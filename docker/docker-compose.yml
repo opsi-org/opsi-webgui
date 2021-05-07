@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+  nuxt:
+    image: node:latest
+    volumes:
+      - ..:/workspace
+    working_dir: /workspace/opsiweb
+    # build:
+    #   dockerfile: docker/Dockerfile.dev
+    entrypoint: ["../docker/docker-entrypoint.sh"]
