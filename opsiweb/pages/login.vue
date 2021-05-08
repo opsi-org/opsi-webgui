@@ -1,18 +1,14 @@
 <template>
   <div class="container">
     <div>
-      <Logo />
-      <h1 class="title">
-        opsiweb
-      </h1>
-      <div class="links">
+      <h1 class="title">opsiweb</h1>
 
-        <b-button
-          to="/login"
-          class="button--grey"
-        >
-          Login
-        </b-button>
+      <b-form-input readonly v-model="opsiconfigserver"></b-form-input>
+      <b-form-input v-model="form.username"></b-form-input>
+      <b-form-input v-model="form.password"></b-form-input>
+      <b-button @click="login">login</b-button>
+      {{result}}
+      <div class="links">
         <a
           href="https://nuxtjs.org/"
           target="_blank"
@@ -37,7 +33,30 @@
 <script lang="ts">
 import Vue from 'vue'
 
-export default Vue.extend({})
+export default Vue.extend({
+  name:"index",
+  data(){return {
+    form:{username:"", password:""},
+    result:"",
+  }},
+  async asyncData({ $axios }) {
+    let data = await $axios.$post('/api/user/opsiserver', {});
+    return { opsiconfigserver:data.result}
+  },
+  methods:{
+    async login(){
+      if (!this.form.username) return
+      if (!this.form.password) return
+
+      const User = new FormData();
+      User.append("username", this.form.username);
+      User.append("password", this.form.password);
+    //   let user = {username: this.form.username, password: this.form.password,}
+      let data = await this.$axios.$post('/api/auth/login', User);
+      this.result = data.result
+    }
+  }
+})
 </script>
 
 <style>

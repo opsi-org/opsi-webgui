@@ -1,10 +1,20 @@
+import path from 'path'
+import fs from 'fs'
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
 
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
-
+  server: {
+    // host: 'localhost', // default: localhost
+    // port: 8888, // default: 3000
+    https: {
+      key: fs.readFileSync(path.resolve(__dirname, 'https/server.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, 'https/server.crt'))
+    }
+  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'opsiweb',
@@ -27,6 +37,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -43,11 +54,14 @@ export default {
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    // baseURL: process.env.API_URL,
+    baseURL:"https://localhost:4447/webgui",
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

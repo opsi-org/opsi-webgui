@@ -3,9 +3,9 @@
 	"dockerComposeFile": "../docker/docker-compose.yml",
 	"service": "nuxt",
 	"workspaceFolder": "/workspace/opsiweb",
-	"forwardPorts": ["3333"],
+	"forwardPorts": ["8888"],
 	// "postStartCommand": "./start.sh",
-	"postStartCommand": "npm install && PORT=3333 npm run dev",
+	"postStartCommand": "npm install && PORT=8888 npm run dev",
 	"extensions": [
 		"octref.vetur"
 	]
