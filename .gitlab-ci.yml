@@ -1,0 +1,18 @@
+image: node:latest
+
+stages:
+  - build
+
+build:linux-pyinstaller:
+  stage: build
+  script: |
+    cd opsiweb
+    npm install
+    npm run build
+    npm run generate
+  artifacts:
+    name: 'opsi-webgui'
+    paths:
+      - dist
+    expire_in: 2 day
+
