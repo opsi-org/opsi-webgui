@@ -5,6 +5,7 @@
       <h1 class="title">
         opsiweb
       </h1>
+      {{settings}}
       <div class="links">
         <b-button
           to="/login"
@@ -36,7 +37,12 @@
 <script lang="ts">
 import Vue from 'vue'
 
-export default Vue.extend({})
+export default Vue.extend({
+  async asyncData({ $axios }) {
+    let data = await $axios.$post('/api/user/getsettings');
+    return { settings:data.result}
+  },
+})
 </script>
 
 <style>
