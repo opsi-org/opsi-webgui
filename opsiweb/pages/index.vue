@@ -6,7 +6,6 @@
         opsiweb
       </h1>
       <div class="links">
-
         <b-button
           to="/login"
           class="button--grey"
