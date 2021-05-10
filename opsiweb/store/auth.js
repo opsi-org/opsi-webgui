@@ -9,6 +9,7 @@ export const getters = {
     username: (state) => state.username,
     // expired: (state) => state.expired,
     // isAuthenticated: (state) => !!state.username,
+    // isAuthenticated: (state) => Boolean(Cookie.get("opsiconfd-session")),
     isAuthenticated: (state) => {
       let r = Boolean(Cookie.get("opsiconfd-session") ) //&& state.username)
       console.debug("Cookie: ", Cookie.get("opsiconfd-session"))
@@ -27,14 +28,4 @@ export const mutations = {
 };
 
 export const actions = {
-
-  // async isAuthenticated({state}, {$axios}) {
-  //   console.debug("Auth/LogIn do axios");
-  //   try {
-  //     var response = await $axios.$post("/auth/authenticated");
-  //     state.authenticated = response.result
-  //   } catch (error) {
-  //     state.authenticated = false
-  //   }
-  // },
 };

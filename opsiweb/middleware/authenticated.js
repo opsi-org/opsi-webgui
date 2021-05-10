@@ -1,25 +1,16 @@
-// import axios from 'axios'
-// export default ({ res, store }) => {
-//   if (process.server) {
-//     axios.get(process.env.token)
-//       .then((response) => {
-//         document.cookie = "token="+response.data.token+"; expires=Thu, 18 Dec 2019 12:00:00 UTC; path=/";
-//       })
-//   }
-// }
-//middleware/authenticated.js
 export default function ({
     store,
     redirect,
     route
   }) {
     console.log("IsAuthenticated", store.getters['auth/isAuthenticated'])
-    if (route.name === 'login'){
-      if (store.getters['auth/isAuthenticated'])
-        return redirect('/')
+    if (store.getters['auth/isAuthenticated'] && route.name === 'login'){
+      return redirect('/')
     }
-    else if (!store.getters['auth/isAuthenticated']) {
+    // if (!store.getters['auth/isAuthenticated'] && route.name === 'login'){ }
+    else if (!store.getters['auth/isAuthenticated'] && route.name !== 'login') {
       console.log("redirect to login")
       return redirect('/login')
     }
+    console.log("redirect to ??")
   }

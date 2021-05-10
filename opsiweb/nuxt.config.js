@@ -49,7 +49,7 @@ export default {
     '@nuxt/typescript-build'
   ],
   router: {
-    middleware: 'authenticated'
+    middleware: ['authenticated']
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -62,8 +62,15 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // baseURL: process.env.API_URL,
-    baseURL:"https://localhost:4447/webgui",
-    // withCredentials: true,  // <- is set through plugin/axios.js. compare: https://github.com/nuxt-community/axios-module/issues/168
+    port:4447,
+    prefix:"/webgui",
+    progress: false,
+    // // |--> default is 'true', but otherwise it is not a "simple request"
+    // // and causes a CORS preflight error on firefox and safari-based browser
+    // // alternative would be using proxy, but is not supported in static applications
+
+    // withCredentials: true, // is set through '~/plugins/axios.js'
+    // //    see: https://github.com/nuxt-community/axios-module/issues/168
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
