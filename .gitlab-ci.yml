@@ -7,12 +7,18 @@ build:linux-pyinstaller:
   stage: build
   script: |
     cd opsiweb
+    pwd
     npm install
     npm run build
     npm run generate
+    ls -la
+    ls -la dist
+    cd ..
+    pwd
+    ls -la
   artifacts:
     name: 'opsi-webgui'
     paths:
-      - dist
+      - opsiweb/dist
     expire_in: 2 day
 
