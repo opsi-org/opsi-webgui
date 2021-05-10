@@ -2,31 +2,39 @@
   <div >
     <!-- v-if="!isAuthenticated"> -->
     <div>
-      <b-form-input readonly v-model="configserver"></b-form-input>
-      <b-form-input v-model="form.username">adminuser</b-form-input>
-      <b-form-input v-model="form.password">adminuser</b-form-input>
+      <b-form-input readonly v-model="opsiconfigserver"></b-form-input>
+      <b-form-input v-model="form.username"  :state="validUsername">adminuser</b-form-input>
+      <b-form-input v-model="form.password" type="password" :state="validPassword"></b-form-input>
+      <!-- <b-button @click="login" :disabled="(validUsername&&validPassword)!==null">login</b-button> -->
+      <!-- <b-button @click="login" :disabled="(validUsername!==null&&validPassword!==null)">login</b-button> -->
       <b-button @click="login">login</b-button>
-      Authenticated? {{isAuthenticated}}
     </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import {mapState, mapGetters, mapMutations} from 'vuex'
+import {mapMutations} from 'vuex'
 
-// import Cookie from 'js-cookie'
 export default Vue.extend({
-  name:"index",
-  props:{
-    configserver:String,
+  name:"FLogin",
+  fetchOnServer: false, // call fetch only on client-side
+  async fetch() {
+    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result;
   },
   data(){return {
+    opsiconfigserver:"",
     form:{username:"adminuser", password:"adminuser"},
-    result:"",
   }},
   computed:{
-    ...mapGetters({ isAuthenticated: "auth/isAuthenticated", }),
+    validUsername(){
+      if (this.form.username!=='') return null
+      return false
+    },
+    validPassword(){
+      if (this.form.password!=='') return null
+      return false
+    },
   },
   methods:{
     ...mapMutations({
@@ -43,8 +51,21 @@ export default Vue.extend({
       let response = await this.$axios.$post('/api/auth/login', User)
       if (response.result == 'Login success'){
         this.XsetUsername(this.form.username)
-        this.$router.back()
+        if (this.$route.name === "login"){
+          this.$router.push("/")
+        }
+        else{
+          this.$router.back()
+        }
+      }else{
+        alert("error")
       }
+      // if (response.result == 'Login success'){
+
+      //   // let data = await this.$axios.$get('/api/user/getsettings');
+      //   // // return { settings:data.result}
+      //   // this.result = data
+      // }
     }
   }
 })
