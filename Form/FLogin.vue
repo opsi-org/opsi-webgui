@@ -1,75 +1,70 @@
 <template>
-  <div >
-    <!-- v-if="!isAuthenticated"> -->
+  <div>
     <div>
-      <b-form-input readonly v-model="opsiconfigserver"></b-form-input>
-      <b-form-input v-model="form.username"  :state="validUsername">adminuser</b-form-input>
-      <b-form-input v-model="form.password" type="password" :state="validPassword"></b-form-input>
+      <b-form-input v-model="opsiconfigserver" readonly />
+      <b-form-input v-model="form.username" :state="validUsername" />
+      <b-form-input v-model="form.password" :state="validPassword" type="password" />
       <!-- <b-button @click="login" :disabled="(validUsername&&validPassword)!==null">login</b-button> -->
       <!-- <b-button @click="login" :disabled="(validUsername!==null&&validPassword!==null)">login</b-button> -->
-      <b-button @click="login">login</b-button>
-      {{result}}
+      <b-button @click="login">
+        login
+      </b-button>
+      <p>{{ result }}</p>
     </div>
   </div>
 </template>
 
 <script>
 import Vue from 'vue'
-import {mapMutations} from 'vuex'
+import { mapMutations } from 'vuex'
 
 export default Vue.extend({
-  name:"FLogin",
+  name: 'FLogin',
   fetchOnServer: false, // call fetch only on client-side
-  async fetch() {
-    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result;
+  data () {
+    return {
+      opsiconfigserver: '',
+      form: { username: 'adminuser', password: 'adminuser' },
+      result: ''
+    }
   },
-  data(){return {
-    opsiconfigserver:"",
-    form:{username:"adminuser", password:"adminuser"},
-    result:""
-  }},
-  computed:{
-    validUsername(){
-      if (this.form.username!=='') return null
+  async fetch () {
+    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
+  },
+  computed: {
+    validUsername () {
+      if (this.form.username !== '') { return null }
       return false
     },
-    validPassword(){
-      if (this.form.password!=='') return null
+    validPassword () {
+      if (this.form.password !== '') { return null }
       return false
-    },
+    }
   },
-  methods:{
+  methods: {
     ...mapMutations({
-      XsetUsername:'auth/setUsername',
+      XsetUsername: 'auth/setUsername'
     }),
-    async login(){
-      this.result = ""
-      if (!this.form.username) return
-      if (!this.form.password) return
+    login () {
+      this.result = ''
+      if (!this.form.username) { return }
+      if (!this.form.password) { return }
 
-      const User = new FormData();
-      User.append("username", this.form.username);
-      User.append("password", this.form.password);
+      const User = new FormData()
+      User.append('username', this.form.username)
+      User.append('password', this.form.password)
       // let response = await this.$axios.$post('/api/auth/login', User)
       this.$axios.post('/api/auth/login', User)
         .then(() => {
           this.XsetUsername(this.form.username)
-          if (this.$route.name === "login"){
-            this.$router.push("/")
-          }
-          else{
+          if (this.$route.name === 'login') {
+            this.$router.push('/')
+          } else {
             this.$router.back()
           }
-        }).catch(error => {
-          this.result = "login failed"
+        }).catch(() => {
+          this.result = 'login failed'
         })
-
-      // if (response.result == 'Login success'){
-
-      //   // let data = await this.$axios.$get('/api/user/getsettings');
-      //   // // return { settings:data.result}
-      //   // this.result = data
-      // }
     }
   }
 })
