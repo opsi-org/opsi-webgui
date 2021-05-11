@@ -1,19 +1,19 @@
 import Cookie from 'js-cookie'
 
 export const state = () => ({
-  username: null,
+  username: undefined
 })
 
 export const getters = {
-  username: (state) => state.username,
-  isAuthenticated: (state) => Boolean(Cookie.get('opsiconfd-session') && state.username),
-};
+  username: state => state.username,
+  isAuthenticated: state => Boolean(Cookie.get('opsiconfd-session') && state.username)
+}
 
 export const mutations = {
-  setUsername(state, payload) {
+  setUsername (state, payload) {
     state.username = payload
-  },
-};
+  }
+}
 
 export const actions = {
-};
+}

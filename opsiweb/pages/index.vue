@@ -2,17 +2,21 @@
   <div class="container">
     <div>
       <Logo />
-      <h1 class="title">opsiweb</h1>
+      <h1 class="title">
+        opsiweb
+      </h1>
       <h4>Modules content: </h4>
       <div v-for="v,k in modules" :key="k">
-        {{k}}:{{v}} <br />
+        <p>{{ k }}:{{ v }}</p>
       </div>
       <div class="links">
         <b-button
           v-if="!isAuthenticated"
           to="/login"
           class="button--grey"
-        >Login </b-button>
+        >
+          Login
+        </b-button>
         <a
           href="https://nuxtjs.org/"
           target="_blank"
@@ -36,16 +40,16 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 export default Vue.extend({
-  async asyncData({ $axios }) {
+  async asyncData ({ $axios }) {
     return {
-      modules : (await $axios.$post('/api/opsidata/modulesContent')).result
+      modules: (await $axios.$post('/api/opsidata/modulesContent')).result
     }
   },
-  computed:{
+  computed: {
     ...mapGetters({
-      isAuthenticated: "auth/isAuthenticated"
+      isAuthenticated: 'auth/isAuthenticated'
     })
   }
 })
