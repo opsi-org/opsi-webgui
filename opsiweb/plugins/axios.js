@@ -1,14 +1,14 @@
-export default function ({ $axios, redirect, store }) {
+export default function ({ $axios, redirect, store, route }) {
   $axios.onRequest(config => {
+    // console.debug('Making request to ', config)
     if (config.url !== '/api/user/opsiserver'){
       config.withCredentials = true
     }
-    // console.debug('Making request to ', config)
     return config
   })
   $axios.onResponse((response) => {
-      // console.debug('Received response from ', response)
-    });
+    // console.debug('Received response from ', response)
+  });
 
   $axios.onError(error => {
     const code = parseInt(error.response && error.response.status)
@@ -18,9 +18,9 @@ export default function ({ $axios, redirect, store }) {
     // }
     // else
     if (code === 401) {
-      // console.error("401: unauthorized")
-      // store.commit('auth/setUsername', undefined)
-      // redirect('/login')
+      store.commit('auth/setUsername', undefined)
+      if (route.name !== 'login')
+        redirect('/login')
     }
   })
 }

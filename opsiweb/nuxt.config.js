@@ -57,14 +57,14 @@ export default {
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios',
+    '@nuxtjs/axios'
   ],
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // baseURL: process.env.API_URL,
-    port:4447,
-    prefix:"/webgui",
-    progress: false,
+    port: 4447,
+    prefix: '/webgui',
+    progress: false
     // // |--> default is 'true', but otherwise it is not a "simple request"
     // // and causes a CORS preflight error on firefox and safari-based browser
     // // alternative would be using proxy, but is not supported in static applications
