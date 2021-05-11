@@ -8,6 +8,7 @@
       <!-- <b-button @click="login" :disabled="(validUsername&&validPassword)!==null">login</b-button> -->
       <!-- <b-button @click="login" :disabled="(validUsername!==null&&validPassword!==null)">login</b-button> -->
       <b-button @click="login">login</b-button>
+      {{result}}
     </div>
   </div>
 </template>
@@ -25,6 +26,7 @@ export default Vue.extend({
   data(){return {
     opsiconfigserver:"",
     form:{username:"adminuser", password:"adminuser"},
+    result:""
   }},
   computed:{
     validUsername(){
@@ -41,25 +43,27 @@ export default Vue.extend({
       XsetUsername:'auth/setUsername',
     }),
     async login(){
+      this.result = ""
       if (!this.form.username) return
       if (!this.form.password) return
 
       const User = new FormData();
       User.append("username", this.form.username);
       User.append("password", this.form.password);
+      // let response = await this.$axios.$post('/api/auth/login', User)
+      this.$axios.post('/api/auth/login', User)
+        .then(() => {
+          this.XsetUsername(this.form.username)
+          if (this.$route.name === "login"){
+            this.$router.push("/")
+          }
+          else{
+            this.$router.back()
+          }
+        }).catch(error => {
+          this.result = "login failed"
+        })
 
-      let response = await this.$axios.$post('/api/auth/login', User)
-      if (response.result == 'Login success'){
-        this.XsetUsername(this.form.username)
-        if (this.$route.name === "login"){
-          this.$router.push("/")
-        }
-        else{
-          this.$router.back()
-        }
-      }else{
-        alert("error")
-      }
       // if (response.result == 'Login success'){
 
       //   // let data = await this.$axios.$get('/api/user/getsettings');
