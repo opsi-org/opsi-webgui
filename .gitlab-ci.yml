@@ -1,21 +1,26 @@
 image: node:latest
 
 stages:
+  - test
   - build
 
-build:linux-pyinstaller:
+test:jtest:
+  stage: test
+  script: |
+    cd opsiweb
+    npm install
+    npm test
+  artifacts:
+    reports:
+      cobertura: opsiweb/coverage/clover.xml
+
+build:static-app:
   stage: build
   script: |
     cd opsiweb
-    pwd
     npm install
     npm run build
     npm run generate
-    ls -la
-    ls -la dist
-    cd ..
-    pwd
-    ls -la
   artifacts:
     name: 'opsi-webgui'
     paths:
