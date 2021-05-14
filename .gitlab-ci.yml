@@ -8,8 +8,8 @@ stages:
 install:
   stage: install
   script: |
-    - cd opsiweb
-    - npm install
+    cd opsiweb
+    npm install
   artifacts:
     name: "artifacts"
     untracked: true
