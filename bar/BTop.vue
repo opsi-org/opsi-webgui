@@ -9,6 +9,7 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
           <b-nav-form>
+            <DropdownDDTheme />
             <ButtonBTNLogout />
           </b-nav-form>
         </b-navbar-nav>
