@@ -9,9 +9,9 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-@Component export default class PLogin extends Vue {
-}
+// import { Component, Vue } from 'nuxt-property-decorator'
+// @Component export default class PLogin extends Vue {
+// }
 </script>
 
 <style>

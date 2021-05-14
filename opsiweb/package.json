@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npm run test & npm run lint & nuxt",
+    "dev": "npm run lint & nuxt # npm run test & ",
     "prod": "npm run generate && npm run start",
     "build": "nuxt build",
     "start": "nuxt start",
@@ -18,7 +18,8 @@
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.9.1",
     "js-cookie": "^2.2.1",
-    "nuxt": "^2.15.6"
+    "nuxt": "^2.15.6",
+    "nuxt-property-decorator": "^2.9.1"
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.3",
