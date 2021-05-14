@@ -1,65 +1,37 @@
 image: node:latest
-.install:
-  script:
-    - cd opsiweb
-    - npm install
-  artifacts:
-    name: "artifacts"
-    untracked: true
-    expire_in: 30 mins
-    paths:
-      - opsiweb/node_modules/
 
 stages:
   - test
   - build
 
-# install:
-#   stage: install
-#   script: |
-#     - cd opsiweb
-#     - npm install
-#   artifacts:
-#     name: "artifacts"
-#     untracked: true
-#     expire_in: 30 mins
-#     paths:
-#       - opsiweb/node_modules/
-
 test:lint:
   stage: test
   script: |
     cd opsiweb
+    npm install
     npm run lint
-  # dependencies:
-  #   - install
-  extends: .install
 
 test:jtest:
   stage: test
   script: |
     cd opsiweb
+    npm install
     npm run test
   artifacts:
     reports:
       cobertura: opsiweb/coverage/clover.xml
-  # dependencies:
-  #   - install
-  extends: .install
 
 build:static-app:
   stage: build
   script: |
     cd opsiweb
+    npm install
     npm run generate
   artifacts:
     name: 'opsi-webgui'
     paths:
       - opsiweb/dist
     expire_in: 2 day
-  # dependencies:
-  #   - install
-  extends: .install
   only:
     - develop
 
