@@ -1,5 +1,7 @@
 <template>
   <div>
+    <BarBTop />
+    <BarBSide />
     <Nuxt />
   </div>
 </template>
