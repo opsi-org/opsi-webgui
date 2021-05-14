@@ -1,29 +1,34 @@
 image: node:latest
+.install:
+  script:
+    - cd opsiweb
+    - npm install
 
 stages:
   - install
   - test
   - build
 
-install:
-  stage: install
-  script: |
-    cd opsiweb
-    npm install
-  artifacts:
-    name: "artifacts"
-    untracked: true
-    expire_in: 30 mins
-    paths:
-      - opsiweb/node_modules/
+# install:
+#   stage: install
+#   script: |
+#     - cd opsiweb
+#     - npm install
+#   artifacts:
+#     name: "artifacts"
+#     untracked: true
+#     expire_in: 30 mins
+#     paths:
+#       - opsiweb/node_modules/
 
 test:lint:
   stage: test
   script: |
     cd opsiweb
     npm run lint
-  dependencies:
-    - install
+  # dependencies:
+  #   - install
+  extends: .install
 
 test:jtest:
   stage: test
@@ -33,8 +38,9 @@ test:jtest:
   artifacts:
     reports:
       cobertura: opsiweb/coverage/clover.xml
-  dependencies:
-    - install
+  # dependencies:
+  #   - install
+  extends: .install
 
 build:static-app:
   stage: build
@@ -46,6 +52,7 @@ build:static-app:
     paths:
       - opsiweb/dist
     expire_in: 2 day
-  dependencies:
-    - install
+  # dependencies:
+  #   - install
+  extends: .install
 
