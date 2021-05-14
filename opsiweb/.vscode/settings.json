@@ -1,0 +1,38 @@
+{
+  "[vue]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[css]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[html]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[javascript]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[yaml]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  "[json]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
+  // "files.associations": { "**/../.data/*.conf*": "python"}, // Does not work through .vscode/settings.json - only ~user/.config/Code/settings.json. See https://github.com/microsoft/vscode/issues/89179
+  "code-eol.highlightExtraWhitespace": true,
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": false
+  },
+  "eslint.validate": [
+    "javascript",
+    "typescript",
+    "vue",
+    "html"
+  ]
+}

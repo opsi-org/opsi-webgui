@@ -3,10 +3,11 @@
 	"dockerComposeFile": "../docker/docker-compose.yml",
 	"service": "nuxt",
 	"workspaceFolder": "/workspace/opsiweb",
-	"forwardPorts": ["8888"],
-	// "postStartCommand": "./start.sh",
+	"forwardPorts": [8888],
+	// "postStartCommand": "npm install && PORT=8888 bash",
 	"postStartCommand": "npm install && PORT=8888 npm run dev",
 	"extensions": [
-		"octref.vetur"
+		"octref.vetur",
+		"dbaeumer.vscode-eslint"
 	]
 }
