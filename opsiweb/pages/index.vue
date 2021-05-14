@@ -6,6 +6,18 @@
         opsiweb
       </h1>
       <div>
+        <b-button
+          to="/depots/"
+          class="button--grey"
+        >
+          Depots
+        </b-button>
+        <b-button
+          to="/clients/"
+          class="button--grey"
+        >
+          Clients
+        </b-button>
         <ButtonBTNLogout />
         <DropdownDDTheme />
       </div>
