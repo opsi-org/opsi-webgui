@@ -2,7 +2,7 @@
   <div>
     <BarBTop />
     <BarBSide />
-    <Nuxt />
+    <Nuxt class="content" />
   </div>
 </template>
 
@@ -28,6 +28,9 @@ export default Vue.extend({
 </script>
 
 <style>
+.content{
+  margin-top: 56px !important;
+}
 html {
   font-family:
     'Source Sans Pro',
