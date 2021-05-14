@@ -43,7 +43,8 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations({
-      XsetUsername: 'auth/setUsername'
+      Xlogin: 'auth/login',
+      Xlogout: 'auth/logout'
     }),
     login () {
       this.result = ''
@@ -55,14 +56,19 @@ export default Vue.extend({
       User.append('password', this.form.password)
       // let response = await this.$axios.$post('/api/auth/login', User)
       this.$axios.post('/api/auth/login', User)
-        .then(() => {
-          this.XsetUsername(this.form.username)
-          if (this.$route.name === 'login') {
-            this.$router.push('/')
-          } else {
-            this.$router.back()
+        .then((response) => {
+          if (response.data.result === 'Login success') {
+            this.Xlogin(this.form.username)
+            if (this.$route.name === 'login') {
+              this.$router.push({ path: '/' })
+            } else {
+              this.$router.back()
+            }
           }
-        }).catch(() => {
+        }).catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error(error)
+          this.Xlogout()
           this.result = 'login failed'
         })
     }
