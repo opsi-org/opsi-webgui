@@ -1,5 +1,5 @@
 <template>
-  <b-dropdown :text="theme" variant="danger">
+  <b-dropdown :text="theme" variant="secondary">
     <b-dropdown-item
       v-for="t in styles.themes"
       :key="t.rel"
