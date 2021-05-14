@@ -50,7 +50,8 @@ export default {
     '@nuxt/typescript-build'
   ],
   router: {
-    middleware: ['authenticated']
+    middleware: ['authenticated'],
+    base: '/webgui/app/'
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -63,6 +64,8 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // baseURL: process.env.API_URL,
+    // baseURL: process.env.API_URL,
+    https: true,
     port: 4447,
     prefix: '/webgui',
     progress: false
@@ -76,5 +79,6 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+    // publicPath: '/webgui/app/'
   }
 }

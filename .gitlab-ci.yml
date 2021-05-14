@@ -1,0 +1,38 @@
+image: node:latest
+
+stages:
+  - test
+  - build
+
+test:lint:
+  stage: test
+  script: |
+    cd opsiweb
+    npm install
+    npm run lint
+
+test:jtest:
+  stage: test
+  script: |
+    cd opsiweb
+    npm install
+    npm run test
+  coverage: /All files\s*\|\s*([\d\.]+)/
+  artifacts:
+    reports:
+      cobertura: opsiweb/coverage/clover.xml
+
+build:static-app:
+  stage: build
+  script: |
+    cd opsiweb
+    npm install
+    npm run generate
+  artifacts:
+    name: 'opsi-webgui'
+    paths:
+      - opsiweb/dist
+    expire_in: 2 day
+  only:
+    - develop
+
