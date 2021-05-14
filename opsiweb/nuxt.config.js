@@ -69,6 +69,12 @@ export default {
     port: 4447,
     prefix: '/webgui',
     progress: false
+    // headers: {
+    //   common: {
+    //     // 'Accept': 'application/json, text/plain, */*',
+    //     'Cache-Control': 'no-cache'
+    //   },
+    // }
     // // |--> default is 'true', but otherwise it is not a "simple request"
     // // and causes a CORS preflight error on firefox and safari-based browser
     // // alternative would be using proxy, but is not supported in static applications

@@ -18,7 +18,8 @@
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.9.1",
     "js-cookie": "^2.2.1",
-    "nuxt": "^2.15.6"
+    "nuxt": "^2.15.6",
+    "nuxt-property-decorator": "^2.9.1"
   },
   "devDependencies": {
     "@nuxt/types": "^2.15.3",
