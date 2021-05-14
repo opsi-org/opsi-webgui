@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt #npm run test & npm run lint & nuxt",
+    "dev": "npm run test & npm run lint & nuxt",
     "prod": "npm run generate && npm run start",
     "build": "nuxt build",
     "start": "nuxt start",
