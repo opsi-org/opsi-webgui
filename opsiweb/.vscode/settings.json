@@ -33,7 +33,6 @@
     "javascript",
     "typescript",
     "vue",
-    "html",
-    "json"
+    "html"
   ]
 }

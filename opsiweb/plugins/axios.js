@@ -1,3 +1,4 @@
+// import Cookie from 'js-cookie'
 export default function ({ $axios, redirect, store, route }) {
   $axios.onRequest((config) => {
     // console.debug('Making request to ', config)
@@ -18,7 +19,7 @@ export default function ({ $axios, redirect, store, route }) {
     // }
     // else
     if (code === 401) {
-      store.commit('auth/setUsername', undefined)
+      store.commit('auth/logout')
       if (route.name !== 'login') {
         redirect('/login')
       }

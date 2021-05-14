@@ -1,11 +1,17 @@
+import Cookie from 'js-cookie'
+
 export default function ({
-  store,
+  // store,
   redirect,
   route
 }) {
-  if (store.getters['auth/isAuthenticated'] && route.name === 'login') {
+  const isA = Boolean(Cookie.get('opsiconfd-session') && localStorage.getItem('username'))
+  // const isA = store.getters['auth/isAuthenticated']
+  // value is different from store.auth.isAuthenticated
+  // seems to be a timing issue
+  if (isA && route.name === 'login') {
     return redirect('/')
-  } else if (!store.getters['auth/isAuthenticated'] && route.name !== 'login') {
+  } else if (!isA && route.name !== 'login') {
     return redirect('/login')
   }
 }

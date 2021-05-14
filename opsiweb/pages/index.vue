@@ -5,6 +5,7 @@
       <h1 class="title">
         opsiweb
       </h1>
+      <ButtonBTNLogout />
       <h4>Modules content: </h4>
       <div v-for="v,k in modules" :key="k">
         <p>{{ k }}:{{ v }}</p>

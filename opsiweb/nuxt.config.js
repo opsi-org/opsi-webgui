@@ -7,6 +7,7 @@ export default {
 
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
+  // mode: 'spa',
   server: {
     // host: 'localhost', // default: localhost
     // port: 8888, // default: 3000
