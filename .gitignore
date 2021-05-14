@@ -1,0 +1,4 @@
+*.backup
+*.tmp
+*_tmp
+.env

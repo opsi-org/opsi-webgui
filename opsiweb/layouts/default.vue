@@ -4,6 +4,27 @@
   </div>
 </template>
 
+<script lang="ts">
+import { mapGetters } from 'vuex'
+
+import Vue from 'vue'
+export default Vue.extend({
+  head () {
+    return {
+      link: [{
+        rel: 'stylesheet',
+        href: (this.XgetColorTheme) ? this.XgetColorTheme.rel : ''
+      }]
+    }
+  },
+  computed: {
+    ...mapGetters({
+      XgetColorTheme: 'settings/colortheme'
+    })
+  }
+})
+</script>
+
 <style>
 html {
   font-family:
