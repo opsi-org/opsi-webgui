@@ -5,9 +5,14 @@
       <h1 class="title">
         opsiweb
       </h1>
+      <ButtonBTNLogout />
+      <h4>Modules content: </h4>
+      <div v-for="v,k in modules" :key="k">
+        <p>{{ k }}:{{ v }}</p>
+      </div>
       <div class="links">
-
         <b-button
+          v-if="!isAuthenticated"
           to="/login"
           class="button--grey"
         >
@@ -36,8 +41,19 @@
 
 <script lang="ts">
 import Vue from 'vue'
-
-export default Vue.extend({})
+import { mapGetters } from 'vuex'
+export default Vue.extend({
+  async asyncData ({ $axios }) {
+    return {
+      modules: (await $axios.$post('/api/opsidata/modulesContent')).result
+    }
+  },
+  computed: {
+    ...mapGetters({
+      isAuthenticated: 'auth/isAuthenticated'
+    })
+  }
+})
 </script>
 
 <style>
