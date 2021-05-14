@@ -11,7 +11,7 @@
 </template>
 <style>
 #sidemenu {
-  top: 56px;
+  top: 56px !important;
   width: 200px;
 }
 </style>
