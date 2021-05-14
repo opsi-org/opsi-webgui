@@ -3,6 +3,12 @@ image: node:latest
   script:
     - cd opsiweb
     - npm install
+  artifacts:
+    name: "artifacts"
+    untracked: true
+    expire_in: 30 mins
+    paths:
+      - opsiweb/node_modules/
 
 stages:
   - install
@@ -55,4 +61,6 @@ build:static-app:
   # dependencies:
   #   - install
   extends: .install
+  only:
+    - develop
 
