@@ -26,13 +26,6 @@
         <p>{{ k }}:{{ v }}</p>
       </div>
       <div class="links">
-        <b-button
-          v-if="!isAuthenticated"
-          to="/login"
-          class="button--grey"
-        >
-          Login
-        </b-button>
         <a
           href="https://nuxtjs.org/"
           target="_blank"
@@ -55,20 +48,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { mapGetters } from 'vuex'
-export default Vue.extend({
-  async asyncData ({ $axios }) {
+import { Component, Vue } from 'nuxt-property-decorator'
+@Component
+export default class PIndex extends Vue {
+  async asyncData ({ $axios }: any): Promise<any> {
     return {
       modules: (await $axios.$post('/api/opsidata/modulesContent')).result
     }
-  },
-  computed: {
-    ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated'
-    })
   }
-})
+}
 </script>
 
 <style>
