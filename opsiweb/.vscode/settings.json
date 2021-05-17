@@ -29,6 +29,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": false
   },
+  "js/ts.implicitProjectConfig.experimentalDecorators": true,
   "eslint.validate": [
     "javascript",
     "typescript",

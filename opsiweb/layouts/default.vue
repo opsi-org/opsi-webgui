@@ -25,6 +25,29 @@ export default Vue.extend({
     })
   }
 })
+
+/* WARN  in ./layouts/default.vue?vue&type=script&lang=ts&
+
+"export 'default' (imported as 'mod') was not found in '-!../node_modules/babel-loader/lib/index.js??ref--12-0!../node_modules/ts-loader/index.js??ref--12-1!../node_modules/vue-loader/lib/index.js??vue-loader-options!./default.vue?vue&type=script&lang=ts&'
+*/
+// import { Component, Vue, namespace } from 'nuxt-property-decorator'
+
+// const settings = namespace('settings')
+// interface OBJTheme {
+//     title: string,
+//     rel: string
+// }
+// @Component export class LDefault extends Vue {
+//   @settings.Getter public colortheme!: OBJTheme
+//   public head (): any {
+//     return {
+//       link: [{
+//         rel: 'stylesheet',
+//         href: this.colortheme.rel
+//       }]
+//     }
+//   }
+// }
 </script>
 
 <style>

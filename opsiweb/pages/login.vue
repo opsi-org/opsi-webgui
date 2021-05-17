@@ -8,16 +8,15 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
-import Vue from 'vue'
-
-export default Vue.extend({
-  name: 'Login',
-  layout: 'auth',
-  computed: {},
-  methods: {}
+// import { Component, Vue } from 'nuxt-property-decorator'
+// @Component export default class PLogin extends Vue {
+// }
+import { Vue, Component } from 'nuxt-property-decorator'
+@Component({
+  layout: 'auth'
 })
+export default class PLogin extends Vue {}
 </script>
 
 <style>
