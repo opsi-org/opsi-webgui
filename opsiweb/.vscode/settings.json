@@ -15,6 +15,10 @@
     "editor.insertSpaces": true,
     "editor.tabSize": 2
   },
+  "[typescript]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  },
   "[yaml]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2

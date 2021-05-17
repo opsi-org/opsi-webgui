@@ -33,12 +33,12 @@ export default Vue.extend({
 // import { Component, Vue, namespace } from 'nuxt-property-decorator'
 
 // const settings = namespace('settings')
-// interface OBJTheme {
+// interface ITheme {
 //     title: string,
 //     rel: string
 // }
 // @Component export class LDefault extends Vue {
-//   @settings.Getter public colortheme!: OBJTheme
+//   @settings.Getter public colortheme!: ITheme
 //   public head (): any {
 //     return {
 //       link: [{
