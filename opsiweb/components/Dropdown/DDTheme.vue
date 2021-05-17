@@ -13,14 +13,11 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
+import { ITheme } from '~/types/tsettings'
 const settings = namespace('settings')
-interface OBJTheme {
-    title: string,
-    rel: string
-}
 
 @Component export default class DDTheme extends Vue {
-  themes: Array<OBJTheme> = [
+  themes: Array<ITheme> = [
     // Created with https://bootstrap.build/app :
     // {title: "opsi-dark", rel:"~/assets/themes/theme-opsi-color-dark.css"},
     // {title: "opsi-light", rel:"~/assets/themes/theme-opsi-color-light.css"},
@@ -36,13 +33,13 @@ interface OBJTheme {
     { title: 'Bootswatch-Lux', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css' }
   ]
 
-  @settings.Getter public colortheme!: OBJTheme
-  @settings.Mutation public setColorTheme!: (theme: OBJTheme) => void
+  @settings.Getter public colortheme!: ITheme
+  @settings.Mutation public setColorTheme!: (theme: ITheme) => void
   get theme () {
     return this.colortheme
   }
 
-  set theme (val: OBJTheme) {
+  set theme (val: ITheme) {
     this.setColorTheme(val)
   }
 }
