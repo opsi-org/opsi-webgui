@@ -2,7 +2,7 @@
   <div>
     <BarBTop />
     <BarBSide />
-    <div class="main-content">
+    <div class="main_content">
       <Nuxt />
     </div>
   </div>
@@ -53,7 +53,7 @@ export default Vue.extend({
 </script>
 
 <style>
-.main-content{
+.main_content{
   margin-top: 56px !important;
   width: calc(100% + 100px);
 }
