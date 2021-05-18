@@ -26,7 +26,9 @@
           size="sm"
           class="fixed_column_selection"
         >
-          <template #button-content><b-icon-list-task /></template>
+          <template #button-content>
+            <b-icon-list-task />
+          </template>
           <div v-if="$mq=='mobile'">
             <b-dropdown-item-button
               v-for="header in Object.values(headers).filter(h=>h._fixed!==true)"
@@ -120,9 +122,11 @@ export default class TTable extends BTable {
       this.columnVisibilityList = Object.keys(this.columnVisibilityStates).filter(k => this.columnVisibilityStates[k])
     } else {
       // set selected columns to true (desktop-view)
-      Object.keys(this.columnVisibilityList).forEach((k) => {
-        this.columnVisibilityStates[this.columnVisibilityList[k]] = true
-        this.headers[this.columnVisibilityList[k]].visible = true
+      this.columnVisibilityList.forEach((k: string) => {
+        this.columnVisibilityStates[k] = true
+        this.headers[k].visible = true
+        // this.columnVisibilityStates[this.columnVisibilityList[k]] = true
+        // this.headers[this.columnVisibilityList[k]].visible = true
       })
     }
   }

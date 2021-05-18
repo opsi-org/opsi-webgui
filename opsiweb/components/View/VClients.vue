@@ -44,9 +44,12 @@
           align="fill"
         />
       </div>
-      {{ selectionDepots }}
-      <br />
-      {{ selectionClients }}
+      <div>
+        {{ selectionDepots }}
+      </div>
+      <div>
+        {{ selectionClients }}
+      </div>
     </div>
   </div>
 </template>
