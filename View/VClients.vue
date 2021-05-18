@@ -12,7 +12,6 @@
     >
       Depots
     </b-button>
-    <!-- <TableTTable /> -->
 
     <div>
       <div class="mt-3">
@@ -20,7 +19,8 @@
         <TableTTable
           id="tableclients"
           datakey="clientId"
-          :fields="Object.values(headerData)"
+          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+          :headers="headerData"
           :items="fetchedData.clients"
           :selection="selectionClients"
           :no-local-sorting="true"
@@ -33,7 +33,6 @@
           hover
           :rowchanged="selectRow"
         />
-        <!-- :fetch="fetch" -->
         <b-pagination
           v-model="tableData.pageNumber"
           :per-page="tableData.perPage"
@@ -54,7 +53,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { IClient, ITableData } from '~/types/tsettings'
+import { IClient, ITableData, ITableHeaders } from '~/types/tsettings'
 const selections = namespace('selections')
 @Component
 export default class VClients extends Vue {
@@ -64,15 +63,16 @@ export default class VClients extends Vue {
     perPage: 10,
     sortBy: 'clientId',
     sortDesc: false,
-    filterQuery: '',
-    selectedDepot: []
+    filterQuery: ''
   }
 
-  headerData: object = {
-    selected: { label: 's', key: 'sel', visible: true }, //, class: 'extrasmall-column-width' },
-    clientId: { label: 'Id', key: 'clientId', visible: true },
-    description: { label: 'Desc', key: 'description', visible: true },
-    actions: { key: 'actions', label: 'a', visible: true, selectableColumn: false }
+  headerData: ITableHeaders = {
+    selected: { label: 's', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
+    clientId: { label: 'Id', key: 'clientId', visible: true, _fixed: true },
+    description: { label: 'Desc', key: 'description', visible: false },
+    ipAddress: { label: 'IP', key: 'ipAddress', visible: false },
+    _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
+    actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionClients!: Array<string>
