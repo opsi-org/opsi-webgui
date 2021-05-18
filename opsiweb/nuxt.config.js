@@ -59,7 +59,15 @@ export default {
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    ['nuxt-mq', {
+      // Default breakpoint for SSR
+      // defaultBreakpoint: 'mobile',
+      breakpoints: {
+        mobile: 850,
+        desktop: Infinity
+      }
+    }]
   ],
   bootstrapVue: {
     icons: true

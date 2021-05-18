@@ -19,6 +19,7 @@
     "core-js": "^3.9.1",
     "js-cookie": "^2.2.1",
     "nuxt": "^2.15.6",
+    "nuxt-mq": "^2.0.2",
     "nuxt-property-decorator": "^2.9.1"
   },
   "devDependencies": {
