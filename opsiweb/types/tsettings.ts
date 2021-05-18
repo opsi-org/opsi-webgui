@@ -17,13 +17,12 @@ export interface IDepot {
     description: string
 }
 
-export interface IRowItem {
-    ident: string
-    _rowVariant?: string
-}
-export interface IRow {
+export interface ITableRow {
     rowSelected: boolean
-    item: IRowItem
+    item: {
+        ident: string
+        _rowVariant?: string
+    };
 }
 
 export interface ITableData {
@@ -34,4 +33,14 @@ export interface ITableData {
     filterQuery: string,
     selectedDepot?: Array<string>,
     selectedClients?: Array<string>
+}
+
+export interface ITableHeader {
+    label: string,
+    key: string,
+    visible: boolean,
+    _fixed?: boolean,
+}
+export interface ITableHeaders {
+    [key: string]: ITableHeader
 }

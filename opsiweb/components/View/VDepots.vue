@@ -12,15 +12,16 @@
     >
       Clients
     </b-button>
-    <!-- <TableTTable /> -->
 
     <div>
+      <!-- {{headerData}} -->
       <div class="mt-3">
         <b-form-input v-model="tableData.filterQuery" />
         <TableTTable
           id="tabledepots"
           datakey="depotId"
-          :fields="Object.values(headerData)"
+          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+          :headers="headerData"
           :items="fetchedData.depots"
           :selection="selectionDepots"
           :no-local-sorting="true"
@@ -33,7 +34,6 @@
           hover
           :rowchanged="selectRow"
         />
-          <!-- :fetch="fetch" -->
         <b-pagination
           v-model="tableData.pageNumber"
           :per-page="tableData.perPage"
@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { IDepot, ITableData } from '~/types/tsettings'
+import { IDepot, ITableData, ITableHeaders } from '~/types/tsettings'
 const selections = namespace('selections')
 @Component
 export default class VClients extends Vue {
@@ -65,11 +65,14 @@ export default class VClients extends Vue {
     filterQuery: ''
   }
 
-  headerData: object = {
-    selected: { label: 's', key: 'sel', visible: true }, //, class: 'extrasmall-column-width' },
-    depotId: { label: 'Id', key: 'depotId', visible: true },
-    description: { label: 'Desc', key: 'description', visible: true },
-    actions: { key: 'actions', label: 'a', visible: true, selectableColumn: false }
+  headerData: ITableHeaders = {
+    selected: { label: 's', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
+    depotId: { label: 'Id', key: 'depotId', visible: true, _fixed: true },
+    description: { label: 'Desc', key: 'description', visible: false },
+    type: { label: 'type', key: 'type', visible: false },
+    ip: { label: 'ip', key: 'ip', visible: false },
+    _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
+    actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionDepots!: Array<string>
