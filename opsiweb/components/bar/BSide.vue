@@ -89,10 +89,10 @@ export default Vue.extend({
       this.attributes.currentlyOpen = opened
     },
     onOverMenuDrop () {
-      this.$refs.dropdown.visible = true
+      (this.$refs.dropdown as any).visible = true
     },
     onLeaveMenuDrop () {
-      this.$refs.dropdown.visible = false
+      (this.$refs.dropdown as any).visible = false
     }
   }
 })
