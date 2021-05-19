@@ -10,13 +10,56 @@
       :visible="attributes.visible"
     >
       <!-- @hidden="attributes.visible =! attributes.visible" -->
-      <b-nav vertical tabs>
-        <b-nav-item active>
-          Depots
+      <b-nav vertical tabs class="sidemenu_nav">
+        <b-nav-text v-if="attributes.currentlyOpen">
+          Overview
+        </b-nav-text>
+        <b-nav-text v-else />
+        <b-nav-item>
+          <b-icon icon="bar-chart-line-fill" />
+          <span v-if="attributes.currentlyOpen">
+            Dashboard Dummy
+          </span>
         </b-nav-item>
-        <b-nav-item>Clients</b-nav-item>
-        <b-nav-item>Products</b-nav-item>
+        <b-nav-item>
+          <b-icon icon="headset" />
+          <span v-if="attributes.currentlyOpen">
+            Support Dummy
+          </span>
+        </b-nav-item>
+        <b-nav-text v-if="attributes.currentlyOpen">
+          Manage
+        </b-nav-text>
+        <b-nav-text v-else />
+        <div @mouseover="onOverMenuDrop" @mouseleave="onLeaveMenuDrop">
+          <b-nav-item-dropdown ref="dropdown" block dropright no-caret>
+            <template #button-content>
+              <b-icon icon="hdd-stack-fill" />
+              <span v-if="attributes.currentlyOpen">
+                Depots Dummy 1
+              </span>
+            </template>
+            <b-dropdown-item v-if="!attributes.currentlyOpen">
+              Depots Dummy 1
+            </b-dropdown-item>
+            <b-dropdown-divider v-if="!attributes.currentlyOpen" />
+            <b-dropdown-item>First Action</b-dropdown-item>
+            <b-dropdown-item>Second Action</b-dropdown-item>
+            <b-dropdown-item>Third Action</b-dropdown-item>
+          </b-nav-item-dropdown>
+        </div>
+        <b-nav-text v-if="attributes.currentlyOpen">
+          Configure
+        </b-nav-text>
+        <b-nav-text v-else />
+        <b-nav-item>
+          <b-icon icon="gear-fill" />
+          <span v-if="attributes.currentlyOpen">
+            Setting Dummy
+          </span>
+        </b-nav-item>
       </b-nav>
+
       <template v-if="$mq === 'desktop'" #footer="">
         <div class="sidemenu_footer">
           <b-button
@@ -44,6 +87,12 @@ export default Vue.extend({
   methods: {
     toggleSidebar (opened: boolean) {
       this.attributes.currentlyOpen = opened
+    },
+    onOverMenuDrop () {
+      this.$refs.dropdown.visible = true
+    },
+    onLeaveMenuDrop () {
+      this.$refs.dropdown.visible = false
     }
   }
 })
@@ -56,11 +105,15 @@ export default Vue.extend({
   /* margin-bottom: 70px; */
 }
 .sidemenu_small > #sidemenu {
-  width: 40px;
+  width: 50px;
 }
 .sidemenu_footer {
   display: inline;
   float: right;
   margin-bottom: 70px;
+}
+.sidemenu_nav{
+  position:absolute;
+  float:right;
 }
 </style>
