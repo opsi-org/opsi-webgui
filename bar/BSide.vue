@@ -6,6 +6,7 @@
       bg-variant="secondary"
       text-variant="light"
       no-header
+      :backdrop="$mq == 'mobile'"
       :no-close-on-route-change="$mq == 'desktop' ? true : false"
       :visible="attributes.visible"
     >
@@ -45,6 +46,7 @@ export default Vue.extend({
 #sidemenu {
   top: 56px !important;
   width: 200px;
+  height: 100%;
 }
 .sidemenu_small > #sidemenu {
   width: 50px;
