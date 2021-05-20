@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-navbar class="topbar" toggleable="sm" fixed="top" variant="secondary">
+      <slot name="sidebarToggle" />
       <b-navbar-brand href="/">
         <img src="../../assets/images/LogoOpsi.png" class="logo">
         Opsiweb

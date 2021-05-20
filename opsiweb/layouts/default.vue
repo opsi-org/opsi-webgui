@@ -1,7 +1,15 @@
 <template>
   <div>
-    <BarBTop />
-    <BarBSide />
+    <BarBTop>
+      <template slot="sidebarToggle">
+        <b-navbar-nav>
+          <b-button v-if="$mq === 'mobile'" :pressed.sync="sidebarAttr.visible">
+            <b-icon icon="list" />
+          </b-button>
+        </b-navbar-nav>
+      </template>
+    </BarBTop>
+    <BarBSide :attributes="sidebarAttr" />
     <div class="main_content">
       <Nuxt />
     </div>
@@ -13,6 +21,11 @@ import { mapGetters } from 'vuex'
 
 import Vue from 'vue'
 export default Vue.extend({
+  data () {
+    return {
+      sidebarAttr: { visible: true, expanded: true }
+    }
+  },
   head () {
     return {
       link: [{
@@ -25,6 +38,11 @@ export default Vue.extend({
     ...mapGetters({
       XgetColorTheme: 'settings/colortheme'
     })
+  },
+  methods: {
+    toogleSideBar () {
+      (this.$refs.sidemenu as any).visible = !(this.$refs.sidemenu as any).visible
+    }
   }
 })
 
