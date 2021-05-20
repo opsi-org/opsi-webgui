@@ -39,9 +39,18 @@ export default Vue.extend({
       XgetColorTheme: 'settings/colortheme'
     })
   },
+  watch: {
+    $mq () {
+      this.updateSidebarAttr()
+    }
+  },
   methods: {
-    toogleSideBar () {
-      (this.$refs.sidemenu as any).visible = !(this.$refs.sidemenu as any).visible
+    updateSidebarAttr () {
+      if (this.$mq === 'mobile') {
+        this.sidebarAttr.visible = false
+      } else {
+        this.sidebarAttr.visible = true
+      }
     }
   }
 })
