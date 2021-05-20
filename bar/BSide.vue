@@ -2,7 +2,6 @@
   <div>
     <b-sidebar
       id="sidemenu"
-      ref="sidemenu"
       :class="{sidemenu_small: !attributes.expanded}"
       bg-variant="secondary"
       text-variant="light"
@@ -10,7 +9,6 @@
       :no-close-on-route-change="$mq == 'desktop' ? true : false"
       :visible="attributes.visible"
     >
-      <!-- @hidden="attributes.visible =! attributes.visible" -->
       <NavNSideBarNav :expanded="attributes.expanded" />
 
       <template v-if="$mq === 'desktop'" #footer="">
@@ -32,9 +30,12 @@
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
-  data () {
-    return {
-      attributes: { visible: true, expanded: true }
+  props: {
+    attributes: {
+      type: Object,
+      default () {
+        return { visible: true, expanded: true }
+      }
     }
   }
 })
