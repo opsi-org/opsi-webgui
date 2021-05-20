@@ -1,10 +1,12 @@
 <template>
   <div>
     <b-nav-item>
-      <b-icon :icon="icon" />
-      <span v-if="expanded">
-        {{ title }}
-      </span>
+      <NuxtLink :to="route">
+        <b-icon :icon="icon" />
+        <span v-if="expanded">
+          {{ title }}
+        </span>
+      </NuxtLink>
     </b-nav-item>
   </div>
 </template>
@@ -19,6 +21,10 @@ export default Vue.extend({
       default: ''
     },
     icon: {
+      type: String,
+      default: ''
+    },
+    route: {
       type: String,
       default: ''
     }
