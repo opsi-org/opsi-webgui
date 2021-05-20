@@ -1,0 +1,6 @@
+:root{
+    --height-navbar: 56px;
+
+    --width-sidebar-expanded:190px;
+    --width-sidebar-collapsed:50px;
+}
