@@ -2,6 +2,7 @@
   <div>
     <b-sidebar
       id="sidemenu"
+      ref="sidemenu"
       :class="{sidemenu_small: !attributes.expanded}"
       bg-variant="secondary"
       text-variant="light"
@@ -17,7 +18,7 @@
           <b-button
             v-b-tooltip.hover
             :title=" (!attributes.expanded)? 'Expand': 'Collapse'"
-            @click="toggleSidebar(!attributes.expanded)"
+            :pressed.sync="attributes.expanded"
           >
             <b-icon v-if="!attributes.expanded" icon="chevron-double-right" />
             <b-icon v-else-if="attributes.expanded" icon="chevron-double-left" />
@@ -34,11 +35,6 @@ export default Vue.extend({
   data () {
     return {
       attributes: { visible: true, expanded: true }
-    }
-  },
-  methods: {
-    toggleSidebar (expanded: boolean) {
-      this.attributes.expanded = expanded
     }
   }
 })
