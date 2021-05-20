@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div
+    :class="{
+      sidebar_collapsed:!sidebarAttr.expanded && $mq!='mobile',
+      sidebar_expanded:sidebarAttr.expanded}"
+  >
     <BarBTop>
       <template slot="sidebarToggle">
         <b-navbar-nav>
@@ -23,7 +27,7 @@ import Vue from 'vue'
 export default Vue.extend({
   data () {
     return {
-      sidebarAttr: { visible: true, expanded: true }
+      sidebarAttr: { visible: true, expanded: false }
     }
   },
   head () {
@@ -46,8 +50,9 @@ export default Vue.extend({
   },
   methods: {
     updateSidebarAttr () {
-      if (this.$mq === 'mobile') {
+      if ((this as any).$mq === 'mobile') {
         this.sidebarAttr.visible = false
+        this.sidebarAttr.expanded = true
       } else {
         this.sidebarAttr.visible = true
       }
@@ -80,9 +85,23 @@ export default Vue.extend({
 </script>
 
 <style>
-.main_content{
+/* .main_content{
   margin-top: 56px !important;
-  width: calc(100% + 100px);
+  width: calc(100% + 15px);
+} */
+.sidebar_collapsed .main_content{
+  margin-left: 55px;
+  width: calc(100% - 55px - 15px);
+  max-width: calc(100% - 55px - 15px);
+  margin-top: 56px;
+  max-height: calc(100% - 56px - 15px);
+}
+.sidebar_expanded .main_content{
+  margin-left: 245;
+  width: calc(100% - 245 - 15px);
+  max-width: calc(100% - 245 - 15px);
+  margin-top: 56px;
+  max-height: calc(100% - 56px - 15px);
 }
 html {
   font-family:
