@@ -40,6 +40,8 @@ export interface ITableHeader {
     key: string,
     visible: boolean,
     _fixed?: boolean,
+    _isMajor?: boolean,
+    _majorKey?: string,
 }
 export interface ITableHeaders {
     [key: string]: ITableHeader

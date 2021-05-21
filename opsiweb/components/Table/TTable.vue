@@ -1,8 +1,5 @@
 <template>
   <div>
-    <!-- F: {{fields}}<br />
-    H: {{headers}}<br /> -->
-    <!-- :fields="headers" -->
     <b-table
       v-bind="$props"
       :class="$mq"
@@ -31,7 +28,7 @@
           </template>
           <div v-if="$mq=='mobile'">
             <b-dropdown-item-button
-              v-for="header in Object.values(headers).filter(h=>h._fixed!==true)"
+              v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
               :key="header.key"
               class="_fixed_column_btn"
               :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
@@ -44,7 +41,7 @@
           <div v-else>
             <b-form-checkbox-group id="selectableColumns-group" v-model="columnVisibilityList" name="selectableColumns">
               <b-form-checkbox
-                v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_')"
+                v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
                 :key="header.key"
                 :value="header.key"
                 class="_fixed_column_btn"
@@ -102,7 +99,7 @@ export default class TTable extends BTable {
       if (elem) { elem.classList.add('b-table-row-selected') }
       row.item._rowVariant = 'primary'
     } else {
-      const elem = document.getElementById(`__row_${row.item.ident}`)
+      const elem = document.getElementById(`__row_${row.item.ident}Major`)
       if (elem) { elem.classList.remove('b-table-row-selected') }
       row.item._rowVariant = ''
     }
@@ -124,11 +121,23 @@ export default class TTable extends BTable {
       // set selected columns to true (desktop-view)
       this.columnVisibilityList.forEach((k: string) => {
         this.columnVisibilityStates[k] = true
-        this.headers[k].visible = true
         // this.columnVisibilityStates[this.columnVisibilityList[k]] = true
         // this.headers[this.columnVisibilityList[k]].visible = true
       })
     }
+    // change visibilty of children if any major column is selected
+    Object.keys(this.columnVisibilityStates).forEach((k) => {
+      if (!this.headers[k]._isMajor) {
+        this.headers[k].visible = true
+      } else {
+        Object.values(this.headers).filter(h => h._majorKey === k).map(h => h.key).forEach((ck) => {
+          console.log(`found children of major ${k}:`, ck)
+          this.headers[ck].visible = this.columnVisibilityStates[k]
+        })
+        // utils.eachIn.arr(Object.values(this.tableInfos.headers).filter(h=>h.majorKey==k).map(h=>h.key),
+        //   ck => {this.tableInfos.headers[ck].visible = this.d_columnVisibilityStates[k]})
+      }
+    })
   }
 }
 </script>
