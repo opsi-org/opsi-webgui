@@ -1,12 +1,10 @@
 <template>
   <div>
-    <b-nav-item>
-      <NuxtLink :to="route">
-        <b-icon :icon="icon" />
-        <span v-if="expanded">
-          {{ title }}
-        </span>
-      </NuxtLink>
+    <b-nav-item :to="route">
+      <b-icon :icon="icon" />
+      <span v-if="expanded">
+        {{ title }}
+      </span>
     </b-nav-item>
   </div>
 </template>

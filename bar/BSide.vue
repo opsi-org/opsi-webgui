@@ -35,7 +35,7 @@ export default Vue.extend({
     attributes: {
       type: Object,
       default () {
-        return { visible: true, expanded: true }
+        return { visible: true, expanded: false }
       }
     }
   }
@@ -44,12 +44,12 @@ export default Vue.extend({
 
 <style>
 #sidemenu {
-  top: 56px !important;
-  width: 200px;
+  top: var(--height-navbar) !important;
+  width: var(--width-sidebar-expanded);
   height: 100%;
 }
 .sidemenu_small > #sidemenu {
-  width: 50px;
+  width: var(--width-sidebar-collapsed);
 }
 .sidemenu_footer {
   display: inline;
