@@ -38,7 +38,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/axios'
+    '~/plugins/axios',
+    { src: '~/plugins/vuex-persist', ssr: false }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -70,6 +71,7 @@ export default {
     }]
   ],
   bootstrapVue: {
+    // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)
     icons: true
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

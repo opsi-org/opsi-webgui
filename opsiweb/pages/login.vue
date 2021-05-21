@@ -12,6 +12,11 @@
 // import { Component, Vue } from 'nuxt-property-decorator'
 // @Component export default class PLogin extends Vue {
 // }
+import { Vue, Component } from 'nuxt-property-decorator'
+@Component({
+  layout: 'auth'
+})
+export default class PLogin extends Vue {}
 </script>
 
 <style>
