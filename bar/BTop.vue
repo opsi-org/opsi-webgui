@@ -4,6 +4,18 @@
       <b-navbar-brand href="/">
         <img src="../../assets/images/LogoOpsi.png" class="logo">
         Opsiweb
+        <b-button
+          to="/depots/"
+          class="button--grey"
+        >
+          Depots
+        </b-button>
+        <b-button
+          to="/clients/"
+          class="button--grey"
+        >
+          Clients
+        </b-button>
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse">
         <template #default="">

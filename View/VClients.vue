@@ -1,21 +1,9 @@
 <template>
   <div>
-    <b-button
-      to="/"
-      class="button--grey"
-    >
-      Home
-    </b-button>
-    <b-button
-      to="/depots/"
-      class="button--grey"
-    >
-      Depots
-    </b-button>
-
     <div>
       <div class="mt-3">
-        <b-form-input v-model="tableData.filterQuery" />
+        <!-- <b-form-input v-model="tableData.filterQuery" /> -->
+        <InputIFilter v-model="tableData.filterQuery" />
         <TableTTable
           id="tableclients"
           datakey="clientId"
