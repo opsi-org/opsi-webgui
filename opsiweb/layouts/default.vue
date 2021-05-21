@@ -1,18 +1,10 @@
 <template>
   <div
     :class="{
-      sidebar_collapsed:!sidebarAttr.expanded && $mq!='mobile',
-      sidebar_expanded:sidebarAttr.expanded}"
+      sidebar_collapsed:!sidebarAttr.expanded && $mq=='desktop',
+      sidebar_expanded:sidebarAttr.expanded && $mq=='desktop'}"
   >
-    <BarBTop>
-      <template slot="sidebarToggle">
-        <b-navbar-nav>
-          <b-button v-if="$mq === 'mobile'" :pressed.sync="sidebarAttr.visible">
-            <b-icon icon="list" />
-          </b-button>
-        </b-navbar-nav>
-      </template>
-    </BarBTop>
+    <BarBTop :attributes="sidebarAttr" />
     <BarBSide :attributes="sidebarAttr" />
     <Nuxt class="main_content" />
   </div>
@@ -84,24 +76,16 @@ export default Vue.extend({
 
 <style>
 .main_content{
-  margin-top: 56px !important;
-  width: calc(100% + 15px);
+  margin-top: var(--margin-top-maincontent);
+  margin-left: var(--margin-left-maincontent);
 }
 .sidebar_collapsed .main_content{
-  margin-left: 55px;
-  width: calc(100% - 55px - 15px);
-  max-width: calc(100% - 55px - 15px);
-  margin-top: 56px;
-  max-height: calc(100% - 56px - 15px);
+  margin-left: var(--margin-left-maincontent-if-sidebar-collpased);
 }
 .sidebar_expanded .main_content{
-  margin-left: 245;
-  width: calc(100% - 245 - 15px);
-  max-width: calc(100% - 245 - 15px);
-  margin-top: 56px;
-  max-height: calc(100% - 56px - 15px);
+  margin-left: var(--margin-left-maincontent-if-sidebar-expanded);
 }
-html {
+/* html {
   font-family:
     'Source Sans Pro',
     -apple-system,
@@ -125,5 +109,5 @@ html {
 *::after {
   box-sizing: border-box;
   margin: 0;
-}
+} */
 </style>
