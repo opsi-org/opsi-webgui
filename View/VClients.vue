@@ -74,7 +74,11 @@ export default class VClients extends Vue {
     clientId: { label: 'Id', key: 'clientId', visible: true, _fixed: true },
     description: { label: 'Desc', key: 'description', visible: false },
     ipAddress: { label: 'IP', key: 'ipAddress', visible: false },
-    _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
+    macAddress: { label: 'MAC', key: 'macAddress', visible: false },
+    _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
+    version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
+    actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false },
+    // _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
     actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
   }
 
