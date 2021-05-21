@@ -11,7 +11,6 @@
       :visible="attributes.visible"
     >
       <NavNSideBarNav :expanded="attributes.expanded" />
-
       <template v-if="$mq === 'desktop'" #footer="">
         <div class="sidemenu_footer">
           <b-button
