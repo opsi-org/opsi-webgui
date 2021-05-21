@@ -3,39 +3,46 @@
     v-bind="$props"
     no-caret
     lazy
-    dropup
     variant="outline-primary"
     size="sm"
+    alt="Show column"
     class="fixed_column_selection"
   >
     <template #button-content>
       <b-icon-list-task />
     </template>
-    <div v-if="$mq=='mobile'">
-      <b-dropdown-item-button
+    <li v-if="$mq=='mobile'">
+      <a
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
         :key="header.key"
-        class="_fixed_column_btn"
+        class="dropdown-item"
         :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
         :disabled="columnVisibilityStates[header.key]"
         @click="setColumnVisibilityModel(header.key)"
       >
         {{ header.label }} <!-- {{ $t(header.label) }} -->
-      </b-dropdown-item-button>
-    </div>
-    <div v-else>
-      <b-form-checkbox-group id="selectableColumns-group" v-model="columnVisibilityList" name="selectableColumns">
+      </a>
+    </li>
+    <li
+      v-else
+      id="selectableColumns-group"
+      name="selectableColumns"
+    >
+      <a
+        v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
+        :key="header.key"
+        class="dropdown-item"
+        @click="handleItem(header.key)"
+      >
         <b-form-checkbox
-          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
-          :key="header.key"
+          v-model="columnVisibilityList"
+          :name="header.label"
           :value="header.key"
-          class="_fixed_column_btn"
           :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
-        >
-          {{ header.label }}
-        </b-form-checkbox>
-      </b-form-checkbox-group>
-    </div>
+        />
+        {{ header.label }}
+      </a>
+    </li>
   </b-dropdown>
 </template>
 
@@ -60,6 +67,15 @@ export default class DDTableColumnVisibilty extends BDropdown {
 
   @Watch('columnVisibilityList') keysChanged () {
     this.setColumnVisibilityModel(undefined)
+  }
+
+  handleItem (key: string) {
+    console.log("handle key", key)
+    if (this.columnVisibilityList.includes(key)) {
+      this.columnVisibilityList = this.columnVisibilityList.filter(s => s !== key)
+    }else {
+      this.columnVisibilityList.push(key)
+    }
   }
 
   setColumnVisibilityModel (tableKey: string|undefined) {
@@ -93,3 +109,12 @@ export default class DDTableColumnVisibilty extends BDropdown {
   }
 }
 </script>
+<style>
+.dropdown-menu {
+  height: max-content !important;
+}
+.dropdown-menu .dropdown-item {
+  cursor: pointer;
+  display: flex !important;
+}
+</style>
