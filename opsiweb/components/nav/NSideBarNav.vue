@@ -2,8 +2,8 @@
   <div>
     <b-nav vertical tabs class="sidemenu_nav">
       <NavNTitle :expanded="expanded" :title="'Overview'" />
-      <NavNItem :expanded="expanded" :title="'Dashboard Dummy'" :icon="'bar-chart-line-fill'" />
-      <NavNItem :expanded="expanded" :title="'Support Dummy'" :icon="'headset'" />
+      <NavNItem :expanded="expanded" :title="'Dashboard Dummy'" :icon="'bar-chart-line-fill'" :route="'/dashboard'" />
+      <NavNItem :expanded="expanded" :title="'Support Dummy'" :icon="'headset'" :route="'/support'" />
 
       <NavNTitle :expanded="expanded" :title="'Manage'" />
       <div v-if="!expanded" @mouseover="onOverMenuDrop" @mouseleave="onLeaveMenuDrop">
@@ -23,6 +23,7 @@
       <!-- <NavNItem v-else v-b-toggle.collapse-navitem :expanded="expanded" :title="'Depots Dummy'" :icon="'hdd-stack-fill'" /> -->
       <b-nav-item v-else v-b-toggle.collapse-navitem>
         <b-icon icon="hdd-stack-fill" /> Depots Dummy
+        <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
       </b-nav-item>
       <b-collapse v-if="expanded" id="collapse-navitem">
         <b-nav vertical>
@@ -60,6 +61,7 @@
       </div>
       <b-nav-item v-else v-b-toggle.collapse-navitem1>
         <b-icon icon="laptop" /> Clients Dummy
+        <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
       </b-nav-item>
       <b-collapse v-if="expanded" id="collapse-navitem1">
         <b-nav vertical>
@@ -105,6 +107,12 @@ export default Vue.extend({
     },
     onLeaveMenuDrop () {
       (this.$refs.dropdown as any).visible = false
+    },
+    onOverMenuDrop1 () {
+      (this.$refs.dropdown1 as any).visible = true
+    },
+    onLeaveMenuDrop1 () {
+      (this.$refs.dropdown1 as any).visible = false
     }
   }
 })
@@ -117,5 +125,9 @@ export default Vue.extend({
 }
 .submenu{
   margin-left: 35px;
+}
+.caret_icon{
+  float: right;
+  margin-top: 5px;
 }
 </style>

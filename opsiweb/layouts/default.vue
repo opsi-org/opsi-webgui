@@ -14,9 +14,7 @@
       </template>
     </BarBTop>
     <BarBSide :attributes="sidebarAttr" />
-    <div class="main_content">
-      <Nuxt />
-    </div>
+    <Nuxt class="main_content" />
   </div>
 </template>
 
@@ -85,10 +83,10 @@ export default Vue.extend({
 </script>
 
 <style>
-/* .main_content{
+.main_content{
   margin-top: 56px !important;
   width: calc(100% + 15px);
-} */
+}
 .sidebar_collapsed .main_content{
   margin-left: 55px;
   width: calc(100% - 55px - 15px);
