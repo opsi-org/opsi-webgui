@@ -1,7 +1,7 @@
 <template>
   <div>
     <BarBTop />
-    <BarBSide />
+    <!-- <BarBSide /> -->
     <div class="main-content">
       <Nuxt />
     </div>
@@ -55,7 +55,7 @@ export default Vue.extend({
 <style>
 .main-content{
   margin-top: 56px !important;
-  width: calc(100% + 100px);
+  width: calc(100%);
 }
 html {
   font-family:

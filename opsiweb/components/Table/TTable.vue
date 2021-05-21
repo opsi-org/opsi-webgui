@@ -1,60 +1,58 @@
 <template>
-  <div>
-    <b-table
-      v-bind="$props"
-      :class="$mq"
-      @row-selected="rowchanged"
-    >
-      <template #cell(sel)="row">
-        <!-- {{datakey}}: {{selection}} -->
-        <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])">
-          {{ fixRow(row) }}
-        </b-icon-check2>
-      </template>
+  <b-table
+    v-bind="$props"
+    :class="$mq"
+    @row-selected="rowchanged"
+  >
+    <template #cell(sel)="row">
+      <!-- {{datakey}}: {{selection}} -->
+      <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])">
+        {{ fixRow(row) }}
+      </b-icon-check2>
+    </template>
 
-      <template #head(actions)="{}">
-        <!-- <div /></template> -->
-        <!-- <template #head(_select_visible_column)=""> -->
-        <b-dropdown
-          no-caret
-          lazy
-          dropup
-          variant="outline-primary"
-          size="sm"
-          class="fixed_column_selection"
-        >
-          <template #button-content>
-            <b-icon-list-task />
-          </template>
-          <div v-if="$mq=='mobile'">
-            <b-dropdown-item-button
-              v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
+    <template #head(actions)="{}">
+      <!-- <div /></template> -->
+      <!-- <template #head(_select_visible_column)=""> -->
+      <b-dropdown
+        no-caret
+        lazy
+        dropup
+        variant="outline-primary"
+        size="sm"
+        class="fixed_column_selection"
+      >
+        <template #button-content>
+          <b-icon-list-task />
+        </template>
+        <div v-if="$mq=='mobile'">
+          <b-dropdown-item-button
+            v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
+            :key="header.key"
+            class="_fixed_column_btn"
+            :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
+            :disabled="columnVisibilityStates[header.key]"
+            @click="setColumnVisibilityModel(header.key)"
+          >
+            {{ header.label }} <!-- {{ $t(header.label) }} -->
+          </b-dropdown-item-button>
+        </div>
+        <div v-else>
+          <b-form-checkbox-group id="selectableColumns-group" v-model="columnVisibilityList" name="selectableColumns">
+            <b-form-checkbox
+              v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
               :key="header.key"
+              :value="header.key"
               class="_fixed_column_btn"
               :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
-              :disabled="columnVisibilityStates[header.key]"
-              @click="setColumnVisibilityModel(header.key)"
             >
-              {{ header.label }} <!-- {{ $t(header.label) }} -->
-            </b-dropdown-item-button>
-          </div>
-          <div v-else>
-            <b-form-checkbox-group id="selectableColumns-group" v-model="columnVisibilityList" name="selectableColumns">
-              <b-form-checkbox
-                v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
-                :key="header.key"
-                :value="header.key"
-                class="_fixed_column_btn"
-                :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
-              >
-                {{ header.label }}
-              </b-form-checkbox>
-            </b-form-checkbox-group>
-          </div>
-        </b-dropdown>
-      </template>
-    </b-table>
-  </div>
+              {{ header.label }}
+            </b-form-checkbox>
+          </b-form-checkbox-group>
+        </div>
+      </b-dropdown>
+    </template>
+  </b-table>
 </template>
 
 <script lang="ts">
