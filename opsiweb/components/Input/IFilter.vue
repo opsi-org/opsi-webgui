@@ -1,5 +1,5 @@
 <template>
-  <b-form-input v-bind="$props" placeholder="Filter table" />
+  <b-form-input v-bind="$props" placeholder="Filter table" alt="Filter" />
 </template>
 
 <script lang="ts">

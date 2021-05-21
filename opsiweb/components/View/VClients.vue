@@ -21,15 +21,11 @@
           hover
           :rowchanged="selectRow"
         />
-        <b-pagination
+        <BarBPagination
           v-model="tableData.pageNumber"
           :per-page="tableData.perPage"
           :total-rows="fetchedData.total"
-          first-number
-          last-number
           aria-controls="tableclients"
-          size="sm"
-          align="fill"
         />
       </div>
       <div>
@@ -58,7 +54,7 @@ export default class VClients extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: 's', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
+    selected: { label: '', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
     clientId: { label: 'Id', key: 'clientId', visible: true, _fixed: true },
     description: { label: 'Desc', key: 'description', visible: false },
     ipAddress: { label: 'IP', key: 'ipAddress', visible: false },
