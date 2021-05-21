@@ -2,7 +2,7 @@
   <div>
     <b-navbar class="topbar" toggleable="sm" fixed="top" variant="secondary">
       <b-navbar-brand href="/">
-        <img src="../../assets/images/LogoOpsi.png" class="logo">
+        <img src="../../assets/images/LogoOpsi.png" class="logo" alt="opsi logo">
         Opsiweb
         <b-button
           to="/depots/"

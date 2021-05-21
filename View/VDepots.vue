@@ -22,7 +22,7 @@
           hover
           :rowchanged="selectRow"
         />
-        <b-pagination
+        <BarBPagination
           v-model="tableData.pageNumber"
           :per-page="tableData.perPage"
           :total-rows="fetchedData.total"
@@ -54,7 +54,7 @@ export default class VClients extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: 's', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
+    selected: { label: '', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
     depotId: { label: 'Id', key: 'depotId', visible: true, _fixed: true },
     description: { label: 'Desc', key: 'description', visible: false },
     type: { label: 'type', key: 'type', visible: false },
