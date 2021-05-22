@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <b-nav-text v-if="expanded">
-      {{ title }}
-    </b-nav-text>
-    <b-nav-text v-else />
-  </div>
+  <b-nav-item v-if="expanded" disabled>
+    {{ title }}
+  </b-nav-item>
+  <b-nav-item v-else disabled />
 </template>
 
 <script lang="ts">
@@ -19,3 +17,9 @@ export default Vue.extend({
   }
 })
 </script>
+
+<style>
+.nav-tabs .nav-link.disabled {
+  color: black;
+}
+</style>
