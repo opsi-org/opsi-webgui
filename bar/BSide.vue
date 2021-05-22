@@ -10,7 +10,7 @@
       :no-close-on-route-change="$mq == 'desktop' ? true : false"
       :visible="attributes.visible"
     >
-      <NavNSideBarNav :expanded="attributes.expanded" />
+      <NavNSidebar :expanded="attributes.expanded" />
       <template v-if="$mq === 'desktop'" #footer="">
         <div class="sidemenu_footer">
           <b-button
