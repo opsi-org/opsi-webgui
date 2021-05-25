@@ -20,7 +20,6 @@
 import Vue from 'vue'
 export default Vue.extend({
   props: {
-    expanded: Boolean,
     title: {
       type: String,
       default: ''
