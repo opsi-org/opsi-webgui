@@ -40,6 +40,20 @@ export default Vue.extend({
     return {
       navItems: [
         {
+          title: 'Test',
+          menu: [
+            { title: 'Two-column-layout', icon: 'layout-split', route: '/testtwocolumn' },
+            {
+              title: 'With-Child',
+              icon: 'layout-split',
+              submenu: [
+                { title: 'Child1', route: '/' },
+                { title: 'Child2', route: '/support' }
+              ]
+            }
+          ]
+        },
+        {
           title: 'Overview',
           menu: [
             { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
