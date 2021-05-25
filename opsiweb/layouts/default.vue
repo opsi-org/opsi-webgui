@@ -6,7 +6,11 @@
   >
     <BarBTop :attributes="sidebarAttr" />
     <BarBSide :attributes="sidebarAttr" />
-    <Nuxt class="main_content" />
+    <div class="main_content">
+      <!-- <Nuxt /> -->
+      <Nuxt v-if="!$slots.default" />
+      <slot />
+    </div>
   </div>
 </template>
 
