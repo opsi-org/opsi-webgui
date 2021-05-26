@@ -47,8 +47,8 @@ export default Vue.extend({
               title: 'With-Child',
               icon: 'layout-split',
               submenu: [
-                { title: 'Child1', route: '/' },
-                { title: 'Child2', route: '/support' }
+                { title: 'withchild-All', route: '/testtwocolumn' },
+                { title: 'Child1', route: '/testtwocolumnchild1' }
               ]
             }
           ]
