@@ -32,9 +32,9 @@ export default Vue.extend({
       default: ''
     },
     submenu: {
-      type: Object,
+      type: Array,
       default () {
-        return {}
+        return []
       }
     }
   },
