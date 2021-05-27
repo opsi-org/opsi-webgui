@@ -53,19 +53,19 @@ export default Vue.extend({
               title: 'Depots',
               icon: 'hdd-stack-fill',
               submenu: [
-                { title: 'All Depots', route: '/dashboard' },
-                { title: 'Configuration', route: '/support' },
-                { title: 'Logs', route: '/support' }
+                { title: 'All Depots', route: '/' },
+                { title: 'Configuration', route: '/' },
+                { title: 'Logs', route: '/' }
               ]
             },
             {
               title: 'Clients',
               icon: 'laptop',
               submenu: [
-                { title: 'All Clients', route: '/dashboard' },
-                { title: 'Add New', route: '/dashboard' },
-                { title: 'Configuration', route: '/support' },
-                { title: 'Logs', route: '/support' }
+                { title: 'All Clients', route: '/' },
+                { title: 'Add New', route: '/' },
+                { title: 'Configuration', route: '/' },
+                { title: 'Logs', route: '/' }
               ]
             },
             { title: 'Products', icon: 'grid-fill', route: '/' }
@@ -74,7 +74,7 @@ export default Vue.extend({
         {
           title: 'Configure',
           menu: [
-            { title: 'Settings', icon: 'gear-fill', route: '/support' },
+            { title: 'Settings', icon: 'gear-fill', route: '/' },
             { title: 'Index page', icon: 'collection-fill', route: '/' }
           ]
         }
