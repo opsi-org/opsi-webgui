@@ -1,8 +1,13 @@
 <template>
   <div>
     <b-navbar class="topbar" toggleable="sm" fixed="top" variant="secondary">
+      <b-navbar-nav v-if="$mq === 'mobile'">
+        <b-button :pressed.sync="attributes.visible">
+          <b-icon icon="list" />
+        </b-button>
+      </b-navbar-nav>
       <b-navbar-brand href="/">
-        <img src="../../assets/images/LogoOpsi.png" class="logo" alt="opsi logo">
+        <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
         Opsiweb
         <b-button
           to="/depots/"
@@ -34,12 +39,34 @@
   </div>
 </template>
 
-<style>
-.logo {
-  height: 25px !important;
+<script lang="ts">
+
+import { Component, Vue, Prop } from 'nuxt-property-decorator'
+
+@Component
+export default class LError extends Vue {
+  @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: Object
 }
+
+// import Vue from 'vue'
+// export default Vue.extend({
+//   props: {
+//     attributes: {
+//       type: Object,
+//       default () {
+//         return { visible: true, expanded: false }
+//       }
+//     }
+//   }
+// })
+</script>
+
+<style>
 .topbar{
   position: fixed;
-  height: 56px !important;
+  height: var(--height-navbar) !important;
+}
+.topbar_logo {
+  height: 25px !important;
 }
 </style>
