@@ -1,4 +1,9 @@
 
+export interface ISidebarAttributes {
+    visible: boolean
+    expanded: boolean
+}
+
 export interface ITheme {
     title: string
     rel: string
@@ -27,6 +32,7 @@ export interface ITableRow {
 
 export interface ITableData {
     pageNumber: number,
+    setPageNumber: Function,
     perPage: number,
     sortBy: string,
     sortDesc: boolean,

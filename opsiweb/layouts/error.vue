@@ -1,34 +1,23 @@
 <template>
-  <div
-    :class="{
-      sidebar_collapsed:!sidebarAttr.expanded && $mq=='desktop',
-      sidebar_expanded:sidebarAttr.expanded && $mq=='desktop'}"
-  >
-    <BarBTop :attributes="sidebarAttr" />
-    <BarBSide :attributes="sidebarAttr" />
-    <div class="main_content">
-      <h1 v-if="error.statusCode === 404">Page not found</h1>
-      <h1 v-else>An error occurred</h1>
-      {{ error.message }}
-      <!-- <Nuxt /> -->
-    </div>
-    <!-- <Nuxt class="main_content" /> -->
+  <div class="main_content">
+    <h1 v-if="error.statusCode === 404">
+      Page not found
+    </h1>
+    <h1 v-else>
+      An error occurred
+    </h1>
+    {{ error.message }}
   </div>
 </template>
 
 <script lang="ts">
-
 import { Component, Vue, Prop, Watch, namespace } from 'nuxt-property-decorator'
-// import { mapGetters } from 'vuex'
-import { ITheme } from '~/types/tsettings'
+import { ITheme, ISidebarAttributes } from '~/types/tsettings'
 const settings = namespace('settings')
-interface ISidebarAttributes {
-  visible: boolean
-  expanded: boolean
-}
-@Component({ /* layout: 'error' */ })
+@Component({ layout: 'default' })
 export default class LError extends Vue {
   @Prop({ }) error!: object
+
   sidebarAttr: ISidebarAttributes = { visible: true, expanded: false }
 
   head () {
@@ -43,8 +32,8 @@ export default class LError extends Vue {
   @settings.Getter public colortheme!: ITheme
   // @settings.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
-  @Watch('tableData', { deep: true })
-  $mq () { this.updateSidebarAttr() }
+  @Watch('$mq'/* , { deep: true } */)
+  mqChanged () { this.updateSidebarAttr() }
 
   updateSidebarAttr () {
     if ((this as any).$mq === 'mobile') {

@@ -1,5 +1,6 @@
 <template>
   <div @mouseover="onMouseOver" @mouseleave="onMouseLeave">
+    <!-- @click="changeRoute" -->
     <b-nav-item-dropdown ref="dropdown" class="sidemenu_dropdown" block dropright no-caret>
       <template #button-content>
         <b-icon :icon="icon" />
@@ -32,9 +33,9 @@ export default Vue.extend({
       default: ''
     },
     submenu: {
-      type: Object,
+      type: Array,
       default () {
-        return {}
+        return []
       }
     }
   },
@@ -45,6 +46,10 @@ export default Vue.extend({
     onMouseLeave () {
       (this.$refs.dropdown as any).visible = false
     }
+    // changeRoute () {
+    //   // return redirect('/login')
+    //   this.$router.push({ path: this.route })
+    // }
   }
 })
 </script>
