@@ -70,10 +70,9 @@ export default class DDTableColumnVisibilty extends BDropdown {
   }
 
   handleItem (key: string) {
-    console.log("handle key", key)
     if (this.columnVisibilityList.includes(key)) {
       this.columnVisibilityList = this.columnVisibilityList.filter(s => s !== key)
-    }else {
+    } else {
       this.columnVisibilityList.push(key)
     }
   }
