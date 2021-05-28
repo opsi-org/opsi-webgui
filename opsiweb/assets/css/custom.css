@@ -5,7 +5,7 @@
     --width-sidebar-collapsed:53px;
 
     --margin-top-maincontent:60px;
-    --margin-left-maincontent:50px;
+    --margin-left-maincontent:0px;
     --margin-left-maincontent-if-sidebar-collpased:70px;
     --margin-left-maincontent-if-sidebar-expanded:205px;
 }
