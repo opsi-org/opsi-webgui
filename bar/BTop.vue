@@ -9,18 +9,6 @@
       <b-navbar-brand href="/">
         <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
         Opsiweb
-        <b-button
-          to="/depots/"
-          class="button--grey"
-        >
-          Depots
-        </b-button>
-        <b-button
-          to="/clients/"
-          class="button--grey"
-        >
-          Clients
-        </b-button>
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse">
         <template #default="">
@@ -48,17 +36,6 @@ export default class LError extends Vue {
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: Object
 }
 
-// import Vue from 'vue'
-// export default Vue.extend({
-//   props: {
-//     attributes: {
-//       type: Object,
-//       default () {
-//         return { visible: true, expanded: false }
-//       }
-//     }
-//   }
-// })
 </script>
 
 <style>

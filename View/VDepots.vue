@@ -1,40 +1,31 @@
 <template>
   <div>
-    <div>
-      <!-- {{headerData}} -->
-      <div class="mt-3">
-        <!-- <b-form-input v-model="tableData.filterQuery" /> -->
-        <InputIFilter v-model="tableData.filterQuery" />
-        <TableTTable
-          id="tabledepots"
-          datakey="depotId"
-          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-          :headers="headerData"
-          :items="fetchedData.depots"
-          :selection="selectionDepots"
-          :no-local-sorting="true"
-          :sort-by.sync="tableData.sortBy"
-          :sort-desc.sync="tableData.sortDesc"
-          sort-icon-left
-          select-mode="multi"
-          selectable
-          striped
-          hover
-          :rowchanged="selectRow"
-        />
-        <BarBPagination
-          v-model="tableData.pageNumber"
-          :per-page="tableData.perPage"
-          :total-rows="fetchedData.total"
-          first-number
-          last-number
-          aria-controls="tabledepots"
-          size="sm"
-          align="fill"
-        />
-      </div>
-      {{ selectionDepots }}
+    <div class="mt-3">
+      <InputIFilter v-model="tableData.filterQuery" />
+      <TableTTable
+        id="tabledepots"
+        datakey="depotId"
+        :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+        :headers="headerData"
+        :items="fetchedData.depots"
+        :selection="selectionDepots"
+        :no-local-sorting="true"
+        :sort-by.sync="tableData.sortBy"
+        :sort-desc.sync="tableData.sortDesc"
+        sort-icon-left
+        select-mode="multi"
+        selectable
+        striped
+        hover
+        :rowchanged="selectRow"
+      />
+      <BarBPagination
+        :tabledata="tableData"
+        :total-rows="fetchedData.total"
+        aria-controls="tabledepots"
+      />
     </div>
+    {{ selectionDepots }}
   </div>
 </template>
 
@@ -47,10 +38,11 @@ export default class VClients extends Vue {
   fetchedData: object = {}
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 10,
+    perPage: 2,
     sortBy: 'depotId',
     sortDesc: false,
-    filterQuery: ''
+    filterQuery: '',
+    setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
   }
 
   headerData: ITableHeaders = {

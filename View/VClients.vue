@@ -1,39 +1,39 @@
 <template>
   <div>
-    <div>
-      <div class="mt-3">
-        <!-- <b-form-input v-model="tableData.filterQuery" /> -->
+    <div class="mt-3">
+      <!-- <b-form-input v-model="tableData.filterQuery" /> -->
+      <div class="inline">
         <InputIFilter v-model="tableData.filterQuery" />
-        <TableTTable
-          id="tableclients"
-          datakey="clientId"
-          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-          :headers="headerData"
-          :items="fetchedData.clients"
-          :selection="selectionClients"
-          :no-local-sorting="true"
-          :sort-by.sync="tableData.sortBy"
-          :sort-desc.sync="tableData.sortDesc"
-          sort-icon-left
-          select-mode="multi"
-          selectable
-          striped
-          hover
-          :rowchanged="selectRow"
-        />
-        <BarBPagination
-          v-model="tableData.pageNumber"
-          :per-page="tableData.perPage"
-          :total-rows="fetchedData.total"
-          aria-controls="tableclients"
-        />
+        <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
       </div>
-      <div>
-        {{ selectionDepots }}
-      </div>
-      <div>
-        {{ selectionClients }}
-      </div>
+      <TableTTable
+        id="tableclients"
+        datakey="clientId"
+        :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+        :headers="headerData"
+        :items="fetchedData.clients"
+        :selection="selectionClients"
+        :no-local-sorting="true"
+        :sort-by.sync="tableData.sortBy"
+        :sort-desc.sync="tableData.sortDesc"
+        sort-icon-left
+        select-mode="multi"
+        selectable
+        striped
+        hover
+        :rowchanged="selectRow"
+      />
+      <BarBPagination
+        :tabledata="tableData"
+        :total-rows="fetchedData.total"
+        aria-controls="tableclients"
+      />
+    </div>
+    <div>
+      {{ selectionDepots }}
+    </div>
+    <div>
+      {{ selectionClients }}
     </div>
   </div>
 </template>
@@ -45,12 +45,14 @@ const selections = namespace('selections')
 @Component
 export default class VClients extends Vue {
   fetchedData: object = {}
+  fetchedDataDepotIds: Array<string> = []
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 10,
+    perPage: 3,
     sortBy: 'clientId',
     sortDesc: false,
-    filterQuery: ''
+    filterQuery: '',
+    setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
   }
 
   headerData: ITableHeaders = {
@@ -73,9 +75,8 @@ export default class VClients extends Vue {
     this.setSelectionClients(s.map(o => o.clientId))
   }
 
-  @Watch('selectedDepots', { deep: true })
+  @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
-    this.tableData.selectedDepot = this.selectionDepots
     this.$fetch()
   }
 
@@ -83,7 +84,9 @@ export default class VClients extends Vue {
   tableDataChanged () { this.$fetch() }
 
   async fetch () {
+    this.tableData.selectedDepot = this.selectionDepots
     this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
+    this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
   }
 }
 </script>

@@ -51,6 +51,7 @@ export default Vue.extend({
           menu: [
             {
               title: 'Depots',
+              route: '/depots/',
               icon: 'hdd-stack-fill',
               submenu: [
                 { title: 'All Depots', route: '/depots/' },
@@ -60,6 +61,7 @@ export default Vue.extend({
             },
             {
               title: 'Clients',
+              route: '/clients/',
               icon: 'laptop',
               submenu: [
                 { title: 'All Clients', route: '/clients/' },

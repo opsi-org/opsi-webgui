@@ -3,6 +3,7 @@
     v-bind="$props"
     no-caret
     lazy
+    dropleft
     variant="outline-primary"
     size="sm"
     alt="Show column"
