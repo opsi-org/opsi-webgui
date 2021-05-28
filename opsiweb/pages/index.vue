@@ -1,48 +1,46 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        opsiweb
-      </h1>
-      <div>
-        <b-button
-          to="/depots/"
-          class="button--grey"
-        >
-          Depots
-        </b-button>
-        <b-button
-          to="/clients/"
-          class="button--grey"
-        >
-          Clients
-        </b-button>
-        <ButtonBTNLogout />
-        <DropdownDDTheme />
-      </div>
-      <h4>Modules content: </h4>
-      <div v-for="v,k in modules" :key="k">
-        <p>{{ k }}:{{ v }}</p>
-      </div>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+  <div>
+    <Logo />
+    <h1 class="title">
+      opsiweb
+    </h1>
+    <b-button
+      to="/depots/"
+      class="button--grey"
+    >
+      Depots
+    </b-button>
+    <b-button
+      to="/clients/"
+      class="button--grey"
+    >
+      Clients
+    </b-button>
+    <!-- <div>
+      <ButtonBTNLogout />
+      <DropdownDDTheme />
+    </div> -->
+    <h4>Modules content: </h4>
+    <div v-for="v,k in modules" :key="k">
+      <p>{{ k }}:{{ v }}</p>
+    </div>
+    <div class="links">
+      <a
+        href="https://nuxtjs.org/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="button--green"
+      >
+        Documentation
+      </a>
+      <a
+        href="https://github.com/nuxt/nuxt.js"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="button--grey"
+      >
+        GitHub
+      </a>
     </div>
   </div>
 </template>

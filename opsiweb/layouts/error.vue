@@ -7,52 +7,54 @@
     <BarBTop :attributes="sidebarAttr" />
     <BarBSide :attributes="sidebarAttr" />
     <div class="main_content">
-      <BarBBreadcrumb />
-      <Nuxt />
+      <h1 v-if="error.statusCode === 404">Page not found</h1>
+      <h1 v-else>An error occurred</h1>
+      {{ error.message }}
+      <!-- <Nuxt /> -->
     </div>
     <!-- <Nuxt class="main_content" /> -->
   </div>
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex'
 
-import Vue from 'vue'
-export default Vue.extend({
-  data () {
-    return {
-      sidebarAttr: { visible: true, expanded: false }
-    }
-  },
+import { Component, Vue, Prop, Watch, namespace } from 'nuxt-property-decorator'
+// import { mapGetters } from 'vuex'
+import { ITheme } from '~/types/tsettings'
+const settings = namespace('settings')
+interface ISidebarAttributes {
+  visible: boolean
+  expanded: boolean
+}
+@Component({ /* layout: 'error' */ })
+export default class LError extends Vue {
+  @Prop({ }) error!: object
+  sidebarAttr: ISidebarAttributes = { visible: true, expanded: false }
+
   head () {
     return {
       link: [{
         rel: 'stylesheet',
-        href: (this.XgetColorTheme) ? this.XgetColorTheme.rel : ''
+        href: (this.colortheme) ? this.colortheme.rel : ''
       }]
     }
-  },
-  computed: {
-    ...mapGetters({
-      XgetColorTheme: 'settings/colortheme'
-    })
-  },
-  watch: {
-    $mq () {
-      this.updateSidebarAttr()
-    }
-  },
-  methods: {
-    updateSidebarAttr () {
-      if ((this as any).$mq === 'mobile') {
-        this.sidebarAttr.visible = false
-        this.sidebarAttr.expanded = true
-      } else {
-        this.sidebarAttr.visible = true
-      }
+  }
+
+  @settings.Getter public colortheme!: ITheme
+  // @settings.Mutation public setSelectionDepots!: (s: Array<string>) => void
+
+  @Watch('tableData', { deep: true })
+  $mq () { this.updateSidebarAttr() }
+
+  updateSidebarAttr () {
+    if ((this as any).$mq === 'mobile') {
+      this.sidebarAttr.visible = false
+      this.sidebarAttr.expanded = true
+    } else {
+      this.sidebarAttr.visible = true
     }
   }
-})
+}
 
 /* WARN  in ./layouts/default.vue?vue&type=script&lang=ts&
 
