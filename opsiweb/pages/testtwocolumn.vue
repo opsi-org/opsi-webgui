@@ -1,8 +1,11 @@
 <template>
   <div>
-    <h3>Test two column</h3>
+    <h3>Test two column Parent</h3>
+    <span style="color:blue">
+      Note: This is only for test purpose. Use similar nested route structure for Depots, Clients and Products
+    </span>
     <b-row>
-      <b-col>
+      <b-col :class="{'d-none' : secondColumnOpened && $mq === 'mobile'}">
         <NuxtLink to="/testtwocolumn/testchild1" :class="{'nuxt-link-active': isRouteActive('/testtwocolumn/testchild1')}">
           Show Child
         </NuxtLink>
