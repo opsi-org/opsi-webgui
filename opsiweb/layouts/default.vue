@@ -17,7 +17,7 @@ import Vue from 'vue'
 export default Vue.extend({
   data () {
     return {
-      sidebarAttr: (this as any).$mq === 'desktop' ? { visible: true, expanded: false } : { visible: false, expanded: true }
+      sidebarAttr: { visible: true, expanded: false }
     }
   },
   head () {
