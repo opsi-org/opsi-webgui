@@ -34,7 +34,7 @@ export default Vue.extend({
     attributes: {
       type: Object,
       default () {
-        return { visible: true, expanded: false }
+        return {}
       }
     }
   }
