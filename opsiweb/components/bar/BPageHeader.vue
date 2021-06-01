@@ -8,6 +8,8 @@
       <b-navbar-nav class="ml-auto">
         <slot name="clientdelete" />
         <slot name="clientrename" />
+        <slot name="formreset" />
+        <slot name="clientadd" />
         <b-button :to="closeroute">
           <b-icon icon="x" />
         </b-button>
