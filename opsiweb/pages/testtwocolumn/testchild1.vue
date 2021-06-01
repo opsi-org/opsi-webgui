@@ -1,9 +1,6 @@
 <template>
   <div>
-    <h3>test child1</h3>
-    <b-button to="/testtwocolumn">
-      Close
-    </b-button>
+    <BarBPageHeader :title="'Test Child1'" :closeroute="'/testtwocolumn'" />
     <b-table striped hover :items="items" />
   </div>
 </template>

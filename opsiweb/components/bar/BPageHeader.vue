@@ -2,6 +2,8 @@
   <div>
     <b-navbar>
       <span><b>{{ title }}</b></span>
+      <slot name="logtype" />
+      <slot name="loglevel" />
       <b-navbar-nav class="ml-auto">
         <b-button :to="closeroute">
           <b-icon icon="x" />
