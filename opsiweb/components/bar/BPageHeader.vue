@@ -6,6 +6,8 @@
       <slot name="logtype" />
       <slot name="loglevel" />
       <b-navbar-nav class="ml-auto">
+        <slot name="clientdelete" />
+        <slot name="clientrename" />
         <b-button :to="closeroute">
           <b-icon icon="x" />
         </b-button>
