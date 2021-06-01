@@ -9,7 +9,8 @@
         <NuxtLink to="/testtwocolumn/testchild1" :class="{'nuxt-link-active': isRouteActive('/testtwocolumn/testchild1')}">
           Show Child
         </NuxtLink>
-        <b-table striped hover :items="items" />
+        <CollapseCTable title="Category1" :tableitems="items" />
+        <CollapseCTable title="Category2" :tableitems="childItems" />
       </b-col>
       <b-col v-if="secondColumnOpened">
         <NuxtChild :items="childItems" />
