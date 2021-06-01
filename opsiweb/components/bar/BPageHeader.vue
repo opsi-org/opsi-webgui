@@ -2,6 +2,7 @@
   <div>
     <b-navbar>
       <span><b>{{ title }}</b></span>
+      <slot name="filter" />
       <slot name="logtype" />
       <slot name="loglevel" />
       <b-navbar-nav class="ml-auto">
