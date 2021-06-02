@@ -2,7 +2,7 @@
   <div>
     <h3>
       {{ breadcrumb }} <span style="color:blue">
-        Note: Add breadcrumb here
+      <BarBBreadcrumb />
       </span>
     </h3>
     <b-row>
