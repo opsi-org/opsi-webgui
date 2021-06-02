@@ -1,11 +1,14 @@
 <template>
   <b-table
     v-bind="$props"
+    :ref="$props.id"
     :class="$mq"
-    @row-selected="rowchanged"
+    @row-clicked="rowChanged"
   >
+    <template #head(sel)="{}">
+      {{ selection.length }}/{{ totalrows }}
+    </template>
     <template #cell(sel)="row">
-      <!-- {{datakey}}: {{selection}} -->
       {{ fixRow(row) }}
       <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
     </template>
@@ -13,20 +16,25 @@
     <template #head(actions)="{}">
       <DropdownDDTableColumnVisibilty :headers="headers" />
     </template>
+    <template
+      v-for="slotName in Object.keys($scopedSlots)"
+      #[slotName]="slotScope"
+    >
+      <slot :name="slotName" v-bind="slotScope" />
+    </template>
   </b-table>
 </template>
 
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BTable } from 'bootstrap-vue'
-import { ITableRow, ITableHeaders } from '~/types/tsettings'
-// const selections = namespace('selections')
-
+import { ITableRow, ITableHeaders, ITableDataItem } from '~/types/tsettings'
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string
+  @Prop({ }) totalrows!: number
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
-  @Prop({ default: () => { return () => { /* default */ } } }) rowchanged!: Function
+  @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
 
   fixRow (row: ITableRow): void {
@@ -40,6 +48,16 @@ export default class TTable extends BTable {
       if (elem) { elem.classList.remove('b-table-row-selected') }
       row.item._rowVariant = ''
     }
+  }
+
+  rowChanged (item: ITableDataItem) {
+    const selectionCopy:Array<string> = [...this.selection]
+    if (selectionCopy.includes(item.ident)) {
+      selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
+    } else {
+      selectionCopy.push(item.ident)
+    }
+    this.onchangeselection(selectionCopy)
   }
 }
 </script>

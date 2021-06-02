@@ -10,16 +10,8 @@ export interface ITheme {
     timestamp?: number
 }
 
-export interface IClient {
+export interface ITableDataItem {
     ident: string
-    clientId: string
-    description: string
-}
-
-export interface IDepot {
-    ident: string
-    depotId: string
-    description: string
 }
 
 export interface ITableRow {
