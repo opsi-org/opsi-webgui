@@ -37,7 +37,7 @@ export interface ITableData {
     sortBy: string,
     sortDesc: boolean,
     filterQuery: string,
-    selectedDepot?: Array<string>,
+    selectedDepots?: Array<string>,
     selectedClients?: Array<string>
 }
 

@@ -84,7 +84,7 @@ export default class VClients extends Vue {
   tableDataChanged () { this.$fetch() }
 
   async fetch () {
-    this.tableData.selectedDepot = this.selectionDepots
+    this.tableData.selectedDepots = this.selectionDepots
     this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
     this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
   }
