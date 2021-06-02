@@ -8,6 +8,7 @@
     size="sm"
     alt="Show column"
     class="fixed_column_selection"
+    :title="tooltip"
   >
     <template #button-content>
       <b-icon-list-task />
@@ -68,6 +69,13 @@ export default class DDTableColumnVisibilty extends BDropdown {
 
   @Watch('columnVisibilityList') keysChanged () {
     this.setColumnVisibilityModel(undefined)
+  }
+
+  get tooltip () {
+    if (this.$mq === 'mobile') {
+      return 'show additional column'
+    }
+    return 'visible addational columns'
   }
 
   handleItem (key: string) {

@@ -44,14 +44,19 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/tsettings'
 const selections = namespace('selections')
+interface IFetchOptions {
+  fetchClients:boolean,
+  fetchDepotIds:boolean,
+}
 @Component
 export default class VClients extends Vue {
   isLoading: boolean = true
   fetchedData: object = {}
   fetchedDataDepotIds: Array<string> = []
+  fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 3,
+    perPage: 2,
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
@@ -59,7 +64,7 @@ export default class VClients extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
+    selected: { label: '', key: 'sel', visible: true, _fixed: true },
     clientId: { label: 'Id', key: 'clientId', visible: true, _fixed: true },
     description: { label: 'Desc', key: 'description', visible: false },
     ipAddress: { label: 'IP', key: 'ipAddress', visible: false },
@@ -67,7 +72,6 @@ export default class VClients extends Vue {
     _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
     actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false },
-    // _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
     actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
   }
 
@@ -76,18 +80,21 @@ export default class VClients extends Vue {
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('selectionDepots', { deep: true })
-  selectionDepotsChanged () {
-    this.$fetch()
-  }
+  selectionDepotsChanged () { this.$fetch() }
 
   @Watch('tableData', { deep: true })
   tableDataChanged () { this.$fetch() }
 
   async fetch () {
     this.isLoading = true
-    this.tableData.selectedDepots = this.selectionDepots
-    this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
-    this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
+    if (this.fetchOptions.fetchClients) {
+      this.tableData.selectedDepots = this.selectionDepots
+      this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
+    }
+    if (this.fetchOptions.fetchDepotIds) {
+      this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
+      this.fetchOptions.fetchDepotIds = false
+    }
     this.isLoading = false
   }
 }
