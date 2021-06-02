@@ -17,10 +17,8 @@
       </b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto float-right">
-          <b-nav-form>
-            <DropdownDDTheme />
-            <ButtonBTNLogout />
-          </b-nav-form>
+          <DropdownDDTheme />
+          <ButtonBTNLogout />
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -42,6 +40,8 @@ export default class LError extends Vue {
 .topbar{
   position: fixed;
   height: var(--height-navbar) !important;
+  /* flex-flow: row nowrap;
+  display: inline-flex; */
 }
 .topbar_logo {
   height: 25px !important;

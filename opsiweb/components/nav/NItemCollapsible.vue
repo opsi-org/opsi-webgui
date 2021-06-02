@@ -4,7 +4,7 @@
       <b-icon :icon="icon" /> {{ title }}
       <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
     </b-nav-item>
-    <b-collapse :id="'collapse-navitem-'+title">
+    <b-collapse :id="'collapse-navitem-'+title" accordion="sidebarAccordion">
       <b-nav vertical>
         <b-nav-item v-for="sub in submenu" :key="sub.title" :to="sub.route">
           <span class="submenu">
