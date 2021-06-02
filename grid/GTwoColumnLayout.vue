@@ -1,8 +1,9 @@
 <template>
   <div>
     <h3>
-      {{ breadcrumb }} <span style="color:blue">
-      <BarBBreadcrumb />
+      {{ breadcrumb }}
+      <span style="color:blue">
+        <BarBBreadcrumb />
       </span>
     </h3>
     <b-row>
