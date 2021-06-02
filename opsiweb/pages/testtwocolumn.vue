@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h3>Test two column Parent</h3>
+    <h3>
+      Test two column Parent <span style="color:blue">
+        Note: Add breadcrumb here
+      </span>
+    </h3>
     <span style="color:blue">
       Note: This is only for test purpose. Use similar nested route structure for Depots, Clients and Products
     </span>
