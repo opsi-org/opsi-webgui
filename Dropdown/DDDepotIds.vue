@@ -49,12 +49,14 @@ const selections = namespace('selections')
   // @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('selectionLocal', { deep: true }) selectionChanged () {
     if (this.selectionLocal.length === 0) {
       this.selectionLocal.push(this.opsiconfigserver)
     }
     this.setSelectionDepots([...this.selectionLocal])
+    this.setSelectionClients([])
   }
 
   handleItem (key: string) {

@@ -57,7 +57,7 @@ export default class VClients extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true }, //, class: 'extrasmall-column-width' },
+    selected: { label: '', key: 'sel', visible: true, _fixed: true },
     depotId: { label: 'Id', key: 'depotId', visible: true, _fixed: true },
     description: { label: 'Desc', key: 'description', visible: false },
     type: { label: 'type', key: 'type', visible: false },
