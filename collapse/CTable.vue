@@ -9,9 +9,7 @@
       @click.native="visible = !visible"
     />
     <b-collapse :id="title+'-collapse'" v-model="visible" accordion="table-accordion">
-      <b-container fluid>
-        <b-table striped hover :items="tableitems" />
-      </b-container>
+      <TableTDefault :tableitems="tableitems" />
     </b-collapse>
   </div>
 </template>
