@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar>
+    <b-navbar class="pageheader border">
       <span v-if="navbartype=='collapse'">
         <b-icon v-if="collapsed" icon="chevron-double-down" />
         <b-icon v-else icon="chevron-double-right" />
@@ -47,4 +47,7 @@ export default Vue.extend({
 </script>
 
 <style>
+.pageheader{
+  height: var(--height-navbar) !important;
+}
 </style>
