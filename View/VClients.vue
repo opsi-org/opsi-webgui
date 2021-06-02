@@ -13,6 +13,9 @@
         :headers="headerData"
         :items="fetchedData.clients"
         :selection="selectionClients"
+        :onchangeselection="setSelectionClients"
+        :loading="isLoading"
+        :totalrows="fetchedData.total"
         :no-local-sorting="true"
         :sort-by.sync="tableData.sortBy"
         :sort-desc.sync="tableData.sortDesc"
@@ -21,7 +24,6 @@
         selectable
         striped
         hover
-        :rowchanged="selectRow"
       />
       <BarBPagination
         :tabledata="tableData"
@@ -40,10 +42,11 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { IClient, ITableData, ITableHeaders } from '~/types/tsettings'
+import { ITableData, ITableHeaders } from '~/types/tsettings'
 const selections = namespace('selections')
 @Component
 export default class VClients extends Vue {
+  isLoading: boolean = true
   fetchedData: object = {}
   fetchedDataDepotIds: Array<string> = []
   tableData: ITableData = {
@@ -71,9 +74,6 @@ export default class VClients extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
-  selectRow (s: Array<IClient>) {
-    this.setSelectionClients(s.map(o => o.clientId))
-  }
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -84,9 +84,11 @@ export default class VClients extends Vue {
   tableDataChanged () { this.$fetch() }
 
   async fetch () {
+    this.isLoading = true
     this.tableData.selectedDepots = this.selectionDepots
     this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
     this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
+    this.isLoading = false
   }
 }
 </script>
