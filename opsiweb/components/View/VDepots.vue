@@ -30,6 +30,7 @@
                 :class="{'nuxt-link-active': isRouteActive('/depots/config')}"
                 @click="rowId = row.item.ident;"
               >
+                <!--  TODO: first click always failes (timing problem)  -->
                 config
               </b-button>
             </template>
