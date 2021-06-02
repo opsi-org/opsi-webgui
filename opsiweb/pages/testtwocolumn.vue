@@ -1,26 +1,19 @@
 <template>
-  <div>
-    <h3>
-      Test two column Parent <span style="color:blue">
-        Note: Add breadcrumb here
+  <GridGTwoColumnLayout breadcrumb="Test two column Parent" :showchild="secondColumnOpened">
+    <template #parent>
+      <NuxtLink to="/testtwocolumn/testchild1" :class="{'nuxt-link-active': isRouteActive('/testtwocolumn/testchild1')}">
+        Show Child
+      </NuxtLink>
+      <CollapseCTable title="Category1" :tableitems="items" />
+      <CollapseCTable title="Category2" :tableitems="childItems" />
+      <span style="color:blue">
+        Note: This page is only for test purpose. Use similar nested route structure for Depots, Clients and Products
       </span>
-    </h3>
-    <span style="color:blue">
-      Note: This is only for test purpose. Use similar nested route structure for Depots, Clients and Products
-    </span>
-    <b-row>
-      <b-col :class="{'d-none' : secondColumnOpened && $mq === 'mobile'}">
-        <NuxtLink to="/testtwocolumn/testchild1" :class="{'nuxt-link-active': isRouteActive('/testtwocolumn/testchild1')}">
-          Show Child
-        </NuxtLink>
-        <CollapseCTable title="Category1" :tableitems="items" />
-        <CollapseCTable title="Category2" :tableitems="childItems" />
-      </b-col>
-      <b-col v-if="secondColumnOpened">
-        <NuxtChild :items="childItems" />
-      </b-col>
-    </b-row>
-  </div>
+    </template>
+    <template #child>
+      <NuxtChild :items="childItems" />
+    </template>
+  </GridGTwoColumnLayout>
 </template>
 
 <script lang="ts">
