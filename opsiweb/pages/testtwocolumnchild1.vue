@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>child1</h3>
-    <b-table striped hover :items="items" />
+    <TableTDefault :tableitems="items" />
   </div>
 </template>
 

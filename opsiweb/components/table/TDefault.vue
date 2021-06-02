@@ -1,15 +1,14 @@
 <template>
-  <div>
-    <BarBPageHeader title="Test Child1" closeroute="/testtwocolumn" />
-    <TableTDefault :tableitems="items" />
-  </div>
+  <b-container fluid>
+    <b-table striped hover :items="tableitems" />
+  </b-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 export default Vue.extend({
   props: {
-    items: {
+    tableitems: {
       type: Array,
       default () {
         return []
