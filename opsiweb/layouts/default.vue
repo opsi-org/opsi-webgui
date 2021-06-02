@@ -7,7 +7,6 @@
     <BarBTop :attributes="sidebarAttr" />
     <BarBSide :attributes="sidebarAttr" />
     <div class="main_content">
-      <BarBBreadcrumb />
       <Nuxt />
     </div>
     <!-- <Nuxt class="main_content" /> -->
