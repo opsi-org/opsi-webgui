@@ -4,7 +4,8 @@
       <div>
         <div class="mt-3">
           <InputIFilter v-model="tableData.filterQuery" />
-          Selection: {{ selectionDepots }}
+          Selection: {{ selectionDepots }} <br />
+          rowID {{ rowId }}
           <TableTTable
             id="tabledepots"
             datakey="depotId"
@@ -25,14 +26,23 @@
             hover
           >
             <template #cell(actions)="row">
-              <b-button
-                :to="{ path: '/depots/config', params: { id: row.item.last_name }}"
-                :class="{'nuxt-link-active': isRouteActive('/depots/config')}"
-                @click="rowId = row.item.ident;"
-              >
-                <!--  TODO: first click always failes (timing problem)  -->
-                config
-              </b-button>
+              <ButtonBTNRowLinkTo
+                title="config"
+                icon="gear"
+                to="/depots/config"
+                :ident="row.item.ident"
+                :pressed="isRouteActive"
+                :click="routeRedirectWith"
+              />
+
+              <ButtonBTNRowLinkTo
+                title="log"
+                icon="file-earmark-text"
+                to="/depots/log"
+                :ident="row.item.ident"
+                :pressed="isRouteActive"
+                :click="routeRedirectWith"
+              />
             </template>
           </TableTTable>
           <BarBPagination
@@ -54,14 +64,13 @@ import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/tsettings'
 const selections = namespace('selections')
 @Component
-export default class VClients extends Vue {
+export default class VDepots extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   rowId: string = ''
   fetchedData: object = {}
   isLoading: boolean = true
-  secondColumnOpened: boolean = false
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 3,
@@ -81,12 +90,17 @@ export default class VClients extends Vue {
     actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
   }
 
-  isRouteActive (id: string) {
-    if (this.$route.path.includes(id)) {
-      this.secondColumnOpened = true
-    } else {
-      this.secondColumnOpened = false
-    }
+  routeRedirectWith (to: string, rowIdent: string) {
+    this.rowId = rowIdent
+    this.$router.push(to)
+  }
+
+  isRouteActive (to: string, rowIdent: string) {
+    return this.$route.path.includes(to) && this.rowId === rowIdent
+  }
+
+  get secondColumnOpened () {
+    return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }

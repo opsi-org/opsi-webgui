@@ -1,7 +1,7 @@
 <template>
   <div>
-    <BarBPageHeader title="Config" closeroute="/depots" />
-    <h1>Depot CONFIG</h1>
+    <BarBPageHeader title="Log" closeroute="/depots" />
+    <h1>Depot LOG</h1>
     <p>Hello {{ id }} !</p>
   </div>
 </template>
@@ -9,7 +9,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PDepotConfig extends Vue {
+export default class PDepotLog extends Vue {
   @Prop({ }) id!: string
   mounted () {
     if (this.id === '') {
