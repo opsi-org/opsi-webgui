@@ -7,7 +7,7 @@
         </b-button>
       </b-navbar-nav>
       <b-navbar-brand href="/">
-        <img src="../../assets/images/LogoOpsi.png" class="topbar_logo">
+        <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
         Opsiweb
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse">
@@ -26,17 +26,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    attributes: {
-      type: Object,
-      default () {
-        return { visible: true, expanded: false }
-      }
-    }
-  }
-})
+
+import { Component, Vue, Prop } from 'nuxt-property-decorator'
+
+@Component
+export default class LError extends Vue {
+  @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: Object
+}
+
 </script>
 
 <style>

@@ -7,6 +7,7 @@
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
 const auth = namespace('auth')
+
 @Component
 export default class BTNLogout extends Vue {
   @auth.Mutation public logout!: () => void
