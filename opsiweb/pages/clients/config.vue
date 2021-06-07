@@ -10,7 +10,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class PClientConfig extends Vue {
-  @Prop({ default: "select"}) id!: string
+  @Prop({ }) id!: string
   mounted () {
     if (this.id === '') {
       this.$router.push({ path: '/clients/' })
