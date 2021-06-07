@@ -7,8 +7,9 @@
       </span>
       <b>{{ title }}</b>
       <slot name="filter" />
-      <slot name="logtype" />
-      <slot name="loglevel" />
+      <slot name="log" />
+      <!-- <slot name="logtype" />
+      <slot name="loglevel" /> -->
       <b-navbar-nav class="ml-auto">
         <slot name="clientdelete" />
         <slot name="clientrename" />
