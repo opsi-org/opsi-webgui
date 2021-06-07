@@ -1,6 +1,8 @@
 <template>
   <div
     :class="{
+      mobile: $mq === 'mobile',
+      desktop: $mq === 'desktop',
       sidebar_collapsed:!sidebarAttr.expanded && $mq=='desktop',
       sidebar_expanded:sidebarAttr.expanded && $mq=='desktop'}"
   >

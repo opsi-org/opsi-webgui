@@ -65,7 +65,8 @@ export default {
       // Default breakpoint for SSR
       // defaultBreakpoint: 'mobile',
       breakpoints: {
-        mobile: 850,
+        // mobile: 850, // should also be updated in Bar/BTop.vue on change!
+        mobile: 767.98, // then compatible with bootstrap breakpoint 'md'
         desktop: Infinity
       }
     }]
