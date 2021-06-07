@@ -10,7 +10,6 @@
       variant="outline-primary"
       size="sm"
       alt="Show column"
-      class="fixed_column_selection"
     >
       <template #button-content>
         <b-icon-hdd-stack-fill /> Depots
