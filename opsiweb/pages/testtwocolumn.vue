@@ -2,10 +2,10 @@
   <GridGTwoColumnLayout breadcrumb="Test two column Parent" :showchild="secondColumnOpened">
     <template #parent>
       <NuxtLink to="/testtwocolumn/testlog" :class="{'nuxt-link-active': isRouteActive('/testtwocolumn/testlog')}">
-        Show Child
+        Show Log
       </NuxtLink>
       <CollapseCTable title="Category1" :tableitems="items" />
-      <CollapseCTable title="Category2" :tableitems="childItems" />
+      <CollapseCTable title="Category2" :tableitems="items" />
       <span style="color:blue">
         Note: This page is only for test purpose. Use similar nested route structure for Depots, Clients and Products
       </span>
