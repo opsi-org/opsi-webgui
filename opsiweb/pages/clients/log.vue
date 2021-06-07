@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BarBPageHeader title="Log" closeroute="/depots" />
+    <BarBPageHeader title="Log" closeroute="/clients" />
     <h1>Client LOG</h1>
     <p>Hello {{ id }} !</p>
   </div>
@@ -13,7 +13,7 @@ export default class PClientLog extends Vue {
   @Prop({ }) id!: string
   mounted () {
     if (this.id === '') {
-      this.$router.push({ path: '/depots/' })
+      this.$router.push({ path: '/clients/' })
     }
   }
 }

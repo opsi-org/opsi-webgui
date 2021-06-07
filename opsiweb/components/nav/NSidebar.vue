@@ -70,7 +70,7 @@ export default Vue.extend({
               submenu: [
                 { title: 'All Depots', route: '/depots' },
                 { title: 'Configuration', route: '/depots/config' },
-                { title: 'Logs', route: '/depots/logs' }
+                { title: 'Logs', route: '/depots/log' }
               ]
             },
             {
@@ -81,7 +81,7 @@ export default Vue.extend({
                 { title: 'All Clients', route: '/clients' },
                 { title: 'Add New', route: '/clients/clientnew' },
                 { title: 'Configuration', route: '/clients/config' },
-                { title: 'Logs', route: '/clients/logs' }
+                { title: 'Logs', route: '/clients/log' }
               ]
             },
             { title: 'Products', icon: 'grid-fill', route: '/products/' }
