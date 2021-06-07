@@ -1,43 +1,70 @@
 <template>
-  <div>
-    <div class="mt-3">
-      <!-- <b-form-input v-model="tableData.filterQuery" /> -->
-      <div class="inline">
-        <InputIFilter v-model="tableData.filterQuery" />
-        <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+  <GridGTwoColumnLayout breadcrumb="" :showchild="secondColumnOpened">
+    <template #parent>
+      <div>
+        <div class="mt-3">
+          <!-- <b-form-input v-model="tableData.filterQuery" /> -->
+          <div class="inline">
+            <InputIFilter v-model="tableData.filterQuery" />
+            <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+          </div>
+          <TableTTable
+            id="tableclients"
+            datakey="clientId"
+            :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+            :headers="headerData"
+            :items="fetchedData.clients"
+            :selection="selectionClients"
+            :onchangeselection="setSelectionClients"
+            :loading="isLoading"
+            :totalrows="fetchedData.total"
+            :no-local-sorting="true"
+            :sort-by.sync="tableData.sortBy"
+            :sort-desc.sync="tableData.sortDesc"
+            sort-icon-left
+            select-mode="multi"
+            selectable
+            striped
+            hover
+          >
+            <template #cell(actions)="row">
+              <ButtonBTNRowLinkTo
+                title="config"
+                icon="gear"
+                to="/clients/config"
+                :ident="row.item.ident"
+                :pressed="isRouteActive"
+                :click="routeRedirectWith"
+              />
+
+              <ButtonBTNRowLinkTo
+                title="log"
+                icon="file-earmark-text"
+                to="/clients/log"
+                :ident="row.item.ident"
+                :pressed="isRouteActive"
+                :click="routeRedirectWith"
+              />
+            </template>
+          </TableTTable>
+          <BarBPagination
+            :tabledata="tableData"
+            :total-rows="fetchedData.total"
+            aria-controls="tableclients"
+          />
+        </div>
+        <div>
+          {{ selectionDepots }}
+        </div>
+        <div>
+          {{ selectionClients }}
+        </div>
       </div>
-      <TableTTable
-        id="tableclients"
-        datakey="clientId"
-        :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-        :headers="headerData"
-        :items="fetchedData.clients"
-        :selection="selectionClients"
-        :onchangeselection="setSelectionClients"
-        :loading="isLoading"
-        :totalrows="fetchedData.total"
-        :no-local-sorting="true"
-        :sort-by.sync="tableData.sortBy"
-        :sort-desc.sync="tableData.sortDesc"
-        sort-icon-left
-        select-mode="multi"
-        selectable
-        striped
-        hover
-      />
-      <BarBPagination
-        :tabledata="tableData"
-        :total-rows="fetchedData.total"
-        aria-controls="tableclients"
-      />
-    </div>
-    <div>
-      {{ selectionDepots }}
-    </div>
-    <div>
-      {{ selectionClients }}
-    </div>
-  </div>
+    </template>
+    <template #child>
+      <NuxtChild :id="rowId" />
+    </template>
+  </GridGTwoColumnLayout>
 </template>
 
 <script lang="ts">
@@ -50,6 +77,7 @@ interface IFetchOptions {
 }
 @Component
 export default class VClients extends Vue {
+  rowId: string = ''
   isLoading: boolean = true
   fetchedData: object = {}
   fetchedDataDepotIds: Array<string> = []
@@ -96,6 +124,19 @@ export default class VClients extends Vue {
       this.fetchOptions.fetchDepotIds = false
     }
     this.isLoading = false
+  }
+
+  routeRedirectWith (to: string, rowIdent: string) {
+    this.rowId = rowIdent
+    this.$router.push(to)
+  }
+
+  isRouteActive (to: string, rowIdent: string) {
+    return this.$route.path.includes(to) && this.rowId === rowIdent
+  }
+
+  get secondColumnOpened () {
+    return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 }
 </script>
