@@ -45,95 +45,18 @@ export default class BBreadcrumbRow extends Vue {
   get crumbs (): Array<string> {
     const pathArray = this.$route.path.split('/')
     pathArray.shift()
-
-    // console.error("path", pathArray)
-    // const breadcrumbs = pathArray.reduce((breadcrumbArray, path, idx):any => {
-    //   if (!this.$route.matched[idx]) {
-    //     return breadcrumbArray
-    //   }
-    //   // if (this.$route.matched[idx].meta.breadCrumb) {
-    //   //   const counting = ''
-    //   //   // if (this.$route.matched[idx].meta.counting) {
-    //   //   //   counting = ` (${this.selectedItemsReadable.length}/${Object.keys(this.rowsReadable).length})`;
-    //   //   //   if (this.totalCount)
-    //   //   //     counting = this.totalCount;
-    //   //   // }
-    //   //   const bc:object = {
-    //   //     path,
-    //   //     to: breadcrumbArray[idx - 1]
-    //   //       ? '/' + breadcrumbArray[idx - 1].path + '/' + path
-    //   //       : '/' + path,
-    //   //     // text: this.$t(this.$route.matched[idx].meta.breadCrumb) + counting || path
-    //   //     text: path
-    //   //   }
-    //   //   console.log('bc ', bc)
-    //   //   breadcrumbArray.push(bc)
-    //   // }
-    //   return path
-    //   // return breadcrumbArray
-    // }, [])
+    for (const c in pathArray) {
+      switch (pathArray[c]) {
+        case 'clientsconfig': pathArray[c] = 'Configuration'; break
+        case 'depotsconfig': pathArray[c] = 'Hostparameter'; break
+        case 'clientslog': pathArray[c] = 'log'; break
+        case 'depotslog': pathArray[c] = 'log'; break
+      }
+    }
     return pathArray.filter(p => p !== '')
-    // return breadcrumbs
   }
 }
 </script>
 
 <style scoped>
-/* .View-Breadcrumb-RightCol{
-  text-align: end;
-  display: contents;
-}
-.View-Breadcrumb-RightCol_Mobile{
-  text-align: end;
-  flex-flow:column wrap;
-}
-.View-Breadcrumb{
-  height: 100%;
-  align-content: center;
-}
-.View-Breadcrumb{
-  border: unset;
-  text-shadow: unset;
-  background-color: unset;
-  background-image: unset;
-  background-image: unset;
-  background-repeat: unset;
-  -webkit-filter: unset;
-  filter: unset;
-}
-.ViewsLayoutRow{
-  margin-right: auto;
-  margin-left:  auto;
-}
-.breadcrumb{
-  padding:0px;
-  border-radius: unset;
-  font-size: unset;
-  margin-left: 0px;
-  margin-right: 0px;
-}
-.View-Breadcrumb-RightCol-SpaceBetween{
- padding-left: 5px;
-}
-.breadcrumb.View-Row-Breadcrumb{
-  border: 1px solid var(--primary);
-  background-color: var(--transparent);
-  min-height: 30px;
-  padding-left: 5px;
-  padding-right: 5px;
-  width: 100%;
-  font-size: medium;
-}
-.breadcrumb.View-Breadcrumb{
-  margin-bottom: 0px;
-  font-size: x-large;
-}
-.view-main  {
-  min-width: 100%;
-  width: calc(100% - 25px);
-}
-.view-main  .container-fluid {
-  width: unset;
-}
-*/
 </style>

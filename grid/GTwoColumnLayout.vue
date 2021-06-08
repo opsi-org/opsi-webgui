@@ -1,11 +1,5 @@
 <template>
   <div>
-    <h3>
-      {{ breadcrumb }}
-      <span style="color:blue">
-        <BarBBreadcrumb />
-      </span>
-    </h3>
     <b-row>
       <b-col :class="{'d-none' : showchild && $mq === 'mobile'}">
         <slot name="parent" />
