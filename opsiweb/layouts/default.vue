@@ -9,6 +9,11 @@
     <BarBTop :attributes="sidebarAttr" />
     <BarBSide :attributes="sidebarAttr" />
     <div class="main_content">
+      <h3>
+        <span style="color:blue">
+          <BarBBreadcrumb />
+        </span>
+      </h3>
       <Nuxt />
     </div>
     <!-- <Nuxt class="main_content" /> -->

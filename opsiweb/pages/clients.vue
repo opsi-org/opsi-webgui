@@ -1,4 +1,5 @@
 <template>
+  <!-- shows the clients table  -->
   <div class="container">
     <ViewVClients />
   </div>

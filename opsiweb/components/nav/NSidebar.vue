@@ -48,7 +48,7 @@ export default Vue.extend({
               icon: 'layout-split',
               submenu: [
                 { title: 'withchild-All', route: '/testtwocolumn' },
-                { title: 'Child1', route: '/testtwocolumnchild1' }
+                { title: 'Child1', route: '/testtwocolumn/testchild1' }
               ]
             }
           ]
@@ -78,9 +78,9 @@ export default Vue.extend({
               route: '/clients/',
               icon: 'laptop',
               submenu: [
-                { title: 'All Clients', route: '/clients' },
+                { title: 'All Clients', route: '/clients/' },
                 { title: 'Add New', route: '/clients/clientnew' },
-                { title: 'Configuration', route: '/clients/config' },
+                { title: 'Configuration', route: '/clientsconfig' },
                 { title: 'Logs', route: '/clients/log' }
               ]
             },

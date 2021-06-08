@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout breadcrumb="" :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <div>
         <div class="mt-3">
@@ -7,6 +7,8 @@
           <div class="inline">
             <InputIFilter v-model="tableData.filterQuery" />
             <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+            Selection: {{ selectionClients }} <br />
+            rowID {{ rowId }}
           </div>
           <TableTTable
             id="tableclients"
@@ -62,7 +64,7 @@
       </div>
     </template>
     <template #child>
-      <NuxtChild :id="rowId" />
+      <NuxtChild :id="rowId" :as-child="true" />
     </template>
   </GridGTwoColumnLayout>
 </template>
