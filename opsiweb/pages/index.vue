@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <Logo />
     <h1 class="title">
       opsiweb

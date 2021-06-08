@@ -1,5 +1,5 @@
 <template>
-  <div>
-    <h3>Dashboard</h3>
+  <div class="container-fluid">
+    <h5> Hello Dashboard</h5>
   </div>
 </template>
