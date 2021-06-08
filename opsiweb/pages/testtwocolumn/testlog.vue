@@ -68,7 +68,7 @@ export default Vue.extend({
     }
   },
   data: () => ({
-    logtype: '',
+    logtype: 'opsiconfd',
     loglevel: 5,
     logResult: [],
     logrequest: {
@@ -77,6 +77,16 @@ export default Vue.extend({
     },
     logTypes: [{ value: null, text: 'Select Log Type' }, 'bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
   }),
+  watch: {
+    'logtype' () {
+      this.getLog(this.id, this.logtype)
+    },
+    'id' () {
+      if (this.logtype) {
+        this.getLog(this.id, this.logtype)
+      }
+    }
+  },
   beforeMount () {
     if (this.logtype) { this.getLog(this.id, this.logtype) }
   },
