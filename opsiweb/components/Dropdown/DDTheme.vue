@@ -15,7 +15,8 @@
         :key="t.rel"
         :disable="t.title==theme"
         @click="theme = t;"
-      >{{ t.title }}
+      >
+        {{ t.title }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
     <b-dropdown v-else :text="theme.title" variant="secondary">

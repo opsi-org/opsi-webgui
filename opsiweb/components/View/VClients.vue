@@ -7,7 +7,7 @@
           <div class="inline">
             <InputIFilter v-model="tableData.filterQuery" />
             <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
-            Selection: {{ selectionClients }} <br />
+            Selection: {{ selectionClients }} <br>
             rowID {{ rowId }}
           </div>
           <TableTTable

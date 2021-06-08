@@ -4,7 +4,7 @@
       <div>
         <div class="mt-3">
           <InputIFilter v-model="tableData.filterQuery" />
-          Selection: {{ selectionDepots }} <br />
+          Selection: {{ selectionDepots }} <br>
           rowID {{ rowId }}
           <TableTTable
             id="tabledepots"

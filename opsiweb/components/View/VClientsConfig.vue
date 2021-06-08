@@ -2,7 +2,9 @@
   <div>
     <BarBPageHeader v-if="asChild" title="Config" closeroute="/clients/" />
     <p>Hello from config page !</p>
-    <p v-if="id">Hello {{ id }}!</p>
+    <p v-if="id">
+      Hello {{ id }}!
+    </p>
   </div>
 </template>
 
