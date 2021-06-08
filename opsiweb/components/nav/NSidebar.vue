@@ -40,20 +40,6 @@ export default Vue.extend({
     return {
       navItems: [
         {
-          title: 'Test',
-          menu: [
-            { title: 'Two-column-layout', icon: 'layout-split', route: '/testtwocolumn' },
-            {
-              title: 'With-Child',
-              icon: 'layout-split',
-              submenu: [
-                { title: 'withchild-All', route: '/testtwocolumn' },
-                { title: 'Child1', route: '/testtwocolumn/testchild1' }
-              ]
-            }
-          ]
-        },
-        {
           title: 'Overview',
           menu: [
             { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
@@ -81,7 +67,7 @@ export default Vue.extend({
                 { title: 'All Clients', route: '/clients/' },
                 { title: 'Add New', route: '/clients/clientnew' },
                 { title: 'Configuration', route: '/clientsconfig' },
-                { title: 'Logs', route: '/clients/log' }
+                { title: 'Logs', route: '/clientslog' }
               ]
             },
             { title: 'Products', icon: 'grid-fill', route: '/products/' }
