@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BarBPageHeader v-if="asChild" title="Config" closeroute="/clients/" />
+    <BarBPageHeader v-if="asChild" :title="'Config - ' + id" closeroute="/clients/" />
     <p>Hello from config page !</p>
     <p v-if="id">
       Hello {{ id }}!
