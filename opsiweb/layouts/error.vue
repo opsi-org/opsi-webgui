@@ -1,64 +1,49 @@
 <template>
-  <div
-    :class="{
-      mobile: $mq === 'mobile',
-      desktop: $mq === 'desktop',
-      sidebar_collapsed:!sidebarAttr.expanded && $mq=='desktop',
-      sidebar_expanded:sidebarAttr.expanded && $mq=='desktop'}"
-  >
-    <BarBTop :attributes="sidebarAttr" />
-    <BarBSide :attributes="sidebarAttr" />
-    <div class="main_content">
-      <h3>
-        <span style="color:blue">
-          <BarBBreadcrumb />
-        </span>
-      </h3>
-      <Nuxt />
-    </div>
-    <!-- <Nuxt class="main_content" /> -->
+  <div class="main_content">
+    <h1 v-if="error.statusCode === 404">
+      Page not found
+    </h1>
+    <h1 v-else>
+      An error occurred
+    </h1>
+    {{ error.message }}
   </div>
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex'
+import { Component, Vue, Prop, Watch, namespace } from 'nuxt-property-decorator'
+import { ITheme, ISidebarAttributes } from '~/types/tsettings'
+const settings = namespace('settings')
+@Component({ layout: 'default' })
+export default class LError extends Vue {
+  @Prop({ }) error!: object
 
-import Vue from 'vue'
-export default Vue.extend({
-  data () {
-    return {
-      sidebarAttr: { visible: true, expanded: false }
-    }
-  },
+  sidebarAttr: ISidebarAttributes = { visible: true, expanded: false }
+
   head () {
     return {
       link: [{
         rel: 'stylesheet',
-        href: (this.XgetColorTheme) ? this.XgetColorTheme.rel : ''
+        href: (this.colortheme) ? this.colortheme.rel : ''
       }]
     }
-  },
-  computed: {
-    ...mapGetters({
-      XgetColorTheme: 'settings/colortheme'
-    })
-  },
-  watch: {
-    $mq () {
-      this.updateSidebarAttr()
-    }
-  },
-  methods: {
-    updateSidebarAttr () {
-      if ((this as any).$mq === 'mobile') {
-        this.sidebarAttr.visible = false
-        this.sidebarAttr.expanded = true
-      } else {
-        this.sidebarAttr.visible = true
-      }
+  }
+
+  @settings.Getter public colortheme!: ITheme
+  // @settings.Mutation public setSelectionDepots!: (s: Array<string>) => void
+
+  @Watch('$mq'/* , { deep: true } */)
+  mqChanged () { this.updateSidebarAttr() }
+
+  updateSidebarAttr () {
+    if ((this as any).$mq === 'mobile') {
+      this.sidebarAttr.visible = false
+      this.sidebarAttr.expanded = true
+    } else {
+      this.sidebarAttr.visible = true
     }
   }
-})
+}
 
 /* WARN  in ./layouts/default.vue?vue&type=script&lang=ts&
 

@@ -38,7 +38,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/axios'
+    '~/plugins/axios',
+    { src: '~/plugins/vuex-persist', ssr: false }
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -60,15 +61,15 @@ export default {
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    [
-      'nuxt-mq',
-      {
-        breakpoints: {
-          mobile: 850,
-          desktop: Infinity
-        }
+    ['nuxt-mq', {
+      // Default breakpoint for SSR
+      // defaultBreakpoint: 'mobile',
+      breakpoints: {
+        // mobile: 850, // should also be updated in Bar/BTop.vue on change!
+        mobile: 767.98, // then compatible with bootstrap breakpoint 'md'
+        desktop: Infinity
       }
-    ]
+    }]
   ],
   bootstrapVue: {
     // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)
@@ -82,6 +83,12 @@ export default {
     port: 4447,
     prefix: '/webgui',
     progress: false
+    // headers: {
+    //   common: {
+    //     // 'Accept': 'application/json, text/plain, */*',
+    //     'Cache-Control': 'no-cache'
+    //   },
+    // }
     // // |--> default is 'true', but otherwise it is not a "simple request"
     // // and causes a CORS preflight error on firefox and safari-based browser
     // // alternative would be using proxy, but is not supported in static applications

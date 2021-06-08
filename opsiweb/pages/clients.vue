@@ -1,6 +1,7 @@
 <template>
+  <!-- shows the clients table  -->
   <div class="container">
-    <ViewVDepots />
+    <ViewVClients />
   </div>
 </template>
 

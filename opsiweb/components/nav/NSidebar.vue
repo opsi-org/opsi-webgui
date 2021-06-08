@@ -1,6 +1,6 @@
 <template>
   <div>
-    <span style="color:blue">Note: Edit navItems route in components/nav/NSidebar</span>
+    <!-- TODO: Edit navItems route in components/nav/NSidebar -->
     <b-nav vertical tabs class="sidemenu_nav">
       <span v-for="catogery in navItems" :key="catogery.title">
         <NavNTitle :expanded="expanded" :title="catogery.title" />
@@ -48,7 +48,7 @@ export default Vue.extend({
               icon: 'layout-split',
               submenu: [
                 { title: 'withchild-All', route: '/testtwocolumn' },
-                { title: 'Child1', route: '/testtwocolumnchild1' }
+                { title: 'Child1', route: '/testtwocolumn/testchild1' }
               ]
             }
           ]
@@ -65,30 +65,32 @@ export default Vue.extend({
           menu: [
             {
               title: 'Depots',
+              route: '/depots/',
               icon: 'hdd-stack-fill',
               submenu: [
-                { title: 'All Depots', route: '/' },
-                { title: 'Configuration', route: '/' },
-                { title: 'Logs', route: '/' }
+                { title: 'All Depots', route: '/depots' },
+                { title: 'Configuration', route: '/depots/config' },
+                { title: 'Logs', route: '/depots/log' }
               ]
             },
             {
               title: 'Clients',
+              route: '/clients/',
               icon: 'laptop',
               submenu: [
-                { title: 'All Clients', route: '/' },
-                { title: 'Add New', route: '/' },
-                { title: 'Configuration', route: '/' },
-                { title: 'Logs', route: '/' }
+                { title: 'All Clients', route: '/clients/' },
+                { title: 'Add New', route: '/clients/clientnew' },
+                { title: 'Configuration', route: '/clientsconfig' },
+                { title: 'Logs', route: '/clients/log' }
               ]
             },
-            { title: 'Products', icon: 'grid-fill', route: '/' }
+            { title: 'Products', icon: 'grid-fill', route: '/products/' }
           ]
         },
         {
           title: 'Configure',
           menu: [
-            { title: 'Settings', icon: 'gear-fill', route: '/' },
+            { title: 'Settings', icon: 'gear-fill', route: '/settings' },
             { title: 'Index page', icon: 'collection-fill', route: '/' }
           ]
         }
