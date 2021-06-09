@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar class="pageheader border">
+    <b-navbar class="pageheader">
       <span v-if="navbartype=='collapse'">
         <b-icon v-if="collapsed" icon="chevron-double-down" />
         <b-icon v-else icon="chevron-double-right" />
