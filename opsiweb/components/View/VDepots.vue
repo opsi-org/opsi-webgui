@@ -35,14 +35,14 @@
                 :click="routeRedirectWith"
               />
 
-              <ButtonBTNRowLinkTo
+              <!-- <ButtonBTNRowLinkTo
                 title="log"
                 icon="file-earmark-text"
                 to="/depots/log"
                 :ident="row.item.ident"
                 :pressed="isRouteActive"
                 :click="routeRedirectWith"
-              />
+              /> -->
             </template>
           </TableTTable>
           <BarBPagination

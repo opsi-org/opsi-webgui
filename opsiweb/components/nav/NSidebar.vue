@@ -55,8 +55,8 @@ export default Vue.extend({
               icon: 'hdd-stack-fill',
               submenu: [
                 { title: 'All Depots', route: '/depots' },
-                { title: 'Configuration', route: '/depots/config' },
-                { title: 'Logs', route: '/depots/log' }
+                { title: 'Configuration', route: '/depots/config' }
+                // { title: 'Logs', route: '/depots/log' }
               ]
             },
             {
