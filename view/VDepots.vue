@@ -19,11 +19,8 @@
             :no-local-sorting="true"
             :sort-by.sync="tableData.sortBy"
             :sort-desc.sync="tableData.sortDesc"
-            sort-icon-left
             select-mode="multi"
             selectable
-            striped
-            hover
           >
             <template #cell(actions)="row">
               <ButtonBTNRowLinkTo
