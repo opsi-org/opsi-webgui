@@ -3,7 +3,7 @@
     <template #parent>
       <div>
         <div class="mt-3">
-          <InputIFilter v-model="tableData.filterQuery" />
+          <InputIFilter :data="tableData" />
           Selection: {{ selectionDepots }} <br>
           rowID {{ rowId }}
           <TableTTable
@@ -19,11 +19,8 @@
             :no-local-sorting="true"
             :sort-by.sync="tableData.sortBy"
             :sort-desc.sync="tableData.sortDesc"
-            sort-icon-left
             select-mode="multi"
             selectable
-            striped
-            hover
           >
             <template #cell(actions)="row">
               <ButtonBTNRowLinkTo
@@ -103,7 +100,11 @@ export default class VDepots extends Vue {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 
-  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () {
+    // eslint-disable-next-line no-console
+    console.log('tableData changed')
+    this.$fetch()
+  }
 
   async fetch () {
     this.isLoading = true

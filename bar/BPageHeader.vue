@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar class="pageheader">
+    <b-navbar :class="{pageheader: $mq === 'desktop', pageheader_wrap: $mq === 'mobile'}">
       <span v-if="navbartype=='collapse'">
         <b-icon v-if="collapsed" icon="chevron-double-down" />
         <b-icon v-else icon="chevron-double-right" />
@@ -9,8 +9,6 @@
       <slot name="filter" />
       <slot name="selection" />
       <slot name="log" />
-      <!-- <slot name="logtype" />
-      <slot name="loglevel" /> -->
       <b-navbar-nav class="ml-auto">
         <slot name="clientdelete" />
         <slot name="clientrename" />
@@ -51,5 +49,9 @@ export default Vue.extend({
 <style>
 .pageheader{
   height: var(--height-navbar) !important;
+}
+.pageheader_wrap {
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>

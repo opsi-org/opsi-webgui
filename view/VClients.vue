@@ -3,9 +3,9 @@
     <template #parent>
       <div>
         <div class="mt-3">
-          <!-- <b-form-input v-model="tableData.filterQuery" /> -->
+          Filter: {{tableData.filterQuery}}
           <div class="inline">
-            <InputIFilter v-model="tableData.filterQuery" />
+            <InputIFilter :data="tableData" />
             <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
             Selection: {{ selectionClients }} <br>
             rowID {{ rowId }}
@@ -23,11 +23,8 @@
             :no-local-sorting="true"
             :sort-by.sync="tableData.sortBy"
             :sort-desc.sync="tableData.sortDesc"
-            sort-icon-left
             select-mode="multi"
             selectable
-            striped
-            hover
           >
             <template #cell(actions)="row">
               <ButtonBTNRowLinkTo
