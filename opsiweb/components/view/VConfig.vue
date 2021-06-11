@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- TODO: Replace tableitems and hostparam with real data from backend  -->
+    <!-- TODO: Replace tableitems and hostparam(configserver's) with real data from backend  -->
     <BarBPageHeader v-if="asChild" :title="'Config - ' + id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #selection>
