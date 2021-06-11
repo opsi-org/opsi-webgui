@@ -10,7 +10,7 @@
     class="fixed_column_selection widthmax"
   >
     <template #button-content>
-      {{(request.length == 1) ? request[0]:">1" }}
+      {{(request.length == 1) ? request[0]:"mixed" }}
     </template>
 
     <!-- @click="actionRequestProducts=a; addSelectedToChanged(actionRequestProducts)" -->
@@ -27,11 +27,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-import { ITableRowProducts } from '~/types/tsettings'
-@Component export default class DDProductRequest extends BDropdown {
-  @Prop({ }) rowitem!: ITableRowProducts|undefined
+import { ITableRowItemProducts } from '~/types/tsettings'
+@Component
+export default class DDProductRequest extends BDropdown {
+  @Prop({ }) rowitem!: ITableRowItemProducts|undefined
   @Prop({ default: () => { return ['---'] } }) request!: Array<string>
   @Prop({ default: () => { return ['---', 'none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
   @Prop({ default: () => { return () => {} } }) save!: Function
