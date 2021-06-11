@@ -12,11 +12,12 @@
       alt="Show column"
     >
       <template #button-content>
-        <b-icon-hdd-stack-fill /> Depots
+        <b-icon-hdd-stack-fill /> Clients
       </template>
       <li
         id="selectableColumns-group"
         name="selectableColumns"
+        class="ddclientIds-li"
       >
         <a
           v-for="obj in fetchedData"
@@ -42,20 +43,21 @@ import { Component, Vue, namespace, Watch } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component export default class DDDepotIds extends Vue {
-  opsiconfigserver:string = ''
+  // opsiconfigserver:string = ''
   fetchedData: Array<string> = []
   selectionLocal: Array<string> = []
   // @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('selectionLocal', { deep: true }) selectionChanged () {
-    if (this.selectionLocal.length === 0) {
-      this.selectionLocal.push(this.opsiconfigserver)
-    }
-    this.setSelectionDepots([...this.selectionLocal])
-    this.setSelectionClients([])
+    // if (this.selectionLocal.length === 0) {
+    //   this.selectionLocal.push(this.opsiconfigserver)
+    // }
+    this.setSelectionClients([...this.selectionLocal])
+    // this.setSelectionClients([])
   }
 
   handleItem (key: string) {
@@ -67,15 +69,19 @@ const selections = namespace('selections')
   }
 
   async fetch () {
-    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
-    this.fetchedData = (await this.$axios.$post('/api/opsidata/depotsIds')).result
-    this.selectionLocal = [...this.selectionDepots]
+    // this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
+    this.fetchedData = (await this.$axios.$post('/api/opsidata/clientIds')).result
+    this.selectionLocal = [...this.selectionClients]
   }
 }
 </script>
 
 <style scoped>
-
+.ddclientIds-li {
+  max-height: 400px !important;
+  overflow: auto;
+  /* width: 100px; */
+}
 .dropdown-item {
   display:flex !important;
 }
