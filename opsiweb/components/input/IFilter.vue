@@ -1,16 +1,23 @@
 <template>
-  <b-form-input v-bind="$props" placeholder="Filter table" aria-label="Filter" />
+  <div>
+    <b-form-input
+      v-model="data.filterQuery"
+      v-bind="$props"
+      placeholder="Filter table"
+      aria-label="Filter"
+    />
+  </div>
 </template>
 
 <script lang="ts">
-import { Component } from 'nuxt-property-decorator'
+import { Component, Prop } from 'nuxt-property-decorator'
 import { BFormInput } from 'bootstrap-vue'
 // import { ITableRow, ITableHeaders } from '~/types/tsettings'
 // const selections = namespace('selections')
 
 @Component
 export default class IFilter extends BFormInput {
-  // @Prop({ }) datakey!: string
+  @Prop({ }) data!: string
 }
 </script>
 
