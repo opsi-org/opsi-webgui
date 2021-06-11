@@ -22,6 +22,12 @@ export interface ITableRow {
     };
 }
 
+export interface ITableRowProducts {
+    item: {
+        ident: string
+        request: string
+    }
+}
 export interface ITableData {
     pageNumber: number,
     setPageNumber: Function,
