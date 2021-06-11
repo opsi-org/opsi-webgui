@@ -1,12 +1,20 @@
 <template>
   <div>
+    <!-- TODO: Need backend method like '/api/opsidata/clientIds' for fetching only list of clientIds  -->
     <BarBPageHeader v-if="asChild" :title="'Log - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #filter>
         <b-form-input v-model.trim="filterQuery" placeholder="Filter" @keyup="filterLog" />
       </template>
       <template v-if="!asChild" #selection>
-        <b-form-select />
+        {{ fetchClientIds () }}
+        <b-form-select v-model="id" :options="clientIds">
+          <template #first>
+            <b-form-select-option :value="null" disabled>
+              -- Please select a Client --
+            </b-form-select-option>
+          </template>
+        </b-form-select>
       </template>
       <template #log>
         <b-form-select
@@ -78,13 +86,18 @@ export default class VClientLog extends Vue {
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   logTypes: Array<string> = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
   isLoading: boolean = false
+  clientIds: Array<string> = []
 
   @Watch('logtype', { deep: true }) logtypeChanged () { this.getLog(this.id, this.logtype) }
   @Watch('id', { deep: true }) idChanged () { this.getLog(this.id, this.logtype) }
   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
 
   beforeMount () {
-    if (this.logtype) { this.getLog(this.id, this.logtype) }
+    if (this.logtype && this.id) { this.getLog(this.id, this.logtype) }
+  }
+
+  fetchClientIds () {
+    this.clientIds = ['agorumcore-tst.uib.local', 'akunde1.uib.local']
   }
 
   filterLog () {
@@ -110,13 +123,9 @@ export default class VClientLog extends Vue {
     this.logrequest.selectedLogType = logtype
     await this.$axios.post('/api/opsidata/log', JSON.stringify(this.logrequest))
       .then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response)
         this.logResult = response.data.result
         this.filteredLog = this.logResult
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
         this.logResult = error
         this.filteredLog = this.logResult
       })
