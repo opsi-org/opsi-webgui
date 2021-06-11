@@ -20,39 +20,37 @@
         />
       </template>
     </BarBPageHeader>
-    <b-card no-body class="border-0 container-fluid">
-      <IconILoading v-if="isLoading" />
-      <b-card-text v-else>
-        <div v-if="filteredLog == ''">
-          No Logs Found !
-        </div>
-        <div
-          v-for="(log, index) in filteredLog"
-          :key="index"
-          :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
+    <IconILoading v-if="isLoading" />
+    <div v-else class="container-fluid result-scrollable">
+      <div v-if="filteredLog == ''" class="container-fluid">
+        No Logs Found !
+      </div>
+      <div
+        v-for="(log, index) in filteredLog"
+        :key="index"
+        :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
+      >
+        <span
+          v-if="index != 0"
+          style="font-family: monospace;"
+          :class="{
+            'text-secondary': true,
+            'text-secondary': log.startsWith('[0]'),
+            'text-secondary': log.startsWith('[1]'),
+            'text-danger': log.startsWith('[2]'),
+            'text-warning': log.startsWith('[3]'),
+            'text-primary': log.startsWith('[4]'),
+            'text-success': log.startsWith('[5]'),
+            'text-secondary': log.startsWith('[6]'),
+            'text-muted': log.startsWith('[7]'),
+            'text-muted': log.startsWith('[8]'),
+            'text-muted': log.startsWith('[9]')
+          }"
         >
-          <span
-            v-if="index != 0"
-            style="font-family: monospace;"
-            :class="{
-              'text-secondary': true,
-              'text-secondary': log.startsWith('[0]'),
-              'text-secondary': log.startsWith('[1]'),
-              'text-danger': log.startsWith('[2]'),
-              'text-warning': log.startsWith('[3]'),
-              'text-primary': log.startsWith('[4]'),
-              'text-success': log.startsWith('[5]'),
-              'text-secondary': log.startsWith('[6]'),
-              'text-muted': log.startsWith('[7]'),
-              'text-muted': log.startsWith('[8]'),
-              'text-muted': log.startsWith('[9]')
-            }"
-          >
-            ({{ index }}) {{ log }}
-          </span>
-        </div>
-      </b-card-text>
-    </b-card>
+          ({{ index }}) {{ log }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -125,5 +123,9 @@ export default class VClientLog extends Vue {
 <style>
 .loglevel_spinbutton{
   min-width: 160px !important;
+}
+.result-scrollable{
+  height:700px;
+  overflow-y: scroll;
 }
 </style>
