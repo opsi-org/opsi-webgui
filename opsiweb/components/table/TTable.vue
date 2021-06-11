@@ -3,6 +3,9 @@
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
+    sort-icon-left
+    striped
+    hover
     @row-clicked="rowChanged"
   >
     <template #head(sel)="{}">
