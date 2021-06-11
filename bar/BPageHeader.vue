@@ -7,6 +7,7 @@
       </span>
       <b>{{ title }}</b>
       <slot name="filter" />
+      <slot name="selection" />
       <slot name="log" />
       <!-- <slot name="logtype" />
       <slot name="loglevel" /> -->
