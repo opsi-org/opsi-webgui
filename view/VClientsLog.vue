@@ -5,6 +5,9 @@
       <template #filter>
         <b-form-input v-model.trim="filterQuery" placeholder="Filter" @keyup="filterLog" />
       </template>
+      <template v-if="!asChild" #selection>
+        <b-form-select />
+      </template>
       <template #log>
         <b-form-select
           v-model="logtype"
