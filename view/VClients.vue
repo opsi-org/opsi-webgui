@@ -3,7 +3,7 @@
     <template #parent>
       <div>
         <div class="mt-3">
-          Filter: {{tableData.filterQuery}}
+          Filter: {{ tableData.filterQuery }}
           <div class="inline">
             <InputIFilter :data="tableData" />
             <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
