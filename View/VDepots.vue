@@ -54,7 +54,7 @@
       </div>
     </template>
     <template #child>
-      <NuxtChild :id="rowId" />
+      <NuxtChild :id="rowId" :as-child="true" />
     </template>
   </GridGTwoColumnLayout>
 </template>
