@@ -1,6 +1,4 @@
 <template>
-  <!-- Same as clients/config but shows the only the config column (without parent 'clients') -->
-  <!-- breadcrumb is changed from clientsconfig to config -->
   <div class="container-fluid">
     <ViewVConfig :as-child="false" />
   </div>
@@ -9,7 +7,7 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PClientsconfig extends Vue {
+export default class PDepotsconfig extends Vue {
 }
 </script>
 

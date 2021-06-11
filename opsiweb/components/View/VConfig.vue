@@ -9,20 +9,29 @@
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
     <template v-else>
-      <TableTDefault :tableitems="tableitems" />
       <template v-if="id === opsiconfigserver">
-        Hello from config server
-        <!-- <span v-for="catogery in hostparam" :key="catogery.title">
-          {{ category }} -->
-          <!-- <CollapseCTable :title="catogery.title" :tableitems="catogery.items" /> -->
-        <!-- </span> -->
+        <CollapseCContent title="General">
+          <template #content>
+            <TableTDefault :tableitems="tableitems" />
+          </template>
+        </CollapseCContent>
+        <CollapseCContent title="Host Parameters">
+          <template #content>
+            <span v-for="catogery in hostparam" :key="catogery.title">
+              <CollapseCTable :title="catogery.title" :tableitems="catogery.items" />
+            </span>
+          </template>
+        </CollapseCContent>
+      </template>
+      <template v-else>
+        <TableTDefault :tableitems="tableitems" />
       </template>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 @Component
 export default class VClientConfig extends Vue {
   @Prop({ }) id!: string
@@ -37,6 +46,9 @@ export default class VClientConfig extends Vue {
 
   beforeMount () {
     this.getConfig()
+  }
+
+  @Watch('id', { deep: true }) idChanged () {
     if (this.id === this.opsiconfigserver) {
       this.getHostParam()
     }
