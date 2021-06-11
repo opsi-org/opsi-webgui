@@ -1,24 +1,17 @@
 <template>
   <div>
-    <BarBPageHeader title="Log" closeroute="/clients" />
-    <h1>Client LOG</h1>
-    <p>Hello {{ id }} !</p>
+    <ViewVClientsLog :id="id" :as-child="asChild" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PClientLog extends Vue {
+export default class PClientLogColumn extends Vue {
   @Prop({ }) id!: string
-  mounted () {
-    if (this.id === '') {
-      this.$router.push({ path: '/clients/' })
-    }
-  }
+  @Prop({ default: false }) asChild!: string
 }
 </script>
 
 <style>
-
 </style>

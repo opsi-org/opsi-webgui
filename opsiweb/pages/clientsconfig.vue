@@ -1,7 +1,7 @@
 <template>
   <!-- Same as clients/config but shows the only the config column (without parent 'clients') -->
   <!-- breadcrumb is changed from clientsconfig to config -->
-  <div class="container">
+  <div class="container-fluid">
     <ViewVClientsConfig :as-child="false" />
   </div>
 </template>
