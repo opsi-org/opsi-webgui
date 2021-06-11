@@ -12,9 +12,10 @@
             Selection: {{ selectionClients }} <br />
             rowID {{ rowId }}
           </div>
-          <TableTTable
+          <TableTCollapseable
             id="tableproducts"
             datakey="productId"
+            :title="'Localboot products'"
             :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
             :headers="headerData"
             :items="Object.values(fetchedData)"
@@ -28,13 +29,20 @@
             select-mode="multi"
             selectable
           >
-            <!-- <template #cell(version)="row">
-              {{row.item.versionDepot}}
-            </template> -->
+            <template #cell(version)="row">
+              <TableCellTCSpan :list2text="row.item.versionDepot" />
+            </template>
+            <template #cell(name)="row">
+              <TableCellTCSpan :list2text="row.item.name" />
+            </template>
+            <template #cell(productId)="row">
+              <TableCellTCSpan :list2text="row.item.productId" />
+            </template>
             <template #head(request)>
               <DropdownDDProductRequest
                 v-if="selectionClients.length>0"
                 :title="'Set actionrequest for all selected products'"
+                :save="saveActionRequests"
               />
             </template>
             <template #cell(request)="row">
@@ -47,18 +55,15 @@
               />
               <!-- {{row.item.versionDepot}} -->
             </template>
-          </TableTTable>
-          <BarBPagination
-            :tabledata="tableData"
-            :total-rows="fetchedData.total"
-            aria-controls="tableclients"
-          />
-        </div>
-        <div>
-          {{ selectionDepots }}
-        </div>
-        <div>
-          {{ selectionClients }}
+
+            <template #pagination>
+              <BarBPagination
+                :tabledata="tableData"
+                :total-rows="fetchedData.total"
+                aria-controls="tableclients"
+              />
+            </template>
+          </TableTCollapseable>
         </div>
       </div>
     </template>
@@ -70,7 +75,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders, ITableRowProducts } from '~/types/tsettings'
+import { ITableData, ITableHeaders, ITableRowItemProducts } from '~/types/tsettings'
 const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,
@@ -97,7 +102,7 @@ export default class VProducts extends Vue {
     productId: { label: 'Id', key: 'productId', visible: true, _fixed: true },
     name: { label: 'Desc', key: 'name', visible: true },
     request: { label: 'request', key: 'request', visible: true },
-    versionDepot: { label: 'version', key: 'versionDepot', visible: true },
+    version: { label: 'version', key: 'version', visible: true }
     // macAddress: { label: 'MAC', key: 'macAddress', visible: false },
     // _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     // version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
@@ -132,9 +137,17 @@ export default class VProducts extends Vue {
     this.isLoading = false
   }
 
-  saveActionRequest (rowitem: ITableRowProducts, newrequest:String) {
-
+  saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     rowitem.request = [newrequest]
+  }
+
+  saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
+    console.log('save action Request for all selected clients and products')
+    console.log(rowitem)
+    console.log(newrequest)
+    // for (const i in this.selectionProducts) {
+    //   this.fetchedData[this.selectionProducts[i]].request = newrequest
+    // }
   }
 
   routeRedirectWith (to: string, rowIdent: string) {

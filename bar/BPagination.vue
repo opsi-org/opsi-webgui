@@ -1,4 +1,5 @@
 <template>
+    <!-- v-if="$props.totalRows > tabledata.perPage" -->
   <b-pagination
     v-model="localPageNumber"
     class="BarBPagination"
