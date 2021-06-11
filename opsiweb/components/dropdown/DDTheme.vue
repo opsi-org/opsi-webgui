@@ -6,9 +6,7 @@
       variant="secondary"
       class="dd-dd-theme"
       :text="theme.title"
-      :size="size"
       alt="select theme"
-      :dropright="dropright"
     >
       <b-dropdown-item
         v-for="t in themes"
