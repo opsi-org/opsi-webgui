@@ -3,9 +3,9 @@
     <template #parent>
       <div>
         <div class="mt-3">
-          <!-- <b-form-input v-model="tableData.filterQuery" /> -->
+          Filter: {{tableData.filterQuery}}
           <div class="inline">
-            <InputIFilter v-model="tableData.filterQuery" />
+            <InputIFilter :data="tableData" />
             <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
             Selection: {{ selectionClients }} <br />
             rowID {{ rowId }}

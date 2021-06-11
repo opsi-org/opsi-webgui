@@ -3,7 +3,7 @@
     <template #parent>
       <div>
         <div class="mt-3">
-          <InputIFilter v-model="tableData.filterQuery" />
+          <InputIFilter :data="tableData" />
           Selection: {{ selectionDepots }} <br />
           rowID {{ rowId }}
           <TableTTable
@@ -100,7 +100,10 @@ export default class VDepots extends Vue {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 
-  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () {
+    console.log('tableData changed')
+    this.$fetch()
+  }
 
   async fetch () {
     this.isLoading = true
