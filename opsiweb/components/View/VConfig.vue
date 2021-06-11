@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- TODO: Replace tableitems with real data from backend  -->
+    <!-- TODO: Replace tableitems and hostparam with real data from backend  -->
     <BarBPageHeader v-if="asChild" :title="'Config - ' + id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #selection>
@@ -8,7 +8,7 @@
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <template v-else>
+    <div v-else class="container-fluid result-scrollable">
       <template v-if="id === opsiconfigserver">
         <CollapseCContent title="General">
           <template #content>
@@ -26,7 +26,7 @@
       <template v-else>
         <TableTDefault :tableitems="tableitems" />
       </template>
-    </template>
+    </div>
   </div>
 </template>
 
@@ -52,6 +52,10 @@ export default class VClientConfig extends Vue {
     if (this.id === this.opsiconfigserver) {
       this.getHostParam()
     }
+  }
+
+  async fetch () {
+    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
   }
 
   getConfig () {
@@ -98,10 +102,6 @@ export default class VClientConfig extends Vue {
       }
     ]
     this.isLoading = false
-  }
-
-  async fetch () {
-    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
   }
 }
 </script>
