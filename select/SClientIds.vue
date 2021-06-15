@@ -10,12 +10,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class SClientIds extends Vue {
-  @Prop({ }) id!: string
-
   clientIds: Array<string> = []
   idselection: string = ''
 
