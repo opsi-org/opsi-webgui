@@ -1,17 +1,17 @@
 <template>
   <div class="container-fluid">
-    <ViewVClientsLog :id="id" :as-child="false">
+    <ViewVConfig :id="id" :as-child="false">
       <template slot="IDSelection">
-        <SelectSClientIds :id.sync="id" />
+        <SelectSDepotIds :id.sync="id" />
       </template>
-    </ViewVClientsLog>
+    </ViewVConfig>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PClientsLog extends Vue {
+export default class PDepotsconfig extends Vue {
   id: string = ''
 }
 </script>

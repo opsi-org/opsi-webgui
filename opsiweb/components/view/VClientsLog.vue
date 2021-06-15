@@ -1,40 +1,22 @@
 <template>
   <div>
-    <!-- TODO: Need backend method like '/api/opsidata/clientIds' for fetching only list of clientIds  -->
     <BarBPageHeader v-if="asChild" :title="'Log - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #filter>
         <b-form-input v-model.trim="filterQuery" placeholder="Filter" @keyup="filterLog" />
       </template>
       <template v-if="!asChild" #selection>
-        {{ fetchClientIds () }}
-        <b-form-select v-model="id" :options="clientIds">
-          <template #first>
-            <b-form-select-option :value="null" disabled>
-              -- Please select a Client --
-            </b-form-select-option>
-          </template>
-        </b-form-select>
+        <slot name="IDSelection" />
       </template>
       <template #log>
-        <b-form-select
-          v-model="logtype"
-          :options="logTypes"
-        />
-        <b-form-spinbutton
-          v-model="loglevel"
-          class="loglevel_spinbutton"
-          min="0"
-          max="8"
-          step="1"
-          inline
-        />
+        <SelectSLogtype :logtype.sync="logtype" />
+        <SpinbuttonSBLoglevel :loglevel.sync="loglevel" />
       </template>
     </BarBPageHeader>
-    <b-card no-body class="border-0 container-fluid">
-      <IconILoading v-if="isLoading" />
-      <b-card-text v-else>
-        <div v-if="filteredLog == ''">
+    <IconILoading v-if="isLoading" />
+    <DivDScrollResult v-else>
+      <template slot="content">
+        <div v-if="filteredLog == ''" class="container-fluid">
           No Logs Found !
         </div>
         <div
@@ -62,8 +44,8 @@
             ({{ index }}) {{ log }}
           </span>
         </div>
-      </b-card-text>
-    </b-card>
+      </template>
+    </DivDScrollResult>
   </div>
 </template>
 
@@ -79,25 +61,19 @@ export default class VClientLog extends Vue {
   @Prop({ default: false }) 'asChild'!: string
 
   logtype: string = 'opsiconfd'
-  loglevel: number = 5
+  loglevel: number = 0
   logResult: Array<string> = []
   filteredLog: Array<string> = []
   filterQuery: string = ''
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
-  logTypes: Array<string> = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
   isLoading: boolean = false
-  clientIds: Array<string> = []
 
-  @Watch('logtype', { deep: true }) logtypeChanged () { this.getLog(this.id, this.logtype) }
-  @Watch('id', { deep: true }) idChanged () { this.getLog(this.id, this.logtype) }
+  @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
+  @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
 
   beforeMount () {
     if (this.logtype && this.id) { this.getLog(this.id, this.logtype) }
-  }
-
-  fetchClientIds () {
-    this.clientIds = ['agorumcore-tst.uib.local', 'akunde1.uib.local']
   }
 
   filterLog () {
@@ -115,7 +91,7 @@ export default class VClientLog extends Vue {
     const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
     const result = logrow.match(rxSelf2)
     return !!result
-  }// end isLoglovelSmaller
+  }
 
   async getLog (id: string, logtype: string) {
     this.isLoading = true
@@ -130,12 +106,9 @@ export default class VClientLog extends Vue {
         this.filteredLog = this.logResult
       })
     this.isLoading = false
-  } // end getLog
+  }
 }
 </script>
 
 <style>
-.loglevel_spinbutton{
-  min-width: 160px !important;
-}
 </style>
