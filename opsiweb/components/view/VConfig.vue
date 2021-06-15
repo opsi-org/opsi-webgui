@@ -4,7 +4,7 @@
     <BarBPageHeader v-if="asChild" :title="'Config - ' + id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #selection>
-        <b-form-select />
+        <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
@@ -37,7 +37,6 @@ export default class VClientConfig extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string
-  @Prop({ default: false }) 'asConfigDepot'!: string
 
   isLoading: boolean = false
   tableitems:Array<object> = []

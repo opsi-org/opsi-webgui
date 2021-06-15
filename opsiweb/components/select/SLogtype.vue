@@ -9,12 +9,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class SLogtype extends Vue {
-  // @Prop({ }) logtype!: string
-
   logTypes: Array<string> = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
   type: string = 'opsiconfd'
 }

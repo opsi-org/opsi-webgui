@@ -13,8 +13,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class SDepotIds extends Vue {
-  // @Prop({ }) id!: string
-
   depotIds: Array<string> = []
   idselection: string = ''
 
