@@ -91,7 +91,7 @@ export default class VClientLog extends Vue {
     const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
     const result = logrow.match(rxSelf2)
     return !!result
-  }// end isLoglovelSmaller
+  }
 
   async getLog (id: string, logtype: string) {
     this.isLoading = true
@@ -106,7 +106,7 @@ export default class VClientLog extends Vue {
         this.filteredLog = this.logResult
       })
     this.isLoading = false
-  } // end getLog
+  }
 }
 </script>
 
