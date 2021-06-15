@@ -8,25 +8,27 @@
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <div v-else class="container-fluid result-scrollable">
-      <template v-if="id === opsiconfigserver">
-        <CollapseCContent title="General">
-          <template #content>
-            <TableTDefault :tableitems="tableitems" />
-          </template>
-        </CollapseCContent>
-        <CollapseCContent title="Host Parameters">
-          <template #content>
-            <span v-for="catogery in hostparam" :key="catogery.title">
-              <CollapseCTable :title="catogery.title" :tableitems="catogery.items" />
-            </span>
-          </template>
-        </CollapseCContent>
+    <DivDScrollResult>
+      <template slot="content">
+        <template v-if="id === opsiconfigserver">
+          <CollapseCContent title="General">
+            <template #content>
+              <TableTDefault :tableitems="tableitems" />
+            </template>
+          </CollapseCContent>
+          <CollapseCContent title="Host Parameters">
+            <template #content>
+              <span v-for="catogery in hostparam" :key="catogery.title">
+                <CollapseCTable :title="catogery.title" :tableitems="catogery.items" />
+              </span>
+            </template>
+          </CollapseCContent>
+        </template>
+        <template v-else>
+          <TableTDefault :tableitems="tableitems" />
+        </template>
       </template>
-      <template v-else>
-        <TableTDefault :tableitems="tableitems" />
-      </template>
-    </div>
+    </DivDScrollResult>
   </div>
 </template>
 

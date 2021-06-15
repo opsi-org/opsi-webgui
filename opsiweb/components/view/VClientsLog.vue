@@ -14,7 +14,7 @@
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <DivDScrollable v-else>
+    <DivDScrollResult v-else>
       <template slot="content">
         <div v-if="filteredLog == ''" class="container-fluid">
           No Logs Found !
@@ -45,7 +45,7 @@
           </span>
         </div>
       </template>
-    </DivDScrollable>
+    </DivDScrollResult>
   </div>
 </template>
 
