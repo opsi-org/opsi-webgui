@@ -41,12 +41,12 @@ export default class DDProductRequest extends BDropdown {
   @selections.Getter public selectionClients!: Array<string>
   get visibleRequest () {
     if (this.rowitem === undefined) {
-      return '<no rowitem>'
+      return '---'
     }
     if (!this.request || !this.request[0]) {
       return 'none'
     }
-    if (this.rowitem.selectedClients === undefined) {
+    if (this.rowitem.selectedClients === undefined || this.rowitem.selectedClients === null) {
       return 'none'
     }
     if (this.rowitem.selectedClients.length === 0) {
