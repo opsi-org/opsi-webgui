@@ -1,9 +1,13 @@
 <template>
   <div>
-    <b-badge v-bind="$props">
+    <b-badge :id="`TCBadgeCompares_${type}_hover_${rowid}`">
       {{ text }}
     </b-badge>
-    {{(text == 'mixed')? tooltiptext:''}}
+    <!-- {{(text == 'mixed')? tooltiptext:''}} -->
+    <TooltipTTProductCell
+      :target="`TCBadgeCompares_${type}_hover_${rowid}`"
+      :details="tooltiptext"
+    />
   </div>
 </template>
 
@@ -14,6 +18,8 @@ import { mapValues2Value, mapValues2Objects } from '~/helpers/htable'
 
 @Component
 export default class TCSpan extends Vue {
+  @Prop({ }) rowid!: string
+  @Prop({ }) type!: string
   @Prop({ }) values!: Array<string>
   @Prop({ }) objects!: Array<string>
   @Prop({ }) objectsorigin!: Array<string>
