@@ -30,13 +30,22 @@
             selectable
           >
             <template #cell(version)="row">
-              <TableCellTCSpan :list2text="row.item.depotVersions" />
+              <TableCellTCBadge :list2text="row.item.depotVersions" />
+            </template>
+
+            <template #cell(installationStatus)="row">
+              <TableCellTCBadge
+                v-if="(selectionClients && row.item.selectedClients)"
+                :values="row.item.installationStatus || []"
+                :objects="row.item.selectedClients || []"
+                :objectsorigin="selectedClients || []"
+              />
             </template>
             <!-- <template #cell(name)="row">
-              <TableCellTCSpan :list2text="row.item.name" />
+              <TableCellTCBadge :list2text="row.item.name" />
             </template> -->
             <!-- <template #cell(productId)="row">
-              <TableCellTCSpan :list2text="row.item.productId" />
+              <TableCellTCBadge :list2text="row.item.productId" />
             </template> -->
             <template #head(actionRequest)>
               <DropdownDDProductRequest
@@ -78,7 +87,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders, ITableRowItemProducts } from '~/types/tsettings'
+import { ITableData, ITableHeaders, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,
@@ -106,8 +115,8 @@ export default class VProducts extends Vue {
     productId: { label: 'Id', key: 'productId', visible: true, _fixed: true },
     desc: { label: 'desc', key: 'desc', visible: false },
     name: { label: 'name', key: 'name', visible: false },
-    clientIds: { label: 'clientIds', key: 'selectedClients', visible: true },
-    depotIds: { label: 'depotIds', key: 'selectedDepots', visible: false },
+    selectedClients: { label: 'clientIds', key: 'selectedClients', visible: false },
+    selectedDepots: { label: 'depotIds', key: 'selectedDepots', visible: false },
     installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: true },
     actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: true },
     version: { label: 'version', key: 'version', visible: true },
@@ -115,7 +124,7 @@ export default class VProducts extends Vue {
     // _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     // version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
     // actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false },
-    rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
+    rowactions: { key: 'rowactions', label: '-', visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionClients!: Array<string>
