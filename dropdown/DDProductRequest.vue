@@ -29,7 +29,6 @@
 <script lang="ts">
 import { Component, namespace, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-import { IObjectString2String } from '~/types/tsettings'
 import { ITableRowItemProducts } from '~/types/ttable'
 import { mapValues2Value, mapValues2Objects } from '~/helpers/htable'
 const selections = namespace('selections')
@@ -52,7 +51,7 @@ export default class DDProductRequest extends BDropdown {
     if (this.rowitem === undefined) {
       return
     }
-    return mapValues2Objects(this.request, this.rowitem.selectedClients as Array<string>)
+    return mapValues2Objects(this.request, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'None')
   }
 }
 </script>
