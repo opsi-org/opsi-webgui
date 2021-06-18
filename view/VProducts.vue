@@ -38,7 +38,7 @@
                 v-if="(selectionClients && row.item.selectedClients)"
                 :values="row.item.installationStatus || []"
                 :objects="row.item.selectedClients || []"
-                :objectsorigin="selectedClients || []"
+                :objectsorigin="selectionClients || []"
               />
             </template>
             <!-- <template #cell(name)="row">

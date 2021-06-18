@@ -31,6 +31,7 @@ import { Component, namespace, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { IObjectString2String } from '~/types/tsettings'
 import { ITableRowItemProducts } from '~/types/ttable'
+import { mapValues2Value, mapValues2Objects } from '~/helpers/htable'
 const selections = namespace('selections')
 @Component
 export default class DDProductRequest extends BDropdown {
@@ -44,48 +45,14 @@ export default class DDProductRequest extends BDropdown {
     if (this.rowitem === undefined) {
       return '---'
     }
-    if (!this.request || !this.request[0]) {
-      return 'none'
-    }
-    if (this.rowitem.selectedClients === undefined || this.rowitem.selectedClients === null) {
-      return 'none'
-    }
-    if (this.rowitem.selectedClients.length === 0) {
-      return 'none'
-    }
-    if (this.selectionClients.length === 1 && this.request.length === 1) {
-      return this.request[0]
-    }
-    if (this.selectionClients.length > 1 && this.request.length === 1) {
-      return (this.request[0] === 'none') ? 'none' : 'mixed'
-    }
-    if (this.selectionClients.length === this.rowitem.selectedClients.length) {
-      if (this.request.every(val => val === this.request[0])) {
-        return this.request[0]
-      }
-    }
-    if (this.request.every(val => val === 'none')) {
-      return 'none'
-    }
-
-    return 'mixed'
+    return mapValues2Value(this.request, this.rowitem.selectedClients as Array<string>, this.selectionClients)
   }
 
   get allRequests () {
     if (this.rowitem === undefined) {
       return
     }
-    if (!this.request || !this.request[0]) {
-      return
-    }
-    if (this.rowitem.selectedClients === undefined) {
-      return
-    }
-    const client2request: IObjectString2String = {}
-    for (const i in this.rowitem.selectedClients) {
-      client2request[this.rowitem.selectedClients[i]] = this.request[i]
-    }
-    return client2request
+    return mapValues2Objects(this.request, this.rowitem.selectedClients as Array<string>)
   }
 }
 </script>
