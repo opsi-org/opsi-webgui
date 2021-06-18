@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :id="`TCProductVersionCell_hover_${rowid}`">
     <b-badge v-if="visibleVersions.versionDepots =='mixed'">
       !=
     </b-badge>
@@ -12,7 +12,10 @@
     >
       *
     </b-badge>
-    {{ tooltiptext }}
+    <TooltipTTProductCell
+      :target="`TCProductVersionCell_hover_${rowid}`"
+      :details="{...tooltiptext.depots, ...tooltiptext.clients}"
+    />
   </div>
 </template>
 
@@ -23,6 +26,7 @@ const selections = namespace('selections')
 
 @Component
 export default class TableCellTCProductVersionCell extends Vue {
+  @Prop({ }) rowid!: string
   @Prop({ }) valuesDepots!: Array<string>
   @Prop({ }) valuesClients!: Array<string>
   @Prop({ }) objectsDepots!: Array<string>
