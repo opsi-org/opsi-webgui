@@ -7,6 +7,7 @@
           <div class="inline">
             <InputIFilter :data="tableData" />
             <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+            <TreeselectTSHostGroup />
             Selection: {{ selectionClients }} <br>
             rowID {{ rowId }}
           </div>
