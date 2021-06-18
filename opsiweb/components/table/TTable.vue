@@ -16,7 +16,7 @@
       <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
     </template>
 
-    <template #head(actions)="{}">
+    <template #head(rowactions)="{}">
       <DropdownDDTableColumnVisibilty :headers="headers" />
     </template>
     <template

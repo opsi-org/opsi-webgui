@@ -26,7 +26,7 @@
             select-mode="multi"
             selectable
           >
-            <template #cell(actions)="row">
+            <template #cell(rowactions)="row">
               <ButtonBTNRowLinkTo
                 title="config"
                 icon="gear"
@@ -99,7 +99,7 @@ export default class VClients extends Vue {
     _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
     actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false },
-    actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
+    rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionClients!: Array<string>

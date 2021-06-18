@@ -1,4 +1,6 @@
-
+export interface IObjectString2String {
+    [key: string]: string
+}
 export interface ISidebarAttributes {
     visible: boolean
     expanded: boolean
@@ -25,6 +27,8 @@ export interface ITableRow {
 export interface ITableRowItemProducts {
     ident: Array<string>
     request: Array<string>
+    selectedDepots?: Array<string>
+    selectedClients?: Array<string>
 }
 export interface ITableData {
     pageNumber: number,
@@ -33,6 +37,7 @@ export interface ITableData {
     sortBy: string,
     sortDesc: boolean,
     filterQuery: string,
+    type?: string,
     selectedDepots?: Array<string>,
     selectedClients?: Array<string>
 }
