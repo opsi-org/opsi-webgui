@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders } from '~/types/tsettings'
+import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
 @Component
 export default class VDepots extends Vue {

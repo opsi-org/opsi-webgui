@@ -29,7 +29,8 @@
 <script lang="ts">
 import { Component, namespace, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-import { IObjectString2String, ITableRowItemProducts } from '~/types/tsettings'
+import { IObjectString2String } from '~/types/tsettings'
+import { ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
 @Component
 export default class DDProductRequest extends BDropdown {
