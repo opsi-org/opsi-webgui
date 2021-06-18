@@ -30,11 +30,16 @@
             selectable
           >
             <template #cell(version)="row">
-              <TableCellTCBadge :list2text="row.item.depotVersions" />
+              <TableCellTCProductVersionCell
+                :valuesDepots="row.item.depotVersions || []"
+                :valuesClients="row.item.clientVersions || []"
+                :objectsDepots="row.item.selectedDepots || []"
+                :objectsClients="row.item.selectedClients || []"
+              />
             </template>
 
             <template #cell(installationStatus)="row">
-              <TableCellTCBadge
+              <TableCellTCBadgeCompares
                 v-if="(selectionClients && row.item.selectedClients)"
                 :values="row.item.installationStatus || []"
                 :objects="row.item.selectedClients || []"
@@ -42,10 +47,10 @@
               />
             </template>
             <!-- <template #cell(name)="row">
-              <TableCellTCBadge :list2text="row.item.name" />
+              <TableCellTCProductCellComparable :list2text="row.item.name" />
             </template> -->
             <!-- <template #cell(productId)="row">
-              <TableCellTCBadge :list2text="row.item.productId" />
+              <TableCellTCProductCellComparable :list2text="row.item.productId" />
             </template> -->
             <template #head(actionRequest)>
               <DropdownDDProductRequest

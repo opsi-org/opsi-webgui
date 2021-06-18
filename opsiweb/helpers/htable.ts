@@ -1,6 +1,6 @@
 import { IObjectString2String } from '~/types/tsettings'
 
-export function mapValues2Value (values:Array<string>, objects:Array<string>, objectsorigin:Array<string>|undefined) {
+export function mapValues2Value (values: Array<string>, objects: Array<string>, objectsorigin?: Array<string>) {
   if (!values || !values[0]) {
     return 'none'
   }
@@ -29,7 +29,7 @@ export function mapValues2Value (values:Array<string>, objects:Array<string>, ob
 
   return 'mixed'
 }
-export function mapValues2Objects (values:Array<string>, objects:Array<string>) {
+export function mapValues2Objects (values: Array<string>, objects: Array<string>, objectsorigin: Array<string>, defaultValue: string) {
   if (!values || !values[0]) {
     return
   }
@@ -37,8 +37,13 @@ export function mapValues2Objects (values:Array<string>, objects:Array<string>) 
     return
   }
   const client2value: IObjectString2String = {}
-  for (const i in objects) {
-    client2value[objects[i]] = values[i]
+  for (const o in objectsorigin) {
+    const i = objects.indexOf(objectsorigin[o])
+    if (i >= 0) {
+      client2value[objects[i]] = values[i]
+    } else {
+      client2value[objectsorigin[o]] = defaultValue
+    }
   }
   return client2value
 }
