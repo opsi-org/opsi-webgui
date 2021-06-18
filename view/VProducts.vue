@@ -18,7 +18,7 @@
             :title="'Localboot products'"
             :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
             :headers="headerData"
-            :items="Object.values(fetchedData)"
+            :items="fetchedData.products"
             :selection="selectionClients"
             :onchangeselection="setSelectionProducts"
             :loading="isLoading"
@@ -30,14 +30,14 @@
             selectable
           >
             <template #cell(version)="row">
-              <TableCellTCSpan :list2text="row.item.versionDepot" />
+              <TableCellTCSpan :list2text="row.item.depotVersions" />
             </template>
-            <template #cell(name)="row">
+            <!-- <template #cell(name)="row">
               <TableCellTCSpan :list2text="row.item.name" />
-            </template>
-            <template #cell(productId)="row">
+            </template> -->
+            <!-- <template #cell(productId)="row">
               <TableCellTCSpan :list2text="row.item.productId" />
-            </template>
+            </template> -->
             <template #head(request)>
               <DropdownDDProductRequest
                 v-if="selectionClients.length>0"
@@ -45,11 +45,14 @@
                 :save="saveActionRequests"
               />
             </template>
-            <template #cell(request)="row">
+
+            <template #cell(actionRequest)="row">
+              <!-- {{row.item.actionRequest}} -->
               <DropdownDDProductRequest
+                v-if="selectionClients.length>0"
                 :title="'Set actionrequest for all selected products'"
-                :request="row.item.request"
-                :requestoptions="row.item.requestOptions"
+                :request="row.item.actionRequest || [none]"
+                :requestoptions="row.item.actions"
                 :rowitem="row.item"
                 :save="saveActionRequest"
               />
@@ -60,7 +63,7 @@
               <BarBPagination
                 :tabledata="tableData"
                 :total-rows="fetchedData.total"
-                aria-controls="tableclients"
+                aria-controls="tableproducts"
               />
             </template>
           </TableTCollapseable>
@@ -89,6 +92,7 @@ export default class VProducts extends Vue {
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
   tableData: ITableData = {
+    type: 'LocalbootProduct',
     pageNumber: 1,
     perPage: 2,
     sortBy: 'productId',
@@ -100,14 +104,18 @@ export default class VProducts extends Vue {
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
     productId: { label: 'Id', key: 'productId', visible: true, _fixed: true },
-    name: { label: 'Desc', key: 'name', visible: true },
-    request: { label: 'request', key: 'request', visible: true },
-    version: { label: 'version', key: 'version', visible: true }
+    desc: { label: 'desc', key: 'desc', visible: false },
+    name: { label: 'name', key: 'name', visible: false },
+    clientIds: { label: 'clientIds', key: 'selectedClients', visible: true },
+    depotIds: { label: 'depotIds', key: 'selectedDepots', visible: false },
+    installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: true },
+    actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: true },
+    version: { label: 'version', key: 'version', visible: true },
     // macAddress: { label: 'MAC', key: 'macAddress', visible: false },
     // _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     // version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
     // actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false },
-    // actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
+    rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionClients!: Array<string>
@@ -128,7 +136,13 @@ export default class VProducts extends Vue {
     this.isLoading = true
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = this.selectionDepots
-      this.fetchedData = (await this.$axios.$post('/api/opsidata/localbootproducts', JSON.stringify(this.tableData))).result
+      if (this.selectionClients.length > 0) {
+        this.tableData.selectedClients = this.selectionClients
+      } else {
+        delete this.tableData.selectedClients
+      }
+      this.fetchedData = (await this.$axios.$post('/api/opsidata/products', JSON.stringify(this.tableData))).result
+      console.log('products', this.fetchedData)
     }
     if (this.fetchOptions.fetchDepotIds) {
       this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result

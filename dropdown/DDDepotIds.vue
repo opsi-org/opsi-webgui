@@ -55,7 +55,7 @@ const selections = namespace('selections')
       this.selectionLocal.push(this.opsiconfigserver)
     }
     this.setSelectionDepots([...this.selectionLocal])
-    this.setSelectionClients([])
+    // this.setSelectionClients([])
   }
 
   handleItem (key: string) {

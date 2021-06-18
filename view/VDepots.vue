@@ -22,7 +22,7 @@
             select-mode="multi"
             selectable
           >
-            <template #cell(actions)="row">
+            <template #cell(rowactions)="row">
               <ButtonBTNRowLinkTo
                 title="config"
                 icon="gear"
@@ -84,7 +84,7 @@ export default class VDepots extends Vue {
     type: { label: 'type', key: 'type', visible: false },
     ip: { label: 'ip', key: 'ip', visible: false },
     _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
-    actions: { key: 'actions', label: 'a', visible: true, _fixed: true }
+    rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
