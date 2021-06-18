@@ -38,7 +38,7 @@
             <!-- <template #cell(productId)="row">
               <TableCellTCSpan :list2text="row.item.productId" />
             </template> -->
-            <template #head(request)>
+            <template #head(actionRequest)>
               <DropdownDDProductRequest
                 v-if="selectionClients.length>0"
                 :title="'Set actionrequest for all selected products'"
@@ -51,7 +51,7 @@
               <DropdownDDProductRequest
                 v-if="selectionClients.length>0"
                 :title="'Set actionrequest for all selected products'"
-                :request="row.item.actionRequest || [none]"
+                :request="row.item.actionRequest || ['none']"
                 :requestoptions="row.item.actions"
                 :rowitem="row.item"
                 :save="saveActionRequest"
