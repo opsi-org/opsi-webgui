@@ -1,14 +1,16 @@
 <template>
-  <b-badge
-    v-bind="$props"
-  >
-    {{ text }}
-  </b-badge>
+  <div>
+    <b-badge v-bind="$props">
+      {{ text }}
+    </b-badge>
+    {{(text == 'mixed')? tooltiptext:''}}
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 // import { BSpan } from 'bootstrap-vue'
+import { mapValues2Value, mapValues2Objects } from '~/helpers/htable'
 
 @Component
 export default class TCSpan extends Vue {
@@ -17,46 +19,12 @@ export default class TCSpan extends Vue {
   @Prop({ }) objectsorigin!: Array<string>
 
   get text () {
-    // if (this.rowitem === undefined) {
-    //   return '---'
-    // }
-    if (!this.values || !this.values[0]) {
-      return 'none'
-    }
-    if (this.objects === undefined || this.objects === null) {
-      return 'none'
-    }
-    if (this.objects.length === 0) {
-      return 'none'
-    }
-    if (this.objectsorigin.length === 1 && this.values.length === 1) {
-      return this.values[0]
-    }
-    if (this.objectsorigin.length > 1 && this.values.length === 1) {
-      return (this.values[0] === 'none') ? 'none' : 'mixed'
-    }
-    if (this.objectsorigin.length === this.objects.length) {
-      if (this.values.every(val => val === this.values[0])) {
-        return this.values[0]
-      }
-    }
-    if (this.values.every(val => val === 'none')) {
-      return 'none'
-    }
-
-    return 'mixed'
+    return mapValues2Value(this.values, this.objects, this.objectsorigin)
   }
-  // get text () {
-  //   if (this.values.length === 1) {
-  //     return this.values[0]
-  //   }
-  //   if (this.values.length > 1) {
-  //     // TODO: check if all equal
-  //     return '>1 (maybe mixed)'
-  //     // return this.values[0] || 'mixed'
-  //   }
-  // }
-  // TODO: handle tooltip for different elements in values
+
+  get tooltiptext () {
+    return mapValues2Objects(this.values, this.objects)
+  }
 }
 </script>
 
