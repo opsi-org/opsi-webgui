@@ -10,6 +10,8 @@
           Selection: {{ selectionDepots }} <br />
           Selection: {{ selectionClients }} <br />
           rowID {{ rowId }}
+          Sorting By: <b>{{ tableData.sortBy }}</b>, Sort Direction:
+          <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b>
         </div>
         <TableTCollapseable
           id="tableproducts"
@@ -22,15 +24,16 @@
           :onchangeselection="setSelectionProducts"
           :loading="isLoading"
           :totalrows="fetchedData.total"
-          :no-local-sorting="true"
-          :sort-by.sync="tableData.sortBy"
-          :sort-desc.sync="tableData.sortDesc"
           select-mode="multi"
           selectable
         >
+          <!-- :no-local-sorting="true"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc" -->
           <template #cell(version)="row">
             <TableCellTCProductVersionCell
               :rowid="row.item.productId"
+              :clients2depots="fetchedDataClients2Depots"
               :values-depots="row.item.depotVersions || []"
               :values-clients="row.item.clientVersions || []"
               :objects-depots="row.item.selectedDepots || []"
@@ -98,14 +101,16 @@ const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,
+  fetchClients2Depots:boolean,
 }
 @Component
 export default class VProducts extends Vue {
   rowId: string = ''
   isLoading: boolean = true
   fetchedData: object = {}
+  fetchedDataClients2Depots: object = {}
   fetchedDataDepotIds: Array<string> = []
-  fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
+  fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
   tableData: ITableData = {
     type: 'LocalbootProduct',
     pageNumber: 1,
@@ -118,14 +123,14 @@ export default class VProducts extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    productId: { label: 'Id', key: 'productId', visible: true, _fixed: true },
-    desc: { label: 'desc', key: 'desc', visible: false },
-    name: { label: 'name', key: 'name', visible: false },
+    productId: { label: 'Id', key: 'productId', visible: true, _fixed: true, sortable: true },
+    desc: { label: 'desc', key: 'desc', visible: false, sortable: true },
+    name: { label: 'name', key: 'name', visible: false, sortable: true },
     selectedClients: { label: 'clientIds', key: 'selectedClients', visible: false },
     selectedDepots: { label: 'depotIds', key: 'selectedDepots', visible: false },
-    installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: true },
-    actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: true },
-    version: { label: 'version', key: 'version', visible: true },
+    installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: true, sortable: true },
+    actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: true, sortable: true },
+    version: { label: 'version', key: 'version', visible: true, sortable: true },
     // macAddress: { label: 'MAC', key: 'macAddress', visible: false },
     // _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     // version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
@@ -138,6 +143,26 @@ export default class VProducts extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
 
+  // get sortBy (): string {
+  //   console.log("sortby asked", this.tableData.sortBy)
+  //   return this.tableData.sortBy
+  // }
+
+  // set sortBy (s: string) {
+  //   this.tableData.sortBy = s
+  //   console.log("sortby set", this.tableData.sortBy)
+  // }
+
+  // get sortDesc (): boolean {
+  //   console.log("sortDesc asked", this.tableData.sortDesc)
+  //   return this.tableData.sortDesc
+  // }
+
+  // set sortDesc (s: boolean) {
+  //   this.tableData.sortDesc = s
+  //   console.log("sortDesc set", this.tableData.sortDesc)
+  // }
+
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () { this.$fetch() }
 
@@ -149,6 +174,18 @@ export default class VProducts extends Vue {
 
   async fetch () {
     this.isLoading = true
+    if (this.fetchOptions.fetchDepotIds) {
+      this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
+      this.fetchOptions.fetchDepotIds = false
+    }
+    if (this.fetchOptions.fetchClients2Depots) {
+      this.fetchedDataClients2Depots = (await this.$axios.$post(
+        '/api/opsidata/clients/depots',
+        JSON.stringify({ selectedClients: this.selectionClients })
+      )).result
+      this.fetchOptions.fetchClients2Depots = false
+    }
+
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = this.selectionDepots
       if (this.selectionClients.length > 0) {
@@ -156,12 +193,11 @@ export default class VProducts extends Vue {
       } else {
         delete this.tableData.selectedClients
       }
-      this.fetchedData = (await this.$axios.$post('/api/opsidata/products', JSON.stringify(this.tableData))).result
+      this.fetchedData = (await this.$axios.$post(
+        '/api/opsidata/products',
+        JSON.stringify(this.tableData)
+      )).result
       console.log('products', this.fetchedData)
-    }
-    if (this.fetchOptions.fetchDepotIds) {
-      this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
-      this.fetchOptions.fetchDepotIds = false
     }
     this.isLoading = false
   }

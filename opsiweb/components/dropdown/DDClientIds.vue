@@ -70,7 +70,9 @@ const selections = namespace('selections')
 
   async fetch () {
     // this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
-    this.fetchedData = (await this.$axios.$post('/api/opsidata/clientIds')).result
+    this.fetchedData = (await this.$axios.$post(
+      '/api/opsidata/depots/clients',
+      JSON.stringify({ selectedDepots: this.selectionDepots }))).result.clients.sort()
     this.selectionLocal = [...this.selectionClients]
   }
 }

@@ -1,25 +1,23 @@
 <template>
-  <div>
-    <b-navbar :class="{pageheader: $mq === 'desktop', pageheader_wrap: $mq === 'mobile'}">
-      <span v-if="navbartype=='collapse'">
-        <b-icon v-if="collapsed" icon="chevron-double-down" />
-        <b-icon v-else icon="chevron-double-right" />
-      </span>
-      <b>{{ title }}</b>
-      <slot name="filter" />
-      <slot name="selection" />
-      <slot name="log" />
-      <b-navbar-nav class="ml-auto">
-        <slot name="clientdelete" />
-        <slot name="clientrename" />
-        <slot name="formreset" />
-        <slot name="clientadd" />
-        <b-button v-if="closeroute" :to="closeroute">
-          <b-icon icon="x" />
-        </b-button>
-      </b-navbar-nav>
-    </b-navbar>
-  </div>
+  <b-navbar :class="{pageheader: $mq === 'desktop', pageheader_wrap: $mq === 'mobile'}">
+    <span v-if="navbartype=='collapse'">
+      <b-icon v-if="collapsed" icon="chevron-double-down" />
+      <b-icon v-else icon="chevron-double-right" />
+    </span>
+    <b>{{ title }}</b>
+    <slot name="filter" />
+    <slot name="selection" />
+    <slot name="log" />
+    <b-navbar-nav class="ml-auto">
+      <slot name="clientdelete" />
+      <slot name="clientrename" />
+      <slot name="formreset" />
+      <slot name="clientadd" />
+      <b-button v-if="closeroute" :to="closeroute">
+        <b-icon icon="x" />
+      </b-button>
+    </b-navbar-nav>
+  </b-navbar>
 </template>
 
 <script lang="ts">
@@ -53,5 +51,8 @@ export default Vue.extend({
 .pageheader_wrap {
   display: flex;
   flex-wrap: wrap;
+}
+.navbar {
+  z-index: inherit !important;
 }
 </style>

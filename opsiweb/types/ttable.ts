@@ -33,6 +33,7 @@ export interface ITableHeader {
   label: string,
   key: string,
   visible: boolean,
+  sortable?: boolean,
   _fixed?: boolean,
   _isMajor?: boolean,
   _majorKey?: string,

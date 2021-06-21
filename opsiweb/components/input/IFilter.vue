@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <b-form-input
-      v-model="data.filterQuery"
-      v-bind="$props"
-      placeholder="Filter table"
-      aria-label="Filter"
-    />
-  </div>
+  <b-form-input
+    v-model="data.filterQuery"
+    v-bind="$props"
+    placeholder="Filter table"
+    aria-label="Filter"
+  />
 </template>
 
 <script lang="ts">

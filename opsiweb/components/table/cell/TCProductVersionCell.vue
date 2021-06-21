@@ -8,21 +8,25 @@
     </b-badge>
     <b-badge
       v-if="visibleVersions.versionClients =='mixed'"
-      :variant="(Object.values(tooltiptext.clients).some(e => e != visibleVersions.versionDepots)) ? 'danger':''"
     >
+      <!-- :variant="(Object.values(tooltiptext).some(e => e. != visibleVersions.versionDepots)) ? 'danger':''" -->
       *
     </b-badge>
+    <!-- {{tooltiptext}} -->
     <TooltipTTProductCell
+      v-if="visibleVersions.versionDepots == 'mixed' || visibleVersions.versionClients == 'mixed'"
       type="version"
       :target="`TCProductVersionCell_hover_${rowid}`"
-      :details="{...tooltiptext.depots, ...tooltiptext.clients}"
+      :details="tooltiptext"
     />
+      <!-- :detailsDepots="tooltiptext.depots" -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { mapValues2Value, mapValues2Objects } from '~/helpers/hmappings'
+import { IObjectString2String, IObjectString2ObjectString2String } from '~/types/tsettings'
 const selections = namespace('selections')
 
 @Component
@@ -32,6 +36,7 @@ export default class TableCellTCProductVersionCell extends Vue {
   @Prop({ }) valuesClients!: Array<string>
   @Prop({ }) objectsDepots!: Array<string>
   @Prop({ }) objectsClients!: Array<string>
+  @Prop({ }) clients2depots!: IObjectString2String
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
@@ -43,10 +48,21 @@ export default class TableCellTCProductVersionCell extends Vue {
   }
 
   get tooltiptext () {
-    return {
-      depots: mapValues2Objects(this.valuesDepots, this.objectsDepots, this.selectionDepots, '-'),
-      clients: mapValues2Objects(this.valuesClients, this.objectsClients, this.selectionClients, '-')
+    const clients: IObjectString2String = mapValues2Objects(this.valuesClients, this.objectsClients, this.selectionClients, '-')
+    const depots: IObjectString2String = mapValues2Objects(this.valuesDepots, this.objectsDepots, this.selectionDepots, '-')
+    const tt:IObjectString2ObjectString2String = {}
+    for (const d in depots) {
+      console.log(d, depots[d])
+      tt[d] = {
+        [d]: depots[d]
+      }
     }
+    console.log(tt)
+    console.log(this.clients2depots)
+    for (const c in clients) {
+      tt[this.clients2depots[c]][c] = clients[c]
+    }
+    return tt
   }
 }
 </script>
