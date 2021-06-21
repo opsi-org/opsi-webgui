@@ -1,5 +1,6 @@
 <template>
   <div class="container-fluid">
-    <h5> Hello Dashboard</h5>
+    Loading
+    <b-icon icon="three-dots" animation="cylon" />
   </div>
 </template>

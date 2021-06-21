@@ -34,7 +34,7 @@
 import { Component, Vue, Prop } from 'nuxt-property-decorator'
 
 @Component
-export default class LError extends Vue {
+export default class CTop extends Vue {
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: Object
 }
 

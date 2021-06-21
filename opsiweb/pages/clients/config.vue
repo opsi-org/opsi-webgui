@@ -1,7 +1,7 @@
 <template>
   <!-- Same as clientsconfig but shows the config in a column (without parent 'clients') -->
   <div>
-    <ViewVClientsConfig :id="id" :as-child="asChild" />
+    <ViewVConfig :id="id" :as-child="asChild" closeroute="/clients/" />
   </div>
 </template>
 
