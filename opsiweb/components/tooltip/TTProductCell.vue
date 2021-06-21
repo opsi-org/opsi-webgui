@@ -3,17 +3,19 @@
   <b-tooltip v-else-if="(type=='ppversion' && text)" :target="target" triggers="hover" :variant="variant"> only on Depot:{{row.item.objectIdsDepots}}</b-tooltip>
   <b-tooltip v-else-if="(type=='productId' && text)" :target="target" triggers="hover" variant="danger">only on: {{row.item.depotId}}</b-tooltip>
   <b-tooltip v-else-if="(type=='installationStatus' && text)" :target="target" triggers="hover" :variant="variant">Status: {{row.item.installationStatus}}</b-tooltip> -->
-  <b-tooltip :target="target" triggers="hover" variant="secondary">
-    <div v-for="(v,c) in details" :key="c" :class="`badge_${type}_${v}`">
-      <b-badge>
-        <b-badge
-          class="tooltip-inner-badge-text-size"
-        >
-          {{ v }}
-        </b-badge>
-        ({{ c }})
-      </b-badge>
-    </div>
+  <b-tooltip :target="target" triggers="hover" variant="">
+    <b-table-simple small dark class="tt-table">
+      <b-tbody>
+        <b-tr v-for="(v,c) in details" :key="c" :class="`badge_${type}_${c}`">
+          <b-th class="text-left">
+            {{ c }}
+          </b-th>
+          <b-th class="text-right">
+            {{ v }}
+          </b-th>
+        </b-tr>
+      </b-tbody>
+    </b-table-simple>
   </b-tooltip>
 </template>
 
@@ -63,7 +65,13 @@ export default class TTProductCell extends Vue {
 }
 </script>
 <style>
-
+.tt-table,
+.tt-table th {
+  background-color: transparent !important;
+}
+.tooltip-inner {
+  max-width: inherit !important;
+}
 /* .badge_installationStatus_not_installed:nth-child(1n+2) { */
   /* border: 1px solid purple !important; */
 /* } */
