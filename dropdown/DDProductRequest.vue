@@ -1,10 +1,11 @@
 <template>
   <div>
     <b-dropdown
+      :id="(rowitem!=undefined) ? `DDProductRequest_actionRequest_hover_${rowitem.productId}`:''"
       v-bind="$props"
       no-caret
       lazy
-      dropleft
+      dropdown
       variant="outline-primary"
       size="sm"
       alt="Show column"
@@ -19,10 +20,16 @@
         :key="a"
         @click="save(rowitem, a)"
       >
-        {{a}}
+        {{ a }}
       </b-dropdown-item>
     </b-dropdown>
-    {{(visibleRequest==="mixed")? allRequests:''}}
+    <!-- {{(text == 'mixed')? tooltiptext:''}} -->
+    <TooltipTTProductCell
+      v-if="(rowitem!=undefined && visibleRequest == 'mixed')"
+      type="actionRequest"
+      :target="`DDProductRequest_actionRequest_hover_${rowitem.productId}`"
+      :details="allRequests"
+    />
   </div>
 </template>
 
@@ -30,7 +37,7 @@
 import { Component, namespace, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableRowItemProducts } from '~/types/ttable'
-import { mapValues2Value, mapValues2Objects } from '~/helpers/htable'
+import { mapValues2Value, mapValues2Objects } from '~/helpers/hmappings'
 const selections = namespace('selections')
 @Component
 export default class DDProductRequest extends BDropdown {
@@ -49,7 +56,7 @@ export default class DDProductRequest extends BDropdown {
 
   get allRequests () {
     if (this.rowitem === undefined) {
-      return
+      return {}
     }
     return mapValues2Objects(this.request, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'None')
   }

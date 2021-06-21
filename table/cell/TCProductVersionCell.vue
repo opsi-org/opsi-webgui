@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { mapValues2Value, mapValues2Objects } from '~/helpers/htable'
+import { mapValues2Value, mapValues2Objects } from '~/helpers/hmappings'
 const selections = namespace('selections')
 
 @Component

@@ -1,90 +1,88 @@
 <template>
   <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
-      <div>
-        <div class="mt-3">
-          Filter: {{tableData.filterQuery}}
-          <div class="inline">
-            <InputIFilter :data="tableData" />
-            <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
-            <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" />
-            Selection: {{ selectionDepots }} <br />
-            Selection: {{ selectionClients }} <br />
-            rowID {{ rowId }}
-          </div>
-          <TableTCollapseable
-            id="tableproducts"
-            datakey="productId"
-            :title="'Localboot products'"
-            :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-            :headers="headerData"
-            :items="fetchedData.products"
-            :selection="selectionClients"
-            :onchangeselection="setSelectionProducts"
-            :loading="isLoading"
-            :totalrows="fetchedData.total"
-            :no-local-sorting="true"
-            :sort-by.sync="tableData.sortBy"
-            :sort-desc.sync="tableData.sortDesc"
-            select-mode="multi"
-            selectable
-          >
-            <template #cell(version)="row">
-              <TableCellTCProductVersionCell
-                :rowid="row.item.productId"
-                :valuesDepots="row.item.depotVersions || []"
-                :valuesClients="row.item.clientVersions || []"
-                :objectsDepots="row.item.selectedDepots || []"
-                :objectsClients="row.item.selectedClients || []"
-              />
-            </template>
-
-            <template #cell(installationStatus)="row">
-              <TableCellTCBadgeCompares
-                v-if="(selectionClients && row.item.selectedClients)"
-                type="installationStatus"
-                :rowid="row.item.productId"
-                :values="row.item.installationStatus || []"
-                :objects="row.item.selectedClients || []"
-                :objectsorigin="selectionClients || []"
-              />
-            </template>
-            <!-- <template #cell(name)="row">
-              <TableCellTCProductCellComparable :list2text="row.item.name" />
-            </template> -->
-            <!-- <template #cell(productId)="row">
-              <TableCellTCProductCellComparable :list2text="row.item.productId" />
-            </template> -->
-            <template #head(actionRequest)>
-              <DropdownDDProductRequest
-                v-if="selectionClients.length>0"
-                :title="'Set actionrequest for all selected products'"
-                :save="saveActionRequests"
-              />
-            </template>
-
-            <template #cell(actionRequest)="row">
-              <!-- {{row.item.actionRequest}} -->
-              <DropdownDDProductRequest
-                v-if="selectionClients.length>0"
-                :title="'Set actionrequest for all selected products'"
-                :request="row.item.actionRequest || ['none']"
-                :requestoptions="row.item.actions"
-                :rowitem="row.item"
-                :save="saveActionRequest"
-              />
-              <!-- {{row.item.versionDepot}} -->
-            </template>
-
-            <template #pagination>
-              <BarBPagination
-                :tabledata="tableData"
-                :total-rows="fetchedData.total"
-                aria-controls="tableproducts"
-              />
-            </template>
-          </TableTCollapseable>
+      <div class="mt-3">
+        Filter: {{tableData.filterQuery}}
+        <div class="inline">
+          <InputIFilter :data="tableData" />
+          <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+          <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" />
+          Selection: {{ selectionDepots }} <br />
+          Selection: {{ selectionClients }} <br />
+          rowID {{ rowId }}
         </div>
+        <TableTCollapseable
+          id="tableproducts"
+          datakey="productId"
+          :title="'Localboot products'"
+          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+          :headers="headerData"
+          :items="fetchedData.products"
+          :selection="selectionClients"
+          :onchangeselection="setSelectionProducts"
+          :loading="isLoading"
+          :totalrows="fetchedData.total"
+          :no-local-sorting="true"
+          :sort-by.sync="tableData.sortBy"
+          :sort-desc.sync="tableData.sortDesc"
+          select-mode="multi"
+          selectable
+        >
+          <template #cell(version)="row">
+            <TableCellTCProductVersionCell
+              :rowid="row.item.productId"
+              :values-depots="row.item.depotVersions || []"
+              :values-clients="row.item.clientVersions || []"
+              :objects-depots="row.item.selectedDepots || []"
+              :objects-clients="row.item.selectedClients || []"
+            />
+          </template>
+
+          <template #cell(installationStatus)="row">
+            <TableCellTCBadgeCompares
+              v-if="(selectionClients && row.item.selectedClients)"
+              type="installationStatus"
+              :rowid="row.item.productId"
+              :values="row.item.installationStatus || []"
+              :objects="row.item.selectedClients || []"
+              :objectsorigin="selectionClients || []"
+            />
+          </template>
+          <!-- <template #cell(name)="row">
+            <TableCellTCProductCellComparable :list2text="row.item.name" />
+          </template> -->
+          <!-- <template #cell(productId)="row">
+            <TableCellTCProductCellComparable :list2text="row.item.productId" />
+          </template> -->
+          <template #head(actionRequest)>
+            <DropdownDDProductRequest
+              v-if="selectionClients.length>0"
+              :title="'Set actionrequest for all selected products'"
+              :save="saveActionRequests"
+            />
+          </template>
+
+          <template #cell(actionRequest)="row">
+            <!-- {{row.item.actionRequest}} -->
+            <!-- :title="'Set actionrequest for all selected products'" -->
+            <DropdownDDProductRequest
+              v-if="selectionClients.length>0"
+              :request="row.item.actionRequest || ['none']"
+              :requestoptions="row.item.actions"
+              :rowitem="row.item"
+              :save="saveActionRequest"
+            />
+            <!-- {{row.item.versionDepot}} -->
+          </template>
+
+          <template #pagination>
+            <BarBPagination
+              :tabledata="tableData"
+              :total-rows="fetchedData.total"
+              aria-controls="tableproducts"
+            />
+          </template>
+        </TableTCollapseable>
       </div>
     </template>
     <template #child>

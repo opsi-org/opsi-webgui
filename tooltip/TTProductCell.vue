@@ -70,7 +70,9 @@ export default class TTProductCell extends Vue {
 }
 .tooltip-inner {
   max-width: inherit !important;
-}
+  max-height: 250px;
+  overflow: auto;
+  }
 /* .badge_installationStatus_not_installed:nth-child(1n+2) { */
   /* border: 1px solid purple !important; */
 /* } */
