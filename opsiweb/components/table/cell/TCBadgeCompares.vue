@@ -7,6 +7,7 @@
     <TooltipTTProductCell
       :target="`TCBadgeCompares_${type}_hover_${rowid}`"
       :details="tooltiptext"
+      :type="type"
     />
   </div>
 </template>

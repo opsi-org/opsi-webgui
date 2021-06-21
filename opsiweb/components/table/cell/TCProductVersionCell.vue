@@ -13,6 +13,7 @@
       *
     </b-badge>
     <TooltipTTProductCell
+      type="version"
       :target="`TCProductVersionCell_hover_${rowid}`"
       :details="{...tooltiptext.depots, ...tooltiptext.clients}"
     />

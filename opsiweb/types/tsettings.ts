@@ -1,3 +1,6 @@
+export interface IObjectString2Function {
+    [key: string]: Function
+}
 export interface IObjectString2String {
     [key: string]: string
 }
