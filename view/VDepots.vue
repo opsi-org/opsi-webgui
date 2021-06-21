@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout breadcrumb="" :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <div class="mt-3">
         <InputIFilter :data="tableData" />

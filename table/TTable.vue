@@ -1,15 +1,16 @@
 <template>
+    <!-- sort-icon-left -->
   <b-table
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
-    sort-icon-left
     striped
     hover
     @row-clicked="rowChanged"
   >
     <template #head(sel)="{}">
       {{ selection.length }}/{{ totalrows }}
+      <!-- {{$props}} -->
     </template>
     <template #cell(sel)="row">
       {{ fixRow(row) }}
@@ -31,7 +32,7 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BTable } from 'bootstrap-vue'
-import { ITableRow, ITableHeaders, ITableDataItem } from '~/types/tsettings'
+import { ITableRow, ITableHeaders, ITableDataItem } from '~/types/ttable'
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string

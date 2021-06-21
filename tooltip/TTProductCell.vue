@@ -5,7 +5,44 @@
   <b-tooltip v-else-if="(type=='installationStatus' && text)" :target="target" triggers="hover" :variant="variant">Status: {{row.item.installationStatus}}</b-tooltip> -->
   <b-tooltip :target="target" triggers="hover">
     <b-table-simple small dark class="tt-table">
-      <b-tbody>
+      <b-tbody v-if="type=='version'">
+        <div v-for="(vd, cd) in details" :key="cd">
+          <BarBTooltipCollapseRow
+            :title="cd"
+            :value="vd[cd]"
+            :collapsed="Object.keys(details).length <= 1"
+            :collapseable="Object.keys(vd).length > 1"
+            :value-variant="getVariant(vd[cd])"
+          >
+            <!-- :collapsed="Object.keys(vd) > 1" -->
+            <template
+              v-if="Object.keys(vd).length > 1"
+              #nav-child
+            >
+              <b-tr
+                v-for="(v,c) in vd"
+                :key="c"
+                :class="`subbadge_${type}_${c}`"
+                class="tr-subrow"
+              >
+                <b-th
+                  v-if="c!=cd"
+                  class="text-left"
+                >
+                  {{ c }}
+                </b-th>
+                <b-th
+                  v-if="c!=cd"
+                  class="text-right"
+                >
+                  <b-badge :class="getVariant(v)">{{ v }}</b-badge>
+                </b-th>
+              </b-tr>
+            </template>
+          </BarBTooltipCollapseRow>
+        </div>
+      </b-tbody>
+      <b-tbody v-else>
         <b-tr v-for="(v,c) in details" :key="c" :class="`badge_${type}_${c}`">
           <b-th class="text-left">
             {{ c }}
@@ -29,6 +66,7 @@ export default class TTProductCell extends Vue {
   @Prop({ default: 'version' }) type!: string
   @Prop({ default: 'danger' }) variant!: string
   @Prop({ }) details!: IObjectString2String
+  @Prop({ }) detailsDepots!: IObjectString2String
   // @Prop({ }) row:Object,
   // @Prop({ }) text!: {type:Boolean, default:false},
   variants: IObjectString2Function = {
@@ -64,6 +102,9 @@ export default class TTProductCell extends Vue {
 }
 </script>
 <style>
+/* .tr-subrow{
+  margin-left: 30px;
+} */
 .tt-table,
 .tt-table th {
   background-color: transparent !important;
