@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- <treeselect v-model="value" :multiple="true" :options="options" :max-height="200" /> -->
     <treeselect
       v-model="groupSelection"
       :multiple="true"
@@ -23,14 +22,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+const selections = namespace('selections')
 
 @Component
 export default class TSHostGroup extends Vue {
-  idList: Array<string> = []
   groupSelection: Array<object> = []
   hostGroup: Array<object> = []
-  // options: any
+
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public pushToSelectionClients!: (s: string) => void
+  @selections.Mutation public delFromSelectionClients!: (s: string) => void
+
   fetch () {
     // TODO: Need backend method like '/api/opsidata/hostgroup' for fetching hostgroups for the selectedDepotsList
     // this.hostGroup = (await this.$axios.$post('/api/opsidata/hostgroup', selectedDepotsList)).result
@@ -41,39 +45,39 @@ export default class TSHostGroup extends Vue {
         type: 'HostGroup',
         children: [
           {
-            id: 'agorumcore-tst.uib.local',
+            id: 'agorumcore-tst.uib.local;40_gefundene_software',
             label: 'agorumcore-tst.uib.local',
             type: 'ObjectToGroup'
           },
-          // {
-          //   id: 'akunde1.uib.local',
-          //   label: 'akunde1.uib.local',
-          //   type: 'ObjectToGroup'
-          // },
           {
-            id: 'testgroup1',
+            id: 'akunde1.uib.local;40_gefundene_software',
+            label: 'akunde1.uib.local',
+            type: 'ObjectToGroup'
+          },
+          {
+            id: 'testgroup1;40_gefundene_software',
             label: 'testgroup1',
             type: 'HostGroup',
             children: [
               {
-                id: 'customibmtm62.uib.local',
+                id: 'customibmtm62.uib.local;testgroup1',
                 label: 'customibmtm62.uib.local',
                 type: 'ObjectToGroup'
               },
               {
-                id: 'noteabdul.uib.local',
+                id: 'noteabdul.uib.local;testgroup1',
                 label: 'noteabdul.uib.local',
                 type: 'ObjectToGroup'
               }
             ]
           },
           {
-            id: 'testgroup2',
+            id: 'testgroup2;40_gefundene_software',
             label: 'testgroup2',
             type: 'HostGroup',
             children: [
               {
-                id: 'akunde1.uib.local',
+                id: 'akunde1.uib.local;testgroup2',
                 label: 'akunde1.uib.local',
                 type: 'ObjectToGroup'
               }
@@ -95,39 +99,34 @@ export default class TSHostGroup extends Vue {
     }
   }
 
+  groupChange (value: object, type: string) {
+    let idList: Array<string> = []
+    this.mapElementsByValue([value], 'ObjectToGroup', 'type', 'label', idList)
+    idList = [...new Set(idList)]
+    let storeData
+    storeData = this.selectionClients
+    storeData = [...new Set(storeData)]
+
+    for (const i in idList) {
+      const objectId = idList[i]
+      if (type === 'select') {
+        this.pushToSelectionClients(objectId)
+      }
+      if (type === 'deselect') {
+        if (storeData.includes(objectId)) {
+          this.delFromSelectionClients(objectId)
+        }
+      }
+    }
+  }
+
   groupSelect (selection: any) {
-    // eslint-disable-next-line no-console
-    console.log('groupSelect', JSON.stringify(selection))
-    this.mapElementsByValue(selection, 'ObjectToGroup', 'type', 'text', this.idList)
-    // eslint-disable-next-line no-console
-    console.log('idList', JSON.stringify(this.idList))
-    // // this.idList = selection.filter((item: any) => item.type === 'ObjectToGroup');
+    this.groupChange(selection, 'select')
   }
 
   groupDeselect (deselection: object) {
-    // eslint-disable-next-line no-console
-    console.log('groupDeselect', deselection)
+    this.groupChange(deselection, 'deselect')
   }
-
-  // fetch () {
-  //   this.options = [{
-  //     id: 'a',
-  //     label: 'a',
-  //     children: [{
-  //       id: 'aa',
-  //       label: 'aa'
-  //     }, {
-  //       id: 'ab',
-  //       label: 'ab'
-  //     }]
-  //   }, {
-  //     id: 'b',
-  //     label: 'b'
-  //   }, {
-  //     id: 'c',
-  //     label: 'c'
-  //   }]
-  // }
 }
 </script>
 
