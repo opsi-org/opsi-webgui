@@ -4,7 +4,7 @@
       <div>
         <div class="mt-3">
           <InputIFilter :data="tableData" />
-          Selection: {{ selectionDepots }} <br />
+          Selection: {{ selectionDepots }} <br>
           rowID {{ rowId }}
           <TableTTable
             id="tabledepots"
@@ -32,14 +32,14 @@
                 :click="routeRedirectWith"
               />
 
-              <ButtonBTNRowLinkTo
+              <!-- <ButtonBTNRowLinkTo
                 title="log"
                 icon="file-earmark-text"
                 to="/depots/log"
                 :ident="row.item.ident"
                 :pressed="isRouteActive"
                 :click="routeRedirectWith"
-              />
+              /> -->
             </template>
           </TableTTable>
           <BarBPagination
@@ -51,7 +51,7 @@
       </div>
     </template>
     <template #child>
-      <NuxtChild :id="rowId" />
+      <NuxtChild :id="rowId" :as-child="true" />
     </template>
   </GridGTwoColumnLayout>
 </template>
@@ -101,6 +101,7 @@ export default class VDepots extends Vue {
   }
 
   @Watch('tableData', { deep: true }) tableDataChanged () {
+    // eslint-disable-next-line no-console
     console.log('tableData changed')
     this.$fetch()
   }

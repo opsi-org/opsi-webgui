@@ -48,7 +48,7 @@ export default class BBreadcrumbRow extends Vue {
     for (const c in pathArray) {
       switch (pathArray[c]) {
         case 'clientsconfig': pathArray[c] = 'Configuration'; break
-        case 'depotsconfig': pathArray[c] = 'Hostparameter'; break
+        case 'depotsconfig': pathArray[c] = 'Configuration'; break
         case 'clientslog': pathArray[c] = 'log'; break
         case 'depotslog': pathArray[c] = 'log'; break
       }

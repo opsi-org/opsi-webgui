@@ -3,11 +3,11 @@
     <template #parent>
       <div>
         <div class="mt-3">
-          Filter: {{tableData.filterQuery}}
+          Filter: {{ tableData.filterQuery }}
           <div class="inline">
             <InputIFilter :data="tableData" />
             <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
-            Selection: {{ selectionClients }} <br />
+            Selection: {{ selectionClients }} <br>
             rowID {{ rowId }}
           </div>
           <TableTTable
