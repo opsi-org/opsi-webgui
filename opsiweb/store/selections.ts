@@ -12,4 +12,14 @@ export default class Selections extends VuexModule {
 
   @VuexMutation public setSelectionDepots (s: Array<string>) { this._selectionDepots = s }
   @VuexMutation public setSelectionClients (s: Array<string>) { this._selectionClients = s }
+  @VuexMutation public pushToSelectionClients (s: string) {
+    this._selectionClients.push(s)
+  }
+
+  @VuexMutation public delFromSelectionClients (s: string) {
+    const index = this._selectionClients.indexOf(s)
+    if (index !== -1) {
+      this._selectionClients.splice(index, 1)
+    }
+  }
 }
