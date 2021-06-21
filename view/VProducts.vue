@@ -31,6 +31,7 @@
           >
             <template #cell(version)="row">
               <TableCellTCProductVersionCell
+                :rowid="row.item.productId"
                 :valuesDepots="row.item.depotVersions || []"
                 :valuesClients="row.item.clientVersions || []"
                 :objectsDepots="row.item.selectedDepots || []"
@@ -41,6 +42,8 @@
             <template #cell(installationStatus)="row">
               <TableCellTCBadgeCompares
                 v-if="(selectionClients && row.item.selectedClients)"
+                type="installationStatus"
+                :rowid="row.item.productId"
                 :values="row.item.installationStatus || []"
                 :objects="row.item.selectedClients || []"
                 :objectsorigin="selectionClients || []"
