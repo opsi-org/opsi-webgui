@@ -3,7 +3,7 @@
   <b-tooltip v-else-if="(type=='ppversion' && text)" :target="target" triggers="hover" :variant="variant"> only on Depot:{{row.item.objectIdsDepots}}</b-tooltip>
   <b-tooltip v-else-if="(type=='productId' && text)" :target="target" triggers="hover" variant="danger">only on: {{row.item.depotId}}</b-tooltip>
   <b-tooltip v-else-if="(type=='installationStatus' && text)" :target="target" triggers="hover" :variant="variant">Status: {{row.item.installationStatus}}</b-tooltip> -->
-  <b-tooltip :target="target" triggers="hover" variant="">
+  <b-tooltip :target="target" triggers="hover">
     <b-table-simple small dark class="tt-table">
       <b-tbody>
         <b-tr v-for="(v,c) in details" :key="c" :class="`badge_${type}_${c}`">
@@ -11,7 +11,7 @@
             {{ c }}
           </b-th>
           <b-th class="text-right">
-            {{ v }}
+            <b-badge :class="getVariant(v)">{{ v }}</b-badge>
           </b-th>
         </b-tr>
       </b-tbody>
@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { IObjectString2String } from '~/types/tsettings'
+import { IObjectString2String, IObjectString2Function } from '~/types/tsettings'
 
 @Component
 export default class TTProductCell extends Vue {
@@ -31,37 +31,36 @@ export default class TTProductCell extends Vue {
   @Prop({ }) details!: IObjectString2String
   // @Prop({ }) row:Object,
   // @Prop({ }) text!: {type:Boolean, default:false},
+  variants: IObjectString2Function = {
+    actionRequest: (r:string) => {
+      if (r === 'uninstall') { return 'bg-danger' }
+      if (r === 'setup') { return 'bg-primary' }
+      if (r === 'update') { return 'bg-primary' }
+      if (r === 'always') { return 'bg-info' }
+      if (r === 'once') { return 'bg-info' }
+      if (r === 'custom') { return 'bg-info' }
+      return 'bg-secondary'
+    },
+    installationStatus: (s: string) => {
+      if (s === 'installed') { return 'bg-success' }
+      if (s === 'unknown') { return 'bg-primary' }
+      return 'bg-secondary'
+    },
+    version: () => ''
+    // version:(v)=> (v!=this.row.item.versionDepot && v!='None')?'bg-danger':'bg-dark',
+    // ppversion:(v:string)=> {v.startsWith('*')? 'pps_client_uneq_depot':'not_bold'},
+  }
 
-  // detailsVariant (value: string) {
-  //   const variants = {
-  //     actionrequest: (r:string) => {
-  //       if (r === 'uninstall') { return 'bg-danger' }
-  //       if (r === 'setup') { return 'bg-primary' }
-  //       if (r === 'update') { return 'bg-primary' }
-  //       if (r === 'always') { return 'bg-info' }
-  //       if (r === 'once') { return 'bg-info' }
-  //       if (r === 'custom') { return 'bg-info' }
-  //       return 'bg-secondary'
-  //     },
-  //     installationStatus: (s: string) => {
-  //       if (s === 'installed') { return 'bg-success' }
-  //       if (s === 'unknown') { return 'bg-primary' }
-  //       return 'bg-secondary'
-  //     },
-  //     version: () => ''
-  //     // version:(v)=> (v!=this.row.item.versionDepot && v!='None')?'bg-danger':'bg-dark',
-  //     // ppversion:(v:string)=> {v.startsWith('*')? 'pps_client_uneq_depot':'not_bold'},
-  //   }
-
-  //   if (variants[this.type] === undefined) {
-  //     console.error(`Type ${this.type} not in variants`)
-  //     return ''
-  //   }
-  //   // return (v) => {
-  //   // console.error(`Variants for ${this.type}`, variants[this.type](value))
-  //   return variants[this.type](value)
-  //   // }
-  // }
+  getVariant (value: string) {
+    if (this.variants[this.type] === undefined) {
+      console.error(`Type ${this.type} not in variants`)
+      return ''
+    }
+    // return (v) => {
+    // console.error(`Variants for ${this.type}`, variants[this.type](value))
+    return this.variants[this.type](value)
+    // }
+  }
 }
 </script>
 <style>
