@@ -31,10 +31,10 @@ export function mapValues2Value (values: Array<string>, objects: Array<string>, 
 }
 export function mapValues2Objects (values: Array<string>, objects: Array<string>, objectsorigin: Array<string>, defaultValue: string) {
   if (!values || !values[0]) {
-    return
+    return {}
   }
-  if (objects === undefined) {
-    return
+  if (objects === undefined || objects === null) {
+    return {}
   }
   const client2value: IObjectString2String = {}
   for (const o in objectsorigin) {

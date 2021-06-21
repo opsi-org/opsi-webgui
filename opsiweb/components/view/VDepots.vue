@@ -1,53 +1,51 @@
 <template>
   <GridGTwoColumnLayout breadcrumb="" :showchild="secondColumnOpened">
     <template #parent>
-      <div>
-        <div class="mt-3">
-          <InputIFilter :data="tableData" />
-          Selection: {{ selectionDepots }} <br>
-          rowID {{ rowId }}
-          <TableTTable
-            id="tabledepots"
-            datakey="depotId"
-            :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-            :headers="headerData"
-            :items="fetchedData.depots"
-            :selection="selectionDepots"
-            :onchangeselection="setSelectionDepots"
-            :loading="isLoading"
-            :totalrows="fetchedData.total"
-            :no-local-sorting="true"
-            :sort-by.sync="tableData.sortBy"
-            :sort-desc.sync="tableData.sortDesc"
-            select-mode="multi"
-            selectable
-          >
-            <template #cell(rowactions)="row">
-              <ButtonBTNRowLinkTo
-                title="config"
-                icon="gear"
-                to="/depots/config"
-                :ident="row.item.ident"
-                :pressed="isRouteActive"
-                :click="routeRedirectWith"
-              />
+      <div class="mt-3">
+        <InputIFilter :data="tableData" />
+        Selection: {{ selectionDepots }} <br>
+        rowID {{ rowId }}
+        <TableTTable
+          id="tabledepots"
+          datakey="depotId"
+          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+          :headers="headerData"
+          :items="fetchedData.depots"
+          :selection="selectionDepots"
+          :onchangeselection="setSelectionDepots"
+          :loading="isLoading"
+          :totalrows="fetchedData.total"
+          :no-local-sorting="true"
+          :sort-by.sync="tableData.sortBy"
+          :sort-desc.sync="tableData.sortDesc"
+          select-mode="multi"
+          selectable
+        >
+          <template #cell(rowactions)="row">
+            <ButtonBTNRowLinkTo
+              title="config"
+              icon="gear"
+              to="/depots/config"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
 
-              <!-- <ButtonBTNRowLinkTo
-                title="log"
-                icon="file-earmark-text"
-                to="/depots/log"
-                :ident="row.item.ident"
-                :pressed="isRouteActive"
-                :click="routeRedirectWith"
-              /> -->
-            </template>
-          </TableTTable>
-          <BarBPagination
-            :tabledata="tableData"
-            :total-rows="fetchedData.total"
-            aria-controls="tabledepots"
-          />
-        </div>
+            <!-- <ButtonBTNRowLinkTo
+              title="log"
+              icon="file-earmark-text"
+              to="/depots/log"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            /> -->
+          </template>
+        </TableTTable>
+        <BarBPagination
+          :tabledata="tableData"
+          :total-rows="fetchedData.total"
+          aria-controls="tabledepots"
+        />
       </div>
     </template>
     <template #child>

@@ -15,7 +15,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 // import { BSpan } from 'bootstrap-vue'
-import { mapValues2Value, mapValues2Objects } from '~/helpers/htable'
+import { mapValues2Value, mapValues2Objects } from '~/helpers/hmappings'
 
 @Component
 export default class TCSpan extends Vue {
