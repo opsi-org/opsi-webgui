@@ -1,5 +1,5 @@
 <template>
-    <!-- sort-icon-left -->
+  <!-- sort-icon-left -->
   <b-table
     v-bind="$props"
     :ref="$props.id"

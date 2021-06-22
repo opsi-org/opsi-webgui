@@ -2,16 +2,16 @@
   <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <div class="mt-3">
-        Filter: {{tableData.filterQuery}}
+        <!-- Filter: {{tableData.filterQuery}} -->
         <div class="inline">
           <InputIFilter :data="tableData" />
           <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" />
-          Selection: {{ selectionDepots }} <br />
+          <!-- Selection: {{ selectionDepots }} <br />
           Selection: {{ selectionClients }} <br />
           rowID {{ rowId }}
           Sorting By: <b>{{ tableData.sortBy }}</b>, Sort Direction:
-          <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b>
+          <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b> -->
         </div>
         <TableTCollapseable
           id="tableproducts"
@@ -197,19 +197,22 @@ export default class VProducts extends Vue {
         '/api/opsidata/products',
         JSON.stringify(this.tableData)
       )).result
-      console.log('products', this.fetchedData)
+      // console.log('products', this.fetchedData)
     }
     this.isLoading = false
   }
 
   saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
+    // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
   }
 
   saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
+    // TODO: saving in database for dropdown in table head(actionRequest)
+    // eslint-disable-next-line no-console
     console.log('save action Request for all selected clients and products')
-    console.log(rowitem)
-    console.log(newrequest)
+    // eslint-disable-next-line no-console
+    console.log(rowitem, newrequest)
     // for (const i in this.selectionProducts) {
     //   this.fetchedData[this.selectionProducts[i]].request = newrequest
     // }
