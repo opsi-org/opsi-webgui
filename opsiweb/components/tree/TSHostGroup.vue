@@ -22,18 +22,23 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component
 export default class TSHostGroup extends Vue {
-  groupSelection: Array<object> = []
+  groupSelection: Array<any> = []
   hostGroup: Array<object> = []
+  item: any
 
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
+
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+    this.syncStoreToTree()
+  }
 
   fetch () {
     // TODO: Need backend method like '/api/opsidata/hostgroup' for fetching hostgroups for the selectedDepotsList
@@ -88,6 +93,46 @@ export default class TSHostGroup extends Vue {
     ]
   }
 
+  arrEqual (aOrg: Array<string>, bOrg: Array<string>) {
+    if (aOrg.length === bOrg.length && aOrg.length === 0) { return true } else if (aOrg.length !== bOrg.length) { return false }
+    const a = JSON.parse(JSON.stringify(aOrg))
+    const b = JSON.parse(JSON.stringify(bOrg))
+    if (a === b) { return true }
+    if (a == null || b == null) { return false }
+    if (a.length !== b.length) { return false }
+    a.sort()
+    b.sort()
+
+    for (let i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) {
+        return false
+      }
+    }
+    return true
+  }
+
+  syncStoreToTree () {
+    const storeData = this.selectionClients
+    let treeData = this.groupSelection.filter(item => item.type === 'ObjectToGroup')
+    treeData = [...new Set(treeData)]
+    if (this.arrEqual(storeData, treeData)) {
+      // eslint-disable-next-line no-useless-return
+      return
+    }
+    // const elementsInTree = []
+    // // found all elements in tree with node.text == clientId
+    // for (const cIdIndex in storeData) {
+    //   if (this.obj2groupIds.includes(storeData[cIdIndex])) {
+    //     utils.tree.filterElementsByValue(
+    //       this.filteredGroupItems, storeData[cIdIndex],
+    //       'text', elementsInTree)
+    //   }
+    // }
+    // this.groupSelection = elementsInTree
+    // // eslint-disable-next-line no-console
+    // console.debug('syncStoreToTree groupSelection', this.groupSelection)
+  }
+
   mapElementsByValue (elements:any, matchingValue: string, compareKey:string, mapKey:string, resultArray:Array<string>) {
     for (const elementKey in elements) {
       const element = elements[elementKey]
@@ -110,7 +155,11 @@ export default class TSHostGroup extends Vue {
     for (const i in idList) {
       const objectId = idList[i]
       if (type === 'select') {
+        // if (storeData.includes(objectId)) {
+        //   return null
+        // } else {
         this.pushToSelectionClients(objectId)
+        // }
       }
       if (type === 'deselect') {
         if (storeData.includes(objectId)) {
