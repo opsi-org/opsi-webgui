@@ -29,6 +29,7 @@ const selections = namespace('selections')
 export default class TSHostGroup extends Vue {
   groupSelection: Array<any> = []
   hostGroup: Array<object> = []
+  groupIdList: Array<string> = []
   item: any
 
   @selections.Getter public selectionClients!: Array<string>
@@ -91,6 +92,7 @@ export default class TSHostGroup extends Vue {
         ]
       }
     ]
+    this.mapElementsByValue(this.hostGroup, 'ObjectToGroup', 'type', 'label', this.groupIdList)
   }
 
   arrEqual (aOrg: Array<string>, bOrg: Array<string>) {
@@ -119,18 +121,29 @@ export default class TSHostGroup extends Vue {
       // eslint-disable-next-line no-useless-return
       return
     }
-    // const elementsInTree = []
-    // // found all elements in tree with node.text == clientId
-    // for (const cIdIndex in storeData) {
-    //   if (this.obj2groupIds.includes(storeData[cIdIndex])) {
-    //     utils.tree.filterElementsByValue(
-    //       this.filteredGroupItems, storeData[cIdIndex],
-    //       'text', elementsInTree)
-    //   }
-    // }
-    // this.groupSelection = elementsInTree
-    // // eslint-disable-next-line no-console
-    // console.debug('syncStoreToTree groupSelection', this.groupSelection)
+    const elementsInTree: Array<string> = []
+    // found all elements in tree with node.text == clientId
+    for (const index in storeData) {
+      if (this.groupIdList.includes(storeData[index])) {
+        this.filterElementsByValue(
+          this.hostGroup, storeData[index],
+          'label', elementsInTree)
+      }
+    }
+    this.groupSelection = elementsInTree
+    // eslint-disable-next-line no-console
+    console.debug('syncStoreToTree groupSelection', JSON.stringify(this.groupSelection))
+  }
+
+  filterElementsByValue (elements: any, matchingValue: string, key: string, resultArray:Array<string>) {
+    for (const elementKey in elements) {
+      const element = elements[elementKey]
+      if (element[key] === matchingValue) {
+        resultArray.push(element)
+      } else if (element.children != null) {
+        this.filterElementsByValue(element.children, matchingValue, key, resultArray)
+      }
+    }
   }
 
   mapElementsByValue (elements:any, matchingValue: string, compareKey:string, mapKey:string, resultArray:Array<string>) {
