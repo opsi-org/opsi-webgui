@@ -41,6 +41,10 @@
             />
           </template>
 
+          <template #head(installationStatus)>
+            is
+          </template>
+
           <template #cell(installationStatus)="row">
             <TableCellTCBadgeCompares
               v-if="(selectionClients && row.item.selectedClients)"
@@ -128,9 +132,9 @@ export default class VProducts extends Vue {
     name: { label: 'name', key: 'name', visible: false, sortable: true },
     selectedClients: { label: 'clientIds', key: 'selectedClients', visible: false },
     selectedDepots: { label: 'depotIds', key: 'selectedDepots', visible: false },
-    installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: true, sortable: true },
-    actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: true, sortable: true },
-    version: { label: 'version', key: 'version', visible: true, sortable: true },
+    installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: false, sortable: true },
+    actionRequest: { label: '', key: 'actionRequest', visible: true, sortable: true, _fixed: true },
+    version: { label: 'version', key: 'version', visible: false, sortable: true },
     // macAddress: { label: 'MAC', key: 'macAddress', visible: false },
     // _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     // version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
@@ -188,11 +192,7 @@ export default class VProducts extends Vue {
 
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = this.selectionDepots
-      if (this.selectionClients.length > 0) {
-        this.tableData.selectedClients = this.selectionClients
-      } else {
-        delete this.tableData.selectedClients
-      }
+      this.tableData.selectedClients = this.selectionClients
       this.fetchedData = (await this.$axios.$post(
         '/api/opsidata/products',
         JSON.stringify(this.tableData)
