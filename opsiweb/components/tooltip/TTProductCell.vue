@@ -35,7 +35,9 @@
                   v-if="c!=cd"
                   class="text-right"
                 >
-                  <b-badge :class="getVariant(v)">{{ v }}</b-badge>
+                  <b-badge :class="getVariant(v)">
+                    {{ v }}
+                  </b-badge>
                 </b-th>
               </b-tr>
             </template>
@@ -48,7 +50,9 @@
             {{ c }}
           </b-th>
           <b-th class="text-right">
-            <b-badge :class="getVariant(v)">{{ v }}</b-badge>
+            <b-badge :class="getVariant(v)">
+              {{ v }}
+            </b-badge>
           </b-th>
         </b-tr>
       </b-tbody>
@@ -91,7 +95,7 @@ export default class TTProductCell extends Vue {
 
   getVariant (value: string) {
     if (this.variants[this.type] === undefined) {
-      console.error(`Type ${this.type} not in variants`)
+      // console.error(`Type ${this.type} not in variants`)
       return ''
     }
     // return (v) => {

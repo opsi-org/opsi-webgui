@@ -19,7 +19,7 @@
       :target="`TCProductVersionCell_hover_${rowid}`"
       :details="tooltiptext"
     />
-      <!-- :detailsDepots="tooltiptext.depots" -->
+    <!-- :detailsDepots="tooltiptext.depots" -->
   </div>
 </template>
 
@@ -52,13 +52,10 @@ export default class TableCellTCProductVersionCell extends Vue {
     const depots: IObjectString2String = mapValues2Objects(this.valuesDepots, this.objectsDepots, this.selectionDepots, '-')
     const tt:IObjectString2ObjectString2String = {}
     for (const d in depots) {
-      console.log(d, depots[d])
       tt[d] = {
         [d]: depots[d]
       }
     }
-    console.log(tt)
-    console.log(this.clients2depots)
     for (const c in clients) {
       tt[this.clients2depots[c]][c] = clients[c]
     }
