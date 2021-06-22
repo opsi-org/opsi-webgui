@@ -1,4 +1,17 @@
-
+export interface IObjectString2Function {
+    // x = {'foo': () => { doSth() })}
+    [key: string]: Function
+}
+export interface IObjectString2String {
+    // x = {'foo': 'bar'}
+    [key: string]: string
+}
+export interface IObjectString2ObjectString2String {
+    // x = {'foo': { 'k': 'bar' })}
+    [key: string]: {
+        [key: string]: string
+    }
+}
 export interface ISidebarAttributes {
     visible: boolean
     expanded: boolean
@@ -8,39 +21,4 @@ export interface ITheme {
     title: string
     rel: string
     timestamp?: number
-}
-
-export interface ITableDataItem {
-    ident: string
-}
-
-export interface ITableRow {
-    rowSelected: boolean
-    item: {
-        ident: string
-        _rowVariant?: string
-    };
-}
-
-export interface ITableData {
-    pageNumber: number,
-    setPageNumber: Function,
-    perPage: number,
-    sortBy: string,
-    sortDesc: boolean,
-    filterQuery: string,
-    selectedDepots?: Array<string>,
-    selectedClients?: Array<string>
-}
-
-export interface ITableHeader {
-    label: string,
-    key: string,
-    visible: boolean,
-    _fixed?: boolean,
-    _isMajor?: boolean,
-    _majorKey?: string,
-}
-export interface ITableHeaders {
-    [key: string]: ITableHeader
 }

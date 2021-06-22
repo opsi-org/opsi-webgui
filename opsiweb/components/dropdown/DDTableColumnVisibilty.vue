@@ -51,7 +51,7 @@
 <script lang="ts">
 import { Component, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-import { ITableHeaders } from '~/types/tsettings'
+import { ITableHeaders } from '~/types/ttable'
 
 @Component
 export default class DDTableColumnVisibilty extends BDropdown {
