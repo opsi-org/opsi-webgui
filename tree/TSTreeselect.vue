@@ -48,22 +48,8 @@ export default class TSTreeselect extends Vue {
     this.syncStoreToTree()
   }
 
-  arrEqual (aOrg: Array<string>, bOrg: Array<string>) {
-    if (aOrg.length === bOrg.length && aOrg.length === 0) { return true } else if (aOrg.length !== bOrg.length) { return false }
-    const a = JSON.parse(JSON.stringify(aOrg))
-    const b = JSON.parse(JSON.stringify(bOrg))
-    if (a === b) { return true }
-    if (a == null || b == null) { return false }
-    if (a.length !== b.length) { return false }
-    a.sort()
-    b.sort()
-
-    for (let i = 0; i < a.length; ++i) {
-      if (a[i] !== b[i]) {
-        return false
-      }
-    }
-    return true
+  arrEqual (arr1: Array<string>, arr2: Array<string>) {
+    return JSON.stringify(arr1) === JSON.stringify(arr2)
   }
 
   syncStoreToTree () {
@@ -108,12 +94,9 @@ export default class TSTreeselect extends Vue {
   }
 
   groupChange (value: object, type: string) {
-    let idList: Array<string> = []
+    const idList : Array<string> = []
     this.filterObjectLabel([value], 'ObjectToGroup', 'type', 'label', idList)
-    idList = [...new Set(idList)]
-    let storeData
-    storeData = this.selectionClients
-    storeData = [...new Set(storeData)]
+    const storeData = this.selectionClients
 
     for (const i in idList) {
       const objectId = idList[i]
