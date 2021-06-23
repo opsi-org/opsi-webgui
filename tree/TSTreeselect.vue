@@ -1,24 +1,26 @@
 <template>
-  <treeselect
-    v-model="groupSelection"
-    :placeholder="type === 'hostgroup' ? 'Host Group' : 'Product Group'"
-    class="treeselect"
-    :multiple="true"
-    :clearable="false"
-    :options="options"
-    value-format="object"
-    :max-height="200"
-    @select="groupSelect"
-    @deselect="groupDeselect"
-  >
-    <div slot="option-label" slot-scope="{ node }">
-      <div :ref="'tree-item-'+node.id">
-        <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
-        <b-icon v-else icon="laptop" />
-        <small> {{ node.label }} </small>
+  <b-input-group>
+    <treeselect
+      v-model="groupSelection"
+      :placeholder="type === 'hostgroup' ? 'Host Group' : 'Product Group'"
+      class="treeselect"
+      :multiple="true"
+      :clearable="false"
+      :options="options"
+      value-format="object"
+      :max-height="200"
+      @select="groupSelect"
+      @deselect="groupDeselect"
+    >
+      <div slot="option-label" slot-scope="{ node }">
+        <div :ref="'tree-item-'+node.id">
+          <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
+          <b-icon v-else icon="laptop" />
+          <small> {{ node.label }} </small>
+        </div>
       </div>
-    </div>
-  </treeselect>
+    </treeselect>
+  </b-input-group>
 </template>
 
 <script lang="ts">
