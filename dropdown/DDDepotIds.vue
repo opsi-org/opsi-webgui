@@ -1,39 +1,39 @@
 <template>
-  <div>
-    <!-- store {{ selectionDepots }} <br />
+  <!-- <div class="container-fluid"> -->
+  <!-- store {{ selectionDepots }} <br />
     local {{ selectionLocal }} <br />
     configserver {{ opsiconfigserver }} <br /> -->
-    <b-dropdown
-      v-bind="$props"
-      no-caret
-      lazy
-      variant="outline-primary"
-      size="sm"
-      alt="Show column"
+  <b-dropdown
+    class="m-2"
+    right
+    v-bind="$props"
+    no-caret
+    lazy
+    alt="Show column"
+  >
+    <template #button-content>
+      <b-icon-hdd-stack-fill /> Depots
+    </template>
+    <li
+      id="selectableColumns-group"
+      name="selectableColumns"
     >
-      <template #button-content>
-        <b-icon-hdd-stack-fill /> Depots
-      </template>
-      <li
-        id="selectableColumns-group"
-        name="selectableColumns"
+      <a
+        v-for="obj in fetchedData"
+        :key="obj"
+        class="dropdown-item"
+        @click="handleItem(obj)"
       >
-        <a
-          v-for="obj in fetchedData"
-          :key="obj"
-          class="dropdown-item"
-          @click="handleItem(obj)"
-        >
-          <b-form-checkbox
-            v-model="selectionLocal"
-            :name="obj"
-            :value="obj"
-          />
-          {{ obj }}
-        </a>
-      </li>
-    </b-dropdown>
-  </div>
+        <b-form-checkbox
+          v-model="selectionLocal"
+          :name="obj"
+          :value="obj"
+        />
+        {{ obj }}
+      </a>
+    </li>
+  </b-dropdown>
+  <!-- </div> -->
 </template>
 
 <script lang="ts">
