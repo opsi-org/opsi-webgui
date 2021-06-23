@@ -1,6 +1,6 @@
 <template>
   <!-- shows the clients table  -->
-  <div class="container">
+  <div class="container-fluid">
     <ViewVProducts />
   </div>
 </template>
