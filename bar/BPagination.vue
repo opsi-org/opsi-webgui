@@ -1,4 +1,5 @@
 <template>
+  <!-- v-if="$props.totalRows > tabledata.perPage" -->
   <b-pagination
     v-model="localPageNumber"
     class="BarBPagination"
@@ -14,7 +15,7 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BPagination } from 'bootstrap-vue'
-import { ITableData } from '~/types/tsettings'
+import { ITableData } from '~/types/ttable'
 @Component
 export default class UIBBPangination extends BPagination {
   @Prop({}) tabledata!:ITableData;
