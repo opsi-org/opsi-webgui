@@ -1,18 +1,13 @@
 <template>
   <treeselect
-    :id="tid"
     v-model="groupSelection"
-    class="Group_TreeSelect"
+    :placeholder="type === 'hostgroup' ? 'Host Group' : 'Product Group'"
+    class="treeselect"
     :multiple="true"
-    :options="filteredGroupItems"
-    :placeholder="placeholder +' '+ addPlaceholder"
-    :normalizer="normalizer"
+    :clearable="false"
+    :options="options"
     value-format="object"
-    :before-clear-all="beforeClearAll"
-    value-consists-of="LEAF_PRIORITY"
-    :no-children-text="(dataType=='HostGroups')?$t('clients.group.noChildren'):$t('products.group.noChildren')"
-    :no-options-text="(dataType=='HostGroups')?$t('clients.group.noOptions'):$t('products.group.noOptions')"
-    :no-results-text="(dataType=='HostGroups')?$t('clients.group.noSearchResults'):$t('products.group.noSearchResults')"
+    :max-height="200"
     @select="groupSelect"
     @deselect="groupDeselect"
   >
@@ -27,45 +22,125 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
+const selections = namespace('selections')
 
 @Component
 export default class TSTreeselect extends Vue {
-  elementWithValue (element: any, matchingValue: any, key: any, type = 'any') {
-    if (element[key] === matchingValue) {
-      return true
-    } else if (element.children != null) {
-      let i
-      let result = type !== 'any'
-      const shouldBe = type !== 'any'
-      for (i = 0; result === shouldBe && i < Object.values(element.children).length; i++) {
-        result = this.elementWithValue(Object.values(element.children)[i], matchingValue, key, type)
+  @Prop({ }) options!: Array<object>
+  @Prop({ }) type!: string
+
+  groupSelection: Array<any> = []
+  groupIdList: Array<string> = []
+  item: any
+
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public pushToSelectionClients!: (s: string) => void
+  @selections.Mutation public delFromSelectionClients!: (s: string) => void
+
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+    this.syncStoreToTree()
+  }
+
+  mounted () {
+    this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'label', this.groupIdList)
+    this.syncStoreToTree()
+  }
+
+  arrEqual (aOrg: Array<string>, bOrg: Array<string>) {
+    if (aOrg.length === bOrg.length && aOrg.length === 0) { return true } else if (aOrg.length !== bOrg.length) { return false }
+    const a = JSON.parse(JSON.stringify(aOrg))
+    const b = JSON.parse(JSON.stringify(bOrg))
+    if (a === b) { return true }
+    if (a == null || b == null) { return false }
+    if (a.length !== b.length) { return false }
+    a.sort()
+    b.sort()
+
+    for (let i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) {
+        return false
       }
-      return result
     }
-    return false
+    return true
   }
 
-  compareByKeyText (a: any, b: any) {
-    const textA = a.text.toUpperCase()
-    const textB = b.text.toUpperCase()
-    if (textA > textB) { return 1 } else if (textA < textB) { return -1 } else { return 0 }
+  syncStoreToTree () {
+    const storeData = this.selectionClients
+    let treeData = this.groupSelection.filter(item => item.type === 'ObjectToGroup')
+    treeData = [...new Set(treeData)]
+    if (this.arrEqual(storeData, treeData)) {
+      // eslint-disable-next-line no-useless-return
+      return
+    }
+    const elementsInTree: Array<string> = []
+    for (const index in storeData) {
+      if (this.groupIdList.includes(storeData[index])) {
+        this.filterObject(
+          this.options, storeData[index],
+          'label', elementsInTree)
+      }
+    }
+    this.groupSelection = elementsInTree
   }
 
-  normalizer (node: any) {
-    const newDisabled = (
-      (this.elementWithValue(node, true, 'disabled', 'all')) ||
-            ((node.children) && !(this.elementWithValue(node, 'ObjectToGroup', 'type'))))
-    return {
-      id: node.id,
-      label: node.text.replace(/_+$/, ''),
-      isDisabled: newDisabled,
-      children: (node.children) ? Object.values(node.children).sort(this.compareByKeyText) : {}
+  filterObject (elements: any, matchingValue: string, key: string, resultArray:Array<string>) {
+    for (const elementKey in elements) {
+      const element = elements[elementKey]
+      if (element[key] === matchingValue) {
+        resultArray.push(element)
+      } else if (element.children != null) {
+        this.filterObject(element.children, matchingValue, key, resultArray)
+      }
     }
+  }
+
+  filterObjectLabel (elements:any, matchingValue: string, compareKey:string, mapKey:string, resultArray:Array<string>) {
+    for (const elementKey in elements) {
+      const element = elements[elementKey]
+      if (element[compareKey] === matchingValue) {
+        resultArray.push(element[mapKey])
+      } else if (element.children != null) {
+        this.filterObjectLabel(element.children, matchingValue, compareKey, mapKey, resultArray)
+      }
+    }
+  }
+
+  groupChange (value: object, type: string) {
+    let idList: Array<string> = []
+    this.filterObjectLabel([value], 'ObjectToGroup', 'type', 'label', idList)
+    idList = [...new Set(idList)]
+    let storeData
+    storeData = this.selectionClients
+    storeData = [...new Set(storeData)]
+
+    for (const i in idList) {
+      const objectId = idList[i]
+      if (type === 'select') {
+        this.pushToSelectionClients(objectId)
+      }
+      if (type === 'deselect') {
+        if (storeData.includes(objectId)) {
+          this.delFromSelectionClients(objectId)
+        }
+      }
+    }
+  }
+
+  groupSelect (selection: any) {
+    this.groupChange(selection, 'select')
+  }
+
+  groupDeselect (deselection: object) {
+    this.groupChange(deselection, 'deselect')
   }
 }
 </script>
 
 <style>
+.treeselect .vue-treeselect__multi-value-item-container {
+  display: none;
+}
 
 </style>
