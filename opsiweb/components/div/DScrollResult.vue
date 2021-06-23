@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid content-scroll">
+  <div class="content-scroll">
     <slot name="content" />
   </div>
 </template>
