@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: Need backend method like '/api/opsidata/clientIds' for fetching only sorted list of clientIds  -->
   <b-form-select v-model="idselection" :options="clientIds" @change="$emit('update:id', idselection)">
     <template #first>
       <b-form-select-option :value="null" disabled>
@@ -10,15 +9,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+const selections = namespace('selections')
 
 @Component
 export default class SClientIds extends Vue {
   clientIds: Array<string> = []
   idselection: string = ''
+  @selections.Getter public selectionDepots!: Array<string>
 
-  fetch () {
-    this.clientIds = ['agorumcore-tst.uib.local', 'akunde1.uib.local']
+  async fetch () {
+    this.clientIds = (await this.$axios.$post('/api/opsidata/depots/clients',
+      JSON.stringify({ selectedDepots: this.selectionDepots }))
+    ).result.clients.sort()
     this.idselection = this.clientIds[0]
   }
 }
