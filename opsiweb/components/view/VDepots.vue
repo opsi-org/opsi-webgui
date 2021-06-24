@@ -22,16 +22,16 @@
         select-mode="multi"
         selectable
       >
-        <template #cell(rowactions)="row">
-          <!-- <ButtonBTNRowLinkTo
+        <!-- <template #cell(rowactions)="row">
+          <ButtonBTNRowLinkTo
             title="config"
             icon="gear"
             to="/depots/config"
             :ident="row.item.ident"
             :pressed="isRouteActive"
             :click="routeRedirectWith"
-          /> -->
-        </template>
+          />
+        </template> -->
       </TableTTable>
       <BarBPagination
         :tabledata="tableData"
