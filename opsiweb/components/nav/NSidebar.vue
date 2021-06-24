@@ -54,8 +54,8 @@ export default Vue.extend({
               route: '/depots/',
               icon: 'hdd-stack-fill',
               submenu: [
-                { title: 'All Depots', route: '/depots' }
-                // { title: 'Configuration', route: '/depotsconfig' }
+                { title: 'All Depots', route: '/depots' },
+                { title: 'Configuration', route: '/depotsconfig' }
                 // { title: 'Logs', route: '/depots/log' }
               ]
             },
@@ -66,7 +66,7 @@ export default Vue.extend({
               submenu: [
                 { title: 'All Clients', route: '/clients/' },
                 // { title: 'Add New', route: '/clients/clientnew' },
-                // { title: 'Configuration', route: '/clientsconfig' },
+                { title: 'Configuration', route: '/clientsconfig' },
                 { title: 'Logs', route: '/clientslog' }
               ]
             },
