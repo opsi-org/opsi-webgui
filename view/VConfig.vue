@@ -9,10 +9,9 @@
     <IconILoading v-if="isLoading" />
     <DivDScrollResult>
       <template slot="content">
-        <!-- <template v-if="id === opsiconfigserver"> -->
         <CollapseCContent title="General">
           <template #content>
-            <TableTGeneralConfig />
+            <TableTGeneralConfig :id="id" />
           </template>
         </CollapseCContent>
         <CollapseCContent title="Host Parameters">
@@ -20,10 +19,6 @@
             <TableTHostParam />
           </template>
         </CollapseCContent>
-        <!-- </template> -->
-        <!-- <template v-else>
-          <TableTGeneralConfig />
-        </template> -->
       </template>
     </DivDScrollResult>
   </div>
@@ -38,11 +33,6 @@ export default class VClientConfig extends Vue {
   @Prop({ default: false }) 'closeroute'!: string
 
   isLoading: boolean = false
-  // opsiconfigserver: string = ''
-
-  // async fetch () {
-  //   this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
-  // }
 }
 </script>
 

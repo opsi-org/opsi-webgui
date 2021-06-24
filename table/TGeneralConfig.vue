@@ -1,27 +1,31 @@
 <template>
-  <!-- TODO: Replace tableitems with real data from backend  -->
-  <TableTDefault :tableitems="tableitems" />
+  <TableTDefault :tableitems="Object.values(tableitems)" />
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class TGeneralConfig extends Vue {
-  tableitems:Array<object> = []
+  @Prop({ }) id!: string
+  tableitems:Object = {}
+  dummyresult: Object = {}
+
+  @Watch('id', { deep: true }) idChanged () { this.$fetch() }
+
+  // TODO: A backend method for retrieving 'host_getObjects' result for given id
 
   fetch () {
-    this.tableitems = [
-      { property: 'Description', value: '' },
-      { property: 'Inventory Number', value: '' },
-      { property: 'MAC Address', value: '' },
-      { property: 'Install by shutdown', value: 'true', type: 'switch' },
-      { property: 'UEFI Boot', value: 'true', type: 'boolean' },
-      { property: 'WAN Configuration', value: 'false', type: 'boolean' },
-      { property: 'One Time password', value: '' },
-      { property: 'opsiHostKey', value: '123456' },
-      { property: 'Notes', value: '' }
-    ]
+    this.dummyresult = {
+      id: { property: 'id', value: this.id },
+      description: { property: 'description', value: '' },
+      hardwareAddress: { property: 'hardwareAddress', value: '' },
+      ipAddress: { property: 'ipAddress', value: '' },
+      inventoryNumber: { property: 'inventoryNumber', value: '' },
+      opsiHostKey: { property: 'opsiHostKey', value: '123456' },
+      notes: { property: 'notes', value: '' }
+    }
+    this.tableitems = this.dummyresult
   }
 }
 </script>
