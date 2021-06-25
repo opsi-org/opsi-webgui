@@ -1,5 +1,5 @@
 <template>
-  <TableTDefault :tableitems="Object.values(tableitems)" />
+  <LazyTableTDefault v-if="tableitems" :tableitems="Object.values(tableitems)" />
 </template>
 
 <script lang="ts">
