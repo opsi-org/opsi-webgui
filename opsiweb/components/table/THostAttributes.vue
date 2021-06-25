@@ -6,7 +6,7 @@
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class TGeneralConfig extends Vue {
+export default class THostAttributes extends Vue {
   @Prop({ }) id!: string
   tableitems:Object = {}
   dummyresult: Object = {}
