@@ -9,16 +9,24 @@
     <IconILoading v-if="isLoading" />
     <DivDScrollResult>
       <template slot="content">
-        <CollapseCContent title="General">
+        <b-tabs active-nav-item-class="font-weight-bold" content-class="mt-3">
+          <b-tab title="Host Attributes" active>
+            <TableTHostAttributes :id="id" />
+          </b-tab>
+          <b-tab title="Host Parameters">
+            <TableTHostParam />
+          </b-tab>
+        </b-tabs>
+        <!-- <CollapseCContent title="Host Attributes">
           <template #content>
-            <TableTGeneralConfig :id="id" />
+            <TableTHostAttributes :id="id" />
           </template>
         </CollapseCContent>
         <CollapseCContent title="Host Parameters">
           <template #content>
-            <TableTHostParam />
+            <TableTHostParam :id="id" />
           </template>
-        </CollapseCContent>
+        </CollapseCContent> -->
       </template>
     </DivDScrollResult>
   </div>
