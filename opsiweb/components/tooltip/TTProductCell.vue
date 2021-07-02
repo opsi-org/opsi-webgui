@@ -6,37 +6,38 @@
   <b-tooltip :target="target" triggers="hover">
     <b-table-simple small dark class="tt-table">
       <b-tbody v-if="type=='version'">
-        <div v-for="(vd, cd) in details" :key="cd">
+        <div v-for="(depotClientDetails, depotId) in details" :key="depotId">
+          <!-- {{depotClientDetails}}, {{depotId}} -->
           <BarBTooltipCollapseRow
-            :title="cd"
-            :value="vd[cd]"
+            :title="depotId"
+            :value="depotClientDetails[depotId]"
             :collapsed="Object.keys(details).length <= 1"
-            :collapseable="Object.keys(vd).length > 1"
-            :value-variant="getVariant(vd[cd])"
+            :collapseable="Object.keys(depotClientDetails).length > 1"
+            :value-variant="(depotVersionDiff)? 'warning':''"
           >
-            <!-- :collapsed="Object.keys(vd) > 1" -->
+            <!-- :collapsed="Object.keys(depotClientDetails) > 1" -->
             <template
-              v-if="Object.keys(vd).length > 1"
+              v-if="Object.keys(depotClientDetails).length > 1"
               #nav-child
             >
               <b-tr
-                v-for="(v,c) in vd"
-                :key="c"
-                :class="`subbadge_${type}_${c}`"
+                v-for="(clientVersion,clientId) in depotClientDetails"
+                :key="clientId"
+                :class="`subbadge_${type}_${clientId}`"
                 class="tr-subrow"
               >
                 <b-th
-                  v-if="c!=cd"
+                  v-if="clientId!=depotId"
                   class="text-left"
                 >
-                  {{ c }}
+                  {{ clientId }}
                 </b-th>
                 <b-th
-                  v-if="c!=cd"
+                  v-if="clientId!=depotId"
                   class="text-right"
                 >
-                  <b-badge :class="getVariant(v)">
-                    {{ v }}
+                  <b-badge :variant="(depotClientDetails[depotId]!=clientVersion)?'danger':''">
+                    {{ clientVersion }}
                   </b-badge>
                 </b-th>
               </b-tr>
@@ -63,14 +64,17 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { IObjectString2String, IObjectString2Function } from '~/types/tsettings'
+// import { ITableRowItemProducts } from '~/types/ttable'
 
 @Component
 export default class TTProductCell extends Vue {
   @Prop({ }) target!: string
+  @Prop({ default: false }) depotVersionDiff?: boolean
   @Prop({ default: 'version' }) type!: string
   @Prop({ default: 'danger' }) variant!: string
   @Prop({ }) details!: IObjectString2String
   @Prop({ }) detailsDepots!: IObjectString2String
+  // @Prop({ }) rowitem?: ITableRowItemProducts
   // @Prop({ }) row:Object,
   // @Prop({ }) text!: {type:Boolean, default:false},
   variants: IObjectString2Function = {
@@ -88,7 +92,7 @@ export default class TTProductCell extends Vue {
       if (s === 'unknown') { return 'bg-primary' }
       return 'bg-secondary'
     },
-    version: () => ''
+    version: () => 'danger'
     // version:(v)=> (v!=this.row.item.versionDepot && v!='None')?'bg-danger':'bg-dark',
     // ppversion:(v:string)=> {v.startsWith('*')? 'pps_client_uneq_depot':'not_bold'},
   }

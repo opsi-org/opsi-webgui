@@ -1,13 +1,19 @@
 <template>
-  <!-- sort-icon-left -->
   <b-table
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
     striped
     hover
+    selectable
+    select-mode="multi"
+    :no-local-sorting="true"
+    :sort-by.sync="tabledata.sortBy"
+    :sort-desc.sync="tabledata.sortDesc"
     @row-clicked="rowChanged"
   >
+    <!-- :sort-by="$props.tableData.sortBy"
+    :sort-desc="$props.tableData.sortDesc" -->
     <template #head(sel)="{}">
       {{ selection.length }}/{{ totalrows }}
       <!-- {{$props}} -->
@@ -32,7 +38,7 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BTable } from 'bootstrap-vue'
-import { ITableRow, ITableHeaders, ITableDataItem } from '~/types/ttable'
+import { ITableRow, ITableHeaders, ITableDataItem, ITableData } from '~/types/ttable'
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string
@@ -40,6 +46,7 @@ export default class TTable extends BTable {
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
+  @Prop({ }) tabledata!: ITableData
 
   fixRow (row: ITableRow): void {
     row.rowSelected = this.selection.includes(row.item.ident)

@@ -13,10 +13,14 @@ export interface ITableRow {
 
 export interface ITableRowItemProducts {
   ident: Array<string>
+  selectedDepots: Array<string>
+  selectedClients: Array<string>
   request: Array<string>
   actionRequestDetails?: Array<string>
-  selectedDepots?: Array<string>
-  selectedClients?: Array<string>
+  depotVersions: Array<string>
+  clientVersions: Array<string>
+  clientVersionOutdated: boolean
+  depotVersionDiff: boolean
 }
 export interface ITableData {
   pageNumber: number,

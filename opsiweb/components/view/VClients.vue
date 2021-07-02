@@ -12,6 +12,7 @@
       <TableTTable
         id="tableclients"
         datakey="clientId"
+        :tabledata="tableData"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
         :items="fetchedData.clients"
@@ -19,11 +20,6 @@
         :onchangeselection="setSelectionClients"
         :loading="isLoading"
         :totalrows="fetchedData.total"
-        :no-local-sorting="true"
-        :sort-by.sync="tableData.sortBy"
-        :sort-desc.sync="tableData.sortDesc"
-        select-mode="multi"
-        selectable
       >
         <template #cell(rowactions)="row">
           <!-- <ButtonBTNRowLinkTo
@@ -88,13 +84,13 @@ export default class VClients extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    clientId: { label: 'Id', key: 'clientId', visible: true, _fixed: true },
-    description: { label: 'Desc', key: 'description', visible: false },
-    ipAddress: { label: 'IP', key: 'ipAddress', visible: false },
-    macAddress: { label: 'MAC', key: 'macAddress', visible: false },
+    clientId: { label: 'Id', key: 'clientId', visible: true, _fixed: true, sortable: true },
+    description: { label: 'Desc', key: 'description', visible: false, sortable: true },
+    ipAddress: { label: 'IP', key: 'ipAddress', visible: false, sortable: true },
+    macAddress: { label: 'MAC', key: 'macAddress', visible: false, sortable: true },
     _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
-    version_outdated: { label: 'v outated', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
-    actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false },
+    version_outdated: { label: 'v outated', key: 'version_outdated', _majorKey: '_majorStats', visible: false, sortable: true },
+    actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false, sortable: true },
     rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
   }
 
