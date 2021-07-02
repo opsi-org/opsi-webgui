@@ -14,6 +14,7 @@ export interface ITableRow {
 export interface ITableRowItemProducts {
   ident: Array<string>
   request: Array<string>
+  actionRequestDetails?: Array<string>
   selectedDepots?: Array<string>
   selectedClients?: Array<string>
 }
