@@ -10,10 +10,10 @@
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" />
         </template>
       </BarBPageHeader>
-
       <TableTCollapseable
         id="tableproducts"
         datakey="productId"
+        :tabledata="tableData"
         :title="'Localboot products'"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
@@ -22,20 +22,22 @@
         :onchangeselection="setSelectionProducts"
         :loading="isLoading"
         :totalrows="fetchedData.total"
-        select-mode="multi"
-        selectable
       >
         <!-- :no-local-sorting="true"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc" -->
-        <template #cell(version)="row">
+        <template #cell(depotVersions)="row">
           <TableCellTCProductVersionCell
-            :rowid="row.item.productId"
+            type="depotVersions"
+            :rowitem="row.item"
             :clients2depots="fetchedDataClients2Depots"
-            :values-depots="row.item.depotVersions || []"
-            :values-clients="row.item.clientVersions || []"
-            :objects-depots="row.item.selectedDepots || []"
-            :objects-clients="row.item.selectedClients || []"
+          />
+        </template>
+        <template #cell(clientVersions)="row">
+          <TableCellTCProductVersionCell
+            type="clientVersion"
+            :rowitem="row.item"
+            :clients2depots="fetchedDataClients2Depots"
           />
         </template>
 
@@ -138,7 +140,10 @@ export default class VProducts extends Vue {
     selectedDepots: { label: 'depotIds', key: 'selectedDepots', visible: false },
     installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: false, sortable: true },
     actionRequest: { label: '', key: 'actionRequest', visible: true, sortable: true, _fixed: true },
-    version: { label: 'version', key: 'version', visible: false, sortable: true },
+    _majorVersion: { label: 'Version', key: '_majorVersion', _isMajor: true, visible: false },
+    depotVersions: { label: 'd', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true },
+    clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: true, sortable: true },
+    // version: { label: 'version', key: 'version', visible: false, sortable: true },
     // macAddress: { label: 'MAC', key: 'macAddress', visible: false },
     // _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
     // version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
@@ -197,6 +202,8 @@ export default class VProducts extends Vue {
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = this.selectionDepots
       this.tableData.selectedClients = this.selectionClients
+      if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
+      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
       this.fetchedData = (await this.$axios.$post(
         '/api/opsidata/products',
         JSON.stringify(this.tableData)

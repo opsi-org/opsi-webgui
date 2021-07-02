@@ -9,6 +9,7 @@
       <TableTTable
         id="tabledepots"
         datakey="depotId"
+        :tabledata="tableData"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
         :items="fetchedData.depots"
@@ -16,11 +17,6 @@
         :onchangeselection="setSelectionDepots"
         :loading="isLoading"
         :totalrows="fetchedData.total"
-        :no-local-sorting="true"
-        :sort-by.sync="tableData.sortBy"
-        :sort-desc.sync="tableData.sortDesc"
-        select-mode="multi"
-        selectable
       >
         <!-- <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo
@@ -72,10 +68,10 @@ export default class VDepots extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    depotId: { label: 'Id', key: 'depotId', visible: true, _fixed: true },
-    description: { label: 'Desc', key: 'description', visible: false },
-    type: { label: 'type', key: 'type', visible: false },
-    ip: { label: 'ip', key: 'ip', visible: false },
+    depotId: { label: 'Id', key: 'depotId', visible: true, _fixed: true, sortable: true },
+    description: { label: 'Desc', key: 'description', visible: false, sortable: true },
+    type: { label: 'type', key: 'type', visible: false, sortable: true },
+    ip: { label: 'ip', key: 'ip', visible: false, sortable: true },
     _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
     rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
   }
