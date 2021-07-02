@@ -13,7 +13,7 @@
     >
       <template #button-content>
         <!-- {{request}}: <br /> -->
-        {{ request }}
+        {{ visibleRequest }}
       </template>
       <b-dropdown-item
         v-for="a in requestoptions"
@@ -25,7 +25,7 @@
     </b-dropdown>
     <!-- {{(text == 'mixed')? tooltiptext:''}} -->
     <TooltipTTProductCell
-      v-if="(rowitem!==undefined && request == 'mixed')"
+      v-if="(rowitem!==undefined)"
       type="actionRequest"
       :target="`DDProductRequest_actionRequest_hover_${rowitem.productId}`"
       :details="allRequests"
@@ -42,18 +42,29 @@ const selections = namespace('selections')
 @Component
 export default class DDProductRequest extends BDropdown {
   @Prop({ }) rowitem!: ITableRowItemProducts|undefined
-  @Prop({ default: () => { return ['---'] } }) request!: Array<string>
+  @Prop({ default: () => { return '---' } }) request!: string
   @Prop({ default: () => { return ['---', 'none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
   @Prop({ default: () => { return () => {} } }) save!: Function
 
   @selections.Getter public selectionClients!: Array<string>
+  get visibleRequest () {
+    if (this.rowitem === undefined) {
+      return this.request
+    }
+    if (this.rowitem.selectedClients && this.rowitem.selectedClients.length !== this.selectionClients.length) {
+      if (this.request !== 'none') {
+        return 'mixed'
+      }
+    }
+    return this.request
+  }
 
   get allRequests () {
     if (this.rowitem === undefined) {
       return {}
     }
     if (this.rowitem.actionRequestDetails) {
-      return mapValues2Objects(this.rowitem.actionRequestDetails, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'None')
+      return mapValues2Objects(this.rowitem.actionRequestDetails, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'none')
     }
     return {}
   }
