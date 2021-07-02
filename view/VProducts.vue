@@ -72,7 +72,7 @@
           <!-- :title="'Set actionrequest for all selected products'" -->
           <DropdownDDProductRequest
             v-if="selectionClients.length>0"
-            :request="row.item.actionRequest || ['none']"
+            :request="row.item.actionRequest || 'none'"
             :requestoptions="row.item.actions"
             :rowitem="row.item"
             :save="saveActionRequest"

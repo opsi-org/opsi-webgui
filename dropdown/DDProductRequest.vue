@@ -13,7 +13,7 @@
     >
       <template #button-content>
         <!-- {{request}}: <br /> -->
-        {{ visibleRequest }}
+        {{ request }}
       </template>
       <b-dropdown-item
         v-for="a in requestoptions"
@@ -25,7 +25,7 @@
     </b-dropdown>
     <!-- {{(text == 'mixed')? tooltiptext:''}} -->
     <TooltipTTProductCell
-      v-if="(rowitem!=undefined && visibleRequest == 'mixed')"
+      v-if="(rowitem!==undefined && request == 'mixed')"
       type="actionRequest"
       :target="`DDProductRequest_actionRequest_hover_${rowitem.productId}`"
       :details="allRequests"
@@ -37,7 +37,7 @@
 import { Component, namespace, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableRowItemProducts } from '~/types/ttable'
-import { mapValues2Value, mapValues2Objects } from '~/helpers/hmappings'
+import { mapValues2Objects } from '~/helpers/hmappings'
 const selections = namespace('selections')
 @Component
 export default class DDProductRequest extends BDropdown {
@@ -47,18 +47,15 @@ export default class DDProductRequest extends BDropdown {
   @Prop({ default: () => { return () => {} } }) save!: Function
 
   @selections.Getter public selectionClients!: Array<string>
-  get visibleRequest () {
-    if (this.rowitem === undefined) {
-      return '---'
-    }
-    return mapValues2Value(this.request, this.rowitem.selectedClients as Array<string>, this.selectionClients)
-  }
 
   get allRequests () {
     if (this.rowitem === undefined) {
       return {}
     }
-    return mapValues2Objects(this.request, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'None')
+    if (this.rowitem.actionRequestDetails) {
+      return mapValues2Objects(this.rowitem.actionRequestDetails, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'None')
+    }
+    return {}
   }
 }
 </script>
