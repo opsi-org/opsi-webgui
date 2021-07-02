@@ -25,7 +25,7 @@
     </b-dropdown>
     <!-- {{(text == 'mixed')? tooltiptext:''}} -->
     <TooltipTTProductCell
-      v-if="(rowitem!==undefined)"
+      v-if="(visibleRequest==='mixed')"
       type="actionRequest"
       :target="`DDProductRequest_actionRequest_hover_${rowitem.productId}`"
       :details="allRequests"
