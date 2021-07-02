@@ -18,7 +18,7 @@
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
         :items="fetchedData.products"
-        :selection="selectionClients"
+        :selection="selectionProducts"
         :onchangeselection="setSelectionProducts"
         :loading="isLoading"
         :totalrows="fetchedData.total"
@@ -93,6 +93,7 @@
       <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>
+      Products: {{ selectionProducts }} <br>
       <!-- Sorting By: <b>{{ tableData.sortBy }}</b>, Sort Direction:
       <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b> -->
       <!-- rowID {{ rowId }} <br>
@@ -141,40 +142,15 @@ export default class VProducts extends Vue {
     installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: false, sortable: true },
     actionRequest: { label: '', key: 'actionRequest', visible: true, sortable: true, _fixed: true },
     _majorVersion: { label: 'Version', key: '_majorVersion', _isMajor: true, visible: false },
-    depotVersions: { label: 'd', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true },
-    clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: true, sortable: true },
-    // version: { label: 'version', key: 'version', visible: false, sortable: true },
-    // macAddress: { label: 'MAC', key: 'macAddress', visible: false },
-    // _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
-    // version_outdated: { label: 'vO', key: 'version_outdated', _majorKey: '_majorStats', visible: false },
-    // actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false },
-    rowactions: { key: 'rowactions', label: '-', visible: true, _fixed: true }
+    depotVersions: { label: 'd', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey width-max-content text-right' },
+    clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey width-max-content ' },
+    rowactions: { key: 'rowactions', label: '-', visible: true, _fixed: true, class: 'width-max-content' }
   }
 
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-
-  // get sortBy (): string {
-  //   console.log("sortby asked", this.tableData.sortBy)
-  //   return this.tableData.sortBy
-  // }
-
-  // set sortBy (s: string) {
-  //   this.tableData.sortBy = s
-  //   console.log("sortby set", this.tableData.sortBy)
-  // }
-
-  // get sortDesc (): boolean {
-  //   console.log("sortDesc asked", this.tableData.sortDesc)
-  //   return this.tableData.sortDesc
-  // }
-
-  // set sortDesc (s: boolean) {
-  //   this.tableData.sortDesc = s
-  //   console.log("sortDesc set", this.tableData.sortDesc)
-  // }
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () { this.$fetch() }

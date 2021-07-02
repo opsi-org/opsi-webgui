@@ -12,11 +12,8 @@
     :sort-desc.sync="tabledata.sortDesc"
     @row-clicked="rowChanged"
   >
-    <!-- :sort-by="$props.tableData.sortBy"
-    :sort-desc="$props.tableData.sortDesc" -->
     <template #head(sel)="{}">
       {{ selection.length }}/{{ totalrows }}
-      <!-- {{$props}} -->
     </template>
     <template #cell(sel)="row">
       {{ fixRow(row) }}
