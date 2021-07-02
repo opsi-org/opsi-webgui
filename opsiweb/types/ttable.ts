@@ -42,6 +42,8 @@ export interface ITableHeader {
   _fixed?: boolean,
   _isMajor?: boolean,
   _majorKey?: string,
+  class?: string,
+  variant?: string,
 }
 export interface ITableHeaders {
   [key: string]: ITableHeader

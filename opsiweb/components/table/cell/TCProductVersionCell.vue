@@ -4,8 +4,7 @@
       <div v-if="type=='depotVersions'">
         <b-badge
           v-if="rowitem.depot_version_diff"
-          :variant="(rowitem.client_version_outdated||false)?'warning':''"
-          style="width:100%"
+          :class="(rowitem.client_version_outdated||false)?'bg-color-orange':''"
         >
           !=
         </b-badge>
@@ -18,14 +17,12 @@
       <div v-else>
         <b-badge
           v-if="rowitem.client_version_outdated||false"
-          :variant="(rowitem.client_version_outdated||false)?'danger':''"
+          :class="(rowitem.client_version_outdated||false)?'bg-color-red':''"
           style="width:100%"
         >
           *
         </b-badge>
       </div>
-      <!-- :rowitem="rowitem" -->
-      <!-- :detailsDepots="tooltiptext.depots" -->
       <TooltipTTProductCell
         v-if="rowitem.depot_version_diff || rowitem.client_version_outdated||false"
         type="version"
@@ -34,7 +31,6 @@
         :depot-version-diff="rowitem.depot_version_diff"
       />
     </div>
-    <!-- {{tooltiptext}} -->
   </div>
 </template>
 
@@ -48,21 +44,11 @@ const selections = namespace('selections')
 @Component
 export default class TableCellTCProductVersionCell extends Vue {
   @Prop({ }) rowitem!: ITableRowItemProducts
-  @Prop({ }) type!: string // depotVersions | clientVersions
-  // @Prop({ }) rowitem.depotVersions!: Array<string>
-  // @Prop({ }) rowitem.clientVersions!: Array<string>
-  // @Prop({ }) rowitem.selectedDepots!: Array<string>
-  // @Prop({ }) rowitem.selectedClients!: Array<string>
+  @Prop({ }) type!: string
   @Prop({ }) clients2depots!: IObjectString2String
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
-
-  // get visibleVersions () {
-  //   const versionDepots = mapValues2Value(this.rowitem.depotVersions, this.rowitem.selectedDepots, this.selectionDepots)
-  //   const versionClients = mapValues2Value(this.rowitem.clientVersions, this.rowitem.selectedClients, this.selectionClients)
-  //   return { versionDepots, versionClients }
-  // }
 
   get tooltiptext () {
     const clients: IObjectString2String = mapValues2Objects(this.rowitem.clientVersions, this.rowitem.selectedClients, this.selectionClients, '-')
