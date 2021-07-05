@@ -5,14 +5,9 @@
       <b-icon v-else icon="chevron-double-right" />
     </span>
     <b>{{ title }}</b>
-    <slot name="filter" />
-    <slot name="selection" />
-    <slot name="log" />
+    <slot name="left" />
     <b-navbar-nav class="ml-auto">
-      <slot name="clientdelete" />
-      <slot name="clientrename" />
-      <slot name="formreset" />
-      <slot name="clientadd" />
+      <slot name="right" />
       <b-button v-if="closeroute" :to="closeroute">
         <b-icon icon="x" />
       </b-button>

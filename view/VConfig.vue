@@ -2,14 +2,14 @@
   <div>
     <BarBPageHeader v-if="asChild" :title="'Config - ' + id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
-      <template #selection>
+      <template #left>
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
     <DivDScrollResult>
       <template slot="content">
-        <b-tabs active-nav-item-class="font-weight-bold" content-class="mt-3">
+        <b-tabs v-if="id">
           <b-tab title="Host Attributes" active>
             <LazyTableTHostAttributes v-if="id" :id="id" />
           </b-tab>

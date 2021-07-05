@@ -2,7 +2,7 @@
   <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <BarBPageHeader>
-        <template #filter>
+        <template #left>
           <InputIFilter :data="tableData" />
         </template>
       </BarBPageHeader>
