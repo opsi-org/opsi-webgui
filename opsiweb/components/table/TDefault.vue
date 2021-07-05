@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-table striped hover :items="tableitems">
+    <b-table hover :items="tableitems">
       <template #cell(value)="row">
         <template v-if="row.item.property == 'opsiHostKey'">
           <b-input-group>
@@ -11,7 +11,7 @@
             </b-button>
           </b-input-group>
         </template>
-        <template v-else-if="row.item.type == 'boolean'">
+        <!-- <template v-else-if="row.item.type == 'boolean'">
           <b-form-checkbox v-model="row.item.value" disabled>
             True
           </b-form-checkbox>
@@ -20,7 +20,7 @@
           <b-form-checkbox v-model="row.item.value" switch disabled>
             ON
           </b-form-checkbox>
-        </template>
+        </template> -->
         <b-form-input v-else v-model="row.item.value" readonly />
       </template>
     </b-table>
