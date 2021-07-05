@@ -50,7 +50,7 @@ const settings = namespace('settings')
     { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' },
     { title: 'Bootswatch-Lux', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css' },
     { title: 'opsi-dark', rel: '/themes/opsi-bootstrap-theme-dark.css' },
-    { title: 'opsi-light', rel: '/themes/opsi-bootstrap-theme-light.css' },
+    { title: 'opsi-light', rel: '/themes/opsi-bootstrap-theme-light.css' }
   ]
 
   @settings.Getter public colortheme!: ITheme
