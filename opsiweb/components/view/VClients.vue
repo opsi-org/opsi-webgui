@@ -2,10 +2,8 @@
   <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <BarBPageHeader>
-        <template #filter>
+        <template #left>
           <InputIFilter :data="tableData" />
-        </template>
-        <template #selection>
           <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
         </template>
       </BarBPageHeader>
