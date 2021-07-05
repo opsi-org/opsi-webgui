@@ -11,22 +11,9 @@
       <template slot="content">
         <b-tabs active-nav-item-class="font-weight-bold" content-class="mt-3">
           <b-tab title="Host Attributes" active>
-            <TableTHostAttributes :id="id" />
-          </b-tab>
-          <b-tab title="Host Parameters">
-            <TableTHostParam />
+            <LazyTableTHostAttributes v-if="id" :id="id" />
           </b-tab>
         </b-tabs>
-        <!-- <CollapseCContent title="Host Attributes">
-          <template #content>
-            <TableTHostAttributes :id="id" />
-          </template>
-        </CollapseCContent>
-        <CollapseCContent title="Host Parameters">
-          <template #content>
-            <TableTHostParam :id="id" />
-          </template>
-        </CollapseCContent> -->
       </template>
     </DivDScrollResult>
   </div>

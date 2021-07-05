@@ -1,31 +1,31 @@
 <template>
-  <LazyTableTDefault v-if="tableitems" :tableitems="Object.values(tableitems)" />
+  <LazyTableTDefault v-if="result" :stacked="true" :tableitems="[result]" />
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+interface Request {
+    hosts: Array<string>
+}
 
 @Component
 export default class THostAttributes extends Vue {
   @Prop({ }) id!: string
-  tableitems:Object = {}
-  dummyresult: Object = {}
+  result:Object = {}
+  request: Request = { hosts: [] }
+  isLoading: boolean = false
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  // TODO: A backend method for retrieving 'host_getObjects' result for given id
+  beforeMount () {
+    if (this.id) { this.$fetch() }
+  }
 
-  fetch () {
-    this.dummyresult = {
-      id: { property: 'id', value: this.id },
-      description: { property: 'description', value: '' },
-      hardwareAddress: { property: 'hardwareAddress', value: '' },
-      ipAddress: { property: 'ipAddress', value: '' },
-      inventoryNumber: { property: 'inventoryNumber', value: '' },
-      opsiHostKey: { property: 'opsiHostKey', value: '123456' },
-      notes: { property: 'notes', value: '' }
-    }
-    this.tableitems = this.dummyresult
+  async fetch () {
+    this.request.hosts = [this.id]
+    this.result = (await this.$axios.$post(
+      '/api/opsidata/hosts', JSON.stringify(this.request)
+    )).result
   }
 }
 </script>
