@@ -81,7 +81,8 @@ export default {
     port: 4447,
     prefix: '/webgui',
     progress: false,
-    baseURL: '/'
+    // baseURL: '/'
+    API_HOST: '/'
     // headers: {
     //   common: {
     //     // 'Accept': 'application/json, text/plain, */*',
