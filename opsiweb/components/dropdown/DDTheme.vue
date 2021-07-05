@@ -39,8 +39,6 @@ const settings = namespace('settings')
   @Prop({ default: false }) navbar!: boolean
   themes: Array<ITheme> = [
     // Created with https://bootstrap.build/app :
-    // {title: "opsi-dark", rel:"~/assets/themes/theme-opsi-color-dark.css"},
-    // {title: "opsi-light", rel:"~/assets/themes/theme-opsi-color-light.css"},
     // Used from https://bootswatch.com/ :
     { title: 'Bootswatch-Cerulean', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css' },
     { title: 'Bootswatch-Cosmo', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css' },
@@ -50,7 +48,9 @@ const settings = namespace('settings')
     { title: 'Bootswatch-Yeti', rel: '//stackpath.bootstrapcdn.com/bootswatch/4.5.2/yeti/bootstrap.min.css' },
     { title: 'Bootswatch-Slate', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/slate/bootstrap.min.css' },
     { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' },
-    { title: 'Bootswatch-Lux', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css' }
+    { title: 'Bootswatch-Lux', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css' },
+    { title: 'opsi-dark', rel: '/themes/opsi-bootstrap-theme-dark.css' },
+    { title: 'opsi-light', rel: '/themes/opsi-bootstrap-theme-light.css' },
   ]
 
   @settings.Getter public colortheme!: ITheme
