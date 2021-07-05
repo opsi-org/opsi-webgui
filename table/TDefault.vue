@@ -1,6 +1,9 @@
 <template>
   <b-container fluid>
-    <b-table :stacked="stacked" borderless :items="tableitems">
+    <b-table :busy="isBusy" :stacked="stacked" borderless :items="tableitems">
+      <template #table-busy>
+        <IconILoading />
+      </template>
       <template #cell(opsiHostKey)="row">
         <b-input-group>
           <b-form-input v-model="row.item.opsiHostKey" size="sm" readonly :type="hideValue ? 'text': 'password' " />
@@ -28,6 +31,12 @@ export default Vue.extend({
       }
     },
     stacked: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    },
+    isBusy: {
       type: Boolean,
       default () {
         return false

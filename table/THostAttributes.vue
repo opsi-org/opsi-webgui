@@ -1,5 +1,5 @@
 <template>
-  <LazyTableTDefault v-if="result" :stacked="true" :tableitems="[result]" />
+  <LazyTableTDefault v-if="result" :is-busy="isLoading" :stacked="true" :tableitems="[result]" />
 </template>
 
 <script lang="ts">
@@ -18,14 +18,18 @@ export default class THostAttributes extends Vue {
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
   beforeMount () {
-    if (this.id) { this.$fetch() }
+    this.$fetch()
   }
 
   async fetch () {
-    this.request.hosts = [this.id]
-    this.result = (await this.$axios.$post(
-      '/api/opsidata/hosts', JSON.stringify(this.request)
-    )).result
+    if (this.id) {
+      this.isLoading = true
+      this.request.hosts = [this.id]
+      this.result = (await this.$axios.$post(
+        '/api/opsidata/hosts', JSON.stringify(this.request)
+      )).result
+      this.isLoading = false
+    }
   }
 }
 </script>
