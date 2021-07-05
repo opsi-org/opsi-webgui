@@ -22,14 +22,14 @@
         :totalrows="fetchedData.total"
       >
         <template #cell(rowactions)="row">
-          <!-- <ButtonBTNRowLinkTo
+          <ButtonBTNRowLinkTo
             title="config"
             icon="gear"
             to="/clients/config"
             :ident="row.item.ident"
             :pressed="isRouteActive"
             :click="routeRedirectWith"
-          /> -->
+          />
 
           <ButtonBTNRowLinkTo
             title="log"
