@@ -13,6 +13,16 @@
           </b-button>
         </b-input-group>
       </template>
+      <template #cell(notes)="row">
+        <b-form-textarea
+          v-model="row.item.notes"
+          size="sm"
+          rows="2"
+          max-rows="3"
+          no-resize
+          readonly
+        />
+      </template>
       <template #cell()="row">
         <b-form-input v-model="row.value" size="sm" readonly />
       </template>
