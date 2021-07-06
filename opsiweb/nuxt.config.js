@@ -81,7 +81,8 @@ export default {
     // baseURL: process.env.BASE_URL,
     https: true,
     port: 4447,
-    prefix: '/webgui'
+    prefix: '/webgui',
+    progress: false
     // progress: true,
     // baseURL: '/'
     // host: '/',
