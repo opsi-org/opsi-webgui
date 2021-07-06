@@ -10,22 +10,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    expanded: Boolean,
-    title: {
-      type: String,
-      default: ''
-    },
-    icon: {
-      type: String,
-      default: ''
-    },
-    route: {
-      type: String,
-      default: ''
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class NItem extends Vue {
+  @Prop({ }) expanded!: boolean
+  @Prop({ }) title!: string
+  @Prop({ }) icon!: string
+  @Prop({ }) route!: string
+}
 </script>
