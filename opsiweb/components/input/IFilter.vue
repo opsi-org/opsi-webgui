@@ -1,6 +1,7 @@
 <template>
   <b-form-input
     v-model="data.filterQuery"
+    class="filter"
     v-bind="$props"
     placeholder="Filter table"
     aria-label="Filter"
@@ -20,5 +21,8 @@ export default class IFilter extends BFormInput {
 </script>
 
 <style>
+.filter{
+  min-width: 300px;
+}
 
 </style>
