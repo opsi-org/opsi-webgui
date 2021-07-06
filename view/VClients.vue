@@ -5,6 +5,7 @@
         <template #left>
           <InputIFilter :data="tableData" />
           <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+          <TreeTSHostGroup />
         </template>
       </BarBPageHeader>
       <TableTTable
