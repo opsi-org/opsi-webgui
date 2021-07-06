@@ -16,27 +16,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    navbartype: {
-      type: String,
-      default: 'default'
-    },
-    collapsed: {
-      type: Boolean,
-      default: false
-    },
-    title: {
-      type: String,
-      default: ''
-    },
-    closeroute: {
-      type: String,
-      default: ''
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class BPageHeader extends Vue {
+  @Prop({ }) navbartype!: string
+  @Prop({ }) collapsed!: boolean
+  @Prop({ }) title!: string
+  @Prop({ }) closeroute!: string
+}
 </script>
 
 <style>

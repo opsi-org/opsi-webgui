@@ -31,30 +31,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    tableitems: {
-      type: Array,
-      default () {
-        return []
-      }
-    },
-    stacked: {
-      type: Boolean,
-      default () {
-        return false
-      }
-    },
-    isBusy: {
-      type: Boolean,
-      default () {
-        return false
-      }
-    }
-  },
-  data: () => ({
-    hideValue: false
-  })
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class TDefault extends Vue {
+  @Prop({ }) tableitems!: Array<object>
+  @Prop({ }) stacked!: boolean
+  @Prop({ }) isBusy!: boolean
+  hideValue : boolean = false
+}
 </script>
