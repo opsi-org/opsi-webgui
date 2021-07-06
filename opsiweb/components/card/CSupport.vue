@@ -20,17 +20,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    item: {
-      type: Object,
-      default () {
-        return {}
-      }
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class CSupport extends Vue {
+  @Prop({ }) item!: object
+}
 </script>
 
 <style>

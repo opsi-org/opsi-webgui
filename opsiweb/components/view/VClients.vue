@@ -2,10 +2,8 @@
   <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <BarBPageHeader>
-        <template #filter>
+        <template #left>
           <InputIFilter :data="tableData" />
-        </template>
-        <template #selection>
           <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
         </template>
       </BarBPageHeader>
@@ -22,14 +20,14 @@
         :totalrows="fetchedData.total"
       >
         <template #cell(rowactions)="row">
-          <!-- <ButtonBTNRowLinkTo
+          <ButtonBTNRowLinkTo
             title="config"
             icon="gear"
             to="/clients/config"
             :ident="row.item.ident"
             :pressed="isRouteActive"
             :click="routeRedirectWith"
-          /> -->
+          />
 
           <ButtonBTNRowLinkTo
             title="log"

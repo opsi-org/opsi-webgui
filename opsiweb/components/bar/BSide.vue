@@ -28,17 +28,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    attributes: {
-      type: Object,
-      default () {
-        return {}
-      }
-    }
-  }
-})
+
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class BSide extends Vue {
+  @Prop({ }) attributes!: object
+}
 </script>
 
 <style>

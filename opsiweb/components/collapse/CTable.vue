@@ -15,22 +15,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    tableitems: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
-  },
-  data: () => ({
-    visible: false
-  })
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class CTable extends Vue {
+  @Prop({ }) title!: string
+  @Prop({ }) tableitems!: Array<object>
+  visible: boolean = false
+}
 </script>

@@ -18,67 +18,40 @@
 </template>
 
 <script lang="ts">
-import { mapGetters } from 'vuex'
+import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
+const settings = namespace('settings')
+interface SideBarAttr {
+    visible: boolean,
+    expanded: boolean
+}
 
-import Vue from 'vue'
-export default Vue.extend({
-  data () {
-    return {
-      sidebarAttr: { visible: true, expanded: false }
-    }
-  },
+@Component
+export default class LayoutDefault extends Vue {
+  sidebarAttr: SideBarAttr = { visible: true, expanded: false }
+  @settings.Getter public colortheme!: any
+
+  @Watch('$mq', { deep: true }) mqChanged () {
+    this.updateSidebarAttr()
+  }
+
   head () {
     return {
       link: [{
         rel: 'stylesheet',
-        href: (this.XgetColorTheme) ? this.XgetColorTheme.rel : ''
+        href: (this.colortheme) ? this.colortheme.rel : ''
       }]
     }
-  },
-  computed: {
-    ...mapGetters({
-      XgetColorTheme: 'settings/colortheme'
-    })
-  },
-  watch: {
-    $mq () {
-      this.updateSidebarAttr()
-    }
-  },
-  methods: {
-    updateSidebarAttr () {
-      if ((this as any).$mq === 'mobile') {
-        this.sidebarAttr.visible = false
-        this.sidebarAttr.expanded = true
-      } else {
-        this.sidebarAttr.visible = true
-      }
+  }
+
+  updateSidebarAttr () {
+    if ((this as any).$mq === 'mobile') {
+      this.sidebarAttr.visible = false
+      this.sidebarAttr.expanded = true
+    } else {
+      this.sidebarAttr.visible = true
     }
   }
-})
-
-/* WARN  in ./layouts/default.vue?vue&type=script&lang=ts&
-
-"export 'default' (imported as 'mod') was not found in '-!../node_modules/babel-loader/lib/index.js??ref--12-0!../node_modules/ts-loader/index.js??ref--12-1!../node_modules/vue-loader/lib/index.js??vue-loader-options!./default.vue?vue&type=script&lang=ts&'
-*/
-// import { Component, Vue, namespace } from 'nuxt-property-decorator'
-
-// const settings = namespace('settings')
-// interface ITheme {
-//     title: string,
-//     rel: string
-// }
-// @Component export class LDefault extends Vue {
-//   @settings.Getter public colortheme!: ITheme
-//   public head (): any {
-//     return {
-//       link: [{
-//         rel: 'stylesheet',
-//         href: this.colortheme.rel
-//       }]
-//     }
-//   }
-// }
+}
 </script>
 
 <style>
