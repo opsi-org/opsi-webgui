@@ -76,13 +76,16 @@ export default {
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
+    // browserBaseURL: "/",
     // baseURL: process.env.API_URL,
+    // baseURL: process.env.BASE_URL,
     https: true,
     port: 4447,
     prefix: '/webgui',
-    progress: false,
+    progress: false
+    // progress: true,
     // baseURL: '/'
-    API_HOST: '/'
+    // host: '/',
     // headers: {
     //   common: {
     //     // 'Accept': 'application/json, text/plain, */*',
