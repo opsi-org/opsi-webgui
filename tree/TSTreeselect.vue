@@ -1,26 +1,25 @@
 <template>
-  <b-input-group>
-    <treeselect
-      v-model="groupSelection"
-      :placeholder="type === 'hostgroup' ? 'Host Group' : 'Product Group'"
-      class="treeselect"
-      :multiple="true"
-      :clearable="false"
-      :options="options"
-      value-format="object"
-      :max-height="200"
-      @select="groupSelect"
-      @deselect="groupDeselect"
-    >
-      <div slot="option-label" slot-scope="{ node }">
-        <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
-          <b-icon v-else icon="laptop" />
-          <small> {{ node.label }} </small>
-        </div>
+  <treeselect
+    v-model="groupSelection"
+    :placeholder="type === 'hostgroup' ? 'Host Group' : 'Product Group'"
+    class="treeselect"
+    :multiple="true"
+    :clearable="false"
+    :options="options"
+    :normalizer="normalizer"
+    value-format="object"
+    :max-height="400"
+    @select="groupSelect"
+    @deselect="groupDeselect"
+  >
+    <div slot="option-label" slot-scope="{ node }">
+      <div :ref="'tree-item-'+node.id">
+        <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
+        <b-icon v-else icon="laptop" />
+        <small> {{ node.label }} </small>
       </div>
-    </treeselect>
-  </b-input-group>
+    </div>
+  </treeselect>
 </template>
 
 <script lang="ts">
@@ -29,7 +28,7 @@ const selections = namespace('selections')
 
 @Component
 export default class TSTreeselect extends Vue {
-  @Prop({ }) options!: Array<object>
+  @Prop({ }) options!: object
   @Prop({ }) type!: string
 
   groupSelection: Array<any> = []
@@ -45,8 +44,17 @@ export default class TSTreeselect extends Vue {
     this.syncStoreToTree()
   }
 
+  normalizer (node: any) {
+    return {
+      id: node.id,
+      type: node.type,
+      label: node.text.replace(/_+$/, ''),
+      children: (node.children) ? Object.values(node.children) : {}
+    }
+  }
+
   mounted () {
-    this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'label', this.groupIdList)
+    this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
   }
 
@@ -67,7 +75,7 @@ export default class TSTreeselect extends Vue {
       if (this.groupIdList.includes(storeData[index])) {
         this.filterObject(
           this.options, storeData[index],
-          'label', elementsInTree)
+          'text', elementsInTree)
       }
     }
     this.groupSelection = elementsInTree
@@ -97,7 +105,7 @@ export default class TSTreeselect extends Vue {
 
   groupChange (value: object, type: string) {
     const idList : Array<string> = []
-    this.filterObjectLabel([value], 'ObjectToGroup', 'type', 'label', idList)
+    this.filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
     const storeData = this.selectionClients
 
     for (const i in idList) {
