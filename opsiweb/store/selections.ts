@@ -28,4 +28,10 @@ export default class Selections extends VuexModule {
   }
 
   @VuexMutation public setSelectionProducts (s: Array<string>) { this._selectionProducts = s }
+
+  @VuexMutation public clearAllSelection () {
+    this._selectionDepots = []
+    this._selectionClients = []
+    this._selectionProducts = []
+  }
 }
