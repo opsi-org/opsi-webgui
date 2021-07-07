@@ -54,7 +54,13 @@ export default class TSTreeselect extends Vue {
       id: node.id,
       type: node.type,
       label: node.text.replace(/_+$/, ''),
-      children: (node.children) ? Object.values(node.children) : {}
+      children: (node.children)
+        ? Object.values(node.children).sort(function (a: any, b: any) {
+          if (a.text < b.text) { return -1 }
+          if (a.text > b.text) { return 1 }
+          return 0
+        })
+        : {}
     }
   }
 
