@@ -44,6 +44,11 @@ export default class TSTreeselect extends Vue {
     this.syncStoreToTree()
   }
 
+  beforeUpdate () {
+    this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
+    this.syncStoreToTree()
+  }
+
   normalizer (node: any) {
     return {
       id: node.id,
@@ -51,11 +56,6 @@ export default class TSTreeselect extends Vue {
       label: node.text.replace(/_+$/, ''),
       children: (node.children) ? Object.values(node.children) : {}
     }
-  }
-
-  mounted () {
-    this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
-    this.syncStoreToTree()
   }
 
   arrEqual (arr1: Array<string>, arr2: Array<string>) {
