@@ -6,6 +6,7 @@
           <InputIFilter :data="tableData" />
           <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" />
+          <TreeTSProductGroup />
         </template>
       </BarBPageHeader>
       <TableTCollapseable
