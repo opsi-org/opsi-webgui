@@ -5,14 +5,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+const selections = namespace('selections')
+interface Request {
+    selectedDepots: Array<string>
+    parentGroup: string
+}
 
 @Component
 export default class TSHostGroup extends Vue {
+  request: Request = { selectedDepots: [], parentGroup: '' }
   hostGroup: Array<object> = []
+  @selections.Getter public selectionDepots!: Array<string>
 
   async fetch () {
-    this.hostGroup = Object.values((await this.$axios.$post('/api/opsidata/hosts/groups', '')).result.groups.children)
+    this.request.selectedDepots = this.selectionDepots
+    this.request.parentGroup = 'root'
+    this.hostGroup = Object.values((await this.$axios.$post('/api/opsidata/hosts/groups', JSON.stringify(this.request))).result.groups.children)
   }
 }
 </script>
