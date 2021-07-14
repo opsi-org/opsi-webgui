@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 interface Request {
     selectedDepots: Array<string>
@@ -17,6 +17,10 @@ export default class TSHostGroup extends Vue {
   request: Request = { selectedDepots: [], parentGroup: '' }
   hostGroup: Array<object> = []
   @selections.Getter public selectionDepots!: Array<string>
+
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
+    this.$fetch()
+  }
 
   async fetch () {
     this.request.selectedDepots = this.selectionDepots
