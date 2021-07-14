@@ -20,7 +20,7 @@ export default class TSHostGroup extends Vue {
 
   async fetch () {
     this.request.selectedDepots = this.selectionDepots
-    this.request.parentGroup = 'root'
+    // this.request.parentGroup = 'root'
     this.hostGroup = Object.values((await this.$axios.$post('/api/opsidata/hosts/groups', JSON.stringify(this.request))).result.groups.children)
   }
 }
