@@ -1,5 +1,6 @@
 <template>
   <div>
+    <TreeTSDelayedLoading />
     <LazyTreeTSTreeselect v-if="hostGroup" :options="hostGroup" :type="'hostgroup'" />
   </div>
 </template>
