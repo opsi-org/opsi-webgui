@@ -34,6 +34,6 @@ build:static-app:
     paths:
       - opsiweb/dist
     expire_in: 2 day
-  only:
-    - develop
+  # only:
+  #   - develop
 
