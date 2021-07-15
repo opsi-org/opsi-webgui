@@ -28,7 +28,9 @@ build:static-app:
     cd opsiweb
     npm install
     npm run generate
-    opsi-dev-tool -l info --binary-push opsiweb/dist $CI_JOB_ID
+    wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
+    tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
+    ./opsi-dev-tool -l info --binary-push opsiweb/dist $CI_JOB_ID
   artifacts:
     name: 'opsi-webgui'
     paths:
