@@ -17,5 +17,5 @@ package:
     mkdir -p "${DST}/rootfs/usr/lib/opsi-webgui"
     cp -a "${SRC}/opsiweb/dist/." "${DST}/rootfs/usr/lib/opsi-webgui/"
   postinst_script:
-    - echo "webgui"
+    - echo "OPSI webgui folder '/usr/lib/opsi-webgui'"
     - exit 0

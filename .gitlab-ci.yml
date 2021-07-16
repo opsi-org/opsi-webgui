@@ -11,9 +11,7 @@ stages:
   apt -y install debhelper osc
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
-  # apt -y install python3-dev
-  # pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
-  # pip3 install poetry
+
 
 test:lint:
   stage: test
@@ -35,6 +33,9 @@ test:jtest:
 
 build:static-app:
   stage: build
+  dependencies:
+    - test:lint
+    - test:jtest
   script: |
     cd opsiweb
     npm install
@@ -43,9 +44,9 @@ build:static-app:
     name: 'opsi-webgui'
     paths:
       - opsiweb/dist
-    expire_in: 2 day
-  # only:
-  #   - develop
+    expire_in: 1 day
+  only:
+    - develop
 
 publish:binary-index:
   stage: publish
@@ -55,7 +56,8 @@ publish:binary-index:
     - *install_tools
     - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
     - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --binary-push opsiweb/dist opsi-webgui linux x64'
-  when: manual
+  only:
+    - develop
 
 publish:obs_int:
   stage: publish
@@ -64,9 +66,10 @@ publish:obs_int:
   script:
     - *install_tools
     - ./opsi-dev-tool -l info --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-  when: manual
-  # only:
-  #   - tags
+  only:
+    - tags
+  only:
+    - develop
 
 # publish:obs_ext:
 #   stage: publish
@@ -76,5 +79,5 @@ publish:obs_int:
 #     - *install_tools
 #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
 #   when: manual
-  # only:
-  #   - tags
+#   only:
+#    - tags
