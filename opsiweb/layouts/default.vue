@@ -6,7 +6,7 @@
       sidebar_collapsed:!sidebarAttr.expanded && $mq=='desktop',
       sidebar_expanded:sidebarAttr.expanded && $mq=='desktop'}"
   >
-    <BarBTop :attributes="sidebarAttr" />
+    <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide :attributes="sidebarAttr" />
     <div class="main_content">
       <h3 class="text-capitalize">
@@ -55,6 +55,9 @@ export default class LayoutDefault extends Vue {
 </script>
 
 <style>
+.topbar_content {
+  z-index: 9999;
+}
 .main_content{
   margin-top: var(--margin-top-maincontent);
   margin-left: var(--margin-left-maincontent);
