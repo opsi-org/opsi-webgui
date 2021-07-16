@@ -3,6 +3,17 @@ image: node:latest
 stages:
   - test
   - build
+  - publish
+
+.install_tools: &install_tools |
+  export DEBIAN_FRONTEND=noninteractive
+  apt update
+  apt -y install debhelper osc
+  wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
+  tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
+  # apt -y install python3-dev
+  # pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
+  # pip3 install poetry
 
 test:lint:
   stage: test
@@ -28,9 +39,6 @@ build:static-app:
     cd opsiweb
     npm install
     npm run generate
-    wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
-    tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
-    ./opsi-dev-tool -l info --binary-push opsiweb/dist $CI_JOB_ID
   artifacts:
     name: 'opsi-webgui'
     paths:
@@ -39,3 +47,33 @@ build:static-app:
   # only:
   #   - develop
 
+# publish:binary-index:
+  # stage: publish
+  #   dependencies:
+  #     - build:static-app
+  #   script: |
+      # wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
+      # tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
+      # ./opsi-dev-tool -l info --binary-push opsiweb/dist $CI_JOB_ID
+
+publish:obs_int:
+  stage: publish
+  dependencies:
+    - build:static-app
+  script:
+    - *install_tools
+    - ./opsi-dev-tool -l info --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+  when: manual
+  # only:
+  #   - tags
+
+# publish:obs_ext:
+#   stage: publish
+#   dependencies:
+#     - build:static-app
+#   script:
+#     - *install_tools
+#     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
+#   when: manual
+  # only:
+  #   - tags

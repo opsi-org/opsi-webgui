@@ -1,0 +1,21 @@
+project:
+  name: opsi-webgui
+  version: 1.0.0
+  description: opsi webgui
+  homepage: http://www.opsi.org
+  licenses:
+    - license: AGPL-3.0
+  maintainer: uib GmbH <info@uib.de>
+
+package:
+  name: opsi-webgui
+  type: binary
+  architecture: all
+  depends:
+    - opsiconfd (>= 4.2.0.180)
+  source_script: |
+    mkdir -p "${DST}/rootfs/usr/lib/opsi/webgui"
+    cp -a "${SRC}/opsiweb/dist" "${DST}/rootfs/usr/lib/opsi/webgui"
+  postinst_script:
+    - echo "webgui"
+    - exit 0
