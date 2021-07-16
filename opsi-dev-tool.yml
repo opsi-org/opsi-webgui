@@ -14,8 +14,8 @@ package:
   depends:
     - opsiconfd (>= 4.2.0.180)
   source_script: |
-    mkdir -p "${DST}/rootfs/usr/lib/opsi/webgui"
-    cp -a "${SRC}/opsiweb/dist/." "${DST}/rootfs/usr/lib/opsi/webgui/"
+    mkdir -p "${DST}/rootfs/usr/lib/opsi-webgui"
+    cp -a "${SRC}/opsiweb/dist/." "${DST}/rootfs/usr/lib/opsi-webgui/"
   postinst_script:
     - echo "webgui"
     - exit 0
