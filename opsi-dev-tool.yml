@@ -12,7 +12,7 @@ package:
   type: binary
   architecture: all
   depends:
-    - opsiconfd (>= 4.2.0.180)
+    - opsiconfd (>= 4.2.0.184)
   source_script: |
     mkdir -p "${DST}/rootfs/usr/lib/opsi-webgui"
     cp -a "${SRC}/opsiweb/dist/." "${DST}/rootfs/usr/lib/opsi-webgui/"
