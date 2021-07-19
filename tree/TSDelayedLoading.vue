@@ -26,9 +26,15 @@
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
+interface Request {
+    selectedDepots: Array<string>
+    parentGroup: string
+}
 
 @Component
 export default class TSDelayedLoading extends Vue {
+  request: Request = { selectedDepots: [], parentGroup: '' }
+
   value: any = null
   children: Array<object> = []
   options: Array<object> = []
@@ -38,9 +44,19 @@ export default class TSDelayedLoading extends Vue {
   item: any
   storeData : Array<string> = []
 
+  @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
+
+  normalizer (node: any) {
+    return {
+      id: node.id,
+      type: node.type,
+      label: node.text.replace(/_+$/, ''),
+      children: node.children
+    }
+  }
 
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
     this.syncStoreToTree()
@@ -50,39 +66,29 @@ export default class TSDelayedLoading extends Vue {
     this.syncStoreToTree()
   }
 
-  fetch () {
-    // TODO: request backend for groups (sorted order) with children:'null'
-    // request: Request = { selectedDepots: [], parentGroup: '' }
-    // where request.parentGroup = '' // empty string
-    // this.hostGroup = Object.values((await this.$axios.$post('/api/opsidata/hosts/groups', JSON.stringify(this.request))).result)
-    this.options = [{
-      id: '40_gefundene_software',
-      text: '40_gefundene_software',
-      children: null
-    }, {
-      id: 'aa_opsiconf_basis',
-      text: 'aa_opsiconf_basis',
-      children: null
-    }, {
-      id: 'ab_group',
-      text: 'ab_group',
-      children: null
-    }]
+  async fetch () {
+    this.request.selectedDepots = this.selectionDepots
+    this.request.parentGroup = 'root'
+    this.options = Object.values((await this.$axios.$post('/api/opsidata/hosts/groups', JSON.stringify(this.request))).result.groups.children)
+    // this.options = [{
+    //   id: '40_gefundene_software',
+    //   text: '40_gefundene_software',
+    //   children: null
+    // }, {
+    //   id: 'aa_opsiconf_basis',
+    //   text: 'aa_opsiconf_basis',
+    //   children: null
+    // }, {
+    //   id: 'ab_group',
+    //   text: 'ab_group',
+    //   children: null
+    // }]
   }
 
   beforeUpdate () {
     this.storeData = this.selectionClients
     this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
-  }
-
-  normalizer (node: any) {
-    return {
-      id: node.id,
-      type: node.type,
-      label: node.text.replace(/_+$/, ''),
-      children: node.children
-    }
   }
 
   arrEqual (arr1: Array<string>, arr2: Array<string>) {
@@ -161,53 +167,53 @@ export default class TSDelayedLoading extends Vue {
     }
   }
 
-  // TODO: Again request backend for children (sorted order)
-  // request: Request = { selectedDepots: [], parentGroup: '' }
-  // where request.parentGroup = this.parentId
-  // this.hostGroup = Object.values((await this.$axios.$post('/api/opsidata/hosts/groups', JSON.stringify(this.request))).result)
-  loadChildren (parentId: string) {
-    if (parentId === '40_gefundene_software') {
-      this.children = [{
-        id: 'windows_treiberpaket',
-        text: 'windows_treiberpaket',
-        children: null
-      }]
-    }
-    if (parentId === 'windows_treiberpaket') {
-      this.children = [{
-        id: 'agorumcore-tst.uib.local',
-        text: 'agorumcore-tst.uib.local',
-        type: 'ObjectToGroup'
-      }, {
-        id: 'akunde1.uib.local',
-        text: 'akunde1.uib.local',
-        type: 'ObjectToGroup'
-      },
-      {
-        id: 'alena.uib.local',
-        text: 'alena.uib.local',
-        type: 'ObjectToGroup'
-      }]
-    }
-    if (parentId === 'aa_opsiconf_basis') {
-      this.children = this.children = [{
-        id: 'akunde1.uib.local',
-        text: 'akunde1.uib.local',
-        type: 'ObjectToGroup'
-      }, {
-        id: 'alena.uib.local',
-        text: 'alena.uib.local',
-        type: 'ObjectToGroup'
-      },
-      {
-        id: 'anna-vm-24001.uib.local',
-        text: 'anna-vm-24001.uib.local',
-        type: 'ObjectToGroup'
-      }]
-    }
-    if (parentId === 'ab_group') {
-      this.children = []
-    }
+  async loadChildren (parentId: string) {
+    this.request.selectedDepots = this.selectionDepots
+    this.request.parentGroup = parentId
+    this.children = Object.values((await this.$axios.$post('/api/opsidata/hosts/groups', JSON.stringify(this.request))).result.groups.children)
+
+    // if (parentId === '40_gefundene_software') {
+    //   this.children = [{
+    //     id: 'windows_treiberpaket',
+    //     text: 'windows_treiberpaket',
+    //     children: null
+    //   }]
+    // }
+    // if (parentId === 'windows_treiberpaket') {
+    //   this.children = [{
+    //     id: 'agorumcore-tst.uib.local',
+    //     text: 'agorumcore-tst.uib.local',
+    //     type: 'ObjectToGroup'
+    //   }, {
+    //     id: 'akunde1.uib.local',
+    //     text: 'akunde1.uib.local',
+    //     type: 'ObjectToGroup'
+    //   },
+    //   {
+    //     id: 'alena.uib.local',
+    //     text: 'alena.uib.local',
+    //     type: 'ObjectToGroup'
+    //   }]
+    // }
+    // if (parentId === 'aa_opsiconf_basis') {
+    //   this.children = this.children = [{
+    //     id: 'akunde1.uib.local',
+    //     text: 'akunde1.uib.local',
+    //     type: 'ObjectToGroup'
+    //   }, {
+    //     id: 'alena.uib.local',
+    //     text: 'alena.uib.local',
+    //     type: 'ObjectToGroup'
+    //   },
+    //   {
+    //     id: 'anna-vm-24001.uib.local',
+    //     text: 'anna-vm-24001.uib.local',
+    //     type: 'ObjectToGroup'
+    //   }]
+    // }
+    // if (parentId === 'ab_group') {
+    //   this.children = []
+    // }
     return this.children
   }
 }
