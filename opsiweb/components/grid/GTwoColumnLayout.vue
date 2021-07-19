@@ -12,14 +12,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    breadcrumb: {
-      type: String,
-      default: ''
-    },
-    showchild: Boolean
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class GTwoColumnLayout extends Vue {
+  // @Prop({ }) breadcrumb!: string
+  @Prop({ }) showchild!: boolean
+}
 </script>

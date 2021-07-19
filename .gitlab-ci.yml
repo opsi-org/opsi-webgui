@@ -3,6 +3,15 @@ image: node:latest
 stages:
   - test
   - build
+  - publish
+
+.install_tools: &install_tools |
+  export DEBIAN_FRONTEND=noninteractive
+  apt update
+  apt -y install debhelper osc
+  wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
+  tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
+
 
 test:lint:
   stage: test
@@ -24,6 +33,9 @@ test:jtest:
 
 build:static-app:
   stage: build
+  dependencies:
+    - test:lint
+    - test:jtest
   script: |
     cd opsiweb
     npm install
@@ -32,7 +44,40 @@ build:static-app:
     name: 'opsi-webgui'
     paths:
       - opsiweb/dist
-    expire_in: 2 day
+    expire_in: 1 day
   only:
     - develop
 
+publish:binary-index:
+  stage: publish
+  dependencies:
+    - build:static-app
+  script:
+    - *install_tools
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --binary-push opsiweb/dist opsi-webgui linux x64'
+  only:
+    - develop
+
+publish:obs_int:
+  stage: publish
+  dependencies:
+    - build:static-app
+  script:
+    - *install_tools
+    - ./opsi-dev-tool -l info --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+  only:
+    - tags
+  only:
+    - develop
+
+# publish:obs_ext:
+#   stage: publish
+#   dependencies:
+#     - build:static-app
+#   script:
+#     - *install_tools
+#     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
+#   when: manual
+#   only:
+#    - tags

@@ -13,5 +13,38 @@ export default class Selections extends VuexModule {
 
   @VuexMutation public setSelectionDepots (s: Array<string>) { this._selectionDepots = s }
   @VuexMutation public setSelectionClients (s: Array<string>) { this._selectionClients = s }
+  @VuexMutation public pushToSelectionClients (s: string) {
+    const index = this._selectionClients.indexOf(s)
+    if (index === -1) {
+      this._selectionClients.push(s)
+    }
+  }
+
+  @VuexMutation public delFromSelectionClients (s: string) {
+    const index = this._selectionClients.indexOf(s)
+    if (index !== -1) {
+      this._selectionClients.splice(index, 1)
+    }
+  }
+
   @VuexMutation public setSelectionProducts (s: Array<string>) { this._selectionProducts = s }
+  @VuexMutation public pushToSelectionProducts (s: string) {
+    const index = this._selectionProducts.indexOf(s)
+    if (index === -1) {
+      this._selectionProducts.push(s)
+    }
+  }
+
+  @VuexMutation public delFromSelectionProducts (s: string) {
+    const index = this._selectionProducts.indexOf(s)
+    if (index !== -1) {
+      this._selectionProducts.splice(index, 1)
+    }
+  }
+
+  @VuexMutation public clearAllSelection () {
+    this._selectionDepots = []
+    this._selectionClients = []
+    this._selectionProducts = []
+  }
 }

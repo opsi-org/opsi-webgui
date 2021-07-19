@@ -2,7 +2,7 @@
   <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <BarBPageHeader>
-        <template #filter>
+        <template #left>
           <InputIFilter :data="tableData" />
         </template>
       </BarBPageHeader>
@@ -18,7 +18,7 @@
         :loading="isLoading"
         :totalrows="fetchedData.total"
       >
-        <!-- <template #cell(rowactions)="row">
+        <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo
             title="config"
             icon="gear"
@@ -27,7 +27,7 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
-        </template> -->
+        </template>
       </TableTTable>
       <BarBPagination
         :tabledata="tableData"
