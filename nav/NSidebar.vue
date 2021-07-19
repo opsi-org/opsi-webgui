@@ -31,59 +31,55 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    expanded: Boolean
-  },
-  data () {
-    return {
-      navItems: [
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class NSidebar extends Vue {
+  @Prop({ }) expanded!: boolean
+  navItems : Array<object> = [
+    {
+      title: 'Overview',
+      menu: [
+        // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
+        { title: 'Support', icon: 'headset', route: '/support' }
+      ]
+    },
+    {
+      title: 'Manage',
+      menu: [
         {
-          title: 'Overview',
-          menu: [
-            // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-            { title: 'Support', icon: 'headset', route: '/support' }
+          title: 'Depots',
+          route: '/depots/',
+          icon: 'hdd-stack-fill',
+          submenu: [
+            { title: 'All Depots', route: '/depots' },
+            { title: 'Configuration', route: '/depotsconfig' }
+            // { title: 'Logs', route: '/depots/log' }
           ]
         },
         {
-          title: 'Manage',
-          menu: [
-            {
-              title: 'Depots',
-              route: '/depots/',
-              icon: 'hdd-stack-fill',
-              submenu: [
-                { title: 'All Depots', route: '/depots' }
-                // { title: 'Configuration', route: '/depotsconfig' }
-                // { title: 'Logs', route: '/depots/log' }
-              ]
-            },
-            {
-              title: 'Clients',
-              route: '/clients/',
-              icon: 'laptop',
-              submenu: [
-                { title: 'All Clients', route: '/clients/' },
-                // { title: 'Add New', route: '/clients/clientnew' },
-                // { title: 'Configuration', route: '/clientsconfig' },
-                { title: 'Logs', route: '/clientslog' }
-              ]
-            },
-            { title: 'Products', icon: 'grid-fill', route: '/products/' }
+          title: 'Clients',
+          route: '/clients/',
+          icon: 'laptop',
+          submenu: [
+            { title: 'All Clients', route: '/clients/' },
+            // { title: 'Add New', route: '/clients/clientnew' },
+            { title: 'Configuration', route: '/clientsconfig' },
+            { title: 'Logs', route: '/clientslog' }
           ]
         },
-        {
-          title: 'Configure',
-          menu: [
-            // { title: 'Settings', icon: 'gear-fill', route: '/settings' },
-            { title: 'Index page', icon: 'collection-fill', route: '/' }
-          ]
-        }
+        { title: 'Products', icon: 'grid-fill', route: '/products/' }
+      ]
+    },
+    {
+      title: 'Configure',
+      menu: [
+        // { title: 'Settings', icon: 'gear-fill', route: '/settings' },
+        { title: 'Index page', icon: 'collection-fill', route: '/' }
       ]
     }
-  }
-})
+  ]
+}
 </script>
 
 <style>

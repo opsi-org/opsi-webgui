@@ -5,14 +5,9 @@
       <b-icon v-else icon="chevron-double-right" />
     </span>
     <b>{{ title }}</b>
-    <slot name="filter" />
-    <slot name="selection" />
-    <slot name="log" />
+    <slot name="left" />
     <b-navbar-nav class="ml-auto">
-      <slot name="clientdelete" />
-      <slot name="clientrename" />
-      <slot name="formreset" />
-      <slot name="clientadd" />
+      <slot name="right" />
       <b-button v-if="closeroute" :to="closeroute">
         <b-icon icon="x" />
       </b-button>
@@ -21,27 +16,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    navbartype: {
-      type: String,
-      default: 'default'
-    },
-    collapsed: {
-      type: Boolean,
-      default: false
-    },
-    title: {
-      type: String,
-      default: ''
-    },
-    closeroute: {
-      type: String,
-      default: ''
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class BPageHeader extends Vue {
+  @Prop({ }) navbartype!: string
+  @Prop({ }) collapsed!: boolean
+  @Prop({ }) title!: string
+  @Prop({ }) closeroute!: string
+}
 </script>
 
 <style>

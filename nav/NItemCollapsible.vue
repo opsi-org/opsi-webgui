@@ -17,29 +17,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    icon: {
-      type: String,
-      default: ''
-    },
-    route: {
-      type: String,
-      default: ''
-    },
-    submenu: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class NItemCollapsible extends Vue {
+  @Prop({ }) title!: string
+  @Prop({ }) icon!: string
+  @Prop({ }) route!: string
+  @Prop({ }) submenu!: Array<object>
+}
 </script>
 
 <style>

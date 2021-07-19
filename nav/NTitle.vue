@@ -6,16 +6,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    expanded: Boolean,
-    title: {
-      type: String,
-      default: ''
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class NTitle extends Vue {
+  @Prop({ }) expanded!: boolean
+  @Prop({ }) title!: string
+}
 </script>
 
 <style>

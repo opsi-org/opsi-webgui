@@ -1,45 +1,43 @@
 <template>
   <b-container fluid>
-    <b-table striped hover :items="tableitems">
-      <template #cell(value)="row">
-        <template v-if="row.item.property == 'opsiHostKey'">
-          <b-input-group>
-            <b-form-input v-model="row.item.value" readonly :type="hideValue ? 'text': 'password' " />
-            <b-button :pressed.sync="hideValue">
-              <b-icon v-if="hideValue" icon="eye-slash" />
-              <b-icon v-else icon="eye" />
-            </b-button>
-          </b-input-group>
-        </template>
-        <template v-else-if="row.item.type == 'boolean'">
-          <b-form-checkbox v-model="row.item.value" disabled>
-            True
-          </b-form-checkbox>
-        </template>
-        <template v-else-if="row.item.type == 'switch'">
-          <b-form-checkbox v-model="row.item.value" switch disabled>
-            ON
-          </b-form-checkbox>
-        </template>
-        <b-form-input v-else v-model="row.item.value" readonly />
+    <b-table :busy="isBusy" :stacked="stacked" borderless :items="tableitems">
+      <template #table-busy>
+        <IconILoading />
+      </template>
+      <template #cell(opsiHostKey)="row">
+        <b-input-group>
+          <b-form-input v-model="row.item.opsiHostKey" size="sm" readonly :type="hideValue ? 'text': 'password' " />
+          <b-button :pressed.sync="hideValue" size="sm">
+            <b-icon v-if="hideValue" icon="eye-slash" />
+            <b-icon v-else icon="eye" />
+          </b-button>
+        </b-input-group>
+      </template>
+      <template #cell(notes)="row">
+        <b-form-textarea
+          v-model="row.item.notes"
+          size="sm"
+          rows="2"
+          max-rows="3"
+          no-resize
+          readonly
+        />
+      </template>
+      <template #cell()="row">
+        <b-form-input v-model="row.value" size="sm" readonly />
       </template>
     </b-table>
   </b-container>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    tableitems: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
-  },
-  data: () => ({
-    hideValue: false
-  })
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class TDefault extends Vue {
+  @Prop({ }) tableitems!: Array<object>
+  @Prop({ }) stacked!: boolean
+  @Prop({ }) isBusy!: boolean
+  hideValue : boolean = false
+}
 </script>

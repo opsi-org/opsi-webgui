@@ -2,13 +2,9 @@
   <div>
     <BarBPageHeader v-if="asChild" :title="'Log - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
-      <template #filter>
+      <template #left>
         <b-form-input v-model.trim="filterQuery" placeholder="Filter" @keyup="filterLog" />
-      </template>
-      <template v-if="!asChild" #selection>
-        <slot name="IDSelection" />
-      </template>
-      <template #log>
+        <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype :logtype.sync="logtype" />
         <SpinbuttonSBLoglevel :loglevel.sync="loglevel" />
       </template>
@@ -17,7 +13,7 @@
     <DivDScrollResult v-else>
       <template slot="content">
         <div v-if="filteredLog == ''" class="container-fluid">
-          No Logs Found !
+          --
         </div>
         <div
           v-for="(log, index) in filteredLog"
