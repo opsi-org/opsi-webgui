@@ -4,8 +4,10 @@
       <BarBPageHeader>
         <template #left>
           <InputIFilter :data="tableData" />
-          <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
-          <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" />
+          <DropdownDDDepotIds />
+          <DropdownDDClientIds />
+          <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+          <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSProductGroup />
         </template>
       </BarBPageHeader>
@@ -163,7 +165,7 @@ export default class VProducts extends Vue {
   async fetch () {
     this.isLoading = true
     if (this.fetchOptions.fetchDepotIds) {
-      this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
+      this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
       this.fetchOptions.fetchDepotIds = false
     }
     if (this.fetchOptions.fetchClients2Depots) {

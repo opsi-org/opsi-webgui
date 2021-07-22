@@ -4,7 +4,9 @@
       <BarBPageHeader>
         <template #left>
           <InputIFilter :data="tableData" />
-          <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+          <DropdownDDDepotIds />
+          <!-- DOUBT: Why fetching depots again ?-->
+          <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSHostGroup />
         </template>
       </BarBPageHeader>
@@ -110,7 +112,7 @@ export default class VClients extends Vue {
       this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
     }
     if (this.fetchOptions.fetchDepotIds) {
-      this.fetchedDataDepotIds = (await this.$axios.$post('/api/opsidata/depotIds')).result
+      this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
       this.fetchOptions.fetchDepotIds = false
     }
     this.isLoading = false
