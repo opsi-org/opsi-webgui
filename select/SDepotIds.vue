@@ -17,7 +17,7 @@ export default class SDepotIds extends Vue {
   idselection: string = ''
 
   async fetch () {
-    this.depotIds = (await this.$axios.$post('/api/opsidata/depotsIds')).result
+    this.depotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
     // this.idselection = this.depotIds[0]
   }
 }
