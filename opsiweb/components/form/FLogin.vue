@@ -31,7 +31,7 @@ interface FormUser {
   @auth.Mutation public logout!: () => void
 
   async fetch () {
-    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
+    this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
   }
 
   get validUsername () {
