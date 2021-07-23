@@ -4,8 +4,10 @@
       <BarBPageHeader>
         <template #left>
           <InputIFilter :data="tableData" />
-          <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
-          <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" />
+          <DropdownDDDepotIds />
+          <DropdownDDClientIds />
+          <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+          <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSProductGroup />
         </template>
       </BarBPageHeader>
@@ -160,31 +162,51 @@ export default class VProducts extends Vue {
   @Watch('tableData', { deep: true })
   tableDataChanged () { this.$fetch() }
 
+  // async beforeMount () {
+  //   this.tableData.selectedDepots = this.selectionDepots
+  //   this.tableData.selectedClients = this.selectionClients
+  //   if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
+  //   if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
+  //   this.fetchedData = (await this.$axios.$post(
+  //     '/api/opsidata/products',
+  //     JSON.stringify(this.tableData)
+  //   )).result
+  // }
+
   async fetch () {
     this.isLoading = true
-    if (this.fetchOptions.fetchDepotIds) {
-      this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
-      this.fetchOptions.fetchDepotIds = false
-    }
-    if (this.fetchOptions.fetchClients2Depots) {
-      this.fetchedDataClients2Depots = (await this.$axios.$post(
-        '/api/opsidata/clients/depots',
-        JSON.stringify({ selectedClients: this.selectionClients })
-      )).result
-      this.fetchOptions.fetchClients2Depots = false
-    }
+    // if (this.fetchOptions.fetchDepotIds) {
+    //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
+    //   this.fetchOptions.fetchDepotIds = false
+    // }
+    // if (this.fetchOptions.fetchClients2Depots) {
+    //   this.fetchedDataClients2Depots = (await this.$axios.$post(
+    //     '/api/opsidata/clients/depots',
+    //     JSON.stringify({ selectedClients: this.selectionClients })
+    //   )).result
+    //   this.fetchOptions.fetchClients2Depots = false
+    // }
 
-    if (this.fetchOptions.fetchClients) {
-      this.tableData.selectedDepots = this.selectionDepots
-      this.tableData.selectedClients = this.selectionClients
-      if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-      this.fetchedData = (await this.$axios.$post(
-        '/api/opsidata/products',
-        JSON.stringify(this.tableData)
-      )).result
-      // console.log('products', this.fetchedData)
-    }
+    // if (this.fetchOptions.fetchClients) {
+    //   this.tableData.selectedDepots = this.selectionDepots
+    //   this.tableData.selectedClients = this.selectionClients
+    //   if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
+    //   if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
+    //   this.fetchedData = (await this.$axios.$post(
+    //     '/api/opsidata/products',
+    //     JSON.stringify(this.tableData)
+    //   )).result
+    //   // console.log('products', this.fetchedData)
+    // }
+
+    this.tableData.selectedDepots = this.selectionDepots
+    this.tableData.selectedClients = this.selectionClients
+    if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
+    if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
+    this.fetchedData = (await this.$axios.$post(
+      '/api/opsidata/products',
+      JSON.stringify(this.tableData)
+    )).result
     this.isLoading = false
   }
 
