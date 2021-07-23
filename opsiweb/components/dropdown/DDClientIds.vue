@@ -52,6 +52,9 @@ const selections = namespace('selections')
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
+  @Watch('selectionDepots', { deep: true })
+  selectionDepotsChanged () { this.$fetch() }
+
   @Watch('selectionLocal', { deep: true }) selectionChanged () {
     // if (this.selectionLocal.length === 0) {
     //   this.selectionLocal.push(this.opsiconfigserver)
