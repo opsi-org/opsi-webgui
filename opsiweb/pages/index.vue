@@ -1,6 +1,6 @@
 <template>
   <b-card class="text-center">
-    <img src="../assets/images/LogoOpsi.png" alt="opsi logo">
+    <IconIOpsiLogo />
     <h1> OPSIWEB </h1>
     <!-- <b-button to="/depots/">
       Depots
