@@ -48,16 +48,39 @@ export default class TTable extends BTable {
   @Prop({ }) tabledata!: ITableData
 
   fixRow (row: ITableRow): void {
-    row.rowSelected = this.selection.includes(row.item.ident)
-    if (row.rowSelected) {
-      const elem = document.getElementById(`__row_${row.item.ident}`)
-      if (elem) { elem.classList.add('b-table-row-selected') }
-      row.item._rowVariant = 'primary'
+    if (this.datakey === 'productId') {
+      row.rowSelected = this.selection.includes(row.item.productId)
+      if (row.rowSelected) {
+        const elem = document.getElementById(`__row_${row.item.productId}`)
+        if (elem) { elem.classList.add('b-table-row-selected') }
+        row.item._rowVariant = 'primary'
+      } else {
+        const elem = document.getElementById(`__row_${row.item.productId}Major`)
+        if (elem) { elem.classList.remove('b-table-row-selected') }
+        row.item._rowVariant = ''
+      }
     } else {
-      const elem = document.getElementById(`__row_${row.item.ident}Major`)
-      if (elem) { elem.classList.remove('b-table-row-selected') }
-      row.item._rowVariant = ''
+      row.rowSelected = this.selection.includes(row.item.ident)
+      if (row.rowSelected) {
+        const elem = document.getElementById(`__row_${row.item.ident}`)
+        if (elem) { elem.classList.add('b-table-row-selected') }
+        row.item._rowVariant = 'primary'
+      } else {
+        const elem = document.getElementById(`__row_${row.item.ident}Major`)
+        if (elem) { elem.classList.remove('b-table-row-selected') }
+        row.item._rowVariant = ''
+      }
     }
+    // row.rowSelected = this.selection.includes(row.item.ident)
+    // if (row.rowSelected) {
+    //   const elem = document.getElementById(`__row_${row.item.ident}`)
+    //   if (elem) { elem.classList.add('b-table-row-selected') }
+    //   row.item._rowVariant = 'primary'
+    // } else {
+    //   const elem = document.getElementById(`__row_${row.item.ident}Major`)
+    //   if (elem) { elem.classList.remove('b-table-row-selected') }
+    //   row.item._rowVariant = ''
+    // }
   }
 
   rowChanged (item: ITableDataItem) {

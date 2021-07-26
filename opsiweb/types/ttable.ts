@@ -7,7 +7,8 @@ export interface ITableDataItem {
 export interface ITableRow {
   rowSelected: boolean
   item: {
-      ident: string
+    ident: string
+    productId: string
       _rowVariant?: string
   };
 }
