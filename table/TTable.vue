@@ -11,6 +11,7 @@
       :no-local-sorting="true"
       :sort-by.sync="tabledata.sortBy"
       :sort-desc.sync="tabledata.sortDesc"
+      sort-icon-left
       @row-clicked="rowChanged"
     >
       <template #head(sel)="{}">
