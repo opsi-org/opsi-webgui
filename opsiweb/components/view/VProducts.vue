@@ -10,6 +10,39 @@
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSProductGroup />
         </template>
+        <template #right>
+          <b-button
+            v-b-modal.ProductSaveModal
+            :disabled="productChanges.length == 0"
+            :variant="productChanges.length != 0 ? 'success' : 'light'"
+          >
+            <b-icon icon="list-check" :variant="productChanges.length != 0 ? 'light' : 'dark'" />
+          </b-button>
+          <b-modal
+            id="ProductSaveModal"
+            ref="modal-saveOverview"
+            size="xl"
+            title="Overview of Product Changes"
+            scrollable
+            hide-footer
+          >
+            <b-table :items="productChanges" :fields="['productId', 'selectedDepots', 'selectedClients', 'actionRequest', 'clientVersions', 'depotVersions', 'depot_version_diff']" />
+            <!-- {{ productChanges }} -->
+
+            <b-row>
+              <b-col>
+                <b-button>
+                  <b-icon icon="trash" /> Delete All
+                </b-button>
+              </b-col>
+              <b-col cols="auto">
+                <b-button>
+                  <b-icon icon="check2" /> Save All
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-modal>
+        </template>
       </BarBPageHeader>
       <TableTCollapseable
         id="tableproducts"
@@ -123,6 +156,7 @@ export default class VProducts extends Vue {
   fetchedDataClients2Depots: object = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
+  productChanges: Array<object> = []
   tableData: ITableData = {
     type: 'LocalbootProduct',
     pageNumber: 1,
@@ -162,17 +196,6 @@ export default class VProducts extends Vue {
   @Watch('tableData', { deep: true })
   tableDataChanged () { this.$fetch() }
 
-  // async beforeMount () {
-  //   this.tableData.selectedDepots = this.selectionDepots
-  //   this.tableData.selectedClients = this.selectionClients
-  //   if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-  //   if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-  //   this.fetchedData = (await this.$axios.$post(
-  //     '/api/opsidata/products',
-  //     JSON.stringify(this.tableData)
-  //   )).result
-  // }
-
   async fetch () {
     this.isLoading = true
     // if (this.fetchOptions.fetchDepotIds) {
@@ -211,6 +234,7 @@ export default class VProducts extends Vue {
   }
 
   saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
+    this.productChanges.push(rowitem)
     // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
   }
