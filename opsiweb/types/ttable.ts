@@ -9,7 +9,7 @@ export interface ITableRow {
   item: {
     ident: string
     productId: string
-      _rowVariant?: string
+    _rowVariant?: string
   };
 }
 

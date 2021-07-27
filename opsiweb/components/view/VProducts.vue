@@ -11,37 +11,7 @@
           <TreeTSProductGroup />
         </template>
         <template #right>
-          <b-button
-            v-b-modal.ProductSaveModal
-            :disabled="productChanges.length == 0"
-            :variant="productChanges.length != 0 ? 'success' : 'light'"
-          >
-            <b-icon icon="list-check" :variant="productChanges.length != 0 ? 'light' : 'dark'" />
-          </b-button>
-          <b-modal
-            id="ProductSaveModal"
-            ref="modal-saveOverview"
-            size="xl"
-            title="Overview of Product Changes"
-            scrollable
-            hide-footer
-          >
-            <b-table :items="productChanges" :fields="['productId', 'selectedDepots', 'selectedClients', 'actionRequest', 'clientVersions', 'depotVersions', 'depot_version_diff']" />
-            <!-- {{ productChanges }} -->
-
-            <b-row>
-              <b-col>
-                <b-button>
-                  <b-icon icon="trash" /> Delete All
-                </b-button>
-              </b-col>
-              <b-col cols="auto">
-                <b-button>
-                  <b-icon icon="check2" /> Save All
-                </b-button>
-              </b-col>
-            </b-row>
-          </b-modal>
+          <ModalMProdSaveOverview :product-changes="productChanges" />
         </template>
       </BarBPageHeader>
       <TableTCollapseable
@@ -128,6 +98,7 @@
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>
       Products: {{ selectionProducts }} <br>
+      Product Changes: {{ productChanges }} <br>
       <!-- Sorting By: <b>{{ tableData.sortBy }}</b>, Sort Direction:
       <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b> -->
       <!-- rowID {{ rowId }} <br>
