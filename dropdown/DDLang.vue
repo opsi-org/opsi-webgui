@@ -3,7 +3,7 @@
     <b-nav-item-dropdown
       style="height:100%;margin:0px;"
       variant="secondary"
-      :text="$i18n.locale"
+      :text="language"
       alt="select theme"
     >
       <b-dropdown-item
@@ -18,12 +18,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+const settings = namespace('settings')
 
 @Component export default class DDLang extends Vue {
   languages: Array<string> = ['en', 'de']
 
+  @settings.Getter public language!: string
+  @settings.Mutation public setLanguage!: (lang: string) => void
+
+  beforeMount () {
+    if (this.language) {
+      this.$i18n.locale = this.language
+    }
+  }
+
   changeLanguage (lang : string) {
+    this.setLanguage(lang)
     this.$i18n.locale = lang
   }
 }
