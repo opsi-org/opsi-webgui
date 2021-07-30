@@ -1,0 +1,72 @@
+{
+  "title":{
+    "overview": "Overview",
+    "support": "Support",
+    "manage": "Manage",
+    "depots": "Depots",
+    "allDepots": "All Depots",
+    "clients": "Clients",
+    "allClients": "All Clients",
+    "config": "Configuration",
+    "log": "Logs",
+    "products": "Products",
+    "configure": "Configure",
+    "settings": "Settings",
+    "localboot": "Localboot Products",
+    "hostattr": "Host Attributes"
+  },
+  "table": {
+    "filter": "Filter",
+    "showCol": "Show Columns",
+    "fields":{
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "ip": "IP",
+      "hwAddr": "Hardware Address",
+      "inventNum": "Inventory Number",
+      "created": "Created",
+      "lastSeen": "Last Seen",
+      "hostKey": "OPSI Host Key",
+      "otp": "One Time Password",
+      "notes": "Notes",
+      "stats": "Statistics",
+      "version": "Version",
+      "instStatus": "Installation Status",
+      "clientsIds": "Selected Clients",
+      "depotIds": "Selected Depots"
+    }
+  },
+  "button" : {
+    "login": "Login",
+    "logout": "Logout",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "treeselect":{
+    "hostGroups": "Host Groups",
+    "prodGroups": "Product Groups"
+  },
+  "formselect": {
+    "depot": "Please select a Depot",
+    "client": "Please select a Client"
+  },
+  "supportPage" : {
+    "documentation": {
+      "title": "Documentation",
+      "description": "Our documentation contains Getiing Started Guides and Manuals, which are step-by-step instructions that will help you get started with OPSI.",
+      "button": "View Documentation"
+    },
+    "forum": {
+      "title": "Forum",
+      "description": "Share feedback, ask for help and connect with community on the OPSI Forum.",
+      "button": "Visit OPSI Forum"
+    },
+    "support": {
+      "title": "Support",
+      "description": "Do you need support at OPSI? We will get you the help you need. ",
+      "button": "Learn More"
+    }
+  }
+}
