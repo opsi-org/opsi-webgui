@@ -7,6 +7,7 @@
       class="dd-dd-theme"
       :text="theme.title"
       alt="select theme"
+      :dropup="dropup"
     >
       <b-dropdown-item
         v-for="t in themes"
@@ -17,7 +18,7 @@
         {{ t.title }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
-    <b-dropdown v-else :text="theme.title" variant="secondary">
+    <b-dropdown v-else :text="theme.title" variant="secondary" :dropup="dropup">
       <b-dropdown-item
         v-for="t in themes"
         :key="t.rel"
@@ -36,6 +37,7 @@ import { ITheme } from '~/types/tsettings'
 const settings = namespace('settings')
 
 @Component export default class DDTheme extends Vue {
+  @Prop({ default: false }) dropup!: boolean
   @Prop({ default: false }) navbar!: boolean
   themes: Array<ITheme> = [
     // Created with https://bootstrap.build/app :

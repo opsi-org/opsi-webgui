@@ -5,7 +5,8 @@
         <b-nav-text> uib GmbH 2021</b-nav-text>
       </b-navbar-nav>
       <b-navbar-nav align="center" small class="ml-auto">
-        <DropdownDDTheme />
+        <DropdownDDLang :dropup="true" />
+        <DropdownDDTheme :dropup="true" />
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto" small>
         <b-nav-text> version: 1.0.0</b-nav-text>
