@@ -1,35 +1,38 @@
 <template>
-  <b-table
-    v-bind="$props"
-    :ref="$props.id"
-    :class="$mq"
-    striped
-    hover
-    selectable
-    select-mode="multi"
-    :no-local-sorting="true"
-    :sort-by.sync="tabledata.sortBy"
-    :sort-desc.sync="tabledata.sortDesc"
-    @row-clicked="rowChanged"
-  >
-    <template #head(sel)="{}">
-      {{ selection.length }}/{{ totalrows }}
-    </template>
-    <template #cell(sel)="row">
-      {{ fixRow(row) }}
-      <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
-    </template>
-
-    <template #head(rowactions)="{}">
-      <DropdownDDTableColumnVisibilty :headers="headers" />
-    </template>
-    <template
-      v-for="slotName in Object.keys($scopedSlots)"
-      #[slotName]="slotScope"
+  <div>
+    <b-table
+      v-bind="$props"
+      :ref="$props.id"
+      :class="$mq"
+      striped
+      hover
+      selectable
+      select-mode="multi"
+      :no-local-sorting="true"
+      :sort-by.sync="tabledata.sortBy"
+      :sort-desc.sync="tabledata.sortDesc"
+      sort-icon-left
+      @row-clicked="rowChanged"
     >
-      <slot :name="slotName" v-bind="slotScope" />
-    </template>
-  </b-table>
+      <template #head(sel)="{}">
+        {{ selection.length }}/{{ totalrows }}
+      </template>
+      <template #cell(sel)="row">
+        {{ fixRow(row) }}
+        <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
+      </template>
+
+      <template #head(rowactions)="{}">
+        <DropdownDDTableColumnVisibilty :headers="headers" />
+      </template>
+      <template
+        v-for="slotName in Object.keys($scopedSlots)"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script lang="ts">
@@ -60,11 +63,23 @@ export default class TTable extends BTable {
 
   rowChanged (item: ITableDataItem) {
     const selectionCopy:Array<string> = [...this.selection]
-    if (selectionCopy.includes(item.ident)) {
+    if (this.datakey === 'productId') {
+      if (selectionCopy.includes(item.productId)) {
+        selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
+      } else {
+        selectionCopy.push(item.productId)
+      }
+    } else if (selectionCopy.includes(item.ident)) {
       selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
     } else {
       selectionCopy.push(item.ident)
     }
+
+    // if (selectionCopy.includes(item.ident)) {
+    //   selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
+    // } else {
+    //   selectionCopy.push(item.ident)
+    // }
     this.onchangeselection(selectionCopy)
   }
 }
