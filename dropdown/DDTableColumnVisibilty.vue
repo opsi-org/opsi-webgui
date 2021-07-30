@@ -8,7 +8,7 @@
     size="sm"
     alt="Show column"
     class="fixed_column_selection"
-    :title="tooltip"
+    :title="$t('table.showCol')"
   >
     <template #button-content>
       <b-icon-list-task />
@@ -22,7 +22,7 @@
         :disabled="columnVisibilityStates[header.key]"
         @click="setColumnVisibilityModel(header.key)"
       >
-        {{ header.label }} <!-- {{ $t(header.label) }} -->
+        {{ $t(header.label) }}
       </a>
     </li>
     <li
@@ -42,7 +42,7 @@
           :value="header.key"
           :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
         />
-        {{ header.label }}
+        {{ $t(header.label) }}
       </a>
     </li>
   </b-dropdown>
@@ -69,13 +69,6 @@ export default class DDTableColumnVisibilty extends BDropdown {
 
   @Watch('columnVisibilityList') keysChanged () {
     this.setColumnVisibilityModel(undefined)
-  }
-
-  get tooltip () {
-    if (this.$mq === 'mobile') {
-      return 'show additional column'
-    }
-    return 'visible addational columns'
   }
 
   handleItem (key: string) {

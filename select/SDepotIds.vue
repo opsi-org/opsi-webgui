@@ -2,7 +2,7 @@
   <b-form-select v-model="idselection" :options="depotIds" @change="$emit('update:id', idselection)">
     <template #first>
       <b-form-select-option :value="''" disabled>
-        -- Please select a Depot --
+        -- {{ $t('formselect.depot') }} --
       </b-form-select-option>
     </template>
   </b-form-select>

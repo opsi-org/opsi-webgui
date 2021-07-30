@@ -15,7 +15,7 @@
         id="tableproducts"
         datakey="productId"
         :tabledata="tableData"
-        :title="'Localboot products'"
+        :title="$t('title.localboot')"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
         :items="fetchedData.products"
@@ -135,14 +135,14 @@ export default class VProducts extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    productId: { label: 'Id', key: 'productId', visible: true, _fixed: true, sortable: true },
-    desc: { label: 'desc', key: 'desc', visible: false, sortable: true },
-    name: { label: 'name', key: 'name', visible: false, sortable: true },
-    selectedClients: { label: 'clientIds', key: 'selectedClients', visible: false },
-    selectedDepots: { label: 'depotIds', key: 'selectedDepots', visible: false },
-    installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: false, sortable: true },
+    productId: { label: 'table.fields.id', key: 'productId', visible: true, _fixed: true, sortable: true },
+    desc: { label: 'table.fields.description', key: 'desc', visible: false, sortable: true },
+    name: { label: 'table.fields.name', key: 'name', visible: false, sortable: true },
+    selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false },
+    selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
+    installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: false, sortable: true },
     actionRequest: { label: '', key: 'actionRequest', visible: true, sortable: true, _fixed: true },
-    _majorVersion: { label: 'Version', key: '_majorVersion', _isMajor: true, visible: false },
+    _majorVersion: { label: 'table.fields.version', key: '_majorVersion', _isMajor: true, visible: false },
     depotVersions: { label: 'd', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey width-max-content text-right' },
     clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey width-max-content ' },
     rowactions: { key: 'rowactions', label: '-', visible: true, _fixed: true, class: 'width-max-content' }
