@@ -5,7 +5,7 @@
         <b-button @click="resetNewClientForm()">
           <b-icon icon="arrow-counterclockwise" /> Reset
         </b-button>
-        <b-button :disabled="!clientNamewithoutDomain" @click="createOpsiClient()">
+        <b-button :disabled="!clientName" @click="createOpsiClient()">
           <b-icon icon="plus" /> Add
         </b-button>
       </template>
@@ -19,7 +19,7 @@
           </b-col>
           <b-col>
             <b-form-input
-              v-model="clientNamewithoutDomain"
+              v-model="clientName"
               type="text"
               required
             />
@@ -93,7 +93,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+const selections = namespace('selections')
+
 interface NewClient {
   hostId: string,
   description: string,
@@ -104,9 +106,12 @@ interface NewClient {
 }
 
 @Component export default class VClientsAddNew extends Vue {
+  clientIds: Array<string> = []
+  opsiconfigserver: string = ''
+  result: string = ''
   isLoading: boolean = false
-  domainName: string = '.uib.local'
-  clientNamewithoutDomain: string = ''
+  domain: string = ''
+  clientName: string = ''
   newClient: NewClient = {
     hostId: '',
     description: '',
@@ -116,14 +121,50 @@ interface NewClient {
     notes: ''
   }
 
+  @selections.Getter public selectionDepots!: Array<string>
+
+  get domainName () {
+    if (this.opsiconfigserver) {
+      this.result = this.opsiconfigserver
+      this.result = this.result.substring(this.result.indexOf('.'))
+    }
+    this.domain = this.result
+    return this.result
+  }
+
+  set domainName (val: string) {
+    this.domain = val
+  }
+
+  beforeMount () {
+    this.$fetch()
+  }
+
+  async fetch () {
+    this.clientIds = (await this.$axios.$post('/api/opsidata/depots/clients',
+      JSON.stringify({ selectedDepots: this.selectionDepots }))
+    ).result.clients.sort()
+
+    this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+  }
+
   resetNewClientForm () {
-    this.clientNamewithoutDomain = ''
+    this.clientName = ''
     this.newClient = {} as NewClient
   }
 
-  createOpsiClient () {
+  async createOpsiClient () {
     this.isLoading = true
-    // await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
+    this.newClient.hostId = this.clientName.trim() + this.domain.trim()
+    if (this.clientIds.includes(this.newClient.hostId)) {
+      this.isLoading = false
+      // eslint-disable-next-line no-console
+      console.log('newClient: ALREADY EXISTS')
+      return
+    }
+    // eslint-disable-next-line no-console
+    console.log('newClient', this.newClient)
+    await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
     this.isLoading = false
   }
 }
