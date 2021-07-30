@@ -1,9 +1,9 @@
 import { mount } from '@vue/test-utils'
-import Logo from '~/components/Logo.vue'
+import OpsiLogo from '~/components/icon/IOpsiLogo.vue'
 
-describe('Logo', () => {
+describe('OpsiLogo', () => {
   test('is a Vue instance', () => {
-    const wrapper = mount(Logo)
+    const wrapper = mount(OpsiLogo)
     expect(wrapper.vm).toBeTruthy()
   })
 })
