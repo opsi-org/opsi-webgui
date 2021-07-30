@@ -7,7 +7,7 @@
       <!-- <b-button @click="login" :disabled="(validUsername&&validPassword)!==null">login</b-button> -->
       <!-- <b-button @click="login" :disabled="(validUsername!==null&&validPassword!==null)">login</b-button> -->
       <b-button @click="doLogin">
-        login
+        {{ $t('button.login') }}
       </b-button>
       <p>{{ result }}</p>
     </div>

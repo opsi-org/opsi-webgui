@@ -3,7 +3,7 @@
     v-model="data.filterQuery"
     class="filter"
     v-bind="$props"
-    placeholder="Filter table"
+    :placeholder="$t('table.filter')"
     aria-label="Filter"
   />
 </template>

@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-table :busy="isBusy" :stacked="stacked" borderless :items="tableitems">
+    <b-table :busy="isBusy" :stacked="stacked" borderless :items="tableitems" :fields="tablefields">
       <template #table-busy>
         <IconILoading />
       </template>
@@ -36,6 +36,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class TDefault extends Vue {
   @Prop({ }) tableitems!: Array<object>
+  @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
   @Prop({ }) isBusy!: boolean
   hideValue : boolean = false

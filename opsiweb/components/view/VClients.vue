@@ -24,7 +24,7 @@
       >
         <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo
-            title="config"
+            :title="$t('title.config')"
             icon="gear"
             to="/clients/config"
             :ident="row.item.ident"
@@ -33,7 +33,7 @@
           />
 
           <ButtonBTNRowLinkTo
-            title="log"
+            :title="$t('title.log')"
             icon="file-earmark-text"
             to="/clients/log"
             :ident="row.item.ident"
@@ -85,11 +85,11 @@ export default class VClients extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    clientId: { label: 'Id', key: 'clientId', visible: true, _fixed: true, sortable: true },
-    description: { label: 'Desc', key: 'description', visible: false, sortable: true },
-    ipAddress: { label: 'IP', key: 'ipAddress', visible: false, sortable: true },
-    macAddress: { label: 'MAC', key: 'macAddress', visible: false, sortable: true },
-    _majorStats: { label: 'stats', key: '_majorStats', _isMajor: true, visible: false },
+    clientId: { label: 'table.fields.id', key: 'clientId', visible: true, _fixed: true, sortable: true },
+    description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
+    ipAddress: { label: 'table.fields.ip', key: 'ipAddress', visible: false, sortable: true },
+    macAddress: { label: 'table.fields.hwAddr', key: 'macAddress', visible: false, sortable: true },
+    _majorStats: { label: 'table.fields.stats', key: '_majorStats', _isMajor: true, visible: false },
     version_outdated: { label: 'v outated', key: 'version_outdated', _majorKey: '_majorStats', visible: false, sortable: true },
     actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false, sortable: true },
     rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }

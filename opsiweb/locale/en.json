@@ -1,4 +1,7 @@
 {
+  "message":{
+    "loading": "Loading"
+  },
   "title":{
     "overview": "Overview",
     "support": "Support",
@@ -50,7 +53,8 @@
   },
   "formselect": {
     "depot": "Please select a Depot",
-    "client": "Please select a Client"
+    "client": "Please select a Client",
+    "logtype": "Please select a Log type"
   },
   "supportPage" : {
     "documentation": {
@@ -68,5 +72,8 @@
       "description": "Do you need support at OPSI? We will get you the help you need. ",
       "button": "Learn More"
     }
+  },
+  "settingsPage": {
+    "modules": "Module Content"
   }
 }
