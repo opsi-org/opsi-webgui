@@ -5,6 +5,7 @@
       variant="secondary"
       :text="language"
       alt="select theme"
+      :dropup="dropup"
     >
       <b-dropdown-item
         v-for="(lang, i) in languages"
@@ -18,10 +19,12 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 const settings = namespace('settings')
 
 @Component export default class DDLang extends Vue {
+  @Prop({ default: false }) dropup!: boolean
+
   languages: Array<string> = ['en', 'de']
 
   @settings.Getter public language!: string
