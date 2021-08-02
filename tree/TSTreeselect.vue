@@ -1,7 +1,7 @@
 <template>
   <treeselect
     v-model="groupSelection"
-    :placeholder="type === 'hostgroup' ? 'Host Group' : 'Product Group'"
+    :placeholder="type === 'hostgroup' ? $t('treeselect.hostGroups') : $t('treeselect.prodGroups')"
     class="treeselect"
     :multiple="true"
     :clearable="false"

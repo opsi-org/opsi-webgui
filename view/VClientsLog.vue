@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BarBPageHeader v-if="asChild" :title="'Log - ' + id" closeroute="/clients/" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
         <b-form-input v-model.trim="filterQuery" placeholder="Filter" @keyup="filterLog" />

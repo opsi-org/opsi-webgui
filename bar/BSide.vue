@@ -15,11 +15,11 @@
         <div class="sidemenu_footer">
           <b-button
             v-b-tooltip.hover
-            :title=" (!attributes.expanded)? 'Expand': 'Collapse'"
+            :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
             :pressed.sync="attributes.expanded"
           >
-            <b-icon v-if="!attributes.expanded" icon="chevron-double-right" />
-            <b-icon v-else-if="attributes.expanded" icon="chevron-double-left" />
+            <b-icon v-if="attributes.expanded" icon="chevron-double-left" />
+            <b-icon v-else icon="chevron-double-right" />
           </b-button>
         </div>
       </template>

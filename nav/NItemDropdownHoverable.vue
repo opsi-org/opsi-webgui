@@ -6,11 +6,12 @@
         <b-icon :icon="icon" />
       </template>
       <b-dropdown-item disabled>
-        {{ title }}
+        {{ $t(title) }}
       </b-dropdown-item>
       <b-dropdown-divider />
       <b-dropdown-item v-for="sub in submenu" :key="sub.title" :to="sub.route">
-        {{ sub.title }}
+        {{ $t(sub.title) }}
+        <!-- {{ sub.title }} -->
       </b-dropdown-item>
     </b-nav-item-dropdown>
   </div>
