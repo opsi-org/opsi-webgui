@@ -131,6 +131,23 @@ interface NewClient {
   resetNewClientForm () {
     this.clientName = ''
     this.newClient = {} as NewClient
+    // this.$bvToast.toast('This is toast number', {
+    //   title: 'BootstrapVue Toast',
+    //   toaster: 'b-toaster-bottom-right',
+    //   variant: 'danger',
+    //   autoHideDelay: 5000,
+    //   appendToast: false
+    // })
+  }
+
+  makeToast (message:string = '', title:string = '', variant:string = 'primary', autoHideDelay: number = 5000, append = false) {
+    this.$bvToast.toast(message, {
+      title,
+      toaster: 'b-toaster-bottom-right',
+      variant,
+      autoHideDelay,
+      appendToast: append
+    })
   }
 
   async createOpsiClient () {
@@ -138,13 +155,13 @@ interface NewClient {
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      // eslint-disable-next-line no-console
-      console.log('newClient: ALREADY EXISTS')
+      this.makeToast(this.newClient.hostId + ' already exists', 'Oops!', 'warning', 5000)
       return
     }
-    // eslint-disable-next-line no-console
-    console.log('newClient', this.newClient)
-    await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
+    const result = await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
+    if (result.error === null) {
+      this.makeToast(this.newClient.hostId + ' has been added succesfully', 'Success', 'success', 5000)
+    } else { this.makeToast(result.error, 'ERROR', 'danger', 8000) }
     this.isLoading = false
   }
 }
