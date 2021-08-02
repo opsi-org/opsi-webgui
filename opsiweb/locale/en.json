@@ -10,6 +10,8 @@
     "allDepots": "All Depots",
     "clients": "Clients",
     "allClients": "All Clients",
+    "addNew": "Add New",
+    "addNewClient": "Add New Client",
     "config": "Configuration",
     "log": "Logs",
     "products": "Products",
@@ -21,12 +23,14 @@
   "table": {
     "filter": "Filter",
     "showCol": "Show Columns",
+    "clientDetails":"Client Details",
+    "addtnlInfo":"Additional Information",
     "fields":{
       "id": "ID",
       "name": "Name",
       "description": "Description",
       "type": "Type",
-      "ip": "IP",
+      "ip": "IP Address",
       "hwAddr": "Hardware Address",
       "inventNum": "Inventory Number",
       "created": "Created",
@@ -45,7 +49,9 @@
     "login": "Login",
     "logout": "Logout",
     "expand": "Expand",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "reset": "Reset",
+    "add": "Add"
   },
   "treeselect":{
     "hostGroups": "Host Groups",
