@@ -1,6 +1,6 @@
 <template>
   <b-button v-bind="$props" class="btn-logout text-left" @click="doLogout">
-    Logout
+    {{ $t('button.logout') }}
   </b-button>
 </template>
 

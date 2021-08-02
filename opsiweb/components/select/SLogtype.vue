@@ -2,7 +2,7 @@
   <b-form-select v-model="type" :options="logTypes" @change="$emit('update:logtype', type)">
     <template #first>
       <b-form-select-option :value="null" disabled>
-        -- Please select a Log type --
+        -- {{ $t('formselect.logtype') }} --
       </b-form-select-option>
     </template>
   </b-form-select>

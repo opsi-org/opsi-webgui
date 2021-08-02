@@ -38,43 +38,43 @@ export default class NSidebar extends Vue {
   @Prop({ }) expanded!: boolean
   navItems : Array<object> = [
     {
-      title: 'Overview',
+      title: 'title.overview',
       menu: [
         // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-        { title: 'Support', icon: 'headset', route: '/support' }
+        { title: 'title.support', icon: 'headset', route: '/support' }
       ]
     },
     {
-      title: 'Manage',
+      title: 'title.manage',
       menu: [
         {
-          title: 'Depots',
+          title: 'title.depots',
           route: '/depots/',
           icon: 'hdd-stack-fill',
           submenu: [
-            { title: 'All Depots', route: '/depots' },
-            { title: 'Configuration', route: '/depotsconfig' }
+            { title: 'title.allDepots', route: '/depots' },
+            { title: 'title.config', route: '/depotsconfig' }
             // { title: 'Logs', route: '/depots/log' }
           ]
         },
         {
-          title: 'Clients',
+          title: 'title.clients',
           route: '/clients/',
           icon: 'laptop',
           submenu: [
-            { title: 'All Clients', route: '/clients/' },
+            { title: 'title.allClients', route: '/clients/' },
             { title: 'Add New', route: '/clientsaddnew' },
-            { title: 'Configuration', route: '/clientsconfig' },
-            { title: 'Logs', route: '/clientslog' }
+            { title: 'title.config', route: '/clientsconfig' },
+            { title: 'title.log', route: '/clientslog' }
           ]
         },
-        { title: 'Products', icon: 'grid-fill', route: '/products/' }
+        { title: 'title.products', icon: 'grid-fill', route: '/products/' }
       ]
     },
     {
-      title: 'Configure',
+      title: 'title.configure',
       menu: [
-        { title: 'Settings', icon: 'gear-fill', route: '/settings' }
+        { title: 'title.settings', icon: 'gear-fill', route: '/settings' }
         // { title: 'Index page', icon: 'collection-fill', route: '/' }
       ]
     }
