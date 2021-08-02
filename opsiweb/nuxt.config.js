@@ -1,10 +1,14 @@
 import path from 'path'
 import fs from 'fs'
+import pkg from './package.json'
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
-
+  // https://nuxtjs.org/guide/runtime-config
+  publicRuntimeConfig: {
+    clientVersion: pkg.version
+  },
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
   // mode: 'spa',
