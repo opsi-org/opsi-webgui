@@ -5,7 +5,7 @@
         <template #left>
           <InputIFilter :data="tableData" />
           <DropdownDDDepotIds />
-          <!-- DOUBT: Why fetching depots again ?-->
+          <!-- DOUBT: why fetchedDataDepotIds -->
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSHostGroup />
         </template>

@@ -1,6 +1,7 @@
 
 export interface ITableDataItem {
   ident: string
+  productId: string
 }
 
 export interface ITableRow {

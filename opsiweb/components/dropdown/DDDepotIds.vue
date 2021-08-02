@@ -67,7 +67,7 @@ const selections = namespace('selections')
   }
 
   async fetch () {
-    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
+    this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
     this.fetchedData = (await this.$axios.$get('/api/opsidata/depotIds')).result
     this.selectionLocal = [...this.selectionDepots]
   }
