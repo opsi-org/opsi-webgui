@@ -14,6 +14,9 @@
       sort-icon-left
       @row-clicked="rowChanged"
     >
+      <template #head()="header">
+        {{ $t(header.label) }}
+      </template>
       <template #head(sel)="{}">
         {{ selection.length }}/{{ totalrows }}
       </template>

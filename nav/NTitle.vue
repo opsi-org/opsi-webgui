@@ -1,6 +1,6 @@
 <template>
   <b-nav-item v-if="expanded" disabled>
-    {{ title }}
+    {{ $t(title) }}
   </b-nav-item>
   <b-nav-item v-else disabled />
 </template>
