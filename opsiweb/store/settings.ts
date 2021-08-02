@@ -4,7 +4,7 @@ import { ITheme } from '@/types/tsettings'
 
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
-  _language: string = ''
+  _language: string = 'en'
   colorthemeobj: ITheme = { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' }
 
   get language (): string { return this._language }
