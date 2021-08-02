@@ -4,7 +4,10 @@ import { ITheme } from '@/types/tsettings'
 
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
+  _language: string = ''
   colorthemeobj: ITheme = { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' }
+
+  get language (): string { return this._language }
 
   get colortheme (): ITheme {
     if (Cookie.get('theme.title')) {
@@ -24,6 +27,11 @@ export default class Settings extends VuexModule {
       }
     }
     return this.colorthemeobj
+  }
+
+  @VuexMutation public setLanguage (lang: string) {
+    this._language = lang
+    Cookie.set('Language', this._language)
   }
 
   @VuexMutation // ({ mutate: ['colorthemeobj'] })

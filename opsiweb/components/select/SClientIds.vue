@@ -2,7 +2,7 @@
   <b-form-select v-model="idselection" :options="clientIds" @change="$emit('update:id', idselection)">
     <template #first>
       <b-form-select-option :value="''" disabled>
-        -- Please select a Client --
+        -- {{ $t('formselect.client') }} --
       </b-form-select-option>
     </template>
   </b-form-select>

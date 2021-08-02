@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <b-tabs>
-      <b-tab title="Modules content" active>
+      <b-tab :title="$t('settingsPage.modules')" active>
         <ViewVModules />
       </b-tab>
     </b-tabs>

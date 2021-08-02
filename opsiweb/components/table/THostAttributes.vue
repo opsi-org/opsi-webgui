@@ -1,5 +1,5 @@
 <template>
-  <LazyTableTDefault v-if="result" :is-busy="isLoading" :stacked="true" :tableitems="[result]" />
+  <TableTDefault v-if="result" :is-busy="isLoading" :stacked="true" :tableitems="[result]" :tablefields="fields" />
 </template>
 
 <script lang="ts">
@@ -14,6 +14,22 @@ export default class THostAttributes extends Vue {
   result:Object = {}
   request: Request = { hosts: [] }
   isLoading: boolean = false
+
+  get fields () {
+    return [
+      { label: this.$t('table.fields.id'), key: 'hostId' },
+      { label: this.$t('table.fields.type'), key: 'type' },
+      { label: this.$t('table.fields.description'), key: 'description' },
+      { label: this.$t('table.fields.notes'), key: 'notes' },
+      { label: this.$t('table.fields.hwAddr'), key: 'hardwareAddress' },
+      { label: this.$t('table.fields.ip'), key: 'ipAddress' },
+      { label: this.$t('table.fields.inventNum'), key: 'inventoryNumber' },
+      { label: this.$t('table.fields.created'), key: 'created' },
+      { label: this.$t('table.fields.lastSeen'), key: 'lastSeen' },
+      { label: this.$t('table.fields.hostKey'), key: 'opsiHostKey' },
+      { label: this.$t('table.fields.otp'), key: 'oneTimePassword' }
+    ]
+  }
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
