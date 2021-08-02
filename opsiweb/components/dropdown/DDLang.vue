@@ -3,7 +3,7 @@
     <b-nav-item-dropdown
       style="height:100%;margin:0px;"
       variant="secondary"
-      :text="language"
+      :text="$i18n.locale"
       alt="select theme"
       :dropup="dropup"
     >
