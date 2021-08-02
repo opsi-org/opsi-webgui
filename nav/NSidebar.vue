@@ -63,7 +63,7 @@ export default class NSidebar extends Vue {
           icon: 'laptop',
           submenu: [
             { title: 'title.allClients', route: '/clients/' },
-            { title: 'Add New', route: '/clientsaddnew' },
+            { title: 'title.addNew', route: '/clientsaddnew' },
             { title: 'title.config', route: '/clientsconfig' },
             { title: 'title.log', route: '/clientslog' }
           ]

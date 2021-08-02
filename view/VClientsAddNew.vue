@@ -3,10 +3,10 @@
     <BarBPageHeader>
       <template #right>
         <b-button @click="resetNewClientForm()">
-          <b-icon icon="arrow-counterclockwise" /> Reset
+          <b-icon icon="arrow-counterclockwise" /> {{ $t('button.reset') }}
         </b-button>
         <b-button :disabled="!clientName" @click="createOpsiClient()">
-          <b-icon icon="plus" /> Add
+          <b-icon icon="plus" /> {{ $t('button.add') }}
         </b-button>
       </template>
     </BarBPageHeader>
@@ -15,76 +15,56 @@
       <template slot="content">
         <b-row class="mb-2">
           <b-col sm="3" class="text-sm-right">
-            Client ID:
+            {{ $t('table.fields.id') }}:
           </b-col>
           <b-col>
-            <b-form-input
-              v-model="clientName"
-              type="text"
-              required
-            />
+            <b-form-input v-model="clientName" type="text" required />
           </b-col>
           <b-col>
             <b-form-input v-model="domainName" size="sm" type="text" required />
           </b-col>
         </b-row>
-        <b>Client Details: </b>
+        <b>{{ $t('table.clientDetails') }}: </b>
         <b-row class="mb-2">
           <b-col sm="3" class="text-sm-right">
-            Description:
+            {{ $t('table.fields.description') }}:
           </b-col>
           <b-col>
-            <b-form-input
-              v-model="newClient.description"
-              type="text"
-            />
+            <b-form-input v-model="newClient.description" type="text" />
           </b-col>
         </b-row>
         <b-row class="mb-2">
           <b-col sm="3" class="text-sm-right">
-            Inventory Number:
+            {{ $t('table.fields.inventNum') }}:
           </b-col>
           <b-col>
-            <b-form-input
-              v-model="newClient.inventoryNumber"
-              type="text"
-            />
+            <b-form-input v-model="newClient.inventoryNumber" type="text" />
           </b-col>
         </b-row>
         <b-row class="mb-2">
           <b-col sm="3" class="text-sm-right">
-            Hardware Address:
+            {{ $t('table.fields.hwAddr') }}:
           </b-col>
           <b-col>
-            <b-form-input
-              v-model="newClient.hardwareAddress"
-              type="text"
-            />
+            <b-form-input v-model="newClient.hardwareAddress" type="text" />
           </b-col>
         </b-row>
 
         <b-row class="mb-2">
           <b-col sm="3" class="text-sm-right">
-            IP Address:
+            {{ $t('table.fields.ip') }}:
           </b-col>
           <b-col>
-            <b-form-input
-              v-model="newClient.ipAddress"
-              type="text"
-            />
+            <b-form-input v-model="newClient.ipAddress" type="text" />
           </b-col>
         </b-row>
-        <b>Additional Information: </b>
+        <b>{{ $t('table.addtnlInfo') }}: </b>
         <b-row class="mb-2">
           <b-col sm="3" class="text-sm-right">
-            Notes:
+            {{ $t('table.fields.notes') }}:
           </b-col>
           <b-col>
-            <b-form-textarea
-              v-model="newClient.notes"
-              rows="2"
-              no-resize
-            />
+            <b-form-textarea v-model="newClient.notes" rows="2" no-resize />
           </b-col>
         </b-row>
       </template>
