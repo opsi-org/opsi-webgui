@@ -83,6 +83,29 @@ export default class TSDelayedLoading extends Vue {
     //   text: 'ab_group',
     //   children: null
     // }]
+    // this.options = [
+    //   {
+    //     id: 'clientdirectory',
+    //     text: 'clientdirectory',
+    //     isBranch: true,
+    //     type: 'HostGroup',
+    //     children: null
+    //   },
+    //   {
+    //     id: 'groups',
+    //     text: 'groups',
+    //     isBranch: true,
+    //     type: 'HostGroup',
+    //     children: null
+    //   },
+    //   {
+    //     id: 'clientlist',
+    //     text: 'clientlist',
+    //     isBranch: true,
+    //     type: 'HostGroup',
+    //     children: null
+    //   }
+    // ]
   }
 
   beforeUpdate () {
