@@ -140,7 +140,7 @@ interface NewClient {
     // })
   }
 
-  makeToast (message:string = '', title:string = '', variant:string = 'primary', autoHideDelay: number = 5000, append = false) {
+  makeToast (message:string = '', title:any = '', variant:string = 'primary', autoHideDelay: number = 5000, append = false) {
     this.$bvToast.toast(message, {
       title,
       toaster: 'b-toaster-bottom-right',
@@ -155,13 +155,13 @@ interface NewClient {
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      this.makeToast(this.newClient.hostId + ' already exists', 'Oops!', 'warning', 5000)
+      this.makeToast(this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning', 5000)
       return
     }
     const result = await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
     if (result.error === null) {
-      this.makeToast(this.newClient.hostId + ' has been added succesfully', 'Success', 'success', 5000)
-    } else { this.makeToast(result.error, 'ERROR', 'danger', 8000) }
+      this.makeToast(this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
+    } else { this.makeToast(result.error, this.$t('message.error'), 'danger', 8000) }
     this.isLoading = false
   }
 }

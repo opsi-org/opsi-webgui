@@ -1,6 +1,11 @@
 {
   "message":{
-    "loading": "Loading"
+    "loading": "Loading",
+    "warning": "WARNING",
+    "success": "SUCCESS",
+    "error": "ERROR",
+    "add": " has been added succesfully.",
+    "exists": " already exists."
   },
   "title":{
     "overview": "Overview",
