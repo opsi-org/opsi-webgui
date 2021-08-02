@@ -1,0 +1,90 @@
+{
+  "message":{
+    "loading": "Laden",
+    "warning": "WARNUNG",
+    "success": "ERFOLG",
+    "error": "FEHLER",
+    "add": " wurde erfolgreich hinzugefügt.",
+    "exists": " existiert bereits."
+  },
+  "title":{
+    "overview": "Überblick",
+    "support": "Support",
+    "manage": "Verwalten",
+    "depots": "Depots",
+    "allDepots": "Alle Depots",
+    "clients": "Clients",
+    "allClients": "Alle Clients",
+    "addNew": "Neue hinzufügen",
+    "addNewClient": "Neuen Client hinzufügen",
+    "config": "Konfiguration",
+    "log": "Log",
+    "products": "Produkte",
+    "configure": "Konfigurieren",
+    "settings": "Einstellungen",
+    "localboot": "Localboot-Produkt",
+    "hostattr": "Host-Attribute"
+  },
+  "table": {
+    "filter": "Filter",
+    "showCol": "Spalten anzeigen",
+    "clientDetails":"Client-Details",
+    "addtnlInfo":"Zusätzliche Information",
+    "fields":{
+      "id": "ID",
+      "name": "Name",
+      "description": "Beschreibung",
+      "type": "Typ",
+      "ip": "IP Adresse",
+      "hwAddr": "Hardware-Adresse",
+      "inventNum": "Inventar Nummer",
+      "created": "Erstellt",
+      "lastSeen": "Zuletzt gesehen",
+      "hostKey": "OPSI-Hostschlüssel",
+      "otp": "Einmalpasswort OTP",
+      "notes": "Anmerkungen",
+      "stats": "Statistiken",
+      "version": "Version",
+      "instStatus": "Installationsstatus",
+      "clientsIds": "Ausgewählte Clients",
+      "depotIds": "Ausgewählte Depots"
+    }
+  },
+  "button" : {
+    "login": "Login",
+    "logout": "Ausloggen",
+    "expand": "Expandieren",
+    "collapse": "Kollaps",
+    "reset": "Rücksetzen",
+    "add": "Hinzufügen"
+  },
+  "treeselect":{
+    "hostGroups": "Hostgruppen",
+    "prodGroups": "Produktgruppen"
+  },
+  "formselect": {
+    "depot": "Bitte wählen Sie ein Depot",
+    "client": "Bitte wählen Sie ein Client",
+    "logtype": "Bitte wählen Sie ein Log Typ"
+  },
+  "supportPage" : {
+    "documentation": {
+      "title": "Dokumentation",
+      "description": "Unsere Dokumentation enthält Anleitungen und Handbücher für die ersten Schritte, die Schritt-für-Schritt-Anleitungen sind, die Ihnen den Einstieg in OPSI erleichtern.",
+      "button": "Dokumentation Anzeigen"
+    },
+    "forum": {
+      "title": "Forum",
+      "description": "Teilen Sie Feedback, bitten Sie um Hilfe und verbinden Sie sich mit der Community im OPSI-Forum.",
+      "button": "OPSI Forum Besuchen"
+    },
+    "support": {
+      "title": "Support",
+      "description": "Benötigen Sie Support bei OPSI? Wir besorgen Ihnen die Hilfe, die Sie brauchen.",
+      "button": "Mehr Erfahren"
+    }
+  },
+  "settingsPage": {
+    "modules": "Modul-Inhalt"
+  }
+}
