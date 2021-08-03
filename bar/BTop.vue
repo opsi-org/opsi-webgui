@@ -21,7 +21,7 @@
       </b-navbar-nav>
       <b-collapse id="nav-collapse" is-nav variant="secondary">
         <b-navbar-nav class="ml-auto float-right">
-          <DropdownDDLang class="navbar-collapse-child" />
+          <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
           <DropdownDDTheme class="navbar-collapse-child" :navbar="true" />
           <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
         </b-navbar-nav>
@@ -58,17 +58,12 @@ export default class CTop extends Vue {
   border-top: 0px !important;
 }
 
-.desktop #nav-collapse,
+/* .desktop #nav-collapse,
 .desktop #nav-collapse .navbar-nav {
-  /* top:0px !important;
-  width: 100% !important;
-  padding: 0px !important;
-  margin: 0px !important;
-  border: 0px !important; */
   margin-top: 0px !important;
   padding-top: 0px !important;
   background-color: var(--transparent) !important;
-}
+} */
 .topbar{
   background-color: var(--secondary) !important;
   position: fixed;
@@ -78,18 +73,18 @@ export default class CTop extends Vue {
   padding-right: 0px !important;
   padding: 0em !important;
 }
-.navbar-toggler{
+/* .navbar-toggler{
   margin-right: 0.5em !important;
 }
 .navbar-nav {
   margin-left: 1em !important;
   padding-right: 1em !important;
-}
+} */
 
-.mobile .navbar-collapse .navbar-nav > .navbar-collapse-child{
+/* .mobile .navbar-collapse .navbar-nav > .navbar-collapse-child{
   margin-left: 1em !important;
   margin-right: 1em !important;
-}
+} */
 .topbar::before {
   content: unset !important;
 }
@@ -100,17 +95,15 @@ export default class CTop extends Vue {
   max-height: var(--height-navbar) !important;
   display: inline-flex !important;
   padding-bottom: 0px !important;
-  /* padding-top: 0px; */
 }
 .topbar_logo {
   height: 25px !important;
-  /* margin-top: 5px; */
 }
 
-.navbar-collapse .navbar-nav{
+/* .navbar-collapse .navbar-nav{
   padding-top:10px !important;
   margin-top:10px !important;
   background-color: var(--secondary) !important;
-}
+} */
 
 </style>
