@@ -51,7 +51,7 @@
     }
   },
   "button" : {
-    "login": "Login",
+    "login": "Anmeldung",
     "logout": "Ausloggen",
     "expand": "Expandieren",
     "collapse": "Kollaps",
