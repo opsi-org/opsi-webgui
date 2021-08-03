@@ -67,6 +67,10 @@
     "client": "Please select a Client",
     "logtype": "Please select a Log type"
   },
+  "loginPage": {
+    "username": "Username",
+    "password": "Password"
+  },
   "supportPage" : {
     "documentation": {
       "title": "Documentation",
