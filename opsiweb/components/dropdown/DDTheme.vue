@@ -70,7 +70,7 @@ const settings = namespace('settings')
 </script>
 
 <style>
-.navbar-light .navbar-nav .nav-link{
+/* .navbar-light .navbar-nav .nav-link{
   color: unset !important;
   font-weight: normal !important;
   padding-top: 0px;
@@ -85,5 +85,5 @@ const settings = namespace('settings')
 {
   background-image: unset !important;
   background-color: transparent !important;
-}
+} */
 </style>

@@ -1,6 +1,7 @@
 <template>
   <div class="btn btn-secondary dd-theme text-left">
     <b-nav-item-dropdown
+      v-if="navbar"
       style="height:100%;margin:0px;"
       variant="secondary"
       :text="$i18n.locale"
@@ -15,6 +16,15 @@
         {{ lang }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
+    <b-dropdown v-else :text="$i18n.locale" variant="secondary" :dropup="dropup">
+      <b-dropdown-item
+        v-for="(lang, i) in languages"
+        :key="i"
+        @click="changeLanguage(lang)"
+      >
+        {{ lang }}
+      </b-dropdown-item>
+    </b-dropdown>
   </div>
 </template>
 
@@ -44,7 +54,7 @@ const settings = namespace('settings')
 </script>
 
 <style>
-.navbar-light .navbar-nav .nav-link{
+/* .navbar-light .navbar-nav .nav-link{
   color: unset !important;
   font-weight: normal !important;
   padding-top: 0px;
@@ -59,5 +69,5 @@ const settings = namespace('settings')
 {
   background-image: unset !important;
   background-color: transparent !important;
-}
+} */
 </style>
