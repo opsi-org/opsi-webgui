@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <b-navbar class="bottombar" fixed="bottom" type="dark" variant="secondary">
+  <div class="fixed-bottom">
+    <b-navbar fixed="bottom" type="dark" variant="secondary">
       <b-navbar-nav small>
         <b-nav-text> uib GmbH 2021</b-nav-text>
       </b-navbar-nav>
@@ -16,8 +16,4 @@
 </template>
 
 <style>
-.bottombar{
-  /* position: fixed; */
-  height: 38px;
-}
 </style>
