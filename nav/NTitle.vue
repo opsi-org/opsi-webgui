@@ -1,6 +1,6 @@
 <template>
   <b-nav-item v-if="expanded" disabled>
-    {{ $t(title) }}
+    <small>{{ $t(title) }}</small>
   </b-nav-item>
   <b-nav-item v-else disabled />
 </template>
@@ -16,7 +16,7 @@ export default class NTitle extends Vue {
 </script>
 
 <style>
-.nav-tabs .nav-link.disabled {
-  color: black;
+.nav-tabs .nav-link.disabled{
+  color: lightgray !important;
 }
 </style>
