@@ -39,6 +39,13 @@ export default class CTop extends Vue {
 
 <style>
 
+.navbar-light .navbar-nav .nav-link{
+  color: unset !important;
+  font-weight: normal !important;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 .mobile #nav-collapse {
   border-bottom: 3px solid var(--primary) !important;
 }
