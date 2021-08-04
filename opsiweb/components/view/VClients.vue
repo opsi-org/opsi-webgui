@@ -110,10 +110,19 @@ export default class VClients extends Vue {
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = this.selectionDepots
       // this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
-      const params = {
-        tableData: this.tableData
+      const data = {
+        tableData: this.tableData,
+        method: 'get'
       }
-      this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', { params })).result
+      this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', { data })).result
+      // this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', { params })).result
+      // this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', {
+      //   params,
+      //   paramsSerializer: function paramsSerializer (parameters) {
+      //     // "Hide" the `answer` param
+      //     return Object.entries(Object.assign({}, parameters, params)).map(([key, value]) => `${key}=${value}`).join('&')
+      //   }
+      // })).result
       // const data = {
       //   tableData: this.tableData
       // }

@@ -49,3 +49,41 @@ export interface ITableHeader {
 export interface ITableHeaders {
   [key: string]: ITableHeader
 }
+
+export interface IProperty {
+  propertyId: string
+  // proptertyType: EPropertyType
+  propertyType: 'UnicodeProductProperty'|'BoolProductProperty'
+  version: string // combined: product-packageVersion
+  possibleValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
+  editable: boolean
+  multiValue: boolean
+
+  depotsIds: Array<string>
+  depotsValues: Array<Array<string|boolean>> //  prodPropState(depots) or defaultValues
+  depotsVersions?: string // combined: product-packageVersion
+
+  clientsIds: Array<string>
+  clientsValues: Array<Array<string|boolean>> // prodPropState(clients)
+  clientsVersions?: string // combined: product-packageVersion
+
+  // clientValuesDiff: boolean
+  // depotVersionDiff: boolean
+  newValue?: string
+  newValues?: Array<string>
+}
+
+export interface IProperties {
+  [key: string]: IProperty
+}
+export interface IProductPropertyConfig {
+  description?: string
+  properties: IProperties
+}
+
+export interface INewPropertyValue {
+  [key: string]: {
+    newValue: string
+    newValues: Array<string>
+  }
+}
