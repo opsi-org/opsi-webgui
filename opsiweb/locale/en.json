@@ -8,9 +8,9 @@
     "exists": " already exists."
   },
   "title":{
-    "overview": "Overview",
+    "overview": "OVERVIEW",
     "support": "Support",
-    "manage": "Manage",
+    "manage": "MANAGE",
     "depots": "Depots",
     "allDepots": "All Depots",
     "clients": "Clients",
@@ -20,7 +20,7 @@
     "config": "Configuration",
     "log": "Logs",
     "products": "Products",
-    "configure": "Configure",
+    "configure": "CONFIGURE",
     "settings": "Settings",
     "localboot": "Localboot Products",
     "hostattr": "Host Attributes"
@@ -66,6 +66,10 @@
     "depot": "Please select a Depot",
     "client": "Please select a Client",
     "logtype": "Please select a Log type"
+  },
+  "loginPage": {
+    "username": "Username",
+    "password": "Password"
   },
   "supportPage" : {
     "documentation": {
