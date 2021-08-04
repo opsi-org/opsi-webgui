@@ -42,6 +42,7 @@
   ],
   "files.exclude": {
     ".vscode": true,
+    ".mockups": true,
     ".nuxt": true,
     "https": true,
     "node_modules": true,
