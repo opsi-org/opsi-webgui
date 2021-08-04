@@ -8,9 +8,9 @@
     "exists": " existiert bereits."
   },
   "title":{
-    "overview": "Überblick",
+    "overview": "ÜBERBLICK",
     "support": "Support",
-    "manage": "Verwalten",
+    "manage": "VERWALTEN",
     "depots": "Depots",
     "allDepots": "Alle Depots",
     "clients": "Clients",
@@ -20,7 +20,7 @@
     "config": "Konfiguration",
     "log": "Log",
     "products": "Produkte",
-    "configure": "Konfigurieren",
+    "configure": "KONFIGURIEREN",
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
     "hostattr": "Host-Attribute"
