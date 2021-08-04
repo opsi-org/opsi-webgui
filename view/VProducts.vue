@@ -83,6 +83,25 @@
           <!-- {{row.item.versionDepot}} -->
         </template>
 
+        <template #cell(rowactions)="row">
+          <ButtonBTNRowLinkTo
+            :title="$t('title.config')"
+            icon="gear"
+            to="/products/config"
+            :ident="row.item.productId"
+            :pressed="isRouteActive"
+            :click="routeRedirectWith"
+          />
+
+          <!-- <ButtonBTNRowLinkTo
+            :title="$t('title.log')"
+            icon="file-earmark-text"
+            to="/clients/log"
+            :ident="row.item.ident"
+            :pressed="isRouteActive"
+            :click="routeRedirectWith"
+          /> -->
+        </template>
         <template #pagination>
           <BarBPagination
             :tabledata="tableData"

@@ -24,8 +24,14 @@
         />
       </template>
       <template #cell()="row">
-        <b-form-input v-model="row.value" size="sm" readonly />
+        <b-form-input v-model="row[valueKey]" size="sm" readonly />
       </template>
+      <template
+          v-for="slotName in Object.keys($scopedSlots)"
+          #[slotName]="slotScope"
+        >
+          <slot :name="slotName" v-bind="slotScope" />
+        </template>
     </b-table>
   </b-container>
 </template>
@@ -39,6 +45,8 @@ export default class TDefault extends Vue {
   @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
   @Prop({ }) isBusy!: boolean
+  @Prop({ default: 'label' }) labelKey!: boolean
+  @Prop({ default: 'value' }) valueKey!: boolean
   hideValue : boolean = false
 }
 </script>
