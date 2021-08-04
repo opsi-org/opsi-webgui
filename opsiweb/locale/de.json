@@ -8,9 +8,9 @@
     "exists": " existiert bereits."
   },
   "title":{
-    "overview": "Überblick",
+    "overview": "ÜBERBLICK",
     "support": "Support",
-    "manage": "Verwalten",
+    "manage": "VERWALTEN",
     "depots": "Depots",
     "allDepots": "Alle Depots",
     "clients": "Clients",
@@ -20,7 +20,7 @@
     "config": "Konfiguration",
     "log": "Log",
     "products": "Produkte",
-    "configure": "Konfigurieren",
+    "configure": "KONFIGURIEREN",
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
     "hostattr": "Host-Attribute"
@@ -51,7 +51,7 @@
     }
   },
   "button" : {
-    "login": "Login",
+    "login": "Anmeldung",
     "logout": "Ausloggen",
     "expand": "Expandieren",
     "collapse": "Kollaps",
@@ -66,6 +66,10 @@
     "depot": "Bitte wählen Sie ein Depot",
     "client": "Bitte wählen Sie ein Client",
     "logtype": "Bitte wählen Sie ein Log Typ"
+  },
+  "loginPage": {
+    "username": "Benutzername",
+    "password": "Passwort"
   },
   "supportPage" : {
     "documentation": {

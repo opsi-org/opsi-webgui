@@ -25,6 +25,7 @@
             <NavNItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
           </template>
         </span>
+        <br>
       </span>
     </b-nav>
   </div>
@@ -83,6 +84,13 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
+.navbar-light .navbar-nav .nav .nav-item{
+  color: unset !important;
+  font-weight: normal !important;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 .sidemenu_nav{
   position:absolute;
   width: 100%;
