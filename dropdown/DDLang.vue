@@ -1,5 +1,5 @@
 <template>
-  <div class="btn btn-secondary dd-theme text-left">
+  <div class="btn btn-secondary dd_lang text-left">
     <b-nav-item-dropdown
       style="height:100%;margin:0px;"
       :text="$i18n.locale"
@@ -43,17 +43,11 @@ const settings = namespace('settings')
 </script>
 
 <style>
-/* .navbar-light .navbar-nav .nav-link{
-  color: unset !important;
-  font-weight: normal !important;
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
-.dd-theme{
+.dd_lang{
   padding-left: 1em !important;
   padding-right: 1em !important;
 }
-.dropdown:hover
+/* .dropdown:hover
 .dropdown-toggle:hover
 {
   background-image: unset !important;
