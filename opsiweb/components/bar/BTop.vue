@@ -11,11 +11,7 @@
         OPSIWEB
       </b-navbar-brand>
       <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button
-          v-b-toggle.nav-collapse
-          class="topbar_collapse_btn"
-          variant="secondary"
-        >
+        <b-button v-b-toggle.nav-collapse variant="secondary">
           <b-icon-three-dots-vertical font-scale="1.1" />
         </b-button>
       </b-navbar-nav>

@@ -1,9 +1,7 @@
 <template>
   <div class="btn btn-secondary dd-theme text-left">
     <b-nav-item-dropdown
-      v-if="navbar"
       style="height:100%;margin:0px;"
-      variant="secondary"
       :text="$i18n.locale"
       alt="select theme"
       :dropup="dropup"
@@ -16,15 +14,6 @@
         {{ lang }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
-    <b-dropdown v-else :text="$i18n.locale" variant="secondary" :dropup="dropup">
-      <b-dropdown-item
-        v-for="(lang, i) in languages"
-        :key="i"
-        @click="changeLanguage(lang)"
-      >
-        {{ lang }}
-      </b-dropdown-item>
-    </b-dropdown>
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <Nuxt />
-    <BarBBottom />
+    <BarBAuthFooter />
   </div>
 </template>
 
