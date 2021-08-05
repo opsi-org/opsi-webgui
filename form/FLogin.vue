@@ -1,16 +1,14 @@
 <template>
   <div>
-    <div>
-      <b-form-input v-model="opsiconfigserver" readonly />
-      <b-form-input v-model="form.username" :state="validUsername" />
-      <b-form-input v-model="form.password" :state="validPassword" type="password" />
-      <!-- <b-button @click="login" :disabled="(validUsername&&validPassword)!==null">login</b-button> -->
-      <!-- <b-button @click="login" :disabled="(validUsername!==null&&validPassword!==null)">login</b-button> -->
-      <b-button @click="doLogin">
-        {{ $t('button.login') }}
-      </b-button>
-      <p>{{ result }}</p>
-    </div>
+    <b-form-input v-model="opsiconfigserver" readonly />
+    <b-form-input v-model="form.username" :placeholder="$t('loginPage.username')" :state="validUsername" />
+    <b-form-input v-model="form.password" :placeholder="$t('loginPage.password')" :state="validPassword" type="password" />
+    <!-- <b-button @click="login" :disabled="(validUsername&&validPassword)!==null">login</b-button> -->
+    <!-- <b-button @click="login" :disabled="(validUsername!==null&&validPassword!==null)">login</b-button> -->
+    <b-button block @click="doLogin">
+      {{ $t('button.login') }}
+    </b-button>
+    <p>{{ result }}</p>
   </div>
 </template>
 
