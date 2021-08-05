@@ -2,7 +2,9 @@
   <div>
     <div v-if="$mq=='mobile'">
       <!-- Depots: {{selectionDepots}} -->
-      Clients ({{ selectionClients.length }}): {{ JSON.stringify(selectionClients) }}
+      <b-alert show variant="secondary">
+        <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
+      </b-alert>
     </div>
     <!-- <DropdownDDDefault
       v-if="selectionDepots.length>1"
@@ -57,7 +59,7 @@
                   variant="outline-secondary"
                   @click="updateNewPropertyValuesRow(row)"
                 >
-                  add
+                  {{ $t('values.add') }}
                 </b-button>
               </template>
             </b-input-group>

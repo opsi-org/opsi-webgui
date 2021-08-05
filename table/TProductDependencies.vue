@@ -32,11 +32,11 @@ export default class TProductProperties extends Vue {
   isLoading: boolean = false
   get fields () {
     return [
-      { label: 'product', key: 'productId' },
-      { label: 'required', key: 'required' },
-      { label: 'pre-required', key: 'pre-required' },
-      { label: 'post-required', key: 'post-required' },
-      { label: 'on deinstall', key: 'on deinstall' }
+      { label: this.$t('table.fields.productId'), key: 'productId' },
+      { label: this.$t('table.fields.required'), key: 'required' },
+      { label: this.$t('table.fields.pre-required'), key: 'pre-required' },
+      { label: this.$t('table.fields.post-required'), key: 'post-required' },
+      { label: this.$t('table.fields.on-deinstall'), key: 'on deinstall' }
     ]
   }
 }

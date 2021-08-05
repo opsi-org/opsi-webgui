@@ -14,10 +14,10 @@
         </b-card>
         <!-- <br /> -->
         <b-tabs v-if="id">
-          <b-tab title="Properties" active>
+          <b-tab :title="$t('title.properties')" active>
             <LazyTableTProductProperties v-if="id" :id="id" :properties="fetchedData.properties" />
           </b-tab>
-          <b-tab title="Dependencies" :disabled="fetchedData.dependencies.length <= 0">
+          <b-tab :title="$t('title.dependencies')" :disabled="fetchedData.dependencies.length <= 0">
             <LazyTableTProductDependencies :id="id" :dependencies="fetchedData.dependencies" />
           </b-tab>
         </b-tabs>
