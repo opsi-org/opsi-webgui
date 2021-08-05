@@ -12,7 +12,7 @@
       <b-table :items="productChanges" :fields="['productId', 'selectedDepots', 'selectedClients', 'actionRequest', 'clientVersions', 'depotVersions', 'depot_version_diff', '_action']">
         <template #cell(_action)="row">
           <b-button-group>
-            <ButtonBTNDeleteObj :item="row.item" :delete-from="productChanges" />
+            <ButtonBTNDeleteObj :item="row.item" :delete-from="productChanges" hide="ProductSaveModal" />
             <b-button>
               <b-icon icon="check2" />
             </b-button>
