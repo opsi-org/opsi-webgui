@@ -73,11 +73,20 @@ export interface IProperty {
   newValues?: Array<string>
 }
 
+export interface IProductDependency {
+  productId: string
+  required?: string
+  'pre-required'?: string
+  'post-required'?: string
+  'on deinstall'?:string
+}
+
 export interface IProperties {
   [key: string]: IProperty
 }
 export interface IProductPropertyConfig {
   description?: string
+  dependencies?: Array<IProductDependency>
   properties: IProperties
 }
 

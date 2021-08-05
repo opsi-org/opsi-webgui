@@ -1,6 +1,6 @@
 <template>
   <b-container fluid>
-    <b-table :busy="isBusy" :stacked="stacked" borderless :items="tableitems" :fields="tablefields">
+    <b-table v-bind="$props" :busy="isBusy" :stacked="stacked" :small="small" borderless :items="tableitems" :fields="tablefields">
       <template #table-busy>
         <IconILoading />
       </template>
@@ -23,15 +23,15 @@
           readonly
         />
       </template>
-      <template #cell()="row">
+      <template v-if="valueIsInputField" #cell()="row">
         <b-form-input v-model="row[valueKey]" size="sm" readonly />
       </template>
       <template
-          v-for="slotName in Object.keys($scopedSlots)"
-          #[slotName]="slotScope"
-        >
-          <slot :name="slotName" v-bind="slotScope" />
-        </template>
+        v-for="slotName in Object.keys($scopedSlots)"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
     </b-table>
   </b-container>
 </template>
@@ -45,8 +45,10 @@ export default class TDefault extends Vue {
   @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
   @Prop({ }) isBusy!: boolean
-  @Prop({ default: 'label' }) labelKey!: boolean
-  @Prop({ default: 'value' }) valueKey!: boolean
+  @Prop({ default: 'label' }) labelKey?: boolean
+  @Prop({ default: 'value' }) valueKey?: boolean
+  @Prop({ default: false }) small?: boolean
+  @Prop({ default: true }) valueIsInputField?: boolean
   hideValue : boolean = false
 }
 </script>

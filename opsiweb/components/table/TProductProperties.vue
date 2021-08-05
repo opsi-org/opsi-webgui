@@ -9,27 +9,33 @@
       :options="['all depots', ...selectionDepots]"
       :selected-items="['all depots']"
     /> -->
-    <TableTDefault v-if="properties" :is-busy="isLoading" :stacked="false" :tableitems="Object.values(properties)" :tablefields="fields">
+    <TableTDefault v-if="properties" :is-busy="isLoading" :stacked="false" :small="true" :tableitems="Object.values(properties)" :tablefields="fields">
       <template #cell(propertyId)="row">
         {{ row.item.propertyId }}
       </template>
       <template #cell(value)="row">
         <!-- Clients: {{row.item.clientsValues}} -->
         <b-row>
-        <div
-          v-if="Object.keys(fetchedDataClients2Depots).length > 0"
-        >
-          {{createNewPropertyValueEntryRow(row.item)}}
-          <!-- {{createNewPropertyValueEntry(row.item.propertyId)}} -->
-          <TableCellTCProductPropertyValue
-            :clients2depots="fetchedDataClients2Depots"
-            :row-item="row.item"
-          />
+          <div
+            v-if="Object.keys(fetchedDataClients2Depots).length > 0"
+          >
+            {{createNewPropertyValueEntryRow(row.item)}}
+            <!-- {{createNewPropertyValueEntry(row.item.propertyId)}} -->
+            <TableCellTCProductPropertyValue
+              :clients2depots="fetchedDataClients2Depots"
+              :row-item="row.item"
+            />
             <!-- :values-new="row.item.newValues" -->
             <!-- :values-new="newValuesPerProp[row.item.propertyId].newValues" -->
             <!-- :values-new="getNewPropertyValues(row.item.propertyId)" -->
-        </div>
-        <b-button v-if="row.item.editable" @click="row.toggleDetails()">+</b-button>
+          </div>
+          <b-button
+            v-if="row.item.editable"
+            disabled
+            @click="row.toggleDetails()"
+          >
+            +
+          </b-button>
         </b-row>
       </template>
       <template #row-details="row">
