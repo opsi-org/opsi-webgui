@@ -40,6 +40,12 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
+          <b-dropdown no-caret>
+            <template #button-content>
+              <b-icon icon="three-dots-vertical" />
+            </template>
+            <ModalMDeleteClient :id="row.item.ident.trim()" />
+          </b-dropdown>
         </template>
       </TableTTable>
       <BarBPagination
