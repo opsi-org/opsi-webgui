@@ -1,33 +1,35 @@
 <template>
   <div>
     <div v-if="$mq=='mobile'">
-    <!-- Depots: {{selectionDepots}} -->
-    Clients ({{selectionClients.length}}): {{JSON.stringify(selectionClients)}}
+      <!-- Depots: {{selectionDepots}} -->
+      Clients ({{ selectionClients.length }}): {{ JSON.stringify(selectionClients) }}
     </div>
     <!-- <DropdownDDDefault
       v-if="selectionDepots.length>1"
       :options="['all depots', ...selectionDepots]"
       :selected-items="['all depots']"
     /> -->
-    <TableTDefault v-if="properties" :is-busy="isLoading" :stacked="false" :small="true" :tableitems="Object.values(properties)" :tablefields="fields">
+    <TableTDefault
+      v-if="properties"
+      :is-busy="isLoading"
+      :stacked="false"
+      :small="true"
+      :tableitems="Object.values(properties)"
+      :tablefields="fields"
+    >
       <template #cell(propertyId)="row">
         {{ row.item.propertyId }}
       </template>
       <template #cell(value)="row">
-        <!-- Clients: {{row.item.clientsValues}} -->
         <b-row>
           <div
             v-if="Object.keys(fetchedDataClients2Depots).length > 0"
           >
-            {{createNewPropertyValueEntryRow(row.item)}}
-            <!-- {{createNewPropertyValueEntry(row.item.propertyId)}} -->
+            {{ createNewPropertyValueEntryRow(row.item) }}
             <TableCellTCProductPropertyValue
               :clients2depots="fetchedDataClients2Depots"
               :row-item="row.item"
             />
-            <!-- :values-new="row.item.newValues" -->
-            <!-- :values-new="newValuesPerProp[row.item.propertyId].newValues" -->
-            <!-- :values-new="getNewPropertyValues(row.item.propertyId)" -->
           </div>
           <b-button
             v-if="row.item.editable"
@@ -42,15 +44,6 @@
         <b-card>
           <b-container>
             <b-input-group>
-              <!-- @keydown.native="addNewValOnEnter(rows.item)" -->
-                <!-- :placeholder="$t('products.config.formInputPlaceholder')" -->
-                <!-- :placeholder="newValue" -->
-              <!-- {{newValuesPerProp}} -->
-              <!-- {{newValuesPerProp[row.item.propertyId].newValues}}
-              {{newValuesPerProp[row.item.propertyId].newValue}} -->
-              <!-- {{row.item.newValue}}
-              {{row.item.newValues}} -->
-                <!-- v-model="newValuesPerProp[row.item.propertyId].newValue" -->
               <b-form-input
                 v-model="row.item.newValue"
                 size="sm"
@@ -58,10 +51,7 @@
                 disabled
                 @keyup.enter="updateNewPropertyValuesRow(row.item)"
               />
-                <!-- @keyup.enter="updateNewPropertyValuesRow(row.item)" -->
               <template #append>
-                <!-- v-b-tooltip.hover.left
-                  v-bind:title="$t('products.config.addValue')" -->
                 <b-button
                   disabled
                   size="sm"
@@ -70,12 +60,10 @@
                 >
                   +
                 </b-button>
-                <!-- @click="newValuesPerProp[row.propertyId].push(newValue)" -->
               </template>
             </b-input-group>
           </b-container>
         </b-card>
-
       </template>
     </TableTDefault>
   </div>
@@ -112,10 +100,6 @@ export default class TProductProperties extends Vue {
     ]
   }
 
-  // selectedValue (propertyId: string) {
-
-  //   return 'x'
-  // }
   // @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
   async beforeMount () {
@@ -163,8 +147,8 @@ export default class TProductProperties extends Vue {
       // rowitem.clientsValues.push(rowitem.newValue)
       // rowitem.newValues.push(rowitem.newValue)
     }
-    console.debug('add new value', rowitem.newValue)
-    console.debug('   new values', rowitem.newValues)
+    // console.debug('add new value', rowitem.newValue)
+    // console.debug('   new values', rowitem.newValues)
   }
   //   console.log('current values:', rowitem.newValues)
   //   console.log('Add new value:', rowitem.newValue)
