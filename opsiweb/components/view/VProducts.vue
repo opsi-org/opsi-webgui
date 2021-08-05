@@ -62,19 +62,18 @@
         <!-- <template #cell(productId)="row">
             <TableCellTCProductCellComparable :list2text="row.item.productId" />
           </template> -->
-        <template #head(actionRequest)>
+        <template v-if="selectionClients.length>0" #head(actionRequest)>
           <DropdownDDProductRequest
             v-if="selectionClients.length>0"
-            :title="'Set actionrequest for all selected products'"
+            :title="$t('formselect.tooltip.actionRequest')"
             :save="saveActionRequests"
           />
         </template>
 
-        <template #cell(actionRequest)="row">
+        <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
           <!-- {{row.item.actionRequest}} -->
           <!-- :title="'Set actionrequest for all selected products'" -->
           <DropdownDDProductRequest
-            v-if="selectionClients.length>0"
             :request="row.item.actionRequest || 'none'"
             :requestoptions="row.item.actions"
             :rowitem="row.item"
@@ -141,10 +140,10 @@ export default class VProducts extends Vue {
     selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false },
     selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
     installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: false, sortable: true },
-    actionRequest: { label: '', key: 'actionRequest', visible: true, sortable: true, _fixed: true },
+    actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: false, sortable: true, _fixed: false },
     _majorVersion: { label: 'table.fields.version', key: '_majorVersion', _isMajor: true, visible: false },
     depotVersions: { label: 'd', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey width-max-content text-right' },
-    clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey width-max-content ' },
+    clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: false, sortable: true, class: 'bg-color-grey width-max-content ' },
     rowactions: { key: 'rowactions', label: '-', visible: true, _fixed: true, class: 'width-max-content' }
   }
 
@@ -157,11 +156,25 @@ export default class VProducts extends Vue {
   selectionDepotsChanged () { this.$fetch() }
 
   @Watch('selectionClients', { deep: true })
-  selectionClientsChanged () { this.$fetch() }
+  selectionClientsChanged () {
+    this.$fetch()
+    this.updateColumnVisibility()
+  }
 
   @Watch('tableData', { deep: true })
   tableDataChanged () { this.$fetch() }
 
+  mounted () {
+    this.updateColumnVisibility()
+  }
+
+  updateColumnVisibility () {
+    if (this.selectionClients.length > 0) {
+      this.headerData.actionRequest.visible = true
+    } else {
+      this.headerData.actionRequest.visible = false
+    }
+  }
   // async beforeMount () {
   //   this.tableData.selectedDepots = this.selectionDepots
   //   this.tableData.selectedClients = this.selectionClients

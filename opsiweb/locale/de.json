@@ -63,9 +63,12 @@
     "prodGroups": "Produktgruppen"
   },
   "formselect": {
-    "depot": "Bitte wählen Sie ein Depot",
-    "client": "Bitte wählen Sie ein Client",
-    "logtype": "Bitte wählen Sie ein Log Typ"
+    "depot": "Auswahl eines Depots",
+    "client": "Auswahl eines Clients",
+    "logtype": "Auswahl eines Log Typs",
+    "tooltip": {
+      "actionRequest": "Setze ActionRequest für alle ausgwählten Produkte"
+    }
   },
   "loginPage": {
     "username": "Benutzername",
