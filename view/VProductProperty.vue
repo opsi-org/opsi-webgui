@@ -9,9 +9,16 @@
     <IconILoading v-if="isLoading" />
     <DivDScrollResult>
       <template slot="content">
+        <b-card>
+          {{ fetchedData.description }}
+        </b-card>
+        <br />
         <b-tabs v-if="id">
-          <b-tab title="Host Attributes" active>
+          <b-tab title="Properties" active>
             <LazyTableTProductProperties v-if="id" :id="id" :properties="fetchedData.properties" />
+          </b-tab>
+          <b-tab title="Dependencies" :disabled="fetchedData.dependencies.length <= 0">
+            <LazyTableTProductDependencies :id="id" :dependencies="fetchedData.dependencies" />
           </b-tab>
         </b-tabs>
       </template>
@@ -22,9 +29,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { IProductPropertyConfig } from '~/types/ttable'
-// interface IProductProperty {
-//   description: string
-// }
+
 @Component
 export default class VClientConfig extends Vue {
   @Prop({ }) id!: string
@@ -34,10 +39,22 @@ export default class VClientConfig extends Vue {
   fetchedData!: IProductPropertyConfig
   isLoading: boolean = true
 
+  mounted () {
+    if (!this.id) {
+      this.$router.back()
+    }
+  }
+
   /* async */ fetch () {
     this.fetchedData = {
-      description: 'foo',
-      // productId: '7zip',
+      description: 'This is the description',
+      dependencies: [
+        // { productId: 'a', required: 'installed:', 'pre-required': 'installed:', 'post-required': ':setup', 'on deinstall': '' },
+        // { productId: 'b', required: 'installed:', 'pre-required': '', 'post-required': '', 'on deinstall': '' },
+        // { productId: 'c', required: '', 'pre-required': 'installed:', 'post-required': '', 'on deinstall': '' },
+        // { productId: 'd', required: '', 'pre-required': '', 'post-required': ':setup', 'on deinstall': '' },
+        // { productId: 'e', required: '', 'pre-required': '', 'post-required': '', 'on deinstall': 'uninstall' }
+      ],
       properties: {
         uninstall_before_install: { propertyId: 'uninstall_before_install', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [[true]], depotsIds: ['bonifax.uib.local'], depotsValues: [[false]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' },
         uninstall_before_install1: { propertyId: 'uninstall_before_install1', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [[false]], depotsIds: ['bonifax.uib.local'], depotsValues: [[false]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' },
