@@ -1,19 +1,26 @@
 {
   "message":{
-    "loading": "Loading"
+    "loading": "Loading",
+    "warning": "WARNING",
+    "success": "SUCCESS",
+    "error": "ERROR",
+    "add": " has been added succesfully.",
+    "exists": " already exists."
   },
   "title":{
-    "overview": "Overview",
+    "overview": "OVERVIEW",
     "support": "Support",
-    "manage": "Manage",
+    "manage": "MANAGE",
     "depots": "Depots",
     "allDepots": "All Depots",
     "clients": "Clients",
     "allClients": "All Clients",
+    "addNew": "Add New",
+    "addNewClient": "Add New Client",
     "config": "Configuration",
     "log": "Logs",
     "products": "Products",
-    "configure": "Configure",
+    "configure": "CONFIGURE",
     "settings": "Settings",
     "localboot": "Localboot Products",
     "hostattr": "Host Attributes"
@@ -21,12 +28,14 @@
   "table": {
     "filter": "Filter",
     "showCol": "Show Columns",
+    "clientDetails":"Client Details",
+    "addtnlInfo":"Additional Information",
     "fields":{
       "id": "ID",
       "name": "Name",
       "description": "Description",
       "type": "Type",
-      "ip": "IP",
+      "ip": "IP Address",
       "hwAddr": "Hardware Address",
       "inventNum": "Inventory Number",
       "created": "Created",
@@ -45,7 +54,9 @@
     "login": "Login",
     "logout": "Logout",
     "expand": "Expand",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "reset": "Reset",
+    "add": "Add"
   },
   "treeselect":{
     "hostGroups": "Host Groups",
@@ -55,6 +66,10 @@
     "depot": "Please select a Depot",
     "client": "Please select a Client",
     "logtype": "Please select a Log type"
+  },
+  "loginPage": {
+    "username": "Username",
+    "password": "Password"
   },
   "supportPage" : {
     "documentation": {
