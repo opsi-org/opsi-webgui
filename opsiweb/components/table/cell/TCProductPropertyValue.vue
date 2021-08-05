@@ -1,11 +1,8 @@
 <template>
   <div>
-    <!-- Depots: {{rowItem.depotsValues}} <br /> -->
-    <!-- {{selectionClientsValuesWithDepotValues}} <br /> -->
     <b-form-checkbox
       v-if="rowItem.propertyType=='BoolProductProperty'"
       v-model="visibleValueBool"
-      disabled
       :indeterminate="visibleValueBoolIndeterminate"
     />
 
@@ -14,55 +11,50 @@
       :options="uniqueOptions"
       :selected-items="uniqueSelection"
       :multiple="true"
-      disabled
+      @change="selectionChanged"
     />
     <DropdownDDDefault
       v-else
       :options="uniqueOptions"
       :selected-items="uniqueSelection"
-      disabled
+      @change="selectionChanged"
     />
-    <!-- {{rowItem.newValues}} -->
-    <!-- {{(rowItem.propertyType=='UnicodeProductProperty') ? visibleValueUnicode: ''}} -->
-
-    <!-- <b-form-input v-model="row.item.clientsValues" size="sm" readonly /> -->
   </div>
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IProperty } from '~/types/ttable'
 import { IObjectString2String } from '~/types/tsettings'
 import { arrayEqual } from '~/helpers/hcompares'
 const selections = namespace('selections')
-
+const mixed = '<mixed>'
 @Component
 export default class TProductProperties extends Vue {
   @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String
   @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
-  // @selections.Getter public selectionDepots!: Array<string>
-  // @selections.Getter public selectionProducts!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
-  // @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
 
-  // @Watch('valuesNew') newValuedAdded () {
-  //   this.selectionHandler(this.selections)
-  // }
+  @Watch('rowItem.newValues') newValuesChanged () {
+    this.$emit('change', this.rowItem.propertyId, this.uniqueSelection, 'UnicodeProductProperty')
+  }
 
-  // @Watch('rowItem.newValues') newValuesChanged () {
-  //   if (this.visibleValueUnicode === ['mixed']) {
+  selectionChanged (value: Array<string>) {
+    this.$emit('change', this.rowItem.propertyId, value, 'UnicodeProductProperty')
+  }
 
-  //   }
-  // }
+  set visibleValueBool (val:boolean) {
+    this.$emit('change', this.rowItem.propertyId, [val], 'BoolProductProperty')
+  }
 
   get uniqueSelection () {
-    if (this.rowItem.newValues) {
-      if (this.visibleValueUnicode !== ['mixed']) {
-        return this.uniques([...this.visibleValueUnicode, ...this.rowItem.newValues])
+    if (this.rowItem.newValues && this.rowItem.newValues.length > 0) {
+      if (this.visibleValueUnicode.includes(mixed)) {
+        return this.uniques([...this.rowItem.newValues])
       }
-      return this.uniques([...this.rowItem.newValues])
+      return this.uniques([...this.visibleValueUnicode, ...this.rowItem.newValues])
     }
     return this.uniques([...this.visibleValueUnicode])
   }
@@ -71,7 +63,7 @@ export default class TProductProperties extends Vue {
     if (this.rowItem.newValues) {
       return this.uniques([...this.rowItem.possibleValues, ...this.visibleValueUnicode, ...this.rowItem.newValues])
     }
-    return this.uniques([...this.rowItem.possibleValues, ...this.visibleValueUnicode, ...this.valuesNew])
+    return this.uniques([...this.rowItem.possibleValues, ...this.visibleValueUnicode])
   }
 
   get selectionClientsValuesWithDepotValues () {
@@ -83,12 +75,12 @@ export default class TProductProperties extends Vue {
         const client = this.selectionClients[ci]
         if (this.rowItem.clientsIds.includes(client)) {
           const i = this.rowItem.clientsIds.indexOf(client)
-          valuesWithDepotDefaults.push(this.rowItem.clientsValues[i])// + '-' +client)
+          valuesWithDepotDefaults.push(this.rowItem.clientsValues[i])
         } else {
           const clientDepot = this.clients2depots[client]
           if (this.rowItem.depotsIds.includes(clientDepot)) {
             const i = this.rowItem.depotsIds.indexOf(clientDepot)
-            valuesWithDepotDefaults.push(this.rowItem.depotsValues[i])// + '-' +clientDepot)
+            valuesWithDepotDefaults.push(this.rowItem.depotsValues[i])
           }
         }
       }
@@ -99,11 +91,8 @@ export default class TProductProperties extends Vue {
   get visibleValueBool () {
     if (this.selectionClientsValuesWithDepotValues.every(arrv => arrv[0] === true)) { return true }
     if (this.selectionClientsValuesWithDepotValues.every(arrv => arrv[0] === false)) { return false }
-    return false // or true ---> this case is modelled by indeterminate
+    return false // or true ---> doesnt matter: if 'mixed'(this case) indeterminate should be true
   }
-  // set visibleValueBool (val:boolean) {
-  //   // TODO: post request with update prodPropState/s
-  // }
 
   get visibleValueBoolIndeterminate () {
     // check for if checkbox "mixed"/indeterminate
@@ -114,15 +103,12 @@ export default class TProductProperties extends Vue {
     if (this.selectionClientsValuesWithDepotValues.every(arrv => arrayEqual(arrv, this.selectionClientsValuesWithDepotValues[0]))) {
       return this.selectionClientsValuesWithDepotValues[0]
     }
-    return ['mixed']
+    return [mixed]
   }
 
   uniques (arr:Array<any>) {
     return [...new Set(arr)]
   }
-  // set visibleValueUnicode (val) {
-  //   // TODO: post request with update prodPropState/s
-  // }
 }
 </script>
 

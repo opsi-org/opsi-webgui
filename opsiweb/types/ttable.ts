@@ -52,25 +52,27 @@ export interface ITableHeaders {
 
 export interface IProperty {
   propertyId: string
-  // proptertyType: EPropertyType
   propertyType: 'UnicodeProductProperty'|'BoolProductProperty'
   version: string // combined: product-packageVersion
   possibleValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
+  propertyDifferentOnVersions?: boolean
   editable: boolean
+  newValue?: string // empty string if editable==true
+  newValues?: Array<string> // empty list if editable==true
+
   multiValue: boolean
 
   depotsIds: Array<string>
   depotsValues: Array<Array<string|boolean>> //  prodPropState(depots) or defaultValues
-  depotsVersions?: string // combined: product-packageVersion
+  // depotsVersions?: string // combined: product-packageVersion
 
   clientsIds: Array<string>
   clientsValues: Array<Array<string|boolean>> // prodPropState(clients)
-  clientsVersions?: string // combined: product-packageVersion
+  // clientsVersions?: string // combined: product-packageVersion
 
-  // clientValuesDiff: boolean
-  // depotVersionDiff: boolean
-  newValue?: string
-  newValues?: Array<string>
+  anyClientDifferentFromDepot?: boolean
+  allClientValuesEqual?: boolean
+  allDepotValuesEqual?: boolean
 }
 
 export interface IProductDependency {

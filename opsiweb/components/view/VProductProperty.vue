@@ -27,14 +27,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IProductPropertyConfig } from '~/types/ttable'
+const selections = namespace('selections')
 
 @Component
 export default class VClientConfig extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string
+
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Getter public selectionDepots!: Array<string>
 
   fetchedData!: IProductPropertyConfig
   isLoading: boolean = true
@@ -46,6 +50,11 @@ export default class VClientConfig extends Vue {
   }
 
   /* async */ fetch () {
+    // TODO: Backend-Request getProductProperty
+    // const params = {
+    //   selectionClients: this.selectionClients,
+    //   productId: this.id
+    // }
     this.fetchedData = {
       description: 'This is the description',
       dependencies: [
@@ -62,9 +71,9 @@ export default class VClientConfig extends Vue {
         architecture: { propertyId: 'architecture', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [['64bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: false, multiValue: false, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
         architecture1: { propertyId: 'architecture1', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: false, multiValue: false, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
         architecture2: { propertyId: 'architecture2', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [['64bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: false, multiValue: false, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        architecture3: { propertyId: 'architecture3', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        architecture4: { propertyId: 'architecture4', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit', '32bit'], ['32bit', '64bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        architecture5: { propertyId: 'architecture5', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit', '32bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
+        architecture3: { propertyId: 'architecture3', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, newValue: '', newValues: [], multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
+        architecture4: { propertyId: 'architecture4', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit', '32bit'], ['32bit', '64bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, newValue: '', newValues: [], multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
+        architecture5: { propertyId: 'architecture5', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit', '32bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, newValue: '', newValues: [], multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
         desktop_icon: { propertyId: 'desktop_icon', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [[true], [false]], depotsIds: ['bonifax.uib.local'], depotsValues: [[false]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' }
       }
     }
