@@ -6,7 +6,8 @@
       v-if="rowItem.propertyType=='BoolProductProperty'"
       v-model="visibleValueBool"
       disabled
-      :indeterminate="visibleValueBoolIndeterminate" />
+      :indeterminate="visibleValueBoolIndeterminate"
+    />
 
     <DropdownDDDefault
       v-else-if="rowItem.propertyType=='UnicodeProductProperty' && rowItem.multiValue"

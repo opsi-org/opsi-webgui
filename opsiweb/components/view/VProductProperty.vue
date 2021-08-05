@@ -9,10 +9,10 @@
     <IconILoading v-if="isLoading" />
     <DivDScrollResult>
       <template slot="content">
-        <b-card>
+        <b-card class="VProductProperty-Card-Description">
           {{ fetchedData.description }}
         </b-card>
-        <br />
+        <!-- <br /> -->
         <b-tabs v-if="id">
           <b-tab title="Properties" active>
             <LazyTableTProductProperties v-if="id" :id="id" :properties="fetchedData.properties" />
@@ -49,11 +49,11 @@ export default class VClientConfig extends Vue {
     this.fetchedData = {
       description: 'This is the description',
       dependencies: [
-        // { productId: 'a', required: 'installed:', 'pre-required': 'installed:', 'post-required': ':setup', 'on deinstall': '' },
-        // { productId: 'b', required: 'installed:', 'pre-required': '', 'post-required': '', 'on deinstall': '' },
-        // { productId: 'c', required: '', 'pre-required': 'installed:', 'post-required': '', 'on deinstall': '' },
-        // { productId: 'd', required: '', 'pre-required': '', 'post-required': ':setup', 'on deinstall': '' },
-        // { productId: 'e', required: '', 'pre-required': '', 'post-required': '', 'on deinstall': 'uninstall' }
+        { productId: 'a', required: 'installed:', 'pre-required': 'installed:', 'post-required': ':setup', 'on deinstall': '' },
+        { productId: 'b', required: 'installed:', 'pre-required': '', 'post-required': '', 'on deinstall': '' },
+        { productId: 'c', required: '', 'pre-required': 'installed:', 'post-required': '', 'on deinstall': '' },
+        { productId: 'd', required: '', 'pre-required': '', 'post-required': ':setup', 'on deinstall': '' },
+        { productId: 'e', required: '', 'pre-required': '', 'post-required': '', 'on deinstall': 'uninstall' }
       ],
       properties: {
         uninstall_before_install: { propertyId: 'uninstall_before_install', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [[true]], depotsIds: ['bonifax.uib.local'], depotsValues: [[false]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' },
@@ -78,5 +78,7 @@ export default class VClientConfig extends Vue {
 </script>
 
 <style>
-
+.VProductProperty-Card-Description {
+  margin-bottom: 20px;
+}
 </style>

@@ -1,6 +1,14 @@
 <template>
   <b-container fluid>
-    <b-table v-bind="$props" :busy="isBusy" :stacked="stacked" :small="small" borderless :items="tableitems" :fields="tablefields">
+    <b-table
+      v-bind="$props"
+      borderless
+      :busy="isBusy"
+      :stacked="stacked"
+      :small="small"
+      :items="tableitems"
+      :fields="tablefields"
+    >
       <template #table-busy>
         <IconILoading />
       </template>
