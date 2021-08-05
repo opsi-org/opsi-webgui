@@ -23,7 +23,13 @@
     "configure": "CONFIGURE",
     "settings": "Settings",
     "localboot": "Localboot Products",
-    "hostattr": "Host Attributes"
+    "hostattr": "Host Attributes",
+    "properties": "Property-Configuration",
+    "dependencies": "Dependencies"
+  },
+  "values": {
+    "mixed": "<mixed>",
+    "add": "add and select"
   },
   "table": {
     "filter": "Filter",
@@ -47,7 +53,12 @@
       "version": "Version",
       "instStatus": "Installation Status",
       "clientsIds": "Selected Clients",
-      "depotIds": "Selected Depots"
+      "depotIds": "Selected Depots",
+      "productId": "Product Id",
+      "required": "required",
+      "pre-required": "pre-required",
+      "post-required": "post-required",
+      "on-deinstall": "on-deinstall"
     }
   },
   "button" : {

@@ -28,7 +28,7 @@ import { IProperty } from '~/types/ttable'
 import { IObjectString2String } from '~/types/tsettings'
 import { arrayEqual } from '~/helpers/hcompares'
 const selections = namespace('selections')
-const mixed = '<mixed>'
+// const mixed = '<mixed>'
 @Component
 export default class TProductProperties extends Vue {
   @Prop() type!: 'unicode'|'bool'|'functional'
@@ -51,7 +51,7 @@ export default class TProductProperties extends Vue {
 
   get uniqueSelection () {
     if (this.rowItem.newValues && this.rowItem.newValues.length > 0) {
-      if (this.visibleValueUnicode.includes(mixed)) {
+      if (this.visibleValueUnicode.includes(this.$t('values.mixed') as string)) {
         return this.uniques([...this.rowItem.newValues])
       }
       return this.uniques([...this.visibleValueUnicode, ...this.rowItem.newValues])
@@ -103,7 +103,7 @@ export default class TProductProperties extends Vue {
     if (this.selectionClientsValuesWithDepotValues.every(arrv => arrayEqual(arrv, this.selectionClientsValuesWithDepotValues[0]))) {
       return this.selectionClientsValuesWithDepotValues[0]
     }
-    return [mixed]
+    return [this.$t('values.mixed') as string]
   }
 
   uniques (arr:Array<any>) {
