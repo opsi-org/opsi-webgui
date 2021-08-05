@@ -7,19 +7,19 @@
     size="sm"
   >
     <template v-if="multiple" #button-content>
-      <b-badge v-for="i in selectedItems" :key="i">
+      <b-badge v-for="i in selections" :key="i">
         {{ i }}
       </b-badge>
     </template>
     <template v-else #button-content>
-      {{ selectedItems[0] }}
+      {{ selections[0] }}
     </template>
     <li v-if="!multiple">
       <a
         v-for="o in options"
         :key="o"
         class="dropdown-item"
-        @click="selectionHandler(o)"
+        @click="selections = [o]"
       >
         {{ o }}
       </a>
@@ -50,24 +50,23 @@
 <script lang="ts">
 import { Component, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-// import { IObjectString2Boolean } from '~/types/tsettings'
-// import { ITableHeaders } from '~/types/ttable'
 
 @Component
 export default class DDDefault extends BDropdown {
   @Prop({ default: false }) multiple!: Array<any>
   @Prop({ default: () => { return () => { /* default */ } } }) options!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) selectedItems!: Array<string>
-  @Prop({ default: () => { return () => { /* default */ } } }) selectionHandler!: Function
-
-  // options2selection: IObjectString2Boolean = {}
   selections: Array<string> = []
   created () {
-    this.selections = [...this.selectedItems]
+    this.selections = this.uniques([...this.selectedItems])
   }
 
-  @Watch('selections') keysChanged () {
-    this.selectionHandler(this.selections)
+  @Watch('selections') selectionsChanged () {
+    this.$emit('change', this.selections)
+  }
+
+  @Watch('selectedItems') selectedItemsChanged () {
+    this.selections = this.uniques([...this.selectedItems, ...this.selections])
   }
 
   toggleSelection (item: string) {
@@ -76,6 +75,10 @@ export default class DDDefault extends BDropdown {
     } else {
       this.selections.splice(this.selections.indexOf(item), 1)
     }
+  }
+
+  uniques (arr:Array<any>) {
+    return [...new Set(arr)]
   }
 }
 </script>

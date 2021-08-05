@@ -25,17 +25,18 @@
           <div
             v-if="Object.keys(fetchedDataClients2Depots).length > 0"
           >
-            {{ createNewPropertyValueEntryRow(row.item) }}
+            <!-- {{ createNewPropertyValueEntryRow(row.item) }} -->
             <TableCellTCProductPropertyValue
               :clients2depots="fetchedDataClients2Depots"
               :row-item="row.item"
+              @change="handleChange"
             />
           </div>
           <b-button
             v-if="row.item.editable"
-            disabled
             @click="row.toggleDetails()"
           >
+            <!-- disabled -->
             +
           </b-button>
         </b-row>
@@ -48,17 +49,15 @@
                 v-model="row.item.newValue"
                 size="sm"
                 class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
-                disabled
-                @keyup.enter="updateNewPropertyValuesRow(row.item)"
+                @keyup.enter="updateNewPropertyValuesRow(row)"
               />
               <template #append>
                 <b-button
-                  disabled
                   size="sm"
                   variant="outline-secondary"
-                  @click="updateNewPropertyValuesRow(row.item)"
+                  @click="updateNewPropertyValuesRow(row)"
                 >
-                  +
+                  add
                 </b-button>
               </template>
             </b-input-group>
@@ -71,13 +70,8 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { IProperties, INewPropertyValue, IProperty } from '~/types/ttable'
-// import { INewPropertyValue } from '~/types/tsettings'
+import { IProperties, INewPropertyValue } from '~/types/ttable'
 const selections = namespace('selections')
-
-interface Request {
-    hosts: Array<string>
-}
 
 @Component
 export default class TProductProperties extends Vue {
@@ -88,7 +82,6 @@ export default class TProductProperties extends Vue {
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   result:Object = {}
-  request: Request = { hosts: [] }
   isLoading: boolean = false
   newValuesPerProp: INewPropertyValue = {}
   fetchedDataClients2Depots: object = {}
@@ -100,12 +93,7 @@ export default class TProductProperties extends Vue {
     ]
   }
 
-  // @Watch('id', { deep: true }) idChanged () { this.$fetch() }
-
   async beforeMount () {
-    // this.$fetch()
-
-    // this.setSelectionClients(['anna-tp-t14.uib.local'])
     this.setSelectionClients(['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'])
     if (this.selectionClients.length > 0) {
       this.fetchedDataClients2Depots = (await this.$axios.$post(
@@ -115,78 +103,26 @@ export default class TProductProperties extends Vue {
     }
   }
 
-  // createNewPropertyValueEntry (propId:string) {
-  //   this.newValuesPerProp[propId] = {
-  //     newValue: propId,
-  //     newValues: []
-  //   }
-  // }
-
-  createNewPropertyValueEntryRow (rowitem: IProperty) {
-    // rowitem.newValue = rowitem.propertyId
-    rowitem.newValue = '<add new value>'
-    rowitem.newValues = []
-  }
-
-  // getNewPropertyValues (propId:string): Array<string> {
-  //   if (this.newValuesPerProp[propId]) {
-  //     console.debug('get new value: ', this.newValuesPerProp[propId].newValues)
-  //     return this.newValuesPerProp[propId].newValues
-  //   }
-  //   console.debug('get new value: [x]')
-  //   return ['x']
-  // }
-
-  updateNewPropertyValuesRow (rowitem:IProperty) {
-    if (rowitem.newValue) {
-      if (rowitem.newValues === undefined) {
-        rowitem.newValues = []
-      }
-      rowitem.newValues.push(rowitem.newValue)
-      // rowitem.possibleValues.push(rowitem.newValue)
-      // rowitem.clientsValues.push(rowitem.newValue)
-      // rowitem.newValues.push(rowitem.newValue)
+  handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
+    // TODO: TODO: Backend-Request setProductProperty
+    const data = {
+      selectionClients: this.selectionClients,
+      productId: this.id,
+      propertyId,
+      values
+      // type
     }
-    // console.debug('add new value', rowitem.newValue)
-    // console.debug('   new values', rowitem.newValues)
+    // eslint-disable-next-line no-console
+    console.debug('(todo) Request following data: ', data)
+    // this.fetchedData = (await this.$axios.$post(
+    //   '/api/opsidata/product/properties/value',
+    //   JSON.stringify(this.tableData)
+    // )).result
   }
-  //   console.log('current values:', rowitem.newValues)
-  //   console.log('Add new value:', rowitem.newValue)
-  //   if (rowitem.newValues === undefined) {
-  //     rowitem.newValues = []
-  //   }
-  //   if (rowitem.newValue === undefined) {
-  //     rowitem.newValue = ''
-  //   }
-  //   rowitem.newValues.push(rowitem.newValue)
-  //   console.log('new values:', rowitem.newValues)
-  //   // this.newValuesPerProp = Object.assign({}, this.newValuesPerProp) as INewPropertyValue
-  //   // this.newValuesPerProp[propId].newValues = [...this.newValuesPerProp[propId].newValues]
-  //   // this.newValuesPerProp = Object.assign({}, this.newValuesPerProp, { propID: { newValues: [...this.newValuesPerProp[propId].newValues] } }) as INewPropertyValue
-  //   rowitem.newValues = Object.assign([], rowitem.newValues)
-  //   // console.log('new values:', this.newValuesPerProp[propId])
-  // }
 
-  // updateNewPropertyValues (propId:string) {
-  //   console.log('Add new value:', this.newValuesPerProp[propId].newValue)
-  //   this.newValuesPerProp[propId].newValues.push(this.newValuesPerProp[propId].newValue)
-  //   console.log('new values:', this.newValuesPerProp[propId].newValues)
-  //   // this.newValuesPerProp = Object.assign({}, this.newValuesPerProp) as INewPropertyValue
-  //   this.newValuesPerProp[propId].newValues = [...this.newValuesPerProp[propId].newValues]
-  //   // this.newValuesPerProp = Object.assign({}, this.newValuesPerProp, { propID: { newValues: [...this.newValuesPerProp[propId].newValues] } }) as INewPropertyValue
-  //   console.log('new values:', this.newValuesPerProp[propId])
-  // }
-
-  // async fetch () {
-  //   if (this.id) {
-  //     this.isLoading = true
-  //     this.request.hosts = [this.id]
-  //     this.result = (await this.$axios.$post(
-  //       '/api/opsidata/hosts', JSON.stringify(this.request)
-  //     )).result
-  //     this.isLoading = false
-  //   }
-  // }
+  updateNewPropertyValuesRow (row: INewPropertyValue) {
+    row.item.newValues.push(row.item.newValue)
+  }
 }
 </script>
 
