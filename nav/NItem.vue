@@ -3,7 +3,7 @@
     <b-nav-item :to="route">
       <b-icon :icon="icon" />
       <span v-if="expanded">
-        {{ title }}
+        {{ $t(title) }}
       </span>
     </b-nav-item>
   </div>
@@ -20,3 +20,9 @@ export default class NItem extends Vue {
   @Prop({ }) route!: string
 }
 </script>
+
+<style>
+.nav-tabs .nav-link{
+  color: lightgray !important;
+}
+</style>
