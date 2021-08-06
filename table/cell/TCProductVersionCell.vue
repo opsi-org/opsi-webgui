@@ -46,7 +46,7 @@ export default class TableCellTCProductVersionCell extends Vue {
   @selections.Getter public selectionClients!: Array<string>
 
   get tooltiptext () {
-    console.debug('key length: ', Object.keys(this.clients2depots).length)
+    // console.debug('key length: ', Object.keys(this.clients2depots).length)
     if (Object.keys(this.clients2depots).length <= 0) {
       return {}
     }
