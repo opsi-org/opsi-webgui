@@ -25,6 +25,9 @@
     "localboot": "Localboot-Produkt",
     "hostattr": "Host-Attribute"
   },
+  "values": {
+    "mixed": "<mixed>"
+  },
   "table": {
     "filter": "Filter",
     "showCol": "Spalten anzeigen",
@@ -44,7 +47,7 @@
       "otp": "Einmalpasswort OTP",
       "notes": "Anmerkungen",
       "stats": "Statistiken",
-      "version": "Version",
+      "version": "(Depot) Version",
       "instStatus": "Installationsstatus",
       "clientsIds": "Ausgewählte Clients",
       "depotIds": "Ausgewählte Depots"

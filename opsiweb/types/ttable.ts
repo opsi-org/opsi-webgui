@@ -22,6 +22,8 @@ export interface ITableRowItemProducts {
   clientVersions: Array<string>
   clientVersionOutdated: boolean
   depotVersionDiff: boolean
+  installationStatus: Array<string>
+  actionResult: Array<string>
 }
 export interface ITableData {
   pageNumber: number,
