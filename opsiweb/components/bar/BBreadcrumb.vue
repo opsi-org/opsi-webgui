@@ -51,6 +51,7 @@ export default class BBreadcrumbRow extends Vue {
         case 'depotsconfig': pathArray[c] = 'Depots - Configuration'; break
         case 'clientslog': pathArray[c] = 'Clients - Log'; break
         case 'depotslog': pathArray[c] = 'Depots - Log'; break
+        case 'clientsaddnew': pathArray[c] = 'Add New Client'; break
       }
     }
     return pathArray.filter(p => p !== '')

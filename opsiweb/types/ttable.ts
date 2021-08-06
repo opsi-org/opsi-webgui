@@ -23,6 +23,8 @@ export interface ITableRowItemProducts {
   clientVersions: Array<string>
   clientVersionOutdated: boolean
   depotVersionDiff: boolean
+  installationStatus: Array<string>
+  actionResult: Array<string>
 }
 export interface ITableData {
   pageNumber: number,
@@ -43,6 +45,7 @@ export interface ITableHeader {
   sortable?: boolean,
   _fixed?: boolean,
   _isMajor?: boolean,
+  disabled?: boolean,
   _majorKey?: string,
   class?: string,
   variant?: string,

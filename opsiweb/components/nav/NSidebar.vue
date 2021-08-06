@@ -25,6 +25,7 @@
             <NavNItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
           </template>
         </span>
+        <br>
       </span>
     </b-nav>
   </div>
@@ -38,43 +39,43 @@ export default class NSidebar extends Vue {
   @Prop({ }) expanded!: boolean
   navItems : Array<object> = [
     {
-      title: 'Overview',
+      title: 'title.overview',
       menu: [
         // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-        { title: 'Support', icon: 'headset', route: '/support' }
+        { title: 'title.support', icon: 'headset', route: '/support' }
       ]
     },
     {
-      title: 'Manage',
+      title: 'title.manage',
       menu: [
         {
-          title: 'Depots',
+          title: 'title.depots',
           route: '/depots/',
           icon: 'hdd-stack-fill',
           submenu: [
-            { title: 'All Depots', route: '/depots' },
-            { title: 'Configuration', route: '/depotsconfig' }
+            { title: 'title.allDepots', route: '/depots' },
+            { title: 'title.config', route: '/depotsconfig' }
             // { title: 'Logs', route: '/depots/log' }
           ]
         },
         {
-          title: 'Clients',
+          title: 'title.clients',
           route: '/clients/',
           icon: 'laptop',
           submenu: [
-            { title: 'All Clients', route: '/clients/' },
-            // { title: 'Add New', route: '/clients/clientnew' },
-            { title: 'Configuration', route: '/clientsconfig' },
-            { title: 'Logs', route: '/clientslog' }
+            { title: 'title.allClients', route: '/clients/' },
+            { title: 'title.addNew', route: '/clientsaddnew' },
+            { title: 'title.config', route: '/clientsconfig' },
+            { title: 'title.log', route: '/clientslog' }
           ]
         },
-        { title: 'Products', icon: 'grid-fill', route: '/products/' }
+        { title: 'title.products', icon: 'grid-fill', route: '/products/' }
       ]
     },
     {
-      title: 'Configure',
+      title: 'title.configure',
       menu: [
-        { title: 'Settings', icon: 'gear-fill', route: '/settings' }
+        { title: 'title.settings', icon: 'gear-fill', route: '/settings' }
         // { title: 'Index page', icon: 'collection-fill', route: '/' }
       ]
     }
@@ -83,6 +84,13 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
+.navbar-light .navbar-nav .nav .nav-item{
+  color: unset !important;
+  font-weight: normal !important;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
 .sidemenu_nav{
   position:absolute;
   width: 100%;

@@ -20,7 +20,7 @@
       >
         <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo
-            title="config"
+            :title="$t('title.config')"
             icon="gear"
             to="/depots/config"
             :ident="row.item.ident"
@@ -68,10 +68,10 @@ export default class VDepots extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    depotId: { label: 'Id', key: 'depotId', visible: true, _fixed: true, sortable: true },
-    description: { label: 'Desc', key: 'description', visible: false, sortable: true },
-    type: { label: 'type', key: 'type', visible: false, sortable: true },
-    ip: { label: 'ip', key: 'ip', visible: false, sortable: true },
+    depotId: { label: 'table.fields.id', key: 'depotId', visible: true, _fixed: true, sortable: true },
+    description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
+    type: { label: 'table.fields.type', key: 'type', visible: false, sortable: true },
+    ip: { label: 'table.fields.ip', key: 'ip', visible: false, sortable: true },
     _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
     rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
   }

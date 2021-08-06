@@ -39,7 +39,8 @@ export default {
   plugins: [
     '~/plugins/axios',
     { src: '~/plugins/vuex-persist', ssr: false },
-    { src: '~/plugins/vue-treeselect.js', mode: 'client' }
+    { src: '~/plugins/vue-treeselect.js', mode: 'client' },
+    '~/plugins/vue-i18n.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
