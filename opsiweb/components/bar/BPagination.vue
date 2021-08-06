@@ -1,6 +1,5 @@
 <template>
   <div class="BarBPagination-Container">
-    <!-- v-if="$props.totalRows > tabledata.perPage" -->
     <b-input-group :prepend="$t('table.perpage')" size="sm" class="BarBPagination-PerPage">
       <b-form-select v-model="tabledata.perPage" :options="[1,2,5,10,20,30]" size="sm" class="BarBPagination-PerPage-Dropdown" />
     </b-input-group>
@@ -13,7 +12,6 @@
       :per-page="tabledata.perPage"
       :total-rows="$props.totalRows"
     />
-      <!-- align="right" -->
   </div>
 </template>
 
