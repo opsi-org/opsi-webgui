@@ -10,12 +10,12 @@
           <TreeTSProductGroup />
         </template>
       </BarBPageHeader>
-      <b-card bg-variant="transparent">
+      <!-- <b-card bg-variant="transparent" class="VProducts-Card"> -->
         <TableTProductsNetboot />
-      </b-card>
-      <b-card bg-variant="transparent">
+      <!-- </b-card>
+      <b-card bg-variant="transparent" class="VProducts-Card"> -->
         <TableTProductsLocalboot />
-      </b-card>
+      <!-- </b-card> -->
       <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>
