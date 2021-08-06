@@ -4,8 +4,6 @@
     bg-variant="transparent"
     class="TCollapseableForMobile-Card"
   >
-  <!-- <div
-  > -->
     <BarBPageHeader
       navbartype="collapse"
       :collapsed="visible"
@@ -27,7 +25,6 @@
       <slot name="pagination" />
     </b-collapse>
   </b-card>
-  <!-- <div v-else> -->
   <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card">
     <TableTTable v-bind="$props" :tabledata="tabledata">
       <template

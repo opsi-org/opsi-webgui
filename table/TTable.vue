@@ -1,8 +1,5 @@
 <template>
   <div>
-      <!-- striped -->
-      <!-- borderless -->
-      <!-- outlined -->
     <b-table
       v-bind="$props"
       :ref="$props.id"
