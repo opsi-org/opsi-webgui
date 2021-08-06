@@ -10,16 +10,16 @@
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSProductGroup />
         </template>
-        <template #right>
+        <!-- <template #right>
           <ModalMProdSaveOverview :product-changes="productChanges" />
-        </template>
+        </template> -->
       </BarBPageHeader>
       <TableTProductsLocalboot :table-data="tableData" />
       <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>
       Products: {{ selectionProducts }} <br>
-      Product Changes: {{ productChanges }} <br>
+      <!-- Product Changes: {{ productChanges }} <br> -->
       <!-- Sorting By: <b>{{ tableData.sortBy }}</b>, Sort Direction:
       <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b> -->
       <!-- rowID {{ rowId }} <br>
