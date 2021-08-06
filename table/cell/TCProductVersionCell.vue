@@ -1,36 +1,31 @@
 <template>
   <div>
     <div :id="`TCProductVersionCell_hover_${rowitem.productId}_${type}`">
-      <div v-if="type=='depotVersions'">
-        <b-badge
-          v-if="rowitem.depot_version_diff"
-          :class="(rowitem.client_version_outdated||false)?'bg-color-orange':''"
-        >
-          !=
-        </b-badge>
-        <b-badge
-          v-else
-        >
-          {{ rowitem.depotVersions[0] }}
-        </b-badge>
-      </div>
-      <div v-else>
-        <b-badge
-          v-if="rowitem.client_version_outdated||false"
-          :class="(rowitem.client_version_outdated||false)?'bg-color-red':''"
-          style="width:100%"
-        >
-          *
-        </b-badge>
-      </div>
-      <TooltipTTProductCell
-        v-if="rowitem.depot_version_diff || rowitem.client_version_outdated||false"
-        type="version"
-        :target="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
-        :details="tooltiptext"
-        :depot-version-diff="rowitem.depot_version_diff"
-      />
+      <b-badge
+        v-if="rowitem.depot_version_diff"
+        :class="(rowitem.depot_version_diff||false)?'bg-color-orange':''"
+      >
+        <span>&#8800;</span>
+      </b-badge>
+      <b-badge
+        v-else
+      >
+        {{ rowitem.depotVersions[0] }}
+      </b-badge>
+      <b-badge
+        v-if="rowitem.client_version_outdated||false"
+        :class="(rowitem.client_version_outdated||false)?'bg-color-red':''"
+      >
+        *
+      </b-badge>
     </div>
+    <TooltipTTProductCell
+      v-if="rowitem.depot_version_diff || rowitem.client_version_outdated||false"
+      type="version"
+      :target="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
+      :details="tooltiptext"
+      :depot-version-diff="rowitem.depot_version_diff"
+    />
   </div>
 </template>
 
@@ -51,6 +46,10 @@ export default class TableCellTCProductVersionCell extends Vue {
   @selections.Getter public selectionClients!: Array<string>
 
   get tooltiptext () {
+    console.debug('key length: ', Object.keys(this.clients2depots).length)
+    if (Object.keys(this.clients2depots).length <= 0) {
+      return {}
+    }
     const clients: IObjectString2String = mapValues2Objects(this.rowitem.clientVersions, this.rowitem.selectedClients, this.selectionClients, '-')
     const depots: IObjectString2String = mapValues2Objects(this.rowitem.depotVersions, this.rowitem.selectedDepots, this.selectionDepots, '-')
     const tt:IObjectString2ObjectString2String = {}

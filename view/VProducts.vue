@@ -23,24 +23,27 @@
         :onchangeselection="setSelectionProducts"
         :loading="isLoading"
         :totalrows="fetchedData.total"
+        :stacked="$mq=='mobile'"
       >
         <!-- :no-local-sorting="true"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc" -->
-        <template #cell(depotVersions)="row">
+        <template #cell(_majorVersion)="row">
           <TableCellTCProductVersionCell
+            v-if="Object.keys(fetchedDataClients2Depots).length > 0"
             type="depotVersions"
             :rowitem="row.item"
             :clients2depots="fetchedDataClients2Depots"
           />
         </template>
-        <template #cell(clientVersions)="row">
+        <!-- <template #cell(clientVersions)="row">
           <TableCellTCProductVersionCell
+            v-if="fetchedDataClients2Depots"
             type="clientVersion"
             :rowitem="row.item"
             :clients2depots="fetchedDataClients2Depots"
           />
-        </template>
+        </template> -->
 
         <template #head(installationStatus)>
           is
@@ -73,6 +76,7 @@
         <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
           <!-- {{row.item.actionRequest}} -->
           <!-- :title="'Set actionrequest for all selected products'" -->
+          <!-- {{row.item.installationStatus}} -->
           <DropdownDDProductRequest
             :request="row.item.actionRequest || 'none'"
             :requestoptions="row.item.actions"
@@ -141,10 +145,10 @@ export default class VProducts extends Vue {
     selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
     installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: false, sortable: true },
     actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: false, sortable: true, _fixed: false },
-    _majorVersion: { label: 'table.fields.version', key: '_majorVersion', _isMajor: true, visible: false },
-    depotVersions: { label: 'd', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey width-max-content text-right' },
-    clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: false, sortable: true, class: 'bg-color-grey width-max-content ' },
-    rowactions: { key: 'rowactions', label: '-', visible: true, _fixed: true, class: 'width-max-content' }
+    _majorVersion: { label: 'table.fields.version', key: '_majorVersion', _isMajor: true, visible: true },
+    // depotVersions: { label: 'version', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey text-right' },
+    // clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: false, sortable: true, class: 'bg-color-grey width-max-content ' },
+    rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
   }
 
   @selections.Getter public selectionClients!: Array<string>
@@ -153,10 +157,16 @@ export default class VProducts extends Vue {
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
 
   @Watch('selectionDepots', { deep: true })
-  selectionDepotsChanged () { this.$fetch() }
+  selectionDepotsChanged () {
+    this.fetchedDataClients2Depots = {}
+    this.fetchOptions.fetchClients2Depots = true
+    this.$fetch()
+  }
 
   @Watch('selectionClients', { deep: true })
   selectionClientsChanged () {
+    this.fetchedDataClients2Depots = {}
+    this.fetchOptions.fetchClients2Depots = true
     this.$fetch()
     this.updateColumnVisibility()
   }
@@ -192,34 +202,34 @@ export default class VProducts extends Vue {
     //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
     //   this.fetchOptions.fetchDepotIds = false
     // }
-    // if (this.fetchOptions.fetchClients2Depots) {
-    //   this.fetchedDataClients2Depots = (await this.$axios.$post(
-    //     '/api/opsidata/clients/depots',
-    //     JSON.stringify({ selectedClients: this.selectionClients })
-    //   )).result
-    //   this.fetchOptions.fetchClients2Depots = false
-    // }
+    if (this.fetchOptions.fetchClients2Depots) {
+      this.fetchedDataClients2Depots = (await this.$axios.$post(
+        '/api/opsidata/clients/depots',
+        JSON.stringify({ selectedClients: this.selectionClients })
+      )).result
+      this.fetchOptions.fetchClients2Depots = false
+    }
 
-    // if (this.fetchOptions.fetchClients) {
-    //   this.tableData.selectedDepots = this.selectionDepots
-    //   this.tableData.selectedClients = this.selectionClients
-    //   if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-    //   if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-    //   this.fetchedData = (await this.$axios.$post(
-    //     '/api/opsidata/products',
-    //     JSON.stringify(this.tableData)
-    //   )).result
-    //   // console.log('products', this.fetchedData)
-    // }
+    if (this.fetchOptions.fetchClients) {
+      this.tableData.selectedDepots = this.selectionDepots
+      this.tableData.selectedClients = this.selectionClients
+      if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
+      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
+      this.fetchedData = (await this.$axios.$post(
+        '/api/opsidata/products',
+        JSON.stringify(this.tableData)
+      )).result
+      // console.log('products', this.fetchedData)
+    }
 
-    this.tableData.selectedDepots = this.selectionDepots
-    this.tableData.selectedClients = this.selectionClients
-    if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-    if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-    this.fetchedData = (await this.$axios.$post(
-      '/api/opsidata/products',
-      JSON.stringify(this.tableData)
-    )).result
+    // this.tableData.selectedDepots = this.selectionDepots
+    // this.tableData.selectedClients = this.selectionClients
+    // if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
+    // if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
+    // this.fetchedData = (await this.$axios.$post(
+    //   '/api/opsidata/products',
+    //   JSON.stringify(this.tableData)
+    // )).result
     this.isLoading = false
   }
 
