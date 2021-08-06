@@ -15,11 +15,11 @@
       :stacked="$mq=='mobile'"
     >
       <template #head(productId)>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')"/>
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
 
       <template #cell(_majorVersion)="row">
-          <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
+        <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
           type="depotVersions"
           :rowitem="row.item"
@@ -31,7 +31,7 @@
       </template>
 
       <template #cell(installationStatus)="row">
-        {{row.item.installationStatus}}
+        {{ row.item.installationStatus }}
         <!-- <TableCellTCBadgeCompares
           v-if="(selectionClients && row.item.selectedClients)"
           type="installationStatus"
