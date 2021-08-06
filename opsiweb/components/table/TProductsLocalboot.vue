@@ -1,30 +1,34 @@
 <template>
-  <TableTCollapseable
-    id="tableproducts"
-    datakey="productId"
-    :tabledata="tableData"
-    :title="$t('title.localboot')"
-    :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-    :headers="headerData"
-    :items="fetchedData.products"
-    :selection="selectionProducts"
-    :onchangeselection="setSelectionProducts"
-    :loading="isLoading"
-    :totalrows="fetchedData.total"
-    :stacked="$mq=='mobile'"
-  >
-    <!-- :no-local-sorting="true"
+  <div>
+    <TableTCollapseable
+      id="tableproducts"
+      datakey="productId"
+      :tabledata="tableData"
+      :title="$t('title.localboot')"
+      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+      :headers="headerData"
+      :items="fetchedData.products"
+      :selection="selectionProducts"
+      :onchangeselection="setSelectionProducts"
+      :loading="isLoading"
+      :totalrows="fetchedData.total"
+      :stacked="$mq=='mobile'"
+    >
+      <template #right>
+        <ModalMProdSaveOverview :product-changes="productChanges" />
+      </template>
+      <!-- :no-local-sorting="true"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc" -->
-    <template #cell(_majorVersion)="row">
-      <TableCellTCProductVersionCell
-        v-if="Object.keys(fetchedDataClients2Depots).length > 0"
-        type="depotVersions"
-        :rowitem="row.item"
-        :clients2depots="fetchedDataClients2Depots"
-      />
-    </template>
-    <!-- <template #cell(clientVersions)="row">
+      <template #cell(_majorVersion)="row">
+        <TableCellTCProductVersionCell
+          v-if="Object.keys(fetchedDataClients2Depots).length > 0"
+          type="depotVersions"
+          :rowitem="row.item"
+          :clients2depots="fetchedDataClients2Depots"
+        />
+      </template>
+      <!-- <template #cell(clientVersions)="row">
       <TableCellTCProductVersionCell
         v-if="fetchedDataClients2Depots"
         type="clientVersion"
@@ -33,55 +37,57 @@
       />
     </template> -->
 
-    <template #head(installationStatus)>
-      is
-    </template>
+      <template #head(installationStatus)>
+        is
+      </template>
 
-    <template #cell(installationStatus)="row">
-      <TableCellTCBadgeCompares
-        v-if="(selectionClients && row.item.selectedClients)"
-        type="installationStatus"
-        :rowid="row.item.productId"
-        :values="row.item.installationStatus || []"
-        :objects="row.item.selectedClients || []"
-        :objectsorigin="selectionClients || []"
-      />
-    </template>
-    <!-- <template #cell(name)="row">
+      <template #cell(installationStatus)="row">
+        <TableCellTCBadgeCompares
+          v-if="(selectionClients && row.item.selectedClients)"
+          type="installationStatus"
+          :rowid="row.item.productId"
+          :values="row.item.installationStatus || []"
+          :objects="row.item.selectedClients || []"
+          :objectsorigin="selectionClients || []"
+        />
+      </template>
+      <!-- <template #cell(name)="row">
         <TableCellTCProductCellComparable :list2text="row.item.name" />
       </template> -->
-    <!-- <template #cell(productId)="row">
+      <!-- <template #cell(productId)="row">
         <TableCellTCProductCellComparable :list2text="row.item.productId" />
       </template> -->
-    <template v-if="selectionClients.length>0" #head(actionRequest)>
-      <DropdownDDProductRequest
-        v-if="selectionClients.length>0"
-        :title="$t('formselect.tooltip.actionRequest')"
-        :save="saveActionRequests"
-      />
-    </template>
+      <template v-if="selectionClients.length>0" #head(actionRequest)>
+        <DropdownDDProductRequest
+          v-if="selectionClients.length>0"
+          :title="$t('formselect.tooltip.actionRequest')"
+          :save="saveActionRequests"
+        />
+      </template>
 
-    <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
-      <!-- {{row.item.actionRequest}} -->
-      <!-- :title="'Set actionrequest for all selected products'" -->
-      <!-- {{row.item.installationStatus}} -->
-      <DropdownDDProductRequest
-        :request="row.item.actionRequest || 'none'"
-        :requestoptions="row.item.actions"
-        :rowitem="row.item"
-        :save="saveActionRequest"
-      />
+      <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
+        <!-- {{row.item.actionRequest}} -->
+        <!-- :title="'Set actionrequest for all selected products'" -->
+        <!-- {{row.item.installationStatus}} -->
+        <DropdownDDProductRequest
+          :request="row.item.actionRequest || 'none'"
+          :requestoptions="row.item.actions"
+          :rowitem="row.item"
+          :save="saveActionRequest"
+        />
       <!-- {{row.item.versionDepot}} -->
-    </template>
+      </template>
 
-    <template #pagination>
-      <BarBPagination
-        :tabledata="tableData"
-        :total-rows="fetchedData.total"
-        aria-controls="tableproducts"
-      />
-    </template>
-  </TableTCollapseable>
+      <template #pagination>
+        <BarBPagination
+          :tabledata="tableData"
+          :total-rows="fetchedData.total"
+          aria-controls="tableproducts"
+        />
+      </template>
+    </TableTCollapseable>
+    {{ productChanges }}
+  </div>
 </template>
 
 <script lang="ts">
@@ -96,6 +102,7 @@ interface IFetchOptions {
 @Component
 export default class TProductsLocalboot extends Vue {
   @Prop() tableData!: ITableData
+  productChanges: Array<object> = []
   rowId: string = ''
   isLoading: boolean = true
   fetchedData: object = {}
@@ -173,16 +180,6 @@ export default class TProductsLocalboot extends Vue {
       this.headerData._majorVersion.disabled = false
     }
   }
-  // async beforeMount () {
-  //   this.tableData.selectedDepots = this.selectionDepots
-  //   this.tableData.selectedClients = this.selectionClients
-  //   if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-  //   if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-  //   this.fetchedData = (await this.$axios.$post(
-  //     '/api/opsidata/products',
-  //     JSON.stringify(this.tableData)
-  //   )).result
-  // }
 
   async fetch () {
     this.isLoading = true
@@ -210,21 +207,21 @@ export default class TProductsLocalboot extends Vue {
       )).result
       // console.log('products', this.fetchedData)
     }
-
-    // this.tableData.selectedDepots = this.selectionDepots
-    // this.tableData.selectedClients = this.selectionClients
-    // if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-    // if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-    // this.fetchedData = (await this.$axios.$post(
-    //   '/api/opsidata/products',
-    //   JSON.stringify(this.tableData)
-    // )).result
     this.isLoading = false
   }
 
-  saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
+  saveActionRequest (rowitem: any, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    rowitem.request = [newrequest]
+    for (const c in this.selectionClients) {
+      const changedItem: any = {
+        productId: rowitem.productId,
+        clientId: this.selectionClients[c],
+        productType: rowitem.productType,
+        actionRequest: newrequest
+      }
+      this.productChanges.push(changedItem)
+    }
+    rowitem.request = newrequest
   }
 
   saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
