@@ -3,7 +3,7 @@
   <!-- store {{ selectionDepots }} <br />
     local {{ selectionLocal }} <br />
     configserver {{ opsiconfigserver }} <br /> -->
-    <!-- right -->
+  <!-- right -->
   <b-dropdown
     class="m-2"
     v-bind="$props"
