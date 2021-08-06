@@ -9,7 +9,7 @@
       centered
       hide-footer
     >
-      <b-table :items="productChanges" :fields="['productId', 'selectedDepots', 'selectedClients', 'actionRequest', 'clientVersions', 'depotVersions', 'depot_version_diff', '_action']">
+      <b-table :items="productChanges" :fields="['productId', 'clientId', 'productType', 'actionRequest', '_action']">
         <template #cell(_action)="row">
           <b-button-group>
             <ButtonBTNDeleteObj :item="row.item" :delete-from="productChanges" hide="ProductSaveModal" />
