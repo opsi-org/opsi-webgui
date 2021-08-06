@@ -44,6 +44,7 @@ export interface ITableHeader {
   sortable?: boolean,
   _fixed?: boolean,
   _isMajor?: boolean,
+  disabled?: boolean,
   _majorKey?: string,
   class?: string,
   variant?: string,

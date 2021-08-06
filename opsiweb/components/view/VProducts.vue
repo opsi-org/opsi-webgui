@@ -141,8 +141,8 @@ export default class VProducts extends Vue {
     productId: { label: 'table.fields.id', key: 'productId', visible: true, _fixed: true, sortable: true },
     desc: { label: 'table.fields.description', key: 'desc', visible: false, sortable: true },
     name: { label: 'table.fields.name', key: 'name', visible: false, sortable: true },
-    selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false },
     selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
+    selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false, disabled: true },
     installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: false, sortable: true },
     actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: false, sortable: true, _fixed: false },
     _majorVersion: { label: 'table.fields.version', key: '_majorVersion', _isMajor: true, visible: true },
@@ -181,8 +181,20 @@ export default class VProducts extends Vue {
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
       this.headerData.actionRequest.visible = true
+      this.headerData._majorVersion.visible = true
+      this.fetchOptions.fetchClients2Depots = true
+      this.headerData.selectedClients.disabled = true
+      this.headerData.installationStatus.disabled = true
+      this.headerData.actionRequest.disabled = true
+      this.headerData._majorVersion.disabled = true
     } else {
       this.headerData.actionRequest.visible = false
+      this.headerData._majorVersion.visible = false
+      this.fetchOptions.fetchClients2Depots = false
+      this.headerData.selectedClients.disabled = false
+      this.headerData.installationStatus.disabled = false
+      this.headerData.actionRequest.disabled = false
+      this.headerData._majorVersion.disabled = false
     }
   }
   // async beforeMount () {
@@ -198,6 +210,7 @@ export default class VProducts extends Vue {
 
   async fetch () {
     this.isLoading = true
+    this.updateColumnVisibility()
     // if (this.fetchOptions.fetchDepotIds) {
     //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
     //   this.fetchOptions.fetchDepotIds = false
