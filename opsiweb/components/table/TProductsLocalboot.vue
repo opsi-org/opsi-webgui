@@ -1,6 +1,7 @@
 <template>
   <div>
-    <TableTTable
+    <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
+    <TableTCollapseableForMobile
       id="tableproducts"
       datakey="productId"
       :tabledata="tableData"
@@ -78,12 +79,14 @@
         />
         <!-- {{row.item.versionDepot}} -->
       </template>
-    </TableTTable>
-    <BarBPagination
-      :tabledata="tableData"
-      :total-rows="fetchedData.total"
-      aria-controls="tableproducts"
-    />
+      <template #pagination>
+        <BarBPagination
+          :tabledata="tableData"
+          :total-rows="fetchedData.total"
+          aria-controls="tableproducts"
+        />
+      </template>
+    </TableTCollapseableForMobile>
   </div>
 </template>
 
@@ -117,7 +120,7 @@ export default class TProductsLocalboot extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    productId: { label: 'table.fields.id', key: 'productId', visible: true, _fixed: true, sortable: true },
+    productId: { label: 'table.fields.localbootid', key: 'productId', visible: true, _fixed: true, sortable: true },
     desc: { label: 'table.fields.description', key: 'desc', visible: false, sortable: true },
     name: { label: 'table.fields.name', key: 'name', visible: false, sortable: true },
     selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },

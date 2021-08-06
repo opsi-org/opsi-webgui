@@ -10,8 +10,8 @@
           <TreeTSProductGroup />
         </template>
       </BarBPageHeader>
-      <TableTProductsNetboot />
-      <TableTProductsLocalboot />
+      <b-card bg-variant="transparent"><TableTProductsNetboot /></b-card>
+      <b-card bg-variant="transparent"><TableTProductsLocalboot /></b-card>
       <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>

@@ -24,7 +24,8 @@
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
     "netboot": "Netboot-Produkt",
-    "hostattr": "Host-Attribute"
+    "hostattr": "Host-Attribute",
+    "actionRequest": "Request"
   },
   "values": {
     "mixed": "<mixed>"
@@ -34,6 +35,7 @@
     "showCol": "Spalten anzeigen",
     "clientDetails":"Client-Details",
     "addtnlInfo":"Zusätzliche Information",
+    "perpage": "Pro Seite",
     "fields":{
       "id": "ID",
       "name": "Name",
