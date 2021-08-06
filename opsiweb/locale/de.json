@@ -23,6 +23,7 @@
     "configure": "KONFIGURIEREN",
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
+    "netboot": "Netboot-Produkt",
     "hostattr": "Host-Attribute"
   },
   "values": {
@@ -50,7 +51,9 @@
       "version": "(Depot) Version",
       "instStatus": "Installationsstatus",
       "clientsIds": "Ausgewählte Clients",
-      "depotIds": "Ausgewählte Depots"
+      "depotIds": "Ausgewählte Depots",
+      "localbootid": "Localboot Produkt-ID",
+      "netbootid": "Localboot Produkt-ID"
     }
   },
   "button" : {

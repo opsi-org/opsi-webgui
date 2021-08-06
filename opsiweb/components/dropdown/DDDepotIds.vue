@@ -3,9 +3,9 @@
   <!-- store {{ selectionDepots }} <br />
     local {{ selectionLocal }} <br />
     configserver {{ opsiconfigserver }} <br /> -->
+    <!-- right -->
   <b-dropdown
     class="m-2"
-    right
     v-bind="$props"
     no-caret
     lazy

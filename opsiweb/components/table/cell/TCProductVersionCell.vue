@@ -47,10 +47,6 @@ export default class TableCellTCProductVersionCell extends Vue {
 
   get tooltiptext () {
     // console.debug('key length: ', Object.keys(this.clients2depots).length)
-    if (Object.keys(this.clients2depots).length <= 0) {
-      return {}
-    }
-    const clients: IObjectString2String = mapValues2Objects(this.rowitem.clientVersions, this.rowitem.selectedClients, this.selectionClients, '-')
     const depots: IObjectString2String = mapValues2Objects(this.rowitem.depotVersions, this.rowitem.selectedDepots, this.selectionDepots, '-')
     const tt:IObjectString2ObjectString2String = {}
     for (const d in depots) {
@@ -58,6 +54,10 @@ export default class TableCellTCProductVersionCell extends Vue {
         [d]: depots[d]
       }
     }
+    if (Object.keys(this.clients2depots).length <= 0) {
+      return tt
+    }
+    const clients: IObjectString2String = mapValues2Objects(this.rowitem.clientVersions, this.rowitem.selectedClients, this.selectionClients, '-')
     for (const c in clients) {
       tt[this.clients2depots[c]][c] = clients[c]
     }

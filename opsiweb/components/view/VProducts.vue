@@ -3,7 +3,6 @@
     <template #parent>
       <BarBPageHeader>
         <template #left>
-          <InputIFilter :data="tableData" />
           <DropdownDDDepotIds />
           <DropdownDDClientIds />
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
@@ -11,7 +10,8 @@
           <TreeTSProductGroup />
         </template>
       </BarBPageHeader>
-      <TableTProductsLocalboot :table-data="tableData" />
+      <TableTProductsNetboot />
+      <TableTProductsLocalboot />
       <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>
@@ -29,28 +29,37 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
-import { ITableData } from '~/types/ttable'
+// import { ITableData } from '~/types/ttable'
 const selections = namespace('selections')
 @Component
 export default class VProducts extends Vue {
-  rowId: string = ''
-  isLoading: boolean = true
-  // fetchedDataDepotIds: Array<string> = []
-  // fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
-  tableData: ITableData = {
-    type: 'LocalbootProduct',
-    pageNumber: 1,
-    perPage: 5,
-    sortBy: 'productId',
-    sortDesc: false,
-    filterQuery: '',
-    setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
-  }
-
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  rowId: string = ''
+  isLoading: boolean = true
+  // fetchedDataDepotIds: Array<string> = []
+  // fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
+  // tableData: ITableData = {
+  //   type: 'LocalbootProduct',
+  //   pageNumber: 1,
+  //   perPage: 5,
+  //   sortBy: 'productId',
+  //   sortDesc: false,
+  //   filterQuery: '',
+  //   setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
+  // }
+
+  // tableDataNetboot: ITableData = {
+  //   type: 'NetbootProduct',
+  //   pageNumber: 1,
+  //   perPage: 3,
+  //   sortBy: (this.selectionClients.length > 0) ? 'actionRequest' : 'productId',
+  //   sortDesc: false,
+  //   filterQuery: '',
+  //   setPageNumber: (pn:number) => { this.tableDataNetboot.pageNumber = pn }
+  // }
 
   // @Watch('selectionDepots', { deep: true })
   // selectionDepotsChanged () {

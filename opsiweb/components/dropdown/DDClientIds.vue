@@ -5,7 +5,6 @@
     configserver {{ opsiconfigserver }} <br /> -->
   <b-dropdown
     class="m-2"
-    right
     v-bind="$props"
     no-caret
     lazy
