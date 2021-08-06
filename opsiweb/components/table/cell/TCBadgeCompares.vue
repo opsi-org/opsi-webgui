@@ -26,9 +26,9 @@ export default class TCSpan extends Vue {
   @Prop({ }) objectsorigin!: Array<string>
 
   get text () {
-    console.debug('values', this.values)
-    console.debug('objects', this.objects)
-    console.debug('objectsorigin', this.objectsorigin)
+    // console.debug('values', this.values)
+    // console.debug('objects', this.objects)
+    // console.debug('objectsorigin', this.objectsorigin)
     return mapValues2Value(this.values, this.objects, this.objectsorigin)
   }
 
