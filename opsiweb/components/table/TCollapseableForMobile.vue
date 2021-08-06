@@ -1,7 +1,11 @@
 <template>
-  <div
-    v-if="$mq=='mobile'"
+  <b-card
+    v-if="$mq=='mobile' && collapseable"
+    bg-variant="transparent"
+    class="TCollapseableForMobile-Card"
   >
+  <!-- <div
+  > -->
     <BarBPageHeader
       navbartype="collapse"
       :collapsed="visible"
@@ -22,8 +26,9 @@
 
       <slot name="pagination" />
     </b-collapse>
-  </div>
-  <div v-else>
+  </b-card>
+  <!-- <div v-else> -->
+  <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card">
     <TableTTable v-bind="$props" :tabledata="tabledata">
       <template
         v-for="slotName in Object.keys($scopedSlots)"
@@ -33,7 +38,7 @@
       </template>
     </TableTTable>
     <slot name="pagination" />
-  </div>
+  </b-card>
 </template>
 
 <script lang="ts">
@@ -45,7 +50,20 @@ import { ITableData } from '~/types/ttable'
 export default class TCollapseable extends TTable {
   @Prop({ }) title!: string
   @Prop({ }) tabledata!: ITableData
+  @Prop({ default: true }) collapseable?: Boolean
   visible: Boolean = true
 }
 
 </script>
+<style>
+
+.TCollapseableForMobile-Card {
+  margin-bottom: 15px;
+}
+.TCollapseableForMobile-Card > .card-body{
+  padding-top:0px;
+  padding-bottom:0px;
+  padding-left:0px;
+  padding-right:0px;
+}
+</style>
