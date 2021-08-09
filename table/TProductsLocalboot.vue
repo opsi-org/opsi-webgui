@@ -15,10 +15,6 @@
       :totalrows="fetchedData.total"
       :stacked="$mq=='mobile'"
     >
-      <!-- <template #right>
-        <ModalMProdSaveOverview :product-changes="productChanges" />
-      </template> -->
-
       <!-- :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc" -->
@@ -106,7 +102,6 @@
         />
       </template>
     </TableTCollapseableForMobile>
-    {{ changesProducts }}
   </div>
 </template>
 
@@ -158,7 +153,6 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-  @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
 
   @Watch('selectionDepots', { deep: true })
@@ -255,7 +249,6 @@ export default class TProductsLocalboot extends Vue {
         actionRequest: newrequest
       }
       this.pushToChangesProducts(changedItem)
-      // this.productChanges.push(changedItem)
     }
     rowitem.request = newrequest
   }

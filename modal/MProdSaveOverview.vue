@@ -13,7 +13,7 @@
         <template #cell(_action)="row">
           <b-button-group>
             <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-            <b-button>
+            <b-button @click="save(row.item)">
               <b-icon icon="check2" />
             </b-button>
           </b-button-group>
@@ -38,7 +38,20 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 const changes = namespace('changes')
 @Component
 export default class MProdSaveOverview extends Vue {
+  saveResult: any
   @changes.Getter public changesProducts!: Array<object>
+  @changes.Mutation public delFromChangesProducts!: (s: object) => void
+
+  async save (item: object) {
+    const body = item
+    this.saveResult = await this.$axios.$patch('/api/opsidata/clients/products', JSON.stringify(body))
+    if (this.saveResult.error === {}) {
+      this.delFromChangesProducts(item)
+    }
+    if (this.changesProducts.length === 0) {
+      this.$bvModal.hide('ProductSaveModal')
+    }
+  }
 }
 </script>
 
