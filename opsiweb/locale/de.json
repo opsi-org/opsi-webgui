@@ -55,7 +55,7 @@
       "clientsIds": "Ausgewählte Clients",
       "depotIds": "Ausgewählte Depots",
       "localbootid": "Localboot Produkt-ID",
-      "netbootid": "Localboot Produkt-ID"
+      "netbootid": "Netboot Produkt-ID"
     }
   },
   "button" : {

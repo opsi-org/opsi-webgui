@@ -13,6 +13,7 @@
       @click.native="visible = !visible"
     />
     <b-collapse :id="title+'-collapse'" v-model="visible" accordion="table-accordion">
+      <slot name="filter" />
       <TableTTable v-bind="$props" :tabledata="tabledata">
         <template
           v-for="slotName in Object.keys($scopedSlots)"
