@@ -159,7 +159,7 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @changes.Getter public changesProducts!: Array<object>
-  @changes.Mutation public pushToChangesProducts!: (s: Array<object>) => void
+  @changes.Mutation public pushToChangesProducts!: (s: object) => void
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {

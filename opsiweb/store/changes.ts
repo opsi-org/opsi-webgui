@@ -9,20 +9,14 @@ export default class Changes extends VuexModule {
 
   @VuexMutation public setChangesProducts (s: Array<object>) { this._changesProducts = s }
   @VuexMutation public pushToChangesProducts (s: object) {
-    const index = this._changesProducts.indexOf(s)
-    if (index === -1) {
-      this._changesProducts.push(s)
-    }
+    this._changesProducts.push(s)
   }
 
   @VuexMutation public delFromChangesProducts (s: object) {
-    const index = this._changesProducts.indexOf(s)
-    if (index !== -1) {
-      this._changesProducts.splice(index, 1)
-    }
+    this._changesProducts.splice(this._changesProducts.indexOf(s), 1)
   }
 
-  @VuexMutation public clearAllChanges () {
-    this._changesProducts = []
+  @VuexMutation public deleteAllChanges () {
+    this._changesProducts.splice(0, this._changesProducts.length)
   }
 }

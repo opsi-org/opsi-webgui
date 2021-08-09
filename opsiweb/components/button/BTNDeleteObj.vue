@@ -1,19 +1,26 @@
 <template>
-  <b-button @click="deleteObj()">
+  <b-button @click="deleteChanges()">
     <b-icon icon="trash" />
   </b-button>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+const changes = namespace('changes')
 @Component
 export default class BTNDeleteObj extends Vue {
   @Prop({ }) item!: object
   @Prop({ }) hide!: string
-  @Prop({ }) deleteFrom!: Array<object>
-  deleteObj () {
-    this.deleteFrom.splice(this.deleteFrom.indexOf(this.item), 1)
-    if (this.deleteFrom.length === 0) {
+  @Prop({ }) from!: string
+
+  @changes.Getter public changesProducts!: Array<object>
+  @changes.Mutation public delFromChangesProducts!: (s: object) => void
+
+  deleteChanges () {
+    if (this.from === 'products') {
+      this.delFromChangesProducts(this.item)
+    }
+    if (this.changesProducts.length === 0) {
       this.$bvModal.hide(this.hide)
     }
   }
