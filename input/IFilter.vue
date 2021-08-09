@@ -3,7 +3,7 @@
     v-model="data.filterQuery"
     class="filter"
     v-bind="$props"
-    :placeholder="$t('table.filter')"
+    :placeholder="$t('table.filter') + ' ' + additionalTitle"
     aria-label="Filter"
   />
 </template>
@@ -17,6 +17,7 @@ import { BFormInput } from 'bootstrap-vue'
 @Component
 export default class IFilter extends BFormInput {
   @Prop({ }) data!: string
+  @Prop({ default: '' }) additionalTitle!: string
 }
 </script>
 

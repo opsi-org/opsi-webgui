@@ -4,14 +4,15 @@
       v-bind="$props"
       :ref="$props.id"
       :class="$mq"
-      striped
       hover
+      :small="$mq=='mobile'"
       selectable
+      borderless
       select-mode="multi"
       :no-local-sorting="true"
       :sort-by.sync="tabledata.sortBy"
       :sort-desc.sync="tabledata.sortDesc"
-      sort-icon-left
+      sort-icon-right
       @row-clicked="rowChanged"
     >
       <template #head()="header">
@@ -52,18 +53,9 @@ export default class TTable extends BTable {
   @Prop({ }) tabledata!: ITableData
 
   fixRow (row: ITableRow): void {
-    if (this.datakey === 'productId') {
-      row.rowSelected = this.selection.includes(row.item.productId)
-      if (row.rowSelected) {
-        const elem = document.getElementById(`__row_${row.item.productId}`)
-        if (elem) { elem.classList.add('b-table-row-selected') }
-        row.item._rowVariant = 'primary'
-      } else {
-        const elem = document.getElementById(`__row_${row.item.productId}Major`)
-        if (elem) { elem.classList.remove('b-table-row-selected') }
-        row.item._rowVariant = ''
-      }
-    } else {
+    // eslint-disable-next-line no-console
+    console.log('rowitem.ident', row.item.ident)
+    if (typeof row.item.ident === 'string') {
       row.rowSelected = this.selection.includes(row.item.ident)
       if (row.rowSelected) {
         const elem = document.getElementById(`__row_${row.item.ident}`)
