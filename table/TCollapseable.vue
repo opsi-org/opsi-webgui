@@ -7,11 +7,7 @@
       :aria-expanded="visible"
       :title="title"
       @click.native="visible = !visible"
-    >
-      <template #right>
-        <slot name="right" />
-      </template>
-    </BarBPageHeader>
+    />
     <b-collapse :id="title+'-collapse'" v-model="visible" accordion="table-accordion">
       <TableTTable v-bind="$props" :tabledata="tabledata">
         <template
