@@ -18,7 +18,6 @@ export default function ({ $axios, redirect, store, route }) {
 
   $axios.onError((error) => {
     const code = parseInt(error.response && error.response.status)
-    // console.error("ERROR code:", code)
     // if (code === 400) {
     //   // redirect('/400')
     // }

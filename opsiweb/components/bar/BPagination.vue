@@ -1,15 +1,18 @@
 <template>
-  <!-- v-if="$props.totalRows > tabledata.perPage" -->
-  <b-pagination
-    v-model="localPageNumber"
-    class="BarBPagination"
-    first-number
-    last-number
-    size="sm"
-    align="fill"
-    :per-page="tabledata.perPage"
-    :total-rows="$props.totalRows"
-  />
+  <div class="BarBPagination-Container">
+    <b-input-group :prepend="$t('table.perpage')" size="sm" class="BarBPagination-PerPage">
+      <b-form-select v-model="tabledata.perPage" :options="[1,2,5,10,20,30]" size="sm" class="BarBPagination-PerPage-Dropdown" />
+    </b-input-group>
+    <b-pagination
+      v-model="localPageNumber"
+      class="BarBPagination-Pages"
+      first-number
+      last-number
+      size="sm"
+      :per-page="tabledata.perPage"
+      :total-rows="$props.totalRows"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -25,7 +28,24 @@ export default class UIBBPangination extends BPagination {
 </script>
 
 <style scoped>
-.BarBPagination{
+.BarBPagination-Container{
+  display: inline-flex !important;
+  align-items: center !important;
+  float: right !important;
+  /* min-width: min-content !important; */
+}
+.BarBPagination-PerPage {
+  /* min-width: 150px; */
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  display: contents !important;
+}
+.BarBPagination-Pages{
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
   display: flex !important;
+}
+.BarBPagination-PerPage-Dropdown {
+  max-width: inherit !important;
 }
 </style>

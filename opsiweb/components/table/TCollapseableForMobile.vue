@@ -1,0 +1,67 @@
+<template>
+  <b-card
+    v-if="$mq=='mobile' && collapseable"
+    bg-variant="transparent"
+    class="TCollapseableForMobile-Card"
+  >
+    <BarBPageHeader
+      navbartype="collapse"
+      :collapsed="visible"
+      :aria-controls="title+'-collapse'"
+      :aria-expanded="visible"
+      :title="title"
+      @click.native="visible = !visible"
+    />
+    <b-collapse :id="title+'-collapse'" v-model="visible" accordion="table-accordion">
+      <slot name="filter" />
+      <TableTTable v-bind="$props" :tabledata="tabledata">
+        <template
+          v-for="slotName in Object.keys($scopedSlots)"
+          #[slotName]="slotScope"
+        >
+          <slot :name="slotName" v-bind="slotScope" />
+        </template>
+      </TableTTable>
+
+      <slot name="pagination" />
+    </b-collapse>
+  </b-card>
+  <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card">
+    <TableTTable v-bind="$props" :tabledata="tabledata">
+      <template
+        v-for="slotName in Object.keys($scopedSlots)"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
+    </TableTTable>
+    <slot name="pagination" />
+  </b-card>
+</template>
+
+<script lang="ts">
+import { Component, Prop } from 'nuxt-property-decorator'
+import TTable from '~/components/table/TTable.vue'
+import { ITableData } from '~/types/ttable'
+
+@Component
+export default class TCollapseable extends TTable {
+  @Prop({ }) title!: string
+  @Prop({ }) tabledata!: ITableData
+  @Prop({ default: true }) collapseable?: Boolean
+  visible: Boolean = true
+}
+
+</script>
+<style>
+
+.TCollapseableForMobile-Card {
+  margin-bottom: 15px;
+}
+.TCollapseableForMobile-Card > .card-body{
+  padding-top:0px;
+  padding-bottom:0px;
+  padding-left:0px;
+  padding-right:0px;
+}
+</style>

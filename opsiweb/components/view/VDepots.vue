@@ -1,14 +1,15 @@
 <template>
   <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
-      <BarBPageHeader>
+      <!-- <BarBPageHeader>
         <template #left>
           <InputIFilter :data="tableData" />
         </template>
-      </BarBPageHeader>
-      <TableTTable
+      </BarBPageHeader> -->
+      <TableTCollapseableForMobile
         id="tabledepots"
         datakey="depotId"
+        :collapseable="false"
         :tabledata="tableData"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
@@ -18,6 +19,9 @@
         :loading="isLoading"
         :totalrows="fetchedData.total"
       >
+        <template #head(depotId)>
+          <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
+        </template>
         <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo
             :title="$t('title.config')"
@@ -28,12 +32,14 @@
             :click="routeRedirectWith"
           />
         </template>
-      </TableTTable>
-      <BarBPagination
-        :tabledata="tableData"
-        :total-rows="fetchedData.total"
-        aria-controls="tabledepots"
-      />
+        <template #pagination>
+          <BarBPagination
+            :tabledata="tableData"
+            :total-rows="fetchedData.total"
+            aria-controls="tabledepots"
+          />
+        </template>
+      </TableTCollapseableForMobile>
       <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       <!-- rowID {{ rowId }} <br>
