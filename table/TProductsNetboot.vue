@@ -15,6 +15,9 @@
       :totalrows="fetchedData.total"
       :stacked="$mq=='mobile'"
     >
+      <template #filter>
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
+      </template>
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
@@ -23,8 +26,9 @@
         <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
           type="depotVersions"
-          :rowitem="row.item"
+          :row="row"
           :clients2depots="fetchedDataClients2Depots"
+          @details="toogleDetailsTooltip"
         />
       </template>
       <template #head(installationStatus)>
@@ -58,6 +62,17 @@
           :save="saveActionRequest"
         />
       </template>
+
+      <template #row-details="row">
+        <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
+        <TableTTooltip
+          v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+          type="version"
+          :details="row.item.tooltiptext"
+          :depot-version-diff="row.item.depot_version_diff"
+        />
+        {{ row.item.tooltiptext }}
+      </template>
       <template #pagination>
         <BarBPagination
           :tabledata="tableData"
@@ -71,7 +86,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders, ITableRowItemProducts } from '~/types/ttable'
+import { IObjectString2ObjectString2String } from '~/types/tsettings'
+import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,
@@ -107,9 +123,7 @@ export default class TProductsNetboot extends Vue {
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
     actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
-    _majorVersion: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
-    // depotVersions: { label: 'version', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey text-right' },
-    // clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: false, sortable: true, class: 'bg-color-grey width-max-content ' },
+    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
     rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
   }
 
@@ -159,6 +173,12 @@ export default class TProductsNetboot extends Vue {
       this.headerData.installationStatus.disabled = false
       this.headerData.actionRequest.disabled = false
     }
+  }
+
+  toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
+    (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
+    console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
+    row.toggleDetails()
   }
 
   async fetch () {

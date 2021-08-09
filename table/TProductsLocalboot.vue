@@ -18,10 +18,13 @@
       <!-- :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc" -->
+      <template #filter>
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+      </template>
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
       </template>
-      <template #cell(_majorVersion)="row">
+      <template #cell(version)="row">
         <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
           type="depotVersions"
@@ -120,16 +123,14 @@ export default class TProductsLocalboot extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    productId: { label: 'table.fields.localbootid', key: 'productId', visible: true, _fixed: true, sortable: true },
-    desc: { label: 'table.fields.description', key: 'desc', visible: false, sortable: true },
-    name: { label: 'table.fields.name', key: 'name', visible: false, sortable: true },
-    selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
-    selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false, disabled: true },
-    installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: false, sortable: true },
-    actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: false, sortable: true, _fixed: false },
-    _majorVersion: { label: 'table.fields.version', key: '_majorVersion', _isMajor: true, visible: true },
-    // depotVersions: { label: 'version', key: 'depotVersions', _majorKey: '_majorVersion', visible: true, sortable: true, class: 'bg-color-grey text-right' },
-    // clientVersions: { label: 'c', key: 'clientVersions', _majorKey: '_majorVersion', visible: false, sortable: true, class: 'bg-color-grey width-max-content ' },
+    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
+    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: true },
+    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
+    selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
+    selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
+    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
+    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
+    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
     rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
   }
 
