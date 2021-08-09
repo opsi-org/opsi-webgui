@@ -23,6 +23,7 @@
     "configure": "CONFIGURE",
     "settings": "Settings",
     "localboot": "Localboot Products",
+    "netboot": "Netboot Products",
     "hostattr": "Host Attributes"
   },
   "values": {
@@ -33,6 +34,7 @@
     "showCol": "Show Columns",
     "clientDetails":"Client Details",
     "addtnlInfo":"Additional Information",
+    "perpage": "PerPage",
     "fields":{
       "id": "ID",
       "name": "Name",
@@ -50,7 +52,10 @@
       "version": "(Depot) Version",
       "instStatus": "Installation Status",
       "clientsIds": "Selected Clients",
-      "depotIds": "Selected Depots"
+      "depotIds": "Selected Depots",
+      "localbootid": "Localboot Product-ID",
+      "netbootid": "Netboot Product-ID",
+      "actionRequest": "Request"
     }
   },
   "button" : {

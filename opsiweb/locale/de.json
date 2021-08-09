@@ -23,7 +23,9 @@
     "configure": "KONFIGURIEREN",
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
-    "hostattr": "Host-Attribute"
+    "netboot": "Netboot-Produkt",
+    "hostattr": "Host-Attribute",
+    "actionRequest": "Request"
   },
   "values": {
     "mixed": "<mixed>"
@@ -33,6 +35,7 @@
     "showCol": "Spalten anzeigen",
     "clientDetails":"Client-Details",
     "addtnlInfo":"Zusätzliche Information",
+    "perpage": "Pro Seite",
     "fields":{
       "id": "ID",
       "name": "Name",
@@ -50,7 +53,9 @@
       "version": "(Depot) Version",
       "instStatus": "Installationsstatus",
       "clientsIds": "Ausgewählte Clients",
-      "depotIds": "Ausgewählte Depots"
+      "depotIds": "Ausgewählte Depots",
+      "localbootid": "Localboot Produkt-ID",
+      "netbootid": "Netboot Produkt-ID"
     }
   },
   "button" : {

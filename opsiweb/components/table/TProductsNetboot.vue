@@ -1,11 +1,11 @@
 <template>
   <div>
-    <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
+    <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.netboot') }}</h4></div> -->
     <TableTCollapseableForMobile
       id="tableproducts"
       datakey="productId"
       :tabledata="tableData"
-      :title="$t('title.localboot')"
+      :title="$t('title.netboot')"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :headers="headerData"
       :items="fetchedData.products"
@@ -15,15 +15,13 @@
       :totalrows="fetchedData.total"
       :stacked="$mq=='mobile'"
     >
-      <!-- :no-local-sorting="true"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc" -->
       <template #filter>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
       <template #head(productId)>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
+
       <template #cell(version)="row">
         <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
@@ -33,15 +31,6 @@
           @details="toogleDetailsTooltip"
         />
       </template>
-      <!-- <template #cell(clientVersions)="row">
-        <TableCellTCProductVersionCell
-          v-if="fetchedDataClients2Depots"
-          type="clientVersion"
-          :rowitem="row.item"
-          :clients2depots="fetchedDataClients2Depots"
-        />
-      </template> -->
-
       <template #head(installationStatus)>
         is
       </template>
@@ -57,12 +46,6 @@
           :objectsorigin="selectionClients || []"
         /> -->
       </template>
-      <!-- <template #cell(name)="row">
-          <TableCellTCProductCellComparable :list2text="row.item.name" />
-        </template> -->
-      <!-- <template #cell(productId)="row">
-          <TableCellTCProductCellComparable :list2text="row.item.productId" />
-        </template> -->
       <template v-if="selectionClients.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
           v-if="selectionClients.length>0"
@@ -72,16 +55,12 @@
       </template>
 
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
-        <!-- {{row.item.actionRequest}} -->
-        <!-- :title="'Set actionrequest for all selected products'" -->
-        <!-- {{row.item.installationStatus}} -->
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
           :requestoptions="row.item.actions"
           :rowitem="row.item"
           :save="saveActionRequest"
         />
-        <!-- {{row.item.versionDepot}} -->
       </template>
 
       <template #row-details="row">
@@ -116,18 +95,19 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 @Component
-export default class TProductsLocalboot extends Vue {
+export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
-  rowId: string = ''
+
   isLoading: boolean = true
   fetchedData: object = {}
   fetchedDataClients2Depots: object = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
+
   tableData: ITableData = {
-    type: 'LocalbootProduct',
+    type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 5,
+    perPage: 2,
     sortBy: 'productId',
     sortDesc: false,
     filterQuery: '',
@@ -172,17 +152,12 @@ export default class TProductsLocalboot extends Vue {
 
   mounted () {
     this.updateColumnVisibility()
-  }
-
-  toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
-    (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
-    // console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
-    row.toggleDetails()
+    this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
   }
 
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
-      // this.fetchOptions.fetchClients2Depots = true
+      this.fetchOptions.fetchClients2Depots = true
       this.headerData.actionRequest.visible = true
       // this.headerData._majorVersion.visible = true
       // this.headerData._majorVersion.disabled = true
@@ -190,7 +165,7 @@ export default class TProductsLocalboot extends Vue {
       this.headerData.installationStatus.disabled = true
       this.headerData.actionRequest.disabled = true
     } else {
-      // this.fetchOptions.fetchClients2Depots = false
+      this.fetchOptions.fetchClients2Depots = false
       this.headerData.actionRequest.visible = false
       // this.headerData._majorVersion.visible = false
       // this.headerData._majorVersion.disabled = false
@@ -200,13 +175,15 @@ export default class TProductsLocalboot extends Vue {
     }
   }
 
+  toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
+    (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
+    // console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
+    row.toggleDetails()
+  }
+
   async fetch () {
     this.isLoading = true
     this.updateColumnVisibility()
-    // if (this.fetchOptions.fetchDepotIds) {
-    //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
-    //   this.fetchOptions.fetchDepotIds = false
-    // }
     if (this.fetchOptions.fetchClients2Depots) {
       this.fetchedDataClients2Depots = (await this.$axios.$post(
         '/api/opsidata/clients/depots',
@@ -219,35 +196,18 @@ export default class TProductsLocalboot extends Vue {
       this.tableData.selectedDepots = this.selectionDepots
       this.tableData.selectedClients = this.selectionClients
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
-      try {
-        this.fetchedData = (await this.$axios.$post(
-          '/api/opsidata/products',
-          JSON.stringify(this.tableData)
-        )).result
-        // this.fetchedData = this.fetchedData.result
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('error in fetchData ', this.fetchedData)
-        // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
-      }
-      // console.log('products', this.fetchedData)
+      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
+      this.fetchedData = (await this.$axios.$post(
+        '/api/opsidata/products',
+        JSON.stringify(this.tableData)
+      )).result
     }
     this.isLoading = false
   }
 
-  saveActionRequest (rowitem: any, newrequest: string) {
+  saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    for (const c in this.selectionClients) {
-      const changedItem: any = {
-        productId: rowitem.productId,
-        clientId: this.selectionClients[c],
-        productType: rowitem.productType,
-        actionRequest: newrequest
-      }
-      this.productChanges.push(changedItem)
-    }
-    rowitem.request = newrequest
+    rowitem.request = [newrequest]
   }
 
   saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
