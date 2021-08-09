@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ButtonBTNOpenModal modal-id="ProductSaveModal" icon="list-check" :disabled="productChanges.length == 0" />
+    <ButtonBTNOpenModal modal-id="ProductSaveModal" icon="list-check" :disabled="changesProducts.length == 0" />
     <b-modal
       id="ProductSaveModal"
       size="xl"
@@ -9,10 +9,10 @@
       centered
       hide-footer
     >
-      <b-table :items="productChanges" :fields="['productId', 'clientId', 'productType', 'actionRequest', '_action']">
+      <b-table :items="changesProducts" :fields="['productId', 'clientId', 'productType', 'actionRequest', '_action']">
         <template #cell(_action)="row">
           <b-button-group>
-            <ButtonBTNDeleteObj :item="row.item" :delete-from="productChanges" hide="ProductSaveModal" />
+            <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
             <b-button>
               <b-icon icon="check2" />
             </b-button>
@@ -21,7 +21,7 @@
       </b-table>
       <b-row>
         <b-col>
-          <ButtonBTNDeleteAll :items="productChanges" hide="ProductSaveModal" />
+          <ButtonBTNDeleteAll hide="ProductSaveModal" />
         </b-col>
         <b-col cols="auto">
           <b-button>
@@ -34,10 +34,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+const changes = namespace('changes')
 @Component
 export default class MProdSaveOverview extends Vue {
-  @Prop({ }) productChanges!:any
+  @changes.Getter public changesProducts!: Array<object>
 }
 </script>
 

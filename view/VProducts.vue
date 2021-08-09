@@ -10,7 +10,7 @@
           <TreeTSProductGroup />
         </template>
         <template #right>
-          <ModalMProdSaveOverview :product-changes="changesProducts" />
+          <ModalMProdSaveOverview />
         </template>
       </BarBPageHeader>
       <TableTProductsNetboot />
@@ -35,14 +35,12 @@
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
 // import { ITableData } from '~/types/ttable'
 const selections = namespace('selections')
-const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-  @changes.Getter public changesProducts!: Array<object>
   rowId: string = ''
   isLoading: boolean = true
   // fetchedDataDepotIds: Array<string> = []

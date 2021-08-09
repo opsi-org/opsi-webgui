@@ -5,13 +5,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+const changes = namespace('changes')
 @Component
 export default class BTNDeleteAll extends Vue {
-  @Prop({ }) items!: Array<object>
   @Prop({ }) hide!: string
+
+  @changes.Getter public changesProducts!: Array<object>
+  @changes.Mutation public deleteAllChanges!: () => void
+
   deleteAll () {
-    this.items.splice(0, this.items.length)
+    this.deleteAllChanges()
     if (this.hide) { this.$bvModal.hide(this.hide) }
   }
 }
