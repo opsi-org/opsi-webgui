@@ -11,25 +11,27 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class PageSupport extends Vue {
-  supportItems: Array<object> = [
-    {
-      title: 'supportPage.documentation.title',
-      description: 'supportPage.documentation.description',
-      buttonname: 'supportPage.documentation.button',
-      link: 'https://www.uib.de/en/opsi-documentation/documentation'
-    },
-    {
-      title: 'supportPage.forum.title',
-      description: 'supportPage.forum.description',
-      buttonname: 'supportPage.forum.button',
-      link: 'https://forum.opsi.org/index.php'
-    },
-    {
-      title: 'supportPage.support.title',
-      description: 'supportPage.support.description',
-      buttonname: 'supportPage.support.button',
-      link: 'https://www.uib.de/en/support-training/support'
-    }
-  ]
+  get supportItems (): Array<object> {
+    return [
+      {
+        title: 'supportPage.documentation.title',
+        description: 'supportPage.documentation.description',
+        buttonname: 'supportPage.documentation.button',
+        link: this.$i18n.locale === 'en' ? 'https://www.uib.de/en/opsi-documentation/documentation' : 'https://www.uib.de/de/opsi-dokumentation/dokumentationen'
+      },
+      {
+        title: 'supportPage.forum.title',
+        description: 'supportPage.forum.description',
+        buttonname: 'supportPage.forum.button',
+        link: 'https://forum.opsi.org/index.php'
+      },
+      {
+        title: 'supportPage.support.title',
+        description: 'supportPage.support.description',
+        buttonname: 'supportPage.support.button',
+        link: this.$i18n.locale === 'en' ? 'https://www.uib.de/en/support-training/support' : 'https://www.uib.de/de/support-schulung/support'
+      }
+    ]
+  }
 }
 </script>
