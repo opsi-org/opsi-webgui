@@ -15,6 +15,10 @@
       :totalrows="fetchedData.total"
       :stacked="$mq=='mobile'"
     >
+      <!-- <template #right>
+        <ModalMProdSaveOverview :product-changes="productChanges" />
+      </template> -->
+
       <!-- :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc" -->
@@ -102,6 +106,7 @@
         />
       </template>
     </TableTCollapseableForMobile>
+    {{ changesProducts }}
   </div>
 </template>
 
@@ -110,6 +115,7 @@ import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { IObjectString2ObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
+const changes = namespace('changes')
 interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,
@@ -118,6 +124,7 @@ interface IFetchOptions {
 @Component
 export default class TProductsLocalboot extends Vue {
   // @Prop() tableData!: ITableData
+  // productChanges: Array<object> = []
   rowId: string = ''
   isLoading: boolean = true
   fetchedData: object = {}
@@ -151,6 +158,8 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @changes.Getter public changesProducts!: Array<object>
+  @changes.Mutation public pushToChangesProducts!: (s: Array<object>) => void
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -245,7 +254,8 @@ export default class TProductsLocalboot extends Vue {
         productType: rowitem.productType,
         actionRequest: newrequest
       }
-      this.productChanges.push(changedItem)
+      this.pushToChangesProducts(changedItem)
+      // this.productChanges.push(changedItem)
     }
     rowitem.request = newrequest
   }
