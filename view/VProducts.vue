@@ -11,7 +11,7 @@
         </template>
       </BarBPageHeader>
       <TableTProductsNetboot />
-      <!-- <TableTProductsLocalboot /> -->
+      <TableTProductsLocalboot />
       <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>

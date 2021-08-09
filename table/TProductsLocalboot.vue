@@ -28,8 +28,9 @@
         <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
           type="depotVersions"
-          :rowitem="row.item"
+          :row="row"
           :clients2depots="fetchedDataClients2Depots"
+          @details="toogleDetailsTooltip"
         />
       </template>
       <!-- <template #cell(clientVersions)="row">
@@ -82,6 +83,17 @@
         />
         <!-- {{row.item.versionDepot}} -->
       </template>
+
+      <template #row-details="row">
+        <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
+        <TableTTooltip
+          v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+          type="version"
+          :details="row.item.tooltiptext"
+          :depot-version-diff="row.item.depot_version_diff"
+        />
+        <!-- {{ row.item.tooltiptext }} -->
+      </template>
       <template #pagination>
         <BarBPagination
           :tabledata="tableData"
@@ -95,7 +107,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders, ITableRowItemProducts } from '~/types/ttable'
+import { IObjectString2ObjectString2String } from '~/types/tsettings'
+import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,
@@ -161,9 +174,15 @@ export default class TProductsLocalboot extends Vue {
     this.updateColumnVisibility()
   }
 
+  toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
+    (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
+    // console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
+    row.toggleDetails()
+  }
+
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
-      this.fetchOptions.fetchClients2Depots = true
+      // this.fetchOptions.fetchClients2Depots = true
       this.headerData.actionRequest.visible = true
       // this.headerData._majorVersion.visible = true
       // this.headerData._majorVersion.disabled = true
@@ -171,8 +190,8 @@ export default class TProductsLocalboot extends Vue {
       this.headerData.installationStatus.disabled = true
       this.headerData.actionRequest.disabled = true
     } else {
+      // this.fetchOptions.fetchClients2Depots = false
       this.headerData.actionRequest.visible = false
-      this.fetchOptions.fetchClients2Depots = false
       // this.headerData._majorVersion.visible = false
       // this.headerData._majorVersion.disabled = false
       this.headerData.selectedClients.disabled = false
@@ -210,22 +229,20 @@ export default class TProductsLocalboot extends Vue {
       this.tableData.selectedDepots = this.selectionDepots
       this.tableData.selectedClients = this.selectionClients
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-      this.fetchedData = (await this.$axios.$post(
-        '/api/opsidata/products',
-        JSON.stringify(this.tableData)
-      )).result
+      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
+      try {
+        this.fetchedData = (await this.$axios.$post(
+          '/api/opsidata/products',
+          JSON.stringify(this.tableData)
+        )).result
+        // this.fetchedData = this.fetchedData.result
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error('error in fetchData ', this.fetchedData)
+        // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
+      }
       // console.log('products', this.fetchedData)
     }
-
-    // this.tableData.selectedDepots = this.selectionDepots
-    // this.tableData.selectedClients = this.selectionClients
-    // if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-    // if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-    // this.fetchedData = (await this.$axios.$post(
-    //   '/api/opsidata/products',
-    //   JSON.stringify(this.tableData)
-    // )).result
     this.isLoading = false
   }
 

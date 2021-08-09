@@ -71,7 +71,7 @@
           :details="row.item.tooltiptext"
           :depot-version-diff="row.item.depot_version_diff"
         />
-        {{ row.item.tooltiptext }}
+        <!-- {{ row.item.tooltiptext }} -->
       </template>
       <template #pagination>
         <BarBPagination
@@ -177,7 +177,7 @@ export default class TProductsNetboot extends Vue {
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
-    console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
+    // console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
     row.toggleDetails()
   }
 
