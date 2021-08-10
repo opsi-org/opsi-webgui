@@ -54,12 +54,8 @@ interface DeleteClient {
     // eslint-disable-next-line no-console
     console.log('DELETE: ', this.id)
     this.$bvModal.hide(this.id + 'deleteClientModal')
-    // const params = {
-    //   clientid: this.id
-    // }
-    // const result = (await this.$axios.$delete('/api/opsidata/clients', { params }))
-    const result = (await this.$axios.$delete('/api/opsidata/clients/' + this.id))
-    if (result.error === null) {
+    const result = await this.$axios.$delete('/api/opsidata/clients/' + this.id)
+    if (result.error === '') {
       this.makeToast(this.id + 'has been removed successfully.', this.$t('message.success'), 'success', 5000)
     } else { this.makeToast(result.error, this.$t('message.error'), 'danger', 8000) }
   }
