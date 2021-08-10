@@ -18,7 +18,7 @@
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
         :key="header.key"
         class="dropdown-item"
-        :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
+        :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key], disabled:header.disabled}"
         :disabled="columnVisibilityStates[header.key]"
         @click="setColumnVisibilityModel(header.key)"
       >
@@ -34,6 +34,7 @@
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
         :key="header.key"
         class="dropdown-item"
+        :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
         @click="handleItem(header.key)"
       >
         <b-form-checkbox
@@ -118,4 +119,9 @@ export default class DDTableColumnVisibilty extends BDropdown {
   cursor: pointer;
   display: flex !important;
 }
+/* .disabled {
+  cursor: default;
+  display: none;
+
+} */
 </style>

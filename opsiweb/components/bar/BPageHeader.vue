@@ -4,7 +4,7 @@
       <b-icon v-if="collapsed" icon="chevron-double-down" />
       <b-icon v-else icon="chevron-double-right" />
     </span>
-    <b>{{ title }}</b>
+    <b v-if="title">{{ title }}</b>
     <slot name="left" />
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
@@ -37,5 +37,7 @@ export default class BPageHeader extends Vue {
 }
 .navbar {
   z-index: inherit !important;
+  padding-left: 0rem !important;
+  padding-right: 0rem !important;
 }
 </style>

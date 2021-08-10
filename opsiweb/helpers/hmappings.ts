@@ -30,17 +30,19 @@ export function mapValues2Value (values: Array<string>, objects: Array<string>, 
   return 'mixed'
 }
 export function mapValues2Objects (values: Array<string>, objects: Array<string>, objectsorigin: Array<string>, defaultValue: string) {
-  if (!values || !values[0]) {
-    return {}
-  }
+  // if (!values && !values[0]) {
+  //   return {}
+  // }
   if (objects === undefined || objects === null) {
     return {}
   }
   const client2value: IObjectString2String = {}
   for (const o in objectsorigin) {
     const i = objects.indexOf(objectsorigin[o])
-    if (i >= 0) {
+    if (i >= 0 && values) {
       client2value[objects[i]] = values[i]
+    } else if (i >= 0) {
+      client2value[objects[i]] = defaultValue
     } else {
       client2value[objectsorigin[o]] = defaultValue
     }

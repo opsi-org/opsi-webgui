@@ -8,9 +8,9 @@
     "exists": " existiert bereits."
   },
   "title":{
-    "overview": "Überblick",
+    "overview": "ÜBERBLICK",
     "support": "Support",
-    "manage": "Verwalten",
+    "manage": "VERWALTEN",
     "depots": "Depots",
     "allDepots": "Alle Depots",
     "clients": "Clients",
@@ -20,16 +20,22 @@
     "config": "Konfiguration",
     "log": "Log",
     "products": "Produkte",
-    "configure": "Konfigurieren",
+    "configure": "KONFIGURIEREN",
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
-    "hostattr": "Host-Attribute"
+    "netboot": "Netboot-Produkt",
+    "hostattr": "Host-Attribute",
+    "actionRequest": "Request"
+  },
+  "values": {
+    "mixed": "<mixed>"
   },
   "table": {
     "filter": "Filter",
     "showCol": "Spalten anzeigen",
     "clientDetails":"Client-Details",
     "addtnlInfo":"Zusätzliche Information",
+    "perpage": "Pro Seite",
     "fields":{
       "id": "ID",
       "name": "Name",
@@ -44,14 +50,16 @@
       "otp": "Einmalpasswort OTP",
       "notes": "Anmerkungen",
       "stats": "Statistiken",
-      "version": "Version",
+      "version": "(Depot) Version",
       "instStatus": "Installationsstatus",
       "clientsIds": "Ausgewählte Clients",
-      "depotIds": "Ausgewählte Depots"
+      "depotIds": "Ausgewählte Depots",
+      "localbootid": "Localboot Produkt-ID",
+      "netbootid": "Netboot Produkt-ID"
     }
   },
   "button" : {
-    "login": "Login",
+    "login": "Anmeldung",
     "logout": "Ausloggen",
     "expand": "Expandieren",
     "collapse": "Kollaps",
@@ -63,9 +71,16 @@
     "prodGroups": "Produktgruppen"
   },
   "formselect": {
-    "depot": "Bitte wählen Sie ein Depot",
-    "client": "Bitte wählen Sie ein Client",
-    "logtype": "Bitte wählen Sie ein Log Typ"
+    "depot": "Auswahl eines Depots",
+    "client": "Auswahl eines Clients",
+    "logtype": "Auswahl eines Log Typs",
+    "tooltip": {
+      "actionRequest": "Setze ActionRequest für alle ausgwählten Produkte"
+    }
+  },
+  "loginPage": {
+    "username": "Benutzername",
+    "password": "Passwort"
   },
   "supportPage" : {
     "documentation": {

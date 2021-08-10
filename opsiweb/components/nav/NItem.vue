@@ -20,3 +20,9 @@ export default class NItem extends Vue {
   @Prop({ }) route!: string
 }
 </script>
+
+<style>
+.nav-tabs .nav-link{
+  color: lightgray !important;
+}
+</style>

@@ -1,15 +1,8 @@
+import { IObjectString2ObjectString2String } from './tsettings'
 
 export interface ITableDataItem {
   ident: string
   productId: string
-}
-
-export interface ITableRow {
-  rowSelected: boolean
-  item: {
-      ident: string
-      _rowVariant?: string
-  };
 }
 
 export interface ITableRowItemProducts {
@@ -22,6 +15,19 @@ export interface ITableRowItemProducts {
   clientVersions: Array<string>
   clientVersionOutdated: boolean
   depotVersionDiff: boolean
+  installationStatus: Array<string>
+  actionResult: Array<string>
+  _rowVariant?: string
+  tooltiptext?: IObjectString2ObjectString2String
+}
+
+export interface ITableRow {
+  rowSelected: boolean
+  toggleDetails: Function,
+  item: ITableRowItemProducts|{
+      ident: string
+      _rowVariant?: string
+  };
 }
 export interface ITableData {
   pageNumber: number,
@@ -42,6 +48,7 @@ export interface ITableHeader {
   sortable?: boolean,
   _fixed?: boolean,
   _isMajor?: boolean,
+  disabled?: boolean,
   _majorKey?: string,
   class?: string,
   variant?: string,
