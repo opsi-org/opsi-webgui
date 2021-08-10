@@ -8,6 +8,7 @@
       title="Delete Client"
       centered
       hide-footer
+      no-fade
     >
       <span>
         Are you sure you want to delete the client<br>
@@ -66,4 +67,7 @@ interface DeleteClient {
 </script>
 
 <style>
+.modal-dialog {
+  left: 0% !important;
+}
 </style>
