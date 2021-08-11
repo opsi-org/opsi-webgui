@@ -57,7 +57,7 @@
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
-          :requestoptions="row.item.actions"
+          :requestoptions="['none', ...row.item.actions]"
           :rowitem="row.item"
           :save="saveActionRequest"
         />
@@ -86,7 +86,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { IObjectString2ObjectString2String } from '~/types/tsettings'
+import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
 interface IFetchOptions {
@@ -100,7 +100,7 @@ export default class TProductsNetboot extends Vue {
 
   isLoading: boolean = true
   fetchedData: object = {}
-  fetchedDataClients2Depots: object = {}
+  fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
 
@@ -157,7 +157,6 @@ export default class TProductsNetboot extends Vue {
 
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
-      this.fetchOptions.fetchClients2Depots = true
       this.headerData.actionRequest.visible = true
       // this.headerData._majorVersion.visible = true
       // this.headerData._majorVersion.disabled = true
@@ -165,7 +164,6 @@ export default class TProductsNetboot extends Vue {
       this.headerData.installationStatus.disabled = true
       this.headerData.actionRequest.disabled = true
     } else {
-      this.fetchOptions.fetchClients2Depots = false
       this.headerData.actionRequest.visible = false
       // this.headerData._majorVersion.visible = false
       // this.headerData._majorVersion.disabled = false
@@ -205,9 +203,41 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = false
   }
 
-  saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
+  async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
+    console.debug('Clients2Depots', this.fetchedDataClients2Depots)
+    const alldata = []
+    for (const c in this.selectionClients) {
+      const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
+      const data = {
+        clientId: this.selectionClients[c],
+        productId: rowitem.productId,
+        productType: 'NetbootProduct',
+        version: rowitem.depotVersions[rowitem.selectedDepots.indexOf(depot)],
+        actionRequest: newrequest
+      }
+      alldata.push(data)
+    }
+    console.debug('save:', alldata)
+
+    const responseError: IObjectString2String = (await this.$axios.$patch(
+      '/api/opsidata/clients/products',
+      JSON.stringify({ data: alldata })
+    )).error
+    if (Object.keys(responseError).length > 0) {
+      let txt = 'Errors for: <br />'
+      for (const k in responseError) {
+        txt += `${k}: ${responseError[k]} <br />`
+      }
+      this.$bvToast.toast(txt, {
+        title: 'Warnings:',
+        autoHideDelay: 5000,
+        appendToast: false
+      })
+    }
+    this.fetchOptions.fetchClients = true
+    this.$fetch()
   }
 
   saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
