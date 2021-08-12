@@ -8,13 +8,13 @@
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 interface Request {
-    selectedDepots: Array<string>
+    selectedDepots: string
     parentGroup: string
 }
 
 @Component
 export default class TSHostGroup extends Vue {
-  request: Request = { selectedDepots: [], parentGroup: '' }
+  request: Request = { selectedDepots: '', parentGroup: '' }
   hostGroup: Array<object> = []
   @selections.Getter public selectionDepots!: Array<string>
 
@@ -23,7 +23,7 @@ export default class TSHostGroup extends Vue {
   }
 
   async fetch () {
-    this.request.selectedDepots = this.selectionDepots
+    this.request.selectedDepots = JSON.stringify(this.selectionDepots)
     // this.request.parentGroup = 'root'
     const params = this.request
     this.hostGroup = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)

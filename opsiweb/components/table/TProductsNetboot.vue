@@ -95,12 +95,12 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 interface DepotRequest {
-    selectedClients: Array<string>
+    selectedClients: string
 }
 @Component
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
-  depotRequest: DepotRequest = { selectedClients: [] }
+  depotRequest: DepotRequest = { selectedClients: '' }
   isLoading: boolean = true
   fetchedData: object = {}
   fetchedDataClients2Depots: object = {}
@@ -188,27 +188,19 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = true
     this.updateColumnVisibility()
     if (this.fetchOptions.fetchClients2Depots) {
-      this.depotRequest.selectedClients = this.selectionClients
+      this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
       const params = this.depotRequest
       this.fetchedDataClients2Depots = (await this.$axios.$get('/api/opsidata/clients/depots', { params })).result
-      // this.fetchedDataClients2Depots = (await this.$axios.$post(
-      //   '/api/opsidata/clients/depots',
-      //   JSON.stringify({ selectedClients: this.selectionClients })
-      // )).result
       this.fetchOptions.fetchClients2Depots = false
     }
 
     if (this.fetchOptions.fetchClients) {
-      this.tableData.selectedDepots = this.selectionDepots
-      this.tableData.selectedClients = this.selectionClients
+      this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+      this.tableData.selectedClients = JSON.stringify(this.selectionClients)
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
       const params = this.tableData
       this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
-      // this.fetchedData = (await this.$axios.$post(
-      //   '/api/opsidata/products',
-      //   JSON.stringify(this.tableData)
-      // )).result
     }
     this.isLoading = false
   }
