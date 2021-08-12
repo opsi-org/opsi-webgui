@@ -115,8 +115,12 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
+interface DepotRequest {
+    selectedClients: Array<string>
+}
 @Component
 export default class TProductsLocalboot extends Vue {
+  depotRequest: DepotRequest = { selectedClients: [] }
   // @Prop() tableData!: ITableData
   rowId: string = ''
   isLoading: boolean = true
@@ -218,10 +222,14 @@ export default class TProductsLocalboot extends Vue {
     //   this.fetchOptions.fetchDepotIds = false
     // }
     if (this.fetchOptions.fetchClients2Depots) {
-      this.fetchedDataClients2Depots = (await this.$axios.$post(
-        '/api/opsidata/clients/depots',
-        JSON.stringify({ selectedClients: this.selectionClients })
-      )).result
+      this.depotRequest.selectedClients = this.selectionClients
+      const params = this.depotRequest
+      this.fetchedDataClients2Depots = (await this.$axios.$get('/api/opsidata/clients/depots', { params })).result
+
+      // this.fetchedDataClients2Depots = (await this.$axios.$post(
+      //   '/api/opsidata/clients/depots',
+      //   JSON.stringify({ selectedClients: this.selectionClients })
+      // )).result
       this.fetchOptions.fetchClients2Depots = false
     }
 
@@ -231,10 +239,12 @@ export default class TProductsLocalboot extends Vue {
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
       try {
-        this.fetchedData = (await this.$axios.$post(
-          '/api/opsidata/products',
-          JSON.stringify(this.tableData)
-        )).result
+        const params = this.tableData
+        this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
+        // this.fetchedData = (await this.$axios.$post(
+        //   '/api/opsidata/products',
+        //   JSON.stringify(this.tableData)
+        // )).result
         // this.fetchedData = this.fetchedData.result
       } catch (error) {
         // eslint-disable-next-line no-console
