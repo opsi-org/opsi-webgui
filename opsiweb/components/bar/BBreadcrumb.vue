@@ -59,7 +59,7 @@ export default class BBreadcrumbRow extends Vue {
         case 'settings': pathArray[c] = this.$t('title.settings'); break
       }
     }
-    return pathArray.filter(p => p !== '')
+    return pathArray.filter((p: string) => p !== '')
   }
 }
 </script>
