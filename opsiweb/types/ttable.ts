@@ -37,8 +37,8 @@ export interface ITableData {
   sortDesc: boolean,
   filterQuery: string,
   type?: string,
-  selectedDepots?: Array<string>,
-  selectedClients?: Array<string>
+  selectedDepots?: string,
+  selectedClients?: string
 }
 
 export interface ITableHeader {
