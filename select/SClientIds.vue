@@ -12,18 +12,18 @@
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 interface ClientRequest {
-    selectedDepots: Array<string>
+    selectedDepots: string
 }
 
 @Component
 export default class SClientIds extends Vue {
-  clientRequest: ClientRequest = { selectedDepots: [] }
+  clientRequest: ClientRequest = { selectedDepots: '' }
   clientIds: Array<string> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
 
   async fetch () {
-    this.clientRequest.selectedDepots = this.selectionDepots
+    this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
     // this.idselection = this.clientIds[0]

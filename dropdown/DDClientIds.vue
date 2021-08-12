@@ -41,11 +41,11 @@ import { Component, Vue, namespace, Watch } from 'nuxt-property-decorator'
 // import { IDepot } from '~/types/tsettings'
 const selections = namespace('selections')
 interface ClientRequest {
-    selectedDepots: Array<string>
+    selectedDepots: string
 }
 
 @Component export default class DDDepotIds extends Vue {
-  clientRequest: ClientRequest = { selectedDepots: [] }
+  clientRequest: ClientRequest = { selectedDepots: '' }
   // opsiconfigserver:string = ''
   fetchedData: Array<string> = []
   selectionLocal: Array<string> = []
@@ -75,7 +75,7 @@ interface ClientRequest {
   }
 
   async fetch () {
-    this.clientRequest.selectedDepots = this.selectionDepots
+    this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     this.fetchedData = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
     // this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
