@@ -1,11 +1,11 @@
 <template>
   <DivDScrollResult>
     <template slot="content">
-      <b-table :busy="isLoading" stacked :items="[modules]">
+      <b-table :busy="isLoading" stacked :items="[modules]" :fields="['valid', 'expires']">
         <template #table-busy>
           <IconILoading />
         </template>
-        <template #cell(signature)="row">
+        <!-- <template #cell(signature)="row">
           <b-input-group>
             <b-form-input v-model="row.item.signature" size="sm" readonly :type="hideValue ? 'text': 'password' " />
             <b-button :pressed.sync="hideValue" size="sm">
@@ -13,7 +13,7 @@
               <b-icon v-else icon="eye" />
             </b-button>
           </b-input-group>
-        </template>
+        </template> -->
       </b-table>
       <!-- <div v-for="v,k in modules" :key="k">
               <p>{{ k }}:{{ v }}</p>
@@ -38,8 +38,7 @@ export default class VModules extends Vue {
 
   async fetch () {
     this.isLoading = true
-    this.modules = (await this.$axios.$post(
-      '/api/opsidata/modulesContent')).result
+    this.modules = (await this.$axios.$get('/api/opsidata/modulesContent')).result
     this.isLoading = false
   }
 }
