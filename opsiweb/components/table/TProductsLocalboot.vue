@@ -107,7 +107,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { IObjectString2ObjectString2String } from '~/types/tsettings'
+import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
 const changes = namespace('changes')
@@ -127,7 +127,7 @@ export default class TProductsLocalboot extends Vue {
   rowId: string = ''
   isLoading: boolean = true
   fetchedData: object = {}
-  fetchedDataClients2Depots: object = {}
+  fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
   tableData: ITableData = {
@@ -239,18 +239,52 @@ export default class TProductsLocalboot extends Vue {
     this.isLoading = false
   }
 
-  saveActionRequest (rowitem: any, newrequest: string) {
+  async saveActionRequest (rowitem: any, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
+    // for (const c in this.selectionClients) {
+    //   const changedItem: any = {
+    //     productId: rowitem.productId,
+    //     clientId: this.selectionClients[c],
+    //     productType: rowitem.productType,
+    //     actionRequest: newrequest
+    //   }
+    //   this.pushToChangesProducts(changedItem)
+    // }
+    rowitem.request = [newrequest]
+    // eslint-disable-next-line no-console
+    console.debug('Clients2Depots', this.fetchedDataClients2Depots)
+    const alldata = []
     for (const c in this.selectionClients) {
-      const changedItem: any = {
-        productId: rowitem.productId,
+      const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
+      const data = {
         clientId: this.selectionClients[c],
-        productType: rowitem.productType,
+        productId: rowitem.productId,
+        productType: 'NetbootProduct',
+        version: rowitem.depotVersions[rowitem.selectedDepots.indexOf(depot)],
         actionRequest: newrequest
       }
-      this.pushToChangesProducts(changedItem)
+      alldata.push(data)
     }
-    rowitem.request = newrequest
+    // eslint-disable-next-line no-console
+    console.debug('save:', alldata)
+
+    const responseError: IObjectString2String = (await this.$axios.$patch(
+      '/api/opsidata/clients/products',
+      JSON.stringify({ data: alldata })
+    )).error
+    if (Object.keys(responseError).length > 0) {
+      let txt = 'Errors for: <br />'
+      for (const k in responseError) {
+        txt += `${k}: ${responseError[k]} <br />`
+      }
+      this.$bvToast.toast(txt, {
+        title: 'Warnings:',
+        autoHideDelay: 5000,
+        appendToast: false
+      })
+    }
+    this.fetchOptions.fetchClients = true
+    this.$fetch()
   }
 
   saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {

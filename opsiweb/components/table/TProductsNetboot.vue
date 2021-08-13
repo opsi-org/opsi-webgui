@@ -206,6 +206,7 @@ export default class TProductsNetboot extends Vue {
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
+    // eslint-disable-next-line no-console
     console.debug('Clients2Depots', this.fetchedDataClients2Depots)
     const alldata = []
     for (const c in this.selectionClients) {
@@ -219,6 +220,7 @@ export default class TProductsNetboot extends Vue {
       }
       alldata.push(data)
     }
+    // eslint-disable-next-line no-console
     console.debug('save:', alldata)
 
     const responseError: IObjectString2String = (await this.$axios.$patch(
