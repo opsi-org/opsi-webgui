@@ -1,14 +1,12 @@
 <template>
-  <div>
-    <b-row>
-      <b-col :class="{'d-none' : showchild && $mq === 'mobile'}">
-        <slot name="parent" />
-      </b-col>
-      <b-col v-if="showchild">
-        <slot name="child" />
-      </b-col>
-    </b-row>
-  </div>
+  <b-row>
+    <b-col :class="{'d-none' : showchild && $mq === 'mobile'}">
+      <slot name="parent" />
+    </b-col>
+    <b-col v-if="showchild">
+      <slot name="child" />
+    </b-col>
+  </b-row>
 </template>
 
 <script lang="ts">

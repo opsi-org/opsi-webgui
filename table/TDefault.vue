@@ -6,9 +6,9 @@
       </template>
       <template #cell(opsiHostKey)="row">
         <b-input-group>
-          <b-form-input v-model="row.item.opsiHostKey" size="sm" readonly :type="hideValue ? 'text': 'password' " />
-          <b-button :pressed.sync="hideValue" size="sm">
-            <b-icon v-if="hideValue" icon="eye-slash" />
+          <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
+          <b-button :pressed.sync="showValue" size="sm">
+            <b-icon v-if="showValue" icon="eye-slash" />
             <b-icon v-else icon="eye" />
           </b-button>
         </b-input-group>
@@ -39,6 +39,6 @@ export default class TDefault extends Vue {
   @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
   @Prop({ }) isBusy!: boolean
-  hideValue : boolean = false
+  showValue : boolean = false
 }
 </script>

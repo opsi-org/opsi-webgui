@@ -3,16 +3,17 @@
     <template #parent>
       <BarBPageHeader>
         <template #left>
-          <InputIFilter :data="tableData" />
+          <!-- <InputIFilter :data="tableData" /> -->
           <DropdownDDDepotIds />
           <!-- DOUBT: why fetchedDataDepotIds -->
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSHostGroup />
         </template>
       </BarBPageHeader>
-      <TableTTable
+      <TableTCollapseableForMobile
         id="tableclients"
         datakey="clientId"
+        :collapseable="false"
         :tabledata="tableData"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
@@ -22,6 +23,9 @@
         :loading="isLoading"
         :totalrows="fetchedData.total"
       >
+        <template #head(clientId)>
+          <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
+        </template>
         <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo
             :title="$t('title.config')"
@@ -40,16 +44,24 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
+          <b-dropdown no-caret>
+            <template #button-content>
+              <b-icon icon="three-dots-vertical" />
+            </template>
+            <ModalMDeleteClient :id="row.item.ident.trim()" />
+          </b-dropdown>
         </template>
-      </TableTTable>
-      <BarBPagination
-        :tabledata="tableData"
-        :total-rows="fetchedData.total"
-        aria-controls="tableclients"
-      />
-      <b>Selection: </b> <br>
+        <template #pagination>
+          <BarBPagination
+            :tabledata="tableData"
+            :total-rows="fetchedData.total"
+            aria-controls="tableclients"
+          />
+        </template>
+      </TableTCollapseableForMobile>
+      <!-- <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
-      Clients : {{ selectionClients }} <br>
+      Clients : {{ selectionClients }} <br> -->
       <!-- rowID {{ rowId }} <br>
       Filter Query: {{ tableData.filterQuery }} -->
     </template>
@@ -108,16 +120,9 @@ export default class VClients extends Vue {
   async fetch () {
     this.isLoading = true
     if (this.fetchOptions.fetchClients) {
-      this.tableData.selectedDepots = this.selectionDepots
-      // this.fetchedData = (await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.tableData))).result
-      const params = {
-        tableData: this.tableData
-      }
+      this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+      const params = this.tableData
       this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', { params })).result
-      // const data = {
-      //   tableData: this.tableData
-      // }
-      // this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', { data })).result
     }
     if (this.fetchOptions.fetchDepotIds) {
       this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
