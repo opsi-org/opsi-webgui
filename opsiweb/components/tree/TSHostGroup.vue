@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <LazyTreeTSTreeselect v-if="hostGroup" :options="hostGroup" :type="'hostgroup'" />
-  </div>
+  <LazyTreeTSTreeselect v-if="hostGroup" :options="hostGroup" :type="'hostgroup'" />
 </template>
 
 <script lang="ts">

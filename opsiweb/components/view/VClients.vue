@@ -53,9 +53,9 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <b>Selection: </b> <br>
+      <!-- <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
-      Clients : {{ selectionClients }} <br>
+      Clients : {{ selectionClients }} <br> -->
       <!-- rowID {{ rowId }} <br>
       Filter Query: {{ tableData.filterQuery }} -->
     </template>
