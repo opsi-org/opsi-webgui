@@ -6,10 +6,10 @@
       :class="{auth_footer: $mq === 'desktop', auth_footer_wrap: $mq === 'mobile'}"
     >
       <b-navbar-nav small class="ml-auto">
-        <b>Selection: </b>
-        Depots : {{ selectionDepots }} <br>
-        Clients: {{ selectionClients }} <br>
-        Products: {{ selectionProducts }} <br>
+        <b>Selection:- </b>
+        Depots   : {{ selectionDepots }} <br>
+        Clients  : {{ selectionClients }} <br>
+        Products : {{ selectionProducts }} <br>
       </b-navbar-nav>
     </b-navbar>
   </div>
