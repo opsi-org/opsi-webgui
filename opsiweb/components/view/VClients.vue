@@ -44,6 +44,12 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
+          <b-dropdown no-caret>
+            <template #button-content>
+              <b-icon icon="three-dots-vertical" />
+            </template>
+            <ModalMDeleteClient :id="row.item.ident.trim()" />
+          </b-dropdown>
         </template>
         <template #pagination>
           <BarBPagination
@@ -53,9 +59,9 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <b>Selection: </b> <br>
+      <!-- <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
-      Clients : {{ selectionClients }} <br>
+      Clients : {{ selectionClients }} <br> -->
       <!-- rowID {{ rowId }} <br>
       Filter Query: {{ tableData.filterQuery }} -->
     </template>
