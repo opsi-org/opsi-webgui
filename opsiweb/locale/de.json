@@ -13,7 +13,10 @@
     "manage": "VERWALTEN",
     "depots": "Depots",
     "allDepots": "Alle Depots",
+    "depotsconfig": "Depots - Konfiguration",
     "clients": "Clients",
+    "clientsconfig": "Clients - Konfiguration",
+    "clientslog": "Clients - Log",
     "allClients": "Alle Clients",
     "addNew": "Neue hinzufügen",
     "addNewClient": "Neuen Client hinzufügen",
@@ -23,13 +26,19 @@
     "configure": "KONFIGURIEREN",
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
-    "hostattr": "Host-Attribute"
+    "netboot": "Netboot-Produkt",
+    "hostattr": "Host-Attribute",
+    "actionRequest": "Request"
+  },
+  "values": {
+    "mixed": "<mixed>"
   },
   "table": {
     "filter": "Filter",
     "showCol": "Spalten anzeigen",
     "clientDetails":"Client-Details",
     "addtnlInfo":"Zusätzliche Information",
+    "perpage": "Pro Seite",
     "fields":{
       "id": "ID",
       "name": "Name",
@@ -44,10 +53,12 @@
       "otp": "Einmalpasswort OTP",
       "notes": "Anmerkungen",
       "stats": "Statistiken",
-      "version": "Version",
+      "version": "(Depot) Version",
       "instStatus": "Installationsstatus",
       "clientsIds": "Ausgewählte Clients",
-      "depotIds": "Ausgewählte Depots"
+      "depotIds": "Ausgewählte Depots",
+      "localbootid": "Localboot Produkt-ID",
+      "netbootid": "Netboot Produkt-ID"
     }
   },
   "button" : {
@@ -63,9 +74,12 @@
     "prodGroups": "Produktgruppen"
   },
   "formselect": {
-    "depot": "Bitte wählen Sie ein Depot",
-    "client": "Bitte wählen Sie ein Client",
-    "logtype": "Bitte wählen Sie ein Log Typ"
+    "depot": "Auswahl eines Depots",
+    "client": "Auswahl eines Clients",
+    "logtype": "Auswahl eines Log Typs",
+    "tooltip": {
+      "actionRequest": "Setze ActionRequest für alle ausgwählten Produkte"
+    }
   },
   "loginPage": {
     "username": "Benutzername",
@@ -89,6 +103,8 @@
     }
   },
   "settingsPage": {
+    "general": "Allgemein",
+    "theme": "Thema",
     "modules": "Modul-Inhalt"
   }
 }

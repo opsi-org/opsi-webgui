@@ -13,7 +13,10 @@
     "manage": "MANAGE",
     "depots": "Depots",
     "allDepots": "All Depots",
+    "depotsconfig": "Depots - Configuration",
     "clients": "Clients",
+    "clientsconfig": "Clients - Configuration",
+    "clientslog": "Clients - Logs",
     "allClients": "All Clients",
     "addNew": "Add New",
     "addNewClient": "Add New Client",
@@ -23,13 +26,18 @@
     "configure": "CONFIGURE",
     "settings": "Settings",
     "localboot": "Localboot Products",
+    "netboot": "Netboot Products",
     "hostattr": "Host Attributes"
+  },
+  "values": {
+    "mixed": "<mixed>"
   },
   "table": {
     "filter": "Filter",
     "showCol": "Show Columns",
     "clientDetails":"Client Details",
     "addtnlInfo":"Additional Information",
+    "perpage": "PerPage",
     "fields":{
       "id": "ID",
       "name": "Name",
@@ -44,10 +52,13 @@
       "otp": "One Time Password",
       "notes": "Notes",
       "stats": "Statistics",
-      "version": "Version",
+      "version": "(Depot) Version",
       "instStatus": "Installation Status",
       "clientsIds": "Selected Clients",
-      "depotIds": "Selected Depots"
+      "depotIds": "Selected Depots",
+      "localbootid": "Localboot Product-ID",
+      "netbootid": "Netboot Product-ID",
+      "actionRequest": "Request"
     }
   },
   "button" : {
@@ -63,9 +74,12 @@
     "prodGroups": "Product Groups"
   },
   "formselect": {
-    "depot": "Please select a Depot",
-    "client": "Please select a Client",
-    "logtype": "Please select a Log type"
+    "depot": "Select a Depot",
+    "client": "Select a Client",
+    "logtype": "Select a Log type",
+    "tooltip": {
+      "actionRequest": "Set actionRequest for all selected products"
+    }
   },
   "loginPage": {
     "username": "Username",
@@ -89,6 +103,8 @@
     }
   },
   "settingsPage": {
+    "general": "General",
+    "theme": "Theme",
     "modules": "Module Content"
   }
 }

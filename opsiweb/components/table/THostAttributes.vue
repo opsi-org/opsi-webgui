@@ -5,14 +5,14 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 interface Request {
-    hosts: Array<string>
+    hosts: string
 }
 
 @Component
 export default class THostAttributes extends Vue {
   @Prop({ }) id!: string
   result:Object = {}
-  request: Request = { hosts: [] }
+  request: Request = { hosts: '' }
   isLoading: boolean = false
 
   get fields () {
@@ -40,10 +40,9 @@ export default class THostAttributes extends Vue {
   async fetch () {
     if (this.id) {
       this.isLoading = true
-      this.request.hosts = [this.id]
-      this.result = (await this.$axios.$post(
-        '/api/opsidata/hosts', JSON.stringify(this.request)
-      )).result
+      this.request.hosts = this.id
+      const params = this.request
+      this.result = (await this.$axios.$get('/api/opsidata/hosts', { params })).result
       this.isLoading = false
     }
   }
