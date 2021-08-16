@@ -59,9 +59,9 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <b>Selection: </b> <br>
+      <!-- <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
-      Clients : {{ selectionClients }} <br>
+      Clients : {{ selectionClients }} <br> -->
       <!-- rowID {{ rowId }} <br>
       Filter Query: {{ tableData.filterQuery }} -->
     </template>
@@ -120,7 +120,7 @@ export default class VClients extends Vue {
   async fetch () {
     this.isLoading = true
     if (this.fetchOptions.fetchClients) {
-      this.tableData.selectedDepots = this.selectionDepots
+      this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
       const params = this.tableData
       this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', { params })).result
     }

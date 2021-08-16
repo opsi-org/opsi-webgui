@@ -1,39 +1,38 @@
 <template>
-  <div>
-    <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
-    <TableTCollapseableForMobile
-      id="tableproducts"
-      datakey="productId"
-      :tabledata="tableData"
-      :title="$t('title.localboot')"
-      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-      :headers="headerData"
-      :items="fetchedData.products"
-      :selection="selectionProducts"
-      :onchangeselection="setSelectionProducts"
-      :loading="isLoading"
-      :totalrows="fetchedData.total"
-      :stacked="$mq=='mobile'"
-    >
-      <!-- :no-local-sorting="true"
+  <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
+  <TableTCollapseableForMobile
+    id="tableproducts"
+    datakey="productId"
+    :tabledata="tableData"
+    :title="$t('title.localboot')"
+    :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+    :headers="headerData"
+    :items="fetchedData.products"
+    :selection="selectionProducts"
+    :onchangeselection="setSelectionProducts"
+    :loading="isLoading"
+    :totalrows="fetchedData.total"
+    :stacked="$mq=='mobile'"
+  >
+    <!-- :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc" -->
-      <template #filter>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
-      </template>
-      <template #head(productId)>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
-      </template>
-      <template #cell(version)="row">
-        <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
-        <TableCellTCProductVersionCell
-          type="depotVersions"
-          :row="row"
-          :clients2depots="fetchedDataClients2Depots"
-          @details="toogleDetailsTooltip"
-        />
-      </template>
-      <!-- <template #cell(clientVersions)="row">
+    <template #filter>
+      <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+    </template>
+    <template #head(productId)>
+      <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+    </template>
+    <template #cell(version)="row">
+      <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
+      <TableCellTCProductVersionCell
+        type="depotVersions"
+        :row="row"
+        :clients2depots="fetchedDataClients2Depots"
+        @details="toogleDetailsTooltip"
+      />
+    </template>
+    <!-- <template #cell(clientVersions)="row">
         <TableCellTCProductVersionCell
           v-if="fetchedDataClients2Depots"
           type="clientVersion"
@@ -42,13 +41,13 @@
         />
       </template> -->
 
-      <template #head(installationStatus)>
-        is
-      </template>
+    <template #head(installationStatus)>
+      is
+    </template>
 
-      <template #cell(installationStatus)="row">
-        {{ row.item.installationStatus }}
-        <!-- <TableCellTCBadgeCompares
+    <template #cell(installationStatus)="row">
+      {{ row.item.installationStatus }}
+      <!-- <TableCellTCBadgeCompares
           v-if="(selectionClients && row.item.selectedClients)"
           type="installationStatus"
           :rowid="row.item.productId"
@@ -56,53 +55,52 @@
           :objects="row.item.selectedClients || []"
           :objectsorigin="selectionClients || []"
         /> -->
-      </template>
-      <!-- <template #cell(name)="row">
+    </template>
+    <!-- <template #cell(name)="row">
           <TableCellTCProductCellComparable :list2text="row.item.name" />
         </template> -->
-      <!-- <template #cell(productId)="row">
+    <!-- <template #cell(productId)="row">
           <TableCellTCProductCellComparable :list2text="row.item.productId" />
         </template> -->
-      <template v-if="selectionClients.length>0" #head(actionRequest)>
-        <DropdownDDProductRequest
-          v-if="selectionClients.length>0"
-          :title="$t('formselect.tooltip.actionRequest')"
-          :save="saveActionRequests"
-        />
-      </template>
+    <template v-if="selectionClients.length>0" #head(actionRequest)>
+      <DropdownDDProductRequest
+        v-if="selectionClients.length>0"
+        :title="$t('formselect.tooltip.actionRequest')"
+        :save="saveActionRequests"
+      />
+    </template>
 
-      <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
-        <!-- {{row.item.actionRequest}} -->
-        <!-- :title="'Set actionrequest for all selected products'" -->
-        <!-- {{row.item.installationStatus}} -->
-        <DropdownDDProductRequest
-          :request="row.item.actionRequest || 'none'"
-          :requestoptions="row.item.actions"
-          :rowitem="row.item"
-          :save="saveActionRequest"
-        />
-        <!-- {{row.item.versionDepot}} -->
-      </template>
+    <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
+      <!-- {{row.item.actionRequest}} -->
+      <!-- :title="'Set actionrequest for all selected products'" -->
+      <!-- {{row.item.installationStatus}} -->
+      <DropdownDDProductRequest
+        :request="row.item.actionRequest || 'none'"
+        :requestoptions="row.item.actions"
+        :rowitem="row.item"
+        :save="saveActionRequest"
+      />
+      <!-- {{row.item.versionDepot}} -->
+    </template>
 
-      <template #row-details="row">
-        <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
-        <TableTTooltip
-          v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
-          type="version"
-          :details="row.item.tooltiptext"
-          :depot-version-diff="row.item.depot_version_diff"
-        />
-        <!-- {{ row.item.tooltiptext }} -->
-      </template>
-      <template #pagination>
-        <BarBPagination
-          :tabledata="tableData"
-          :total-rows="fetchedData.total"
-          aria-controls="tableproducts"
-        />
-      </template>
-    </TableTCollapseableForMobile>
-  </div>
+    <template #row-details="row">
+      <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
+      <TableTTooltip
+        v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+        type="version"
+        :details="row.item.tooltiptext"
+        :depot-version-diff="row.item.depot_version_diff"
+      />
+      <!-- {{ row.item.tooltiptext }} -->
+    </template>
+    <template #pagination>
+      <BarBPagination
+        :tabledata="tableData"
+        :total-rows="fetchedData.total"
+        aria-controls="tableproducts"
+      />
+    </template>
+  </TableTCollapseableForMobile>
 </template>
 
 <script lang="ts">
@@ -115,8 +113,12 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
+interface DepotRequest {
+    selectedClients: string
+}
 @Component
 export default class TProductsLocalboot extends Vue {
+  depotRequest: DepotRequest = { selectedClients: '' }
   // @Prop() tableData!: ITableData
   rowId: string = ''
   isLoading: boolean = true
@@ -218,24 +220,20 @@ export default class TProductsLocalboot extends Vue {
     //   this.fetchOptions.fetchDepotIds = false
     // }
     if (this.fetchOptions.fetchClients2Depots) {
-      this.fetchedDataClients2Depots = (await this.$axios.$post(
-        '/api/opsidata/clients/depots',
-        JSON.stringify({ selectedClients: this.selectionClients })
-      )).result
+      this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
+      const params = this.depotRequest
+      this.fetchedDataClients2Depots = (await this.$axios.$get('/api/opsidata/clients/depots', { params })).result
       this.fetchOptions.fetchClients2Depots = false
     }
 
     if (this.fetchOptions.fetchClients) {
-      this.tableData.selectedDepots = this.selectionDepots
-      this.tableData.selectedClients = this.selectionClients
+      this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+      this.tableData.selectedClients = JSON.stringify(this.selectionClients)
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
       try {
-        this.fetchedData = (await this.$axios.$post(
-          '/api/opsidata/products',
-          JSON.stringify(this.tableData)
-        )).result
-        // this.fetchedData = this.fetchedData.result
+        const params = this.tableData
+        this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error('error in fetchData ', this.fetchedData)

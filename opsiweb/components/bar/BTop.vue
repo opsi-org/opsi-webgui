@@ -27,18 +27,14 @@
 </template>
 
 <script lang="ts">
-
 import { Component, Vue, Prop } from 'nuxt-property-decorator'
-
 @Component
 export default class CTop extends Vue {
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: Object
 }
-
 </script>
 
 <style>
-
 .navbar-light .navbar-nav .nav-link{
   color: unset !important;
   font-weight: normal !important;
@@ -108,5 +104,4 @@ export default class CTop extends Vue {
   margin-top:10px !important;
   background-color: var(--secondary) !important;
 } */
-
 </style>

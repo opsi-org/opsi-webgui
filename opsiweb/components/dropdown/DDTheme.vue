@@ -17,7 +17,7 @@
         {{ t.title }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
-    <b-dropdown v-else :text="theme.title" variant="secondary" :dropup="dropup">
+    <b-dropdown v-else :text="theme.title" size="sm" :dropup="dropup">
       <b-dropdown-item
         v-for="t in themes"
         :key="t.rel"
