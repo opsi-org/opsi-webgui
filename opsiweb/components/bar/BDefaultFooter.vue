@@ -3,12 +3,10 @@
     <b-navbar
       toggleable="md"
       fixed="bottom"
-      type="light"
-      variant="secondary"
       :class="{auth_footer: $mq === 'desktop', auth_footer_wrap: $mq === 'mobile'}"
     >
-      <b-navbar-nav align="center" small class="ml-auto">
-        <b>Selection: </b> <br>
+      <b-navbar-nav small class="ml-auto">
+        <b>Selection: </b>
         Depots : {{ selectionDepots }} <br>
         Clients: {{ selectionClients }} <br>
         Products: {{ selectionProducts }} <br>
