@@ -242,15 +242,51 @@ export default class TProductsNetboot extends Vue {
     this.$fetch()
   }
 
-  saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
-    // TODO: saving in database for dropdown in table head(actionRequest)
+  // saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
+  async saveActionRequests (newrequest: string) {
+    const alldata = []
+    for (const c in this.selectionClients) {
+      // const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
+      for (const p in this.selectionProducts) {
+        const data = {
+          clientId: this.selectionClients[c],
+          productId: this.selectionProducts[p],
+          productType: 'NetbootProduct',
+          actionRequest: newrequest
+        }
+        alldata.push(data)
+      }
+    }
     // eslint-disable-next-line no-console
-    console.log('save action Request for all selected clients and products')
-    // eslint-disable-next-line no-console
-    console.log(rowitem, newrequest)
-    // for (const i in this.selectionProducts) {
-    //   this.fetchedData[this.selectionProducts[i]].request = newrequest
-    // }
+    console.debug('save:', alldata)
+    for (const d in alldata) {
+      const responseError: IObjectString2String = (await this.$axios.$patch(
+        '/api/opsidata/clients/products',
+        JSON.stringify({ data: alldata[d] })
+      )).error
+      if (Object.keys(responseError).length > 0) {
+        let txt = 'Errors for: <br />'
+        for (const k in responseError) {
+          txt += `${k}: ${responseError[k]} <br />`
+        }
+        this.$bvToast.toast(txt, {
+          title: 'Warnings:',
+          autoHideDelay: 5000,
+          appendToast: false
+        })
+      }
+    }
+    this.fetchOptions.fetchClients = true
+    this.$fetch()
+
+    // // TODO: saving in database for dropdown in table head(actionRequest)
+    // // eslint-disable-next-line no-console
+    // console.log('save action Request for all selected clients and products')
+    // // eslint-disable-next-line no-console
+    // console.log(rowitem, newrequest)
+    // // for (const i in this.selectionProducts) {
+    // //   this.fetchedData[this.selectionProducts[i]].request = newrequest
+    // // }
   }
 }
 </script>
