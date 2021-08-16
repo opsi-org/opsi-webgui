@@ -15,11 +15,10 @@
       </BarBPageHeader>
       <TableTProductsNetboot />
       <TableTProductsLocalboot />
-      <b>Selection: </b> <br>
+      <!-- <b>Selection: </b> <br>
       Depots : {{ selectionDepots }} <br>
       Clients: {{ selectionClients }} <br>
-      Products: {{ selectionProducts }} <br>
-      <!-- Product Changes: {{ productChanges }} <br> -->
+      Products: {{ selectionProducts }} <br> -->
       <!-- Sorting By: <b>{{ tableData.sortBy }}</b>, Sort Direction:
       <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b> -->
       <!-- rowID {{ rowId }} <br>

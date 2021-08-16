@@ -1,42 +1,40 @@
 <template>
-  <div>
-    <b-table
-      v-bind="$props"
-      :ref="$props.id"
-      :class="$mq"
-      hover
-      :small="$mq=='mobile'"
-      selectable
-      borderless
-      select-mode="multi"
-      :no-local-sorting="true"
-      :sort-by.sync="tabledata.sortBy"
-      :sort-desc.sync="tabledata.sortDesc"
-      sort-icon-right
-      @row-clicked="rowChanged"
-    >
-      <template #head()="header">
-        {{ $t(header.label) }}
-      </template>
-      <template #head(sel)="{}">
-        {{ selection.length }}/{{ totalrows }}
-      </template>
-      <template #cell(sel)="row">
-        {{ fixRow(row) }}
-        <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
-      </template>
+  <b-table
+    v-bind="$props"
+    :ref="$props.id"
+    :class="$mq"
+    hover
+    :small="$mq=='mobile'"
+    selectable
+    borderless
+    select-mode="multi"
+    :no-local-sorting="true"
+    :sort-by.sync="tabledata.sortBy"
+    :sort-desc.sync="tabledata.sortDesc"
+    sort-icon-right
+    @row-clicked="rowChanged"
+  >
+    <template #head()="header">
+      {{ $t(header.label) }}
+    </template>
+    <template #head(sel)="{}">
+      {{ selection.length }}/{{ totalrows }}
+    </template>
+    <template #cell(sel)="row">
+      {{ fixRow(row) }}
+      <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
+    </template>
 
-      <template #head(rowactions)="{}">
-        <DropdownDDTableColumnVisibilty :headers="headers" />
-      </template>
-      <template
-        v-for="slotName in Object.keys($scopedSlots)"
-        #[slotName]="slotScope"
-      >
-        <slot :name="slotName" v-bind="slotScope" />
-      </template>
-    </b-table>
-  </div>
+    <template #head(rowactions)="{}">
+      <DropdownDDTableColumnVisibilty :headers="headers" />
+    </template>
+    <template
+      v-for="slotName in Object.keys($scopedSlots)"
+      #[slotName]="slotScope"
+    >
+      <slot :name="slotName" v-bind="slotScope" />
+    </template>
+  </b-table>
 </template>
 
 <script lang="ts">
