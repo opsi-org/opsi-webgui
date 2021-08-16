@@ -75,7 +75,6 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
-
 interface NewClient {
   hostId: string,
   description: string,
@@ -84,8 +83,12 @@ interface NewClient {
   ipAddress: any,
   notes: string
 }
+interface ClientRequest {
+    selectedDepots: Array<string>
+}
 
 @Component export default class VClientsAddNew extends Vue {
+  clientRequest: ClientRequest = { selectedDepots: [] }
   clientIds: Array<string> = []
   opsiconfigserver: string = ''
   result: string = ''
@@ -121,10 +124,9 @@ interface NewClient {
   }
 
   async fetch () {
-    this.clientIds = (await this.$axios.$post('/api/opsidata/depots/clients',
-      JSON.stringify({ selectedDepots: this.selectionDepots }))
-    ).result.clients.sort()
-
+    this.clientRequest.selectedDepots = this.selectionDepots
+    const params = this.clientRequest
+    this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
     this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
   }
 

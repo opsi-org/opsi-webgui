@@ -40,8 +40,8 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <b>Selection: </b> <br>
-      Depots : {{ selectionDepots }} <br>
+      <!-- <b>Selection: </b> <br>
+      Depots : {{ selectionDepots }} <br> -->
       <!-- rowID {{ rowId }} <br>
       Filter Query: {{ tableData.filterQuery }} -->
     </template>
@@ -103,7 +103,8 @@ export default class VDepots extends Vue {
 
   async fetch () {
     this.isLoading = true
-    this.fetchedData = (await this.$axios.$post('/api/opsidata/depots', JSON.stringify(this.tableData))).result
+    const params = this.tableData
+    this.fetchedData = (await this.$axios.$get('/api/opsidata/depots', { params })).result
     this.isLoading = false
   }
 }
