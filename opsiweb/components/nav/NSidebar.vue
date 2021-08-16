@@ -1,34 +1,32 @@
 <template>
-  <div>
-    <!-- TODO: Edit navItems route in components/nav/NSidebar -->
-    <b-nav vertical tabs class="sidemenu_nav">
-      <span v-for="catogery in navItems" :key="catogery.title">
-        <NavNTitle :expanded="expanded" :title="catogery.title" />
-        <span v-for="menuitem in catogery.menu" :key="menuitem.title">
-          <template v-if="menuitem.submenu">
-            <NavNItemCollapsible
-              v-if="expanded"
-              :title="menuitem.title"
-              :icon="menuitem.icon"
-              :route="menuitem.route"
-              :submenu="menuitem.submenu"
-            />
-            <NavNItemDropdownHoverable
-              v-else
-              :title="menuitem.title"
-              :icon="menuitem.icon"
-              :route="menuitem.route"
-              :submenu="menuitem.submenu"
-            />
-          </template>
-          <template v-else>
-            <NavNItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
-          </template>
-        </span>
-        <br>
+  <!-- TODO: Edit navItems route in components/nav/NSidebar -->
+  <b-nav vertical tabs class="sidemenu_nav">
+    <span v-for="catogery in navItems" :key="catogery.title">
+      <NavNTitle :expanded="expanded" :title="catogery.title" />
+      <span v-for="menuitem in catogery.menu" :key="menuitem.title">
+        <template v-if="menuitem.submenu">
+          <NavNItemCollapsible
+            v-if="expanded"
+            :title="menuitem.title"
+            :icon="menuitem.icon"
+            :route="menuitem.route"
+            :submenu="menuitem.submenu"
+          />
+          <NavNItemDropdownHoverable
+            v-else
+            :title="menuitem.title"
+            :icon="menuitem.icon"
+            :route="menuitem.route"
+            :submenu="menuitem.submenu"
+          />
+        </template>
+        <template v-else>
+          <NavNItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
+        </template>
       </span>
-    </b-nav>
-  </div>
+      <br>
+    </span>
+  </b-nav>
 </template>
 
 <script lang="ts">
