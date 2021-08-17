@@ -4,6 +4,7 @@
     "warning": "WARNING",
     "success": "SUCCESS",
     "error": "ERROR",
+    "loginFailed": "Login Failed",
     "add": " has been added succesfully.",
     "exists": " already exists."
   },

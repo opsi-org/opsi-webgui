@@ -4,6 +4,7 @@
     "warning": "WARNUNG",
     "success": "ERFOLG",
     "error": "FEHLER",
+    "loginFailed": "Fehler bei der Anmeldung",
     "add": " wurde erfolgreich hinzugefügt.",
     "exists": " existiert bereits."
   },
