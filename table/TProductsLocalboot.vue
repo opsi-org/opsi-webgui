@@ -219,7 +219,7 @@ export default class TProductsLocalboot extends Vue {
     //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
     //   this.fetchOptions.fetchDepotIds = false
     // }
-    if (this.fetchOptions.fetchClients2Depots) {
+    if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
       this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
       const params = this.depotRequest
       this.fetchedDataClients2Depots = (await this.$axios.$get('/api/opsidata/clients/depots', { params })).result
