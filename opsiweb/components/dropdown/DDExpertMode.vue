@@ -2,7 +2,7 @@
   <b-button class="text-left dd_expertmode" @click="toggleMode">
     <b-icon v-if="localmode==='user'" icon="gem" class="" font-scale="0.8"/>
     <b-icon v-else-if="localmode==='expert'" icon="gem" class="" font-scale="0.8" variant="danger" />
-    {{($mq=='mobile') ? $t('expertmode') : '' }} {{ (localmode === 'expert') ? 'on':'' }}
+    {{($mq=='mobile') ? $t('expertmode') : '' }} {{ ($mq=='mobile' && localmode === 'expert') ? 'on':'' }}
   </b-button>
 </template>
 
@@ -13,6 +13,7 @@ const settings = namespace('settings')
 @Component export default class DDExpertMode extends Vue {
   @Prop({ default: false }) dropup!: boolean
   localmode: string = 'user'
+  @settings.Getter public modeIsExpert!: Boolean
   @settings.Getter public expertmode!: Function // returns string
   @settings.Mutation public setExpertmode!: (mode: string) => void
 

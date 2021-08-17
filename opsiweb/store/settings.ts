@@ -10,6 +10,10 @@ export default class Settings extends VuexModule {
     return () => { return Cookie.get('mode') as string }
   }
 
+  get modeIsExpert () {
+    return () => { return Cookie.get('mode') as string === 'expert' }
+  }
+
   get language (): string { return this._language }
 
   get colortheme (): ITheme {
