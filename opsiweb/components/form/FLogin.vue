@@ -67,12 +67,14 @@ interface FormUser {
           } else {
             this.$router.back()
           }
+          this.isLoading = false
         }
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
         this.logout()
         this.result = (this as any).$t('message.loginFailed')
+        this.isLoading = false
         this.$bvToast.toast(this.result, {
           title: (this as any).$t('message.error'),
           toaster: 'b-toaster-bottom-right',
@@ -81,7 +83,6 @@ interface FormUser {
           appendToast: false
         })
       })
-    this.isLoading = false
   }
 }
 </script>
