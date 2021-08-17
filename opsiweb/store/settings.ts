@@ -6,6 +6,9 @@ import { ITheme } from '@/types/tsettings'
 export default class Settings extends VuexModule {
   _language: string = 'en'
   colorthemeobj: ITheme = { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' }
+  get expertmode () {
+    return () => { return Cookie.get('mode') as string }
+  }
 
   get language (): string { return this._language }
 
@@ -31,7 +34,11 @@ export default class Settings extends VuexModule {
 
   @VuexMutation public setLanguage (lang: string) {
     this._language = lang
-    Cookie.set('Language', this._language)
+    Cookie.set('Language', this._language, { expires: 365 })
+  }
+
+  @VuexMutation public setExpertmode (mode: string) {
+    Cookie.set('mode', mode, { expires: 365 })
   }
 
   @VuexMutation // ({ mutate: ['colorthemeobj'] })
