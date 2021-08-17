@@ -5,6 +5,7 @@
     "success": "ERFOLG",
     "error": "FEHLER",
     "loginFailed": "Fehler bei der Anmeldung",
+    "errortext": "Etwas ist schief gelaufen !!!",
     "add": " wurde erfolgreich hinzugefügt.",
     "exists": " existiert bereits."
   },

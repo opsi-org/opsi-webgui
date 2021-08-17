@@ -5,6 +5,7 @@
     "success": "SUCCESS",
     "error": "ERROR",
     "loginFailed": "Login Failed",
+    "errortext": "Something went wrong !!!",
     "add": " has been added succesfully.",
     "exists": " already exists."
   },
