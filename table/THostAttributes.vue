@@ -1,5 +1,13 @@
 <template>
-  <TableTDefault v-if="result" :is-busy="isLoading" :stacked="true" :tableitems="[result]" :tablefields="fields" />
+  <TableTDefault
+    v-if="result"
+    :is-busy="isLoading"
+    :error="showError"
+    :errortext="errorText"
+    :stacked="true"
+    :tableitems="[result]"
+    :tablefields="fields"
+  />
 </template>
 
 <script lang="ts">
@@ -14,6 +22,8 @@ export default class THostAttributes extends Vue {
   result:Object = {}
   request: Request = { hosts: '' }
   isLoading: boolean = false
+  showError: boolean = false
+  errorText: string = ''
 
   get fields () {
     return [
@@ -42,7 +52,15 @@ export default class THostAttributes extends Vue {
       this.isLoading = true
       this.request.hosts = this.id
       const params = this.request
-      this.result = (await this.$axios.$get('/api/opsidata/hosts', { params })).result
+      await this.$axios.$get('/api/opsidata/hosts', { params })
+        .then((response) => {
+          this.result = response.result
+        }).catch((error) => {
+        // eslint-disable-next-line no-console
+          console.error(error)
+          this.showError = true
+          this.errorText = (this as any).$t('message.errortext')
+        })
       this.isLoading = false
     }
   }

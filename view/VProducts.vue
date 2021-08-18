@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
     <template #parent>
       <BarBPageHeader>
         <template #left>

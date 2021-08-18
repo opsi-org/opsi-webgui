@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
     <template #parent>
       <BarBPageHeader>
         <template #left>
@@ -10,7 +10,12 @@
           <TreeTSHostGroup />
         </template>
       </BarBPageHeader>
+      <IconILoading v-if="isLoading" />
+      <p v-else-if="errorText">
+        {{ errorText }}
+      </p>
       <TableTCollapseableForMobile
+        v-else
         id="tableclients"
         datakey="clientId"
         :collapseable="false"
@@ -83,6 +88,7 @@ interface IFetchOptions {
 export default class VClients extends Vue {
   rowId: string = ''
   isLoading: boolean = true
+  errorText: string = ''
   fetchedData: object = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
@@ -122,10 +128,24 @@ export default class VClients extends Vue {
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
       const params = this.tableData
-      this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', { params })).result
+      await this.$axios.$get('/api/opsidata/clients', { params })
+        .then((response) => {
+          this.fetchedData = response.result
+        }).catch((error) => {
+        // eslint-disable-next-line no-console
+          console.error(error)
+          this.errorText = (this as any).$t('message.errortext')
+        })
     }
     if (this.fetchOptions.fetchDepotIds) {
-      this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
+      await this.$axios.$get('/api/opsidata/depotIds')
+        .then((response) => {
+          this.fetchedDataDepotIds = response.result
+        }).catch((error) => {
+        // eslint-disable-next-line no-console
+          console.error(error)
+          this.errorText = (this as any).$t('message.errortext')
+        })
       this.fetchOptions.fetchDepotIds = false
     }
     this.isLoading = false
