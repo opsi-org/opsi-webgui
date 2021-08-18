@@ -115,6 +115,7 @@ import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
+const settings = namespace('settings')
 const changes = namespace('changes')
 interface IFetchOptions {
   fetchClients:boolean,
@@ -164,6 +165,7 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
+  @settings.Getter public expert!: boolean
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -255,15 +257,17 @@ export default class TProductsLocalboot extends Vue {
 
   async saveActionRequest (rowitem: any, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    // for (const c in this.selectionClients) {
-    //   const changedItem: any = {
-    //     productId: rowitem.productId,
-    //     clientId: this.selectionClients[c],
-    //     productType: rowitem.productType,
-    //     actionRequest: newrequest
+    // if (this.expert) {
+    //   for (const c in this.selectionClients) {
+    //     const changedItem: any = {
+    //       productId: rowitem.productId,
+    //       clientId: this.selectionClients[c],
+    //       productType: rowitem.productType,
+    //       actionRequest: newrequest
+    //     }
+    //     this.pushToChangesProducts(changedItem)
     //   }
-    //   this.pushToChangesProducts(changedItem)
-    // }
+    // } else {
     rowitem.request = [newrequest]
     // eslint-disable-next-line no-console
     console.debug('Clients2Depots', this.fetchedDataClients2Depots)
@@ -278,27 +282,33 @@ export default class TProductsLocalboot extends Vue {
         actionRequest: newrequest
       }
       alldata.push(data)
-    }
-    // eslint-disable-next-line no-console
-    console.debug('save:', alldata)
-
-    const responseError: IObjectString2String = (await this.$axios.$patch(
-      '/api/opsidata/clients/products',
-      JSON.stringify({ data: alldata })
-    )).error
-    if (Object.keys(responseError).length > 0) {
-      let txt = 'Errors for: <br />'
-      for (const k in responseError) {
-        txt += `${k}: ${responseError[k]} <br />`
+      if (this.expert) {
+        this.pushToChangesProducts(data)
       }
-      this.$bvToast.toast(txt, {
-        title: 'Warnings:',
-        autoHideDelay: 5000,
-        appendToast: false
-      })
     }
-    this.fetchOptions.fetchClients = true
-    this.$fetch()
+    if (!this.expert) {
+    // eslint-disable-next-line no-console
+      console.debug('save:', alldata)
+
+      const responseError: IObjectString2String = (await this.$axios.$patch(
+        '/api/opsidata/clients/products',
+        JSON.stringify({ data: alldata })
+      )).error
+      if (Object.keys(responseError).length > 0) {
+        let txt = 'Errors for: <br />'
+        for (const k in responseError) {
+          txt += `${k}: ${responseError[k]} <br />`
+        }
+        this.$bvToast.toast(txt, {
+          title: 'Warnings:',
+          autoHideDelay: 5000,
+          appendToast: false
+        })
+      }
+      this.fetchOptions.fetchClients = true
+      this.$fetch()
+    }
+    // }
   }
 
   saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
