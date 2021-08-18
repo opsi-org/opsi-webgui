@@ -1,38 +1,44 @@
 <template>
-  <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
-  <TableTCollapseableForMobile
-    id="tableproducts"
-    datakey="productId"
-    :tabledata="tableData"
-    :title="$t('title.localboot')"
-    :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-    :headers="headerData"
-    :items="fetchedData.products"
-    :selection="selectionProducts"
-    :onchangeselection="setSelectionProducts"
-    :loading="isLoading"
-    :totalrows="fetchedData.total"
-    :stacked="$mq=='mobile'"
-  >
-    <!-- :no-local-sorting="true"
+  <div>
+    <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
+    <IconILoading v-if="isLoading" />
+    <p v-else-if="errorText">
+      {{ errorText }}
+    </p>
+    <TableTCollapseableForMobile
+      v-else
+      id="tableproducts"
+      datakey="productId"
+      :tabledata="tableData"
+      :title="$t('title.localboot')"
+      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+      :headers="headerData"
+      :items="fetchedData.products"
+      :selection="selectionProducts"
+      :onchangeselection="setSelectionProducts"
+      :loading="isLoading"
+      :totalrows="fetchedData.total"
+      :stacked="$mq=='mobile'"
+    >
+      <!-- :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc" -->
-    <template #filter>
-      <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
-    </template>
-    <template #head(productId)>
-      <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
-    </template>
-    <template #cell(version)="row">
-      <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
-      <TableCellTCProductVersionCell
-        type="depotVersions"
-        :row="row"
-        :clients2depots="fetchedDataClients2Depots"
-        @details="toogleDetailsTooltip"
-      />
-    </template>
-    <!-- <template #cell(clientVersions)="row">
+      <template #filter>
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+      </template>
+      <template #head(productId)>
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+      </template>
+      <template #cell(version)="row">
+        <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
+        <TableCellTCProductVersionCell
+          type="depotVersions"
+          :row="row"
+          :clients2depots="fetchedDataClients2Depots"
+          @details="toogleDetailsTooltip"
+        />
+      </template>
+      <!-- <template #cell(clientVersions)="row">
         <TableCellTCProductVersionCell
           v-if="fetchedDataClients2Depots"
           type="clientVersion"
@@ -41,12 +47,12 @@
         />
       </template> -->
 
-    <template #head(installationStatus)>
-      is
-    </template>
+      <template #head(installationStatus)>
+        is
+      </template>
 
-    <template #cell(installationStatus)="row">
-      {{ row.item.installationStatus }}
+      <template #cell(installationStatus)="row">
+        {{ row.item.installationStatus }}
       <!-- <TableCellTCBadgeCompares
           v-if="(selectionClients && row.item.selectedClients)"
           type="installationStatus"
@@ -55,52 +61,53 @@
           :objects="row.item.selectedClients || []"
           :objectsorigin="selectionClients || []"
         /> -->
-    </template>
-    <!-- <template #cell(name)="row">
+      </template>
+      <!-- <template #cell(name)="row">
           <TableCellTCProductCellComparable :list2text="row.item.name" />
         </template> -->
-    <!-- <template #cell(productId)="row">
+      <!-- <template #cell(productId)="row">
           <TableCellTCProductCellComparable :list2text="row.item.productId" />
         </template> -->
-    <template v-if="selectionClients.length>0" #head(actionRequest)>
-      <DropdownDDProductRequest
-        v-if="selectionClients.length>0"
-        :title="$t('formselect.tooltip.actionRequest')"
-        :save="saveActionRequests"
-      />
-    </template>
+      <template v-if="selectionClients.length>0" #head(actionRequest)>
+        <DropdownDDProductRequest
+          v-if="selectionClients.length>0"
+          :title="$t('formselect.tooltip.actionRequest')"
+          :save="saveActionRequests"
+        />
+      </template>
 
-    <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
-      <!-- {{row.item.actionRequest}} -->
-      <!-- :title="'Set actionrequest for all selected products'" -->
-      <!-- {{row.item.installationStatus}} -->
-      <DropdownDDProductRequest
-        :request="row.item.actionRequest || 'none'"
-        :requestoptions="row.item.actions"
-        :rowitem="row.item"
-        :save="saveActionRequest"
-      />
+      <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
+        <!-- {{row.item.actionRequest}} -->
+        <!-- :title="'Set actionrequest for all selected products'" -->
+        <!-- {{row.item.installationStatus}} -->
+        <DropdownDDProductRequest
+          :request="row.item.actionRequest || 'none'"
+          :requestoptions="row.item.actions"
+          :rowitem="row.item"
+          :save="saveActionRequest"
+        />
       <!-- {{row.item.versionDepot}} -->
-    </template>
+      </template>
 
-    <template #row-details="row">
-      <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
-      <TableTTooltip
-        v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
-        type="version"
-        :details="row.item.tooltiptext"
-        :depot-version-diff="row.item.depot_version_diff"
-      />
+      <template #row-details="row">
+        <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
+        <TableTTooltip
+          v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+          type="version"
+          :details="row.item.tooltiptext"
+          :depot-version-diff="row.item.depot_version_diff"
+        />
       <!-- {{ row.item.tooltiptext }} -->
-    </template>
-    <template #pagination>
-      <BarBPagination
-        :tabledata="tableData"
-        :total-rows="fetchedData.total"
-        aria-controls="tableproducts"
-      />
-    </template>
-  </TableTCollapseableForMobile>
+      </template>
+      <template #pagination>
+        <BarBPagination
+          :tabledata="tableData"
+          :total-rows="fetchedData.total"
+          aria-controls="tableproducts"
+        />
+      </template>
+    </TableTCollapseableForMobile>
+  </div>
 </template>
 
 <script lang="ts">
@@ -122,6 +129,7 @@ export default class TProductsLocalboot extends Vue {
   // @Prop() tableData!: ITableData
   rowId: string = ''
   isLoading: boolean = true
+  errorText: string = ''
   fetchedData: object = {}
   fetchedDataClients2Depots: object = {}
   fetchedDataDepotIds: Array<string> = []
@@ -222,7 +230,14 @@ export default class TProductsLocalboot extends Vue {
     if (this.fetchOptions.fetchClients2Depots) {
       this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
       const params = this.depotRequest
-      this.fetchedDataClients2Depots = (await this.$axios.$get('/api/opsidata/clients/depots', { params })).result
+      await this.$axios.$get('/api/opsidata/clients/depots', { params })
+        .then((response) => {
+          this.fetchedDataClients2Depots = response.result
+        }).catch((error) => {
+        // eslint-disable-next-line no-console
+          console.error(error)
+          this.errorText = (this as any).$t('message.errortext')
+        })
       this.fetchOptions.fetchClients2Depots = false
     }
 
@@ -235,6 +250,7 @@ export default class TProductsLocalboot extends Vue {
         const params = this.tableData
         this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
       } catch (error) {
+        this.errorText = (this as any).$t('message.errortext')
         // eslint-disable-next-line no-console
         console.error('error in fetchData ', this.fetchedData)
         // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
