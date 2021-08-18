@@ -1,8 +1,8 @@
 <template>
   <b-button class="text-left dd_expertmode" @click="toggleMode">
-    <b-icon v-if="localmode==='user'" icon="gem" class="" font-scale="0.8"/>
+    <b-icon v-if="localmode==='user'" icon="gem" class="" font-scale="0.8" />
     <b-icon v-else-if="localmode==='expert'" icon="gem" class="" font-scale="0.8" variant="danger" />
-    {{($mq=='mobile') ? $t('expertmode') : '' }} {{ ($mq=='mobile' && localmode === 'expert') ? 'on':'' }}
+    {{ ($mq=='mobile') ? $t('expertmode') : '' }} {{ ($mq=='mobile' && localmode === 'expert') ? 'on':'' }}
   </b-button>
 </template>
 
