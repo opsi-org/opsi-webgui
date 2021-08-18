@@ -1,7 +1,4 @@
 <template>
-  <!-- <b-button :pressed.sync="expert">
-    {{ expert? 'Expert': 'Normal' }}
-  </b-button> -->
   <b-button v-model="localMode" :pressed.sync="localMode" @click="changeMode(localMode)">
     {{ expert? 'Expert': 'Normal' }}
   </b-button>
@@ -14,19 +11,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
 const settings = namespace('settings')
 
 @Component export default class BTNExpertMode extends Vue {
-  @Prop({ default: false }) dropup!: boolean
-  // expert: boolean = false
-  localMode: boolean = false
-  @settings.Getter public expert!: boolean
-  @settings.Mutation public setExpertmode!: (isExpert: boolean) => void
+  // @Prop({ default: false }) dropup!: boolean
   // localmode: string = 'user'
   // @settings.Getter public modeIsExpert!: Boolean
   // @settings.Getter public expertmode!: Function // returns string
   // @settings.Mutation public setExpertmode!: (mode: string) => void
+
+  localMode: boolean = false
+  @settings.Getter public expert!: boolean
+  @settings.Mutation public setExpertmode!: (isExpert: boolean) => void
+
+  beforeMount () {
+    this.localMode = this.expert
+  }
 
   changeMode (localMode: boolean) {
     this.setExpertmode(localMode)
