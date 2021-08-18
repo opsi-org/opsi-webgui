@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-dropdown-item-button @click="$bvModal.show(id + 'deleteClientModal')">
-      <b-icon icon="trash" />  Delete
+      <b-icon icon="trash" />  {{ $t('message.delete') }}
     </b-dropdown-item-button>
     <b-modal
       :id="id + 'deleteClientModal'"
@@ -11,15 +11,15 @@
       no-fade
     >
       <span>
-        Are you sure you want to delete the client<br>
+        {{ $t('message.deleteConfirm') }}<br>
         <b> {{ id }}</b>
         ?
       </span>
+      <br>
       <b-row>
-        <b-col />
-        <b-col cols="auto">
+        <b-col>
           <b-button @click="deleteOpsiClient()">
-            <b-icon icon="trash" /> Delete
+            <b-icon icon="trash" /> {{ $t('message.delete') }}
           </b-button>
         </b-col>
       </b-row>
@@ -51,13 +51,17 @@ interface DeleteClient {
   }
 
   async deleteOpsiClient () {
-    // eslint-disable-next-line no-console
-    console.log('DELETE: ', this.id)
     this.$bvModal.hide(this.id + 'deleteClientModal')
-    const result = await this.$axios.$delete('/api/opsidata/clients/' + this.id)
-    if (result.error === '') {
-      this.makeToast(this.id + 'has been removed successfully.', this.$t('message.success'), 'success', 5000)
-    } else { this.makeToast(result.error, this.$t('message.error'), 'danger', 8000) }
+    await this.$axios.$delete('/api/opsidata/clients/' + this.id)
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.error(response)
+        this.makeToast(this.id + this.$t('message.deleteMessage'), this.$t('message.success'), 'success', 5000)
+      }).catch((error) => {
+        this.makeToast((this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
   }
 }
 </script>

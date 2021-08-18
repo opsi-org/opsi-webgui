@@ -19,7 +19,7 @@
         <b-navbar-nav class="ml-auto float-right">
           <DropdownDDExpertMode class="navbar-collapse-child" :navbar="true" />
           <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-          <DropdownDDTheme class="navbar-collapse-child" :navbar="true" />
+          <!-- <DropdownDDTheme class="navbar-collapse-child" :navbar="true" /> -->
           <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
         </b-navbar-nav>
       </b-collapse>
