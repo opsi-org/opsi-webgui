@@ -9,7 +9,7 @@
       centered
       hide-footer
     >
-      <b-table :items="changesProducts" :fields="['productId', 'clientId', 'productType', 'actionRequest', '_action']">
+      <b-table :items="changesProducts" :fields="['productId', 'clientId', 'productType', 'version', 'actionRequest', '_action']">
         <template #cell(_action)="row">
           <b-button-group>
             <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
@@ -24,7 +24,7 @@
           <ButtonBTNDeleteAll hide="ProductSaveModal" />
         </b-col>
         <b-col cols="auto">
-          <b-button>
+          <b-button @click="saveAll()">
             <b-icon icon="check2" /> Save All
           </b-button>
         </b-col>
@@ -35,6 +35,7 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { IObjectString2String } from '~/types/tsettings'
 const changes = namespace('changes')
 @Component
 export default class MProdSaveOverview extends Vue {
@@ -43,13 +44,31 @@ export default class MProdSaveOverview extends Vue {
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   async save (item: object) {
-    const body = item
-    this.saveResult = await this.$axios.$patch('/api/opsidata/clients/products', JSON.stringify(body))
-    if (this.saveResult.error === {}) {
+    const responseError: IObjectString2String = (await this.$axios.$patch(
+      '/api/opsidata/clients/products',
+      JSON.stringify({ data: [item] })
+    )).error
+    if (Object.keys(responseError).length > 0) {
+      let txt = 'Errors for: <br />'
+      for (const k in responseError) {
+        txt += `${k}: ${responseError[k]} <br />`
+      }
+      this.$bvToast.toast(txt, {
+        title: 'Warnings:',
+        autoHideDelay: 5000,
+        appendToast: false
+      })
+    } else {
       this.delFromChangesProducts(item)
     }
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
+    }
+  }
+
+  saveAll () {
+    for (const p in this.changesProducts) {
+      this.save(this.changesProducts[p])
     }
   }
 }
