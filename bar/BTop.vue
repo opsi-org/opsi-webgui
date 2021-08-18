@@ -12,12 +12,14 @@
       </b-navbar-brand>
       <b-navbar-nav v-if="$mq === 'mobile'">
         <b-button v-b-toggle.nav-collapse variant="secondary">
+          <IconIExpert v-if="expert" />
           <b-icon-three-dots-vertical font-scale="1.1" />
         </b-button>
       </b-navbar-nav>
       <b-collapse id="nav-collapse" is-nav variant="secondary">
         <b-navbar-nav class="ml-auto float-right">
-          <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" />
+          <IconIExpert v-if="expert && $mq=='desktop'" />
+          <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
           <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
           <!-- <DropdownDDTheme class="navbar-collapse-child" :navbar="true" /> -->
           <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
@@ -28,10 +30,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
+const settings = namespace('settings')
 @Component
 export default class CTop extends Vue {
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: Object
+  @settings.Getter public expert!: boolean
 }
 </script>
 
