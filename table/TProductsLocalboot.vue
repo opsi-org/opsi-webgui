@@ -257,17 +257,6 @@ export default class TProductsLocalboot extends Vue {
 
   async saveActionRequest (rowitem: any, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    // if (this.expert) {
-    //   for (const c in this.selectionClients) {
-    //     const changedItem: any = {
-    //       productId: rowitem.productId,
-    //       clientId: this.selectionClients[c],
-    //       productType: rowitem.productType,
-    //       actionRequest: newrequest
-    //     }
-    //     this.pushToChangesProducts(changedItem)
-    //   }
-    // } else {
     rowitem.request = [newrequest]
     // eslint-disable-next-line no-console
     console.debug('Clients2Depots', this.fetchedDataClients2Depots)
@@ -308,7 +297,6 @@ export default class TProductsLocalboot extends Vue {
       this.fetchOptions.fetchClients = true
       this.$fetch()
     }
-    // }
   }
 
   saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
