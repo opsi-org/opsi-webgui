@@ -1,12 +1,17 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
     <template #parent>
       <!-- <BarBPageHeader>
         <template #left>
           <InputIFilter :data="tableData" />
         </template>
       </BarBPageHeader> -->
+      <IconILoading v-if="isLoading" />
+      <p v-else-if="errorText">
+        {{ errorText }}
+      </p>
       <TableTCollapseableForMobile
+        v-else
         id="tabledepots"
         datakey="depotId"
         :collapseable="false"
@@ -62,6 +67,7 @@ export default class VDepots extends Vue {
 
   rowId: string = ''
   fetchedData: object = {}
+  errorText: string = ''
   isLoading: boolean = true
   tableData: ITableData = {
     pageNumber: 1,
@@ -104,7 +110,14 @@ export default class VDepots extends Vue {
   async fetch () {
     this.isLoading = true
     const params = this.tableData
-    this.fetchedData = (await this.$axios.$get('/api/opsidata/depots', { params })).result
+    await this.$axios.$get('/api/opsidata/depots', { params })
+      .then((response) => {
+        this.fetchedData = response.result
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.errorText = (this as any).$t('message.errortext')
+      })
     this.isLoading = false
   }
 }

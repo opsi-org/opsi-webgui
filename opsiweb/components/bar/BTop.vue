@@ -18,7 +18,7 @@
       <b-collapse id="nav-collapse" is-nav variant="secondary">
         <b-navbar-nav class="ml-auto float-right">
           <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-          <DropdownDDTheme class="navbar-collapse-child" :navbar="true" />
+          <!-- <DropdownDDTheme class="navbar-collapse-child" :navbar="true" /> -->
           <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
         </b-navbar-nav>
       </b-collapse>

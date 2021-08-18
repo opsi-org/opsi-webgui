@@ -160,10 +160,16 @@ interface ClientRequest {
       this.makeToast(this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning', 5000)
       return
     }
-    const result = await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
-    if (result.error === null) {
-      this.makeToast(this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
-    } else { this.makeToast(result.error, this.$t('message.error'), 'danger', 8000) }
+    await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.error(response)
+        this.makeToast(this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.makeToast((this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
+      })
     this.isLoading = false
   }
 }
