@@ -55,14 +55,13 @@ export default class THostAttributes extends Vue {
       await this.$axios.$get('/api/opsidata/hosts', { params })
         .then((response) => {
           this.result = response.result
-          this.isLoading = false
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
           this.showError = true
           this.errorText = (this as any).$t('message.errortext')
-          this.isLoading = false
         })
+      this.isLoading = false
     }
   }
 }
