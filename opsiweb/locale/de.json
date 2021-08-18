@@ -4,7 +4,12 @@
     "warning": "WARNUNG",
     "success": "ERFOLG",
     "error": "FEHLER",
+    "loginFailed": "Fehler bei der Anmeldung",
+    "errortext": "Etwas ist schief gelaufen !!!",
     "add": " wurde erfolgreich hinzugefügt.",
+    "delete": "Löschen",
+    "deleteConfirm": "Möchten Sie den Client wirklich löschen?",
+    "deleteMessage": " wurde erfolgreich gelöscht.",
     "exists": " existiert bereits."
   },
   "title":{

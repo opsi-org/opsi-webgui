@@ -4,7 +4,12 @@
     "warning": "WARNING",
     "success": "SUCCESS",
     "error": "ERROR",
+    "loginFailed": "Login Failed",
+    "errortext": "Something went wrong !!!",
     "add": " has been added succesfully.",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete the client",
+    "deleteMessage": " has been deleted successfully.",
     "exists": " already exists."
   },
   "title":{

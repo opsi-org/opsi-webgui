@@ -1,9 +1,23 @@
 <template>
   <b-container fluid>
-    <b-table :busy="isBusy" :stacked="stacked" borderless :items="tableitems" :fields="tablefields">
+    <p v-if="error">
+      {{ errortext }}
+    </p>
+    <!-- :show-empty="error" -->
+    <b-table
+      v-else
+      :busy="isBusy"
+      :stacked="stacked"
+      borderless
+      :items="tableitems"
+      :fields="tablefields"
+    >
       <template #table-busy>
         <IconILoading />
       </template>
+      <!-- <template #empty>
+        {{ errortext }}
+      </template> -->
       <template #cell(opsiHostKey)="row">
         <b-input-group>
           <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
@@ -39,6 +53,8 @@ export default class TDefault extends Vue {
   @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
   @Prop({ }) isBusy!: boolean
+  @Prop({ }) error!: boolean
+  @Prop({ }) errortext!: string
   showValue : boolean = false
 }
 </script>
