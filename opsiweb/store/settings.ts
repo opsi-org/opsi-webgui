@@ -5,16 +5,20 @@ import { ITheme } from '@/types/tsettings'
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
   _language: string = 'en'
+  _expert: boolean = false
   colorthemeobj: ITheme = { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' }
-  get expertmode () {
-    return () => { return Cookie.get('mode') as string }
-  }
 
-  get modeIsExpert () {
-    return () => { return Cookie.get('mode') as string === 'expert' }
-  }
+  // get expertmode () {
+  //   return () => { return Cookie.get('mode') as string }
+  // }
+
+  // get modeIsExpert () {
+  //   return () => { return Cookie.get('mode') as string === 'expert' }
+  // }
 
   get language (): string { return this._language }
+
+  get expert (): boolean { return this._expert }
 
   get colortheme (): ITheme {
     if (Cookie.get('theme.title')) {
@@ -41,9 +45,13 @@ export default class Settings extends VuexModule {
     Cookie.set('Language', this._language, { expires: 365 })
   }
 
-  @VuexMutation public setExpertmode (mode: string) {
-    Cookie.set('mode', mode, { expires: 365 })
+  @VuexMutation public setExpertmode (isExpert: boolean) {
+    this._expert = isExpert
+    Cookie.set('Expert Mode', JSON.stringify(this._expert), { expires: 365 })
   }
+  // @VuexMutation public setExpertmode (mode: string) {
+  //   Cookie.set('mode', mode, { expires: 365 })
+  // }
 
   @VuexMutation // ({ mutate: ['colorthemeobj'] })
   public setColorTheme (newThemeObj: ITheme) {
