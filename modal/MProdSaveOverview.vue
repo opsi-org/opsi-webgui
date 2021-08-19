@@ -58,9 +58,9 @@ export default class MProdSaveOverview extends Vue {
         autoHideDelay: 5000,
         appendToast: false
       })
-    } else {
-      this.delFromChangesProducts(item)
     }
+    this.delFromChangesProducts(item)
+
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
     }
