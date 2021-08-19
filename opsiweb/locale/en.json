@@ -108,8 +108,9 @@
     }
   },
   "settingsPage": {
-    "general": "General",
+    "localspecific": "Local Specific Settings",
     "theme": "Theme",
+    "mode": "User Mode",
     "modules": "Module Content"
   }
 }
