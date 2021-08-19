@@ -70,7 +70,8 @@
         </template> -->
       <template v-if="selectionClients.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
-          v-if="selectionClients.length>0"
+          v-if="selectionClients.length>0 && selectionProducts.length>0"
+          :action.sync="action"
           :title="$t('formselect.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
@@ -112,9 +113,11 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { IObjectString2ObjectString2String } from '~/types/tsettings'
+import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
+const settings = namespace('settings')
+const changes = namespace('changes')
 interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,
@@ -125,13 +128,16 @@ interface DepotRequest {
 }
 @Component
 export default class TProductsLocalboot extends Vue {
+  action: string = ''
   depotRequest: DepotRequest = { selectedClients: '' }
   // @Prop() tableData!: ITableData
+  // productChanges: Array<object> = []
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: object = {}
-  fetchedDataClients2Depots: object = {}
+  fetchedData: any
+  // fetchedData: object = {}
+  fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
   tableData: ITableData = {
@@ -161,6 +167,9 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @changes.Mutation public setChangesProducts!: (s: Array<object>) => void
+  @changes.Mutation public pushToChangesProducts!: (s: object) => void
+  @settings.Getter public expert!: boolean
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -209,16 +218,6 @@ export default class TProductsLocalboot extends Vue {
       this.headerData.actionRequest.disabled = false
     }
   }
-  // async beforeMount () {
-  //   this.tableData.selectedDepots = this.selectionDepots
-  //   this.tableData.selectedClients = this.selectionClients
-  //   if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-  //   if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-  //   this.fetchedData = (await this.$axios.$post(
-  //     '/api/opsidata/products',
-  //     JSON.stringify(this.tableData)
-  //   )).result
-  // }
 
   async fetch () {
     this.isLoading = true
@@ -260,21 +259,115 @@ export default class TProductsLocalboot extends Vue {
     this.isLoading = false
   }
 
-  saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
-    // TODO: saving in database for dropdown in table cell(actionRequest)
-    rowitem.request = [newrequest]
+  async save (change : Array<object>) {
+    const responseError: IObjectString2String = (await this.$axios.$patch(
+      '/api/opsidata/clients/products',
+      JSON.stringify({ data: change })
+    )).error
+    if (Object.keys(responseError).length > 0) {
+      let txt = 'Errors for: <br />'
+      for (const k in responseError) {
+        txt += `${k}: ${responseError[k]} <br />`
+      }
+      this.$bvToast.toast(txt, {
+        title: 'Warnings:',
+        autoHideDelay: 5000,
+        appendToast: false
+      })
+    }
   }
 
-  saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
-    // TODO: saving in database for dropdown in table head(actionRequest)
+  saveActionRequest (rowitem: any, newrequest: string) {
+    // TODO: saving in database for dropdown in table cell(actionRequest)
+    rowitem.request = [newrequest]
     // eslint-disable-next-line no-console
-    console.log('save action Request for all selected clients and products')
+    console.debug('Clients2Depots', this.fetchedDataClients2Depots)
+    const alldata = []
+    for (const c in this.selectionClients) {
+      const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
+      const data = {
+        clientId: this.selectionClients[c],
+        productId: rowitem.productId,
+        productType: 'NetbootProduct',
+        version: rowitem.depotVersions[rowitem.selectedDepots.indexOf(depot)],
+        actionRequest: newrequest
+      }
+      alldata.push(data)
+      if (this.expert) {
+        this.pushToChangesProducts(data)
+      }
+    }
+    if (!this.expert) {
     // eslint-disable-next-line no-console
-    console.log(rowitem, newrequest)
-    // for (const i in this.selectionProducts) {
-    //   this.fetchedData[this.selectionProducts[i]].request = newrequest
-    // }
+      console.debug('save:', alldata)
+      this.save(alldata)
+
+      // const responseError: IObjectString2String = (await this.$axios.$patch(
+      //   '/api/opsidata/clients/products',
+      //   JSON.stringify({ data: alldata })
+      // )).error
+      // if (Object.keys(responseError).length > 0) {
+      //   let txt = 'Errors for: <br />'
+      //   for (const k in responseError) {
+      //     txt += `${k}: ${responseError[k]} <br />`
+      //   }
+      //   this.$bvToast.toast(txt, {
+      //     title: 'Warnings:',
+      //     autoHideDelay: 5000,
+      //     appendToast: false
+      //   })
+      // }
+      this.fetchOptions.fetchClients = true
+      this.setChangesProducts([])
+      this.$fetch()
+    }
   }
+
+  saveActionRequests () {
+    const alldata = []
+    for (const c in this.selectionClients) {
+      const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
+      for (const p in this.selectionProducts) {
+        let row = this.fetchedData.products.filter((x: { productId: string }) => x.productId === this.selectionProducts[p])
+        row = row[0]
+        if (row) {
+        // const item = row[0]
+          const data = {
+            clientId: this.selectionClients[c],
+            productId: this.selectionProducts[p],
+            productType: 'NetbootProduct',
+            version: row.depotVersions[row.selectedDepots.indexOf(depot)],
+            actionRequest: this.action
+          }
+          alldata.push(data)
+          if (this.expert) {
+            this.pushToChangesProducts(data)
+          }
+        }
+      }
+    }
+    if (!this.expert) {
+    // eslint-disable-next-line no-console
+      console.debug('save:', alldata)
+      for (const d in alldata) {
+        const change = alldata[d]
+        this.save([change])
+      }
+      this.fetchOptions.fetchClients = true
+      this.$fetch()
+    }
+  }
+
+  // saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
+  //   // TODO: saving in database for dropdown in table head(actionRequest)
+  //   // eslint-disable-next-line no-console
+  //   console.log('save action Request for all selected clients and products')
+  //   // eslint-disable-next-line no-console
+  //   console.log(rowitem, newrequest)
+  //   // for (const i in this.selectionProducts) {
+  //   //   this.fetchedData[this.selectionProducts[i]].request = newrequest
+  //   // }
+  // }
 }
 </script>
 

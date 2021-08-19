@@ -14,6 +14,7 @@
         v-else
       >
         {{ row.item.depotVersions[0] }}
+        {{ (row.item.selectedDepots.length != selectionDepots.length)? '*':'' }}
       </b-badge>
       <b-badge
         v-if="row.item.client_version_outdated||false"
@@ -24,7 +25,7 @@
       </b-badge>
     </div>
     <TooltipTTProductCell
-      v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+      v-if="row.item.depot_version_diff || row.item.client_version_outdated||(row.item.selectedDepots.length != selectionDepots.length)||false"
       type="version"
       :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
       :details="tooltiptext"

@@ -65,6 +65,16 @@ export default class TTable extends BTable {
         row.item._rowVariant = ''
       }
     }
+    // row.rowSelected = this.selection.includes(row.item.ident)
+    // if (row.rowSelected) {
+    //   const elem = document.getElementById(`__row_${row.item.ident}`)
+    //   if (elem) { elem.classList.add('b-table-row-selected') }
+    //   row.item._rowVariant = 'primary'
+    // } else {
+    //   const elem = document.getElementById(`__row_${row.item.ident}Major`)
+    //   if (elem) { elem.classList.remove('b-table-row-selected') }
+    //   row.item._rowVariant = ''
+    // }
   }
 
   rowChanged (item: ITableDataItem) {
