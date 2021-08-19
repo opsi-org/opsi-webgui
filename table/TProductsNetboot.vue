@@ -53,7 +53,8 @@
       </template>
       <template v-if="selectionClients.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
-          v-if="selectionClients.length>0"
+          v-if="selectionClients.length>0 && selectionProducts.length>0"
+          :action.sync="action"
           :title="$t('formselect.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
@@ -107,10 +108,12 @@ interface DepotRequest {
 @Component
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
+  action: string = ''
   depotRequest: DepotRequest = { selectedClients: '' }
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: object = {}
+  fetchedData: any
+  // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
@@ -142,6 +145,7 @@ export default class TProductsNetboot extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @changes.Mutation public setChangesProducts!: (s: Array<object>) => void
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
   @settings.Getter public expert!: boolean
 
@@ -268,46 +272,59 @@ export default class TProductsNetboot extends Vue {
         })
       }
       this.fetchOptions.fetchClients = true
+      this.setChangesProducts([])
       this.$fetch()
     }
   }
 
   // saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
-  async saveActionRequests (newrequest: string) {
+  async saveActionRequests () {
     const alldata = []
     for (const c in this.selectionClients) {
-      // const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
+      const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
       for (const p in this.selectionProducts) {
-        const data = {
-          clientId: this.selectionClients[c],
-          productId: this.selectionProducts[p],
-          productType: 'NetbootProduct',
-          actionRequest: newrequest
+        let row = this.fetchedData.products.filter((x: { productId: string }) => x.productId === this.selectionProducts[p])
+        row = row[0]
+        if (row) {
+        // const item = row[0]
+          const data = {
+            clientId: this.selectionClients[c],
+            productId: this.selectionProducts[p],
+            productType: 'NetbootProduct',
+            version: row.depotVersions[row.selectedDepots.indexOf(depot)],
+            actionRequest: this.action
+          }
+          alldata.push(data)
+          if (this.expert) {
+            this.pushToChangesProducts(data)
+          }
         }
-        alldata.push(data)
       }
     }
+    if (!this.expert) {
     // eslint-disable-next-line no-console
-    console.debug('save:', alldata)
-    for (const d in alldata) {
-      const responseError: IObjectString2String = (await this.$axios.$patch(
-        '/api/opsidata/clients/products',
-        JSON.stringify({ data: alldata[d] })
-      )).error
-      if (Object.keys(responseError).length > 0) {
-        let txt = 'Errors for: <br />'
-        for (const k in responseError) {
-          txt += `${k}: ${responseError[k]} <br />`
+      console.debug('save:', alldata)
+      for (const d in alldata) {
+        const change = alldata[d]
+        const responseError: IObjectString2String = (await this.$axios.$patch(
+          '/api/opsidata/clients/products',
+          JSON.stringify({ data: [change] })
+        )).error
+        if (Object.keys(responseError).length > 0) {
+          let txt = 'Errors for: <br />'
+          for (const k in responseError) {
+            txt += `${k}: ${responseError[k]} <br />`
+          }
+          this.$bvToast.toast(txt, {
+            title: 'Warnings:',
+            autoHideDelay: 5000,
+            appendToast: false
+          })
         }
-        this.$bvToast.toast(txt, {
-          title: 'Warnings:',
-          autoHideDelay: 5000,
-          appendToast: false
-        })
       }
+      this.fetchOptions.fetchClients = true
+      this.$fetch()
     }
-    this.fetchOptions.fetchClients = true
-    this.$fetch()
 
     // // TODO: saving in database for dropdown in table head(actionRequest)
     // // eslint-disable-next-line no-console
