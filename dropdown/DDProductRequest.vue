@@ -18,7 +18,7 @@
       <b-dropdown-item
         v-for="a in requestoptions"
         :key="a"
-        @click="save(rowitem, a)"
+        @click="$emit('update:action', a);save(rowitem, a)"
       >
         {{ a }}
       </b-dropdown-item>
