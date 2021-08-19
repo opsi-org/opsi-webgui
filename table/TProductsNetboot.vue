@@ -232,7 +232,25 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = false
   }
 
-  async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
+  async save (change : Array<object>) {
+    const responseError: IObjectString2String = (await this.$axios.$patch(
+      '/api/opsidata/clients/products',
+      JSON.stringify({ data: change })
+    )).error
+    if (Object.keys(responseError).length > 0) {
+      let txt = 'Errors for: <br />'
+      for (const k in responseError) {
+        txt += `${k}: ${responseError[k]} <br />`
+      }
+      this.$bvToast.toast(txt, {
+        title: 'Warnings:',
+        autoHideDelay: 5000,
+        appendToast: false
+      })
+    }
+  }
+
+  saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
     // eslint-disable-next-line no-console
@@ -255,22 +273,7 @@ export default class TProductsNetboot extends Vue {
     if (!this.expert) {
     // eslint-disable-next-line no-console
       console.debug('save:', alldata)
-
-      const responseError: IObjectString2String = (await this.$axios.$patch(
-        '/api/opsidata/clients/products',
-        JSON.stringify({ data: alldata })
-      )).error
-      if (Object.keys(responseError).length > 0) {
-        let txt = 'Errors for: <br />'
-        for (const k in responseError) {
-          txt += `${k}: ${responseError[k]} <br />`
-        }
-        this.$bvToast.toast(txt, {
-          title: 'Warnings:',
-          autoHideDelay: 5000,
-          appendToast: false
-        })
-      }
+      this.save(alldata)
       this.fetchOptions.fetchClients = true
       this.setChangesProducts([])
       this.$fetch()
@@ -278,7 +281,15 @@ export default class TProductsNetboot extends Vue {
   }
 
   // saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
-  async saveActionRequests () {
+  saveActionRequests () {
+    // // TODO: saving in database for dropdown in table head(actionRequest)
+    // // eslint-disable-next-line no-console
+    // console.log('save action Request for all selected clients and products')
+    // // eslint-disable-next-line no-console
+    // console.log(rowitem, newrequest)
+    // // for (const i in this.selectionProducts) {
+    // //   this.fetchedData[this.selectionProducts[i]].request = newrequest
+    // // }
     const alldata = []
     for (const c in this.selectionClients) {
       const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
@@ -306,34 +317,11 @@ export default class TProductsNetboot extends Vue {
       console.debug('save:', alldata)
       for (const d in alldata) {
         const change = alldata[d]
-        const responseError: IObjectString2String = (await this.$axios.$patch(
-          '/api/opsidata/clients/products',
-          JSON.stringify({ data: [change] })
-        )).error
-        if (Object.keys(responseError).length > 0) {
-          let txt = 'Errors for: <br />'
-          for (const k in responseError) {
-            txt += `${k}: ${responseError[k]} <br />`
-          }
-          this.$bvToast.toast(txt, {
-            title: 'Warnings:',
-            autoHideDelay: 5000,
-            appendToast: false
-          })
-        }
+        this.save([change])
       }
       this.fetchOptions.fetchClients = true
       this.$fetch()
     }
-
-    // // TODO: saving in database for dropdown in table head(actionRequest)
-    // // eslint-disable-next-line no-console
-    // console.log('save action Request for all selected clients and products')
-    // // eslint-disable-next-line no-console
-    // console.log(rowitem, newrequest)
-    // // for (const i in this.selectionProducts) {
-    // //   this.fetchedData[this.selectionProducts[i]].request = newrequest
-    // // }
   }
 }
 </script>
