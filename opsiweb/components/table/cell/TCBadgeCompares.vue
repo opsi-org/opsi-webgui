@@ -1,6 +1,10 @@
 <template>
   <div>
-    <b-badge :id="`TCBadgeCompares_${type}_hover_${rowid}`">
+    <TableCellTCInstallationStatus v-if="type=='installationStatus' && text=='mixed'" :id="`TCBadgeCompares_${type}_hover_${rowid}`" :text="text" />
+    <TableCellTCInstallationStatus v-else-if="type=='installationStatus'" :text="text" />
+    <TableCellTCActionResult v-else-if="type=='actionResult' && text=='mixed'" :id="`TCBadgeCompares_${type}_hover_${rowid}`" :text="text" />
+    <TableCellTCActionResult v-else-if="type=='actionResult'" :text="text" />
+    <b-badge v-else :id="`TCBadgeCompares_${type}_hover_${rowid}`">
       {{ text }}
     </b-badge>
     <!-- {{(text == 'mixed')? tooltiptext:''}} -->

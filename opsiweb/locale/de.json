@@ -60,6 +60,7 @@
       "stats": "Statistiken",
       "version": "(Depot) Version",
       "instStatus": "Installationsstatus",
+      "actionResult": "ActionResult",
       "clientsIds": "Ausgewählte Clients",
       "depotIds": "Ausgewählte Depots",
       "localbootid": "Localboot Produkt-ID",
