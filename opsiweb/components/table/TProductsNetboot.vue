@@ -36,20 +36,33 @@
           @details="toogleDetailsTooltip"
         />
       </template>
-      <template #head(installationStatus)>
-        is
+
+      <template v-if="selectionClients.length>0" #head(installationStatus)>
+        <b-icon icon="box-seam" alt="installation status" />
+      </template>
+
+      <template v-if="selectionClients.length>0" #head(actionResult)>
+        <b-icon icon="hourglass-bottom" alt="action result" />
       </template>
 
       <template #cell(installationStatus)="row">
-        {{ row.item.installationStatus }}
-      <!-- <TableCellTCBadgeCompares
-          v-if="(selectionClients && row.item.selectedClients)"
+        <TableCellTCBadgeCompares
           type="installationStatus"
           :rowid="row.item.productId"
-          :values="row.item.installationStatus || []"
+          :values="row.item.installationStatusDetails || []"
           :objects="row.item.selectedClients || []"
           :objectsorigin="selectionClients || []"
-        /> -->
+        />
+      </template>
+
+      <template #cell(actionResult)="row">
+        <TableCellTCBadgeCompares
+          type="actionResult"
+          :rowid="row.item.productId"
+          :values="row.item.actionResultDetails || []"
+          :objects="row.item.selectedClients || []"
+          :objectsorigin="selectionClients || []"
+        />
       </template>
       <template v-if="selectionClients.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
@@ -71,7 +84,7 @@
 
       <template #row-details="row">
         <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
-        <TableTTooltip
+        <TableTTooltipContent
           v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
           type="version"
           :details="row.item.tooltiptext"
@@ -130,13 +143,14 @@ export default class TProductsNetboot extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
-    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: true },
-    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
+    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: false },
+    actionResult: { label: this.$t('table.fields.instStatus') as string, key: 'actionResult', visible: true, sortable: false },
+    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
+    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: false },
+    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
-    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
+    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
     version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
     rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
   }
@@ -232,10 +246,10 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = false
   }
 
-  async save (change : Array<object>) {
+  async save (change : object) {
     const responseError: IObjectString2String = (await this.$axios.$patch(
       '/api/opsidata/clients/products',
-      JSON.stringify({ data: change })
+      { data: change }
     )).error
     if (Object.keys(responseError).length > 0) {
       let txt = 'Errors for: <br />'
@@ -250,77 +264,56 @@ export default class TProductsNetboot extends Vue {
     }
   }
 
-  saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
+  async saveActionRequest (rowitem: any, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
-    // eslint-disable-next-line no-console
-    console.debug('Clients2Depots', this.fetchedDataClients2Depots)
-    const alldata = []
-    for (const c in this.selectionClients) {
-      const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
-      const data = {
-        clientId: this.selectionClients[c],
-        productId: rowitem.productId,
-        productType: 'NetbootProduct',
-        version: rowitem.depotVersions[rowitem.selectedDepots.indexOf(depot)],
-        actionRequest: newrequest
-      }
-      alldata.push(data)
-      if (this.expert) {
-        this.pushToChangesProducts(data)
-      }
+    const data = {
+      clientIds: this.selectionClients,
+      productIds: [rowitem.productId],
+      actionRequest: newrequest
     }
-    if (!this.expert) {
-    // eslint-disable-next-line no-console
-      console.debug('save:', alldata)
-      this.save(alldata)
+    if (this.expert) {
+      for (const c in this.selectionClients) {
+        const d = {
+          clientId: this.selectionClients[c],
+          productId: rowitem.productId,
+          actionRequest: newrequest
+        }
+        this.pushToChangesProducts(d)
+      }
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('save:', data)
+      await this.save(data)
       this.fetchOptions.fetchClients = true
       this.setChangesProducts([])
       this.$fetch()
     }
   }
 
-  // saveActionRequests (rowitem: ITableRowItemProducts, newrequest: string) {
-  saveActionRequests () {
-    // // TODO: saving in database for dropdown in table head(actionRequest)
-    // // eslint-disable-next-line no-console
-    // console.log('save action Request for all selected clients and products')
-    // // eslint-disable-next-line no-console
-    // console.log(rowitem, newrequest)
-    // // for (const i in this.selectionProducts) {
-    // //   this.fetchedData[this.selectionProducts[i]].request = newrequest
-    // // }
-    // TODO: this will not work if selected products are on different pages
-    const alldata = []
-    for (const c in this.selectionClients) {
-      const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
-      for (const p in this.selectionProducts) {
-        let row = this.fetchedData.products.filter((x: { productId: string }) => x.productId === this.selectionProducts[p])
-        row = row[0]
-        if (row) {
-        // const item = row[0]
-          const data = {
+  async saveActionRequests () {
+    const data = {
+      clientIds: this.selectionClients,
+      productIds: this.selectionProducts,
+      actionRequest: this.action
+    }
+    if (this.expert) {
+      for (const c in this.selectionClients) {
+        for (const p in this.selectionProducts) {
+          const d = {
             clientId: this.selectionClients[c],
             productId: this.selectionProducts[p],
-            productType: 'NetbootProduct',
-            version: row.depotVersions[row.selectedDepots.indexOf(depot)],
             actionRequest: this.action
           }
-          alldata.push(data)
-          if (this.expert) {
-            this.pushToChangesProducts(data)
-          }
+          this.pushToChangesProducts(d)
         }
       }
-    }
-    if (!this.expert) {
-    // eslint-disable-next-line no-console
-      console.debug('save:', alldata)
-      for (const d in alldata) {
-        const change = alldata[d]
-        this.save([change])
-      }
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('save:', data)
+      await this.save(data)
       this.fetchOptions.fetchClients = true
+      this.setChangesProducts([])
       this.$fetch()
     }
   }
