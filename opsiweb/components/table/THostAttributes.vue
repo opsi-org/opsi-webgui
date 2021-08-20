@@ -1,5 +1,5 @@
 <template>
-  <TableTDefault
+  <TableTSimple
     v-if="result"
     :is-busy="isLoading"
     :error="showError"
