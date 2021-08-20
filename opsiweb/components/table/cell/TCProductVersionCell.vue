@@ -5,7 +5,7 @@
     >
       <b-badge
         v-if="row.item.depot_version_diff"
-        :class="(row.item.depot_version_diff||false)?'bg-color-orange':''"
+        :class="(row.item.depot_version_diff||false)?'bg-orange':''"
         @click="$emit('details', row, tooltiptext)"
       >
         <span>&#8800;</span>
@@ -18,7 +18,7 @@
       </b-badge>
       <b-badge
         v-if="row.item.client_version_outdated||false"
-        :class="(row.item.client_version_outdated||false)?'bg-color-red':''"
+        :class="(row.item.client_version_outdated||false)?'bg-red':''"
         @click="$emit('details', row, tooltiptext)"
       >
         *
