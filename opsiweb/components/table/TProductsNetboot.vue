@@ -199,7 +199,7 @@ export default class TProductsNetboot extends Vue {
   async fetch () {
     this.isLoading = true
     this.updateColumnVisibility()
-    if (this.fetchOptions.fetchClients2Depots) {
+    if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
       this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
       const params = this.depotRequest
       await this.$axios.$get('/api/opsidata/clients/depots', { params })
@@ -290,6 +290,7 @@ export default class TProductsNetboot extends Vue {
     // // for (const i in this.selectionProducts) {
     // //   this.fetchedData[this.selectionProducts[i]].request = newrequest
     // // }
+    // TODO: this will not work if selected products are on different pages
     const alldata = []
     for (const c in this.selectionClients) {
       const depot = this.fetchedDataClients2Depots[this.selectionClients[c]]
