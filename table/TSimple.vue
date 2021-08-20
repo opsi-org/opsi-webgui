@@ -48,7 +48,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class TDefault extends Vue {
+export default class TSimple extends Vue {
   @Prop({ }) tableitems!: Array<object>
   @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
