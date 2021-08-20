@@ -67,7 +67,7 @@ export default class TTProductCell extends Vue {
   @Prop({ default: 'danger' }) variant!: string
   @Prop({ default: false }) dark!: boolean
   @Prop({ }) details!: IObjectString2String
-  @Prop({ }) detailsDepots!: IObjectString2String
+  // @Prop({ }) detailsDepots!: IObjectString2String
   // @Prop({ }) rowitem?: ITableRowItemProducts
   // @Prop({ }) row:Object,
   // @Prop({ }) text!: {type:Boolean, default:false},
@@ -82,8 +82,13 @@ export default class TTProductCell extends Vue {
       return 'bg-secondary'
     },
     installationStatus: (s: string) => {
-      if (s === 'installed') { return 'bg-success' }
+      if (s === 'installed') { return 'bg-danger' }
       if (s === 'unknown') { return 'bg-primary' }
+      return 'bg-secondary'
+    },
+    actionResult: (s: string) => {
+      if (s === 'failed') { return 'bg-danger' }
+      if (s === 'successful') { return 'bg-success' }
       return 'bg-secondary'
     },
     version: () => 'danger'
