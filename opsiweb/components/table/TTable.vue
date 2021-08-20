@@ -8,12 +8,13 @@
     selectable
     borderless
     select-mode="multi"
-    :no-local-sorting="true"
-    :sort-by.sync="tabledata.sortBy"
-    :sort-desc.sync="tabledata.sortDesc"
-    sort-icon-right
     @row-clicked="rowChanged"
   >
+    <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
+    <!-- :no-local-sorting="true"
+    :sort-by.sync="tabledata.sortBy"
+    :sort-desc.sync="tabledata.sortDesc"
+    sort-icon-right -->
     <template #head()="header">
       {{ $t(header.label) }}
     </template>
