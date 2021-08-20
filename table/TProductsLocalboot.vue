@@ -47,20 +47,32 @@
         />
       </template> -->
 
-      <template #head(installationStatus)>
-        is
+      <template v-if="selectionClients.length>0" #head(installationStatus)>
+        <b-icon icon="box-seam" alt="installation status" />
+      </template>
+
+      <template v-if="selectionClients.length>0" #head(actionResult)>
+        <b-icon icon="hourglass-bottom" alt="action result" />
       </template>
 
       <template #cell(installationStatus)="row">
-        {{ row.item.installationStatus }}
-      <!-- <TableCellTCBadgeCompares
-          v-if="(selectionClients && row.item.selectedClients)"
+        <TableCellTCBadgeCompares
           type="installationStatus"
           :rowid="row.item.productId"
-          :values="row.item.installationStatus || []"
+          :values="row.item.installationStatusDetails || []"
           :objects="row.item.selectedClients || []"
           :objectsorigin="selectionClients || []"
-        /> -->
+        />
+      </template>
+
+      <template #cell(actionResult)="row">
+        <TableCellTCBadgeCompares
+          type="actionResult"
+          :rowid="row.item.productId"
+          :values="row.item.actionResultDetails || []"
+          :objects="row.item.selectedClients || []"
+          :objectsorigin="selectionClients || []"
+        />
       </template>
       <!-- <template #cell(name)="row">
           <TableCellTCProductCellComparable :list2text="row.item.name" />
@@ -92,7 +104,7 @@
 
       <template #row-details="row">
         <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
-        <TableTTooltip
+        <TableTTooltipContent
           v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
           type="version"
           :details="row.item.tooltiptext"
@@ -152,13 +164,14 @@ export default class TProductsLocalboot extends Vue {
 
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
-    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: true },
-    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
+    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: false },
+    actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: true, sortable: false },
+    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
+    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: false },
+    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
-    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
+    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
     version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
     rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
   }
