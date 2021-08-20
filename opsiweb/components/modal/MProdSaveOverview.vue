@@ -9,7 +9,9 @@
       centered
       hide-footer
     >
-      <b-table :items="changesProducts" :fields="['productId', 'clientId', 'productType', 'version', 'actionRequest', '_action']">
+      <!-- {{ changesProducts }} -->
+      <!-- ['productId', 'clientId', 'productType', 'version', 'actionRequest', '_action'] -->
+      <b-table :items="changesProducts" :fields="['productId', 'clientId', 'actionRequest', '_action']">
         <template #cell(_action)="row">
           <b-button-group>
             <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
@@ -43,10 +45,16 @@ export default class MProdSaveOverview extends Vue {
   @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
-  async save (item: object) {
+  async save (item: any) {
+    const change = {
+      clientIds: [item.clientId],
+      productIds: [item.productId],
+      actionRequest: item.actionRequest
+    }
+
     const responseError: IObjectString2String = (await this.$axios.$patch(
       '/api/opsidata/clients/products',
-      JSON.stringify({ data: [item] })
+      { data: change }
     )).error
     if (Object.keys(responseError).length > 0) {
       let txt = 'Errors for: <br />'
@@ -61,7 +69,6 @@ export default class MProdSaveOverview extends Vue {
     } else {
       this.delFromChangesProducts(item)
     }
-
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
     }
