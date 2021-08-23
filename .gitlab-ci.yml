@@ -47,6 +47,7 @@ build:static-app:
     expire_in: 1 day
   only:
     - develop
+    - tags
 
 publish:binary-index:
   stage: publish
