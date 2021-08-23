@@ -12,7 +12,7 @@
       :type="type"
       :dark="dark"
     />
-      <!-- :details-depots="detailsDepots" -->
+    <!-- :details-depots="detailsDepots" -->
   </b-tooltip>
 </template>
 
