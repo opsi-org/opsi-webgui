@@ -8,9 +8,7 @@
   <b-badge v-else-if="text=='unknown'" variant="bg-grey">
     <b-icon icon="question" alt="unknown" />
   </b-badge>
-  <b-badge v-else-if="text=='not_installed'||text==''||text=='none'" variant="transparent">
-    <b-icon icon="" alt="not installed" />
-  </b-badge>
+  <b-badge v-else-if="text=='not_installed'||text==''||text=='none'" />
   <b-badge v-else>
     {{ text }}
   </b-badge>
