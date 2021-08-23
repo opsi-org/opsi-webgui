@@ -59,7 +59,6 @@ publish:binary-index:
     - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --binary-push opsiweb/dist opsi-webgui linux x64'
   only:
     - develop
-    - tags
 
 publish:obs_int:
   stage: publish
