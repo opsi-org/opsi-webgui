@@ -122,6 +122,7 @@ interface DepotRequest {
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
   action: string = ''
+  type: string = ''
   depotRequest: DepotRequest = { selectedClients: '' }
   isLoading: boolean = true
   errorText: string = ''
@@ -278,6 +279,7 @@ export default class TProductsNetboot extends Vue {
       for (const c in this.selectionClients) {
         const d = {
           clientId: this.selectionClients[c],
+          type: 'NetbootProduct',
           productId: rowitem.productId,
           actionRequest: newrequest
         }
@@ -306,9 +308,16 @@ export default class TProductsNetboot extends Vue {
     if (this.expert) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {
+          const pObj = this.fetchedData.products.find((obj: { productId: string }) => obj.productId === this.selectionProducts[p])
+          if (pObj) {
+            this.type = 'NetbootProduct'
+          } else {
+            this.type = 'LocalbootProduct'
+          }
           const d = {
             clientId: this.selectionClients[c],
             productId: this.selectionProducts[p],
+            type: this.type,
             actionRequest: this.action
           }
           const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
