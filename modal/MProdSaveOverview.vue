@@ -9,34 +9,8 @@
       centered
       hide-footer
     >
-      <b> Netboot Products: </b>
-      <b-table
-        :items="changesProducts.filter(o => o.type === 'NetbootProduct')"
-        :fields="['productId', 'clientId', 'type', 'actionRequest', '_action']"
-      >
-        <template #cell(_action)="row">
-          <b-button-group>
-            <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-            <b-button @click="save(row.item)">
-              <b-icon icon="check2" />
-            </b-button>
-          </b-button-group>
-        </template>
-      </b-table>
-      <b> Localboot Products: </b>
-      <b-table
-        :items="changesProducts.filter(o => o.type === 'LocalbootProduct')"
-        :fields="['productId', 'clientId', 'type', 'actionRequest', '_action']"
-      >
-        <template #cell(_action)="row">
-          <b-button-group>
-            <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-            <b-button @click="save(row.item)">
-              <b-icon icon="check2" />
-            </b-button>
-          </b-button-group>
-        </template>
-      </b-table>
+      <TableTChanges title="Netboot Products" :tableitems="changesProducts.filter(o => o.type === 'NetbootProduct')" />
+      <TableTChanges title="Localboot Products" :tableitems="changesProducts.filter(o => o.type === 'LocalbootProduct')" />
       <b-row>
         <b-col>
           <ButtonBTNDeleteAll hide="ProductSaveModal" />
