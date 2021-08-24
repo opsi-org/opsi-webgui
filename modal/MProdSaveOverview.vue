@@ -8,6 +8,7 @@
       scrollable
       centered
       hide-footer
+      no-fade
     >
       <TableTChanges title="Netboot Products" :tableitems="changesProducts.filter(o => o.type === 'NetbootProduct')" />
       <TableTChanges title="Localboot Products" :tableitems="changesProducts.filter(o => o.type === 'LocalbootProduct')" />
@@ -73,4 +74,7 @@ export default class MProdSaveOverview extends Vue {
 </script>
 
 <style>
+.modal-dialog {
+  left: 0% !important;
+}
 </style>
