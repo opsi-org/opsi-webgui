@@ -9,8 +9,6 @@
       centered
       hide-footer
     >
-      <!-- {{ changesProducts }} -->
-      <!-- ['productId', 'clientId', 'productType', 'version', 'actionRequest', '_action'] -->
       <b-table :items="changesProducts" :fields="['productId', 'clientId', 'actionRequest', '_action']">
         <template #cell(_action)="row">
           <b-button-group>
