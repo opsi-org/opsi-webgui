@@ -14,7 +14,6 @@
       </h3>
       <Nuxt />
     </div>
-    <BarBDefaultFooter />
   </div>
 </template>
 
