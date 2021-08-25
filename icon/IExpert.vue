@@ -1,8 +1,5 @@
 <template>
-  <div class="btn bg-primary disabled">
-    <b-icon-person-fill shift-h="4" shift-v="-6" variant="white" />
-    <b-icon-gem font-scale="0.8" shift-h="-4" shift-v="-6" variant="white" />
-  </div>
+  <b-icon-gem variant="danger" font-scale="0.6" shift-h="4" shift-v="0" />
 </template>
 
 <script lang="ts">

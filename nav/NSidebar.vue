@@ -1,6 +1,6 @@
 <template>
   <!-- TODO: Edit navItems route in components/nav/NSidebar -->
-  <b-nav vertical tabs class="sidemenu_nav">
+  <b-nav vertical tabs class="">
     <span v-for="catogery in navItems" :key="catogery.title">
       <NavNTitle :expanded="expanded" :title="catogery.title" />
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">

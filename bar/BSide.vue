@@ -1,10 +1,10 @@
 <template>
   <b-sidebar
     id="sidemenu"
-    :class="{sidemenu_small: !attributes.expanded}"
-    bg-variant="secondary"
-    text-variant="light"
     no-header
+    bg-variant="primary"
+    text-variant="light"
+    :class="{sidemenu_small: !attributes.expanded}"
     :backdrop="$mq == 'mobile'"
     :no-close-on-route-change="$mq == 'desktop' ? true : false"
     :visible="attributes.visible"
@@ -14,6 +14,7 @@
       <div class="sidemenu_footer">
         <b-button
           v-b-tooltip.hover
+          variant="primary"
           :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
           :pressed.sync="attributes.expanded"
         >
@@ -37,13 +38,16 @@ export default class BSide extends Vue {
 
 <style>
 #sidemenu {
-  top: var(--height-navbar) !important;
+  top: calc(var(--height-navbar) - 3px) !important;
   width: var(--width-sidebar-expanded);
   height: 100%;
 }
 .sidemenu_small > #sidemenu {
   width: var(--width-sidebar-collapsed);
 }
+/* .sidemenu_footer .btn {
+  background-image: none !important;
+} */
 .sidemenu_footer {
   display: inline;
   float: right;

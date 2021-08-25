@@ -16,7 +16,7 @@ export default class NTitle extends Vue {
 </script>
 
 <style>
-.nav-tabs .nav-link.disabled{
-  color: lightgray !important;
-}
+/* .nav-tabs .nav-link.disabled{
+  color: inherit !important;
+} */
 </style>
