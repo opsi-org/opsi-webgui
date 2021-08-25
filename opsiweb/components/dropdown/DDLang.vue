@@ -1,5 +1,5 @@
 <template>
-  <div class="btn btn-secondary dd_lang text-left">
+  <div class="btn btn-primary dd_lang text-left">
     <b-nav-item-dropdown
       style="height:100%;margin:0px;"
       :text="$i18n.locale"
@@ -44,6 +44,7 @@ const settings = namespace('settings')
 
 <style>
 .dd_lang{
+  /* max-height: max-c; */
   padding-left: 1em !important;
   padding-right: 1em !important;
 }
