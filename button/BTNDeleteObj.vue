@@ -22,6 +22,7 @@ export default class BTNDeleteObj extends Vue {
     }
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide(this.hide)
+      this.$nuxt.refresh()
     }
   }
 }
