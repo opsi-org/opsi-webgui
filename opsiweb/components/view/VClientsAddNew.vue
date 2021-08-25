@@ -11,64 +11,63 @@
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <DivDScrollResult v-else>
-      <template slot="content">
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.id') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="clientName" type="text" required />
-          </b-col>
-          <b-col>
-            <b-form-input v-model="domainName" size="sm" type="text" required />
-          </b-col>
-        </b-row>
-        <b>{{ $t('table.clientDetails') }}: </b>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.description') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.description" type="text" />
-          </b-col>
-        </b-row>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.inventNum') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.inventoryNumber" type="text" />
-          </b-col>
-        </b-row>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.hwAddr') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.hardwareAddress" type="text" />
-          </b-col>
-        </b-row>
+    <div v-else>
+      <br>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.id') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="clientName" type="text" required />
+        </b-col>
+        <b-col>
+          <b-form-input v-model="domainName" size="sm" type="text" required />
+        </b-col>
+      </b-row>
+      <b>{{ $t('table.clientDetails') }}: </b>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.description') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.description" type="text" />
+        </b-col>
+      </b-row>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.inventNum') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.inventoryNumber" type="text" />
+        </b-col>
+      </b-row>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.hwAddr') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.hardwareAddress" type="text" />
+        </b-col>
+      </b-row>
 
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.ip') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.ipAddress" type="text" />
-          </b-col>
-        </b-row>
-        <b>{{ $t('table.addtnlInfo') }}: </b>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.notes') }}:
-          </b-col>
-          <b-col>
-            <b-form-textarea v-model="newClient.notes" rows="2" no-resize />
-          </b-col>
-        </b-row>
-      </template>
-    </DivDScrollResult>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.ip') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.ipAddress" type="text" />
+        </b-col>
+      </b-row>
+      <b>{{ $t('table.addtnlInfo') }}: </b>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.notes') }}:
+        </b-col>
+        <b-col>
+          <b-form-textarea v-model="newClient.notes" rows="2" no-resize />
+        </b-col>
+      </b-row>
+    </div>
   </div>
 </template>
 
