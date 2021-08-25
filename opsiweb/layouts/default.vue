@@ -56,8 +56,7 @@ export default class LayoutDefault extends Vue {
 </script>
 
 <style>
-.topbar_content,
-.sidebar_content {
+.topbar_content {
   z-index: 9999;
 }
 
@@ -68,13 +67,16 @@ export default class LayoutDefault extends Vue {
 }
 
 .main_content{
+  position:fixed;
   margin-top: var(--margin-top-maincontent);
   margin-left: var(--margin-left-maincontent);
 }
 .sidebar_collapsed .main_content{
   margin-left: var(--margin-left-maincontent-if-sidebar-collpased);
+  width: calc(100% - var(--margin-left-maincontent-if-sidebar-collpased));
 }
 .sidebar_expanded .main_content{
   margin-left: var(--margin-left-maincontent-if-sidebar-expanded);
+  width: calc(100% - var(--margin-left-maincontent-if-sidebar-expanded));
 }
 </style>
