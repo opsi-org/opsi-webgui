@@ -8,19 +8,10 @@
       scrollable
       centered
       hide-footer
+      no-fade
     >
-      <!-- {{ changesProducts }} -->
-      <!-- ['productId', 'clientId', 'productType', 'version', 'actionRequest', '_action'] -->
-      <b-table :items="changesProducts" :fields="['productId', 'clientId', 'actionRequest', '_action']">
-        <template #cell(_action)="row">
-          <b-button-group>
-            <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-            <b-button @click="save(row.item)">
-              <b-icon icon="check2" />
-            </b-button>
-          </b-button-group>
-        </template>
-      </b-table>
+      <TableTChanges title="Netboot Products" :tableitems="changesProducts.filter(o => o.type === 'NetbootProduct')" />
+      <TableTChanges title="Localboot Products" :tableitems="changesProducts.filter(o => o.type === 'LocalbootProduct')" />
       <b-row>
         <b-col>
           <ButtonBTNDeleteAll hide="ProductSaveModal" />
@@ -83,4 +74,7 @@ export default class MProdSaveOverview extends Vue {
 </script>
 
 <style>
+.modal-dialog {
+  left: 0% !important;
+}
 </style>

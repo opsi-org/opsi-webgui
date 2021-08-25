@@ -1,4 +1,3 @@
-// import Cookie from 'js-cookie'
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 
 @Module({ name: 'changes', stateFactory: true, namespaced: true })
@@ -7,13 +6,17 @@ export default class Changes extends VuexModule {
 
   get changesProducts (): Array<object> { return this._changesProducts }
 
-  @VuexMutation public setChangesProducts (s: Array<object>) { this._changesProducts = s }
-  @VuexMutation public pushToChangesProducts (s: object) {
-    this._changesProducts.push(s)
+  @VuexMutation public setChangesProducts (arr: Array<object>) { this._changesProducts = arr }
+  @VuexMutation public pushToChangesProducts (obj: object) {
+    this._changesProducts.push(obj)
   }
 
-  @VuexMutation public delFromChangesProducts (s: object) {
-    this._changesProducts.splice(this._changesProducts.indexOf(s), 1)
+  @VuexMutation public delWithIndexChangesProducts (index: number) {
+    this._changesProducts.splice(index, 1)
+  }
+
+  @VuexMutation public delFromChangesProducts (obj: object) {
+    this._changesProducts.splice(this._changesProducts.indexOf(obj), 1)
   }
 
   @VuexMutation public deleteAllChanges () {
