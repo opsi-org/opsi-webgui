@@ -14,7 +14,7 @@
       </h3>
       <Nuxt />
     </div>
-    <!-- <BarBDefaultFooter /> -->
+    <!-- <BarBDefaultFooter  class="footer_content" /> -->
   </div>
 </template>
 
@@ -58,40 +58,12 @@ export default class LayoutDefault extends Vue {
 <style>
 .topbar_content {
   z-index: 9999;
+}
+
+.topbar_content,
+.sidebar_content ,
+.footer_content {
   color: var(--light) !important;
-}
-.sidebar_content {
-  color: var(--dark) !important;
-}
-
-.topbar_content .btn,
-.topbar_content .navbar,
-.topbar_content .navbar-dark .navbar-brand,
-.topbar_content .navbar-dark .navbar-nav .nav-link,
-.sidebar_content .b-icon,
-.sidebar_content .btn,
-.sidebar_content .navbar,
-.sidebar_content .nav-item,
-.sidebar_content .nav-tabs .nav-link,
-.sidebar_content .nav-tabs .nav-link.disabled,
-.sidebar_content .navbar-dark .navbar-brand,
-.sidebar_content .navbar-dark .navbar-nav .nav-link {
-  color: inherit !important;
-  background-image: none !important;
-  /* background-repeat: no-repeat !important; */
-}
-
-.topbar_content .dropdown-toggle,
-.topbar_content .btn,
-.sidebar_content .btn,
-.sidebar_content .nav-tabs .nav-link,
-.sidebar_content .nav-tabs .nav-link.disabled {
-  border: none !important;
-  border-left: none !important;
-  border-right: none !important;
-  border-top: none !important;
-  border-bottom: none !important;
-  background-color: transparent !important;
 }
 
 .main_content{

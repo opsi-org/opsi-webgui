@@ -110,9 +110,9 @@ export default class CTop extends Vue {
   height: 25px !important;
 }
 
-.navbar {
+/* .navbar {
   background-image: none !important;
-}
+} */
 /* .btn {
   color: inherit !important;
 } */
