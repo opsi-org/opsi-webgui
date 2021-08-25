@@ -62,6 +62,7 @@ export default class MProdSaveOverview extends Vue {
     }
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
+      this.$nuxt.refresh()
     }
   }
 
