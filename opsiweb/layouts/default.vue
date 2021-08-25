@@ -57,7 +57,7 @@ export default class LayoutDefault extends Vue {
 
 <style>
 .topbar_content {
-  z-index: 9999;
+  z-index: 2000;
 }
 
 .topbar_content,
@@ -66,10 +66,18 @@ export default class LayoutDefault extends Vue {
   color: var(--light) !important;
 }
 
+.topbar_content {
+  position: absolute !important;
+  width: 100% !important;
+  max-height: 100px;
+}
 .main_content{
-  position:fixed;
+  position:absolute;
   margin-top: var(--margin-top-maincontent);
   margin-left: var(--margin-left-maincontent);
+  overflow: auto;
+  width: calc(100% - 2 * var(--margin-left-maincontent));
+  height: calc(100% - var(--margin-top-maincontent));
 }
 .sidebar_collapsed .main_content{
   margin-left: var(--margin-left-maincontent-if-sidebar-collpased);
