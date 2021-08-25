@@ -1,16 +1,19 @@
 <template>
-  <DivDScrollResult>
-    <template slot="content">
-      <p v-if="errorText">
-        {{ errorText }}
-      </p>
-      <b-table v-else :busy="isLoading" stacked :items="[modules]" :fields="['valid', 'expires']">
-        <template #table-busy>
-          <IconILoading />
-        </template>
-      </b-table>
+  <p v-if="errorText">
+    {{ errorText }}
+  </p>
+  <b-table
+    v-else
+    :busy="isLoading"
+    borderless
+    stacked
+    :items="[modules]"
+    :fields="['valid', 'expires']"
+  >
+    <template #table-busy>
+      <IconILoading />
     </template>
-  </DivDScrollResult>
+  </b-table>
 </template>
 
 <script lang="ts">
