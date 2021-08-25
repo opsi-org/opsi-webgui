@@ -1,6 +1,5 @@
 <template>
   <div class="fixed-bottom">
-      <!-- type="dark" -->
     <b-navbar
       toggleable="md"
       fixed="bottom"
@@ -12,7 +11,7 @@
       </b-navbar-nav>
       <b-navbar-nav align="center" small class="ml-auto">
         <DropdownDDLang :dropup="true" />
-        <DropdownDDTheme :dropup="true" :navbar="true" />
+        <!-- <DropdownDDTheme :dropup="true" :navbar="true" /> -->
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto" small>
         <b-nav-text> version: 1.0.0</b-nav-text>
