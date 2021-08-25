@@ -25,7 +25,7 @@
         :totalrows="fetchedData.total"
       >
         <template #head(depotId)>
-          <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
+          <InputIFilter ref="IFilterDepots" :data="tableData" :additional-title="$t('table.fields.id')" />
         </template>
         <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo

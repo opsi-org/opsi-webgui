@@ -50,10 +50,10 @@ const settings = namespace('settings')
     { title: 'Bootswatch-Slate', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/slate/bootstrap.min.css' },
     { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' },
     { title: 'Bootswatch-Lux', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css' },
-    { title: 'opsi-dark', rel: '/themes/opsi-bootstrap-theme-dark.css' },
-    { title: 'opsi-dark-inversed', rel: '/themes/opsi-bootstrap-theme-dark-inversed.css' },
-    { title: 'opsi-light', rel: '/themes/opsi-bootstrap-theme-light.css' },
-    { title: 'opsi-light-inversed', rel: '/themes/opsi-bootstrap-theme-light-inversed.css' }
+    { title: 'opsi-dark', rel: 'themes/opsi-bootstrap-theme-dark.css' },
+    { title: 'opsi-dark-inversed', rel: 'themes/opsi-bootstrap-theme-dark-inversed.css' },
+    { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' },
+    { title: 'opsi-light-inversed', rel: 'themes/opsi-bootstrap-theme-light-inversed.css' }
   ]
 
   @settings.Getter public colortheme!: ITheme
