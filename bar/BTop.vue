@@ -52,21 +52,6 @@ export default class CTop extends Vue {
   padding-bottom: 0px;
 }
 
-.mobile #nav-collapse {
-  border-bottom: 3px solid var(--primary) !important;
-}
-
-.mobile #nav-collapse,
-.mobile #nav-collapse .navbar-nav {
-  top:0px !important;
-  width: 100% !important;
-  padding: 0px !important;
-  margin: 0px !important;
-  border-left: 0px !important;
-  border-right: 0px !important;
-  border-top: 0px !important;
-}
-
 /* .desktop #nav-collapse,
 .desktop #nav-collapse .navbar-nav {
   margin-top: 0px !important;
@@ -108,6 +93,24 @@ export default class CTop extends Vue {
 }
 .topbar_logo {
   height: 25px !important;
+}
+
+.mobile #nav-collapse {
+  max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
+  overflow: scroll;
+  background-color: var(--primary) !important;
+  border-bottom: 3px solid var(--primary) !important;
+}
+
+.mobile #nav-collapse,
+.mobile #nav-collapse .navbar-nav {
+  top:0px !important;
+  width: 100% !important;
+  padding: 0px !important;
+  margin: 0px !important;
+  border-left: 0px !important;
+  border-right: 0px !important;
+  border-top: 0px !important;
 }
 
 /* .navbar {

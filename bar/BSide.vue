@@ -49,6 +49,8 @@ export default class BSide extends Vue {
 .sidemenu_footer .btn {
   /* margin-left: -10px; */
   padding: 10px;
+  border: 1px solid var(--light) !important;
+  z-index: 2200;
 }
 .sidemenu_footer {
   display: inline;
