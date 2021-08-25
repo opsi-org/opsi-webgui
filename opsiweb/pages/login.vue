@@ -2,7 +2,7 @@
   <div class="container">
     <b-card class="login_content text-center bg-primary">
       <div class="login_title_row">
-        <b-badge class="bg-light login_logo_container" >
+        <b-badge class="bg-light login_logo_container">
           <img src="../assets/images/LogoOpsi.png" class="login_logo" alt="opsi logo">
         </b-badge>
         <h1 class="login_title">
