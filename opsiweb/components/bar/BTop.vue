@@ -1,32 +1,35 @@
 <template>
   <div>
     <b-navbar class="topbar" toggleable="md" fixed="top" type="dark" variant="primary">
-      <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button :pressed.sync="attributes.visible">
-          <b-icon icon="list" />
-        </b-button>
-      </b-navbar-nav>
-      <b-navbar-brand href="/" class="topbar_brand">
-        <b-badge variant="light" style="margin-left:5px;margin-right:5px">
-          <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
-        </b-badge>
-        OPSIWEB
-      </b-navbar-brand>
-      <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button v-b-toggle.nav-collapse variant="primary">
-          <IconIExpert v-if="expert" />
-          <b-icon-three-dots-vertical font-scale="1.1" />
-        </b-button>
-      </b-navbar-nav>
-      <b-collapse id="nav-collapse" is-nav variant="primary">
-        <b-navbar-nav class="ml-auto float-right">
-          <IconIExpert v-if="expert && $mq=='desktop'" />
-          <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
-          <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-          <!-- <DropdownDDTheme class="navbar-collapse-child" :navbar="true" /> -->
-          <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
+      <div class="container-fluid">
+        <b-navbar-nav v-if="$mq === 'mobile'">
+          <b-button :pressed.sync="attributes.visible">
+            <b-icon icon="list" />
+          </b-button>
         </b-navbar-nav>
-      </b-collapse>
+        <b-navbar-brand href="/" class="topbar_brand">
+          <b-badge class="bg-light" style="margin-left:5px;margin-right:5px">
+            <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
+          </b-badge>
+          OPSIWEB
+          <IconIExpert v-if="expert" />
+        </b-navbar-brand>
+        <b-navbar-nav v-if="$mq === 'mobile'">
+          <b-button v-b-toggle.nav-collapse variant="primary">
+            <!-- <IconIExpert v-if="expert" /> -->
+            <b-icon-three-dots-vertical font-scale="1.1" />
+          </b-button>
+        </b-navbar-nav>
+        <b-collapse id="nav-collapse" is-nav variant="primary">
+          <b-navbar-nav class="ml-auto float-right">
+            <!-- <IconIExpert v-if="expert && $mq=='desktop'" /> -->
+            <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
+            <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
+            <!-- <DropdownDDTheme class="navbar-collapse-child" :navbar="true" /> -->
+            <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
+          </b-navbar-nav>
+        </b-collapse>
+      </div>
     </b-navbar>
   </div>
 </template>
@@ -71,7 +74,7 @@ export default class CTop extends Vue {
   background-color: var(--transparent) !important;
 } */
 .topbar{
-  background-color: var(--secondary) !important;
+  background-color: var(--primary) !important;
   position: fixed;
   height: var(--height-navbar) !important;
   margin-bottom: 0px !important;
@@ -107,6 +110,12 @@ export default class CTop extends Vue {
   height: 25px !important;
 }
 
+.navbar {
+  background-image: none !important;
+}
+/* .btn {
+  color: inherit !important;
+} */
 /* .navbar-collapse .navbar-nav{
   padding-top:10px !important;
   margin-top:10px !important;
