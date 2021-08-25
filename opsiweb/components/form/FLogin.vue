@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @keyup.enter="doLogin">
     <b-form-input v-model="opsiconfigserver" readonly />
     <b-form-input v-model="form.username" :placeholder="$t('loginPage.username')" :state="validUsername" />
     <b-form-input v-model="form.password" :placeholder="$t('loginPage.password')" :state="validPassword" type="password" />
