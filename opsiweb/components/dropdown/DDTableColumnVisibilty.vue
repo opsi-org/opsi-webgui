@@ -11,7 +11,7 @@
     :title="$t('table.showCol')"
   >
     <template #button-content>
-      <b-icon-list-task />
+      <b-icon-grid />
     </template>
     <li v-if="$mq=='mobile'">
       <a
