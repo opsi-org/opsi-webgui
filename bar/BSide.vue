@@ -44,13 +44,16 @@ export default class BSide extends Vue {
 }
 .sidemenu_small > #sidemenu {
   width: var(--width-sidebar-collapsed);
+  /* width: max-content; */
 }
-/* .sidemenu_footer .btn {
-  background-image: none !important;
-} */
+.sidemenu_footer .btn {
+  /* margin-left: -10px; */
+  padding: 10px;
+}
 .sidemenu_footer {
   display: inline;
   float: right;
+  margin-right: 2px;
   margin-bottom: 70px;
 }
 </style>
