@@ -1,22 +1,24 @@
 <template>
   <div>
-    <b-navbar class="topbar" toggleable="md" fixed="top" type="light" variant="secondary">
+    <b-navbar class="topbar" toggleable="md" fixed="top" type="dark" variant="primary">
       <b-navbar-nav v-if="$mq === 'mobile'">
         <b-button :pressed.sync="attributes.visible">
           <b-icon icon="list" />
         </b-button>
       </b-navbar-nav>
       <b-navbar-brand href="/" class="topbar_brand">
-        <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
+        <b-badge variant="light" style="margin-left:5px;margin-right:5px">
+          <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
+        </b-badge>
         OPSIWEB
       </b-navbar-brand>
       <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button v-b-toggle.nav-collapse variant="secondary">
+        <b-button v-b-toggle.nav-collapse variant="primary">
           <IconIExpert v-if="expert" />
           <b-icon-three-dots-vertical font-scale="1.1" />
         </b-button>
       </b-navbar-nav>
-      <b-collapse id="nav-collapse" is-nav variant="secondary">
+      <b-collapse id="nav-collapse" is-nav variant="primary">
         <b-navbar-nav class="ml-auto float-right">
           <IconIExpert v-if="expert && $mq=='desktop'" />
           <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
@@ -86,6 +88,7 @@ export default class CTop extends Vue {
 } */
 
 /* .mobile .navbar-collapse .navbar-nav > .navbar-collapse-child{
+/* .mobile .navbar-collapse .navbar-nav >
   margin-left: 1em !important;
   margin-right: 1em !important;
 } */
