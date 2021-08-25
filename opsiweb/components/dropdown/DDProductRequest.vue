@@ -47,7 +47,7 @@ export default class DDProductRequest extends BDropdown {
   @Prop({ default: () => { return ['---', 'none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
   @Prop({ default: () => { return () => {} } }) save!: Function
 
-  preRequest: string = ''
+  preRequest: string = this.request
   currentReq: string = this.request
 
   @selections.Getter public selectionClients!: Array<string>
@@ -60,7 +60,6 @@ export default class DDProductRequest extends BDropdown {
         return 'mixed'
       }
     }
-    this.preRequest = this.request
     return this.request
   }
 
