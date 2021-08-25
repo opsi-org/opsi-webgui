@@ -25,7 +25,7 @@
             <!-- <IconIExpert v-if="expert && $mq=='desktop'" /> -->
             <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
             <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-            <!-- <DropdownDDTheme class="navbar-collapse-child" :navbar="true" /> -->
+            <DropdownDDTheme class="navbar-collapse-child" :navbar="true" />
             <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
           </b-navbar-nav>
         </b-collapse>

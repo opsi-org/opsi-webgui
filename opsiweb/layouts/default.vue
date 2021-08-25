@@ -56,7 +56,8 @@ export default class LayoutDefault extends Vue {
 </script>
 
 <style>
-.topbar_content {
+.topbar_content,
+.sidebar_content {
   z-index: 9999;
 }
 
