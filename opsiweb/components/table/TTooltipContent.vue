@@ -73,25 +73,25 @@ export default class TTProductCell extends Vue {
   // @Prop({ }) text!: {type:Boolean, default:false},
   variants: IObjectString2Function = {
     actionRequest: (r:string) => {
-      if (r === 'uninstall') { return 'bg-danger' }
-      if (r === 'setup') { return 'bg-primary' }
-      if (r === 'update') { return 'bg-primary' }
-      if (r === 'always') { return 'bg-info' }
-      if (r === 'once') { return 'bg-info' }
-      if (r === 'custom') { return 'bg-info' }
-      return 'bg-secondary'
+      if (r === 'uninstall') { return 'bg-blue' }
+      if (r === 'setup') { return 'bg-red' }
+      if (r === 'update') { return 'bg-red' }
+      if (r === 'always') { return 'bg-red' }
+      if (r === 'once') { return 'bg-red' }
+      if (r === 'custom') { return 'bg-red' }
+      return 'bg-grey'
     },
     installationStatus: (s: string) => {
-      if (s === 'installed') { return 'bg-danger' }
-      if (s === 'unknown') { return 'bg-primary' }
-      return 'bg-secondary'
+      if (s === 'installed') { return 'bg-green' }
+      if (s === 'unknown') { return 'bg-orange' }
+      return 'bg-grey' // not_installed
     },
     actionResult: (s: string) => {
-      if (s === 'failed') { return 'bg-danger' }
-      if (s === 'successful') { return 'bg-success' }
-      return 'bg-secondary'
+      if (s === 'failed') { return 'bg-red' }
+      if (s === 'successful') { return 'bg-green' }
+      return 'bg-grey'
     },
-    version: () => 'danger'
+    version: () => 'red'
     // version:(v)=> (v!=this.row.item.versionDepot && v!='None')?'bg-danger':'bg-dark',
     // ppversion:(v:string)=> {v.startsWith('*')? 'pps_client_uneq_depot':'not_bold'},
   }

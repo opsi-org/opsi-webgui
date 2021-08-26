@@ -12,8 +12,8 @@
       class="fixed_column_selection widthmax"
     >
       <template #button-content>
-        <span :class="{'bg-warning text-dark' : currentReq != preRequest}">
-          {{ visibleRequest }}
+        <span :class="{'fg-orange' : currentReq != preRequest}">
+          {{ visibleRequest }} {{ (currentReq != preRequest)? '*' : '' }}
         </span>
       </template>
       <b-dropdown-item

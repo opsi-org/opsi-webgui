@@ -17,10 +17,17 @@
 [class$="bg-blue"] { background-color: blue !important;}
 [class$="bg-grey"] { background-color: grey !important;}
 
-.bg-color-red { background-color: red !important; }
+[class$="fg-orange"] { color: orange !important;}
+[class$="fg-yellow"] { color: yellow !important;}
+[class$="fg-red"] { color: red !important;}
+[class$="fg-green"] { color: green !important;}
+[class$="fg-blue"] { color: blue !important;}
+[class$="fg-grey"] { color: grey !important;}
+
+/* .bg-color-red { background-color: red !important; }
 .bg-color-orange { background-color: orange !important; }
 .bg-color-yellow { background-color: yellow !important; }
-.bg-color-grey { background-color: rgb(196, 196, 196) !important; }
+.bg-color-grey { background-color: rgb(196, 196, 196) !important; } */
 .width-max-content{
     max-width: max-content !important;
 }
