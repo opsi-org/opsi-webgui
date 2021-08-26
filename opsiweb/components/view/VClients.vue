@@ -53,7 +53,7 @@
             <template #button-content>
               <b-icon icon="three-dots-vertical" />
             </template>
-            <ModalMDeleteClient :id="row.item.ident.trim()" />
+            <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
           </b-dropdown>
         </template>
         <template #pagination>
@@ -101,6 +101,8 @@ export default class VClients extends Vue {
     setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
   }
 
+  updateTable: boolean = false
+
   headerData: ITableHeaders = {
     selected: { label: '', key: 'sel', visible: true, _fixed: true },
     clientId: { label: 'table.fields.id', key: 'clientId', visible: true, _fixed: true, sortable: true },
@@ -122,6 +124,8 @@ export default class VClients extends Vue {
 
   @Watch('tableData', { deep: true })
   tableDataChanged () { this.$fetch() }
+
+  @Watch('updateTable', { deep: true }) updateTableChanged () { if (this.updateTable === true) { this.$fetch() } }
 
   async fetch () {
     this.isLoading = true
