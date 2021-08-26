@@ -97,7 +97,8 @@ export default class VClientLog extends Vue {
     this.isLoading = true
     this.logrequest.selectedClient = id
     this.logrequest.selectedLogType = logtype
-    await this.$axios.$post('/api/opsidata/log', JSON.stringify(this.logrequest))
+    const params = this.logrequest
+    await this.$axios.$get('/api/opsidata/log', { params })
       .then((response) => {
         this.logResult = response.result
         this.filteredLog = this.logResult

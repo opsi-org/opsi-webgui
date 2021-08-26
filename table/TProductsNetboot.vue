@@ -122,6 +122,7 @@ interface DepotRequest {
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
   action: string = ''
+  type: string = ''
   depotRequest: DepotRequest = { selectedClients: '' }
   isLoading: boolean = true
   errorText: string = ''
@@ -159,8 +160,10 @@ export default class TProductsNetboot extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @changes.Getter public changesProducts!: any
   @changes.Mutation public setChangesProducts!: (s: Array<object>) => void
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
+  @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
 
   @Watch('selectionDepots', { deep: true })
@@ -276,8 +279,13 @@ export default class TProductsNetboot extends Vue {
       for (const c in this.selectionClients) {
         const d = {
           clientId: this.selectionClients[c],
+          type: 'NetbootProduct',
           productId: rowitem.productId,
           actionRequest: newrequest
+        }
+        const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
+        if (objIndex > -1) {
+          this.delWithIndexChangesProducts(objIndex)
         }
         this.pushToChangesProducts(d)
       }
@@ -300,10 +308,21 @@ export default class TProductsNetboot extends Vue {
     if (this.expert) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {
+          const pObj = this.fetchedData.products.find((obj: { productId: string }) => obj.productId === this.selectionProducts[p])
+          if (pObj) {
+            this.type = 'NetbootProduct'
+          } else {
+            this.type = 'LocalbootProduct'
+          }
           const d = {
             clientId: this.selectionClients[c],
             productId: this.selectionProducts[p],
+            type: this.type,
             actionRequest: this.action
+          }
+          const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
+          if (objIndex > -1) {
+            this.delWithIndexChangesProducts(objIndex)
           }
           this.pushToChangesProducts(d)
         }
