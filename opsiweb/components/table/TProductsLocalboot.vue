@@ -162,7 +162,7 @@ export default class TProductsLocalboot extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: false },
     actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: true, sortable: false },
     productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
