@@ -9,7 +9,7 @@
     <b-icon icon="x" alt="failed" />
   </b-badge>
   <b-badge v-else-if="text=='not_installed'||text==''||text=='none'" variant="transparent">
-    {{($mq=='mobile')? '-':''}}
+    {{ ($mq=='mobile')? '-':'' }}
   </b-badge>
   <b-badge v-else>
     {{ text }}
