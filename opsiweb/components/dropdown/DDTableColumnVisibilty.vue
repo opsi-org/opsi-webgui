@@ -63,10 +63,11 @@ export default class DDTableColumnVisibilty extends BDropdown {
   columnVisibilityStates: IObjectString2Boolean = {}
 
   mounted () {
-    Object.values(this.headers).forEach((h) => {
-      this.columnVisibilityStates[h.key] = h.disabled || false
-    })
-    this.columnVisibilityList = Object.values(this.headers).filter(h => h.visible).map(h => h.key)
+    this.setColumnVisibilityModel(undefined)
+    // Object.values(this.headers).forEach((h) => {
+    //   this.columnVisibilityStates[h.key] = h.disabled || false
+    // })
+    // this.columnVisibilityList = Object.values(this.headers).filter(h => h.visible).map(h => h.key)
   }
 
   @Watch('$mq') mqChanged () {
@@ -111,7 +112,6 @@ export default class DDTableColumnVisibilty extends BDropdown {
         this.headers[k].visible = this.columnVisibilityStates[k]
       } else {
         Object.values(this.headers).filter(h => h._majorKey === k).map(h => h.key).forEach((ck) => {
-          // console.log(`found children of major ${k}:`, ck)
           this.headers[ck].visible = this.columnVisibilityStates[k]
         })
       }

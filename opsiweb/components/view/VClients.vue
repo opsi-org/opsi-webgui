@@ -8,6 +8,10 @@
           <!-- DOUBT: why fetchedDataDepotIds -->
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSHostGroup />
+          <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
+        </template>
+        <template #right>
+          <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
         </template>
       </BarBPageHeader>
       <IconILoading v-if="isLoading" />
@@ -28,6 +32,9 @@
         :loading="isLoading"
         :totalrows="fetchedData.total"
       >
+        <template #head(_majorStats)>
+          {{ '' }}
+        </template>
         <template #head(clientId)>
           <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
         </template>
@@ -105,26 +112,22 @@ export default class VClients extends Vue {
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
-    clientId: { label: 'table.fields.id', key: 'clientId', visible: true, _fixed: true, sortable: true },
-    description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
-    ipAddress: { label: 'table.fields.ip', key: 'ipAddress', visible: false, sortable: true },
-    macAddress: { label: 'table.fields.hwAddr', key: 'macAddress', visible: false, sortable: true },
-    _majorStats: { label: 'table.fields.stats', key: '_majorStats', _isMajor: true, visible: true },
-    version_outdated: { label: 'v outated', key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
-    actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
-    rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
+    clientId: { label: this.$t('table.fields.id') as string, key: 'clientId', visible: true, _fixed: true, sortable: true },
+    description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
+    ipAddress: { label: this.$t('table.fields.ip') as string, key: 'ipAddress', visible: false, sortable: true },
+    macAddress: { label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', visible: false, sortable: true },
+    _majorStats: { label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false },
+    version_outdated: { label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
+    actionResult_failed: { label: this.$t('table.fields.actionRequestFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
+    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
-  @Watch('selectionDepots', { deep: true })
-  selectionDepotsChanged () { this.$fetch() }
-
-  @Watch('tableData', { deep: true })
-  tableDataChanged () { this.$fetch() }
-
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
   @Watch('updateTable', { deep: true }) updateTableChanged () { if (this.updateTable === true) { this.$fetch() } }
 
   async fetch () {

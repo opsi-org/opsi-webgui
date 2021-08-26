@@ -170,8 +170,8 @@ export default class TProductsLocalboot extends Vue {
     name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
     version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
+    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
     rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
   }
 

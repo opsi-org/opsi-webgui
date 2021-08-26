@@ -64,7 +64,10 @@
       "clientsIds": "Ausgewählte Clients",
       "depotIds": "Ausgewählte Depots",
       "localbootid": "Localboot Produkt-ID",
-      "netbootid": "Netboot Produkt-ID"
+      "netbootid": "Netboot Produkt-ID",
+      "versionOutdated": "vO",
+      "actionRequestFailed": "aRf",
+      "rowactions": "Aktionen"
     }
   },
   "button" : {
