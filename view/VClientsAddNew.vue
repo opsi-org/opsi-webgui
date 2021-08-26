@@ -2,10 +2,10 @@
   <div>
     <BarBPageHeader>
       <template #right>
-        <b-button @click="resetNewClientForm()">
+        <b-button variant="primary" @click="resetNewClientForm()">
           <b-icon icon="arrow-counterclockwise" /> {{ $t('button.reset') }}
         </b-button>
-        <b-button :disabled="!clientName" @click="createOpsiClient()">
+        <b-button variant="success" :disabled="!clientName" @click="createOpsiClient()">
           <b-icon icon="plus" /> {{ $t('button.add') }}
         </b-button>
       </template>
@@ -21,7 +21,7 @@
           <b-form-input v-model="clientName" type="text" required />
         </b-col>
         <b-col>
-          <b-form-input v-model="domainName" size="sm" type="text" required />
+          <b-form-input v-model="domainName" type="text" required />
         </b-col>
       </b-row>
       <b>{{ $t('table.clientDetails') }}: </b>
