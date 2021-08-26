@@ -20,7 +20,7 @@ export default class PIndex extends Vue {
 
 <style>
 .index_content {
-  height: calc(100% - var(--margin-top-maincontent));
+  height: calc(100% - var(--margin-left-maincontent));
 }
 .index_content h1 {
   font-size: 5vw;

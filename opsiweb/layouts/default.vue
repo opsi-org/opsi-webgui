@@ -80,10 +80,10 @@ export default class LayoutDefault extends Vue {
 }
 .sidebar_collapsed .main_content{
   margin-left: var(--margin-left-maincontent-if-sidebar-collpased);
-  width: calc(100% - var(--margin-left-maincontent-if-sidebar-collpased));
+  width: calc(100% - var(--margin-left-maincontent-if-sidebar-collpased) - var(--margin-left-maincontent));
 }
 .sidebar_expanded .main_content{
   margin-left: var(--margin-left-maincontent-if-sidebar-expanded);
-  width: calc(100% - var(--margin-left-maincontent-if-sidebar-expanded));
+  width: calc(100% - var(--margin-left-maincontent-if-sidebar-expanded) - var(--margin-left-maincontent));
 }
 </style>
