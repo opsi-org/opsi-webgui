@@ -21,12 +21,14 @@ export default class SClientIds extends Vue {
   clientIds: Array<string> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
 
   async fetch () {
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
-    // this.idselection = this.clientIds[0]
+    this.idselection = this.selectionClients[0]
+    this.$emit('update:id', this.idselection)
   }
 }
 </script>
