@@ -53,13 +53,21 @@
 import { Component, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '~/types/ttable'
+import { IObjectString2Boolean } from '~/types/tsettings'
 
 @Component
 export default class DDTableColumnVisibilty extends BDropdown {
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
 
   columnVisibilityList: Array<string> = []
-  columnVisibilityStates: { [key: string]: boolean; } = {}
+  columnVisibilityStates: IObjectString2Boolean = {}
+
+  mounted () {
+    Object.values(this.headers).forEach((h) => {
+      this.columnVisibilityStates[h.key] = h.disabled || false
+    })
+    this.columnVisibilityList = Object.values(this.headers).filter(h => h.visible).map(h => h.key)
+  }
 
   @Watch('$mq') mqChanged () {
     if (this.$mq === 'mobile') {
