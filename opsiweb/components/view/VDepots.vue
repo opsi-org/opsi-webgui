@@ -79,7 +79,7 @@ export default class VDepots extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true },
     depotId: { label: 'table.fields.id', key: 'depotId', visible: true, _fixed: true, sortable: true },
     description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
     type: { label: 'table.fields.type', key: 'type', visible: false, sortable: true },

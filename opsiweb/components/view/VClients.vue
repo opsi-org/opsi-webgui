@@ -104,14 +104,14 @@ export default class VClients extends Vue {
   updateTable: boolean = false
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true },
     clientId: { label: 'table.fields.id', key: 'clientId', visible: true, _fixed: true, sortable: true },
     description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
     ipAddress: { label: 'table.fields.ip', key: 'ipAddress', visible: false, sortable: true },
     macAddress: { label: 'table.fields.hwAddr', key: 'macAddress', visible: false, sortable: true },
-    _majorStats: { label: 'table.fields.stats', key: '_majorStats', _isMajor: true, visible: false },
-    version_outdated: { label: 'v outated', key: 'version_outdated', _majorKey: '_majorStats', visible: false, sortable: true },
-    actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false, sortable: true },
+    _majorStats: { label: 'table.fields.stats', key: '_majorStats', _isMajor: true, visible: true },
+    version_outdated: { label: 'v outated', key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
+    actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
     rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
   }
 
