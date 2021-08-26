@@ -1,5 +1,9 @@
 <template>
-  <b-navbar :class="{pageheader: $mq === 'desktop', pageheader_wrap: $mq === 'mobile'}">
+  <b-navbar
+    :class="{pageheader: $mq === 'desktop', pageheader_wrap: $mq === 'mobile'}"
+    class="BPageHeader_Navbar"
+    variant="transparent"
+  >
     <span v-if="navbartype=='collapse'">
       <b-icon v-if="collapsed" icon="chevron-double-down" />
       <b-icon v-else icon="chevron-double-right" />
@@ -39,5 +43,12 @@ export default class BPageHeader extends Vue {
   z-index: inherit !important;
   padding-left: 0rem !important;
   padding-right: 0rem !important;
+}
+.BPageHeader_Navbar{
+  background-image: none !important;
+  padding: 5px 0px !important;
+}
+.BPageHeader_Navbar .dropdown{
+  margin: 0px !important;
 }
 </style>
