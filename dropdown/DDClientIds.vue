@@ -12,7 +12,7 @@
     alt="Show column"
   >
     <template #button-content>
-      <b-icon-laptop /> Clients
+      <b-icon-laptop /> Clients ({{ selectionClients.length }}/{{ fetchedData.length }})
     </template>
     <li
       id="selectableColumns-group"

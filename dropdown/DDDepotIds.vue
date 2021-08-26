@@ -13,7 +13,7 @@
     alt="Show column"
   >
     <template #button-content>
-      <b-icon-hdd-stack-fill /> Depots
+      <b-icon-hdd-stack-fill /> Depots  ({{ selectionDepots.length }}/{{ fetchedData.length }})
     </template>
     <li
       id="selectableColumns-group"
