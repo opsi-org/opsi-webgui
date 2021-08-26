@@ -47,11 +47,11 @@
         />
       </template> -->
 
-      <template v-if="selectionClients.length>0" #head(installationStatus)>
+      <template #head(installationStatus)>
         <b-icon icon="box-seam" alt="installation status" />
       </template>
 
-      <template v-if="selectionClients.length>0" #head(actionResult)>
+      <template #head(actionResult)>
         <b-icon icon="hourglass-bottom" alt="action result" />
       </template>
 
@@ -216,19 +216,25 @@ export default class TProductsLocalboot extends Vue {
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
       // this.fetchOptions.fetchClients2Depots = true
-      this.headerData.actionRequest.visible = true
       // this.headerData._majorVersion.visible = true
       // this.headerData._majorVersion.disabled = true
       this.headerData.selectedClients.disabled = true
+      this.headerData.installationStatus.visible = true
       this.headerData.installationStatus.disabled = true
+      this.headerData.actionResult.visible = true
+      this.headerData.actionResult.disabled = true
+      this.headerData.actionRequest.visible = true
       this.headerData.actionRequest.disabled = true
     } else {
       // this.fetchOptions.fetchClients2Depots = false
-      this.headerData.actionRequest.visible = false
       // this.headerData._majorVersion.visible = false
       // this.headerData._majorVersion.disabled = false
       this.headerData.selectedClients.disabled = false
+      this.headerData.installationStatus.visible = false
       this.headerData.installationStatus.disabled = false
+      this.headerData.actionResult.visible = false
+      this.headerData.actionResult.disabled = false
+      this.headerData.actionRequest.visible = false
       this.headerData.actionRequest.disabled = false
     }
   }
