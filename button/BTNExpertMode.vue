@@ -1,5 +1,10 @@
 <template>
-  <b-button v-model="localMode" :pressed.sync="localMode" @click="changeMode(localMode)">
+  <b-button
+    v-model="localMode"
+    variant="primary"
+    :pressed.sync="localMode"
+    @click="changeMode(localMode)"
+  >
     {{ expert? 'Expert': 'Normal' }}
   </b-button>
   <!-- <b-button class="text-left dd_expertmode" @click="toggleMode">
