@@ -2,7 +2,7 @@
   "message":{
     "loading": "Laden",
     "warning": "WARNUNG",
-    "success": "ERFOLG",
+    "success": "ERFOLGREICH",
     "error": "FEHLER",
     "loginFailed": "Fehler bei der Anmeldung",
     "errortext": "Etwas ist schief gelaufen !!!",
@@ -115,6 +115,6 @@
     "localspecific": "Lokale spezifische Einstellungen",
     "theme": "Thema",
     "mode": "Benutzer-Modus",
-    "modules": "Modul-Inhalt"
+    "modules": "Modules-Inhalt"
   }
 }

@@ -6,10 +6,11 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class NSidebar extends Vue {
+export default class IOpsiLogo extends Vue {
   @Prop({ default: '60%' }) height!: string
   @Prop({ default: '61%' }) width!: string
 }
 </script>
+
 <style>
 </style>
