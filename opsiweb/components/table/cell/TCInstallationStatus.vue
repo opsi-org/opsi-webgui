@@ -5,7 +5,7 @@
   <b-badge v-else-if="text=='installed'" variant="success">
     <b-icon icon="laptop" alt="installed" title="installed" />
   </b-badge>
-  <b-badge v-else-if="text=='unknown'" variant="warning">
+  <b-badge v-else-if="text=='unknown'" variant="warning" text-variant="dark">
     <b-icon icon="question" alt="unknown" />
   </b-badge>
   <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">
