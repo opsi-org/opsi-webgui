@@ -91,7 +91,6 @@ export default class DDTableColumnVisibilty extends BDropdown {
   }
 
   @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
-    console.debug('twoColumnLayoutCollapsed changed1', this.twoColumnLayoutCollapsed, this.columnVisibilityStates, this.columnVisibilityList)
     if (this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
@@ -99,7 +98,6 @@ export default class DDTableColumnVisibilty extends BDropdown {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
     }
-    console.debug('twoColumnLayoutCollapsed changed2', this.twoColumnLayoutCollapsed, this.columnVisibilityStates, this.columnVisibilityList)
   }
 
   @Watch('columnVisibilityList') keysChanged () {
