@@ -13,15 +13,20 @@
     <template #button-content>
       <b-icon-grid />
     </template>
-    <li v-if="$mq=='mobile'">
+    <li v-if="$mq=='mobile' || twoColumnLayoutCollapsed[tableId]">
       <a
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
         :key="header.key"
         class="dropdown-item"
-        :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key], disabled:header.disabled}"
+        :class="{
+          'selected':columnVisibilityStates[header.key],
+          disabled:header.disabled,
+        }"
+        variant="primary"
         :disabled="columnVisibilityStates[header.key]"
         @click="setColumnVisibilityModel(header.key)"
       >
+        <!-- :columnVisibilityStates[header.key] -->
         {{ $t(header.label) }}
       </a>
     </li>
@@ -41,7 +46,7 @@
           v-model="columnVisibilityList"
           :name="header.label"
           :value="header.key"
-          :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
+          :class="{'selected':columnVisibilityStates[header.key]}"
         />
         {{ $t(header.label) }}
       </a>
@@ -50,24 +55,32 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '~/types/ttable'
 import { IObjectString2Boolean } from '~/types/tsettings'
+const settings = namespace('settings')
 
 @Component
 export default class DDTableColumnVisibilty extends BDropdown {
+  @Prop({ default: 'table' }) tableId!: string
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
+
+  @settings.Getter public twoColumnLayoutCollapsed!: IObjectString2Boolean
 
   columnVisibilityList: Array<string> = []
   columnVisibilityStates: IObjectString2Boolean = {}
 
-  mounted () {
-    this.setColumnVisibilityModel(undefined)
-    // Object.values(this.headers).forEach((h) => {
-    //   this.columnVisibilityStates[h.key] = h.disabled || false
-    // })
-    // this.columnVisibilityList = Object.values(this.headers).filter(h => h.visible).map(h => h.key)
+  created () {
+    Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
+      if (h._majorKey) {
+        // console.debug(h.key, 'major key ', h._majorKey, 'parent', this.headers[h._majorKey].key, 'visible', h.visible)
+        this.columnVisibilityStates[this.headers[h._majorKey].key] = h.visible || false
+      } else {
+        this.columnVisibilityStates[h.key] = h.visible || false
+      }
+    })
+    this.columnVisibilityList = Object.keys(this.columnVisibilityStates).filter(k => this.columnVisibilityStates[k])
   }
 
   @Watch('$mq') mqChanged () {
@@ -75,6 +88,18 @@ export default class DDTableColumnVisibilty extends BDropdown {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
     }
+  }
+
+  @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
+    console.debug('twoColumnLayoutCollapsed changed1', this.twoColumnLayoutCollapsed, this.columnVisibilityStates, this.columnVisibilityList)
+    if (this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+      this.setColumnVisibilityModel(firstVisible)
+    } else if (!this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+      this.setColumnVisibilityModel(firstVisible)
+    }
+    console.debug('twoColumnLayoutCollapsed changed2', this.twoColumnLayoutCollapsed, this.columnVisibilityStates, this.columnVisibilityList)
   }
 
   @Watch('columnVisibilityList') keysChanged () {
@@ -126,6 +151,9 @@ export default class DDTableColumnVisibilty extends BDropdown {
 .dropdown-menu .dropdown-item {
   cursor: pointer;
   display: flex !important;
+}
+a.selected {
+  background-color: var(--primary);
 }
 /* .disabled {
   cursor: default;

@@ -3,6 +3,7 @@
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
+    class="ttable"
     :small="$mq=='mobile'"
     :stacked="$mq=='mobile'"
     hover
@@ -28,7 +29,7 @@
     </template>
 
     <template #head(rowactions)="{}">
-      <DropdownDDTableColumnVisibilty :headers="headers" />
+      <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
     </template>
     <template
       v-for="slotName in Object.keys($scopedSlots)"
