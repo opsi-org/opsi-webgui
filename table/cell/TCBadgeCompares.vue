@@ -37,7 +37,7 @@ export default class TCSpan extends Vue {
   }
 
   get text () {
-    return mapValues2Value(this.values, this.objects, this.objectsorigin)
+    return mapValues2Value(this.values, this.objects, this.objectsorigin, this.defaults[this.type])
   }
 
   get tooltiptext () {

@@ -29,7 +29,8 @@ export default class IFilter extends BFormInput {
 
 <style>
 .filter{
-  min-width: 300px;
+  width: 90%;
+  min-width: 100px;
 }
 
 </style>

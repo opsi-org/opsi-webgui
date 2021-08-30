@@ -20,7 +20,7 @@ import { Component, Prop } from 'nuxt-property-decorator'
 import { BPagination } from 'bootstrap-vue'
 import { ITableData } from '~/types/ttable'
 @Component
-export default class UIBBPangination extends BPagination {
+export default class BPaginationUib extends BPagination {
   @Prop({}) tabledata!:ITableData;
   get localPageNumber () { return this.tabledata.pageNumber }
   set localPageNumber (pn) { this.tabledata.setPageNumber(pn) }
@@ -32,6 +32,8 @@ export default class UIBBPangination extends BPagination {
   display: inline-flex !important;
   align-items: center !important;
   float: right !important;
+  margin-bottom: 10px !important;
+  margin-right: 10px !important;
   /* min-width: min-content !important; */
 }
 .BarBPagination-PerPage {

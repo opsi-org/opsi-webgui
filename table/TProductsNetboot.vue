@@ -18,7 +18,6 @@
       :onchangeselection="setSelectionProducts"
       :loading="isLoading"
       :totalrows="fetchedData.total"
-      :stacked="$mq=='mobile'"
     >
       <template #filter>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
@@ -37,11 +36,11 @@
         />
       </template>
 
-      <template v-if="selectionClients.length>0" #head(installationStatus)>
+      <template #head(installationStatus)>
         <b-icon icon="box-seam" alt="installation status" />
       </template>
 
-      <template v-if="selectionClients.length>0" #head(actionResult)>
+      <template #head(actionResult)>
         <b-icon icon="hourglass-bottom" alt="action result" />
       </template>
 
@@ -135,7 +134,7 @@ export default class TProductsNetboot extends Vue {
   tableData: ITableData = {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 2,
+    perPage: 5,
     sortBy: 'productId',
     sortDesc: false,
     filterQuery: '',
@@ -143,17 +142,17 @@ export default class TProductsNetboot extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: false },
-    actionResult: { label: this.$t('table.fields.instStatus') as string, key: 'actionResult', visible: true, sortable: false },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: false },
+    actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: false },
     productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
     desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: false },
     name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
     version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
-    rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
+    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
+    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
   @selections.Getter public selectionClients!: Array<string>
@@ -191,18 +190,24 @@ export default class TProductsNetboot extends Vue {
 
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
-      this.headerData.actionRequest.visible = true
       // this.headerData._majorVersion.visible = true
       // this.headerData._majorVersion.disabled = true
       this.headerData.selectedClients.disabled = true
+      this.headerData.installationStatus.visible = true
       this.headerData.installationStatus.disabled = true
+      this.headerData.actionResult.visible = true
+      this.headerData.actionResult.disabled = true
+      this.headerData.actionRequest.visible = true
       this.headerData.actionRequest.disabled = true
     } else {
-      this.headerData.actionRequest.visible = false
       // this.headerData._majorVersion.visible = false
       // this.headerData._majorVersion.disabled = false
       this.headerData.selectedClients.disabled = false
+      this.headerData.installationStatus.visible = false
       this.headerData.installationStatus.disabled = false
+      this.headerData.actionResult.visible = false
+      this.headerData.actionResult.disabled = false
+      this.headerData.actionRequest.visible = false
       this.headerData.actionRequest.disabled = false
     }
   }

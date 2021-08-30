@@ -1,30 +1,35 @@
 <template>
   <div>
-    <b-navbar class="topbar" toggleable="md" fixed="top" type="light" variant="secondary">
-      <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button :pressed.sync="attributes.visible">
-          <b-icon icon="list" />
-        </b-button>
-      </b-navbar-nav>
-      <b-navbar-brand href="/" class="topbar_brand">
-        <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
-        OPSIWEB
-      </b-navbar-brand>
-      <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button v-b-toggle.nav-collapse variant="secondary">
-          <IconIExpert v-if="expert" />
-          <b-icon-three-dots-vertical font-scale="1.1" />
-        </b-button>
-      </b-navbar-nav>
-      <b-collapse id="nav-collapse" is-nav variant="secondary">
-        <b-navbar-nav class="ml-auto float-right">
-          <IconIExpert v-if="expert && $mq=='desktop'" />
-          <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
-          <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-          <!-- <DropdownDDTheme class="navbar-collapse-child" :navbar="true" /> -->
-          <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
+    <b-navbar class="topbar" toggleable="md" fixed="top" type="dark" variant="primary">
+      <div class="container-fluid">
+        <b-navbar-nav v-if="$mq === 'mobile'">
+          <b-button :pressed.sync="attributes.visible">
+            <b-icon icon="list" />
+          </b-button>
         </b-navbar-nav>
-      </b-collapse>
+        <b-navbar-brand href="/" class="topbar_brand">
+          <b-badge class="bg-light" style="margin-left:5px;margin-right:5px">
+            <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
+          </b-badge>
+          OPSIWEB
+          <IconIExpert v-if="expert" />
+        </b-navbar-brand>
+        <b-navbar-nav v-if="$mq === 'mobile'">
+          <b-button v-b-toggle.nav-collapse variant="primary">
+            <!-- <IconIExpert v-if="expert" /> -->
+            <b-icon-three-dots-vertical font-scale="1.1" />
+          </b-button>
+        </b-navbar-nav>
+        <b-collapse id="nav-collapse" is-nav variant="primary">
+          <b-navbar-nav class="ml-auto float-right">
+            <!-- <IconIExpert v-if="expert && $mq=='desktop'" /> -->
+            <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
+            <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
+            <DropdownDDTheme class="navbar-collapse-child" :navbar="true" />
+            <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
+          </b-navbar-nav>
+        </b-collapse>
+      </div>
     </b-navbar>
   </div>
 </template>
@@ -47,21 +52,6 @@ export default class CTop extends Vue {
   padding-bottom: 0px;
 }
 
-.mobile #nav-collapse {
-  border-bottom: 3px solid var(--primary) !important;
-}
-
-.mobile #nav-collapse,
-.mobile #nav-collapse .navbar-nav {
-  top:0px !important;
-  width: 100% !important;
-  padding: 0px !important;
-  margin: 0px !important;
-  border-left: 0px !important;
-  border-right: 0px !important;
-  border-top: 0px !important;
-}
-
 /* .desktop #nav-collapse,
 .desktop #nav-collapse .navbar-nav {
   margin-top: 0px !important;
@@ -69,7 +59,7 @@ export default class CTop extends Vue {
   background-color: var(--transparent) !important;
 } */
 .topbar{
-  background-color: var(--secondary) !important;
+  background-color: var(--primary) !important;
   position: fixed;
   height: var(--height-navbar) !important;
   margin-bottom: 0px !important;
@@ -86,6 +76,7 @@ export default class CTop extends Vue {
 } */
 
 /* .mobile .navbar-collapse .navbar-nav > .navbar-collapse-child{
+/* .mobile .navbar-collapse .navbar-nav >
   margin-left: 1em !important;
   margin-right: 1em !important;
 } */
@@ -104,6 +95,30 @@ export default class CTop extends Vue {
   height: 25px !important;
 }
 
+.mobile #nav-collapse {
+  max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
+  overflow: scroll;
+  background-color: var(--primary) !important;
+  border-bottom: 3px solid var(--primary) !important;
+}
+
+.mobile #nav-collapse,
+.mobile #nav-collapse .navbar-nav {
+  top:0px !important;
+  width: 100% !important;
+  padding: 0px !important;
+  margin: 0px !important;
+  border-left: 0px !important;
+  border-right: 0px !important;
+  border-top: 0px !important;
+}
+
+/* .navbar {
+  background-image: none !important;
+} */
+/* .btn {
+  color: inherit !important;
+} */
 /* .navbar-collapse .navbar-nav{
   padding-top:10px !important;
   margin-top:10px !important;

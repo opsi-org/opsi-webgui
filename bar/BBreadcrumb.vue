@@ -1,5 +1,5 @@
 <template>
-  <b-breadcrumb class="View-Breadcrumb" :items="crumbs" />
+  <b-breadcrumb v-if="crumbs.length > 0" class="View-Breadcrumb" :items="crumbs" />
   <!-- <b-row
   > -->
   <!-- align-v="stretch" -->
