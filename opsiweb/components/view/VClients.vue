@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
     <template #parent>
       <BarBPageHeader>
         <template #left>
@@ -87,12 +87,12 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
+// const settings = namespace('settings')
 interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,
 }
-@Component
-export default class VClients extends Vue {
+@Component export default class VClients extends Vue {
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
@@ -125,10 +125,14 @@ export default class VClients extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
   @Watch('updateTable', { deep: true }) updateTableChanged () { if (this.updateTable === true) { this.$fetch() } }
+  // @Watch('secondColumnOpened') layoutColumnChanged () {
+  //   this.setColumnLayoutCollapsed('tableclients', Boolean(this.secondColumnOpened && this.rowId))
+  // }
 
   async fetch () {
     this.isLoading = true
