@@ -10,19 +10,19 @@
   --margin-left-maincontent-if-sidebar-collpased:70px;
   --margin-left-maincontent-if-sidebar-expanded:205px;
 }
-[class$="bg-orange"] { background-color: orange !important;}
-[class$="bg-yellow"] { background-color: yellow !important;}
-[class$="bg-red"] { background-color: red !important;}
-[class$="bg-green"] { background-color: green !important;}
-[class$="bg-blue"] { background-color: blue !important;}
-[class$="bg-grey"] { background-color: grey !important;}
+[class$="bg-orange"] { background-color: var(--orange) !important;}
+[class$="bg-yellow"] { background-color: var(--yellow) !important;}
+[class$="bg-red"] { background-color: var(--red) !important;}
+[class$="bg-green"] { background-color: var(--green) !important;}
+[class$="bg-blue"] { background-color: var(--blue) !important;}
+[class$="bg-grey"] { background-color: var(--gray) !important;}
 
-[class$="fg-orange"] { color: orange !important;}
-[class$="fg-yellow"] { color: yellow !important;}
-[class$="fg-red"] { color: red !important;}
-[class$="fg-green"] { color: green !important;}
-[class$="fg-blue"] { color: blue !important;}
-[class$="fg-grey"] { color: grey !important;}
+[class$="fg-orange"] { color: var(--orange) !important;}
+[class$="fg-yellow"] { color: var(--yellow) !important;}
+[class$="fg-red"] { color: var(--red) !important;}
+[class$="fg-green"] { color: var(--green) !important;}
+[class$="fg-blue"] { color: var(--blue) !important;}
+[class$="fg-grey"] { color: var(--gray) !important;}
 
 /* .bg-color-red { background-color: red !important; }
 .bg-color-orange { background-color: orange !important; }
