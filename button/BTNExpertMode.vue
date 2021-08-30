@@ -1,6 +1,7 @@
 <template>
   <b-button
     v-model="localMode"
+    style="width:180px;"
     variant="primary"
     :pressed.sync="localMode"
     @click="changeMode(localMode)"
