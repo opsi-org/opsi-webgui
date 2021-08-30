@@ -1,9 +1,9 @@
 <template>
-  <div class="btn btn-secondary dd_theme text-left">
+  <div class="btn btn-primary dd_theme text-left">
     <b-nav-item-dropdown
       v-if="navbar"
       style="height:100%;margin:0px;"
-      variant="secondary"
+      variant="primary"
       :text="theme.title"
       alt="select theme"
       :dropup="dropup"
@@ -17,7 +17,7 @@
         {{ t.title }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
-    <b-dropdown v-else :text="theme.title" size="sm" :dropup="dropup">
+    <b-dropdown v-else :text="theme.title" size="sm" :dropup="dropup" variant="primary">
       <b-dropdown-item
         v-for="t in themes"
         :key="t.rel"
@@ -70,8 +70,10 @@ const settings = namespace('settings')
 
 <style>
 .dd_theme{
+  /* max-height: max-content; */
   padding-left: 1em !important;
   padding-right: 1em !important;
+  /* max-height: var(--height-navbar) !important; */
 }
 
 /* .navbar-light .navbar-nav .nav-link{

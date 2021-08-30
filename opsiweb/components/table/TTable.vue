@@ -3,8 +3,9 @@
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
-    hover
     :small="$mq=='mobile'"
+    :stacked="$mq=='mobile'"
+    hover
     selectable
     borderless
     select-mode="multi"

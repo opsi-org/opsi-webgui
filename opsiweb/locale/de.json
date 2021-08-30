@@ -2,7 +2,7 @@
   "message":{
     "loading": "Laden",
     "warning": "WARNUNG",
-    "success": "ERFOLG",
+    "success": "ERFOLGREICH",
     "error": "FEHLER",
     "loginFailed": "Fehler bei der Anmeldung",
     "errortext": "Etwas ist schief gelaufen !!!",
@@ -49,8 +49,8 @@
       "name": "Name",
       "description": "Beschreibung",
       "type": "Typ",
-      "ip": "IP Adresse",
-      "hwAddr": "Hardware-Adresse",
+      "ip": "IP",
+      "hwAddr": "MAC",
       "inventNum": "Inventar Nummer",
       "created": "Erstellt",
       "lastSeen": "Zuletzt gesehen",
@@ -64,7 +64,10 @@
       "clientsIds": "Ausgewählte Clients",
       "depotIds": "Ausgewählte Depots",
       "localbootid": "Localboot Produkt-ID",
-      "netbootid": "Netboot Produkt-ID"
+      "netbootid": "Netboot Produkt-ID",
+      "versionOutdated": "vO",
+      "actionRequestFailed": "aRf",
+      "rowactions": "Aktionen"
     }
   },
   "button" : {
@@ -112,6 +115,6 @@
     "localspecific": "Lokale spezifische Einstellungen",
     "theme": "Thema",
     "mode": "Benutzer-Modus",
-    "modules": "Modul-Inhalt"
+    "modules": "Modules-Inhalt"
   }
 }

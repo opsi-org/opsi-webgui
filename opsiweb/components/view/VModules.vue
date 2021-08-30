@@ -7,8 +7,9 @@
     :busy="isLoading"
     borderless
     stacked
+    small
     :items="[modules]"
-    :fields="['valid', 'expires']"
+    :fields="Object.keys(modules).filter(k => k !== 'signature')"
   >
     <template #table-busy>
       <IconILoading />

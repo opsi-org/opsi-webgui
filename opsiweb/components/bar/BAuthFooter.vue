@@ -3,8 +3,7 @@
     <b-navbar
       toggleable="md"
       fixed="bottom"
-      type="light"
-      variant="secondary"
+      variant="primary"
       :class="{auth_footer: $mq === 'desktop', auth_footer_wrap: $mq === 'mobile'}"
     >
       <b-navbar-nav small>
@@ -22,6 +21,9 @@
 </template>
 
 <style>
+.fixed-bottom .navbar {
+  margin-bottom: 0;
+}
 .auth_footer{
   height: var(--height-navbar) !important;
 }

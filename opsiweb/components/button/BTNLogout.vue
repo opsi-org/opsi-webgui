@@ -1,5 +1,10 @@
 <template>
-  <b-button v-bind="$props" class="btn_logout text-left" @click="doLogout">
+  <b-button
+    v-bind="$props"
+    variant="primary"
+    class="btn_logout text-left"
+    @click="doLogout"
+  >
     <b-icon-power />
     {{ $t('button.logout') }}
   </b-button>
@@ -34,6 +39,7 @@ export default class BTNLogout extends Vue {
 
 <style>
 .btn_logout{
+  /* max-height: inherit; */
   padding-left: 1em !important;
   padding-right: 1em !important;
   /* width: 100%; */

@@ -48,8 +48,8 @@
       "name": "Name",
       "description": "Description",
       "type": "Type",
-      "ip": "IP Address",
-      "hwAddr": "Hardware Address",
+      "ip": "IP",
+      "hwAddr": "MAC",
       "inventNum": "Inventory Number",
       "created": "Created",
       "lastSeen": "Last Seen",
@@ -57,14 +57,17 @@
       "otp": "One Time Password",
       "notes": "Notes",
       "stats": "Statistics",
-      "version": "(Depot) Version",
+      "version": "(Depot-)Version",
       "instStatus": "Installation Status",
       "actionResult": "ActionResult",
-      "clientsIds": "Selected Clients",
-      "depotIds": "Selected Depots",
-      "localbootid": "Localboot Product-ID",
-      "netbootid": "Netboot Product-ID",
-      "actionRequest": "Request"
+      "clientsIds": "Installed on clients",
+      "depotIds": "Installed on depots",
+      "localbootid": "Product-ID",
+      "netbootid": "Product-ID",
+      "actionRequest": "Request",
+      "versionOutdated": "Outdated Products",
+      "actionRequestFailed": "Failed Products",
+      "rowactions": "Actions"
     }
   },
   "button" : {
@@ -112,6 +115,6 @@
     "localspecific": "Local Specific Settings",
     "theme": "Theme",
     "mode": "User Mode",
-    "modules": "Module Content"
+    "modules": "Modules Content"
   }
 }
