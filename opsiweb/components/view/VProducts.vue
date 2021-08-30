@@ -45,6 +45,7 @@ export default class VProducts extends Vue {
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean
   @changes.Getter public changesProducts!: Array<object>
+  @changes.Mutation public deleteAllChanges!: () => void
   rowId: string = ''
   isLoading: boolean = true
   // fetchedDataDepotIds: Array<string> = []
@@ -101,6 +102,9 @@ export default class VProducts extends Vue {
   //     JSON.stringify(this.tableData)
   //   )).result
   // }
+  created () {
+    this.deleteAllChanges()
+  }
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
