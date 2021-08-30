@@ -8,7 +8,7 @@
           :value="depotClientDetails[depotId]"
           :collapsed="Object.keys(details).length <= 1"
           :collapseable="Object.keys(depotClientDetails).length > 1"
-          :value-variant="(depotVersionDiff)? 'warning':''"
+          :value-variant="(depotVersionDiff || depotClientDetails[depotId]=='--')? 'warning':'info'"
         >
           <!-- :collapsed="Object.keys(depotClientDetails) > 1" -->
           <template
@@ -31,7 +31,7 @@
                 v-if="clientId!=depotId"
                 class="text-right"
               >
-                <b-badge :variant="(depotClientDetails[depotId]!=clientVersion)?'danger':''">
+                <b-badge :variant="(depotClientDetails[depotId]!=clientVersion)?'danger':getVariant(type)">
                   {{ clientVersion }}
                 </b-badge>
               </b-th>
@@ -73,25 +73,25 @@ export default class TTProductCell extends Vue {
   // @Prop({ }) text!: {type:Boolean, default:false},
   variants: IObjectString2Function = {
     actionRequest: (r:string) => {
-      if (r === 'uninstall') { return 'bg-blue' }
-      if (r === 'setup') { return 'bg-red' }
-      if (r === 'update') { return 'bg-red' }
-      if (r === 'always') { return 'bg-red' }
-      if (r === 'once') { return 'bg-red' }
-      if (r === 'custom') { return 'bg-red' }
+      if (r === 'uninstall') { return 'info' }
+      if (r === 'setup') { return 'danger' }
+      if (r === 'update') { return 'danger' }
+      if (r === 'always') { return 'danger' }
+      if (r === 'once') { return 'danger' }
+      if (r === 'custom') { return 'danger' }
       return 'bg-grey'
     },
     installationStatus: (s: string) => {
-      if (s === 'installed') { return 'bg-green' }
-      if (s === 'unknown') { return 'bg-orange' }
+      if (s === 'installed') { return 'success' }
+      if (s === 'unknown') { return 'warning' }
       return 'bg-grey' // not_installed
     },
     actionResult: (s: string) => {
-      if (s === 'failed') { return 'bg-red' }
-      if (s === 'successful') { return 'bg-green' }
+      if (s === 'failed') { return 'danger' }
+      if (s === 'successful') { return 'success' }
       return 'bg-grey'
     },
-    version: () => 'red'
+    version: () => 'info'
     // version:(v)=> (v!=this.row.item.versionDepot && v!='None')?'bg-danger':'bg-dark',
     // ppversion:(v:string)=> {v.startsWith('*')? 'pps_client_uneq_depot':'not_bold'},
   }
