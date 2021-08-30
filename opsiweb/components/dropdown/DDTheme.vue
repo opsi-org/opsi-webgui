@@ -2,7 +2,7 @@
   <div class="btn btn-primary dd_theme text-left">
     <b-nav-item-dropdown
       v-if="navbar"
-      style="height:100%;margin:0px;"
+      style="height:100%;margin:0px;width:150px;"
       variant="primary"
       :text="theme.title"
       alt="select theme"
@@ -17,7 +17,14 @@
         {{ t.title }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
-    <b-dropdown v-else :text="theme.title" size="sm" :dropup="dropup" variant="primary">
+    <b-dropdown
+      v-else
+      :text="theme.title"
+      size="sm"
+      style="width:150px;"
+      :dropup="dropup"
+      variant="primary"
+    >
       <b-dropdown-item
         v-for="t in themes"
         :key="t.rel"

@@ -164,6 +164,7 @@ interface ClientRequest {
         // eslint-disable-next-line no-console
         console.error(response)
         this.makeToast(this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
+        this.$nuxt.refresh()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
