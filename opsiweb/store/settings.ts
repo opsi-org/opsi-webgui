@@ -1,11 +1,15 @@
 import Cookie from 'js-cookie'
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
-import { ITheme } from '@/types/tsettings'
-
+import { IObjectString2Boolean, ITheme } from '@/types/tsettings'
+interface IColumnLayoutCollaped {
+  parentId: string,
+  value: boolean
+}
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
   _language: string = 'en'
   _expert: boolean = false
+  _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
   colorthemeobj: ITheme = { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' }
 
   // get expertmode () {
@@ -17,7 +21,6 @@ export default class Settings extends VuexModule {
   // }
 
   get language (): string { return this._language }
-
   get expert (): boolean { return this._expert }
 
   get colortheme (): ITheme {
@@ -48,6 +51,10 @@ export default class Settings extends VuexModule {
   @VuexMutation public setExpertmode (isExpert: boolean) {
     this._expert = isExpert
     Cookie.set('Expert Mode', JSON.stringify(this._expert), { expires: 365 })
+  }
+
+  @VuexMutation public setColumnLayoutCollapsed (obj: IColumnLayoutCollaped) {
+    this._twoColumnLayoutCollapsed[obj.parentId] = obj.value
   }
   // @VuexMutation public setExpertmode (mode: string) {
   //   Cookie.set('mode', mode, { expires: 365 })
