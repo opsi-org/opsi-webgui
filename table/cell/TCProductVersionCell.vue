@@ -5,20 +5,26 @@
     >
       <b-badge
         v-if="row.item.depot_version_diff"
-        :class="(row.item.depot_version_diff||false)?'bg-orange':''"
+        :variant="(row.item.depot_version_diff||false)?'warning':''"
         @click="$emit('details', row, tooltiptext)"
       >
         <span>&#8800;</span>
       </b-badge>
       <b-badge
         v-else
+        :variant="'info'"
       >
         {{ row.item.depotVersions[0] }}
-        {{ (row.item.selectedDepots.length != selectionDepots.length)? '*':'' }}
+      </b-badge>
+      <b-badge
+        v-if="(row.item.selectedDepots.length != selectionDepots.length)"
+        :variant="(row.item.selectedDepots.length != selectionDepots.length)?'warning':''"
+      >
+        *
       </b-badge>
       <b-badge
         v-if="row.item.client_version_outdated||false"
-        :class="(row.item.client_version_outdated||false)?'bg-red':''"
+        :variant="(row.item.client_version_outdated||false)?'danger':''"
         @click="$emit('details', row, tooltiptext)"
       >
         *
@@ -52,7 +58,7 @@ export default class TableCellTCProductVersionCell extends Vue {
 
   get tooltiptext () {
     // console.debug('key length: ', Object.keys(this.clients2depots).length)
-    const depots: IObjectString2String = mapValues2Objects((this.row.item as ITableRowItemProducts).depotVersions, (this.row.item as ITableRowItemProducts).selectedDepots, this.selectionDepots, '-')
+    const depots: IObjectString2String = mapValues2Objects((this.row.item as ITableRowItemProducts).depotVersions, (this.row.item as ITableRowItemProducts).selectedDepots, this.selectionDepots, '--')
     const tt:IObjectString2ObjectString2String = {}
     for (const d in depots) {
       tt[d] = {

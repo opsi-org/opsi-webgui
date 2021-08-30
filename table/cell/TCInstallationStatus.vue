@@ -1,11 +1,11 @@
 <template>
-  <b-badge v-if="text=='mixed'" variant="bg-orange">
+  <b-badge v-if="text=='mixed'" variant="warning">
     &#8800;
   </b-badge>
-  <b-badge v-else-if="text=='installed'" variant="bg-green">
+  <b-badge v-else-if="text=='installed'" variant="success">
     <b-icon icon="laptop" alt="installed" title="installed" />
   </b-badge>
-  <b-badge v-else-if="text=='unknown'" variant="bg-grey">
+  <b-badge v-else-if="text=='unknown'" variant="warning">
     <b-icon icon="question" alt="unknown" />
   </b-badge>
   <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">

@@ -134,7 +134,7 @@ export default class TProductsNetboot extends Vue {
   tableData: ITableData = {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 2,
+    perPage: 5,
     sortBy: 'productId',
     sortDesc: false,
     filterQuery: '',
