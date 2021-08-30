@@ -12,6 +12,7 @@ export default class Settings extends VuexModule {
   colorthemeobj: ITheme = { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' }
   _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
 
+  get twoColumnLayoutCollapsed (): IObjectString2Boolean { return this._twoColumnLayoutCollapsed }
   get language (): string { return this._language }
   get expert (): boolean { return this._expert }
   get colortheme (): ITheme {
