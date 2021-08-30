@@ -49,6 +49,7 @@ import { ITableData } from '~/types/ttable'
 
 @Component
 export default class TCollapseableForMobile extends TTable {
+  @Prop({ }) tableId!: string
   @Prop({ }) title!: string
   @Prop({ }) tabledata!: ITableData
   @Prop({ default: true }) collapseable?: Boolean
