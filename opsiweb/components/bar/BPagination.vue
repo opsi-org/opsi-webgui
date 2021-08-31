@@ -43,6 +43,7 @@ export default class BPaginationUib extends BPagination {
   display: contents !important;
 }
 .BarBPagination-Pages{
+  margin-left: 25px !important;
   margin-top: 0px !important;
   margin-bottom: 0px !important;
   display: flex !important;
