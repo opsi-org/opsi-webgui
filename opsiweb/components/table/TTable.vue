@@ -1,41 +1,43 @@
 <template>
-  <div>
-    <b-table
-      v-bind="$props"
-      :ref="$props.id"
-      :class="$mq"
-      striped
-      hover
-      selectable
-      select-mode="multi"
-      :no-local-sorting="true"
-      :sort-by.sync="tabledata.sortBy"
-      :sort-desc.sync="tabledata.sortDesc"
-      sort-icon-left
-      @row-clicked="rowChanged"
-    >
-      <template #head()="header">
-        {{ $t(header.label) }}
-      </template>
-      <template #head(sel)="{}">
-        {{ selection.length }}/{{ totalrows }}
-      </template>
-      <template #cell(sel)="row">
-        {{ fixRow(row) }}
-        <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
-      </template>
+  <b-table
+    v-bind="$props"
+    :ref="$props.id"
+    :class="$mq"
+    class="ttable"
+    :small="$mq=='mobile'"
+    :stacked="$mq=='mobile'"
+    hover
+    selectable
+    borderless
+    select-mode="multi"
+    @row-clicked="rowChanged"
+  >
+    <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
+    <!-- :no-local-sorting="true"
+    :sort-by.sync="tabledata.sortBy"
+    :sort-desc.sync="tabledata.sortDesc"
+    sort-icon-right -->
+    <template #head()="header">
+      {{ $t(header.label) }}
+    </template>
+    <template #head(sel)="{}">
+      {{ selection.length }}/{{ totalrows }}
+    </template>
+    <template #cell(sel)="row">
+      {{ fixRow(row) }}
+      <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
+    </template>
 
-      <template #head(rowactions)="{}">
-        <DropdownDDTableColumnVisibilty :headers="headers" />
-      </template>
-      <template
-        v-for="slotName in Object.keys($scopedSlots)"
-        #[slotName]="slotScope"
-      >
-        <slot :name="slotName" v-bind="slotScope" />
-      </template>
-    </b-table>
-  </div>
+    <template #head(rowactions)="{}">
+      <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
+    </template>
+    <template
+      v-for="slotName in Object.keys($scopedSlots)"
+      #[slotName]="slotScope"
+    >
+      <slot :name="slotName" v-bind="slotScope" />
+    </template>
+  </b-table>
 </template>
 
 <script lang="ts">
@@ -52,16 +54,30 @@ export default class TTable extends BTable {
   @Prop({ }) tabledata!: ITableData
 
   fixRow (row: ITableRow): void {
-    row.rowSelected = this.selection.includes(row.item.ident)
-    if (row.rowSelected) {
-      const elem = document.getElementById(`__row_${row.item.ident}`)
-      if (elem) { elem.classList.add('b-table-row-selected') }
-      row.item._rowVariant = 'primary'
-    } else {
-      const elem = document.getElementById(`__row_${row.item.ident}Major`)
-      if (elem) { elem.classList.remove('b-table-row-selected') }
-      row.item._rowVariant = ''
+    // eslint-disable-next-line no-console
+    console.log('rowitem.ident', row.item.ident)
+    if (typeof row.item.ident === 'string') {
+      row.rowSelected = this.selection.includes(row.item.ident)
+      if (row.rowSelected) {
+        const elem = document.getElementById(`__row_${row.item.ident}`)
+        if (elem) { elem.classList.add('b-table-row-selected') }
+        row.item._rowVariant = 'primary'
+      } else {
+        const elem = document.getElementById(`__row_${row.item.ident}Major`)
+        if (elem) { elem.classList.remove('b-table-row-selected') }
+        row.item._rowVariant = ''
+      }
     }
+    // row.rowSelected = this.selection.includes(row.item.ident)
+    // if (row.rowSelected) {
+    //   const elem = document.getElementById(`__row_${row.item.ident}`)
+    //   if (elem) { elem.classList.add('b-table-row-selected') }
+    //   row.item._rowVariant = 'primary'
+    // } else {
+    //   const elem = document.getElementById(`__row_${row.item.ident}Major`)
+    //   if (elem) { elem.classList.remove('b-table-row-selected') }
+    //   row.item._rowVariant = ''
+    // }
   }
 
   rowChanged (item: ITableDataItem) {

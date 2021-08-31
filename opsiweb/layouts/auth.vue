@@ -1,7 +1,7 @@
 <template>
   <div>
     <Nuxt />
-    <BarBAuthFooter />
+    <BarBAuthFooter class="footer_content" />
   </div>
 </template>
 
@@ -22,3 +22,10 @@ export default class LayoutAuth extends Vue {
   }
 }
 </script>
+<style>
+.topbar_content,
+.sidebar_content ,
+.footer_content {
+  color: var(--light) !important;
+}
+</style>

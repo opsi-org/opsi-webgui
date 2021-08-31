@@ -2,9 +2,14 @@
   "message":{
     "loading": "Laden",
     "warning": "WARNUNG",
-    "success": "ERFOLG",
+    "success": "ERFOLGREICH",
     "error": "FEHLER",
+    "loginFailed": "Fehler bei der Anmeldung",
+    "errortext": "Etwas ist schief gelaufen !!!",
     "add": " wurde erfolgreich hinzugefügt.",
+    "delete": "Löschen",
+    "deleteConfirm": "Möchten Sie den Client wirklich löschen?",
+    "deleteMessage": " wurde erfolgreich gelöscht.",
     "exists": " existiert bereits."
   },
   "title":{
@@ -13,7 +18,10 @@
     "manage": "VERWALTEN",
     "depots": "Depots",
     "allDepots": "Alle Depots",
+    "depotsconfig": "Depots - Konfiguration",
     "clients": "Clients",
+    "clientsconfig": "Clients - Konfiguration",
+    "clientslog": "Clients - Log",
     "allClients": "Alle Clients",
     "addNew": "Neue hinzufügen",
     "addNewClient": "Neuen Client hinzufügen",
@@ -29,20 +37,24 @@
   },
   "values": {
     "mixed": "<unterschiedlich>",
-    "add": "hinzufügen und auswählen"
+    "add": "hinzufügen und auswählen",
+    "netboot": "Netboot-Produkt",
+    "hostattr": "Host-Attribute",
+    "actionRequest": "Request"
   },
   "table": {
     "filter": "Filter",
     "showCol": "Spalten anzeigen",
     "clientDetails":"Client-Details",
     "addtnlInfo":"Zusätzliche Information",
+    "perpage": "Pro Seite",
     "fields":{
       "id": "ID",
       "name": "Name",
       "description": "Beschreibung",
       "type": "Typ",
-      "ip": "IP Adresse",
-      "hwAddr": "Hardware-Adresse",
+      "ip": "IP",
+      "hwAddr": "MAC",
       "inventNum": "Inventar Nummer",
       "created": "Erstellt",
       "lastSeen": "Zuletzt gesehen",
@@ -50,15 +62,21 @@
       "otp": "Einmalpasswort OTP",
       "notes": "Anmerkungen",
       "stats": "Statistiken",
-      "version": "Version",
+      "version": "(Depot) Version",
       "instStatus": "Installationsstatus",
+      "actionResult": "ActionResult",
       "clientsIds": "Ausgewählte Clients",
       "depotIds": "Ausgewählte Depots",
       "productId": "Produkt Id",
       "required": "required",
       "pre-required": "pre-required",
       "post-required": "post-required",
-      "on-deinstall": "on-deinstall"
+      "on-deinstall": "on-deinstall",
+      "localbootid": "Localboot Produkt-ID",
+      "netbootid": "Netboot Produkt-ID",
+      "versionOutdated": "vO",
+      "actionRequestFailed": "aRf",
+      "rowactions": "Aktionen"
     }
   },
   "button" : {
@@ -74,9 +92,12 @@
     "prodGroups": "Produktgruppen"
   },
   "formselect": {
-    "depot": "Bitte wählen Sie ein Depot",
-    "client": "Bitte wählen Sie ein Client",
-    "logtype": "Bitte wählen Sie ein Log Typ"
+    "depot": "Auswahl eines Depots",
+    "client": "Auswahl eines Clients",
+    "logtype": "Auswahl eines Log Typs",
+    "tooltip": {
+      "actionRequest": "Setze ActionRequest für alle ausgwählten Produkte"
+    }
   },
   "loginPage": {
     "username": "Benutzername",
@@ -100,6 +121,9 @@
     }
   },
   "settingsPage": {
-    "modules": "Modul-Inhalt"
+    "localspecific": "Lokale spezifische Einstellungen",
+    "theme": "Thema",
+    "mode": "Benutzer-Modus",
+    "modules": "Modules-Inhalt"
   }
 }

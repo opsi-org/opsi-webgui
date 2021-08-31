@@ -10,9 +10,10 @@ export interface IObjectString2Stringarray {
     // x = {'foo': 'bar'}
     [key: string]: Array<string>
 }
-// export interface IObjectString2Boolean {
-//     [key: string]: boolean
-// }
+export interface IObjectString2Boolean {
+    // x = {'foo': 'bar'}
+    [key: string]: boolean
+}
 export interface IObjectString2ObjectString2String {
     // x = {'foo': { 'k': 'bar' })}
     [key: string]: {
