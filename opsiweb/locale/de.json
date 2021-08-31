@@ -32,8 +32,7 @@
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
     "netboot": "Netboot-Produkt",
-    "hostattr": "Host-Attribute",
-    "actionRequest": "Request"
+    "hostattr": "Host-Attribute"
   },
   "values": {
     "mixed": "<mixed>"
@@ -65,6 +64,7 @@
       "depotIds": "Ausgewählte Depots",
       "localbootid": "Localboot Produkt-ID",
       "netbootid": "Netboot Produkt-ID",
+      "actionRequest": "Request",
       "versionOutdated": "vO",
       "actionRequestFailed": "aRf",
       "rowactions": "Aktionen"
