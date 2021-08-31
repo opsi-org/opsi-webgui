@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
     <template #parent>
       <BarBPageHeader>
         <template #left>
@@ -63,10 +63,12 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
-@Component
-export default class VDepots extends Vue {
+// const settings = namespace('settings')
+
+@Component export default class VDepots extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+  // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
   rowId: string = ''
   fetchedData: object = {}
