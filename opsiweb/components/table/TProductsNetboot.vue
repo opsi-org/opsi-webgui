@@ -143,16 +143,16 @@ export default class TProductsNetboot extends Vue {
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
-    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: false },
-    actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: false },
-    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
-    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: false },
-    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
-    selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
-    selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
-    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
-    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
+    installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: false, sortable: false },
+    actionResult: { label: 'table.fields.actionResult', key: 'actionResult', visible: false, sortable: false },
+    productId: { label: 'table.fields.netbootid', key: 'productId', visible: true, _fixed: true, sortable: false },
+    desc: { label: 'table.fields.description', key: 'desc', visible: false, sortable: false },
+    name: { label: 'table.fields.name', key: 'name', visible: false, sortable: false },
+    selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
+    selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false, disabled: true },
+    version: { label: 'table.fields.version', key: 'version', visible: true },
+    actionRequest: { label: 'table.fields.actionRequest', key: 'actionRequest', visible: false, sortable: false, _fixed: false },
+    rowactions: { key: 'rowactions', label: 'table.fields.rowactions', visible: true, _fixed: true, class: '' }
   }
 
   @selections.Getter public selectionClients!: Array<string>
