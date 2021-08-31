@@ -116,5 +116,11 @@
     "theme": "Theme",
     "mode": "User Mode",
     "modules": "Modules Content"
+  },
+  "userinfo": {
+    "normal": "Normal Mode",
+    "normal_desc": "Product actionRequest changes can be saved immediately.",
+    "expert": "Expert Mode",
+    "expert_desc": "There is a Overview of changes with Delete/Save features."
   }
 }
