@@ -70,6 +70,7 @@
           :title="$t('formselect.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
+        <div v-else />
       </template>
 
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
