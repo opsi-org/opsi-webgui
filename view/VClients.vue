@@ -112,14 +112,14 @@ interface IFetchOptions {
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
-    clientId: { label: this.$t('table.fields.id') as string, key: 'clientId', visible: true, _fixed: true, sortable: true },
-    description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
-    ipAddress: { label: this.$t('table.fields.ip') as string, key: 'ipAddress', visible: false, sortable: true },
-    macAddress: { label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', visible: false, sortable: true },
-    _majorStats: { label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false },
-    version_outdated: { label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
-    actionResult_failed: { label: this.$t('table.fields.actionRequestFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
-    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
+    clientId: { label: 'table.fields.id', key: 'clientId', visible: true, _fixed: true, sortable: true },
+    description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
+    ipAddress: { label: 'table.fields.ip', key: 'ipAddress', visible: false, sortable: true },
+    macAddress: { label: 'table.fields.hwAddr', key: 'macAddress', visible: false, sortable: true },
+    _majorStats: { label: 'table.fields.stats', key: '_majorStats', _isMajor: true, visible: false },
+    version_outdated: { label: 'table.fields.versionOutdated', key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
+    actionResult_failed: { label: 'table.fields.actionRequestFailed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
+    rowactions: { key: 'rowactions', label: 'table.fields.rowactions', visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionClients!: Array<string>
