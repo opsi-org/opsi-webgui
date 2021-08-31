@@ -9,12 +9,13 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class CDivScrollable extends Vue {
 }
-
 </script>
 
 <style>
 .content-scroll{
-  height:700px;
-  overflow-y: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
 }
 </style>
