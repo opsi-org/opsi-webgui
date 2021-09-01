@@ -11,13 +11,13 @@
       :options="['all depots', ...selectionDepots]"
       :selected-items="['all depots']"
     /> -->
-    <TableTDefault
+    <TableTTable
       v-if="properties"
       :is-busy="isLoading"
       :stacked="false"
       :small="true"
-      :tableitems="Object.values(properties)"
-      :tablefields="fields"
+      :items="properties"
+      :fields="fields"
     >
       <template #cell(propertyId)="row">
         {{ row.item.propertyId }}
@@ -27,7 +27,6 @@
           <div
             v-if="Object.keys(fetchedDataClients2Depots).length > 0"
           >
-            <!-- {{ createNewPropertyValueEntryRow(row.item) }} -->
             <TableCellTCProductPropertyValue
               :clients2depots="fetchedDataClients2Depots"
               :row-item="row.item"
@@ -38,7 +37,6 @@
             v-if="row.item.editable"
             @click="row.toggleDetails()"
           >
-            <!-- disabled -->
             +
           </b-button>
         </b-row>
@@ -66,23 +64,24 @@
           </b-container>
         </b-card>
       </template>
-    </TableTDefault>
+    </TableTTable>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { IProperties, INewPropertyValue } from '~/types/ttable'
+import { INewPropertyValue, IProperty } from '~/types/ttable'
 const selections = namespace('selections')
 
 @Component
 export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
-  @Prop({ }) properties!: IProperties
+  @Prop({ }) properties!: Array<IProperty>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
+  errorText: string = ''
   result:Object = {}
   isLoading: boolean = false
   newValuesPerProp: INewPropertyValue = {}
@@ -96,12 +95,18 @@ export default class TProductProperties extends Vue {
   }
 
   async beforeMount () {
-    this.setSelectionClients(['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'])
+    // this.setSelectionClients(['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'])
     if (this.selectionClients.length > 0) {
-      this.fetchedDataClients2Depots = (await this.$axios.$post(
-        '/api/opsidata/clients/depots',
-        JSON.stringify({ selectedClients: this.selectionClients })
-      )).result
+      // const params = { selectedClients: this.selectionClients }
+      // await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
+        .then((response) => {
+          this.fetchedDataClients2Depots = response.result
+        }).catch((error) => {
+          // eslint-disable-next-line no-console
+          console.error(error)
+          this.errorText = (this as any).$t('message.errortext')
+        })
     }
   }
 

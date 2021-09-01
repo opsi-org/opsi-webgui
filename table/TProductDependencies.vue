@@ -1,22 +1,34 @@
 <template>
   <div>
-    <TableTDefault
+    <TableTTable
       v-if="dependencies"
       :is-busy="isLoading"
       :stacked="false"
       :small="true"
-      :tableitems="Object.values(dependencies)"
-      :tablefields="fields"
+      :items="Object.values(dependencies)"
+      :fields="fields"
       :value-is-input-field="false"
     >
       <template #head()="row">
         <small><b>{{ row.label }}</b></small>
       </template>
-
-      <template #cell()="row">
-        <small>{{ row.item[row.field.key] }}</small>
+      <template #cell(requiredProductId)="row">
+        <small><b>{{ row.item.requiredProductId }}</b></small>
       </template>
-    </TableTDefault>
+      <template #head(requiredProductId)>
+        <small>{{ }}</small>
+      </template>
+      <template #cell(required)="row">
+        <small>
+          {{ getValue(row.item) }}
+        </small>
+      </template>
+      <template #cell(type)="row">
+        <small>
+          ({{ getType(row.item.requirementType, row.item.productAction) }})
+        </small>
+      </template>
+    </TableTTable>
   </div>
 </template>
 
@@ -32,12 +44,34 @@ export default class TProductProperties extends Vue {
   isLoading: boolean = false
   get fields () {
     return [
-      { label: this.$t('table.fields.productId'), key: 'productId' },
+      // { label: this.$t('table.fields.productId'), key: 'productId' },
+      { label: this.$t('table.fields.productId'), key: 'requiredProductId' },
       { label: this.$t('table.fields.required'), key: 'required' },
-      { label: this.$t('table.fields.pre-required'), key: 'pre-required' },
-      { label: this.$t('table.fields.post-required'), key: 'post-required' },
-      { label: this.$t('table.fields.on-deinstall'), key: 'on deinstall' }
+      { label: this.$t('table.fields.requiredType'), key: 'type' }
+      // { label: this.$t('table.fields.pre-required'), key: 'pre-required' },
+      // { label: this.$t('table.fields.post-required'), key: 'post-required' },
+      // { label: this.$t('table.fields.on-deinstall'), key: 'on deinstall' }
     ]
+  }
+
+  getValue (rowItem: IProductDependency) {
+    const isAction = (rowItem.requiredAction) ? ':' : ''
+    const isStatus = (rowItem.requiredInstallationStatus) ? ':' : ''
+    const value = rowItem.requiredAction || rowItem.requiredInstallationStatus
+    return isAction + value + isStatus
+  }
+
+  getType (type:string, productAction:string) {
+    return {
+      'null-setup': this.$t('table.fields.required'),
+      'after-setup': this.$t('table.fields.post-required'),
+      'before-setup': this.$t('table.fields.pre-required'),
+      'before-uninstall': this.$t('table.fields.on-deinstall')
+    }[`${type}-${productAction}`] || this.$t('table.fields.unknown')
+  }
+
+  async fetch () {
+
   }
 }
 </script>
