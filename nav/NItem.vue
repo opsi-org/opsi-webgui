@@ -1,6 +1,6 @@
 <template>
-  <b-nav-item :to="route">
-    <b-icon :icon="icon" />
+  <b-nav-item :to="route" class="NItem-nav-item">
+    <b-icon class="" :icon="icon" />
     <span v-if="expanded">
       {{ $t(title) }}
     </span>
@@ -20,7 +20,10 @@ export default class NItem extends Vue {
 </script>
 
 <style>
-.nav-tabs .nav-link{
-  color: lightgray !important;
+.NItem-nav-item{
+  z-index: 1999;
 }
+/* .nav-tabs .nav-link{
+  color: inherit !important;
+} */
 </style>

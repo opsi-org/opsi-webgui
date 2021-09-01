@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
     <template #parent>
       <BarBPageHeader>
         <template #left>
@@ -8,9 +8,18 @@
           <!-- DOUBT: why fetchedDataDepotIds -->
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSHostGroup />
+          <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
+        </template>
+        <template #right>
+          <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
         </template>
       </BarBPageHeader>
+      <IconILoading v-if="isLoading" />
+      <p v-else-if="errorText">
+        {{ errorText }}
+      </p>
       <TableTCollapseableForMobile
+        v-else
         id="tableclients"
         datakey="clientId"
         :collapseable="false"
@@ -23,6 +32,9 @@
         :loading="isLoading"
         :totalrows="fetchedData.total"
       >
+        <template #head(_majorStats)>
+          {{ '' }}
+        </template>
         <template #head(clientId)>
           <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
         </template>
@@ -44,11 +56,11 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
-          <b-dropdown no-caret>
+          <b-dropdown no-caret variant="outline-primary">
             <template #button-content>
               <b-icon icon="three-dots-vertical" />
             </template>
-            <ModalMDeleteClient :id="row.item.ident.trim()" />
+            <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
           </b-dropdown>
         </template>
         <template #pagination>
@@ -75,14 +87,15 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
+// const settings = namespace('settings')
 interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,
 }
-@Component
-export default class VClients extends Vue {
+@Component export default class VClients extends Vue {
   rowId: string = ''
   isLoading: boolean = true
+  errorText: string = ''
   fetchedData: object = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
@@ -95,37 +108,55 @@ export default class VClients extends Vue {
     setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
   }
 
+  updateTable: boolean = false
+
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true },
     clientId: { label: 'table.fields.id', key: 'clientId', visible: true, _fixed: true, sortable: true },
     description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
     ipAddress: { label: 'table.fields.ip', key: 'ipAddress', visible: false, sortable: true },
     macAddress: { label: 'table.fields.hwAddr', key: 'macAddress', visible: false, sortable: true },
     _majorStats: { label: 'table.fields.stats', key: '_majorStats', _isMajor: true, visible: false },
-    version_outdated: { label: 'v outated', key: 'version_outdated', _majorKey: '_majorStats', visible: false, sortable: true },
-    actionResult_failed: { label: 'aR failed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: false, sortable: true },
-    rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
+    version_outdated: { label: 'table.fields.versionOutdated', key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
+    actionResult_failed: { label: 'table.fields.actionRequestFailed', key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
+    rowactions: { key: 'rowactions', label: 'table.fields.rowactions', visible: true, _fixed: true }
   }
 
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
-  @Watch('selectionDepots', { deep: true })
-  selectionDepotsChanged () { this.$fetch() }
-
-  @Watch('tableData', { deep: true })
-  tableDataChanged () { this.$fetch() }
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('updateTable', { deep: true }) updateTableChanged () { if (this.updateTable === true) { this.$fetch() } }
+  // @Watch('secondColumnOpened') layoutColumnChanged () {
+  //   this.setColumnLayoutCollapsed('tableclients', Boolean(this.secondColumnOpened && this.rowId))
+  // }
 
   async fetch () {
     this.isLoading = true
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
       const params = this.tableData
-      this.fetchedData = (await this.$axios.$get('/api/opsidata/clients', { params })).result
+      await this.$axios.$get('/api/opsidata/clients', { params })
+        .then((response) => {
+          this.fetchedData = response.result
+        }).catch((error) => {
+        // eslint-disable-next-line no-console
+          console.error(error)
+          this.errorText = (this as any).$t('message.errortext')
+        })
     }
     if (this.fetchOptions.fetchDepotIds) {
-      this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
+      await this.$axios.$get('/api/opsidata/depotIds')
+        .then((response) => {
+          this.fetchedDataDepotIds = response.result
+        }).catch((error) => {
+        // eslint-disable-next-line no-console
+          console.error(error)
+          this.errorText = (this as any).$t('message.errortext')
+        })
       this.fetchOptions.fetchDepotIds = false
     }
     this.isLoading = false

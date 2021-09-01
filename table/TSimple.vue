@@ -1,13 +1,27 @@
 <template>
   <b-container fluid>
-    <b-table :busy="isBusy" :stacked="stacked" borderless :items="tableitems" :fields="tablefields">
+    <p v-if="error">
+      {{ errortext }}
+    </p>
+    <!-- :show-empty="error" -->
+    <b-table
+      v-else
+      :busy="isBusy"
+      :stacked="stacked"
+      borderless
+      :items="tableitems"
+      :fields="tablefields"
+    >
       <template #table-busy>
         <IconILoading />
       </template>
+      <!-- <template #empty>
+        {{ errortext }}
+      </template> -->
       <template #cell(opsiHostKey)="row">
         <b-input-group>
           <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
-          <b-button :pressed.sync="showValue" size="sm">
+          <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
             <b-icon v-if="showValue" icon="eye-slash" />
             <b-icon v-else icon="eye" />
           </b-button>
@@ -34,11 +48,13 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class TDefault extends Vue {
+export default class TSimple extends Vue {
   @Prop({ }) tableitems!: Array<object>
   @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
   @Prop({ }) isBusy!: boolean
+  @Prop({ }) error!: boolean
+  @Prop({ }) errortext!: string
   showValue : boolean = false
 }
 </script>

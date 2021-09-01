@@ -5,26 +5,33 @@
     >
       <b-badge
         v-if="row.item.depot_version_diff"
-        :class="(row.item.depot_version_diff||false)?'bg-color-orange':''"
+        :variant="(row.item.depot_version_diff||false)?'warning':''"
         @click="$emit('details', row, tooltiptext)"
       >
         <span>&#8800;</span>
       </b-badge>
       <b-badge
         v-else
+        :variant="'info'"
       >
         {{ row.item.depotVersions[0] }}
       </b-badge>
       <b-badge
+        v-if="(row.item.selectedDepots.length != selectionDepots.length)"
+        :variant="(row.item.selectedDepots.length != selectionDepots.length)?'warning':''"
+      >
+        *
+      </b-badge>
+      <b-badge
         v-if="row.item.client_version_outdated||false"
-        :class="(row.item.client_version_outdated||false)?'bg-color-red':''"
+        :variant="(row.item.client_version_outdated||false)?'danger':''"
         @click="$emit('details', row, tooltiptext)"
       >
         *
       </b-badge>
     </div>
     <TooltipTTProductCell
-      v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+      v-if="row.item.depot_version_diff || row.item.client_version_outdated||(row.item.selectedDepots.length != selectionDepots.length)||false"
       type="version"
       :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
       :details="tooltiptext"
@@ -51,7 +58,7 @@ export default class TableCellTCProductVersionCell extends Vue {
 
   get tooltiptext () {
     // console.debug('key length: ', Object.keys(this.clients2depots).length)
-    const depots: IObjectString2String = mapValues2Objects((this.row.item as ITableRowItemProducts).depotVersions, (this.row.item as ITableRowItemProducts).selectedDepots, this.selectionDepots, '-')
+    const depots: IObjectString2String = mapValues2Objects((this.row.item as ITableRowItemProducts).depotVersions, (this.row.item as ITableRowItemProducts).selectedDepots, this.selectionDepots, '--')
     const tt:IObjectString2ObjectString2String = {}
     for (const d in depots) {
       tt[d] = {

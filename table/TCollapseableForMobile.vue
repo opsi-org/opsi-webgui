@@ -13,7 +13,10 @@
       @click.native="visible = !visible"
     />
     <b-collapse :id="title+'-collapse'" v-model="visible" accordion="table-accordion">
-      <slot name="filter" />
+      <div class="BarBPageHeader-row">
+        <slot name="filter" />
+        <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headers" />
+      </div>
       <TableTTable v-bind="$props" :tabledata="tabledata">
         <template
           v-for="slotName in Object.keys($scopedSlots)"
@@ -45,7 +48,8 @@ import TTable from '~/components/table/TTable.vue'
 import { ITableData } from '~/types/ttable'
 
 @Component
-export default class TCollapseable extends TTable {
+export default class TCollapseableForMobile extends TTable {
+  @Prop({ }) tableId!: string
   @Prop({ }) title!: string
   @Prop({ }) tabledata!: ITableData
   @Prop({ default: true }) collapseable?: Boolean
@@ -63,5 +67,9 @@ export default class TCollapseable extends TTable {
   padding-bottom:0px;
   padding-left:0px;
   padding-right:0px;
+}
+.BarBPageHeader-row > .filter,
+.BarBPageHeader-row > .dropdown {
+  display: inline-block;
 }
 </style>

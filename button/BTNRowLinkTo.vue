@@ -1,5 +1,6 @@
 <template>
   <b-button
+    variant="outline-primary"
     :title="title"
     :pressed="pressed(to, ident)"
     @click="click(to, ident)"
