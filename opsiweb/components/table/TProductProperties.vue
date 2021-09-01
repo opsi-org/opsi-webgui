@@ -114,16 +114,14 @@ export default class TProductProperties extends Vue {
     // TODO: TODO: Backend-Request setProductProperty
     const data = {
       selectionClients: this.selectionClients,
-      productId: this.id,
       propertyId,
       values
-      // type
     }
     // eslint-disable-next-line no-console
-    console.debug('(todo) Request following data: ', data)
+    console.debug('(todo) Request POST product property: ', data)
     // this.fetchedData = (await this.$axios.$post(
-    //   '/api/opsidata/product/properties/value',
-    //   JSON.stringify(this.tableData)
+    //   '/api/opsidata/product/${this.id}/properties',
+    //   JSON.stringify(this.data)
     // )).result
   }
 
