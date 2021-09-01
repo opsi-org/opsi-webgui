@@ -7,6 +7,7 @@ export interface ITableDataItem {
 
 export interface ITableRowItemProducts {
   ident: Array<string>
+  productId: string
   selectedDepots: Array<string>
   selectedClients: Array<string>
   request: Array<string>

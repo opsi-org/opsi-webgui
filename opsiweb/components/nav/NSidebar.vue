@@ -83,7 +83,7 @@ export default class NSidebar extends Vue {
 
 <style>
 .navbar-light .navbar-nav .nav .nav-item{
-  color: unset !important;
+  color: inherit !important;
   font-weight: normal !important;
   padding-top: 0px;
   padding-bottom: 0px;
@@ -92,5 +92,13 @@ export default class NSidebar extends Vue {
 .sidemenu_nav{
   position:absolute;
   width: 100%;
+}
+
+.sidebar_collapsed .sidemenu_nav .nav-item{
+  margin-right: 0px !important;
+}
+.sidebar_collapsed .sidemenu_nav .nav-link > svg{
+  width: 100% !important;
+  margin: 0 auto !important;
 }
 </style>

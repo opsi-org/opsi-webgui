@@ -2,73 +2,72 @@
   <div>
     <BarBPageHeader>
       <template #right>
-        <b-button @click="resetNewClientForm()">
+        <b-button variant="primary" @click="resetNewClientForm()">
           <b-icon icon="arrow-counterclockwise" /> {{ $t('button.reset') }}
         </b-button>
-        <b-button :disabled="!clientName" @click="createOpsiClient()">
+        <b-button variant="success" :disabled="!clientName" @click="createOpsiClient()">
           <b-icon icon="plus" /> {{ $t('button.add') }}
         </b-button>
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <DivDScrollResult v-else>
-      <template slot="content">
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.id') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="clientName" type="text" required />
-          </b-col>
-          <b-col>
-            <b-form-input v-model="domainName" size="sm" type="text" required />
-          </b-col>
-        </b-row>
-        <b>{{ $t('table.clientDetails') }}: </b>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.description') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.description" type="text" />
-          </b-col>
-        </b-row>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.inventNum') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.inventoryNumber" type="text" />
-          </b-col>
-        </b-row>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.hwAddr') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.hardwareAddress" type="text" />
-          </b-col>
-        </b-row>
+    <div v-else>
+      <br>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.id') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="clientName" type="text" required />
+        </b-col>
+        <b-col>
+          <b-form-input v-model="domainName" type="text" required />
+        </b-col>
+      </b-row>
+      <b>{{ $t('table.clientDetails') }}: </b>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.description') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.description" type="text" />
+        </b-col>
+      </b-row>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.inventNum') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.inventoryNumber" type="text" />
+        </b-col>
+      </b-row>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.hwAddr') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.hardwareAddress" type="text" />
+        </b-col>
+      </b-row>
 
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.ip') }}:
-          </b-col>
-          <b-col>
-            <b-form-input v-model="newClient.ipAddress" type="text" />
-          </b-col>
-        </b-row>
-        <b>{{ $t('table.addtnlInfo') }}: </b>
-        <b-row class="mb-2">
-          <b-col sm="3" class="text-sm-right">
-            {{ $t('table.fields.notes') }}:
-          </b-col>
-          <b-col>
-            <b-form-textarea v-model="newClient.notes" rows="2" no-resize />
-          </b-col>
-        </b-row>
-      </template>
-    </DivDScrollResult>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.ip') }}:
+        </b-col>
+        <b-col>
+          <b-form-input v-model="newClient.ipAddress" type="text" />
+        </b-col>
+      </b-row>
+      <b>{{ $t('table.addtnlInfo') }}: </b>
+      <b-row class="mb-2">
+        <b-col sm="3" class="text-sm-right">
+          {{ $t('table.fields.notes') }}:
+        </b-col>
+        <b-col>
+          <b-form-textarea v-model="newClient.notes" rows="2" no-resize />
+        </b-col>
+      </b-row>
+    </div>
   </div>
 </template>
 
@@ -160,10 +159,17 @@ interface ClientRequest {
       this.makeToast(this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning', 5000)
       return
     }
-    const result = await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
-    if (result.error === null) {
-      this.makeToast(this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
-    } else { this.makeToast(result.error, this.$t('message.error'), 'danger', 8000) }
+    await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.error(response)
+        this.makeToast(this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
+        this.$nuxt.refresh()
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.makeToast((this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
+      })
     this.isLoading = false
   }
 }

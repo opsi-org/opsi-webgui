@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
     <template #parent>
       <BarBPageHeader>
         <template #left>
@@ -8,6 +8,9 @@
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSProductGroup />
+        </template>
+        <template #right>
+          <ModalMProdSaveOverview v-if="expert && changesProducts" />
         </template>
       </BarBPageHeader>
       <TableTProductsNetboot />
@@ -31,12 +34,17 @@
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
 // import { ITableData } from '~/types/ttable'
 const selections = namespace('selections')
+const settings = namespace('settings')
+const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @settings.Getter public expert!: boolean
+  @changes.Getter public changesProducts!: Array<object>
+  @changes.Mutation public deleteAllChanges!: () => void
   rowId: string = ''
   isLoading: boolean = true
   // fetchedDataDepotIds: Array<string> = []
@@ -93,6 +101,9 @@ export default class VProducts extends Vue {
   //     JSON.stringify(this.tableData)
   //   )).result
   // }
+  created () {
+    this.deleteAllChanges()
+  }
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent

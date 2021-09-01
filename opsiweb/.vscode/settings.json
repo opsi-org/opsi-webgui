@@ -65,7 +65,8 @@
     "middleware/README.md": true,
     "layouts/README.md": true,
     "components/README.md": true,
-    "assets/README.md": true
+    "assets/README.md": true,
+    "dist": true
   },
   "workspace.isHidden": true
 }
