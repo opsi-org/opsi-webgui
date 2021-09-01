@@ -70,6 +70,8 @@
       "pre-required": "pre-required",
       "post-required": "post-required",
       "on-deinstall": "on-deinstall",
+      "requiredType": "type",
+      "unknown": "unknown",
       "actionResult": "ActionResult",
       "localbootid": "Product-ID",
       "netbootid": "Product-ID",

@@ -72,6 +72,8 @@
       "pre-required": "pre-required",
       "post-required": "post-required",
       "on-deinstall": "on-deinstall",
+      "requiredType": "typ",
+      "unknown": "unbekannt",
       "localbootid": "Localboot Produkt-ID",
       "netbootid": "Netboot Produkt-ID",
       "versionOutdated": "vO",

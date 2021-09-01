@@ -85,19 +85,22 @@ export interface IProperty {
 
 export interface IProductDependency {
   productId: string
-  required?: string
-  'pre-required'?: string
-  'post-required'?: string
-  'on deinstall'?:string
+  productAction: string|null
+  version: string
+  requiredProductId: string
+  requiredVersion: string|null
+  requiredAction: string|null
+  requiredInstallationStatus: string|null
+  requirementType: string|null
 }
 
-export interface IProperties {
-  [key: string]: IProperty
-}
+// export interface IProperties {
+//   [key: string]: IProperty
+// }
 export interface IProductPropertyConfig {
   description?: string
   dependencies?: Array<IProductDependency>
-  properties: IProperties
+  properties: Array<IProperty>|[]
 }
 
 export interface INewPropertyValue {
