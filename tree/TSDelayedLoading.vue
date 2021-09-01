@@ -6,7 +6,7 @@
       :options="options"
       :normalizer="normalizer"
       :load-options="loadOptions"
-      placeholder="Dummy Hostgroup with delayed loading children"
+      placeholder="Hostgroup with delayed loading children"
       value-format="object"
       :max-height="400"
       @select="groupSelect"
@@ -66,46 +66,45 @@ export default class TSDelayedLoading extends Vue {
     this.syncStoreToTree()
   }
 
-  async fetch () {
-    this.request.selectedDepots = JSON.stringify(this.selectionDepots)
-    this.request.parentGroup = 'groups'
-    const params = this.request
-    this.options = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups)
-    // this.options = [
-    //   {
-    //     id: 'clientdirectory',
-    //     text: 'clientdirectory',
-    //     isBranch: true,
-    //     type: 'HostGroup',
-    //     children: null
-    //   },
-    //   {
-    //     id: 'groups',
-    //     text: 'groups',
-    //     isBranch: true,
-    //     type: 'HostGroup',
-    //     children: null
-    //   },
-    //   {
-    //     id: 'clientlist',
-    //     text: 'clientlist',
-    //     isBranch: true,
-    //     type: 'HostGroup',
-    //     children: null
-    //   }
-    // ]
+  fetch () {
+    // this.request.selectedDepots = JSON.stringify(this.selectionDepots)
+    // this.request.parentGroup = 'root'
+    // const params = this.request
+    // this.options = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)
+    this.options = [
+      {
+        id: 'clientdirectory',
+        text: 'clientdirectory',
+        isBranch: true,
+        type: 'HostGroup',
+        children: null
+      },
+      {
+        id: 'groups',
+        text: 'root',
+        isBranch: true,
+        type: 'HostGroup',
+        children: null
+      },
+      {
+        id: 'clientlist',
+        text: 'clientlist',
+        isBranch: true,
+        type: 'HostGroup',
+        children: null
+      }
+    ]
   }
 
   async loadOptions ({ action, parentNode, callback }: any) {
     if (action === 'LOAD_CHILDREN_OPTIONS') {
-      this.request.selectedDepots = this.selectionDepots
+      this.request.selectedDepots = JSON.stringify(this.selectionDepots)
       this.request.parentGroup = parentNode.text
-      const result = (await this.$axios.$post('/api/opsidata/hosts/groups', JSON.stringify(this.request))).result.groups.children
+      const params = this.request
+      const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)
       if (result !== null) {
         parentNode.children = Object.values(result)
       }
-      // // eslint-disable-next-line no-console
-      // console.log('CHILDREN', parentNode.children)
       callback()
     }
   }
