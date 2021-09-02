@@ -1,23 +1,19 @@
 <template>
   <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.netboot') }}</h4></div> -->
   <div>
-    <IconILoading v-if="isLoading" />
-    <p v-else-if="errorText">
-      {{ errorText }}
-    </p>
     <TableTCollapseableForMobile
-      v-else
       id="tableproducts"
       datakey="productId"
-      :tabledata="tableData"
       :title="$t('title.netboot')"
-      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+      :tabledata="tableData"
       :headers="headerData"
-      :items="fetchedData.products"
+      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :selection="selectionProducts"
-      :onchangeselection="setSelectionProducts"
-      :loading="isLoading"
+      :items="fetchedData.products"
       :totalrows="fetchedData.total"
+      :busy="isLoading"
+      :error-text="errorText"
+      :onchangeselection="setSelectionProducts"
     >
       <template #filter>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
@@ -115,18 +111,18 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-interface DepotRequest {
-    selectedClients: string
-}
+// interface DepotRequest {
+//     selectedClients: string
+// }
 @Component
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
   action: string = ''
   type: string = ''
-  depotRequest: DepotRequest = { selectedClients: '' }
+  // depotRequest: DepotRequest = { selectedClients: '' }
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: any
+  fetchedData: any = { products: [], total: 0 }
   // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
@@ -223,9 +219,10 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = true
     this.updateColumnVisibility()
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
-      const params = this.depotRequest
-      await this.$axios.$get('/api/opsidata/clients/depots', { params })
+      // this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
+      // const params = this.depotRequest
+      // await this.$axios.$get('/api/opsidata/clients/depots', { params })
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {
