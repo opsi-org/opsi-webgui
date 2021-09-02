@@ -15,6 +15,7 @@
       </p>
       <TableTCollapseableForMobile
         v-else
+        small
         id="tabledepots"
         datakey="depotId"
         :collapseable="false"

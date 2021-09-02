@@ -56,7 +56,7 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
-          <b-dropdown no-caret variant="outline-primary">
+          <b-dropdown no-caret variant="outline-primary" size="sm">
             <template #button-content>
               <b-icon icon="three-dots-vertical" />
             </template>

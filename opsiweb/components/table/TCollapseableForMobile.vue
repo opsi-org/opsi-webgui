@@ -2,7 +2,7 @@
   <b-card
     v-if="$mq=='mobile' && collapseable"
     bg-variant="transparent"
-    class="TCollapseableForMobile-Card"
+    class="TCollapseableForMobile-Card overflow-auto"
   >
     <BarBPageHeader
       navbartype="collapse"
@@ -29,7 +29,7 @@
       <slot name="pagination" />
     </b-collapse>
   </b-card>
-  <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card">
+  <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card overflow-auto">
     <TableTTable v-bind="$props" :tabledata="tabledata">
       <template
         v-for="slotName in Object.keys($scopedSlots)"
