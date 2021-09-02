@@ -9,13 +9,7 @@
           <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
         </template>
       </BarBPageHeader>
-      <IconILoading v-if="isLoading" />
-      <p v-else-if="errorText">
-        {{ errorText }}
-      </p>
       <TableTCollapseableForMobile
-        v-else
-        small
         id="tabledepots"
         datakey="depotId"
         :collapseable="false"
@@ -25,7 +19,8 @@
         :items="fetchedData.depots"
         :selection="selectionDepots"
         :onchangeselection="setSelectionDepots"
-        :loading="isLoading"
+        :error-text="errorText"
+        :busy="isLoading"
         :totalrows="fetchedData.total"
       >
         <template #head(depotId)>

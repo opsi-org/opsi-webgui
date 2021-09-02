@@ -1,12 +1,7 @@
 <template>
   <div>
     <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
-    <IconILoading v-if="isLoading" />
-    <p v-else-if="errorText">
-      {{ errorText }}
-    </p>
     <TableTCollapseableForMobile
-      v-else
       id="tableproducts"
       datakey="productId"
       :tabledata="tableData"
@@ -16,7 +11,8 @@
       :items="fetchedData.products"
       :selection="selectionProducts"
       :onchangeselection="setSelectionProducts"
-      :loading="isLoading"
+      :busy="isLoading"
+      :error-text="errorText"
       :totalrows="fetchedData.total"
       :stacked="$mq=='mobile'"
     >
@@ -136,18 +132,16 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-interface DepotRequest {
-    selectedClients: string
-}
 @Component
 export default class TProductsLocalboot extends Vue {
   action: string = ''
   type: string = ''
-  depotRequest: DepotRequest = { selectedClients: '' }
+  // depotRequest: DepotRequest = { selectedClients: '' }
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: any
+  // fetchedData: any
+  fetchedData: any = { products: [], total: 0 }
   // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
@@ -248,9 +242,9 @@ export default class TProductsLocalboot extends Vue {
     //   this.fetchOptions.fetchDepotIds = false
     // }
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
-      const params = this.depotRequest
-      await this.$axios.$get('/api/opsidata/clients/depots', { params })
+      // this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
+      // const params = this.depotRequest
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {

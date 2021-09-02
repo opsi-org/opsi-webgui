@@ -17,7 +17,10 @@
         <slot name="filter" />
         <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headers" />
       </div>
-      <TableTTable v-bind="$props" :tabledata="tabledata">
+      <p v-if="$props.errorText">
+        {{ $props.errorText }}
+      </p>
+      <TableTTable v-else v-bind="$props" :tabledata="tabledata">
         <template
           v-for="slotName in Object.keys($scopedSlots)"
           #[slotName]="slotScope"
@@ -30,6 +33,9 @@
     </b-collapse>
   </b-card>
   <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card overflow-auto">
+    <p v-if="$props.errorText">
+      {{ $props.errorText }}
+    </p>
     <TableTTable v-bind="$props" :tabledata="tabledata">
       <template
         v-for="slotName in Object.keys($scopedSlots)"
