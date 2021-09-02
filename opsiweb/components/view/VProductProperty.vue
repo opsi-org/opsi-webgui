@@ -39,6 +39,7 @@ export default class VClientConfig extends Vue {
 
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   fetchedData: IProductPropertyConfig = { description: '', dependencies: [], properties: [] }
   errorText: string = ''
@@ -103,6 +104,7 @@ export default class VClientConfig extends Vue {
     //       this.errorText = (this as any).$t('message.errortext')
     //     })
     // }
+    this.setSelectionClients(['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'])
     this.fetchedData = {
       description: 'This is the description',
       dependencies: [
@@ -112,17 +114,48 @@ export default class VClientConfig extends Vue {
         { productId: '1st-customize', productAction: 'setup', version: '17-3', requiredProductId: 'clientdescription', requiredVersion: null, requiredAction: 'once', requiredInstallationStatus: null, requirementType: 'after' },
         { productId: 'sas', productAction: 'uninstall', version: '9.2-2', requiredProductId: 'javavm', requiredVersion: null, requiredAction: null, requiredInstallationStatus: 'installed', requirementType: 'before' }
       ],
+
       properties: [
-        { propertyId: 'uninstall_before_install', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [[true]], depotsIds: ['bonifax.uib.local'], depotsValues: [[false]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' },
-        { propertyId: 'uninstall_before_install1', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [[false]], depotsIds: ['bonifax.uib.local'], depotsValues: [[false]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' },
-        { propertyId: 'uninstall_before_install2', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [[true]], depotsIds: ['bonifax.uib.local'], depotsValues: [[true]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' },
-        { propertyId: 'architecture', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [['64bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: false, multiValue: false, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        { propertyId: 'architecture1', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: false, multiValue: false, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        { propertyId: 'architecture2', clientsIds: ['anna-tp-t14.uib.local'], clientsValues: [['64bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: false, multiValue: false, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        { propertyId: 'architecture3', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, newValue: '', newValues: [], multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        { propertyId: 'architecture4', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit', '32bit'], ['32bit', '64bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, newValue: '', newValues: [], multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        { propertyId: 'architecture5', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [['64bit', '32bit'], ['32bit']], depotsIds: ['bonifax.uib.local'], depotsValues: [['64bit']], possibleValues: ['32bit', '64bit', 'sysnativ'], editable: true, newValue: '', newValues: [], multiValue: true, version: '19.00-1', propertyType: 'UnicodeProductProperty' },
-        { propertyId: 'desktop_icon', clientsIds: ['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'], clientsValues: [[true], [false]], depotsIds: ['bonifax.uib.local'], depotsValues: [[false]], possibleValues: [true, false], editable: false, multiValue: false, version: '19.00-1', propertyType: 'BoolProductProperty' }
+        {
+          propertyId: 'unicode',
+          propertyType: 'UnicodeProductProperty',
+          description: 'this is an unicode property',
+          multiValue: true,
+          editable: true,
+          newValue: '',
+          newValues: [],
+          default: ['a'],
+          possibleValues: ['a', 'b', 'c'],
+          // defaultDetails:{d1: x, d2:y},
+          // descriptionDetails: {d1: x, d2:y},
+
+          depots: { 'bonifax.uib.local': ['a', 'b'] },
+          clients: {
+            'anna-tp-14.uib.local': ['a'],
+            'anna-vm-24001.uib.local': ['a', 'b'] // <depotValue:a>
+          },
+          // visibleValues: <mixed>
+
+          anyDepotDifferentFromDefault: true,
+          anyClientDifferentFromDepot: true
+        },
+        {
+          propertyId: 'boolean',
+          propertyType: 'BoolProductProperty',
+          description: 'this is an boolean property',
+          multiValue: false,
+          editable: false,
+          default: [true],
+          possibleValues: [true, false],
+          depots: { 'bonifax.uib.local': [false] },
+          clients: {
+            'anna-tp-14.uib.local': [true],
+            'anna-vm-24001.uib.local': [false] // <depotValue:a>
+          },
+
+          anyDepotDifferentFromDefault: true,
+          anyClientDifferentFromDepot: true
+        }
       ]
     }
     // this.fetchedData = (await this.$axios.$post(

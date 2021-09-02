@@ -61,26 +61,24 @@ export interface ITableHeaders {
 export interface IProperty {
   propertyId: string
   propertyType: 'UnicodeProductProperty'|'BoolProductProperty'
-  version: string // combined: product-packageVersion
-  possibleValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
-  propertyDifferentOnVersions?: boolean
+  description: string
+  multiValue: boolean
   editable: boolean
+  default: Array<string|boolean> // combined: product-packageVersion
+  possibleValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
+
+  descriptionDetails?: { [key:string]: string}
+  defaultDetails?: { [key:string]: string}
+  multiValueDetails?: { [key:string]: string}
+  editableDetails?: { [key:string]: string}
+
   newValue?: string // empty string if editable==true
   newValues?: Array<string> // empty list if editable==true
 
-  multiValue: boolean
-
-  depotsIds: Array<string>
-  depotsValues: Array<Array<string|boolean>> //  prodPropState(depots) or defaultValues
-  // depotsVersions?: string // combined: product-packageVersion
-
-  clientsIds: Array<string>
-  clientsValues: Array<Array<string|boolean>> // prodPropState(clients)
-  // clientsVersions?: string // combined: product-packageVersion
-
+  anyDepotDifferentFromDefault?: boolean
   anyClientDifferentFromDepot?: boolean
-  allClientValuesEqual?: boolean
-  allDepotValuesEqual?: boolean
+  depots:{ [key: string]: Array<string|boolean> }
+  clients:{ [key: string]: Array<string|boolean> }
 }
 
 export interface IProductDependency {
@@ -95,7 +93,7 @@ export interface IProductDependency {
 }
 
 // export interface IProperties {
-//   [key: string]: IProperty
+//   [key: string]: Array<IProperty>|[]
 // }
 export interface IProductPropertyConfig {
   description?: string
