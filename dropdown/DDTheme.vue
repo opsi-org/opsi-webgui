@@ -2,7 +2,7 @@
   <div class="btn btn-primary dd_theme text-left">
     <b-nav-item-dropdown
       v-if="navbar"
-      style="height:100%;margin:0px;width:150px;"
+      style="height:100%;margin:0px;max-width:150px;"
       variant="primary"
       :text="theme.title"
       alt="select theme"
