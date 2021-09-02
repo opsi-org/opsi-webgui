@@ -81,12 +81,12 @@ const selections = namespace('selections')
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
-    depotId: { label: 'table.fields.id', key: 'depotId', visible: true, _fixed: true, sortable: true },
-    description: { label: 'table.fields.description', key: 'description', visible: false, sortable: true },
-    type: { label: 'table.fields.type', key: 'type', visible: false, sortable: true },
-    ip: { label: 'table.fields.ip', key: 'ip', visible: false, sortable: true },
-    // _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
-    rowactions: { key: 'rowactions', label: 'table.fields.rowactions', visible: true, _fixed: true }
+    depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
+    description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
+    type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
+    ip: { label: this.$t('table.fields.ip') as string, key: 'ip', visible: false, sortable: true },
+    // _empty_: { label: this.$t('', key: '_empty_') as string, visible: true, _fixed: true },
+    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
