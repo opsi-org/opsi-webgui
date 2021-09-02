@@ -20,25 +20,37 @@
       :fields="fields"
     >
       <template #cell(propertyId)="row">
-        {{ row.item.propertyId }}
+        <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
+        {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
+        <small v-if="row.item.anyDepotDifferentFromDefault">
+          <br />
+          (depotValue is different from default!)
+          <!-- TODO: show tooltip with depot- and default-values -->
+        </small>
       </template>
       <template #cell(value)="row">
         <b-row>
           <div
             v-if="Object.keys(fetchedDataClients2Depots).length > 0"
           >
+            <!-- {{row.item}} -->
             <TableCellTCProductPropertyValue
               :clients2depots="fetchedDataClients2Depots"
               :row-item="row.item"
               @change="handleChange"
-            />
+            >
+              <template #editable-button>
+                <b-button
+                  v-if="row.item.editable"
+                  variant="primary"
+                  size="sm"
+                  @click="row.toggleDetails()"
+                >
+                  +
+                </b-button>
+              </template>
+            </TableCellTCProductPropertyValue>
           </div>
-          <b-button
-            v-if="row.item.editable"
-            @click="row.toggleDetails()"
-          >
-            +
-          </b-button>
         </b-row>
       </template>
       <template #row-details="row">
@@ -49,13 +61,13 @@
                 v-model="row.item.newValue"
                 size="sm"
                 class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
-                @keyup.enter="updateNewPropertyValuesRow(row)"
+                @keyup.enter="updateNewPropertyValuesRow(row.item)"
               />
               <template #append>
                 <b-button
                   size="sm"
                   variant="outline-secondary"
-                  @click="updateNewPropertyValuesRow(row)"
+                  @click="updateNewPropertyValuesRow(row.item)"
                 >
                   {{ $t('values.add') }}
                 </b-button>
@@ -79,7 +91,6 @@ export default class TProductProperties extends Vue {
   @Prop({ }) properties!: Array<IProperty>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
-  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   errorText: string = ''
   result:Object = {}
@@ -95,7 +106,6 @@ export default class TProductProperties extends Vue {
   }
 
   async beforeMount () {
-    // this.setSelectionClients(['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'])
     if (this.selectionClients.length > 0) {
       // const params = { selectedClients: this.selectionClients }
       // await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
@@ -125,8 +135,10 @@ export default class TProductProperties extends Vue {
     // )).result
   }
 
-  updateNewPropertyValuesRow (row: INewPropertyValue) {
-    row.item.newValues.push(row.item.newValue)
+  updateNewPropertyValuesRow (rowItem: IProperty) {
+    if (rowItem.newValue && rowItem.newValues) {
+      rowItem.newValues.push(rowItem.newValue)
+    }
   }
 }
 </script>

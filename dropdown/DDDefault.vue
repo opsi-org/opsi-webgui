@@ -7,7 +7,7 @@
     size="sm"
   >
     <template v-if="multiple" #button-content>
-      <b-badge v-for="i in selections" :key="i">
+      <b-badge v-for="i in selections" :key="i" variant="primary">
         {{ i }}
       </b-badge>
     </template>
@@ -62,11 +62,24 @@ export default class DDDefault extends BDropdown {
   }
 
   @Watch('selections') selectionsChanged () {
+    // const localSelection = this.selections])
+    if (this.selections.length > 1) {
+      const index = this.selections.indexOf(this.$t('values.mixed') as string)
+      if (index > -1) {
+        this.selections.splice(index, 1)
+      }
+    }
+    // this.selections = localSelection
     this.$emit('change', this.selections)
   }
 
   @Watch('selectedItems') selectedItemsChanged () {
-    this.selections = this.uniques([...this.selectedItems, ...this.selections])
+    const localSelection = this.uniques([...this.selectedItems, ...this.selections])
+    // const index = localSelection.indexOf(this.$t('values.mixed') as string)
+    // if (index > -1) {
+    //   localSelection.splice(index, 1)
+    // }
+    this.selections = localSelection
   }
 
   toggleSelection (item: string) {
