@@ -27,4 +27,3 @@ export interface ITheme {
     rel: string
     timestamp?: number
 }
-
