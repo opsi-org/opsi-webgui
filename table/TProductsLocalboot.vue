@@ -26,8 +26,8 @@
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
       </template>
       <template #cell(version)="row">
-        <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
+          v-if="Object.keys(fetchedDataClients2Depots).length == selectionClients.length"
           type="depotVersions"
           :row="row"
           :clients2depots="fetchedDataClients2Depots"
