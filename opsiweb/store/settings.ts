@@ -7,23 +7,14 @@ interface IColumnLayoutCollaped {
 }
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
-  _language: string = 'en'
-  _expert: boolean = false
+  _language: string = Cookie.get('Language') as string || 'en'
+  _expert: boolean = Cookie.get('ExpertMode') as string === 'expert' || false
+  colorthemeobj: ITheme = { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' }
   _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
-  colorthemeobj: ITheme = { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' }
-
-  // get expertmode () {
-  //   return () => { return Cookie.get('mode') as string }
-  // }
-
-  // get modeIsExpert () {
-  //   return () => { return Cookie.get('mode') as string === 'expert' }
-  // }
 
   get twoColumnLayoutCollapsed (): IObjectString2Boolean { return this._twoColumnLayoutCollapsed }
   get language (): string { return this._language }
   get expert (): boolean { return this._expert }
-
   get colortheme (): ITheme {
     if (Cookie.get('theme.title')) {
       const c: ITheme = {
@@ -51,21 +42,16 @@ export default class Settings extends VuexModule {
 
   @VuexMutation public setExpertmode (isExpert: boolean) {
     this._expert = isExpert
-    Cookie.set('Expert Mode', JSON.stringify(this._expert), { expires: 365 })
+    Cookie.set('ExpertMode', (isExpert) ? 'expert' : 'normal', { expires: 365 })
   }
 
   @VuexMutation public setColumnLayoutCollapsed (obj: IColumnLayoutCollaped) {
     this._twoColumnLayoutCollapsed[obj.parentId] = obj.value
   }
-  // @VuexMutation public setExpertmode (mode: string) {
-  //   Cookie.set('mode', mode, { expires: 365 })
-  // }
 
-  @VuexMutation // ({ mutate: ['colorthemeobj'] })
-  public setColorTheme (newThemeObj: ITheme) {
+  @VuexMutation public setColorTheme (newThemeObj: ITheme) {
     this.colorthemeobj = newThemeObj
     this.colorthemeobj.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
-    // Cookie.set('theme', JSON.stringify(newThemeObj))
     Cookie.set('theme.title', this.colorthemeobj.title)
     Cookie.set('theme.timestamp', JSON.stringify(this.colorthemeobj.timestamp))
     Cookie.set('theme.rel', this.colorthemeobj.rel)

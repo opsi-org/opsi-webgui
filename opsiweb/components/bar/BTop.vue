@@ -12,7 +12,6 @@
             <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
           </b-badge>
           OPSIWEB
-          <IconIExpert v-if="expert" />
         </b-navbar-brand>
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
@@ -21,11 +20,15 @@
           </b-button>
         </b-navbar-nav>
         <b-collapse id="nav-collapse" is-nav variant="primary">
+          <b-navbar-nav v-if="$mq!='mobile'">
+            <IconIExpert />
+          </b-navbar-nav>
           <b-navbar-nav class="ml-auto float-right">
-            <!-- <IconIExpert v-if="expert && $mq=='desktop'" /> -->
-            <!-- <ButtonBTNExpertMode class="navbar-collapse-child" :navbar="true" /> -->
             <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-            <DropdownDDTheme class="navbar-collapse-child" :navbar="true" />
+            <!-- TODO: remove for production start -->
+            <!-- <ButtonBTNExpertMode v-if="$mq=='mobile'" class="navbar-collapse-child" :navbar="true" /> -->
+            <DropdownDDTheme v-if="$mq!='mobile'" class="navbar-collapse-child" :navbar="true" />
+            <!-- TODO: remove for production end -->
             <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
           </b-navbar-nav>
         </b-collapse>
@@ -94,10 +97,17 @@ export default class CTop extends Vue {
 .topbar_logo {
   height: 25px !important;
 }
-
+.desktop .navbar-brand{
+  margin-right: 0px !important;
+  /* padding-right: 0px !important; */
+}
+.desktop #nav-collapse {
+  margin-left: 0px !important;
+  padding-left: 0px !important;
+}
 .mobile #nav-collapse {
   max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
-  overflow: scroll;
+  overflow: auto;
   background-color: var(--primary) !important;
   border-bottom: 3px solid var(--primary) !important;
 }
