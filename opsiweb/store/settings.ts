@@ -20,6 +20,7 @@ export default class Settings extends VuexModule {
   //   return () => { return Cookie.get('mode') as string === 'expert' }
   // }
 
+  get twoColumnLayoutCollapsed (): IObjectString2Boolean { return this._twoColumnLayoutCollapsed }
   get language (): string { return this._language }
   get expert (): boolean { return this._expert }
 
