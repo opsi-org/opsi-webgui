@@ -1,58 +1,61 @@
 <template>
-  <div>
-    <b-sidebar
-      id="sidemenu"
-      :class="{sidemenu_small: !attributes.expanded}"
-      bg-variant="secondary"
-      text-variant="light"
-      no-header
-      :backdrop="$mq == 'mobile'"
-      :no-close-on-route-change="$mq == 'desktop' ? true : false"
-      :visible="attributes.visible"
-    >
-      <NavNSidebar :expanded="attributes.expanded" />
-      <template v-if="$mq === 'desktop'" #footer="">
-        <div class="sidemenu_footer">
-          <b-button
-            v-b-tooltip.hover
-            :title=" (!attributes.expanded)? 'Expand': 'Collapse'"
-            :pressed.sync="attributes.expanded"
-          >
-            <b-icon v-if="!attributes.expanded" icon="chevron-double-right" />
-            <b-icon v-else-if="attributes.expanded" icon="chevron-double-left" />
-          </b-button>
-        </div>
-      </template>
-    </b-sidebar>
-  </div>
+  <b-sidebar
+    id="sidemenu"
+    no-header
+    bg-variant="primary"
+    text-variant="light"
+    :class="{sidemenu_small: !attributes.expanded}"
+    :backdrop="$mq == 'mobile'"
+    :no-close-on-route-change="$mq == 'desktop' ? true : false"
+    :visible="attributes.visible"
+  >
+    <NavNSidebar :expanded="attributes.expanded" />
+    <template v-if="$mq === 'desktop'" #footer="">
+      <div class="sidemenu_footer">
+        <b-button
+          v-b-tooltip.hover
+          variant="primary"
+          :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
+          :pressed.sync="attributes.expanded"
+        >
+          <b-icon v-if="attributes.expanded" icon="chevron-double-left" />
+          <b-icon v-else icon="chevron-double-right" />
+        </b-button>
+      </div>
+    </template>
+  </b-sidebar>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    attributes: {
-      type: Object,
-      default () {
-        return {}
-      }
-    }
-  }
-})
+
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class BSide extends Vue {
+  @Prop({ }) attributes!: object
+}
 </script>
 
 <style>
 #sidemenu {
-  top: var(--height-navbar) !important;
+  top: calc(var(--height-navbar) - 3px) !important;
   width: var(--width-sidebar-expanded);
   height: 100%;
 }
 .sidemenu_small > #sidemenu {
   width: var(--width-sidebar-collapsed);
+  /* width: max-content; */
+}
+.sidemenu_footer .btn {
+  /* margin-left: -10px; */
+  padding: 10px;
+  border: 1px solid var(--light) !important;
+  z-index: 2200;
 }
 .sidemenu_footer {
   display: inline;
   float: right;
+  margin-right: 2px;
   margin-bottom: 70px;
 }
 </style>

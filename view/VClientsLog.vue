@@ -1,23 +1,22 @@
 <template>
   <div>
-    <BarBPageHeader v-if="asChild" :title="'Log - ' + id" closeroute="/clients/" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
-      <template #filter>
+      <template #left>
         <b-form-input v-model.trim="filterQuery" placeholder="Filter" @keyup="filterLog" />
-      </template>
-      <template v-if="!asChild" #selection>
-        <slot name="IDSelection" />
-      </template>
-      <template #log>
+        <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype :logtype.sync="logtype" />
         <SpinbuttonSBLoglevel :loglevel.sync="loglevel" />
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
+    <p v-else-if="errorText">
+      {{ errorText }}
+    </p>
     <DivDScrollResult v-else>
       <template slot="content">
         <div v-if="filteredLog == ''" class="container-fluid">
-          No Logs Found !
+          --
         </div>
         <div
           v-for="(log, index) in filteredLog"
@@ -67,6 +66,7 @@ export default class VClientLog extends Vue {
   filterQuery: string = ''
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   isLoading: boolean = false
+  errorText: string = ''
 
   @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
   @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
@@ -97,13 +97,15 @@ export default class VClientLog extends Vue {
     this.isLoading = true
     this.logrequest.selectedClient = id
     this.logrequest.selectedLogType = logtype
-    await this.$axios.post('/api/opsidata/log', JSON.stringify(this.logrequest))
+    const params = this.logrequest
+    await this.$axios.$get('/api/opsidata/log', { params })
       .then((response) => {
-        this.logResult = response.data.result
+        this.logResult = response.result
         this.filteredLog = this.logResult
       }).catch((error) => {
-        this.logResult = error
-        this.filteredLog = this.logResult
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.errorText = (this as any).$t('message.errortext')
       })
     this.isLoading = false
   }

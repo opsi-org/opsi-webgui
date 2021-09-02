@@ -15,7 +15,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class SLoglevel extends Vue {
-  level: number = 7
+  level: number = 5
 }
 </script>
 

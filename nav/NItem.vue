@@ -1,31 +1,29 @@
 <template>
-  <div>
-    <b-nav-item :to="route">
-      <b-icon :icon="icon" />
-      <span v-if="expanded">
-        {{ title }}
-      </span>
-    </b-nav-item>
-  </div>
+  <b-nav-item :to="route" class="NItem-nav-item">
+    <b-icon class="" :icon="icon" />
+    <span v-if="expanded">
+      {{ $t(title) }}
+    </span>
+  </b-nav-item>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    expanded: Boolean,
-    title: {
-      type: String,
-      default: ''
-    },
-    icon: {
-      type: String,
-      default: ''
-    },
-    route: {
-      type: String,
-      default: ''
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class NItem extends Vue {
+  @Prop({ }) expanded!: boolean
+  @Prop({ }) title!: string
+  @Prop({ }) icon!: string
+  @Prop({ }) route!: string
+}
 </script>
+
+<style>
+.NItem-nav-item{
+  z-index: 1999;
+}
+/* .nav-tabs .nav-link{
+  color: inherit !important;
+} */
+</style>

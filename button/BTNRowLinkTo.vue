@@ -1,6 +1,9 @@
 <template>
   <b-button
+    variant="outline-primary"
+    class="Btn_Row_action"
     :title="title"
+    size="sm"
     :pressed="pressed(to, ident)"
     @click="click(to, ident)"
   >
@@ -27,5 +30,7 @@ export default class BTNRowLinkTo extends Vue {
 </script>
 
 <style>
+.Btn_Row_action {
 
+}
 </style>
