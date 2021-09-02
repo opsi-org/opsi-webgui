@@ -30,9 +30,13 @@ interface Request {
     selectedDepots: string
     parentGroup: string
 }
+interface ClientRequest {
+    selectedDepots: string
+}
 
 @Component
 export default class TSDelayedLoading extends Vue {
+  clientRequest: ClientRequest = { selectedDepots: '' }
   request: Request = { selectedDepots: '', parentGroup: '' }
 
   value: any = null
@@ -97,13 +101,25 @@ export default class TSDelayedLoading extends Vue {
   }
 
   async loadOptions ({ action, parentNode, callback }: any) {
+    const clientList: Array<object> = []
     if (action === 'LOAD_CHILDREN_OPTIONS') {
       this.request.selectedDepots = JSON.stringify(this.selectionDepots)
       this.request.parentGroup = parentNode.text
-      const params = this.request
-      const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)
-      if (result !== null) {
-        parentNode.children = Object.values(result)
+      if (this.request.parentGroup === 'clientlist') {
+        this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
+        const params = this.clientRequest
+        const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+        for (const c in result) {
+          const client = result[c]
+          clientList.push({ id: client + ';clientlist', text: client, type: 'ObjectToGroup' })
+        }
+        parentNode.children = clientList
+      } else {
+        const params = this.request
+        const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)
+        if (result !== null) {
+          parentNode.children = Object.values(result)
+        }
       }
       callback()
     }
