@@ -1,14 +1,14 @@
 <template>
   <div>
     <b-nav-item v-b-toggle="'collapse-navitem-'+title">
-      <b-icon :icon="icon" /> {{ title }}
+      <b-icon :icon="icon" /> {{ $t(title) }}
       <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
     </b-nav-item>
     <b-collapse :id="'collapse-navitem-'+title" accordion="sidebarAccordion">
       <b-nav vertical>
         <b-nav-item v-for="sub in submenu" :key="sub.title" :to="sub.route">
           <span class="submenu">
-            {{ sub.title }}
+            {{ $t(sub.title) }}
           </span>
         </b-nav-item>
       </b-nav>
@@ -17,29 +17,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    icon: {
-      type: String,
-      default: ''
-    },
-    route: {
-      type: String,
-      default: ''
-    },
-    submenu: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class NItemCollapsible extends Vue {
+  @Prop({ }) title!: string
+  @Prop({ }) icon!: string
+  @Prop({ }) route!: string
+  @Prop({ }) submenu!: Array<object>
+}
 </script>
 
 <style>

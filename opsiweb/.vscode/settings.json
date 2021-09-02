@@ -39,5 +39,34 @@
     "typescript",
     "vue",
     "html"
-  ]
+  ],
+  "files.exclude": {
+    ".vscode": true,
+    ".mockups": true,
+    ".nuxt": true,
+    "https": true,
+    "node_modules": true,
+    "static": true,
+    "test": true,
+    ".babelrc": true,
+    ".editorconfig": true,
+    ".eslintignore": true,
+    ".eslintrc.js": true,
+    ".gitignore": true,
+    "jest.config.js": true,
+    "package-lock.json": true,
+    "package.json": true,
+    "README.md": true,
+    "vue-shim.d.ts": true,
+    "vue-shim.d.ts.tmp": true,
+    "tsconfig.json": true,
+    "plugins/README.md": true,
+    "pages/README.md": true,
+    "middleware/README.md": true,
+    "layouts/README.md": true,
+    "components/README.md": true,
+    "assets/README.md": true,
+    "dist": true
+  },
+  "workspace.isHidden": true
 }

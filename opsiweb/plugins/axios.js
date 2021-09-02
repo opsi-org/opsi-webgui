@@ -1,5 +1,10 @@
 // import Cookie from 'js-cookie'
 export default function ({ $axios, redirect, store, route }) {
+  if (process.client || process.static) {
+    const host = window.location.hostname
+    $axios.setBaseURL('https://' + host + ':4447/webgui')
+  }
+
   $axios.onRequest((config) => {
     // console.debug('Making request to ', config)
     if (config.url !== '/api/user/opsiserver') {
@@ -13,7 +18,6 @@ export default function ({ $axios, redirect, store, route }) {
 
   $axios.onError((error) => {
     const code = parseInt(error.response && error.response.status)
-    // console.error("ERROR code:", code)
     // if (code === 400) {
     //   // redirect('/400')
     // }

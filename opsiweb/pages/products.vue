@@ -6,13 +6,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { Component, Vue } from 'nuxt-property-decorator'
 
-export default Vue.extend({
-  name: 'PageProducts',
-  computed: {},
-  methods: {}
-})
+@Component
+export default class PageProducts extends Vue {
+}
 </script>
 
 <style>

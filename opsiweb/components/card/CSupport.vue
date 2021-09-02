@@ -3,15 +3,15 @@
     <b-card>
       <b-row>
         <b-col md="7">
-          <b-card-body :title="item.title">
+          <b-card-body :title="$t(item.title)">
             <b-card-text>
-              {{ item.description }}
+              {{ $t(item.description) }}
             </b-card-text>
           </b-card-body>
         </b-col>
         <b-col md="5">
           <b-card-body>
-            <a class="btn btn-default border support-button" :href="item.link" target="_blank">{{ item.buttonname }}</a>
+            <a class="btn btn-default border support-button" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
           </b-card-body>
         </b-col>
       </b-row>
@@ -20,17 +20,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    item: {
-      type: Object,
-      default () {
-        return {}
-      }
-    }
-  }
-})
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class CSupport extends Vue {
+  @Prop({ }) item!: object
+}
 </script>
 
 <style>

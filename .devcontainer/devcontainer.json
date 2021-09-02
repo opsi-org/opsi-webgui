@@ -10,6 +10,8 @@
 	"extensions": [
 		"octref.vetur",
 		"dbaeumer.vscode-eslint",
-		"gruntfuggly.todo-tree"
+		"gruntfuggly.todo-tree",
+		"fooxly.workspace",
+		"esbenp.prettier-vscode"
 	]
 }

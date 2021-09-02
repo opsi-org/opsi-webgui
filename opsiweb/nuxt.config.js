@@ -33,14 +33,14 @@ export default {
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['~/assets/css/custom'
-  ],
+  css: ['~/assets/css/custom'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios',
     { src: '~/plugins/vuex-persist', ssr: false },
-    { src: '~/plugins/vue-treeselect.js', mode: 'client' }
+    { src: '~/plugins/vue-treeselect.js', mode: 'client' },
+    '~/plugins/vue-i18n.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -78,12 +78,16 @@ export default {
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
+    // browserBaseURL: "/",
     // baseURL: process.env.API_URL,
-    // baseURL: process.env.API_URL,
+    // baseURL: process.env.BASE_URL,
     https: true,
     port: 4447,
     prefix: '/webgui',
     progress: false
+    // progress: true,
+    // baseURL: '/'
+    // host: '/',
     // headers: {
     //   common: {
     //     // 'Accept': 'application/json, text/plain, */*',

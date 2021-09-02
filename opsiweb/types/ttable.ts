@@ -1,21 +1,34 @@
+import { IObjectString2ObjectString2String } from './tsettings'
 
 export interface ITableDataItem {
   ident: string
-}
-
-export interface ITableRow {
-  rowSelected: boolean
-  item: {
-      ident: string
-      _rowVariant?: string
-  };
+  productId: string
 }
 
 export interface ITableRowItemProducts {
   ident: Array<string>
+  productId: string
+  selectedDepots: Array<string>
+  selectedClients: Array<string>
   request: Array<string>
-  selectedDepots?: Array<string>
-  selectedClients?: Array<string>
+  actionRequestDetails?: Array<string>
+  depotVersions: Array<string>
+  clientVersions: Array<string>
+  clientVersionOutdated: boolean
+  depotVersionDiff: boolean
+  installationStatus: Array<string>
+  actionResult: Array<string>
+  _rowVariant?: string
+  tooltiptext?: IObjectString2ObjectString2String
+}
+
+export interface ITableRow {
+  rowSelected: boolean
+  toggleDetails: Function,
+  item: ITableRowItemProducts|{
+      ident: string
+      _rowVariant?: string
+  };
 }
 export interface ITableData {
   pageNumber: number,
@@ -25,8 +38,8 @@ export interface ITableData {
   sortDesc: boolean,
   filterQuery: string,
   type?: string,
-  selectedDepots?: Array<string>,
-  selectedClients?: Array<string>
+  selectedDepots?: string,
+  selectedClients?: string
 }
 
 export interface ITableHeader {
@@ -36,7 +49,10 @@ export interface ITableHeader {
   sortable?: boolean,
   _fixed?: boolean,
   _isMajor?: boolean,
+  disabled?: boolean,
   _majorKey?: string,
+  class?: string,
+  variant?: string,
 }
 export interface ITableHeaders {
   [key: string]: ITableHeader

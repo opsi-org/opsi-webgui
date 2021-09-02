@@ -6,52 +6,40 @@
         <b-icon :icon="icon" />
       </template>
       <b-dropdown-item disabled>
-        {{ title }}
+        {{ $t(title) }}
       </b-dropdown-item>
       <b-dropdown-divider />
       <b-dropdown-item v-for="sub in submenu" :key="sub.title" :to="sub.route">
-        {{ sub.title }}
+        {{ $t(sub.title) }}
+        <!-- {{ sub.title }} -->
       </b-dropdown-item>
     </b-nav-item-dropdown>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-export default Vue.extend({
-  props: {
-    title: {
-      type: String,
-      default: ''
-    },
-    icon: {
-      type: String,
-      default: ''
-    },
-    route: {
-      type: String,
-      default: ''
-    },
-    submenu: {
-      type: Array,
-      default () {
-        return []
-      }
-    }
-  },
-  methods: {
-    onMouseOver () {
-      (this.$refs.dropdown as any).visible = true
-    },
-    onMouseLeave () {
-      (this.$refs.dropdown as any).visible = false
-    }
-    // changeRoute () {
-    //   // return redirect('/login')
-    //   this.$router.push({ path: this.route })
-    // }
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+@Component
+export default class NItemDropdownHoverable extends Vue {
+  @Prop({ }) title!: string
+  @Prop({ }) icon!: string
+  @Prop({ }) route!: string
+  @Prop({ }) submenu!: Array<object>
+
+  onMouseOver () {
+    (this.$refs.dropdown as any).visible = true
   }
-})
+
+  onMouseLeave () {
+    (this.$refs.dropdown as any).visible = false
+  }
+
+  // changeRoute () {
+  //   // return redirect('/login')
+  //   this.$router.push({ path: this.route })
+  // }
+}
 </script>
 
 <style>

@@ -1,16 +1,27 @@
 <template>
-  <!-- sort-icon-left -->
   <b-table
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
-    striped
+    class="ttable"
+    :small="$mq=='mobile'"
+    :stacked="$mq=='mobile'"
     hover
+    selectable
+    borderless
+    select-mode="multi"
     @row-clicked="rowChanged"
   >
+    <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
+    <!-- :no-local-sorting="true"
+    :sort-by.sync="tabledata.sortBy"
+    :sort-desc.sync="tabledata.sortDesc"
+    sort-icon-right -->
+    <template #head()="header">
+      {{ $t(header.label) }}
+    </template>
     <template #head(sel)="{}">
       {{ selection.length }}/{{ totalrows }}
-      <!-- {{$props}} -->
     </template>
     <template #cell(sel)="row">
       {{ fixRow(row) }}
@@ -18,7 +29,7 @@
     </template>
 
     <template #head(rowactions)="{}">
-      <DropdownDDTableColumnVisibilty :headers="headers" />
+      <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
     </template>
     <template
       v-for="slotName in Object.keys($scopedSlots)"
@@ -32,7 +43,7 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BTable } from 'bootstrap-vue'
-import { ITableRow, ITableHeaders, ITableDataItem } from '~/types/ttable'
+import { ITableRow, ITableHeaders, ITableDataItem, ITableData } from '~/types/ttable'
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string
@@ -40,27 +51,54 @@ export default class TTable extends BTable {
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
+  @Prop({ }) tabledata!: ITableData
 
   fixRow (row: ITableRow): void {
-    row.rowSelected = this.selection.includes(row.item.ident)
-    if (row.rowSelected) {
-      const elem = document.getElementById(`__row_${row.item.ident}`)
-      if (elem) { elem.classList.add('b-table-row-selected') }
-      row.item._rowVariant = 'primary'
-    } else {
-      const elem = document.getElementById(`__row_${row.item.ident}Major`)
-      if (elem) { elem.classList.remove('b-table-row-selected') }
-      row.item._rowVariant = ''
+    // eslint-disable-next-line no-console
+    console.log('rowitem.ident', row.item.ident)
+    if (typeof row.item.ident === 'string') {
+      row.rowSelected = this.selection.includes(row.item.ident)
+      if (row.rowSelected) {
+        const elem = document.getElementById(`__row_${row.item.ident}`)
+        if (elem) { elem.classList.add('b-table-row-selected') }
+        row.item._rowVariant = 'primary'
+      } else {
+        const elem = document.getElementById(`__row_${row.item.ident}Major`)
+        if (elem) { elem.classList.remove('b-table-row-selected') }
+        row.item._rowVariant = ''
+      }
     }
+    // row.rowSelected = this.selection.includes(row.item.ident)
+    // if (row.rowSelected) {
+    //   const elem = document.getElementById(`__row_${row.item.ident}`)
+    //   if (elem) { elem.classList.add('b-table-row-selected') }
+    //   row.item._rowVariant = 'primary'
+    // } else {
+    //   const elem = document.getElementById(`__row_${row.item.ident}Major`)
+    //   if (elem) { elem.classList.remove('b-table-row-selected') }
+    //   row.item._rowVariant = ''
+    // }
   }
 
   rowChanged (item: ITableDataItem) {
     const selectionCopy:Array<string> = [...this.selection]
-    if (selectionCopy.includes(item.ident)) {
+    if (this.datakey === 'productId') {
+      if (selectionCopy.includes(item.productId)) {
+        selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
+      } else {
+        selectionCopy.push(item.productId)
+      }
+    } else if (selectionCopy.includes(item.ident)) {
       selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
     } else {
       selectionCopy.push(item.ident)
     }
+
+    // if (selectionCopy.includes(item.ident)) {
+    //   selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
+    // } else {
+    //   selectionCopy.push(item.ident)
+    // }
     this.onchangeselection(selectionCopy)
   }
 }

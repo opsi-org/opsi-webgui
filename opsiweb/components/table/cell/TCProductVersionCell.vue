@@ -1,61 +1,77 @@
 <template>
-  <div :id="`TCProductVersionCell_hover_${rowid}`">
-    <b-badge v-if="visibleVersions.versionDepots =='mixed'">
-      !=
-    </b-badge>
-    <b-badge v-else-if="visibleVersions.versionDepots !=='mixed'">
-      {{ visibleVersions.versionDepots }}
-    </b-badge>
-    <b-badge
-      v-if="visibleVersions.versionClients =='mixed'"
+  <div>
+    <div
+      :id="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
     >
-      <!-- :variant="(Object.values(tooltiptext).some(e => e. != visibleVersions.versionDepots)) ? 'danger':''" -->
-      *
-    </b-badge>
-    <!-- {{tooltiptext}} -->
+      <b-badge
+        v-if="row.item.depot_version_diff"
+        :variant="(row.item.depot_version_diff||false)?'warning':''"
+        @click="$emit('details', row, tooltiptext)"
+      >
+        <span>&#8800;</span>
+      </b-badge>
+      <b-badge
+        v-else
+        :variant="'info'"
+      >
+        {{ row.item.depotVersions[0] }}
+      </b-badge>
+      <b-badge
+        v-if="(row.item.selectedDepots.length != selectionDepots.length)"
+        :variant="(row.item.selectedDepots.length != selectionDepots.length)?'warning':''"
+      >
+        *
+      </b-badge>
+      <b-badge
+        v-if="row.item.client_version_outdated||false"
+        :variant="(row.item.client_version_outdated||false)?'danger':''"
+        @click="$emit('details', row, tooltiptext)"
+      >
+        *
+      </b-badge>
+    </div>
     <TooltipTTProductCell
-      v-if="visibleVersions.versionDepots == 'mixed' || visibleVersions.versionClients == 'mixed'"
+      v-if="row.item.depot_version_diff || row.item.client_version_outdated||(row.item.selectedDepots.length != selectionDepots.length)||false"
       type="version"
-      :target="`TCProductVersionCell_hover_${rowid}`"
+      :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
       :details="tooltiptext"
+      :depot-version-diff="row.item.depot_version_diff"
     />
-    <!-- :detailsDepots="tooltiptext.depots" -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { mapValues2Value, mapValues2Objects } from '~/helpers/hmappings'
+import { mapValues2Objects } from '~/helpers/hmappings'
 import { IObjectString2String, IObjectString2ObjectString2String } from '~/types/tsettings'
+import { ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
 
 @Component
 export default class TableCellTCProductVersionCell extends Vue {
-  @Prop({ }) rowid!: string
-  @Prop({ }) valuesDepots!: Array<string>
-  @Prop({ }) valuesClients!: Array<string>
-  @Prop({ }) objectsDepots!: Array<string>
-  @Prop({ }) objectsClients!: Array<string>
+  @Prop({ }) row!: ITableRow
+  @Prop({ }) type!: string
   @Prop({ }) clients2depots!: IObjectString2String
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
 
-  get visibleVersions () {
-    const versionDepots = mapValues2Value(this.valuesDepots, this.objectsDepots, this.selectionDepots)
-    const versionClients = mapValues2Value(this.valuesClients, this.objectsClients, this.selectionClients)
-    return { versionDepots, versionClients }
-  }
-
   get tooltiptext () {
-    const clients: IObjectString2String = mapValues2Objects(this.valuesClients, this.objectsClients, this.selectionClients, '-')
-    const depots: IObjectString2String = mapValues2Objects(this.valuesDepots, this.objectsDepots, this.selectionDepots, '-')
+    // console.debug('key length: ', Object.keys(this.clients2depots).length)
+    const depots: IObjectString2String = mapValues2Objects((this.row.item as ITableRowItemProducts).depotVersions, (this.row.item as ITableRowItemProducts).selectedDepots, this.selectionDepots, '--')
     const tt:IObjectString2ObjectString2String = {}
     for (const d in depots) {
       tt[d] = {
         [d]: depots[d]
       }
     }
+    if (Object.keys(this.clients2depots).length <= 0) {
+      return tt
+    }
+    const clients: IObjectString2String = mapValues2Objects(
+      (this.row.item as ITableRowItemProducts).clientVersions,
+      (this.row.item as ITableRowItemProducts).selectedClients,
+      this.selectionClients, '--')
     for (const c in clients) {
       tt[this.clients2depots[c]][c] = clients[c]
     }
@@ -65,5 +81,7 @@ export default class TableCellTCProductVersionCell extends Vue {
 </script>
 
 <style scoped>
-
+.version_outdated {
+  color:red
+}
 </style>

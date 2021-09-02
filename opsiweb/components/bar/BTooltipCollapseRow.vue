@@ -2,6 +2,7 @@
   <div>
     <b-nav-item
       v-b-toggle="`collapse-navitem-${title}`"
+      class="collapse-navitem"
       light
     >
       <b-th class="text-left">
@@ -12,7 +13,7 @@
         {{ title }}
       </b-th>
       <b-th class="text-right">
-        <b-badge :class="valueVariant">
+        <b-badge :variant="valueVariant">
           {{ value }}
         </b-badge>
       </b-th>
@@ -31,7 +32,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 export default class BTooltipCollpaseRow extends Vue {
   @Prop({ }) title!: string
   @Prop({ }) value!: string
-  @Prop({ default: '' }) valueVariant!: string
+  @Prop({ default: 'info' }) valueVariant!: string
   @Prop({ default: true }) collapseable!: boolean
   @Prop({ default: false }) collapsed!: boolean
 }
@@ -47,5 +48,11 @@ export default class BTooltipCollpaseRow extends Vue {
 }
 .navbar {
   z-index: inherit !important;
+}
+.collapse{
+  padding-left: 20px;
+}
+.nav-item {
+  min-width: 100%;
 }
 </style>

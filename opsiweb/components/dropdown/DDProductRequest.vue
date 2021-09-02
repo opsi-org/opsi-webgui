@@ -12,20 +12,21 @@
       class="fixed_column_selection widthmax"
     >
       <template #button-content>
-        <!-- {{request}}: <br /> -->
-        {{ visibleRequest }}
+        <span :class="{'fg-orange' : currentReq != preRequest}">
+          {{ visibleRequest }} {{ (currentReq != preRequest)? '*' : '' }}
+        </span>
       </template>
       <b-dropdown-item
         v-for="a in requestoptions"
         :key="a"
-        @click="save(rowitem, a)"
+        @click="$emit('update:action', a);save(rowitem, a); visibleRequest=a"
       >
         {{ a }}
       </b-dropdown-item>
     </b-dropdown>
     <!-- {{(text == 'mixed')? tooltiptext:''}} -->
     <TooltipTTProductCell
-      v-if="(rowitem!=undefined && visibleRequest == 'mixed')"
+      v-if="(visibleRequest==='mixed')"
       type="actionRequest"
       :target="`DDProductRequest_actionRequest_hover_${rowitem.productId}`"
       :details="allRequests"
@@ -37,28 +38,44 @@
 import { Component, namespace, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableRowItemProducts } from '~/types/ttable'
-import { mapValues2Value, mapValues2Objects } from '~/helpers/hmappings'
+import { mapValues2Objects } from '~/helpers/hmappings'
 const selections = namespace('selections')
 @Component
 export default class DDProductRequest extends BDropdown {
   @Prop({ }) rowitem!: ITableRowItemProducts|undefined
-  @Prop({ default: () => { return ['---'] } }) request!: Array<string>
+  @Prop({ default: () => { return '---' } }) request!: string
   @Prop({ default: () => { return ['---', 'none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
   @Prop({ default: () => { return () => {} } }) save!: Function
+
+  preRequest: string = this.request
+  currentReq: string = this.request
 
   @selections.Getter public selectionClients!: Array<string>
   get visibleRequest () {
     if (this.rowitem === undefined) {
-      return '---'
+      return this.request
     }
-    return mapValues2Value(this.request, this.rowitem.selectedClients as Array<string>, this.selectionClients)
+    if (this.rowitem.selectedClients && this.rowitem.selectedClients.length !== this.selectionClients.length) {
+      if (this.request !== 'none') {
+        return 'mixed'
+      }
+    }
+    return this.request
+  }
+
+  set visibleRequest (val: string) {
+    this.currentReq = val
+    this.request = val
   }
 
   get allRequests () {
     if (this.rowitem === undefined) {
       return {}
     }
-    return mapValues2Objects(this.request, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'None')
+    if (this.rowitem.actionRequestDetails) {
+      return mapValues2Objects(this.rowitem.actionRequestDetails, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'none')
+    }
+    return {}
   }
 }
 </script>

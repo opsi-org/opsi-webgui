@@ -8,21 +8,26 @@
     size="sm"
     alt="Show column"
     class="fixed_column_selection"
-    :title="tooltip"
+    :title="$t('table.showCol')"
   >
     <template #button-content>
-      <b-icon-list-task />
+      <b-icon-grid />
     </template>
-    <li v-if="$mq=='mobile'">
+    <li v-if="$mq=='mobile' || twoColumnLayoutCollapsed[tableId]">
       <a
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
         :key="header.key"
         class="dropdown-item"
-        :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
+        :class="{
+          'selected':columnVisibilityStates[header.key],
+          disabled:header.disabled,
+        }"
+        variant="primary"
         :disabled="columnVisibilityStates[header.key]"
         @click="setColumnVisibilityModel(header.key)"
       >
-        {{ header.label }} <!-- {{ $t(header.label) }} -->
+        <!-- :columnVisibilityStates[header.key] -->
+        {{ $t(header.label) }}
       </a>
     </li>
     <li
@@ -34,31 +39,49 @@
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
         :key="header.key"
         class="dropdown-item"
+        :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
         @click="handleItem(header.key)"
       >
         <b-form-checkbox
           v-model="columnVisibilityList"
           :name="header.label"
           :value="header.key"
-          :class="{'_fixed_column_btn_selected_item':columnVisibilityStates[header.key]}"
+          :class="{'selected':columnVisibilityStates[header.key]}"
         />
-        {{ header.label }}
+        {{ $t(header.label) }}
       </a>
     </li>
   </b-dropdown>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '~/types/ttable'
+import { IObjectString2Boolean } from '~/types/tsettings'
+const settings = namespace('settings')
 
 @Component
 export default class DDTableColumnVisibilty extends BDropdown {
+  @Prop({ default: 'table' }) tableId!: string
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
 
+  @settings.Getter public twoColumnLayoutCollapsed!: IObjectString2Boolean
+
   columnVisibilityList: Array<string> = []
-  columnVisibilityStates: { [key: string]: boolean; } = {}
+  columnVisibilityStates: IObjectString2Boolean = {}
+
+  created () {
+    Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
+      if (h._majorKey) {
+        // console.debug(h.key, 'major key ', h._majorKey, 'parent', this.headers[h._majorKey].key, 'visible', h.visible)
+        this.columnVisibilityStates[this.headers[h._majorKey].key] = h.visible || false
+      } else {
+        this.columnVisibilityStates[h.key] = h.visible || false
+      }
+    })
+    this.columnVisibilityList = Object.keys(this.columnVisibilityStates).filter(k => this.columnVisibilityStates[k])
+  }
 
   @Watch('$mq') mqChanged () {
     if (this.$mq === 'mobile') {
@@ -67,15 +90,18 @@ export default class DDTableColumnVisibilty extends BDropdown {
     }
   }
 
-  @Watch('columnVisibilityList') keysChanged () {
-    this.setColumnVisibilityModel(undefined)
+  @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
+    if (this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+      this.setColumnVisibilityModel(firstVisible)
+    } else if (!this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+      this.setColumnVisibilityModel(firstVisible)
+    }
   }
 
-  get tooltip () {
-    if (this.$mq === 'mobile') {
-      return 'show additional column'
-    }
-    return 'visible addational columns'
+  @Watch('columnVisibilityList') keysChanged () {
+    this.setColumnVisibilityModel(undefined)
   }
 
   handleItem (key: string) {
@@ -109,7 +135,6 @@ export default class DDTableColumnVisibilty extends BDropdown {
         this.headers[k].visible = this.columnVisibilityStates[k]
       } else {
         Object.values(this.headers).filter(h => h._majorKey === k).map(h => h.key).forEach((ck) => {
-          // console.log(`found children of major ${k}:`, ck)
           this.headers[ck].visible = this.columnVisibilityStates[k]
         })
       }
@@ -125,4 +150,12 @@ export default class DDTableColumnVisibilty extends BDropdown {
   cursor: pointer;
   display: flex !important;
 }
+a.selected {
+  background-color: var(--primary);
+}
+/* .disabled {
+  cursor: default;
+  display: none;
+
+} */
 </style>
