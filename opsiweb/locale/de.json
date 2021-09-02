@@ -33,7 +33,8 @@
     "localboot": "Localboot-Produkt",
     "hostattr": "Host-Attribute",
     "properties": "Property-Konfiguration",
-    "dependencies": "Abhängigkeiten"
+    "dependencies": "Abhängigkeiten",
+    "netboot": "Netboot-Produkt"
   },
   "values": {
     "mixed": "<unterschiedlich>",
@@ -76,8 +77,9 @@
       "unknown": "unbekannt",
       "localbootid": "Localboot Produkt-ID",
       "netbootid": "Netboot Produkt-ID",
-      "versionOutdated": "vO",
-      "actionRequestFailed": "aRf",
+      "actionRequest": "Request",
+      "versionOutdated": "Veraltete Produkte",
+      "actionRequestFailed": "Fehlgeschlagene Produkte",
       "rowactions": "Aktionen"
     }
   },
@@ -127,5 +129,11 @@
     "theme": "Thema",
     "mode": "Benutzer-Modus",
     "modules": "Modules-Inhalt"
+  },
+  "userinfo": {
+    "normal": "Normaler-Modus",
+    "normal_desc": "Änderungen an Produkt actionRequest können sofort gespeichert werden.",
+    "expert": "Experten-Modus",
+    "expert_desc": "Es gibt eine Übersicht der Änderungen mit Funktionen zum Löschen/Speichern."
   }
 }

@@ -12,6 +12,9 @@
     select-mode="multi"
     @row-clicked="rowChanged"
   >
+    <template #table-busy>
+      <IconILoading v-if="$props.busy" />
+    </template>
     <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
     <!-- :no-local-sorting="true"
     :sort-by.sync="tabledata.sortBy"

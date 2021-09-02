@@ -1,20 +1,20 @@
 <template>
   <b-tooltip :target="target" variant="light">
-    <b> User Mode </b>
+    <b> {{ $t('settingsPage.mode') }} </b>
     <b-row class="text-left">
       <b-col>
-        Normal Mode:
+        {{ $t('userinfo.normal') }}:
       </b-col>
       <b-col>
-        Product actionRequest changes can be saved immediately
+        {{ $t('userinfo.normal_desc') }}
       </b-col>
     </b-row>
     <b-row class="text-left">
       <b-col>
-        Expert Mode:
+        {{ $t('userinfo.expert') }}:
       </b-col>
       <b-col>
-        There is a Overview of changes with Delete/Save features.
+        {{ $t('userinfo.expert_desc') }}
       </b-col>
     </b-row>
   </b-tooltip>

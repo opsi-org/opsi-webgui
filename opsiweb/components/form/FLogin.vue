@@ -17,6 +17,7 @@
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
 const auth = namespace('auth')
+const selections = namespace('selections')
 interface FormUser {
     username: string,
     password: string
@@ -30,6 +31,7 @@ interface FormUser {
 
   @auth.Mutation public login!: (username: string) => void
   @auth.Mutation public logout!: () => void
+  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
     this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
@@ -64,6 +66,9 @@ interface FormUser {
           this.login(this.form.username)
           if (this.$route.name === 'login') {
             this.$router.push({ path: '/' })
+            const selectionDepot: Array<string> = []
+            selectionDepot.push(this.opsiconfigserver)
+            this.setSelectionDepots([...selectionDepot])
           } else {
             this.$router.back()
           }

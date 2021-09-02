@@ -1,12 +1,7 @@
 <template>
   <div>
     <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
-    <IconILoading v-if="isLoading" />
-    <p v-else-if="errorText">
-      {{ errorText }}
-    </p>
     <TableTCollapseableForMobile
-      v-else
       id="tableproducts"
       datakey="productId"
       :tabledata="tableData"
@@ -16,7 +11,8 @@
       :items="fetchedData.products"
       :selection="selectionProducts"
       :onchangeselection="setSelectionProducts"
-      :loading="isLoading"
+      :busy="isLoading"
+      :error-text="errorText"
       :totalrows="fetchedData.total"
       :stacked="$mq=='mobile'"
     >
@@ -30,8 +26,8 @@
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
       </template>
       <template #cell(version)="row">
-        <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
+          v-if="Object.keys(fetchedDataClients2Depots).length == selectionClients.length"
           type="depotVersions"
           :row="row"
           :clients2depots="fetchedDataClients2Depots"
@@ -87,6 +83,7 @@
           :title="$t('formselect.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
+        <div v-else />
       </template>
 
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
@@ -135,18 +132,16 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-interface DepotRequest {
-    selectedClients: string
-}
 @Component
 export default class TProductsLocalboot extends Vue {
   action: string = ''
   type: string = ''
-  depotRequest: DepotRequest = { selectedClients: '' }
+  // depotRequest: DepotRequest = { selectedClients: '' }
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: any
+  // fetchedData: any
+  fetchedData: any = { products: [], total: 0 }
   // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
@@ -172,7 +167,7 @@ export default class TProductsLocalboot extends Vue {
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
     version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
     actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
-    rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
+    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
   @selections.Getter public selectionClients!: Array<string>
@@ -247,9 +242,9 @@ export default class TProductsLocalboot extends Vue {
     //   this.fetchOptions.fetchDepotIds = false
     // }
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
-      const params = this.depotRequest
-      await this.$axios.$get('/api/opsidata/clients/depots', { params })
+      // this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
+      // const params = this.depotRequest
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {

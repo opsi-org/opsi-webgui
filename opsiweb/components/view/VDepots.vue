@@ -9,12 +9,7 @@
           <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
         </template>
       </BarBPageHeader>
-      <IconILoading v-if="isLoading" />
-      <p v-else-if="errorText">
-        {{ errorText }}
-      </p>
       <TableTCollapseableForMobile
-        v-else
         id="tabledepots"
         datakey="depotId"
         :collapseable="false"
@@ -24,7 +19,8 @@
         :items="fetchedData.depots"
         :selection="selectionDepots"
         :onchangeselection="setSelectionDepots"
-        :loading="isLoading"
+        :error-text="errorText"
+        :busy="isLoading"
         :totalrows="fetchedData.total"
       >
         <template #head(depotId)>
@@ -89,7 +85,7 @@ const selections = namespace('selections')
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
     ip: { label: this.$t('table.fields.ip') as string, key: 'ip', visible: false, sortable: true },
-    // _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
+    // _empty_: { label: this.$t('', key: '_empty_') as string, visible: true, _fixed: true },
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
