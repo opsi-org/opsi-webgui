@@ -34,6 +34,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { IObjectString2String } from '~/types/tsettings'
 import { IProductDependency } from '~/types/ttable'
 
 @Component
@@ -42,6 +43,13 @@ export default class TProductProperties extends Vue {
   @Prop({ }) dependencies!: Array<IProductDependency>
 
   isLoading: boolean = false
+  types2text: IObjectString2String = {
+    'null-setup': this.$t('table.fields.required') as string,
+    'after-setup': this.$t('table.fields.post-required') as string,
+    'before-setup': this.$t('table.fields.pre-required') as string,
+    'before-uninstall': this.$t('table.fields.on-deinstall') as string
+  }
+
   get fields () {
     return [
       // { label: this.$t('table.fields.productId'), key: 'productId' },
@@ -62,17 +70,12 @@ export default class TProductProperties extends Vue {
   }
 
   getType (type:string, productAction:string) {
-    return {
-      'null-setup': this.$t('table.fields.required'),
-      'after-setup': this.$t('table.fields.post-required'),
-      'before-setup': this.$t('table.fields.pre-required'),
-      'before-uninstall': this.$t('table.fields.on-deinstall')
-    }[`${type}-${productAction}`] || this.$t('table.fields.unknown')
+    return this.types2text[`${type}-${productAction}`] || this.$t('table.fields.unknown') as string
   }
 
-  async fetch () {
+  // async fetch () {
 
-  }
+  // }
 }
 </script>
 
