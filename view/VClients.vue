@@ -14,12 +14,7 @@
           <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
         </template>
       </BarBPageHeader>
-      <IconILoading v-if="isLoading" />
-      <p v-else-if="errorText">
-        {{ errorText }}
-      </p>
       <TableTCollapseableForMobile
-        v-else
         id="tableclients"
         datakey="clientId"
         :collapseable="false"
@@ -29,7 +24,8 @@
         :items="fetchedData.clients"
         :selection="selectionClients"
         :onchangeselection="setSelectionClients"
-        :loading="isLoading"
+        :busy="isLoading"
+        :error-text="errorText"
         :totalrows="fetchedData.total"
       >
         <template #head(_majorStats)>
@@ -56,7 +52,7 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
-          <b-dropdown no-caret variant="outline-primary">
+          <b-dropdown no-caret variant="outline-primary" size="sm">
             <template #button-content>
               <b-icon icon="three-dots-vertical" />
             </template>
@@ -95,10 +91,11 @@ interface IFetchOptions {
 @Component export default class VClients extends Vue {
   rowId: string = ''
   isLoading: boolean = true
-  errorText: string = ''
+  errorText: string = 'lalala'
   fetchedData: object = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
+  updateTable: boolean = false
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 5,
@@ -107,8 +104,6 @@ interface IFetchOptions {
     filterQuery: '',
     setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
   }
-
-  updateTable: boolean = false
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },

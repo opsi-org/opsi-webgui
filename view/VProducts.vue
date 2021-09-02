@@ -7,8 +7,7 @@
           <DropdownDDClientIds />
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
-          <!-- TODO: Duplicate ID bug in Product Groups -->
-          <!-- <TreeTSProductGroup /> -->
+          <TreeTSProductGroup />
         </template>
         <template #right>
           <ModalMProdSaveOverview v-if="expert && changesProducts" />

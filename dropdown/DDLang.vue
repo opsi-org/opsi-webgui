@@ -19,12 +19,13 @@
 
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { IObjectString2Any } from '~/types/tsettings'
 const settings = namespace('settings')
 
 @Component export default class DDLang extends Vue {
   @Prop({ default: false }) dropup!: boolean
 
-  languages: Array<string> = ['en', 'de']
+  languages: Array<string> = []
 
   @settings.Getter public language!: string
   @settings.Mutation public setLanguage!: (lang: string) => void
@@ -35,9 +36,22 @@ const settings = namespace('settings')
     }
   }
 
+  mounted () {
+    const langPaths = require.context('~/locale/', true, /\.json$/) as IObjectString2Any
+    langPaths.keys().forEach((key: string) => (this.languages.push((key as string).replace('./', '').replace('.json', ''))))
+  }
+
   changeLanguage (lang : string) {
     this.setLanguage(lang)
     this.$i18n.locale = lang
+    window.location.reload()
+    // this.$bvToast.toast(this.$t('message.reloadMessage') as string, {
+    //   title: this.$t('message.hint') as string,
+    //   toaster: 'b-toaster-bottom-right',
+    //   variant: 'info',
+    //   autoHideDelay: 5000,
+    //   appendToast: false
+    // })
   }
 }
 </script>

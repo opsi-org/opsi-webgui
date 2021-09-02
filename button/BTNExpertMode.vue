@@ -1,5 +1,17 @@
 <template>
   <b-button
+    v-if="navbar"
+    v-model="localMode"
+    style="width:100%;"
+    variant="primary"
+    class="btn text-left btn_expertmode"
+    :pressed.sync="localMode"
+    @click="changeMode(localMode)"
+  >
+    {{ $t('settingsPage.mode') }}: {{ expert? 'Expert': 'Normal' }}
+  </b-button>
+  <b-button
+    v-else
     v-model="localMode"
     style="width:180px;"
     variant="primary"
@@ -8,20 +20,14 @@
   >
     {{ expert? 'Expert': 'Normal' }}
   </b-button>
-  <!-- <b-button class="text-left dd_expertmode" @click="toggleMode">
-    <b-icon-person-fill />
-    <b-icon v-if="localmode==='user'" icon="gem" class="" font-scale="0.8" />
-    <b-icon v-else-if="localmode==='expert'" icon="gem" class="" font-scale="0.8" variant="danger" />
-    {{ ($mq=='mobile') ? $t('expertmode') : '' }} {{ ($mq=='mobile' && localmode === 'expert') ? 'on':'' }}
-  </b-button> -->
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 const settings = namespace('settings')
 
 @Component export default class BTNExpertMode extends Vue {
-  // @Prop({ default: false }) dropup!: boolean
+  @Prop({ default: false }) navbar!: boolean
   // localmode: string = 'user'
   // @settings.Getter public modeIsExpert!: Boolean
   // @settings.Getter public expertmode!: Function // returns string
@@ -54,6 +60,12 @@ const settings = namespace('settings')
 </script>
 
 <style>
+
+.btn_expertmode{
+  /* max-height: inherit; */
+  padding-left: 1em !important;
+  padding-right: 1em !important;
+}
 /* .dd_expertmode {
   padding-left: 1em !important;
   padding-right: 1em !important;
