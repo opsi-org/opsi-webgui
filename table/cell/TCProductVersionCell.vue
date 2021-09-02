@@ -10,12 +10,7 @@
       >
         <span>&#8800;</span>
       </b-badge>
-      <b-badge
-        v-else
-        :variant="'info'"
-      >
-        {{ row.item.depotVersions[0] }}
-      </b-badge>
+      {{ (row.item.depot_version_diff)? '' : row.item.depotVersions[0] }}
       <b-badge
         v-if="(row.item.selectedDepots.length != selectionDepots.length)"
         :variant="(row.item.selectedDepots.length != selectionDepots.length)?'warning':''"
