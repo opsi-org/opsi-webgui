@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    Loading
+    {{ $t('message.loading') }}
     <b-icon icon="three-dots" animation="cylon" />
   </div>
 </template>

@@ -1,6 +1,6 @@
 project:
   name: opsi-webgui
-  version: 0.1.0
+  version: 0.0.2
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
@@ -12,7 +12,7 @@ package:
   type: binary
   architecture: all
   depends:
-    - opsiconfd (>= 4.2.0.184)
+    - opsiconfd (>= 4.2.0.193)
   source_script: |
     mkdir -p "${DST}/rootfs/usr/lib/opsi-webgui"
     cp -a "${SRC}/opsiweb/dist/." "${DST}/rootfs/usr/lib/opsi-webgui/"

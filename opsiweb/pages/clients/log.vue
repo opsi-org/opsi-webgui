@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <ViewVClientsLog :id="id" :as-child="asChild" />
-  </div>
+  <ViewVClientsLog :id="id" :as-child="asChild" />
 </template>
 
 <script lang="ts">

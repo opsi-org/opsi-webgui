@@ -1,15 +1,18 @@
 <template>
-  <!-- v-if="$props.totalRows > tabledata.perPage" -->
-  <b-pagination
-    v-model="localPageNumber"
-    class="BarBPagination"
-    first-number
-    last-number
-    size="sm"
-    align="fill"
-    :per-page="tabledata.perPage"
-    :total-rows="$props.totalRows"
-  />
+  <div class="BarBPagination-Container">
+    <b-input-group :prepend="$t('table.perpage')" size="sm" class="BarBPagination-PerPage">
+      <b-form-select v-model="tabledata.perPage" :options="[1,2,5,10,20,30]" size="sm" class="BarBPagination-PerPage-Dropdown" />
+    </b-input-group>
+    <b-pagination
+      v-model="localPageNumber"
+      class="BarBPagination-Pages"
+      first-number
+      last-number
+      size="sm"
+      :per-page="tabledata.perPage"
+      :total-rows="$props.totalRows"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -17,7 +20,7 @@ import { Component, Prop } from 'nuxt-property-decorator'
 import { BPagination } from 'bootstrap-vue'
 import { ITableData } from '~/types/ttable'
 @Component
-export default class UIBBPangination extends BPagination {
+export default class BPaginationUib extends BPagination {
   @Prop({}) tabledata!:ITableData;
   get localPageNumber () { return this.tabledata.pageNumber }
   set localPageNumber (pn) { this.tabledata.setPageNumber(pn) }
@@ -25,7 +28,27 @@ export default class UIBBPangination extends BPagination {
 </script>
 
 <style scoped>
-.BarBPagination{
+.BarBPagination-Container{
+  display: inline-flex !important;
+  align-items: center !important;
+  float: right !important;
+  margin-bottom: 10px !important;
+  margin-right: 10px !important;
+  /* min-width: min-content !important; */
+}
+.BarBPagination-PerPage {
+  /* min-width: 150px; */
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  display: contents !important;
+}
+.BarBPagination-Pages{
+  margin-left: 25px !important;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
   display: flex !important;
+}
+.BarBPagination-PerPage-Dropdown {
+  max-width: inherit !important;
 }
 </style>

@@ -2,9 +2,19 @@ export interface IObjectString2Function {
     // x = {'foo': () => { doSth() })}
     [key: string]: Function
 }
+
+export interface IObjectString2Any {
+    // x = {'foo': 'bar'}
+    [key: string]: any
+}
 export interface IObjectString2String {
     // x = {'foo': 'bar'}
     [key: string]: string
+}
+
+export interface IObjectString2Boolean {
+    // x = {'foo': 'bar'}
+    [key: string]: boolean
 }
 export interface IObjectString2ObjectString2String {
     // x = {'foo': { 'k': 'bar' })}

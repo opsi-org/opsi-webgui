@@ -1,7 +1,10 @@
 <template>
   <div class="container-fluid">
     <b-tabs>
-      <b-tab title="Modules content" active>
+      <b-tab :title="$t('settingsPage.localspecific')" active>
+        <ViewVSettingsLocalSpecific />
+      </b-tab>
+      <b-tab :title="$t('settingsPage.modules')">
         <ViewVModules />
       </b-tab>
     </b-tabs>

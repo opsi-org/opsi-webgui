@@ -7,7 +7,7 @@ export default {
   ssr: false,
   // https://nuxtjs.org/guide/runtime-config
   publicRuntimeConfig: {
-    clientVersion: pkg.version
+    packageVersion: pkg.version
   },
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
@@ -43,7 +43,8 @@ export default {
   plugins: [
     '~/plugins/axios',
     { src: '~/plugins/vuex-persist', ssr: false },
-    { src: '~/plugins/vue-treeselect.js', mode: 'client' }
+    { src: '~/plugins/vue-treeselect.js', mode: 'client' },
+    '~/plugins/vue-i18n.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
