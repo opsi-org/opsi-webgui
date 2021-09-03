@@ -1,7 +1,7 @@
 <template>
   <treeselect
     v-model="groupSelection"
-    :placeholder="type === 'hostgroup' ? $t('treeselect.hostGroups') : $t('treeselect.prodGroups')"
+    :placeholder="$t(placeholder)"
     class="treeselect"
     :multiple="true"
     :clearable="false"
@@ -23,32 +23,34 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component
 export default class TSTreeselect extends Vue {
   @Prop({ }) options!: object
   @Prop({ }) type!: string
+  @Prop({ }) placeholder!: string
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
   item: any
   storeData : Array<string> = []
 
-  @selections.Getter public selectionClients!: Array<string>
-  @selections.Mutation public pushToSelectionClients!: (s: string) => void
-  @selections.Mutation public delFromSelectionClients!: (s: string) => void
+  // @selections.Getter public selectionClients!: Array<string>
+  // @selections.Mutation public pushToSelectionClients!: (s: string) => void
+  // @selections.Mutation public delFromSelectionClients!: (s: string) => void
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
 
-  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
-    this.syncStoreToTree()
-  }
+  // @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+  //   this.syncStoreToTree()
+  // }
 
   beforeUpdate () {
-    if (this.type === 'hostgroup') { this.storeData = this.selectionClients } else { this.storeData = this.selectionProducts }
+    // if (this.type === 'hostgroup') { this.storeData = this.selectionClients } else { this.storeData = this.selectionProducts }
+    this.storeData = this.selectionProducts
     this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
   }
@@ -119,11 +121,13 @@ export default class TSTreeselect extends Vue {
     for (const i in idList) {
       const objectId = idList[i]
       if (type === 'select') {
-        if (this.type === 'hostgroup') { this.pushToSelectionClients(objectId) } else { this.pushToSelectionProducts(objectId) }
+        this.pushToSelectionProducts(objectId)
+        // if (this.type === 'hostgroup') { this.pushToSelectionClients(objectId) } else { this.pushToSelectionProducts(objectId) }
       }
       if (type === 'deselect') {
         if (this.storeData.includes(objectId)) {
-          if (this.type === 'hostgroup') { this.delFromSelectionClients(objectId) } else { this.delFromSelectionProducts(objectId) }
+          this.delFromSelectionProducts(objectId)
+          // if (this.type === 'hostgroup') { this.delFromSelectionClients(objectId) } else { this.delFromSelectionProducts(objectId) }
         }
       }
     }
