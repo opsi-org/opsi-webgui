@@ -1,12 +1,12 @@
-## Summary
+### Summary
 
 (Summarize the objectives of Discussion)
 
-## Relevant Info
+### Relevant Info
 
 (Add relevant informations or links)
 
-## Opinions / Feedback
+### Opinions / Feedback
 
 ( Add opinions as "*Comments in italic*" - **Name** )
 
