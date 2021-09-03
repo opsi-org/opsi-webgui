@@ -32,7 +32,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 export default class BTooltipCollpaseRow extends Vue {
   @Prop({ }) title!: string
   @Prop({ }) value!: string
-  @Prop({ default: '' }) valueVariant!: string
+  @Prop({ default: 'info' }) valueVariant!: string
   @Prop({ default: true }) collapseable!: boolean
   @Prop({ default: false }) collapsed!: boolean
 }
