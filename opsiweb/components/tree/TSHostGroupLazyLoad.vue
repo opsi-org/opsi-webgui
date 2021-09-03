@@ -89,20 +89,24 @@ export default class TSDelayedLoading extends Vue {
     this.syncStoreToTree()
   }
 
-  async loadOptions ({ action, parentNode, callback }: any) {
+  async fetchClientList ({ parentNode }: any) {
     const clientList: Array<object> = []
+    this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
+    const params = this.clientRequest
+    const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+    for (const c in result) {
+      const client = result[c]
+      clientList.push({ id: client + ';clientlist', text: client, type: 'ObjectToGroup' })
+    }
+    parentNode.children = clientList
+  }
+
+  async loadOptions ({ action, parentNode, callback }: any) {
     if (action === 'LOAD_CHILDREN_OPTIONS') {
       this.request.selectedDepots = JSON.stringify(this.selectionDepots)
       this.request.parentGroup = parentNode.text
       if (this.request.parentGroup === 'clientlist') {
-        this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
-        const params = this.clientRequest
-        const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
-        for (const c in result) {
-          const client = result[c]
-          clientList.push({ id: client + ';clientlist', text: client, type: 'ObjectToGroup' })
-        }
-        parentNode.children = clientList
+        await this.fetchClientList({ parentNode })
       } else {
         const params = this.request
         const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)
