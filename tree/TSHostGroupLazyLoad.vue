@@ -39,13 +39,32 @@ export default class TSDelayedLoading extends Vue {
   clientRequest: ClientRequest = { selectedDepots: '' }
   request: Request = { selectedDepots: '', parentGroup: '' }
 
-  value: any = null
-  children: Array<object> = []
-  options: Array<object> = []
+  options: Array<object> = [
+    {
+      id: 'clientdirectory',
+      text: 'clientdirectory',
+      isBranch: true,
+      type: 'HostGroup',
+      children: null
+    },
+    {
+      id: 'groups',
+      text: 'root',
+      isBranch: true,
+      type: 'HostGroup',
+      children: null
+    },
+    {
+      id: 'clientlist',
+      text: 'clientlist',
+      isBranch: true,
+      type: 'HostGroup',
+      children: null
+    }
+  ]
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
-  item: any
   storeData : Array<string> = []
 
   @selections.Getter public selectionDepots!: Array<string>
@@ -68,36 +87,6 @@ export default class TSDelayedLoading extends Vue {
 
   @Watch('options', { deep: true }) optionsChanged () {
     this.syncStoreToTree()
-  }
-
-  fetch () {
-    // this.request.selectedDepots = JSON.stringify(this.selectionDepots)
-    // this.request.parentGroup = 'root'
-    // const params = this.request
-    // this.options = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)
-    this.options = [
-      {
-        id: 'clientdirectory',
-        text: 'clientdirectory',
-        isBranch: true,
-        type: 'HostGroup',
-        children: null
-      },
-      {
-        id: 'groups',
-        text: 'root',
-        isBranch: true,
-        type: 'HostGroup',
-        children: null
-      },
-      {
-        id: 'clientlist',
-        text: 'clientlist',
-        isBranch: true,
-        type: 'HostGroup',
-        children: null
-      }
-    ]
   }
 
   async loadOptions ({ action, parentNode, callback }: any) {
