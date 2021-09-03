@@ -5,6 +5,7 @@
       id="tableproducts"
       datakey="productId"
       :title="$t('title.netboot')"
+      :visible="false"
       :tabledata="tableData"
       :headers="headerData"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"

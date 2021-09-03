@@ -1,6 +1,6 @@
 <template>
   <b-card
-    v-if="$mq=='mobile' && collapseable"
+    v-if="$mq=='mobile' || collapseable"
     bg-variant="transparent"
     class="TCollapseableForMobile-Card overflow-auto"
   >
@@ -59,7 +59,8 @@ export default class TCollapseableForMobile extends TTable {
   @Prop({ }) title!: string
   @Prop({ }) tabledata!: ITableData
   @Prop({ default: true }) collapseable?: Boolean
-  visible: Boolean = true
+  @Prop({ default: true }) visible?: Boolean
+  // visible: Boolean = true
 }
 
 </script>

@@ -4,6 +4,7 @@
     <TableTCollapseableForMobile
       id="tableproducts"
       datakey="productId"
+      :visible="true"
       :tabledata="tableData"
       :title="$t('title.localboot')"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
