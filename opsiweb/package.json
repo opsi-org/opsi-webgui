@@ -1,6 +1,6 @@
 {
   "name": "opsiweb",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "scripts": {
     "dev": "sudo npm run lint & nuxt # npm run test & ",
