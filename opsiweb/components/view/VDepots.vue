@@ -1,7 +1,7 @@
 <template>
   <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
     <template #parent>
-      <BarBPageHeader>
+      <BarBPageHeader v-if="$mq=='mobile'">
         <template #left>
           <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
         </template>
