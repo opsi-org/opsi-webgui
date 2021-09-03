@@ -21,7 +21,7 @@
     :sort-desc.sync="tabledata.sortDesc"
     sort-icon-right -->
     <template #head()="header">
-      {{ $t(header.label) }}
+      {{ header.label }}
     </template>
     <template #head(sel)="{}">
       {{ selection.length }}/{{ totalrows }}
