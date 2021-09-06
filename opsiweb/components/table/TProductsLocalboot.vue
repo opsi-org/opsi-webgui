@@ -1,14 +1,10 @@
 <template>
   <div>
     <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
-    <IconILoading v-if="isLoading" />
-    <p v-else-if="errorText">
-      {{ errorText }}
-    </p>
     <TableTCollapseableForMobile
-      v-else
       id="tableproducts"
       datakey="productId"
+      :visible="true"
       :tabledata="tableData"
       :title="$t('title.localboot')"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
@@ -16,7 +12,8 @@
       :items="fetchedData.products"
       :selection="selectionProducts"
       :onchangeselection="setSelectionProducts"
-      :loading="isLoading"
+      :busy="isLoading"
+      :error-text="errorText"
       :totalrows="fetchedData.total"
       :stacked="$mq=='mobile'"
     >
@@ -30,8 +27,8 @@
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
       </template>
       <template #cell(version)="row">
-        <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
+          v-if="Object.keys(fetchedDataClients2Depots).length == selectionClients.length"
           type="depotVersions"
           :row="row"
           :clients2depots="fetchedDataClients2Depots"
@@ -136,18 +133,16 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-interface DepotRequest {
-    selectedClients: string
-}
 @Component
 export default class TProductsLocalboot extends Vue {
   action: string = ''
   type: string = ''
-  depotRequest: DepotRequest = { selectedClients: '' }
+  // depotRequest: DepotRequest = { selectedClients: '' }
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: any
+  // fetchedData: any
+  fetchedData: any = { products: [], total: 0 }
   // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
@@ -164,16 +159,16 @@ export default class TProductsLocalboot extends Vue {
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
-    installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: true, sortable: false },
-    actionResult: { label: 'table.fields.actionResult', key: 'actionResult', visible: true, sortable: false },
-    productId: { label: 'table.fields.netbootid', key: 'productId', visible: true, _fixed: true, sortable: false },
-    desc: { label: 'table.fields.description', key: 'desc', visible: false, sortable: false },
-    name: { label: 'table.fields.name', key: 'name', visible: false, sortable: false },
-    selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
-    selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false, disabled: true },
-    version: { label: 'table.fields.version', key: 'version', visible: true },
-    actionRequest: { label: 'table.fields.actionRequest', key: 'actionRequest', visible: false, sortable: false, _fixed: false },
-    rowactions: { key: 'rowactions', label: '', visible: true, _fixed: true, class: '' }
+    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: false },
+    actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: true, sortable: false },
+    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
+    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: false },
+    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
+    selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
+    selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
+    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
+    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
+    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
   @selections.Getter public selectionClients!: Array<string>
@@ -248,9 +243,9 @@ export default class TProductsLocalboot extends Vue {
     //   this.fetchOptions.fetchDepotIds = false
     // }
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
-      const params = this.depotRequest
-      await this.$axios.$get('/api/opsidata/clients/depots', { params })
+      // this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
+      // const params = this.depotRequest
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {
