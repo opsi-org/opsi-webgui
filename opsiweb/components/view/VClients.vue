@@ -7,7 +7,7 @@
           <DropdownDDDepotIds />
           <!-- DOUBT: why fetchedDataDepotIds -->
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
-          <TreeTSHostGroup />
+          <TreeTSHostGroupLazyLoad />
           <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
         </template>
         <template #right>

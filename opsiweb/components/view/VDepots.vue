@@ -11,6 +11,7 @@
       </BarBPageHeader>
       <TableTCollapseableForMobile
         id="tabledepots"
+        small
         datakey="depotId"
         :collapseable="false"
         :tabledata="tableData"
