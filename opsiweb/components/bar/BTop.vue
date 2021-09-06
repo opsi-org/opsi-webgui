@@ -7,7 +7,7 @@
             <b-icon icon="list" />
           </b-button>
         </b-navbar-nav>
-        <b-navbar-brand href="/" class="topbar_brand">
+        <b-navbar-brand href="/webgui/app" class="topbar_brand">
           <b-badge class="bg-light" style="margin-left:5px;margin-right:5px">
             <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
           </b-badge>

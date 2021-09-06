@@ -65,8 +65,8 @@
       "localbootid": "Localboot Produkt-ID",
       "netbootid": "Netboot Produkt-ID",
       "actionRequest": "Request",
-      "versionOutdated": "vO",
-      "actionRequestFailed": "aRf",
+      "versionOutdated": "Veraltete Produkte",
+      "actionRequestFailed": "Fehlgeschlagene Produkte",
       "rowactions": "Aktionen"
     }
   },

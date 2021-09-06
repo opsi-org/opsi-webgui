@@ -29,7 +29,8 @@
       "@types/node",
       "@nuxt/types",
       "@nuxtjs/axios",
-      "bootstrap-vue"
+      "bootstrap-vue",
+      "webpack-env"
     ]
   },
   "exclude": [

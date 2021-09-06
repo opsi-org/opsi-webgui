@@ -1,6 +1,6 @@
 <template>
   <b-card
-    v-if="$mq=='mobile' && collapseable"
+    v-if="$mq=='mobile' || collapseable"
     bg-variant="transparent"
     class="TCollapseableForMobile-Card overflow-auto"
   >
@@ -17,7 +17,10 @@
         <slot name="filter" />
         <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headers" />
       </div>
-      <TableTTable v-bind="$props" :tabledata="tabledata">
+      <p v-if="$props.errorText">
+        {{ $props.errorText }}
+      </p>
+      <TableTTable v-else v-bind="$props" :tabledata="tabledata">
         <template
           v-for="slotName in Object.keys($scopedSlots)"
           #[slotName]="slotScope"
@@ -30,6 +33,9 @@
     </b-collapse>
   </b-card>
   <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card overflow-auto">
+    <p v-if="$props.errorText">
+      {{ $props.errorText }}
+    </p>
     <TableTTable v-bind="$props" :tabledata="tabledata">
       <template
         v-for="slotName in Object.keys($scopedSlots)"
@@ -53,7 +59,8 @@ export default class TCollapseableForMobile extends TTable {
   @Prop({ }) title!: string
   @Prop({ }) tabledata!: ITableData
   @Prop({ default: true }) collapseable?: Boolean
-  visible: Boolean = true
+  @Prop({ default: true }) visible?: Boolean
+  // visible: Boolean = true
 }
 
 </script>
