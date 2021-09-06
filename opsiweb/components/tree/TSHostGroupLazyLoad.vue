@@ -7,7 +7,7 @@
       :options="options"
       :normalizer="normalizer"
       :load-options="loadOptions"
-      placeholder="Hostgroup with delayed loading children"
+      :placeholder="$t('treeselect.hostGroups')"
       value-format="object"
       :max-height="400"
       @select="groupSelect"

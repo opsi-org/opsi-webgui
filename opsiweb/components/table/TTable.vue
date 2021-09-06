@@ -58,7 +58,7 @@ export default class TTable extends BTable {
 
   fixRow (row: ITableRow): void {
     // eslint-disable-next-line no-console
-    console.log('rowitem.ident', row.item.ident)
+    // console.log('rowitem.ident', row.item.ident)
     if (typeof row.item.ident === 'string') {
       row.rowSelected = this.selection.includes(row.item.ident)
       if (row.rowSelected) {
