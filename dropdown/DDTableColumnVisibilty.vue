@@ -27,7 +27,7 @@
         @click="setColumnVisibilityModel(header.key)"
       >
         <!-- :columnVisibilityStates[header.key] -->
-        {{ $t(header.label) }}
+        {{ header.label }}
       </a>
     </li>
     <li
@@ -48,7 +48,7 @@
           :value="header.key"
           :class="{'selected':columnVisibilityStates[header.key]}"
         />
-        {{ $t(header.label) }}
+        {{ header.label }}
       </a>
     </li>
   </b-dropdown>

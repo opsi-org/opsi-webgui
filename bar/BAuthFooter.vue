@@ -14,7 +14,7 @@
         <!-- <DropdownDDTheme :dropup="true" :navbar="true" /> -->
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto" small>
-        <b-nav-text> version: 1.0.0</b-nav-text>
+        <b-nav-text> version: {{ $config.packageVersion }}</b-nav-text>
       </b-navbar-nav>
     </b-navbar>
   </div>

@@ -46,7 +46,7 @@
           {{ c }}
         </b-th>
         <b-th class="text-right">
-          <b-badge :class="getVariant(v)">
+          <b-badge :variant="getVariant(v)">
             {{ v }}
           </b-badge>
         </b-th>
