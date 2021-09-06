@@ -26,8 +26,9 @@ export interface ITableRow {
   rowSelected: boolean
   toggleDetails: Function,
   item: ITableRowItemProducts|{
-      ident: string
-      _rowVariant?: string
+    ident: string
+    productId: string
+    _rowVariant?: string
   };
 }
 export interface ITableData {
