@@ -56,17 +56,25 @@ export default class TTable extends BTable {
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   @Prop({ }) tabledata!: ITableData
 
+  rowIdent: any
+
   fixRow (row: ITableRow): void {
+    if (this.datakey === 'productId') {
+      this.rowIdent = row.item.productId
+    } else {
+      this.rowIdent = row.item.ident
+    }
     // eslint-disable-next-line no-console
-    // console.log('rowitem.ident', row.item.ident)
-    if (typeof row.item.ident === 'string') {
-      row.rowSelected = this.selection.includes(row.item.ident)
+    console.log('rowIdent', this.rowIdent)
+
+    if (typeof this.rowIdent === 'string') {
+      row.rowSelected = this.selection.includes(this.rowIdent)
       if (row.rowSelected) {
-        const elem = document.getElementById(`__row_${row.item.ident}`)
+        const elem = document.getElementById(`__row_${this.rowIdent}`)
         if (elem) { elem.classList.add('b-table-row-selected') }
         row.item._rowVariant = 'primary'
       } else {
-        const elem = document.getElementById(`__row_${row.item.ident}Major`)
+        const elem = document.getElementById(`__row_${this.rowIdent}Major`)
         if (elem) { elem.classList.remove('b-table-row-selected') }
         row.item._rowVariant = ''
       }
