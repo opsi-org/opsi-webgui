@@ -29,7 +29,7 @@ const selections = namespace('selections')
 @Component
 export default class TSTreeselect extends Vue {
   @Prop({ }) options!: object
-  @Prop({ }) type!: string
+  // @Prop({ }) type!: string
   @Prop({ }) placeholder!: string
 
   groupSelection: Array<any> = []
