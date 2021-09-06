@@ -12,13 +12,16 @@
     select-mode="multi"
     @row-clicked="rowChanged"
   >
+    <template #table-busy>
+      <IconILoading v-if="$props.busy" />
+    </template>
     <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
     <!-- :no-local-sorting="true"
     :sort-by.sync="tabledata.sortBy"
     :sort-desc.sync="tabledata.sortDesc"
     sort-icon-right -->
     <template #head()="header">
-      {{ $t(header.label) }}
+      {{ header.label }}
     </template>
     <template #head(sel)="{}">
       {{ selection.length }}/{{ totalrows }}

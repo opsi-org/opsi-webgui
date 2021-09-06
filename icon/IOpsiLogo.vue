@@ -1,16 +1,18 @@
 <template>
-  <img src="../../assets/images/LogoOpsi.png" alt="opsi logo" :height="height" :width="width">
+  <img src="../../assets/images/LogoOpsi.png" alt="opsi logo" class="OpsiLogo_Img">
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class IOpsiLogo extends Vue {
-  @Prop({ default: '60%' }) height!: string
-  @Prop({ default: '61%' }) width!: string
 }
 </script>
 
 <style>
+.OpsiLogo_Img {
+  max-width: 60%;
+  max-height: 60%;
+}
 </style>

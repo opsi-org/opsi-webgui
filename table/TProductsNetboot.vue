@@ -1,23 +1,20 @@
 <template>
   <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.netboot') }}</h4></div> -->
   <div>
-    <IconILoading v-if="isLoading" />
-    <p v-else-if="errorText">
-      {{ errorText }}
-    </p>
     <TableTCollapseableForMobile
-      v-else
       id="tableproducts"
       datakey="productId"
-      :tabledata="tableData"
       :title="$t('title.netboot')"
-      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+      :visible="false"
+      :tabledata="tableData"
       :headers="headerData"
-      :items="fetchedData.products"
+      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :selection="selectionProducts"
-      :onchangeselection="setSelectionProducts"
-      :loading="isLoading"
+      :items="fetchedData.products"
       :totalrows="fetchedData.total"
+      :busy="isLoading"
+      :error-text="errorText"
+      :onchangeselection="setSelectionProducts"
     >
       <template #filter>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
@@ -115,18 +112,18 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-interface DepotRequest {
-    selectedClients: string
-}
+// interface DepotRequest {
+//     selectedClients: string
+// }
 @Component
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
   action: string = ''
   type: string = ''
-  depotRequest: DepotRequest = { selectedClients: '' }
+  // depotRequest: DepotRequest = { selectedClients: '' }
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: any
+  fetchedData: any = { products: [], total: 0 }
   // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
@@ -144,16 +141,16 @@ export default class TProductsNetboot extends Vue {
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
-    installationStatus: { label: 'table.fields.instStatus', key: 'installationStatus', visible: false, sortable: false },
-    actionResult: { label: 'table.fields.actionResult', key: 'actionResult', visible: false, sortable: false },
-    productId: { label: 'table.fields.netbootid', key: 'productId', visible: true, _fixed: true, sortable: false },
-    desc: { label: 'table.fields.description', key: 'desc', visible: false, sortable: false },
-    name: { label: 'table.fields.name', key: 'name', visible: false, sortable: false },
-    selectedDepots: { label: 'table.fields.depotIds', key: 'selectedDepots', visible: false },
-    selectedClients: { label: 'table.fields.clientsIds', key: 'selectedClients', visible: false, disabled: true },
-    version: { label: 'table.fields.version', key: 'version', visible: true },
-    actionRequest: { label: 'table.fields.actionRequest', key: 'actionRequest', visible: false, sortable: false, _fixed: false },
-    rowactions: { key: 'rowactions', label: 'table.fields.rowactions', visible: true, _fixed: true, class: '' }
+    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: false },
+    actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: false },
+    productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
+    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: false },
+    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
+    selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
+    selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
+    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
+    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
+    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
   @selections.Getter public selectionClients!: Array<string>
@@ -223,9 +220,10 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = true
     this.updateColumnVisibility()
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
-      const params = this.depotRequest
-      await this.$axios.$get('/api/opsidata/clients/depots', { params })
+      // this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
+      // const params = this.depotRequest
+      // await this.$axios.$get('/api/opsidata/clients/depots', { params })
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {
