@@ -29,7 +29,6 @@ const selections = namespace('selections')
 @Component
 export default class TSTreeselect extends Vue {
   @Prop({ }) options!: object
-  // @Prop({ }) type!: string
   @Prop({ }) placeholder!: string
 
   groupSelection: Array<any> = []
@@ -37,19 +36,11 @@ export default class TSTreeselect extends Vue {
   item: any
   storeData : Array<string> = []
 
-  // @selections.Getter public selectionClients!: Array<string>
-  // @selections.Mutation public pushToSelectionClients!: (s: string) => void
-  // @selections.Mutation public delFromSelectionClients!: (s: string) => void
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
 
-  // @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
-  //   this.syncStoreToTree()
-  // }
-
   beforeUpdate () {
-    // if (this.type === 'hostgroup') { this.storeData = this.selectionClients } else { this.storeData = this.selectionProducts }
     this.storeData = this.selectionProducts
     this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
@@ -122,12 +113,10 @@ export default class TSTreeselect extends Vue {
       const objectId = idList[i]
       if (type === 'select') {
         this.pushToSelectionProducts(objectId)
-        // if (this.type === 'hostgroup') { this.pushToSelectionClients(objectId) } else { this.pushToSelectionProducts(objectId) }
       }
       if (type === 'deselect') {
         if (this.storeData.includes(objectId)) {
           this.delFromSelectionProducts(objectId)
-          // if (this.type === 'hostgroup') { this.delFromSelectionClients(objectId) } else { this.delFromSelectionProducts(objectId) }
         }
       }
     }
@@ -147,5 +136,4 @@ export default class TSTreeselect extends Vue {
 .treeselect .vue-treeselect__multi-value-item-container {
   display: none;
 }
-
 </style>
