@@ -1,4 +1,3 @@
-// import Cookie from 'js-cookie'
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 
 @Module({ name: 'selections', stateFactory: true, namespaced: true })
@@ -12,6 +11,20 @@ export default class Selections extends VuexModule {
   get selectionProducts (): Array<string> { return this._selectionProducts }
 
   @VuexMutation public setSelectionDepots (s: Array<string>) { this._selectionDepots = s }
+  @VuexMutation public pushToSelectionDepots (s: string) {
+    const index = this._selectionDepots.indexOf(s)
+    if (index === -1) {
+      this._selectionDepots.push(s)
+    }
+  }
+
+  @VuexMutation public delFromSelectionDepots (s: string) {
+    const index = this._selectionDepots.indexOf(s)
+    if (index !== -1) {
+      this._selectionDepots.splice(index, 1)
+    }
+  }
+
   @VuexMutation public setSelectionClients (s: Array<string>) { this._selectionClients = s }
   @VuexMutation public pushToSelectionClients (s: string) {
     const index = this._selectionClients.indexOf(s)
