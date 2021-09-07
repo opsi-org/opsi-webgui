@@ -3,7 +3,8 @@
     <template #parent>
       <BarBPageHeader>
         <template #left>
-          <DropdownDDDepotIds />
+          <!-- <DropdownDDDepotIds /> -->
+          <TreeTSDepots />
           <!-- <DropdownDDClientIds /> -->
           <TreeTSHostGroupLazyLoad />
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
@@ -16,14 +17,6 @@
       </BarBPageHeader>
       <TableTProductsNetboot />
       <TableTProductsLocalboot />
-      <!-- <b>Selection: </b> <br>
-      Depots : {{ selectionDepots }} <br>
-      Clients: {{ selectionClients }} <br>
-      Products: {{ selectionProducts }} <br> -->
-      <!-- Sorting By: <b>{{ tableData.sortBy }}</b>, Sort Direction:
-      <b>{{ tableData.sortDesc ? 'Descending' : 'Ascending' }}</b> -->
-      <!-- rowID {{ rowId }} <br>
-      Filter Query: {{ tableData.filterQuery }} -->
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
@@ -34,15 +27,15 @@
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
 // import { ITableData } from '~/types/ttable'
-const selections = namespace('selections')
+// const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
-  @selections.Getter public selectionClients!: Array<string>
-  @selections.Getter public selectionDepots!: Array<string>
-  @selections.Getter public selectionProducts!: Array<string>
-  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  // @selections.Getter public selectionClients!: Array<string>
+  // @selections.Getter public selectionDepots!: Array<string>
+  // @selections.Getter public selectionProducts!: Array<string>
+  // @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean
   @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public deleteAllChanges!: () => void
