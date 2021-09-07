@@ -3,6 +3,7 @@
     v-model="groupSelection"
     class="treeselect"
     :multiple="true"
+    :clearable="false"
     :options="options"
     :normalizer="normalizer"
     :load-options="loadOptions"
@@ -195,6 +196,9 @@ export default class TSDelayedLoading extends Vue {
 </script>
 
 <style>
+.treeselect{
+  max-width: 350px;
+}
 .treeselect .vue-treeselect__multi-value-item-container {
   display: none;
 }
