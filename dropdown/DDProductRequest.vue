@@ -12,13 +12,14 @@
       class="fixed_column_selection widthmax"
     >
       <template #button-content>
-        <!-- {{request}}: <br /> -->
-        {{ visibleRequest }}
+        <span :class="{'fg-orange' : currentReq != preRequest}">
+          {{ visibleRequest }} {{ (currentReq != preRequest)? '*' : '' }}
+        </span>
       </template>
       <b-dropdown-item
         v-for="a in requestoptions"
         :key="a"
-        @click="save(rowitem, a)"
+        @click="$emit('update:action', a);save(rowitem, a); visibleRequest=a"
       >
         {{ a }}
       </b-dropdown-item>
@@ -46,6 +47,9 @@ export default class DDProductRequest extends BDropdown {
   @Prop({ default: () => { return ['---', 'none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
   @Prop({ default: () => { return () => {} } }) save!: Function
 
+  preRequest: string = this.request
+  currentReq: string = this.request
+
   @selections.Getter public selectionClients!: Array<string>
   get visibleRequest () {
     if (this.rowitem === undefined) {
@@ -57,6 +61,11 @@ export default class DDProductRequest extends BDropdown {
       }
     }
     return this.request
+  }
+
+  set visibleRequest (val: string) {
+    this.currentReq = val
+    this.request = val
   }
 
   get allRequests () {

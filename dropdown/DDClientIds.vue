@@ -5,14 +5,14 @@
     configserver {{ opsiconfigserver }} <br /> -->
   <b-dropdown
     class="m-2"
-    right
     v-bind="$props"
     no-caret
     lazy
+    variant="outline-primary"
     alt="Show column"
   >
     <template #button-content>
-      <b-icon-laptop /> Clients
+      <b-icon-laptop /> Clients ({{ selectionClients.length }}/{{ fetchedData.length }})
     </template>
     <li
       id="selectableColumns-group"
@@ -39,10 +39,15 @@
 
 <script lang="ts">
 import { Component, Vue, namespace, Watch } from 'nuxt-property-decorator'
+import { arrayEqual } from '~/helpers/hcompares'
 // import { IDepot } from '~/types/tsettings'
 const selections = namespace('selections')
+interface ClientRequest {
+    selectedDepots: string
+}
 
 @Component export default class DDDepotIds extends Vue {
+  clientRequest: ClientRequest = { selectedDepots: '' }
   // opsiconfigserver:string = ''
   fetchedData: Array<string> = []
   selectionLocal: Array<string> = []
@@ -52,12 +57,17 @@ const selections = namespace('selections')
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
+  @Watch('selectionDepots', { deep: true })
+  selectionDepotsChanged () { this.$fetch() }
+
   @Watch('selectionLocal', { deep: true }) selectionChanged () {
     // if (this.selectionLocal.length === 0) {
     //   this.selectionLocal.push(this.opsiconfigserver)
     // }
-    this.setSelectionClients([...this.selectionLocal])
-    // this.setSelectionClients([])
+
+    if (!arrayEqual(this.selectionLocal, this.selectionClients)) {
+      this.setSelectionClients([...this.selectionLocal])
+    }
   }
 
   handleItem (key: string) {
@@ -69,11 +79,13 @@ const selections = namespace('selections')
   }
 
   async fetch () {
+    this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
+    const params = this.clientRequest
+    this.fetchedData = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
     // this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
-    this.fetchedData = (await this.$axios.$post(
-      '/api/opsidata/depots/clients',
-      JSON.stringify({ selectedDepots: this.selectionDepots }))).result.clients.sort()
-    this.selectionLocal = [...this.selectionClients]
+    if (this.selectionLocal !== [...this.selectionClients]) {
+      this.selectionLocal = [...this.selectionClients]
+    }
   }
 }
 </script>

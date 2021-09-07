@@ -31,6 +31,9 @@ interface Request {
   perPage:number
   selectedDepots: Array<string>
 }
+interface ClientRequest {
+    selectedDepots: string
+}
 
 @Component
 export default class SClientIds extends Vue {
@@ -45,15 +48,18 @@ export default class SClientIds extends Vue {
   totalClients: Number = 0
   result: Array<string> = []
 
+  clientRequest: ClientRequest = { selectedDepots: '' }
   clientIds: Array<string> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
 
   async fetch () {
-    this.clientIds = (await this.$axios.$post('/api/opsidata/depots/clients',
-      JSON.stringify({ selectedDepots: this.selectionDepots }))
-    ).result.clients.sort()
-    // this.idselection = this.clientIds[0]
+    this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
+    const params = this.clientRequest
+    this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+    this.idselection = this.selectionClients[0]
+    this.$emit('update:id', this.idselection)
   }
 
   beforeMount () {

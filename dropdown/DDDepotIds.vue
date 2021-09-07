@@ -3,16 +3,17 @@
   <!-- store {{ selectionDepots }} <br />
     local {{ selectionLocal }} <br />
     configserver {{ opsiconfigserver }} <br /> -->
+  <!-- right -->
   <b-dropdown
     class="m-2"
-    right
     v-bind="$props"
     no-caret
     lazy
+    variant="outline-primary"
     alt="Show column"
   >
     <template #button-content>
-      <b-icon-hdd-stack-fill /> Depots
+      <b-icon-hdd-stack-fill /> Depots  ({{ selectionDepots.length }}/{{ fetchedData.length }})
     </template>
     <li
       id="selectableColumns-group"
@@ -38,6 +39,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace, Watch } from 'nuxt-property-decorator'
+import { arrayEqual } from '~/helpers/hcompares'
 // import { IDepot } from '~/types/tsettings'
 const selections = namespace('selections')
 
@@ -45,7 +47,7 @@ const selections = namespace('selections')
   opsiconfigserver:string = ''
   fetchedData: Array<string> = []
   selectionLocal: Array<string> = []
-  // @selections.Getter public selectionClients!: Array<string>
+
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -54,8 +56,9 @@ const selections = namespace('selections')
     if (this.selectionLocal.length === 0) {
       this.selectionLocal.push(this.opsiconfigserver)
     }
-    this.setSelectionDepots([...this.selectionLocal])
-    // this.setSelectionClients([])
+    if (!arrayEqual(this.selectionLocal, this.selectionDepots)) {
+      this.setSelectionDepots([...this.selectionLocal])
+    }
   }
 
   handleItem (key: string) {
@@ -67,8 +70,8 @@ const selections = namespace('selections')
   }
 
   async fetch () {
-    this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
-    this.fetchedData = (await this.$axios.$post('/api/opsidata/depotsIds')).result
+    this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    this.fetchedData = (await this.$axios.$get('/api/opsidata/depotIds')).result
     this.selectionLocal = [...this.selectionDepots]
   }
 }

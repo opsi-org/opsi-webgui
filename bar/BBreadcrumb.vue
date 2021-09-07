@@ -1,5 +1,5 @@
 <template>
-  <b-breadcrumb class="View-Breadcrumb" :items="crumbs" />
+  <b-breadcrumb v-if="crumbs.length > 0" class="View-Breadcrumb" :items="crumbs" />
   <!-- <b-row
   > -->
   <!-- align-v="stretch" -->
@@ -43,17 +43,23 @@ export default class BBreadcrumbRow extends Vue {
   }
 
   get crumbs (): Array<string> {
-    const pathArray = this.$route.path.split('/')
+    const pathArray : any = this.$route.path.split('/')
     pathArray.shift()
     for (const c in pathArray) {
       switch (pathArray[c]) {
-        case 'clientsconfig': pathArray[c] = 'Clients - Configuration'; break
-        case 'depotsconfig': pathArray[c] = 'Depots - Configuration'; break
-        case 'clientslog': pathArray[c] = 'Clients - Log'; break
-        case 'depotslog': pathArray[c] = 'Depots - Log'; break
+        case 'support': pathArray[c] = this.$t('title.support'); break
+        case 'depots': pathArray[c] = this.$t('title.depots'); break
+        case 'config': pathArray[c] = this.$t('title.config'); break
+        case 'log': pathArray[c] = this.$t('title.log'); break
+        case 'depotsconfig': pathArray[c] = this.$t('title.depotsconfig'); break
+        case 'clientsconfig': pathArray[c] = this.$t('title.clientsconfig'); break
+        case 'clientslog': pathArray[c] = this.$t('title.clientslog'); break
+        case 'clientsaddnew': pathArray[c] = this.$t('title.addNewClient'); break
+        case 'products': pathArray[c] = this.$t('title.products'); break
+        case 'settings': pathArray[c] = this.$t('title.settings'); break
       }
     }
-    return pathArray.filter(p => p !== '')
+    return pathArray.filter((p: string) => p !== '')
   }
 }
 </script>
