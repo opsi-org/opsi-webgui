@@ -45,10 +45,6 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <!-- <b>Selection: </b> <br>
-      Depots : {{ selectionDepots }} <br> -->
-      <!-- rowID {{ rowId }} <br>
-      Filter Query: {{ tableData.filterQuery }} -->
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
