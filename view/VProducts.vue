@@ -4,7 +4,8 @@
       <BarBPageHeader>
         <template #left>
           <DropdownDDDepotIds />
-          <DropdownDDClientIds />
+          <!-- <DropdownDDClientIds /> -->
+          <TreeTSHostGroupLazyLoad />
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSProductGroup />
