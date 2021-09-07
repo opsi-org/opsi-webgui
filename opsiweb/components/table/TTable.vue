@@ -65,7 +65,7 @@ export default class TTable extends BTable {
       this.rowIdent = row.item.ident
     }
     // eslint-disable-next-line no-console
-    console.log('rowIdent', this.rowIdent)
+    // console.log('rowIdent', this.rowIdent)
 
     if (typeof this.rowIdent === 'string') {
       row.rowSelected = this.selection.includes(this.rowIdent)

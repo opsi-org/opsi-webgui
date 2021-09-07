@@ -4,8 +4,8 @@
       <BarBPageHeader>
         <template #left>
           <!-- <InputIFilter :data="tableData" /> -->
-          <DropdownDDDepotIds />
-          <!-- DOUBT: why fetchedDataDepotIds -->
+          <!-- <DropdownDDDepotIds /> -->
+          <TreeTSDepots />
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSHostGroupLazyLoad />
           <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
@@ -67,11 +67,6 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <!-- <b>Selection: </b> <br>
-      Depots : {{ selectionDepots }} <br>
-      Clients : {{ selectionClients }} <br> -->
-      <!-- rowID {{ rowId }} <br>
-      Filter Query: {{ tableData.filterQuery }} -->
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />

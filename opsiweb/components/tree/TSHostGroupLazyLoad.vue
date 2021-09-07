@@ -1,27 +1,26 @@
 <template>
-  <div>
-    <treeselect
-      v-model="groupSelection"
-      class="treeselect"
-      :multiple="true"
-      :options="options"
-      :normalizer="normalizer"
-      :load-options="loadOptions"
-      :placeholder="$t('treeselect.hostGroups')"
-      value-format="object"
-      :max-height="400"
-      @select="groupSelect"
-      @deselect="groupDeselect"
-    >
-      <div slot="option-label" slot-scope="{ node }">
-        <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
-          <b-icon v-else icon="laptop" />
-          <small> {{ node.label }} </small>
-        </div>
+  <treeselect
+    v-model="groupSelection"
+    class="treeselect"
+    :multiple="true"
+    :clearable="false"
+    :options="options"
+    :normalizer="normalizer"
+    :load-options="loadOptions"
+    :placeholder="$t('treeselect.hostGroups')"
+    value-format="object"
+    :max-height="400"
+    @select="groupSelect"
+    @deselect="groupDeselect"
+  >
+    <div slot="option-label" slot-scope="{ node }">
+      <div :ref="'tree-item-'+node.id">
+        <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
+        <b-icon v-else icon="laptop" />
+        <small> {{ node.label }} </small>
       </div>
-    </treeselect>
-  </div>
+    </div>
+  </treeselect>
 </template>
 
 <script lang="ts">
@@ -50,7 +49,7 @@ export default class TSDelayedLoading extends Vue {
     },
     {
       id: 'groups',
-      text: 'root',
+      text: 'groups',
       isBranch: true,
       type: 'HostGroup',
       children: null
@@ -197,6 +196,9 @@ export default class TSDelayedLoading extends Vue {
 </script>
 
 <style>
+.treeselect{
+  max-width: 350px;
+}
 .treeselect .vue-treeselect__multi-value-item-container {
   display: none;
 }
