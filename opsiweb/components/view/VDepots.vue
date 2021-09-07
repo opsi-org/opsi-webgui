@@ -1,26 +1,35 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
     <template #parent>
-      <BarBPageHeader>
+      <BarBPageHeader v-if="$mq=='mobile'">
         <template #left>
-          <InputIFilter :data="tableData" />
+          <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
+        </template>
+        <template #right>
+          <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
         </template>
       </BarBPageHeader>
-      <TableTTable
+      <TableTCollapseableForMobile
         id="tabledepots"
+        small
         datakey="depotId"
+        :collapseable="false"
         :tabledata="tableData"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
         :items="fetchedData.depots"
         :selection="selectionDepots"
         :onchangeselection="setSelectionDepots"
-        :loading="isLoading"
+        :error-text="errorText"
+        :busy="isLoading"
         :totalrows="fetchedData.total"
       >
+        <template #head(depotId)>
+          <InputIFilter ref="IFilterDepots" :data="tableData" :additional-title="$t('table.fields.id')" />
+        </template>
         <template #cell(rowactions)="row">
           <ButtonBTNRowLinkTo
-            title="config"
+            :title="$t('title.config')"
             icon="gear"
             to="/depots/config"
             :ident="row.item.ident"
@@ -28,16 +37,14 @@
             :click="routeRedirectWith"
           />
         </template>
-      </TableTTable>
-      <BarBPagination
-        :tabledata="tableData"
-        :total-rows="fetchedData.total"
-        aria-controls="tabledepots"
-      />
-      <b>Selection: </b> <br>
-      Depots : {{ selectionDepots }} <br>
-      <!-- rowID {{ rowId }} <br>
-      Filter Query: {{ tableData.filterQuery }} -->
+        <template #pagination>
+          <BarBPagination
+            :tabledata="tableData"
+            :total-rows="fetchedData.total"
+            aria-controls="tabledepots"
+          />
+        </template>
+      </TableTCollapseableForMobile>
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
@@ -49,13 +56,16 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
-@Component
-export default class VDepots extends Vue {
+// const settings = namespace('settings')
+
+@Component export default class VDepots extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+  // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
   rowId: string = ''
   fetchedData: object = {}
+  errorText: string = ''
   isLoading: boolean = true
   tableData: ITableData = {
     pageNumber: 1,
@@ -67,13 +77,13 @@ export default class VDepots extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'sel', visible: true, _fixed: true },
-    depotId: { label: 'Id', key: 'depotId', visible: true, _fixed: true, sortable: true },
-    description: { label: 'Desc', key: 'description', visible: false, sortable: true },
-    type: { label: 'type', key: 'type', visible: false, sortable: true },
-    ip: { label: 'ip', key: 'ip', visible: false, sortable: true },
-    _empty_: { label: '', key: '_empty_', visible: true, _fixed: true },
-    rowactions: { key: 'rowactions', label: 'a', visible: true, _fixed: true }
+    sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
+    description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
+    type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
+    ip: { label: this.$t('table.fields.ip') as string, key: 'ip', visible: false, sortable: true },
+    // _empty_: { label: this.$t('', key: '_empty_') as string, visible: true, _fixed: true },
+    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
@@ -97,7 +107,15 @@ export default class VDepots extends Vue {
 
   async fetch () {
     this.isLoading = true
-    this.fetchedData = (await this.$axios.$post('/api/opsidata/depots', JSON.stringify(this.tableData))).result
+    const params = this.tableData
+    await this.$axios.$get('/api/opsidata/depots', { params })
+      .then((response) => {
+        this.fetchedData = response.result
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.errorText = (this as any).$t('message.errortext')
+      })
     this.isLoading = false
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <treeselect
     v-model="groupSelection"
-    :placeholder="type === 'hostgroup' ? 'Host Group' : 'Product Group'"
+    :placeholder="$t(placeholder)"
     class="treeselect"
     :multiple="true"
     :clearable="false"
@@ -23,12 +23,13 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component
 export default class TSTreeselect extends Vue {
   @Prop({ }) options!: object
+  @Prop({ }) placeholder!: string
   @Prop({ }) type!: string
 
   groupSelection: Array<any> = []
@@ -36,19 +37,15 @@ export default class TSTreeselect extends Vue {
   item: any
   storeData : Array<string> = []
 
-  @selections.Getter public selectionClients!: Array<string>
-  @selections.Mutation public pushToSelectionClients!: (s: string) => void
-  @selections.Mutation public delFromSelectionClients!: (s: string) => void
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public pushToSelectionDepots!: (s: string) => void
+  @selections.Mutation public delFromSelectionDepots!: (s: string) => void
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
 
-  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
-    this.syncStoreToTree()
-  }
-
   beforeUpdate () {
-    if (this.type === 'hostgroup') { this.storeData = this.selectionClients } else { this.storeData = this.selectionProducts }
+    if (this.type === 'depots') { this.storeData = this.selectionDepots } else { this.storeData = this.selectionProducts }
     this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
   }
@@ -119,11 +116,11 @@ export default class TSTreeselect extends Vue {
     for (const i in idList) {
       const objectId = idList[i]
       if (type === 'select') {
-        if (this.type === 'hostgroup') { this.pushToSelectionClients(objectId) } else { this.pushToSelectionProducts(objectId) }
+        if (this.type === 'depots') { this.pushToSelectionDepots(objectId) } else { this.pushToSelectionProducts(objectId) }
       }
       if (type === 'deselect') {
         if (this.storeData.includes(objectId)) {
-          if (this.type === 'hostgroup') { this.delFromSelectionClients(objectId) } else { this.delFromSelectionProducts(objectId) }
+          if (this.type === 'depots') { this.delFromSelectionDepots(objectId) } else { this.delFromSelectionProducts(objectId) }
         }
       }
     }
@@ -140,8 +137,10 @@ export default class TSTreeselect extends Vue {
 </script>
 
 <style>
+.treeselect{
+  max-width: 350px;
+}
 .treeselect .vue-treeselect__multi-value-item-container {
   display: none;
 }
-
 </style>

@@ -3,15 +3,26 @@
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
-    striped
+    class="ttable"
+    :small="$mq=='mobile'"
+    :stacked="$mq=='mobile'"
     hover
     selectable
+    borderless
     select-mode="multi"
-    :no-local-sorting="true"
-    :sort-by.sync="tabledata.sortBy"
-    :sort-desc.sync="tabledata.sortDesc"
     @row-clicked="rowChanged"
   >
+    <template #table-busy>
+      <IconILoading v-if="$props.busy" />
+    </template>
+    <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
+    <!-- :no-local-sorting="true"
+    :sort-by.sync="tabledata.sortBy"
+    :sort-desc.sync="tabledata.sortDesc"
+    sort-icon-right -->
+    <template #head()="header">
+      {{ header.label }}
+    </template>
     <template #head(sel)="{}">
       {{ selection.length }}/{{ totalrows }}
     </template>
@@ -21,7 +32,7 @@
     </template>
 
     <template #head(rowactions)="{}">
-      <DropdownDDTableColumnVisibilty :headers="headers" />
+      <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
     </template>
     <template
       v-for="slotName in Object.keys($scopedSlots)"
@@ -45,26 +56,60 @@ export default class TTable extends BTable {
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   @Prop({ }) tabledata!: ITableData
 
+  rowIdent: any
+
   fixRow (row: ITableRow): void {
-    row.rowSelected = this.selection.includes(row.item.ident)
-    if (row.rowSelected) {
-      const elem = document.getElementById(`__row_${row.item.ident}`)
-      if (elem) { elem.classList.add('b-table-row-selected') }
-      row.item._rowVariant = 'primary'
+    if (this.datakey === 'productId') {
+      this.rowIdent = row.item.productId
     } else {
-      const elem = document.getElementById(`__row_${row.item.ident}Major`)
-      if (elem) { elem.classList.remove('b-table-row-selected') }
-      row.item._rowVariant = ''
+      this.rowIdent = row.item.ident
     }
+    // eslint-disable-next-line no-console
+    // console.log('rowIdent', this.rowIdent)
+
+    if (typeof this.rowIdent === 'string') {
+      row.rowSelected = this.selection.includes(this.rowIdent)
+      if (row.rowSelected) {
+        const elem = document.getElementById(`__row_${this.rowIdent}`)
+        if (elem) { elem.classList.add('b-table-row-selected') }
+        row.item._rowVariant = 'primary'
+      } else {
+        const elem = document.getElementById(`__row_${this.rowIdent}Major`)
+        if (elem) { elem.classList.remove('b-table-row-selected') }
+        row.item._rowVariant = ''
+      }
+    }
+    // row.rowSelected = this.selection.includes(row.item.ident)
+    // if (row.rowSelected) {
+    //   const elem = document.getElementById(`__row_${row.item.ident}`)
+    //   if (elem) { elem.classList.add('b-table-row-selected') }
+    //   row.item._rowVariant = 'primary'
+    // } else {
+    //   const elem = document.getElementById(`__row_${row.item.ident}Major`)
+    //   if (elem) { elem.classList.remove('b-table-row-selected') }
+    //   row.item._rowVariant = ''
+    // }
   }
 
   rowChanged (item: ITableDataItem) {
     const selectionCopy:Array<string> = [...this.selection]
-    if (selectionCopy.includes(item.ident)) {
+    if (this.datakey === 'productId') {
+      if (selectionCopy.includes(item.productId)) {
+        selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
+      } else {
+        selectionCopy.push(item.productId)
+      }
+    } else if (selectionCopy.includes(item.ident)) {
       selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
     } else {
       selectionCopy.push(item.ident)
     }
+
+    // if (selectionCopy.includes(item.ident)) {
+    //   selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
+    // } else {
+    //   selectionCopy.push(item.ident)
+    // }
     this.onchangeselection(selectionCopy)
   }
 }

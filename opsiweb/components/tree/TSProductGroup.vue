@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <LazyTreeTSTreeselect v-if="productGroup" :options="productGroup" :type="'productgroup'" />
-  </div>
+  <LazyTreeTSTreeselect v-if="productGroup" :options="productGroup" :placeholder="'treeselect.prodGroups'" />
 </template>
 
 <script lang="ts">
@@ -12,11 +10,10 @@ export default class TSProductGroup extends Vue {
   productGroup: Array<object> = []
 
   async fetch () {
-    this.productGroup = Object.values((await this.$axios.$post('/api/opsidata/products/groups', '')).result.groups.children)
+    this.productGroup = Object.values((await this.$axios.$get('/api/opsidata/products/groups')).result.groups)
   }
 }
 </script>
 
 <style>
-
 </style>

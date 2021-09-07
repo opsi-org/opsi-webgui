@@ -1,8 +1,8 @@
-## Feature description
+### Feature description
 
 (Description including problem or goals)
 
-## Proposal
+### Proposal
 
 (A proposed solution including task list)
 
@@ -11,7 +11,7 @@
   - [ ] Sub task 1
   - [ ] Sub task 2
 
-## References
+### References
 
 (Useful links or references)
 

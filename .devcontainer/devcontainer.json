@@ -11,6 +11,7 @@
 		"octref.vetur",
 		"dbaeumer.vscode-eslint",
 		"gruntfuggly.todo-tree",
-		"fooxly.workspace"
+		"fooxly.workspace",
+		"esbenp.prettier-vscode"
 	]
 }
