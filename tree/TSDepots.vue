@@ -1,5 +1,5 @@
 <template>
-  <LazyTreeTSTreeselect v-if="depotsList" :type="depots" :options="depotsList" :placeholder="'title.depots'" />
+  <LazyTreeTSTreeselect v-if="depotsList" type="depots" :options="depotsList" :placeholder="'title.depots'" />
 </template>
 
 <script lang="ts">

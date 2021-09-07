@@ -47,7 +47,7 @@ const selections = namespace('selections')
   opsiconfigserver:string = ''
   fetchedData: Array<string> = []
   selectionLocal: Array<string> = []
-  // @selections.Getter public selectionClients!: Array<string>
+
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
