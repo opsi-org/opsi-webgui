@@ -30,18 +30,22 @@ const selections = namespace('selections')
 export default class TSTreeselect extends Vue {
   @Prop({ }) options!: object
   @Prop({ }) placeholder!: string
+  @Prop({ }) type!: string
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
   item: any
   storeData : Array<string> = []
 
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public pushToSelectionDepots!: (s: string) => void
+  @selections.Mutation public delFromSelectionDepots!: (s: string) => void
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
 
   beforeUpdate () {
-    this.storeData = this.selectionProducts
+    if (this.type === 'depots') { this.storeData = this.selectionDepots } else { this.storeData = this.selectionProducts }
     this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
   }
@@ -112,11 +116,11 @@ export default class TSTreeselect extends Vue {
     for (const i in idList) {
       const objectId = idList[i]
       if (type === 'select') {
-        this.pushToSelectionProducts(objectId)
+        if (this.type === 'depots') { this.pushToSelectionDepots(objectId) } else { this.pushToSelectionProducts(objectId) }
       }
       if (type === 'deselect') {
         if (this.storeData.includes(objectId)) {
-          this.delFromSelectionProducts(objectId)
+          if (this.type === 'depots') { this.delFromSelectionDepots(objectId) } else { this.delFromSelectionProducts(objectId) }
         }
       }
     }
