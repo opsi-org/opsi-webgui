@@ -2,6 +2,7 @@
   <treeselect
     v-model="groupSelection"
     class="treeselect"
+    :flat="true"
     :multiple="true"
     :clearable="false"
     :options="options"
@@ -45,6 +46,7 @@ export default class TSDelayedLoading extends Vue {
       text: 'clientdirectory',
       isBranch: true,
       type: 'HostGroup',
+      isDisabled: true,
       children: null
     },
     {
@@ -52,6 +54,7 @@ export default class TSDelayedLoading extends Vue {
       text: 'groups',
       isBranch: true,
       type: 'HostGroup',
+      isDisabled: true,
       children: null
     },
     {
@@ -59,6 +62,7 @@ export default class TSDelayedLoading extends Vue {
       text: 'clientlist',
       isBranch: true,
       type: 'HostGroup',
+      isDisabled: true,
       children: null
     }
   ]
