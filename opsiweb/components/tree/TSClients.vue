@@ -1,11 +1,12 @@
 <template>
-  <b-form-select v-model="idselection" :options="clientIds" @change="$emit('update:id', idselection)">
-    <template #first>
-      <b-form-select-option :value="''" disabled>
-        -- {{ $t('formselect.client') }} --
-      </b-form-select-option>
-    </template>
-  </b-form-select>
+  <treeselect
+    v-if="clientIds"
+    v-model="idselection"
+    class="treeselect"
+    :options="clientIds"
+    placeholder="-- Please select a Client --"
+    @input="$emit('update:id', idselection)"
+  />
 </template>
 
 <script lang="ts">
@@ -16,17 +17,23 @@ interface ClientRequest {
 }
 
 @Component
-export default class SClientIds extends Vue {
+export default class TSClients extends Vue {
   clientRequest: ClientRequest = { selectedDepots: '' }
-  clientIds: Array<string> = []
+  clientIds: Array<object> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
 
   async fetch () {
+    const clients: Array<object> = []
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
-    this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+    const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+    for (const c in result) {
+      const client = result[c]
+      clients.push({ id: client, label: client })
+    }
+    this.clientIds = clients
     this.idselection = this.selectionClients[0]
     this.$emit('update:id', this.idselection)
   }
@@ -34,5 +41,7 @@ export default class SClientIds extends Vue {
 </script>
 
 <style>
-
+.treeselect{
+  max-width: 350px;
+}
 </style>

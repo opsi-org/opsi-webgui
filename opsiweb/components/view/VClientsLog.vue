@@ -3,7 +3,7 @@
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
-        <b-form-input v-model.trim="filterQuery" placeholder="Filter" @keyup="filterLog" />
+        <b-form-input v-model.trim="filterQuery" placeholder="Filter Logs" @keyup="filterLog" />
         <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype :logtype.sync="logtype" />
         <SpinbuttonSBLoglevel :loglevel.sync="loglevel" />
