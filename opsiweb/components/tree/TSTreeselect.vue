@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component
@@ -34,8 +34,6 @@ export default class TSTreeselect extends Vue {
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
-  item: any
-  storeData : Array<string> = []
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public pushToSelectionDepots!: (s: string) => void
@@ -44,8 +42,11 @@ export default class TSTreeselect extends Vue {
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
 
+  @Watch('selectionProducts', { deep: true }) selectionProductsChanged () {
+    this.syncStoreToTree()
+  }
+
   beforeUpdate () {
-    if (this.type === 'depots') { this.storeData = this.selectionDepots } else { this.storeData = this.selectionProducts }
     this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
   }
@@ -70,17 +71,19 @@ export default class TSTreeselect extends Vue {
   }
 
   syncStoreToTree () {
+    let storeSelect: Array<string> = []
+    if (this.type === 'depots') { storeSelect = this.selectionDepots } else { storeSelect = this.selectionProducts }
     let treeData = this.groupSelection.filter(item => item.type === 'ObjectToGroup')
     treeData = [...new Set(treeData)]
-    if (this.arrEqual(this.storeData, treeData)) {
+    if (this.arrEqual(storeSelect, treeData)) {
       // eslint-disable-next-line no-useless-return
       return
     }
     const elementsInTree: Array<string> = []
-    for (const index in this.storeData) {
-      if (this.groupIdList.includes(this.storeData[index])) {
+    for (const index in storeSelect) {
+      if (this.groupIdList.includes(storeSelect[index])) {
         this.filterObject(
-          this.options, this.storeData[index],
+          this.options, storeSelect[index],
           'text', elementsInTree)
       }
     }
@@ -111,6 +114,8 @@ export default class TSTreeselect extends Vue {
 
   groupChange (value: object, type: string) {
     const idList : Array<string> = []
+    let storeSel: Array<string> = []
+    if (this.type === 'depots') { storeSel = this.selectionDepots } else { storeSel = this.selectionProducts }
     this.filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
 
     for (const i in idList) {
@@ -119,7 +124,7 @@ export default class TSTreeselect extends Vue {
         if (this.type === 'depots') { this.pushToSelectionDepots(objectId) } else { this.pushToSelectionProducts(objectId) }
       }
       if (type === 'deselect') {
-        if (this.storeData.includes(objectId)) {
+        if (storeSel.includes(objectId)) {
           if (this.type === 'depots') { this.delFromSelectionDepots(objectId) } else { this.delFromSelectionProducts(objectId) }
         }
       }
