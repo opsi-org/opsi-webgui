@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component
@@ -44,9 +44,14 @@ export default class TSTreeselect extends Vue {
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
 
-  beforeUpdate () {
+  @Watch('selectionProducts', { deep: true }) selectionProductsChanged () {
     if (this.type === 'depots') { this.storeData = this.selectionDepots } else { this.storeData = this.selectionProducts }
+    this.syncStoreToTree()
+  }
+
+  beforeUpdate () {
     this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
+    if (this.type === 'depots') { this.storeData = this.selectionDepots } else { this.storeData = this.selectionProducts }
     this.syncStoreToTree()
   }
 
