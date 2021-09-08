@@ -65,12 +65,20 @@ export default class TSDelayedLoading extends Vue {
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
-  storeData : Array<string> = []
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
+
+  beforeUpdate () {
+    this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
+    this.syncStoreToTree()
+  }
+
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+    this.syncStoreToTree()
+  }
 
   normalizer (node: any) {
     return {
@@ -79,14 +87,6 @@ export default class TSDelayedLoading extends Vue {
       label: node.text.replace(/_+$/, ''),
       children: node.children
     }
-  }
-
-  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
-    this.syncStoreToTree()
-  }
-
-  @Watch('options', { deep: true }) optionsChanged () {
-    this.syncStoreToTree()
   }
 
   async fetchClientList ({ parentNode }: any) {
@@ -114,14 +114,9 @@ export default class TSDelayedLoading extends Vue {
           parentNode.children = Object.values(result)
         }
       }
+      this.syncStoreToTree()
       callback()
     }
-  }
-
-  beforeUpdate () {
-    this.storeData = this.selectionClients
-    this.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
-    this.syncStoreToTree()
   }
 
   arrEqual (arr1: Array<string>, arr2: Array<string>) {
@@ -129,17 +124,18 @@ export default class TSDelayedLoading extends Vue {
   }
 
   syncStoreToTree () {
+    const storeSelect = this.selectionClients
     let treeData = this.groupSelection.filter(item => item.type === 'ObjectToGroup')
     treeData = [...new Set(treeData)]
-    if (this.arrEqual(this.storeData, treeData)) {
+    if (this.arrEqual(storeSelect, treeData)) {
       // eslint-disable-next-line no-useless-return
       return
     }
     const elementsInTree: Array<string> = []
-    for (const index in this.storeData) {
-      if (this.groupIdList.includes(this.storeData[index])) {
+    for (const index in storeSelect) {
+      if (this.groupIdList.includes(storeSelect[index])) {
         this.filterObject(
-          this.options, this.storeData[index],
+          this.options, storeSelect[index],
           'text', elementsInTree)
       }
     }
@@ -170,6 +166,7 @@ export default class TSDelayedLoading extends Vue {
 
   groupChange (value: object, type: string) {
     const idList : Array<string> = []
+    const storeSel = this.selectionClients
     this.filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
 
     for (const i in idList) {
@@ -178,7 +175,7 @@ export default class TSDelayedLoading extends Vue {
         this.pushToSelectionClients(objectId)
       }
       if (type === 'deselect') {
-        if (this.storeData.includes(objectId)) {
+        if (storeSel.includes(objectId)) {
           this.delFromSelectionClients(objectId)
         }
       }
