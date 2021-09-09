@@ -32,7 +32,6 @@ import { IObjectString2String } from '~/types/tsettings'
 const changes = namespace('changes')
 @Component
 export default class MProdSaveOverview extends Vue {
-  saveResult: any
   @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
