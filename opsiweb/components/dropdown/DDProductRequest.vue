@@ -53,19 +53,19 @@ export default class DDProductRequest extends BDropdown {
   @selections.Getter public selectionClients!: Array<string>
   get visibleRequest () {
     if (this.rowitem === undefined) {
-      return this.request
+      this.currentReq = this.request
+      return this.currentReq
     }
     if (this.rowitem.selectedClients && this.rowitem.selectedClients.length !== this.selectionClients.length) {
       if (this.request !== 'none') {
-        return 'mixed'
+        this.currentReq = 'mixed'
       }
     }
-    return this.request
+    return this.currentReq
   }
 
   set visibleRequest (val: string) {
     this.currentReq = val
-    this.request = val
   }
 
   get allRequests () {
