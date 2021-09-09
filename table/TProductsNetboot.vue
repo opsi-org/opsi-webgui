@@ -73,7 +73,7 @@
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
-          :requestoptions="['none', ...row.item.actions]"
+          :requestoptions="[...row.item.actions]"
           :rowitem="row.item"
           :save="saveActionRequest"
         />
