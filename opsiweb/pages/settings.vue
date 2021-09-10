@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <b-tabs>
+    <b-tabs :horizontal="true">
       <b-tab :title="$t('settingsPage.localspecific')" active>
         <ViewVSettingsLocalSpecific />
       </b-tab>
