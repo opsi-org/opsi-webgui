@@ -6,13 +6,13 @@
   >
     <BarBPageHeader
       navbartype="collapse"
-      :collapsed="visible"
+      :collapsed="visibleLocal"
       :aria-controls="title+'-collapse'"
-      :aria-expanded="visible"
+      :aria-expanded="visibleLocal"
       :title="title"
-      @click.native="visible = !visible"
+      @click.native="visibleLocal = !visibleLocal"
     />
-    <b-collapse :id="title+'-collapse'" v-model="visible" accordion="table-accordion">
+    <b-collapse :id="title+'-collapse'" v-model="visibleLocal" accordion="table-accordion">
       <div class="BarBPageHeader-row">
         <slot name="filter" />
         <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headers" />
@@ -60,7 +60,12 @@ export default class TCollapseableForMobile extends TTable {
   @Prop({ }) tabledata!: ITableData
   @Prop({ default: true }) collapseable?: Boolean
   @Prop({ default: true }) visible?: Boolean
-  // visible: Boolean = true
+
+  visibleLocal: Boolean = true
+
+  beforeMount () {
+    this.visibleLocal = this.visible!
+  }
 }
 
 </script>
