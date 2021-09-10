@@ -15,7 +15,7 @@
     <b-collapse :id="title+'-collapse'" v-model="visibleLocal" accordion="table-accordion">
       <div class="BarBPageHeader-row">
         <slot name="filter" />
-        <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headers" />
+        <DropdownDDTableColumnVisibilty v-if="$mq=='mobile' && collapseable" :headers="headers" />
       </div>
       <p v-if="$props.errorText">
         {{ $props.errorText }}
