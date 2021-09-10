@@ -17,7 +17,7 @@
       :onchangeselection="setSelectionProducts"
     >
       <template #filter>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
+        <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />

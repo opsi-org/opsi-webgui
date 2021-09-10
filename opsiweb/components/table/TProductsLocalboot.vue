@@ -21,7 +21,7 @@
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc" -->
       <template #filter>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
+        <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.localbootid')" />
       </template>
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
