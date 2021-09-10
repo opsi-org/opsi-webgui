@@ -5,7 +5,11 @@
         <ViewVSettingsLocalSpecific />
       </b-tab>
       <b-tab :title="$t('settingsPage.modules')">
-        <ViewVModules />
+        <DivDScrollResult>
+          <template slot="content">
+            <ViewVModules />
+          </template>
+        </DivDScrollResult>
       </b-tab>
     </b-tabs>
   </div>
