@@ -1,5 +1,5 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened">
     <template #parent>
       <BarBPageHeader>
         <template #left>
@@ -15,7 +15,7 @@
           <ModalMProdSaveOverview v-if="expert && changesProducts" />
         </template>
       </BarBPageHeader>
-      <TableTProductsNetboot />
+      <TableTProductsNetboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
       <TableTProductsLocalboot />
     </template>
     <template #child>
@@ -100,6 +100,7 @@ export default class VProducts extends Vue {
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
+    console.debug('routeRedirectWith', to, rowIdent)
     this.rowId = rowIdent
     this.$router.push(to)
   }

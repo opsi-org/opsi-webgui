@@ -93,7 +93,7 @@
         <!-- {{row.item.installationStatus}} -->
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
-          :requestoptions="[...row.item.actions]"
+          :requestoptions="row.item.actions"
           :rowitem="row.item"
           :save="saveActionRequest"
         />
