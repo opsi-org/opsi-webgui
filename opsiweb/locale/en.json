@@ -31,6 +31,7 @@
     "configure": "CONFIGURE",
     "settings": "Settings",
     "localboot": "Localboot Products",
+    "netboot": "Netboot Products",
     "hostattr": "Host Attributes",
     "properties": "Property-Configuration",
     "dependencies": "Dependencies"
