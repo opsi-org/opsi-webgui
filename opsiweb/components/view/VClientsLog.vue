@@ -60,7 +60,7 @@ export default class VClientLog extends Vue {
   @Prop({ default: false }) 'asChild'!: string
 
   logtype: string = 'opsiconfd'
-  loglevel: number = 0
+  loglevel: number = 5
   logResult: Array<string> = []
   filteredLog: Array<string> = []
   filterQuery: string = ''

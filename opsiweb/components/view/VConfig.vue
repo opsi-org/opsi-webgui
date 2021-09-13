@@ -7,15 +7,15 @@
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <DivDScrollResult>
-      <template slot="content">
-        <b-tabs v-if="id">
-          <b-tab title="Host Attributes" active>
+    <b-tabs>
+      <b-tab title="Host Attributes" active>
+        <DivDScrollResult>
+          <template slot="content">
             <LazyTableTHostAttributes v-if="id" :id="id" />
-          </b-tab>
-        </b-tabs>
-      </template>
-    </DivDScrollResult>
+          </template>
+        </DivDScrollResult>
+      </b-tab>
+    </b-tabs>
   </div>
 </template>
 

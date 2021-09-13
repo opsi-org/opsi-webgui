@@ -13,9 +13,8 @@ export default class CDivScrollable extends Vue {
 
 <style>
 .content-scroll{
+  max-height: 670px !important;
   overflow-x: hidden;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column-reverse;
+  overflow-y: scroll;
 }
 </style>
