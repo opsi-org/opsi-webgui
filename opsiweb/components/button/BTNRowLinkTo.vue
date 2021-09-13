@@ -5,7 +5,7 @@
     :title="title"
     size="sm"
     :pressed="pressed(to, ident)"
-    @click="click(to, ident)"
+    @click="action"
   >
     <!-- v-bind="$props" -->
     <!-- title="config"
@@ -21,11 +21,25 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class BTNRowLinkTo extends Vue {
   @Prop({ }) pressed!: Function
-  @Prop({ }) click!: Function
+  @Prop({ }) click!: Function|undefined
+  @Prop({ }) clickParent!: Function
   @Prop({ }) to!: string
   @Prop({ }) ident!: string
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
+
+  action () {
+    console.debug('action triggered', this.click, this.clickParent)
+    if (this.click !== undefined) {
+      console.debug('click is defined')
+      this.click(this.to, this.ident)
+    } else if (this.clickParent !== undefined) {
+      console.debug('emit', this.clickParent)
+      this.clickParent(this.to, this.ident)
+    } else {
+      console.error('no action defined')
+    }
+  }
 }
 </script>
 

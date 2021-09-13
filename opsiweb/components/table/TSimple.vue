@@ -37,8 +37,14 @@
           readonly
         />
       </template>
-      <template #cell()="row">
-        <b-form-input v-model="row.value" size="sm" readonly />
+      <template v-if="valueIsInputField" #cell()="row">
+        <b-form-input v-model="row[valueKey]" size="sm" readonly />
+      </template>
+      <template
+        v-for="slotName in Object.keys($scopedSlots)"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
   </b-container>
@@ -53,6 +59,11 @@ export default class TSimple extends Vue {
   @Prop({ }) tablefields!: Array<string>
   @Prop({ }) stacked!: boolean
   @Prop({ }) isBusy!: boolean
+  @Prop({ default: 'label' }) labelKey?: boolean
+  @Prop({ default: 'value' }) valueKey?: boolean
+  @Prop({ default: false }) small?: boolean
+  @Prop({ default: true }) valueIsInputField?: boolean
+  hideValue : boolean = false
   @Prop({ }) error!: boolean
   @Prop({ }) errortext!: string
   showValue : boolean = false
