@@ -16,7 +16,7 @@
         </template>
       </BarBPageHeader>
       <TableTProductsNetboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
-      <TableTProductsLocalboot />
+      <TableTProductsLocalboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
@@ -100,6 +100,7 @@ export default class VProducts extends Vue {
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
+    // eslint-disable-next-line no-console
     console.debug('routeRedirectWith', to, rowIdent)
     this.rowId = rowIdent
     this.$router.push(to)
