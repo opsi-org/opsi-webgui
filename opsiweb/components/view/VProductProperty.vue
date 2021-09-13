@@ -62,6 +62,14 @@ export default class VClientConfig extends Vue {
   }
 
   async fetch () {
+    await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=${this.selectionClients}`)
+      .then((response) => {
+        this.fetchedData.properties = response.data
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.errorText = (this as any).$t('message.errortext')
+      })
     await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=${this.selectionClients}`)
       .then((response) => {
         this.fetchedData.dependencies = response.data
