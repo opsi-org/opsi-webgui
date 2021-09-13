@@ -13,7 +13,7 @@
           <b-tab :title="$t('title.properties')" active>
             <LazyTableTProductProperties v-if="id" :id="id" :properties="fetchedData.properties" />
           </b-tab>
-          <b-tab :title="$t('title.dependencies')" :disabled="fetchedData.dependencies.length <= 0">
+          <b-tab :title="$t('title.dependencies')" :disabled="JSON.stringify(fetchedData.dependencies) != '[]'">
             <LazyTableTProductDependencies :id="id" :dependencies="fetchedData.dependencies" />
           </b-tab>
         </b-tabs>
@@ -61,7 +61,16 @@ export default class VClientConfig extends Vue {
     }
   }
 
-  /* async */ fetch () {
+  async fetch () {
+    await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=${this.selectionClients}`)
+      .then((response) => {
+        this.fetchedData.dependencies = response.data
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.errorText = (this as any).$t('message.errortext')
+      })
+
     // TODO: Backend-Request getProductProperty
     // const params = {
     //   selectionClients: this.selectionClients,
@@ -104,60 +113,62 @@ export default class VClientConfig extends Vue {
     //       this.errorText = (this as any).$t('message.errortext')
     //     })
     // }
-    this.setSelectionClients(['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'])
-    this.fetchedData = {
-      description: 'This is the description',
-      dependencies: [
-        { productId: '04-schulen-nuernberg_fos2_nb_step1', productAction: 'setup', version: '1.0-1', requiredProductId: '04-schulen-nuernberg_fos2_nb_step2', requiredVersion: null, requiredAction: 'setup', requiredInstallationStatus: null, requirementType: null },
-        { productId: '04-schulen-nuernberg_fos2_nb_step1', productAction: 'setup', version: '1.0-1', requiredProductId: 'activate-win', requiredVersion: null, requiredAction: null, requiredInstallationStatus: 'installed', requirementType: null },
-        { productId: 'ac2011', productAction: 'setup', version: '11.0-1', requiredProductId: 'dotnetfx', requiredVersion: null, requiredAction: null, requiredInstallationStatus: 'installed', requirementType: 'before' },
-        { productId: '1st-customize', productAction: 'setup', version: '17-3', requiredProductId: 'clientdescription', requiredVersion: null, requiredAction: 'once', requiredInstallationStatus: null, requirementType: 'after' },
-        { productId: 'sas', productAction: 'uninstall', version: '9.2-2', requiredProductId: 'javavm', requiredVersion: null, requiredAction: null, requiredInstallationStatus: 'installed', requirementType: 'before' }
-      ],
 
-      properties: [
-        {
-          propertyId: 'unicode',
-          propertyType: 'UnicodeProductProperty',
-          description: 'this is an unicode property',
-          multiValue: true,
-          editable: true,
-          newValue: '',
-          newValues: [],
-          default: ['a'],
-          possibleValues: ['a', 'b', 'c'],
-          // defaultDetails:{d1: x, d2:y},
-          // descriptionDetails: {d1: x, d2:y},
+    // this.setSelectionClients(['anna-tp-t14.uib.local', 'anna-vm-24001.uib.local'])
+    // this.fetchedData = {
+    //   description: 'This is the description',
+    //   dependencies: [
+    //     { productId: '04-schulen-nuernberg_fos2_nb_step1', productAction: 'setup', version: '1.0-1', requiredProductId: '04-schulen-nuernberg_fos2_nb_step2', requiredVersion: null, requiredAction: 'setup', requiredInstallationStatus: null, requirementType: null },
+    //     { productId: '04-schulen-nuernberg_fos2_nb_step1', productAction: 'setup', version: '1.0-1', requiredProductId: 'activate-win', requiredVersion: null, requiredAction: null, requiredInstallationStatus: 'installed', requirementType: null },
+    //     { productId: 'ac2011', productAction: 'setup', version: '11.0-1', requiredProductId: 'dotnetfx', requiredVersion: null, requiredAction: null, requiredInstallationStatus: 'installed', requirementType: 'before' },
+    //     { productId: '1st-customize', productAction: 'setup', version: '17-3', requiredProductId: 'clientdescription', requiredVersion: null, requiredAction: 'once', requiredInstallationStatus: null, requirementType: 'after' },
+    //     { productId: 'sas', productAction: 'uninstall', version: '9.2-2', requiredProductId: 'javavm', requiredVersion: null, requiredAction: null, requiredInstallationStatus: 'installed', requirementType: 'before' }
+    //   ],
 
-          depots: { 'bonifax.uib.local': ['a', 'b'] },
-          clients: {
-            'anna-tp-14.uib.local': ['a'],
-            'anna-vm-24001.uib.local': ['a', 'b'] // <depotValue:a>
-          },
-          // visibleValues: <mixed>
+    //   properties: [
+    //     {
+    //       propertyId: 'unicode',
+    //       propertyType: 'UnicodeProductProperty',
+    //       description: 'this is an unicode property',
+    //       multiValue: true,
+    //       editable: true,
+    //       newValue: '',
+    //       newValues: [],
+    //       default: ['a'],
+    //       possibleValues: ['a', 'b', 'c'],
+    //       // defaultDetails:{d1: x, d2:y},
+    //       // descriptionDetails: {d1: x, d2:y},
 
-          anyDepotDifferentFromDefault: true,
-          anyClientDifferentFromDepot: true
-        },
-        {
-          propertyId: 'boolean',
-          propertyType: 'BoolProductProperty',
-          description: 'this is an boolean property',
-          multiValue: false,
-          editable: false,
-          default: [true],
-          possibleValues: [true, false],
-          depots: { 'bonifax.uib.local': [false] },
-          clients: {
-            'anna-tp-14.uib.local': [true],
-            'anna-vm-24001.uib.local': [false] // <depotValue:a>
-          },
+    //       depots: { 'bonifax.uib.local': ['a', 'b'] },
+    //       clients: {
+    //         'anna-tp-14.uib.local': ['a'],
+    //         'anna-vm-24001.uib.local': ['a', 'b'] // <depotValue:a>
+    //       },
+    //       // visibleValues: <mixed>
 
-          anyDepotDifferentFromDefault: true,
-          anyClientDifferentFromDepot: true
-        }
-      ]
-    }
+    //       anyDepotDifferentFromDefault: true,
+    //       anyClientDifferentFromDepot: true
+    //     },
+    //     {
+    //       propertyId: 'boolean',
+    //       propertyType: 'BoolProductProperty',
+    //       description: 'this is an boolean property',
+    //       multiValue: false,
+    //       editable: false,
+    //       default: [true],
+    //       possibleValues: [true, false],
+    //       depots: { 'bonifax.uib.local': [false] },
+    //       clients: {
+    //         'anna-tp-14.uib.local': [true],
+    //         'anna-vm-24001.uib.local': [false] // <depotValue:a>
+    //       },
+
+    //       anyDepotDifferentFromDefault: true,
+    //       anyClientDifferentFromDepot: true
+    //     }
+    //   ]
+    // }
+
     // this.fetchedData = (await this.$axios.$post(
     //   '/api/opsidata/products',
     //   JSON.stringify(this.tableData)
