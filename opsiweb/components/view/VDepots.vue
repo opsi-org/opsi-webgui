@@ -101,7 +101,7 @@ const selections = namespace('selections')
 
   @Watch('tableData', { deep: true }) tableDataChanged () {
     // eslint-disable-next-line no-console
-    console.log('tableData changed')
+    // console.log('tableData changed')
     this.$fetch()
   }
 
