@@ -116,6 +116,7 @@
           icon="gear"
           to="/products/config"
           :ident="row.item.productId"
+          type="LocalbootProduct"
           :pressed="isRouteActive"
           :click-parent="routeRedirectToParent"
         />
