@@ -1,5 +1,4 @@
 <template>
-  <!-- shows the clients table  -->
   <div class="container-fluid">
     <ViewVProducts />
   </div>
@@ -12,6 +11,3 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class PageProducts extends Vue {
 }
 </script>
-
-<style>
-</style>

@@ -113,6 +113,3 @@ export default class VProducts extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

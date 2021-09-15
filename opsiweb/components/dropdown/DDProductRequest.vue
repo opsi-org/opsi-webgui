@@ -24,7 +24,6 @@
         {{ a }}
       </b-dropdown-item>
     </b-dropdown>
-    <!-- {{(text == 'mixed')? tooltiptext:''}} -->
     <TooltipTTProductCell
       v-if="(visibleRequest==='mixed')"
       type="actionRequest"

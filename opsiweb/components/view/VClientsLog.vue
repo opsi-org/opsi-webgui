@@ -111,6 +111,3 @@ export default class VClientLog extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

@@ -15,7 +15,6 @@ const settings = namespace('settings')
 
 @Component
 export default class GTwoColumnLayout extends Vue {
-  // @Prop({ }) breadcrumb!: string
   @Prop({ default: 'default' }) parentId!: string
   @Prop({ }) showchild!: string
 

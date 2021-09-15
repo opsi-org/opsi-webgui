@@ -15,7 +15,3 @@ export default class PDepotsconfig extends Vue {
   id: string = ''
 }
 </script>
-
-<style>
-
-</style>

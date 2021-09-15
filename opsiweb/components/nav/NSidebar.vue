@@ -53,7 +53,6 @@ export default class NSidebar extends Vue {
           submenu: [
             { title: 'title.allDepots', route: '/depots' },
             { title: 'title.config', route: '/depotsconfig' }
-            // { title: 'Logs', route: '/depots/log' }
           ]
         },
         {

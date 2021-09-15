@@ -1,4 +1,3 @@
-// import Cookie from 'js-cookie'
 export default function ({ $axios, redirect, store, route }) {
   if (process.client || process.static) {
     const host = window.location.hostname

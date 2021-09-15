@@ -2,12 +2,6 @@
   <b-card class="text-center index_content">
     <IconIOpsiLogo />
     <h1> OPSIWEB </h1>
-    <!-- <b-button to="/depots/">
-      Depots
-    </b-button>
-    <b-button to="/clients/">
-      Clients
-    </b-button> -->
   </b-card>
 </template>
 

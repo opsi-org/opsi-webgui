@@ -40,7 +40,3 @@ export default class VModules extends Vue {
   }
 }
 </script>
-
-<style>
-
-</style>

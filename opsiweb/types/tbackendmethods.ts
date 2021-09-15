@@ -1,4 +1,3 @@
-
 export interface IGroupObj2Group {
     id: string
     label: string

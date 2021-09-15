@@ -14,9 +14,3 @@ export default class NTitle extends Vue {
   @Prop({ }) title!: string
 }
 </script>
-
-<style>
-/* .nav-tabs .nav-link.disabled{
-  color: inherit !important;
-} */
-</style>

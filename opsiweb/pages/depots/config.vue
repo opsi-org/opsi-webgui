@@ -10,7 +10,3 @@ export default class PDepotConfig extends Vue {
   @Prop({ default: false }) asChild!: string
 }
 </script>
-
-<style>
-
-</style>

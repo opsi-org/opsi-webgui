@@ -25,7 +25,3 @@ export default class SDepotIds extends Vue {
   }
 }
 </script>
-
-<style>
-
-</style>

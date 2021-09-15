@@ -21,6 +21,3 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class PSettings extends Vue {
 }
 </script>
-
-<style>
-</style>

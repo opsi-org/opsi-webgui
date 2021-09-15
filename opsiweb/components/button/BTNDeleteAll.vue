@@ -18,13 +18,6 @@ export default class BTNDeleteAll extends Vue {
     this.deleteAllChanges()
     if (this.hide) { this.$bvModal.hide(this.hide) }
     this.$nuxt.refresh()
-    // (this as any).$refs.tablelocalboot.$forceUpdate()
-    // this.$refs.tablelocalboot.$forceUpdate()
-    // (this as any).$refs.tablenetboot.$forceUpdate()
   }
 }
 </script>
-
-<style>
-
-</style>

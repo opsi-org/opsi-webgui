@@ -1,9 +1,4 @@
 <template>
-  <!-- <div class="container-fluid"> -->
-  <!-- store {{ selectionDepots }} <br />
-    local {{ selectionLocal }} <br />
-    configserver {{ opsiconfigserver }} <br /> -->
-  <!-- right -->
   <b-dropdown
     class="m-2"
     v-bind="$props"
@@ -34,13 +29,11 @@
       </a>
     </li>
   </b-dropdown>
-  <!-- </div> -->
 </template>
 
 <script lang="ts">
 import { Component, Vue, namespace, Watch } from 'nuxt-property-decorator'
 import { arrayEqual } from '~/helpers/hcompares'
-// import { IDepot } from '~/types/tsettings'
 const selections = namespace('selections')
 
 @Component export default class DDDepotIds extends Vue {

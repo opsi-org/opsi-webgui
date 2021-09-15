@@ -3,7 +3,6 @@
     <p v-if="error">
       {{ errortext }}
     </p>
-    <!-- :show-empty="error" -->
     <b-table
       v-else
       :busy="isBusy"
@@ -15,9 +14,6 @@
       <template #table-busy>
         <IconILoading />
       </template>
-      <!-- <template #empty>
-        {{ errortext }}
-      </template> -->
       <template #cell(opsiHostKey)="row">
         <b-input-group>
           <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />

@@ -11,7 +11,6 @@
       <b-dropdown-divider />
       <b-dropdown-item v-for="sub in submenu" :key="sub.title" :to="sub.route">
         {{ $t(sub.title) }}
-        <!-- {{ sub.title }} -->
       </b-dropdown-item>
     </b-nav-item-dropdown>
   </div>

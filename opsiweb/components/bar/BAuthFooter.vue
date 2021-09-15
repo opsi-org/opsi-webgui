@@ -11,7 +11,6 @@
       </b-navbar-nav>
       <b-navbar-nav align="center" small class="ml-auto">
         <DropdownDDLang :dropup="true" />
-        <!-- <DropdownDDTheme :dropup="true" :navbar="true" /> -->
       </b-navbar-nav>
       <b-navbar-nav class="ml-auto" small>
         <b-nav-text> version: {{ $config.packageVersion }}</b-nav-text>
