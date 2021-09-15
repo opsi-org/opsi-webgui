@@ -3,14 +3,10 @@
     <b-form-input v-model="opsiconfigserver" readonly class="login_input_field" />
     <b-form-input v-model="form.username" :placeholder="$t('loginPage.username')" :state="validUsername" class="login_input_field" />
     <b-form-input v-model="form.password" :placeholder="$t('loginPage.password')" :state="validPassword" type="password" class="login_input_field" />
-    <!-- <b-button @click="login" :disabled="(validUsername&&validPassword)!==null">login</b-button> -->
-    <!-- <b-button @click="login" :disabled="(validUsername!==null&&validPassword!==null)">login</b-button> -->
     <b-button class="login_input_field_btn" variant="primary" block @click="doLogin">
       {{ $t('button.login') }}
     </b-button>
     <IconILoading v-if="isLoading" />
-
-    <!-- <p>{{ result }}</p> -->
   </div>
 </template>
 

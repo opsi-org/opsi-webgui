@@ -141,5 +141,4 @@ export default class TSTreeselect extends Vue {
 .treeselect .vue-treeselect__multi-value-item-container {
   display: none;
 }
-
 </style>

@@ -34,10 +34,8 @@ export default class BPaginationUib extends BPagination {
   float: right !important;
   margin-bottom: 10px !important;
   margin-right: 10px !important;
-  /* min-width: min-content !important; */
 }
 .BarBPagination-PerPage {
-  /* min-width: 150px; */
   margin-top: 0px !important;
   margin-bottom: 0px !important;
   display: contents !important;

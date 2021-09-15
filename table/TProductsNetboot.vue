@@ -112,19 +112,15 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-// interface DepotRequest {
-//     selectedClients: string
-// }
+
 @Component
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
   action: string = ''
   type: string = ''
-  // depotRequest: DepotRequest = { selectedClients: '' }
   isLoading: boolean = true
   errorText: string = ''
   fetchedData: any = { products: [], total: 0 }
-  // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
@@ -220,9 +216,6 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = true
     this.updateColumnVisibility()
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      // this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
-      // const params = this.depotRequest
-      // await this.$axios.$get('/api/opsidata/clients/depots', { params })
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
@@ -342,6 +335,3 @@ export default class TProductsNetboot extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

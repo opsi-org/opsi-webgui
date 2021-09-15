@@ -17,7 +17,3 @@ export default class SLogtype extends Vue {
   type: string = 'opsiconfd'
 }
 </script>
-
-<style>
-
-</style>

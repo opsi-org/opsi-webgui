@@ -77,23 +77,7 @@ const settings = namespace('settings')
 
 <style>
 .dd_theme{
-  /* max-height: max-content; */
   padding-left: 1em !important;
   padding-right: 1em !important;
-  /* max-height: var(--height-navbar) !important; */
 }
-
-/* .navbar-light .navbar-nav .nav-link{
-  color: unset !important;
-  font-weight: normal !important;
-  padding-top: 0px;
-  padding-bottom: 0px;
-} */
-
-/* .dropdown:hover
-.dropdown-toggle:hover
-{
-  background-image: unset !important;
-  background-color: transparent !important;
-} */
 </style>

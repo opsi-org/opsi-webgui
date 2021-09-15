@@ -137,13 +137,10 @@ interface IFetchOptions {
 export default class TProductsLocalboot extends Vue {
   action: string = ''
   type: string = ''
-  // depotRequest: DepotRequest = { selectedClients: '' }
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  // fetchedData: any
   fetchedData: any = { products: [], total: 0 }
-  // fetchedData: object = {}
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
@@ -243,8 +240,6 @@ export default class TProductsLocalboot extends Vue {
     //   this.fetchOptions.fetchDepotIds = false
     // }
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      // this.depotRequest.selectedClients = JSON.stringify(this.selectionClients)
-      // const params = this.depotRequest
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
@@ -366,6 +361,3 @@ export default class TProductsLocalboot extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

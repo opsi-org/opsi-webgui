@@ -30,7 +30,3 @@ export default class VClientConfig extends Vue {
   isLoading: boolean = false
 }
 </script>
-
-<style>
-
-</style>

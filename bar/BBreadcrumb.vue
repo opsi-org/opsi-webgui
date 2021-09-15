@@ -63,6 +63,3 @@ export default class BBreadcrumbRow extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

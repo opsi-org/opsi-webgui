@@ -26,7 +26,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-// import { IObjectString2String, IObjectString2Function } from '~/types/tsettings'
 
 @Component
 export default class BTooltipCollpaseRow extends Vue {

@@ -39,9 +39,7 @@ export default class BTNLogout extends Vue {
 
 <style>
 .btn_logout{
-  /* max-height: inherit; */
   padding-left: 1em !important;
   padding-right: 1em !important;
-  /* width: 100%; */
 }
 </style>
