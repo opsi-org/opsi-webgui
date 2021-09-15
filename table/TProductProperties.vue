@@ -23,7 +23,7 @@
         <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
         {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
         <small v-if="row.item.anyDepotDifferentFromDefault">
-          <br />
+          <br>
           (depotValue is different from default!)
           <!-- TODO: show tooltip with depot- and default-values -->
         </small>
@@ -84,13 +84,20 @@
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { INewPropertyValue, IProperty } from '~/types/ttable'
 const selections = namespace('selections')
+const changes = namespace('changes')
+const settings = namespace('settings')
 
 @Component
 export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
+  @Prop({ }) type!: string
   @Prop({ }) properties!: Array<IProperty>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
+  @changes.Getter public changesProducts!: any
+  @changes.Mutation public pushToChangesProducts!: (s: object) => void
+  @changes.Mutation public updateChangesProductProperty!: (i:Number, s: any) => void
+  @settings.Getter public expert!: boolean
 
   errorText: string = ''
   result:Object = {}
@@ -127,12 +134,30 @@ export default class TProductProperties extends Vue {
       propertyId,
       values
     }
-    // eslint-disable-next-line no-console
-    console.debug('(todo) Request POST product property: ', data)
+    if (this.expert) {
+      for (const c in this.selectionClients) {
+        const d = {
+          clientId: this.selectionClients[c],
+          type: this.type,
+          productId: this.id,
+          actionRequest: 'empty',
+          property: propertyId,
+          value: values
+        }
+        const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
+        if (objIndex > -1) {
+          this.updateChangesProductProperty(objIndex, d)
+        }
+        this.pushToChangesProducts(d)
+      }
+    } else {
+      // eslint-disable-next-line no-console
+      console.debug('(todo) Request POST product property: ', data)
     // this.fetchedData = (await this.$axios.$post(
     //   '/api/opsidata/product/${this.id}/properties',
     //   JSON.stringify(this.data)
     // )).result
+    }
   }
 
   updateNewPropertyValuesRow (rowItem: IProperty) {
