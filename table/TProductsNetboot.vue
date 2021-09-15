@@ -95,6 +95,7 @@
           icon="gear"
           to="/products/config"
           :ident="row.item.productId"
+          type="NetbootProduct"
           :pressed="isRouteActive"
           :click-parent="routeRedirectToParent"
         />
