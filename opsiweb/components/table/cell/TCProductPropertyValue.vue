@@ -105,9 +105,12 @@ export default class TProductProperties extends Vue {
   }
 
   get uniqueOptions () {
+    // eslint-disable-next-line no-console
     console.debug('possible', this.rowItem.possibleValues)
+    // eslint-disable-next-line no-console
     console.debug('visible', this.visibleValue)
     if (this.rowItem.newValues) {
+      // eslint-disable-next-line no-console
       console.debug('new', this.rowItem.newValues)
       return this.uniques([...this.rowItem.possibleValues, ...this.visibleValue, ...this.rowItem.newValues])
     }
