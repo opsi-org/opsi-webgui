@@ -14,6 +14,3 @@ export default class TSProductGroup extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

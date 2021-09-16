@@ -95,7 +95,3 @@ export default class TSHostGroup extends Vue {
 }
 
 </script>
-
-<style>
-
-</style>

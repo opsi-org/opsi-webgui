@@ -28,7 +28,3 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class VSettingsLocalSpecific extends Vue {
 }
 </script>
-
-<style>
-
-</style>

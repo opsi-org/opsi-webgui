@@ -9,9 +9,7 @@
           OPSIWEB
         </h1>
       </div>
-      <!-- <b-card class="login_form_content text-center bg-light"> -->
       <FormFLogin />
-      <!-- </b-card> -->
     </b-card>
   </div>
 </template>

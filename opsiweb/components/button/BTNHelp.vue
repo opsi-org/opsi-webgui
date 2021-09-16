@@ -11,7 +11,3 @@ export default class BTNHelp extends Vue {
   @Prop({ }) id!: string
 }
 </script>
-
-<style>
-
-</style>

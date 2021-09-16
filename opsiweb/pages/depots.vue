@@ -11,6 +11,3 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class PageDepots extends Vue {
 }
 </script>
-
-<style>
-</style>

@@ -7,9 +7,6 @@
     :pressed="pressed(to, ident)"
     @click="click(to, ident)"
   >
-    <!-- v-bind="$props" -->
-    <!-- title="config"
-    @click="routeRedirectWith('/depots/config', row.item.ident)" -->
     <b-icon :icon="icon" />
   </b-button>
 </template>
@@ -28,9 +25,3 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) icon!: string
 }
 </script>
-
-<style>
-.Btn_Row_action {
-
-}
-</style>

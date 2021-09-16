@@ -1,8 +1,4 @@
 <template>
-  <!-- <div class="container-fluid"> -->
-  <!-- store {{ selectionDepots }} <br />
-    local {{ selectionLocal }} <br />
-    configserver {{ opsiconfigserver }} <br /> -->
   <b-dropdown
     class="m-2"
     v-bind="$props"
@@ -34,13 +30,11 @@
       </a>
     </li>
   </b-dropdown>
-  <!-- </div> -->
 </template>
 
 <script lang="ts">
 import { Component, Vue, namespace, Watch } from 'nuxt-property-decorator'
 import { arrayEqual } from '~/helpers/hcompares'
-// import { IDepot } from '~/types/tsettings'
 const selections = namespace('selections')
 interface ClientRequest {
     selectedDepots: string
@@ -48,10 +42,9 @@ interface ClientRequest {
 
 @Component export default class DDDepotIds extends Vue {
   clientRequest: ClientRequest = { selectedDepots: '' }
-  // opsiconfigserver:string = ''
   fetchedData: Array<string> = []
   selectionLocal: Array<string> = []
-  // @selections.Getter public selectionClients!: Array<string>
+
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
@@ -61,10 +54,6 @@ interface ClientRequest {
   selectionDepotsChanged () { this.$fetch() }
 
   @Watch('selectionLocal', { deep: true }) selectionChanged () {
-    // if (this.selectionLocal.length === 0) {
-    //   this.selectionLocal.push(this.opsiconfigserver)
-    // }
-
     if (!arrayEqual(this.selectionLocal, this.selectionClients)) {
       this.setSelectionClients([...this.selectionLocal])
     }
@@ -82,7 +71,6 @@ interface ClientRequest {
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     this.fetchedData = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
-    // this.opsiconfigserver = (await this.$axios.$post('/api/user/opsiserver')).result
     if (this.selectionLocal !== [...this.selectionClients]) {
       this.selectionLocal = [...this.selectionClients]
     }
@@ -94,7 +82,6 @@ interface ClientRequest {
 .ddclientIds-li {
   max-height: 400px !important;
   overflow: auto;
-  /* width: 100px; */
 }
 .dropdown-item {
   display:flex !important;

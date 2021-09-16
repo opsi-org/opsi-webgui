@@ -15,7 +15,3 @@ export default class PClientsLog extends Vue {
   id: string = ''
 }
 </script>
-
-<style>
-
-</style>

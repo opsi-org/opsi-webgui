@@ -15,7 +15,3 @@ export default class PClientsconfig extends Vue {
   id: string = ''
 }
 </script>
-
-<style>
-
-</style>

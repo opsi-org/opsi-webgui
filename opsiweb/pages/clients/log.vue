@@ -10,6 +10,3 @@ export default class PClientLogColumn extends Vue {
   @Prop({ default: false }) asChild!: string
 }
 </script>
-
-<style>
-</style>

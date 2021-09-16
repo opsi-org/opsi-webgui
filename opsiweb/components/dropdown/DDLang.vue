@@ -45,27 +45,13 @@ const settings = namespace('settings')
     this.setLanguage(lang)
     this.$i18n.locale = lang
     window.location.reload()
-    // this.$bvToast.toast(this.$t('message.reloadMessage') as string, {
-    //   title: this.$t('message.hint') as string,
-    //   toaster: 'b-toaster-bottom-right',
-    //   variant: 'info',
-    //   autoHideDelay: 5000,
-    //   appendToast: false
-    // })
   }
 }
 </script>
 
 <style>
 .dd_lang{
-  /* max-height: max-c; */
   padding-left: 1em !important;
   padding-right: 1em !important;
 }
-/* .dropdown:hover
-.dropdown-toggle:hover
-{
-  background-image: unset !important;
-  background-color: transparent !important;
-} */
 </style>

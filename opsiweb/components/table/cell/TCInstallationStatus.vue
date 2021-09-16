@@ -25,6 +25,3 @@ export default class TCSpan extends Vue {
   @Prop({ }) text!: string
 }
 </script>
-
-<style scoped>
-</style>

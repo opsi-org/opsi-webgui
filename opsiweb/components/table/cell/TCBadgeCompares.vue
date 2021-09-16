@@ -1,6 +1,5 @@
 <template>
   <div :id="`TCBadgeCompares_${type}_hover_${rowid}`">
-    <!-- {{`TCBadgeCompares_${type}_hover_${rowid}`}} -->
     <TableCellTCInstallationStatus v-if="type=='installationStatus' && text=='mixed'" :text="text" />
     <TableCellTCInstallationStatus v-else-if="type=='installationStatus'" :text="text" />
 
@@ -45,6 +44,3 @@ export default class TCSpan extends Vue {
   }
 }
 </script>
-
-<style scoped>
-</style>

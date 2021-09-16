@@ -23,7 +23,4 @@ export default class NItem extends Vue {
 .NItem-nav-item{
   z-index: 1999;
 }
-/* .nav-tabs .nav-link{
-  color: inherit !important;
-} */
 </style>

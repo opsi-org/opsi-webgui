@@ -11,7 +11,3 @@ export default class PClientsAddNew extends Vue {
 
 }
 </script>
-
-<style>
-
-</style>

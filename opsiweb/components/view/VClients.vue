@@ -78,7 +78,6 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
-// const settings = namespace('settings')
 interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,

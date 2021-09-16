@@ -26,7 +26,6 @@
         :disabled="columnVisibilityStates[header.key]"
         @click="setColumnVisibilityModel(header.key)"
       >
-        <!-- :columnVisibilityStates[header.key] -->
         {{ header.label }}
       </a>
     </li>
@@ -74,7 +73,6 @@ export default class DDTableColumnVisibilty extends BDropdown {
   created () {
     Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
       if (h._majorKey) {
-        // console.debug(h.key, 'major key ', h._majorKey, 'parent', this.headers[h._majorKey].key, 'visible', h.visible)
         this.columnVisibilityStates[this.headers[h._majorKey].key] = h.visible || false
       } else {
         this.columnVisibilityStates[h.key] = h.visible || false
@@ -153,9 +151,4 @@ export default class DDTableColumnVisibilty extends BDropdown {
 a.selected {
   background-color: var(--primary);
 }
-/* .disabled {
-  cursor: default;
-  display: none;
-
-} */
 </style>

@@ -10,7 +10,3 @@ export default class PClientsConfigColumn extends Vue {
   @Prop({ default: false }) asChild!: string
 }
 </script>
-
-<style>
-
-</style>

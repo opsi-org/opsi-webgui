@@ -20,6 +20,3 @@ export default class TSDepots extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

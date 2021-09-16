@@ -56,12 +56,10 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
-// const settings = namespace('settings')
 
 @Component export default class VDepots extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
-  // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
   rowId: string = ''
   fetchedData: object = {}
@@ -120,7 +118,3 @@ const selections = namespace('selections')
   }
 }
 </script>
-
-<style>
-
-</style>

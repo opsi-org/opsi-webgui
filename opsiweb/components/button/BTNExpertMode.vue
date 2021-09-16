@@ -28,10 +28,6 @@ const settings = namespace('settings')
 
 @Component export default class BTNExpertMode extends Vue {
   @Prop({ default: false }) navbar!: boolean
-  // localmode: string = 'user'
-  // @settings.Getter public modeIsExpert!: Boolean
-  // @settings.Getter public expertmode!: Function // returns string
-  // @settings.Mutation public setExpertmode!: (mode: string) => void
 
   localMode: boolean = false
   @settings.Getter public expert!: boolean
@@ -44,30 +40,12 @@ const settings = namespace('settings')
   changeMode (localMode: boolean) {
     this.setExpertmode(localMode)
   }
-
-  // toggleMode () {
-  //   this.localmode = this.expertmode() as string
-  //   if (this.localmode === 'user') {
-  //     this.setExpertmode('expert')
-  //   } else if (this.localmode === 'expert') {
-  //     this.setExpertmode('user')
-  //   } else {
-  //     throw new Error(`no such mode: '${this.localmode}'`)
-  //   }
-  //   this.localmode = this.expertmode() as string
-  // }
 }
 </script>
 
 <style>
-
 .btn_expertmode{
-  /* max-height: inherit; */
   padding-left: 1em !important;
   padding-right: 1em !important;
 }
-/* .dd_expertmode {
-  padding-left: 1em !important;
-  padding-right: 1em !important;
-} */
 </style>

@@ -27,7 +27,3 @@ export default class BTNDeleteObj extends Vue {
   }
 }
 </script>
-
-<style>
-
-</style>

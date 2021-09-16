@@ -18,7 +18,3 @@ export default class BTNOpenModal extends Vue {
   @Prop({ }) icon!: string
 }
 </script>
-
-<style>
-
-</style>

@@ -29,6 +29,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { makeToast } from '@/mixins/toast'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
@@ -42,27 +43,17 @@ interface DeleteClient {
 
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
-  makeToast (message:string = '', title:any = '', variant:string = 'primary', autoHideDelay: number = 5000, append = false) {
-    this.$bvToast.toast(message, {
-      title,
-      toaster: 'b-toaster-bottom-right',
-      variant,
-      autoHideDelay,
-      appendToast: append
-    })
-  }
-
   async deleteOpsiClient () {
     this.$bvModal.hide(this.id + 'deleteClientModal')
     await this.$axios.$delete('/api/opsidata/clients/' + this.id)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.error(response)
-        this.makeToast(this.id + this.$t('message.deleteMessage'), this.$t('message.success'), 'success', 5000)
+        makeToast(this, this.id + this.$t('message.deleteMessage'), this.$t('message.success'), 'success')
         this.delFromSelectionClients(this.id)
         this.$emit('update:updateTable', true)
       }).catch((error) => {
-        this.makeToast((this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
+        makeToast(this, (this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
         // eslint-disable-next-line no-console
         console.error(error)
       })

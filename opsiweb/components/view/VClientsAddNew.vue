@@ -73,6 +73,8 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { makeToast } from '@/mixins/toast'
+
 const selections = namespace('selections')
 interface NewClient {
   hostId: string,
@@ -132,23 +134,6 @@ interface ClientRequest {
   resetNewClientForm () {
     this.clientName = ''
     this.newClient = {} as NewClient
-    // this.$bvToast.toast('This is toast number', {
-    //   title: 'BootstrapVue Toast',
-    //   toaster: 'b-toaster-bottom-right',
-    //   variant: 'danger',
-    //   autoHideDelay: 5000,
-    //   appendToast: false
-    // })
-  }
-
-  makeToast (message:string = '', title:any = '', variant:string = 'primary', autoHideDelay: number = 5000, append = false) {
-    this.$bvToast.toast(message, {
-      title,
-      toaster: 'b-toaster-bottom-right',
-      variant,
-      autoHideDelay,
-      appendToast: append
-    })
   }
 
   async createOpsiClient () {
@@ -156,24 +141,21 @@ interface ClientRequest {
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      this.makeToast(this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning', 5000)
+      makeToast(this, this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning')
       return
     }
     await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
       .then((response) => {
         // eslint-disable-next-line no-console
         console.error(response)
-        this.makeToast(this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
+        makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
-        this.makeToast((this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
+        makeToast(this, (this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
       })
     this.isLoading = false
   }
 }
 </script>
-
-<style>
-</style>
