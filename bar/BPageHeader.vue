@@ -1,6 +1,5 @@
 <template>
   <b-navbar
-    :class="{pageheader: $mq === 'desktop', pageheader_wrap: $mq === 'mobile'}"
     class="BPageHeader_Navbar"
     variant="transparent"
   >
@@ -32,13 +31,6 @@ export default class BPageHeader extends Vue {
 </script>
 
 <style>
-.pageheader{
-  height: var(--height-navbar) !important;
-}
-.pageheader_wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
 .navbar {
   z-index: inherit !important;
   padding-left: 0rem !important;
@@ -47,6 +39,8 @@ export default class BPageHeader extends Vue {
 .BPageHeader_Navbar{
   background-image: none !important;
   padding: 5px 0px !important;
+  display: flex;
+  flex-wrap: wrap;
 }
 .BPageHeader_Navbar .dropdown{
   margin: 0px !important;
