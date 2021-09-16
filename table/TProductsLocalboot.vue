@@ -93,7 +93,7 @@
         <!-- {{row.item.installationStatus}} -->
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
-          :requestoptions="row.item.actions"
+          :requestoptions="[...row.item.actions]"
           :rowitem="row.item"
           :save="saveActionRequest"
         />
@@ -110,17 +110,6 @@
         />
       <!-- {{ row.item.tooltiptext }} -->
       </template>
-      <template #cell(rowactions)="row">
-        <ButtonBTNRowLinkTo
-          :title="$t('title.config')"
-          icon="gear"
-          to="/products/config"
-          :ident="row.item.productId"
-          type="LocalbootProduct"
-          :pressed="isRouteActive"
-          :click-parent="routeRedirectToParent"
-        />
-      </template>
       <template #pagination>
         <BarBPagination
           :tabledata="tableData"
@@ -133,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch, namespace } from 'nuxt-property-decorator'
+import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
@@ -146,12 +135,10 @@ interface IFetchOptions {
 }
 @Component
 export default class TProductsLocalboot extends Vue {
-  @Prop() rowId!: string
-  @Prop() routeRedirectWith!: Function
   action: string = ''
   type: string = ''
   // depotRequest: DepotRequest = { selectedClients: '' }
-  // rowId: string = ''
+  rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
   // fetchedData: any
@@ -376,14 +363,6 @@ export default class TProductsLocalboot extends Vue {
       this.setChangesProducts([])
       this.$fetch()
     }
-  }
-
-  routeRedirectToParent (to: string, rowIdent: string) {
-    this.routeRedirectWith(to, rowIdent)
-  }
-
-  isRouteActive (to: string, rowIdent: string) {
-    return this.$route.path.includes(to) && this.rowId === rowIdent
   }
 }
 </script>
