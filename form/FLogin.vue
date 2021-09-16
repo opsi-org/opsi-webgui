@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
+import { makeToast } from '@/mixins/toast'
 const auth = namespace('auth')
 const selections = namespace('selections')
 interface FormUser {
@@ -76,13 +77,7 @@ interface FormUser {
         this.logout()
         this.result = (this as any).$t('message.loginFailed')
         this.isLoading = false
-        this.$bvToast.toast(this.result, {
-          title: (this as any).$t('message.error'),
-          toaster: 'b-toaster-bottom-right',
-          variant: 'danger',
-          autoHideDelay: 5000,
-          appendToast: false
-        })
+        makeToast(this, this.result, this.$t('message.error'), 'danger')
       })
   }
 }
