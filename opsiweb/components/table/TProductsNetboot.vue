@@ -73,7 +73,7 @@
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
-          :requestoptions="[...row.item.actions]"
+          :requestoptions="row.item.actions"
           :rowitem="row.item"
           :save="saveActionRequest"
         />
@@ -89,6 +89,17 @@
         />
       <!-- {{ row.item.tooltiptext }} -->
       </template>
+      <template #cell(rowactions)="row">
+        <ButtonBTNRowLinkTo
+          :title="$t('title.config')"
+          icon="gear"
+          to="/products/config"
+          :ident="row.item.productId"
+          type="NetbootProduct"
+          :pressed="isRouteActive"
+          :click-parent="routeRedirectToParent"
+        />
+      </template>
       <template #pagination>
         <BarBPagination
           :tabledata="tableData"
@@ -101,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
@@ -117,6 +128,8 @@ interface IFetchOptions {
 // }
 @Component
 export default class TProductsNetboot extends Vue {
+  @Prop() rowId!: string
+  @Prop() routeRedirectWith!: Function
   // @Prop() tableData!: ITableData
   action: string = ''
   type: string = ''
@@ -163,23 +176,19 @@ export default class TProductsNetboot extends Vue {
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
 
-  @Watch('selectionDepots', { deep: true })
-  selectionDepotsChanged () {
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.$fetch()
   }
 
-  @Watch('selectionClients', { deep: true })
-  selectionClientsChanged () {
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.$fetch()
     this.updateColumnVisibility()
   }
-
-  @Watch('tableData', { deep: true })
-  tableDataChanged () { this.$fetch() }
 
   mounted () {
     this.updateColumnVisibility()
@@ -339,6 +348,18 @@ export default class TProductsNetboot extends Vue {
       this.setChangesProducts([])
       this.$fetch()
     }
+  }
+
+  routeRedirectToParent (to: string, rowIdent: string) {
+    this.routeRedirectWith(to, rowIdent)
+  }
+
+  isRouteActive (to: string, rowIdent: string) {
+    return this.$route.path.includes(to) && this.rowId === rowIdent
+  }
+
+  get secondColumnOpened () {
+    return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 }
 </script>

@@ -32,10 +32,15 @@
     "settings": "Settings",
     "localboot": "Localboot Products",
     "netboot": "Netboot Products",
-    "hostattr": "Host Attributes"
+    "hostattr": "Host Attributes",
+    "properties": "Property-Configuration",
+    "dependencies": "Dependencies"
   },
   "values": {
-    "mixed": "<mixed>"
+    "mixed": "<mixed>",
+    "add": "add and select",
+    "netboot": "Netboot Products",
+    "hostattr": "Host Attributes"
   },
   "table": {
     "filter": "Filter",
@@ -59,9 +64,16 @@
       "stats": "Statistics",
       "version": "(Depot) Version",
       "instStatus": "Installation Status",
-      "actionResult": "ActionResult",
       "clientsIds": "Installed on clients",
       "depotIds": "Installed on depots",
+      "productId": "Product Id",
+      "required": "required",
+      "pre-required": "pre-required",
+      "post-required": "post-required",
+      "on-deinstall": "on-deinstall",
+      "requiredType": "type",
+      "unknown": "unknown",
+      "actionResult": "ActionResult",
       "localbootid": "Product-ID",
       "netbootid": "Product-ID",
       "actionRequest": "Request",

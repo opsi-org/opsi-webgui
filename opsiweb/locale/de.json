@@ -31,11 +31,17 @@
     "configure": "KONFIGURIEREN",
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
-    "netboot": "Netboot-Produkt",
-    "hostattr": "Host-Attribute"
+    "hostattr": "Host-Attribute",
+    "properties": "Property-Konfiguration",
+    "dependencies": "Abhängigkeiten",
+    "netboot": "Netboot-Produkt"
   },
   "values": {
-    "mixed": "<mixed>"
+    "mixed": "<unterschiedlich>",
+    "add": "hinzufügen und auswählen",
+    "netboot": "Netboot-Produkt",
+    "hostattr": "Host-Attribute",
+    "actionRequest": "Request"
   },
   "table": {
     "filter": "Filter",
@@ -62,6 +68,13 @@
       "actionResult": "ActionResult",
       "clientsIds": "Ausgewählte Clients",
       "depotIds": "Ausgewählte Depots",
+      "productId": "Produkt Id",
+      "required": "required",
+      "pre-required": "pre-required",
+      "post-required": "post-required",
+      "on-deinstall": "on-deinstall",
+      "requiredType": "typ",
+      "unknown": "unbekannt",
       "localbootid": "Localboot Produkt-ID",
       "netbootid": "Netboot Produkt-ID",
       "actionRequest": "Request",
