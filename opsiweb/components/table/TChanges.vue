@@ -29,6 +29,7 @@
 
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { makeToast } from '@/mixins/toast'
 import { IObjectString2String } from '~/types/tsettings'
 const changes = namespace('changes')
 
@@ -56,11 +57,7 @@ export default class TChanges extends Vue {
       for (const k in responseError) {
         txt += `${k}: ${responseError[k]} <br />`
       }
-      this.$bvToast.toast(txt, {
-        title: 'Warnings:',
-        autoHideDelay: 5000,
-        appendToast: false
-      })
+      makeToast(this, txt, this.$t('message.warning'), 'warning')
     } else {
       this.delFromChangesProducts(item)
     }

@@ -123,6 +123,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import { makeToast } from '@/mixins/toast'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 const selections = namespace('selections')
@@ -280,11 +281,7 @@ export default class TProductsLocalboot extends Vue {
       for (const k in responseError) {
         txt += `${k}: ${responseError[k]} <br />`
       }
-      this.$bvToast.toast(txt, {
-        title: 'Warnings:',
-        autoHideDelay: 5000,
-        appendToast: false
-      })
+      makeToast(this, txt, this.$t('message.warning'), 'warning')
     }
   }
 

@@ -141,14 +141,14 @@ interface ClientRequest {
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      makeToast(this, this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning', 5000)
+      makeToast(this, this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning')
       return
     }
     await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
       .then((response) => {
         // eslint-disable-next-line no-console
         console.error(response)
-        makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success', 5000)
+        makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
         // eslint-disable-next-line no-console
