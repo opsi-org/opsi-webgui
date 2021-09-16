@@ -44,7 +44,6 @@ const settings = namespace('settings')
   changeLanguage (lang : string) {
     this.setLanguage(lang)
     this.$i18n.locale = lang
-    window.location.reload()
   }
 }
 </script>
