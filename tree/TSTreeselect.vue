@@ -38,7 +38,7 @@ interface Group {
 
 @Component
 export default class TSTreeselect extends Vue {
-  @Prop({ }) options!: object
+  @Prop({ }) options!: Array<object>
   @Prop({ }) placeholder!: string
   @Prop({ }) type!: string
 

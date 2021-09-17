@@ -112,7 +112,7 @@ const selections = namespace('selections')
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
-        this.errorText = (this as any).$t('message.errortext')
+        this.errorText = this.$t('message.errortext') as string
       })
     this.isLoading = false
   }

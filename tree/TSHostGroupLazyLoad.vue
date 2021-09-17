@@ -27,6 +27,7 @@
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { methods } from '@/mixins/methods'
+import { Group } from '~/types/tbackendmethods'
 const selections = namespace('selections')
 interface Request {
     selectedDepots: string
@@ -34,15 +35,6 @@ interface Request {
 }
 interface ClientRequest {
     selectedDepots: string
-}
-
-interface Group {
-  id: string
-  text: string
-  isBranch?: boolean
-  type: string
-  isDisabled?: boolean
-  children: null | Array<any>
 }
 
 @Component
