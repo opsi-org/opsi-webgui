@@ -31,6 +31,7 @@
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2String } from '~/types/tsettings'
+import { ChangeObj } from '~/types/tchanges'
 const changes = namespace('changes')
 
 @Component
@@ -38,10 +39,10 @@ export default class TChanges extends Vue {
   @Prop({ }) tableitems!: Array<object>
   @Prop({ }) title!: string
 
-  @changes.Getter public changesProducts!: Array<object>
+  @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
-  async save (item: any) {
+  async save (item: ChangeObj) {
     const change = {
       clientIds: [item.clientId],
       productIds: [item.productId],
