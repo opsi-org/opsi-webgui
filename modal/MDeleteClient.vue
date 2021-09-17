@@ -53,7 +53,7 @@ interface DeleteClient {
         this.delFromSelectionClients(this.id)
         this.$emit('update:updateTable', true)
       }).catch((error) => {
-        makeToast(this, (this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
+        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error'), 'danger', 8000)
         // eslint-disable-next-line no-console
         console.error(error)
       })
