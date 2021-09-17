@@ -6,15 +6,17 @@
       variant="primary"
       :class="{auth_footer: $mq === 'desktop', auth_footer_wrap: $mq === 'mobile'}"
     >
-      <b-navbar-nav small>
-        <b-nav-text> uib GmbH 2021</b-nav-text>
-      </b-navbar-nav>
-      <b-navbar-nav align="center" small class="ml-auto">
-        <DropdownDDLang :dropup="true" />
-      </b-navbar-nav>
-      <b-navbar-nav class="ml-auto" small>
-        <b-nav-text> version: {{ $config.packageVersion }}</b-nav-text>
-      </b-navbar-nav>
+      <b-container fluid>
+        <b-navbar-nav small>
+          <b-nav-text> uib GmbH 2021</b-nav-text>
+        </b-navbar-nav>
+        <b-navbar-nav align="center" small class="ml-auto">
+          <DropdownDDLang :dropup="true" />
+        </b-navbar-nav>
+        <b-navbar-nav class="ml-auto" small>
+          <b-nav-text> version: {{ $config.packageVersion }}</b-nav-text>
+        </b-navbar-nav>
+      </b-container>
     </b-navbar>
   </div>
 </template>
