@@ -148,12 +148,12 @@ interface ClientRequest {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.error(response)
-        makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success'), 'success')
+        makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
-        makeToast(this, (this as any).$t('message.errortext'), this.$t('message.error'), 'danger', 8000)
+        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
     this.isLoading = false
   }

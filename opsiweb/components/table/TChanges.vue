@@ -58,7 +58,7 @@ export default class TChanges extends Vue {
       for (const k in responseError) {
         txt += `${k}: ${responseError[k]} <br />`
       }
-      makeToast(this, txt, this.$t('message.warning'), 'warning')
+      makeToast(this, txt, this.$t('message.warning') as string, 'warning')
     } else {
       this.delFromChangesProducts(item)
     }
