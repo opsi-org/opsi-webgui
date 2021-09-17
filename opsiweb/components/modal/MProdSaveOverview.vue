@@ -30,13 +30,15 @@
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2String } from '~/types/tsettings'
+import { ChangeObj } from '~/types/tchanges'
 const changes = namespace('changes')
+
 @Component
 export default class MProdSaveOverview extends Vue {
-  @changes.Getter public changesProducts!: Array<object>
+  @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
-  async save (item: any) {
+  async save (item: ChangeObj) {
     const change = {
       clientIds: [item.clientId],
       productIds: [item.productId],
@@ -52,7 +54,7 @@ export default class MProdSaveOverview extends Vue {
       for (const k in responseError) {
         txt += `${k}: ${responseError[k]} <br />`
       }
-      makeToast(this, txt, this.$t('message.warning'), 'warning')
+      makeToast(this, txt, this.$t('message.warning') as string, 'warning')
     } else {
       this.delFromChangesProducts(item)
     }

@@ -3,10 +3,10 @@ export function makeToast (
     $bvToast:
     {
       toast: (arg0: string, arg1:
-        { title: any; toaster: string; variant: string; autoHideDelay: number; appendToast: boolean; }) => void;
+        { title: string; toaster: string; variant: string; autoHideDelay: number; appendToast: boolean; }) => void;
     };
   },
-  message: string = '', title: any = '', variant: string = 'primary',
+  message: string = '', title: string = '', variant: string = 'primary',
   autoHideDelay: number = 5000, append = false): void {
   vm.$bvToast.toast(message, {
     title,

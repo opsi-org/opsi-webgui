@@ -27,9 +27,18 @@ import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
 import { methods } from '@/mixins/methods'
 const selections = namespace('selections')
 
+interface Group {
+  id: string
+  text: string
+  isBranch?: boolean
+  type: string
+  isDisabled?: boolean
+  children: null | Array<any>
+}
+
 @Component
 export default class TSTreeselect extends Vue {
-  @Prop({ }) options!: object
+  @Prop({ }) options!: Array<object>
   @Prop({ }) placeholder!: string
   @Prop({ }) type!: string
 
@@ -52,13 +61,13 @@ export default class TSTreeselect extends Vue {
     this.syncStoreToTree()
   }
 
-  normalizer (node: any) {
+  normalizer (node: Group) {
     return {
       id: node.id,
       type: node.type,
       label: node.text.replace(/_+$/, ''),
       children: (node.children)
-        ? Object.values(node.children).sort(function (a: any, b: any) {
+        ? Object.values(node.children).sort(function (a: Group, b: Group) {
           if (a.text < b.text) { return -1 }
           if (a.text > b.text) { return 1 }
           return 0
@@ -106,7 +115,7 @@ export default class TSTreeselect extends Vue {
     }
   }
 
-  groupSelect (selection: any) {
+  groupSelect (selection: object) {
     this.groupChange(selection, 'select')
   }
 

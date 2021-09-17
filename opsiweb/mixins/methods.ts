@@ -2,7 +2,7 @@ export const methods = {
   arrEqual (arr1: Array<string>, arr2: Array<string>) {
     return JSON.stringify(arr1) === JSON.stringify(arr2)
   },
-  filterObject (elements: any, matchingValue: string, key: string, resultArray:Array<string>) {
+  filterObject (elements: Array<any>, matchingValue: string, key: string, resultArray:Array<string>) {
     for (const elementKey in elements) {
       const element = elements[elementKey]
       if (element[key] === matchingValue) {
@@ -12,7 +12,7 @@ export const methods = {
       }
     }
   },
-  filterObjectLabel (elements:any, matchingValue: string, compareKey:string, mapKey:string, resultArray:Array<string>) {
+  filterObjectLabel (elements:Array<any>, matchingValue: string, compareKey:string, mapKey:string, resultArray:Array<string>) {
     for (const elementKey in elements) {
       const element = elements[elementKey]
       if (element[compareKey] === matchingValue) {

@@ -27,6 +27,7 @@
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { methods } from '@/mixins/methods'
+import { Group } from '~/types/tbackendmethods'
 const selections = namespace('selections')
 interface Request {
     selectedDepots: string
@@ -41,7 +42,7 @@ export default class TSDelayedLoading extends Vue {
   clientRequest: ClientRequest = { selectedDepots: '' }
   request: Request = { selectedDepots: '', parentGroup: '' }
 
-  options: Array<object> = [
+  options: Array<Group> = [
     {
       id: 'clientdirectory',
       text: 'clientdirectory',
@@ -85,7 +86,7 @@ export default class TSDelayedLoading extends Vue {
     this.syncStoreToTree()
   }
 
-  normalizer (node: any) {
+  normalizer (node: Group) {
     return {
       id: node.id,
       type: node.type,
@@ -161,7 +162,7 @@ export default class TSDelayedLoading extends Vue {
     }
   }
 
-  groupSelect (selection: any) {
+  groupSelect (selection: object) {
     this.groupChange(selection, 'select')
   }
 

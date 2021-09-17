@@ -17,3 +17,12 @@ export interface IGroup {
 export interface IGroups {
   [key: string]: IGroup
 }
+
+export interface Group {
+  id: string
+  text: string
+  isBranch?: boolean
+  type: string
+  isDisabled?: boolean
+  children: null | Array<any>
+}

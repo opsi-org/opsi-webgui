@@ -43,23 +43,23 @@ export default class BBreadcrumbRow extends Vue {
   }
 
   get crumbs (): Array<string> {
-    const pathArray : any = this.$route.path.split('/')
+    const pathArray : Array<string> = this.$route.path.split('/')
     pathArray.shift()
     for (const c in pathArray) {
       switch (pathArray[c]) {
-        case 'support': pathArray[c] = this.$t('title.support'); break
-        case 'depots': pathArray[c] = this.$t('title.depots'); break
-        case 'config': pathArray[c] = this.$t('title.config'); break
-        case 'log': pathArray[c] = this.$t('title.log'); break
-        case 'depotsconfig': pathArray[c] = this.$t('title.depotsconfig'); break
-        case 'clientsconfig': pathArray[c] = this.$t('title.clientsconfig'); break
-        case 'clientslog': pathArray[c] = this.$t('title.clientslog'); break
-        case 'clientsaddnew': pathArray[c] = this.$t('title.addNewClient'); break
-        case 'products': pathArray[c] = this.$t('title.products'); break
-        case 'settings': pathArray[c] = this.$t('title.settings'); break
+        case 'support': pathArray[c] = this.$t('title.support') as string; break
+        case 'depots': pathArray[c] = this.$t('title.depots') as string; break
+        case 'config': pathArray[c] = this.$t('title.config') as string; break
+        case 'log': pathArray[c] = this.$t('title.log') as string; break
+        case 'depotsconfig': pathArray[c] = this.$t('title.depotsconfig') as string; break
+        case 'clientsconfig': pathArray[c] = this.$t('title.clientsconfig') as string; break
+        case 'clientslog': pathArray[c] = this.$t('title.clientslog') as string; break
+        case 'clientsaddnew': pathArray[c] = this.$t('title.addNewClient') as string; break
+        case 'products': pathArray[c] = this.$t('title.products') as string; break
+        case 'settings': pathArray[c] = this.$t('title.settings') as string; break
       }
     }
-    return pathArray.filter((p: string) => p !== '')
+    return pathArray.filter(p => p !== '')
   }
 }
 </script>

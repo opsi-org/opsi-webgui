@@ -59,7 +59,7 @@ export default class THostAttributes extends Vue {
         // eslint-disable-next-line no-console
           console.error(error)
           this.showError = true
-          this.errorText = (this as any).$t('message.errortext')
+          this.errorText = this.$t('message.errortext') as string
         })
       this.isLoading = false
     }
