@@ -1,7 +1,7 @@
 import Cookie from 'js-cookie'
 
 export default function ({
-  // store,
+  store,
   redirect,
   route
 }) {
@@ -12,6 +12,8 @@ export default function ({
   if (isA && route.name === 'login') {
     return redirect('/')
   } else if (!isA && route.name !== 'login') {
+    store.dispatch('selections/clearAllSelection')
+    store.dispatch('changes/deleteAllChanges')
     return redirect('/login')
   }
 }
