@@ -23,7 +23,6 @@ interface FormUser {
 @Component export default class DDTheme extends Vue {
   form: FormUser = { username: '', password: '' }
   opsiconfigserver: string = ''
-  result: string = ''
   isLoading: boolean = false
 
   @auth.Mutation public login!: (username: string) => void
@@ -45,7 +44,6 @@ interface FormUser {
   }
 
   doLogin () {
-    this.result = ''
     if (!this.form.username) {
       return
     }
@@ -75,9 +73,9 @@ interface FormUser {
         // eslint-disable-next-line no-console
         console.error(error)
         this.logout()
-        this.result = (this as any).$t('message.loginFailed')
+        const errorMsg = this.$t('message.loginFailed') as string
         this.isLoading = false
-        makeToast(this, this.result, this.$t('message.error'), 'danger')
+        makeToast(this, errorMsg, this.$t('message.error'), 'danger')
       })
   }
 }
