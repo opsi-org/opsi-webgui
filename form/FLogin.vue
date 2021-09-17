@@ -75,7 +75,7 @@ interface FormUser {
         this.logout()
         const errorMsg = this.$t('message.loginFailed') as string
         this.isLoading = false
-        makeToast(this, errorMsg, this.$t('message.error'), 'danger')
+        makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
       })
   }
 }

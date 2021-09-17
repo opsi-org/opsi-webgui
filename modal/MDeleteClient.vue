@@ -49,11 +49,11 @@ interface DeleteClient {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.error(response)
-        makeToast(this, this.id + this.$t('message.deleteMessage'), this.$t('message.success'), 'success')
+        makeToast(this, this.id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(this.id)
         this.$emit('update:updateTable', true)
       }).catch((error) => {
-        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error'), 'danger', 8000)
+        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
         // eslint-disable-next-line no-console
         console.error(error)
       })
