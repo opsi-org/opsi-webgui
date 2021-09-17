@@ -105,6 +105,7 @@ import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
+import { ChangeObj } from '~/types/tchanges'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -112,6 +113,10 @@ interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
+}
+interface FetchProd {
+  products:Array<ITableRowItemProducts>,
+  total:Number,
 }
 
 @Component
@@ -121,7 +126,7 @@ export default class TProductsNetboot extends Vue {
   type: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: any = { products: [], total: 0 }
+  fetchedData: FetchProd = { products: [], total: 0 }
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
@@ -154,7 +159,7 @@ export default class TProductsNetboot extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-  @changes.Getter public changesProducts!: any
+  @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public setChangesProducts!: (s: Array<object>) => void
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
@@ -223,7 +228,7 @@ export default class TProductsNetboot extends Vue {
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          this.errorText = (this as any).$t('message.errortext')
+          this.errorText = this.$t('message.errortext') as string
         })
       this.fetchOptions.fetchClients2Depots = false
     }
@@ -241,7 +246,7 @@ export default class TProductsNetboot extends Vue {
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          this.errorText = (this as any).$t('message.errortext')
+          this.errorText = this.$t('message.errortext') as string
         })
     }
     this.isLoading = false
@@ -261,7 +266,7 @@ export default class TProductsNetboot extends Vue {
     }
   }
 
-  async saveActionRequest (rowitem: any, newrequest: string) {
+  async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
     const data = {

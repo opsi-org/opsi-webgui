@@ -126,6 +126,7 @@ import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
+import { ChangeObj } from '~/types/tchanges'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -134,6 +135,10 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
+interface FetchProd {
+  products:Array<ITableRowItemProducts>,
+  total:Number,
+}
 @Component
 export default class TProductsLocalboot extends Vue {
   action: string = ''
@@ -141,7 +146,7 @@ export default class TProductsLocalboot extends Vue {
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: any = { products: [], total: 0 }
+  fetchedData: FetchProd = { products: [], total: 0 }
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
@@ -173,7 +178,7 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-  @changes.Getter public changesProducts!: any
+  @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public setChangesProducts!: (a: Array<object>) => void
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
@@ -247,7 +252,7 @@ export default class TProductsLocalboot extends Vue {
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          this.errorText = (this as any).$t('message.errortext')
+          this.errorText = this.$t('message.errortext') as string
         })
       this.fetchOptions.fetchClients2Depots = false
     }
@@ -261,7 +266,7 @@ export default class TProductsLocalboot extends Vue {
         const params = this.tableData
         this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
       } catch (error) {
-        this.errorText = (this as any).$t('message.errortext')
+        this.errorText = this.$t('message.errortext') as string
         // eslint-disable-next-line no-console
         console.error('error in fetchData ', this.fetchedData)
         // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
@@ -285,7 +290,7 @@ export default class TProductsLocalboot extends Vue {
     }
   }
 
-  async saveActionRequest (rowitem: any, newrequest: string) {
+  async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
     rowitem.request = [newrequest]
     const data = {
