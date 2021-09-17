@@ -36,12 +36,21 @@ interface ClientRequest {
     selectedDepots: string
 }
 
+interface Group {
+  id: string
+  text: string
+  isBranch?: boolean
+  type: string
+  isDisabled?: boolean
+  children: null | Array<any>
+}
+
 @Component
 export default class TSDelayedLoading extends Vue {
   clientRequest: ClientRequest = { selectedDepots: '' }
   request: Request = { selectedDepots: '', parentGroup: '' }
 
-  options: Array<object> = [
+  options: Array<Group> = [
     {
       id: 'clientdirectory',
       text: 'clientdirectory',
@@ -85,7 +94,7 @@ export default class TSDelayedLoading extends Vue {
     this.syncStoreToTree()
   }
 
-  normalizer (node: any) {
+  normalizer (node: Group) {
     return {
       id: node.id,
       type: node.type,
@@ -161,7 +170,7 @@ export default class TSDelayedLoading extends Vue {
     }
   }
 
-  groupSelect (selection: any) {
+  groupSelect (selection: object) {
     this.groupChange(selection, 'select')
   }
 
