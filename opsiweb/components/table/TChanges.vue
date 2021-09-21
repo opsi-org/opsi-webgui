@@ -1,29 +1,42 @@
 <template>
   <div v-if="tableitems.length>0">
-    <h4> {{ title }}: </h4>
-    <div v-for="changes, k in groupedById" :key="changes.productId">
-      <b>{{ k }}</b>
-      <b-table
-        size="sm"
-        hover
-        borderless
-        sticky-header
-        fixed
-        class="changes_table"
-        thead-class="table-header-none"
-        :items="changes"
-        :fields="['clientId', 'actionRequest', '_action']"
-      >
-        <template #cell(_action)="row">
-          <b-button-group>
-            <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-            <b-button variant="light" @click="save(row.item)">
-              <b-icon icon="check2" />
-            </b-button>
-          </b-button-group>
-        </template>
-      </b-table>
-    </div>
+    <BarBPageHeader
+      navbartype="collapse"
+      variant="light"
+      :collapsed="visible"
+      :aria-controls="title+'-collapsechanges'"
+      :aria-expanded="visible"
+      :title="title"
+      @click.native="visible = !visible"
+    />
+    <b-collapse :id="title+'-collapsechanges'" v-model="visible" accordion="table-accordion">
+      <div v-for="changes, k in groupedById" :key="changes.productId">
+        <small><b>{{ k }}</b></small>
+        <b-table
+          size="sm"
+          hover
+          borderless
+          sticky-header
+          fixed
+          class="changes_table"
+          thead-class="table-header-none"
+          :items="changes"
+          :fields="['clientId', 'actionRequest', '_action']"
+        >
+          <template #cell()="row">
+            <small>{{ row.value }}</small>
+          </template>
+          <template #cell(_action)="row">
+            <b-button-group>
+              <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
+              <b-button size="sm" variant="light" @click="save(row.item)">
+                <b-icon icon="check2" />
+              </b-button>
+            </b-button-group>
+          </template>
+        </b-table>
+      </div>
+    </b-collapse>
   </div>
   <div v-else>
     --
@@ -41,6 +54,7 @@ const changes = namespace('changes')
 export default class TChanges extends Vue {
   @Prop({ }) tableitems!: Array<object>
   @Prop({ }) title!: string
+  visible: boolean = true
 
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
@@ -87,6 +101,9 @@ export default class TChanges extends Vue {
 </script>
 
 <style>
+.changes_table{
+  max-height: 160px !important;
+}
 .table-header-none{
   display: none;
 }
