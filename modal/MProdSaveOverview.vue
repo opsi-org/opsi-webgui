@@ -6,22 +6,16 @@
       size="xl"
       title="Overview of Product Changes"
       scrollable
-      centered
-      hide-footer
       no-fade
     >
       <TableTChanges title="Netboot Products" :tableitems="changesProducts.filter(o => o.type === 'NetbootProduct')" />
       <TableTChanges title="Localboot Products" :tableitems="changesProducts.filter(o => o.type === 'LocalbootProduct')" />
-      <b-row>
-        <b-col>
-          <ButtonBTNDeleteAll hide="ProductSaveModal" />
-        </b-col>
-        <b-col cols="auto">
-          <b-button @click="saveAll()">
-            <b-icon icon="check2" /> Save All
-          </b-button>
-        </b-col>
-      </b-row>
+      <template #modal-footer>
+        <ButtonBTNDeleteAll hide="ProductSaveModal" />
+        <b-button size="sm" variant="primary" @click="saveAll()">
+          <b-icon icon="check2" /> Save All
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -75,5 +69,6 @@ export default class MProdSaveOverview extends Vue {
 <style>
 .modal-dialog {
   left: 0% !important;
+  margin-top: 50px;
 }
 </style>

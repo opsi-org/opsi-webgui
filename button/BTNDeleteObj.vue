@@ -1,5 +1,5 @@
 <template>
-  <b-button variant="light" @click="deleteChanges()">
+  <b-button size="sm" variant="light" @click="deleteChanges()">
     <b-icon icon="trash" />
   </b-button>
 </template>
