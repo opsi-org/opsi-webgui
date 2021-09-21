@@ -10,10 +10,18 @@
       @click.native="visible = !visible"
     />
     <b-collapse :id="title+'-collapsechanges'" v-model="visible" accordion="table-accordion">
+      <b-form-input
+        v-model="filter"
+        size="sm"
+        type="search"
+        placeholder="Filter by Client ID"
+      />
       <div v-for="changes, k in groupedById" :key="changes.productId">
         <small><b>{{ k }}</b></small>
         <b-table
           size="sm"
+          :filter="filter"
+          filter-included-fields="clientId"
           hover
           borderless
           sticky-header
@@ -55,6 +63,7 @@ export default class TChanges extends Vue {
   @Prop({ }) tableitems!: Array<object>
   @Prop({ }) title!: string
   visible: boolean = true
+  filter: string = ''
 
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
