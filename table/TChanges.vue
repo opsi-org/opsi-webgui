@@ -10,18 +10,13 @@
       @click.native="visible = !visible"
     />
     <b-collapse :id="title+'-collapsechanges'" v-model="visible" accordion="table-accordion">
-      <b-form-input
-        v-model="filter"
-        size="sm"
-        type="search"
-        placeholder="Filter by Client ID"
-      />
+      <InputIFilterTChanges :filter.sync="filter" />
       <div v-for="changes, k in groupedById" :key="changes.productId">
         <small><b>{{ k }}</b></small>
         <b-table
           size="sm"
           :filter="filter"
-          filter-included-fields="clientId"
+          :filter-included-fields="['clientId']"
           hover
           borderless
           sticky-header
@@ -46,13 +41,10 @@
       </div>
     </b-collapse>
   </div>
-  <div v-else>
-    --
-  </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2String } from '~/types/tsettings'
 import { ChangeObj } from '~/types/tchanges'
@@ -69,6 +61,8 @@ export default class TChanges extends Vue {
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   groupedById: Array<object> = []
+
+  @Watch('tableitems', { deep: true }) tableitemsChanged () { this.groupedById = this.groupArrayOfObjects(this.tableitems, 'productId') }
 
   beforeMount () {
     this.groupedById = this.groupArrayOfObjects(this.tableitems, 'productId')
