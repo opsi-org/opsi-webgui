@@ -1,27 +1,30 @@
 <template>
-  <treeselect
-    v-model="groupSelection"
-    class="treeselect"
-    :flat="true"
-    :multiple="true"
-    :clearable="false"
-    :options="options"
-    :normalizer="normalizer"
-    :load-options="loadOptions"
-    :placeholder="$t('treeselect.hostGroups')"
-    value-format="object"
-    :max-height="400"
-    @select="groupSelect"
-    @deselect="groupDeselect"
-  >
-    <div slot="option-label" slot-scope="{ node }">
-      <div :ref="'tree-item-'+node.id">
-        <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
-        <b-icon v-else icon="laptop" />
-        <small> {{ node.label }} </small>
+  <div class="form-inline" style="margin-right:30px">
+    <b-icon-laptop variant="primary" font-scale="2" class="border" />
+    <treeselect
+      v-model="groupSelection"
+      class="treeselect"
+      :flat="true"
+      :multiple="true"
+      :clearable="false"
+      :options="options"
+      :normalizer="normalizer"
+      :load-options="loadOptions"
+      :placeholder="$t('treeselect.hostGroups')"
+      value-format="object"
+      :max-height="400"
+      @select="groupSelect"
+      @deselect="groupDeselect"
+    >
+      <div slot="option-label" slot-scope="{ node }">
+        <div :ref="'tree-item-'+node.id">
+          <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
+          <b-icon v-else icon="laptop" />
+          <small> {{ node.label }} </small>
+        </div>
       </div>
-    </div>
-  </treeselect>
+    </treeselect>
+  </div>
 </template>
 
 <script lang="ts">
