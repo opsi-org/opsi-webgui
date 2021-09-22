@@ -2,17 +2,17 @@
   <!-- TODO: Edit navItems route in components/nav/NSidebar -->
   <b-nav vertical tabs class="sidemenu_nav">
     <span v-for="catogery in navItems" :key="catogery.title">
-      <NavNTitle :expanded="expanded" :title="catogery.title" />
+      <NavItemNITitle :expanded="expanded" :title="catogery.title" />
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
-          <NavNItemCollapsible
+          <NavItemNICollapsible
             v-if="expanded"
             :title="menuitem.title"
             :icon="menuitem.icon"
             :route="menuitem.route"
             :submenu="menuitem.submenu"
           />
-          <NavNItemDropdownHoverable
+          <NavItemNIDropdownHoverable
             v-else
             :title="menuitem.title"
             :icon="menuitem.icon"
@@ -21,7 +21,7 @@
           />
         </template>
         <template v-else>
-          <NavNItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
+          <NavItemNIItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
         </template>
       </span>
       <br>

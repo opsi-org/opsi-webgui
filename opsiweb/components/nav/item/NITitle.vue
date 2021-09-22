@@ -9,7 +9,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class NTitle extends Vue {
+export default class NITitle extends Vue {
   @Prop({ }) expanded!: boolean
   @Prop({ }) title!: string
 }

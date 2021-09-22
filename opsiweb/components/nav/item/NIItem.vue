@@ -11,7 +11,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class NItem extends Vue {
+export default class NIItem extends Vue {
   @Prop({ }) expanded!: boolean
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
