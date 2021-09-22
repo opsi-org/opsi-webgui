@@ -1,7 +1,7 @@
 <template>
   <b-navbar
     class="BPageHeader_Navbar"
-    variant="transparent"
+    :variant="variant"
   >
     <span v-if="navbartype=='collapse'">
       <b-icon v-if="collapsed" icon="chevron-double-down" />
@@ -23,6 +23,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class BPageHeader extends Vue {
+  @Prop({ default: 'transparent' }) variant!: string
   @Prop({ }) navbartype!: string
   @Prop({ }) collapsed!: boolean
   @Prop({ }) title!: string

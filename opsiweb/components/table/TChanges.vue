@@ -1,34 +1,50 @@
 <template>
-  <div>
-    <b> {{ title }}: </b>
-    <b-table
-      v-if="tableitems.length>0"
-      size="sm"
-      hover
-      borderless
-      sticky-header
-      fixed
-      thead-class="table-header-none"
-      :items="tableitems"
-      :fields="['productId', 'clientId', 'actionRequest', '_action']"
-    >
-      <template #cell(_action)="row">
-        <b-button-group>
-          <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-          <b-button variant="light" @click="save(row.item)">
-            <b-icon icon="check2" />
-          </b-button>
-        </b-button-group>
-      </template>
-    </b-table>
-    <div v-else>
-      --
-    </div>
+  <div v-if="tableitems.length>0">
+    <BarBPageHeader
+      navbartype="collapse"
+      variant="light"
+      :collapsed="visible"
+      :aria-controls="title+'-collapsechanges'"
+      :aria-expanded="visible"
+      :title="title"
+      @click.native="visible = !visible"
+    />
+    <b-collapse :id="title+'-collapsechanges'" v-model="visible" accordion="table-accordion">
+      <InputIFilterTChanges :filter.sync="filter" />
+      <div v-for="changes, k in groupedById" :key="changes.productId">
+        <small><b>{{ k }}</b></small>
+        <b-table
+          size="sm"
+          :filter="filter"
+          :filter-included-fields="['clientId']"
+          hover
+          borderless
+          sticky-header
+          fixed
+          class="changes_table"
+          thead-class="table-header-none"
+          :items="changes"
+          :fields="['clientId', 'actionRequest', '_action']"
+        >
+          <template #cell()="row">
+            <small>{{ row.value }}</small>
+          </template>
+          <template #cell(_action)="row">
+            <b-button-group>
+              <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
+              <b-button size="sm" variant="light" @click="save(row.item)">
+                <b-icon icon="check2" />
+              </b-button>
+            </b-button-group>
+          </template>
+        </b-table>
+      </div>
+    </b-collapse>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2String } from '~/types/tsettings'
 import { ChangeObj } from '~/types/tchanges'
@@ -38,9 +54,26 @@ const changes = namespace('changes')
 export default class TChanges extends Vue {
   @Prop({ }) tableitems!: Array<object>
   @Prop({ }) title!: string
+  visible: boolean = true
+  filter: string = ''
 
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
+
+  groupedById: Array<object> = []
+
+  @Watch('tableitems', { deep: true }) tableitemsChanged () { this.groupedById = this.groupArrayOfObjects(this.tableitems, 'productId') }
+
+  beforeMount () {
+    this.groupedById = this.groupArrayOfObjects(this.tableitems, 'productId')
+  }
+
+  groupArrayOfObjects (list: Array<any>, key:any) {
+    return list.reduce(function (rv, x) {
+      (rv[x[key]] = rv[x[key]] || []).push(x)
+      return rv
+    }, {})
+  }
 
   async save (item: ChangeObj) {
     const change = {
@@ -71,6 +104,9 @@ export default class TChanges extends Vue {
 </script>
 
 <style>
+.changes_table{
+  max-height: 160px !important;
+}
 .table-header-none{
   display: none;
 }
