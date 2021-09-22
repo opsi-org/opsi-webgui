@@ -127,7 +127,7 @@ export default class TSTreeselect extends Vue {
 
 <style>
 .treeselect{
-  max-width: 350px;
+  max-width: 300px;
 }
 .treeselect .vue-treeselect__multi-value-item-container {
   display: none;

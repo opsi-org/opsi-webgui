@@ -17,8 +17,9 @@
       </span>
       <br>
       <b-row>
-        <b-col>
-          <b-button @click="deleteOpsiClient()">
+        <b-col />
+        <b-col cols="auto">
+          <b-button variant="danger" size="sm" @click="deleteOpsiClient()">
             <b-icon icon="trash" /> {{ $t('message.delete') }}
           </b-button>
         </b-col>

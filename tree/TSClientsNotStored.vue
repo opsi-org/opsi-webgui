@@ -46,6 +46,6 @@ export default class TSClientsNotStored extends Vue {
 
 <style>
 .treeselect{
-  max-width: 350px;
+  max-width: 300px;
 }
 </style>
