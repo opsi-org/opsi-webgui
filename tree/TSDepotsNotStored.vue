@@ -14,7 +14,7 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component
-export default class TSDepotsSelect extends Vue {
+export default class TSDepotsNotStored extends Vue {
   depotIds: Array<object> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>

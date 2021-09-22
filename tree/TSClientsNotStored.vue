@@ -17,7 +17,7 @@ interface ClientRequest {
 }
 
 @Component
-export default class TSClientsSelect extends Vue {
+export default class TSClientsNotStored extends Vue {
   clientRequest: ClientRequest = { selectedDepots: '' }
   clientIds: Array<object> = []
   idselection: string = ''
