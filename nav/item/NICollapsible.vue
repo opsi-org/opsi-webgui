@@ -20,7 +20,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class NItemCollapsible extends Vue {
+export default class NICollapsible extends Vue {
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
