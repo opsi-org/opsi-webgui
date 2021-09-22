@@ -3,7 +3,7 @@
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
-        <b-form-input v-model.trim="filterQuery" placeholder="Filter Logs" @keyup="filterLog" />
+        <b-form-input v-model.trim="filterQuery" class="filter_logs" placeholder="Filter Logs" @keyup="filterLog" />
         <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype :logtype.sync="logtype" />
         <SpinbuttonSBLoglevel :loglevel.sync="loglevel" />
@@ -111,3 +111,9 @@ export default class VClientLog extends Vue {
   }
 }
 </script>
+
+<style>
+.filter_logs{
+  max-width: 300px;
+}
+</style>
