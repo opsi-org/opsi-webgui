@@ -17,7 +17,7 @@ interface ClientRequest {
 }
 
 @Component
-export default class TSClients extends Vue {
+export default class TSClientsNotStored extends Vue {
   clientRequest: ClientRequest = { selectedDepots: '' }
   clientIds: Array<object> = []
   idselection: string = ''
@@ -34,7 +34,11 @@ export default class TSClients extends Vue {
       clients.push({ id: client, label: client })
     }
     this.clientIds = clients
-    this.idselection = this.selectionClients[0]
+    if (this.selectionClients.length !== 0) {
+      this.idselection = this.selectionClients[0]
+    } else {
+      this.idselection = result[0]
+    }
     this.$emit('update:id', this.idselection)
   }
 }
@@ -42,6 +46,6 @@ export default class TSClients extends Vue {
 
 <style>
 .treeselect{
-  max-width: 350px;
+  max-width: 300px;
 }
 </style>
