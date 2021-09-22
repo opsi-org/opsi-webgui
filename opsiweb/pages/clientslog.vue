@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <ViewVClientsLog :id="id" :as-child="false">
       <template slot="IDSelection">
-        <TreeTSClients :id.sync="id" />
+        <TreeTSClientsSelect :id.sync="id" />
       </template>
     </ViewVClientsLog>
   </div>
