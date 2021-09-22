@@ -1,9 +1,14 @@
 <template>
   <div @mouseover="onMouseOver" @mouseleave="onMouseLeave">
-    <!-- @click="changeRoute" -->
-    <b-nav-item-dropdown ref="dropdown" class="sidemenu_dropdown" block dropright no-caret>
+    <b-nav-item-dropdown
+      ref="dropdown"
+      class="sidemenu_dropdown"
+      block
+      dropright
+      no-caret
+    >
       <template #button-content>
-        <b-icon :icon="icon" />
+        <b-icon :icon="icon" @click="changeRoute" />
       </template>
       <b-dropdown-item disabled>
         {{ $t(title) }}
@@ -34,10 +39,9 @@ export default class NIDropdownHoverable extends Vue {
     (this.$refs.dropdown as any).visible = false
   }
 
-  // changeRoute () {
-  //   // return redirect('/login')
-  //   this.$router.push({ path: this.route })
-  // }
+  changeRoute () {
+    this.$router.push({ path: this.route })
+  }
 }
 </script>
 

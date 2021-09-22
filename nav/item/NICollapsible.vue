@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-nav-item v-b-toggle="'collapse-navitem-'+title">
+    <b-nav-item v-b-toggle="'collapse-navitem-'+title" @click="changeRoute">
       <b-icon :icon="icon" /> {{ $t(title) }}
       <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
     </b-nav-item>
@@ -25,6 +25,10 @@ export default class NICollapsible extends Vue {
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<object>
+
+  changeRoute () {
+    this.$router.push({ path: this.route })
+  }
 }
 </script>
 
