@@ -1,6 +1,6 @@
 <template>
   <div class="form-inline" style="margin-right:30px">
-    <b-icon-laptop variant="primary" font-scale="2" class="border" />
+    <b-icon-laptop variant="primary" font-scale="2" />
     <treeselect
       v-model="groupSelection"
       class="treeselect"
