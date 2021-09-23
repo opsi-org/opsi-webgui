@@ -18,7 +18,7 @@
     >
       <div slot="option-label" slot-scope="{ node }">
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
+          <b-icon v-if="node.isBranch" icon="diagram2" />
           <b-icon v-else icon="laptop" />
           <small> {{ node.label }} </small>
         </div>
