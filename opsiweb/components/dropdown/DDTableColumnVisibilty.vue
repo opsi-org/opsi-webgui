@@ -11,7 +11,7 @@
     :title="$t('table.showCol')"
   >
     <template #button-content>
-      <b-icon-grid />
+      <IconITableColumn />
     </template>
     <li v-if="$mq=='mobile' || twoColumnLayoutCollapsed[tableId]">
       <a

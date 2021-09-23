@@ -49,7 +49,7 @@ export default class NSidebar extends Vue {
         {
           title: 'title.depots',
           route: '/depots/',
-          icon: 'hdd-stack-fill',
+          icon: 'hdd-network',
           submenu: [
             { title: 'title.allDepots', route: '/depots' },
             { title: 'title.config', route: '/depotsconfig' }
@@ -66,13 +66,13 @@ export default class NSidebar extends Vue {
             { title: 'title.log', route: '/clientslog' }
           ]
         },
-        { title: 'title.products', icon: 'grid-fill', route: '/products/' }
+        { title: 'title.products', icon: 'grid', route: '/products/' }
       ]
     },
     {
       title: 'title.configure',
       menu: [
-        { title: 'title.settings', icon: 'gear-fill', route: '/settings' }
+        { title: 'title.settings', icon: 'gear', route: '/settings' }
         // { title: 'Index page', icon: 'collection-fill', route: '/' }
       ]
     }
