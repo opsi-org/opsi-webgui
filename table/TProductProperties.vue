@@ -11,20 +11,24 @@
       :options="['all depots', ...selectionDepots]"
       :selected-items="['all depots']"
     /> -->
+      <!-- v-if="properties && Object.values(properties).length > 0" -->
     <TableTTable
-      v-if="properties"
       :is-busy="isLoading"
       :stacked="false"
       :small="true"
-      :items="properties"
+      :items="Object.values(properties)"
       :fields="fields"
+      show-empty
     >
+      <template #empty>
+        <small>{{ $t('table.emptyText') }}</small>
+      </template>
       <template #cell(propertyId)="row">
         <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
         {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
         <small v-if="row.item.anyDepotDifferentFromDefault">
           <br />
-          (depotValue is different from default!)
+          (depotValue/s different from default!)
           <!-- TODO: show tooltip with depot- and default-values -->
         </small>
       </template>
@@ -82,13 +86,13 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { INewPropertyValue, IProperty } from '~/types/ttable'
+import { INewPropertyValue, IProperties, IProperty } from '~/types/ttable'
 const selections = namespace('selections')
 
 @Component
 export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
-  @Prop({ }) properties!: Array<IProperty>
+  @Prop({ }) properties!: IProperties
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
 
