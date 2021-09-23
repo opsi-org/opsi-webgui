@@ -72,7 +72,99 @@ export default class VClientConfig extends Vue {
       })
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]`)
       .then((response) => {
-        this.fetchedData.properties = response.data.properties
+        // this.fetchedData.properties = response.data.properties
+        this.fetchedData.properties = {
+          desktopicon: {
+            productId: 'anydesk',
+            propertyId: 'desktopicon',
+            versionDetails: {
+              'bonifax.uib.local': '6.2.3-1'
+            },
+            type: 'BoolProductProperty',
+            descriptionDetails: {
+              'bonifax.uib.local': 'Soll es ein Desktop Icon geben ?'
+            },
+            multiValueDetails: {
+              'bonifax.uib.local': false
+            },
+            editableDetails: {
+              'bonifax.uib.local': false
+            },
+            allValues: [false, true],
+            defaultDetails: {
+              'bonifax.uib.local': [
+                false
+              ]
+            },
+            depots: {
+              'bonifax.uib.local': [
+                false
+              ]
+            },
+            clients: {
+              'fabian-client1.uib.local': [
+                false
+              ],
+              'fabian-client2.uib.local': [
+                false
+              ],
+              'fabian-client3.uib.local': [
+                false
+              ]
+            },
+            version: '6.2.3-1',
+            description: 'Soll es ein Desktop Icon geben ?',
+            multiValue: false,
+            editable: false,
+            default: [
+              false
+            ],
+            allClientValuesEqual: true,
+            anyDepotDifferentFromDefault: false,
+            anyClientDifferentFromDepot: false
+          },
+          license_key_or_pool: {
+            productId: 'anydesk',
+            propertyId: 'license_key_or_pool',
+            versionDetails: {
+              'bonifax.uib.local': '6.2.3-1'
+            },
+            type: 'UnicodeProductProperty',
+            descriptionDetails: {
+              'bonifax.uib.local': 'Give opsi-License-Pool or product license key'
+            },
+            multiValueDetails: {
+              'bonifax.uib.local': false
+            },
+            editableDetails: {
+              'bonifax.uib.local': true
+            },
+            allValues: ['', '7VEDHI84DZJXVPQ'],
+            defaultDetails: {
+              'bonifax.uib.local': ['']
+            },
+            depots: {
+              'bonifax.uib.local': ['7VEDHI84DZJXVPQ']
+            },
+            clients: {
+              'fabian-client1.uib.local': ['7VEDHI84DZJXVPQ'],
+              'fabian-client2.uib.local': ['7VEDHI84DZJXVPQ'],
+              'fabian-client3.uib.local': ['7VEDHI84DZJXVPQ']
+            },
+            anyDepotDifferentFromDefault: true,
+            version: '6.2.3-1',
+            description: 'Give opsi-License-Pool or product license key',
+            multiValue: false,
+            editable: true,
+            default: [
+              ''
+            ],
+            allClientValuesEqual: true,
+            newValue: '',
+            newValues: [],
+            anyClientDifferentFromDepot: false
+          }
+        }
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

@@ -4,12 +4,12 @@
     :ref="$props.id"
     :class="$mq"
     class="ttable"
-    :small="$mq=='mobile'"
-    :stacked="$mq=='mobile'"
-    hover
-    selectable
-    borderless
     select-mode="multi"
+    borderless
+    :small="$mq=='mobile' && small!=false"
+    :stacked="$mq=='mobile' && stacked!=false"
+    :hover="disableSelection==false && true"
+    :selectable="disableSelection!=false && true"
     @row-clicked="rowChanged"
   >
     <template #table-busy>
@@ -54,6 +54,7 @@ export default class TTable extends BTable {
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
+  @Prop({ default: false }) readonly disableSelection!: boolean
   @Prop({ }) tabledata!: ITableData
 
   rowIdent: any

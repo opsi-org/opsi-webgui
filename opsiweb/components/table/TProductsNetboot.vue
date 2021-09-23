@@ -15,6 +15,7 @@
       :busy="isLoading"
       :error-text="errorText"
       :onchangeselection="setSelectionProducts"
+      :stacked="$mq=='mobile'"
     >
       <template #filter>
         <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.netbootid')" />

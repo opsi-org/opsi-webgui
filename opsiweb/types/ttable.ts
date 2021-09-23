@@ -60,16 +60,19 @@ export interface ITableHeaders {
 }
 
 export interface IProperty {
+  productId?: string
   propertyId: string
   type: 'UnicodeProductProperty'|'BoolProductProperty'
+  version?: string
   description: string
   multiValue: boolean|string
   editable: boolean|string
-  default: Array<string|boolean> // combined: product-packageVersion
-  possibleValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
+  default?: Array<string|boolean> // combined: product-packageVersion
+  allValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
 
+  versionDetails?: { [key:string]: string}
   descriptionDetails?: { [key:string]: string}
-  defaultDetails?: { [key:string]: string}
+  defaultDetails?: { [key:string]: Array<boolean|string>}
   multiValueDetails?: { [key:string]: boolean}
   editableDetails?: { [key:string]: boolean}
 
