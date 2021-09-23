@@ -110,6 +110,17 @@
         />
       <!-- {{ row.item.tooltiptext }} -->
       </template>
+      <template #cell(rowactions)="row">
+        <ButtonBTNRowLinkTo
+          :title="$t('title.config')"
+          icon="gear"
+          to="/products/config"
+          :ident="row.item.productId"
+          :pressed="isRouteActive"
+          :click-parent="routeRedirectToParent"
+        />
+      </template>
+
       <template #pagination>
         <BarBPagination
           :tabledata="tableData"
@@ -122,7 +133,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
@@ -141,9 +152,12 @@ interface FetchProd {
 }
 @Component
 export default class TProductsLocalboot extends Vue {
+  @Prop() rowId!: string
+  @Prop() routeRedirectWith!: Function
+
   action: string = ''
   type: string = ''
-  rowId: string = ''
+  // rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
   fetchedData: FetchProd = { products: [], total: 0 }
@@ -360,6 +374,18 @@ export default class TProductsLocalboot extends Vue {
       this.setChangesProducts([])
       this.$fetch()
     }
+  }
+
+  routeRedirectToParent (to: string, rowIdent: string) {
+    this.routeRedirectWith(to, rowIdent)
+  }
+
+  isRouteActive (to: string, rowIdent: string) {
+    return this.$route.path.includes(to) && this.rowId === rowIdent
+  }
+
+  get secondColumnOpened () {
+    return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 }
 </script>
