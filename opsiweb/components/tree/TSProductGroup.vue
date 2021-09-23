@@ -1,5 +1,5 @@
 <template>
-  <LazyTreeTSTreeselect v-if="productGroup" :options="productGroup" :placeholder="'treeselect.prodGroups'" icon="grid-fill" />
+  <LazyTreeTSTreeselect v-if="productGroup" :options="productGroup" :placeholder="'treeselect.prodGroups'" icon="grid" />
 </template>
 
 <script lang="ts">
