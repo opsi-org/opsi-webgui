@@ -105,13 +105,13 @@ export default class TProductProperties extends Vue {
   }
 
   get uniqueOptions () {
-    console.debug('possible', this.rowItem.possibleValues)
+    console.debug('allValues', this.rowItem.allValues)
     console.debug('visible', this.visibleValue)
     if (this.rowItem.newValues) {
       console.debug('new', this.rowItem.newValues)
-      return this.uniques([...Object.values(this.rowItem.possibleValues), ...this.visibleValue, ...this.rowItem.newValues])
+      return this.uniques([...Object.values(this.rowItem.allValues), ...this.visibleValue, ...this.rowItem.newValues])
     }
-    return this.uniques([...Object.values(this.rowItem.possibleValues), ...this.visibleValue])
+    return this.uniques([...Object.values(this.rowItem.allValues), ...this.visibleValue])
   }
 
   // get selectionClientsValuesWithDepotValues () {
@@ -148,9 +148,9 @@ export default class TProductProperties extends Vue {
       this.visibleValueBoolIndeterminate = false
     }
     if (this.rowItem.allClientValuesEqual) {
-      return Object.values(this.rowItem.clients)
+      return Object.values(this.rowItem.clients)[0]
     }
-
+    // not all clients are equal
     if (this.rowItem.type === 'BoolProductProperty') {
       this.visibleValueBoolIndeterminate = true
     }

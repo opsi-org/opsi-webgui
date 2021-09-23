@@ -18,6 +18,7 @@
       :small="true"
       :items="Object.values(properties)"
       :fields="fields"
+      disable-selection
       show-empty
     >
       <template #empty>
