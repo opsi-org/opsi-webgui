@@ -29,14 +29,12 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) icon!: string
 
   action () {
-    console.debug('action triggered', this.click, this.clickParent)
     if (this.click !== undefined) {
-      console.debug('click is defined')
       this.click(this.to, this.ident)
     } else if (this.clickParent !== undefined) {
-      console.debug('emit', this.clickParent)
       this.clickParent(this.to, this.ident)
     } else {
+      // eslint-disable-next-line no-console
       console.error('no action defined')
     }
   }
@@ -44,7 +42,4 @@ export default class BTNRowLinkTo extends Vue {
 </script>
 
 <style>
-.Btn_Row_action {
-
-}
 </style>

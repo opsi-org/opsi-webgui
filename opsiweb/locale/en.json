@@ -45,6 +45,7 @@
     "clientDetails":"Client Details",
     "addtnlInfo":"Additional Information",
     "perpage": "PerPage",
+    "emptyText":"No entries",
     "fields":{
       "id": "ID",
       "name": "Name",

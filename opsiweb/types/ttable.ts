@@ -61,23 +61,25 @@ export interface ITableHeaders {
 
 export interface IProperty {
   propertyId: string
-  propertyType: 'UnicodeProductProperty'|'BoolProductProperty'
+  type: 'UnicodeProductProperty'|'BoolProductProperty'
   description: string
-  multiValue: boolean
-  editable: boolean
+  multiValue: boolean|string
+  editable: boolean|string
   default: Array<string|boolean> // combined: product-packageVersion
   possibleValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
 
   descriptionDetails?: { [key:string]: string}
   defaultDetails?: { [key:string]: string}
-  multiValueDetails?: { [key:string]: string}
-  editableDetails?: { [key:string]: string}
+  multiValueDetails?: { [key:string]: boolean}
+  editableDetails?: { [key:string]: boolean}
 
   newValue?: string // empty string if editable==true
   newValues?: Array<string> // empty list if editable==true
 
+  allClientValuesEqual?: boolean
   anyDepotDifferentFromDefault?: boolean
   anyClientDifferentFromDepot?: boolean
+
   depots:{ [key: string]: Array<string|boolean> }
   clients:{ [key: string]: Array<string|boolean> }
 }
@@ -93,13 +95,13 @@ export interface IProductDependency {
   requirementType: string|null
 }
 
-// export interface IProperties {
-//   [key: string]: Array<IProperty>|[]
-// }
+export interface IProperties {
+  [key: string]: IProperty
+}
 export interface IProductPropertyConfig {
   description?: string
   dependencies?: Array<IProductDependency>
-  properties: Array<IProperty>|[]
+  properties: IProperties
 }
 
 export interface INewPropertyValue {
