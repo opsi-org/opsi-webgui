@@ -32,7 +32,9 @@
     "settings": "Settings",
     "localboot": "Localboot Products",
     "netboot": "Netboot Products",
-    "hostattr": "Host Attributes"
+    "hostattr": "Host Attributes",
+    "properties": "Property-Configuration",
+    "dependencies": "Dependencies"
   },
   "values": {
     "mixed": "<mixed>"
@@ -67,7 +69,15 @@
       "actionRequest": "Request",
       "versionOutdated": "Outdated Products",
       "actionRequestFailed": "Failed Products",
-      "rowactions": "Actions"
+      "rowactions": "Actions",
+      "productId": "Product Id",
+      "required": "required",
+      "pre-required": "pre-required",
+      "post-required": "post-required",
+      "on-deinstall": "on-deinstall",
+      "requiredType": "type",
+      "unknown": "unknown"
+
     }
   },
   "button" : {

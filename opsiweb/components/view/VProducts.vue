@@ -15,8 +15,8 @@
           <ModalMProdSaveOverview v-if="expert && changesProducts" />
         </template>
       </BarBPageHeader>
-      <TableTProductsNetboot />
-      <TableTProductsLocalboot />
+      <TableTProductsNetboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
+      <TableTProductsLocalboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
@@ -104,9 +104,9 @@ export default class VProducts extends Vue {
     this.$router.push(to)
   }
 
-  isRouteActive (to: string, rowIdent: string) {
-    return this.$route.path.includes(to) && this.rowId === rowIdent
-  }
+  // isRouteActive (to: string, rowIdent: string) {
+  //   return this.$route.path.includes(to) && this.rowId === rowIdent
+  // }
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
