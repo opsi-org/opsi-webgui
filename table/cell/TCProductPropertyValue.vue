@@ -105,10 +105,7 @@ export default class TProductProperties extends Vue {
   }
 
   get uniqueOptions () {
-    console.debug('allValues', this.rowItem.allValues)
-    console.debug('visible', this.visibleValue)
     if (this.rowItem.newValues) {
-      console.debug('new', this.rowItem.newValues)
       return this.uniques([...Object.values(this.rowItem.allValues), ...this.visibleValue, ...this.rowItem.newValues])
     }
     return this.uniques([...Object.values(this.rowItem.allValues), ...this.visibleValue])
