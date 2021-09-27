@@ -135,8 +135,6 @@ export default class TProductProperties extends Vue {
   // }
 
   get visibleValue () {
-    console.debug('selectionClients', this.selectionClients)
-    console.debug('rowItem.clients', this.rowItem)
     if (this.selectionClients.length !== Object.keys(this.rowItem.clients).length) {
       if (Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
         throw new Error(`something went wrong. SelectionClient.length !== keys(rowItem.clients).length ${this.rowItem}`)

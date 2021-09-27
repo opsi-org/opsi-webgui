@@ -32,16 +32,15 @@
         <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
         {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
         <small v-if="row.item.anyDepotDifferentFromDefault">
-          <br />
+          <br>
           (depotValue/s different from default!)
           <!-- TODO: show tooltip with depot- and default-values -->
         </small>
       </template>
       <template #cell(value)="row">
         <b-row>
-            <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
-          <div
-          >
+          <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
+          <div>
             <!-- {{row.item}} -->
             <TableCellTCProductPropertyValue
               :clients2depots="fetchedDataClients2Depots"
