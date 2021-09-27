@@ -1,9 +1,13 @@
 <template>
   <div>
     <div v-if="$mq=='mobile'">
-      <!-- Depots: {{selectionDepots}} -->
       <b-alert show variant="secondary">
         <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
+      </b-alert>
+    </div>
+    <div v-else-if="selectionClients.length <= 0">
+      <b-alert show variant="warning">
+        <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
       </b-alert>
     </div>
     <!-- <DropdownDDDefault
@@ -11,14 +15,14 @@
       :options="['all depots', ...selectionDepots]"
       :selected-items="['all depots']"
     /> -->
-      <!-- v-if="properties && Object.values(properties).length > 0" -->
+    <!-- v-if="properties && Object.values(properties).length > 0" -->
     <TableTTable
       :is-busy="isLoading"
-      :stacked="false"
-      :small="true"
       :items="Object.values(properties)"
       :fields="fields"
-      disable-selection
+      :stacked="false"
+      :small="true"
+      :disable-selection="true"
       show-empty
     >
       <template #empty>
@@ -35,8 +39,8 @@
       </template>
       <template #cell(value)="row">
         <b-row>
+            <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
           <div
-            v-if="Object.keys(fetchedDataClients2Depots).length > 0"
           >
             <!-- {{row.item}} -->
             <TableCellTCProductPropertyValue

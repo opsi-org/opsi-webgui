@@ -5,6 +5,7 @@
       :is-busy="isLoading"
       :stacked="false"
       :small="true"
+      :disable-selection="true"
       :items="Object.values(dependencies)"
       :fields="fields"
       :value-is-input-field="false"
@@ -47,7 +48,7 @@ export default class TProductProperties extends Vue {
     'null-setup': this.$t('table.fields.required') as string,
     'after-setup': this.$t('table.fields.post-required') as string,
     'before-setup': this.$t('table.fields.pre-required') as string,
-    'before-uninstall': this.$t('table.fields.on-deinstall') as string
+    'before-uninstall': this.$t('table.fields.on-deinstall') as string + '(not possible)'
   }
 
   get fields () {
