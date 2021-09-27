@@ -14,12 +14,14 @@
     <template v-else #button-content>
       {{ selections[0] }}
     </template>
+
     <li v-if="!multiple">
       <a
         v-for="o in options"
         :key="o"
-        class="dropdown-item"
-        @click="selections = [o]"
+        class="dropdown-item x"
+        :class="{selected: selections.includes(o)}"
+        @click="(!selections.includes(0))?selections = [o]:()=>{}"
       >
         {{ o }}
       </a>
@@ -33,7 +35,8 @@
         v-for="o in options"
         :key="o"
         class="dropdown-item"
-        @click="toggleSelection(o)"
+        :class="{selected: selections.includes(o)}"
+        @click="(!selections.includes(0))? toggleSelection(o):()=>{}"
       >
         <b-form-checkbox
           v-model="selections"
@@ -83,6 +86,7 @@ export default class DDDefault extends BDropdown {
   }
 
   toggleSelection (item: string) {
+    // multValue
     if (!this.selections.includes(item)) {
       this.selections.push(item)
     } else {
@@ -99,8 +103,14 @@ export default class DDDefault extends BDropdown {
 .dropdown-menu {
   height: max-content !important;
 }
+
+.dropdown-menu .selected:hover,
+.dropdown-menu .selected {
+  cursor:default !important;
+  background-color: var(--primary);
+}
 .dropdown-menu .dropdown-item {
   cursor: pointer;
-  display: flex !important;
+  /* display: grid !important; */
 }
 </style>

@@ -14,7 +14,7 @@ export default class CDivScrollable extends Vue {
 <style>
 .content-scroll{
   max-height: 670px !important;
-  overflow-x: hidden;
+  overflow-x: auto;
   overflow-y: scroll;
 }
 </style>

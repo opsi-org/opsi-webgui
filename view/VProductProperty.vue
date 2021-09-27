@@ -62,7 +62,7 @@ export default class VClientConfig extends Vue {
   }
 
   async fetch () {
-    await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]`)
+    await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.dependencies = response.data.dependencies
       }).catch((error) => {
@@ -70,7 +70,7 @@ export default class VClientConfig extends Vue {
         console.error(error)
         this.errorText = (this as any).$t('message.errortext')
       })
-    await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]`)
+    await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.properties = response.data.properties
         // this.fetchedData.properties = {
