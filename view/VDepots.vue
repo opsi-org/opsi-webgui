@@ -67,7 +67,7 @@ const selections = namespace('selections')
   isLoading: boolean = true
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 5,
+    perPage: 10,
     sortBy: 'depotId',
     sortDesc: false,
     filterQuery: '',

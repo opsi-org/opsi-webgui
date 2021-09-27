@@ -153,7 +153,7 @@ export default class TProductsLocalboot extends Vue {
   tableData: ITableData = {
     type: 'LocalbootProduct',
     pageNumber: 1,
-    perPage: 5,
+    perPage: 10,
     sortBy: 'productId',
     sortDesc: false,
     filterQuery: '',
