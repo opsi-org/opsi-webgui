@@ -35,6 +35,7 @@ export interface ITableData {
   pageNumber: number,
   setPageNumber: Function,
   perPage: number,
+  setPerPage: Function,
   sortBy: string,
   sortDesc: boolean,
   filterQuery: string,
