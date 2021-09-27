@@ -54,6 +54,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import Cookie from 'js-cookie'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
 
@@ -67,7 +68,11 @@ const selections = namespace('selections')
   isLoading: boolean = true
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 10,
+    perPage: Cookie.get('perpage_depots') ? Cookie.get('perpage_depots') as unknown as number : 10,
+    setPerPage: (pp:number) => {
+      this.tableData.perPage = pp
+      Cookie.set('perpage_depots', this.tableData.perPage as unknown as string, { expires: 365 })
+    },
     sortBy: 'depotId',
     sortDesc: false,
     filterQuery: '',

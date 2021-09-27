@@ -76,6 +76,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import Cookie from 'js-cookie'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
 interface IFetchOptions {
@@ -92,7 +93,11 @@ interface IFetchOptions {
   updateTable: boolean = false
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 10,
+    perPage: Cookie.get('perpage_clients') ? Cookie.get('perpage_clients') as unknown as number : 10,
+    setPerPage: (pp:number) => {
+      this.tableData.perPage = pp
+      Cookie.set('perpage_clients', this.tableData.perPage as unknown as string, { expires: 365 })
+    },
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
