@@ -64,6 +64,7 @@ export interface ITableHeaders {
 }
 
 export interface IProperty {
+  _showDetails?: boolean // from bootstrap-table
   productId?: string
   propertyId: string
   type: 'UnicodeProductProperty'|'BoolProductProperty'

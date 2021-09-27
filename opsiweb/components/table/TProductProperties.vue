@@ -10,6 +10,7 @@
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
       </b-alert>
     </div>
+    <!-- <div v-if="$mq=='tablet'">hiii {{$mq}}</div> -->
     <!-- <DropdownDDDefault
       v-if="selectionDepots.length>1"
       :options="['all depots', ...selectionDepots]"
@@ -17,6 +18,7 @@
     /> -->
     <!-- v-if="properties && Object.values(properties).length > 0" -->
     <TableTTable
+      class="TProductProperties_Table"
       :is-busy="isLoading"
       :items="Object.values(properties)"
       :fields="fields"
@@ -25,6 +27,10 @@
       :disable-selection="true"
       show-empty
     >
+      <!-- <template #cell(value)="row">
+        <b-button @click="row.toggleDetails"></b-button>
+      </template> -->
+
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
       </template>
@@ -39,9 +45,7 @@
       </template>
       <template #cell(value)="row">
         <b-row>
-          <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
           <div>
-            <!-- {{row.item}} -->
             <TableCellTCProductPropertyValue
               :clients2depots="fetchedDataClients2Depots"
               :row-item="row.item"
@@ -62,28 +66,28 @@
         </b-row>
       </template>
       <template #row-details="row">
-        <b-card>
-          <b-container>
-            <b-input-group>
-              <b-form-input
-                v-model="row.item.newValue"
+        <b-container>
+          <b-input-group>
+            <b-form-input
+              v-model="row.item.newValue"
+              size="sm"
+              class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
+              @keyup.enter="updateNewPropertyValuesRow(row.item)"
+            />
+            <template #append>
+              <b-button
                 size="sm"
-                class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
-                @keyup.enter="updateNewPropertyValuesRow(row.item)"
-              />
-              <template #append>
-                <b-button
-                  size="sm"
-                  variant="outline-secondary"
-                  @click="updateNewPropertyValuesRow(row.item)"
-                >
-                  {{ $t('values.add') }}
-                </b-button>
-              </template>
-            </b-input-group>
-          </b-container>
-        </b-card>
+                variant="outline-secondary"
+                @click="updateNewPropertyValuesRow(row.item)"
+              >
+                {{ $t('values.add') }}
+              </b-button>
+              <ButtonBTNHelpTooltip :id="`btn_tt_${row.item.propertyId}`" tooltip="middle click on value-dropdown will copy the text" />
+            </template>
+          </b-input-group>
+        </b-container>
       </template>
+
     </TableTTable>
   </div>
 </template>
@@ -152,5 +156,22 @@ export default class TProductProperties extends Vue {
 </script>
 
 <style>
-
+.TProductProperties_Table td[aria-colindex$="1"] {
+  min-width: 30%;
+}
+.TProductProperties_Table td[aria-colindex$="2"] {
+  max-width: 70%;
+  /* max-width: 100%; */
+  /* background-color: blue !important; */
+}
+.TProductProperties_Table {
+  max-width: 100% !important;
+}
+.TableProductsDetails_EditableProdProp_AddValue_BVFormIInput {
+  max-width: calc(100% - 30px);
+}
+.b-table td > .row,
+.b-table td > .row > .row {
+  margin: 0px !important;
+}
 </style>

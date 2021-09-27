@@ -1,34 +1,46 @@
 <template>
-  <div>
-    <b-form-checkbox
-      v-if="rowItem.type=='BoolProductProperty'"
-      v-model="visibleValue[0]"
-      :indeterminate="visibleValueBoolIndeterminate"
-      style="display:inline"
-    />
+  <b-form-row class="TCProductPropertyValue_Container justify-content-md-center">
+    <b-col class="TCProductPropertyValue_Value" :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}">
+      <b-form-checkbox
+        v-if="rowItem.type=='BoolProductProperty'"
+        v-model="visibleValue[0]"
+        :indeterminate="visibleValueBoolIndeterminate"
+        style="display:inline"
+      />
 
-    <DropdownDDDefault
-      v-else-if="rowItem.type=='UnicodeProductProperty' && rowItem.multiValue"
-      :options="uniqueOptions"
-      :selected-items="uniqueSelection"
-      :multiple="true"
-      @change="selectionChanged"
-    />
-    <DropdownDDDefault
-      v-else
-      :options="uniqueOptions"
-      :selected-items="uniqueSelection"
-      @change="selectionChanged"
-    />
-    <slot name="editable-button" />
-    <b-icon-table v-if="showTooltip" :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" />
-    <TooltipTTProductCell
-      v-if="showTooltip"
-      type="property"
-      :target="`DDProductProperty_value_hover_${rowItem.propertyId}`"
-      :details="rowItem.clients"
-    />
-  </div>
+      <DropdownDDDefault
+        v-else-if="rowItem.type=='UnicodeProductProperty' && rowItem.multiValue"
+        :options="uniqueOptions"
+        :selected-items="uniqueSelection"
+        :multiple="true"
+        @change="selectionChanged"
+        @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } "
+      />
+      <DropdownDDDefault
+        v-else
+        :options="uniqueOptions"
+        :selected-items="uniqueSelection"
+        @change="selectionChanged"
+        @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } "
+      />
+      <b-icon-table v-if="showTooltip" :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" />
+      <TooltipTTProductCell
+        v-if="showTooltip"
+        type="property"
+        :target="`DDProductProperty_value_hover_${rowItem.propertyId}`"
+        :details="rowItem.clients"
+      />
+    </b-col>
+    <b-col v-if="rowItem.editable" :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" cols="*">
+      <slot :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" name="editable-button" />
+    </b-col>
+    <b-col v-if="rowItem.propertyId.includes('password')" class="TCProductPropertyValue_ShowBtn" cols="*">
+      <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
+        <b-icon v-if="showValue" icon="eye-slash" />
+        <b-icon v-else icon="eye" />
+      </b-button>
+    </b-col>
+  </b-form-row>
 </template>
 
 <script lang="ts">
@@ -47,6 +59,14 @@ export default class TProductProperties extends Vue {
   @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   visibleValueBoolIndeterminate: boolean = false
+  showValue : boolean = false
+  changedValue: Array<string>|undefined
+
+  @Watch('showValue', { deep: true }) showValuesChanged () {
+    if (!this.showValue) {
+      this.rowItem._showDetails = this.showValue
+    }
+  }
 
   @Watch('visibleValue', { deep: true }) boolValuesChanged () {
     if (this.rowItem.type === 'BoolProductProperty') {
@@ -64,6 +84,7 @@ export default class TProductProperties extends Vue {
     // if (index > -1) {
     //   value.splice(index, 1)
     // }
+    this.changedValue = value
     this.$emit('change', this.rowItem.propertyId, value) //, 'UnicodeProductProperty')
   }
 
@@ -91,7 +112,9 @@ export default class TProductProperties extends Vue {
       if (this.visibleValue.includes(this.$t('values.mixed') as string)) {
         return this.uniques([...this.rowItem.newValues])
       }
-      return this.uniques([...this.visibleValue, ...this.rowItem.newValues])
+      if (this.rowItem.multiValue) {
+        return this.uniques([...this.visibleValue, ...this.rowItem.newValues])
+      }
     }
     // else if (this.visibleValue.length > 1 && this.visibleValue.includes(this.$t('values.mixed') as string)) {
     //   const newarr = this.uniques([...this.visibleValue])
@@ -186,8 +209,50 @@ export default class TProductProperties extends Vue {
     return [...new Set(arr)]
   }
 }
+// .TCProductPropertyValue_Container {
+//   max-width: 100%;
+//   display: inline-block;
+// }
+// .TCProductPropertyValue_Value {
+//   max-width: fit-content;
+// }
+// .TCProductPropertyValue_ShowBtn,
+// .TCProductPropertyValue_Value > .dropdown,
+// .TCProductPropertyValue_Value > .btn{
+//   display: inline-block;
+// }
+// /* .TCProductPropertyValue_Container > div {
+//   max-width: max-content;
+//   display: inline-block;
+// } */
+// .dropdown {
+//   max-width: 50%;
+// }
 </script>
 
 <style>
-
+.dropdown {
+  max-width: -moz-available;
+  max-width: -moz-available;          /* For Mozzila */
+  max-width: -webkit-fill-available;  /* For Chrome */
+  /*max-width: stretch;*/                 /* Unprefixed */
+}
+.TCProductPropertyValue_Value {
+  /* max-width: 80% !important; */
+}
+.TCProductPropertyValue_Value .dropdown > .dropdown-menu,
+.TCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {
+/* z-index: inherit; */
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.TCProductPropertyValue_Value .dropdown button {
+  /* max-width: 100%; */
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.btn-group, .btn-group-vertical {
+  display: grid !important;
+}
 </style>

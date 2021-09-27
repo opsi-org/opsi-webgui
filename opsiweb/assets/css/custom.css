@@ -10,6 +10,7 @@
   --margin-left-maincontent-if-sidebar-collpased:70px;
   --margin-left-maincontent-if-sidebar-expanded:205px;
   --color-hover: 155, 155, 155, .1;
+  --min-height-button: 31px;
 }
 
 [class$="bg-orange"] { background-color: var(--orange) !important;}
@@ -25,7 +26,9 @@
 [class$="fg-green"] { color: var(--green) !important;}
 [class$="fg-blue"] { color: var(--blue) !important;}
 [class$="fg-grey"] { color: var(--gray) !important;}
-
+.btn, .dropdown-item{
+  min-height: var(--min-height-button) !important;
+}
 .table{
   color: unset !important;
 }

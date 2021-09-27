@@ -38,7 +38,8 @@
     "dependencies": "Dependencies"
   },
   "values": {
-    "mixed": "<mixed>"
+    "mixed": "<mixed>",
+    "add": "+"
   },
   "table": {
     "filter": "Filter",
