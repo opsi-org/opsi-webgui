@@ -52,7 +52,7 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
-          <b-dropdown no-caret variant="outline-primary" class="actions_dropdown" size="sm">
+          <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
             <template #button-content>
               <b-icon icon="three-dots-vertical" />
             </template>
@@ -168,9 +168,7 @@ interface IFetchOptions {
 
 <style>
 .actions_dropdown .btn-outline-primary{
-  /* border: none; */
   border: 0;
   box-shadow: none;
 }
-
 </style>
