@@ -138,14 +138,24 @@ export default class TProductProperties extends Vue {
     console.debug('selectionClients', this.selectionClients)
     console.debug('rowItem.clients', this.rowItem)
     if (this.selectionClients.length !== Object.keys(this.rowItem.clients).length) {
-      throw new Error(`something went wrong. SelectionClient.length !== keys(rowItem.clients).length ${this.rowItem}`)
+      if (Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
+        throw new Error(`something went wrong. SelectionClient.length !== keys(rowItem.clients).length ${this.rowItem}`)
+      }
     }
 
     if (this.rowItem.type === 'BoolProductProperty') {
       this.visibleValueBoolIndeterminate = false
     }
     if (this.rowItem.allClientValuesEqual) {
-      return Object.values(this.rowItem.clients)[0]
+      if (this.rowItem.clients && Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
+        return Object.values(this.rowItem.clients)[0]
+      } else if (this.rowItem.depots && Object.keys(this.rowItem.depots).length > 0 && Object.keys(this.rowItem.depots)[0] !== '') {
+        return Object.values(this.rowItem.depots)[0]
+      } else if (this.rowItem.default) {
+        return this.rowItem.default
+      } else {
+        throw new Error('No client or depot values found')
+      }
     }
     // not all clients are equal
     if (this.rowItem.type === 'BoolProductProperty') {

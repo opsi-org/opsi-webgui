@@ -1,8 +1,10 @@
 import { IObjectString2ObjectString2String } from './tsettings'
 
 export interface ITableDataItem {
-  ident: string
-  productId: string
+  // ident: string
+  productId?: string
+  depotId?: string
+  clientId?: string
 }
 
 export interface ITableRowItemProducts {
@@ -27,7 +29,9 @@ export interface ITableRow {
   toggleDetails: Function,
   item: ITableRowItemProducts|{
     ident: string
-    productId: string
+    productId?: string
+    depotId?: string
+    clientId?: string
     _rowVariant?: string
   };
 }

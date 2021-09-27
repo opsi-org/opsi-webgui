@@ -10,7 +10,8 @@
     "delete": "Delete",
     "deleteConfirm": "Are you sure you want to delete the client",
     "deleteMessage": " has been deleted successfully.",
-    "exists": " already exists."
+    "exists": " already exists.",
+    "noClientsSelectedShowDepot": "0 clients selected (set depot value)"
   },
   "title":{
     "overview": "OVERVIEW",

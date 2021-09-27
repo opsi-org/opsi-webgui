@@ -10,7 +10,8 @@
     "delete": "Löschen",
     "deleteConfirm": "Möchten Sie den Client wirklich löschen?",
     "deleteMessage": " wurde erfolgreich gelöscht.",
-    "exists": " existiert bereits."
+    "exists": " existiert bereits.",
+    "noClientsSelectedShowDepot": "0 clients selected (set depot value)"
   },
   "title":{
     "overview": "ÜBERBLICK",
