@@ -1,7 +1,7 @@
 <template>
   <b-button
     variant="outline-primary"
-    class="Btn_Row_action"
+    class="border-0"
     :title="title"
     size="sm"
     :pressed="pressed(to, ident)"
@@ -25,9 +25,3 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) icon!: string
 }
 </script>
-
-<style>
-.Btn_Row_action .btn {
-  border: none;
-}
-</style>
