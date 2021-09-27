@@ -92,7 +92,7 @@ interface IFetchOptions {
   updateTable: boolean = false
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 5,
+    perPage: 10,
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
