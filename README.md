@@ -7,6 +7,6 @@
 * Accept certificate of opsiconfd: `https://localhost:4447/webgui/api/user/opsiserver`
 * Open: `https://localhost:8888/`
 
-# Quick install (production)
+# Quick install (Production)
 * use development branch of obs e.g. content of `/etc/apt/sources.list.d/opsi.list`: `deb http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04 ./`
 * run `sudo apt update && sudo apt install opsi-webgui`
