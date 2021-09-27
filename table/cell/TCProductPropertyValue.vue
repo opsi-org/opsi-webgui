@@ -1,6 +1,10 @@
 <template>
   <b-form-row class="TCProductPropertyValue_Container justify-content-md-center">
-    <b-col class="TCProductPropertyValue_Value" :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}">
+    <b-col
+      class="TCProductPropertyValue_Value"
+      :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}"
+      @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } "
+    >
       <b-form-checkbox
         v-if="rowItem.type=='BoolProductProperty'"
         v-model="visibleValue[0]"
@@ -14,15 +18,17 @@
         :selected-items="uniqueSelection"
         :multiple="true"
         @change="selectionChanged"
-        @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } "
       />
+        <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
+        <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
       <DropdownDDDefault
         v-else
         :options="uniqueOptions"
         :selected-items="uniqueSelection"
         @change="selectionChanged"
-        @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } "
       />
+        <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
+        <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
       <b-icon-table v-if="showTooltip" :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" />
       <TooltipTTProductCell
         v-if="showTooltip"
@@ -156,6 +162,9 @@ export default class TProductProperties extends Vue {
   // return valuesWithDepotDefaults
   //   return []
   // }
+  test () {
+    alert('me')
+  }
 
   get visibleValue () {
     if (this.selectionClients.length !== Object.keys(this.rowItem.clients).length) {
