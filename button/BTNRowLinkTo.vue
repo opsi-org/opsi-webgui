@@ -25,3 +25,9 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) icon!: string
 }
 </script>
+
+<style>
+.Btn_Row_action .btn {
+  border: none;
+}
+</style>
