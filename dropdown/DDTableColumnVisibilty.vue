@@ -7,7 +7,7 @@
     variant="outline-primary"
     size="sm"
     alt="Show column"
-    class="fixed_column_selection"
+    class="fixed_column_selection noborder"
     :title="$t('table.showCol')"
   >
     <template #button-content>
@@ -150,5 +150,9 @@ export default class DDTableColumnVisibilty extends BDropdown {
 }
 a.selected {
   background-color: var(--primary);
+}
+.noborder .btn-outline-primary{
+  border: 0;
+  box-shadow: none;
 }
 </style>
