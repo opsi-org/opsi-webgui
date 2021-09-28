@@ -13,6 +13,10 @@
           {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
         </b-card>
         <b-tabs v-if="id" v-model="activeTab" lazy small>
+          <!-- activeTab {{ activeTab }}, manual {{ activeTabSet }} <br>
+          tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
+          tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
+          {{ $fetchState.error }} -->
           <p v-if="$fetchState.pending">
             <IconILoading v-if="isLoading" />
           </p>
@@ -116,9 +120,9 @@ export default class VClientConfig extends Vue {
           throw new Error(response.error)
         }
         this.fetchedData.dependencies.dependencies = response.data.dependencies
-        this.fetchedData.dependencies.productDescriptionDetails = { 'bonifax.uib.local': 'string' }
-        this.fetchedData.dependencies.productVersions = { 'bonifax.uib.local': '1.0' }
-        this.fetchedData.dependencies.productDescription = 'string'
+        this.fetchedData.dependencies.productDescriptionDetails = response.data.productDescriptionDetails // { 'bonifax.uib.local': 'string' }
+        this.fetchedData.dependencies.productVersions = response.data.productVersions // { 'bonifax.uib.local': '1.0' }
+        this.fetchedData.dependencies.productDescription = response.data.productDescription
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
         this.activeTabSet = -3
@@ -130,9 +134,9 @@ export default class VClientConfig extends Vue {
           throw new Error(response.error)
         }
         this.fetchedData.properties.properties = response.data.properties
-        this.fetchedData.properties.productDescriptionDetails = { 'bonifax.uib.local': 'string' }
-        this.fetchedData.properties.productVersions = { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
-        this.fetchedData.properties.productDescription = 'string'
+        this.fetchedData.properties.productDescriptionDetails = response.data.productDescriptionDetails
+        this.fetchedData.properties.productVersions = response.data.productVersions // { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
+        this.fetchedData.properties.productDescription = response.data.productDescription
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
         this.activeTabSet = -3
