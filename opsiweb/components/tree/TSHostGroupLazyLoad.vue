@@ -1,6 +1,9 @@
 <template>
   <div class="form-inline" style="margin-right:30px">
     <b-icon-laptop variant="primary" font-scale="2" />
+    <b-badge class="selection_badge" variant="light" size="sm">
+      {{ selectionClients.length }}
+    </b-badge>
     <treeselect
       v-model="groupSelection"
       class="treeselect"
@@ -191,5 +194,8 @@ export default class TSDelayedLoading extends Vue {
 }
 .treeselect .vue-treeselect__option-arrow{
   color: black
+}
+.selection_badge{
+  margin-top: 20px;
 }
 </style>
