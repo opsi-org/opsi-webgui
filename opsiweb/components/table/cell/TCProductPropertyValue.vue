@@ -19,16 +19,16 @@
         :multiple="true"
         @change="selectionChanged"
       />
-        <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
-        <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
+      <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
+      <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
       <DropdownDDDefault
         v-else
         :options="uniqueOptions"
         :selected-items="uniqueSelection"
         @change="selectionChanged"
       />
-        <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
-        <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
+      <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
+      <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
       <b-icon-table v-if="showTooltip" :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" />
       <TooltipTTProductCell
         v-if="showTooltip"
@@ -77,7 +77,6 @@ export default class TProductPropertyValue extends Vue {
 
   @Watch('visibleValue', { deep: true }) boolValuesChanged () {
     if (this.rowItem.type === 'BoolProductProperty') {
-      console.debug('visibleValueBool changed')
       this.$emit('change', this.rowItem.propertyId, this.visibleValue) //, 'BoolProductPropery')
     }
   }
@@ -85,7 +84,7 @@ export default class TProductPropertyValue extends Vue {
   @Watch('rowItem.newValues') newValuesChanged (newValue:any, oldValue:any) {
     if (this.rowItem.newValues === undefined || this.rowItem.newValues.length === 0) { return }
     if (arrEqual(newValue, oldValue)) { return }
-    console.debug('newValues changed', newValue, oldValue)
+    // console.debug('newValues changed', newValue, oldValue)
 
     this.$emit('change', this.rowItem.propertyId, this.uniqueSelection) //, 'UnicodeProductProperty')
   }
@@ -96,7 +95,6 @@ export default class TProductPropertyValue extends Vue {
     // if (index > -1) {
     //   value.splice(index, 1)
     // }
-    console.debug('selectionChanged')
     this.changedValue = value
     this.$emit('change', this.rowItem.propertyId, value) //, 'UnicodeProductProperty')
   }
@@ -121,7 +119,7 @@ export default class TProductPropertyValue extends Vue {
   }
 
   get uniqueSelection () {
-    console.debug('unique selection ', this.rowItem.editable, this.rowItem.newValues, this.rowItem.newValues?.length)
+    // console.debug('unique selection ', this.rowItem.editable, this.rowItem.newValues, this.rowItem.newValues?.length)
     if (this.rowItem.editable && this.rowItem.newValues && this.rowItem.newValues.length > 0) {
       if (this.visibleValue.includes(this.$t('values.mixed') as string)) {
         return this.uniques([...this.rowItem.newValues])
@@ -137,7 +135,7 @@ export default class TProductPropertyValue extends Vue {
     //   return newarr
     // }
     const c:Array<string> = this.uniques([...this.visibleValue])
-    console.debug('uniqueSelection', c)
+    // console.debug('uniqueSelection', c)
     return c
   }
 
@@ -259,9 +257,9 @@ export default class TProductPropertyValue extends Vue {
   max-width: -webkit-fill-available;  /* For Chrome */
   /*max-width: stretch;*/                 /* Unprefixed */
 }
-.TCProductPropertyValue_Value {
+/* .TCProductPropertyValue_Value { */
   /* max-width: 80% !important; */
-}
+/* } */
 .TCProductPropertyValue_Value .dropdown > .dropdown-menu,
 .TCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {
 /* z-index: inherit; */

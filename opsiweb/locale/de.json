@@ -11,7 +11,10 @@
     "deleteConfirm": "Möchten Sie den Client wirklich löschen?",
     "deleteMessage": " wurde erfolgreich gelöscht.",
     "exists": " existiert bereits.",
-    "noClientsSelectedShowDepot": "0 clients selected (set depot value)"
+    "noClientsSelectedShowDepot": "keine Clients ausgewählt (Änderungen am Depot)",
+    "notOnEachDepot": "Produkt nur auf [[DoNotTranslateThis:depotsCount/allDepotsCount]] Depots",
+    "errorInPropertyFetch": "Etwas lief schief bei den ProduktProperties",
+    "errorInDependenciesFetch": "Etwas lief schief bei den Produkt-Abhängigkeiten"
   },
   "title":{
     "overview": "ÜBERBLICK",
@@ -35,7 +38,9 @@
     "netboot": "Netboot-Produkt",
     "hostattr": "Host-Attribute",
     "properties": "Property-Konfiguration",
-    "dependencies": "Abhängigkeiten"
+    "dependencies": "Abhängigkeiten",
+    "dependenciesEmpty": "(leer)",
+    "propertiesEmpty": "(leer)"
 
   },
   "values": {

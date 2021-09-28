@@ -1,3 +1,4 @@
+
 <template>
   <div>
     <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - ' + id" :closeroute="closeroute" />
@@ -6,24 +7,27 @@
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
-    <IconILoading v-if="isLoading" />
     <DivDScrollResult>
       <template slot="content">
         <b-card class="VProductProperty-Card-Description">
           {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
         </b-card>
-        activeTab {{activeTab}}, {{id}}
         <b-tabs v-if="id" v-model="activeTab" lazy small>
-          hi
+          <p v-if="$fetchState.pending">
+            <IconILoading v-if="isLoading" />
+          </p>
+          <div v-else-if="$fetchState.error || activeTabSet < -1">
+            <p>
+              {{ errorText.properties }}
+              {{ (errorText.dependencies && errorText.properties)? '\n':'' }}
+              {{ errorText.dependencies }}
+            </p>
+          </div>
           <b-tab
             ref="VProductProperties_TabProperties"
             :title="$t('title.properties') + ((tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'')"
             :disabled="tabPropertiesDisabled"
           >
-            <!-- :active="activeTab===0" -->
-            <!-- :title-link-class="{ disabled:tabPropertiesDisabled, active: tabPropertiesActive }" -->
-            <!-- :active="tabPropertiesActive || tabDependenciesDisabled" -->
-            <!-- :disabled="tabPropertiesDisabled" -->
             <LazyTableTProductProperties
               v-if="id"
               :id="id"
@@ -37,9 +41,6 @@
             :disabled="tabDependenciesDisabled"
             :active="activeTab===1"
           >
-            <!-- :active="!tabPropertiesActive && !tabDependenciesDisabled" -->
-            <!-- :active="!tabPropertiesActive || tabPropertiesDisabled"
-            :title-link-class="{ disabled:tabDependenciesDisabled, active: !tabPropertiesActive || tabPropertiesDisabled }" -->
             <LazyTableTProductDependencies
               v-if="id"
               :id="id"
@@ -68,7 +69,6 @@ interface IFetchedData {
 @Component
 export default class VClientConfig extends Vue {
   @Prop({ }) id!: string
-  // @Prop({ }) description!: string
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string
 
@@ -84,49 +84,35 @@ export default class VClientConfig extends Vue {
     properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {} }
   }
 
-  get tabDependenciesDisabled () { return this.fetchedData.dependencies.dependencies.length <= 0 }
   get tabPropertiesDisabled () { return Object.keys(this.fetchedData.properties.properties).length <= 0 }
+  get tabDependenciesDisabled () { return this.fetchedData.dependencies.dependencies.length <= 0 }
   get tabPropertiesActive () { return !this.tabPropertiesDisabled || this.tabDependenciesDisabled }
-  get tabDependenciesActive () { return !this.tabPropertiesDisabled && !this.tabDependenciesDisabled }
-  get activeTab () { return (this.activeTabSet !== -1) ? this.activeTabSet : (this.tabPropertiesActive) ? 0 : 1 } // (this.tabDependenciesDisabled) ? 0 : 1 }
+  get tabDependenciesActive () { return this.tabPropertiesDisabled && !this.tabDependenciesDisabled }
+  get activeTab () { return (this.activeTabSet >= 0) ? this.activeTabSet : (this.tabPropertiesActive) ? 0 : (this.tabDependenciesActive) ? 1 : 0 }
   set activeTab (val:number) { this.activeTabSet = val }
 
-  @Watch('tabPropertyActive', { deep: true }) tabPropertyActiveChanged () { this.activeTab = -1 }
-  @Watch('tabDependenciesActive', { deep: true }) tabDependenciesActiveChanged () { this.activeTab = -1 }
+  @Watch('tabPropertyActive') tabPropertyActiveChanged () { this.activeTab = -1 }
+  @Watch('tabDependenciesActive') tabDependenciesActiveChanged () { this.activeTab = -1 }
 
-  // @Watch('selectionClients', { deep: true }) selectionClientsChanged () { this.$fetch() }
-  // @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
-  // @Watch('activeTab', { deep: true }) activeTabChanged () {
-  //   if (this.activeTab === -1 || this.activeTab === 0) {
-  //     if (this.$refs.VProductProperties_TabProperties) { this.$refs.VProductProperties_TabProperties.activate() }
-  //   } else {
-  //     this.$refs.VProductProperties_TabDependencies.activate()
-  //   }
-  // }
   @Watch('id', { deep: true }) productIdChanged () { this.$fetch() }
   mounted () {
     if (!this.id) {
       this.$router.back()
     }
-    // this.tabPropertyActiveChanged()
-    // this.tabDependenciesActiveChanged()
-    if (this.activeTab === -1) { this.activeTab = 0 }
   }
-
-  // updated () {
-  // }
 
   async fetch () {
     this.isLoading = true
+    this.activeTabSet = -1
     this.fetchedData = {
       dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {} },
       properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {} }
     }
     this.errorText = { properties: '', dependencies: '' }
+
     await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         if (response.status !== 200) {
-          this.errorText.dependencies = (this as any).$t('message.errortext')
           throw new Error(response.error)
         }
         this.fetchedData.dependencies.dependencies = response.data.dependencies
@@ -134,13 +120,13 @@ export default class VClientConfig extends Vue {
         this.fetchedData.dependencies.productVersions = { 'bonifax.uib.local': '1.0' }
         this.fetchedData.dependencies.productDescription = 'string'
       }).catch((error) => {
-        this.errorText.dependencies = (this as any).$t('message.errortext')
+        this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
+        this.activeTabSet = -3
         throw new Error(error)
       })
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         if (response.status !== 200) {
-          this.errorText.properties = (this as any).$t('message.errortext')
           throw new Error(response.error)
         }
         this.fetchedData.properties.properties = response.data.properties
@@ -148,9 +134,11 @@ export default class VClientConfig extends Vue {
         this.fetchedData.properties.productVersions = { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
         this.fetchedData.properties.productDescription = 'string'
       }).catch((error) => {
-        this.errorText.properties = (this as any).$t('message.errortext')
+        this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
+        this.activeTabSet = -3
         throw new Error(error)
       })
+    if (this.activeTabSet >= -1) { this.activeTabSet = -1 }
     this.isLoading = false
   }
 }

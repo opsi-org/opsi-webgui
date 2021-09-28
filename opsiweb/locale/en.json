@@ -11,7 +11,10 @@
     "deleteConfirm": "Are you sure you want to delete the client",
     "deleteMessage": " has been deleted successfully.",
     "exists": " already exists.",
-    "noClientsSelectedShowDepot": "0 clients selected (set depot value)"
+    "noClientsSelectedShowDepot": "0 clients selected (set depot value)",
+    "notOnEachDepot": "product installed only on [[DoNotTranslateThis:depotsCount/allDepotsCount]] depots",
+    "errorInPropertyFetch": "Something went wrong with ProductProperties",
+    "errorInDependenciesFetch": "Something went wrong with ProductDependencies"
   },
   "title":{
     "overview": "OVERVIEW",
@@ -35,7 +38,9 @@
     "netboot": "Netboot Products",
     "hostattr": "Host Attributes",
     "properties": "Property-Configuration",
-    "dependencies": "Dependencies"
+    "dependencies": "Dependencies",
+    "dependenciesEmpty": "(empty)",
+    "propertiesEmpty": "(empty)"
   },
   "values": {
     "mixed": "<mixed>",

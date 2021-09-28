@@ -64,13 +64,12 @@ export default class DDDefault extends BDropdown {
   selections: Array<string> = []
   created () {
     this.selections = this.uniques([...this.selectedItems])
-    console.debug(arrayEqual(this.selectedItems, this.selections))
   }
 
   @Watch('selections') selectionsChanged (newV:any, oldV:any) {
     if (arrEqual(this.selectedItems, this.selections)) { return }
     if (arrEqual(oldV, newV)) { return }
-    console.debug('selectionsChanged old->new', oldV, newV)
+    // console.debug('selectionsChanged old->new', oldV, newV)
     // const localSelection = this.selections])
     if (this.selections.length > 1) {
       const index = this.selections.indexOf(this.$t('values.mixed') as string)
@@ -82,9 +81,9 @@ export default class DDDefault extends BDropdown {
     this.$emit('change', this.selections)
   }
 
-  @Watch('selectedItems') selectedItemsChanged (newV:any, oldV:any) {
+  @Watch('selectedItems') selectedItemsChanged () { // (newV:any, oldV:any) {
     if (arrayEqual(this.selectedItems, this.selections)) { return }
-    console.debug('selectedItemsChanged old->new', oldV, newV)
+    // console.debug('selectedItemsChanged old->new', oldV, newV)
     const localSelection = this.uniques([...this.selectedItems, ...this.selections])
     // const index = localSelection.indexOf(this.$t('values.mixed') as string)
     // if (index > -1) {
