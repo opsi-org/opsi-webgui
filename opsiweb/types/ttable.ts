@@ -1,4 +1,4 @@
-import { IObjectString2ObjectString2String } from './tsettings'
+import { IObjectString2ObjectString2String, IObjectString2String, IObjectString2StringOrUndefined } from './tsettings'
 
 export interface ITableDataItem {
   // ident: string
@@ -117,4 +117,18 @@ export interface INewPropertyValue {
     newValue: string
     newValues: Array<string>
   }
+}
+
+export interface IDepend {
+  dependencies: Array<IProductDependency>
+  productVersions: IObjectString2StringOrUndefined
+  productDescription: string
+  productDescriptionDetails: IObjectString2String
+}
+
+export interface IProp {
+  properties: IProperties
+  productVersions: IObjectString2StringOrUndefined
+  productDescription: string
+  productDescriptionDetails: IObjectString2String
 }

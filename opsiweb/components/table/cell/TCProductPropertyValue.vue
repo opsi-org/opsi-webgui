@@ -53,12 +53,13 @@
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IProperty } from '~/types/ttable'
 import { IObjectString2String } from '~/types/tsettings'
+import { arrEqual } from '~/helpers/equal'
 // import { arrayEqual } from '~/helpers/hcompares'
 // import { arrayEqual } from '~/helpers/hcompares'
 const selections = namespace('selections')
 // const mixed = '<mixed>'
 @Component
-export default class TProductProperties extends Vue {
+export default class TProductPropertyValue extends Vue {
   // @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String
@@ -76,11 +77,16 @@ export default class TProductProperties extends Vue {
 
   @Watch('visibleValue', { deep: true }) boolValuesChanged () {
     if (this.rowItem.type === 'BoolProductProperty') {
+      console.debug('visibleValueBool changed')
       this.$emit('change', this.rowItem.propertyId, this.visibleValue) //, 'BoolProductPropery')
     }
   }
 
-  @Watch('rowItem.newValues') newValuesChanged () {
+  @Watch('rowItem.newValues') newValuesChanged (newValue:any, oldValue:any) {
+    if (this.rowItem.newValues === undefined || this.rowItem.newValues.length === 0) { return }
+    if (arrEqual(newValue, oldValue)) { return }
+    console.debug('newValues changed', newValue, oldValue)
+
     this.$emit('change', this.rowItem.propertyId, this.uniqueSelection) //, 'UnicodeProductProperty')
   }
 
@@ -90,6 +96,7 @@ export default class TProductProperties extends Vue {
     // if (index > -1) {
     //   value.splice(index, 1)
     // }
+    console.debug('selectionChanged')
     this.changedValue = value
     this.$emit('change', this.rowItem.propertyId, value) //, 'UnicodeProductProperty')
   }
@@ -114,13 +121,12 @@ export default class TProductProperties extends Vue {
   }
 
   get uniqueSelection () {
-    if (this.rowItem.newValues && this.rowItem.newValues.length > 0) {
+    console.debug('unique selection ', this.rowItem.editable, this.rowItem.newValues, this.rowItem.newValues?.length)
+    if (this.rowItem.editable && this.rowItem.newValues && this.rowItem.newValues.length > 0) {
       if (this.visibleValue.includes(this.$t('values.mixed') as string)) {
         return this.uniques([...this.rowItem.newValues])
       }
-      if (this.rowItem.multiValue) {
-        return this.uniques([...this.visibleValue, ...this.rowItem.newValues])
-      }
+      return this.uniques([...this.visibleValue, ...this.rowItem.newValues])
     }
     // else if (this.visibleValue.length > 1 && this.visibleValue.includes(this.$t('values.mixed') as string)) {
     //   const newarr = this.uniques([...this.visibleValue])
@@ -130,7 +136,9 @@ export default class TProductProperties extends Vue {
     //   }
     //   return newarr
     // }
-    return this.uniques([...this.visibleValue])
+    const c:Array<string> = this.uniques([...this.visibleValue])
+    console.debug('uniqueSelection', c)
+    return c
   }
 
   get uniqueOptions () {
@@ -177,15 +185,20 @@ export default class TProductProperties extends Vue {
       this.visibleValueBoolIndeterminate = false
     }
     if (this.rowItem.allClientValuesEqual) {
+      let ret
       if (this.rowItem.clients && Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
-        return Object.values(this.rowItem.clients)[0]
+        ret = Object.values(this.rowItem.clients)[0]
       } else if (this.rowItem.depots && Object.keys(this.rowItem.depots).length > 0 && Object.keys(this.rowItem.depots)[0] !== '') {
-        return Object.values(this.rowItem.depots)[0]
+        ret = Object.values(this.rowItem.depots)[0]
       } else if (this.rowItem.default) {
-        return this.rowItem.default
+        ret = this.rowItem.default
       } else {
         throw new Error('No client or depot values found')
       }
+      if (this.rowItem.editable && this.rowItem.newValues && this.rowItem.newValues.length > 0) {
+        ret = this.rowItem.newValues[0]
+      }
+      return ret
     }
     // not all clients are equal
     if (this.rowItem.type === 'BoolProductProperty') {

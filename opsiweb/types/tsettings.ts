@@ -4,20 +4,19 @@ export interface IObjectString2Function {
 }
 
 export interface IObjectString2Any {
-    // x = {'foo': 'bar'}
     [key: string]: any
 }
 export interface IObjectString2String {
-    // x = {'foo': 'bar'}
     [key: string]: string
+}
+export interface IObjectString2StringOrUndefined {
+    [key: string]: string|undefined
 }
 
 export interface IObjectString2Boolean {
-    // x = {'foo': 'bar'}
     [key: string]: boolean
 }
 export interface IObjectString2ObjectString2String {
-    // x = {'foo': { 'k': 'bar' })}
     [key: string]: {
         [key: string]: string
     }

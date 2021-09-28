@@ -1,15 +1,18 @@
 <template>
   <div>
     <TableTTable
-      v-if="dependencies"
+      v-if="dependencies.dependencies"
       :is-busy="isLoading"
       :stacked="false"
       :small="true"
       :disable-selection="true"
-      :items="Object.values(dependencies)"
+      :items="Object.values(dependencies.dependencies)"
       :fields="fields"
       :value-is-input-field="false"
     >
+      <template #empty>
+        <small>{{ $t('table.emptyText') }}</small>
+      </template>
       <template #head()="row">
         <small><b>{{ row.label }}</b></small>
       </template>
@@ -36,12 +39,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { IObjectString2String } from '~/types/tsettings'
-import { IProductDependency } from '~/types/ttable'
+import { IDepend, IProductDependency } from '~/types/ttable'
 
 @Component
 export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
-  @Prop({ }) dependencies!: Array<IProductDependency>
+  @Prop({ }) dependencies!: IDepend
 
   isLoading: boolean = false
   types2text: IObjectString2String = {

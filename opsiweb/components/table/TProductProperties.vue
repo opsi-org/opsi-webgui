@@ -1,13 +1,23 @@
 <template>
   <div>
-    <div v-if="$mq=='mobile'">
+    <div v-if="!errorText && $mq=='mobile'">
       <b-alert show variant="secondary">
         <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
       </b-alert>
     </div>
-    <div v-else-if="selectionClients.length <= 0">
+    <div v-else-if="!errorText && selectionClients.length <= 0">
       <b-alert show variant="warning">
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
+      </b-alert>
+    </div>
+    <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
+      <b-alert show variant="warning">
+        <small>
+          {{ $t('message.notOnEachDepot').replace(
+            '[[DoNotTranslateThis:depotsCount/allDepotsCount]]',
+            `${Object.values(properties.productVersions).filter(n => n).length}/${selectionDepots.length}`
+          ) }}
+        </small>
       </b-alert>
     </div>
     <!-- <div v-if="$mq=='tablet'">hiii {{$mq}}</div> -->
@@ -17,16 +27,21 @@
       :selected-items="['all depots']"
     /> -->
     <!-- v-if="properties && Object.values(properties).length > 0" -->
+
+    <p v-if="errorText">
+      {{ errorText }}
+    </p>
     <TableTTable
       class="TProductProperties_Table"
       :is-busy="isLoading"
-      :items="Object.values(properties)"
+      :items="Object.values(properties.properties)"
       :fields="fields"
       :stacked="false"
       :small="true"
       :disable-selection="true"
       show-empty
     >
+      <!-- :error-text="errorText" -->
       <!-- <template #cell(value)="row">
         <b-button @click="row.toggleDetails"></b-button>
       </template> -->
@@ -35,8 +50,18 @@
         <small>{{ $t('table.emptyText') }}</small>
       </template>
       <template #cell(propertyId)="row">
-        <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
-        {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
+        <div :title="`defaults: ${row.item.default}\n\n${row.item.description}`">
+          <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
+          {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
+        </div>
+        <b-badge
+          v-if="Object.values(properties.productVersions).filter(n => n).length == selectionDepots.length && Object.keys(row.item.depots).length!=selectionDepots.length"
+          :id="`btn_tt_${row.item.propertyId}`"
+          :title="`only on depots: ${Object.keys(row.item.depots)}`"
+        >
+          <!-- product on each depot, but property not on every depot-->
+          *
+        </b-badge>
         <small v-if="row.item.anyDepotDifferentFromDefault">
           <br>
           (depotValue/s different from default!)
@@ -87,24 +112,24 @@
           </b-input-group>
         </b-container>
       </template>
-
     </TableTTable>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { INewPropertyValue, IProperties, IProperty } from '~/types/ttable'
+import { INewPropertyValue, IProp, IProperty } from '~/types/ttable'
 const selections = namespace('selections')
 
 @Component
 export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
-  @Prop({ }) properties!: IProperties
+  @Prop({ default: '' }) errorText!: string
+  @Prop({ }) properties!: IProp
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
 
-  errorText: string = ''
+  // errorText: string = ''
   result:Object = {}
   isLoading: boolean = false
   newValuesPerProp: INewPropertyValue = {}
@@ -126,8 +151,9 @@ export default class TProductProperties extends Vue {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {
           // eslint-disable-next-line no-console
-          console.error(error)
+          // console.error(error)
           this.errorText = (this as any).$t('message.errortext')
+          throw new Error(error)
         })
     }
   }
@@ -135,9 +161,21 @@ export default class TProductProperties extends Vue {
   handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
     // TODO: TODO: Backend-Request setProductProperty
     const data = {
+      selectionDepots: this.selectionDepots,
       selectionClients: this.selectionClients,
       propertyId,
       values
+    }
+    if (this.selectionClients.length > 0) {
+      for (const c in this.selectionClients) {
+        this.properties.properties[propertyId].clients[c] = values
+      }
+    } else if (this.selectionDepots.length > 0) {
+      for (const c in this.selectionDepots) {
+        this.properties.properties[propertyId].depots[c] = values
+      }
+    } else {
+      throw new Error('cannot change value of property if no clients or depots are selected')
     }
     // eslint-disable-next-line no-console
     console.debug('(todo) Request POST product property: ', data)
