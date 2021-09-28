@@ -1,5 +1,5 @@
 <template>
-  <LazyTreeTSTreeselect v-if="depotsList" type="depots" :options="depotsList" :placeholder="'title.depots'" icon="hdd-stack-fill" />
+  <LazyTreeTSTreeselect v-if="depotsList" type="depots" :options="depotsList" :placeholder="'title.depots'" icon="hdd-network" />
 </template>
 
 <script lang="ts">

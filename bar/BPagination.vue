@@ -1,7 +1,7 @@
 <template>
   <div class="BarBPagination-Container">
     <b-input-group :prepend="$t('table.perpage')" size="sm" class="BarBPagination-PerPage">
-      <b-form-select v-model="tabledata.perPage" :options="[1,2,5,10,20,30]" size="sm" class="BarBPagination-PerPage-Dropdown" />
+      <b-form-select v-model="localPerPage" :options="[1,2,5,10,20,30]" size="sm" class="BarBPagination-PerPage-Dropdown" />
     </b-input-group>
     <b-pagination
       v-model="localPageNumber"
@@ -9,7 +9,7 @@
       first-number
       last-number
       size="sm"
-      :per-page="tabledata.perPage"
+      :per-page="localPerPage"
       :total-rows="$props.totalRows"
     />
   </div>
@@ -24,6 +24,8 @@ export default class BPaginationUib extends BPagination {
   @Prop({}) tabledata!:ITableData;
   get localPageNumber () { return this.tabledata.pageNumber }
   set localPageNumber (pn) { this.tabledata.setPageNumber(pn) }
+  get localPerPage () { return this.tabledata.perPage }
+  set localPerPage (pp) { this.tabledata.setPerPage(pp) }
 }
 </script>
 

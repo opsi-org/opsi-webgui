@@ -114,6 +114,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import Cookie from 'js-cookie'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
@@ -149,7 +150,11 @@ export default class TProductsNetboot extends Vue {
   tableData: ITableData = {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 5,
+    perPage: Cookie.get('perpage_netboot') ? Cookie.get('perpage_netboot') as unknown as number : 5,
+    setPerPage: (pp:number) => {
+      this.tableData.perPage = pp
+      Cookie.set('perpage_netboot', this.tableData.perPage as unknown as string, { expires: 365 })
+    },
     sortBy: 'productId',
     sortDesc: false,
     filterQuery: '',

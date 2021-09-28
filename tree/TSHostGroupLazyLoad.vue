@@ -1,6 +1,9 @@
 <template>
   <div class="form-inline" style="margin-right:30px">
-    <b-icon-laptop variant="primary" font-scale="2" class="border" />
+    <b-icon-laptop variant="primary" font-scale="2" />
+    <b-badge class="selection_badge" variant="light" size="sm">
+      {{ selectionClients.length }}
+    </b-badge>
     <treeselect
       v-model="groupSelection"
       class="treeselect"
@@ -18,7 +21,7 @@
     >
       <div slot="option-label" slot-scope="{ node }">
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
+          <b-icon v-if="node.isBranch" icon="diagram2" />
           <b-icon v-else icon="laptop" />
           <small> {{ node.label }} </small>
         </div>
@@ -179,7 +182,26 @@ export default class TSDelayedLoading extends Vue {
 .treeselect{
   max-width: 300px;
 }
-.treeselect .vue-treeselect__multi-value-item-container {
+.treeselect .vue-treeselect__multi-value-item {
   display: none;
+}
+.treeselect .vue-treeselect__placeholder {
+    color: gray;
+}
+.treeselect .vue-treeselect-helper-hide {
+  display: inline;
+}
+.treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
+  cursor: pointer;
+  color: black;
+}
+.treeselect .vue-treeselect__option-arrow{
+  color: black
+}
+.form-inline {
+  flex-flow: nowrap;
+}
+.selection_badge{
+  margin-top: 20px;
 }
 </style>
