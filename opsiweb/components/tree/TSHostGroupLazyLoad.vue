@@ -185,4 +185,11 @@ export default class TSDelayedLoading extends Vue {
 .form-inline {
   flex-flow: nowrap;
 }
+.treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
+  cursor: pointer;
+  color: black;
+}
+.treeselect .vue-treeselect__option-arrow{
+  color: black
+}
 </style>
