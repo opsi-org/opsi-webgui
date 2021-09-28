@@ -136,8 +136,14 @@ export default class TSTreeselect extends Vue {
 .treeselect{
   max-width: 300px;
 }
-.treeselect .vue-treeselect__multi-value-item-container {
+.treeselect .vue-treeselect__multi-value-item {
   display: none;
+}
+.treeselect .vue-treeselect__placeholder {
+    color: gray;
+}
+.treeselect .vue-treeselect-helper-hide {
+  display: inline;
 }
 .form-inline {
   flex-flow: nowrap;

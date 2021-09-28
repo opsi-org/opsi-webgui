@@ -182,11 +182,14 @@ export default class TSDelayedLoading extends Vue {
 .treeselect{
   max-width: 300px;
 }
-.treeselect .vue-treeselect__multi-value-item-container {
+.treeselect .vue-treeselect__multi-value-item {
   display: none;
 }
-.form-inline {
-  flex-flow: nowrap;
+.treeselect .vue-treeselect__placeholder {
+    color: gray;
+}
+.treeselect .vue-treeselect-helper-hide {
+  display: inline;
 }
 .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
@@ -194,6 +197,9 @@ export default class TSDelayedLoading extends Vue {
 }
 .treeselect .vue-treeselect__option-arrow{
   color: black
+}
+.form-inline {
+  flex-flow: nowrap;
 }
 .selection_badge{
   margin-top: 20px;
