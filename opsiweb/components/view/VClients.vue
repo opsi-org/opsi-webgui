@@ -52,7 +52,7 @@
             :pressed="isRouteActive"
             :click="routeRedirectWith"
           />
-          <b-dropdown no-caret variant="outline-primary" size="sm">
+          <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
             <template #button-content>
               <b-icon icon="three-dots-vertical" />
             </template>
@@ -76,6 +76,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import Cookie from 'js-cookie'
 import { ITableData, ITableHeaders } from '~/types/ttable'
 const selections = namespace('selections')
 interface IFetchOptions {
@@ -92,7 +93,11 @@ interface IFetchOptions {
   updateTable: boolean = false
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 5,
+    perPage: Cookie.get('perpage_clients') ? Cookie.get('perpage_clients') as unknown as number : 10,
+    setPerPage: (pp:number) => {
+      this.tableData.perPage = pp
+      Cookie.set('perpage_clients', this.tableData.perPage as unknown as string, { expires: 365 })
+    },
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
@@ -167,5 +172,8 @@ interface IFetchOptions {
 </script>
 
 <style>
-
+.actions_dropdown .btn-outline-primary{
+  border: 0;
+  box-shadow: none;
+}
 </style>

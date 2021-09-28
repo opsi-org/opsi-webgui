@@ -1,6 +1,9 @@
 <template>
   <div class="form-inline" style="margin-right:30px">
-    <b-icon :icon="icon" variant="primary" font-scale="2" class="border" />
+    <b-icon :icon="icon" variant="primary" font-scale="2" />
+    <b-badge class="selection_badge" variant="light" size="sm">
+      {{ type === 'depots' ? selectionDepots.length: selectionProducts.length }}
+    </b-badge>
     <treeselect
       v-model="groupSelection"
       :placeholder="$t(placeholder)"
@@ -16,8 +19,8 @@
     >
       <div slot="option-label" slot-scope="{ node }">
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch" icon="hdd-network-fill" />
-          <b-icon v-else icon="laptop" />
+          <b-icon v-if="node.isBranch" icon="diagram2" />
+          <b-icon v-else :icon="type === 'depots' ? 'laptop': 'grid-fill'" />
           <small> {{ node.label }} </small>
         </div>
       </div>
@@ -133,7 +136,19 @@ export default class TSTreeselect extends Vue {
 .treeselect{
   max-width: 300px;
 }
-.treeselect .vue-treeselect__multi-value-item-container {
+.treeselect .vue-treeselect__multi-value-item {
   display: none;
+}
+.treeselect .vue-treeselect__placeholder {
+    color: gray;
+}
+.treeselect .vue-treeselect-helper-hide {
+  display: inline;
+}
+.form-inline {
+  flex-flow: nowrap;
+}
+.selection_badge{
+  margin-top: 20px;
 }
 </style>
