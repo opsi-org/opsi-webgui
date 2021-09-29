@@ -29,13 +29,6 @@
       />
       <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
       <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
-      <b-icon-table v-if="showTooltip" :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" />
-      <TooltipTTProductCell
-        v-if="showTooltip"
-        type="property"
-        :target="`DDProductProperty_value_hover_${rowItem.propertyId}`"
-        :details="rowItem.clients"
-      />
     </b-col>
     <b-col v-if="rowItem.editable" :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" cols="*">
       <slot :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" name="editable-button" />
@@ -45,6 +38,15 @@
         <b-icon v-if="showValue" icon="eye-slash" />
         <b-icon v-else icon="eye" />
       </b-button>
+    </b-col>
+    <b-col v-if="showTooltip" class="TCProductPropertyValue_MixedTT" cols="*">
+      <IconIDetails :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" />
+      <TooltipTTProductCell
+        v-if="showTooltip"
+        type="property"
+        :target="`DDProductProperty_value_hover_${rowItem.propertyId}`"
+        :details="rowItem.clients"
+      />
     </b-col>
   </b-form-row>
 </template>
