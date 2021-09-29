@@ -81,7 +81,7 @@ export default class TProductPropertyValue extends Vue {
     }
   }
 
-  @Watch('rowItem.newValues') newValuesChanged (newValue:any, oldValue:any) {
+  @Watch('rowItem.newValues', { deep: true }) newValuesChanged (newValue:any, oldValue:any) {
     if (this.rowItem.newValues === undefined || this.rowItem.newValues.length === 0) { return }
     if (arrEqual(newValue, oldValue)) { return }
     // console.debug('newValues changed', newValue, oldValue)
@@ -175,7 +175,9 @@ export default class TProductPropertyValue extends Vue {
   get visibleValue () {
     if (this.selectionClients.length !== Object.keys(this.rowItem.clients).length) {
       if (Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
-        throw new Error(`something went wrong. SelectionClient.length !== keys(rowItem.clients).length ${this.rowItem}`)
+        console.warn('waiting for new data...')
+        // return ['not ready?']
+        // throw new Error(`something went wrong. SelectionClient.length !== keys(rowItem.clients).length ${JSON.stringify(this.rowItem)}`)
       }
     }
 

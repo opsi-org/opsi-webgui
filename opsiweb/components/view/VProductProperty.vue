@@ -76,10 +76,6 @@ export default class VClientConfig extends Vue {
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string
 
-  @selections.Getter public selectionClients!: Array<string>
-  @selections.Getter public selectionDepots!: Array<string>
-  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
-
   activeTabSet: number = -1
   errorText: IErrorDepProp = { dependencies: '', properties: '' }
   isLoading: boolean = true
@@ -95,6 +91,12 @@ export default class VClientConfig extends Vue {
   get activeTab () { return (this.activeTabSet >= 0) ? this.activeTabSet : (this.tabPropertiesActive) ? 0 : (this.tabDependenciesActive) ? 1 : 0 }
   set activeTab (val:number) { this.activeTabSet = val }
 
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+
+  @Watch('selectionClients') selectionClientsChanged () { this.$fetch() }
+  @Watch('selectionDepots') selectionDepotsChanged () { this.$fetch() }
   @Watch('tabPropertyActive') tabPropertyActiveChanged () { this.activeTab = -1 }
   @Watch('tabDependenciesActive') tabDependenciesActiveChanged () { this.activeTab = -1 }
 
