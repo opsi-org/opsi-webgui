@@ -177,9 +177,7 @@ export default class TProductPropertyValue extends Vue {
   get visibleValue () {
     if (this.selectionClients.length !== Object.keys(this.rowItem.clients).length) {
       if (Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
-        console.warn('waiting for new data...')
-        // return ['not ready?']
-        // throw new Error(`something went wrong. SelectionClient.length !== keys(rowItem.clients).length ${JSON.stringify(this.rowItem)}`)
+        throw new Error(`Something went wrong.\nSelectionClient.length !== rowItem.clients.length\n${JSON.stringify(this.rowItem)}`)
       }
     }
 
