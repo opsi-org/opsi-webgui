@@ -55,7 +55,7 @@ export default class TableCellTCProductVersionCell extends Vue {
         [d]: depots[d]
       }
     }
-    if (Object.keys(this.clients2depots).length <= 0) {
+    if (Object.keys(this.clients2depots).length <= 0 || Object.keys(this.clients2depots).length !== this.selectionClients.length) {
       return tt
     }
     const clients: IObjectString2String = mapValues2Objects(
