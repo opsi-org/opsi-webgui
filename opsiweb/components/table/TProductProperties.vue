@@ -50,37 +50,7 @@
         <small>{{ $t('table.emptyText') }}</small>
       </template>
       <template #cell(propertyId)="row">
-        <i
-          v-if="row.item.anyDepotDifferentFromDefault"
-          :title="`defaults: ${row.item.default}\ndepots:${JSON.stringify(row.item.depots)}\n\n${row.item.description}`"
-        >
-          <!-- (depotValue/s different from default!) -->
-          <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
-          {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
-        </i>
-        <p
-          v-else
-          :title="`defaults: ${row.item.default}\n\n${row.item.description}`"
-        >
-          <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
-          {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
-        </p>
-        <!-- product on each depot, but property not on every depot-->
-        <IconIDetails
-          v-if="Object.values(properties.productVersions).filter(n => n).length == selectionDepots.length && Object.keys(row.item.depots).length!=selectionDepots.length"
-          :id="`btn_tt_${row.item.propertyId}`"
-          :title="`only on depots: ${Object.keys(row.item.depots)}`"
-          content="****"
-        />
-        <!-- <small v-if="row.item.anyDepotDifferentFromDefault">
-          <IconIDetails :id="`TProductProperty_DepotsDifferent_hover_${row.item.propertyId}`" class="right" />
-          <TooltipTTProductCell
-            v-if="row.item.anyDepotDifferentFromDefault"
-            type="property"
-            :target="`TProductProperty_DepotsDifferent_hover_${row.item.propertyId}`"
-            :details="row.item.depots"
-          />
-        </small> -->
+        <TableCellTCPPropertyId :row-item="row.item" :product-versions="properties.productVersions" />
       </template>
       <template #cell(value)="row">
         <b-row>
@@ -158,8 +128,6 @@ export default class TProductProperties extends Vue {
 
   async beforeMount () {
     if (this.selectionClients.length > 0) {
-      // const params = { selectedClients: this.selectionClients }
-      // await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
@@ -208,6 +176,9 @@ export default class TProductProperties extends Vue {
 </script>
 
 <style>
+.TProductProperties_PropertyId_Row > * {
+  display: inline-block;
+}
 .TProductProperties_Table td[aria-colindex$="1"] {
   min-width: 30%;
 }

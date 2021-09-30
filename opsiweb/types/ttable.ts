@@ -73,7 +73,7 @@ export interface IProperty {
   description: string
   multiValue: boolean|string
   editable: boolean|string
-  default?: Array<string|boolean> // combined: product-packageVersion
+  default: Array<string|boolean> // combined: product-packageVersion
   allValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
 
   versionDetails?: { [key:string]: string}
