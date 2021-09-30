@@ -150,11 +150,11 @@ export default class TProductProperties extends Vue {
     }
     if (this.selectionClients.length > 0) {
       for (const c in this.selectionClients) {
-        this.properties.properties[propertyId].clients[c] = values
+        this.properties.properties[propertyId].clients[this.selectionClients[c]] = values
       }
     } else if (this.selectionDepots.length > 0) {
       for (const c in this.selectionDepots) {
-        this.properties.properties[propertyId].depots[c] = values
+        this.properties.properties[propertyId].depots[this.selectionDepots[c]] = values
       }
     } else {
       throw new Error('cannot change value of property if no clients or depots are selected')

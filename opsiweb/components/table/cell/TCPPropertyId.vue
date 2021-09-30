@@ -19,7 +19,8 @@
     <TooltipTTTooltip
       variant="dark"
       classes="TCPPropertyId_TT"
-      :target="`TProductProperties_PropertyId_hover_${rowItem.propertyId}`">
+      :target="`TProductProperties_PropertyId_hover_${rowItem.propertyId}`"
+    >
       <template #tooltip>
         Defaults: <b v-if="rowItem.default!='mixed'">[{{ rowItem.details }}]</b>
         <div v-else>
