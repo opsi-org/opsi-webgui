@@ -3,7 +3,7 @@
   <b-tooltip v-else-if="(type=='ppversion' && text)" :target="target" triggers="hover" :variant="variant"> only on Depot:{{row.item.objectIdsDepots}}</b-tooltip>
   <b-tooltip v-else-if="(type=='productId' && text)" :target="target" triggers="hover" variant="danger">only on: {{row.item.depotId}}</b-tooltip>
   <b-tooltip v-else-if="(type=='installationStatus' && text)" :target="target" triggers="hover" :variant="variant">Status: {{row.item.installationStatus}}</b-tooltip> -->
-  <b-tooltip :target="target" triggers="hover">
+  <b-tooltip :target="target" triggers="hover" :placement="placement">
     <TableTTooltipContent
       :target="target"
       :details="details"
@@ -25,6 +25,7 @@ import { IObjectString2String } from '~/types/tsettings'
 export default class TTProductCell extends Vue {
   @Prop({ }) target!: string
   @Prop({ }) details!: IObjectString2String
+  @Prop({ default: 'bottom' }) placement!: string
   @Prop({ default: 'version' }) type!: string
   @Prop({ default: true }) dark!: boolean
   @Prop({ default: false }) depotVersionDiff?: boolean
