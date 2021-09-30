@@ -50,23 +50,37 @@
         <small>{{ $t('table.emptyText') }}</small>
       </template>
       <template #cell(propertyId)="row">
-        <div :title="`defaults: ${row.item.default}\n\n${row.item.description}`">
+        <i
+          v-if="row.item.anyDepotDifferentFromDefault"
+          :title="`defaults: ${row.item.default}\ndepots:${JSON.stringify(row.item.depots)}\n\n${row.item.description}`"
+        >
+          <!-- (depotValue/s different from default!) -->
           <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
           {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
-        </div>
-        <b-badge
+        </i>
+        <p
+          v-else
+          :title="`defaults: ${row.item.default}\n\n${row.item.description}`"
+        >
+          <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
+          {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
+        </p>
+        <!-- product on each depot, but property not on every depot-->
+        <IconIDetails
           v-if="Object.values(properties.productVersions).filter(n => n).length == selectionDepots.length && Object.keys(row.item.depots).length!=selectionDepots.length"
           :id="`btn_tt_${row.item.propertyId}`"
           :title="`only on depots: ${Object.keys(row.item.depots)}`"
-        >
-          <!-- product on each depot, but property not on every depot-->
-          *
-        </b-badge>
-        <small v-if="row.item.anyDepotDifferentFromDefault">
-          <br>
-          (depotValue/s different from default!)
-          <!-- TODO: show tooltip with depot- and default-values -->
-        </small>
+          content="****"
+        />
+        <!-- <small v-if="row.item.anyDepotDifferentFromDefault">
+          <IconIDetails :id="`TProductProperty_DepotsDifferent_hover_${row.item.propertyId}`" class="right" />
+          <TooltipTTProductCell
+            v-if="row.item.anyDepotDifferentFromDefault"
+            type="property"
+            :target="`TProductProperty_DepotsDifferent_hover_${row.item.propertyId}`"
+            :details="row.item.depots"
+          />
+        </small> -->
       </template>
       <template #cell(value)="row">
         <b-row>
