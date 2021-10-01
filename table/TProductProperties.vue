@@ -40,7 +40,7 @@
         <small>{{ $t('table.emptyText') }}</small>
       </template>
       <template #cell(propertyId)="row">
-        <TableCellTCPPropertyId :row="row" :product-versions="properties.productVersions" />
+        <TableCellTCProductPropertyId :row="row" :product-versions="properties.productVersions" />
       </template>
       <template #cell(value)="row">
         <b-row>
