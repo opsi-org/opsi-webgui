@@ -1,32 +1,27 @@
 <template>
   <div>
     <div v-if="!errorText && $mq=='mobile'">
-      <b-alert show variant="secondary">
+      <AlertAAlert show variant="secondary">
         <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
-      </b-alert>
+      </AlertAAlert>
     </div>
     <div v-else-if="!errorText && selectionClients.length <= 0">
-      <b-alert show variant="warning">
+      <AlertAAlert show variant="warning">
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
-      </b-alert>
+      </AlertAAlert>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
-      <b-alert show variant="warning">
+      <AlertAAlert show variant="warning">
         <small>
-          {{ $t('message.notOnEachDepot').replace(
-            '[[DoNotTranslateThis:depotsCount/allDepotsCount]]',
-            `${Object.values(properties.productVersions).filter(n => n).length}/${selectionDepots.length}`
-          ) }}
+          {{ $t('message.notOnEachDepot', {count:Object.values(properties.productVersions).filter(n => n).length, countall:selectionDepots.length}) }}
         </small>
-      </b-alert>
+      </AlertAAlert>
     </div>
-    <!-- <div v-if="$mq=='tablet'">hiii {{$mq}}</div> -->
-    <!-- <DropdownDDDefault
-      v-if="selectionDepots.length>1"
-      :options="['all depots', ...selectionDepots]"
-      :selected-items="['all depots']"
-    /> -->
-    <!-- v-if="properties && Object.values(properties).length > 0" -->
+    <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).some((v)=>v!=Object.values(properties.productVersions).filter(n => n)[0])">
+      <AlertAAlert show variant="warning">
+        <small>{{ $t('message.differentProductVersions') }}</small>
+      </AlertAAlert>
+    </div>
 
     <p v-if="errorText">
       {{ errorText }}
@@ -41,16 +36,11 @@
       :disable-selection="true"
       show-empty
     >
-      <!-- :error-text="errorText" -->
-      <!-- <template #cell(value)="row">
-        <b-button @click="row.toggleDetails"></b-button>
-      </template> -->
-
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
       </template>
       <template #cell(propertyId)="row">
-        <TableCellTCPPropertyId :row-item="row.item" :product-versions="properties.productVersions" />
+        <TableCellTCPPropertyId :row="row" :product-versions="properties.productVersions" />
       </template>
       <template #cell(value)="row">
         <b-row>
@@ -75,17 +65,19 @@
         </b-row>
       </template>
       <template #row-details="row">
-        <b-container>
-          <b-input-group>
+        <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${row.item.propertyId}`">
+          <b-input-group v-if="row.item.editable">
             <b-form-input
               v-model="row.item.newValue"
               size="sm"
+              aria-label="new property value text"
               class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
               @keyup.enter="updateNewPropertyValuesRow(row.item)"
             />
             <template #append>
               <b-button
                 size="sm"
+                aria-label="add new property value"
                 variant="outline-secondary"
                 @click="updateNewPropertyValuesRow(row.item)"
               >
@@ -94,6 +86,29 @@
               <ButtonBTNHelpTooltip :id="`btn_tt_${row.item.propertyId}`" tooltip="middle click on value-dropdown will copy the text" />
             </template>
           </b-input-group>
+          <small>
+            Defaults: <b v-if="row.item.default!='mixed'">[{{ row.item.details }}]</b>
+            <div v-else>
+              <p v-for="v,k in row.item.defaultDetails" :key="k">
+                {{ k }}: <b>{{ v }}</b>
+              </p>
+            </div>
+            <br>
+            <div v-if="row.item.anyDepotDifferentFromDefault">
+              Depots:
+              <p v-for="v,k in row.item.depots" :key="k">
+                {{ k }}: <b>{{ v }}</b>
+              </p>
+            </div>
+            <br>
+            Description: <b v-if="row.item.description!='mixed'">{{ row.item.description }}</b>
+            <div v-else>
+              <p v-for="v,k in row.item.descriptionDetails" :key="k">
+                {{ k }}: <b>{{ v }}</b>
+              </p>
+            </div>
+            <br>
+          </small>
         </b-container>
       </template>
     </TableTTable>
@@ -196,5 +211,10 @@ export default class TProductProperties extends Vue {
 .b-table td > .row,
 .b-table td > .row > .row {
   margin: 0px !important;
+}
+
+.TProductProperties_row_details > small p {
+  margin-left: 10px !important;
+  margin-bottom: 0 !important;
 }
 </style>
