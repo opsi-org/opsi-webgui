@@ -12,9 +12,10 @@
     "deleteMessage": " has been deleted successfully.",
     "exists": " already exists.",
     "noClientsSelectedShowDepot": "0 clients selected (set depot value)",
-    "notOnEachDepot": "product installed only on [[DoNotTranslateThis:depotsCount/allDepotsCount]] depots",
+    "notOnEachDepot": "product installed only on {count}/{countall} depots",
     "errorInPropertyFetch": "Something went wrong with ProductProperties",
-    "errorInDependenciesFetch": "Something went wrong with ProductDependencies"
+    "errorInDependenciesFetch": "Something went wrong with ProductDependencies",
+    "differentProductVersions":"Different versions exists"
   },
   "title":{
     "overview": "OVERVIEW",

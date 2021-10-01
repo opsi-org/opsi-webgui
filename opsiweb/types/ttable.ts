@@ -35,6 +35,7 @@ export interface ITableRow {
     _rowVariant?: string
   };
 }
+
 export interface ITableData {
   pageNumber: number,
   setPageNumber: Function,
@@ -93,6 +94,11 @@ export interface IProperty {
   clients:{ [key: string]: Array<string|boolean> }
 }
 
+export interface ITableRowProperty {
+  rowSelected: boolean
+  toggleDetails: Function,
+  item: IProperty
+}
 export interface IProductDependency {
   productId: string
   productAction: string|null
