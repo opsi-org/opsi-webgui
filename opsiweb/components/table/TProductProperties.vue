@@ -22,6 +22,9 @@
         <small>{{ $t('message.differentProductVersions') }}</small>
       </AlertAAlert>
     </div>
+    <AlertAAlert show variant="warning">
+      <small>Saving of properties coming soon.. </small>
+    </AlertAAlert>
 
     <p v-if="errorText">
       {{ errorText }}
@@ -109,6 +112,7 @@
             </div>
             <br>
           </small>
+          <br>
         </b-container>
       </template>
     </TableTTable>
@@ -117,7 +121,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { INewPropertyValue, IProp, IProperty } from '~/types/ttable'
+import { IProp, IProperty } from '~/types/ttable'
 const selections = namespace('selections')
 
 @Component
@@ -131,7 +135,7 @@ export default class TProductProperties extends Vue {
   // errorText: string = ''
   result:Object = {}
   isLoading: boolean = false
-  newValuesPerProp: INewPropertyValue = {}
+  // newValuesPerProp: INewPropertyValue = {}
   fetchedDataClients2Depots: object = {}
 
   get fields () {
@@ -163,6 +167,9 @@ export default class TProductProperties extends Vue {
       propertyId,
       values
     }
+    const saved = false
+    console.warn('(todo) Request POST product property: ', data)
+    if (!saved) { return }
     if (this.selectionClients.length > 0) {
       for (const c in this.selectionClients) {
         this.properties.properties[propertyId].clients[this.selectionClients[c]] = values
@@ -174,8 +181,8 @@ export default class TProductProperties extends Vue {
     } else {
       throw new Error('cannot change value of property if no clients or depots are selected')
     }
+    this.properties.properties = Object.assign({}, this.properties.properties)
     // eslint-disable-next-line no-console
-    console.debug('(todo) Request POST product property: ', data)
     // this.fetchedData = (await this.$axios.$post(
     //   '/api/opsidata/product/${this.id}/properties',
     //   JSON.stringify(this.data)
@@ -183,6 +190,7 @@ export default class TProductProperties extends Vue {
   }
 
   updateNewPropertyValuesRow (rowItem: IProperty) {
+    console.debug('updateNewPropertyValuesRow', rowItem.newValue, rowItem.newValues)
     if (rowItem.newValue && rowItem.newValues) {
       rowItem.newValues.push(rowItem.newValue)
     }

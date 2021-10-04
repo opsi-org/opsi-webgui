@@ -35,6 +35,10 @@
 .badge-warning{
   color: var(--light) !important;
 }
+
+.value-changed-not-saved {
+  color: var(--orange) !important;
+}
 /* .table.b-table.table-hover > tbody > tr.table-active:hover td, .table.b-table.table-hover > tbody > tr.table-active:hover {
   background-image: unset !important;
 } */
