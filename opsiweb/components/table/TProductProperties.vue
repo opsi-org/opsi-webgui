@@ -1,0 +1,227 @@
+<template>
+  <div>
+    <div v-if="!errorText && $mq=='mobile'">
+      <AlertAAlert show variant="secondary">
+        <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
+      </AlertAAlert>
+    </div>
+    <div v-else-if="!errorText && selectionClients.length <= 0">
+      <AlertAAlert show variant="warning">
+        <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
+      </AlertAAlert>
+    </div>
+    <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
+      <AlertAAlert show variant="warning">
+        <small>
+          {{ $t('message.notOnEachDepot', {count:Object.values(properties.productVersions).filter(n => n).length, countall:selectionDepots.length}) }}
+        </small>
+      </AlertAAlert>
+    </div>
+    <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).some((v)=>v!=Object.values(properties.productVersions).filter(n => n)[0])">
+      <AlertAAlert show variant="warning">
+        <small>{{ $t('message.differentProductVersions') }}</small>
+      </AlertAAlert>
+    </div>
+    <AlertAAlert show variant="warning">
+      <small>Saving of properties coming soon.. </small>
+    </AlertAAlert>
+
+    <p v-if="errorText">
+      {{ errorText }}
+    </p>
+    <TableTTable
+      class="TProductProperties_Table"
+      :is-busy="isLoading"
+      :items="Object.values(properties.properties)"
+      :fields="fields"
+      :stacked="false"
+      :small="true"
+      :disable-selection="true"
+      show-empty
+    >
+      <template #empty>
+        <small>{{ $t('table.emptyText') }}</small>
+      </template>
+      <template #cell(propertyId)="row">
+        <TableCellTCProductPropertyId :row="row" :product-versions="properties.productVersions" />
+      </template>
+      <template #cell(value)="row">
+        <b-row>
+          <div>
+            <TableCellTCProductPropertyValue
+              :clients2depots="fetchedDataClients2Depots"
+              :row-item="row.item"
+              @change="handleChange"
+            >
+              <template #editable-button>
+                <b-button
+                  v-if="row.item.editable"
+                  variant="primary"
+                  size="sm"
+                  @click="row.toggleDetails()"
+                >
+                  +
+                </b-button>
+              </template>
+            </TableCellTCProductPropertyValue>
+          </div>
+        </b-row>
+      </template>
+      <template #row-details="row">
+        <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${row.item.propertyId}`">
+          <b-input-group v-if="row.item.editable">
+            <b-form-input
+              v-model="row.item.newValue"
+              size="sm"
+              aria-label="new property value text"
+              class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
+              @keyup.enter="updateNewPropertyValuesRow(row.item)"
+            />
+            <template #append>
+              <b-button
+                size="sm"
+                aria-label="add new property value"
+                variant="outline-secondary"
+                @click="updateNewPropertyValuesRow(row.item)"
+              >
+                {{ $t('values.add') }}
+              </b-button>
+              <ButtonBTNHelpTooltip :id="`btn_tt_${row.item.propertyId}`" tooltip="middle click on value-dropdown will copy the text" />
+            </template>
+          </b-input-group>
+          <small>
+            Defaults: <b v-if="row.item.default!='mixed'">[{{ row.item.details }}]</b>
+            <div v-else>
+              <p v-for="v,k in row.item.defaultDetails" :key="k">
+                {{ k }}: <b>{{ v }}</b>
+              </p>
+            </div>
+            <br>
+            <div v-if="row.item.anyDepotDifferentFromDefault">
+              Depots:
+              <p v-for="v,k in row.item.depots" :key="k">
+                {{ k }}: <b>{{ v }}</b>
+              </p>
+            </div>
+            <br>
+            Description: <b v-if="row.item.description!='mixed'">{{ row.item.description }}</b>
+            <div v-else>
+              <p v-for="v,k in row.item.descriptionDetails" :key="k">
+                {{ k }}: <b>{{ v }}</b>
+              </p>
+            </div>
+            <br>
+          </small>
+          <br>
+        </b-container>
+      </template>
+    </TableTTable>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { IProp, IProperty } from '~/types/ttable'
+const selections = namespace('selections')
+
+@Component
+export default class TProductProperties extends Vue {
+  @Prop({ }) id!: string
+  @Prop({ default: '' }) errorText!: string
+  @Prop({ }) properties!: IProp
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
+
+  // errorText: string = ''
+  result:Object = {}
+  isLoading: boolean = false
+  // newValuesPerProp: INewPropertyValue = {}
+  fetchedDataClients2Depots: object = {}
+
+  get fields () {
+    return [
+      { label: 'pId', key: 'propertyId', thStyle: { display: 'none' } },
+      { label: 'pValue', key: 'value', thStyle: { display: 'none' } }
+    ]
+  }
+
+  async beforeMount () {
+    if (this.selectionClients.length > 0) {
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
+        .then((response) => {
+          this.fetchedDataClients2Depots = response.result
+        }).catch((error) => {
+          // eslint-disable-next-line no-console
+          // console.error(error)
+          this.errorText = (this as any).$t('message.errortext')
+          throw new Error(error)
+        })
+    }
+  }
+
+  handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
+    // TODO: TODO: Backend-Request setProductProperty
+    const data = {
+      selectionDepots: this.selectionDepots,
+      selectionClients: this.selectionClients,
+      propertyId,
+      values
+    }
+    const saved = false
+    console.warn('(todo) Request POST product property: ', data)
+    if (!saved) { return }
+    if (this.selectionClients.length > 0) {
+      for (const c in this.selectionClients) {
+        this.properties.properties[propertyId].clients[this.selectionClients[c]] = values
+      }
+    } else if (this.selectionDepots.length > 0) {
+      for (const c in this.selectionDepots) {
+        this.properties.properties[propertyId].depots[this.selectionDepots[c]] = values
+      }
+    } else {
+      throw new Error('cannot change value of property if no clients or depots are selected')
+    }
+    this.properties.properties = Object.assign({}, this.properties.properties)
+    // eslint-disable-next-line no-console
+    // this.fetchedData = (await this.$axios.$post(
+    //   '/api/opsidata/product/${this.id}/properties',
+    //   JSON.stringify(this.data)
+    // )).result
+  }
+
+  updateNewPropertyValuesRow (rowItem: IProperty) {
+    if (rowItem.newValue && rowItem.newValues) {
+      rowItem.newValues.push(rowItem.newValue)
+    }
+  }
+}
+</script>
+
+<style>
+.TProductProperties_PropertyId_Row > * {
+  display: inline-block;
+}
+.TProductProperties_Table td[aria-colindex$="1"] {
+  min-width: 30%;
+}
+.TProductProperties_Table td[aria-colindex$="2"] {
+  max-width: 70%;
+  /* max-width: 100%; */
+  /* background-color: blue !important; */
+}
+.TProductProperties_Table {
+  max-width: 100% !important;
+}
+.TableProductsDetails_EditableProdProp_AddValue_BVFormIInput {
+  max-width: calc(100% - 30px);
+}
+.b-table td > .row,
+.b-table td > .row > .row {
+  margin: 0px !important;
+}
+
+.TProductProperties_row_details > small p {
+  margin-left: 10px !important;
+  margin-bottom: 0 !important;
+}
+</style>

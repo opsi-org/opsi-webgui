@@ -10,7 +10,12 @@
     "delete": "Löschen",
     "deleteConfirm": "Möchten Sie den Client wirklich löschen?",
     "deleteMessage": " wurde erfolgreich gelöscht.",
-    "exists": " existiert bereits."
+    "exists": " existiert bereits.",
+    "noClientsSelectedShowDepot": "keine Clients ausgewählt (Änderungen am Depot)",
+    "notOnEachDepot": "Produkt nur auf {count}/{countall} Depots",
+    "errorInPropertyFetch": "Etwas lief schief bei den ProduktProperties",
+    "errorInDependenciesFetch": "Etwas lief schief bei den Produkt-Abhängigkeiten",
+    "differentProductVersions":"Es existieren verschiedene Produkt-Versionen"
   },
   "title":{
     "overview": "ÜBERBLICK",
@@ -32,10 +37,16 @@
     "settings": "Einstellungen",
     "localboot": "Localboot-Produkt",
     "netboot": "Netboot-Produkt",
-    "hostattr": "Host-Attribute"
+    "hostattr": "Host-Attribute",
+    "properties": "Property-Konfiguration",
+    "dependencies": "Abhängigkeiten",
+    "dependenciesEmpty": "(leer)",
+    "propertiesEmpty": "(leer)"
+
   },
   "values": {
-    "mixed": "<mixed>"
+    "mixed": "<mixed>",
+    "add": "+"
   },
   "table": {
     "filter": "Filter",
@@ -43,6 +54,7 @@
     "clientDetails":"Client-Details",
     "addtnlInfo":"Zusätzliche Information",
     "perpage": "Pro Seite",
+    "emptyText":"Keine Einträge",
     "fields":{
       "id": "ID",
       "name": "Name",
@@ -67,7 +79,14 @@
       "actionRequest": "Request",
       "versionOutdated": "Veraltete Produkte",
       "actionRequestFailed": "Fehlgeschlagene Produkte",
-      "rowactions": "Aktionen"
+      "rowactions": "Aktionen",
+      "productId": "Produkt Id",
+      "required": "required",
+      "pre-required": "pre-required",
+      "post-required": "post-required",
+      "on-deinstall": "on-deinstall",
+      "requiredType": "typ",
+      "unknown": "unbekannt"
     }
   },
   "button" : {

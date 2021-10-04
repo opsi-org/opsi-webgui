@@ -110,6 +110,17 @@
         />
       <!-- {{ row.item.tooltiptext }} -->
       </template>
+      <template #cell(rowactions)="row">
+        <ButtonBTNRowLinkTo
+          :title="$t('title.config')"
+          icon="gear"
+          to="/products/config"
+          :ident="row.item.productId"
+          :pressed="isRouteActive"
+          :click-parent="routeRedirectToParent"
+        />
+      </template>
+
       <template #pagination>
         <BarBPagination
           :tabledata="tableData"
@@ -122,7 +133,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
@@ -142,9 +153,12 @@ interface FetchProd {
 }
 @Component
 export default class TProductsLocalboot extends Vue {
+  @Prop() rowId!: string
+  @Prop() routeRedirectWith!: Function
+
   action: string = ''
   type: string = ''
-  rowId: string = ''
+  // rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
   fetchedData: FetchProd = { products: [], total: 0 }
@@ -174,7 +188,7 @@ export default class TProductsLocalboot extends Vue {
     name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: false },
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
+    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false },
     actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: false, _fixed: false },
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
@@ -282,10 +296,16 @@ export default class TProductsLocalboot extends Vue {
   }
 
   async save (change: object) {
-    const responseError: IObjectString2String = (await this.$axios.$patch(
-      '/api/opsidata/clients/products',
-      { data: change }
-    )).error
+    let responseError: IObjectString2String = {}
+    try {
+      responseError = (await this.$axios.$patch(
+        '/api/opsidata/clients/products',
+        { data: change }
+      )).error
+    } catch (error) {
+      makeToast(this, error.message, this.$t('message.error') as string, 'danger')
+      return
+    }
     if (Object.keys(responseError).length > 0) {
       let txt = 'Errors for: <br />'
       for (const k in responseError) {
@@ -365,6 +385,18 @@ export default class TProductsLocalboot extends Vue {
       this.setChangesProducts([])
       this.$fetch()
     }
+  }
+
+  routeRedirectToParent (to: string, rowIdent: string) {
+    this.routeRedirectWith(to, rowIdent)
+  }
+
+  isRouteActive (to: string, rowIdent: string) {
+    return this.$route.path.includes(to) && this.rowId === rowIdent
+  }
+
+  get secondColumnOpened () {
+    return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 }
 </script>

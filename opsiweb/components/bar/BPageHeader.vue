@@ -7,7 +7,8 @@
       <b-icon v-if="collapsed" icon="chevron-double-down" />
       <b-icon v-else icon="chevron-double-right" />
     </span>
-    <b v-if="title">{{ title }}</b>
+    <b v-if="title && bold">{{ title }}</b>
+    <p v-else-if="title && !bold">{{ title }}</p>
     <slot name="left" />
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
@@ -24,6 +25,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class BPageHeader extends Vue {
   @Prop({ default: 'transparent' }) variant!: string
+  @Prop({ default: true }) bold!: boolean
   @Prop({ }) navbartype!: string
   @Prop({ }) collapsed!: boolean
   @Prop({ }) title!: string

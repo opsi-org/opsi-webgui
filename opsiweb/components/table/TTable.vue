@@ -3,13 +3,16 @@
     v-bind="$props"
     :ref="$props.id"
     :class="$mq"
+    :primary-key="datakey"
     class="ttable"
-    :small="$mq=='mobile'"
-    :stacked="$mq=='mobile'"
-    hover
-    selectable
-    borderless
+    :tbody-tr-class="{'table-active': false}"
     select-mode="multi"
+    borderless
+    :striped="false"
+    :small="small!=false"
+    :stacked="$mq=='mobile' && stacked!=false"
+    :hover="!disableSelection"
+    :selectable="!disableSelection"
     @row-clicked="rowChanged"
   >
     <template #table-busy>
@@ -29,6 +32,7 @@
     <template #cell(sel)="row">
       {{ fixRow(row) }}
       <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
+      <!-- {{ fixRow(row) }} -->
     </template>
 
     <template #head(rowactions)="{}">
@@ -54,6 +58,7 @@ export default class TTable extends BTable {
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
+  @Prop({ default: false }) readonly disableSelection!: boolean
   @Prop({ }) tabledata!: ITableData
 
   rowIdent: any
@@ -69,14 +74,23 @@ export default class TTable extends BTable {
 
     if (typeof this.rowIdent === 'string') {
       row.rowSelected = this.selection.includes(this.rowIdent)
+      const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
+      if (elem) { elem.classList.remove('table-active') }
+      // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
       if (row.rowSelected) {
-        const elem = document.getElementById(`__row_${this.rowIdent}`)
-        if (elem) { elem.classList.add('b-table-row-selected') }
         row.item._rowVariant = 'primary'
+        if (elem) {
+          elem.classList.add('b-table-row-selected')
+          elem.classList.add('table-primary')
+          elem.classList.add('aaaa')
+        }
       } else {
-        const elem = document.getElementById(`__row_${this.rowIdent}Major`)
-        if (elem) { elem.classList.remove('b-table-row-selected') }
         row.item._rowVariant = ''
+        if (elem) {
+          elem.classList.remove('table-active')
+          elem.classList.remove('b-table-row-selected')
+          elem.classList.remove('table-primary')
+        }
       }
     }
     // row.rowSelected = this.selection.includes(row.item.ident)
@@ -93,16 +107,24 @@ export default class TTable extends BTable {
 
   rowChanged (item: ITableDataItem) {
     const selectionCopy:Array<string> = [...this.selection]
-    if (this.datakey === 'productId') {
+    // for (const el in document.querySelector('.table tr') as ) {
+    //   el.classList.remove('table-active')
+    // }
+
+    if (this.datakey === 'productId' && item.productId) {
       if (selectionCopy.includes(item.productId)) {
         selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
       } else {
         selectionCopy.push(item.productId)
       }
-    } else if (selectionCopy.includes(item.ident)) {
-      selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
-    } else {
-      selectionCopy.push(item.ident)
+    } else if (item.depotId && selectionCopy.includes(item.depotId)) {
+      selectionCopy.splice(selectionCopy.indexOf(item.depotId), 1)
+    } else if (item.clientId && selectionCopy.includes(item.clientId)) {
+      selectionCopy.splice(selectionCopy.indexOf(item.clientId), 1)
+    } else if (item.depotId) {
+      selectionCopy.push(item.depotId)
+    } else if (item.clientId) {
+      selectionCopy.push(item.clientId)
     }
 
     // if (selectionCopy.includes(item.ident)) {
@@ -111,6 +133,10 @@ export default class TTable extends BTable {
     //   selectionCopy.push(item.ident)
     // }
     this.onchangeselection(selectionCopy)
+
+    // const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
+    // if (elem) { elem.classList.remove('table-active') }
+    // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
   }
 }
 </script>
@@ -119,7 +145,17 @@ export default class TTable extends BTable {
 .fixed_column_selection{
   float: right;
 }
-._fixed_column_btn_selected_item{
-  background-color: var(--primary_light);
+.table-active, .table-active > th, .table-active > td {
+  background-color: unset !important;
 }
+
+.b-table-row-selected.table-primary{
+  /* background-color: var(--primary) !important; */
+  background-color: inherit !important;
+}
+
+/* .table.b-table > tbody > .table-active, .table.b-table > tbody > .table-active > th, .table.b-table > tbody > .table-active > td,
+.table-active, .table-active > td, .table-active > th {
+  background-color: unset;
+} */
 </style>

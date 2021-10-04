@@ -15,6 +15,7 @@
       :busy="isLoading"
       :error-text="errorText"
       :onchangeselection="setSelectionProducts"
+      :stacked="$mq=='mobile'"
     >
       <template #filter>
         <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.netbootid')" />
@@ -89,6 +90,17 @@
         />
       <!-- {{ row.item.tooltiptext }} -->
       </template>
+      <template #cell(rowactions)="row">
+        <ButtonBTNRowLinkTo
+          :title="$t('title.config')"
+          icon="gear"
+          to="/products/config"
+          :ident="row.item.productId"
+          :pressed="isRouteActive"
+          :click-parent="routeRedirectToParent"
+        />
+      </template>
+
       <template #pagination>
         <BarBPagination
           :tabledata="tableData"
@@ -101,7 +113,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
 import { makeToast } from '@/mixins/toast'
 import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
@@ -123,6 +135,9 @@ interface FetchProd {
 @Component
 export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
+  @Prop() rowId!: string
+  @Prop() routeRedirectWith!: Function
+
   action: string = ''
   type: string = ''
   isLoading: boolean = true
@@ -148,6 +163,7 @@ export default class TProductsNetboot extends Vue {
 
   headerData: ITableHeaders = {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    ident: { label: '', key: 'ident', visible: true, _fixed: true },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: false },
     actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: false },
     productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: false },
@@ -339,6 +355,18 @@ export default class TProductsNetboot extends Vue {
       this.setChangesProducts([])
       this.$fetch()
     }
+  }
+
+  routeRedirectToParent (to: string, rowIdent: string) {
+    this.routeRedirectWith(to, rowIdent)
+  }
+
+  isRouteActive (to: string, rowIdent: string) {
+    return this.$route.path.includes(to) && this.rowId === rowIdent
+  }
+
+  get secondColumnOpened () {
+    return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 }
 </script>

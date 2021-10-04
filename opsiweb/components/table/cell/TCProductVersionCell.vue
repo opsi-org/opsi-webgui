@@ -3,27 +3,22 @@
     <div
       :id="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
     >
-      <b-badge
+      <IconIDetails
         v-if="row.item.depot_version_diff"
+        content="unequal"
         :variant="(row.item.depot_version_diff||false)?'warning':''"
         @click="$emit('details', row, tooltiptext)"
-      >
-        <span>&#8800;</span>
-      </b-badge>
+      />
       {{ (row.item.depot_version_diff)? '' : row.item.depotVersions[0] }}
-      <b-badge
+      <IconIDetails
         v-if="(row.item.selectedDepots.length != selectionDepots.length)"
         :variant="(row.item.selectedDepots.length != selectionDepots.length)?'warning':''"
-      >
-        *
-      </b-badge>
-      <b-badge
+      />
+      <IconIDetails
         v-if="row.item.client_version_outdated||false"
         :variant="(row.item.client_version_outdated||false)?'danger':''"
         @click="$emit('details', row, tooltiptext)"
-      >
-        *
-      </b-badge>
+      />
     </div>
     <TooltipTTProductCell
       v-if="row.item.depot_version_diff || row.item.client_version_outdated||(row.item.selectedDepots.length != selectionDepots.length)||false"
@@ -60,7 +55,7 @@ export default class TableCellTCProductVersionCell extends Vue {
         [d]: depots[d]
       }
     }
-    if (Object.keys(this.clients2depots).length <= 0) {
+    if (Object.keys(this.clients2depots).length <= 0 || Object.keys(this.clients2depots).length !== this.selectionClients.length) {
       return tt
     }
     const clients: IObjectString2String = mapValues2Objects(

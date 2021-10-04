@@ -1,8 +1,10 @@
-import { IObjectString2ObjectString2String } from './tsettings'
+import { IObjectString2ObjectString2String, IObjectString2String, IObjectString2StringOrUndefined } from './tsettings'
 
 export interface ITableDataItem {
-  ident: string
-  productId: string
+  // ident: string
+  productId?: string
+  depotId?: string
+  clientId?: string
 }
 
 export interface ITableRowItemProducts {
@@ -27,10 +29,13 @@ export interface ITableRow {
   toggleDetails: Function,
   item: ITableRowItemProducts|{
     ident: string
-    productId: string
+    productId?: string
+    depotId?: string
+    clientId?: string
     _rowVariant?: string
   };
 }
+
 export interface ITableData {
   pageNumber: number,
   setPageNumber: Function,
@@ -58,4 +63,79 @@ export interface ITableHeader {
 }
 export interface ITableHeaders {
   [key: string]: ITableHeader
+}
+
+export interface IProperty {
+  _showDetails?: boolean // from bootstrap-table
+  productId?: string
+  propertyId: string
+  type: 'UnicodeProductProperty'|'BoolProductProperty'
+  version?: string
+  description: string
+  multiValue: boolean|string
+  editable: boolean|string
+  default: Array<string|boolean> // combined: product-packageVersion
+  allValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
+
+  versionDetails?: { [key:string]: string}
+  descriptionDetails?: { [key:string]: string}
+  defaultDetails?: { [key:string]: Array<boolean|string>}
+  multiValueDetails?: { [key:string]: boolean}
+  editableDetails?: { [key:string]: boolean}
+
+  newValue?: string // empty string if editable==true
+  newValues?: Array<string> // empty list if editable==true
+
+  allClientValuesEqual?: boolean
+  anyDepotDifferentFromDefault?: boolean
+  anyClientDifferentFromDepot?: boolean
+
+  depots:{ [key: string]: Array<string|boolean> }
+  clients:{ [key: string]: Array<string|boolean> }
+}
+
+export interface ITableRowProperty {
+  rowSelected: boolean
+  toggleDetails: Function,
+  item: IProperty
+}
+export interface IProductDependency {
+  productId: string
+  productAction: string|null
+  version: string
+  requiredProductId: string
+  requiredVersion: string|null
+  requiredAction: string|null
+  requiredInstallationStatus: string|null
+  requirementType: string|null
+}
+
+export interface IProperties {
+  [key: string]: IProperty
+}
+export interface IProductPropertyConfig {
+  description?: string
+  dependencies?: Array<IProductDependency>
+  properties: IProperties
+}
+
+export interface INewPropertyValue {
+  [key: string]: {
+    newValue: string
+    newValues: Array<string>
+  }
+}
+
+export interface IDepend {
+  dependencies: Array<IProductDependency>
+  productVersions: IObjectString2StringOrUndefined
+  productDescription: string
+  productDescriptionDetails: IObjectString2String
+}
+
+export interface IProp {
+  properties: IProperties
+  productVersions: IObjectString2StringOrUndefined
+  productDescription: string
+  productDescriptionDetails: IObjectString2String
 }
