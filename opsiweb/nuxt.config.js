@@ -2,6 +2,9 @@ import path from 'path'
 import fs from 'fs'
 import pkg from './package.json'
 
+import en from './locale/en.json'
+import de from './locale/de.json'
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -43,8 +46,8 @@ export default {
   plugins: [
     '~/plugins/axios',
     { src: '~/plugins/vuex-persist', ssr: false },
-    { src: '~/plugins/vue-treeselect.js', mode: 'client' },
-    '~/plugins/vue-i18n.js'
+    { src: '~/plugins/vue-treeselect.js', mode: 'client' }
+    // '~/plugins/vue-i18n.js'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -66,6 +69,13 @@ export default {
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    ['@nuxtjs/i18n', {
+      locale: 'en',
+      vueI18n: {
+        fallbackLocale: 'en',
+        messages: { en, de }
+      }
+    }],
     ['nuxt-mq', {
       // Default breakpoint for SSR
       // defaultBreakpoint: 'mobile',
