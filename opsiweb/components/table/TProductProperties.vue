@@ -190,7 +190,6 @@ export default class TProductProperties extends Vue {
   }
 
   updateNewPropertyValuesRow (rowItem: IProperty) {
-    console.debug('updateNewPropertyValuesRow', rowItem.newValue, rowItem.newValues)
     if (rowItem.newValue && rowItem.newValues) {
       rowItem.newValues.push(rowItem.newValue)
     }

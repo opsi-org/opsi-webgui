@@ -93,11 +93,6 @@ export default class DDDefault extends BDropdown {
     }
   }
 
-  // get isOrigin () {
-  //   console.debug('DD-isOrigin', this.selections, this.selectedItems)
-  //   return arrayEqual(this.selections, this.selectedItems)
-  // }
-
   toggleSelection (item: string) {
     // multValue
     if (!this.selections.includes(item)) {
