@@ -60,7 +60,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
-import { IDepend, IProp } from '~/types/ttable'
+import { IDepend, IProp } from '~/scripts/types/ttable'
 const selections = namespace('selections')
 interface IErrorDepProp {
   dependencies: string

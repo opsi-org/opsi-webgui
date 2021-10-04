@@ -1,6 +1,7 @@
 import Cookie from 'js-cookie'
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
-import { IObjectString2Boolean, ITheme } from '@/types/tsettings'
+import { ITheme } from '@/scripts/types/tsettings'
+import { IObjectString2Boolean } from '@/scripts/types/tgeneral'
 interface IColumnLayoutCollaped {
   parentId: string,
   value: boolean

@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
-import { IObjectString2Any } from '~/types/tsettings'
+import { IObjectString2Any } from '~/scripts/types/tgeneral'
 const settings = namespace('settings')
 
 @Component export default class DDLang extends Vue {

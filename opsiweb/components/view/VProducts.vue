@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
-// import { ITableData } from '~/types/ttable'
+// import { ITableData } from '~/scripts/types/ttable'
 // const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')

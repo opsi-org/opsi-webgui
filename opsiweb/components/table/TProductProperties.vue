@@ -121,7 +121,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { IProp, IProperty } from '~/types/ttable'
+import { IProp, IProperty } from '~/scripts/types/ttable'
 const selections = namespace('selections')
 
 @Component

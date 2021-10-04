@@ -30,7 +30,8 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
-import { methods } from '@/mixins/methods'
+import { filterObject, filterObjectLabel } from '@/scripts/snippets/sfilters'
+import { arrayEqual } from '~/scripts/snippets/scompares'
 const selections = namespace('selections')
 
 interface Group {
@@ -64,7 +65,7 @@ export default class TSTreeselect extends Vue {
   }
 
   beforeUpdate () {
-    methods.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
+    filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
   }
 
@@ -88,14 +89,14 @@ export default class TSTreeselect extends Vue {
     if (this.type === 'depots') { storeSelect = this.selectionDepots } else { storeSelect = this.selectionProducts }
     let treeData = this.groupSelection.filter(item => item.type === 'ObjectToGroup')
     treeData = [...new Set(treeData)]
-    if (methods.arrEqual(storeSelect, treeData)) {
+    if (arrayEqual(storeSelect, treeData)) {
       // eslint-disable-next-line no-useless-return
       return
     }
     const elementsInTree: Array<string> = []
     for (const index in storeSelect) {
       if (this.groupIdList.includes(storeSelect[index])) {
-        methods.filterObject(
+        filterObject(
           this.options, storeSelect[index],
           'text', elementsInTree)
       }
@@ -107,7 +108,7 @@ export default class TSTreeselect extends Vue {
     const idList : Array<string> = []
     let storeSel: Array<string> = []
     if (this.type === 'depots') { storeSel = this.selectionDepots } else { storeSel = this.selectionProducts }
-    methods.filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
+    filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
 
     for (const i in idList) {
       const objectId = idList[i]
