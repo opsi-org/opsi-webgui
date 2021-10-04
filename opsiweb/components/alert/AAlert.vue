@@ -3,7 +3,7 @@
     v-bind="$props"
     :aria-label="$props.variant"
   >
-    <slot></slot>
+    <slot />
   </b-alert>
 </template>
 
