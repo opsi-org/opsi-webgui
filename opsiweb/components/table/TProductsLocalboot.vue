@@ -136,7 +136,7 @@
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
 import { makeToast } from '@/mixins/toast'
-import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
+import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
 import { ChangeObj } from '~/types/tchanges'
 const selections = namespace('selections')
@@ -303,7 +303,7 @@ export default class TProductsLocalboot extends Vue {
         { data: change }
       )).error
     } catch (error) {
-      makeToast(this, error.message, this.$t('message.error') as string, 'danger')
+      makeToast(this, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
       return
     }
     if (Object.keys(responseError).length > 0) {
