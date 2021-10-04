@@ -147,7 +147,7 @@ export default class TProductProperties extends Vue {
 
   async beforeMount () {
     if (this.selectionClients.length > 0) {
-      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {
