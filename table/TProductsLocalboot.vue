@@ -296,10 +296,16 @@ export default class TProductsLocalboot extends Vue {
   }
 
   async save (change: object) {
-    const responseError: IObjectString2String = (await this.$axios.$patch(
-      '/api/opsidata/clients/products',
-      { data: change }
-    )).error
+    let responseError: IObjectString2String = {}
+    try {
+      responseError = (await this.$axios.$patch(
+        '/api/opsidata/clients/products',
+        { data: change }
+      )).error
+    } catch (error) {
+      makeToast(this, error.message, this.$t('message.error') as string, 'danger')
+      return
+    }
     if (Object.keys(responseError).length > 0) {
       let txt = 'Errors for: <br />'
       for (const k in responseError) {
