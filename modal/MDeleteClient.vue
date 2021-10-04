@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '@/mixins/toast'
+import { makeToast } from '@/scripts/snippets/scomponents'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string

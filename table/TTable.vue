@@ -50,7 +50,7 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BTable } from 'bootstrap-vue'
-import { ITableRow, ITableHeaders, ITableDataItem, ITableData } from '~/types/ttable'
+import { ITableRow, ITableHeaders, ITableDataItem, ITableData } from '~/scripts/types/ttable'
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string

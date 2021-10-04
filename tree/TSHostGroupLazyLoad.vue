@@ -32,8 +32,9 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { methods } from '@/mixins/methods'
-import { Group } from '~/types/tbackendmethods'
+import { filterObjectLabel, filterObject } from '@/scripts/snippets/sfilters'
+import { Group } from '~/scripts/types/tbackendmethods'
+import { arrayEqual } from '~/scripts/snippets/scompares'
 const selections = namespace('selections')
 interface Request {
     selectedDepots: string
@@ -84,7 +85,7 @@ export default class TSDelayedLoading extends Vue {
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
   beforeUpdate () {
-    methods.filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
+    filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
     this.syncStoreToTree()
   }
 
@@ -135,14 +136,14 @@ export default class TSDelayedLoading extends Vue {
     const storeSelect = this.selectionClients
     let treeData = this.groupSelection.filter(item => item.type === 'ObjectToGroup')
     treeData = [...new Set(treeData)]
-    if (methods.arrEqual(storeSelect, treeData)) {
+    if (arrayEqual(storeSelect, treeData)) {
       // eslint-disable-next-line no-useless-return
       return
     }
     const elementsInTree: Array<string> = []
     for (const index in storeSelect) {
       if (this.groupIdList.includes(storeSelect[index])) {
-        methods.filterObject(
+        filterObject(
           this.options, storeSelect[index],
           'text', elementsInTree)
       }
@@ -153,7 +154,7 @@ export default class TSDelayedLoading extends Vue {
   groupChange (value: object, type: string) {
     const idList : Array<string> = []
     const storeSel = this.selectionClients
-    methods.filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
+    filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
 
     for (const i in idList) {
       const objectId = idList[i]

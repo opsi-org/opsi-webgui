@@ -73,7 +73,7 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '@/mixins/toast'
+import { makeToast } from '@/scripts/snippets/scomponents'
 
 const selections = namespace('selections')
 interface NewClient {

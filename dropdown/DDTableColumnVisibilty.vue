@@ -56,8 +56,8 @@
 <script lang="ts">
 import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-import { ITableHeaders } from '~/types/ttable'
-import { IObjectString2Boolean } from '~/types/tsettings'
+import { ITableHeaders } from '~/scripts/types/ttable'
+import { IObjectString2Boolean } from '~/scripts/types/tgeneral'
 const settings = namespace('settings')
 
 @Component
