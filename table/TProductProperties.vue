@@ -151,8 +151,6 @@ export default class TProductProperties extends Vue {
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {
-          // eslint-disable-next-line no-console
-          // console.error(error)
           this.errorText = (this as any).$t('message.errortext')
           throw new Error(error)
         })
@@ -168,6 +166,7 @@ export default class TProductProperties extends Vue {
       values
     }
     const saved = false
+    // eslint-disable-next-line no-console
     console.warn('(todo) Request POST product property: ', data)
     if (!saved) { return }
     if (this.selectionClients.length > 0) {
@@ -182,7 +181,6 @@ export default class TProductProperties extends Vue {
       throw new Error('cannot change value of property if no clients or depots are selected')
     }
     this.properties.properties = Object.assign({}, this.properties.properties)
-    // eslint-disable-next-line no-console
     // this.fetchedData = (await this.$axios.$post(
     //   '/api/opsidata/product/${this.id}/properties',
     //   JSON.stringify(this.data)

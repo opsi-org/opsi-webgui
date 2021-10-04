@@ -8,7 +8,9 @@
       <b-icon v-else icon="chevron-double-right" />
     </span>
     <b v-if="title && bold">{{ title }}</b>
-    <p v-else-if="title && !bold">{{ title }}</p>
+    <p v-else-if="title && !bold">
+      {{ title }}
+    </p>
     <slot name="left" />
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
