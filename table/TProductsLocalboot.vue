@@ -297,13 +297,14 @@ export default class TProductsLocalboot extends Vue {
 
   async save (change: object) {
     let responseError: IObjectString2String = {}
+    const t:any = this
     try {
       responseError = (await this.$axios.$patch(
         '/api/opsidata/clients/products',
         { data: change }
       )).error
     } catch (error) {
-      makeToast(this, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
+      makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
       return
     }
     if (Object.keys(responseError).length > 0) {

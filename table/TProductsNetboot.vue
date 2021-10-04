@@ -116,7 +116,7 @@
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
 import { makeToast } from '@/scripts/snippets/scomponents'
-import { IObjectString2ObjectString2String, IObjectString2String } from '~/scripts/types/tgeneral'
+import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '~/scripts/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/scripts/types/ttable'
 import { ChangeObj } from '~/scripts/types/tchanges'
 const selections = namespace('selections')
@@ -274,10 +274,17 @@ export default class TProductsNetboot extends Vue {
   }
 
   async save (change : object) {
-    const responseError: IObjectString2String = (await this.$axios.$patch(
-      '/api/opsidata/clients/products',
-      { data: change }
-    )).error
+    let responseError: IObjectString2String = {}
+    const t:any = this
+    try {
+      responseError = (await this.$axios.$patch(
+        '/api/opsidata/clients/products',
+        { data: change }
+      )).error
+    } catch (error) {
+      makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
+      return
+    }
     if (Object.keys(responseError).length > 0) {
       let txt = 'Errors for: <br />'
       for (const k in responseError) {
