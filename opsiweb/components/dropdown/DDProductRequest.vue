@@ -48,6 +48,9 @@ export default class DDProductRequest extends BDropdown {
 
   preRequest: string = this.request
   currentReq: string = this.request
+  mounted () {
+    this.preRequest = this.visibleRequest
+  }
 
   @selections.Getter public selectionClients!: Array<string>
   get visibleRequest () {
