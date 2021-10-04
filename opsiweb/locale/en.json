@@ -1,5 +1,5 @@
 {
-  "message":{
+  "message": {
     "loading": "Loading",
     "warning": "WARNING",
     "success": "SUCCESS",
@@ -15,9 +15,9 @@
     "notOnEachDepot": "product installed only on {count}/{countall} depots",
     "errorInPropertyFetch": "Something went wrong with ProductProperties",
     "errorInDependenciesFetch": "Something went wrong with ProductDependencies",
-    "differentProductVersions":"Different versions exists"
+    "differentProductVersions": "Different versions exists"
   },
-  "title":{
+  "title": {
     "overview": "OVERVIEW",
     "support": "Support",
     "manage": "MANAGE",
@@ -50,11 +50,11 @@
   "table": {
     "filter": "Filter",
     "showCol": "Show Columns",
-    "clientDetails":"Client Details",
-    "addtnlInfo":"Additional Information",
+    "clientDetails": "Client Details",
+    "addtnlInfo": "Additional Information",
     "perpage": "PerPage",
-    "emptyText":"No entries",
-    "fields":{
+    "emptyText": "No entries",
+    "fields": {
       "id": "ID",
       "name": "Name",
       "description": "Description",
@@ -86,10 +86,9 @@
       "on-deinstall": "on-deinstall",
       "requiredType": "type",
       "unknown": "unknown"
-
     }
   },
-  "button" : {
+  "button": {
     "login": "Login",
     "logout": "Logout",
     "expand": "Expand",
@@ -97,7 +96,7 @@
     "reset": "Reset",
     "add": "Add"
   },
-  "treeselect":{
+  "treeselect": {
     "hostGroups": "Host Groups",
     "prodGroups": "Product Groups"
   },
@@ -113,7 +112,7 @@
     "username": "Username",
     "password": "Password"
   },
-  "supportPage" : {
+  "supportPage": {
     "documentation": {
       "title": "Documentation",
       "description": "Our documentation contains Getiing Started Guides and Manuals, which are step-by-step instructions that will help you get started with OPSI.",
