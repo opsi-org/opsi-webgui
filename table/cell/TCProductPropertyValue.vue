@@ -76,21 +76,15 @@ export default class TProductPropertyValue extends Vue {
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
   @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
-    // if (this.rowItem.type === 'BoolProductProperty') {
-    //   this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'BoolProductPropery')
-    // } else
     if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
-      this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'UnicodeProductProperty')
+      this.$emit('change', this.rowItem.propertyId, this.selectedValues)
     }
-
-    console.debug('fetch isOrigin:', this.selectedValues, this.selectedValuesOriginal)
     this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
   }
 
   @Watch('rowItem.clients', { deep: true }) rowItemClientsChanged () { this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal)) }
   @Watch('rowItem.depots', { deep: true }) rowItemDepotsChanged () { this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal)) }
   @Watch('rowItem.newValues', { deep: true }) newValuesChanged (newV:Array<any>, oldV:Array<any>) {
-    console.debug('newValues changed?', oldV, newV)
     if (this.rowItem.newValues === undefined) { return }
     if (arrayEqual(oldV, newV) && newV.length === 0) { return }
     if (this.rowItem.multiValue) {
@@ -98,16 +92,12 @@ export default class TProductPropertyValue extends Vue {
     } else {
       this.selectedValues = [this.rowItem.newValue || '']
     }
-    this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'UnicodeProductProperty')
+    this.selectedValuesChanged()
   }
 
-  // @Watch('rowItem.newValues', { deep: true }) newValuesChanged (newV:Array<any>, oldV:Array<any>) {
-  // get isOrigin () {
-  //   console.debug('fetch isOrigin:', this.selectedValues, this.selectedValuesOriginal)
-  //   return arrayEqual(this.selectedValues, this.selectedValuesOriginal)
-  // }
-
-  get allOptionsUnique () { return this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues || []]) }
+  get allOptionsUnique () {
+    return this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues || []])
+  }
 
   get selectedValuesOriginal () {
     if (this.rowItem.type === 'BoolProductProperty') {
@@ -130,6 +120,7 @@ export default class TProductPropertyValue extends Vue {
       this.visibleValueBoolIndeterminate = true
       return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
     }
+    // eslint-disable-next-line no-console
     console.error(this.rowItem.propertyId, ': ', this.rowItem.clients.length, this.rowItem.allClientValuesEqual)
     return ['--error--']
   }
@@ -149,20 +140,13 @@ export default class TProductPropertyValue extends Vue {
   }
 
   handleBoolChange () {
-    console.debug('booool changed')
     this.selectedValues = JSON.parse(JSON.stringify([!this.selectedValues[0]]))
-    console.debug(this.selectedValuesOriginal, this.selectedValues, this.isOrigin)
     this.selectedValuesChanged()
-    // this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'BoolProductPropery')
   }
 
   selectionChanged (values: Array<string|boolean>) {
-    console.debug('selectionChanged')
-    // if (!arrayEqual(values, this.selectedValuesOriginal)) {
     this.selectedValues = JSON.parse(JSON.stringify(values))
     this.selectedValuesChanged()
-    // this.$emit('change', this.rowItem.propertyId, values) //, 'UnicodeProductProperty')
-    // }
   }
 }
 </script>
