@@ -12,7 +12,7 @@
       class="fixed_column_selection widthmax"
     >
       <template #button-content>
-        <span :class="{'fg-orange' : currentReq != preRequest}">
+        <span :class="{'value-changed-not-saved' : currentReq != preRequest}">
           {{ visibleRequest }} {{ (currentReq != preRequest)? '*' : '' }}
         </span>
       </template>

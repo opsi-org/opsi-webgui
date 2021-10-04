@@ -1,96 +1,102 @@
 <template>
-  <b-dropdown
-    v-bind="$props"
-    no-caret
-    lazy
-    variant="outline-primary"
-    size="sm"
-  >
-    <template v-if="multiple" #button-content>
-      <b-badge v-for="i in selections" :key="i" variant="primary">
-        {{ i }}
-      </b-badge>
-    </template>
-    <template v-else #button-content>
-      {{ selections[0] }}
-    </template>
-
-    <li v-if="!multiple">
-      <a
-        v-for="o in options"
-        :key="o"
-        class="dropdown-item"
-        :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
-        @click="(!selections.includes(0))?selections = [o]:()=>{}"
-      >
-        {{ o }}
-      </a>
-    </li>
-    <li
-      v-else
-      id="selectableColumns-group"
-      name="selectableColumns"
+  <div>
+    <b-dropdown
+      v-bind="$props"
+      no-caret
+      lazy
+      :toggle-class="{'value-changed-not-saved': !isOrigin, 'DDDefault-BtnContent': true }"
+      variant="outline-primary"
+      size="sm"
     >
-      <a
-        v-for="o in options"
-        :key="o"
-        class="dropdown-item"
-        :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
-        @click="(!selections.includes(0))? toggleSelection(o):()=>{}"
+      <template v-if="multiple==true" #button-content>
+        <b-badge v-for="i in selections" :key="i" variant="primary">
+          {{ i }}
+        </b-badge>
+        {{ !isOrigin? '*':'' }}
+      </template>
+      <template v-else #button-content>
+        {{ selections[0] }}
+        {{ !isOrigin? '*':'' }}
+      </template>
+
+      <li v-if="!multiple">
+        <a
+          v-for="o in options"
+          :key="o"
+          class="dropdown-item"
+          :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
+          @click="(!selections.includes(0))?selections = [o]:()=>{}"
+        >
+          {{ o }}
+        </a>
+      </li>
+      <li
+        v-else
+        id="selectableColumns-group"
+        name="selectableColumns"
       >
-        <b-form-checkbox
-          v-model="selections"
-          :name="o"
-          :value="o"
-          @change="toggleSelection(o)"
-        />
-        {{ o }}
-      </a>
-    </li>
-  </b-dropdown>
+        <a
+          v-for="o in options"
+          :key="o"
+          class="dropdown-item"
+          :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
+          @click="(!selections.includes(0))? toggleSelection(o):()=>{}"
+        >
+          <b-form-checkbox
+            v-model="selections"
+            :name="o"
+            :value="o"
+            @change="toggleSelection(o)"
+          />
+          {{ o }}
+        </a>
+      </li>
+    </b-dropdown>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { arrayEqual } from '~/helpers/hcompares'
-import { arrEqual } from '~/helpers/equal'
 
 @Component
 export default class DDDefault extends BDropdown {
-  @Prop({ default: false }) multiple!: Array<any>
-  @Prop({ default: () => { return () => { /* default */ } } }) options!: Array<string>
-  @Prop({ default: () => { return () => { /* default */ } } }) selectedItems!: Array<string>
+  @Prop({ default: false }) multiple!: boolean
+  @Prop({ default: true }) isOrigin!: boolean
+  @Prop({ }) options!: Array<string>
+  @Prop({ }) selectedItems!: Array<string>
   selections: Array<string> = []
-  created () {
+
+  mounted () {
     this.selections = this.uniques([...this.selectedItems])
   }
 
-  @Watch('selections') selectionsChanged (newV:any, oldV:any) {
-    if (arrEqual(this.selectedItems, this.selections)) { return }
-    if (arrEqual(oldV, newV)) { return }
-    // console.debug('selectionsChanged old->new', oldV, newV)
-    // const localSelection = this.selections])
+  @Watch('selections') selectionsChanged () {
+    if (arrayEqual(this.selectedItems, this.selections)) { return }
     if (this.selections.length > 1) {
       const index = this.selections.indexOf(this.$t('values.mixed') as string)
       if (index > -1) {
         this.selections.splice(index, 1)
       }
     }
-    // this.selections = localSelection
+    if (arrayEqual(this.selectedItems, this.selections)) { return }
     this.$emit('change', this.selections)
   }
 
-  @Watch('selectedItems') selectedItemsChanged () { // (newV:any, oldV:any) {
+  @Watch('selectedItems') selectedItemsChanged () {
     if (arrayEqual(this.selectedItems, this.selections)) { return }
-    // console.debug('selectedItemsChanged old->new', oldV, newV)
-    const localSelection = this.uniques([...this.selectedItems, ...this.selections])
-    // const index = localSelection.indexOf(this.$t('values.mixed') as string)
-    // if (index > -1) {
-    //   localSelection.splice(index, 1)
-    // }
-    this.selections = localSelection
+    if (this.multiple) {
+      this.selections = this.uniques([...this.selectedItems, ...this.selections])
+    } else {
+      this.selections = this.uniques([...this.selectedItems])
+    }
   }
+
+  // get isOrigin () {
+  //   console.debug('DD-isOrigin', this.selections, this.selectedItems)
+  //   return arrayEqual(this.selections, this.selectedItems)
+  // }
 
   toggleSelection (item: string) {
     // multValue
@@ -107,6 +113,9 @@ export default class DDDefault extends BDropdown {
 }
 </script>
 <style>
+.DDDefault-BtnContent {
+  text-align: left !important;
+}
 .dropdown-menu {
   height: max-content !important;
 }

@@ -3,32 +3,28 @@
     <b-col
       class="TCProductPropertyValue_Value"
       :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}"
-      @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } "
+      @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${selectedValues}`: () => {} } "
     >
       <b-form-checkbox
         v-if="rowItem.type=='BoolProductProperty'"
-        v-model="visibleValue[0]"
-        :indeterminate="visibleValueBoolIndeterminate"
         style="display:inline"
-      />
-
-      <DropdownDDDefault
-        v-else-if="rowItem.type=='UnicodeProductProperty' && rowItem.multiValue"
-        :options="uniqueOptions"
-        :selected-items="uniqueSelection"
-        :multiple="true"
+        :class="{'value-changed-not-saved': !isOrigin }"
+        :checked="selectedValues[0]"
+        :aria-label="rowItem.propertyId + (selectedValues[0]?'checked':'unchecked')"
+        :indeterminate="visibleValueBoolIndeterminate"
+        @change="handleBoolChange"
+      >
+        {{ isOrigin? '': '*' }}
+      </b-form-checkbox>
+      <LazyDropdownDDDefault
+        v-else-if="rowItem.type=='UnicodeProductProperty'"
+        :is-origin="isOrigin"
+        :options="allOptionsUnique"
+        :selected-items="selectedValues"
+        :multiple="rowItem.multiValue"
         @change="selectionChanged"
       />
-      <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
-      <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
-      <DropdownDDDefault
-        v-else
-        :options="uniqueOptions"
-        :selected-items="uniqueSelection"
-        @change="selectionChanged"
-      />
-      <!-- @click.middle="rowItem.newValue = `${changedValue || visibleValue}`" -->
-      <!-- @contextmenu.prevent="() => { (rowItem.editable) ? rowItem.newValue = `${changedValue || visibleValue}`:'' } " -->
+      <!-- {{!arrayEqual(selectedValuesOriginal, selectedValues)? 'CHANGED-notsaved':''}} -->
     </b-col>
     <b-col v-if="rowItem.editable" :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" cols="*">
       <slot :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" name="editable-button" />
@@ -55,9 +51,7 @@
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IProperty } from '~/types/ttable'
 import { IObjectString2String } from '~/types/tsettings'
-import { arrEqual } from '~/helpers/equal'
-// import { arrayEqual } from '~/helpers/hcompares'
-// import { arrayEqual } from '~/helpers/hcompares'
+import { arrayEqual } from '~/helpers/hcompares'
 const selections = namespace('selections')
 // const mixed = '<mixed>'
 @Component
@@ -67,52 +61,82 @@ export default class TProductPropertyValue extends Vue {
   @Prop() clients2depots!: IObjectString2String
   @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
-  visibleValueBoolIndeterminate: boolean = false
   showValue : boolean = false
   changedValue: Array<string>|undefined
+  selectedValues!: Array<string|boolean>
+  // selectedValuesOriginal!: Array<string|boolean>
+  isOrigin: boolean = true
+  visibleValueBool!: boolean
+  visibleValueBoolIndeterminate!: boolean
 
-  @Watch('showValue', { deep: true }) showValuesChanged () {
-    if (!this.showValue) {
-      this.rowItem._showDetails = this.showValue
+  created () {
+    this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+  }
+
+  @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
+
+  @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
+    // if (this.rowItem.type === 'BoolProductProperty') {
+    //   this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'BoolProductPropery')
+    // } else
+    if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
+      this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'UnicodeProductProperty')
     }
+
+    console.debug('fetch isOrigin:', this.selectedValues, this.selectedValuesOriginal)
+    this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
   }
 
-  @Watch('visibleValue', { deep: true }) boolValuesChanged () {
-    if (this.rowItem.type === 'BoolProductProperty') {
-      this.$emit('change', this.rowItem.propertyId, this.visibleValue) //, 'BoolProductPropery')
+  @Watch('rowItem.clients', { deep: true }) rowItemClientsChanged () { this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal)) }
+  @Watch('rowItem.depots', { deep: true }) rowItemDepotsChanged () { this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal)) }
+  @Watch('rowItem.newValues', { deep: true }) newValuesChanged (newV:Array<any>, oldV:Array<any>) {
+    console.debug('newValues changed?', oldV, newV)
+    if (this.rowItem.newValues === undefined) { return }
+    if (arrayEqual(oldV, newV) && newV.length === 0) { return }
+    if (this.rowItem.multiValue) {
+      this.selectedValues = this.uniques([...this.selectedValues, ...this.rowItem.newValues || []])
+    } else {
+      this.selectedValues = [this.rowItem.newValue || '']
     }
+    this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'UnicodeProductProperty')
   }
 
-  @Watch('rowItem.newValues', { deep: true }) newValuesChanged (newValue:any, oldValue:any) {
-    if (this.rowItem.newValues === undefined || this.rowItem.newValues.length === 0) { return }
-    if (arrEqual(newValue, oldValue)) { return }
-    // console.debug('newValues changed', newValue, oldValue)
-
-    this.$emit('change', this.rowItem.propertyId, this.uniqueSelection) //, 'UnicodeProductProperty')
-  }
-
-  selectionChanged (value: Array<string>) {
-    // if (value)
-    // const index = value.indexOf(this.$t('values.mixed') as string)
-    // if (index > -1) {
-    //   value.splice(index, 1)
-    // }
-    this.changedValue = value
-    this.$emit('change', this.rowItem.propertyId, value) //, 'UnicodeProductProperty')
-  }
-
-  mounted () {
-    // if (this.rowItem.length > 1) {
-    //   this.onlyOneVersion = false
-    // }
-  }
-  // set visibleValueBool (val:boolean) {
-  //   this.$emit('change', this.rowItem.propertyId, [val], 'BoolProductProperty')
+  // @Watch('rowItem.newValues', { deep: true }) newValuesChanged (newV:Array<any>, oldV:Array<any>) {
+  // get isOrigin () {
+  //   console.debug('fetch isOrigin:', this.selectedValues, this.selectedValuesOriginal)
+  //   return arrayEqual(this.selectedValues, this.selectedValuesOriginal)
   // }
+
+  get allOptionsUnique () { return this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues || []]) }
+
+  get selectedValuesOriginal () {
+    if (this.rowItem.type === 'BoolProductProperty') {
+      this.visibleValueBoolIndeterminate = false
+    }
+
+    if (Object.keys(this.rowItem.clients).length > 0 && this.rowItem.allClientValuesEqual) {
+      if (this.rowItem.type === 'BoolProductProperty') {
+        this.visibleValueBool = Object.values(this.rowItem.clients)[0][0] as boolean
+      }
+      return Object.values(this.rowItem.clients)[0]
+    } else if (Object.keys(this.rowItem.clients).length > 0 && !this.rowItem.allClientValuesEqual) {
+      this.visibleValueBoolIndeterminate = true
+      return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
+    }
+
+    if (Object.keys(this.rowItem.depots).length > 0 && Object.values(this.rowItem.depots).every(v => v === Object.values(this.rowItem.depots)[0])) {
+      return Object.values(this.rowItem.depots)[0]
+    } else if (Object.keys(this.rowItem.depots).length > 0 && Object.values(this.rowItem.depots).some(v => v !== Object.values(this.rowItem.depots)[0])) {
+      this.visibleValueBoolIndeterminate = true
+      return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
+    }
+    console.error(this.rowItem.propertyId, ': ', this.rowItem.clients.length, this.rowItem.allClientValuesEqual)
+    return ['--error--']
+  }
 
   get showTooltip () {
     if (this.rowItem.type === 'UnicodeProductProperty') {
-      return this.uniqueSelection.includes(this.$t('values.mixed'))
+      return this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)
     }
     if (this.rowItem.type === 'BoolProductProperty') {
       return this.visibleValueBoolIndeterminate
@@ -120,136 +144,27 @@ export default class TProductPropertyValue extends Vue {
     return true
   }
 
-  get uniqueSelection () {
-    // console.debug('unique selection ', this.rowItem.editable, this.rowItem.newValues, this.rowItem.newValues?.length)
-    if (this.rowItem.editable && this.rowItem.newValues && this.rowItem.newValues.length > 0) {
-      if (this.visibleValue.includes(this.$t('values.mixed') as string)) {
-        return this.uniques([...this.rowItem.newValues])
-      }
-      return this.uniques([...this.visibleValue, ...this.rowItem.newValues])
-    }
-    // else if (this.visibleValue.length > 1 && this.visibleValue.includes(this.$t('values.mixed') as string)) {
-    //   const newarr = this.uniques([...this.visibleValue])
-    //   const index = newarr.indexOf(this.$t('values.mixed') as string)
-    //   if (index > -1) {
-    //     newarr.splice(index, 1)
-    //   }
-    //   return newarr
-    // }
-    const c:Array<string> = this.uniques([...this.visibleValue])
-    // console.debug('uniqueSelection', c)
-    return c
-  }
-
-  get uniqueOptions () {
-    if (this.rowItem.newValues) {
-      return this.uniques([...Object.values(this.rowItem.allValues), ...this.visibleValue, ...this.rowItem.newValues])
-    }
-    return this.uniques([...Object.values(this.rowItem.allValues), ...this.visibleValue])
-  }
-
-  // get selectionClientsValuesWithDepotValues () {
-  // let valuesWithDepotDefaults = []
-  // if (this.selectionClients.length === this.rowItem.clientsIds.length) {
-  //   valuesWithDepotDefaults = [...this.rowItem.clientsValues]
-  // } else {
-  //   for (const ci in this.selectionClients) {
-  //     const client = this.selectionClients[ci]
-  //     if (this.rowItem.clientsIds.includes(client)) {
-  //       const i = this.rowItem.clientsIds.indexOf(client)
-  //       valuesWithDepotDefaults.push(this.rowItem.clientsValues[i])
-  //     } else {
-  //       const clientDepot = this.clients2depots[client]
-  //       if (this.rowItem.depotsIds.includes(clientDepot)) {
-  //         const i = this.rowItem.depotsIds.indexOf(clientDepot)
-  //         valuesWithDepotDefaults.push(this.rowItem.depotsValues[i])
-  //       }
-  //     }
-  //   }
-  // }
-  // return valuesWithDepotDefaults
-  //   return []
-  // }
-  test () {
-    alert('me')
-  }
-
-  get visibleValue () {
-    if (this.selectionClients.length !== Object.keys(this.rowItem.clients).length) {
-      if (Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
-        throw new Error(`Something went wrong.\nSelectionClient.length !== rowItem.clients.length\n${JSON.stringify(this.rowItem)}`)
-      }
-    }
-
-    if (this.rowItem.type === 'BoolProductProperty') {
-      this.visibleValueBoolIndeterminate = false
-    }
-    if (this.rowItem.allClientValuesEqual) {
-      let ret
-      if (this.rowItem.clients && Object.keys(this.rowItem.clients).length > 0 && Object.keys(this.rowItem.clients)[0] !== '') {
-        ret = Object.values(this.rowItem.clients)[0]
-      } else if (this.rowItem.depots && Object.keys(this.rowItem.depots).length > 0 && Object.keys(this.rowItem.depots)[0] !== '') {
-        ret = Object.values(this.rowItem.depots)[0]
-      } else if (this.rowItem.default) {
-        ret = this.rowItem.default
-      } else {
-        throw new Error('No client or depot values found')
-      }
-      if (this.rowItem.editable && this.rowItem.newValues && this.rowItem.newValues.length > 0) {
-        ret = this.rowItem.newValues[0]
-      }
-      return ret
-    }
-    // not all clients are equal
-    if (this.rowItem.type === 'BoolProductProperty') {
-      this.visibleValueBoolIndeterminate = true
-    }
-    return [this.$t('values.mixed') as string]
-
-    // const clientValues = Object.values(this.rowItem.clients)
-    // if (clientValues.every(arrv => arrayEqual(arrv, clientValues[0]))) { return clientValues[0] }
-    // // if (Object.values(this.rowItem.clients).every(arrv => arrv[0] === true)) { return true }
-    // // if (Object.values(this.rowItem.clients).every(arrv => arrv[0] === false)) { return false }
-
-    // // return false // or true ---> doesnt matter: if 'mixed'(this case) indeterminate should be true
-  }
-
-  // get visibleValueBoolIndeterminate () {
-  //   // check for if checkbox "mixed"/indeterminate
-  //   return !this.selectionClientsValuesWithDepotValues.every(arrv => arrv[0] === true) && !this.selectionClientsValuesWithDepotValues.every(arrv => arrv[0] === false)
-  // }
-
-  // get visibleValue () {
-  //   const clientValues = Object.values(this.rowItem.clients)
-  //   if (clientValues.every(arrv => arrayEqual(arrv, clientValues[0]))) {
-  //     return clientValues[0]
-  //   }
-  //   return [this.$t('values.mixed') as string]
-  // }
-
   uniques (arr:Array<any>) {
     return [...new Set(arr)]
   }
+
+  handleBoolChange () {
+    console.debug('booool changed')
+    this.selectedValues = JSON.parse(JSON.stringify([!this.selectedValues[0]]))
+    console.debug(this.selectedValuesOriginal, this.selectedValues, this.isOrigin)
+    this.selectedValuesChanged()
+    // this.$emit('change', this.rowItem.propertyId, this.selectedValues) //, 'BoolProductPropery')
+  }
+
+  selectionChanged (values: Array<string|boolean>) {
+    console.debug('selectionChanged')
+    // if (!arrayEqual(values, this.selectedValuesOriginal)) {
+    this.selectedValues = JSON.parse(JSON.stringify(values))
+    this.selectedValuesChanged()
+    // this.$emit('change', this.rowItem.propertyId, values) //, 'UnicodeProductProperty')
+    // }
+  }
 }
-// .TCProductPropertyValue_Container {
-//   max-width: 100%;
-//   display: inline-block;
-// }
-// .TCProductPropertyValue_Value {
-//   max-width: fit-content;
-// }
-// .TCProductPropertyValue_ShowBtn,
-// .TCProductPropertyValue_Value > .dropdown,
-// .TCProductPropertyValue_Value > .btn{
-//   display: inline-block;
-// }
-// /* .TCProductPropertyValue_Container > div {
-//   max-width: max-content;
-//   display: inline-block;
-// } */
-// .dropdown {
-//   max-width: 50%;
-// }
 </script>
 
 <style>
@@ -257,20 +172,14 @@ export default class TProductPropertyValue extends Vue {
   max-width: -moz-available;
   max-width: -moz-available;          /* For Mozzila */
   max-width: -webkit-fill-available;  /* For Chrome */
-  /*max-width: stretch;*/                 /* Unprefixed */
 }
-/* .TCProductPropertyValue_Value { */
-  /* max-width: 80% !important; */
-/* } */
 .TCProductPropertyValue_Value .dropdown > .dropdown-menu,
 .TCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {
-/* z-index: inherit; */
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 .TCProductPropertyValue_Value .dropdown button {
-  /* max-width: 100%; */
   text-overflow: ellipsis;
   overflow: hidden;
 }
