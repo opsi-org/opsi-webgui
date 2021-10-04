@@ -72,5 +72,9 @@
   "i18n-ally.localesPaths": [
     "locale"
   ],
-  "i18n-ally.keystyle": "flat"
+  "i18n-ally.keystyle": "flat",
+  "i18n-ally.sourceLanguage": "de",
+  "i18n-ally.enabledParsers": [
+    "json"
+  ],
 }
