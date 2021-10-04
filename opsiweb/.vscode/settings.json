@@ -68,5 +68,13 @@
     "assets/README.md": true,
     "dist": true
   },
-  "workspace.isHidden": true
+  "workspace.isHidden": true,
+  "i18n-ally.localesPaths": [
+    "locale"
+  ],
+  "i18n-ally.keystyle": "flat",
+  "i18n-ally.sourceLanguage": "de",
+  "i18n-ally.enabledParsers": [
+    "json"
+  ],
 }
