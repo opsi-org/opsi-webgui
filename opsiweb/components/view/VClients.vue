@@ -77,7 +77,7 @@
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
-import { ITableData, ITableHeaders } from '~/types/ttable'
+import { ITableData, ITableHeaders } from '~/scripts/types/ttable'
 const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,

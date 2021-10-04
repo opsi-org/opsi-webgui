@@ -51,7 +51,7 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import TTable from '~/components/table/TTable.vue'
-import { ITableData } from '~/types/ttable'
+import { ITableData } from '~/scripts/types/ttable'
 
 @Component
 export default class TCollapseableForMobile extends TTable {

@@ -38,8 +38,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { IObjectString2String } from '~/types/tsettings'
-import { IDepend, IProductDependency } from '~/types/ttable'
+import { IObjectString2String } from '~/scripts/types/tgeneral'
+import { IDepend, IProductDependency } from '~/scripts/types/ttable'
 
 @Component
 export default class TProductProperties extends Vue {

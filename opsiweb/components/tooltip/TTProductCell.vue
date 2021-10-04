@@ -18,8 +18,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { IObjectString2String } from '~/types/tsettings'
-// import { ITableRowItemProducts } from '~/types/ttable'
+import { IObjectString2String } from '~/scripts/types/tgeneral'
+// import { ITableRowItemProducts } from '~/scripts/types/ttable'
 
 @Component
 export default class TTProductCell extends Vue {

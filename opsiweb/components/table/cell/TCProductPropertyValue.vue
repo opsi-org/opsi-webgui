@@ -49,9 +49,9 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
-import { IProperty } from '~/types/ttable'
-import { IObjectString2String } from '~/types/tsettings'
-import { arrayEqual } from '~/helpers/hcompares'
+import { IProperty } from '~/scripts/types/ttable'
+import { IObjectString2String } from '~/scripts/types/tgeneral'
+import { arrayEqual } from '~/scripts/snippets/scompares'
 const selections = namespace('selections')
 // const mixed = '<mixed>'
 @Component

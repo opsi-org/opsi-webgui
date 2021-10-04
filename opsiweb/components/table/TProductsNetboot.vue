@@ -115,10 +115,10 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
-import { makeToast } from '@/mixins/toast'
-import { IObjectString2ObjectString2String, IObjectString2String } from '~/types/tsettings'
-import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/types/ttable'
-import { ChangeObj } from '~/types/tchanges'
+import { makeToast } from '@/scripts/snippets/scomponents'
+import { IObjectString2ObjectString2String, IObjectString2String } from '~/scripts/types/tgeneral'
+import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/scripts/types/ttable'
+import { ChangeObj } from '~/scripts/types/tchanges'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -243,7 +243,7 @@ export default class TProductsNetboot extends Vue {
     this.isLoading = true
     this.updateColumnVisibility()
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=${this.selectionClients}`)
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response.result
         }).catch((error) => {
