@@ -45,6 +45,8 @@ build:static-app:
     paths:
       - opsiweb/dist
     expire_in: 1 day
+  only:
+    - develop
 
 publish:binary-index:
   stage: publish
