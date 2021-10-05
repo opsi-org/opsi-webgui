@@ -13,6 +13,7 @@
 		"gruntfuggly.todo-tree",
 		"fooxly.workspace",
 		"esbenp.prettier-vscode",
-		"lokalise.i18n-ally"
+		"lokalise.i18n-ally",
+		"orta.vscode-jest"
 	]
 }

@@ -47,7 +47,6 @@
     "https": true,
     "node_modules": true,
     "static": true,
-    "test": true,
     ".babelrc": true,
     ".editorconfig": true,
     ".eslintignore": true,
