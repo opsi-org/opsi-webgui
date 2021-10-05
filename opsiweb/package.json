@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "sudo npm run lint & npm run test & nuxt",
     "prod": "npm run generate && npm run start",
+    "clean": "rm -r -f node_modules coverage .nuxt package-lock.json",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
