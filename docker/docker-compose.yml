@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   nuxt:
-    image: node:latest
+    image: node:16-alpine
     volumes:
       - ..:/workspace
     working_dir: /workspace/opsiweb

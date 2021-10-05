@@ -5,7 +5,7 @@
 	"workspaceFolder": "/workspace/opsiweb",
 	"forwardPorts": [8888],
 	// "postStartCommand": "npm install && PORT=8888 bash",
-	"postStartCommand": "npm install && PORT=8888 npm run dev",
+	"postStartCommand": "chown -R 1000:1000 '/root/.npm' & npm install && PORT=8888 npm run dev",
 	// "remoteUser": "1000",
 	"extensions": [
 		"octref.vetur",
