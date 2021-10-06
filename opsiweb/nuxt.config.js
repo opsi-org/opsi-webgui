@@ -120,5 +120,19 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     // publicPath: '/webgui/app/'
+    // extend (config, ctx) {
+    //   if (ctx.isDev) {
+    //     config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
+    //   }
+    // }
+  },
+  storybook: {
+    stories: [
+      '~/stories/**/*.stories.js'
+    ]
+    // Optionsstorybook: {
+    // addons: [
+    //   '@storybook/addon-storyshots'
+    // ]
   }
 }

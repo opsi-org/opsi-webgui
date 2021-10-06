@@ -1,0 +1,38 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"auto": true,
+			"name": "webgui",
+			"request": "launch",
+			"runtimeArgs": [
+				"run-script",
+				"dev"
+			],
+			"port": 8888,
+			"runtimeExecutable": "npm",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "node",
+			"outputCapture": "std"
+		},
+		{
+			"outputCapture": "std",
+			"auto": true,
+			"name": "storybook",
+			"request": "launch",
+			"runtimeArgs": [
+				"run-script",
+				"story"
+			],
+			"port": 3003,
+			"runtimeExecutable": "npm",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "node"
+		}
+    ]
+}
+// echo "start application at port 8888"
