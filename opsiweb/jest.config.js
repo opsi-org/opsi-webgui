@@ -18,10 +18,10 @@ module.exports = {
   verbose: true,
   collectCoverage: true,
   collectCoverageFrom: [
-    'components/**/*.{js,ts,vue}',
-    'layouts/**/*.{js,ts,vue}',
-    'pages/**/*.{js,ts,vue}',
-    'scripts/**/*.{js,ts,vue}'
+    'components/**/*.{js,ts,vue}'
+    // 'layouts/**/*.{js,ts,vue}',
+    // 'pages/**/*.{js,ts,vue}',
+    // 'scripts/**/*.{js,ts,vue}'
   ],
   coveragePathIgnorePatterns: [
     'node_modules/',

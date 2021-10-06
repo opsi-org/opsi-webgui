@@ -22,6 +22,7 @@ import { ITableData } from '~/scripts/types/ttable'
 @Component
 export default class BPaginationUib extends BPagination {
   @Prop({}) tabledata!:ITableData;
+  @Prop({}) totalRows!:Number
   get localPageNumber () { return this.tabledata.pageNumber }
   set localPageNumber (pn) { this.tabledata.setPageNumber(pn) }
   get localPerPage () { return this.tabledata.perPage }
