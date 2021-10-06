@@ -1,7 +1,7 @@
 import { mount, createLocalVue } from '@vue/test-utils'
 import BootstrapVue, { BootstrapVueIcons } from 'bootstrap-vue'
 import VueRouter from 'vue-router'
-import BBreadcrumb from '@/components/bar/BBreadcrumb'
+import BBreadcrumbRow from '@/components/bar/BBreadcrumb'
 // create an extended `Vue` constructor
 const localVue = createLocalVue()
 
@@ -12,7 +12,7 @@ localVue.use(BootstrapVueIcons)
 const router = new VueRouter()
 describe('BBreadcrumb', () => {
   test('is a Vue instance', () => {
-    const wrapper = mount(BBreadcrumb, { localVue, router })
+    const wrapper = mount(BBreadcrumbRow, { localVue, router })
     expect(wrapper.vm).toBeTruthy()
   })
 })
