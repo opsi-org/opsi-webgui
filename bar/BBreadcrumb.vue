@@ -29,7 +29,7 @@ import { Vue, Component } from 'nuxt-property-decorator'
 //     text: string,
 // }
 @Component
-export default class BBreadcrumb extends Vue {
+export default class BBreadcrumbRow extends Vue {
   get breadcrumbItems (): Array<string> {
     if (this.$router === null || this.$router === undefined) {
       return []
