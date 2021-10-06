@@ -16,6 +16,7 @@ describe('BSide', () => {
         $mq: 'desktop',
         $t: () => 'some specific text'
       },
+      stubs: ['NavNSidebar'],
       propsData: {
         attributes: {
           expanded: true,

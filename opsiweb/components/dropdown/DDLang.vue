@@ -37,8 +37,9 @@ const settings = namespace('settings')
   }
 
   mounted () {
-    const langPaths = require.context('~/locale/', true, /\.json$/) as IObjectString2Any
-    langPaths.keys().forEach((key: string) => (this.languages.push((key as string).replace('./', '').replace('.json', ''))))
+    this.languages = Object.keys(this.$i18n.messages)
+    // require.context('~/locale/', true, /\.json$/) as IObjectString2Any
+    // langPaths.keys().forEach((key: string) => (this.languages.push((key as string).replace('./', '').replace('.json', ''))))
   }
 
   changeLanguage (lang : string) {
