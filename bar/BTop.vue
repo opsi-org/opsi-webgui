@@ -37,10 +37,12 @@
 
 <script lang="ts">
 import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
+import { ISidebarAttributes } from '~/scripts/types/tsettings'
 const settings = namespace('settings')
+
 @Component
-export default class CTop extends Vue {
-  @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: Object
+export default class BTop extends Vue {
+  @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
   @settings.Getter public expert!: boolean
 }
 </script>

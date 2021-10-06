@@ -27,12 +27,12 @@
 </template>
 
 <script lang="ts">
-
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { ISidebarAttributes } from '~/scripts/types/tsettings'
 
 @Component
 export default class BSide extends Vue {
-  @Prop({ }) attributes!: object
+  @Prop({ }) attributes!: ISidebarAttributes
 }
 </script>
 
