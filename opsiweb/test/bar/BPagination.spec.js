@@ -1,25 +1,16 @@
-
-// @Prop({}) tabledata!:ITableData;
-
 import { createLocalVue, mount } from '@vue/test-utils'
-import BootstrapVue, { BootstrapVueIcons } from 'bootstrap-vue'
-// import VueI18n from 'vue-i18n'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import BPaginationUib from '@/components/bar/BPagination'
-// import VueRouter from 'vue-router'
-// create an extended `Vue` constructor
-const localVue = createLocalVue()
 
-// install plugins as normal
-// localVue.use(VueRouter)
+const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(BootstrapVueIcons)
-// localVue.use(VueI18n)
-// const router = new VueRouter()
 
 describe('BPagination', () => {
-  test('is a Vue instance', () => {
-    const wrapper = mount(BPaginationUib, {
-      localVue, // router,
+  let wrapper
+  beforeEach(() => {
+    wrapper = mount(BPaginationUib, {
+      localVue,
       mocks: {
         $mq: 'desktop',
         $t: () => 'some specific text'
@@ -40,6 +31,9 @@ describe('BPagination', () => {
         }
       }
     })
+  })
+
+  test('is a Vue instance', () => {
     expect(wrapper.vm).toBeTruthy()
   })
 })

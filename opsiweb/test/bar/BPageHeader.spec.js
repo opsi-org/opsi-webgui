@@ -1,20 +1,16 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import BootstrapVue, { BootstrapVueIcons } from 'bootstrap-vue'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import BPageHeader from '@/components/bar/BPageHeader'
-// import VueRouter from 'vue-router'
-// create an extended `Vue` constructor
-const localVue = createLocalVue()
 
-// install plugins as normal
-// localVue.use(VueRouter)
+const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(BootstrapVueIcons)
-// const router = new VueRouter()
 
 describe('BPageHeader', () => {
-  test('is a Vue instance', () => {
-    const wrapper = mount(BPageHeader, {
-      localVue, // router,
+  let wrapper
+  beforeEach(() => {
+    wrapper = mount(BPageHeader, {
+      localVue,
       propsData: {
         variant: 'transparent',
         bold: true,
@@ -24,6 +20,8 @@ describe('BPageHeader', () => {
         closeroute: 'true'
       }
     })
+  })
+  test('is a Vue instance', () => {
     expect(wrapper.vm).toBeTruthy()
   })
 })

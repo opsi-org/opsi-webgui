@@ -1,28 +1,17 @@
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
-import BootstrapVue, { BootstrapVueIcons } from 'bootstrap-vue'
+import { createLocalVue, mount } from '@vue/test-utils'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import BAuthFooter from '@/components/bar/BAuthFooter'
-import DropdownDDLang from '@/components/dropdown/DDLang'
-// import DropdownDDTheme from '@/components/dropdown/DDTheme'
-// import ButtonBTNLogout from '@/components/button/BTNLogout'
-// create an extended `Vue` constructor
-const localVue = createLocalVue()
 
-// install plugins as normal
+const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(BootstrapVueIcons)
 
 describe('BAuthFooter', () => {
-  test('is a Vue instance', () => {
-    const wrapper = mount(BAuthFooter, {
-      localVue, // router,
+  let wrapper
+  beforeEach(() => {
+    wrapper = mount(BAuthFooter, {
+      localVue,
       stubs: ['DropdownDDLang'],
-      // stubs: {
-      //   DropdownDDLang: {
-      //     mocks: {
-      //       $i18n: { locale: '', messages: { de: {}, en: {} } },
-      //     }
-      //   }
-      // },
       mocks: {
         $i18n: { locale: '', messages: { de: {}, en: {} } },
         $config: { packageVersion: '0' },
@@ -33,6 +22,9 @@ describe('BAuthFooter', () => {
         attributes: { visible: true, expanded: false }
       }
     })
+  })
+
+  test('is a Vue instance', () => {
     expect(wrapper.vm).toBeTruthy()
   })
 })

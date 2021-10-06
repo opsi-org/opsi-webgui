@@ -1,17 +1,16 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import BootstrapVue, { BootstrapVueIcons } from 'bootstrap-vue'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import BTooltipCollapseRow from '@/components/bar/BTooltipCollapseRow'
-// create an extended `Vue` constructor
-const localVue = createLocalVue()
 
-// install plugins as normal
+const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(BootstrapVueIcons)
 
 describe('BTooltipCollapseRow', () => {
-  test('is a Vue instance', () => {
-    const wrapper = mount(BTooltipCollapseRow, {
-      localVue, // router,
+  let wrapper
+  beforeEach(() => {
+    wrapper = mount(BTooltipCollapseRow, {
+      localVue,
       mocks: {
         $mq: 'desktop',
         $t: () => 'some specific text'
@@ -19,11 +18,15 @@ describe('BTooltipCollapseRow', () => {
       propsData: {
         title: '',
         value: ''
+        /* props with defaults: */
         // valueVariant: 'info',
         // collapseable: true,
         // collapsed: false,
       }
     })
+  })
+
+  test('is a Vue instance', () => {
     expect(wrapper.vm).toBeTruthy()
   })
 })

@@ -1,17 +1,17 @@
 import { createLocalVue, mount } from '@vue/test-utils'
-import BootstrapVue, { BootstrapVueIcons } from 'bootstrap-vue'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import BSide from '@/components/bar/BSide'
-// create an extended `Vue` constructor
-const localVue = createLocalVue()
 
-// install plugins as normal
+const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(BootstrapVueIcons)
 
 describe('BSide', () => {
-  test('is a Vue instance', () => {
-    const wrapper = mount(BSide, {
-      localVue, // router,
+  let wrapper
+
+  beforeEach(() => {
+    wrapper = mount(BSide, {
+      localVue,
       mocks: {
         $mq: 'desktop',
         $t: () => 'some specific text'
@@ -24,6 +24,9 @@ describe('BSide', () => {
         }
       }
     })
+  })
+
+  test('is a Vue instance', () => {
     expect(wrapper.vm).toBeTruthy()
   })
 })
