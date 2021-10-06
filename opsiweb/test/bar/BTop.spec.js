@@ -3,6 +3,11 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import BootstrapVue, { BootstrapVueIcons } from 'bootstrap-vue'
 import BTop from '@/components/bar/BTop'
+import IExpert from '@/components/icon/IExpert'
+import DropdownDDLang from '@/components/dropdown/DDLang'
+import DropdownDDTheme from '@/components/dropdown/DDTheme'
+import ButtonBTNLogout from '@/components/button/BTNLogout'
+
 // create an extended `Vue` constructor
 const localVue = createLocalVue()
 
@@ -15,9 +20,13 @@ describe('BTop', () => {
     const wrapper = mount(BTop, {
       localVue, // router,
       mocks: {
+        'require.context': () => { return {} },
+        // require: { context: () => { return {} } },
+        $i18n: { locale: '' },
         $mq: 'desktop',
         $t: () => 'some specific text'
       },
+      stubs: { IExpert, DropdownDDLang, DropdownDDTheme, ButtonBTNLogout },
       propsData: {
         attributes: { visible: true, expanded: false }
       }
