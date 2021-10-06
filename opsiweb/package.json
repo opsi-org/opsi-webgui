@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "private": true,
   "scripts": {
-    "dev": "nuxt # npm run lint && nuxt # & npm run test & nuxt",
+    "dev": "npm run lint & nuxt # & npm run test & nuxt",
     "prod": "npm run generate && npm run start",
     "clean": "rm -r -f node_modules coverage .nuxt package-lock.json",
     "build": "nuxt build",
