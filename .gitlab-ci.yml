@@ -25,7 +25,7 @@ test:test-unit:
   script: |
     cd opsiweb
     npm install
-  npm run test:unit
+    npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
