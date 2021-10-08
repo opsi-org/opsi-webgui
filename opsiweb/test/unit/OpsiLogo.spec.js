@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 // import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
 import OpsiLogo from '~/components/icon/IOpsiLogo.vue'
-
 // const localVue = createLocalVue()
 // localVue.use(BootstrapVue)
 // localVue.use(BootstrapVueIcons)
@@ -12,7 +11,7 @@ describe('OpsiLogo', () => {
     wrapper = mount(OpsiLogo)
   })
 
-  test('is a Vue instance', () => {
+  it('is a Vue instance', () => {
     expect(wrapper.vm).toBeTruthy()
   })
 })

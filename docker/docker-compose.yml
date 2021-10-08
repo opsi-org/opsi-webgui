@@ -1,11 +1,11 @@
 version: '3.3'
 
 services:
-  nuxt:
-    image: node:16
+  opsiweb_dev:
+    # image: node:16
+    image: mcr.microsoft.com/playwright:v1.6.2-focal
     volumes:
       - ..:/workspace
     working_dir: /workspace/opsiweb
-    # build:
-    #   dockerfile: docker/Dockerfile.dev
     entrypoint: ["../docker/docker-entrypoint.sh"]
+    network_mode: host
