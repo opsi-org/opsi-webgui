@@ -20,4 +20,3 @@ test('page snapshot', async ({ page }) => {
   await page.goto('./login')
   expect(await page.screenshot()).toMatchSnapshot('page-login.png')
 })
-
