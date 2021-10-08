@@ -21,7 +21,3 @@ test('page snapshot', async ({ page }) => {
   expect(await page.screenshot()).toMatchSnapshot('page-login.png')
 })
 
-test('icon opsilogo snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=logo--opsilogo&viewMode=story')
-  expect(await page.screenshot()).toMatchSnapshot('comp-icon-opsilogo.png')
-})

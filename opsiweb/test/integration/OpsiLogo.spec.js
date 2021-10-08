@@ -1,7 +1,6 @@
 const { test, expect } = require('@playwright/test')
 
-test('login page with opsilogo', async ({ page }) => {
-  // await page.goto('./login')
-  // const title = page.locator('.login_title')
-  // await expect(title).toHaveText('OPSIWEB')
+test('icon opsilogo snapshot', async ({ page }) => {
+  await page.goto('http://localhost:3003/iframe.html?id=logo--opsilogo&viewMode=story')
+  expect(await page.screenshot()).toMatchSnapshot('comp-icon-opsilogo.png')
 })
