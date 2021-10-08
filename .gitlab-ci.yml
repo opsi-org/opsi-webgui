@@ -20,12 +20,12 @@ test:lint:
     npm install
     npm run lint
 
-test:jtest:
+test:test-unit:
   stage: test
   script: |
     cd opsiweb
     npm install
-    npm run test
+  npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
