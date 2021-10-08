@@ -1,4 +1,4 @@
-image: node:latest
+image: mcr.microsoft.com/playwright:v1.6.2-focal
 
 stages:
   - test
