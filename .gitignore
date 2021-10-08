@@ -2,3 +2,6 @@
 *.tmp
 *_tmp
 .env
+
+.nuxt-storybook/
+opsiweb/test/README.md
