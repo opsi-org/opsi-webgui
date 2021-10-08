@@ -15,6 +15,7 @@
 		"esbenp.prettier-vscode",
 		"lokalise.i18n-ally",
 		"orta.vscode-jest",
-		"philfontaine.autolaunch"
+		"philfontaine.autolaunch",
+		"ms-playwright.playwright"
 	]
 }

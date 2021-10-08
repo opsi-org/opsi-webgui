@@ -7,12 +7,21 @@ test('show login page', async ({ page }) => {
 })
 
 test('show depot', async ({ page }) => {
-  let content
   // await page.goto('https://localhost:4447/webgui/api/user/opsiserver')
   // content = page.locator('pre')
   // await expect(content).toHaveText('{"result":"bonifax.uib.local"}')
 
   await page.goto('./login')
-  content = page.locator('.server')
+  const content = page.locator('.server')
   await expect(content).toHaveAttribute('placeholder', 'bonifax.uib.local')
+})
+
+test('page snapshot', async ({ page }) => {
+  await page.goto('./login')
+  expect(await page.screenshot()).toMatchSnapshot('page-login.png')
+})
+
+test('icon opsilogo snapshot', async ({ page }) => {
+  await page.goto('http://localhost:3003/iframe.html?id=logo--opsilogo&viewMode=story')
+  expect(await page.screenshot()).toMatchSnapshot('comp-icon-opsilogo.png')
 })
