@@ -25,9 +25,11 @@ test('login and logout again', async ({ page }) => {
   await page.press('[placeholder="Username"]', 'Tab')
   await page.fill('[placeholder="Password"]', 'adminuser')
   await page.press('[placeholder="Password"]', 'Enter')
+  await apiMock(page, '**/api/auth/login', { result: 'Login success' })
   await page.waitForNavigation({ url: './' })
 
   await page.click('[data-testid="btn-logout"]')
+  await apiMock(page, '**/api/auth/logout', { result: 'logout success' })
   await page.waitForNavigation({ url: './login' })
   title = page.locator('.login_title')
   await expect(title).toHaveText('OPSIWEB')
