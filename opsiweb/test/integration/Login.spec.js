@@ -1,22 +1,29 @@
 const { test, expect } = require('@playwright/test')
+const apiMock = (page, apiPath, response) => page.route(apiPath, route => route.fulfill({
+  status: 200,
+  headers: { 'access-control-allow-origin': '*' },
+  contentType: 'application/json',
+  body: JSON.stringify(response)
+}))
 
-test('show login page', async ({ page }) => {
+test.beforeEach(async ({ page }) => {
+  const apiServerPath = '**/api/user/opsiserver'
+  await page.unroute(apiServerPath)
+  await apiMock(page, apiServerPath, { result: 'mydepot.uib.local' })
   await page.goto('./login')
+})
+
+test('login page return title opsiweb', async ({ page }) => {
   const title = page.locator('.login_title')
   await expect(title).toHaveText('OPSIWEB')
 })
 
-test('show depot', async ({ page }) => {
-  // await page.goto('https://localhost:4447/webgui/api/user/opsiserver')
-  // content = page.locator('pre')
-  // await expect(content).toHaveText('{"result":"bonifax.uib.local"}')
-
-  await page.goto('./login')
+test('login page return mocked depot', async ({ page }) => {
   const content = page.locator('.server')
-  await expect(content).toHaveAttribute('placeholder', 'bonifax.uib.local')
+  await expect(content).toHaveAttribute('placeholder', 'mydepot.uib.local')
 })
 
-test('page snapshot', async ({ page }) => {
-  await page.goto('./login')
-  expect(await page.screenshot()).toMatchSnapshot('page-login.png')
+test('login page snapshot is matching', async ({ page }) => {
+  const content = await page.screenshot()
+  expect(content).toMatchSnapshot('page-login.png')
 })
