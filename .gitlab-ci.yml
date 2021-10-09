@@ -34,8 +34,10 @@ test:test-unit:
 test:test-e2e:
   stage: test
   script: |
+    pwd
     cd opsiweb
     npm install
+    npx playwright install
     npm run test:e2e
   # coverage: /All files\s*\|\s*([\d\.]+)/
   # artifacts:
