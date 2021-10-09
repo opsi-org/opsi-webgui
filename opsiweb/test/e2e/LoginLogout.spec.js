@@ -15,6 +15,8 @@ test.beforeEach(async ({ page }) => {
 
 test('login and logout again', async ({ page }) => {
   // await page.goto('./login')
+  title = page.locator('.login_title')
+  await expect(title).toHaveText('OPSIWEB')
   title = page.locator('.server')
   await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
 
