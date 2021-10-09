@@ -53,7 +53,6 @@
     ".gitignore": true,
     "jest.config.js": true,
     "package-lock.json": true,
-    "package.json": true,
     "README.md": true,
     "vue-shim.d.ts": true,
     "vue-shim.d.ts.tmp": true,
