@@ -3,7 +3,7 @@
 	"dockerComposeFile": "../docker/docker-compose.yml",
 	"service": "opsiweb_dev",
 	"workspaceFolder": "/workspace/opsiweb",
-	// "forwardPorts": [8888, 3003],
+	"forwardPorts": [8888, 3003],
 	// "postStartCommand": "npm install && PORT=8888 bash",
 	"postStartCommand": "'/workspace/.devcontainer/script.sh'",
 	// "remoteUser": "1000",

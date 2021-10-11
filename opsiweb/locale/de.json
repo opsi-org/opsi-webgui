@@ -111,7 +111,8 @@
   },
   "loginPage": {
     "username": "Benutzername",
-    "password": "Passwort"
+    "password": "Passwort",
+    "errortext": "Etwas lief schief. Ist opsiconfd zu erreichen?"
   },
   "supportPage" : {
     "documentation": {

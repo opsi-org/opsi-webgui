@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const apiMock = (page, apiPath, response, withCookie = true) => {
+const apiMock = (page, apiPath, response) => {
   page.route(apiPath, route => route.fulfill({
     status: 200,
     headers: {
@@ -26,19 +26,20 @@ const cookieOpsiconfdSession = [{
 }]
 
 test.beforeEach(async ({ page }) => {
-  page.on('console', m => console.log(m.text()))
-  page.on('requestfailed', request => (!request.url().includes('4447')) ? '' : console.log(`>>f ${request.method()} ${request.url()} ${JSON.stringify(request.failure())}`))
-  page.on('request', request => {
-    if (request.url().includes('4447')) {
-      console.log(`>> ${request.method()} ${request.url()}`)
-    }
-  })
-  page.on('response', async response => {
-    if (response.url().includes('4447')) {
-      let txt = (await response.body()).toString()
-      console.log(`<< ${response.status()} ${response.url()} ${txt}`)
-    }
-  })
+  // page.on('console', m => console.log(m.text()))
+  // page.on('requestfailed', request => (!request.url().includes('4447')) ? '' : console.log(`>>f ${request.method()} ${request.url()} ${JSON.stringify(request.failure())}`))
+  // page.on('request', request => {
+  //   if (request.url().includes('4447')) {
+  //     console.log(`>> ${request.method()} ${request.url()}`)
+  //   }
+  // })
+  // page.on('response', async response => {
+  //   if (response.url().includes('4447')) {
+  //     let txt = (await response.body()).toString()
+  //     console.log(`<< ${response.status()} ${response.url()} ${txt}`)
+  //   }
+    // "jest-playwright-preset": "^1.7.0",
+  // })
   await page.unroute('**/api/**')
   await apiMock(page, '**/api/user/opsiserver', { result: 'mydepot.uib.local' })
   await apiMock(page, '**/api/auth/login', { result: 'Login success' })

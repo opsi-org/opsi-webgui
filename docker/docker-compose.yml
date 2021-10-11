@@ -8,4 +8,4 @@ services:
       - ..:/workspace
     working_dir: /workspace/opsiweb
     entrypoint: ["../docker/docker-entrypoint.sh"]
-    network_mode: host
+    # network_mode: host

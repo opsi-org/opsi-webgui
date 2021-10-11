@@ -30,7 +30,14 @@ interface FormUser {
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
-    this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    try {
+      this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    } catch (error) {
+        console.error(error)
+        const errorMsg = this.$t('loginPage.errortext') as string
+        this.isLoading = false
+        makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
+    }
   }
 
   get validUsername () {
