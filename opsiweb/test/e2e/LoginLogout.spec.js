@@ -38,7 +38,7 @@ test.beforeEach(async ({ page }) => {
   //     let txt = (await response.body()).toString()
   //     console.log(`<< ${response.status()} ${response.url()} ${txt}`)
   //   }
-    // "jest-playwright-preset": "^1.7.0",
+  // "jest-playwright-preset": "^1.7.0",
   // })
   await page.unroute('**/api/**')
   await apiMock(page, '**/api/user/opsiserver', { result: 'mydepot.uib.local' })

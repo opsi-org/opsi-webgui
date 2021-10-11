@@ -33,10 +33,10 @@ interface FormUser {
     try {
       this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
     } catch (error) {
-        console.error(error)
-        const errorMsg = this.$t('loginPage.errortext') as string
-        this.isLoading = false
-        makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
+      console.error(error)
+      const errorMsg = this.$t('loginPage.errortext') as string
+      this.isLoading = false
+      makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
     }
   }
 
