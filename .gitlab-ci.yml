@@ -55,7 +55,7 @@ test:test-integration:
     - *install_webgui_devdep
     - PORT=8888 nohup npm run dev &
     - PORT=3003 nohup npm run story &
-    - sleep 20
+    - sleep 30
     - npm run test:integration
   artifacts:
     name: 'integration-snapshot-result'

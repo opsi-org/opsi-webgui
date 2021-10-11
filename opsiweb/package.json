@@ -3,7 +3,7 @@
   "version": "0.0.4",
   "private": true,
   "scripts": {
-    "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt storybook --ci",
+    "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt storybook --ci --quiet",
     "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt",
     "prod": "npm run generate && npm run start",
     "clean": "rm -r -f node_modules coverage .nuxt package-lock.json",
