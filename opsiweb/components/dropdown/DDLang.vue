@@ -19,7 +19,6 @@
 
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
-import { IObjectString2Any } from '~/scripts/types/tgeneral'
 const settings = namespace('settings')
 
 @Component export default class DDLang extends Vue {
@@ -37,8 +36,9 @@ const settings = namespace('settings')
   }
 
   mounted () {
-    const langPaths = require.context('~/locale/', true, /\.json$/) as IObjectString2Any
-    langPaths.keys().forEach((key: string) => (this.languages.push((key as string).replace('./', '').replace('.json', ''))))
+    this.languages = Object.keys(this.$i18n.messages)
+    // require.context('~/locale/', true, /\.json$/) as IObjectString2Any
+    // langPaths.keys().forEach((key: string) => (this.languages.push((key as string).replace('./', '').replace('.json', ''))))
   }
 
   changeLanguage (lang : string) {

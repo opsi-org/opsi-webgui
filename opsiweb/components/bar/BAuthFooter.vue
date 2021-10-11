@@ -21,6 +21,17 @@
   </div>
 </template>
 
+<script lang="ts">
+import { Component, Vue } from 'nuxt-property-decorator'
+// import DDLang from '@/components/dropdown/DDLang'
+
+// ({
+//   components: { DropdownDDLang }
+// })
+@Component export default class BAuthFooter extends Vue {
+}
+</script>
+
 <style>
 .fixed-bottom .navbar {
   margin-bottom: 0;

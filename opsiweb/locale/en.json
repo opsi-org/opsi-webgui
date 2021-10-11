@@ -110,7 +110,8 @@
   },
   "loginPage": {
     "username": "Username",
-    "password": "Password"
+    "password": "Password",
+    "errortext": "Something went wrong. Is opsiconfd available?"
   },
   "supportPage": {
     "documentation": {

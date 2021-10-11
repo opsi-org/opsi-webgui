@@ -1,4 +1,5 @@
 module.exports = {
+  // preset: 'jest-playwright-preset',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^~/(.*)$': '<rootDir>/$1',
@@ -16,12 +17,16 @@ module.exports = {
     '.*\\.(vue)$': 'vue-jest'
   },
   verbose: true,
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
-    'components/**/*.{js,ts,vue}',
-    'layouts/**/*.{js,ts,vue}',
-    'pages/**/*.{js,ts,vue}',
-    'scripts/**/*.{js,ts,vue}'
+    'components/**/*.{js,ts,vue}'
+    // 'layouts/**/*.{js,ts,vue}',
+    // 'pages/**/*.{js,ts,vue}',
+    // 'scripts/**/*.{js,ts,vue}'
+  ],
+  testPathIgnorePatterns: [
+    'test/integration/',
+    'test/e2e/'
   ],
   coveragePathIgnorePatterns: [
     'node_modules/',

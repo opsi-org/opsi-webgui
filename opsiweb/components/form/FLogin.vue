@@ -1,9 +1,9 @@
 <template>
   <div @keyup.enter="doLogin">
-    <b-form-input v-model="opsiconfigserver" readonly class="login_input_field" />
+    <b-form-input v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
     <b-form-input v-model="form.username" :placeholder="$t('loginPage.username')" :state="validUsername" class="login_input_field" />
     <b-form-input v-model="form.password" :placeholder="$t('loginPage.password')" :state="validPassword" type="password" class="login_input_field" />
-    <b-button class="login_input_field_btn" variant="primary" block @click="doLogin">
+    <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
       {{ $t('button.login') }}
     </b-button>
     <IconILoading v-if="isLoading" />
@@ -30,7 +30,14 @@ interface FormUser {
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
-    this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    try {
+      this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    } catch (error) {
+      console.error(error)
+      const errorMsg = this.$t('loginPage.errortext') as string
+      this.isLoading = false
+      makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
+    }
   }
 
   get validUsername () {

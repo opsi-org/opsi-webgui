@@ -1,6 +1,7 @@
 <template>
   <b-button
     v-bind="$props"
+    data-testid="btn-logout"
     variant="primary"
     class="btn_logout text-left"
     @click="doLogout"

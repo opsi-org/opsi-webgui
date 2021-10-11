@@ -41,13 +41,11 @@
     "html"
   ],
   "files.exclude": {
-    ".vscode": true,
     ".mockups": true,
     ".nuxt": true,
     "https": true,
     "node_modules": true,
     "static": true,
-    "test": true,
     ".babelrc": true,
     ".editorconfig": true,
     ".eslintignore": true,
@@ -55,7 +53,6 @@
     ".gitignore": true,
     "jest.config.js": true,
     "package-lock.json": true,
-    "package.json": true,
     "README.md": true,
     "vue-shim.d.ts": true,
     "vue-shim.d.ts.tmp": true,
@@ -66,7 +63,9 @@
     "layouts/README.md": true,
     "components/README.md": true,
     "assets/README.md": true,
-    "dist": true
+    "dist": true,
+    ".nuxt-storybook": true,
+    "coverage": true
   },
   "workspace.isHidden": true,
   "i18n-ally.localesPaths": [

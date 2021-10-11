@@ -1,4 +1,4 @@
-image: node:latest
+image: mcr.microsoft.com/playwright:v1.10.0-focal
 
 stages:
   - test
@@ -11,35 +11,66 @@ stages:
   apt -y install debhelper osc
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
+.install_webgui_devdep: &install_webgui_devdep |
+  cd opsiweb
+  npm install
+  npx playwright install
 
+.install_webgui_devdep_min: &install_webgui_devdep_min |
+  cd opsiweb
+  npm install
 
 test:lint:
   stage: test
-  script: |
-    cd opsiweb
-    npm install
-    npm run lint
+  script:
+    - *install_webgui_devdep_min
+    - npm run lint
 
-#test:jtest:
-#  stage: test
-#  script: |
-#    cd opsiweb
-#    npm install
-#    npm run test
-#  coverage: /All files\s*\|\s*([\d\.]+)/
-#  artifacts:
-#    reports:
-#      cobertura: opsiweb/coverage/clover.xml
+test:test-unit:
+  stage: test
+  script:
+    - *install_webgui_devdep_min
+    - npm run test:unit
+  coverage: /All files\s*\|\s*([\d\.]+)/
+  artifacts:
+    reports:
+      cobertura: opsiweb/coverage/clover.xml
+
+test:test-e2e:
+  stage: test
+  script:
+    - *install_webgui_devdep
+    - PORT=8888 nohup npm run dev &
+    - sleep 20
+    - npm run test:e2e
+  artifacts:
+    name: 'e2e-snapshot-result'
+    paths:
+      - opsiweb/test/test-results
+    expire_in: 1 day
+
+test:test-integration:
+  stage: test
+  script:
+    - *install_webgui_devdep
+    - PORT=8888 nohup npm run dev &
+    - PORT=3003 nohup npm run story &
+    - sleep 60
+    - npm run test:integration
+  artifacts:
+    name: 'integration-snapshot-result'
+    paths:
+      - opsiweb/test/test-results
+    expire_in: 1 day
 
 build:static-app:
   stage: build
   dependencies:
     - test:lint
     #- test:jtest
-  script: |
-    cd opsiweb
-    npm install
-    npm run generate
+  script:
+    - *install_webgui_devdep_min
+    - npm run generate
   artifacts:
     name: 'opsi-webgui'
     paths:
