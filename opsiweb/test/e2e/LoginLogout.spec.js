@@ -14,7 +14,7 @@ const apiMock = (page, apiPath, response, withCookie = true) => {
   }))
 }
 
-const c = [{
+const cookieOpsiconfdSession = [{
   name: 'opsiconfd-session',
   value: 'any-value',
   domain: 'localhost',
@@ -27,9 +27,9 @@ const c = [{
 
 test.beforeEach(async ({ page }) => {
   page.on('console', m => console.log(m.text()))
-  page.on('requestfailed', request => (!request.url().includes('localhost')) ? '' : console.log(`>>f ${request.method()} ${request.url()} ${JSON.stringify(request.failure())}`))
+  page.on('requestfailed', request => (!request.url().includes('4447')) ? '' : console.log(`>>f ${request.method()} ${request.url()} ${JSON.stringify(request.failure())}`))
   page.on('request', request => {
-    if (request.url().includes('localhost')) {
+    if (request.url().includes('4447')) {
       console.log(`>> ${request.method()} ${request.url()}`)
     }
   })
@@ -41,8 +41,8 @@ test.beforeEach(async ({ page }) => {
   })
   await page.unroute('**/api/**')
   await apiMock(page, '**/api/user/opsiserver', { result: 'mydepot.uib.local' })
-  await apiMock(page, 'https://localhost:4447/webgui/api/auth/login', { result: 'Login success' })
-  await apiMock(page, 'https://localhost:4447/webgui/api/auth/logout', { result: 'logout success' })
+  await apiMock(page, '**/api/auth/login', { result: 'Login success' })
+  await apiMock(page, '**/api/auth/logout', { result: 'logout success' })
   await page.goto('./login')
 })
 
@@ -59,9 +59,9 @@ test('should be possible to login and logout again', async ({ page, context }) =
   await page.fill('[placeholder="Password"]', 'adminuser')
   await page.press('[placeholder="Password"]', 'Enter')
 
-  await context.addCookies(c)
+  await context.addCookies(cookieOpsiconfdSession)
   title = await context.cookies()
-  expect(title).toEqual(c)
+  expect(title).toEqual(cookieOpsiconfdSession)
 
   await page.waitForNavigation({ url: './' })
   title = page.locator('[data-testid="btn-logout"]')
