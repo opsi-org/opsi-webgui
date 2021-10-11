@@ -39,6 +39,7 @@ test:test-e2e:
     npm install
     npx playwright install
     PORT=8888 nohup npm run dev &
+    sleep 20
     npm run test:e2e
   # coverage: /All files\s*\|\s*([\d\.]+)/
   # artifacts:
