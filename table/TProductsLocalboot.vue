@@ -135,7 +135,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
-import { makeToast } from '@/scripts/snippets/scomponents'
+import { makeToast } from '@/scripts/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '~/scripts/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/scripts/types/ttable'
 import { ChangeObj } from '~/scripts/types/tchanges'
