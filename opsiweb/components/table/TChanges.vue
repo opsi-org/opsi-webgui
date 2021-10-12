@@ -45,7 +45,7 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '@/scripts/snippets/scomponents'
+import { makeToast } from '@/scripts/utils/scomponents'
 import { IObjectString2String } from '~/scripts/types/tgeneral'
 import { ChangeObj } from '~/scripts/types/tchanges'
 const changes = namespace('changes')

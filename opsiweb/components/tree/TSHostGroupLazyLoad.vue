@@ -32,9 +32,9 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { filterObjectLabel, filterObject } from '@/scripts/snippets/sfilters'
+import { filterObjectLabel, filterObject } from '@/scripts/utils/sfilters'
 import { Group } from '~/scripts/types/tbackendmethods'
-import { arrayEqual } from '~/scripts/snippets/scompares'
+import { arrayEqual } from '~/scripts/utils/scompares'
 const selections = namespace('selections')
 interface Request {
     selectedDepots: string
