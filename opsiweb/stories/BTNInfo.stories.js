@@ -1,7 +1,7 @@
 import { argTypeVariants } from '~/scripts/types/ttestconsts'
 
 export default {
-  title: 'Button/B T N Info',
+  title: 'Button/BTN Info',
   parameters: { docs: { description: { component: 'Button/BTNInfo description' } } },
   argTypes: {
     onclick: { action: 'clicked' },
