@@ -1,4 +1,4 @@
-import { argTypeBoolFalse, argTypeBoolTrue } from "~/scripts/types/ttestconsts";
+import { argTypeBoolFalse, argTypeBoolTrue } from '~/scripts/types/ttestconsts'
 
 export default {
   title: 'bar/B Top',
