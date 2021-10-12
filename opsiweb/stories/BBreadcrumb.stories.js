@@ -1,6 +1,7 @@
 // Describe card component
 export default {
   title: 'Bar/B Breadcrumb',
+  parameters: { docs: { description: { component: 'Bar/BBreadcrumb description' } } },
   argTypes: {
     items: {
       defaultValue: ['first', 'second'],

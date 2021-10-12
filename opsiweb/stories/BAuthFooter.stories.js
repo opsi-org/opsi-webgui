@@ -1,6 +1,7 @@
 // Describe card component
 export default {
-  title: 'Bar/B Auth Footer'
+  title: 'Bar/B Auth Footer',
+  parameters: { docs: { description: { component: 'Bar/BAuthFooter description' } } }
 }
 
 // Define template for Story
