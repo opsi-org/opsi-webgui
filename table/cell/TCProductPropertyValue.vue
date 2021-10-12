@@ -51,7 +51,7 @@
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IProperty } from '~/scripts/types/ttable'
 import { IObjectString2String } from '~/scripts/types/tgeneral'
-import { arrayEqual } from '~/scripts/snippets/scompares'
+import { arrayEqual } from '~/scripts/utils/scompares'
 const selections = namespace('selections')
 // const mixed = '<mixed>'
 @Component

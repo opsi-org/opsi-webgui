@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
-import { makeToast } from '@/scripts/snippets/scomponents'
+import { makeToast } from '@/scripts/utils/scomponents'
 const auth = namespace('auth')
 const selections = namespace('selections')
 interface FormUser {

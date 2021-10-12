@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { mapValues2Value, mapValues2Objects } from '~/scripts/snippets/smappings'
+import { mapValues2Value, mapValues2Objects } from '~/scripts/utils/smappings'
 import { IObjectString2String } from '~/scripts/types/tgeneral'
 
 @Component
