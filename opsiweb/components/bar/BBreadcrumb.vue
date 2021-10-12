@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import { Vue, Component, Prop } from 'nuxt-property-decorator'
 // import { BBreadcrumb } from 'bootstrap-vue'
 // import { ITableRow, ITableHeaders } from '~/types/tsettings'
 
@@ -30,6 +30,9 @@ import { Vue, Component } from 'nuxt-property-decorator'
 // }
 @Component
 export default class BBreadcrumbRow extends Vue {
+  @Prop({ default: undefined }) specificItems!: Array<string>|undefined
+
+
   get breadcrumbItems (): Array<string> {
     if (this.$router === null || this.$router === undefined) {
       return []
@@ -43,6 +46,7 @@ export default class BBreadcrumbRow extends Vue {
   }
 
   get crumbs (): Array<string> {
+    if (this.specificItems !== undefined) { return this.specificItems }
     const pathArray : Array<string> = this.$route.path.split('/')
     pathArray.shift()
     for (const c in pathArray) {

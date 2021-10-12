@@ -19,12 +19,13 @@ const changes = namespace('changes')
 
 @Component
 export default class BTNLogout extends Vue {
-  @Prop({ default: false }) navbar!: boolean
+  @Prop({ default: false }) abortClick!: boolean
   @auth.Mutation public logout!: () => void
   @selections.Mutation public clearAllSelection!: () => void
   @changes.Mutation public deleteAllChanges!: () => void
 
   async doLogout () {
+    if (this.abortClick) { return }
     const response = await this.$axios.$post('/api/auth/logout')
     if (response.result === 'logout success') {
       this.logout()
