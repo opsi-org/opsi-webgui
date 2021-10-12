@@ -36,7 +36,7 @@ interface FormUser {
       const errorMsg = this.$t('loginPage.errortext') as string
       this.isLoading = false
       makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
-      throw new Error(error)
+      throw new Error(errorMsg)
     }
   }
 
