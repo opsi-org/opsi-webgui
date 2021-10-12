@@ -3,7 +3,6 @@
 	"configurations": [
 		{
 			"name": "webgui",
-			"port": 8888,
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run-script",
@@ -15,11 +14,10 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true,
+			"auto": true
 		},
 		{
 			"name": "storybook",
-			"port": 3003,
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run-script",
