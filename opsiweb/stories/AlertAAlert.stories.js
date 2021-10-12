@@ -1,0 +1,24 @@
+import { argTypeVariants } from '~/scripts/types/ttestconsts'
+
+// Describe card component
+export default {
+  title: 'Alert/Alert',
+  parameters: { docs: { description: { component: 'Alert/AAlert description' } } },
+  argTypes: {
+    variant: argTypeVariants,
+    content: {
+      defaultValue: 'Content text',
+      control: {
+        type: 'text'
+      }
+    }
+  }
+}
+
+const DefaultVisibleTemplate = (_args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  template: '<AlertAAlert v-bind="$props" show> {{$props.content}} </AlertAAlert>'
+})
+
+// named export Primary to create respective story
+export const Alert = DefaultVisibleTemplate.bind({})

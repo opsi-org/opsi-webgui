@@ -1,15 +1,15 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
-import BPaginationUib from '@/components/bar/BPagination'
+import BTablePagination from '@/components/bar/BTablePagination'
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
 localVue.use(BootstrapVueIcons)
 
-describe('BPagination', () => {
+describe('BTablePagination', () => {
   let wrapper
   beforeEach(() => {
-    wrapper = mount(BPaginationUib, {
+    wrapper = mount(BTablePagination, {
       localVue,
       mocks: {
         $mq: 'desktop',
