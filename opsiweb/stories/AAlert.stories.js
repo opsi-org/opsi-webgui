@@ -2,7 +2,7 @@ import { argTypeVariants } from '~/scripts/types/ttestconsts'
 
 // Describe card component
 export default {
-  title: 'Alert/AAlert',
+  title: 'Alert/Alert',
   argTypes: {
     variant: argTypeVariants,
     content: {
