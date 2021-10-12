@@ -32,7 +32,6 @@ import { Vue, Component, Prop } from 'nuxt-property-decorator'
 export default class BBreadcrumbRow extends Vue {
   @Prop({ default: undefined }) specificItems!: Array<string>|undefined
 
-
   get breadcrumbItems (): Array<string> {
     if (this.$router === null || this.$router === undefined) {
       return []
