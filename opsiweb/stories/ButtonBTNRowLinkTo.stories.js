@@ -1,14 +1,10 @@
 // import { argTypeBoolFalse, argTypeTextContent } from '~/scripts/types/ttestconsts'
 export default {
   title: 'Button/BTN Row Link To',
-  parameters: { docs: { description: { component: 'Button/BTNRowLinkTo description' } } },
-  // argTypes: {
-  //   modalId: argTypeTextContent,
-  //   disabled: argTypeBoolFalse
-  // }
+  parameters: { docs: { description: { component: 'Button/BTNRowLinkTo description' } } }
 }
 
-const PrimaryTemplate = (args, { argTypes }) => ({
+const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: ` <ButtonBTNRowLinkTo
     :title="$t('title.config')"
