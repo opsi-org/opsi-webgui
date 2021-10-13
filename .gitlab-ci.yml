@@ -44,9 +44,8 @@ test:test-e2e:
     - sleep 20
     - npm run test:e2e
   artifacts:
-    name: 'e2e-snapshot-result'
     paths:
-      - opsiweb/test/test-results
+      - opsiweb/test-results
     expire_in: 1 day
 
 test:test-integration:
@@ -58,9 +57,8 @@ test:test-integration:
     - sleep 60
     - npm run test:integration
   artifacts:
-    name: 'integration-snapshot-result'
     paths:
-      - opsiweb/test/test-results
+      - opsiweb/test-results
     expire_in: 1 day
 
 build:static-app:

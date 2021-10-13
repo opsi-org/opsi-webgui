@@ -16,6 +16,7 @@ test.beforeEach(async ({ page }) => {
   await page.unroute(apiServerPath)
   await apiMock(page, apiServerPath, { result: 'mydepot.uib.local' })
   await page.goto('./login')
+  await page.waitForURL('./login')
 })
 
 test('login page return title opsiweb', async ({ page }) => {
@@ -30,5 +31,6 @@ test('login page return mocked depot', async ({ page }) => {
 
 test('login page snapshot is matching', async ({ page }) => {
   const content = await page.screenshot()
+
   expect(content).toMatchSnapshot('page-login.png')
 })
