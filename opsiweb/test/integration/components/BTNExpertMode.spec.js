@@ -11,7 +11,6 @@ test('button expert mode clicked snapshot', async ({ page }) => {
   expect(await page.screenshot()).toMatchSnapshot('comp-button-btnexpertmode-clicked.png')
 })
 
-
 test('button expert mode (navbar) snapshot', async ({ page }) => {
   await page.goto('http://localhost:3003/iframe.html?id=button-btn-expert-mode--btn-expert-mode-navbar&args=&viewMode=story')
   expect(await page.screenshot()).toMatchSnapshot('comp-button-btnexpertmode-navbar.png')

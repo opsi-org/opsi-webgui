@@ -1,4 +1,4 @@
-import { argTypeBoolFalse } from "~/scripts/types/ttestconsts"
+import { argTypeBoolFalse } from '~/scripts/types/ttestconsts'
 
 // import { argTypeVariants } from '~/scripts/types/ttestconsts'
 export default {
