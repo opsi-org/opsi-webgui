@@ -1,7 +1,7 @@
 // import { argTypeVariants } from '~/scripts/types/ttestconsts'
 export default {
-  title: 'Button/BTN Delete All',
-  parameters: { docs: { description: { component: 'Button/BTNInfo description' } } }
+  title: 'Button/BTN Delete Obj',
+  parameters: { docs: { description: { component: 'Button/BTNDeleteObj description' } } }
   // argTypes: {
   //   hide: { action: 'clicked' },
   // }
@@ -9,8 +9,8 @@ export default {
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<ButtonBTNDeleteAll />'
+  template: '<ButtonBTNDeleteObj />'
 })
 
 // named export Primary to create respective story
-export const BTNDeleteAll = PrimaryTemplate.bind({})
+export const BTNDeleteObj = PrimaryTemplate.bind({})
