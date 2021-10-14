@@ -3,6 +3,8 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   testIgnore: 'test/unit/**/*.spec.js',
+  retries: 2,
+  globalSetup: require.resolve('./test/.utils-pw/pw-global-setup.js'),
   use: {
     browserName: 'chromium',
     baseURL: 'https://localhost:8888/webgui/app/',
