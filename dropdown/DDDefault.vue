@@ -2,6 +2,7 @@
   <div>
     <b-dropdown
       v-bind="$props"
+      data-testid="DropdownDDDefault"
       no-caret
       lazy
       :toggle-class="{'value-changed-not-saved': !isOrigin, 'DDDefault-BtnContent': true }"
@@ -23,6 +24,7 @@
         <a
           v-for="o in options"
           :key="o"
+          :data-testid="`DropdownDDDefault-Item-${o}`"
           class="dropdown-item"
           :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
           @click="(!selections.includes(0))?selections = [o]:()=>{}"
@@ -38,6 +40,7 @@
         <a
           v-for="o in options"
           :key="o"
+          :data-testid="`DropdownDDDefault-Item-${o}`"
           class="dropdown-item"
           :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
           @click="(!selections.includes(0))? toggleSelection(o):()=>{}"
