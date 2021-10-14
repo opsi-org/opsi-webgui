@@ -2,6 +2,7 @@
   <div class="btn btn-primary dd_lang text-left">
     <b-nav-item-dropdown
       style="height:100%;margin:0px;"
+      data-testid="DropdownDDLang"
       :text="$i18n.locale"
       alt="select theme"
       :dropup="dropup"
@@ -9,6 +10,7 @@
       <b-dropdown-item
         v-for="(lang, i) in languages"
         :key="i"
+        :data-testid="`DropdownDDLang-Item-${lang}`"
         @click="changeLanguage(lang)"
       >
         {{ lang }}
@@ -52,5 +54,9 @@ const settings = namespace('settings')
 .dd_lang{
   padding-left: 1em !important;
   padding-right: 1em !important;
+  list-style: none;
+}
+.dd_lang a {
+  color: inherit !important
 }
 </style>
