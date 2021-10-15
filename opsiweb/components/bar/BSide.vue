@@ -1,6 +1,7 @@
 <template>
   <b-sidebar
     id="sidemenu"
+    data-testid="BarBSide"
     no-header
     bg-variant="primary"
     text-variant="light"

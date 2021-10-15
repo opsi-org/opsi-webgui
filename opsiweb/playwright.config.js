@@ -5,6 +5,7 @@ const config = {
   testIgnore: 'test/unit/**/*.spec.js',
   retries: 2, // sometimes first try simply do not work.. :|
   workers: 4, // cause for me locally it exists 8 cpu cores (recommendation is to use the half of it)
+  expect: { toMatchSnapshot: { threshold: 0.1 } },
   globalSetup: require.resolve('./test/.utils-pw/pw-global-setup.js'),
   // forbidOnly: !!process.env.CI,
   use: {

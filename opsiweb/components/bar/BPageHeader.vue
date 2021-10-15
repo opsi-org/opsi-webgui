@@ -1,6 +1,7 @@
 <template>
   <b-navbar
     class="BPageHeader_Navbar"
+    data-testid="BarBPageHeader"
     :variant="variant"
   >
     <span v-if="navbartype=='collapse'">

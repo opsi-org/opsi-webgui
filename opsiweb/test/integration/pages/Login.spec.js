@@ -31,6 +31,6 @@ test('login page return mocked depot', async ({ page }) => {
 
 test('login page snapshot is matching', async ({ page }) => {
   const content = await page.screenshot()
-
-  expect(content).toMatchSnapshot('page-login.png')
+  expect(content).toMatchSnapshot('pages-login.png')
+  // TODO: Webkit broken
 })

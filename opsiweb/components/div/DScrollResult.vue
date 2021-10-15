@@ -1,5 +1,5 @@
 <template>
-  <div class="content-scroll">
+  <div class="content-scroll" data-testid="DivDScrollResult">
     <slot name="content" />
   </div>
 </template>

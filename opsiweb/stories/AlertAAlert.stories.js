@@ -1,4 +1,5 @@
 import { argTypeVariants } from '~/scripts/types/ttestconsts'
+// import * from '~/static/themes/opsi-bootstrap-theme-light.css'
 
 // Describe card component
 export default {

@@ -3,10 +3,13 @@ const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
 test('bar btablepagination snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-table-pagination', 'b-table-pagination')
-  expect(await page.screenshot()).toMatchSnapshot('comp-bar-btablepagination.png')
+  const component = await page.locator('[data-testid="BarBTablePagination"]')
+  expect(await component.screenshot()).toMatchSnapshot('bar-btablepagination.png')
 })
+
 test('bar btablepagination open snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-table-pagination', 'b-table-pagination')
-  await page.click('.BarBPagination-PerPage-Dropdown')
-  expect(await page.screenshot()).toMatchSnapshot('comp-bar-btablepagination-open.png')
+  await page.click('[data-testid="BarBTablePagination-Pagination"]')
+  // TODO: firefox + webkit reacts different (do not show dropdown content)
+  expect(await page.screenshot()).toMatchSnapshot('bar-btablepagination-open.png')
 })
