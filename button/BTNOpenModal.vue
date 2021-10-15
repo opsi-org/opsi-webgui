@@ -1,6 +1,7 @@
 <template>
   <b-button
     v-b-modal="modalId"
+    data-testid="ButtonBTNOpenModal"
     :disabled="disabled"
     :variant="disabled ? 'light' : 'success'"
   >

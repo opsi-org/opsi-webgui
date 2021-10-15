@@ -1,6 +1,13 @@
 <template>
   <div>
-    <b-navbar class="topbar" toggleable="md" fixed="top" type="dark" variant="primary">
+    <b-navbar
+      data-testid="BarBTop"
+      class="topbar"
+      toggleable="md"
+      fixed="top"
+      type="dark"
+      variant="primary"
+    >
       <div class="container-fluid">
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button :pressed.sync="attributes.visible">

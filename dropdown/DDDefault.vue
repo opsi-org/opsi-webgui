@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <div
+    data-testid="DropdownDDDefault"
+  >
     <b-dropdown
       v-bind="$props"
-      data-testid="DropdownDDDefault"
+      data-testid="DropdownDDDefault-Button"
       no-caret
       lazy
       :toggle-class="{'value-changed-not-saved': !isOrigin, 'DDDefault-BtnContent': true }"

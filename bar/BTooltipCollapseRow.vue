@@ -2,7 +2,8 @@
   <div>
     <b-nav-item
       v-b-toggle="`collapse-navitem-${title}`"
-      class="collapse-navitem"
+      data-testid="BarBTooltipCollapseRow"
+      class="collapse-navitem BarBTooltipCollapseRow"
       light
     >
       <b-th class="text-left">
@@ -38,6 +39,9 @@ export default class BTooltipCollapseRow extends Vue {
 </script>
 
 <style>
+.BarBTooltipCollapseRow {
+  list-style: none !important;
+}
 .pageheader{
   height: var(--height-navbar) !important;
 }
