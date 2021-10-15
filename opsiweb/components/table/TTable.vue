@@ -13,6 +13,7 @@
     :stacked="$mq=='mobile' && stacked!=false"
     :hover="!disableSelection"
     :selectable="!disableSelection"
+    sort-icon-left
     @row-clicked="rowChanged"
   >
     <template #table-busy>
