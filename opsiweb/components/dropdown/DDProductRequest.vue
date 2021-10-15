@@ -2,6 +2,7 @@
   <div>
     <b-dropdown
       :id="(rowitem!=undefined) ? `DDProductRequest_actionRequest_hover_${rowitem.productId}`:''"
+      data-testid="DropdownDDProductRequest"
       v-bind="$props"
       no-caret
       lazy
@@ -19,6 +20,7 @@
       <b-dropdown-item
         v-for="a in requestoptions"
         :key="a"
+        :data-testid="`DropdownDDProductRequest-Item-${a}`"
         @click="$emit('update:action', a);save(rowitem, a); visibleRequest=a"
       >
         {{ a }}
