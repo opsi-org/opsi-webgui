@@ -15,6 +15,7 @@ stages:
   cd opsiweb
   npm install
   npx playwright install
+  npx playwright install-deps
 
 .install_webgui_devdep_min: &install_webgui_devdep_min |
   cd opsiweb
