@@ -3,7 +3,6 @@ const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
 test('dropdown DDProductRequest head snapshot', async ({ page }) => {
   await callStoryId(page, 'dropdown-dd-product-request', 'dd-product-request-head')
-  // await page.goto('http://localhost:3003/iframe.html?id=dropdown-dd-product-request--dd-product-request-head&args=&viewMode=story')
   expect(await page.screenshot()).toMatchSnapshot('comp-dropdown-ddproductrequest-head.png')
 })
 

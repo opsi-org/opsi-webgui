@@ -2,7 +2,7 @@ import { argTypeVariants } from '~/scripts/types/ttestconsts'
 
 // Describe card component
 export default {
-  title: 'Alert/Alert',
+  title: 'Alert/A Alert',
   parameters: { docs: { description: { component: 'Alert/AAlert description' } } },
   argTypes: {
     variant: argTypeVariants,
@@ -21,4 +21,4 @@ const DefaultVisibleTemplate = (_args, { argTypes }) => ({
 })
 
 // named export Primary to create respective story
-export const Alert = DefaultVisibleTemplate.bind({})
+export const AAlert = DefaultVisibleTemplate.bind({})

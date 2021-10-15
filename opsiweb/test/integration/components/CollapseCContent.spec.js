@@ -1,13 +1,12 @@
 const { test, expect } = require('@playwright/test')
+const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
-test('bar btablepagination snapshot', async ({ page }) => {
-  // await page.goto(getStoryFrame('id=alert-aalert--alert&args=&viewMode=story'))
-  await page.goto('http://localhost:3003/iframe.html?id=bar-b-table-pagination--b-table-pagination&args=&viewMode=story')
-  expect(await page.screenshot()).toMatchSnapshot('comp-bar-btablepagination.png')
+test('collapse ccontent snapshot', async ({ page }) => {
+  await callStoryId(page, 'collapse-btn-c-collapse', 'btn-c-collapse')
+  expect(await page.screenshot()).toMatchSnapshot('comp-collapse-ccontent.png')
 })
-test('bar btablepagination open snapshot', async ({ page }) => {
-  // await page.goto(getStoryFrame('id=alert-aalert--alert&args=&viewMode=story'))
-  await page.goto('http://localhost:3003/iframe.html?id=bar-b-table-pagination--b-table-pagination&args=&viewMode=story')
-  await page.click('.BarBPagination-PerPage-Dropdown')
-  expect(await page.screenshot()).toMatchSnapshot('comp-bar-btablepagination-open.png')
-})
+// test('bar btablepagination open snapshot', async ({ page }) => {
+//   await callStoryId(page, 'collapse-btn-c-collapse', 'btn-c-collapse')
+//   // await page.click('.BarBPagination-PerPage-Dropdown')
+//   expect(await page.screenshot()).toMatchSnapshot('comp-bar-btablepagination-open.png')
+// })

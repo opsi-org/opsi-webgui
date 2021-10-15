@@ -17,3 +17,4 @@ npm install
 # npm audit fix
 echo "[script.sh] configure playwright..."
 npx playwright install
+npx playwright install-deps
