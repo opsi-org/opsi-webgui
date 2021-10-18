@@ -44,6 +44,8 @@ test:test-e2e:
     - PORT=8888 nohup npm run dev &
     - sleep 20
     - npm run test:e2e
+    - ls -lah
+    - pwd
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
     paths:
@@ -58,6 +60,8 @@ test:test-integration:
     - PORT=3003 nohup npm run story &
     - sleep 60
     - npm run test:integration
+    - ls -lah
+    - pwd
   artifacts:
     name: 'opsi-webgui-test-result-integration'
     paths:
