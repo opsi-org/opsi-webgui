@@ -30,6 +30,7 @@ test('login page return mocked depot', async ({ page }) => {
 })
 
 test('login page snapshot is matching', async ({ page, browserName }) => {
+  await new Promise(resolve => setTimeout(resolve, 1000))
   const content = await page.screenshot()
   test.fail(browserName === 'webkit', 'This feature currently has problems on webkit')
   expect(content).toMatchSnapshot('pages-login.png')
