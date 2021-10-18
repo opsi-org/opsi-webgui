@@ -122,6 +122,8 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IProp, IProperty } from '~/scripts/types/ttable'
+import { IObjectString2Any } from '~/scripts/types/tgeneral'
+import { makeToast } from '@/scripts/utils/scomponents'
 const selections = namespace('selections')
 
 @Component
@@ -157,30 +159,55 @@ export default class TProductProperties extends Vue {
     }
   }
 
-  handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    // TODO: TODO: Backend-Request setProductProperty
-    const data = {
-      selectionDepots: this.selectionDepots,
-      selectionClients: this.selectionClients,
-      propertyId,
-      values
+  async saveProdProp (change: object) {
+    let responseError: string = ''
+    const t:any = this
+    try {
+      responseError = (await this.$axios.$post(
+        '/api/opsidata/products/${this.id}/properties',
+        { data: change }
+      )).error
+    } catch (error) {
+      makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
+      return
     }
-    const saved = false
-    // eslint-disable-next-line no-console
-    console.warn('(todo) Request POST product property: ', data)
-    if (!saved) { return }
+    makeToast(this, responseError, this.$t('message.warning') as string, 'warning')
+  }
+
+  async handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
+    let propObj: any = {}
+    propObj[propertyId] = values
+    let data = {}
     if (this.selectionClients.length > 0) {
-      for (const c in this.selectionClients) {
-        this.properties.properties[propertyId].clients[this.selectionClients[c]] = values
-      }
-    } else if (this.selectionDepots.length > 0) {
-      for (const c in this.selectionDepots) {
-        this.properties.properties[propertyId].depots[this.selectionDepots[c]] = values
+      data = {
+        clientIds: this.selectionClients,
+        properties: propObj
       }
     } else {
-      throw new Error('cannot change value of property if no clients or depots are selected')
+      data = {
+        depotIds: this.selectionDepots,
+        properties: propObj
+      }
     }
-    this.properties.properties = Object.assign({}, this.properties.properties)
+    // const saved = false
+    // eslint-disable-next-line no-console
+    console.warn('(todo) Request POST product property: ', data)
+    await this.saveProdProp(data)
+
+    // if (!saved) { return }
+    // if (this.selectionClients.length > 0) {
+    //   for (const c in this.selectionClients) {
+    //     this.properties.properties[propertyId].clients[this.selectionClients[c]] = values
+    //   }
+    // } else if (this.selectionDepots.length > 0) {
+    //   for (const c in this.selectionDepots) {
+    //     this.properties.properties[propertyId].depots[this.selectionDepots[c]] = values
+    //   }
+    // } else {
+    //   throw new Error('cannot change value of property if no clients or depots are selected')
+    // }
+    // this.properties.properties = Object.assign({}, this.properties.properties)
+
     // this.fetchedData = (await this.$axios.$post(
     //   '/api/opsidata/product/${this.id}/properties',
     //   JSON.stringify(this.data)
