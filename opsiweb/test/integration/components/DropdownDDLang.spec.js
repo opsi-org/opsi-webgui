@@ -7,7 +7,7 @@ test('dropdown lang snapshot', async ({ page }) => {
   expect(await component.screenshot()).toMatchSnapshot('dropdown-ddlang.png')
 })
 
-test('dropdown lang opened snapshot', async ({ page, browserName }) => {
+test('dropdown lang opened snapshot', async ({ page }) => {
   // TODO: hover does not work (im sure its a playwright problem.. )
   // test.fail(browserName === 'webkit', 'This feature currently has problems on Mac')
   await callStoryId(page, 'dropdown-dd-lang', 'dd-lang')
