@@ -29,7 +29,7 @@ test('login page return mocked depot', async ({ page }) => {
   await expect(content).toHaveAttribute('placeholder', 'mydepot.uib.local')
 })
 
-test('login page snapshot is matching', async ({ page }) => {
+test('login page snapshot is matching', async ({ page, browserName }) => {
   const content = await page.screenshot()
   test.fail(browserName === 'webkit', 'This feature currently has problems on webkit')
   expect(content).toMatchSnapshot('pages-login.png')

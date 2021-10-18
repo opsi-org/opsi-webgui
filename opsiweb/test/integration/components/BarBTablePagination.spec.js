@@ -7,7 +7,7 @@ test('bar btablepagination snapshot', async ({ page }) => {
   expect(await component.screenshot()).toMatchSnapshot('bar-btablepagination.png')
 })
 
-test('bar btablepagination open snapshot', async ({ page }) => {
+test('bar btablepagination open snapshot', async ({ page, browserName }) => {
   await callStoryId(page, 'bar-b-table-pagination', 'b-table-pagination')
   await page.click('[data-testid="BarBTablePagination-Pagination"]')
   // TODO: firefox + webkit reacts different (do not show dropdown content)
