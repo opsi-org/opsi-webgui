@@ -1,7 +1,7 @@
 <template>
   <div class="BarBPagination-Container" data-testid="BarBTablePagination">
     <b-input-group :prepend="$t('table.perpage')" size="sm" class="BarBPagination-PerPage">
-      <b-form-select v-model="localPerPage" :options="options" size="sm" class="BarBPagination-PerPage-Dropdown" />
+      <b-form-select v-model="localPerPage" :options="options" size="sm" class="BarBPagination-PerPage-Dropdown" data-testid="BarBTablePagination-PerPage"/>
     </b-input-group>
     <b-pagination
       v-model="localPageNumber"
