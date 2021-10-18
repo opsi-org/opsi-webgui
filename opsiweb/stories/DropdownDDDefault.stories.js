@@ -23,19 +23,19 @@ DDDefaultSingle.args = {
   multiple: false
 }
 
-// export const DDDefaultSingleNotOrigin = DefaultVisibleTemplate.bind({})
-// DDDefaultSingleNotOrigin.args = {
-//   ...DDDefaultSingleOrigin.args,
-//   isOrigin: false
-// }
+export const DDDefaultSingleNotOrigin = DefaultVisibleTemplate.bind({})
+DDDefaultSingleNotOrigin.args = {
+  ...DDDefaultSingle.args,
+  isOrigin: false
+}
 export const DDDefaultMulti = DefaultVisibleTemplate.bind({})
 DDDefaultMulti.args = {
   ...DDDefaultSingle.args,
   selectedItems: ['a', 'b'],
   multiple: true
 }
-// export const DDDefaultMultiNotOrigin = DefaultVisibleTemplate.bind({})
-// DDDefaultMultiNotOrigin.args = {
-//   ...DDDefaultMultiOrigin.args,
-//   isOrigin: false
-// }
+export const DDDefaultMultiNotOrigin = DefaultVisibleTemplate.bind({})
+DDDefaultMultiNotOrigin.args = {
+  ...DDDefaultMulti.args,
+  isOrigin: false
+}
