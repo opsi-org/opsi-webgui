@@ -35,17 +35,16 @@ test('should be possible to login and logout again', async ({ page, context }) =
   await page.press('[placeholder="Username"]', 'Tab')
   await page.fill('[placeholder="Password"]', 'adminuser')
   await page.press('[placeholder="Password"]', 'Enter')
-
   await context.addCookies(cookieOpsiconfdSession)
   title = await context.cookies()
   expect(title).toEqual(cookieOpsiconfdSession)
 
   await page.waitForNavigation({ url: './' })
-  title = page.locator('[data-testid="btn-logout"]')
+  title = page.locator('[data-testid="ButtonBTNLogout"]')
   await expect(title).toHaveText('Logout')
 
   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
-  await page.click('[data-testid="btn-logout"]')
+  await page.click('[data-testid="ButtonBTNLogout"]')
   await page.waitForNavigation({ url: './login' })
   title = page.locator('.login_title')
   await expect(title).toHaveText('OPSIWEB')

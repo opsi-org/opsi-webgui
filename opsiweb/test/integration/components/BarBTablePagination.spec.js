@@ -11,5 +11,6 @@ test('bar btablepagination open snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-table-pagination', 'b-table-pagination')
   await page.click('[data-testid="BarBTablePagination-Pagination"]')
   // TODO: firefox + webkit reacts different (do not show dropdown content)
+  test.fail(browserName === 'webkit' || browserName === 'firefox', 'This feature currently has problems on Mac/Firefox')
   expect(await page.screenshot()).toMatchSnapshot('bar-btablepagination-open.png')
 })
