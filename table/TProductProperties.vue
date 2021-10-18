@@ -164,7 +164,7 @@ export default class TProductProperties extends Vue {
     const t:any = this
     try {
       responseError = (await this.$axios.$post(
-        '/api/opsidata/products/${this.id}/properties',
+        `/api/opsidata/products/${this.id}/properties`,
         { data: change }
       )).error
     } catch (error) {
@@ -175,7 +175,7 @@ export default class TProductProperties extends Vue {
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    let propObj: any = {}
+    const propObj: any = {}
     propObj[propertyId] = values
     let data = {}
     if (this.selectionClients.length > 0) {
