@@ -16,9 +16,11 @@ export default {
   }
 }
 
+const template = '<AlertAAlert v-bind="$props" show> {{$props.content}} </AlertAAlert>'
 const DefaultVisibleTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<AlertAAlert v-bind="$props" show> {{$props.content}} </AlertAAlert>'
+  template
+  // <story/>
 })
 
 // named export Primary to create respective story
