@@ -15,7 +15,8 @@
     "notOnEachDepot": "product installed only on {count}/{countall} depots",
     "errorInPropertyFetch": "Something went wrong with ProductProperties",
     "errorInDependenciesFetch": "Something went wrong with ProductDependencies",
-    "differentProductVersions": "Different versions exists"
+    "differentProductVersions": "Different versions exists",
+    "prodPropSave": "Product properties saved successfully!"
   },
   "title": {
     "overview": "OVERVIEW",
