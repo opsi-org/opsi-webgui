@@ -160,18 +160,17 @@ export default class TProductProperties extends Vue {
   }
 
   async saveProdProp (change: object) {
-    let responseError: string = ''
     const t:any = this
-    try {
-      responseError = (await this.$axios.$post(
-        `/api/opsidata/products/${this.id}/properties`,
-        { data: change }
-      )).error
-    } catch (error) {
-      makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
-      return
-    }
-    makeToast(this, responseError, this.$t('message.warning') as string, 'warning')
+    await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, { data: change })
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.log(response)
+        makeToast(t, 'Properties saved !', this.$t('message.success') as string, 'success')
+      }).catch((error) => {
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
