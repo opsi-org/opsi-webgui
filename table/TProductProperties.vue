@@ -22,10 +22,6 @@
         <small>{{ $t('message.differentProductVersions') }}</small>
       </AlertAAlert>
     </div>
-    <AlertAAlert show variant="warning">
-      <small>Saving of properties coming soon.. </small>
-    </AlertAAlert>
-
     <p v-if="errorText">
       {{ errorText }}
     </p>
@@ -165,7 +161,10 @@ export default class TProductProperties extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Properties saved !', this.$t('message.success') as string, 'success')
+        makeToast(t, this.$t('message.prodPropSave') as string, this.$t('message.success') as string, 'success')
+        setTimeout(() => {
+          this.$nuxt.refresh()
+        }, 5000)
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
         // eslint-disable-next-line no-console
@@ -188,29 +187,7 @@ export default class TProductProperties extends Vue {
         properties: propObj
       }
     }
-    // const saved = false
-    // eslint-disable-next-line no-console
-    console.warn('(todo) Request POST product property: ', data)
     await this.saveProdProp(data)
-
-    // if (!saved) { return }
-    // if (this.selectionClients.length > 0) {
-    //   for (const c in this.selectionClients) {
-    //     this.properties.properties[propertyId].clients[this.selectionClients[c]] = values
-    //   }
-    // } else if (this.selectionDepots.length > 0) {
-    //   for (const c in this.selectionDepots) {
-    //     this.properties.properties[propertyId].depots[this.selectionDepots[c]] = values
-    //   }
-    // } else {
-    //   throw new Error('cannot change value of property if no clients or depots are selected')
-    // }
-    // this.properties.properties = Object.assign({}, this.properties.properties)
-
-    // this.fetchedData = (await this.$axios.$post(
-    //   '/api/opsidata/product/${this.id}/properties',
-    //   JSON.stringify(this.data)
-    // )).result
   }
 
   updateNewPropertyValuesRow (rowItem: IProperty) {
