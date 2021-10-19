@@ -22,10 +22,6 @@
         <small>{{ $t('message.differentProductVersions') }}</small>
       </AlertAAlert>
     </div>
-    <AlertAAlert show variant="warning">
-      <small>Saving of properties coming soon.. </small>
-    </AlertAAlert>
-
     <p v-if="errorText">
       {{ errorText }}
     </p>
@@ -122,6 +118,8 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IProp, IProperty } from '~/scripts/types/ttable'
+import { IObjectString2Any } from '~/scripts/types/tgeneral'
+import { makeToast } from '@/scripts/utils/scomponents'
 const selections = namespace('selections')
 
 @Component
@@ -157,34 +155,39 @@ export default class TProductProperties extends Vue {
     }
   }
 
-  handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    // TODO: TODO: Backend-Request setProductProperty
-    const data = {
-      selectionDepots: this.selectionDepots,
-      selectionClients: this.selectionClients,
-      propertyId,
-      values
-    }
-    const saved = false
-    // eslint-disable-next-line no-console
-    console.warn('(todo) Request POST product property: ', data)
-    if (!saved) { return }
+  async saveProdProp (change: object) {
+    const t:any = this
+    await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, { data: change })
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.log(response)
+        makeToast(t, this.$t('message.prodPropSave') as string, this.$t('message.success') as string, 'success')
+        setTimeout(() => {
+          this.$nuxt.refresh()
+        }, 5000)
+      }).catch((error) => {
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
+  }
+
+  async handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
+    const propObj: any = {}
+    propObj[propertyId] = values
+    let data = {}
     if (this.selectionClients.length > 0) {
-      for (const c in this.selectionClients) {
-        this.properties.properties[propertyId].clients[this.selectionClients[c]] = values
-      }
-    } else if (this.selectionDepots.length > 0) {
-      for (const c in this.selectionDepots) {
-        this.properties.properties[propertyId].depots[this.selectionDepots[c]] = values
+      data = {
+        clientIds: this.selectionClients,
+        properties: propObj
       }
     } else {
-      throw new Error('cannot change value of property if no clients or depots are selected')
+      data = {
+        depotIds: this.selectionDepots,
+        properties: propObj
+      }
     }
-    this.properties.properties = Object.assign({}, this.properties.properties)
-    // this.fetchedData = (await this.$axios.$post(
-    //   '/api/opsidata/product/${this.id}/properties',
-    //   JSON.stringify(this.data)
-    // )).result
+    await this.saveProdProp(data)
   }
 
   updateNewPropertyValuesRow (rowItem: IProperty) {

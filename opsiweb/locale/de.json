@@ -1,5 +1,5 @@
 {
-  "message":{
+  "message": {
     "loading": "Laden",
     "warning": "WARNUNG",
     "success": "ERFOLGREICH",
@@ -15,9 +15,10 @@
     "notOnEachDepot": "Produkt nur auf {count}/{countall} Depots",
     "errorInPropertyFetch": "Etwas lief schief bei den ProduktProperties",
     "errorInDependenciesFetch": "Etwas lief schief bei den Produkt-Abhängigkeiten",
-    "differentProductVersions":"Es existieren verschiedene Produkt-Versionen"
+    "differentProductVersions": "Es existieren verschiedene Produkt-Versionen",
+    "prodPropSave": "Produkteigenschaften erfolgreich gespeichert!"
   },
-  "title":{
+  "title": {
     "overview": "ÜBERBLICK",
     "support": "Support",
     "manage": "VERWALTEN",
@@ -42,7 +43,6 @@
     "dependencies": "Abhängigkeiten",
     "dependenciesEmpty": "(leer)",
     "propertiesEmpty": "(leer)"
-
   },
   "values": {
     "mixed": "<mixed>",
@@ -51,11 +51,11 @@
   "table": {
     "filter": "Filter",
     "showCol": "Spalten anzeigen",
-    "clientDetails":"Client-Details",
-    "addtnlInfo":"Zusätzliche Information",
+    "clientDetails": "Client-Details",
+    "addtnlInfo": "Zusätzliche Information",
     "perpage": "Pro Seite",
-    "emptyText":"Keine Einträge",
-    "fields":{
+    "emptyText": "Keine Einträge",
+    "fields": {
       "id": "ID",
       "name": "Name",
       "description": "Beschreibung",
@@ -89,7 +89,7 @@
       "unknown": "unbekannt"
     }
   },
-  "button" : {
+  "button": {
     "login": "Anmeldung",
     "logout": "Ausloggen",
     "expand": "Expandieren",
@@ -97,7 +97,7 @@
     "reset": "Rücksetzen",
     "add": "Hinzufügen"
   },
-  "treeselect":{
+  "treeselect": {
     "hostGroups": "Hostgruppen",
     "prodGroups": "Produktgruppen"
   },
@@ -114,7 +114,7 @@
     "password": "Passwort",
     "errortext": "Etwas lief schief. Ist opsiconfd zu erreichen?"
   },
-  "supportPage" : {
+  "supportPage": {
     "documentation": {
       "title": "Dokumentation",
       "description": "Unsere Dokumentation enthält Anleitungen und Handbücher für die ersten Schritte, die Schritt-für-Schritt-Anleitungen sind, die Ihnen den Einstieg in OPSI erleichtern.",
