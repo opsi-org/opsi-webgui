@@ -3,7 +3,7 @@
     v-model="filter"
     size="sm"
     type="search"
-    placeholder="Filter by Client ID"
+    placeholder="Filter by DepotID / Client ID"
     @input="$emit('update:filter', filter)"
   />
 </template>

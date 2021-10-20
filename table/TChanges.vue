@@ -16,7 +16,7 @@
       <b-table
         size="sm"
         :filter="filter"
-        :filter-included-fields="['clientId']"
+        :filter-included-fields="['depotId','clientId']"
         hover
         borderless
         sticky-header
@@ -24,7 +24,7 @@
         class="changes_table"
         thead-class="table-header-none"
         :items="changes"
-        :fields="['clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
+        :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
       >
         <template #cell()="row">
           <small>{{ row.value }}</small>
