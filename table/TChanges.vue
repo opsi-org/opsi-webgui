@@ -1,6 +1,6 @@
 <template>
   <div v-if="tableitems.length>0">
-    <BarBPageHeader
+    <!-- <BarBPageHeader
       navbartype="collapse"
       variant="light"
       :collapsed="visible"
@@ -9,37 +9,37 @@
       :title="title"
       @click.native="visible = !visible"
     />
-    <b-collapse :id="title+'-collapsechanges'" v-model="visible" accordion="table-accordion">
-      <InputIFilterTChanges :filter.sync="filter" />
-      <div v-for="changes, k in groupedById" :key="changes.productId">
-        <small><b>{{ k }}</b></small>
-        <b-table
-          size="sm"
-          :filter="filter"
-          :filter-included-fields="['clientId']"
-          hover
-          borderless
-          sticky-header
-          fixed
-          class="changes_table"
-          thead-class="table-header-none"
-          :items="changes"
-          :fields="['clientId', 'actionRequest', '_action']"
-        >
-          <template #cell()="row">
-            <small>{{ row.value }}</small>
-          </template>
-          <template #cell(_action)="row">
-            <b-button-group>
-              <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-              <b-button size="sm" variant="light" @click="save(row.item)">
-                <b-icon icon="check2" />
-              </b-button>
-            </b-button-group>
-          </template>
-        </b-table>
-      </div>
-    </b-collapse>
+    <b-collapse :id="title+'-collapsechanges'" v-model="visible" accordion="table-accordion"> -->
+    <InputIFilterTChanges :filter.sync="filter" />
+    <div v-for="changes, k in groupedById" :key="changes.productId">
+      <small><b>{{ k }}</b></small>
+      <b-table
+        size="sm"
+        :filter="filter"
+        :filter-included-fields="['clientId']"
+        hover
+        borderless
+        sticky-header
+        fixed
+        class="changes_table"
+        thead-class="table-header-none"
+        :items="changes"
+        :fields="['clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
+      >
+        <template #cell()="row">
+          <small>{{ row.value }}</small>
+        </template>
+        <template #cell(_action)="row">
+          <!-- <b-button-group> -->
+          <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
+          <b-button size="sm" variant="light" @click="save(row.item)">
+            <b-icon icon="check2" />
+          </b-button>
+          <!-- </b-button-group> -->
+        </template>
+      </b-table>
+    </div>
+    <!-- </b-collapse> -->
   </div>
 </template>
 
