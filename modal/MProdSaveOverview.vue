@@ -8,8 +8,9 @@
       scrollable
       no-fade
     >
-      <TableTChanges title="Netboot Products" :tableitems="changesProducts.filter(o => o.type === 'NetbootProduct')" />
-      <TableTChanges title="Localboot Products" :tableitems="changesProducts.filter(o => o.type === 'LocalbootProduct')" />
+      <TableTChanges :tableitems="changesProducts" />
+      <!-- <TableTChanges title="Netboot Products" :tableitems="changesProducts.filter(o => o.type === 'NetbootProduct')" />
+      <TableTChanges title="Localboot Products" :tableitems="changesProducts.filter(o => o.type === 'LocalbootProduct')" /> -->
       <template #modal-footer>
         <ButtonBTNDeleteAll hide="ProductSaveModal" />
         <b-button size="sm" variant="primary" @click="saveAll()">
