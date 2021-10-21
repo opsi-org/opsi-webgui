@@ -30,7 +30,7 @@ init:npm:
     - npx playwright install
     - npx playwright install-deps
   artifacts:
-    path:
+    paths:
       - node_modules/
     expires: 1 day
 
