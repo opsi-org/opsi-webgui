@@ -7,8 +7,8 @@ stages:
   - publish
 
 variables:
+  # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
   PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
-  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -40,14 +40,12 @@ init:npm:
     - cd opsiweb
     - node --version
     - npm install
-    - npx playwright install
+    # - npx playwright install
     - npx playwright install-deps
   artifacts:
     paths:
       - opsiweb/node_modules/
-      - opsiweb/.playwright/
     expire_in: 1 day
-# - ../../ms-playwright/
 
 test:lint:
   stage: test
@@ -73,13 +71,10 @@ test:test-e2e:
     - init:npm
   script:
     - cd opsiweb
-    # - *set_playwright_env
     - PORT=8888 nohup npm run dev &
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm run test:e2e
-    - ls -lah
-    - pwd
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
     paths:
