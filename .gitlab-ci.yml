@@ -15,8 +15,8 @@ stages:
 
 .install_playwright: &install_playwright |
   PLAYWRIGHT_BROWSERS_PATH=0
-  npx playwright install
-  npx playwright install-deps
+# npx playwright install
+# npx playwright install-deps
 
 # .install_webgui_devdep: &install_webgui_devdep |
 #   cd opsiweb
@@ -40,7 +40,7 @@ init:npm:
     paths:
       - opsiweb/node_modules/
     expire_in: 1 day
-    # - ../../ms-playwright/
+# - ../../ms-playwright/
 
 test:lint:
   stage: test
