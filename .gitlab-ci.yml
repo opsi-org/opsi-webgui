@@ -8,7 +8,7 @@ stages:
 
 variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-  PLAYWRIGHT_BROWSERS_PATH: "$(pwd)/opsiweb/playwright/browsers/"
+  PLAYWRIGHT_BROWSERS_PATH: "$(pwd)/opsiweb/.playwright/browsers/"
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -40,7 +40,7 @@ init:npm:
     - cd opsiweb
     - node --version
     - npm install
-    - npx playwright install
+    # - npx playwright install
     - npx playwright install-deps
   artifacts:
     paths:
@@ -71,7 +71,6 @@ test:test-e2e:
     - init:npm
   script:
     - cd opsiweb
-    - npx playwright install-deps
     - PORT=8888 nohup npm run dev &
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
