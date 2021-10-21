@@ -32,6 +32,7 @@ init:npm:
   artifacts:
     paths:
       - opsiweb/node_modules/
+      - /ms-playwright/
     expire_in: 1 day
 
 test:lint:
