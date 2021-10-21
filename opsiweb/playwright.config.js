@@ -9,7 +9,7 @@ const config = {
   globalSetup: require.resolve('./test/.utils-pw/pw-global-setup.js'),
   // forbidOnly: !!process.env.CI,
   use: {
-    browserName: 'chromium',
+    // browserName: 'chromium',
     baseURL: 'https://localhost:8888/webgui/app/',
     // headless: false,
     // viewport: { width: 1280, height: 720 },

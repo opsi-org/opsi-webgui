@@ -14,14 +14,11 @@ stages:
   tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
 
 .set_playwright_env: &set_playwright_env |
-  PLAYWRIGHT_BROWSERS_PATH=.playwright/browsers/
+  export PLAYWRIGHT_BROWSERS_PATH=.playwright/browsers/
 
 .install_playwright_browser: &install_playwright_browser |
-  PLAYWRIGHT_BROWSERS_PATH=.playwright/browsers/
-  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-  yarn add playwright-chromium@1.15.2
-  yarn add playwright-webkit@1.15.2
-  yarn add playwright-firefox@1.15.2
+  export PLAYWRIGHT_BROWSERS_PATH=.playwright/browsers/
+  export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 
 # npx playwright install
 # npx playwright install-deps
@@ -67,7 +64,7 @@ test:test-unit:
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
-      cobertura: opsiweb/coverage/clover.xml
+      cobertura: opsiweb/coverage/clover.xmlci
 
 test:test-e2e:
   stage: test
