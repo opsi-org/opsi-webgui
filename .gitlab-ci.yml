@@ -8,7 +8,7 @@ stages:
 
 variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-  PLAYWRIGHT_BROWSERS_PATH: "opsiweb/playwright/browsers/"
+  PLAYWRIGHT_BROWSERS_PATH: "$(pwd)/opsiweb/playwright/browsers/"
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -40,7 +40,7 @@ init:npm:
     - cd opsiweb
     - node --version
     - npm install
-    # - npx playwright install
+    - npx playwright install
     - npx playwright install-deps
   artifacts:
     paths:
