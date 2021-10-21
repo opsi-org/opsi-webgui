@@ -41,7 +41,7 @@ init:npm:
     - cd opsiweb
     - node --version
     - *install_playwright_browser
-    - npm ci
+    - npm install
     - npx playwright install
     - npx playwright install-deps
   artifacts:
