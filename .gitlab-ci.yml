@@ -64,7 +64,6 @@ test:test-e2e:
     - npm run test:e2e
     - ls -lah
     - pwd
-    - cd ..
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
     paths:
@@ -83,12 +82,11 @@ test:test-integration:
     - npm run test:integration
     - ls -lah
     - pwd
-    - cd ..
   artifacts:
     name: 'opsi-webgui-test-result-integration'
     paths:
-      - test-results/
-    expire_in: 1 day
+      - opsiweb/test-results/
+    expire_in: 2 day
 
 build:static-app:
   stage: build
