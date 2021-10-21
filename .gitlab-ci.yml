@@ -12,12 +12,12 @@ stages:
   apt -y install debhelper osc
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
+
 # .install_webgui_devdep: &install_webgui_devdep |
 #   cd opsiweb
 #   npm install
 #   npx playwright install
 #   npx playwright install-deps
-
 # .install_webgui_devdep_min: &install_webgui_devdep_min |
 #   cd opsiweb
 #   npm install
@@ -29,15 +29,15 @@ init:npm:
     - npm install
     - npx playwright install
     - npx playwright install-deps
-    - cd ..
   artifacts:
     path:
-      - opsiweb/node_modules/
+      - node_modules/
     expires: 1 day
 
 test:lint:
   stage: test
   script:
+    - cd opsiweb
     - npm run lint
 
 test:test-unit:
@@ -45,6 +45,7 @@ test:test-unit:
   dependencies:
     - init:npm
   script:
+    - cd opsiweb
     - npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
@@ -56,11 +57,13 @@ test:test-e2e:
   dependencies:
     - init:npm
   script:
+    - cd opsiweb
     - PORT=8888 nohup npm run dev &
     - sleep 20
     - npm run test:e2e
     - ls -lah
     - pwd
+    - cd ..
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
     paths:
@@ -72,25 +75,28 @@ test:test-integration:
   dependencies:
     - init:npm
   script:
+    - cd opsiweb
     - PORT=8888 nohup npm run dev &
     - PORT=3003 nohup npm run story &
     - sleep 60
     - npm run test:integration
     - ls -lah
     - pwd
+    - cd ..
   artifacts:
     name: 'opsi-webgui-test-result-integration'
     paths:
-      - opsiweb/test-results/
+      - test-results/
     expire_in: 1 day
 
 build:static-app:
   stage: build
   dependencies:
+    - init:npm
     - test:lint
     #- test:jtest
   script:
-    - *install_webgui_devdep_min
+    - cd opsiweb
     - npm run generate
   artifacts:
     name: 'opsi-webgui'
