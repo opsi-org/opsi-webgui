@@ -13,8 +13,16 @@ stages:
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
 
-.install_playwright: &install_playwright |
-  PLAYWRIGHT_BROWSERS_PATH=0
+.set_playwright_env: &set_playwright_env |
+  PLAYWRIGHT_BROWSERS_PATH=.playwright/browsers/
+
+.install_playwright_browser: &install_playwright_browser |
+  PLAYWRIGHT_BROWSERS_PATH=.playwright/browsers/
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+  yarn add playwright-chromium@1.15.2
+  yarn add playwright-webkit@1.15.2
+  yarn add playwright-firefox@1.15.2
+
 # npx playwright install
 # npx playwright install-deps
 
@@ -31,14 +39,15 @@ init:npm:
   stage: init
   script:
     - cd opsiweb
-    - PLAYWRIGHT_BROWSERS_PATH=0
+    - node --version
+    - *install_playwright_browser
     - npm install
     - npx playwright install
     - npx playwright install-deps
-    - ls -lah /ms-playwright
   artifacts:
     paths:
       - opsiweb/node_modules/
+      - opsiweb/.playwright
     expire_in: 1 day
 # - ../../ms-playwright/
 
@@ -66,7 +75,7 @@ test:test-e2e:
     - init:npm
   script:
     - cd opsiweb
-    - *install_playwright
+    - *set_playwright_env
     - PORT=8888 nohup npm run dev &
     - sleep 20
     - npm run test:e2e
@@ -84,7 +93,7 @@ test:test-integration:
     - init:npm
   script:
     - cd opsiweb
-    - *install_playwright
+    - *set_playwright_env
     - PORT=8888 nohup npm run dev &
     - PORT=3003 nohup npm run story &
     - sleep 60
