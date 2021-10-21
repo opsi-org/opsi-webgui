@@ -47,7 +47,7 @@ init:npm:
   artifacts:
     paths:
       - opsiweb/node_modules/
-      - opsiweb/.playwright
+      - opsiweb/.playwright/
     expire_in: 1 day
 # - ../../ms-playwright/
 
