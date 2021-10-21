@@ -139,7 +139,7 @@ export default class TProductsNetboot extends Vue {
   @Prop() routeRedirectWith!: Function
 
   action: string = ''
-  type: string = ''
+  // type: string = ''
   isLoading: boolean = true
   errorText: string = ''
   fetchedData: FetchProd = { products: [], total: 0 }
@@ -306,7 +306,7 @@ export default class TProductsNetboot extends Vue {
       for (const c in this.selectionClients) {
         const d = {
           clientId: this.selectionClients[c],
-          type: 'NetbootProduct',
+          // type: 'NetbootProduct',
           productId: rowitem.productId,
           actionRequest: newrequest
         }
@@ -335,16 +335,16 @@ export default class TProductsNetboot extends Vue {
     if (this.expert) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {
-          const pObj = this.fetchedData.products.find((obj: { productId: string }) => obj.productId === this.selectionProducts[p])
-          if (pObj) {
-            this.type = 'NetbootProduct'
-          } else {
-            this.type = 'LocalbootProduct'
-          }
+          // const pObj = this.fetchedData.products.find((obj: { productId: string }) => obj.productId === this.selectionProducts[p])
+          // if (pObj) {
+          //   this.type = 'NetbootProduct'
+          // } else {
+          //   this.type = 'LocalbootProduct'
+          // }
           const d = {
             clientId: this.selectionClients[c],
             productId: this.selectionProducts[p],
-            type: this.type,
+            // type: this.type,
             actionRequest: this.action
           }
           const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
