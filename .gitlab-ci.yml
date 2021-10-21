@@ -31,7 +31,7 @@ init:npm:
     - npx playwright install-deps
   artifacts:
     paths:
-      - node_modules/
+      - opsiweb/node_modules/
     expire_in: 1 day
 
 test:lint:
