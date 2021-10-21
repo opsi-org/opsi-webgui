@@ -13,9 +13,10 @@ stages:
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
 
-# .install_playwright: &install_playwright |
-#   npx playwright install
-#   npx playwright install-deps
+.install_playwright: &install_playwright |
+  PLAYWRIGHT_BROWSERS_PATH=0
+  npx playwright install
+  npx playwright install-deps
 
 # .install_webgui_devdep: &install_webgui_devdep |
 #   cd opsiweb
@@ -38,8 +39,8 @@ init:npm:
   artifacts:
     paths:
       - opsiweb/node_modules/
-      # - ../../ms-playwright/
     expire_in: 1 day
+    # - ../../ms-playwright/
 
 test:lint:
   stage: test
