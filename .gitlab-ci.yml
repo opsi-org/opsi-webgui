@@ -32,7 +32,7 @@ init:npm:
   artifacts:
     paths:
       - node_modules/
-    expires: 1 day
+    expire_in: 1 day
 
 test:lint:
   stage: test
