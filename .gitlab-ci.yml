@@ -41,7 +41,7 @@ init:npm:
     - cd opsiweb
     - node --version
     - *install_playwright_browser
-    - npm install
+    - npm ci
     - npx playwright install
     - npx playwright install-deps
   artifacts:
@@ -78,6 +78,7 @@ test:test-e2e:
     - *set_playwright_env
     - PORT=8888 nohup npm run dev &
     - sleep 20
+    - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm run test:e2e
     - ls -lah
     - pwd
