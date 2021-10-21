@@ -29,10 +29,11 @@ init:npm:
     - npm install
     - npx playwright install
     - npx playwright install-deps
+    - ls -lah /ms-playwright
   artifacts:
     paths:
       - opsiweb/node_modules/
-      - /ms-playwright/
+      - ../../../../../../../ms-playwright/
     expire_in: 1 day
 
 test:lint:
