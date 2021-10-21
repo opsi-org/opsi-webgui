@@ -40,7 +40,7 @@ init:npm:
     - cd opsiweb
     - node --version
     - npm install
-    # - npx playwright install
+    - npx playwright install
     - npx playwright install-deps
   artifacts:
     paths:
@@ -75,6 +75,7 @@ test:test-e2e:
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm run test:e2e
+  allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
     paths:
@@ -87,13 +88,11 @@ test:test-integration:
     - init:npm
   script:
     - cd opsiweb
-    # - *set_playwright_env
     - PORT=8888 nohup npm run dev &
     - PORT=3003 nohup npm run story &
     - sleep 60
     - npm run test:integration
-    - ls -lah
-    - pwd
+  allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-integration'
     paths:
