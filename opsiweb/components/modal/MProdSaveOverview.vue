@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/scripts/utils/scomponents'
-import { IObjectString2String } from '~/scripts/types/tgeneral'
+import { IObjectString2String, IObjectString2Any } from '~/scripts/types/tgeneral'
 import { ChangeObj } from '~/scripts/types/tchanges'
 const changes = namespace('changes')
 
@@ -33,7 +33,7 @@ export default class MProdSaveOverview extends Vue {
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
-  async save (item: ChangeObj) {
+  async saveProd (item: ChangeObj) {
     const change = {
       clientIds: [item.clientId],
       productIds: [item.productId],
@@ -59,9 +59,49 @@ export default class MProdSaveOverview extends Vue {
     }
   }
 
+  async saveProdProp (item: ChangeObj) {
+    const t:any = this
+    const propObj: any = {}
+    propObj[item.property] = item.propertyValue
+    let change = {}
+    if (item.clientId !== '') {
+      change = {
+        clientIds: item.clientId,
+        properties: propObj
+      }
+    } else {
+      change = {
+        depotIds: item.depotId,
+        properties: propObj
+      }
+    }
+    // eslint-disable-next-line no-console
+    console.log(change)
+    await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, { data: change })
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.log(response)
+        makeToast(t, this.$t('message.prodPropSave') as string, this.$t('message.success') as string, 'success')
+        this.delFromChangesProducts(item)
+      }).catch((error) => {
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
+    if (this.changesProducts.length === 0) {
+      this.$bvModal.hide('ProductSaveModal')
+    }
+    this.$nuxt.refresh()
+  }
+
   saveAll () {
     for (const p in this.changesProducts) {
-      this.save(this.changesProducts[p])
+      const change = this.changesProducts[p]
+      if (change.actionRequest) {
+        this.saveProd(change)
+      } else if (change.property) {
+        this.saveProdProp(change)
+      }
     }
   }
 }
