@@ -18,3 +18,9 @@ npm i -D @playwright/test
 # echo "[script.sh] configure playwright..."
 npx playwright install
 # npx playwright install-deps
+
+    # "playwright": "^1.15.2",
+    # "playwright-chromium": "1.15.2",
+    # "playwright-firefox": "1.15.2",
+    # "playwright-test": "^7.1.0",
+    # "playwright-webkit": "1.15.2",

@@ -3,7 +3,7 @@ version: '3.3'
 services:
   opsiweb_dev:
     # image: node:16
-    image: mcr.microsoft.com/playwright:v1.16.0-focal
+    image: mcr.microsoft.com/playwright:v1.15.2-focal
     volumes:
       - ..:/workspace
     working_dir: /workspace/opsiweb

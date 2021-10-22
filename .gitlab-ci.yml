@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/playwright:v1.16.0-focal
+image: mcr.microsoft.com/playwright:v1.15.2-focal
 
 stages:
   - init
