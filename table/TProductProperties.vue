@@ -198,38 +198,28 @@ export default class TProductProperties extends Vue {
     if (this.expert) {
       if (this.selectionClients.length > 0) {
         for (const c in this.selectionClients) {
-          let d: any = {
-            depotId: '',
+          const d: Object = {
             clientId: this.selectionClients[c],
             productId: this.id,
             property: propertyId,
-            propertyValue: values,
-            actionRequest: ''
+            propertyValue: values
           }
           const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.id && item.property === propertyId)
           if (objIndex > -1) {
-            d = this.changesProducts[objIndex]
-            // d.property = propertyId
-            d.propertyValue = values
             this.delWithIndexChangesProducts(objIndex)
           }
           this.pushToChangesProducts(d)
         }
       } else {
         for (const dep in this.selectionDepots) {
-          let d: any = {
+          const d: Object = {
             depotId: this.selectionDepots[dep],
-            clientId: '',
             productId: this.id,
             property: propertyId,
-            propertyValue: values,
-            actionRequest: ''
+            propertyValue: values
           }
-          const objIndex = this.changesProducts.findIndex(i => i.depotId === this.selectionDepots[dep] && i.productId === this.id)
+          const objIndex = this.changesProducts.findIndex(i => i.depotId === this.selectionDepots[dep] && i.productId === this.id && i.property === propertyId)
           if (objIndex > -1) {
-            d = this.changesProducts[objIndex]
-            d.property = propertyId
-            d.propertyValue = values
             this.delWithIndexChangesProducts(objIndex)
           }
           this.pushToChangesProducts(d)
