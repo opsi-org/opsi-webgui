@@ -7,7 +7,7 @@ stages:
   - publish
 
 variables:
-  # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
   PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
 
 .install_playwright_deps: &install_playwright_deps |
