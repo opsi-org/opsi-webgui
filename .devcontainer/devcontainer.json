@@ -10,6 +10,7 @@
 		"PLAYWRIGHT_BROWSERS_PATH":".playwright/browsers/",
 		"PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
 	},
+	// "remoteUser": "echo $(id -u $(whoami))",
 	// "remoteUser": "1000",
 	"extensions": [
 		"octref.vetur",
