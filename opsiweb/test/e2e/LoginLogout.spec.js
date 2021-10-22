@@ -30,10 +30,10 @@ test('should be possible to login and logout again', async ({ page, context }) =
   title = page.locator('.server')
   await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
 
-  await page.click('[placeholder="Username"]')
-  await page.fill('[placeholder="Username"]', 'adminuser')
+  // await page.click('[placeholder="Username"]')
+  await page.type('[placeholder="Username"]', 'adminuser')
   await page.press('[placeholder="Username"]', 'Tab')
-  await page.fill('[placeholder="Password"]', 'adminuser')
+  await page.type('[placeholder="Password"]', 'adminuser')
   await page.press('[placeholder="Password"]', 'Enter')
   await context.addCookies(cookieOpsiconfdSession)
   title = await context.cookies()

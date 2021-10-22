@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/playwright:v1.10.0-focal
+image: mcr.microsoft.com/playwright:v1.16.0-focal
 
 stages:
   - init
@@ -6,9 +6,9 @@ stages:
   - build
   - publish
 
-variables:
-  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-  PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
+# variables:
+  # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+  # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive

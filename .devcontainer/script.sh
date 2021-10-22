@@ -15,6 +15,6 @@ cd ../opsiweb
 echo "[script.sh] install dependencies..."
 npm install
 npm i -D @playwright/test
-echo "[script.sh] configure playwright..."
+# echo "[script.sh] configure playwright..."
 npx playwright install
-npx playwright install-deps
+# npx playwright install-deps

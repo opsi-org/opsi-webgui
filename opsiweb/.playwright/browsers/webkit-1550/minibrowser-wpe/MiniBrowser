@@ -1,6 +1,0 @@
-#!/bin/sh
-MYDIR="$(dirname $(readlink -f $0))"
-export LD_LIBRARY_PATH="${MYDIR}/lib"
-export WEBKIT_EXEC_PATH="${MYDIR}/bin"
-export WEBKIT_INJECTED_BUNDLE_PATH="${MYDIR}/lib"
-exec "${MYDIR}/bin/MiniBrowser" "$@"

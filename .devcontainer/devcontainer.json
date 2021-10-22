@@ -6,10 +6,10 @@
 	"forwardPorts": [8888, 3003],
 	// "postStartCommand": "npm install && PORT=8888 bash",
 	"postStartCommand": "'/workspace/.devcontainer/script.sh'",
-	"remoteEnv": {
-		"PLAYWRIGHT_BROWSERS_PATH":".playwright/browsers/",
-		"PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
-	},
+	// "remoteEnv": {
+	// 	"PLAYWRIGHT_BROWSERS_PATH":".playwright/browsers/",
+	// 	"PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+	// },
 	// "remoteUser": "echo $(id -u $(whoami))",
 	// "remoteUser": "1000",
 	"extensions": [
