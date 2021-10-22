@@ -14,7 +14,8 @@ const config = {
     // headless: false,
     // viewport: { width: 1280, height: 720 },
     headless: true,
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
+    screenshot: 'only-on-failure'
     // video: 'on-first-retry'
   },
   projects: [
