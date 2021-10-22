@@ -74,7 +74,7 @@ test:test-e2e:
     - init:npm
   script:
     - cd opsiweb
-    - *install_playwright_deps
+    # - *install_playwright_deps
     - PORT=8888 nohup npm run dev &
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
@@ -93,7 +93,7 @@ test:test-integration:
     - init:npm
   script:
     - cd opsiweb
-    - *install_playwright_deps
+    # - *install_playwright_deps
     - PORT=8888 nohup npm run dev &
     - PORT=3003 nohup npm run story &
     - sleep 60
