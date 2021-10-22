@@ -206,10 +206,10 @@ export default class TProductProperties extends Vue {
             propertyValue: values,
             actionRequest: ''
           }
-          const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === this.id)
+          const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.id && item.property === propertyId)
           if (objIndex > -1) {
             d = this.changesProducts[objIndex]
-            d.property = propertyId
+            // d.property = propertyId
             d.propertyValue = values
             this.delWithIndexChangesProducts(objIndex)
           }
