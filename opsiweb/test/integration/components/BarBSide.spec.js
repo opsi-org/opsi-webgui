@@ -4,7 +4,7 @@ const { callStoryId } = require('../../.utils-pw/pw-story-call')
 test('bar bside snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-side', 'b-side')
   const component = await page.locator('[data-testid="BarBSide"]')
-  expect(await component.screenshot()).toMatchSnapshot('bar-bside.png')
+  expect(await component.screenshot()).toMatchSnapshot('bar-bside-small.png')
 })
 
 test('bar bside expanded snapshot', async ({ page }) => {

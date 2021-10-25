@@ -22,7 +22,7 @@ const config = {
   },
   projects: [
     { name: 'Chromium-Desktop', use: { browserName: 'chromium', ...devices['Desktop Chrome'] } },
-    // { name: 'Firefox-Desktop', use: { browserName: 'firefox', ...devices['Desktop Firefox'] } },
+    { name: 'Firefox-Desktop', use: { browserName: 'firefox', ...devices['Desktop Firefox'] } }
     // { name: 'WebKit-Desktop', use: { browserName: 'webkit', ...devices['Desktop Safari'] } }
     // { name: 'Chromium-Mobile', use: { browserName: 'chromium', ...devices['Galaxy S8'] } },
     // { name: 'Firefox-Mobile', use: { browserName: 'firefox', ...devices['Nexus 6'] } },
