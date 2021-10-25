@@ -118,8 +118,6 @@ export default class TChanges extends Vue {
         properties: propObj
       }
     }
-    // eslint-disable-next-line no-console
-    console.log(change)
     await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, { data: change })
       .then((response) => {
         // eslint-disable-next-line no-console
@@ -128,8 +126,6 @@ export default class TChanges extends Vue {
         this.delFromChangesProducts(item)
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
-        // eslint-disable-next-line no-console
-        console.error(error)
       })
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
