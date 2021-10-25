@@ -4,7 +4,7 @@ const { callStoryId } = require('../../.utils-pw/pw-story-call')
 test('button expert mode snapshot', async ({ page }) => {
   await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode')
   const component = await page.locator('[data-testid="ButtonBTNExpertMode"]')
-  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode.png')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-normal.png')
 })
 
 test('button expert mode clicked snapshot', async ({ page }) => {
@@ -17,7 +17,7 @@ test('button expert mode clicked snapshot', async ({ page }) => {
 test('button expert mode (navbar) snapshot', async ({ page }) => {
   await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode-navbar')
   const component = await page.locator('[data-testid="ButtonBTNExpertMode"]')
-  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-navbar.png')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-navbar-normal.png')
 })
 
 test('button expert mode (navbar) clicked snapshot', async ({ page }) => {

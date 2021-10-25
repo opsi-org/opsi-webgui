@@ -3,6 +3,7 @@
 echo "###############################################"
 echo "################ TEST ALL #####################"
 echo "###############################################"
+echo "\n\n\n"
 echo ".................check lint...................."
 npm run lint:js
 echo ".................check test:unit..............."
@@ -11,6 +12,7 @@ echo ".................check test:integration........"
 npx playwright test test/integration --quiet
 echo ".................check test:e2e................"
 npx playwright test test/e2e --quiet
+echo "\n\n\n"
 echo "###############################################"
 echo "################ TEST ALL END #################"
 echo "###############################################"

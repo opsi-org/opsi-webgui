@@ -1,5 +1,7 @@
 // @ts-check
 
+const { devices } = require('@playwright/test')
+
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   testIgnore: 'test/unit/**/*.spec.js',
@@ -19,9 +21,12 @@ const config = {
     // video: 'on-first-retry'
   },
   projects: [
-    { name: 'Chromium', use: { browserName: 'chromium' } },
-    { name: 'Firefox', use: { browserName: 'firefox' } },
-    { name: 'WebKit', use: { browserName: 'webkit' } }
+    { name: 'Chromium-Desktop', use: { browserName: 'chromium', ...devices['Desktop Chrome'] } },
+    // { name: 'Firefox-Desktop', use: { browserName: 'firefox', ...devices['Desktop Firefox'] } },
+    // { name: 'WebKit-Desktop', use: { browserName: 'webkit', ...devices['Desktop Safari'] } }
+    // { name: 'Chromium-Mobile', use: { browserName: 'chromium', ...devices['Galaxy S8'] } },
+    // { name: 'Firefox-Mobile', use: { browserName: 'firefox', ...devices['Nexus 6'] } },
+    // { name: 'WebKit-Mobile', use: { browserName: 'webkit', ...devices['iPhone 11'] } }
   ]
 }
 
