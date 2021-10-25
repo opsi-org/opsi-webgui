@@ -1,7 +1,8 @@
 const { test, expect } = require('@playwright/test')
+const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
 test('bar bpageheader snapshot', async ({ page }) => {
-  // await page.goto(getStoryFrame('id=alert-aalert--alert&args=&viewMode=story'))
-  await page.goto('http://localhost:3003/iframe.html?id=bar-b-page-header--b-page-header&args=&viewMode=story')
-  expect(await page.screenshot()).toMatchSnapshot('comp-bar-bpageheader.png')
+  await callStoryId(page, 'bar-b-page-header', 'b-page-header')
+  const component = await page.locator('[data-testid="BarBPageHeader"]')
+  expect(await component.screenshot()).toMatchSnapshot('bar-bpageheader.png')
 })

@@ -1,6 +1,7 @@
 <template>
   <b-button
     variant="outline-primary"
+    data-testid="ButtonBTNRowLinkTo"
     class="border-0"
     :title="title"
     size="sm"

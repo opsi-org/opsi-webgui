@@ -2,6 +2,7 @@
   <b-button
     v-if="navbar"
     v-model="localMode"
+    data-testid="ButtonBTNExpertMode"
     style="width:100%;"
     variant="primary"
     class="btn text-left btn_expertmode"
@@ -13,6 +14,7 @@
   <b-button
     v-else
     v-model="localMode"
+    data-testid="ButtonBTNExpertMode"
     style="width:180px;"
     variant="primary"
     :pressed.sync="localMode"

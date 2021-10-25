@@ -12,7 +12,7 @@ import { Component } from 'nuxt-property-decorator'
 import { BAlert } from 'bootstrap-vue'
 
 @Component
-export default class DDDefault extends BAlert {
+export default class AAlert extends BAlert {
 }
 </script>
 <style>

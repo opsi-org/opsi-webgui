@@ -1,24 +1,28 @@
 const { test, expect } = require('@playwright/test')
+const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
 test('button expert mode snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=button-btn-expert-mode--btn-expert-mode&args=')
-  expect(await page.screenshot()).toMatchSnapshot('comp-button-btnexpertmode.png')
+  await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode')
+  const component = await page.locator('[data-testid="ButtonBTNExpertMode"]')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-normal.png')
 })
 
 test('button expert mode clicked snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=button-btn-expert-mode--btn-expert-mode&args=')
+  await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode')
   await page.click('.btn')
-
-  expect(await page.screenshot()).toMatchSnapshot('comp-button-btnexpertmode-clicked.png')
+  const component = await page.locator('[data-testid="ButtonBTNExpertMode"]')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-clicked.png')
 })
 
 test('button expert mode (navbar) snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=button-btn-expert-mode--btn-expert-mode-navbar&args=&viewMode=story')
-  expect(await page.screenshot()).toMatchSnapshot('comp-button-btnexpertmode-navbar.png')
+  await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode-navbar')
+  const component = await page.locator('[data-testid="ButtonBTNExpertMode"]')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-navbar-normal.png')
 })
 
 test('button expert mode (navbar) clicked snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=button-btn-expert-mode--btn-expert-mode-navbar&args=&viewMode=story')
+  await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode-navbar')
   await page.click('.btn_expertmode')
-  expect(await page.screenshot()).toMatchSnapshot('comp-button-btnexpertmode-navbar-clicked.png')
+  const component = await page.locator('[data-testid="ButtonBTNExpertMode"]')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-navbar-clicked.png', { threshold: 0.2 })
 })

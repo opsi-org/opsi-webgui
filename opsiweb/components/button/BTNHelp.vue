@@ -1,5 +1,12 @@
 <template>
-  <b-button :id="id" size="sm" pill variant="transparent" class="border-primary">
+  <b-button
+    :id="id"
+    data-testid="ButtonBTNHelp"
+    size="sm"
+    pill
+    variant="transparent"
+    class="border-primary"
+  >
     <b-icon-question />
   </b-button>
 </template>
