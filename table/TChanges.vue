@@ -108,12 +108,12 @@ export default class TChanges extends Vue {
     let change = {}
     if (item.clientId !== '') {
       change = {
-        clientIds: item.clientId,
+        clientIds: [item.clientId],
         properties: propObj
       }
     } else {
       change = {
-        depotIds: item.depotId,
+        depotIds: [item.depotId],
         properties: propObj
       }
     }
@@ -132,8 +132,8 @@ export default class TChanges extends Vue {
       })
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
+      this.$nuxt.refresh()
     }
-    this.$nuxt.refresh()
   }
 
   save (rowItem: ChangeObj) {
