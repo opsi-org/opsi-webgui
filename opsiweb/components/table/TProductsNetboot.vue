@@ -292,6 +292,7 @@ export default class TProductsNetboot extends Vue {
       }
       makeToast(this, txt, this.$t('message.warning') as string, 'warning')
     }
+    makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
   }
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
@@ -306,7 +307,6 @@ export default class TProductsNetboot extends Vue {
       for (const c in this.selectionClients) {
         const d = {
           clientId: this.selectionClients[c],
-          // type: 'NetbootProduct',
           productId: rowitem.productId,
           actionRequest: newrequest
         }
@@ -317,8 +317,6 @@ export default class TProductsNetboot extends Vue {
         this.pushToChangesProducts(d)
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.debug('save:', data)
       await this.save(data)
       this.fetchOptions.fetchClients = true
       this.setChangesProducts([])
@@ -335,16 +333,9 @@ export default class TProductsNetboot extends Vue {
     if (this.expert) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {
-          // const pObj = this.fetchedData.products.find((obj: { productId: string }) => obj.productId === this.selectionProducts[p])
-          // if (pObj) {
-          //   this.type = 'NetbootProduct'
-          // } else {
-          //   this.type = 'LocalbootProduct'
-          // }
           const d = {
             clientId: this.selectionClients[c],
             productId: this.selectionProducts[p],
-            // type: this.type,
             actionRequest: this.action
           }
           const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
@@ -355,8 +346,6 @@ export default class TProductsNetboot extends Vue {
         }
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.debug('save:', data)
       await this.save(data)
       this.fetchOptions.fetchClients = true
       this.setChangesProducts([])

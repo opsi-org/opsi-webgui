@@ -81,7 +81,7 @@ export default class TChanges extends Vue {
       productIds: [item.productId],
       actionRequest: item.actionRequest
     }
-
+    const t:any = this
     const responseError: IObjectString2String = (await this.$axios.$patch(
       '/api/opsidata/clients/products',
       { data: change }
@@ -95,6 +95,7 @@ export default class TChanges extends Vue {
     } else {
       this.delFromChangesProducts(item)
     }
+    makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
       this.$nuxt.refresh()
@@ -117,18 +118,14 @@ export default class TChanges extends Vue {
         properties: propObj
       }
     }
-    // eslint-disable-next-line no-console
-    console.log(change)
     await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, { data: change })
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, this.$t('message.prodPropSave') as string, this.$t('message.success') as string, 'success')
+        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
-        // eslint-disable-next-line no-console
-        console.error(error)
       })
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')

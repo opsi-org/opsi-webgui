@@ -15,8 +15,7 @@
     "notOnEachDepot": "Produkt nur auf {count}/{countall} Depots",
     "errorInPropertyFetch": "Etwas lief schief bei den ProduktProperties",
     "errorInDependenciesFetch": "Etwas lief schief bei den Produkt-Abhängigkeiten",
-    "differentProductVersions": "Es existieren verschiedene Produkt-Versionen",
-    "prodPropSave": "Produkteigenschaften erfolgreich gespeichert!"
+    "differentProductVersions": "Es existieren verschiedene Produkt-Versionen"
   },
   "title": {
     "overview": "ÜBERBLICK",

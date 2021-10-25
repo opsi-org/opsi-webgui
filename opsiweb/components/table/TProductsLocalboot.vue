@@ -314,6 +314,7 @@ export default class TProductsLocalboot extends Vue {
       }
       makeToast(this, txt, this.$t('message.warning') as string, 'warning')
     }
+    makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
   }
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
@@ -329,7 +330,6 @@ export default class TProductsLocalboot extends Vue {
         const d: Object = {
           clientId: this.selectionClients[c],
           productId: rowitem.productId,
-          // type: 'LocalbootProduct',
           actionRequest: newrequest
         }
         const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
@@ -339,8 +339,6 @@ export default class TProductsLocalboot extends Vue {
         this.pushToChangesProducts(d)
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.debug('save:', data)
       await this.save(data)
       this.fetchOptions.fetchClients = true
       this.setChangesProducts([])
@@ -359,16 +357,9 @@ export default class TProductsLocalboot extends Vue {
     if (this.expert) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {
-          // const pObj = this.fetchedData.products.find((obj: { productId: string }) => obj.productId === this.selectionProducts[p])
-          // if (pObj) {
-          //   this.type = 'LocalbootProduct'
-          // } else {
-          //   this.type = 'NetbootProduct'
-          // }
           const d = {
             clientId: this.selectionClients[c],
             productId: this.selectionProducts[p],
-            // type: this.type,
             actionRequest: this.action
           }
           const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
@@ -379,8 +370,6 @@ export default class TProductsLocalboot extends Vue {
         }
       }
     } else {
-      // eslint-disable-next-line no-console
-      console.debug('save:', data)
       await this.save(data)
       this.fetchOptions.fetchClients = true
       this.setChangesProducts([])
