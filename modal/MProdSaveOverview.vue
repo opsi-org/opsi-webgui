@@ -84,8 +84,6 @@ export default class MProdSaveOverview extends Vue {
         this.delFromChangesProducts(item)
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
-        // eslint-disable-next-line no-console
-        console.error(error)
       })
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
