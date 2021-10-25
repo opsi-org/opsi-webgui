@@ -120,7 +120,10 @@ import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IProp, IProperty } from '~/scripts/types/ttable'
 import { IObjectString2Any } from '~/scripts/types/tgeneral'
 import { makeToast } from '@/scripts/utils/scomponents'
+import { ChangeObj } from '~/scripts/types/tchanges'
 const selections = namespace('selections')
+const settings = namespace('settings')
+const changes = namespace('changes')
 
 @Component
 export default class TProductProperties extends Vue {
@@ -129,6 +132,11 @@ export default class TProductProperties extends Vue {
   @Prop({ }) properties!: IProp
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
+  @changes.Getter public changesProducts!: Array<ChangeObj>
+  @changes.Mutation public setChangesProducts!: (a: Array<object>) => void
+  @changes.Mutation public pushToChangesProducts!: (o: object) => void
+  @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
+  @settings.Getter public expert!: boolean
 
   // errorText: string = ''
   result:Object = {}
@@ -187,7 +195,39 @@ export default class TProductProperties extends Vue {
         properties: propObj
       }
     }
-    await this.saveProdProp(data)
+    if (this.expert) {
+      if (this.selectionClients.length > 0) {
+        for (const c in this.selectionClients) {
+          const d: Object = {
+            clientId: this.selectionClients[c],
+            productId: this.id,
+            property: propertyId,
+            propertyValue: values
+          }
+          const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.id && item.property === propertyId)
+          if (objIndex > -1) {
+            this.delWithIndexChangesProducts(objIndex)
+          }
+          this.pushToChangesProducts(d)
+        }
+      } else {
+        for (const dep in this.selectionDepots) {
+          const d: Object = {
+            depotId: this.selectionDepots[dep],
+            productId: this.id,
+            property: propertyId,
+            propertyValue: values
+          }
+          const objIndex = this.changesProducts.findIndex(i => i.depotId === this.selectionDepots[dep] && i.productId === this.id && i.property === propertyId)
+          if (objIndex > -1) {
+            this.delWithIndexChangesProducts(objIndex)
+          }
+          this.pushToChangesProducts(d)
+        }
+      }
+    } else {
+      await this.saveProdProp(data)
+    }
   }
 
   updateNewPropertyValuesRow (rowItem: IProperty) {

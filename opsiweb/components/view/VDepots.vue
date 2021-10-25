@@ -38,7 +38,7 @@
           />
         </template>
         <template #pagination>
-          <BarBPagination
+          <BarBTablePagination
             :tabledata="tableData"
             :total-rows="fetchedData.total"
             aria-controls="tabledepots"
