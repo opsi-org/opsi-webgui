@@ -66,17 +66,15 @@ export default class MProdSaveOverview extends Vue {
     let change = {}
     if (item.clientId !== '') {
       change = {
-        clientIds: item.clientId,
+        clientIds: [item.clientId],
         properties: propObj
       }
     } else {
       change = {
-        depotIds: item.depotId,
+        depotIds: [item.depotId],
         properties: propObj
       }
     }
-    // eslint-disable-next-line no-console
-    console.log(change)
     await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, { data: change })
       .then((response) => {
         // eslint-disable-next-line no-console
@@ -90,8 +88,8 @@ export default class MProdSaveOverview extends Vue {
       })
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
+      this.$nuxt.refresh()
     }
-    this.$nuxt.refresh()
   }
 
   saveAll () {
