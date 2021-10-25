@@ -169,7 +169,7 @@ export default class TProductProperties extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, this.$t('message.prodPropSave') as string, this.$t('message.success') as string, 'success')
+        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
         setTimeout(() => {
           this.$nuxt.refresh()
         }, 5000)
