@@ -24,5 +24,5 @@ test('button expert mode (navbar) clicked snapshot', async ({ page }) => {
   await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode-navbar')
   await page.click('.btn_expertmode')
   const component = await page.locator('[data-testid="ButtonBTNExpertMode"]')
-  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-navbar-clicked.png')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnexpertmode-navbar-clicked.png', { threshold: 0.2 })
 })
