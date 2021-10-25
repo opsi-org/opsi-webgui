@@ -1,9 +1,14 @@
-image: mcr.microsoft.com/playwright:v1.10.0-focal
+image: mcr.microsoft.com/playwright:v1.15.2-focal
 
 stages:
+  - init
   - test
   - build
   - publish
+
+# variables:
+  # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+  # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -11,63 +16,81 @@ stages:
   apt -y install debhelper osc
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
-.install_webgui_devdep: &install_webgui_devdep |
-  cd opsiweb
-  npm install
-  npx playwright install
 
-.install_webgui_devdep_min: &install_webgui_devdep_min |
-  cd opsiweb
-  npm install
+init:npm:
+  stage: init
+  script:
+    - cd .devcontainer
+    - ./script.sh
+  artifacts:
+    paths:
+      - opsiweb/node_modules/
+    expire_in: 1 day
 
 test:lint:
   stage: test
   script:
-    - *install_webgui_devdep_min
+    - cd opsiweb
     - npm run lint
 
 test:test-unit:
   stage: test
+  dependencies:
+    - init:npm
   script:
-    - *install_webgui_devdep_min
+    - cd opsiweb
     - npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
-      cobertura: opsiweb/coverage/clover.xml
+      cobertura: opsiweb/coverage/clover.xmlci
 
 test:test-e2e:
   stage: test
+  dependencies:
+    - init:npm
   script:
-    - *install_webgui_devdep
+    - cd opsiweb
+    - npx playwright install
     - PORT=8888 nohup npm run dev &
     - sleep 20
+    - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm run test:e2e
+  allow_failure: true
   artifacts:
+    name: 'opsi-webgui-test-result-e2e'
+    when: on_failure
     paths:
-      - opsiweb/test-results
-    expire_in: 1 day
+      - opsiweb/test-results/
+    expire_in: 2 day
 
 test:test-integration:
   stage: test
+  dependencies:
+    - init:npm
   script:
-    - *install_webgui_devdep
+    - cd opsiweb
+    - npx playwright install
     - PORT=8888 nohup npm run dev &
     - PORT=3003 nohup npm run story &
     - sleep 60
     - npm run test:integration
+  allow_failure: true
   artifacts:
+    name: 'opsi-webgui-test-result-integration'
+    when: on_failure
     paths:
-      - opsiweb/test-results
-    expire_in: 1 day
+      - opsiweb/test-results/
+    expire_in: 2 day
 
 build:static-app:
   stage: build
   dependencies:
+    - init:npm
     - test:lint
     #- test:jtest
   script:
-    - *install_webgui_devdep_min
+    - cd opsiweb
     - npm run generate
   artifacts:
     name: 'opsi-webgui'

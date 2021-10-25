@@ -2,6 +2,7 @@
   <div>
     <BarBPageHeader
       navbartype="collapse"
+      data-testid="CollapseCContent"
       :bold="bold"
       :collapsed="visible"
       :aria-controls="(id || title)+'-collapse'"

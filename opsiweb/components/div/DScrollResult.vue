@@ -1,5 +1,5 @@
 <template>
-  <div class="content-scroll">
+  <div class="content-scroll" data-testid="DivDScrollResult">
     <slot name="content" />
   </div>
 </template>
@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
-export default class CDivScrollable extends Vue {
+export default class DScrollResult extends Vue {
 }
 </script>
 

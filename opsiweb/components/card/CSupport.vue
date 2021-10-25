@@ -1,5 +1,5 @@
 <template>
-  <b-container fluid>
+  <b-container fluid data-testid="CardCSupport">
     <b-card>
       <b-row>
         <b-col md="7">

@@ -1,6 +1,8 @@
 const { test, expect } = require('@playwright/test')
+const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
 test('button rowlinkto snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=button-btn-row-link-to--btn-row-link-to&args=&viewMode=story')
-  expect(await page.screenshot()).toMatchSnapshot('comp-button-btnrowlinkto.png')
+  await callStoryId(page, 'button-btn-row-link-to', 'btn-row-link-to')
+  const component = await page.locator('[data-testid="ButtonBTNRowLinkTo"]')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnrowlinkto.png')
 })

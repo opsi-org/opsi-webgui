@@ -1,6 +1,8 @@
 const { test, expect } = require('@playwright/test')
+const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
 test('button open modal snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=button-btn-open-modal--btn-open-modal&args=icon:b-icon-unknown')
-  expect(await page.screenshot()).toMatchSnapshot('comp-button-btnopenmodal.png')
+  await callStoryId(page, 'button-btn-open-modal', 'btn-open-modal')
+  const component = await page.locator('[data-testid="ButtonBTNOpenModal"]')
+  expect(await component.screenshot()).toMatchSnapshot('button-btnopenmodal.png')
 })

@@ -1,6 +1,8 @@
 const { test, expect } = require('@playwright/test')
+const { callStoryId } = require('../../.utils-pw/pw-story-call')
 
 test('button delete all snapshot', async ({ page }) => {
-  await page.goto('http://localhost:3003/iframe.html?id=button-btn-delete-all--btn-delete-all&args=')
-  expect(await page.screenshot()).toMatchSnapshot('comp-button-btndeleteall.png')
+  await callStoryId(page, 'button-btn-delete-all', 'btn-delete-all')
+  const component = await page.locator('[data-testid="ButtonBTNDeleteAll"]')
+  expect(await component.screenshot()).toMatchSnapshot('button-btndeleteall.png')
 })

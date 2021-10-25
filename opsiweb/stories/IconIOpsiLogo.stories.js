@@ -1,14 +1,11 @@
-import { storiesOf } from '@storybook/vue'
-import IOpsiLogo from '~/components/icon/IOpsiLogo'
+export default {
+  title: 'Icon/I Opsi Logo',
+  parameters: { docs: { description: { component: 'Icon/IOpsiLogo description' } } }
+}
 
-storiesOf('Icon/IOpsiLogo', module)
-  .add('IOpsiLogo', () => ({
-    components: { IOpsiLogo },
-    parameters: { docs: { description: { component: 'icon/IOpsiLogo description' } } },
-    template: '<IconIOpsiLogo/>'
-  }))
-  // .add('opsilogo2', () => ({
-  //   components: { IOpsiLogo },
-  //   template: '<IconIOpsiLogo/>'
-  // }))
-  // .add('I don\'t work', () => '<IconIOpsiLogo />')
+const DefaultVisibleTemplateHead = (_args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  template: `<IconIOpsiLogo/>
+  `
+})
+export const IOpsiLogo = DefaultVisibleTemplateHead.bind({})

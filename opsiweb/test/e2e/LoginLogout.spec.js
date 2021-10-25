@@ -1,29 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const apiMock = (page, apiPath, response) => {
-  page.route(apiPath, route => route.fulfill({
-    status: 200,
-    headers: {
-      'access-control-allow-origin': 'https://localhost:8888',
-      'access-control-allow-credentials': true,
-      'access-control-allow-headers': '*',
-      'access-control-allow-methods': '*'
-      // 'set-cookie': (!withCookie) ? '' : 'opsiconfd-session=any-value; domain=localhost; path=/; sameSite=None; secure=true'
-    },
-    contentType: 'application/json',
-    body: JSON.stringify(response)
-  }))
-}
-
-const cookieOpsiconfdSession = [{
-  name: 'opsiconfd-session',
-  value: 'any-value',
-  domain: 'localhost',
-  path: '/',
-  expires: -1,
-  httpOnly: false,
-  secure: true,
-  sameSite: 'None'
-}]
+const { apiMock, cookieOpsiconfdSession } = require('../.utils-pw/pw-api-mock.js')
 
 test.beforeEach(async ({ page }) => {
   // page.on('console', m => console.log(m.text()))
@@ -54,22 +30,21 @@ test('should be possible to login and logout again', async ({ page, context }) =
   title = page.locator('.server')
   await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
 
-  await page.click('[placeholder="Username"]')
-  await page.fill('[placeholder="Username"]', 'adminuser')
+  // await page.click('[placeholder="Username"]')
+  await page.type('[placeholder="Username"]', 'adminuser')
   await page.press('[placeholder="Username"]', 'Tab')
-  await page.fill('[placeholder="Password"]', 'adminuser')
+  await page.type('[placeholder="Password"]', 'adminuser')
   await page.press('[placeholder="Password"]', 'Enter')
-
   await context.addCookies(cookieOpsiconfdSession)
   title = await context.cookies()
   expect(title).toEqual(cookieOpsiconfdSession)
 
   await page.waitForNavigation({ url: './' })
-  title = page.locator('[data-testid="btn-logout"]')
+  title = page.locator('[data-testid="ButtonBTNLogout"]')
   await expect(title).toHaveText('Logout')
 
   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
-  await page.click('[data-testid="btn-logout"]')
+  await page.click('[data-testid="ButtonBTNLogout"]')
   await page.waitForNavigation({ url: './login' })
   title = page.locator('.login_title')
   await expect(title).toHaveText('OPSIWEB')
