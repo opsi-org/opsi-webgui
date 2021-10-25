@@ -292,6 +292,7 @@ export default class TProductsNetboot extends Vue {
       }
       makeToast(this, txt, this.$t('message.warning') as string, 'warning')
     }
+    makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
   }
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {

@@ -81,7 +81,7 @@ export default class TChanges extends Vue {
       productIds: [item.productId],
       actionRequest: item.actionRequest
     }
-
+    const t:any = this
     const responseError: IObjectString2String = (await this.$axios.$patch(
       '/api/opsidata/clients/products',
       { data: change }
@@ -95,6 +95,7 @@ export default class TChanges extends Vue {
     } else {
       this.delFromChangesProducts(item)
     }
+    makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
     if (this.changesProducts.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
       this.$nuxt.refresh()
