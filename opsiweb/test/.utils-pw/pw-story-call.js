@@ -4,7 +4,7 @@ const wait = function (ms, s) {
 
 module.exports.callStory = (page, path) => page.goto(`http://localhost:3003/${path}`)
 module.exports.callStoryId = async (page, fullId, id) => {
-  await page.goto(`http://localhost:3003/iframe.html?id=${fullId}--${id}&args=&viewMode=story'`)
-  return wait(1000, fullId)
+  return page.goto(`http://localhost:3003/iframe.html?id=${fullId}--${id}&args=&viewMode=story'`)
+  // return wait(1000, fullId)
 }
 
