@@ -12,7 +12,7 @@
           <TreeTSProductGroup />
         </template>
         <template #right>
-          <ModalMProdSaveOverview v-if="expert && changesProducts" />
+          <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
         </template>
       </BarBPageHeader>
       <TableTProductsNetboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
@@ -107,6 +107,9 @@ export default class VProducts extends Vue {
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
+  }
+  get username(){
+    return localStorage.getItem('username')
   }
 }
 </script>
