@@ -334,7 +334,7 @@ export default class TProductsLocalboot extends Vue {
           productId: rowitem.productId,
           actionRequest: newrequest
         }
-        const objIndex = this.changesProducts.findIndex(item  => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
+        const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
         if (objIndex > -1) {
           this.delWithIndexChangesProducts(objIndex)
         }
