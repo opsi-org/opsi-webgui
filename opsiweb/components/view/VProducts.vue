@@ -3,9 +3,7 @@
     <template #parent>
       <BarBPageHeader>
         <template #left>
-          <!-- <DropdownDDDepotIds /> -->
           <TreeTSDepots />
-          <!-- <DropdownDDClientIds /> -->
           <TreeTSHostGroupLazyLoad />
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
