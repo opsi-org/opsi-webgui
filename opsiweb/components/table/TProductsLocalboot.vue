@@ -198,7 +198,6 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
-  @changes.Mutation public setChangesProducts!: (a: Array<object>) => void
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
@@ -328,11 +327,13 @@ export default class TProductsLocalboot extends Vue {
     if (this.expert) {
       for (const c in this.selectionClients) {
         const d: Object = {
+          user: localStorage.getItem('username'),
+          // user: 'dummy-user',
           clientId: this.selectionClients[c],
           productId: rowitem.productId,
           actionRequest: newrequest
         }
-        const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
+        const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
         if (objIndex > -1) {
           this.delWithIndexChangesProducts(objIndex)
         }
@@ -341,7 +342,6 @@ export default class TProductsLocalboot extends Vue {
     } else {
       await this.save(data)
       this.fetchOptions.fetchClients = true
-      this.setChangesProducts([])
       this.$fetch()
     }
   }
@@ -358,11 +358,12 @@ export default class TProductsLocalboot extends Vue {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {
           const d = {
+            user: localStorage.getItem('username'),
             clientId: this.selectionClients[c],
             productId: this.selectionProducts[p],
             actionRequest: this.action
           }
-          const objIndex = this.changesProducts.findIndex((item: { clientId: string, productId: string }) => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
+          const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
           if (objIndex > -1) {
             this.delWithIndexChangesProducts(objIndex)
           }
@@ -372,7 +373,6 @@ export default class TProductsLocalboot extends Vue {
     } else {
       await this.save(data)
       this.fetchOptions.fetchClients = true
-      this.setChangesProducts([])
       this.$fetch()
     }
   }

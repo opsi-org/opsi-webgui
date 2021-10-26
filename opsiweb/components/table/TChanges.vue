@@ -1,15 +1,5 @@
 <template>
   <div v-if="tableitems.length>0">
-    <!-- <BarBPageHeader
-      navbartype="collapse"
-      variant="light"
-      :collapsed="visible"
-      :aria-controls="title+'-collapsechanges'"
-      :aria-expanded="visible"
-      :title="title"
-      @click.native="visible = !visible"
-    />
-    <b-collapse :id="title+'-collapsechanges'" v-model="visible" accordion="table-accordion"> -->
     <InputIFilterTChanges :filter.sync="filter" />
     <div v-for="changes, k in groupedById" :key="changes.productId">
       <small><b>{{ k }}</b></small>
@@ -30,16 +20,13 @@
           <small>{{ row.value }}</small>
         </template>
         <template #cell(_action)="row">
-          <!-- <b-button-group> -->
           <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
           <b-button size="sm" variant="light" @click="save(row.item)">
             <b-icon icon="check2" />
           </b-button>
-          <!-- </b-button-group> -->
         </template>
       </b-table>
     </div>
-    <!-- </b-collapse> -->
   </div>
 </template>
 
@@ -53,8 +40,6 @@ const changes = namespace('changes')
 @Component
 export default class TChanges extends Vue {
   @Prop({ }) tableitems!: Array<object>
-  @Prop({ }) title!: string
-  visible: boolean = true
   filter: string = ''
 
   @changes.Getter public changesProducts!: Array<ChangeObj>

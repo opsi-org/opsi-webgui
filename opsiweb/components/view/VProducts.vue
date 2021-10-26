@@ -3,16 +3,14 @@
     <template #parent>
       <BarBPageHeader>
         <template #left>
-          <!-- <DropdownDDDepotIds /> -->
           <TreeTSDepots />
-          <!-- <DropdownDDClientIds /> -->
           <TreeTSHostGroupLazyLoad />
           <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
           <TreeTSProductGroup />
         </template>
         <template #right>
-          <ModalMProdSaveOverview v-if="expert && changesProducts" />
+          <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
         </template>
       </BarBPageHeader>
       <TableTProductsNetboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
@@ -38,7 +36,7 @@ export default class VProducts extends Vue {
   // @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean
   @changes.Getter public changesProducts!: Array<object>
-  @changes.Mutation public deleteAllChanges!: () => void
+
   rowId: string = ''
   isLoading: boolean = true
   // fetchedDataDepotIds: Array<string> = []
@@ -95,9 +93,6 @@ export default class VProducts extends Vue {
   //     JSON.stringify(this.tableData)
   //   )).result
   // }
-  created () {
-    this.deleteAllChanges()
-  }
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
@@ -110,6 +105,10 @@ export default class VProducts extends Vue {
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
+  }
+
+  get username () {
+    return localStorage.getItem('username')
   }
 }
 </script>

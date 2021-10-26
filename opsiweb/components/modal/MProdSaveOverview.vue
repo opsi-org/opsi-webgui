@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ButtonBTNOpenModal modal-id="ProductSaveModal" icon="list-check" :disabled="changesProducts.length == 0" />
+    <ButtonBTNOpenModal modal-id="ProductSaveModal" icon="list-check" :disabled="changelist.length == 0" />
     <b-modal
       id="ProductSaveModal"
       size="xl"
@@ -8,9 +8,7 @@
       scrollable
       no-fade
     >
-      <TableTChanges :tableitems="changesProducts" />
-      <!-- <TableTChanges title="Netboot Products" :tableitems="changesProducts.filter(o => o.type === 'NetbootProduct')" />
-      <TableTChanges title="Localboot Products" :tableitems="changesProducts.filter(o => o.type === 'LocalbootProduct')" /> -->
+      <TableTChanges :tableitems="changelist" />
       <template #modal-footer>
         <ButtonBTNDeleteAll hide="ProductSaveModal" />
         <b-button size="sm" variant="primary" @click="saveAll()">
@@ -22,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/scripts/utils/scomponents'
 import { IObjectString2String, IObjectString2Any } from '~/scripts/types/tgeneral'
 import { ChangeObj } from '~/scripts/types/tchanges'
@@ -30,7 +28,7 @@ const changes = namespace('changes')
 
 @Component
 export default class MProdSaveOverview extends Vue {
-  @changes.Getter public changesProducts!: Array<ChangeObj>
+  @Prop({ }) changelist!: Array<any>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   async saveProd (item: ChangeObj) {
@@ -54,7 +52,7 @@ export default class MProdSaveOverview extends Vue {
       this.delFromChangesProducts(item)
     }
     makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
-    if (this.changesProducts.length === 0) {
+    if (this.changelist.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
       this.$nuxt.refresh()
     }
@@ -85,15 +83,15 @@ export default class MProdSaveOverview extends Vue {
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
       })
-    if (this.changesProducts.length === 0) {
+    if (this.changelist.length === 0) {
       this.$bvModal.hide('ProductSaveModal')
       this.$nuxt.refresh()
     }
   }
 
   saveAll () {
-    for (const p in this.changesProducts) {
-      const change = this.changesProducts[p]
+    for (const p in this.changelist) {
+      const change = this.changelist[p]
       if (change.actionRequest) {
         this.saveProd(change)
       } else if (change.property) {
