@@ -13,7 +13,6 @@ export default function ({
     return redirect('/')
   } else if (!isA && route.name !== 'login') {
     store.dispatch('selections/clearAllSelection')
-    store.dispatch('changes/deleteAllChanges')
     return redirect('/login')
   }
 }
