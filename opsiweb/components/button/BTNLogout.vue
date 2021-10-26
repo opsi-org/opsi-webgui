@@ -15,7 +15,6 @@
 import { Component, Prop, Vue, namespace } from 'nuxt-property-decorator'
 const auth = namespace('auth')
 const selections = namespace('selections')
-const changes = namespace('changes')
 
 @Component
 export default class BTNLogout extends Vue {
