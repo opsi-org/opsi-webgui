@@ -133,7 +133,6 @@ export default class TProductProperties extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @changes.Getter public changesProducts!: Array<ChangeObj>
-  @changes.Mutation public setChangesProducts!: (a: Array<object>) => void
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
@@ -199,6 +198,7 @@ export default class TProductProperties extends Vue {
       if (this.selectionClients.length > 0) {
         for (const c in this.selectionClients) {
           const d: Object = {
+            user: localStorage.getItem('username'),
             clientId: this.selectionClients[c],
             productId: this.id,
             property: propertyId,
@@ -213,6 +213,7 @@ export default class TProductProperties extends Vue {
       } else {
         for (const dep in this.selectionDepots) {
           const d: Object = {
+            user: localStorage.getItem('username'),
             depotId: this.selectionDepots[dep],
             productId: this.id,
             property: propertyId,

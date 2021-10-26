@@ -14,7 +14,7 @@
         class="changes_table"
         thead-class="table-header-none"
         :items="changes"
-        :fields="['user', 'depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
+        :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
       >
         <template #cell()="row">
           <small>{{ row.value }}</small>
