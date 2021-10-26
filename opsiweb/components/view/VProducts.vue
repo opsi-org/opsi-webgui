@@ -106,7 +106,8 @@ export default class VProducts extends Vue {
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
-  get username(){
+
+  get username () {
     return localStorage.getItem('username')
   }
 }
