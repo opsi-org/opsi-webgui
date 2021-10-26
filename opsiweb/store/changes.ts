@@ -6,7 +6,6 @@ export default class Changes extends VuexModule {
 
   get changesProducts (): Array<object> { return this._changesProducts }
 
-  @VuexMutation public setChangesProducts (arr: Array<object>) { this._changesProducts = arr }
   @VuexMutation public pushToChangesProducts (obj: object) {
     this._changesProducts.push(obj)
   }

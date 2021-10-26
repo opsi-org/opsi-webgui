@@ -198,7 +198,6 @@ export default class TProductsLocalboot extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
-  @changes.Mutation public setChangesProducts!: (a: Array<object>) => void
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
@@ -343,7 +342,6 @@ export default class TProductsLocalboot extends Vue {
     } else {
       await this.save(data)
       this.fetchOptions.fetchClients = true
-      this.setChangesProducts([])
       this.$fetch()
     }
   }
@@ -375,7 +373,6 @@ export default class TProductsLocalboot extends Vue {
     } else {
       await this.save(data)
       this.fetchOptions.fetchClients = true
-      this.setChangesProducts([])
       this.$fetch()
     }
   }
