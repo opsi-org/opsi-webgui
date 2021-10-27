@@ -119,6 +119,7 @@
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IProp, IProperty } from '~/scripts/types/ttable'
 import { IObjectString2Any } from '~/scripts/types/tgeneral'
+import { arrayEqual } from '~/scripts/utils/scompares'
 import { makeToast } from '@/scripts/utils/scomponents'
 import { ChangeObj } from '~/scripts/types/tchanges'
 const selections = namespace('selections')
@@ -179,7 +180,7 @@ export default class TProductProperties extends Vue {
       })
   }
 
-  async handleChange (propertyId:string, values: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
+  async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
     const propObj: any = {}
     propObj[propertyId] = values
     let data = {}
@@ -208,7 +209,9 @@ export default class TProductProperties extends Vue {
           if (objIndex > -1) {
             this.delWithIndexChangesProducts(objIndex)
           }
-          this.pushToChangesProducts(d)
+          if (!arrayEqual(values, orgValues)) {
+            this.pushToChangesProducts(d)
+          }
         }
       } else {
         for (const dep in this.selectionDepots) {
@@ -223,11 +226,15 @@ export default class TProductProperties extends Vue {
           if (objIndex > -1) {
             this.delWithIndexChangesProducts(objIndex)
           }
-          this.pushToChangesProducts(d)
+          if (!arrayEqual(values, orgValues)) {
+            this.pushToChangesProducts(d)
+          }
         }
       }
     } else {
-      await this.saveProdProp(data)
+      if (!arrayEqual(values, orgValues)) {
+        await this.saveProdProp(data)
+      }
     }
   }
 
