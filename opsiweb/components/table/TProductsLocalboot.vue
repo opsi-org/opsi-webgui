@@ -318,7 +318,10 @@ export default class TProductsLocalboot extends Vue {
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    rowitem.request = [newrequest]
+    let orgActionReq = rowitem.actionRequest
+    if (orgActionReq === null) {
+      orgActionReq = 'none'
+    }
     const data = {
       clientIds: this.selectionClients,
       productIds: [rowitem.productId],
@@ -337,9 +340,11 @@ export default class TProductsLocalboot extends Vue {
         if (objIndex > -1) {
           this.delWithIndexChangesProducts(objIndex)
         }
-        this.pushToChangesProducts(d)
+        if (orgActionReq !== newrequest) {
+          this.pushToChangesProducts(d)
+        }
       }
-    } else {
+    } else if (orgActionReq !== newrequest) {
       await this.save(data)
       this.fetchOptions.fetchClients = true
       this.$fetch()

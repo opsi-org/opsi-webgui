@@ -20,6 +20,7 @@ export interface ITableRowItemProducts {
   depotVersionDiff: boolean
   installationStatus: Array<string>
   actionResult: Array<string>
+  actionRequest: string,
   _rowVariant?: string
   tooltiptext?: IObjectString2ObjectString2String
 }
