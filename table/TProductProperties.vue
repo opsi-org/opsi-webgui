@@ -231,10 +231,8 @@ export default class TProductProperties extends Vue {
           }
         }
       }
-    } else {
-      if (!arrayEqual(values, orgValues)) {
-        await this.saveProdProp(data)
-      }
+    } else if (!arrayEqual(values, orgValues)) {
+      await this.saveProdProp(data)
     }
   }
 
