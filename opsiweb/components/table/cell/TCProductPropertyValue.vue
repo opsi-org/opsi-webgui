@@ -76,9 +76,10 @@ export default class TProductPropertyValue extends Vue {
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
   @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
-    if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
-      this.$emit('change', this.rowItem.propertyId, this.selectedValues)
-    }
+    // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
+    //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
+    // }
+    this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
   }
 
