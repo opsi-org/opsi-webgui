@@ -318,31 +318,39 @@ export default class TProductsLocalboot extends Vue {
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    rowitem.request = [newrequest]
-    const data = {
-      clientIds: this.selectionClients,
-      productIds: [rowitem.productId],
-      actionRequest: newrequest
-    }
-    if (this.expert) {
-      for (const c in this.selectionClients) {
-        const d: Object = {
-          user: localStorage.getItem('username'),
-          // user: 'dummy-user',
-          clientId: this.selectionClients[c],
-          productId: rowitem.productId,
-          actionRequest: newrequest
+    if (rowitem.actionRequest !== newrequest){
+      const data = {
+        clientIds: this.selectionClients,
+        productIds: [rowitem.productId],
+        actionRequest: newrequest
+      }
+      if (this.expert) {
+        for (const c in this.selectionClients) {
+          const d: Object = {
+            user: localStorage.getItem('username'),
+            // user: 'dummy-user',
+            clientId: this.selectionClients[c],
+            productId: rowitem.productId,
+            actionRequest: newrequest
+          }
+          const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
+          if (objIndex > -1) {
+            this.delWithIndexChangesProducts(objIndex)
+          }
+          this.pushToChangesProducts(d)
         }
+      } else {
+        await this.save(data)
+        this.fetchOptions.fetchClients = true
+        this.$fetch()
+      }
+    }else {
+      for (const c in this.selectionClients) {
         const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
         if (objIndex > -1) {
           this.delWithIndexChangesProducts(objIndex)
         }
-        this.pushToChangesProducts(d)
       }
-    } else {
-      await this.save(data)
-      this.fetchOptions.fetchClients = true
-      this.$fetch()
     }
   }
 
