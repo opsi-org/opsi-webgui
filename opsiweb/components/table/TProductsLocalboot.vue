@@ -318,7 +318,11 @@ export default class TProductsLocalboot extends Vue {
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    if (rowitem.actionRequest !== newrequest){
+    let orgActionReq = rowitem.actionRequest
+    if (orgActionReq === null){
+      orgActionReq = 'none'
+    }
+    if (orgActionReq !== newrequest){
       const data = {
         clientIds: this.selectionClients,
         productIds: [rowitem.productId],
