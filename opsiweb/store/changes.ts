@@ -21,6 +21,6 @@ export default class Changes extends VuexModule {
   @VuexMutation public deleteAllChanges () {
     // this._changesProducts.splice(0, this._changesProducts.length)
     const removeItems = this._changesProducts.filter(item => item.user === localStorage.getItem('username'))
-    removeItems.forEach(f => this._changesProducts.splice(this._changesProducts.findIndex(item => item.user === f.user),1))
+    removeItems.forEach(f => this._changesProducts.splice(this._changesProducts.findIndex(item => item.user === f.user), 1))
   }
 }
