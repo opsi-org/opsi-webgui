@@ -322,39 +322,32 @@ export default class TProductsLocalboot extends Vue {
     if (orgActionReq === null) {
       orgActionReq = 'none'
     }
-    if (orgActionReq !== newrequest) {
-      const data = {
-        clientIds: this.selectionClients,
-        productIds: [rowitem.productId],
-        actionRequest: newrequest
-      }
-      if (this.expert) {
-        for (const c in this.selectionClients) {
-          const d: Object = {
-            user: localStorage.getItem('username'),
-            // user: 'dummy-user',
-            clientId: this.selectionClients[c],
-            productId: rowitem.productId,
-            actionRequest: newrequest
-          }
-          const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
-          if (objIndex > -1) {
-            this.delWithIndexChangesProducts(objIndex)
-          }
-          this.pushToChangesProducts(d)
-        }
-      } else {
-        await this.save(data)
-        this.fetchOptions.fetchClients = true
-        this.$fetch()
-      }
-    } else {
+    const data = {
+      clientIds: this.selectionClients,
+      productIds: [rowitem.productId],
+      actionRequest: newrequest
+    }
+    if (this.expert) {
       for (const c in this.selectionClients) {
+        const d: Object = {
+          user: localStorage.getItem('username'),
+          // user: 'dummy-user',
+          clientId: this.selectionClients[c],
+          productId: rowitem.productId,
+          actionRequest: newrequest
+        }
         const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
         if (objIndex > -1) {
           this.delWithIndexChangesProducts(objIndex)
         }
+        if (orgActionReq !== newrequest) {
+          this.pushToChangesProducts(d)
+        }
       }
+    } else if (orgActionReq !== newrequest) {
+      await this.save(data)
+      this.fetchOptions.fetchClients = true
+      this.$fetch()
     }
   }
 
