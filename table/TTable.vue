@@ -31,9 +31,8 @@
       {{ selection.length }}/{{ totalrows }}
     </template>
     <template #cell(sel)="row">
+      <!-- <b-icon-check v-if="row.rowSelected || selection.includes(row.item[datakey])" /> -->
       {{ fixRow(row) }}
-      <b-icon-check2 v-if="row.rowSelected || selection.includes(row.item[datakey])" />
-      <!-- {{ fixRow(row) }} -->
     </template>
 
     <template #head(rowactions)="{}">
@@ -70,41 +69,70 @@ export default class TTable extends BTable {
     } else {
       this.rowIdent = row.item.ident
     }
-    // eslint-disable-next-line no-console
-    // console.log('rowIdent', this.rowIdent)
 
-    if (typeof this.rowIdent === 'string') {
-      row.rowSelected = this.selection.includes(this.rowIdent)
-      const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
-      if (elem) { elem.classList.remove('table-active') }
-      // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
-      if (row.rowSelected) {
-        row.item._rowVariant = 'primary'
-        if (elem) {
-          elem.classList.add('b-table-row-selected')
-          elem.classList.add('table-primary')
-          elem.classList.add('aaaa')
-        }
-      } else {
-        row.item._rowVariant = ''
-        if (elem) {
-          elem.classList.remove('table-active')
-          elem.classList.remove('b-table-row-selected')
-          elem.classList.remove('table-primary')
-        }
+    row.rowSelected = this.selection.includes(this.rowIdent)
+    const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
+    // if (elem) { elem.classList.remove('table-active') }
+    // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
+    if (row.rowSelected) {
+      row.item._rowVariant = 'primary'
+      if (elem) {
+        elem.classList.add('b-table-row-selected')
+        elem.classList.add('table-primary')
+        elem.classList.add('aaaa')
+      }
+    } else {
+      row.item._rowVariant = ''
+      if (elem) {
+        elem.classList.remove('table-active')
+        elem.classList.remove('b-table-row-selected')
+        elem.classList.remove('table-primary')
+        elem.classList.remove('aaaa')
       }
     }
-    // row.rowSelected = this.selection.includes(row.item.ident)
-    // if (row.rowSelected) {
-    //   const elem = document.getElementById(`__row_${row.item.ident}`)
-    //   if (elem) { elem.classList.add('b-table-row-selected') }
-    //   row.item._rowVariant = 'primary'
-    // } else {
-    //   const elem = document.getElementById(`__row_${row.item.ident}Major`)
-    //   if (elem) { elem.classList.remove('b-table-row-selected') }
-    //   row.item._rowVariant = ''
-    // }
   }
+
+  // fixRow (row: ITableRow): void {
+  //   if (this.datakey === 'productId') {
+  //     this.rowIdent = row.item.productId
+  //   } else {
+  //     this.rowIdent = row.item.ident
+  //   }
+  //   // eslint-disable-next-line no-console
+  //   // console.log('rowIdent', this.rowIdent)
+
+  //   if (typeof this.rowIdent === 'string') {
+  //     row.rowSelected = this.selection.includes(this.rowIdent)
+  //     const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
+  //     if (elem) { elem.classList.remove('table-active') }
+  //     // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
+  //     if (row.rowSelected) {
+  //       row.item._rowVariant = 'primary'
+  //       if (elem) {
+  //         elem.classList.add('b-table-row-selected')
+  //         elem.classList.add('table-primary')
+  //         elem.classList.add('aaaa')
+  //       }
+  //     } else {
+  //       row.item._rowVariant = ''
+  //       if (elem) {
+  //         elem.classList.remove('table-active')
+  //         elem.classList.remove('b-table-row-selected')
+  //         elem.classList.remove('table-primary')
+  //       }
+  //     }
+  //   }
+  //   // row.rowSelected = this.selection.includes(row.item.ident)
+  //   // if (row.rowSelected) {
+  //   //   const elem = document.getElementById(`__row_${row.item.ident}`)
+  //   //   if (elem) { elem.classList.add('b-table-row-selected') }
+  //   //   row.item._rowVariant = 'primary'
+  //   // } else {
+  //   //   const elem = document.getElementById(`__row_${row.item.ident}Major`)
+  //   //   if (elem) { elem.classList.remove('b-table-row-selected') }
+  //   //   row.item._rowVariant = ''
+  //   // }
+  // }
 
   rowChanged (item: ITableDataItem) {
     const selectionCopy:Array<string> = [...this.selection]
@@ -146,13 +174,17 @@ export default class TTable extends BTable {
 .fixed_column_selection{
   float: right;
 }
-.table-active, .table-active > th, .table-active > td {
+/* .table-active, .table-active > th, .table-active > td {
   background-color: unset !important;
-}
+} */
 
 .b-table-row-selected.table-primary{
+  background-color: #7aafca !important;
   /* background-color: var(--primary) !important; */
-  background-color: inherit !important;
+  /* background-color: inherit !important; */
+}
+.table-primary, .table-primary > td, .table-primary > th {
+  background-color: #7aafca !important;
 }
 
 /* .table.b-table > tbody > .table-active, .table.b-table > tbody > .table-active > th, .table.b-table > tbody > .table-active > td,
