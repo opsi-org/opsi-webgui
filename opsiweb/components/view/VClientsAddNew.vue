@@ -127,7 +127,7 @@ interface ClientRequest {
   async fetch () {
     this.clientRequest.selectedDepots = this.selectionDepots
     const params = this.clientRequest
-    this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+    this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
     this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
   }
 
@@ -145,9 +145,8 @@ interface ClientRequest {
       return
     }
     await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
-      .then((response) => {
+      .then(() => {
         // eslint-disable-next-line no-console
-        console.error(response)
         makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {

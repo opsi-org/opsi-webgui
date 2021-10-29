@@ -21,12 +21,12 @@
         :tabledata="tableData"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
-        :items="fetchedData.clients"
+        :items="fetchedData"
         :selection="selectionClients"
         :onchangeselection="setSelectionClients"
         :busy="isLoading"
         :error-text="errorText"
-        :totalrows="fetchedData.total"
+        :totalrows="totalData"
       >
         <template #head(_majorStats)>
           {{ '' }}
@@ -62,7 +62,7 @@
         <template #pagination>
           <BarBTablePagination
             :tabledata="tableData"
-            :total-rows="fetchedData.total"
+            :total-rows="totalData"
             aria-controls="tableclients"
           />
         </template>
@@ -87,7 +87,8 @@ interface IFetchOptions {
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = 'lalala'
-  fetchedData: object = {}
+  fetchedData: Array<string> = []
+  totalData: number = 0
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
   updateTable: boolean = false
@@ -133,9 +134,10 @@ interface IFetchOptions {
     if (this.fetchOptions.fetchClients) {
       this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
       const params = this.tableData
-      await this.$axios.$get('/api/opsidata/clients', { params })
+      await this.$axios.get('/api/opsidata/clients', { params })
         .then((response) => {
-          this.fetchedData = response.result
+          this.fetchedData = response.data
+          this.totalData = response.headers['x-total-count']
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -143,9 +145,9 @@ interface IFetchOptions {
         })
     }
     if (this.fetchOptions.fetchDepotIds) {
-      await this.$axios.$get('/api/opsidata/depotIds')
+      await this.$axios.$get('/api/opsidata/depot_ids')
         .then((response) => {
-          this.fetchedDataDepotIds = response.result
+          this.fetchedDataDepotIds = response
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)

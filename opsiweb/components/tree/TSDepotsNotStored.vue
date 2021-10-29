@@ -21,7 +21,7 @@ export default class TSDepotsNotStored extends Vue {
 
   async fetch () {
     const depots: Array<object> = []
-    const result = (await this.$axios.$get('/api/opsidata/depotIds')).result.sort()
+    const result = (await this.$axios.$get('/api/opsidata/depot_ids')).sort()
     for (const d in result) {
       const depot = result[d]
       depots.push({ id: depot, label: depot })

@@ -10,7 +10,7 @@ export default class TSProductGroup extends Vue {
   productGroup: Array<object> = []
 
   async fetch () {
-    this.productGroup = Object.values((await this.$axios.$get('/api/opsidata/products/groups')).result.groups)
+    this.productGroup = Object.values((await this.$axios.$get('/api/opsidata/products/groups')).groups)
   }
 }
 </script>

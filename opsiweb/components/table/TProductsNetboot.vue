@@ -10,8 +10,8 @@
       :headers="headerData"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :selection="selectionProducts"
-      :items="fetchedData.products"
-      :totalrows="fetchedData.total"
+      :items="fetchedData"
+      :totalrows="totalData"
       :busy="isLoading"
       :error-text="errorText"
       :onchangeselection="setSelectionProducts"
@@ -104,7 +104,7 @@
       <template #pagination>
         <BarBTablePagination
           :tabledata="tableData"
-          :total-rows="fetchedData.total"
+          :total-rows="totalData"
           aria-controls="tableproducts"
         />
       </template>
@@ -127,10 +127,10 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-interface FetchProd {
-  products:Array<ITableRowItemProducts>,
-  total:Number,
-}
+// interface FetchProd {
+//   products:Array<ITableRowItemProducts>,
+//   total:Number,
+// }
 
 @Component
 export default class TProductsNetboot extends Vue {
@@ -142,7 +142,8 @@ export default class TProductsNetboot extends Vue {
   // type: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: FetchProd = { products: [], total: 0 }
+  fetchedData: Array<ITableRowItemProducts> = []
+  totalData: number = 0
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
@@ -244,7 +245,7 @@ export default class TProductsNetboot extends Vue {
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
-          this.fetchedDataClients2Depots = response.result
+          this.fetchedDataClients2Depots = response
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -260,9 +261,10 @@ export default class TProductsNetboot extends Vue {
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
       const params = this.tableData
       // this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
-      await this.$axios.$get('/api/opsidata/products', { params })
+      await this.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
-          this.fetchedData = response.result
+          this.fetchedData = response.data
+          this.totalData = response.headers['x-total-count']
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -276,9 +278,9 @@ export default class TProductsNetboot extends Vue {
     let responseError: IObjectString2String = {}
     const t:any = this
     try {
-      responseError = (await this.$axios.$patch(
+      responseError = (await this.$axios.$post(
         '/api/opsidata/clients/products',
-        { data: change }
+        change
       )).error
     } catch (error) {
       makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')

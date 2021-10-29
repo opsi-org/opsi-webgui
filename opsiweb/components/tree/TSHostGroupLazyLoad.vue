@@ -106,7 +106,7 @@ export default class TSDelayedLoading extends Vue {
     const clientList: Array<object> = []
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
-    const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+    const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
     for (const c in result) {
       const client = result[c]
       clientList.push({ id: client + ';clientlist', text: client, type: 'ObjectToGroup' })
@@ -122,7 +122,7 @@ export default class TSDelayedLoading extends Vue {
         await this.fetchClientList({ parentNode })
       } else {
         const params = this.request
-        const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).result.groups.children)
+        const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).groups.children)
         if (result !== null) {
           parentNode.children = Object.values(result)
         }

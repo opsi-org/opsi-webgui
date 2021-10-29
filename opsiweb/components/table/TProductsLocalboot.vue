@@ -9,12 +9,12 @@
       :title="$t('title.localboot')"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :headers="headerData"
-      :items="fetchedData.products"
+      :items="fetchedData"
       :selection="selectionProducts"
       :onchangeselection="setSelectionProducts"
       :busy="isLoading"
       :error-text="errorText"
-      :totalrows="fetchedData.total"
+      :totalrows="totalData"
       :stacked="$mq=='mobile'"
     >
       <!-- :no-local-sorting="true"
@@ -124,7 +124,7 @@
       <template #pagination>
         <BarBTablePagination
           :tabledata="tableData"
-          :total-rows="fetchedData.total"
+          :total-rows="totalData"
           aria-controls="tableproducts"
         />
       </template>
@@ -147,10 +147,10 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-interface FetchProd {
-  products:Array<ITableRowItemProducts>,
-  total:Number,
-}
+// interface FetchProd {
+//   products:Array<ITableRowItemProducts>,
+//   total:Number,
+// }
 @Component
 export default class TProductsLocalboot extends Vue {
   @Prop() rowId!: string
@@ -161,7 +161,8 @@ export default class TProductsLocalboot extends Vue {
   // rowId: string = ''
   isLoading: boolean = true
   errorText: string = ''
-  fetchedData: FetchProd = { products: [], total: 0 }
+  fetchedData: Array<ITableRowItemProducts> = []
+  totalData: number = 0
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
@@ -260,13 +261,13 @@ export default class TProductsLocalboot extends Vue {
     this.isLoading = true
     this.updateColumnVisibility()
     // if (this.fetchOptions.fetchDepotIds) {
-    //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depotIds')).result
+    //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depot_ids')).result
     //   this.fetchOptions.fetchDepotIds = false
     // }
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
-          this.fetchedDataClients2Depots = response.result
+          this.fetchedDataClients2Depots = response
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -282,7 +283,9 @@ export default class TProductsLocalboot extends Vue {
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
       try {
         const params = this.tableData
-        this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
+        const response = (await this.$axios.get('/api/opsidata/products', { params }))
+        this.fetchedData = response.data
+        this.totalData = response.headers['x-total-count']
       } catch (error) {
         this.errorText = this.$t('message.errortext') as string
         // eslint-disable-next-line no-console
@@ -298,9 +301,9 @@ export default class TProductsLocalboot extends Vue {
     let responseError: IObjectString2String = {}
     const t:any = this
     try {
-      responseError = (await this.$axios.$patch(
+      responseError = (await this.$axios.$post(
         '/api/opsidata/clients/products',
-        { data: change }
+        change
       )).error
     } catch (error) {
       makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')

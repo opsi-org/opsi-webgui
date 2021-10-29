@@ -1,7 +1,7 @@
 export default function ({ $axios, redirect, store, route }) {
   if (process.client || process.static) {
     const host = window.location.hostname
-    $axios.setBaseURL('https://' + host + ':4447/webgui')
+    $axios.setBaseURL('https://' + host + ':4447/addons/webgui')
   }
 
   $axios.onRequest((config) => {

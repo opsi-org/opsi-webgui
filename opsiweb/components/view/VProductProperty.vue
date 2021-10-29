@@ -118,13 +118,10 @@ export default class VClientConfig extends Vue {
 
     await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(response.error)
-        }
-        this.fetchedData.dependencies.dependencies = response.data.dependencies
-        this.fetchedData.dependencies.productDescriptionDetails = response.data.productDescriptionDetails // { 'bonifax.uib.local': 'string' }
-        this.fetchedData.dependencies.productVersions = response.data.productVersions // { 'bonifax.uib.local': '1.0' }
-        this.fetchedData.dependencies.productDescription = response.data.productDescription
+        this.fetchedData.dependencies.dependencies = response.dependencies
+        this.fetchedData.dependencies.productDescriptionDetails = response.productDescriptionDetails // { 'bonifax.uib.local': 'string' }
+        this.fetchedData.dependencies.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0' }
+        this.fetchedData.dependencies.productDescription = response.productDescription
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
         this.activeTabSet = -3
@@ -132,13 +129,10 @@ export default class VClientConfig extends Vue {
       })
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(response.error)
-        }
-        this.fetchedData.properties.properties = response.data.properties
-        this.fetchedData.properties.productDescriptionDetails = response.data.productDescriptionDetails
-        this.fetchedData.properties.productVersions = response.data.productVersions // { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
-        this.fetchedData.properties.productDescription = response.data.productDescription
+        this.fetchedData.properties.properties = response.properties
+        this.fetchedData.properties.productDescriptionDetails = response.productDescriptionDetails
+        this.fetchedData.properties.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
+        this.fetchedData.properties.productDescription = response.productDescription
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
         this.activeTabSet = -3
