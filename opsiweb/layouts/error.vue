@@ -18,7 +18,7 @@ const settings = namespace('settings')
 export default class LError extends Vue {
   @Prop({ }) error!: object
 
-  sidebarAttr: ISidebarAttributes = { visible: true, expanded: false }
+  sidebarAttr: ISidebarAttributes = { visible: true, expanded: true }
 
   head () {
     return {
