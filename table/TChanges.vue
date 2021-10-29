@@ -67,9 +67,9 @@ export default class TChanges extends Vue {
       actionRequest: item.actionRequest
     }
     const t:any = this
-    const responseError: IObjectString2String = (await this.$axios.$patch(
+    const responseError: IObjectString2String = (await this.$axios.$post(
       '/api/opsidata/clients/products',
-      { data: change }
+      change
     )).error
     if (Object.keys(responseError).length > 0) {
       let txt = 'Errors for: <br />'
@@ -103,7 +103,7 @@ export default class TChanges extends Vue {
         properties: propObj
       }
     }
-    await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, { data: change })
+    await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, change)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)

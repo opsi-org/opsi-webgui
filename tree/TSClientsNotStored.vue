@@ -28,7 +28,7 @@ export default class TSClientsNotStored extends Vue {
     const clients: Array<object> = []
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
-    const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).result.clients.sort()
+    const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
     for (const c in result) {
       const client = result[c]
       clients.push({ id: client, label: client })

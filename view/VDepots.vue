@@ -17,12 +17,12 @@
         :tabledata="tableData"
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
         :headers="headerData"
-        :items="fetchedData.depots"
+        :items="fetchedData"
         :selection="selectionDepots"
         :onchangeselection="setSelectionDepots"
         :error-text="errorText"
         :busy="isLoading"
-        :totalrows="fetchedData.total"
+        :totalrows="totalData"
       >
         <template #head(depotId)>
           <InputIFilter ref="IFilterDepots" :data="tableData" :additional-title="$t('table.fields.id')" />
@@ -40,7 +40,7 @@
         <template #pagination>
           <BarBTablePagination
             :tabledata="tableData"
-            :total-rows="fetchedData.total"
+            :total-rows="totalData"
             aria-controls="tabledepots"
           />
         </template>
@@ -63,7 +63,8 @@ const selections = namespace('selections')
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   rowId: string = ''
-  fetchedData: object = {}
+  fetchedData: Object = []
+  totalData: number = 0
   errorText: string = ''
   isLoading: boolean = true
   tableData: ITableData = {
@@ -111,9 +112,10 @@ const selections = namespace('selections')
   async fetch () {
     this.isLoading = true
     const params = this.tableData
-    await this.$axios.$get('/api/opsidata/depots', { params })
+    await this.$axios.get('/api/opsidata/depots', { params })
       .then((response) => {
-        this.fetchedData = response.result
+        this.fetchedData = response.data
+        this.totalData = response.headers['x-total-count']
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

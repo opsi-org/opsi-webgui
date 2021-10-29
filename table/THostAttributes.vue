@@ -54,7 +54,7 @@ export default class THostAttributes extends Vue {
       const params = this.request
       await this.$axios.$get('/api/opsidata/hosts', { params })
         .then((response) => {
-          this.result = response.result
+          this.result = response[0]
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
