@@ -68,12 +68,12 @@ interface FormUser {
           this.login(this.form.username)
           if (this.$route.name === 'login') {
             this.$router.push({ path: '/' })
-            const selectionDepot: Array<string> = []
-            selectionDepot.push(this.opsiconfigserver)
-            this.setSelectionDepots([...selectionDepot])
           } else {
             this.$router.back()
           }
+          const selectionDepot: Array<string> = []
+          selectionDepot.push(this.opsiconfigserver)
+          this.setSelectionDepots([...selectionDepot])
           this.isLoading = false
         }
       }).catch((error) => {
