@@ -14,8 +14,8 @@ stages:
   export DEBIAN_FRONTEND=noninteractive
   apt update
   apt -y install debhelper osc
-  wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.70.tar.gz
-  tar -xf opsi-dev-tools_linux_x64_1.0.70.tar.gz
+  wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
+  tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
 init:npm:
   stage: init
@@ -107,8 +107,8 @@ publish:binary-index:
     - build:static-app
   script:
     - *install_tools
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l info --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l info --binary-push opsiweb/dist opsi-webgui linux x64'
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64'
   only:
     - develop
 
@@ -118,7 +118,7 @@ publish:obs_int:
     - build:static-app
   script:
     - *install_tools
-    - ./opsi-dev-tool -l info --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
   only:
     - tags
 
