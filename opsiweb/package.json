@@ -1,6 +1,6 @@
 {
   "name": "opsiweb",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "scripts": {
     "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt storybook --ci --quiet --port 3003 -s ./static",
@@ -40,7 +40,7 @@
     "@nuxtjs/eslint-config-typescript": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/storybook": "^4.1.1",
-    "@playwright/test": "^1.16.1",
+    "@playwright/test": "^1.16.3",
     "@types/jest": "^27.0.2",
     "@types/js-cookie": "^2.2.6",
     "@types/webpack-env": "^1.16.2",

@@ -27,7 +27,7 @@ interface SideBarAttr {
 
 @Component
 export default class LayoutDefault extends Vue {
-  sidebarAttr: SideBarAttr = { visible: true, expanded: false }
+  sidebarAttr: SideBarAttr = { visible: true, expanded: true }
   @settings.Getter public colortheme!: any
 
   @Watch('$mq', { deep: true }) mqChanged () {
