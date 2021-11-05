@@ -107,6 +107,10 @@ export default class VClientConfig extends Vue {
     }
   }
 
+  async fetchDependency(){
+
+  }
+
   async fetch () {
     this.isLoading = true
     this.activeTabSet = -1
@@ -125,7 +129,9 @@ export default class VClientConfig extends Vue {
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
         this.activeTabSet = -3
-        throw new Error(error)
+        // eslint-disable-next-line no-console
+        console.error(error)
+        // throw new Error(error)
       })
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
@@ -136,7 +142,9 @@ export default class VClientConfig extends Vue {
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
         this.activeTabSet = -3
-        throw new Error(error)
+        // eslint-disable-next-line no-console
+        console.error(error)
+        // throw new Error(error)
       })
     if (this.activeTabSet >= -1) { this.activeTabSet = -1 }
     this.isLoading = false
