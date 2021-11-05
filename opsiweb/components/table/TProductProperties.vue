@@ -155,7 +155,7 @@ export default class TProductProperties extends Vue {
     if (this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
-          this.fetchedDataClients2Depots = response.result
+          this.fetchedDataClients2Depots = response
         }).catch((error) => {
           this.errorText = (this as any).$t('message.errortext')
           throw new Error(error)
@@ -165,7 +165,7 @@ export default class TProductProperties extends Vue {
 
   async saveProdProp (change: object) {
     const t:any = this
-    await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, { data: change })
+    await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, change)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
