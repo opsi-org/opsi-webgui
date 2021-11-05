@@ -2,7 +2,7 @@
   <treeselect
     v-if="clientIds"
     v-model="idselection"
-    class="treeselect"
+    class="treeselect_idselect"
     :options="clientIds"
     placeholder="-- Please select a Client --"
     @input="$emit('update:id', idselection)"
@@ -45,7 +45,7 @@ export default class TSClientsNotStored extends Vue {
 </script>
 
 <style>
-.treeselect{
+.treeselect_idselect{
   max-width: 300px;
 }
 </style>

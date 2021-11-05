@@ -2,7 +2,7 @@
   <treeselect
     v-if="depotIds"
     v-model="idselection"
-    class="treeselect"
+    class="treeselect_idselect"
     :options="depotIds"
     placeholder="-- Please select a Depot --"
     @input="$emit('update:id', idselection)"
@@ -38,7 +38,7 @@ export default class TSDepotsNotStored extends Vue {
 </script>
 
 <style>
-.treeselect{
+.treeselect_idselect{
   max-width: 300px;
 }
 </style>
