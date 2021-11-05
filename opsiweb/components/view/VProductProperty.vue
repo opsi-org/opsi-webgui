@@ -107,10 +107,6 @@ export default class VClientConfig extends Vue {
     }
   }
 
-  async fetchDependency(){
-
-  }
-
   async fetch () {
     this.isLoading = true
     this.activeTabSet = -1
