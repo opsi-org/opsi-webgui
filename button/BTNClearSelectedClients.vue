@@ -6,15 +6,13 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-const changes = namespace('changes')
+const selections = namespace('selections')
 @Component
 export default class BTNDeleteAll extends Vue {
-  @changes.Getter public changesProducts!: Array<object>
-  @changes.Mutation public deleteAllChanges!: () => void
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
-  // clearSelected () {
-  //   this.deleteAllChanges()
-  //   this.$nuxt.refresh()
-  // }
+  clearSelected () {
+    this.setSelectionClients([])
+  }
 }
 </script>
