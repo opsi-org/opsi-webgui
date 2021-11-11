@@ -1,1 +1,1 @@
-opsiconfd --workers=1 --log-level-stderr=5
+opsiconfd  --addon-dirs /workspace/backend --workers=1 --log-level-stderr=5
