@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../../.utils-pw/pw-story-call')
+const { callStoryId } = require('../.utils/playwright/pw-story-call')
 
 test('div dscrollresult snapshot', async ({ page }) => {
   await callStoryId(page, 'div-d-scroll-result', 'd-scroll-result')

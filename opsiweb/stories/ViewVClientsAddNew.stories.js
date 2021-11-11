@@ -1,5 +1,5 @@
 export default {
-  title: 'View/V ClientsAddNew',
+  title: 'View/V Clients Add New',
   parameters: { docs: { description: { component: 'Client subpage for creating new opsi client' } } }
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="VClientsAddNew">
     <BarBPageHeader>
       <template #right>
         <b-button variant="primary" @click="resetNewClientForm()">
