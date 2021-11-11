@@ -1,6 +1,6 @@
 module.exports = {
   // preset: 'jest-playwright-preset',
-  testRegex: '(<rootDir>/components/.*|)\\.spec-unit\\.jsx?$',
+  testRegex: '(<rootDir>/components/.*|)\\.test.unit\\.jsx?$',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^~/(.*)$': '<rootDir>/$1',

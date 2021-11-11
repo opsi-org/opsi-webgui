@@ -4,7 +4,10 @@ const { devices } = require('@playwright/test')
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  testIgnore: 'test/unit/**/*.spec.js',
+  testIgnore: 'components/**/*.test.unit.js',
+  // quiet: true,
+  // reporter: 'line',
+  // reporter: 'jest-silent-reporter',
   // retries: 1, // sometimes first try simply do not work.. :|
   workers: 4, // cause for me locally it exists 8 cpu cores (recommendation is to use the half of it)
   expect: { toMatchSnapshot: { threshold: 0.1 } },
