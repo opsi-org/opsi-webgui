@@ -127,7 +127,7 @@ export default {
     // }
   },
   storybook: {
-    stories: ['~/stories/**/*.stories.js'],
+    stories: ['~/components/**/*.stories.js'],
     decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
     // Optionsstorybook: {
     // addons: [
