@@ -14,7 +14,8 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true
+			"auto": true,
+			"cwd": "${workspaceFolder}/opsiweb"
 		},
 		{
 			"name": "storybook",
@@ -29,7 +30,8 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true
+			"auto": true,
+            "cwd": "${workspaceFolder}/opsiweb"
 		}
     ]
 }

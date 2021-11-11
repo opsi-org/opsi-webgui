@@ -1,0 +1,80 @@
+{
+    "[vue]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[css]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[html]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[javascript]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[typescript]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[yaml]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[json]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    // "files.associations": { "**/../.data/*.conf*": "python"}, // Does not work through .vscode/settings.json - only ~user/.config/Code/settings.json. See https://github.com/microsoft/vscode/issues/89179
+    "code-eol.highlightExtraWhitespace": true,
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": false
+    },
+    "js/ts.implicitProjectConfig.experimentalDecorators": true,
+    "eslint.validate": [
+      "javascript",
+      "typescript",
+      "vue",
+      "html"
+    ],
+    "files.exclude": {
+      ".mockups": true,
+      ".nuxt": true,
+      "https": true,
+      "node_modules": true,
+      "static": true,
+      ".babelrc": true,
+      ".editorconfig": true,
+      ".eslintignore": true,
+      ".eslintrc.js": true,
+      ".gitignore": true,
+      "jest.config.js": true,
+      "package-lock.json": true,
+      "README.md": true,
+      "vue-shim.d.ts": true,
+      "vue-shim.d.ts.tmp": true,
+      "tsconfig.json": true,
+      "plugins/README.md": true,
+      "pages/README.md": true,
+      "middleware/README.md": true,
+      "layouts/README.md": true,
+      "components/README.md": true,
+      "assets/README.md": true,
+      "dist": true,
+      ".nuxt-storybook": true,
+      "coverage": true
+    },
+    "workspace.isHidden": true,
+    "i18n-ally.localesPaths": [
+      "locale"
+    ],
+    "i18n-ally.keystyle": "flat",
+    "i18n-ally.sourceLanguage": "de",
+    "i18n-ally.enabledParsers": [
+      "json"
+    ],
+    "python.pythonPath": "/usr/bin/python3",
+  }
