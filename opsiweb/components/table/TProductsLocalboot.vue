@@ -304,7 +304,7 @@ export default class TProductsLocalboot extends Vue {
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
         // eslint-disable-next-line no-console
-        console.error(response)
+        console.log(response)
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
