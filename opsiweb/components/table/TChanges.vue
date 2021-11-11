@@ -33,7 +33,7 @@
 <script lang="ts">
 import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/scripts/utils/scomponents'
-import { IObjectString2String, IObjectString2Any } from '~/scripts/types/tgeneral'
+import { IObjectString2Any } from '~/scripts/types/tgeneral'
 import { ChangeObj } from '~/scripts/types/tchanges'
 const changes = namespace('changes')
 
