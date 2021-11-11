@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../../.utils-pw/pw-story-call')
+const { callStoryId } = require('../.utils/playwright/pw-story-call')
 
 test('button expert mode snapshot', async ({ page }) => {
   await callStoryId(page, 'button-btn-expert-mode', 'btn-expert-mode')
