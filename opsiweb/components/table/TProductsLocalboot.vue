@@ -372,8 +372,9 @@ export default class TProductsLocalboot extends Vue {
       }
     } else {
       await this.save(data)
-      this.fetchOptions.fetchClients = true
-      this.$fetch()
+      this.$nuxt.refresh()
+      // this.fetchOptions.fetchClients = true
+      // this.$fetch()
     }
   }
 
