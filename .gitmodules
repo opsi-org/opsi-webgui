@@ -1,8 +1,18 @@
-#[submodule "ui-components"]
-#	path = opsiweb/components
-#	url = ../opsiweb-ui-components.git
-
 [submodule "opsiweb/components"]
 	path = opsiweb/components
 	url = git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git
 	branch = master
+
+[submodule "opsiweb/components/cicd"]
+	path = opsiweb/1components
+	url = ../opsiweb-ui-components.git
+
+
+[submodule "opsiweb/components/cicd2"]
+	path = opsiweb/2components
+	url = ../../opsiweb-ui-components.git
+
+[submodule "opsiweb/components/cicd3"]
+	path = opsiweb/3components
+	url = ../../../opsiweb-ui-components.git
+
