@@ -8,11 +8,16 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+# run with specific submodule-branch defined in .gitmodules
+# # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
+# # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
+before_script:
+  - git submodule sync --recursive
+  - git submodule update --init --remote --recursive
 
 # variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
   # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
-
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
   apt update
