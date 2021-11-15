@@ -23,7 +23,7 @@ variables:
 init:npm:
   stage: init
   script: |
-    git submodule update --init --recursiv
+    # git submodule update --init --recursiv
     cd opsiweb
     ls -lah components
     ls -lah 1components
