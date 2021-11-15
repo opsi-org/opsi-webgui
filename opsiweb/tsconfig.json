@@ -29,7 +29,7 @@
       "@types/node",
       "@types/jest",
       "@nuxt/types",
-      "@nuxt/i18n",
+      "@nuxtjs/i18n",
       "@nuxtjs/axios",
       "bootstrap-vue",
       "webpack-env"

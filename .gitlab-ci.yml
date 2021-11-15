@@ -6,6 +6,9 @@ stages:
   - build
   - publish
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 # variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
   # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
@@ -19,9 +22,13 @@ stages:
 
 init:npm:
   stage: init
-  script:
-    - cd .devcontainer
-    - ./script.sh
+  script: |
+    cd opsiweb
+    ls -lah components
+    echo "[script.sh] install dependencies..."
+    npm install
+    npm i -D @playwright/test
+    npx playwright install
   artifacts:
     paths:
       - opsiweb/node_modules/

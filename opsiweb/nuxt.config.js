@@ -38,7 +38,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
-
+  ignoreOptions: [],
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ['~/assets/css/custom'],
 
@@ -127,7 +127,7 @@ export default {
     // }
   },
   storybook: {
-    stories: ['~/stories/**/*.stories.js'],
+    stories: ['~/components/**/*.stories.js'],
     decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
     // Optionsstorybook: {
     // addons: [

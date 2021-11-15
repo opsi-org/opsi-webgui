@@ -14,9 +14,9 @@
     "lint": "npm run lint:js",
     "test": "jest && playwright test test/e2e test/integration",
     "test:unit": "jest --coverage",
-    "test:integration": "playwright test test/integration",
-    "test:e2e": "playwright test test/e2e",
-    "test:playwright": "playwright test test/e2e test/integration",
+    "test:integration": "playwright test -c config/playwright-integration.config.js",
+    "test:e2e": "playwright test -c config/playwright-e2e.config.js",
+    "test:playwright": "# TODO: command to test both",
     "all": "../.devcontainer/npm_all.sh"
   },
   "dependencies": {

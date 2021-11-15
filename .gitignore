@@ -3,6 +3,7 @@
 *_tmp
 .env
 
+backend/opsibackup
 .nuxt-storybook/
 opsiweb/test/README.md
 opsiweb/test-results/

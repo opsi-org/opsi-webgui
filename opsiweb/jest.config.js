@@ -1,5 +1,6 @@
 module.exports = {
   // preset: 'jest-playwright-preset',
+  testRegex: '(<rootDir>/components/.*|)\\.test.unit\\.jsx?$',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^~/(.*)$': '<rootDir>/$1',
@@ -19,12 +20,13 @@ module.exports = {
   verbose: true,
   collectCoverage: false,
   collectCoverageFrom: [
-    'components/**/*.{js,ts,vue}'
+    'components/**/*.{vue}'
     // 'layouts/**/*.{js,ts,vue}',
     // 'pages/**/*.{js,ts,vue}',
     // 'scripts/**/*.{js,ts,vue}'
   ],
   testPathIgnorePatterns: [
+    // 'components/**/*.spec.js',
     'test/integration/',
     'test/e2e/'
   ],
