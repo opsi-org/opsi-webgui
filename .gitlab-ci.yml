@@ -6,6 +6,9 @@ stages:
   - build
   - publish
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 # variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
   # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
