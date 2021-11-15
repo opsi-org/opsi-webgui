@@ -2,7 +2,7 @@
 *.tmp
 *_tmp
 .env
-
+*backup*
 backend/opsibackup
 .nuxt-storybook/
 opsiweb/test/README.md
