@@ -20,7 +20,18 @@ alias egrep='egrep --color=auto'
 alias ll='ls -l'
 alias ls='ls --color=auto'
 
+# UI_COMPONENT_MODULE = "[submodule \"ui-components\"]
+# 	path = opsiweb/components
+# 	url = ../opsiweb-ui-components.git
+# 	branch = $@
+# "
 function gitall(){ echo ""; git submodule foreach "git $@"; echo ""; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
+function gitallcheckout(){ echo "[submodule \"ui-components\"]
+        path = opsiweb/components
+        url = ../opsiweb-ui-components.git
+        branch = $@
+" > .gitmodules; git submodule foreach "git checkout -B $@"; git checkout -B "$@"; }
+
 
 # alias gitbr "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate"
 # alias gitcheckout = "!f(){ echo \"$1\"  && git submodule foreach 'echo \"$1\"' };f"
