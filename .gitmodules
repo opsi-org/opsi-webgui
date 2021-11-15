@@ -1,5 +1,5 @@
 
-[submodule "opsiweb/components/rel"]
+[submodule "ui-components"]
 	path = opsiweb/components
 	url = ../opsiweb-ui-components.git
 	branch = master
