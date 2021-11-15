@@ -20,6 +20,11 @@ alias egrep='egrep --color=auto'
 alias ll='ls -l'
 alias ls='ls --color=auto'
 
+function gitall(){ git $@; echo ""; echo ""; git submodule foreach "git $@"; }
+
+# alias gitbr "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate"
+# alias gitcheckout = "!f(){ echo \"$1\"  && git submodule foreach 'echo \"$1\"' };f"
+
 force_color_prompt=yes
 if [ -n "$force_color_prompt" ]; then
     if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
