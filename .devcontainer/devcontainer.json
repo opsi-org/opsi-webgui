@@ -2,10 +2,11 @@
 	"name": "opsiweb",
 	"dockerComposeFile": "../docker/docker-compose.yml",
 	"service": "opsiweb_dev",
-	"workspaceFolder": "/workspace/opsiweb",
-	"forwardPorts": [8888, 3003],
+	"workspaceFolder": "/workspace",
+	"forwardPorts": [8888, 3003, 4447, 3000],
 	// "postStartCommand": "npm install && PORT=8888 bash",
-	"postStartCommand": "'/workspace/.devcontainer/script.sh'",
+	"postCreateCommand": "/workspace/.devcontainer/post_create.sh",
+	"postStartCommand": "/workspace/.devcontainer/post_start.sh",
 	// "remoteEnv": {
 	// 	"PLAYWRIGHT_BROWSERS_PATH":".playwright/browsers/",
 	// 	"PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"

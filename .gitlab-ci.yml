@@ -19,9 +19,12 @@ stages:
 
 init:npm:
   stage: init
-  script:
-    - cd .devcontainer
-    - ./script.sh
+  script: |
+    cd opsiweb
+    echo "[script.sh] install dependencies..."
+    npm install
+    npm i -D @playwright/test
+    npx playwright install
   artifacts:
     paths:
       - opsiweb/node_modules/
