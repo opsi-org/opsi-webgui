@@ -1,4 +1,10 @@
 # Development
+## Important
+* This repository has a submodule [opsiweb-ui-components](https://gitlab.uib.gmbh/uib/opsiweb-ui-components) (in directory opsiweb/components). It will be loaded automaticly, but for adding/commiting/pushing it is important to know it.
+  HINT: Use the defined `gitall` command to e.g. automaticly change also the branch of submodules.
+  > Examples:
+  >  * `gitall pull`, `gitall add .`, `gitall commit -m "[fix] some msg"` will automaticly execute the given command in the main repository and in the submodule (if possible) !
+  >  * `gitall checkout -B 123-feature-awesome-feature` will automaticly checkout the given branch in the main repo (opsiweb-ui) and create a branch in opsiweb-ui-components and change into this branch.
 ## Quick install: DevEnviroment
 * Requirements: VisualStudioCode with 'Remote - Container' extension
 * Clone project recursive(!)  and open it in VSCode with `git clone --recursive git@gitlab.uib.gmbh:uib/opsiweb-ui.git`
@@ -16,9 +22,6 @@
 * Accept certificate of opsiconfd: `https://localhost:4447/admin`
 * Open: `https://localhost:8888/`
 
-## Important
-* Use the defined `gitall` command to e.g. automaticly change also the branch of submodules.
-  Example: `gitall checkout -B 123-feature-awesome-feature` will automaticly checkout the given branch in the main repo (opsiweb-ui) and create a brnach in opsiweb-ui-components and change into this branch.
 
 ## Frontend-Testing
 > In container-directory /workspace/webgui
