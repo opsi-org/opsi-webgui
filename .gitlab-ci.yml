@@ -23,6 +23,7 @@ variables:
 init:npm:
   stage: init
   script: |
+    git submodule update --init --recursiv
     cd opsiweb
     ls -lah components
     echo "[script.sh] install dependencies..."
