@@ -13,7 +13,7 @@ variables:
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 before_script:
   - git submodule sync --recursive
-  - git submodule update --init --remote --recursive
+  - git submodule update --init --recursive # --remote
 
 # variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
