@@ -21,6 +21,7 @@ init:npm:
   stage: init
   script: |
     cd opsiweb
+    ls -lah components
     echo "[script.sh] install dependencies..."
     npm install
     npm i -D @playwright/test
