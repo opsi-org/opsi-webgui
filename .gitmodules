@@ -1,3 +1,4 @@
 [submodule "opsiweb/components"]
 	path = opsiweb/components
 	url = ../opsiweb-ui-components.git
+    branch = master
