@@ -22,6 +22,7 @@
 		"lokalise.i18n-ally",
 		"orta.vscode-jest",
 		"philfontaine.autolaunch",
-		"ms-playwright.playwright"
+		"ms-playwright.playwright",
+		"eamodio.gitlens"
 	]
 }
