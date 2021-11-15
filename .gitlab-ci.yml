@@ -26,9 +26,6 @@ init:npm:
     # git submodule update --init --recursiv
     cd opsiweb
     ls -lah components
-    ls -lah 1components
-    ls -lah 2components
-    ls -lah 3components
     echo "[script.sh] install dependencies..."
     npm install
     npm i -D @playwright/test
