@@ -3,6 +3,7 @@
     v-bind="$props"
     :aria-label="$props.variant"
   >
+    This is a test - from merge-request 188-test-ticket-submodules
     <slot />
   </b-alert>
 </template>
