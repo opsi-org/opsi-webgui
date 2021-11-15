@@ -275,25 +275,15 @@ export default class TProductsNetboot extends Vue {
   }
 
   async save (change : object) {
-    let responseError: IObjectString2String = {}
     const t:any = this
-    try {
-      responseError = (await this.$axios.$post(
-        '/api/opsidata/clients/products',
-        change
-      )).error
-    } catch (error) {
-      makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
-      return
-    }
-    if (Object.keys(responseError).length > 0) {
-      let txt = 'Errors for: <br />'
-      for (const k in responseError) {
-        txt += `${k}: ${responseError[k]} <br />`
-      }
-      makeToast(this, txt, this.$t('message.warning') as string, 'warning')
-    }
-    makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
+    await this.$axios.$post('/api/opsidata/clients/products', change)
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.log(response)
+        makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
+      }).catch((error) => {
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
+      })
   }
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
@@ -354,8 +344,9 @@ export default class TProductsNetboot extends Vue {
       }
     } else {
       await this.save(data)
-      this.fetchOptions.fetchClients = true
-      this.$fetch()
+      this.$nuxt.refresh()
+      // this.fetchOptions.fetchClients = true
+      // this.$fetch()
     }
   }
 
