@@ -1,0 +1,3 @@
+[submodule "opsiweb/components"]
+	path = opsiweb/components
+	url = git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git
