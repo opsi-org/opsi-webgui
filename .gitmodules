@@ -2,3 +2,7 @@
 	path = opsiweb/components
 	url = ../opsiweb-ui-components.git
 	branch = master
+
+[submodule "opsiweb/components"]
+	path = opsiweb/components
+	url = git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git
