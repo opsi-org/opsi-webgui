@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container-fluid">
     <b-card class="login_content text-center bg-primary">
       <div class="login_title_row">
         <b-badge class="bg-light login_logo_container">
@@ -25,6 +25,8 @@ export default class PLogin extends Vue {}
 
 .login_content {
   margin-top: max(15px, 5%);
+  max-width: 450px;
+  margin: 0 auto;
 }
 .login_title_row {
   margin-bottom: 5px;
