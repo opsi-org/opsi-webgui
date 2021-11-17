@@ -15,7 +15,10 @@ package:
     - opsiconfd (>= 4.2.0.209)
   source_script: |
     mkdir -p "${DST}/rootfs/usr/lib/opsi-webgui"
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd"
     cp -a "${SRC}/opsiweb/dist/." "${DST}/rootfs/usr/lib/opsi-webgui/"
+    cp -a "${SRC}/backend/webgui" "${DST}/rootfs/var/lib/opsiconfd/webgui"
   postinst_script:
     - echo "OPSI webgui folder '/usr/lib/opsi-webgui'"
+    - echo "OPSI webgui backend folder '/var/lib/opsiconfd/webgui'"
     - exit 0

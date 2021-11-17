@@ -130,7 +130,6 @@ build:addon:
   script: |
     *install_tools
     openssl req -x509 -newkey rsa:4096 -keyout /var/tmp/key.pem -out /var/tmp/cert.pem -sha256 -days 365 --nodes -subj '/CN=localhost   
-    mkdir -p backend/webgui/data
     cd opsiweb
     npm install
     npm run generate
