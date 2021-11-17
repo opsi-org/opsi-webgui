@@ -25,9 +25,8 @@ export default class NICollapsible extends Vue {
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<object>
-
   changeRoute () {
-    if (this.$mq === 'desktop') {
+    if ((this as any).$mq === 'desktop') {
       this.$router.push({ path: this.route })
     }
   }
