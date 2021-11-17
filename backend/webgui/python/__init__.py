@@ -19,7 +19,6 @@ from starlette.concurrency import run_in_threadpool
 
 from opsiconfd.addon import Addon
 from opsiconfd.logging import logger
-from opsiconfd.config import config
 from opsiconfd.utils import remove_route_path
 from opsiconfd.backend import get_client_backend
 
@@ -33,10 +32,7 @@ from .hosts import host_router
 from .webgui import webgui_router
 from .utils import mysql
 
-WEBGUI_APP_PATH = config.webgui_folder
 SESSION_LIFETIME = 60*30
-
-
 
 class Webgui(Addon):
 	id = ADDON_ID
@@ -63,8 +59,12 @@ class Webgui(Addon):
 		app.include_router(client_router, prefix=self.router_prefix)
 		app.include_router(depot_router, prefix=self.router_prefix)
 
-		if os.path.isdir(WEBGUI_APP_PATH):
-			app.mount(f"/{ADDON_ID}/app", StaticFiles(directory=WEBGUI_APP_PATH, html=True), name="app")
+		app.mount(
+			path=f"{self.router_prefix}/app",
+			app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True),
+			name="app"
+		)
+
 
 	def on_load(self, app: FastAPI) -> None:  # pylint: disable=no-self-use
 		"""Called after loading the addon"""
