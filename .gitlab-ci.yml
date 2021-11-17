@@ -127,13 +127,11 @@ publish:binary-index:
 
 build:addon:
   stage: build
+  dependencies:
+    - build:static-app
   script: |
     *install_tools
     openssl req -x509 -newkey rsa:4096 -keyout /var/tmp/key.pem -out /var/tmp/cert.pem -sha256 -days 365 --nodes -subj '/CN=localhost   
-    cd opsiweb
-    npm install
-    npm run generate
-    cd ..
     mkdir -p backend/webgui/data
     mv opsiweb/dist backend/webgui/data/app
     version=$(grep ADDON_VERSION backend/python/const.py | cut -d'"' -f2)
