@@ -6,14 +6,15 @@ stages:
   - build
   - publish
 
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
+# variables:
+#   GIT_SUBMODULE_STRATEGY: recursive
 # run with specific submodule-branch defined in .gitmodules
 # # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 before_script:
-  - git submodule sync --recursive
-  - git submodule update --init --recursive # --remote
+  - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/components
+  # - git submodule sync --recursive
+  # - git submodule update --init --recursive # --remote
 
 # variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
@@ -131,7 +132,7 @@ build:addon:
     - build:static-app
   script: |
     *install_tools
-    openssl req -x509 -newkey rsa:4096 -keyout /var/tmp/key.pem -out /var/tmp/cert.pem -sha256 -days 365 --nodes -subj '/CN=localhost   
+    openssl req -x509 -newkey rsa:4096 -keyout /var/tmp/key.pem -out /var/tmp/cert.pem -sha256 -days 365 --nodes -subj '/CN=localhost
     mkdir -p backend/webgui/data
     mv opsiweb/dist backend/webgui/data/app
     version=$(grep ADDON_VERSION backend/python/const.py | cut -d'"' -f2)
