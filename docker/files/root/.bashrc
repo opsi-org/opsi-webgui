@@ -31,8 +31,8 @@ alias ls='ls --color=auto'
 #         url = ../opsiweb-ui-components.git
 #         branch = $@
 # " > .gitmodules; git submodule foreach "git checkout -B $@"; git checkout -B "$@"; }
-function gitall(){ echo ""; cd opsiweb/components "git $@"; echo ""; cd -; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
-function gitallcheckout(){ cd opsiweb/components "git checkout -B $@"; cd -; git checkout -B "$@"; }
+function gitall(){ echo ""; cd opsiweb/components; git "$@"; echo ""; cd -; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
+function gitallcheckout(){ cd opsiweb/components; git checkout -B "$@"; cd -; git checkout -B "$@"; }
 
 
 # alias gitbr "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate"
