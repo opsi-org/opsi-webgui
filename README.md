@@ -1,18 +1,18 @@
 # Development
 ## Important
-* This repository has a submodule [opsiweb-ui-components](https://gitlab.uib.gmbh/uib/opsiweb-ui-components) (in directory opsiweb/components). It will be loaded automaticly, but for adding/commiting/pushing it is important to know it.
+* This repository needs a sup-repository [opsiweb-ui-components](https://gitlab.uib.gmbh/uib/opsiweb-ui-components) (in directory opsiweb/components). It will be cloned automaticly, by running the devend.sh.
   HINT: Use the defined `gitall` command to e.g. automaticly change also the branch of submodules.
   > Examples:
   >  * `gitall pull`, `gitall add .`, `gitall commit -m "[fix] some msg"` will automaticly execute the given command in the main repository and in the submodule (if possible) !
   >  * `gitall checkout -B 123-feature-awesome-feature` will automaticly checkout the given branch in the main repo (opsiweb-ui) and create a branch in opsiweb-ui-components and change into this branch.
 ## Quick install: DevEnviroment
 * Requirements: VisualStudioCode with 'Remote - Container' extension
-* Clone project recursive(!)  and open it in VSCode with `git clone --recursive git@gitlab.uib.gmbh:uib/opsiweb-ui.git`
-    > It should automaticly clone the sub-repository "opsiweb-ui-components" into opsiweb/components
-    > You can also clone the subdirectory later with `git submodule update --init --recursive`
+* Clone project recursive(!)  and open it in VSCode with `git clone git@gitlab.uib.gmbh:uib/opsiweb-ui.git`
 * run `.devcontainer/devenv.sh` in terminal
   * check if .env-file contains your fqdn (like 'host.uib.local')
   * if it only contains 'host': edit your local /etc/hosts file to contain `127.0.0.1       host.uib.local host localhost` and run devenv.sh again
+  * the script also pulls the sub-repository using ssh. If this step fail - pull it manually !
+    `git clone git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/components`
 * Reopen the project in remote-container (as vscode suggests)
   (Hint: Strg + Shift + P opens command palette; search for: `(rebuild and) reopen in container` )
     > the container starts automaticly the complete develepment enviroment including webgui(nuxt), storybook and playwright
