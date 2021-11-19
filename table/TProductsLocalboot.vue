@@ -12,6 +12,7 @@
       :items="fetchedData"
       :selection="selectionProducts"
       :onchangeselection="setSelectionProducts"
+      :routechild="routeRedirectWith('/products/config', rowident)"
       :busy="isLoading"
       :error-text="errorText"
       :totalrows="totalData"
@@ -390,6 +391,11 @@ export default class TProductsLocalboot extends Vue {
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
+  }
+
+  routeToChild () {
+    console.log('CHILD CALLED')
+    this.$router.push({ path: '/products/config' })
   }
 }
 </script>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ selectMode }}
     <b-table
       v-bind="$props"
       :ref="$props.id"
@@ -8,7 +7,7 @@
       :primary-key="datakey"
       class="ttable"
       :tbody-tr-class="{'table-active': false}"
-      :select-mode="selectMode"
+      :select-mode="selectmode"
       borderless
       :striped="false"
       :small="small!=false"
@@ -61,13 +60,14 @@ export default class TTable extends BTable {
   @Prop({ }) totalrows!: number
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
+  @Prop({ default: () => { return () => {} } }) routechild!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   @Prop({ default: false }) readonly disableSelection!: boolean
   @Prop({ }) tabledata!: ITableData
 
   rowIdent: any
 
-  get selectMode () {
+  get selectmode () {
     if (this.ismultiselect) {
       return 'multi'
     } else { return 'single' }
@@ -145,37 +145,42 @@ export default class TTable extends BTable {
   // }
 
   rowChanged (item: ITableDataItem) {
-    const selectionCopy:Array<string> = [...this.selection]
-    // for (const el in document.querySelector('.table tr') as ) {
-    //   el.classList.remove('table-active')
-    // }
+    if (this.ismultiselect) {
+      const selectionCopy:Array<string> = [...this.selection]
+      // for (const el in document.querySelector('.table tr') as ) {
+      //   el.classList.remove('table-active')
+      // }
 
-    if (this.datakey === 'productId' && item.productId) {
-      if (selectionCopy.includes(item.productId)) {
-        selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
-      } else {
-        selectionCopy.push(item.productId)
+      if (this.datakey === 'productId' && item.productId) {
+        if (selectionCopy.includes(item.productId)) {
+          selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
+        } else {
+          selectionCopy.push(item.productId)
+        }
+      } else if (item.depotId && selectionCopy.includes(item.depotId)) {
+        selectionCopy.splice(selectionCopy.indexOf(item.depotId), 1)
+      } else if (item.clientId && selectionCopy.includes(item.clientId)) {
+        selectionCopy.splice(selectionCopy.indexOf(item.clientId), 1)
+      } else if (item.depotId) {
+        selectionCopy.push(item.depotId)
+      } else if (item.clientId) {
+        selectionCopy.push(item.clientId)
       }
-    } else if (item.depotId && selectionCopy.includes(item.depotId)) {
-      selectionCopy.splice(selectionCopy.indexOf(item.depotId), 1)
-    } else if (item.clientId && selectionCopy.includes(item.clientId)) {
-      selectionCopy.splice(selectionCopy.indexOf(item.clientId), 1)
-    } else if (item.depotId) {
-      selectionCopy.push(item.depotId)
-    } else if (item.clientId) {
-      selectionCopy.push(item.clientId)
+
+      // if (selectionCopy.includes(item.ident)) {
+      //   selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
+      // } else {
+      //   selectionCopy.push(item.ident)
+      // }
+      this.onchangeselection(selectionCopy)
+
+      // const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
+      // if (elem) { elem.classList.remove('table-active') }
+      // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
+    } else {
+      this.routechild()
+      console.log('Route Child')
     }
-
-    // if (selectionCopy.includes(item.ident)) {
-    //   selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
-    // } else {
-    //   selectionCopy.push(item.ident)
-    // }
-    this.onchangeselection(selectionCopy)
-
-    // const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
-    // if (elem) { elem.classList.remove('table-active') }
-    // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
   }
 }
 </script>
