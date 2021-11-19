@@ -15,6 +15,7 @@
       :busy="isLoading"
       :error-text="errorText"
       :onchangeselection="setSelectionProducts"
+      :ismultiselect="multiselect"
       :stacked="$mq=='mobile'"
     >
       <template #filter>
@@ -137,6 +138,7 @@ export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
   @Prop() rowId!: string
   @Prop() routeRedirectWith!: Function
+  @Prop() multiselect!: boolean
 
   action: string = ''
   // type: string = ''

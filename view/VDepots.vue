@@ -23,6 +23,7 @@
         :error-text="errorText"
         :busy="isLoading"
         :totalrows="totalData"
+        :ismultiselect="true"
       >
         <template #head(depotId)>
           <InputIFilter ref="IFilterDepots" :data="tableData" :additional-title="$t('table.fields.id')" />

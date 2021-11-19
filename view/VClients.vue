@@ -27,6 +27,7 @@
         :busy="isLoading"
         :error-text="errorText"
         :totalrows="totalData"
+        :ismultiselect="true"
       >
         <template #head(_majorStats)>
           {{ '' }}
