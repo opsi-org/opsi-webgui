@@ -1,50 +1,53 @@
 <template>
-  <b-table
-    v-bind="$props"
-    :ref="$props.id"
-    :class="$mq"
-    :primary-key="datakey"
-    class="ttable"
-    :tbody-tr-class="{'table-active': false}"
-    select-mode="multi"
-    borderless
-    :striped="false"
-    :small="small!=false"
-    :stacked="$mq=='mobile' && stacked!=false"
-    :hover="!disableSelection"
-    :selectable="!disableSelection"
-    sort-icon-left
-    @row-clicked="rowChanged"
-  >
-    <template #table-busy>
-      <IconILoading v-if="$props.busy" />
-    </template>
-    <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
-    <!-- :no-local-sorting="true"
+  <div>
+    {{ selectMode }}
+    <b-table
+      v-bind="$props"
+      :ref="$props.id"
+      :class="$mq"
+      :primary-key="datakey"
+      class="ttable"
+      :tbody-tr-class="{'table-active': false}"
+      :select-mode="selectMode"
+      borderless
+      :striped="false"
+      :small="small!=false"
+      :stacked="$mq=='mobile' && stacked!=false"
+      :hover="!disableSelection"
+      :selectable="!disableSelection"
+      sort-icon-left
+      @row-clicked="rowChanged"
+    >
+      <template #table-busy>
+        <IconILoading v-if="$props.busy" />
+      </template>
+      <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
+      <!-- :no-local-sorting="true"
     :sort-by.sync="tabledata.sortBy"
     :sort-desc.sync="tabledata.sortDesc"
     sort-icon-right -->
-    <template #head()="header">
-      {{ header.label }}
-    </template>
-    <template #head(sel)="{}">
-      {{ selection.length }}/{{ totalrows }}
-    </template>
-    <template #cell(sel)="row">
-      <!-- <b-icon-check v-if="row.rowSelected || selection.includes(row.item[datakey])" /> -->
-      {{ fixRow(row) }}
-    </template>
+      <template #head()="header">
+        {{ header.label }}
+      </template>
+      <template #head(sel)="{}">
+        {{ selection.length }}/{{ totalrows }}
+      </template>
+      <template #cell(sel)="row">
+        <!-- <b-icon-check v-if="row.rowSelected || selection.includes(row.item[datakey])" /> -->
+        {{ fixRow(row) }}
+      </template>
 
-    <template #head(rowactions)="{}">
-      <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
-    </template>
-    <template
-      v-for="slotName in Object.keys($scopedSlots)"
-      #[slotName]="slotScope"
-    >
-      <slot :name="slotName" v-bind="slotScope" />
-    </template>
-  </b-table>
+      <template #head(rowactions)="{}">
+        <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
+      </template>
+      <template
+        v-for="slotName in Object.keys($scopedSlots)"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script lang="ts">
@@ -54,6 +57,7 @@ import { ITableRow, ITableHeaders, ITableDataItem, ITableData } from '~/scripts/
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string
+  @Prop({ }) ismultiselect!: boolean
   @Prop({ }) totalrows!: number
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
@@ -62,6 +66,12 @@ export default class TTable extends BTable {
   @Prop({ }) tabledata!: ITableData
 
   rowIdent: any
+
+  get selectMode () {
+    if (this.ismultiselect) {
+      return 'multi'
+    } else { return 'single' }
+  }
 
   fixRow (row: ITableRow): void {
     if (this.datakey === 'productId') {
