@@ -10,11 +10,12 @@
           <TreeTSProductGroup />
         </template>
         <template #right>
+          <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
           <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
         </template>
       </BarBPageHeader>
-      <TableTProductsNetboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
-      <TableTProductsLocalboot :row-id="rowId" :route-redirect-with="routeRedirectWith" />
+      <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
+      <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
@@ -24,6 +25,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
+import { ChangeObj } from '~/scripts/types/tchanges'
 // import { ITableData } from '~/scripts/types/ttable'
 // const selections = namespace('selections')
 const settings = namespace('settings')
@@ -35,10 +37,11 @@ export default class VProducts extends Vue {
   // @selections.Getter public selectionProducts!: Array<string>
   // @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean
-  @changes.Getter public changesProducts!: Array<object>
+  @changes.Getter public changesProducts!: Array<ChangeObj>
 
   rowId: string = ''
   isLoading: boolean = true
+  ismultiselect: boolean = false
   // fetchedDataDepotIds: Array<string> = []
   // fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
   // tableData: ITableData = {
