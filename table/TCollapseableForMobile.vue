@@ -1,6 +1,6 @@
 <template>
   <b-card
-    v-if="$mq=='mobile' || collapseable"
+    v-if="collapseable"
     bg-variant="transparent"
     class="TCollapseableForMobile-Card overflow-auto"
   >

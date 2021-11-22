@@ -11,7 +11,7 @@
       borderless
       :striped="false"
       :small="small!=false"
-      :stacked="$mq=='mobile' && stacked!=false"
+      :stacked="$mq=='mobile'"
       :hover="!disableSelection"
       :selectable="!disableSelection"
       sort-icon-left
