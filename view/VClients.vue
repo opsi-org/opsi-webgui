@@ -68,7 +68,7 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <ButtonBTNClearSelectedClients />
+      <ButtonBTNClearSelection store="clients" />
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />

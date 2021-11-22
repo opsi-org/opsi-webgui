@@ -16,6 +16,7 @@
       </BarBPageHeader>
       <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
       <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
+      <ButtonBTNClearSelection store="products" />
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
