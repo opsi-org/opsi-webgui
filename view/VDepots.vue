@@ -1,7 +1,7 @@
 <template>
   <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
     <template #parent>
-      <template v-if="totalData < 3">
+      <template v-if="totalData == 1">
         <b-table borderless stacked :items="Object.values(fetchedData)" :fields="['depotId', 'type', 'ip', 'description', 'configuration']">
           <template #cell(configuration)>
             <ButtonBTNRowLinkTo
