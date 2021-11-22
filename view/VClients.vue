@@ -27,6 +27,7 @@
         :busy="isLoading"
         :error-text="errorText"
         :totalrows="totalData"
+        :ismultiselect="true"
       >
         <template #head(_majorStats)>
           {{ '' }}
@@ -67,7 +68,7 @@
           />
         </template>
       </TableTCollapseableForMobile>
-      <ButtonBTNClearSelectedClients />
+      <ButtonBTNClearSelection store="clients" />
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />

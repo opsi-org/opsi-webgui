@@ -12,9 +12,11 @@
       :items="fetchedData"
       :selection="selectionProducts"
       :onchangeselection="setSelectionProducts"
+      :routechild="routeToChild"
       :busy="isLoading"
       :error-text="errorText"
       :totalrows="totalData"
+      :ismultiselect="multiselect"
       :stacked="$mq=='mobile'"
     >
       <!-- :no-local-sorting="true"
@@ -153,8 +155,9 @@ interface IFetchOptions {
 // }
 @Component
 export default class TProductsLocalboot extends Vue {
-  @Prop() rowId!: string
+  @Prop() rowident!: string
   @Prop() routeRedirectWith!: Function
+  @Prop() multiselect!: boolean
 
   action: string = ''
   // type: string = ''
@@ -383,11 +386,15 @@ export default class TProductsLocalboot extends Vue {
   }
 
   isRouteActive (to: string, rowIdent: string) {
-    return this.$route.path.includes(to) && this.rowId === rowIdent
+    return this.$route.path.includes(to) && this.rowident === rowIdent
   }
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
+  }
+
+  routeToChild (id: string) {
+    this.routeRedirectWith('/products/config', id)
   }
 }
 </script>

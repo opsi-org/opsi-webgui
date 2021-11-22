@@ -15,6 +15,8 @@
       :busy="isLoading"
       :error-text="errorText"
       :onchangeselection="setSelectionProducts"
+      :routechild="routeToChild"
+      :ismultiselect="multiselect"
       :stacked="$mq=='mobile'"
     >
       <template #filter>
@@ -137,6 +139,7 @@ export default class TProductsNetboot extends Vue {
   // @Prop() tableData!: ITableData
   @Prop() rowId!: string
   @Prop() routeRedirectWith!: Function
+  @Prop() multiselect!: boolean
 
   action: string = ''
   // type: string = ''
@@ -360,6 +363,10 @@ export default class TProductsNetboot extends Vue {
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
+  }
+
+  routeToChild (id: string) {
+    this.routeRedirectWith('/products/config', id)
   }
 }
 </script>

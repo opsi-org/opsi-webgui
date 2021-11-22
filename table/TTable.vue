@@ -1,50 +1,52 @@
 <template>
-  <b-table
-    v-bind="$props"
-    :ref="$props.id"
-    :class="$mq"
-    :primary-key="datakey"
-    class="ttable"
-    :tbody-tr-class="{'table-active': false}"
-    select-mode="multi"
-    borderless
-    :striped="false"
-    :small="small!=false"
-    :stacked="$mq=='mobile' && stacked!=false"
-    :hover="!disableSelection"
-    :selectable="!disableSelection"
-    sort-icon-left
-    @row-clicked="rowChanged"
-  >
-    <template #table-busy>
-      <IconILoading v-if="$props.busy" />
-    </template>
-    <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
-    <!-- :no-local-sorting="true"
+  <div>
+    <b-table
+      v-bind="$props"
+      :ref="$props.id"
+      :class="$mq"
+      :primary-key="datakey"
+      class="ttable"
+      :tbody-tr-class="{'table-active': false}"
+      :select-mode="selectmode"
+      borderless
+      :striped="false"
+      :small="small!=false"
+      :stacked="$mq=='mobile' && stacked!=false"
+      :hover="!disableSelection"
+      :selectable="!disableSelection"
+      sort-icon-left
+      @row-clicked="rowChanged"
+    >
+      <template #table-busy>
+        <IconILoading v-if="$props.busy" />
+      </template>
+      <!-- TODO: backend method broken for some attributes like installationStatus, actionResult, version..  -->
+      <!-- :no-local-sorting="true"
     :sort-by.sync="tabledata.sortBy"
     :sort-desc.sync="tabledata.sortDesc"
     sort-icon-right -->
-    <template #head()="header">
-      {{ header.label }}
-    </template>
-    <template #head(sel)="{}">
-      {{ selection.length }}/{{ totalrows }}
-    </template>
-    <template #cell(sel)="row">
-      <!-- <b-icon-check v-if="row.rowSelected || selection.includes(row.item[datakey])" /> -->
-      {{ fixRow(row) }}
-    </template>
+      <template #head()="header">
+        {{ header.label }}
+      </template>
+      <template #head(sel)="{}">
+        {{ selection.length }}/{{ totalrows }}
+      </template>
+      <template #cell(sel)="row">
+        <!-- <b-icon-check v-if="row.rowSelected || selection.includes(row.item[datakey])" /> -->
+        {{ fixRow(row) }}
+      </template>
 
-    <template #head(rowactions)="{}">
-      <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
-    </template>
-    <template
-      v-for="slotName in Object.keys($scopedSlots)"
-      #[slotName]="slotScope"
-    >
-      <slot :name="slotName" v-bind="slotScope" />
-    </template>
-  </b-table>
+      <template #head(rowactions)="{}">
+        <DropdownDDTableColumnVisibilty :table-id="$props.id" :headers="headers" />
+      </template>
+      <template
+        v-for="slotName in Object.keys($scopedSlots)"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script lang="ts">
@@ -54,14 +56,22 @@ import { ITableRow, ITableHeaders, ITableDataItem, ITableData } from '~/scripts/
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string
+  @Prop({ }) ismultiselect!: boolean
   @Prop({ }) totalrows!: number
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) onchangeselection!: Function
+  @Prop({ default: () => { return () => {} } }) routechild!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   @Prop({ default: false }) readonly disableSelection!: boolean
   @Prop({ }) tabledata!: ITableData
 
   rowIdent: any
+
+  get selectmode () {
+    if (this.ismultiselect) {
+      return 'multi'
+    } else { return 'single' }
+  }
 
   fixRow (row: ITableRow): void {
     if (this.datakey === 'productId') {
@@ -135,37 +145,41 @@ export default class TTable extends BTable {
   // }
 
   rowChanged (item: ITableDataItem) {
-    const selectionCopy:Array<string> = [...this.selection]
-    // for (const el in document.querySelector('.table tr') as ) {
-    //   el.classList.remove('table-active')
-    // }
+    if (this.ismultiselect) {
+      const selectionCopy:Array<string> = [...this.selection]
+      // for (const el in document.querySelector('.table tr') as ) {
+      //   el.classList.remove('table-active')
+      // }
 
-    if (this.datakey === 'productId' && item.productId) {
-      if (selectionCopy.includes(item.productId)) {
-        selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
-      } else {
-        selectionCopy.push(item.productId)
+      if (this.datakey === 'productId' && item.productId) {
+        if (selectionCopy.includes(item.productId)) {
+          selectionCopy.splice(selectionCopy.indexOf(item.productId), 1)
+        } else {
+          selectionCopy.push(item.productId)
+        }
+      } else if (item.depotId && selectionCopy.includes(item.depotId)) {
+        selectionCopy.splice(selectionCopy.indexOf(item.depotId), 1)
+      } else if (item.clientId && selectionCopy.includes(item.clientId)) {
+        selectionCopy.splice(selectionCopy.indexOf(item.clientId), 1)
+      } else if (item.depotId) {
+        selectionCopy.push(item.depotId)
+      } else if (item.clientId) {
+        selectionCopy.push(item.clientId)
       }
-    } else if (item.depotId && selectionCopy.includes(item.depotId)) {
-      selectionCopy.splice(selectionCopy.indexOf(item.depotId), 1)
-    } else if (item.clientId && selectionCopy.includes(item.clientId)) {
-      selectionCopy.splice(selectionCopy.indexOf(item.clientId), 1)
-    } else if (item.depotId) {
-      selectionCopy.push(item.depotId)
-    } else if (item.clientId) {
-      selectionCopy.push(item.clientId)
+
+      // if (selectionCopy.includes(item.ident)) {
+      //   selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
+      // } else {
+      //   selectionCopy.push(item.ident)
+      // }
+      this.onchangeselection(selectionCopy)
+
+      // const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
+      // if (elem) { elem.classList.remove('table-active') }
+      // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
+    } else {
+      this.routechild(item.productId)
     }
-
-    // if (selectionCopy.includes(item.ident)) {
-    //   selectionCopy.splice(selectionCopy.indexOf(item.ident), 1)
-    // } else {
-    //   selectionCopy.push(item.ident)
-    // }
-    this.onchangeselection(selectionCopy)
-
-    // const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
-    // if (elem) { elem.classList.remove('table-active') }
-    // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
   }
 }
 </script>
