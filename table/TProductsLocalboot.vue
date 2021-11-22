@@ -12,7 +12,7 @@
       :items="fetchedData"
       :selection="selectionProducts"
       :onchangeselection="setSelectionProducts"
-      :routechild="routeRedirectWith('/products/config', rowident)"
+      :routechild="routeToChild"
       :busy="isLoading"
       :error-text="errorText"
       :totalrows="totalData"
@@ -393,9 +393,8 @@ export default class TProductsLocalboot extends Vue {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
   }
 
-  routeToChild () {
-    console.log('CHILD CALLED')
-    this.$router.push({ path: '/products/config' })
+  routeToChild (id: string) {
+    this.routeRedirectWith('/products/config', id)
   }
 }
 </script>
