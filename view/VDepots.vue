@@ -1,51 +1,67 @@
 <template>
   <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
     <template #parent>
-      <BarBPageHeader v-if="$mq=='mobile'">
-        <template #left>
-          <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
-        </template>
-        <template #right>
-          <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
-        </template>
-      </BarBPageHeader>
-      <TableTCollapseableForMobile
-        id="tabledepots"
-        small
-        datakey="depotId"
-        :collapseable="false"
-        :tabledata="tableData"
-        :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-        :headers="headerData"
-        :items="fetchedData"
-        :selection="selectionDepots"
-        :onchangeselection="setSelectionDepots"
-        :error-text="errorText"
-        :busy="isLoading"
-        :totalrows="totalData"
-        :ismultiselect="true"
-      >
-        <template #head(depotId)>
-          <InputIFilter ref="IFilterDepots" :data="tableData" :additional-title="$t('table.fields.id')" />
-        </template>
-        <template #cell(rowactions)="row">
-          <ButtonBTNRowLinkTo
-            :title="$t('title.config')"
-            icon="gear"
-            to="/depots/config"
-            :ident="row.item.ident"
-            :pressed="isRouteActive"
-            :click="routeRedirectWith"
-          />
-        </template>
-        <template #pagination>
-          <BarBTablePagination
-            :tabledata="tableData"
-            :total-rows="totalData"
-            aria-controls="tabledepots"
-          />
-        </template>
-      </TableTCollapseableForMobile>
+      <template v-if="totalData < 3">
+        <b-table borderless stacked :items="Object.values(fetchedData)" :fields="['depotId', 'type', 'ip', 'description', 'configuration']">
+          <template #cell(configuration)>
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              icon="gear"
+              to="/depots/config"
+              :ident="Object.values(fetchedData)[0].ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+          </template>
+        </b-table>
+      </template>
+      <template v-else>
+        <BarBPageHeader v-if="$mq=='mobile'">
+          <template #left>
+            <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
+          </template>
+          <template #right>
+            <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
+          </template>
+        </BarBPageHeader>
+        <TableTCollapseableForMobile
+          id="tabledepots"
+          small
+          datakey="depotId"
+          :collapseable="false"
+          :tabledata="tableData"
+          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+          :headers="headerData"
+          :items="fetchedData"
+          :selection="selectionDepots"
+          :onchangeselection="setSelectionDepots"
+          :error-text="errorText"
+          :busy="isLoading"
+          :totalrows="totalData"
+          :ismultiselect="true"
+        >
+          <template #head(depotId)>
+            <InputIFilter ref="IFilterDepots" :data="tableData" :additional-title="$t('table.fields.id')" />
+          </template>
+          <template #cell(rowactions)="row">
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              icon="gear"
+              to="/depots/config"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+          </template>
+          <template #pagination>
+            <BarBTablePagination
+              :tabledata="tableData"
+              :total-rows="totalData"
+              aria-controls="tabledepots"
+            />
+          </template>
+        </TableTCollapseableForMobile>
+      </template>
     </template>
     <template #child>
       <NuxtChild :id="rowId" :as-child="true" />
