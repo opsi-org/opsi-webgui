@@ -1,79 +1,81 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
-    <template #parent>
-      <BarBPageHeader>
-        <template #left>
-          <!-- <InputIFilter :data="tableData" /> -->
-          <!-- <DropdownDDDepotIds /> -->
-          <TreeTSDepots />
-          <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
-          <TreeTSHostGroupLazyLoad />
-          <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
-        </template>
-        <template #right>
-          <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
-        </template>
-      </BarBPageHeader>
-      <TableTCollapseableForMobile
-        id="tableclients"
-        datakey="clientId"
-        :collapseable="false"
-        :tabledata="tableData"
-        :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-        :headers="headerData"
-        :items="fetchedData"
-        :selection="selectionClients"
-        :onchangeselection="setSelectionClients"
-        :busy="isLoading"
-        :error-text="errorText"
-        :totalrows="totalData"
-        :ismultiselect="true"
-      >
-        <template #head(_majorStats)>
-          {{ '' }}
-        </template>
-        <template #head(clientId)>
-          <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
-        </template>
-        <template #cell(rowactions)="row">
-          <ButtonBTNRowLinkTo
-            :title="$t('title.config')"
-            icon="gear"
-            to="/clients/config"
-            :ident="row.item.ident"
-            :pressed="isRouteActive"
-            :click="routeRedirectWith"
-          />
+  <div data-testid="VClients">
+    <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
+      <template #parent>
+        <BarBPageHeader>
+          <template #left>
+            <!-- <InputIFilter :data="tableData" /> -->
+            <!-- <DropdownDDDepotIds /> -->
+            <TreeTSDepots />
+            <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
+            <TreeTSHostGroupLazyLoad />
+            <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
+          </template>
+          <template #right>
+            <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
+          </template>
+        </BarBPageHeader>
+        <TableTCollapseableForMobile
+          id="tableclients"
+          datakey="clientId"
+          :collapseable="false"
+          :tabledata="tableData"
+          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+          :headers="headerData"
+          :items="fetchedData"
+          :selection="selectionClients"
+          :onchangeselection="setSelectionClients"
+          :busy="isLoading"
+          :error-text="errorText"
+          :totalrows="totalData"
+          :ismultiselect="true"
+        >
+          <template #head(_majorStats)>
+            {{ '' }}
+          </template>
+          <template #head(clientId)>
+            <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
+          </template>
+          <template #cell(rowactions)="row">
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              icon="gear"
+              to="/clients/config"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
 
-          <ButtonBTNRowLinkTo
-            :title="$t('title.log')"
-            icon="file-earmark-text"
-            to="/clients/log"
-            :ident="row.item.ident"
-            :pressed="isRouteActive"
-            :click="routeRedirectWith"
-          />
-          <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
-            <template #button-content>
-              <b-icon icon="three-dots-vertical" />
-            </template>
-            <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
-          </b-dropdown>
-        </template>
-        <template #pagination>
-          <BarBTablePagination
-            :tabledata="tableData"
-            :total-rows="totalData"
-            aria-controls="tableclients"
-          />
-        </template>
-      </TableTCollapseableForMobile>
-      <ButtonBTNClearSelection store="clients" />
-    </template>
-    <template #child>
-      <NuxtChild :id="rowId" :as-child="true" />
-    </template>
-  </GridGTwoColumnLayout>
+            <ButtonBTNRowLinkTo
+              :title="$t('title.log')"
+              icon="file-earmark-text"
+              to="/clients/log"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+            <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
+              <template #button-content>
+                <b-icon icon="three-dots-vertical" />
+              </template>
+              <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
+            </b-dropdown>
+          </template>
+          <template #pagination>
+            <BarBTablePagination
+              :tabledata="tableData"
+              :total-rows="totalData"
+              aria-controls="tableclients"
+            />
+          </template>
+        </TableTCollapseableForMobile>
+        <ButtonBTNClearSelection store="clients" />
+      </template>
+      <template #child>
+        <NuxtChild :id="rowId" :as-child="true" />
+      </template>
+    </GridGTwoColumnLayout>
+  </div>
 </template>
 
 <script lang="ts">
