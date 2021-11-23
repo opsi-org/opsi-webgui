@@ -9,4 +9,4 @@ const PrimaryTemplate = (_args, { argTypes }) => ({
 })
 
 // named export Primary to create respective story
-export const ViewVDepots = PrimaryTemplate.bind({})
+export const VDepots = PrimaryTemplate.bind({})
