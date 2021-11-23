@@ -1,5 +1,5 @@
 export default {
-  title: 'View/V ClientsLog',
+  title: 'View/V Clients Log',
   parameters: { docs: { description: { component: 'Client Logs' } } }
 }
 
