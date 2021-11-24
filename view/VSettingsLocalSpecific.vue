@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="VSettingsLocalSpecific">
     <br>
     <b-row class="mb-2">
       <b-col sm="3" class="text-sm-right">

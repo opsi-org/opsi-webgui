@@ -1,5 +1,5 @@
 export default {
-  title: 'View/V SettingsLocalSpecific',
+  title: 'View/V Settings Local Specific',
   parameters: { docs: { description: { component: 'Local specific settings' } } }
 }
 
