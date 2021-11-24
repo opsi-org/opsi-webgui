@@ -1,6 +1,6 @@
 export default {
-  title: 'View/V ProductProperty',
-  parameters: { docs: { description: { component: 'ProductProperty and Dependency View' } } }
+  title: 'View/V Product Property',
+  parameters: { docs: { description: { component: 'Product property and dependency view' } } }
 }
 
 const PrimaryTemplate = () => ({
