@@ -1,20 +1,22 @@
 <template>
-  <p v-if="errorText">
-    {{ errorText }}
-  </p>
-  <b-table
-    v-else
-    :busy="isLoading"
-    borderless
-    stacked
-    small
-    :items="[modules]"
-    :fields="Object.keys(modules).filter(k => k !== 'signature')"
-  >
-    <template #table-busy>
-      <IconILoading />
-    </template>
-  </b-table>
+  <div data-testid="VModules">
+    <p v-if="errorText">
+      {{ errorText }}
+    </p>
+    <b-table
+      v-else
+      :busy="isLoading"
+      borderless
+      stacked
+      small
+      :items="[modules]"
+      :fields="Object.keys(modules).filter(k => k !== 'signature')"
+    >
+      <template #table-busy>
+        <IconILoading />
+      </template>
+    </b-table>
+  </div>
 </template>
 
 <script lang="ts">

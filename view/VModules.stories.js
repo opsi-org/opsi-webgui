@@ -8,4 +8,4 @@ const PrimaryTemplate = () => ({
 })
 
 // named export Primary to create respective story
-export const VModulesIfError = PrimaryTemplate.bind({})
+export const VModules = PrimaryTemplate.bind({})
