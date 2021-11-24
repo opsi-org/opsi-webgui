@@ -1,5 +1,5 @@
 export default {
-  title: 'Tree/TS Depots',
+  title: 'Tree/T S Depots',
   parameters: { docs: { description: { component: 'Treeselect for depot selection' } } }
 }
 

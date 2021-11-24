@@ -1,5 +1,5 @@
 export default {
-  title: 'Tree/TS ProductGroup',
+  title: 'Tree/T S Productgroup',
   parameters: { docs: { description: { component: 'Treeselect for product group selection' } } }
 }
 
