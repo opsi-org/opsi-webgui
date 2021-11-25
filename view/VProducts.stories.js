@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Products',
-  parameters: { docs: { description: { component: 'Products table view with depots, hostgroups and product groups selection' } } }
+  parameters: { docs: { description: { component: 'Products view with depots, hostgroups and product groups selection' } } }
 }
 
 const PrimaryTemplate = () => ({

@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Clients Add New',
-  parameters: { docs: { description: { component: 'Client subpage for creating new opsi client' } } }
+  parameters: { docs: { description: { component: 'New opsi client creation view' } } }
 }
 
 const PrimaryTemplate = () => ({

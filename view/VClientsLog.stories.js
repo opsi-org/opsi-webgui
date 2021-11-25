@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Clients Log',
-  parameters: { docs: { description: { component: 'Client Logs' } } }
+  parameters: { docs: { description: { component: 'Client Logs View' } } }
 }
 
 const PrimaryTemplate = () => ({

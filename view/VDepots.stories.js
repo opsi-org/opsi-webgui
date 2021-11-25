@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Depots',
-  parameters: { docs: { description: { component: 'Depots Table View' } } }
+  parameters: { docs: { description: { component: 'Depots View' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({

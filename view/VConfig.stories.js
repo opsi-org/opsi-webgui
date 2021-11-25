@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Config',
-  parameters: { docs: { description: { component: 'Host Attributes' } } }
+  parameters: { docs: { description: { component: 'Host Attributes View' } } }
 }
 
 const PrimaryTemplate = () => ({

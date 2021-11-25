@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Modules',
-  parameters: { docs: { description: { component: 'Modules Table' } } }
+  parameters: { docs: { description: { component: 'Modules View' } } }
 }
 
 const PrimaryTemplate = () => ({

@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Clients',
-  parameters: { docs: { description: { component: 'Clients table view with depots and hostgroups selection' } } }
+  parameters: { docs: { description: { component: 'Clients view with depots and hostgroups selection' } } }
 }
 
 const PrimaryTemplate = () => ({
