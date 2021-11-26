@@ -1,5 +1,5 @@
 export default {
-  title: 'Tablecell/T C Productpropertyvalue',
+  title: 'Tablecell/T C Productproperty Value',
   parameters: { docs: { description: { component: 'Table cell for Productpropertyvalue' } } }
 }
 
