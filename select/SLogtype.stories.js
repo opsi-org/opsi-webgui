@@ -1,5 +1,5 @@
 export default {
-  title: 'Table/Sb Logtype',
+  title: 'Select/S Logtype',
   parameters: { docs: { description: { component: 'Select for Logtype' } } }
 }
 

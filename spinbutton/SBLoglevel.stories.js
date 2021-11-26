@@ -1,5 +1,5 @@
 export default {
-  title: 'Table/Sb Loglevel',
+  title: 'Spinbutton/Sb Loglevel',
   parameters: { docs: { description: { component: 'Spin button for Loglevel' } } }
 }
 
