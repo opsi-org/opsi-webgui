@@ -1,13 +1,15 @@
 <template>
-  <b-form-spinbutton
-    v-model="level"
-    class="loglevel_spinbutton"
-    min="0"
-    max="8"
-    step="1"
-    inline
-    @change="$emit('update:loglevel', level)"
-  />
+  <div data-testid="SBLoglevel">
+    <b-form-spinbutton
+      v-model="level"
+      class="loglevel_spinbutton"
+      min="0"
+      max="8"
+      step="1"
+      inline
+      @change="$emit('update:loglevel', level)"
+    />
+  </div>
 </template>
 
 <script lang="ts">
