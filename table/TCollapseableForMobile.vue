@@ -1,26 +1,43 @@
 <template>
-  <b-card
-    v-if="collapseable"
-    bg-variant="transparent"
-    class="TCollapseableForMobile-Card overflow-auto"
-  >
-    <BarBPageHeader
-      navbartype="collapse"
-      :collapsed="visibleLocal"
-      :aria-controls="title+'-collapse'"
-      :aria-expanded="visibleLocal"
-      :title="title"
-      @click.native="visibleLocal = !visibleLocal"
-    />
-    <b-collapse :id="title+'-collapse'" v-model="visibleLocal" accordion="table-accordion">
-      <div class="BarBPageHeader-row">
-        <slot name="filter" />
-        <DropdownDDTableColumnVisibilty v-if="$mq=='mobile' && collapseable" :headers="headers" />
-      </div>
+  <div data-testid="TCollapseableForMobile">
+    <b-card
+      v-if="collapseable"
+      bg-variant="transparent"
+      class="TCollapseableForMobile-Card overflow-auto"
+    >
+      <BarBPageHeader
+        navbartype="collapse"
+        :collapsed="visibleLocal"
+        :aria-controls="title+'-collapse'"
+        :aria-expanded="visibleLocal"
+        :title="title"
+        @click.native="visibleLocal = !visibleLocal"
+      />
+      <b-collapse :id="title+'-collapse'" v-model="visibleLocal" accordion="table-accordion">
+        <div class="BarBPageHeader-row">
+          <slot name="filter" />
+          <DropdownDDTableColumnVisibilty v-if="$mq=='mobile' && collapseable" :headers="headers" />
+        </div>
+        <p v-if="$props.errorText">
+          {{ $props.errorText }}
+        </p>
+        <TableTTable v-else v-bind="$props" :tabledata="tabledata">
+          <template
+            v-for="slotName in Object.keys($scopedSlots)"
+            #[slotName]="slotScope"
+          >
+            <slot :name="slotName" v-bind="slotScope" />
+          </template>
+        </TableTTable>
+
+        <slot name="pagination" />
+      </b-collapse>
+    </b-card>
+    <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card overflow-auto">
       <p v-if="$props.errorText">
         {{ $props.errorText }}
       </p>
-      <TableTTable v-else v-bind="$props" :tabledata="tabledata">
+      <TableTTable v-bind="$props" :tabledata="tabledata">
         <template
           v-for="slotName in Object.keys($scopedSlots)"
           #[slotName]="slotScope"
@@ -28,24 +45,9 @@
           <slot :name="slotName" v-bind="slotScope" />
         </template>
       </TableTTable>
-
       <slot name="pagination" />
-    </b-collapse>
-  </b-card>
-  <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card overflow-auto">
-    <p v-if="$props.errorText">
-      {{ $props.errorText }}
-    </p>
-    <TableTTable v-bind="$props" :tabledata="tabledata">
-      <template
-        v-for="slotName in Object.keys($scopedSlots)"
-        #[slotName]="slotScope"
-      >
-        <slot :name="slotName" v-bind="slotScope" />
-      </template>
-    </TableTTable>
-    <slot name="pagination" />
-  </b-card>
+    </b-card>
+  </div>
 </template>
 
 <script lang="ts">

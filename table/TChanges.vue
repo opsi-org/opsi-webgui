@@ -1,5 +1,5 @@
 <template>
-  <div v-if="tableitems.length>0">
+  <div v-if="tableitems.length>0" data-testid="TChanges">
     <InputIFilterTChanges :filter.sync="filter" />
     <div v-for="changes, k in groupedById" :key="changes.productId">
       <small><b>{{ k }}</b></small>
