@@ -1,14 +1,16 @@
 <template>
-  <b-tooltip
-    :custom-class="classes"
-    :triggers="triggers"
-    :target="target"
-    :variant="variant"
-  >
-    <slot name="tooltip">
-      {{ (tooltip || "im here for help :)") }}
-    </slot>
-  </b-tooltip>
+  <div data-testid="TTTooltip">
+    <b-tooltip
+      :custom-class="classes"
+      :triggers="triggers"
+      :target="target"
+      :variant="variant"
+    >
+      <slot name="tooltip">
+        {{ (tooltip || "im here for help :)") }}
+      </slot>
+    </b-tooltip>
+  </div>
 </template>
 
 <script lang="ts">
