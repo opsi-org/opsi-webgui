@@ -1,6 +1,6 @@
 export default {
   title: 'Input/I Filter',
-  parameters: { docs: { description: { component: 'Input for Filter' } } }
+  parameters: { docs: { description: { component: 'Input for filter' } } }
 }
 
 const PrimaryTemplate = () => ({
