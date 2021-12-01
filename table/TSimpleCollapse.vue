@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="TSimpleCollapse">
     <BarBPageHeader
       navbartype="collapse"
       :collapsed="visible"
