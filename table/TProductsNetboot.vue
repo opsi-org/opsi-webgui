@@ -1,6 +1,6 @@
 <template>
   <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.netboot') }}</h4></div> -->
-  <div>
+  <div data-testid="TProductsNetboot">
     <TableTCollapseableForMobile
       id="tableproducts"
       datakey="productId"

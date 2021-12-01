@@ -1,6 +1,6 @@
 export default {
-  title: 'View/V SettingsLocalSpecific',
-  parameters: { docs: { description: { component: 'Local specific settings' } } }
+  title: 'View/V Settings Local Specific',
+  parameters: { docs: { description: { component: 'Local specific settings view' } } }
 }
 
 const PrimaryTemplate = () => ({

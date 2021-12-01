@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="TProductProperties">
     <div v-if="!errorText && $mq=='mobile'">
       <AlertAAlert show variant="secondary">
         <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>

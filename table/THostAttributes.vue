@@ -1,13 +1,15 @@
 <template>
-  <TableTSimple
-    v-if="result"
-    :is-busy="isLoading"
-    :error="showError"
-    :errortext="errorText"
-    :stacked="true"
-    :tableitems="[result]"
-    :tablefields="fields"
-  />
+  <div data-testid="THostAttributes">
+    <TableTSimple
+      v-if="result"
+      :is-busy="isLoading"
+      :error="showError"
+      :errortext="errorText"
+      :stacked="true"
+      :tableitems="[result]"
+      :tablefields="fields"
+    />
+  </div>
 </template>
 
 <script lang="ts">

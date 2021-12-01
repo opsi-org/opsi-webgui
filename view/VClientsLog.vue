@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="VClientsLog">
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - ' + id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>

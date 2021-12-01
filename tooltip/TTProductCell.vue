@@ -1,19 +1,21 @@
 <template>
-  <!-- <b-tooltip v-if="(type=='version' && text)" :target="target" triggers="hover" :variant="variant"> Depot:{{row.item.versionDepot}}</b-tooltip>
+  <div data-testid="TTProductCell">
+    <!-- <b-tooltip v-if="(type=='version' && text)" :target="target" triggers="hover" :variant="variant"> Depot:{{row.item.versionDepot}}</b-tooltip>
   <b-tooltip v-else-if="(type=='ppversion' && text)" :target="target" triggers="hover" :variant="variant"> only on Depot:{{row.item.objectIdsDepots}}</b-tooltip>
   <b-tooltip v-else-if="(type=='productId' && text)" :target="target" triggers="hover" variant="danger">only on: {{row.item.depotId}}</b-tooltip>
   <b-tooltip v-else-if="(type=='installationStatus' && text)" :target="target" triggers="hover" :variant="variant">Status: {{row.item.installationStatus}}</b-tooltip> -->
-  <b-tooltip :target="target" triggers="hover" :placement="placement">
-    <TableTTooltipContent
-      :target="target"
-      :details="details"
-      :depot-version-diff="depotVersionDiff"
-      :variant="variant"
-      :type="type"
-      :dark="dark"
-    />
+    <b-tooltip :target="target" triggers="hover" :placement="placement">
+      <TableTTooltipContent
+        :target="target"
+        :details="details"
+        :depot-version-diff="depotVersionDiff"
+        :variant="variant"
+        :type="type"
+        :dark="dark"
+      />
     <!-- :details-depots="detailsDepots" -->
-  </b-tooltip>
+    </b-tooltip>
+  </div>
 </template>
 
 <script lang="ts">

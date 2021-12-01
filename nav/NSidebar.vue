@@ -1,32 +1,33 @@
 <template>
-  <!-- TODO: Edit navItems route in components/nav/NSidebar -->
-  <b-nav vertical tabs class="sidemenu_nav">
-    <span v-for="catogery in navItems" :key="catogery.title">
-      <NavItemNITitle :expanded="expanded" :title="catogery.title" />
-      <span v-for="menuitem in catogery.menu" :key="menuitem.title">
-        <template v-if="menuitem.submenu">
-          <NavItemNICollapsible
-            v-if="expanded"
-            :title="menuitem.title"
-            :icon="menuitem.icon"
-            :route="menuitem.route"
-            :submenu="menuitem.submenu"
-          />
-          <NavItemNIDropdownHoverable
-            v-else
-            :title="menuitem.title"
-            :icon="menuitem.icon"
-            :route="menuitem.route"
-            :submenu="menuitem.submenu"
-          />
-        </template>
-        <template v-else>
-          <NavItemNIItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
-        </template>
+  <div data-testid="NSidebar">
+    <b-nav vertical tabs class="sidemenu_nav">
+      <span v-for="catogery in navItems" :key="catogery.title">
+        <NavItemNITitle :expanded="expanded" :title="catogery.title" />
+        <span v-for="menuitem in catogery.menu" :key="menuitem.title">
+          <template v-if="menuitem.submenu">
+            <NavItemNICollapsible
+              v-if="expanded"
+              :title="menuitem.title"
+              :icon="menuitem.icon"
+              :route="menuitem.route"
+              :submenu="menuitem.submenu"
+            />
+            <NavItemNIDropdownHoverable
+              v-else
+              :title="menuitem.title"
+              :icon="menuitem.icon"
+              :route="menuitem.route"
+              :submenu="menuitem.submenu"
+            />
+          </template>
+          <template v-else>
+            <NavItemNIItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
+          </template>
+        </span>
+        <br>
       </span>
-      <br>
-    </span>
-  </b-nav>
+    </b-nav>
+  </div>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <b-row>
+  <b-row data-testid="GTwoColumnLayout">
     <b-col :class="{'d-none' : showchild && $mq === 'mobile', column2visible: showchild}">
       <slot name="parent" />
     </b-col>

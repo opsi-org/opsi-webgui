@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="TProductDependencies">
     <TableTTable
       v-if="dependencies.dependencies"
       :is-busy="isLoading"

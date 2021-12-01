@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="VConfig">
     <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - ' + id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #left>

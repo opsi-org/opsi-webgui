@@ -1,5 +1,5 @@
 <template>
-  <div class="form-inline" style="margin-right:30px">
+  <div class="form-inline" style="margin-right:30px" data-testid="TSTreeselect">
     <b-icon :icon="icon" variant="primary" font-scale="2" />
     <b-badge class="selection_badge" variant="light" size="sm">
       {{ type === 'depots' ? selectionDepots.length: selectionProducts.length }}

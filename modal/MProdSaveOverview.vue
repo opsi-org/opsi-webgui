@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="MProdSaveOverview">
     <ButtonBTNOpenModal modal-id="ProductSaveModal" icon="list-check" :disabled="changelist.length == 0" />
     <b-modal
       id="ProductSaveModal"

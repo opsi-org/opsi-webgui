@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Modules',
-  parameters: { docs: { description: { component: 'Modules Table' } } }
+  parameters: { docs: { description: { component: 'Modules View' } } }
 }
 
 const PrimaryTemplate = () => ({
@@ -8,4 +8,4 @@ const PrimaryTemplate = () => ({
 })
 
 // named export Primary to create respective story
-export const VModulesIfError = PrimaryTemplate.bind({})
+export const VModules = PrimaryTemplate.bind({})

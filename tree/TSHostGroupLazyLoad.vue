@@ -1,5 +1,5 @@
 <template>
-  <div class="form-inline" style="margin-right:30px">
+  <div class="form-inline" style="margin-right:30px" data-testid="TSHostGroupLazyLoad">
     <b-icon-laptop variant="primary" font-scale="2" />
     <b-badge class="selection_badge" variant="light" size="sm">
       {{ selectionClients.length }}

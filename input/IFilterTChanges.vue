@@ -1,11 +1,13 @@
 <template>
-  <b-form-input
-    v-model="filter"
-    size="sm"
-    type="search"
-    placeholder="Filter by DepotID / Client ID"
-    @input="$emit('update:filter', filter)"
-  />
+  <div data-testid="IFilterTChanges">
+    <b-form-input
+      v-model="filter"
+      size="sm"
+      type="search"
+      placeholder="Filter by DepotID / Client ID"
+      @input="$emit('update:filter', filter)"
+    />
+  </div>
 </template>
 
 <script lang="ts">

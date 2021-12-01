@@ -1,6 +1,6 @@
 export default {
-  title: 'Tree/TS HostGroupLazyLoad',
-  parameters: { docs: { description: { component: 'Treeselect for host group selection with delayed loading children, where selection stored in vuexstore' } } }
+  title: 'Tree/T S Hostgroup Lazyload',
+  parameters: { docs: { description: { component: 'Treeselect for host groups with delayed loading children' } } }
 }
 
 const PrimaryTemplate = () => ({

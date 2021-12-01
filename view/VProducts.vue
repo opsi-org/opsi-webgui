@@ -1,27 +1,29 @@
 <template>
-  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
-    <template #parent>
-      <BarBPageHeader>
-        <template #left>
-          <TreeTSDepots />
-          <TreeTSHostGroupLazyLoad />
-          <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
+  <div data-testid="VProducts">
+    <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
+      <template #parent>
+        <BarBPageHeader>
+          <template #left>
+            <TreeTSDepots />
+            <TreeTSHostGroupLazyLoad />
+            <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
-          <TreeTSProductGroup />
-        </template>
-        <template #right>
-          <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
-          <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
-        </template>
-      </BarBPageHeader>
-      <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
-      <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
-      <ButtonBTNClearSelection store="products" />
-    </template>
-    <template #child>
-      <NuxtChild :id="rowId" :as-child="true" />
-    </template>
-  </GridGTwoColumnLayout>
+            <TreeTSProductGroup />
+          </template>
+          <template #right>
+            <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
+            <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
+          </template>
+        </BarBPageHeader>
+        <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
+        <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
+        <ButtonBTNClearSelection store="products" />
+      </template>
+      <template #child>
+        <NuxtChild :id="rowId" :as-child="true" />
+      </template>
+    </GridGTwoColumnLayout>
+  </div>
 </template>
 
 <script lang="ts">

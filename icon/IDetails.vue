@@ -1,10 +1,12 @@
 <template>
-  <b-badge
-    v-bind="$props"
-    :variant="variant"
-  >
-    {{ content==='unequal'? '&ne;':content }}
-  </b-badge>
+  <div data-testid="IDetails">
+    <b-badge
+      v-bind="$props"
+      :variant="variant"
+    >
+      {{ content==='unequal'? '&ne;':content }}
+    </b-badge>
+  </div>
 </template>
 
 <script lang="ts">

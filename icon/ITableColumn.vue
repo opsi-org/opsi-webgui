@@ -1,3 +1,5 @@
 <template>
-  <b-icon-grid3x3 />
+  <div data-testid="ITableColumn">
+    <b-icon-grid3x3 />
+  </div>
 </template>

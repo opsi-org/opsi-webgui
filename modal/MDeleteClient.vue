@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="MDeleteClient">
     <b-dropdown-item-button @click="$bvModal.show(id + 'deleteClientModal')">
       <b-icon icon="trash" />  {{ $t('message.delete') }}
     </b-dropdown-item-button>

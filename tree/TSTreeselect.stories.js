@@ -1,5 +1,5 @@
 export default {
-  title: 'Tree/TS Treeselect',
+  title: 'Tree/T S Treeselect',
   parameters: { docs: { description: { component: 'Treeselect for group selection, where selection stored in vuexstore' } } }
 }
 

@@ -1,8 +1,10 @@
 <template>
-  <b-iconstack class="IExpert_Icon" @click="toggleExpertMode">
-    <b-icon-star-fill v-if="localExpert" variant="light" shift-h="4" shift-v="5" class="IExpert_Icon_Star_filled" />
-    <b-icon-star v-else variant="light" shift-h="4" shift-v="5" class="IExpert_Icon_Star" />
-  </b-iconstack>
+  <div data-testid="IExpert">
+    <b-iconstack class="IExpert_Icon" @click="toggleExpertMode">
+      <b-icon-star-fill v-if="localExpert" variant="light" shift-h="4" shift-v="5" class="IExpert_Icon_Star_filled" />
+      <b-icon-star v-else variant="light" shift-h="4" shift-v="5" class="IExpert_Icon_Star" />
+    </b-iconstack>
+  </div>
 </template>
 
 <script lang="ts">

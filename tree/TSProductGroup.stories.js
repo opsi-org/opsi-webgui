@@ -1,6 +1,6 @@
 export default {
-  title: 'Tree/TS ProductGroup',
-  parameters: { docs: { description: { component: 'Treeselect for product group selection' } } }
+  title: 'Tree/T S Productgroup',
+  parameters: { docs: { description: { component: 'Treeselect for product groups' } } }
 }
 
 const PrimaryTemplate = () => ({

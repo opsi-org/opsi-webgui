@@ -1,10 +1,10 @@
 export default {
-  title: 'Tree/TS Clients',
+  title: 'Tree/T S Clients',
   parameters: { docs: { description: { component: 'Treeselect for client selection, where selection not stored.' } } }
 }
 
 const PrimaryTemplate = () => ({
-  template: '<TreeTSClientsNotStored placeholder="-- Please select a Client --" />'
+  template: '<TreeTSClientsNotStored />'
 })
 
 // named export Primary to create respective story

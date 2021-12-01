@@ -1,12 +1,14 @@
 <template>
-  <treeselect
-    v-if="depotIds"
-    v-model="idselection"
-    class="treeselect_idselect"
-    :options="depotIds"
-    placeholder="-- Please select a Depot --"
-    @input="$emit('update:id', idselection)"
-  />
+  <div data-testid="TSDepotsNotStored">
+    <treeselect
+      v-if="depotIds"
+      v-model="idselection"
+      class="treeselect_idselect"
+      :options="depotIds"
+      placeholder="-- Please select a Depot --"
+      @input="$emit('update:id', idselection)"
+    />
+  </div>
 </template>
 
 <script lang="ts">
