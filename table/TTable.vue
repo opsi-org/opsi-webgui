@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="TTable">
     <b-table
       v-bind="$props"
       :ref="$props.id"

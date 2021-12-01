@@ -1,58 +1,60 @@
 <template>
-  <b-table-simple small :dark="dark" class="tt-table">
-    <b-tbody v-if="type=='version'">
-      <div v-for="(depotClientDetails, depotId) in details" :key="depotId">
-        <!-- {{depotClientDetails}}, {{depotId}} -->
-        <BarBTooltipCollapseRow
-          :title="depotId"
-          :value="depotClientDetails[depotId]"
-          :collapsed="Object.keys(details).length <= 1"
-          :collapseable="Object.keys(depotClientDetails).length > 1"
-          :value-variant="(depotVersionDiff || depotClientDetails[depotId]=='--')? 'warning':'info'"
-        >
-          <!-- :collapsed="Object.keys(depotClientDetails) > 1" -->
-          <template
-            v-if="Object.keys(depotClientDetails).length > 1"
-            #nav-child
+  <div data-testid="TTooltipContent">
+    <b-table-simple small :dark="dark" class="tt-table">
+      <b-tbody v-if="type=='version'">
+        <div v-for="(depotClientDetails, depotId) in details" :key="depotId">
+          <!-- {{depotClientDetails}}, {{depotId}} -->
+          <BarBTooltipCollapseRow
+            :title="depotId"
+            :value="depotClientDetails[depotId]"
+            :collapsed="Object.keys(details).length <= 1"
+            :collapseable="Object.keys(depotClientDetails).length > 1"
+            :value-variant="(depotVersionDiff || depotClientDetails[depotId]=='--')? 'warning':'info'"
           >
-            <b-tr
-              v-for="(clientVersion,clientId) in depotClientDetails"
-              :key="clientId"
-              :class="`subbadge_${type}_${clientId}`"
-              class="tr-subrow"
+            <!-- :collapsed="Object.keys(depotClientDetails) > 1" -->
+            <template
+              v-if="Object.keys(depotClientDetails).length > 1"
+              #nav-child
             >
-              <b-th
-                v-if="clientId!=depotId"
-                class="text-left"
+              <b-tr
+                v-for="(clientVersion,clientId) in depotClientDetails"
+                :key="clientId"
+                :class="`subbadge_${type}_${clientId}`"
+                class="tr-subrow"
               >
-                {{ clientId }}
-              </b-th>
-              <b-th
-                v-if="clientId!=depotId"
-                class="text-right"
-              >
-                <b-badge :variant="(depotClientDetails[depotId]!=clientVersion)?'danger':getVariant(type)">
-                  {{ clientVersion }}
-                </b-badge>
-              </b-th>
-            </b-tr>
-          </template>
-        </BarBTooltipCollapseRow>
-      </div>
-    </b-tbody>
-    <b-tbody v-else>
-      <b-tr v-for="(v,c) in details" :key="c" :class="`badge_${type}_${c}`">
-        <b-th class="text-left">
-          {{ c }}
-        </b-th>
-        <b-th class="text-right">
-          <b-badge :variant="getVariant(v)">
-            {{ v }}
-          </b-badge>
-        </b-th>
-      </b-tr>
-    </b-tbody>
-  </b-table-simple>
+                <b-th
+                  v-if="clientId!=depotId"
+                  class="text-left"
+                >
+                  {{ clientId }}
+                </b-th>
+                <b-th
+                  v-if="clientId!=depotId"
+                  class="text-right"
+                >
+                  <b-badge :variant="(depotClientDetails[depotId]!=clientVersion)?'danger':getVariant(type)">
+                    {{ clientVersion }}
+                  </b-badge>
+                </b-th>
+              </b-tr>
+            </template>
+          </BarBTooltipCollapseRow>
+        </div>
+      </b-tbody>
+      <b-tbody v-else>
+        <b-tr v-for="(v,c) in details" :key="c" :class="`badge_${type}_${c}`">
+          <b-th class="text-left">
+            {{ c }}
+          </b-th>
+          <b-th class="text-right">
+            <b-badge :variant="getVariant(v)">
+              {{ v }}
+            </b-badge>
+          </b-th>
+        </b-tr>
+      </b-tbody>
+    </b-table-simple>
+  </div>
 </template>
 
 <script lang="ts">
