@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="TProductsLocalboot">
     <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
     <TableTCollapseableForMobile
       id="tableproducts"
