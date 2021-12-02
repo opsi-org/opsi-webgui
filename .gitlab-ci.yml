@@ -31,7 +31,7 @@ init:npm:
   script: |
     # git submodule update --init --recursiv
     cd opsiweb
-    ls -lah components
+    ls -lah uib-components
     echo "[script.sh] install dependencies..."
     npm install
     npm i -D @playwright/test
