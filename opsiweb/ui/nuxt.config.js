@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs'
-import pkg from './package.json'
+import pkg from '../package.json'
 
 import en from './locale/en.json'
 import de from './locale/de.json'
@@ -128,14 +128,13 @@ export default {
     //     config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
     //   }
     // }
+  },
+  storybook: {
+    stories: ['~/**/*.stories.js'],
+    decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
+    // Optionsstorybook: {
+    // addons: [
+    //   '@storybook/addon-storyshots'
+    // ]
   }
-  // storybook: {
-  //   stories: ['~/components/**/*.stories.js'],
-  //   decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
-  //   // Optionsstorybook: {
-  //   // addons: [
-  //   //   '@storybook/addon-storyshots'
-  //   // ]
-
-  // }
 }
