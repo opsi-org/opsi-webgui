@@ -133,9 +133,12 @@ build:addon:
   script:
     - *install_tools
     - ls -la 
+    - ls -la opsiweb
     - pwd 
-    - la -la /
-    - ls -la ..
+    - cd opsiweb
+    - npm install
+    - npm run generate
+    - cd ..
     - mkdir -p backend/webgui/data
     - mv opsiweb/dist backend/webgui/data/app
   only:
