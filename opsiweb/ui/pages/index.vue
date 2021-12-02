@@ -1,7 +1,7 @@
 <template>
   <b-card class="text-center index_content">
     <IconIOpsiLogo />
-    <h1> OPSIWEB </h1>
+    <h1>  OPSIWEB  </h1>
   </b-card>
 </template>
 
@@ -9,6 +9,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class PIndex extends Vue {
+
 }
 </script>
 

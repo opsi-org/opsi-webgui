@@ -19,10 +19,10 @@
     "baseUrl": ".",
     "paths": {
       "~/*": [
-        "uib-components/*"
+        "./*"
       ],
       "@/*": [
-        "uib-components/*"
+        "./*"
       ]
     },
     "types": [

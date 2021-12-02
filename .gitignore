@@ -1,9 +1,10 @@
 *.backup
-*.tmp
-*_tmp
+*.tmp*
+*_tmp*
 .env
 *backup*
 backend/opsibackup
 .nuxt-storybook/
 opsiweb/test/README.md
 opsiweb/test-results/
+*node_modules*

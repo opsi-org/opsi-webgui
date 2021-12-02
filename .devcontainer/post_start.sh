@@ -43,7 +43,8 @@ service opsiconfd restart
 # su - node <<SHT
 cd /workspace/opsiweb
 echo "[script.sh] install dependencies..."
-npm install
+npm run build
+#TODO
 npm i -D @playwright/test
 # echo "[script.sh] configure playwright..."
 npx playwright install

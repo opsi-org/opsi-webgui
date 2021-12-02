@@ -56,8 +56,11 @@ export default {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/typescript
-    '@nuxt/typescript-build'
+    '@nuxt/typescript-build',
+    // '~/../uib-components/index.js'
+    'uib-components/.nuxt'
   ],
+
   router: {
     middleware: ['authenticated'],
     base: '/webgui/app/'
@@ -125,14 +128,14 @@ export default {
     //     config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
     //   }
     // }
-  },
-  storybook: {
-    stories: ['~/components/**/*.stories.js'],
-    decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
-    // Optionsstorybook: {
-    // addons: [
-    //   '@storybook/addon-storyshots'
-    // ]
-
   }
+  // storybook: {
+  //   stories: ['~/components/**/*.stories.js'],
+  //   decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
+  //   // Optionsstorybook: {
+  //   // addons: [
+  //   //   '@storybook/addon-storyshots'
+  //   // ]
+
+  // }
 }

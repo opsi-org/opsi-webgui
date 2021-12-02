@@ -9,10 +9,10 @@ else
 	echo DEV_USER=$USER >> .env
 fi
 
-
-git clone git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/components
-echo ""
-echo "Attention! "
-echo "Please check if opsiweb/components directory is filled. "
-echo "Otherwise clone it with e.g. "
-echo "\tgit clone git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/components"
+# TODO: Update this
+# git clone git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/components
+# echo ""
+# echo "Attention! "
+# echo "Please check if opsiweb/components directory is filled. "
+# echo "Otherwise clone it with e.g. "
+# echo "\tgit clone git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/components"
