@@ -132,6 +132,10 @@ build:addon:
     - build:static-app
   script:
     - *install_tools
+    - ls -la 
+    - pwd 
+    - la -la /
+    - ls -la ..
     - mkdir -p backend/webgui/data
     - mv opsiweb/dist backend/webgui/data/app
   only:
