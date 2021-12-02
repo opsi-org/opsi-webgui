@@ -29,11 +29,10 @@ before_script:
 init:npm:
   stage: init
   script: |
-    # git submodule update --init --recursiv
     cd opsiweb
-    ls -lah uib-components
     echo "[script.sh] install dependencies..."
-    npm install
+    npm run clean
+    npm run build
     npm i -D @playwright/test
     npx playwright install
   artifacts:
