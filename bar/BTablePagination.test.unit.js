@@ -1,6 +1,8 @@
-import { createLocalVue, mount } from '@vue/test-utils'
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
-import BTablePagination from '@/components/bar/BTablePagination'
+const BootstrapVue = require('bootstrap-vue').BootstrapVue
+const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
+const createLocalVue = require('@vue/test-utils').createLocalVue
+const mount = require('@vue/test-utils').mount
+const BTablePagination = require('@/bar/BTablePagination').default
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)

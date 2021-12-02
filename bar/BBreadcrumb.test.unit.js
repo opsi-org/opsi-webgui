@@ -1,7 +1,9 @@
-import { mount, createLocalVue } from '@vue/test-utils'
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
-import VueRouter from 'vue-router'
-import BBreadcrumbRow from '@/components/bar/BBreadcrumb'
+const BootstrapVue = require('bootstrap-vue').BootstrapVue
+const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
+const createLocalVue = require('@vue/test-utils').createLocalVue
+const mount = require('@vue/test-utils').mount
+const VueRouter = require('vue-router')
+const BBreadcrumbRow = require('@/bar/BBreadcrumb').default
 
 const localVue = createLocalVue()
 localVue.use(VueRouter)

@@ -1,5 +1,6 @@
-import { mount } from '@vue/test-utils'
-import AAlert from '@/components/alert/AAlert'
+// const createLocalVue = require('@vue/test-utils').createLocalVue
+const mount = require('@vue/test-utils').mount
+const AAlert = require('@/alert/AAlert').default
 
 describe('AAlert', () => {
   let wrapper

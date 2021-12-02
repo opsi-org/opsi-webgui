@@ -1,6 +1,8 @@
-import { createLocalVue, mount } from '@vue/test-utils'
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
-import BTop from '@/components/bar/BTop'
+const BootstrapVue = require('bootstrap-vue').BootstrapVue
+const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
+const createLocalVue = require('@vue/test-utils').createLocalVue
+const mount = require('@vue/test-utils').mount
+const BTop = require('@/bar/BTop').default
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)

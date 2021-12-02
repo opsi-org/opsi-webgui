@@ -1,6 +1,8 @@
-import { mount } from '@vue/test-utils'
-// import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
-import OpsiLogo from '~/components/icon/IOpsiLogo.vue'
+// const BootstrapVue = require('bootstrap-vue').BootstrapVue
+// const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
+// const createLocalVue = require('@vue/test-utils').createLocalVue
+const mount = require('@vue/test-utils').mount
+const OpsiLogo = require('@/icon/IOpsiLogo').default
 // const localVue = createLocalVue()
 // localVue.use(BootstrapVue)
 // localVue.use(BootstrapVueIcons)
