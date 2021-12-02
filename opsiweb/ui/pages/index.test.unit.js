@@ -1,4 +1,6 @@
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+// import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+const BootstrapVue = require('bootstrap-vue').BootstrapVue
+const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
 
 const mount = require('@vue/test-utils').mount
 const createLocalVue = require('@vue/test-utils').createLocalVue
