@@ -20,8 +20,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { mapValues2Value, mapValues2Objects } from '~/scripts/utils/smappings'
-import { IObjectString2String } from '~/scripts/types/tgeneral'
+import { mapValues2Value, mapValues2Objects } from 'uib-components/.utils/utils/smappings'
+import { IObjectString2String } from 'uib-components/.utils/types/tgeneral'
 
 @Component
 export default class TCSpan extends Vue {

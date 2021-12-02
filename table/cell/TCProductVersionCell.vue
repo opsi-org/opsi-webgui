@@ -32,9 +32,9 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { mapValues2Objects } from '~/scripts/utils/smappings'
-import { IObjectString2String, IObjectString2ObjectString2String } from '~/scripts/types/tgeneral'
-import { ITableRow, ITableRowItemProducts } from '~/scripts/types/ttable'
+import { mapValues2Objects } from 'uib-components/.utils/utils/smappings'
+import { IObjectString2String, IObjectString2ObjectString2String } from 'uib-components/.utils/types/tgeneral'
+import { ITableRow, ITableRowItemProducts } from 'uib-components/.utils/types/ttable'
 const selections = namespace('selections')
 
 @Component

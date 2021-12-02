@@ -16,7 +16,7 @@
         </b-navbar-nav>
         <b-navbar-brand href="/webgui/app" class="topbar_brand">
           <b-badge class="bg-light" style="margin-left:5px;margin-right:5px">
-            <img src="../../assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
+            <img src="~/assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
           </b-badge>
           OPSIWEB
         </b-navbar-brand>
@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
-import { ISidebarAttributes } from '~/scripts/types/tsettings'
+import { ISidebarAttributes } from 'uib-components/.utils/types/tsettings'
 const settings = namespace('settings')
 
 @Component

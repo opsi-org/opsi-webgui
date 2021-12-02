@@ -20,8 +20,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { IObjectString2String } from '~/scripts/types/tgeneral'
-// import { ITableRowItemProducts } from '~/scripts/types/ttable'
+import { IObjectString2String } from 'uib-components/.utils/types/tgeneral'
+// import { ITableRowItemProducts } from 'uib-components/.utils/types/ttable'
 
 @Component
 export default class TTProductCell extends Vue {

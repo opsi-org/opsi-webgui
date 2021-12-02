@@ -28,8 +28,8 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
-import { ChangeObj } from '~/scripts/types/tchanges'
-// import { ITableData } from '~/scripts/types/ttable'
+import { ChangeObj } from 'uib-components/.utils/types/tchanges'
+// import { ITableData } from 'uib-components/.utils/types/ttable'
 // const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')

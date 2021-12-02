@@ -63,7 +63,7 @@
 <script lang="ts">
 import { Component, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-import { arrayEqual } from '~/scripts/utils/scompares'
+import { arrayEqual } from 'uib-components/.utils/utils/scompares'
 
 @Component
 export default class DDDefault extends BDropdown {

@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { ISidebarAttributes } from '~/scripts/types/tsettings'
+import { ISidebarAttributes } from 'uib-components/.utils/types/tsettings'
 
 @Component
 export default class BSide extends Vue {

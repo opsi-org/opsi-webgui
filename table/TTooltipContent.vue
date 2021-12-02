@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { IObjectString2String, IObjectString2Function } from '~/scripts/types/tgeneral'
+import { IObjectString2String, IObjectString2Function } from 'uib-components/.utils/types/tgeneral'
 // import { ITableRowItemProducts } from '~/types/ttable'
 
 @Component

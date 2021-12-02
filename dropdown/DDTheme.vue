@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, namespace } from 'nuxt-property-decorator'
-import { ITheme } from '~/scripts/types/tsettings'
+import { ITheme } from 'uib-components/.utils/types/tsettings'
 const settings = namespace('settings')
 
 @Component export default class DDTheme extends Vue {

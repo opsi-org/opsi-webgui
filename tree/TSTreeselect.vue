@@ -30,8 +30,8 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
-import { filterObject, filterObjectLabel } from '@/scripts/utils/sfilters'
-import { arrayEqual } from '~/scripts/utils/scompares'
+import { filterObject, filterObjectLabel } from 'uib-components/.utils/utils/sfilters'
+import { arrayEqual } from 'uib-components/.utils/utils/scompares'
 const selections = namespace('selections')
 
 interface Group {
