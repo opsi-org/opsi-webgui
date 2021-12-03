@@ -2,7 +2,7 @@
 // const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
 // const createLocalVue = require('@vue/test-utils').createLocalVue
 const mount = require('@vue/test-utils').mount
-const OpsiLogo = require('@/icon/IOpsiLogo').default
+const OpsiLogo = require('./IOpsiLogo').default
 // const localVue = createLocalVue()
 // localVue.use(BootstrapVue)
 // localVue.use(BootstrapVueIcons)

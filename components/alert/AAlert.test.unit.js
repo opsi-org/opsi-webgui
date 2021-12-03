@@ -1,6 +1,6 @@
 // const createLocalVue = require('@vue/test-utils').createLocalVue
 const mount = require('@vue/test-utils').mount
-const AAlert = require('@/alert/AAlert').default
+const AAlert = require('./AAlert').default
 
 describe('AAlert', () => {
   let wrapper

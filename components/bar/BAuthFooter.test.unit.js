@@ -2,7 +2,7 @@ const BootstrapVue = require('bootstrap-vue').BootstrapVue
 const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
 const createLocalVue = require('@vue/test-utils').createLocalVue
 const mount = require('@vue/test-utils').mount
-const BAuthFooter = require('@/bar/BAuthFooter').default
+const BAuthFooter = require('./BAuthFooter').default
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
