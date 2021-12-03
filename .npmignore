@@ -2,4 +2,4 @@
 .utils
 **/*.test.*.js*
 **/*.stories.js
-scripts/types/
+.utils/types/

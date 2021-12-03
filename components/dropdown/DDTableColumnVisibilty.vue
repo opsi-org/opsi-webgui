@@ -1,0 +1,159 @@
+<template>
+  <b-dropdown
+    v-bind="$props"
+    data-testid="DropdownDDProductRequest"
+    no-caret
+    lazy
+    dropleft
+    variant="outline-primary"
+    size="sm"
+    alt="Show column"
+    class="fixed_column_selection noborder"
+    :title="$t('table.showCol')"
+  >
+    <template #button-content>
+      <IconITableColumn />
+    </template>
+    <li v-if="$mq=='mobile' || twoColumnLayoutCollapsed[tableId]">
+      <a
+        v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
+        :key="header.key"
+        class="dropdown-item"
+        :class="{
+          'selected':columnVisibilityStates[header.key],
+          disabled:header.disabled,
+        }"
+        variant="primary"
+        :disabled="columnVisibilityStates[header.key]"
+        @click="setColumnVisibilityModel(header.key)"
+      >
+        {{ header.label }}
+      </a>
+    </li>
+    <li
+      v-else
+      id="selectableColumns-group"
+      name="selectableColumns"
+    >
+      <a
+        v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
+        :key="header.key"
+        class="dropdown-item"
+        :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
+        @click="handleItem(header.key)"
+      >
+        <b-form-checkbox
+          v-model="columnVisibilityList"
+          :name="header.label"
+          :value="header.key"
+          :class="{'selected':columnVisibilityStates[header.key]}"
+        />
+        {{ header.label }}
+      </a>
+    </li>
+  </b-dropdown>
+</template>
+
+<script lang="ts">
+import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
+import { BDropdown } from 'bootstrap-vue'
+import { ITableHeaders } from '@/.utils/types/ttable'
+import { IObjectString2Boolean } from '@/.utils/types/tgeneral'
+const settings = namespace('settings')
+
+@Component
+export default class DDTableColumnVisibilty extends BDropdown {
+  @Prop({ default: 'table' }) tableId!: string
+  @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
+
+  @settings.Getter public twoColumnLayoutCollapsed!: IObjectString2Boolean
+
+  columnVisibilityList: Array<string> = []
+  columnVisibilityStates: IObjectString2Boolean = {}
+
+  created () {
+    Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
+      if (h._majorKey) {
+        this.columnVisibilityStates[this.headers[h._majorKey].key] = h.visible || false
+      } else {
+        this.columnVisibilityStates[h.key] = h.visible || false
+      }
+    })
+    this.columnVisibilityList = Object.keys(this.columnVisibilityStates).filter(k => this.columnVisibilityStates[k])
+  }
+
+  @Watch('$mq') mqChanged () {
+    if (this.$mq === 'mobile') {
+      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => k !== '_empty_' && this.columnVisibilityStates[k])
+      this.setColumnVisibilityModel(firstVisible)
+    }
+  }
+
+  @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
+    if (this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+      this.setColumnVisibilityModel(firstVisible)
+    } else if (!this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+      this.setColumnVisibilityModel(firstVisible)
+    }
+  }
+
+  @Watch('columnVisibilityList') keysChanged () {
+    this.setColumnVisibilityModel(undefined)
+  }
+
+  handleItem (key: string) {
+    if (this.columnVisibilityList.includes(key)) {
+      this.columnVisibilityList = this.columnVisibilityList.filter(s => s !== key)
+    } else {
+      this.columnVisibilityList.push(key)
+    }
+  }
+
+  setColumnVisibilityModel (tableKey: string|undefined) {
+    // set all columns to false
+    Object.keys(this.columnVisibilityStates).forEach((k) => {
+      this.columnVisibilityStates[k] = false
+      this.headers[k].visible = false
+    })
+
+    // set one columns to true (mobile-view)
+    if (tableKey !== undefined) {
+      this.columnVisibilityStates[tableKey] = true
+      this.columnVisibilityList = Object.keys(this.columnVisibilityStates).filter(k => this.columnVisibilityStates[k])
+    } else {
+      // set selected columns to true (desktop-view)
+      this.columnVisibilityList.forEach((k: string) => {
+        this.columnVisibilityStates[k] = true
+      })
+    }
+    // change visibilty of children if any major column is selected
+    Object.keys(this.columnVisibilityStates).forEach((k) => {
+      if (!this.headers[k]._isMajor) {
+        this.headers[k].visible = this.columnVisibilityStates[k]
+      } else {
+        Object.values(this.headers).filter(h => h._majorKey === k).map(h => h.key).forEach((ck) => {
+          this.headers[ck].visible = this.columnVisibilityStates[k]
+        })
+      }
+    })
+  }
+}
+</script>
+<style>
+.dropdown-menu {
+  height: max-content !important;
+}
+.dropdown-menu .dropdown-item {
+  cursor: pointer;
+  display: flex !important;
+}
+a.selected {
+  background-color: var(--primary);
+}
+.noborder .btn-outline-primary{
+  border: 0;
+  box-shadow: none;
+}
+</style>

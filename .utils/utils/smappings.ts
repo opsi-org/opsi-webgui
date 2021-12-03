@@ -1,4 +1,5 @@
-import { IObjectString2String } from '~/scripts/types/tgeneral'
+// import { IObjectString2String } from '~/.utils/types/tgeneral'
+import { IObjectString2String } from '../types/tgeneral'
 
 export function mapValues2Value (values: Array<string>, objects: Array<string>, objectsorigin?: Array<string>, defaultvalue?: string) {
   let defvalue = 'none'
