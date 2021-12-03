@@ -26,9 +26,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 import DropdownDDLang from '~/components/dropdown/DDLang.vue'
 
-@Component ({
-  components: { DropdownDDLang }
-})
+@Component({ components: { DropdownDDLang } })
 export default class BAuthFooter extends Vue {
 }
 </script>
