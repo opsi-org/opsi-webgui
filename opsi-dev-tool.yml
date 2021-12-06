@@ -14,6 +14,7 @@ package:
   depends:
     - opsiconfd (>= 4.2.0.213)
   source_script: | 
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/webgui"
     cp -a "${SRC}/backend/webgui" "${DST}/rootfs/var/lib/opsiconfd/webgui"
     mkdir -p "${DST}/rootfs/var/lib/opsiconfd/webgui/data/app"
     cp -a "${SRC}/opsiweb/dist/." "${DST}/var/lib/opsiconfd/webgui/data/app/"
