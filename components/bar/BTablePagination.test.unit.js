@@ -21,8 +21,10 @@ describe('BTablePagination', () => {
         totalRows: 1,
         tabledata: {
           pageNumber: 1,
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           setPageNumber: () => {},
           perPage: 1,
+          // eslint-disable-next-line @typescript-eslint/no-empty-function
           setPerPage: () => {},
           sortBy: '',
           sortDesc: '',

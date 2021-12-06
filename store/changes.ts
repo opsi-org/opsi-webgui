@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// TODO: do not use type 'object' define it in details through an interface
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 
 @Module({ name: 'changes', stateFactory: true, namespaced: true })
 export default class Changes extends VuexModule {
   _changesProducts: Array<any> = []
 
-  get changesProducts (): Array<object> { return this._changesProducts }
+  get changesProducts (): Array<any> { return this._changesProducts }
 
   @VuexMutation public pushToChangesProducts (obj: object) {
     this._changesProducts.push(obj)
