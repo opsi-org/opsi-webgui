@@ -81,23 +81,23 @@ test:test-integration:
       - opsiweb/test-results/
     expire_in: 2 day
 
-build:static-app:
-  stage: build
-  dependencies:
-    - init:npm
-    - test:lint
-    #- test:jtest
-  script:
-    - cd opsiweb
-    - npm run generate
-  artifacts:
-    name: 'opsi-webgui'
-    paths:
-      - opsiweb/dist
-    expire_in: 1 day
-  only:
-    - develop
-    - tags
+# build:static-app:
+#   stage: build
+#   dependencies:
+#     - init:npm
+#     - test:lint
+#     #- test:jtest
+#   script:
+#     - cd opsiweb
+#     - npm run generate
+#   artifacts:
+#     name: 'opsi-webgui'
+#     paths:
+#       - opsiweb/dist
+#     expire_in: 1 day
+#   only:
+#     - develop
+#     - tags
 
 # publish:binary-index:
 #   stage: publish
