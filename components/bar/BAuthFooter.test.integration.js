@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../.utils/playwright/pw-story-call')
+const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 // test('bar bauthfooter snapshot', async ({ page }) => {
 //   await callStoryId(page, 'bar-b-auth-footer', 'b-auth-footer')
 //   const component = await page.locator('[data-testid="BarBAuthFooter"]')

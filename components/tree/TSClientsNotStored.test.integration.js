@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../.utils/playwright/pw-story-call')
+const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
 test('treeselect-clients-not-stored snapshot', async ({ page }) => {
   await callStoryId(page, 'tree-t-s-clients', 'ts-clients-not-stored')

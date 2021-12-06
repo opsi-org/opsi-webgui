@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../.utils/playwright/pw-story-call')
+const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
 test('select-logtype snapshot', async ({ page }) => {
   await callStoryId(page, 'select-s-logtype', 's-logtype')

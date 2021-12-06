@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../.utils/playwright/pw-story-call')
+const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
 test('button help tooltip snapshot', async ({ page }) => {
   await callStoryId(page, 'button-btn-help-tooltip', 'btn-help-tooltip')

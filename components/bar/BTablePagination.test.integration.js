@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../.utils/playwright/pw-story-call')
+const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
 test('bar btablepagination snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-table-pagination', 'b-table-pagination')

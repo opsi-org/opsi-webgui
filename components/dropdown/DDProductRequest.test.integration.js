@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../.utils/playwright/pw-story-call')
+const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
 test('dropdown DDProductRequest head snapshot', async ({ page }) => {
   await callStoryId(page, 'dropdown-dd-product-request', 'dd-product-request-head')

@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { apiMock, cookieOpsiconfdSession } = require('../.utils/playwright/pw-api-mock')
+const { apiMock, cookieOpsiconfdSession } = require('../../.utils/playwright/pw-api-mock')
 
 test.beforeEach(async ({ page }) => {
   // page.on('console', m => console.log(m.text()))

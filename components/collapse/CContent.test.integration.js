@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test')
-const { callStoryId } = require('../.utils/playwright/pw-story-call')
+const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
 test('collapse ccontent snapshot', async ({ page }) => {
   await callStoryId(page, 'collapse-c-content', 'c-content')

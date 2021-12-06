@@ -8,12 +8,10 @@
     "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt ",
     "buildclean": "npm run clean && npm run build && npm run dev",
     "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt storybook --ci --quiet --port 3003 -s ./static",
-
     "lint": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path .gitignore .",
-
     "test": "jest && playwright test test/e2e test/integration",
-    "test:unit": "jest --config jest.config.js ",
-    "test:integration": "playwright test -c .utils/playwright/config/playwright-integration.config.js",
+    "test:unit": "jest --config .jest.config.js .",
+    "test:integration": "playwright test -c .utils/playwright/config/playwright-integration.config.js ",
     "test:e2e": "playwright test -c .utils/playwright/config/playwright-e2e.config.js"
   },
   "dependencies": {

@@ -3,7 +3,8 @@ const generalconfig = require('./playwright-config')
 
 // /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  testDir: '../../../../', // /workspace/opsiweb
+  // testDir: '../../../../', // /workspace/opsiweb
+  testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(e2e).js',
 
   testIgnore: generalconfig.testIgnore,
