@@ -1,7 +1,20 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-		{
+		{ // opsiconfd
+			"name": "opsiconfd",
+			"runtimeExecutable": "opsiconfd",
+			"runtimeArgs": [
+				"--workers=1",
+				"--log-level-stderr=5"
+			],
+			"outputCapture": "std",
+			"request": "launch",
+			"type": "node",
+			"auto": true,
+			"cwd": "${workspaceFolder}/opsiweb"
+		},
+		{ // Webgui
 			"name": "webgui",
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
@@ -14,11 +27,43 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true,
+			"auto": false, // TODO
 			"cwd": "${workspaceFolder}/opsiweb"
 		},
-		{
-			"name": "storybook",
+		{ // Webgui-Storybook
+			"name": "Webgui-storybook",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run-script",
+				"story"
+			],
+			"outputCapture": "std",
+			"request": "launch",
+			"type": "node",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"auto": false, // TODO
+            "cwd": "${workspaceFolder}/opsiweb"
+		},
+		{ // (Lib) Uib-components
+			"name": "Uib-Components",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"run-script",
+				"dev"
+			],
+			"outputCapture": "std",
+			"request": "launch",
+			"type": "node",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"auto": true,
+			"cwd": "${workspaceFolder}/opsiweb/uib-components"
+		},
+		{ // (Lib) Uib-Components-Storybook
+			"name": "Uib-Components Storybook",
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run-script",
@@ -31,8 +76,40 @@
 				"<node_internals>/**"
 			],
 			"auto": true,
-            "cwd": "${workspaceFolder}/opsiweb"
-		}
+            "cwd": "${workspaceFolder}/opsiweb/uib-components"
+		},
+		// {
+		// 	"name": "Opsiconfd",
+		// 	"type": "",
+		// 	"request": "launch",
+		// 	"program": "opsiconfd",
+		// 	"args": ["--workers=1", "--log-level-stderr=5"],
+		// 	"internalConsoleOptions": "neverOpen"
+		// },
+		{ // Opsiconfd
+			"name": "Opsiconfd",
+			"type": "bashdb",
+			// "type": "bashdb",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"args": ["--workers=1", "--log-level-stderr=5"],
+			"program": "/bin/opsiconfd",
+			"terminalKind": "integrated" //   <---- This attaches the integrated terminal.
+		  }
+
+		// TODO: test:unit watch
+		// {
+		// 	"name": "Debug Jest Tests",
+		// 	"type": "node",
+		// 	"request": "launch",
+		// 	"program": "${workspaceFolder}/node_modules/.bin/jest",
+		// 	"args": ["--runInBand", "--setupFilesAfterEnv='${workspaceFolder}/jest.debug-setup.js'"],
+		// 	"windows": {
+		// 	"program": "${workspaceFolder}/node_modules/jest/bin/jest"
+		// 	},
+		// 	"console": "integratedTerminal",
+		// 	"internalConsoleOptions": "neverOpen"
+		// }
     ]
 }
 // echo "start application at port 8888"
