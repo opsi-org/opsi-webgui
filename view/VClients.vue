@@ -38,6 +38,15 @@
           </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
+              title="Products"
+              icon="grid"
+              to="/clients/products"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+
+            <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               icon="gear"
               to="/clients/config"
