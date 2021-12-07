@@ -181,7 +181,7 @@ interface IFetchOptions {
   }
 
   get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log')
+    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('products')
   }
 }
 </script>
