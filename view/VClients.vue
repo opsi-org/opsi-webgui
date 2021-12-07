@@ -181,8 +181,8 @@ interface IFetchOptions {
   }
 
   setClientSelection (id: string) {
-    // this.setSelectionClients([id])
-    this.pushToSelectionClients(id)
+    this.setSelectionClients([id])
+    // this.pushToSelectionClients(id)
   }
 
   isRouteActive (to: string, rowIdent: string) {
