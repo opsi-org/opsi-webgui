@@ -14,10 +14,10 @@ package:
   depends:
     - opsiconfd (>= 4.2.0.213)
   source_script: | 
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/webgui"
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd"
     cp -a "${SRC}/backend/webgui" "${DST}/rootfs/var/lib/opsiconfd/webgui"
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/webgui/data/app"
-    cp -a "${SRC}/opsiweb/dist/." "${DST}/var/lib/opsiconfd/webgui/data/app/"
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/webgui/data"
+    cp -a "${SRC}/opsiweb/dist" "${DST}/rootfs/var/lib/opsiconfd/webgui/data/app"
   postinst_script:
     - echo "OPSI webgui folder '/var/lib/opsiconfd/webgui'"
     - exit 0
