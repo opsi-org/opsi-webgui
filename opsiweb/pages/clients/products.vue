@@ -1,7 +1,7 @@
 <template>
   <div>
     <BarBPageHeader :title="'Products - ' + id" closeroute="/clients/" />
-    <ViewVClientsProducts :id="id" />
+    <ViewVProducts :child="true" />
   </div>
 </template>
 
