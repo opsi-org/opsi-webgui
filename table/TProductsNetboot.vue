@@ -96,7 +96,7 @@
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
           icon="gear"
-          to="/products/config"
+          :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
           :pressed="isRouteActive"
           :click-parent="routeRedirectToParent"
@@ -140,6 +140,7 @@ export default class TProductsNetboot extends Vue {
   @Prop() rowId!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
+  @Prop() child!: boolean
 
   action: string = ''
   // type: string = ''
@@ -366,7 +367,11 @@ export default class TProductsNetboot extends Vue {
   }
 
   routeToChild (id: string) {
-    this.routeRedirectWith('/products/config', id)
+    if (this.child) {
+      this.routeRedirectWith('/clients/products/config', id)
+    } else {
+      this.routeRedirectWith('/products/config', id)
+    }
   }
 }
 </script>
