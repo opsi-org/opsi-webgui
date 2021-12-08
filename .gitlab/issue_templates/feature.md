@@ -15,4 +15,4 @@
 
 (Useful links or references)
 
-/label ~type::Feature
+/label ~Feature

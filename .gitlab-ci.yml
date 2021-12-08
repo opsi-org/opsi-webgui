@@ -141,12 +141,14 @@ build:addon:
     - cd ..
     - mkdir -p backend/webgui/data
     - mv opsiweb/dist backend/webgui/data/app
+    - mkdir webgui
+    - cp -r backend/webgui/* webgui/
   only:
     - tags
   artifacts:
     name: 'webgui'
     paths:
-      - backend/webgui
+      - webgui
     expire_in: 2 day
 
 publish:obs_int:
