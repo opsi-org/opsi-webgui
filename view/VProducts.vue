@@ -4,8 +4,8 @@
       <template #parent>
         <BarBPageHeader>
           <template #left>
-            <TreeTSDepots />
-            <TreeTSHostGroupLazyLoad />
+            <TreeTSDepots v-if="!child" />
+            <TreeTSHostGroupLazyLoad v-if="!child" />
             <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
             <TreeTSProductGroup />
@@ -15,8 +15,8 @@
             <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
           </template>
         </BarBPageHeader>
-        <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
-        <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
+        <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
+        <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
         <ButtonBTNClearSelection store="products" />
       </template>
       <template #child>
@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, namespace } from 'nuxt-property-decorator'
+import { Component, Vue, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '~/scripts/types/tchanges'
 // import { ITableData } from '~/scripts/types/ttable'
 // const selections = namespace('selections')
@@ -35,6 +35,7 @@ const settings = namespace('settings')
 const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
+  @Prop() child!: boolean
   // @selections.Getter public selectionClients!: Array<string>
   // @selections.Getter public selectionDepots!: Array<string>
   // @selections.Getter public selectionProducts!: Array<string>
