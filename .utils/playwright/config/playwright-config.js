@@ -22,7 +22,7 @@ module.exports.projects = [
 
 module.exports.testIgnore = '@/**/*.test.unit.js'
 module.exports.workers = 4 // cause for me locally it exists 8 cpu cores (recommendation is to use the half of it)
-module.exports.expect = { toMatchSnapshot: { threshold: 0.1 } }
+module.exports.expect = { toMatchSnapshot: { threshold: 0.2 } }
 // quiet: true,
 // reporter: 'line',
 // reporter: 'jest-silent-reporter',
