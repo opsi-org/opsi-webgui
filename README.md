@@ -18,9 +18,14 @@
     > the container starts automaticly the complete develepment enviroment including webgui(nuxt), storybook and playwright
     > but currently NOT opsiconfd! (see next steps)
 * optional: import backend (e.g `opsi-backup restore --new-server-id=host.uib.local backend/opsibackup/opsi.bak` or with task)
-* start opsiconfd (last command in terminal e.g `opsiconfd l5`)
+* Three applications should start automaticly (visible in 'Run and Debug' or 'debug console'): opsiconfd, webgui, webgui-storybook
+  If it is not the case the following commands can be run in the terminal inside the container (every command in own terminal):
+  * opsiconfd: `opsiconfd l5`
+  * webgui: `cd /workspace/opsiweb/ && npm run dev`
+  * webgui-storybook: `cd /workspace/opsiweb/ && npm run story`
 * Accept certificate of opsiconfd: `https://localhost:4447/admin`
-* Open: `https://localhost:8888/`
+* Open: `https://localhost:8888/` for webgui
+* Optional open: `http://localhost:3003/` for webgui-storybook
 
 
 ## Frontend-Testing

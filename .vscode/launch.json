@@ -1,7 +1,20 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-		{
+		{ // opsiconfd
+			"name": "opsiconfd",
+			"runtimeExecutable": "opsiconfd",
+			"runtimeArgs": [
+				"--workers=1",
+				"--log-level-stderr=5"
+			],
+			"outputCapture": "std",
+			"request": "launch",
+			"type": "node",
+			"auto": true,
+			"cwd": "${workspaceFolder}/opsiweb"
+		},
+		{ // Webgui
 			"name": "webgui",
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
@@ -17,8 +30,8 @@
 			"auto": true,
 			"cwd": "${workspaceFolder}/opsiweb"
 		},
-		{
-			"name": "storybook",
+		{ // Webgui-Storybook
+			"name": "webgui-storybook",
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run-script",
@@ -32,7 +45,18 @@
 			],
 			"auto": true,
             "cwd": "${workspaceFolder}/opsiweb"
-		}
+		},
+
+		{ // Opsiconfd
+			"name": "Opsiconfd",
+			"type": "bashdb",
+			// "type": "bashdb",
+			"request": "launch",
+			"cwd": "${workspaceFolder}",
+			"args": ["--workers=1", "--log-level-stderr=5"],
+			"program": "/bin/opsiconfd",
+			"terminalKind": "integrated" //   <---- This attaches the integrated terminal.
+		  }
     ]
 }
 // echo "start application at port 8888"
