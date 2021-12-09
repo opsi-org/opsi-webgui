@@ -19,9 +19,11 @@
     "baseUrl": ".",
     "paths": {
       "~/*": [
+        "ui/*",
         "uib-components/*"
       ],
       "@/*": [
+        "ui/*",
         "uib-components/*"
       ]
     },
@@ -36,6 +38,7 @@
     ]
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "uib-components/node_modules"
   ],
 }

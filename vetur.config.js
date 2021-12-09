@@ -12,8 +12,8 @@ module.exports = {
   // **optional** default: `[{ root: './' }]`
   // support monorepos
   projects: [
-    './opsiweb', // Shorthand for specifying only the project root location
+    './opsiweb/uib-components',
     './opsiweb/ui', // Shorthand for specifying only the project root location
-    './opsiweb/uib-components'
+    './opsiweb' // Shorthand for specifying only the project root location
   ]
 }

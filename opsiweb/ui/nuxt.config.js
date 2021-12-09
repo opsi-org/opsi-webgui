@@ -58,7 +58,7 @@ export default {
     // https://go.nuxtjs.dev/typescript
     '@nuxt/typescript-build',
     // '~/../uib-components/index.js'
-    'uib-components/.nuxt'
+    'uib-components/.nuxt-integration'
   ],
 
   router: {
@@ -130,7 +130,7 @@ export default {
     // }
   },
   storybook: {
-    stories: ['~/**/*.stories.js'],
+    stories: ['~/../**/*.stories.js'],
     decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
     // Optionsstorybook: {
     // addons: [

@@ -27,11 +27,11 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": false, // TODO
+			"auto": true,
 			"cwd": "${workspaceFolder}/opsiweb"
 		},
 		{ // Webgui-Storybook
-			"name": "Webgui-storybook",
+			"name": "webgui-storybook",
 			"runtimeExecutable": "npm",
 			"runtimeArgs": [
 				"run-script",
@@ -43,7 +43,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": false, // TODO
+			"auto": true,
             "cwd": "${workspaceFolder}/opsiweb"
 		},
 		{ // (Lib) Uib-components
@@ -59,7 +59,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true,
+			"auto": false,
 			"cwd": "${workspaceFolder}/opsiweb/uib-components"
 		},
 		{ // (Lib) Uib-Components-Storybook
@@ -75,7 +75,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true,
+			"auto": false,
             "cwd": "${workspaceFolder}/opsiweb/uib-components"
 		},
 		// {
@@ -86,16 +86,16 @@
 		// 	"args": ["--workers=1", "--log-level-stderr=5"],
 		// 	"internalConsoleOptions": "neverOpen"
 		// },
-		{ // Opsiconfd
-			"name": "Opsiconfd",
-			"type": "bashdb",
-			// "type": "bashdb",
-			"request": "launch",
-			"cwd": "${workspaceFolder}",
-			"args": ["--workers=1", "--log-level-stderr=5"],
-			"program": "/bin/opsiconfd",
-			"terminalKind": "integrated" //   <---- This attaches the integrated terminal.
-		  }
+		// { // Opsiconfd
+		// 	"name": "Opsiconfd",
+		// 	"type": "bashdb",
+		// 	// "type": "bashdb",
+		// 	"request": "launch",
+		// 	"cwd": "${workspaceFolder}",
+		// 	"args": ["--workers=1", "--log-level-stderr=5"],
+		// 	"program": "/bin/opsiconfd",
+		// 	"terminalKind": "integrated" //   <---- This attaches the integrated terminal.
+		//   }
 
 		// TODO: test:unit watch
 		// {

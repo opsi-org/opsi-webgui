@@ -7,6 +7,7 @@
 	// "postStartCommand": "npm install && PORT=8888 bash",
 	"postCreateCommand": "/workspace/.devcontainer/post_create.sh",
 	"postStartCommand": "/workspace/.devcontainer/post_start.sh",
+	// "postAttachCommand": "opsiconfd --workers=1 --log-level-stderr=5",
 	// "remoteEnv": {
 	// 	"PLAYWRIGHT_BROWSERS_PATH":".playwright/browsers/",
 	// 	"PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"

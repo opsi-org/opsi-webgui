@@ -8,3 +8,4 @@ backend/opsibackup
 opsiweb/test/README.md
 opsiweb/test-results/
 *node_modules*
+opsiweb/uib-components/

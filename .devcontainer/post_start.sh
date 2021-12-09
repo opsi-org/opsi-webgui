@@ -55,3 +55,4 @@ npx playwright install
     # "playwright-firefox": "1.15.2",
     # "playwright-test": "^7.1.0",
     # "playwright-webkit": "1.15.2",
+
