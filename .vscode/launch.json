@@ -46,17 +46,6 @@
 			"auto": true,
             "cwd": "${workspaceFolder}/opsiweb"
 		},
-
-		{ // Opsiconfd
-			"name": "Opsiconfd",
-			"type": "bashdb",
-			// "type": "bashdb",
-			"request": "launch",
-			"cwd": "${workspaceFolder}",
-			"args": ["--workers=1", "--log-level-stderr=5"],
-			"program": "/bin/opsiconfd",
-			"terminalKind": "integrated" //   <---- This attaches the integrated terminal.
-		  }
     ]
 }
 // echo "start application at port 8888"
