@@ -68,13 +68,12 @@
     },
     "workspace.isHidden": true,
     "i18n-ally.localesPaths": [
+      "locale",
       "opsiweb/ui/locale",
       "opsiweb/uib-components/locale"
     ],
-    "i18n-ally.keystyle": "flat",
-    "i18n-ally.sourceLanguage": "de",
-    "i18n-ally.enabledParsers": [
-      "json"
-    ],
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.enabledParsers": [ "json" ],
     "python.pythonPath": "/usr/bin/python3",
   }
