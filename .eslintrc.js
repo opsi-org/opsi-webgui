@@ -1,28 +1,26 @@
 module.exports = {
-    "env": {
-        "browser": true,
-        "node": true,
-        "jest": true
-    },
-    // extends: [
-    //     '@nuxtjs',
-    //     '@nuxtjs/eslint-config-typescript',
-    //     'plugin:nuxt/recommended'
-    // ],
-    "extends": [
-        "eslint:recommended",
-        'plugin:nuxt/recommended',
-        "plugin:@typescript-eslint/recommended"
-    ],
-    "parser": "@typescript-eslint/parser",
-    // "parserOptions": {
-    //     "ecmaVersion": 13,
-    //     "sourceType": "module"
-    // },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        '@typescript-eslint/no-var-requires': 0
-    }
-};
+  root: true,
+  env: {
+    browser: true,
+    node: true
+  },
+  // parserOptions: {
+  //   parser: 'babel-eslint',
+  //   sourceType: 'module'
+  // },
+  extends: [
+    '@nuxtjs',
+    '@nuxtjs/eslint-config-typescript',
+    'plugin:nuxt/recommended'
+  ],
+  // extends: [
+  //   '@nuxtjs/eslint-config-typescript',
+  //   'plugin:nuxt/recommended'
+  // ],
+  plugins: [
+    // 'vue/attribute-hyphenation': 'off'
+    // 'no-unused-vars': 'off',
+  ],
+  // add your custom rules here
+  rules: {}
+}
