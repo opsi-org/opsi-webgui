@@ -2,6 +2,7 @@
   <div data-testid="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
+        <BarBPageHeader v-if="child" :title="'Products -'" :subtitle="id" closeroute="/clients/" />
         <BarBPageHeader>
           <template #left>
             <TreeTSDepots v-if="!child" />
@@ -36,6 +37,7 @@ const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
   @Prop() child!: boolean
+  @Prop({ }) id!: string
   // @selections.Getter public selectionClients!: Array<string>
   // @selections.Getter public selectionDepots!: Array<string>
   // @selections.Getter public selectionProducts!: Array<string>
