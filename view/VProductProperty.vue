@@ -1,7 +1,7 @@
 
 <template>
   <div data-testid="VProductProperty">
-    <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - ' + id" :closeroute="closeroute" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #left>
         <slot name="IDSelection" />
