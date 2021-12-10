@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BarBPageHeader :title="'Products - ' + id" closeroute="/clients/" />
+    <BarBPageHeader :title="'Products -'" :subtitle="id" closeroute="/clients/" />
     <ViewVProducts :child="true" />
   </div>
 </template>
