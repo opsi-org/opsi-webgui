@@ -1,6 +1,5 @@
 <template>
   <div>
-    <br>
     <ViewVProductProperty :id="id" :as-child="asChild" closeroute="/clients/products/" />
   </div>
 </template>

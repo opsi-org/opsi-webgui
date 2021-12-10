@@ -1,7 +1,7 @@
 <template>
   <div>
-    <BarBPageHeader :title="'Products -'" :subtitle="id" closeroute="/clients/" />
-    <ViewVProducts :child="true" />
+    <!-- <BarBPageHeader :title="'Products -'" :subtitle="id" closeroute="/clients/" /> -->
+    <ViewVProducts :id="id" :child="true" />
   </div>
 </template>
 
