@@ -35,7 +35,7 @@ export default class NICollapsible extends Vue {
 
 <style>
 .submenu{
-  margin-left: 35px;
+  margin-left: 5px;
 }
 .caret_icon{
   float: right;
