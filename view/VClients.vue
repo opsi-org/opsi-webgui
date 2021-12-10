@@ -38,6 +38,15 @@
           </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
+              title="Products"
+              icon="grid"
+              to="/clients/products"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+
+            <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               icon="gear"
               to="/clients/config"
@@ -126,6 +135,7 @@ interface IFetchOptions {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public pushToSelectionClients!: (s: string) => void
   // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
@@ -167,6 +177,14 @@ interface IFetchOptions {
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
     this.$router.push(to)
+    if (this.$route.path.includes('products')) {
+      this.setClientSelection(rowIdent)
+    }
+  }
+
+  setClientSelection (id: string) {
+    this.setSelectionClients([id])
+    // this.pushToSelectionClients(id)
   }
 
   isRouteActive (to: string, rowIdent: string) {
@@ -174,7 +192,7 @@ interface IFetchOptions {
   }
 
   get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log')
+    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('products')
   }
 }
 </script>

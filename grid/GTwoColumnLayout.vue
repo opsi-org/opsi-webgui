@@ -1,5 +1,6 @@
 <template>
   <b-row data-testid="GTwoColumnLayout">
+    <!-- 'col-4': $route.path.includes('clients/products/config') -->
     <b-col :class="{'d-none' : showchild && $mq === 'mobile', column2visible: showchild}">
       <slot name="parent" />
     </b-col>

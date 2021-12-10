@@ -11,7 +11,7 @@
     <b v-if="title && bold">{{ title }}</b>
     <p v-else-if="title && !bold">
       {{ title }}
-    </p>
+    </p> <span v-if="subtitle" class="font-italic" style="margin-left: 5px !important;"> {{ subtitle }} </span>
     <slot name="left" />
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
@@ -32,6 +32,7 @@ export default class BPageHeader extends Vue {
   @Prop({ }) navbartype!: string
   @Prop({ }) collapsed!: boolean
   @Prop({ }) title!: string
+  @Prop({ }) subtitle!: string
   @Prop({ }) closeroute!: string
 }
 </script>
