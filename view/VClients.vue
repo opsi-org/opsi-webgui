@@ -63,12 +63,14 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
-              <template #button-content>
-                <b-icon icon="three-dots-vertical" />
-              </template>
-              <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
-            </b-dropdown>
+            <b-badge variant="outline-primary">
+              <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
+                <template #button-content>
+                  <b-icon icon="three-dots-vertical" />
+                </template>
+                <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
+              </b-dropdown>
+            </b-badge>
           </template>
           <template #pagination>
             <BarBTablePagination
@@ -198,6 +200,5 @@ interface IFetchOptions {
 <style>
 .actions_dropdown .btn-outline-primary{
   border: 0;
-  box-shadow: none;
 }
 </style>
