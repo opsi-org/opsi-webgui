@@ -20,6 +20,7 @@ const selections = namespace('selections')
 export default class BTNLogout extends Vue {
   @Prop({ default: false }) abortClick!: boolean
   @auth.Mutation public logout!: () => void
+  @auth.Mutation public clearSession!: () => void
   @selections.Mutation public clearAllSelection!: () => void
 
   async doLogout () {
@@ -27,6 +28,7 @@ export default class BTNLogout extends Vue {
     const response = await this.$axios.$post('/api/auth/logout')
     if (response.result === 'logout success') {
       this.logout()
+      this.clearSession()
       this.clearAllSelection()
       if (this.$route.name !== 'login') {
         this.$router.push({ path: '/login' })
