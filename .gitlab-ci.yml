@@ -12,6 +12,7 @@ stages:
 # # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 before_script:
+  - alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
   - git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   - cd opsiweb/uib-components
   - git branch -a
@@ -36,19 +37,23 @@ init:dry:
   script:
     - cd opsiweb
     - npm i -g dry-dry
-    - dry i --dry-save-package-json-to package-merged.json --dry-keep-package-json
+    - npm-uib i
+    - ls -lah
+    - cat package-dry.json
     - cat package-merged.json
     - cat package.json
   artifacts:
     paths:
       - opsiweb/node_modules/
+      - /usr/lib/node_modules/dry-dry/
+      - /usr/bin/dry
     expire_in: 1 day
 
 test:lint:
   stage: test
   script:
     - cd opsiweb
-    - dry run lint
+    - npm-uib run lint
 
 test:test-unit:
   stage: test
@@ -56,7 +61,7 @@ test:test-unit:
     - init:dry
   script:
     - cd opsiweb
-    - dry run test:unit
+    - npm-uib run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
@@ -69,10 +74,10 @@ test:test-e2e:
   script:
     - cd opsiweb
     - npx playwright install
-    - PORT=8888 nohup dry run dev &
+    - PORT=8888 nohup npm-uib run dev &
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - dry run test:e2e
+    - npm-uib run test:e2e
   allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
@@ -88,10 +93,10 @@ test:test-integration:
   script:
     - cd opsiweb
     - npx playwright install
-    - PORT=8888 nohup dry run dev &
-    - PORT=3003 nohup dry run story &
+    - PORT=8888 nohup npm-uib run dev &
+    - PORT=3003 nohup npm-uib run story &
     - sleep 60
-    - dry run test:integration
+    - npm-uib run test:integration
   allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-integration'
@@ -108,7 +113,7 @@ build:static-app:
     #- test:jtest
   script:
     - cd opsiweb
-    - dry run generate
+    - npm-uib run generate
   artifacts:
     name: 'opsi-webgui'
     paths:
