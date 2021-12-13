@@ -141,6 +141,7 @@ import { makeToast } from '@/scripts/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '~/scripts/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '~/scripts/types/ttable'
 import { ChangeObj } from '~/scripts/types/tchanges'
+const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -206,6 +207,7 @@ export default class TProductsLocalboot extends Vue {
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
+  @auth.Mutation public setSession!: () => void
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -272,6 +274,7 @@ export default class TProductsLocalboot extends Vue {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
+          this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -290,6 +293,7 @@ export default class TProductsLocalboot extends Vue {
         const response = (await this.$axios.get('/api/opsidata/products', { params }))
         this.fetchedData = response.data
         this.totalData = response.headers['x-total-count']
+        this.setSession()
       } catch (error) {
         this.errorText = this.$t('message.errortext') as string
         // eslint-disable-next-line no-console
@@ -309,6 +313,7 @@ export default class TProductsLocalboot extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
+        this.setSession()
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
