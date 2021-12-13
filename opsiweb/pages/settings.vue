@@ -12,19 +12,15 @@
         </DivDScrollResult>
       </b-tab>
     </b-tabs> -->
-    <b-row>
-      <b-form-group>
-        <b-form-radio-group
-          v-model="selected"
-          :options="options"
-          plain
-        />
-      </b-form-group>
-    </b-row>
-    <b-row>
-      <ViewVSettingsLocalSpecific v-if="selected=='localspecific'" />
-      <ViewVModules v-if="selected=='modules'" />
-    </b-row>
+    <b-form-group>
+      <b-form-radio-group
+        v-model="selected"
+        :options="options"
+        plain
+      />
+    </b-form-group>
+    <ViewVSettingsLocalSpecific v-if="selected=='localspecific'" />
+    <ViewVModules v-if="selected=='modules'" />
   </div>
 </template>
 
