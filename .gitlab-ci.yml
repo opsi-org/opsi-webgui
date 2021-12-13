@@ -39,7 +39,8 @@ init:dry:
     - cd opsiweb
     - npm i -g dry-dry
     - *define_globals
-    - npm-uib i
+    - npm-uib --help
+    - dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i
     - ls -lah
     - cat package-dry.json
     - cat package-merged.json
