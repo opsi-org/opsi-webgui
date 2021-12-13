@@ -12,8 +12,7 @@ stages:
 # # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 before_script:
-  - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-  - git checkout feature/componentslib2
+  - git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   - cd opsiweb/uib-components
   - git branch -a
   - ls -lah
