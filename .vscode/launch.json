@@ -16,9 +16,11 @@
 		},
 		{ // Webgui
 			"name": "webgui",
-			"runtimeExecutable": "npm",
+			"runtimeExecutable": "dry",
 			"runtimeArgs": [
-				"run-script",
+				"--dry-save-package-json-to package-merged.json",
+				"--dry-keep-package-json",
+				"run",
 				"dev"
 			],
 			"outputCapture": "std",
@@ -32,9 +34,11 @@
 		},
 		{ // Webgui-Storybook
 			"name": "webgui-storybook",
-			"runtimeExecutable": "npm",
+			"runtimeExecutable": "dry",
 			"runtimeArgs": [
-				"run-script",
+				"--dry-save-package-json-to package-merged.json",
+				"--dry-keep-package-json",
+				"run",
 				"story"
 			],
 			"outputCapture": "std",
@@ -48,7 +52,7 @@
 		},
 		{ // (Lib) Uib-components
 			"name": "Uib-Components",
-			"runtimeExecutable": "npm",
+			"runtimeExecutable": "npm-uib",
 			"runtimeArgs": [
 				"run-script",
 				"dev"
@@ -64,7 +68,7 @@
 		},
 		{ // (Lib) Uib-Components-Storybook
 			"name": "Uib-Components Storybook",
-			"runtimeExecutable": "npm",
+			"runtimeExecutable": "npm-uib",
 			"runtimeArgs": [
 				"run-script",
 				"story"

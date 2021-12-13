@@ -12,7 +12,6 @@ stages:
 # # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 before_script:
-  - alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
   - git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   - cd opsiweb/uib-components
   - git branch -a
@@ -24,6 +23,8 @@ before_script:
 # variables:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
   # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
+.define_globals: &define_globals |
+  alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
   apt update
@@ -37,6 +38,7 @@ init:dry:
   script:
     - cd opsiweb
     - npm i -g dry-dry
+    - *define_globals
     - npm-uib i
     - ls -lah
     - cat package-dry.json
@@ -61,6 +63,7 @@ test:test-unit:
     - init:dry
   script:
     - cd opsiweb
+    - *define_globals
     - npm-uib run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
@@ -73,6 +76,7 @@ test:test-e2e:
     - init:dry
   script:
     - cd opsiweb
+    - *define_globals
     - npx playwright install
     - PORT=8888 nohup npm-uib run dev &
     - sleep 20
@@ -92,6 +96,7 @@ test:test-integration:
     - init:dry
   script:
     - cd opsiweb
+    - *define_globals
     - npx playwright install
     - PORT=8888 nohup npm-uib run dev &
     - PORT=3003 nohup npm-uib run story &
@@ -113,6 +118,7 @@ build:static-app:
     #- test:jtest
   script:
     - cd opsiweb
+    - *define_globals
     - npm-uib run generate
   artifacts:
     name: 'opsi-webgui'
