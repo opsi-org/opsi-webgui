@@ -42,22 +42,4 @@ service opsiconfd restart
 
 # su - node <<SHT
 cd /workspace/opsiweb
-echo "[script.sh] install dependencies..."
-# echo "install dry-dry to be able to merge package.json files"
-npm i -g dry-dry
-dry i --dry-save-package-json-to package-merged.json --dry-keep-package-json
-# dry i --dry-save-package-json-to=package-merged.json
-
-# # npm run build
-# #TODO
-# npm i -D @playwright/test
-# # echo "[script.sh] configure playwright..."
-# npx playwright install
-# # npx playwright install-deps
-
-#     # "playwright": "^1.15.2",
-#     # "playwright-chromium": "1.15.2",
-#     # "playwright-firefox": "1.15.2",
-#     # "playwright-test": "^7.1.0",
-#     # "playwright-webkit": "1.15.2",
-
+./install.sh

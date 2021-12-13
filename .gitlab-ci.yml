@@ -28,15 +28,11 @@ before_script:
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
-init:npm:
+init:dry:
   stage: init
   script: |
     cd opsiweb
-    echo "[script.sh] install dependencies..."
-    npm run clean
-    npm run build
-    npm i -D @playwright/test
-    npx playwright install
+    ./install.sh
   artifacts:
     paths:
       - opsiweb/node_modules/
@@ -46,15 +42,15 @@ test:lint:
   stage: test
   script:
     - cd opsiweb
-    - npm run lint
+    - dry run lint
 
 test:test-unit:
   stage: test
   dependencies:
-    - init:npm
+    - init:dry
   script:
     - cd opsiweb
-    - npm run test:unit
+    - dry run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
@@ -63,14 +59,14 @@ test:test-unit:
 test:test-e2e:
   stage: test
   dependencies:
-    - init:npm
+    - init:dry
   script:
     - cd opsiweb
     - npx playwright install
-    - PORT=8888 nohup npm run dev &
+    - PORT=8888 nohup dry run dev &
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm run test:e2e
+    - dry run test:e2e
   allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
@@ -82,14 +78,14 @@ test:test-e2e:
 test:test-integration:
   stage: test
   dependencies:
-    - init:npm
+    - init:dry
   script:
     - cd opsiweb
     - npx playwright install
-    - PORT=8888 nohup npm run dev &
-    - PORT=3003 nohup npm run story &
+    - PORT=8888 nohup dry run dev &
+    - PORT=3003 nohup dry run story &
     - sleep 60
-    - npm run test:integration
+    - dry run test:integration
   allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-integration'
@@ -101,12 +97,12 @@ test:test-integration:
 build:static-app:
   stage: build
   dependencies:
-    - init:npm
+    - init:dry
     - test:lint
     #- test:jtest
   script:
     - cd opsiweb
-    - npm run generate
+    - dry run generate
   artifacts:
     name: 'opsi-webgui'
     paths:
