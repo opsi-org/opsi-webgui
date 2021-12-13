@@ -3,7 +3,7 @@
 	"dockerComposeFile": "../.docker/docker-compose.yml",
 	"service": "uib-components_dev",
 	"workspaceFolder": "/workspace",
-	"forwardPorts": [8888, 3003],
+	"forwardPorts": [8899, 3099],
 	// "postStartCommand": "npm install && PORT=8888 bash",
 	// "postCreateCommand": "/workspace/.devcontainer/post_create.sh",
 	"postStartCommand": "/workspace/.devcontainer/post_start.sh",
