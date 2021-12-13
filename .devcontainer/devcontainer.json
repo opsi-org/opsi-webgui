@@ -24,6 +24,8 @@
 		"orta.vscode-jest",
 		"philfontaine.autolaunch",
 		"ms-playwright.playwright",
-		"eamodio.gitlens"
+		"eamodio.gitlens",
+		"sketchbuch.vsc-packages",
+		"ldd-vs-code.better-package-json"
 	]
 }

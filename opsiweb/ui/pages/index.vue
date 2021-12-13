@@ -1,6 +1,6 @@
 <template>
   <b-card class="text-center index_content">
-    <IconIOpsiLogo />
+    <ComponentsIconIOpsiLogo />
     <h1>  OPSIWEB  </h1>
   </b-card>
 </template>

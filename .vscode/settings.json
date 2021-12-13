@@ -77,4 +77,5 @@
       "json"
     ],
     "python.pythonPath": "/usr/bin/python3",
+    "packageManager": "npm",
   }

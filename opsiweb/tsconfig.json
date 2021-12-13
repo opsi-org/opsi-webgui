@@ -1,10 +1,16 @@
 {
+  "extends": "./uib-components/tsconfig.json",
   "compilerOptions": {
+    "outDir": "./dist",
+    // overwrite uib-component config ?
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES6",
     // "target": "ES2018",
     "module": "ESNext",
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "noImplicitReturns": false,
     "moduleResolution": "Node",
     "lib": [
       "ESNext",
@@ -39,6 +45,8 @@
   },
   "exclude": [
     "node_modules",
-    "uib-components/node_modules"
+    "uib-components/node_modules",
+    "uib-components/tsconfig.json",
+    "ui/tsconfig.json"
   ],
 }

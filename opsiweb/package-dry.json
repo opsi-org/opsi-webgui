@@ -1,0 +1,42 @@
+{
+  "name": "webgui",
+  "version": "0.0.7",
+  "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui-components",
+  "license": "MIT",
+  "keywords": [
+    "opsi",
+    "webgui",
+    "uib"
+  ],
+  "description": "uib opsiweb",
+  "scripts": {
+    "build": "dry i --dry-save-package-json-to package-merged.json --dry-keep-package-json",
+    "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt ui/",
+    "clean": "rm -rf node_modules uib-components/node_modules; rm -f package-lock.json uib-components/package-lock.json",
+    "buildclean": "dry run clean && dry run build #&& dry run dev",
+    "buildclean-lib": "cd uib-components && dry run buildclean",
+    "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt ui/ storybook --ci --quiet --port 3003 -s ./ui/static",
+    "story-components": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt uib-components/ storybook --ci --quiet --port 3003 -s ./ui/static",
+    "story2": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect storybook --port 3003 -s ./ui/static",
+    "prod": "nuxt ui/ generate && dry run start",
+    "start": "nuxt ui/ start",
+    "generate": "nuxt ui/ generate",
+    "lint:ui": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ui/.gitignore  ui/",
+    "lint:components": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path uib-components/.gitignore  uib-components/",
+    "lint:all": "dry run lint:ui && dry run lint:components",
+    "lint": "dry run lint:ui",
+    "test": "jest && playwright test test/e2e test/integration",
+    "test:unit": "jest --config ui/jest.config.js  ui/",
+    "test:unit:components": "jest --config uib-components/jest.config.js uib-components/",
+    "test:integration": "playwright test -c uib-components/.utils/playwright/config/playwright-integration.config.js",
+    "test:e2e": "playwright test -c uib-components/.utils/playwright/config/playwright-e2e.config.js",
+    "test:playwright": "# TODO: command to test both",
+    "all": "../.devcontainer/npm_all.sh"
+  },
+  "dry": {
+    "extends": "uib-components/package.json",
+    "dependencies":{
+      "uib-components": "file:uib-components"
+    }
+  }
+}

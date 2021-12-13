@@ -1,0 +1,12 @@
+{
+  "name": "opsiweb",
+  "version": "0.0.6",
+  "private": true,
+  "scripts": {
+  },
+  "dependencies": {
+    "uib-components": "file:uib-components"
+  },
+  "devDependencies": {
+  }
+}
