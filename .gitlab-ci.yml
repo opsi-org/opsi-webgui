@@ -37,6 +37,8 @@ init:dry:
     - cd opsiweb
     - npm i -g dry-dry
     - dry i --dry-save-package-json-to package-merged.json --dry-keep-package-json
+    - cat package-merged.json
+    - cat package.json
   artifacts:
     paths:
       - opsiweb/node_modules/
