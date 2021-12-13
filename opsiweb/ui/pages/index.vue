@@ -1,7 +1,8 @@
 <template>
   <b-card class="text-center index_content">
     <IconIOpsiLogo />
-    <h1>  OPSIWEB  </h1>
+    <h1>  OPSIWEB
+    </h1>
   </b-card>
 </template>
 

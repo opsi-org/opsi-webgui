@@ -18,7 +18,7 @@ alias egrep='egrep --color=auto'
 # alias cp='cp -i'
 # alias mv='mv -i'
 alias ll='ls -l'
-alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
+alias npm-uib='/usr/bin/dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
 alias ls='ls --color=auto'
 
 # UI_COMPONENT_MODULE = "[submodule \"ui-components\"]

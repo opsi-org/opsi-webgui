@@ -16,11 +16,12 @@
 		},
 		{ // Webgui
 			"name": "webgui",
+			"cwd": "${workspaceFolder}/opsiweb",
 			"runtimeExecutable": "dry",
+			// "--dry-save-package-json-to package-merged.json",
 			"runtimeArgs": [
-				"--dry-save-package-json-to package-merged.json",
 				"--dry-keep-package-json",
-				"run",
+				"run-script",
 				"dev"
 			],
 			"outputCapture": "std",
@@ -29,14 +30,12 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true,
-			"cwd": "${workspaceFolder}/opsiweb"
+			"auto": true
 		},
 		{ // Webgui-Storybook
 			"name": "webgui-storybook",
 			"runtimeExecutable": "dry",
 			"runtimeArgs": [
-				"--dry-save-package-json-to package-merged.json",
 				"--dry-keep-package-json",
 				"run",
 				"story"

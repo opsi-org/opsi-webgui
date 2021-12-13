@@ -10,7 +10,7 @@
   ],
   "description": "uib opsiweb",
   "scripts": {
-    "build": "dry i --dry-save-package-json-to package-merged.json --dry-keep-package-json",
+    "build": "dry i",
     "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt ui/",
     "clean": "rm -rf node_modules uib-components/node_modules; rm -f package-lock.json uib-components/package-lock.json",
     "buildclean": "dry run clean && dry run build #&& dry run dev",
@@ -24,7 +24,7 @@
     "lint-ui": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ui/.gitignore  ui/",
     "lint-lib": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path uib-components/.gitignore  uib-components/",
     "lint:all": "dry run lint-ui && dry run lint-components",
-    "lint": "dry --dry-keep-package-json run lint-ui",
+    "lint": "dry  run lint-ui",
     "test": "jest && playwright test test/e2e test/integration",
     "test:unit": "jest --config ui/.jest.config.js  ui/",
     "test:unit-lib": "jest --config uib-components/.jest.config.js  uib-components/",
