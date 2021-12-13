@@ -12,6 +12,7 @@
   >
     <NavNSidebar :expanded="attributes.expanded" />
     <template v-if="$mq === 'desktop'" #footer="">
+      <BadgeBCountdowntimer />
       <div class="sidemenu_footer">
         <b-button
           v-b-tooltip.hover
