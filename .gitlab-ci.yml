@@ -33,10 +33,10 @@ before_script:
 init:dry:
   stage: init
   # ./install.sh
-  script: |
-    cd opsiweb
-    npm i -g dry-dry
-    dry i --dry-save-package-json-to package-merged.json --dry-keep-package-json
+  script:
+    - cd opsiweb
+    - npm i -g dry-dry
+    - dry i --dry-save-package-json-to package-merged.json --dry-keep-package-json
   artifacts:
     paths:
       - opsiweb/node_modules/
