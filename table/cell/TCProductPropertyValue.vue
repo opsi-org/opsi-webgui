@@ -97,7 +97,11 @@ export default class TProductPropertyValue extends Vue {
   }
 
   get allOptionsUnique () {
-    return this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues || []])
+    const options = this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues || []])
+    if (this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)) {
+      options.push(this.$t('values.mixed') as string)
+    }
+    return options
   }
 
   get selectedValuesOriginal () {
