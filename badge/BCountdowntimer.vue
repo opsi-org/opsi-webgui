@@ -15,14 +15,14 @@ export default class BCountdowntimer extends Vue {
   @auth.Mutation public clearSession!: () => void
 
   mounted () {
-    this.initClock()
+    this.initCountdownTimer()
   }
 
-  initClock () {
+  initCountdownTimer () {
     const timeinterval = setInterval(() => {
       const t = this.getRemainingTime()
       this.countdowntimer = 'Expires in ' + t.days + 'd ' + t.hours + 'h ' + t.minutes + 'm ' + t.seconds + 's'
-      if (t.diff <= 0) {
+      if (isNaN(t.diff)) {
         this.countdowntimer = 'EXPIRED'
         clearInterval(timeinterval)
         this.logout()
@@ -34,6 +34,7 @@ export default class BCountdowntimer extends Vue {
   getRemainingTime () {
     const endtime = Cookie.get('X-opsi-session-lifetime')
     const diff = Date.parse(endtime as unknown as string) - Date.parse(new Date() as unknown as string)
+    console.log(diff)
     const seconds = Math.floor((diff / 1000) % 60)
     const minutes = Math.floor((diff / 1000 / 60) % 60)
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
