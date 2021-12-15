@@ -23,10 +23,10 @@ export default class Settings extends VuexModule {
   }
 
   @VuexMutation setSession () {
-    const expiryInMinutes = 20
-    const expiryTime = new Date(new Date().getTime() + expiryInMinutes * 60 * 1000)
-    const expiry = new Date().getTime()
-    Cookie.set('X-opsi-session-lifetime', { ExpiresIn: expiry }, { expires: expiryTime })
+    const expiryInMinutes = 5
+    const expiryTime = new Date(new Date().getTime() + (expiryInMinutes * 60 * 1000))
+    const expiry = new Date().getTime() + expiryInMinutes * 60 * 1000
+    Cookie.set('X-opsi-session-lifetime', expiry as unknown as string, { expires: expiryTime })
   }
 
   @VuexMutation clearSession () {
