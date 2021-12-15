@@ -35,13 +35,14 @@ import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/scripts/utils/scomponents'
 import { IObjectString2Any } from '~/scripts/types/tgeneral'
 import { ChangeObj } from '~/scripts/types/tchanges'
+const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component
 export default class TChanges extends Vue {
   @Prop({ }) tableitems!: Array<object>
   filter: string = ''
-
+  @auth.Mutation public setSession!: () => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
@@ -73,6 +74,7 @@ export default class TChanges extends Vue {
         console.log(response)
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
+        this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
       })
@@ -105,6 +107,7 @@ export default class TChanges extends Vue {
         console.log(response)
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
+        this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
       })

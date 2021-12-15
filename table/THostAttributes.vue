@@ -13,7 +13,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
+const auth = namespace('auth')
 interface Request {
     hosts: string
 }
@@ -26,6 +27,7 @@ export default class THostAttributes extends Vue {
   isLoading: boolean = false
   showError: boolean = false
   errorText: string = ''
+  @auth.Mutation public setSession!: () => void
 
   get fields () {
     return [
@@ -57,6 +59,7 @@ export default class THostAttributes extends Vue {
       await this.$axios.$get('/api/opsidata/hosts', { params })
         .then((response) => {
           this.result = response[0]
+          this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)

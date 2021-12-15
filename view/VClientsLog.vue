@@ -49,7 +49,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
+const auth = namespace('auth')
 interface LogRequest {
     selectedClient: string,
     selectedLogType: string
@@ -67,6 +68,7 @@ export default class VClientLog extends Vue {
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   isLoading: boolean = false
   errorText: string = ''
+  @auth.Mutation public setSession!: () => void
 
   @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
   @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
@@ -102,6 +104,7 @@ export default class VClientLog extends Vue {
       .then((response) => {
         this.logResult = response.result
         this.filteredLog = this.logResult
+        this.setSession()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

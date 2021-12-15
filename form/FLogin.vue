@@ -27,6 +27,8 @@ interface FormUser {
 
   @auth.Mutation public login!: (username: string) => void
   @auth.Mutation public logout!: () => void
+  @auth.Mutation public setSession!: () => void
+  @auth.Mutation public clearSession!: () => void
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
@@ -66,6 +68,7 @@ interface FormUser {
       .then((response) => {
         if (response.data.result === 'Login success') {
           this.login(this.form.username)
+          this.setSession()
           if (this.$route.name === 'login') {
             this.$router.push({ path: '/' })
           } else {
@@ -80,6 +83,7 @@ interface FormUser {
         // eslint-disable-next-line no-console
         console.error(error)
         this.logout()
+        this.clearSession()
         const errorMsg = this.$t('message.loginFailed') as string
         this.isLoading = false
         makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
