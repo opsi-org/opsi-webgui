@@ -1,6 +1,6 @@
 <template>
   <b-badge>
-    {{ countdowntime }}
+    {{ countdowntimer }}
   </b-badge>
 </template>
 
@@ -10,29 +10,36 @@ import Cookie from 'js-cookie'
 const auth = namespace('auth')
 @Component
 export default class BCountdowntimer extends Vue {
+  countdowntimer : string = ''
   @auth.Mutation public logout!: () => void
   @auth.Mutation public clearSession!: () => void
 
-  get countdowntime () {
-    // return this.countdown()
-    return setInterval(() => { this.countdown() }, 1000)
+  mounted () {
+    this.initClock()
   }
 
-  countdown () {
-    const expiry = Cookie.get('X-opsi-session-lifetime')
-    const countdownEnd = expiry as unknown as number
-    const countdownStart = new Date().getTime()
-    const diff = countdownEnd - countdownStart
-    // const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    // const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
-    if (diff < 0) {
-      this.logout()
-      this.clearSession()
-      return 'EXPIRED'
-      // return days + 'd ' + hours + 'h ' + minutes + 'm ' + seconds + 's'
-    } else { return 'Expires in' + minutes + 'm ' + seconds + 's' }
+  initClock () {
+    const timeinterval = setInterval(() => {
+      const t = this.getRemainingTime()
+      this.countdowntimer = 'Expires in ' + t.days + 'd ' + t.hours + 'h ' + t.minutes + 'm ' + t.seconds + 's'
+      if (t.diff <= 0) {
+        this.countdowntimer = 'EXPIRED'
+        clearInterval(timeinterval)
+        this.logout()
+        this.clearSession()
+      }
+    }, 1000)
+  }
+
+  getRemainingTime () {
+    const endtime = Cookie.get('X-opsi-session-lifetime')
+    const diff = Date.parse(endtime as unknown as string) - Date.parse(new Date() as unknown as string)
+    const seconds = Math.floor((diff / 1000) % 60)
+    const minutes = Math.floor((diff / 1000 / 60) % 60)
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+
+    return { diff, days, hours, minutes, seconds }
   }
 }
 </script>
