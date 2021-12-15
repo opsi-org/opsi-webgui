@@ -1,6 +1,6 @@
 <template>
   <div>
-    {{ countdowntimer }}
+    <small> {{ countdowntimer }} </small>
   </div>
 </template>
 
