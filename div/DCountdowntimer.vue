@@ -14,6 +14,7 @@ export default class BCountdowntimer extends Vue {
   countdowntimer : string = ''
   notify: boolean = false
   @auth.Mutation public logout!: () => void
+  @auth.Mutation public getSession!: () => void
   @auth.Mutation public clearSession!: () => void
 
   mounted () {
@@ -40,7 +41,7 @@ export default class BCountdowntimer extends Vue {
   }
 
   getRemainingTime () {
-    const endtime = Cookie.get('X-opsi-session-lifetime')
+    const endtime = Cookie.get('opsiweb-session')
     const diff = Date.parse(endtime as unknown as string) - Date.parse(new Date() as unknown as string)
     const seconds = Math.floor((diff / 1000) % 60)
     const minutes = Math.floor((diff / 1000 / 60) % 60)
