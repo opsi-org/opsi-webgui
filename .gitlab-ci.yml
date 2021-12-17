@@ -44,7 +44,6 @@ init:dry:
   script:
     - cd opsiweb
     - *define_globals
-    - npm-uib --help
     - npm-uib i
     - ls -lah
     - cat package-dry.json
