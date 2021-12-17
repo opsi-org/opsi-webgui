@@ -12,8 +12,8 @@ stages:
 # # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 before_script:
-  - shopt -s expand_aliases
-  - alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
+  # - shopt -s expand_aliases
+  # - alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
   - git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   - cd opsiweb/uib-components
   - git branch -a
@@ -26,7 +26,11 @@ before_script:
   # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
   # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
 .define_globals: &define_globals |
+  npm i -g dry-dry
+  ls -lah /usr/bin/dry
+  shopt -s expand_aliases
   alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
+
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
   apt update
@@ -39,10 +43,9 @@ init:dry:
   # ./install.sh
   script:
     - cd opsiweb
-    - npm i -g dry-dry
     - *define_globals
-    # - npm-uib --help
-    - dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i
+    - npm-uib --help
+    - npm-uib i
     - ls -lah
     - cat package-dry.json
     - cat package-merged.json
@@ -50,8 +53,8 @@ init:dry:
   artifacts:
     paths:
       - opsiweb/node_modules/
-      - /usr/lib/node_modules/dry-dry/
-      - /usr/bin/dry
+      # - /usr/lib/node_modules/dry-dry/
+      # - /usr/bin/dry
     expire_in: 1 day
 
 test:lint:
