@@ -112,10 +112,7 @@ before_script:
   pwd 
   ls -la 
   ls -la ../backend
-  mkdir webgui
-  cp -r ../backend webgui 
-  ls webgui
-  poetry run python -m pytest -o junit_family=xunit2 --junitxml=testreport.xml --cov-append --cov opsiconfd --cov-report term --cov-report xml -v ./webgui/tests || exit_code=$?
+  poetry run python -m pytest -o junit_family=xunit2 --junitxml=testreport.xml --cov-append --cov opsiconfd --cov-report term --cov-report xml -v tests || exit_code=$?
   if [ $exit_code -ne 0 ]; then
     echo "---------------------------------------"
     echo "opsiconfd log"
