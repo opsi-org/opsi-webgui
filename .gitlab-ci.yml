@@ -60,6 +60,7 @@ test:lint:
   stage: test
   script:
     - cd opsiweb
+    - *define_globals
     - npm-uib run lint
 
 test:test-unit:
