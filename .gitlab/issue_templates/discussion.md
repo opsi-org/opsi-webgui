@@ -8,6 +8,6 @@
 
 ### Opinions / Feedback
 
-( Add opinions as "*Comments in italic*" - **Name** )
+( Add opinions )
 
-/label ~type::Discussion
+/label ~Discussion

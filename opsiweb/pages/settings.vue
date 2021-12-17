@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <b-tabs :horizontal="true">
+    <!-- <b-tabs>
       <b-tab :title="$t('settingsPage.localspecific')" active>
         <ViewVSettingsLocalSpecific />
       </b-tab>
@@ -11,7 +11,16 @@
           </template>
         </DivDScrollResult>
       </b-tab>
-    </b-tabs>
+    </b-tabs> -->
+    <b-form-group>
+      <b-form-radio-group
+        v-model="selected"
+        :options="options"
+        plain
+      />
+    </b-form-group>
+    <ViewVSettingsLocalSpecific v-if="selected=='localspecific'" />
+    <ViewVModules v-if="selected=='modules'" />
   </div>
 </template>
 
@@ -19,5 +28,13 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class PSettings extends Vue {
+  selected: string = 'localspecific'
+  options: Array<object> = [
+    { text: this.$t('settingsPage.localspecific'), value: 'localspecific' },
+    { text: this.$t('settingsPage.modules'), value: 'modules' }
+  ]
 }
 </script>
+
+<style>
+</style>

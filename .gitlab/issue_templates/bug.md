@@ -18,4 +18,4 @@
 
 (Propose a solution or specify the line of code that might be responsible for the issue)
 
-/label ~type::Bug
+/label ~Bug

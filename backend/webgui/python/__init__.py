@@ -39,7 +39,6 @@ class Webgui(Addon):
 	name = ADDON_NAME
 	version = ADDON_VERSION
 
-
 	def setup(self, app):
 
 		if not mysql:
@@ -60,7 +59,7 @@ class Webgui(Addon):
 		app.include_router(depot_router, prefix=self.router_prefix)
 
 		app.mount(
-			path=f"{self.router_prefix}/app",
+			path=f"/{self.id}/app",
 			app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True),
 			name="app"
 		)
