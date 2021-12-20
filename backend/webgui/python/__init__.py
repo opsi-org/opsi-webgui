@@ -86,7 +86,7 @@ class Webgui(Addon):
 			if connection.scope.get("method") == "OPTIONS":
 				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
 		if (connection.scope["path"].rstrip("/") == self.router_prefix
-			or connection.scope["path"].startswith((f"{self.router_prefix}/app",f"{self.router_prefix}/api/user/opsiserver"))
+			or connection.scope["path"].startswith((f"/{self.id}/app",f"{self.router_prefix}/app",f"{self.router_prefix}/api/user/opsiserver"))
 		):
 			connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
 		elif connection.scope["path"] == f"{self.router_prefix}/api/auth/login":
@@ -108,7 +108,7 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	logger.info("Start authentication of client %s", connection.client.host)
 	username = None
 	password = None
-	if connection.scope["path"] == "/addons/webgui/api/auth/login":
+	if connection.scope["path"] == f"{self.router_prefix}/api/auth/login":
 		req = Request(connection.scope, receive)
 		form = await req.form()
 		username = form.get("username")
