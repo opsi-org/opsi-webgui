@@ -1,6 +1,6 @@
 {
   "name": "opsiweb",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": true,
   "scripts": {
     "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt storybook --ci --quiet --port 3003 -s ./static",
