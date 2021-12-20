@@ -90,7 +90,7 @@ before_script:
   poetry config experimental.new-installer false
   poetry lock --no-update
   poetry install
-  poetry run opsiconfd -l5 setup
+  
 
   # Create adminuser used in tests
   useradd adminuser
@@ -100,6 +100,8 @@ before_script:
   # Start and wait for redis server
   redis-server /etc/redis/redis.conf &
   sleep 10
+
+  poetry run opsiconfd -l5 setup
 
 .pytest: &pytest |
   [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
@@ -112,7 +114,7 @@ before_script:
   pwd 
   ls -la 
   ls -la ../backend
-  poetry run python -m pytest -o junit_family=xunit2 --junitxml=testreport.xml --cov-append --cov opsiconfd --cov-report term --cov-report xml -v ../backend/tests || exit_code=$?
+  poetry run pytest -o junit_family=xunit2 --junitxml=testreport.xml --cov-append --cov opsiconfd --cov-report term --cov-report xml -v ../backend/tests || exit_code=$?
   if [ $exit_code -ne 0 ]; then
     echo "---------------------------------------"
     echo "opsiconfd log"
