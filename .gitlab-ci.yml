@@ -90,6 +90,7 @@ before_script:
   poetry config experimental.new-installer false
   poetry lock --no-update
   poetry install
+  poetry run opsiconfd -l5 setup
   
 
   # Create adminuser used in tests
@@ -101,11 +102,13 @@ before_script:
   redis-server /etc/redis/redis.conf &
   sleep 10
 
-  poetry run opsiconfd -l5 setup
+ 
 
 .pytest: &pytest |
   [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
 
+  export OPSICONFD_MAX_SESSIONS_PER_IP=20000
+  poetry run opsiconfd &
   sleep 10
   echo "---------------------------------------"
   echo "Run tests"
