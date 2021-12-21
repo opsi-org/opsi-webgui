@@ -2,7 +2,7 @@ const { devices } = require('@playwright/test')
 
 module.exports.use = {
   // browserName: 'chromium',
-  baseURL: 'https://localhost:8888/webgui/app/',
+  baseURL: 'https://localhost:8888/addons/webgui/app/',
   // headless: false,
   viewport: { width: 1280, height: 720 },
   headless: true,

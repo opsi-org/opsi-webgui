@@ -60,7 +60,7 @@ export default {
   ],
   router: {
     middleware: ['authenticated'],
-    base: '/webgui/app/'
+    base: '/addons/webgui/app/'
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
