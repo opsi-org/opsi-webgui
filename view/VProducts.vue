@@ -28,10 +28,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, namespace } from 'nuxt-property-decorator'
+import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '~/scripts/types/tchanges'
 // import { ITableData } from '~/scripts/types/ttable'
-// const selections = namespace('selections')
+const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 @Component
@@ -41,13 +41,17 @@ export default class VProducts extends Vue {
   // @selections.Getter public selectionClients!: Array<string>
   // @selections.Getter public selectionDepots!: Array<string>
   // @selections.Getter public selectionProducts!: Array<string>
-  // @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
 
   rowId: string = ''
   isLoading: boolean = true
   ismultiselect: boolean = false
+
+  @Watch('ismultiselect', { deep: true }) multiselectChanged () {
+    this.setSelectionProducts([])
+  }
   // fetchedDataDepotIds: Array<string> = []
   // fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
   // tableData: ITableData = {
