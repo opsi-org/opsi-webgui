@@ -64,7 +64,7 @@ interface FormUser {
     const User = new FormData()
     User.append('username', this.form.username)
     User.append('password', this.form.password)
-    this.$axios.post('/api/auth/login', User)
+    this.$axios.post('/api/auth/login', User, { headers: { 'X-opsi-session-lifetime': 60 * 20 } })
       .then((response) => {
         if (response.data.result === 'Login success') {
           this.login(this.form.username)
