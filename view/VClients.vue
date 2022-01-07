@@ -13,6 +13,7 @@
           </template>
           <template #right>
             <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
+            <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
           </template>
         </BarBPageHeader>
         <TableTCollapseableForMobile
@@ -80,7 +81,6 @@
             />
           </template>
         </TableTCollapseableForMobile>
-        <ButtonBTNClearSelection store="clients" />
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />

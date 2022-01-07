@@ -14,11 +14,11 @@
           <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
             <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
+            <ButtonBTNClearSelection style="margin-left: 10px;" store="products" />
           </template>
         </BarBPageHeader>
         <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
         <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
-        <ButtonBTNClearSelection store="products" />
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
