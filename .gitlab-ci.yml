@@ -11,14 +11,21 @@ stages:
 # run with specific submodule-branch defined in .gitmodules
 # # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
-before_script:
-  # - shopt -s expand_aliases
-  # - alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
-  - git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-  - cd opsiweb/uib-components
-  - git branch -a
-  - ls -lah
-  - cd -
+.prepare_repo: &prepare_repo |
+  git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
+  cd opsiweb/uib-components
+  git branch -a
+  ls -lah
+  cd -
+
+# before_script:
+#   # - shopt -s expand_aliases
+#   # - alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
+#   - git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
+#   - cd opsiweb/uib-components
+#   - git branch -a
+#   - ls -lah
+#   - cd -
   # - git submodule sync --recursive
   # - git submodule update --init --recursive # --remote
 
@@ -141,6 +148,7 @@ init:dry:
   stage: init
   # ./install.sh
   script:
+    - *prepare_repo
     - cd opsiweb
     - *define_globals
     - npm-uib i
@@ -151,6 +159,7 @@ init:dry:
   artifacts:
     paths:
       - opsiweb/node_modules/
+      - opsiweb/components/
       # - /usr/lib/node_modules/dry-dry/
       # - /usr/bin/dry
     expire_in: 1 day
