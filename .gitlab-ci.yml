@@ -193,7 +193,9 @@ test:test-e2e:
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:e2e
+    - npm-uib run test:e2e || exit_code=$?
+    - npm-uib run test:delete-empty-results
+    - exit $exit_code
   allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
@@ -216,7 +218,9 @@ test:test-integration:
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story-components &
     - sleep 60
-    - npm-uib run test:integration
+    - npm-uib run test:integration || exit_code=$?
+    - npm-uib run test:delete-empty-results
+    - exit $exit_code
   allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-integration'
