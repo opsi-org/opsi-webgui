@@ -39,13 +39,12 @@ class Webgui(Addon):
 	name = ADDON_NAME
 	version = ADDON_VERSION
 
-
 	def setup(self, app):
 
 		if not mysql:
 			logger.warning("No mysql backend found! Webgui only works with mysql backend.")
 			error_router = APIRouter()
-			@error_router.get(f"/{ADDON_ID}/app")
+			@error_router.get(f"{self.router_prefix}/app")
 			def webgui_error():
 				return PlainTextResponse("No mysql backend found! Webgui only works with mysql backend.", status_code=501)
 			app.include_router(error_router)
@@ -109,11 +108,11 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	logger.info("Start authentication of client %s", connection.client.host)
 	username = None
 	password = None
-	if connection.scope["path"] == "/addons/webgui/api/auth/login":
-		req = Request(connection.scope, receive)
-		form = await req.form()
-		username = form.get("username")
-		password = form.get("password")
+	# if connection.scope["path"] == "/webgui/app/api/auth/login":
+	req = Request(connection.scope, receive)
+	form = await req.form()
+	username = form.get("username")
+	password = form.get("password")
 
 	auth_type = None
 	def sync_auth(username, password, auth_type):

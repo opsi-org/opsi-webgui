@@ -1,6 +1,6 @@
 project:
   name: opsi-webgui
-  version: 0.0.7
+  version: 0.0.8
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
@@ -14,9 +14,10 @@ package:
   depends:
     - opsiconfd (>= 4.2.0.213)
   source_script: | 
-    cp -a "${SRC}/backend/webgui" "${DST}/rootfs/var/lib/opsiconfd/webgui"
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/webgui/data/app"
-    cp -a "${SRC}/opsiweb/dist/." "${DST}/var/lib/opsiconfd/webgui/data/app/"
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
+    cp -a "${SRC}/backend/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
+    cp -a "${SRC}/opsiweb/dist" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
   postinst_script:
-    - echo "OPSI webgui folder '/var/lib/opsiconfd/webgui'"
+    - echo "OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'"
     - exit 0

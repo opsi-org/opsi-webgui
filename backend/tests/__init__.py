@@ -5,13 +5,5 @@
 # All rights reserved.
 # License: AGPL-3.0
 """
-addon webgui - const
+addon webgui tests
 """
-
-from fastapi import APIRouter
-
-ADDON_ID = "webgui"
-ADDON_NAME = "Webgui"
-ADDON_VERSION = "0.2"
-
-test_router = APIRouter()
