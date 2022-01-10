@@ -152,16 +152,10 @@ init:dry:
     - cd opsiweb
     - *define_globals
     - npm-uib i
-    - ls -lah
-    - cat package-dry.json
-    - cat package-merged.json
-    - cat package.json
   artifacts:
     paths:
       - opsiweb/node_modules/
       - opsiweb/components/
-      # - /usr/lib/node_modules/dry-dry/
-      # - /usr/bin/dry
     expire_in: 1 day
 
 test:lint:

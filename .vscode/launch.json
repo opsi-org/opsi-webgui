@@ -21,6 +21,8 @@
 			// "--dry-save-package-json-to package-merged.json",
 			"runtimeArgs": [
 				"--dry-keep-package-json",
+				"--dry-save-package-json-to",
+				"package-merged.json",
 				"run-script",
 				"dev"
 			],
@@ -37,7 +39,9 @@
 			"runtimeExecutable": "dry",
 			"runtimeArgs": [
 				"--dry-keep-package-json",
-				"run",
+				"--dry-save-package-json-to",
+				"package-merged.json",
+				"run-script",
 				"story"
 			],
 			"outputCapture": "std",
@@ -63,14 +67,14 @@
 				"<node_internals>/**"
 			],
 			"auto": false,
-			"cwd": "${workspaceFolder}/opsiweb/uib-components"
+			"cwd": "${workspaceFolder}/opsiweb"
 		},
 		{ // (Lib) Uib-Components-Storybook
 			"name": "Uib-Components Storybook",
 			"runtimeExecutable": "npm-uib",
 			"runtimeArgs": [
 				"run-script",
-				"story"
+				"story-components"
 			],
 			"outputCapture": "std",
 			"request": "launch",
@@ -79,7 +83,7 @@
 				"<node_internals>/**"
 			],
 			"auto": false,
-            "cwd": "${workspaceFolder}/opsiweb/uib-components"
+            "cwd": "${workspaceFolder}/opsiweb"
 		},
 		// {
 		// 	"name": "Opsiconfd",
