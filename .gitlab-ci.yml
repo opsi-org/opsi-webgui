@@ -189,7 +189,7 @@ test:test-e2e:
     - *define_globals
     - npm-uib i -D @playwright/test
     - npx playwright install
-    - PORT=8888 nohup npm-uib run dev &
+    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
     - sleep 20
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm-uib run test:e2e
@@ -210,8 +210,8 @@ test:test-integration:
     - *define_globals
     - npm-uib i -D @playwright/test
     - npx playwright install
-    - PORT=8888 nohup npm-uib run dev &
-    - PORT=3003 nohup npm-uib run story &
+    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story &
     - sleep 60
     - npm-uib run test:integration
   allow_failure: true
