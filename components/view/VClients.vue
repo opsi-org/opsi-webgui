@@ -13,6 +13,7 @@
           </template>
           <template #right>
             <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
+            <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
           </template>
         </BarBPageHeader>
         <TableTCollapseableForMobile
@@ -37,6 +38,15 @@
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
           <template #cell(rowactions)="row">
+            <ButtonBTNRowLinkTo
+              title="Products"
+              icon="grid"
+              to="/clients/products"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               icon="gear"
@@ -71,7 +81,6 @@
             />
           </template>
         </TableTCollapseableForMobile>
-        <ButtonBTNClearSelection store="clients" />
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -84,6 +93,7 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
 import { ITableData, ITableHeaders } from '@/.utils/types/ttable'
+const auth = namespace('auth')
 const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,
@@ -123,9 +133,11 @@ interface IFetchOptions {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
+  @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public pushToSelectionClients!: (s: string) => void
   // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
@@ -143,6 +155,7 @@ interface IFetchOptions {
       await this.$axios.get('/api/opsidata/clients', { params })
         .then((response) => {
           this.fetchedData = response.data
+          this.setSession()
           this.totalData = response.headers['x-total-count']
         }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -154,6 +167,7 @@ interface IFetchOptions {
       await this.$axios.$get('/api/opsidata/depot_ids')
         .then((response) => {
           this.fetchedDataDepotIds = response
+          this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -167,6 +181,14 @@ interface IFetchOptions {
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
     this.$router.push(to)
+    if (this.$route.path.includes('products')) {
+      this.setClientSelection(rowIdent)
+    }
+  }
+
+  setClientSelection (id: string) {
+    this.setSelectionClients([id])
+    // this.pushToSelectionClients(id)
   }
 
   isRouteActive (to: string, rowIdent: string) {
@@ -174,7 +196,7 @@ interface IFetchOptions {
   }
 
   get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log')
+    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('products')
   }
 }
 </script>

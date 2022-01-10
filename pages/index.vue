@@ -2,7 +2,7 @@
   <b-card class="text-center index_content">
     <IconIOpsiLogo />
     <h1>  UIB Components  </h1>
-    <h2>  {{$t('title.app')}}  </h2>
+    <h2>  {{ $t('title.app') }}  </h2>
   </b-card>
 </template>
 

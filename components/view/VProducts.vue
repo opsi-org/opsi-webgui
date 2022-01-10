@@ -2,10 +2,11 @@
   <div data-testid="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
+        <BarBPageHeader v-if="child" :title="'Products -'" :subtitle="id" closeroute="/clients/" />
         <BarBPageHeader>
           <template #left>
-            <TreeTSDepots />
-            <TreeTSHostGroupLazyLoad />
+            <TreeTSDepots v-if="!child" />
+            <TreeTSHostGroupLazyLoad v-if="!child" />
             <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" />
           <DropdownDDClientIds v-if="fetchedDataDepotIds.length > 1" /> -->
             <TreeTSProductGroup />
@@ -13,11 +14,11 @@
           <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
             <ModalMProdSaveOverview v-if="expert && changesProducts" :changelist="changesProducts.filter(o => o.user === username)" />
+            <ButtonBTNClearSelection style="margin-left: 10px;" store="products" />
           </template>
         </BarBPageHeader>
-        <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
-        <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" />
-        <ButtonBTNClearSelection store="products" />
+        <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
+        <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -27,24 +28,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, namespace } from 'nuxt-property-decorator'
+import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '@/.utils/types/tchanges'
 // import { ITableData } from '@/.utils/types/ttable'
-// const selections = namespace('selections')
+const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
+  @Prop() child!: boolean
+  @Prop({ }) id!: string
   // @selections.Getter public selectionClients!: Array<string>
   // @selections.Getter public selectionDepots!: Array<string>
   // @selections.Getter public selectionProducts!: Array<string>
-  // @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
 
   rowId: string = ''
   isLoading: boolean = true
   ismultiselect: boolean = false
+
+  @Watch('ismultiselect', { deep: true }) multiselectChanged () {
+    this.setSelectionProducts([])
+  }
   // fetchedDataDepotIds: Array<string> = []
   // fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
   // tableData: ITableData = {

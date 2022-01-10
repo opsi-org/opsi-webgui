@@ -74,7 +74,7 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/.utils/utils/scomponents'
-
+const auth = namespace('auth')
 const selections = namespace('selections')
 interface NewClient {
   hostId: string,
@@ -105,6 +105,7 @@ interface ClientRequest {
     notes: ''
   }
 
+  @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionDepots!: Array<string>
 
   get domainName () {
@@ -129,6 +130,7 @@ interface ClientRequest {
     const params = this.clientRequest
     this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
     this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    this.setSession()
   }
 
   resetNewClientForm () {
@@ -149,6 +151,7 @@ interface ClientRequest {
         // eslint-disable-next-line no-console
         makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
+        this.setSession()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

@@ -5,7 +5,6 @@
       :ref="$props.id"
       :class="$mq"
       :primary-key="datakey"
-      class="ttable"
       :tbody-tr-class="{'table-active': false}"
       :select-mode="selectmode"
       borderless

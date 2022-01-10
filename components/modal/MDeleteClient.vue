@@ -31,6 +31,7 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '@/.utils/utils/scomponents'
+const auth = namespace('auth')
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
@@ -42,6 +43,7 @@ interface DeleteClient {
     clientid: ''
   }
 
+  @auth.Mutation public setSession!: () => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
   async deleteOpsiClient () {
@@ -53,6 +55,7 @@ interface DeleteClient {
         makeToast(this, this.id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(this.id)
         this.$emit('update:updateTable', true)
+        this.setSession()
       }).catch((error) => {
         makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
         // eslint-disable-next-line no-console

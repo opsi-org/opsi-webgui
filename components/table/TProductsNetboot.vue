@@ -96,7 +96,7 @@
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
           icon="gear"
-          to="/products/config"
+          :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
           :pressed="isRouteActive"
           :click-parent="routeRedirectToParent"
@@ -121,6 +121,7 @@ import { makeToast } from '@/.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '@/.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '@/.utils/types/ttable'
 import { ChangeObj } from '@/.utils/types/tchanges'
+const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -140,6 +141,7 @@ export default class TProductsNetboot extends Vue {
   @Prop() rowId!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
+  @Prop() child!: boolean
 
   action: string = ''
   // type: string = ''
@@ -188,6 +190,7 @@ export default class TProductsNetboot extends Vue {
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
+  @auth.Mutation public setSession!: () => void
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -249,6 +252,7 @@ export default class TProductsNetboot extends Vue {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
+          this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -268,6 +272,7 @@ export default class TProductsNetboot extends Vue {
         .then((response) => {
           this.fetchedData = response.data
           this.totalData = response.headers['x-total-count']
+          this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -283,6 +288,7 @@ export default class TProductsNetboot extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
+        this.setSession()
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
@@ -366,7 +372,11 @@ export default class TProductsNetboot extends Vue {
   }
 
   routeToChild (id: string) {
-    this.routeRedirectWith('/products/config', id)
+    if (this.child) {
+      this.routeRedirectWith('/clients/products/config', id)
+    } else {
+      this.routeRedirectWith('/products/config', id)
+    }
   }
 }
 </script>

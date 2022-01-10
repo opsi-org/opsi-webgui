@@ -18,7 +18,7 @@
           <b-badge class="bg-light" style="margin-left:5px;margin-right:5px">
             <img src="~/assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
           </b-badge>
-          OPSIWEB
+          OPSIWEB <span class="topbar_version"> {{ $config.packageVersion }}</span>
         </b-navbar-brand>
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
@@ -80,6 +80,10 @@ export default class BTop extends Vue {
   max-height: var(--height-navbar) !important;
   display: inline-flex !important;
   padding-bottom: 0px !important;
+}
+.topbar_version{
+  font-size: 10px;
+  margin-left: 5px;
 }
 .topbar_logo {
   height: 25px !important;

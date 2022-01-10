@@ -75,9 +75,11 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
 import { ITableData, ITableHeaders } from '@/.utils/types/ttable'
+const auth = namespace('auth')
 const selections = namespace('selections')
 
 @Component export default class VDepots extends Vue {
+  @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
@@ -134,6 +136,7 @@ const selections = namespace('selections')
     await this.$axios.get('/api/opsidata/depots', { params })
       .then((response) => {
         this.fetchedData = response.data
+        this.setSession()
         this.totalData = response.headers['x-total-count']
       }).catch((error) => {
         // eslint-disable-next-line no-console

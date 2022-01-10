@@ -1,6 +1,6 @@
 <template>
   <b-button size="sm" variant="outline-primary" @click="clearSelected()">
-    <b-icon icon="trash" /> Clear Selection
+    Clear Selection
   </b-button>
 </template>
 

@@ -20,19 +20,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+const auth = namespace('auth')
 @Component
 export default class VModules extends Vue {
   isLoading: boolean = false
   modules: object = {}
   errorText: string = ''
   hideValue : boolean = false
+  @auth.Mutation public setSession!: () => void
 
   async fetch () {
     this.isLoading = true
     await this.$axios.$get('/api/opsidata/modulesContent')
       .then((response) => {
         this.modules = response.result
+        this.setSession()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

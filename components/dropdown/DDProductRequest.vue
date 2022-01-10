@@ -18,7 +18,7 @@
         </span>
       </template>
       <b-dropdown-item
-        v-for="a in requestoptions"
+        v-for="a in options"
         :key="a"
         :data-testid="`DropdownDDProductRequest-Item-${a}`"
         @click="$emit('update:action', a);save(rowitem, a); visibleRequest=a"
@@ -66,6 +66,14 @@ export default class DDProductRequest extends BDropdown {
       }
     }
     return this.currentReq
+  }
+
+  get options () {
+    const options = this.requestoptions
+    if (this.currentReq === 'mixed') {
+      options.push('mixed')
+    }
+    return options
   }
 
   set visibleRequest (val: string) {
