@@ -10,6 +10,7 @@
   ],
   "description": "uib opsiweb",
   "scripts": {
+    "_info": "# Run with: 'dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i' or 'npm-uib i'",
     "build": "dry i",
     "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt ui/",
     "clean": "rm -rf node_modules uib-components/node_modules; rm -f package-lock.json uib-components/package-lock.json",
@@ -24,7 +25,7 @@
     "lint-ui": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ui/.gitignore  ui/",
     "lint-lib": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path uib-components/.gitignore  uib-components/",
     "lint:all": "dry run lint-ui && dry run lint-components",
-    "lint": "dry  run lint-ui",
+    "lint": "dry run lint-ui",
     "test": "jest && playwright test test/e2e test/integration",
     "test:unit": "jest --config ui/.jest.config.js  ui/",
     "test:unit-lib": "jest --config uib-components/.jest.config.js  uib-components/",
@@ -32,7 +33,10 @@
     "test:integration": "playwright test -c uib-components/.utils/playwright/config/playwright-integration.config.js",
     "test:e2e": "playwright test -c uib-components/.utils/playwright/config/playwright-e2e.config.js",
     "test:playwright": "# TODO: command to test both",
-    "all": "../.devcontainer/npm_all.sh"
+    "all": "../.devcontainer/npm_all.sh",
+    "ali":"ls",
+    "ls": "npm-uib run ali -- -lah",
+    "tst": "echo 'hello' && echo ' world!'"
   },
   "dry": {
     "extends": "uib-components/package.json",
