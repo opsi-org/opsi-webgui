@@ -9,6 +9,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 *task-backup*
+test-result-pw-reporter-*.xml
 # Auto Generate
 package-lock.json
 .tmp*
