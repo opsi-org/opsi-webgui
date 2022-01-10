@@ -7,7 +7,7 @@ export default class Settings extends VuexModule {
   myusername: string = localStorage.getItem('username') as string
 
   get username (): string { return this.myusername }
-  get isAuthenticated (): boolean { return Boolean(Cookie.get('opsiconfd-session') && localStorage.getItem('username')) }
+  get isAuthenticated (): Boolean { return Boolean(Cookie.get('opsiconfd-session') && localStorage.getItem('username')) }
 
   @VuexMutation login (username: string) {
     this.myusername = username
@@ -20,5 +20,15 @@ export default class Settings extends VuexModule {
     this.myusername = ''
     // Cookie.remove('opsiconf-session')
     // console.log('cookie removed')
+  }
+
+  @VuexMutation setSession () {
+    const expiryInMinutes = 20
+    const expiryTime = new Date(new Date().getTime() + (expiryInMinutes * 60 * 1000))
+    Cookie.set('opsiweb-session', expiryTime as unknown as string, { expires: expiryTime })
+  }
+
+  @VuexMutation clearSession () {
+    Cookie.remove('opsiweb-session')
   }
 }
