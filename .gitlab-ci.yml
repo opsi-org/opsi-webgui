@@ -166,6 +166,8 @@ init:dry:
 
 test:lint:
   stage: test
+  dependencies:
+    - init:dry
   script:
     - cd opsiweb
     - *define_globals
@@ -282,6 +284,7 @@ publish:binary-index:
 build:addon:
   stage: build
   dependencies:
+    - init:dry
     - build:static-app
   script:
     - *install_tools
@@ -289,8 +292,10 @@ build:addon:
     - ls -la opsiweb
     - pwd
     - cd opsiweb
-    - npm install
-    - npm run generate
+    - *define_globals
+    #- npm install
+    - npm-uib run generate
+    #- npm run generate
     - cd ..
     - mkdir -p backend/webgui/data
     - mv opsiweb/dist backend/webgui/data/app
