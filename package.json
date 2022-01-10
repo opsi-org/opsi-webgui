@@ -13,8 +13,8 @@
     "lint2": "eslint .",
     "test": "jest && playwright test test/e2e test/integration",
     "test:unit": "jest --config .jest.config.js .",
-    "test:integration": "playwright test -c .utils/playwright/config/playwright-integration.config.js && npm run test:integration:delete-empty-results ",
-    "test:e2e": "playwright test -c .utils/playwright/config/playwright-e2e.config.js  && npm run test:integration:delete-empty-results ",
+    "test:integration": "playwright test -c .utils/playwright/config/playwright-integration.config.js; npm run test:integration:delete-empty-results ",
+    "test:e2e": "playwright test -c .utils/playwright/config/playwright-e2e.config.js; npm run test:integration:delete-empty-results ",
     "test:integration:delete-empty-results": "find test-results -empty -delete"
   },
   "dependencies": {
