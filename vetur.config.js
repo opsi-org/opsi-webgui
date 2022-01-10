@@ -19,12 +19,12 @@ module.exports = {
       // **required**
       // Where is your project?
       // It is relative to `vetur.config.js`.
-      root: './opsiweb/uib-components',
+      root: './opsiweb/',
       // **optional** default: `'package.json'`
       // Where is `package.json` in the project?
       // We use it to determine the version of vue.
       // It is relative to root property.
-      package: './package.json',
+      package: './package-dry.json',
       // **optional**
       // Where is TypeScript config file in the project?
       // It is relative to root property.
@@ -38,7 +38,7 @@ module.exports = {
       // It is relative to root property.
       // Notice: It won't actually do it. You need to use `require.context` or `Vue.component`
       globalComponents: [
-        './uib-components/**/*.vue'
+        './opsiweb/**/*.vue'
       ]
     }
   ]
