@@ -186,7 +186,7 @@ test:test-e2e:
     - init:dry
   script:
     - cd opsiweb
-    - ll uib-components
+    - ls -lah uib-components
     - *define_globals
     - npm-uib i -D @playwright/test
     - npx playwright install
