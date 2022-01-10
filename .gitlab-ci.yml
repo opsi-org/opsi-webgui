@@ -72,8 +72,8 @@ test:test-integration:
     - PORT=8888 nohup npm run dev &
     - PORT=3003 nohup npm run story &
     - sleep 60
-    - npm-uib run test:integration || exit_code=$?
-    - npm-uib run test:integration:delete-empty-results
+    - npm run test:integration || exit_code=$?
+    - npm run test:integration:delete-empty-results
     - if [ $exit_code -ne 0 ]; then echo "---> test:integration failed"; fi;
   allow_failure: true
   artifacts:
