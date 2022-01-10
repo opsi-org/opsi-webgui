@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '@/.utils/utils/scomponents'
+import { makeToast } from '../../.utils/utils/scomponents'
 const auth = namespace('auth')
 const selections = namespace('selections')
 interface DeleteClient {

@@ -92,7 +92,7 @@
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
-import { ITableData, ITableHeaders } from '@/.utils/types/ttable'
+import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 const auth = namespace('auth')
 const selections = namespace('selections')
 interface IFetchOptions {

@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Component, Prop, Ref } from 'nuxt-property-decorator'
 import { BFormInput } from 'bootstrap-vue'
-import { ITableData } from '@/.utils/types/ttable'
+import { ITableData } from '../../.utils/types/ttable'
 
 @Component
 export default class IFilter extends BFormInput {

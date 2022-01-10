@@ -117,10 +117,10 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
-import { makeToast } from '@/.utils/utils/scomponents'
-import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '@/.utils/types/tgeneral'
-import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '@/.utils/types/ttable'
-import { ChangeObj } from '@/.utils/types/tchanges'
+import { makeToast } from '../../.utils/utils/scomponents'
+import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
+import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
+import { ChangeObj } from '../../.utils/types/tchanges'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')

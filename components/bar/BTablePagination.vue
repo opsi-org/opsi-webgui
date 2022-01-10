@@ -19,7 +19,7 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BPagination } from 'bootstrap-vue'
-import { ITableData } from '@/.utils/types/ttable'
+import { ITableData } from '../../.utils/types/ttable'
 
 @Component
 export default class BTablePagination extends BPagination {

@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
-import { ISidebarAttributes } from '@/.utils/types/tsettings'
+import { ISidebarAttributes } from '../../.utils/types/tsettings'
 const settings = namespace('settings')
 
 @Component

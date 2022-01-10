@@ -29,8 +29,8 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { IObjectString2StringOrUndefined } from '@/.utils/types/tgeneral'
-import { ITableRowProperty } from '@/.utils/types/ttable'
+import { IObjectString2StringOrUndefined } from '../../../.utils/types/tgeneral'
+import { ITableRowProperty } from '../../../.utils/types/ttable'
 const selections = namespace('selections')
 
 @Component

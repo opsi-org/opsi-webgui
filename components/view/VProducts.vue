@@ -29,8 +29,8 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
-import { ChangeObj } from '@/.utils/types/tchanges'
-// import { ITableData } from '@/.utils/types/ttable'
+import { ChangeObj } from '../../.utils/types/tchanges'
+// import { ITableData } from '../../.utils/types/ttable'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')

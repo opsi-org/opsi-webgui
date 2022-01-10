@@ -21,9 +21,9 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '@/.utils/utils/scomponents'
-import { IObjectString2Any } from '@/.utils/types/tgeneral'
-import { ChangeObj } from '@/.utils/types/tchanges'
+import { makeToast } from '../../.utils/utils/scomponents'
+import { IObjectString2Any } from '../../.utils/types/tgeneral'
+import { ChangeObj } from '../../.utils/types/tchanges'
 const auth = namespace('auth')
 const changes = namespace('changes')
 

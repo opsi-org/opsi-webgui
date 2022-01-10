@@ -117,11 +117,11 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { IProp, IProperty } from '@/.utils/types/ttable'
-import { IObjectString2Any } from '@/.utils/types/tgeneral'
-import { arrayEqual } from '@/.utils/utils/scompares'
-import { makeToast } from '@/.utils/utils/scomponents'
-import { ChangeObj } from '@/.utils/types/tchanges'
+import { IProp, IProperty } from '../../.utils/types/ttable'
+import { IObjectString2Any } from '../../.utils/types/tgeneral'
+import { arrayEqual } from '../../.utils/utils/scompares'
+import { makeToast } from '../../.utils/utils/scomponents'
+import { ChangeObj } from '../../.utils/types/tchanges'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')

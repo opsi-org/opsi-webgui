@@ -6,7 +6,7 @@ const config = {
   // testDir: '../../../../', // /workspace/opsiweb
   testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(int|integration).js',
-
+  reporter: [ ['junit', { outputFile: 'test-result-pw-reporter-integration.xml' }] ],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,
