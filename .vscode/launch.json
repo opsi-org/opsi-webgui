@@ -71,8 +71,11 @@
 		},
 		{ // (Lib) Uib-Components-Storybook
 			"name": "Uib-Components Storybook",
-			"runtimeExecutable": "npm-uib",
+			"runtimeExecutable": "dry",
 			"runtimeArgs": [
+				"--dry-keep-package-json",
+				"--dry-save-package-json-to",
+				"package-merged.json",
 				"run-script",
 				"story-components"
 			],

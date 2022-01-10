@@ -201,7 +201,7 @@ test:test-e2e:
     paths:
       - opsiweb/test-results/
     reports:
-      junit: ./**/*/test-result-pw-reporter-e2e.xml
+      junit: ./opsiweb/uib-components/test-result-pw-reporter-e2e.xml
     expire_in: 2 day
 
 test:test-integration:
@@ -224,7 +224,7 @@ test:test-integration:
     paths:
       - opsiweb/test-results/
     reports:
-      junit: ./**/*/test-result-pw-reporter-integration.xml
+      junit: ./opsiweb/uib-components/test-result-pw-reporter-integration.xml
     expire_in: 2 day
 
 
