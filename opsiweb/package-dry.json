@@ -31,13 +31,9 @@
     "test:unit": "jest --config ui/.jest.config.js  ui/",
     "test:unit-lib": "jest --config uib-components/.jest.config.js  uib-components/",
     "test:unit:components": "jest --config uib-components/jest.config.js uib-components/",
-    "test:integration": "cd uib-components && playwright test -c .utils/playwright/config/playwright-integration.config.js",
-    "test:e2e": "cd uib-components && playwright test -c .utils/playwright/config/playwright-e2e.config.js",
-    "test:playwright": "# TODO: command to test both",
-    "all": "../.devcontainer/npm_all.sh",
-    "ali":"ls",
-    "ls": "npm-uib run ali -- -lah",
-    "tst": "echo 'hello' && echo ' world!'"
+    "test:integration": "cd uib-components && playwright test -c .utils/playwright/config/playwright-integration.config.js & npm run test:integration:delete-empty-results ",
+    "test:e2e": "cd uib-components && playwright test -c .utils/playwright/config/playwright-e2e.config.js & npm run test:integration:delete-empty-results ",
+    "test:integration:delete-empty-results": "find test-results -empty -delete"
   },
   "dry": {
     "extends": "uib-components/package.json",
