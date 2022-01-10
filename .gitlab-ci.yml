@@ -137,7 +137,7 @@ before_script:
   fi
 
 
-init:npm:
+init:dry:
   stage: init
   # ./install.sh
   script:
