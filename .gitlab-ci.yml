@@ -155,7 +155,7 @@ init:dry:
   artifacts:
     paths:
       - opsiweb/node_modules/
-      - opsiweb/components/
+      - opsiweb/uib-components/
     expire_in: 1 day
 
 test:lint:
