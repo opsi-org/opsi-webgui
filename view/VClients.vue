@@ -12,6 +12,7 @@
             <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
           <template #right>
+            <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
             <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
             <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
           </template>
@@ -26,10 +27,11 @@
           :items="fetchedData"
           :selection="selectionClients"
           :onchangeselection="setSelectionClients"
+          :routechild="routeToChild"
           :busy="isLoading"
           :error-text="errorText"
           :totalrows="totalData"
-          :ismultiselect="true"
+          :ismultiselect="ismultiselect"
         >
           <template #head(_majorStats)>
             {{ '' }}
@@ -100,6 +102,7 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
 }
 @Component export default class VClients extends Vue {
+  ismultiselect: boolean = false
   rowId: string = ''
   isLoading: boolean = true
   errorText: string = 'lalala'
@@ -146,6 +149,9 @@ interface IFetchOptions {
   // @Watch('secondColumnOpened') layoutColumnChanged () {
   //   this.setColumnLayoutCollapsed('tableclients', Boolean(this.secondColumnOpened && this.rowId))
   // }
+  @Watch('ismultiselect', { deep: true }) multiselectChanged () {
+    this.setSelectionClients([])
+  }
 
   async fetch () {
     this.isLoading = true
@@ -197,6 +203,10 @@ interface IFetchOptions {
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('products')
+  }
+
+  routeToChild (id: string) {
+    this.routeRedirectWith('/clients/config', id)
   }
 }
 </script>
