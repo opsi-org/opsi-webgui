@@ -7,7 +7,10 @@ const config = {
   testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(e2e).js',
 
-  reporter: [ ['junit', { outputFile: 'test-result-pw-reporter-e2e.xml' }] ],
+  reporter: [
+    ['list'],
+    ['junit', { outputFile: 'test-result-pw-reporter-e2e.xml' }]
+  ],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
   expect: generalconfig.expect,
