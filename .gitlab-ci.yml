@@ -214,7 +214,7 @@ test:test-integration:
     - npm-uib i -D @playwright/test
     - npx playwright install
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story &
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story-components &
     - sleep 60
     - npm-uib run test:integration
   allow_failure: true
