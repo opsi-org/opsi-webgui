@@ -17,8 +17,8 @@
             <ButtonBTNClearSelection style="margin-left: 10px;" store="products" />
           </template>
         </BarBPageHeader>
-        <TableTProductsNetboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
-        <TableTProductsLocalboot :multiselect="ismultiselect" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
+        <TableTProductsNetboot :multiselect="ismultiselect" :sortby="sortby" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
+        <TableTProductsLocalboot :multiselect="ismultiselect" :sortby="sortby" :rowident="rowId" :route-redirect-with="routeRedirectWith" :child="child" />
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -38,6 +38,7 @@ const changes = namespace('changes')
 export default class VProducts extends Vue {
   @Prop() child!: boolean
   @Prop({ }) id!: string
+  @Prop({ }) sortby!: string
   // @selections.Getter public selectionClients!: Array<string>
   // @selections.Getter public selectionDepots!: Array<string>
   // @selections.Getter public selectionProducts!: Array<string>
