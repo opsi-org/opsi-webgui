@@ -14,7 +14,8 @@ describe('BTop', () => {
       mocks: {
         $i18n: { locale: '' },
         $mq: 'desktop',
-        $t: () => 'some specific text'
+        $t: () => 'some specific text',
+        $config: ''
       },
       stubs: ['IconIExpert', 'DropdownDDLang', 'DropdownDDTheme', 'ButtonBTNLogout'],
       propsData: {
