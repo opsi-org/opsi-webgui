@@ -39,6 +39,19 @@
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
+          <template #cell(actionResult_failed)="row">
+            <ButtonBTNRowLinkTo
+              :label="row.item.version_outdated"
+              to="/clients/products"
+              sortby="actionResult"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+            <!-- <b-badge variant="danger">
+              {{ row.item.actionResult_failed }}
+            </b-badge> -->
+          </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               title="Products"
