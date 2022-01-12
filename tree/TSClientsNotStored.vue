@@ -26,14 +26,14 @@ export default class TSClientsNotStored extends Vue {
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
 
   async fetch () {
     const clients: Array<object> = []
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    this.setSession()
+    // this.setSession()
     for (const c in result) {
       const client = result[c]
       clients.push({ id: client, label: client })

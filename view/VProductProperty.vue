@@ -91,7 +91,7 @@ export default class VClientConfig extends Vue {
   get tabDependenciesActive () { return this.tabPropertiesDisabled && !this.tabDependenciesDisabled }
   get activeTab () { return (this.activeTabSet >= 0) ? this.activeTabSet : (this.tabPropertiesActive) ? 0 : (this.tabDependenciesActive) ? 1 : 0 }
   set activeTab (val:number) { this.activeTabSet = val }
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -123,7 +123,7 @@ export default class VClientConfig extends Vue {
         this.fetchedData.dependencies.productDescriptionDetails = response.productDescriptionDetails // { 'bonifax.uib.local': 'string' }
         this.fetchedData.dependencies.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0' }
         this.fetchedData.dependencies.productDescription = response.productDescription
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
         this.activeTabSet = -3
@@ -137,7 +137,7 @@ export default class VClientConfig extends Vue {
         this.fetchedData.properties.productDescriptionDetails = response.productDescriptionDetails
         this.fetchedData.properties.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
         this.fetchedData.properties.productDescription = response.productDescription
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
         this.activeTabSet = -3
