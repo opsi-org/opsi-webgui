@@ -176,8 +176,10 @@ export default class TTable extends BTable {
       // const elem = document.getElementById(`${this.id}__row_${this.rowIdent}`)
       // if (elem) { elem.classList.remove('table-active') }
       // else { console.debug('row is null', `${this.id}__row_${this.rowIdent}`) }
-    } else {
+    } else if (this.datakey === 'productId') {
       this.routechild(item.productId)
+    } else {
+      this.routechild(item.clientId)
     }
   }
 }

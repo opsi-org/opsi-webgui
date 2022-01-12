@@ -5,13 +5,13 @@
     class="border-0"
     :title="title"
     size="sm"
-    :pressed="pressed(to, ident)"
+    :pressed="pressed(to, ident, sortby)"
     @click="action"
   >
     <!-- v-bind="$props" -->
     <!-- title="config"
     @click="routeRedirectWith('/depots/config', row.item.ident)" -->
-    <b-icon :icon="icon" />
+    <b-icon v-if="icon" :icon="icon" /> {{ label }}
   </b-button>
 </template>
 
@@ -25,7 +25,9 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) click!: Function|undefined
   @Prop({ }) clickParent!: Function
   @Prop({ }) to!: string
+  @Prop({ }) sortby!: string
   @Prop({ }) ident!: string
+  @Prop({ }) label!: string
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
 
