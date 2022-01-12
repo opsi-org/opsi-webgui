@@ -22,8 +22,8 @@ export default class Settings extends VuexModule {
     // console.log('cookie removed')
   }
 
-  @VuexMutation setSession () {
-    const expiryInMinutes = 20
+  @VuexMutation setSession (seconds: number) {
+    const expiryInMinutes = seconds
     const expiryTime = new Date(new Date().getTime() + (expiryInMinutes * 60 * 1000))
     Cookie.set('opsiweb-session', expiryTime as unknown as string, { expires: expiryTime })
   }
