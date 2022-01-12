@@ -4,6 +4,8 @@ export default function ({ $axios, redirect, store, route }) {
     $axios.setBaseURL('https://' + host + ':4447/addons/webgui')
   }
 
+  $axios.setHeader('X-opsi-session-lifetime', 60 * 20)
+
   $axios.onRequest((config) => {
     // console.debug('Making request to ', config)
     if (config.url !== '/api/user/opsiserver') {
