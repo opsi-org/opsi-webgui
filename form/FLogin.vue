@@ -34,6 +34,7 @@ interface FormUser {
   async fetch () {
     try {
       this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+      this.setSession()
     } catch (error) {
       const errorMsg = this.$t('loginPage.errortext') as string
       this.isLoading = false
@@ -64,7 +65,8 @@ interface FormUser {
     const User = new FormData()
     User.append('username', this.form.username)
     User.append('password', this.form.password)
-    this.$axios.post('/api/auth/login', User, { headers: { 'X-opsi-session-lifetime': 60 * 20 } })
+    // this.$axios.post('/api/auth/login', User, { headers: { 'X-opsi-session-lifetime': 60 * 20 } })
+    this.$axios.post('/api/auth/login', User)
       .then((response) => {
         if (response.data.result === 'Login success') {
           this.login(this.form.username)
