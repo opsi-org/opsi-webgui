@@ -5,8 +5,10 @@ export default function ({ $axios, redirect, store, route }) {
   }
 
   $axios.onRequest((config) => {
-    $axios.setHeader('X-opsi-session-lifetime', 60 * 20)
-    store.commit('auth/setSession', 60 * 20)
+    if (config.url !== '/api/auth/logout') {
+      $axios.setHeader('X-opsi-session-lifetime', 60 * 20)
+      store.commit('auth/setSession', 60 * 20)
+    }
     // console.debug('Making request to ', config)
     if (config.url !== '/api/user/opsiserver') {
       config.withCredentials = true
