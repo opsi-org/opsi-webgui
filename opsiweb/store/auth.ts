@@ -5,6 +5,9 @@ import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
   myusername: string = localStorage.getItem('username') as string
+  sessionendTime: string = ''
+
+  get sessionEndTime (): string { return this.sessionendTime }
 
   get username (): string { return this.myusername }
   get isAuthenticated (): Boolean { return Boolean(Cookie.get('opsiconfd-session') && localStorage.getItem('username')) }
@@ -25,10 +28,12 @@ export default class Settings extends VuexModule {
   @VuexMutation setSession (seconds: number) {
     const expiryInMinutes = seconds
     const expiryTime = new Date(new Date().getTime() + (expiryInMinutes * 60 * 1000))
-    Cookie.set('opsiweb-session', expiryTime as unknown as string, { expires: expiryTime })
+    this.sessionendTime = expiryTime as unknown as string
+    // Cookie.set('opsiweb-session', expiryTime as unknown as string, { expires: expiryTime })
   }
 
   @VuexMutation clearSession () {
-    Cookie.remove('opsiweb-session')
+    this.sessionendTime = ''
+    // Cookie.remove('opsiweb-session')
   }
 }
