@@ -33,7 +33,7 @@
     "test:unit:components": "jest --config uib-components/jest.config.js uib-components/",
     "test:integration": "cd uib-components && playwright test -c .utils/playwright/config/playwright-integration.config.js",
     "test:e2e": "cd uib-components && playwright test -c .utils/playwright/config/playwright-e2e.config.js",
-    "test:delete-empty-results": "find test-results -empty -delete"
+    "test:delete-empty-results": "find ./test-results -empty -delete"
   },
   "dry": {
     "extends": "uib-components/package.json",
