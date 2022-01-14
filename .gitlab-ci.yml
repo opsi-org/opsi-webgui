@@ -218,8 +218,6 @@ test:test-integration:
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 5
     - npm-uib run test:integration || exit_code=$?
-    - ls -lah
-    - ls -lah ./test-results/
     - npm-uib run test:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -227,8 +225,7 @@ test:test-integration:
     name: 'opsi-webgui-test-result-integration'
     when: on_failure
     paths:
-      - ./opsiweb/uib-components/test-results/
-      - ./opsiweb/test-results/
+      - ./opsiweb/**/*/test-results/
       - ./opsiweb/.storybook.log
     reports:
       junit: ./opsiweb/uib-components/test-result-pw-reporter-integration.xml
