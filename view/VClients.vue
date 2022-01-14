@@ -149,7 +149,7 @@ interface IFetchOptions {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -174,7 +174,7 @@ interface IFetchOptions {
       await this.$axios.get('/api/opsidata/clients', { params })
         .then((response) => {
           this.fetchedData = response.data
-          this.setSession()
+          // this.setSession()
           this.totalData = response.headers['x-total-count']
         }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -186,7 +186,7 @@ interface IFetchOptions {
       await this.$axios.$get('/api/opsidata/depot_ids')
         .then((response) => {
           this.fetchedDataDepotIds = response
-          this.setSession()
+          // this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)

@@ -27,7 +27,7 @@ export default class THostAttributes extends Vue {
   isLoading: boolean = false
   showError: boolean = false
   errorText: string = ''
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
 
   get fields () {
     return [
@@ -59,7 +59,7 @@ export default class THostAttributes extends Vue {
       await this.$axios.$get('/api/opsidata/hosts', { params })
         .then((response) => {
           this.result = response[0]
-          this.setSession()
+          // this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)

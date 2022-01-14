@@ -79,7 +79,7 @@ export default class TSDelayedLoading extends Vue {
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
@@ -108,7 +108,7 @@ export default class TSDelayedLoading extends Vue {
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    this.setSession()
+    // this.setSession()
     for (const c in result) {
       const client = result[c]
       clientList.push({ id: client + ';clientlist', text: client, type: 'ObjectToGroup' })
@@ -125,7 +125,7 @@ export default class TSDelayedLoading extends Vue {
       } else {
         const params = this.request
         const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).groups.children)
-        this.setSession()
+        // this.setSession()
         if (result !== null) {
           parentNode.children = Object.values(result)
         }

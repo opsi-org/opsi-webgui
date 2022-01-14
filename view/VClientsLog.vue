@@ -68,7 +68,7 @@ export default class VClientLog extends Vue {
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   isLoading: boolean = false
   errorText: string = ''
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
 
   @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
   @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
@@ -104,7 +104,7 @@ export default class VClientLog extends Vue {
       .then((response) => {
         this.logResult = response.result
         this.filteredLog = this.logResult
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

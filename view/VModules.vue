@@ -28,14 +28,14 @@ export default class VModules extends Vue {
   modules: object = {}
   errorText: string = ''
   hideValue : boolean = false
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
 
   async fetch () {
     this.isLoading = true
     await this.$axios.$get('/api/opsidata/modulesContent')
       .then((response) => {
         this.modules = response.result
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
