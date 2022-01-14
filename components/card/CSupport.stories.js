@@ -1,6 +1,6 @@
-import { argTypeTextContent, argTypeTextTitle } from '~/.utils/types/ttestconsts'
+import { argTypeTextContent, argTypeTextTitle } from '../../.utils/types/ttestconsts'
 
-// import { argTypeBoolFalse, argTypeTextContent } from '~/.utils/types/ttestconsts'
+// import { argTypeBoolFalse, argTypeTextContent } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Card/C Support',
   parameters: { docs: { description: { component: 'Card/CardCSupport description' } } },

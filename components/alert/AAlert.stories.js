@@ -1,4 +1,4 @@
-import { argTypeVariants } from '~/.utils/types/ttestconsts'
+import { argTypeVariants } from '../../.utils/types/ttestconsts'
 // import * from '~/static/themes/opsi-bootstrap-theme-light.css'
 
 // Describe card component

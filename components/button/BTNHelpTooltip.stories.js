@@ -1,4 +1,4 @@
-import { argTypeTextContent } from '~/.utils/types/ttestconsts'
+import { argTypeTextContent } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Button/BTN Help Tooltip',
   parameters: { docs: { description: { component: 'Button/BTNHelpTooltip description' } } },

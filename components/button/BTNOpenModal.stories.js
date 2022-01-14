@@ -1,4 +1,4 @@
-import { argTypeBoolFalse, argTypeTextContent } from '~/.utils/types/ttestconsts'
+import { argTypeBoolFalse, argTypeTextContent } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Button/BTN Open Modal',
   parameters: { docs: { description: { component: 'Button/BTNOpenModal description' } } },

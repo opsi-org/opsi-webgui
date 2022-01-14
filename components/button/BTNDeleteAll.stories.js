@@ -1,4 +1,4 @@
-// import { argTypeVariants } from '~/.utils/types/ttestconsts'
+// import { argTypeVariants } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Button/BTN Delete All',
   parameters: { docs: { description: { component: 'Button/BTNInfo description' } } }

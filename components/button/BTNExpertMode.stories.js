@@ -1,6 +1,6 @@
-import { argTypeBoolFalse } from '~/.utils/types/ttestconsts'
+import { argTypeBoolFalse } from '../../.utils/types/ttestconsts'
 
-// import { argTypeVariants } from '~/.utils/types/ttestconsts'
+// import { argTypeVariants } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Button/BTN Expert Mode',
   parameters: { docs: { description: { component: 'Button/BTNExpertMode description' } } },

@@ -1,4 +1,4 @@
-import { argTypeBoolFalse, argTypeBoolTrue, argTypeTextContent, argTypeTextTitle, argTypeVariants } from '~/.utils/types/ttestconsts'
+import { argTypeBoolFalse, argTypeBoolTrue, argTypeTextContent, argTypeTextTitle, argTypeVariants } from '../../.utils/types/ttestconsts'
 
 export default {
   title: 'bar/B Tooltip Collapse Row',

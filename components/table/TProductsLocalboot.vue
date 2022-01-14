@@ -160,6 +160,7 @@ export default class TProductsLocalboot extends Vue {
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
   @Prop() child!: boolean
+  @Prop({ }) sortby!: string
 
   action: string = ''
   // type: string = ''
@@ -179,7 +180,7 @@ export default class TProductsLocalboot extends Vue {
       this.tableData.perPage = pp
       Cookie.set('perpage_localboot', this.tableData.perPage as unknown as string, { expires: 365 })
     },
-    sortBy: 'productId',
+    sortBy: this.sortby ? this.sortby : 'productId',
     sortDesc: false,
     filterQuery: '',
     setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }

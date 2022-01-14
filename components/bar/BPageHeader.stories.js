@@ -1,4 +1,4 @@
-import { argTypeBoolTrue, argTypeText, argTypeTextTitle, argTypeVariants } from '~/.utils/types/ttestconsts'
+import { argTypeBoolTrue, argTypeText, argTypeTextTitle, argTypeVariants } from '../../.utils/types/ttestconsts'
 
 // Describe card component
 export default {

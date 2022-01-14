@@ -1,4 +1,4 @@
-import { argTypeVariants } from '~/.utils/types/ttestconsts'
+import { argTypeVariants } from '../../.utils/types/ttestconsts'
 
 export default {
   title: 'Button/BTN Logout',
