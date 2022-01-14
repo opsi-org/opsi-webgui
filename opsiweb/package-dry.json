@@ -17,7 +17,7 @@
     "clean": "rm -rf node_modules uib-components/node_modules; rm -f package-lock.json uib-components/package-lock.json",
     "buildclean": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run clean && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run build #&& dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev",
     "buildclean-lib": "cd uib-components && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run buildclean",
-    "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook  ui/  --ci --quiet --port 3003 -s ./ui/static",
+    "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook ./ui --ci --quiet --port 3003 -s ./ui/static",
     "story-components": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook  uib-components/ --ci --quiet --port 3003 -s ./ui/static",
     "story2": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect storybook --port 3003 -s ./ui/static",
     "prod": "nuxt ui/ generate && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run start",

@@ -46,7 +46,7 @@
   "exclude": [
     "node_modules",
     "uib-components/node_modules",
-    "uib-components/tsconfig.json",
-    "ui/tsconfig.json"
+    "**/*/tsconfig.json"
+    // "ui/tsconfig.json"
   ],
 }

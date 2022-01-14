@@ -137,7 +137,7 @@ export default {
     // addons: [
     //   '@storybook/addon-storyshots'
     // ]
-    addons: ['@storybook/../storybook-addon-mock/register']//, '@storybook/addon-mock'] // "storybook-addon-mock": "^2.0.2",
+    addons: ['storybook-addon-mock/register']//, '@storybook/addon-mock'] // "storybook-addon-mock": "^2.0.2",
     // addons: ['../node_modules/storybook-addon-mock/register']//, '@storybook/addon-mock'] // "storybook-addon-mock": "^2.0.2",
   }
 }

@@ -24,11 +24,11 @@ module.exports = {
       // Where is `package.json` in the project?
       // We use it to determine the version of vue.
       // It is relative to root property.
-      package: './package-dry.json',
+      package: './opsiweb/package-dry.json',
       // **optional**
       // Where is TypeScript config file in the project?
       // It is relative to root property.
-      tsconfig: './tsconfig.json',
+      tsconfig: './opsiweb/tsconfig.json',
       // **optional** default: `'./.vscode/vetur/snippets'`
       // Where is vetur custom snippets folders?
       // snippetFolder: './.vscode/vetur/snippets',
