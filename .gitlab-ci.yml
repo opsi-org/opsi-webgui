@@ -216,7 +216,7 @@ test:test-integration:
     - npm-uib i -D @playwright/test
     - npx playwright install
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
-    - sleep 5
+    - sleep 30
     - npm-uib run test:integration || exit_code=$?
     - npm-uib run test:delete-empty-results
     - exit $exit_code
