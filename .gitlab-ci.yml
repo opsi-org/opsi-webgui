@@ -201,7 +201,7 @@ test:test-e2e:
     name: 'opsi-webgui-test-result-e2e'
     when: on_failure
     paths:
-      - opsiweb/test-results/
+      - opsiweb/**/*/test-results/
     reports:
       junit: ./opsiweb/uib-components/test-result-pw-reporter-e2e.xml
     expire_in: 2 day
@@ -218,15 +218,16 @@ test:test-integration:
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 5
     - npm-uib run test:integration || exit_code=$?
-    - npm-uib run test:delete-empty-results
     - ls -lah
     - ls -lah ./test-results/
+    - npm-uib run test:delete-empty-results
     - exit $exit_code
   allow_failure: true
   artifacts:
     name: 'opsi-webgui-test-result-integration'
     when: on_failure
     paths:
+      - ./opsiweb/uib-components/test-results/
       - ./opsiweb/test-results/
       - ./opsiweb/.storybook.log
     reports:
