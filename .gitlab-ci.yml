@@ -215,8 +215,8 @@ test:test-integration:
     - *define_globals
     - npm-uib i -D @playwright/test
     - npx playwright install
-    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story &
+    # - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 60
     - npm-uib run test:integration || exit_code=$?
     - npm-uib run test:delete-empty-results
@@ -227,6 +227,7 @@ test:test-integration:
     when: on_failure
     paths:
       - opsiweb/test-results/
+      - opsiweb/.storybook.log
     reports:
       junit: ./opsiweb/uib-components/test-result-pw-reporter-integration.xml
     expire_in: 2 day
