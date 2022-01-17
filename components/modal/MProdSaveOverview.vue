@@ -30,7 +30,7 @@ const changes = namespace('changes')
 @Component
 export default class MProdSaveOverview extends Vue {
   @Prop({ }) changelist!: Array<any>
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   async saveProd (item: ChangeObj) {
@@ -47,7 +47,7 @@ export default class MProdSaveOverview extends Vue {
         console.log(response)
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
       })
@@ -79,7 +79,7 @@ export default class MProdSaveOverview extends Vue {
         console.log(response)
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
       })

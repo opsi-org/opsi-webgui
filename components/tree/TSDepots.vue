@@ -11,7 +11,7 @@ const auth = namespace('auth')
 @Component
 export default class TSDepots extends Vue {
   depotsList: Array<object> = []
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
 
   async fetch () {
     const depots: Array<object> = []
@@ -21,7 +21,7 @@ export default class TSDepots extends Vue {
       depots.push({ id: depot + ';depotlist', text: depot, type: 'ObjectToGroup' })
     }
     this.depotsList = depots
-    this.setSession()
+    // this.setSession()
   }
 }
 </script>

@@ -132,7 +132,7 @@ export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: '' }) errorText!: string
   @Prop({ }) properties!: IProp
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @changes.Getter public changesProducts!: Array<ChangeObj>
@@ -158,7 +158,7 @@ export default class TProductProperties extends Vue {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
-          this.setSession()
+          // this.setSession()
         }).catch((error) => {
           this.errorText = (this as any).$t('message.errortext')
           throw new Error(error)
@@ -176,7 +176,7 @@ export default class TProductProperties extends Vue {
         setTimeout(() => {
           this.$nuxt.refresh()
         }, 5000)
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
         // eslint-disable-next-line no-console

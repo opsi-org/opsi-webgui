@@ -43,7 +43,7 @@ interface DeleteClient {
     clientid: ''
   }
 
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
   async deleteOpsiClient () {
@@ -55,7 +55,7 @@ interface DeleteClient {
         makeToast(this, this.id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(this.id)
         this.$emit('update:updateTable', true)
-        this.setSession()
+        // this.setSession()
       }).catch((error) => {
         makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
         // eslint-disable-next-line no-console

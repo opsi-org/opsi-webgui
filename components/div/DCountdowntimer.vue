@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import Cookie from 'js-cookie'
+// import Cookie from 'js-cookie'
 import { makeToast } from '../../.utils/utils/scomponents'
 const auth = namespace('auth')
 @Component
@@ -14,7 +14,7 @@ export default class BCountdowntimer extends Vue {
   countdowntimer : string = ''
   notify: boolean = false
   @auth.Mutation public logout!: () => void
-  @auth.Mutation public getSession!: () => void
+  @auth.Getter public sessionEndTime!: string
   @auth.Mutation public clearSession!: () => void
 
   mounted () {
@@ -41,7 +41,8 @@ export default class BCountdowntimer extends Vue {
   }
 
   getRemainingTime () {
-    const endtime = Cookie.get('opsiweb-session')
+    // const endtime = Cookie.get('opsiweb-session')
+    const endtime = this.sessionEndTime
     const diff = Date.parse(endtime as unknown as string) - Date.parse(new Date() as unknown as string)
     const seconds = Math.floor((diff / 1000) % 60)
     const minutes = Math.floor((diff / 1000 / 60) % 60)

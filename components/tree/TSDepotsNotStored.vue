@@ -21,7 +21,7 @@ export default class TSDepotsNotStored extends Vue {
   depotIds: Array<object> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
-  @auth.Mutation public setSession!: () => void
+  // @auth.Mutation public setSession!: () => void
 
   async fetch () {
     const depots: Array<object> = []
@@ -31,7 +31,7 @@ export default class TSDepotsNotStored extends Vue {
       depots.push({ id: depot, label: depot })
     }
     this.depotIds = depots
-    this.setSession()
+    // this.setSession()
     if (this.selectionDepots.length !== 0) {
       this.idselection = this.selectionDepots[0]
     } else {
