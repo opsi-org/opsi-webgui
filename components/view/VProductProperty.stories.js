@@ -1,5 +1,6 @@
 
 import withMock from 'storybook-addon-mock'
+// const { withMock } = require('storybook-addon-mock')
 const { mockBackendCall } = require('../../.utils/storybook/mock')
 const dependencies = {
   dependencies: [{ productId: 'productId1', productAction: 'setup', version: '4.1.1.14-3', requiredProductId: 'l-system-update', requiredVersion: null, requiredAction: 'setup', requiredInstallationStatus: null, requirementType: 'before' }],
