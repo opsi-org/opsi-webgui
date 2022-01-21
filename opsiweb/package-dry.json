@@ -21,7 +21,7 @@
       "buildclean": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run clean && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run build #&& dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev",
       "buildclean-lib": "cd uib-components && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run buildclean",
       "prod": "nuxt generate ui/ && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run start",
-      "start": "nuxt start ui/",
+      "start": "nuxt start -p 4445 ui/ ",
       "generate": "nuxt generate ui/ ",
     "//storybook":"commands for storybook",
       "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook ./ui --ci --quiet --port 3003 -s ./ui/static",
