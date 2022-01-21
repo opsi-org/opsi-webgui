@@ -41,6 +41,7 @@
       "test:e2e": "cd uib-components && playwright test -c .utils/playwright/config/playwright-e2e.config.js",
       "test:delete-empty-results": "find uib-components/test-results -empty -delete; find ui/test-results -empty -delete",
 
+      "test:all:delete-empty-results": "find test-results -empty -delete",
       "test:all:unit": "jest --config .jest.config.js  ./ ",
       "test:all:e2e": "playwright test -c .config/playwright-all-e2e.config.js",
       "test:all:components": "playwright test -c .config/playwright-all-components.config.js"

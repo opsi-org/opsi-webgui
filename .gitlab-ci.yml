@@ -194,7 +194,7 @@ test:test-e2e:
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm-uib run test:all:e2e || exit_code=$?
-    - npm-uib run test:delete-empty-results
+    - npm-uib run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
   artifacts:
@@ -218,7 +218,7 @@ test:test-integration:
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 60
     - npm-uib run test:all:components || exit_code=$?
-    - npm-uib run test:delete-empty-results
+    - npm-uib run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
   artifacts:
