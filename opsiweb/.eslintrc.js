@@ -5,8 +5,9 @@ module.exports = {
     node: true
   },
   // parserOptions: {
-  //   parser: 'babel-eslint',
-  //   sourceType: 'module'
+  //   parser: '@typescript-eslint/parser'
+  //   //   parser: 'babel-eslint',
+  //   //   sourceType: 'module'
   // },
   extends: [
     '@nuxtjs',

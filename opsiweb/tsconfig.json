@@ -1,5 +1,5 @@
 {
-  "extends": "./uib-components/tsconfig.json",
+  // "extends": "./uib-components/tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
     // overwrite uib-component config ?

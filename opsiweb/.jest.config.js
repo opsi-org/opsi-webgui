@@ -1,9 +1,9 @@
 module.exports = {
   // preset: 'jest-playwright-preset',
-  testRegex: '(<rootDir>/../.*|)\\.test.unit\\.jsx?$',
+  testRegex: '(<rootDir>/.*|)\\.test.unit\\.jsx?$',
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
-    '^~/(.*)$': '<rootDir>/$1',
+    // '^@/(.*)$': '<rootDir>/$1',
+    // '^~/(.*)$': '<rootDir>/$1',
     '^vue$': 'vue/dist/vue.common.js'
   },
   moduleFileExtensions: [

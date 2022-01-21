@@ -30,10 +30,10 @@
 
 ## Frontend-Testing
 > In container-directory /workspace/webgui
-* run for unit test: `npm run test:unit`
-* run for integration tests: `npm run test:integration`
-* run for e2e tests: `npm run test:e2e`
-* run for all tests: `npm run test`
+* run for unit test: `npm-uib run test:all:unit`
+* run for integration tests: `npm-uib run test:all:components`
+* run for e2e tests: `npm-uib run test:all:e2e`
+* > run for all tests: `npm-uib run test`
 > Attention: integration and e2e tests could create snapshots. The result of these tests depends on the hardware and used system - so it can happen (at least currently) that they fail even if everything is ok.
 
 # Production
