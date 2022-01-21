@@ -201,7 +201,7 @@ test:test-e2e:
     name: 'opsi-webgui-test-result-e2e'
     when: on_failure
     paths:
-      - opsiweb/**/*/test-results/
+      - ./**/*/test-results/
     reports:
       junit: ./opsiweb/test-result-pw-reporter-e2e.xml
     expire_in: 2 day
@@ -225,7 +225,7 @@ test:test-integration:
     name: 'opsi-webgui-test-result-components'
     when: on_failure
     paths:
-      - ./opsiweb/**/*/test-results/
+      - ./**/*/test-results/
       - ./opsiweb/.storybook.log
     reports:
       junit: ./opsiweb/test-result-pw-reporter-integration.xml
