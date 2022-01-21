@@ -191,7 +191,7 @@ test:test-e2e:
     - npm-uib i -D @playwright/test
     - npx playwright install
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
-    - sleep 20
+    - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm-uib run test:all:e2e || exit_code=$?
     - npm-uib run test:delete-empty-results
