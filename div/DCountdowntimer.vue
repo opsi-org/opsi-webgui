@@ -31,7 +31,7 @@ export default class BCountdowntimer extends Vue {
         this.notify = true
         makeToast(this, 'Session expires in ' + notifyInMinutes + ' minutes', 'Session Timeout', 'warning', notifyInMilliSec)
       }
-      if (isNaN(t.diff)) {
+      if (isNaN(t.diff) || t.diff === 0) {
         this.countdowntimer = 'EXPIRED'
         clearInterval(timeinterval)
         this.logout()
