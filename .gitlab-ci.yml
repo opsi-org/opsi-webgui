@@ -206,7 +206,7 @@ test:test-e2e:
       junit: ./opsiweb/test-result-pw-reporter-e2e.xml
     expire_in: 2 day
 
-test:test-integration:
+test:test-components:
   stage: test
   dependencies:
     - init:dry
@@ -215,6 +215,7 @@ test:test-integration:
     - *define_globals
     - npm-uib i -D @playwright/test
     - npx playwright install
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 60
     - npm-uib run test:all:components || exit_code=$?
@@ -227,8 +228,9 @@ test:test-integration:
     paths:
       - ./**/*/test-results/
       - ./opsiweb/.storybook.log
+      - ./opsiweb/.dev.log
     reports:
-      junit: ./opsiweb/test-result-pw-reporter-integration.xml
+      junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
 
 

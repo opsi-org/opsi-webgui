@@ -1,7 +1,55 @@
 {
+  "name": "webgui",
+  "version": "0.0.8",
+  "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui-components",
+  "license": "MIT",
+  "keywords": [
+    "opsi",
+    "webgui",
+    "uib"
+  ],
+  "description": "uib opsiweb",
+  "scripts": {
+    "//comment1": "# Information:",
+    "//comment2": "Run with: 'dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i' or 'npm-uib i' #",
+    "//comment3": "Using the package this way will allow to have multiple package.json files (e.g. one in uib-components). The command merges the files given in the dry-section below",
+    "//project-handling":"",
+      "_prepare": "function npm-uib() { dry --dry-save-package-json-to package-merged.json --dry-keep-package-json }; export -f npm-uib",
+      "build": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i",
+      "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt ui/",
+      "clean": "rm -rf node_modules uib-components/node_modules; rm -f package-lock.json uib-components/package-lock.json",
+      "clean:all": "rm -rf node_modules uib-components/node_modules ui/node_modules .nuxt ui/.nuxt .nuxt-storybook ui/.nuxt-storybook test-results ui/test-results uib-components/test-results ui/dist ; rm -f package.json package-lock.json package-merged.json uib-components/package-lock.json test-result-pw-reporter-* ;",
+      "buildclean": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run clean && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run build #&& dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev",
+      "buildclean-lib": "cd uib-components && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run buildclean",
+      "prod": "nuxt generate ui/ && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run start",
+      "start": "nuxt start -p 4445 ui/ ",
+      "generate": "nuxt generate ui/ ",
+    "//storybook":"commands for storybook",
+      "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook ./ui --ci --quiet --port 3003 -s ./ui/static",
+      "story-components": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook  uib-components/ --ci --quiet --port 3003 -s ./ui/static",
+      "story2": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect storybook --port 3003 -s ./ui/static",
+    "//lint": "commands for linting",
+      "lint-ui": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ui/.gitignore  ui/",
+      "lint-lib": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path uib-components/.gitignore  uib-components/",
+      "lint:all": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-components",
+      "lint": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui",
+    "//test": "commands for testing unit/playwright",
+      "test": "jest && playwright test test/e2e test/integration",
+      "test:unit": "jest --config ui/.jest.config.js  ui/",
+      "test:unit-lib": "jest --config uib-components/.jest.config.js  uib-components/",
+      "test:unit:components": "jest --config uib-components/jest.config.js uib-components/",
+      "test:integration": "cd uib-components && playwright test -c .utils/playwright/config/playwright-integration.config.js",
+      "test:e2e": "cd uib-components && playwright test -c .utils/playwright/config/playwright-e2e.config.js",
+      "test:delete-empty-results": "find uib-components/test-results -empty -delete; find ui/test-results -empty -delete",
+
+      "test:all:delete-empty-results": "find test-results -empty -delete",
+      "test:all:unit": "jest --config .jest.config.js  ./ ",
+      "test:all:e2e": "playwright test -c .config/playwright-all-e2e.config.js",
+      "test:all:components": "playwright test -c .config/playwright-all-components.config.js"
+  },
   "dry": {
     "extends": "uib-components/package.json",
-    "dependencies": {
+    "dependencies":{
       "uib-components": "file:uib-components"
     }
   }
