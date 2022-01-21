@@ -18,7 +18,7 @@ describe('BSide', () => {
         $mq: 'desktop',
         $t: () => 'some specific text'
       },
-      stubs: ['NavNSidebar'],
+      stubs: ['NavNSidebar', 'DivDCountdowntimer'],
       propsData: {
         attributes: {
           expanded: true,

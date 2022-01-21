@@ -9,6 +9,7 @@ import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 const changes = namespace('changes')
 @Component
 export default class BTNDeleteAll extends Vue {
+  $nuxt: any
   @Prop({ }) hide!: string
 
   @changes.Getter public changesProducts!: Array<object>

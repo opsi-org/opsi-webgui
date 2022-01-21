@@ -28,6 +28,8 @@ import DropdownDDLang from '../dropdown/DDLang.vue'
 
 @Component({ components: { DropdownDDLang } })
 export default class BAuthFooter extends Vue {
+  $mq: any
+  $config: any
 }
 </script>
 

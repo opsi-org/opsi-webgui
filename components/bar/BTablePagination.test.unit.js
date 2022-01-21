@@ -13,6 +13,7 @@ describe('BTablePagination', () => {
   beforeEach(() => {
     wrapper = mount(BTablePagination, {
       localVue,
+      // stubs: ['DCountdowntimer'],
       mocks: {
         $mq: 'desktop',
         $t: () => 'some specific text'
