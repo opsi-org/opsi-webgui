@@ -4,7 +4,7 @@ const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
 
 const mount = require('@vue/test-utils').mount
 const createLocalVue = require('@vue/test-utils').createLocalVue
-const PIndex = require('~/pages').default
+const PIndex = require('./index').default
 
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
