@@ -341,6 +341,9 @@ publish:obs_int:
     - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
   only:
     - tags
+  # Copy to experimental
+  # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
+  # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.2:/development/Debian_10/
 
 # publish:obs_ext:
 #   stage: publish
