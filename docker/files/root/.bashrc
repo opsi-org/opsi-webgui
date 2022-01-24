@@ -23,19 +23,9 @@ alias ls='ls --color=auto'
 
 function npm-uib(){ /usr/bin/dry --dry-save-package-json-to package-merged.json --dry-keep-package-json "$@"; }
 export -f npm-uib
-# UI_COMPONENT_MODULE = "[submodule \"ui-components\"]
-# 	path = opsiweb/components
-# 	url = ../opsiweb-ui-components.git
-# 	branch = $@
-# "
-# function gitall(){ echo ""; git submodule foreach "git $@"; echo ""; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
-# function gitallcheckout(){ echo "[submodule \"ui-components\"]
-#         path = opsiweb/components
-#         url = ../opsiweb-ui-components.git
-#         branch = $@
-# " > .gitmodules; git submodule foreach "git checkout -B $@"; git checkout -B "$@"; }
-function gitall(){ echo ""; cd opsiweb/uib-components; git "$@"; echo ""; cd -; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
-function gitallcheckout(){ cd opsiweb/uib-components; git checkout -B "$@"; cd -; git checkout -B "$@"; }
+
+function gitall(){ echo ""; cd /workspace/opsiweb/uib-components; git "$@"; echo ""; cd -; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
+function gitallcheckout(){ cd /workspace/opsiweb/uib-components; git checkout -B "$@"; cd -; git checkout -B "$@"; }
 
 
 # alias gitbr "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate"
