@@ -31,7 +31,7 @@
     "//lint": "commands for linting",
       "lint-ui": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ui/.gitignore  ui/",
       "lint-lib": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path uib-components/.gitignore  uib-components/",
-      "lint:all": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-components",
+      "lint:all": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-lib",
       "lint": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui",
     "//test": "commands for testing unit/playwright",
       "test": "jest && playwright test test/e2e test/integration",

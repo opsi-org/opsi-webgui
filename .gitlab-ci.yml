@@ -3,6 +3,7 @@ image: mcr.microsoft.com/playwright:v1.15.2-focal
 stages:
   - init
   - test
+  # - test-components
   - build
   - publish
 
@@ -166,6 +167,15 @@ test:lint:
     - cd opsiweb
     - *define_globals
     - npm-uib run lint
+
+# test:lint-components:
+#   stage: test-components
+#   dependencies:
+#     - init:dry
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     - npm-uib run lint
 
 test:test-unit:
   stage: test
