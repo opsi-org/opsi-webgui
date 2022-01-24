@@ -35,7 +35,7 @@ import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { filterObjectLabel, filterObject } from '../../.utils/utils/sfilters'
 import { Group } from '../../.utils/types/tbackendmethods'
 import { arrayEqual } from '../../.utils/utils/scompares'
-const auth = namespace('auth')
+// const auth = namespace('auth')
 const selections = namespace('selections')
 interface Request {
     selectedDepots: string
@@ -47,6 +47,13 @@ interface ClientRequest {
 
 @Component
 export default class TSDelayedLoading extends Vue {
+  $axios: any
+  node:any
+  // $nuxt: any
+  // $fetch: any
+  // $mq: any
+  // $t: any
+
   clientRequest: ClientRequest = { selectedDepots: '' }
   request: Request = { selectedDepots: '', parentGroup: '' }
 

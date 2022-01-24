@@ -141,7 +141,7 @@ import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
-const auth = namespace('auth')
+// const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -156,6 +156,13 @@ interface IFetchOptions {
 // }
 @Component
 export default class TProductsLocalboot extends Vue {
+  $axios: any
+  $nuxt: any
+  // $t: any
+  $mq: any
+  $fetch: any
+
+
   @Prop() rowident!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean

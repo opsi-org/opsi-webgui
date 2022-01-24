@@ -122,13 +122,18 @@ import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { arrayEqual } from '../../.utils/utils/scompares'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { ChangeObj } from '../../.utils/types/tchanges'
-const auth = namespace('auth')
+// const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 
 @Component
 export default class TProductProperties extends Vue {
+  $axios: any
+  $nuxt: any
+  $mq: any
+
+
   @Prop({ }) id!: string
   @Prop({ default: '' }) errorText!: string
   @Prop({ }) properties!: IProp

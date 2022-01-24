@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-const auth = namespace('auth')
+// const auth = namespace('auth')
 const selections = namespace('selections')
 interface ClientRequest {
     selectedDepots: string
@@ -21,6 +21,7 @@ interface ClientRequest {
 
 @Component
 export default class TSClientsNotStored extends Vue {
+  $axios:any
   clientRequest: ClientRequest = { selectedDepots: '' }
   clientIds: Array<object> = []
   idselection: string = ''

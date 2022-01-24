@@ -31,13 +31,15 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
-const auth = namespace('auth')
+// const auth = namespace('auth')
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
 }
 
 @Component export default class MDeleteClient extends Vue {
+  $axios: any
+
   @Prop({ }) id!: string
   deleteClient: DeleteClient = {
     clientid: ''

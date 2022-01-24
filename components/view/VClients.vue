@@ -108,13 +108,19 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import Cookie from 'js-cookie'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
-const auth = namespace('auth')
+
 const selections = namespace('selections')
 interface IFetchOptions {
   fetchClients:boolean,
   fetchDepotIds:boolean,
 }
 @Component export default class VClients extends Vue {
+  $axios: any
+  // $nuxt: any
+  $fetch: any
+  $mq: any
+  // $t: any
+
   ismultiselect: boolean = false
   rowId: string = ''
   isLoading: boolean = true

@@ -5,11 +5,16 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
-const auth = namespace('auth')
+import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class TSDepots extends Vue {
+  $axios: any
+  // $nuxt: any
+  // $fetch: any
+  // $mq: any
+  // $t: any
+
   depotsList: Array<object> = []
   // @auth.Mutation public setSession!: () => void
 

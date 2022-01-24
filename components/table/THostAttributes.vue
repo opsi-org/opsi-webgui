@@ -14,13 +14,18 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-const auth = namespace('auth')
+// const auth = namespace('auth')
 interface Request {
     hosts: string
 }
 
 @Component
 export default class THostAttributes extends Vue {
+  $axios: any
+  $t: any
+  $fetch: any
+  // $mq: any
+
   @Prop({ }) id!: string
   result:Object = {}
   request: Request = { hosts: '' }

@@ -20,10 +20,14 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
-const auth = namespace('auth')
+import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class VModules extends Vue {
+  $axios: any
+  // $nuxt: any
+  // $fetch: any
+  // $mq: any
+  // $t: any
   isLoading: boolean = false
   modules: object = {}
   errorText: string = ''

@@ -61,7 +61,7 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IDepend, IProp } from '../../.utils/types/ttable'
-const auth = namespace('auth')
+
 const selections = namespace('selections')
 interface IErrorDepProp {
   dependencies: string
@@ -73,6 +73,13 @@ interface IFetchedData {
 }
 @Component
 export default class VClientConfig extends Vue {
+  $fetchState: any
+  $axios: any
+  // $nuxt: any
+  $fetch: any
+  $mq: any
+  $t: any
+
   @Prop({ }) id!: string
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string

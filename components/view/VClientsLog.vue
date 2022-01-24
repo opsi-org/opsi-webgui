@@ -49,14 +49,19 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-const auth = namespace('auth')
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 interface LogRequest {
     selectedClient: string,
     selectedLogType: string
 }
 @Component
 export default class VClientLog extends Vue {
+  $axios: any
+  // $nuxt: any
+  // $fetch: any
+  // $mq: any
+  $t: any
+
   @Prop({ }) id!: string
   @Prop({ default: false }) 'asChild'!: string
 

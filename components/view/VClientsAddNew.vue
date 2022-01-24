@@ -74,7 +74,7 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
-const auth = namespace('auth')
+
 const selections = namespace('selections')
 interface NewClient {
   hostId: string,
@@ -89,6 +89,12 @@ interface ClientRequest {
 }
 
 @Component export default class VClientsAddNew extends Vue {
+  $axios: any
+  $nuxt: any
+  $fetch: any
+  $mq: any
+  // $t: any
+
   clientRequest: ClientRequest = { selectedDepots: [] }
   clientIds: Array<string> = []
   opsiconfigserver: string = ''

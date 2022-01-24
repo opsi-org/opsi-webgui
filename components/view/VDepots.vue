@@ -75,10 +75,14 @@
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
-const auth = namespace('auth')
 const selections = namespace('selections')
 
 @Component export default class VDepots extends Vue {
+  $axios: any
+  // $nuxt: any
+  $fetch: any
+  $mq: any
+  // $t: any
   // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void

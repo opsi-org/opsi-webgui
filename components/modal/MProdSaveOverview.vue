@@ -24,11 +24,17 @@ import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
-const auth = namespace('auth')
+// const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component
 export default class MProdSaveOverview extends Vue {
+  $axios: any
+  // $t: any
+  // $fetch: any
+  // $mq: any
+  $nuxt: any
+
   @Prop({ }) changelist!: Array<any>
   // @auth.Mutation public setSession!: () => void
   @changes.Mutation public delFromChangesProducts!: (s: object) => void

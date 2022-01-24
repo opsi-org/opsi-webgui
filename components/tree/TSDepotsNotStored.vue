@@ -14,10 +14,16 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
-const auth = namespace('auth')
+// const auth = namespace('auth')
 
 @Component
 export default class TSDepotsNotStored extends Vue {
+  $axios: any
+  // $nuxt: any
+  // $fetch: any
+  // $mq: any
+  // $t: any
+
   depotIds: Array<object> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
