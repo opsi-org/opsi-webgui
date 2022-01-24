@@ -41,5 +41,5 @@ chown -R opsiconfd /workspace/backend
 service opsiconfd restart
 
 # su - node <<SHT
-cd /workspace/opsiweb
+cd /workspace/opsiweb/scripts
 ./install.sh

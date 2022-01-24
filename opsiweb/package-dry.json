@@ -1,7 +1,7 @@
 {
   "name": "webgui",
   "version": "0.1.0",
-  "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui-components",
+  "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui",
   "license": "MIT",
   "keywords": [
     "opsi",

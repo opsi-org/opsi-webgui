@@ -9,9 +9,14 @@ else
 	echo DEV_USER=$USER >> .env
 fi
 
-git clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components
-# echo ""
-# echo "Attention! "
-# echo "Please check if opsiweb/components directory is filled. "
-# echo "Otherwise clone it with e.g. "
-# echo "\tgit clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components"
+if [ -d .devcontainer ]; then # current dir: /workspace
+	git clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git /opsiweb/uib-components
+	echo "Please check if opsiweb/uib-components directory is filled. "
+elif [ -f devcontainer.json ]; then # current dir: /workspace/.devcontainer
+	git clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git ../opsiweb/uib-components
+	echo "Please check if opsiweb/uib-components directory is filled. "
+else
+	echo ""
+	echo "Attention! "
+	echo "Please clone repo as opsiweb/uib-components. E.g. with"
+	echo "\tgit clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components"
