@@ -13,12 +13,13 @@ stages:
 # # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
 # # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 .prepare_repo: &prepare_repo |
+  BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
-  echo "GIT_Branch " ${git symbolic-ref --short HEAD || echo "develop"}
+  echo "GIT_Branch $BRANCH
   # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   # Testing using current branch (othewise job failes on "tag"-execution)
 
-  git clone --branch ${git symbolic-ref --short HEAD || echo "develop"} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
+  git clone --branch $BRANCH https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   cd opsiweb/uib-components
   git branch -a
   ls -lah
