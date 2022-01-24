@@ -1,0 +1,79 @@
+{
+    "[vue]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[css]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[html]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[javascript]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[typescript]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[yaml]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[json]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    // "files.associations": { "**/../.data/*.conf*": "python"}, // Does not work through .vscode/settings.json - only ~user/.config/Code/settings.json. See https://github.com/microsoft/vscode/issues/89179
+    "code-eol.highlightExtraWhitespace": true,
+    "editor.formatOnSave": false,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": false
+    },
+    "js/ts.implicitProjectConfig.experimentalDecorators": true,
+    "eslint.validate": [
+      "javascript",
+      "typescript",
+      "vue",
+      "html"
+    ],
+    "files.exclude": {
+      ".mockups": false,
+      ".nuxt": false,
+      "https": false,
+      "node_modules": false,
+      "static": false,
+      ".babelrc": false,
+      ".editorconfig": false,
+      ".eslintignore": false,
+      ".eslintrc.js": false,
+      ".gitignore": false,
+      "jest.config.js": false,
+      "package-lock.json": false,
+      "vue-shim.d.ts": false,
+      "vue-shim.d.ts.tmp": false,
+      "tsconfig.json": false,
+      "plugins/README.md": false,
+      "pages/README.md": false,
+      "middleware/README.md": false,
+      "layouts/README.md": false,
+      "components/README.md": false,
+      "assets/README.md": false,
+      "dist": false,
+      ".nuxt-storybook": false,
+      "coverage": false
+    },
+    "workspace.isHidden": false,
+    "i18n-ally.localesPaths": [
+      "locale",
+      "opsiweb/ui/locale",
+      "opsiweb/uib-components/locale"
+    ],
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.sourceLanguage": "en",
+    "i18n-ally.enabledParsers": [ "json" ],
+    "python.pythonPath": "/usr/bin/python3",
+  }
