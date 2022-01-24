@@ -15,7 +15,7 @@ stages:
 .prepare_repo: &prepare_repo |
   BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
-  echo "GIT_Branch $BRANCH
+  echo "GIT_Branch $BRANCH"
   # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   # Testing using current branch (othewise job failes on "tag"-execution)
 
