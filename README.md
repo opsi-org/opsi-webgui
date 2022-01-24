@@ -1,6 +1,6 @@
-:::impotant:::
+> IMPORTANT
 # Development
-! See [wiki](https://gitlab.uib.gmbh/uib/opsiweb-ui/-/wikis/Usage-webgui-with-components-lib) for detailed information about file-structure, installation, workflow, testing, ...
+See [wiki](https://gitlab.uib.gmbh/uib/opsiweb-ui/-/wikis/Usage-webgui-with-components-lib) for detailed information about file-structure, installation, workflow, testing, ...
 ## Important
 * This repository needs a sup-repository [opsiweb-ui-components](https://gitlab.uib.gmbh/uib/opsiweb-ui-components) (as directory opsiweb/uib-components). It will be cloned automaticly, by running the devenv.sh (See Quick install)
 
@@ -12,7 +12,7 @@
 ## Quick install: DevEnviroment
 * Requirements: VisualStudioCode with 'Remote - Container' extension
 * **Clone project and open** it in VSCode with `git clone git@gitlab.uib.gmbh:uib/opsiweb-ui.git`
-* **run `.devcontainer/devenv.sh`** in terminal
+* **run `.devcontainer/devenv.sh`** in terminal (from Workspace-folder!)
   * check if .env-file contains your fqdn (like 'host.uib.local')
   * if it only contains 'host': edit your local /etc/hosts file to contain `127.0.0.1       host.uib.local host localhost` and run devenv.sh again
   * the script also pulls the sub-repository using ssh. If this step fail - pull it manually !
