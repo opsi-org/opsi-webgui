@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 // const auth = namespace('auth')
 interface Request {
     hosts: string

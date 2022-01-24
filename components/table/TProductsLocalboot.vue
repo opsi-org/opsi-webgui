@@ -162,7 +162,6 @@ export default class TProductsLocalboot extends Vue {
   $mq: any
   $fetch: any
 
-
   @Prop() rowident!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
