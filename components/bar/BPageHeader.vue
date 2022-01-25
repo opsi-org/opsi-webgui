@@ -1,17 +1,16 @@
 <template>
-  <b-navbar
-    class="BPageHeader_Navbar"
-    data-testid="BarBPageHeader"
-    :variant="variant"
-  >
-    <span v-if="navbartype=='collapse'">
+  <b-navbar class="BPageHeader_Navbar" data-testid="BarBPageHeader" :variant="variant">
+    <span v-if="navbartype == 'collapse'">
       <b-icon v-if="collapsed" icon="chevron-double-down" />
       <b-icon v-else icon="chevron-double-right" />
     </span>
     <b v-if="title && bold">{{ title }}</b>
     <p v-else-if="title && !bold">
       {{ title }}
-    </p> <span v-if="subtitle" class="font-italic" style="margin-left: 5px !important;"> {{ subtitle }} </span>
+    </p>
+    <span v-if="subtitle" class="font-italic" style="margin-left: 5px !important">
+      {{ subtitle }}
+    </span>
     <slot name="left" />
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
@@ -23,17 +22,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from "nuxt-property-decorator";
 
 @Component
 export default class BPageHeader extends Vue {
-  @Prop({ default: 'transparent' }) variant!: string
-  @Prop({ default: true }) bold!: boolean
-  @Prop({ }) navbartype!: string
-  @Prop({ }) collapsed!: boolean
-  @Prop({ }) title!: string
-  @Prop({ }) subtitle!: string
-  @Prop({ }) closeroute!: string
+  @Prop({ default: "transparent" }) variant!: string;
+  @Prop({ default: true }) bold!: boolean;
+  @Prop({}) navbartype!: string;
+  @Prop({}) collapsed!: boolean;
+  @Prop({}) title!: string;
+  @Prop({}) subtitle!: string;
+  @Prop({}) closeroute!: string;
 }
 </script>
 
@@ -43,13 +42,16 @@ export default class BPageHeader extends Vue {
   padding-left: 0rem !important;
   padding-right: 0rem !important;
 }
-.BPageHeader_Navbar{
+.BPageHeader_Navbar.navbar-expand {
+  flex-flow: row wrap;
+}
+.BPageHeader_Navbar {
   background-image: none !important;
   padding: 5px 0px !important;
   display: flex;
   flex-wrap: wrap;
 }
-.BPageHeader_Navbar .dropdown{
+.BPageHeader_Navbar .dropdown {
   margin: 0px !important;
 }
 </style>
