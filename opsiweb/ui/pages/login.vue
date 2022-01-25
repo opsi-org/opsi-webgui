@@ -6,7 +6,7 @@
           <img src="../assets/images/LogoOpsi.png" class="login_logo" alt="opsi logo">
         </b-badge>
         <h1 class="login_title">
-          OPSIWEB
+          {{ $t("title.project") }}
         </h1>
       </div>
       <FormFLogin />
@@ -18,7 +18,9 @@
 import { Vue, Component } from 'nuxt-property-decorator'
 
 @Component({ layout: 'auth' })
-export default class PLogin extends Vue {}
+export default class PLogin extends Vue {
+  $t:any
+}
 </script>
 
 <style>
