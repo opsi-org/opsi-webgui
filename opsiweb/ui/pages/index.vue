@@ -1,8 +1,7 @@
 <template>
   <b-card class="text-center index_content">
-    <IconIOpsiLogo />
-    <h1>  OPSIWEB
-    </h1>
+    <IconIOpsiLogo class="logo" />
+    <h1>  {{ $t("title.project") }} </h1>
   </b-card>
 </template>
 
@@ -21,4 +20,9 @@ export default class PIndex extends Vue {
 .index_content h1 {
   font-size: 5vw;
 }
+.logo {
+  max-width: 50%;
+  max-height: 50%;
+}
+
 </style>

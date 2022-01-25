@@ -2,8 +2,13 @@ import path from 'path'
 import fs from 'fs'
 import pkg from '../package.json'
 
-import en from './locale/en.json'
-import de from './locale/de.json'
+import delib from '../uib-components/locale/de.json'
+import enlib from '../uib-components/locale/en.json'
+import enui from './locale/en.json'
+import deui from './locale/de.json'
+
+const de = { ...delib, ...deui } // merge language files from components and local one
+const en = { ...enlib, ...enui } // have to be nested to avoid overwriting sections
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode

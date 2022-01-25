@@ -11,8 +11,11 @@
   --margin-left-maincontent-if-sidebar-expanded:205px;
   --color-hover: 155, 155, 155, .1;
   --min-height-button: 31px;
-}
 
+  --fg-type: var(--light);
+  --bg-type: var(--primary);
+}
+/* [class$="bg-bg"] { background-color: var(--bg-light) !important;} */
 [class$="bg-orange"] { background-color: var(--orange) !important;}
 [class$="bg-yellow"] { background-color: var(--yellow) !important;}
 [class$="bg-red"] { background-color: var(--red) !important;}

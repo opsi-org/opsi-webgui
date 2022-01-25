@@ -27,6 +27,8 @@ export -f npm-uib
 function gitall(){ echo ""; cd /workspace/opsiweb/uib-components; git "$@"; echo ""; cd -; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
 function gitallcheckout(){ cd /workspace/opsiweb/uib-components; git checkout -B "$@"; cd -; git checkout -B "$@"; }
 
+function gitlib(){ echo ""; cd /workspace/opsiweb/uib-components; git "$@"; echo ""; cd -; }
+function gitui(){ echo ""; cd /workspace/opsiweb; git "$@"; echo ""; cd -; }
 
 # alias gitbr "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate"
 # alias gitcheckout = "!f(){ echo \"$1\"  && git submodule foreach 'echo \"$1\"' };f"
