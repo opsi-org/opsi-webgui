@@ -22,7 +22,7 @@ describe('PIndex', () => {
         // $config: { packageVersion: '0' },
         // $mq: 'desktop',
         $t: () => 'some specific text'
-      },
+      }
       // propsData: {
       //   attributes: { visible: true, expanded: false }
       // }
