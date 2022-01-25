@@ -40,6 +40,9 @@ chown -R opsiconfd /workspace/backend
 
 service opsiconfd restart
 
+pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
+python3 -m opsidevtools --git-install-hooks
+
 # su - node <<SHT
 cd /workspace/opsiweb/scripts
 ./install.sh
