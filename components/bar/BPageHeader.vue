@@ -22,11 +22,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "nuxt-property-decorator";
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class BPageHeader extends Vue {
-  @Prop({ default: "transparent" }) variant!: string;
+  @Prop({ default: 'transparent' }) variant!: string;
   @Prop({ default: true }) bold!: boolean;
   @Prop({}) navbartype!: string;
   @Prop({}) collapsed!: boolean;
