@@ -15,8 +15,9 @@
           </b-button>
         </b-navbar-nav>
         <b-navbar-brand href="/webgui/app" class="topbar_brand">
-          <b-badge class="bg-light" style="margin-left:5px;margin-right:5px">
-            <img src="~/assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo">
+          <b-badge class="topbar_badge_logo" style="margin-left:5px;margin-right:5px">
+            <IconIOpsiLogo class="topbar_logo" />
+            <!-- 2<img src="~/assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo"> -->
           </b-badge>
           OPSIWEB <span class="topbar_version"> {{ $config.packageVersion }}</span>
         </b-navbar-brand>
@@ -45,10 +46,14 @@
 <script lang="ts">
 import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
+import IOpsiLogo from '../icon/IOpsiLogo.vue'
 const settings = namespace('settings')
 
 @Component
 export default class BTop extends Vue {
+  $mq:any
+  $config:any
+
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
   @settings.Getter public expert!: boolean
 }
@@ -85,9 +90,24 @@ export default class BTop extends Vue {
   font-size: 10px;
   margin-left: 5px;
 }
+.topbar_badge_logo  {
+    margin-right: 5px;
+    /* background-color: #ffffff00 !important; */
+    background-color: var(--bg-type) !important;
+    padding: 0;
+}
+  /* filter: saturate(0) brightness(0);
+  filter: saturate(0) brightness(6); */
 .topbar_logo {
   height: 25px !important;
+  /* filter: saturate(0) brightness(0); */
+  /* filter: saturate(0) brightness(6);
+  filter: saturate(0) brightness(6) invert(100%); */
+  /* filter: saturate(0) brightness(6) invert(calc(var(--fg-type))); */
 }
+/* .navbar-dark .topbar_logo {
+  filter: saturate(0) brightness(0);
+} */
 .desktop .navbar-brand{
   margin-right: 0px !important;
 }

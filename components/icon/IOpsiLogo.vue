@@ -12,7 +12,14 @@ export default class IOpsiLogo extends Vue {
 
 <style>
 .OpsiLogo_Img {
-  max-width: 60%;
-  max-height: 60%;
+  /* max-width: 60%;
+  max-height: 60%; */
+  /* filter: saturate(0) brightness(6) !important; */
+  /* filter: saturate(0) brightness(0); */
+  /* filter: saturate(0) brightness(6); */
+  filter: saturate(0) brightness(60%);
+  /* color: var(--fg-type); */
+   /* invert(100%); */
+  /* filter: saturate(0) brightness(6) invert(calc(var(--fg-type))); */
 }
 </style>
