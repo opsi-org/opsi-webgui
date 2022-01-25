@@ -29,6 +29,7 @@ function gitallcheckout(){ cd /workspace/opsiweb/uib-components; git checkout -B
 
 function gitlib(){ echo ""; cd /workspace/opsiweb/uib-components; git "$@"; echo ""; cd -; }
 function gitui(){ echo ""; cd /workspace/opsiweb; git "$@"; echo ""; cd -; }
+function update_version(){ echo ""; cd /workspace/opsiweb/scripts; ./update_version.sh "$@"; echo ""; cd -; }
 
 # alias gitbr "branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate"
 # alias gitcheckout = "!f(){ echo \"$1\"  && git submodule foreach 'echo \"$1\"' };f"
