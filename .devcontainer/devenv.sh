@@ -10,7 +10,7 @@ else
 fi
 
 if [ -d .devcontainer ]; then # current dir: /workspace
-	git clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components
+	git clone git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components
 	echo "Please check if opsiweb/uib-components directory is filled. "
 elif [ -f devcontainer.json ]; then # current dir: /workspace/.devcontainer
 	git clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git ../opsiweb/uib-components
