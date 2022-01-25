@@ -19,7 +19,8 @@
             <IconIOpsiLogo class="topbar_logo" />
             <!-- 2<img src="~/assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo"> -->
           </b-badge>
-          OPSIWEB <span class="topbar_version"> {{ $config.packageVersion }}</span>
+          {{ $t("title.project") }}
+          <span class="topbar_version"> {{ $config.packageVersion }}</span>
         </b-navbar-brand>
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
@@ -46,7 +47,6 @@
 <script lang="ts">
 import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
-import IOpsiLogo from '../icon/IOpsiLogo.vue'
 const settings = namespace('settings')
 
 @Component
