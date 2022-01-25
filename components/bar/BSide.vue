@@ -35,6 +35,7 @@ import { ISidebarAttributes } from '../../.utils/types/tsettings'
 
 @Component
 export default class BSide extends Vue {
+  $mq:any
   @Prop({ }) attributes!: ISidebarAttributes
 }
 </script>

@@ -33,17 +33,24 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
+interface IMenuItem {
+  title:string
+  route?: string
+  icon?: string
+  submenu?: Array<IMenuItem>
+  menu?: Array<IMenuItem>
+}
+
 @Component
 export default class NSidebar extends Vue {
   @Prop({ }) expanded!: boolean
-  navItems : Array<object> = [
-    {
-      title: 'title.overview',
-      menu: [
-        // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-        { title: 'title.support', icon: 'headset', route: '/support' }
-      ]
-    },
+  navItems : Array<IMenuItem> = [
+    // {
+    //   title: 'title.overview',
+    //   menu: [
+    //     // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
+    //   ]
+    // },
     {
       title: 'title.manage',
       menu: [
@@ -73,6 +80,7 @@ export default class NSidebar extends Vue {
     {
       title: 'title.configure',
       menu: [
+        { title: 'title.support', icon: 'headset', route: '/support' },
         { title: 'title.settings', icon: 'gear', route: '/settings' }
         // { title: 'Index page', icon: 'collection-fill', route: '/' }
       ]
