@@ -20,7 +20,4 @@ else
 	echo "Attention! "
 	echo "Please clone repo as opsiweb/uib-components. E.g. with"
 	echo "\tgit clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components"
-<<<<<<< HEAD
-=======
 fi
->>>>>>> aa19c405cf3bdad526c8490ee1dd7029da672a01
