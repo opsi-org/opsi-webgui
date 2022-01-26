@@ -77,8 +77,9 @@ export default class NSidebar extends Vue {
         { title: 'title.products', icon: 'grid', route: '/products/' }
       ]
     },
+    // title.configure
     {
-      title: 'title.configure',
+      title: '',
       menu: [
         { title: 'title.support', icon: 'headset', route: '/support' },
         { title: 'title.settings', icon: 'gear', route: '/settings' }
