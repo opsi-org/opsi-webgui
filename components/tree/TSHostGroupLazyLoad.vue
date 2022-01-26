@@ -27,6 +27,7 @@
         </div>
       </div>
     </treeselect>
+    <ButtonBTNClearSelection store="clients" component="tree" />
   </div>
 </template>
 
