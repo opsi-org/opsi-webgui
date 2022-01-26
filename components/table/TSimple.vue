@@ -16,11 +16,11 @@
       </template>
       <template #cell(opsiHostKey)="row">
         <b-input-group>
-          <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
           <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
             <b-icon v-if="showValue" icon="eye-slash" />
             <b-icon v-else icon="eye" />
           </b-button>
+          <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
         </b-input-group>
       </template>
       <template #cell(notes)="row">
