@@ -1,7 +1,9 @@
 <template>
   <b-row data-testid="GTwoColumnLayout">
-    <!-- 'col-4': $route.path.includes('clients/products/config') -->
-    <b-col :class="{'d-none' : showchild && $mq === 'mobile', column2visible: showchild}">
+    <b-col
+      :class="{'d-none' : showchild && $mq === 'mobile', column2visible: showchild,
+               'col-2': $route.path.includes('clients/products/config') && parentId === 'tableclients'}"
+    >
       <slot name="parent" />
     </b-col>
     <b-col v-if="showchild" :class="{column2visible: Boolean(showchild)}">
