@@ -1,6 +1,6 @@
 <template>
   <b-nav-item :to="route" class="NItem-nav-item">
-    <b-icon class="" :icon="icon" />
+    <b-icon v-b-tooltip.hover :title="$t(title)" class="" :icon="icon" />
     <span v-if="expanded">
       {{ $t(title) }}
     </span>
