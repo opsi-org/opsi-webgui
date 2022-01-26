@@ -33,6 +33,12 @@
           readonly
         />
       </template>
+      <template #cell(created)="row">
+        <b-form-input :value="new Date(row.value)" size="sm" readonly />
+      </template>
+      <template #cell(lastSeen)="row">
+        <b-form-input :value="new Date(row.value)" size="sm" readonly />
+      </template>
       <template #cell()="row">
         <b-form-input v-model="row.value" size="sm" readonly />
       </template>
