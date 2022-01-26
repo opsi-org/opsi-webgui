@@ -119,6 +119,7 @@ interface IFetchOptions {
   // $nuxt: any
   $fetch: any
   $mq: any
+  $nuxt: any
   // $t: any
 
   ismultiselect: boolean = false
@@ -205,10 +206,14 @@ interface IFetchOptions {
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
-    this.$router.push(to)
-    if (this.$route.path.includes('products')) {
+    if (this.$route.path.includes('/clients/products')) {
       this.setClientSelection(rowIdent)
+      if (this.selectionClients.length > 1) {
+        this.rowId = rowIdent + '+' + this.selectionClients.length
+      }
     }
+    this.$router.push(to)
+    // this.$nuxt.refresh()
   }
 
   setClientSelection (id: string) {
