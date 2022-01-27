@@ -3,6 +3,7 @@
     <b-table
       v-bind="$props"
       :ref="$props.id"
+      sticky-header
       :class="$mq"
       :primary-key="datakey"
       :tbody-tr-class="{'table-active': false}"
@@ -186,6 +187,10 @@ export default class TTable extends BTable {
 </script>
 
 <style>
+.b-table-sticky-header {
+  max-height: 600px;
+  overflow-y: auto;
+}
 .fixed_column_selection{
   float: right;
 }

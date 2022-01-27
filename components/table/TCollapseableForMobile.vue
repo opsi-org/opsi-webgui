@@ -3,7 +3,7 @@
     <b-card
       v-if="collapseable"
       bg-variant="transparent"
-      :class="datakey === 'productId' ? 'tableproducts' : 'TCollapseableForMobile-Card'"
+      class="TCollapseableForMobile-Card"
     >
       <BarBPageHeader
         navbartype="collapse"
@@ -33,7 +33,7 @@
         <slot name="pagination" />
       </b-collapse>
     </b-card>
-    <b-card v-else bg-variant="transparent" :class="datakey === 'productId' ? 'tableproducts' : 'TCollapseableForMobile-Card'">
+    <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card">
       <p v-if="$props.errorText">
         {{ $props.errorText }}
       </p>
@@ -72,18 +72,12 @@ export default class TCollapseableForMobile extends TTable {
 
 </script>
 <style>
-.tableproducts {
-  max-height: 500px;
-  overflow-x: auto;
-  overflow-y: auto;
-}
-
-.TCollapseableForMobile-Card {
+/* .TCollapseableForMobile-Card {
   margin-bottom: 15px;
   max-height: 630px;
   overflow-x: auto;
   overflow-y: auto;
-}
+} */
 .TCollapseableForMobile-Card > .card-body{
   padding-top:0px;
   padding-bottom:0px;
