@@ -4,8 +4,6 @@
       <template #parent>
         <BarBPageHeader>
           <template #left>
-            <!-- <InputIFilter :data="tableData" /> -->
-            <!-- <DropdownDDDepotIds /> -->
             <TreeTSDepots />
             <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
             <TreeTSHostGroupLazyLoad />
@@ -48,9 +46,6 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <!-- <b-badge variant="danger">
-              {{ row.item.actionResult_failed }}
-            </b-badge> -->
           </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
@@ -156,7 +151,6 @@ interface IFetchOptions {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
-  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -181,7 +175,6 @@ interface IFetchOptions {
       await this.$axios.get('/api/opsidata/clients', { params })
         .then((response) => {
           this.fetchedData = response.data
-          // this.setSession()
           this.totalData = response.headers['x-total-count']
         }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -193,7 +186,6 @@ interface IFetchOptions {
       await this.$axios.$get('/api/opsidata/depot_ids')
         .then((response) => {
           this.fetchedDataDepotIds = response
-          // this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -213,12 +205,10 @@ interface IFetchOptions {
       }
     }
     this.$router.push(to)
-    // this.$nuxt.refresh()
   }
 
   setClientSelection (id: string) {
     this.setSelectionClients([id])
-    // this.pushToSelectionClients(id)
   }
 
   isRouteActive (to: string, rowIdent: string) {
