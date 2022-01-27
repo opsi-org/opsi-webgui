@@ -143,9 +143,9 @@ export default class TSTreeselect extends Vue {
 .treeselect .vue-treeselect__placeholder {
     color: gray;
 }
-.treeselect .vue-treeselect-helper-hide {
+/* .treeselect .vue-treeselect-helper-hide {
   display: inline;
-}
+} */
 .form-inline {
   flex-flow: nowrap;
 }

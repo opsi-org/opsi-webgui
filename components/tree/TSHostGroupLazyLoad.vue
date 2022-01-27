@@ -191,7 +191,7 @@ export default class TSDelayedLoading extends Vue {
 </script>
 
 <style>
-.treeselect{
+/* .treeselect{
   max-width: 300px;
 }
 .treeselect .vue-treeselect__multi-value-item {
@@ -202,7 +202,7 @@ export default class TSDelayedLoading extends Vue {
 }
 .treeselect .vue-treeselect-helper-hide {
   display: inline;
-}
+} */
 .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
   color: black;
