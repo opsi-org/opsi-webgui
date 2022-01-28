@@ -29,8 +29,14 @@
             <slot :name="slotName" v-bind="slotScope" />
           </template>
         </TableTTable>
-
-        <slot name="pagination" />
+        <b-row>
+          <b-col>
+            <slot name="footer" />
+          </b-col>
+          <b-col>
+            <slot name="pagination" />
+          </b-col>
+        </b-row>
       </b-collapse>
     </b-card>
     <b-card v-else bg-variant="transparent" class="TCollapseableForMobile-Card">
@@ -45,7 +51,14 @@
           <slot :name="slotName" v-bind="slotScope" />
         </template>
       </TableTTable>
-      <slot name="pagination" />
+      <b-row>
+        <b-col>
+          <slot name="footer" />
+        </b-col>
+        <b-col>
+          <slot name="pagination" />
+        </b-col>
+      </b-row>
     </b-card>
   </div>
 </template>

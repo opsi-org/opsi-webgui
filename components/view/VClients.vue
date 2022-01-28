@@ -12,7 +12,6 @@
           <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
             <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
-            <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
           </template>
         </BarBPageHeader>
         <TableTCollapseableForMobile
@@ -82,6 +81,9 @@
                 <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
               </b-dropdown>
             </b-badge>
+          </template>
+          <template #footer>
+            <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
           </template>
           <template #pagination>
             <BarBTablePagination

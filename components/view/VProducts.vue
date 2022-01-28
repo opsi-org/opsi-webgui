@@ -20,7 +20,7 @@
               v-if="expert && changesProducts"
               :changelist="changesProducts.filter((o) => o.user === username)"
             />
-            <ButtonBTNClearSelection style="margin-left: 10px" store="products" />
+            <!-- <ButtonBTNClearSelection style="margin-left: 10px" store="products" /> -->
           </template>
         </BarBPageHeader>
         <TableTProductsNetboot

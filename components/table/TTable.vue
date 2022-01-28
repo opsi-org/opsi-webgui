@@ -192,14 +192,15 @@ export default class TTable extends BTable {
 <style>
 .tablediv{
   max-height: 80vh;
+  /* overflow-y: auto; */
 }
 .tableproducts.b-table-sticky-header {
   max-height: 60vh;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 .tabledefault.b-table-sticky-header {
   max-height: 70vh;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 .fixed_column_selection{
   float: right;
