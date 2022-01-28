@@ -200,12 +200,7 @@ interface IFetchOptions {
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
-    if (this.$route.path.includes('/clients/products')) {
-      this.setClientSelection(rowIdent)
-      if (this.selectionClients.length > 1) {
-        this.rowId = rowIdent + '+' + this.selectionClients.length
-      }
-    }
+    this.setClientSelection(rowIdent)
     this.$router.push(to)
   }
 
