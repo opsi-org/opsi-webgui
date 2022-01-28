@@ -6,7 +6,7 @@
           <img src="../assets/images/LogoOpsi.png" class="login_logo" alt="opsi logo">
         </b-badge>
         <h1 class="login_title">
-          {{ $t("title.project") }}
+          {{ getTitleUppercase() }}
         </h1>
       </div>
       <FormFLogin />
@@ -20,6 +20,10 @@ import { Vue, Component } from 'nuxt-property-decorator'
 @Component({ layout: 'auth' })
 export default class PLogin extends Vue {
   $t:any
+
+  getTitleUppercase () {
+    return (this.$t('title.project') as string).toUpperCase()
+  }
 }
 </script>
 

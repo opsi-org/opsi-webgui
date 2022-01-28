@@ -1,3 +1,5 @@
+
+
 const { test, expect } = require('@playwright/test')
 const apiMock = (page, apiPath, response) => page.route(apiPath, route => route.fulfill({
   status: 200,
@@ -17,6 +19,10 @@ test.beforeEach(async ({ page }) => {
   await apiMock(page, apiServerPath, { result: 'mydepot.uib.local' })
   await page.goto('./login')
   await page.waitForURL('./login')
+  // mock webgui version
+  await page.evaluate(() => { document.querySelector('.BAuthFooter-version').innerHTML = 'x.x.x' })
+  // const version = page.('.BarBAauthFooter .navbar-text text="version"').
+  // console.log('TESTING VERSION ' + version)
 })
 
 test('login page return title opsiweb', async ({ page }) => {
