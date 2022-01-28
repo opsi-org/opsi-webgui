@@ -7,54 +7,50 @@
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
-    <DivDScrollResult>
-      <template slot="content">
-        <b-card class="VProductProperty-Card-Description">
-          {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
-        </b-card>
-        <b-tabs v-if="id" v-model="activeTab" lazy small>
-          <!-- activeTab {{ activeTab }}, manual {{ activeTabSet }} <br>
+    <div class="VProductProperty-Card-Description">
+      {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
+    </div>
+    <b-tabs v-if="id" v-model="activeTab" lazy small>
+      <!-- activeTab {{ activeTab }}, manual {{ activeTabSet }} <br>
           tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
           tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
           {{ $fetchState.error }} -->
-          <p v-if="$fetchState.pending">
-            <IconILoading v-if="isLoading" />
-          </p>
-          <div v-else-if="$fetchState.error || activeTabSet < -1">
-            <p>
-              {{ errorText.properties }}
-              {{ (errorText.dependencies && errorText.properties)? '\n':'' }}
-              {{ errorText.dependencies }}
-            </p>
-          </div>
-          <b-tab
-            ref="VProductProperties_TabProperties"
-            :title="$t('title.properties') + ((tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'')"
-            :disabled="tabPropertiesDisabled"
-          >
-            <LazyTableTProductProperties
-              v-if="id"
-              :id="id"
-              :properties="fetchedData.properties"
-              :error-text="errorText.properties"
-            />
-          </b-tab>
-          <b-tab
-            ref="VProductProperties_TabDependencies"
-            :title="$t('title.dependencies') + ((tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'')"
-            :disabled="tabDependenciesDisabled"
-            :active="activeTab===1"
-          >
-            <LazyTableTProductDependencies
-              v-if="id"
-              :id="id"
-              :dependencies="fetchedData.dependencies"
-              :error-text="errorText.properties"
-            />
-          </b-tab>
-        </b-tabs>
-      </template>
-    </DivDScrollResult>
+      <p v-if="$fetchState.pending">
+        <IconILoading v-if="isLoading" />
+      </p>
+      <div v-else-if="$fetchState.error || activeTabSet < -1">
+        <p>
+          {{ errorText.properties }}
+          {{ (errorText.dependencies && errorText.properties)? '\n':'' }}
+          {{ errorText.dependencies }}
+        </p>
+      </div>
+      <b-tab
+        ref="VProductProperties_TabProperties"
+        :title="$t('title.properties') + ((tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'')"
+        :disabled="tabPropertiesDisabled"
+      >
+        <LazyTableTProductProperties
+          v-if="id"
+          :id="id"
+          :properties="fetchedData.properties"
+          :error-text="errorText.properties"
+        />
+      </b-tab>
+      <b-tab
+        ref="VProductProperties_TabDependencies"
+        :title="$t('title.dependencies') + ((tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'')"
+        :disabled="tabDependenciesDisabled"
+        :active="activeTab===1"
+      >
+        <LazyTableTProductDependencies
+          v-if="id"
+          :id="id"
+          :dependencies="fetchedData.dependencies"
+          :error-text="errorText.properties"
+        />
+      </b-tab>
+    </b-tabs>
   </div>
 </template>
 
@@ -160,6 +156,6 @@ export default class VClientConfig extends Vue {
 
 <style>
 .VProductProperty-Card-Description {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 </style>
