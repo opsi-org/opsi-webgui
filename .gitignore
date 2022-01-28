@@ -15,3 +15,5 @@ opsiweb/uib-components/
 opsiweb/package.json
 opsiweb/package-merged.json
 opsi.bak
+opsiweb/test-result-pw-reporter-components.xml
+opsiweb/test-result-pw-reporter-e2e.xml
