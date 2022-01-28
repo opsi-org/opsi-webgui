@@ -1,5 +1,3 @@
-
-
 const { test, expect } = require('@playwright/test')
 const apiMock = (page, apiPath, response) => page.route(apiPath, route => route.fulfill({
   status: 200,
