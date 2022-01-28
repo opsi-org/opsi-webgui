@@ -4,8 +4,7 @@
       <template #parent>
         <BarBPageHeader
           v-if="child"
-          :title="'Products -'"
-          :subtitle="id"
+          :title="'Products'"
           closeroute="/clients/"
         />
         <BarBPageHeader>
@@ -48,7 +47,6 @@
 <script lang="ts">
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-// import { ITableData } from '../../.utils/types/ttable'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -57,6 +55,7 @@ export default class VProducts extends Vue {
   @Prop() child!: boolean;
   @Prop({}) id!: string;
   @Prop({}) sortby!: string;
+  @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void;
   @settings.Getter public expert!: boolean;
   @changes.Getter public changesProducts!: Array<ChangeObj>;
