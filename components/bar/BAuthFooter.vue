@@ -15,7 +15,7 @@
           <DropdownDDLang :dropup="true" />
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto" small>
-          <b-nav-text> version: {{ $config.packageVersion }}</b-nav-text>
+          <b-nav-text class="BAuthFooter-version">version: {{ $config.packageVersion }}</b-nav-text>
         </b-navbar-nav>
       </b-container>
     </b-navbar>

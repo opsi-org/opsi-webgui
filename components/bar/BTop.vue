@@ -19,7 +19,7 @@
             <IconIOpsiLogo class="topbar_logo" />
             <!-- 2<img src="~/assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo"> -->
           </b-badge>
-          {{ $t("title.project") }}
+          {{ getTitleUppercase() }}
           <span class="topbar_version"> {{ $config.packageVersion }}</span>
         </b-navbar-brand>
         <b-navbar-nav v-if="$mq === 'mobile'">
@@ -56,6 +56,10 @@ export default class BTop extends Vue {
 
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
   @settings.Getter public expert!: boolean
+
+  getTitleUppercase () {
+    return (this.$t('title.project') as string).toUpperCase()
+  }
 }
 </script>
 
