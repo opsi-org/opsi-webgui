@@ -35,7 +35,7 @@ export default class MProdSaveOverview extends Vue {
   // $mq: any
   $nuxt: any
 
-  @Prop({ }) changelist!: Array<any>
+  @Prop({ }) changelist!: Array<any> // TODO define any (may look at story)
   // @auth.Mutation public setSession!: () => void
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
