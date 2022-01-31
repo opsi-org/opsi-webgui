@@ -48,15 +48,15 @@
   "volar-document.trace.server": "messages",
   // "volar.preview.backgroundColor": "#ccc",
   "playwright.configs": [
-    "../opsiweb/.config/playwright-all-e2e.config.js",
-    "../opsiweb/.config/playwright-all-components.config.js"
+    "/workspace/opsiweb/.config/playwright-all-e2e.config.js",
+    "/workspace/opsiweb/.config/playwright-all-components.config.js"
   ],
   // "playwright.cliPath": "./e2eTests/node_modules/@playwright/test/lib/cli/cli.js",
   // "playwright.configs": [
   //     "e2eTests/playwright.config.ts"
   // ],
   // "playwright.cliPath": "../opsiweb/node_modules/@playwright/test/cli.js",
-  "playwright.cliPath": "../opsiweb/node_modules/@playwright/test/lib/cli.js",
+  "playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
   // "playwright.env": {
   //     "SITE_URL": "http://connect.schmitt.mx"
   // },
@@ -110,4 +110,6 @@
     "overview"
   ],
   "gitlens.heatmap.toggleMode": "file",
+  "playwrightrunner.playwrightCommand": "npm-uib run vscode:test:all:components",
+  "playwrightrunner.playwrightConfigPath": ".config/playwright-all-components.config.js",
 }
