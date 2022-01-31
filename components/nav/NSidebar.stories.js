@@ -4,8 +4,12 @@ export default {
 }
 
 const PrimaryTemplate = () => ({
-  template: '<NavNSidebar />'
+  template: '<NavNSidebar :expanded="true" />'
+})
+const PrimaryTemplate2 = () => ({
+  template: '<NavNSidebar :expanded="false" />'
 })
 
 // named export Primary to create respective story
-export const NSidebar = PrimaryTemplate.bind({})
+export const NSidebarExpanded = PrimaryTemplate.bind({})
+export const NSidebarNotExpanded = PrimaryTemplate2.bind({})
