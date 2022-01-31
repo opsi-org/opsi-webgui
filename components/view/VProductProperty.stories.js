@@ -1,7 +1,6 @@
 
-import withMock from 'storybook-addon-mock'
-// const { withMock } = require('storybook-addon-mock')
-const { mockBackendCall } = require('../../.utils/storybook/mock')
+// const { withMock } = require('storybook-addon-mock').withMock
+const { withMock, mockBackendCall } = require('../../.utils/storybook/mock')
 const dependencies = {
   dependencies: [{ productId: 'productId1', productAction: 'setup', version: '4.1.1.14-3', requiredProductId: 'l-system-update', requiredVersion: null, requiredAction: 'setup', requiredInstallationStatus: null, requirementType: 'before' }],
   productVersions: { clientId1: '4.1.1.14-3' },
@@ -38,13 +37,13 @@ VProductProperty.args = {
 VProductProperty.parameters = {
   mockData: [
     mockBackendCall(
-      'products/id/dependencies?selectedClients=[]&selectedDepots=[]',
+      'opsidata/products/id/dependencies?selectedClients=[]&selectedDepots=[]',
       dependencies,
       'GET',
       '200'
     ),
     mockBackendCall(
-      'products/id/properties?selectedClients=[]&selectedDepots=[]',
+      'opsidata/products/id/properties?selectedClients=[]&selectedDepots=[]',
       properties,
       'GET',
       '200'
