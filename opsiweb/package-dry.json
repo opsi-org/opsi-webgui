@@ -25,7 +25,7 @@
       "start": "nuxt start -p 4445 ui/ ",
       "generate": "nuxt generate ui/ ",
     "//storybook":"commands for storybook",
-      "story": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook ./ui --ci --quiet --port 3003 -s ./ui/static",
+      "story": "rm -rf uib-components/node_modules; PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook ./ui --ci --quiet --port 3003 -s ./ui/static",
       "story-components": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook  uib-components/ --ci --quiet --port 3003 -s ./ui/static",
       "story2": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect storybook --port 3003 -s ./ui/static",
     "//lint": "commands for linting",

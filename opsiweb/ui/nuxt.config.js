@@ -137,7 +137,7 @@ export default {
   },
   storybook: {
     stories: ['~/../**/*.stories.js'],
-    decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>'],
-    addons: ['storybook-addon-mock/register']//, '@storybook/preset-typescript'] //, '@storybook/addon-mock']
+    decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
+    // addons: ['storybook-addon-mock/register']//, '@storybook/preset-typescript'] //, '@storybook/addon-mock']
   }
 }
