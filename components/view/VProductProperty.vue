@@ -10,7 +10,7 @@
     <div class="VProductProperty-Card-Description">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
-    <b-tabs v-if="id" v-model="activeTab" lazy small>
+    <b-tabs v-if="id" v-model="activeTab" class="horizontaltab" lazy small>
       <!-- activeTab {{ activeTab }}, manual {{ activeTabSet }} <br>
           tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
           tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
@@ -155,6 +155,9 @@ export default class VClientConfig extends Vue {
 </script>
 
 <style>
+.horizontaltab .nav-item{
+  min-width: 50%;
+}
 .VProductProperty-Card-Description {
   margin-bottom: 10px;
 }
