@@ -2,8 +2,8 @@
   <b-form-input
     v-bind="$props"
     ref="IFilter"
-    data-testid="IFilter"
     v-model="data.filterQuery"
+    data-testid="IFilter"
     aria-label="Filter"
     class="filter"
     :placeholder="$t('table.filter') + ' ' + additionalTitle"
