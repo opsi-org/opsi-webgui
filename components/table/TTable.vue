@@ -1,9 +1,11 @@
 <template>
-  <div data-testid="TTable">
+  <div class="tablediv" data-testid="TTable">
+    <!-- :class="$mq" -->
     <b-table
       v-bind="$props"
       :ref="$props.id"
-      :class="$mq"
+      sticky-header
+      :class="datakey === 'productId' ? 'tableproducts' : 'tabledefault'"
       :primary-key="datakey"
       :tbody-tr-class="{'table-active': false}"
       :select-mode="selectmode"
@@ -65,6 +67,8 @@ export default class TTable extends BTable {
   @Prop({ }) tabledata!: ITableData
 
   rowIdent: any
+  $mq:any
+  small:any
 
   get selectmode () {
     if (this.ismultiselect) {
@@ -186,6 +190,18 @@ export default class TTable extends BTable {
 </script>
 
 <style>
+.tablediv{
+  max-height: 80vh;
+  /* overflow-y: auto; */
+}
+.tableproducts.b-table-sticky-header {
+  max-height: 60vh;
+  /* overflow-y: auto; */
+}
+.tabledefault.b-table-sticky-header {
+  max-height: 70vh;
+  /* overflow-y: auto; */
+}
 .fixed_column_selection{
   float: right;
 }
