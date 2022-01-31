@@ -1,6 +1,6 @@
+import { mock } from '../../.utils/storybook/mock'
 
-// const { withMock } = require('storybook-addon-mock').withMock
-const { withMock, mockBackendCall } = require('../../.utils/storybook/mock')
+const pid = 'dummy-product-id'
 const dependencies = {
   dependencies: [{ productId: 'productId1', productAction: 'setup', version: '4.1.1.14-3', requiredProductId: 'l-system-update', requiredVersion: null, requiredAction: 'setup', requiredInstallationStatus: null, requirementType: 'before' }],
   productVersions: { clientId1: '4.1.1.14-3' },
@@ -16,10 +16,10 @@ const properties = {
   productDescriptionDetails: { clientId1: 'Installs opsi-server packages,  configures and create adminuser' },
   productDescription: 'Installs opsi-server packages,  configures and create adminuser'
 }
+
 export default {
   title: 'View/V Product Property',
-  parameters: { docs: { description: { component: 'Product property and dependency view' } } },
-  decorators: [withMock]
+  parameters: { docs: { description: { component: 'Product property and dependency view' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
@@ -27,26 +27,12 @@ const PrimaryTemplate = (_args, { argTypes }) => ({
   template: `<ViewVProductProperty :id='$props.id' :asChild='$props.asChild' :closeroute='$props.closeroute'/>
   `
 })
+mock.onGet(`/api/opsidata/products/${pid}/dependencies?selectedClients=[]&selectedDepots=[]`).reply(200, dependencies)
+mock.onGet(`/api/opsidata/products/${pid}/properties?selectedClients=[]&selectedDepots=[]`).reply(200, properties)
 
 export const VProductProperty = PrimaryTemplate.bind({})
 VProductProperty.args = {
-  id: 'id',
+  id: pid,
   asChild: 'asChild',
   closeroute: 'closeroute'
-}
-VProductProperty.parameters = {
-  mockData: [
-    mockBackendCall(
-      'opsidata/products/id/dependencies?selectedClients=[]&selectedDepots=[]',
-      dependencies,
-      'GET',
-      '200'
-    ),
-    mockBackendCall(
-      'opsidata/products/id/properties?selectedClients=[]&selectedDepots=[]',
-      properties,
-      'GET',
-      '200'
-    )
-  ]
 }

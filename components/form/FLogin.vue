@@ -38,7 +38,7 @@ interface FormUser {
 @Component export default class FLogin extends Vue {
   $axios:any
   form: FormUser = { username: '', password: '' }
-  opsiconfigserver: string = '<config-server-id>'
+  opsiconfigserver: string = ''
   isLoading: boolean = false
 
   @auth.Mutation public login!: (username: string) => void

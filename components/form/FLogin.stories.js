@@ -1,10 +1,11 @@
+import { mock } from '../../.utils/storybook/mock'
 
-const { withMock, mockBackendCall } = require('../../.utils/storybook/mock') //
+const result = { result: '<config-server-id>' }
+mock.onGet('/api/user/opsiserver').reply(200, result)
 
 export default {
   title: 'Form/F Login',
-  parameters: { docs: { description: { component: 'Form for Login' } } },
-  decorators: [withMock]
+  parameters: { docs: { description: { component: 'Form for Login' } } }
 }
 
 const PrimaryTemplate = () => ({
@@ -13,14 +14,3 @@ const PrimaryTemplate = () => ({
 
 // named export Primary to create respective story
 export const FLogin = PrimaryTemplate.bind({})
-FLogin.parameters = {
-  mockData: [
-    mockBackendCall(
-      'user/opsiserver', // api-path
-      { result: 'mydepot.uib.local' }, // this should be the response
-      'GET', // request-method
-      '200' // status
-    )
-    // mockBackendCall(...) // if there are multiple api requests
-  ]
-}

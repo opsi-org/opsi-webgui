@@ -1,5 +1,7 @@
 .nuxt-storybook/
 .nuxt/
+package-dry.json
+package-merged.json
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs

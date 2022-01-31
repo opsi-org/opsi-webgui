@@ -8,7 +8,7 @@
       </template>
     </BarBPageHeader>
     <DivDScrollResult>
-      <template slot="content">
+      <template #content>
         <b-card class="VProductProperty-Card-Description">
           {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
         </b-card>
@@ -72,7 +72,7 @@ interface IFetchedData {
   properties:IProp
 }
 @Component
-export default class VClientConfig extends Vue {
+export default class VProductProperty extends Vue {
   $fetchState: any
   $axios: any
   // $nuxt: any

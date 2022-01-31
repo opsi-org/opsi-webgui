@@ -1,4 +1,4 @@
-// import { withMock, mockBackendCall} from '.utils/storybook/mock'
+// import { withMock, mockBackendCall } from '.utils/storybook/mock'
 
 export default {
   title: 'Input/I Filter',
