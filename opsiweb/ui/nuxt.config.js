@@ -138,11 +138,6 @@ export default {
   storybook: {
     stories: ['~/../**/*.stories.js'],
     decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>'],
-    // Optionsstorybook: {
-    // addons: [
-    //   '@storybook/addon-storyshots'
-    // ]
-    addons: ['storybook-addon-mock/register']//, '@storybook/addon-mock'] // "storybook-addon-mock": "^2.0.2",
-    // addons: ['../node_modules/storybook-addon-mock/register']//, '@storybook/addon-mock'] // "storybook-addon-mock": "^2.0.2",
+    addons: ['storybook-addon-mock/register']//, '@storybook/preset-typescript'] //, '@storybook/addon-mock']
   }
 }
