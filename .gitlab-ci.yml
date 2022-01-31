@@ -43,7 +43,7 @@ test:test-unit:
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
-      cobertura: opsiweb/coverage/clover.xmlci
+      cobertura: coverage/clover.xmlci
 
 # test:test-e2e:
 #   stage: test
@@ -80,7 +80,7 @@ test:test-integration:
     name: 'opsi-webgui-test-result-integration'
     when: on_failure
     paths:
-      - opsiweb/test-results/
+      - test-results/
     expire_in: 2 day
 
 # build:static-app:
