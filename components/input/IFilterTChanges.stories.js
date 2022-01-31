@@ -1,5 +1,5 @@
 export default {
-  title: 'Input/I IFilter TChanges',
+  title: 'Input/I Filter T Changes',
   parameters: { docs: { description: { component: 'Input for Filter Table Changes' } } }
 }
 
