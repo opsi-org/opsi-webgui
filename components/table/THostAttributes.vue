@@ -1,15 +1,14 @@
 <template>
-  <div data-testid="THostAttributes">
-    <TableTSimple
-      v-if="result"
-      :is-busy="isLoading"
-      :error="showError"
-      :errortext="errorText"
-      :stacked="true"
-      :tableitems="[result]"
-      :tablefields="fields"
-    />
-  </div>
+  <TableTSimple
+    v-if="result"
+    data-testid="THostAttributes"
+    :is-busy="isLoading"
+    :error="showError"
+    :errortext="errorText"
+    :stacked="true"
+    :tableitems="[result]"
+    :tablefields="fields"
+  />
 </template>
 
 <script lang="ts">
@@ -54,7 +53,6 @@ export default class THostAttributes extends Vue {
   async fetch () {
     if (this.id) {
       this.isLoading = true
-      console.debug('Fetching HostAttributes from Id ', this.id)
       await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
       // await this.$axios.$get('/api/opsidata/hosts', { params })
         .then((response) => {
