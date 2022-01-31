@@ -123,6 +123,10 @@
         />
       </template>
 
+      <template #footer>
+        <ButtonBTNClearSelection store="products" />
+      </template>
+
       <template #pagination>
         <BarBTablePagination
           :tabledata="tableData"

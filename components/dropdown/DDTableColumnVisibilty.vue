@@ -55,6 +55,7 @@
 </template>
 
 <script lang="ts">
+import Cookie from 'js-cookie'
 import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '../../.utils/types/ttable'
@@ -65,6 +66,7 @@ const settings = namespace('settings')
 export default class DDTableColumnVisibilty extends BDropdown {
   @Prop({ default: 'table' }) tableId!: string
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
+  $mq:any
 
   @settings.Getter public twoColumnLayoutCollapsed!: IObjectString2Boolean
 
@@ -72,14 +74,18 @@ export default class DDTableColumnVisibilty extends BDropdown {
   columnVisibilityStates: IObjectString2Boolean = {}
 
   created () {
-    Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
-      if (h._majorKey) {
-        this.columnVisibilityStates[this.headers[h._majorKey].key] = h.visible || false
-      } else {
-        this.columnVisibilityStates[h.key] = h.visible || false
-      }
-    })
-    this.columnVisibilityList = Object.keys(this.columnVisibilityStates).filter(k => this.columnVisibilityStates[k])
+    if (Cookie.get('column_' + this.tableId)) {
+      this.columnVisibilityList = JSON.parse(Cookie.get('column_' + this.tableId) as unknown as any)
+    } else {
+      Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
+        if (h._majorKey) {
+          this.columnVisibilityStates[this.headers[h._majorKey].key] = h.visible || false
+        } else {
+          this.columnVisibilityStates[h.key] = h.visible || false
+        }
+      })
+      this.columnVisibilityList = Object.keys(this.columnVisibilityStates).filter(k => this.columnVisibilityStates[k])
+    }
   }
 
   @Watch('$mq') mqChanged () {
@@ -109,6 +115,7 @@ export default class DDTableColumnVisibilty extends BDropdown {
     } else {
       this.columnVisibilityList.push(key)
     }
+    Cookie.set('column_' + this.tableId, JSON.stringify(this.columnVisibilityList), { expires: 365 })
   }
 
   setColumnVisibilityModel (tableKey: string|undefined) {

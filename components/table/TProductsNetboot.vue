@@ -102,6 +102,9 @@
           :click-parent="routeRedirectToParent"
         />
       </template>
+      <template #footer>
+        <ButtonBTNClearSelection store="products" />
+      </template>
 
       <template #pagination>
         <BarBTablePagination

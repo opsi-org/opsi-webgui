@@ -4,8 +4,6 @@
       <template #parent>
         <BarBPageHeader>
           <template #left>
-            <!-- <InputIFilter :data="tableData" /> -->
-            <!-- <DropdownDDDepotIds /> -->
             <TreeTSDepots />
             <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
             <TreeTSHostGroupLazyLoad />
@@ -14,7 +12,6 @@
           <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
             <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
-            <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
           </template>
         </BarBPageHeader>
         <TableTCollapseableForMobile
@@ -48,9 +45,6 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <!-- <b-badge variant="danger">
-              {{ row.item.actionResult_failed }}
-            </b-badge> -->
           </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
@@ -87,6 +81,9 @@
                 <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
               </b-dropdown>
             </b-badge>
+          </template>
+          <template #footer>
+            <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
           </template>
           <template #pagination>
             <BarBTablePagination
@@ -156,7 +153,6 @@ interface IFetchOptions {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
-  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -181,7 +177,6 @@ interface IFetchOptions {
       await this.$axios.get('/api/opsidata/clients', { params })
         .then((response) => {
           this.fetchedData = response.data
-          // this.setSession()
           this.totalData = response.headers['x-total-count']
         }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -193,7 +188,6 @@ interface IFetchOptions {
       await this.$axios.$get('/api/opsidata/depot_ids')
         .then((response) => {
           this.fetchedDataDepotIds = response
-          // this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
@@ -206,19 +200,12 @@ interface IFetchOptions {
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
-    if (this.$route.path.includes('/clients/products')) {
-      this.setClientSelection(rowIdent)
-      if (this.selectionClients.length > 1) {
-        this.rowId = rowIdent + '+' + this.selectionClients.length
-      }
-    }
+    this.setClientSelection(rowIdent)
     this.$router.push(to)
-    // this.$nuxt.refresh()
   }
 
   setClientSelection (id: string) {
     this.setSelectionClients([id])
-    // this.pushToSelectionClients(id)
   }
 
   isRouteActive (to: string, rowIdent: string) {
