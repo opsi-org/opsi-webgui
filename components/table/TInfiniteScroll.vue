@@ -8,12 +8,46 @@
       v-else
       id="table"
       ref="table"
-      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-      :items="items"
+      primary-key="table"
+      class="infinitescrolltable"
       sticky-header
       responsive
-      primary-key="id"
-    />
+      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+      :items="items"
+      selectable
+      select-mode="multi"
+      @row-selected="onRowSelected"
+    >
+      <template #head(sel)="{}">
+        {{ selected.length }}/{{ totalItems }}
+        <b-button
+          v-if="selected.length>0"
+          v-b-tooltip.hover
+          title="Clear selected"
+          variant="light"
+          size="sm"
+          @click="clearSelected"
+        >
+          <b-icon-brush />
+        </b-button>
+      </template>
+      <template #head(rowactions)="{}">
+        <DropdownDDTableColumnVisibilty table-id="table" :headers="headerData" />
+      </template>
+      <template #cell(sel)="{ rowSelected }">
+        <template v-if="rowSelected">
+          <span aria-hidden="true">&check;</span>
+          <span class="sr-only">Selected</span>
+        </template>
+        <template v-else>
+          <span aria-hidden="true">&nbsp;</span>
+          <span class="sr-only">Not selected</span>
+        </template>
+      </template>
+    </b-table>
+
+    <span class="tablefooter">Showing {{ items.length }} of {{ totalItems }}</span>
+
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
@@ -26,14 +60,17 @@ const selections = namespace('selections')
 @Component
 export default class TInfiniteScroll extends Vue {
   $axios: any
+  $mq: any
+
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
   error: string = ''
+  selected: Array<object> = []
 
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 20,
+    perPage: 15,
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
@@ -59,6 +96,15 @@ export default class TInfiniteScroll extends Vue {
     this.fetchItems()
     const tableScrollBody = (this.$refs.table as any).$el
     tableScrollBody.addEventListener('scroll', this.onScroll)
+  }
+
+  onRowSelected (items) {
+    this.selected = items
+  }
+
+  clearSelected () {
+    (this.$refs.table as any).clearSelected()
+    // this.selected = []
   }
 
   onScroll (event) {
@@ -95,4 +141,11 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
+.tablefooter {
+  color: gray;
+  font-size: 15px;
+}
+.infinitescrolltable.b-table-sticky-header {
+  max-height: 70vh;
+}
 </style>
