@@ -1,7 +1,11 @@
 <template>
   <div class="tablediv">
     <!-- {{ items }} -->
+    <p v-if="error">
+      {{ error }}
+    </p>
     <b-table
+      v-else
       id="table"
       ref="table"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
@@ -25,10 +29,11 @@ export default class TInfiniteScroll extends Vue {
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
+  error: string = ''
 
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 15,
+    perPage: 20,
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
@@ -62,6 +67,9 @@ export default class TInfiniteScroll extends Vue {
         event.target.scrollHeight
     ) {
       if (!this.isLoading) {
+        if (this.items.length === Number(this.totalItems)) {
+          return
+        }
         this.fetchItems()
       }
     }
@@ -74,14 +82,12 @@ export default class TInfiniteScroll extends Vue {
     await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
-        // if (this.items.length === this.totalItems) { return }
         this.tableData.pageNumber++
-        // console.error('response.data', response.data)
         this.items = this.items.concat(response.data)
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
-        // this.items = this.items.concat(this.$t('message.errortext') as string)
+        this.error = this.$t('message.errortext') as string
       })
     this.isLoading = false
   }
@@ -89,5 +95,4 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
-
 </style>
