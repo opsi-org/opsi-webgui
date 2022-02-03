@@ -13,31 +13,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { ITableData } from '../../.utils/types/ttable'
+const selections = namespace('selections')
 // import { BTable } from 'bootstrap-vue'
 @Component
 export default class TTable extends Vue {
+  $axios: any
   isLoading: Boolean = false
   items: Array<object> = []
-  currentPage: number = 0
-  perPage: number = 5
   totalItems: number = 0
 
-  created () {
-    this.fetchItems()
+  tableData: ITableData = {
+    pageNumber: 1,
+    perPage: 5,
+    sortBy: 'clientId',
+    sortDesc: false,
+    filterQuery: '',
+    setPageNumber: () => {},
+    setPerPage: () => {}
   }
 
-  async fetchItems () {
-    if (this.items.length === this.totalItems) { return }
-    this.isLoading = true
-    const startIndex = this.currentPage++ * this.perPage
-    const endIndex = startIndex + this.perPage
-    const newItems = await this.callBackend(startIndex, endIndex)
-    this.items = this.items.concat(newItems)
-    this.isLoading = false
-  }
+  @selections.Getter public selectionDepots!: Array<string>
+
+  // created () {
+  //   this.fetchItems()
+  // }
 
   mounted () {
+    this.fetchItems()
     const tableScrollBody = (this.$refs.table as any).$el
     tableScrollBody.addEventListener('scroll', this.onScroll)
   }
@@ -51,6 +55,29 @@ export default class TTable extends Vue {
         this.fetchItems()
       }
     }
+  }
+
+  async fetchItems () {
+    if (this.items.length === this.totalItems) { return }
+    this.isLoading = true
+    const newItems = await this.callBackend()
+    this.items = this.items.concat(newItems)
+    this.isLoading = false
+  }
+
+  async callBackend () {
+    this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+    const params = this.tableData
+    await this.$axios.get('/api/opsidata/clients', { params })
+      .then((response) => {
+        this.totalItems = response.headers['x-total-count']
+        this.tableData.pageNumber++
+        return response.data
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        return this.$t('message.errortext') as string
+      })
   }
 }
 </script>
