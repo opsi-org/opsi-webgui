@@ -7,6 +7,19 @@ stages:
   - build
   - publish
 
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+# Define a hidden job to be used with extends
+# Better than default to avoid activating cache for all jobs
+.dependencies_cache:
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm
+    policy: pull
+
 .prepare_repo: &prepare_repo |
   BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
@@ -142,6 +155,10 @@ init:dry:
     - cd opsiweb
     - *define_globals
     - npm-uib i
+
+  extends: .dependencies_cache
+  cache:
+    policy: pull-push
   artifacts:
     paths:
       - opsiweb/node_modules/
@@ -153,8 +170,7 @@ init:dry:
 #########################################################################
 test:lint:
   stage: test
-  dependencies:
-    - init:dry
+  # dependencies: - init:dry
   script:
     - cd opsiweb
     - *define_globals
@@ -162,8 +178,7 @@ test:lint:
 
 test:test-unit:
   stage: test
-  dependencies:
-    - init:dry
+  # dependencies: - init:dry
   script:
     - cd opsiweb
     - *define_globals
@@ -176,8 +191,7 @@ test:test-unit:
 test:test-e2e:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  dependencies:
-    - init:dry
+  # dependencies: - init:dry
   script:
     - cd opsiweb
     - ls -lah uib-components
@@ -203,8 +217,7 @@ test:test-e2e:
 test:test-components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  dependencies:
-    - init:dry
+  # dependencies: - init:dry
   script:
     - cd opsiweb
     - *define_globals
