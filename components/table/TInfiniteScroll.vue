@@ -1,6 +1,5 @@
 <template>
   <div class="tablediv">
-    <!-- {{ items }} -->
     <p v-if="error">
       {{ error }}
     </p>
@@ -9,7 +8,7 @@
       id="table"
       ref="table"
       primary-key="table"
-      class="infinitescrolltable"
+      :class="items.length <10 ? 'smalltable' : 'infinitescrolltable'"
       sticky-header
       responsive
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
@@ -56,7 +55,6 @@
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 const selections = namespace('selections')
-// import { BTable } from 'bootstrap-vue'
 @Component
 export default class TInfiniteScroll extends Vue {
   $axios: any
@@ -71,7 +69,7 @@ export default class TInfiniteScroll extends Vue {
 
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 20,
+    perPage: 15,
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
@@ -111,27 +109,27 @@ export default class TInfiniteScroll extends Vue {
   onScroll (event) {
     // On Scroll Up
     if (
-      event.target.scrollTop + event.target.clientHeight <
-        event.target.scrollHeight
-    ) {
+      event.target.scrollTop === 0) {
       if (!this.isLoading) {
         if (this.tableData.pageNumber === 1) {
           return
         }
         this.tableData.pageNumber--
         this.fetchItems()
+        event.target.scrollTop = event.target.clientHeight - 5
       }
-    } else if ( // On Scroll Down
+    } else
+    if ( // On Scroll Down
       event.target.scrollTop + event.target.clientHeight >=
         event.target.scrollHeight
     ) {
       if (!this.isLoading) {
-        // if (this.items.length === Number(this.totalItems)) {
         if (this.tableData.pageNumber === this.totalpages) {
           return
         }
         this.tableData.pageNumber++
         this.fetchItems()
+        event.target.scrollTop = 5
       }
     }
   }
@@ -144,7 +142,6 @@ export default class TInfiniteScroll extends Vue {
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
-        // this.tableData.pageNumber++
         this.items = response.data
         // this.items = this.items.concat(response.data)
       }).catch((error) => {
@@ -164,5 +161,8 @@ export default class TInfiniteScroll extends Vue {
 }
 .infinitescrolltable.b-table-sticky-header {
   max-height: 70vh;
+}
+.smalltable.b-table-sticky-header {
+  max-height: 10vh;
 }
 </style>
