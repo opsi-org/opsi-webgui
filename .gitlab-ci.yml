@@ -1,5 +1,5 @@
 #image: mcr.microsoft.com/playwright:v1.15.2-focal
-image: ubuntu:focal
+image: node:17-alpine
 stages:
   - init
   - test
@@ -57,8 +57,7 @@ test:test-unit:
   # dependencies:
   #   - init:npm
   script:
-    -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
-
+    # -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
     - npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
