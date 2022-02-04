@@ -12,7 +12,13 @@ npm_command=$4
 # import bash-aliases to be able to use npm-uib
 shopt -s expand_aliases
 source $HOME/.bashrc
-
+echo ""
+echo ""
+echo "---------------------------------------"
+echo "ATTENTION: webgui-storybook have to be started!"
+echo "---------------------------------------"
+echo ""
+echo ""
 cd /workspace/opsiweb/
 # build filename of testfile
 echo "filename: ${file} - change extension from '${file_ext}' to '${file_ext_new}'"
@@ -20,7 +26,7 @@ testfile=$(sed 's/'"$file_ext"'/'"$file_ext_new"'/g' <<<"$file")
 echo "---> testing file: $testfile"
 
 # run playwright test on the testfile
-echo "run: npm-uib run $npm_command $testfile"
+echo "\nrun: npm-uib run $npm_command $testfile"
 npm-uib run $npm_command $testfile
 
 cd -
