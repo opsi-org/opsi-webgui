@@ -155,6 +155,7 @@ init:dry:production:
   script:
     - *prepare_repo
     - cd opsiweb
+    # - rm package-lock.json # todo: how to? rm here or not include to repo? (currently not included)
     - *define_globals
     - npm-uib --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
