@@ -1,5 +1,5 @@
 # image: mcr.microsoft.com/playwright:v1.15.2-focal
-image: node:17-alpine
+image: node:17
 stages:
   - init
   - test
@@ -34,11 +34,11 @@ variables:
   cd -
 
 .define_globals: &define_globals |
-  mkdir /root/.npm-global
-  npm config set prefix "/root/.npm-global"
-  PATH="/root/.npm-global/bin:${PATH}"
+  # mkdir /root/.npm-global
+  # npm config set prefix "/root/.npm-global"
+  # PATH="/root/.npm-global/bin:${PATH}"
+  # ls -l /root/.npm-global
   npm i -g dry-dry
-  ls -l /root/.npm-global
   shopt -s expand_aliases
   alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
 
