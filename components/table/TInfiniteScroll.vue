@@ -46,7 +46,7 @@
       </template>
     </b-table>
 
-    <span class="tablefooter">Showing {{ items.length }} of {{ totalItems }}</span>
+    <span class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
 
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
@@ -65,12 +65,13 @@ export default class TInfiniteScroll extends Vue {
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
+  totalpages: number = 0
   error: string = ''
   selected: Array<object> = []
 
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 15,
+    perPage: 20,
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: '',
@@ -108,14 +109,28 @@ export default class TInfiniteScroll extends Vue {
   }
 
   onScroll (event) {
+    // On Scroll Up
     if (
+      event.target.scrollTop + event.target.clientHeight <
+        event.target.scrollHeight
+    ) {
+      if (!this.isLoading) {
+        if (this.tableData.pageNumber === 1) {
+          return
+        }
+        this.tableData.pageNumber--
+        this.fetchItems()
+      }
+    } else if ( // On Scroll Down
       event.target.scrollTop + event.target.clientHeight >=
         event.target.scrollHeight
     ) {
       if (!this.isLoading) {
-        if (this.items.length === Number(this.totalItems)) {
+        // if (this.items.length === Number(this.totalItems)) {
+        if (this.tableData.pageNumber === this.totalpages) {
           return
         }
+        this.tableData.pageNumber++
         this.fetchItems()
       }
     }
@@ -128,8 +143,10 @@ export default class TInfiniteScroll extends Vue {
     await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
-        this.tableData.pageNumber++
-        this.items = this.items.concat(response.data)
+        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+        // this.tableData.pageNumber++
+        this.items = response.data
+        // this.items = this.items.concat(response.data)
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
