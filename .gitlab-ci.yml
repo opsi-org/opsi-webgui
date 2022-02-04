@@ -173,6 +173,9 @@ test:lint:
   # dependencies: - init:dry
   script:
     - cd opsiweb
+    - ls -lah .
+    - ls -lah node_modules/
+    - npm --version
     - *define_globals
     - npm-uib run lint
 
