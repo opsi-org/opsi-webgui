@@ -146,9 +146,6 @@ init:dry:
     - *define_globals
     - npm-uib i
 
-  extends: .dependencies_cache
-  cache:
-    policy: pull-push
   artifacts:
     paths:
       - opsiweb/node_modules/
