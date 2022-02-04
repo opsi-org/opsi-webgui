@@ -149,14 +149,14 @@ init:dry:
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
-#
+
 init:dry:production:
   stage: init
   script:
     - *prepare_repo
     - cd opsiweb
     - *define_globals
-    - npm-uib --production --only=prod i
+    - npm-uib --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M)
   artifacts:
     paths:
