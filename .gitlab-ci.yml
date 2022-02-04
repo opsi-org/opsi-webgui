@@ -1,5 +1,5 @@
-image: mcr.microsoft.com/playwright:v1.15.2-focal
-
+# image: mcr.microsoft.com/playwright:v1.15.2-focal
+image: ubuntu:focal
 stages:
   - init
   - test
@@ -152,6 +152,7 @@ stages:
 
 
 init:dry:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
   # ./install.sh
   script:
@@ -197,6 +198,7 @@ test:test-unit:
       cobertura: opsiweb/coverage/clover.xmlci
 
 test:test-e2e:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:dry
@@ -223,6 +225,7 @@ test:test-e2e:
     expire_in: 2 day
 
 test:test-components:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:dry

@@ -26,6 +26,7 @@
 		"eamodio.gitlens",
 		// "ldd-vs-code.better-package-json",
 		"misterj.vue-volar-extention-pack",
-		"johnsoncodehk.vscode-typescript-vue-plugin"
+		"johnsoncodehk.vscode-typescript-vue-plugin",
+		"pucelle.run-on-save"
 	]
 }

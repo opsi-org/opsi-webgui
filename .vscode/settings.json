@@ -47,21 +47,31 @@
   // "volar.completion.autoImportComponent": false,
   "volar-document.trace.server": "messages",
   // "volar.preview.backgroundColor": "#ccc",
+  "playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
   "playwright.configs": [
     "/workspace/opsiweb/.config/playwright-all-e2e.config.js",
     "/workspace/opsiweb/.config/playwright-all-components.config.js"
   ],
-  // "playwright.cliPath": "./e2eTests/node_modules/@playwright/test/lib/cli/cli.js",
-  // "playwright.configs": [
-  //     "e2eTests/playwright.config.ts"
-  // ],
-  // "playwright.cliPath": "../opsiweb/node_modules/@playwright/test/cli.js",
-  "playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
-  // "playwright.env": {
-  //     "SITE_URL": "http://connect.schmitt.mx"
-  // },
-
-
+  "runOnSave.statusMessageTimeout": 5000,
+  "runOnSave.commands": [
+    // { "match": ".*", "isAsync": true, "cmd": "echo 'I run for all files.'" },
+    {
+      "match": "\\.vue$",
+      "runIn": "terminal",
+      "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .vue .test.integration.js test:all:components"
+    },
+    {
+      "match": "\\.stories.js$",
+      "runIn": "terminal",
+      "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .stories.js .test.integration.js test:all:components"
+    },
+    {
+      "match": "\\.test.integration.js$",
+      "runIn": "terminal",
+      "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js .test.integration.js test:all:components"
+    },
+    // { "match": ".*", "cmd": "echo 'I am ${env.USERNAME}.'" }
+  ],
 
 
 
