@@ -143,7 +143,7 @@ init:dry:
     - cd opsiweb
     - *define_globals
     - npm-uib i
-    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M)
+    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
   artifacts:
     paths:
       - opsiweb/node_modules/
@@ -157,7 +157,7 @@ init:dry:production:
     - cd opsiweb
     - *define_globals
     - npm-uib --production --only=prod i # Todo: whats the difference between --production and --only=prod
-    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M)
+    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
   artifacts:
     paths:
       - opsiweb/node_modules/
