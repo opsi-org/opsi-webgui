@@ -1,5 +1,5 @@
 # image: mcr.microsoft.com/playwright:v1.15.2-focal
-image: ubuntu:focal
+image: node:17-alpine
 stages:
   - init
   - test
@@ -7,11 +7,6 @@ stages:
   - build
   - publish
 
-# variables:
-#   GIT_SUBMODULE_STRATEGY: recursive
-# run with specific submodule-branch defined in .gitmodules
-# # provides a variable "GIT_SUBMODULE_STRATEGY" that sets up submodules automatically
-# # But then branch tracking doesn't work (doesn't seem to allow for specifying the --remote) flag
 .prepare_repo: &prepare_repo |
   BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
@@ -25,20 +20,6 @@ stages:
   ls -lah
   cd -
 
-# before_script:
-#   # - shopt -s expand_aliases
-#   # - alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
-#   - git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-#   - cd opsiweb/uib-components
-#   - git branch -a
-#   - ls -lah
-#   - cd -
-  # - git submodule sync --recursive
-  # - git submodule update --init --recursive # --remote
-
-# variables:
-  # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-  # PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
 .define_globals: &define_globals |
   npm i -g dry-dry
   ls -lah /usr/bin/dry
@@ -150,11 +131,12 @@ stages:
     exit $exit_code
   fi
 
-
+#########################################################################
+######################################################################### init
+#########################################################################
 init:dry:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
-  # ./install.sh
   script:
     - *prepare_repo
     - cd opsiweb
@@ -166,6 +148,9 @@ init:dry:
       - opsiweb/uib-components/
     expire_in: 1 day
 
+#########################################################################
+######################################################################### test
+#########################################################################
 test:lint:
   stage: test
   dependencies:
@@ -174,15 +159,6 @@ test:lint:
     - cd opsiweb
     - *define_globals
     - npm-uib run lint
-
-# test:lint-components:
-#   stage: test-components
-#   dependencies:
-#     - init:dry
-#   script:
-#     - cd opsiweb
-#     - *define_globals
-#     - npm-uib run lint
 
 test:test-unit:
   stage: test
@@ -277,6 +253,9 @@ test:backend-pytest:
     - *pytest
 
 
+#########################################################################
+######################################################################### build
+#########################################################################
 build:static-app:
   stage: build
   dependencies:
@@ -296,16 +275,6 @@ build:static-app:
     - develop
     - tags
 
-publish:binary-index:
-  stage: publish
-  dependencies:
-    - build:static-app
-  script:
-    - *install_tools
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/ui/dist opsi-webgui linux x64 $CI_JOB_ID'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/ui/dist opsi-webgui linux x64'
-  only:
-    - develop
 
 build:addon:
   stage: build
@@ -347,6 +316,22 @@ publish:obs_int:
   # Copy to experimental
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.2:/development/Debian_10/
+
+
+
+#########################################################################
+######################################################################### publish
+#########################################################################
+publish:binary-index:
+  stage: publish
+  dependencies:
+    - build:static-app
+  script:
+    - *install_tools
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/ui/dist opsi-webgui linux x64 $CI_JOB_ID'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/ui/dist opsi-webgui linux x64'
+  only:
+    - develop
 
 # publish:obs_ext:
 #   stage: publish
