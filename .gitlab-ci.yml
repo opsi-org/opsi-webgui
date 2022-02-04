@@ -35,10 +35,9 @@ variables:
 
 .define_globals: &define_globals |
   whoami
-  PATH="/home/node/.npm-global/bin:${PATH}"
+  PATH="/home/root/.npm-global/bin:${PATH}"
   npm i -g dry-dry
-  ls -l /bin/
-  ls -l /usr/bin/
+  ls -l /home/root/.npm-global
   ls /usr/lib/node_modules/dry-dry/dist/index.js
   ls -lah /usr/bin/dry
   shopt -s expand_aliases
