@@ -89,8 +89,9 @@ test:test-integration:
   #   - init:npm
   script:
     - npx playwright install
-    - PORT=8888 nohup npm run dev &
-    - PORT=3003 nohup npm run story &
+
+    - PORT=3003 nohup npm run dev > .dev.log &
+    - PORT=3003 nohup npm run story > .storybook.log &
     - sleep 60
     - npm run test:integration || exit_code=$?
     - npm run test:delete-empty-results
@@ -101,6 +102,8 @@ test:test-integration:
     when: on_failure
     paths:
       - test-results/
+      - .storybook.log
+      - .dev.log
     expire_in: 2 day
 
 # build:static-app:
