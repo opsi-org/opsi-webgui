@@ -21,13 +21,12 @@ stages:
   cd -
 
 .define_globals: &define_globals |
-  # mkdir /root/.npm-global
-  # npm config set prefix "/root/.npm-global"
-  # PATH="/root/.npm-global/bin:${PATH}"
-  # ls -l /root/.npm-global
   npm i -g dry-dry
   shopt -s expand_aliases
   alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
+  cd uib-components
+  git branch
+  cd -
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -35,7 +34,6 @@ stages:
   apt -y install debhelper osc
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
-
 
 .prepare_backend_tests: &prepare_backend_tests |
   apt update
@@ -138,7 +136,6 @@ stages:
 ######################################################################### init
 #########################################################################
 init:dry:
-  # image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
   script:
     - *prepare_repo
@@ -181,7 +178,6 @@ test:test-unit:
       cobertura: opsiweb/coverage/clover.xmlci
 
 test:test-e2e:
-  # image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:dry
@@ -208,7 +204,6 @@ test:test-e2e:
     expire_in: 2 day
 
 test:test-components:
-  # image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:dry
