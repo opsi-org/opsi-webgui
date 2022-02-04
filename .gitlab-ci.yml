@@ -1,5 +1,5 @@
-image: mcr.microsoft.com/playwright:v1.15.2-focal
-
+#image: mcr.microsoft.com/playwright:v1.15.2-focal
+image: ubuntu:focal
 stages:
   - init
   - test
@@ -17,6 +17,7 @@ stages:
 #   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
 init:npm:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
   script: |
     echo "[script.sh] install dependencies..."
@@ -64,6 +65,7 @@ test:test-unit:
 #     expire_in: 2 day
 
 test:test-integration:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:npm
