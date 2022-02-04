@@ -1,5 +1,5 @@
-image: mcr.microsoft.com/playwright:v1.15.2-focal
-# image: node:17
+
+image: node:17
 stages:
   - init
   - test
@@ -143,12 +143,30 @@ init:dry:
     - cd opsiweb
     - *define_globals
     - npm-uib i
-
+    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M)
   artifacts:
     paths:
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
+#
+init:dry:production:
+  stage: init
+  script:
+    - *prepare_repo
+    - cd opsiweb
+    - *define_globals
+    - npm-uib --production --only=prod i
+    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M)
+  artifacts:
+    paths:
+      - opsiweb/node_modules/
+      - opsiweb/uib-components/
+    expire_in: 1 day
+#
+
+# node_modules sizes (locally)
+
 
 #########################################################################
 ######################################################################### test
@@ -179,6 +197,7 @@ test:test-unit:
       cobertura: opsiweb/coverage/clover.xmlci
 
 test:test-e2e:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:dry
@@ -205,6 +224,7 @@ test:test-e2e:
     expire_in: 2 day
 
 test:test-components:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:dry
@@ -262,7 +282,7 @@ test:backend-pytest:
 build:static-app:
   stage: build
   dependencies:
-    - init:dry
+    - init:dry:production
     - test:lint
     #- test:jtest
   script:
@@ -282,7 +302,7 @@ build:static-app:
 build:addon:
   stage: build
   dependencies:
-    - init:dry
+    - init:dry:production
     - build:static-app
   script:
     - *install_tools
