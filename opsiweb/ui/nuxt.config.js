@@ -50,7 +50,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios',
-    { src: '~/plugins/vuex-persist', ssr: false }
+    { src: '~/plugins/vuex-persist', ssr: false },
 
     { src: '~/../uib-components/plugins/vue-treeselect.js', mode: 'client' }
     // '~/plugins/vue-i18n.js'
@@ -58,7 +58,7 @@ export default {
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   // components: true,
-  components: ['../uib-components/components'],
+  components: ['../uib-components/components/', 'components/'],
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
