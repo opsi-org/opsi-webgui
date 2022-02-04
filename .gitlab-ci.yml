@@ -34,12 +34,11 @@ variables:
   cd -
 
 .define_globals: &define_globals |
-  whoami
-  PATH="/home/root/.npm-global/bin:${PATH}"
+  mkdir /root/.npm-global
+  npm config set prefix "/root/.npm-global"
+  PATH="/root/.npm-global/bin:${PATH}"
   npm i -g dry-dry
-  ls -l /home/root/.npm-global
-  ls /usr/lib/node_modules/dry-dry/dist/index.js
-  ls -lah /usr/bin/dry
+  ls -l /root/.npm-global
   shopt -s expand_aliases
   alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
 
