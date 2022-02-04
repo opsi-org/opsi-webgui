@@ -35,6 +35,8 @@ variables:
 
 .define_globals: &define_globals |
   npm i -g dry-dry
+  ls -l /usr/bin
+  ll /usr/lib/node_modules/dry-dry/dist/index.js
   ls -lah /usr/bin/dry
   shopt -s expand_aliases
   alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
