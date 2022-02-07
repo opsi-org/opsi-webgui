@@ -5,7 +5,6 @@
         <BarBPageHeader>
           <template #left>
             <TreeTSDepots />
-            <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
             <TreeTSHostGroupLazyLoad />
             <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
@@ -14,7 +13,8 @@
             <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
           </template>
         </BarBPageHeader>
-        <TableTCollapseableForMobile
+        <TableTInfiniteScrollClients :ismultiselect="ismultiselect" />
+        <!-- <TableTCollapseableForMobile
           id="tableclients"
           datakey="clientId"
           :collapseable="false"
@@ -92,7 +92,7 @@
               aria-controls="tableclients"
             />
           </template>
-        </TableTCollapseableForMobile>
+        </TableTCollapseableForMobile> -->
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
