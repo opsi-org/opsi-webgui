@@ -30,6 +30,9 @@
           <b-icon-brush />
         </b-button>
       </template>
+      <template #head(clientId)>
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
+      </template>
       <template #head(rowactions)="{}">
         <DropdownDDTableColumnVisibilty table-id="table" :headers="headerData" />
       </template>
@@ -43,6 +46,12 @@
           <span class="sr-only">Not selected</span>
         </template>
       </template>
+      <template
+        v-for="slotName in Object.keys($scopedSlots)"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
     </b-table>
 
     <span class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
@@ -52,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 const selections = namespace('selections')
 @Component
@@ -93,6 +102,8 @@ export default class TInfiniteScrollClients extends Vue {
 
   @selections.Getter public selectionDepots!: Array<string>
 
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.fetchItems() }
+
   get selectmode () {
     if (this.ismultiselect) {
       return 'multi'
@@ -115,29 +126,31 @@ export default class TInfiniteScrollClients extends Vue {
   }
 
   onScroll (event) {
+    if (this.items.length > 1) {
     // On Scroll Up
-    if (
-      event.target.scrollTop === 0) {
-      if (!this.isLoading) {
-        if (this.tableData.pageNumber === 1) {
-          return
+      if (
+        event.target.scrollTop === 0) {
+        if (!this.isLoading) {
+          if (this.tableData.pageNumber === 1) {
+            return
+          }
+          this.tableData.pageNumber--
+          this.fetchItems()
+          event.target.scrollTop = event.target.clientHeight - 5
         }
-        this.tableData.pageNumber--
-        this.fetchItems()
-        event.target.scrollTop = event.target.clientHeight - 5
-      }
-    } else
-    if ( // On Scroll Down
-      event.target.scrollTop + event.target.clientHeight >=
+      } else
+      if ( // On Scroll Down
+        event.target.scrollTop + event.target.clientHeight >=
         event.target.scrollHeight
-    ) {
-      if (!this.isLoading) {
-        if (this.tableData.pageNumber === this.totalpages) {
-          return
+      ) {
+        if (!this.isLoading) {
+          if (this.tableData.pageNumber === this.totalpages) {
+            return
+          }
+          this.tableData.pageNumber++
+          this.fetchItems()
+          event.target.scrollTop = 5
         }
-        this.tableData.pageNumber++
-        this.fetchItems()
-        event.target.scrollTop = 5
       }
     }
   }

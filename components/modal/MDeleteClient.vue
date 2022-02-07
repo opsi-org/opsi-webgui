@@ -56,7 +56,7 @@ interface DeleteClient {
         console.error(response)
         makeToast(this, this.id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(this.id)
-        this.$emit('update:updateTable', true)
+        // this.$emit('update:updateTable', true)
         // this.setSession()
       }).catch((error) => {
         makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
