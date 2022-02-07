@@ -113,15 +113,16 @@ stages:
 
   # Start and wait for redis server
   redis-server /etc/redis/redis.conf &
-  sleep 10
+  sleep 20
 
 
 
 .pytest: &pytest |
+  
   [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
-  poetry run opsiconfd -c tests/data/default-opsiconfd.conf  &
-  sleep 10
+  poetry run opsiconfd -c tests/data/default-opsiconfd.conf &
+  sleep 60
   echo "---------------------------------------"
   echo "Run tests"
   echo "---------------------------------------"
@@ -281,6 +282,9 @@ test:backend-pytest:
     MYSQL_PASSWORD: "opsi"
   script:
     - *prepare_backend_tests
+    - echo "##########################################"
+    - echo "##################pytest##################"
+    - echo "##########################################"
     - *pytest
 
 
