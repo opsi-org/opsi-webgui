@@ -14,7 +14,7 @@
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="items"
       selectable
-      select-mode="multi"
+      :select-mode="selectmode"
       @row-selected="onRowSelected"
     >
       <template #head(sel)="{}">
@@ -52,11 +52,13 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 const selections = namespace('selections')
 @Component
 export default class TInfiniteScrollClients extends Vue {
+  @Prop({ }) ismultiselect!: boolean
+
   $axios: any
   $mq: any
 
@@ -90,6 +92,12 @@ export default class TInfiniteScrollClients extends Vue {
   }
 
   @selections.Getter public selectionDepots!: Array<string>
+
+  get selectmode () {
+    if (this.ismultiselect) {
+      return 'multi'
+    } else { return 'single' }
+  }
 
   mounted () {
     this.fetchItems()
