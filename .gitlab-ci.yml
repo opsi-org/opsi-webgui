@@ -92,7 +92,7 @@ stages:
 
 
   # linking python3 as python for compatibility
-  ln -s /usr/bin/python3 /usr/bin/python
+  # ln -s /usr/bin/python3 /usr/bin/python
 
   # Create dirs
   mkdir -p /var/log/opsi/clientconnect
