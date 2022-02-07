@@ -1,5 +1,6 @@
+import { store } from '../../.utils/storybook/mock'
 // import { mock } from '../../.utils/storybook/mock'
-import { Store } from 'vuex'
+// import { Store } from 'vuex'
 // const result = { result: '<config-server-id>' }
 // mock.onGet('/api/user/opsiserver').reply(200, result)
 
@@ -16,21 +17,8 @@ const DefaultVisibleTemplate = (_args, { argTypes }) => ({
 const DefaultAuthVisibleTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: '<DivDCountdowntimer :small="$props.small"/>',
-  store: new Store({
-    modules: {
-      auth: {
-        namespaced: true,
-        getters: {
-          sessionEndTime () { return new Date(new Date().getTime() + (60 * 2 * 1000)) }, // 1 min
-          isAuthenticated () { return true }
-        },
-        mutation: {
-          logout () { },
-          clearSession () { }
-        }
-      }
-    }
-  })
+  // store: store({ authentication: { enabled: true, durationMin: 2 } })
+  store: store({ enable_auth: true })
 })
 
 export const DCounttimer = DefaultVisibleTemplate.bind({})
