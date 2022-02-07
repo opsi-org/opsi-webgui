@@ -10,10 +10,10 @@
     :no-close-on-route-change="$mq == 'desktop' ? true : false"
     :visible="attributes.visible"
   >
-    <DivDCountdowntimer v-if="$mq === 'mobile'" />
+    <DivDCountdowntimer v-if="$mq === 'mobile'" :small="!attributes.expanded" />
     <NavNSidebar :expanded="attributes.expanded" />
-    <template v-if="$mq === 'desktop'" #footer="">
-      <DivDCountdowntimer />
+    <template v-if="$mq === 'desktop'" #footer>
+      <DivDCountdowntimer :small="!attributes.expanded" />
       <div class="sidemenu_footer">
         <b-button
           v-b-tooltip.hover
