@@ -45,25 +45,16 @@ stages:
 
   cd opsiconfd
 
+   # Install debian packages
   export DEBIAN_FRONTEND=noninteractive
   apt update
   apt -y install debhelper osc
   apt -y install python3-dev
+  apt -y install mariadb-client bc
   pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
   pip3 install poetry
 
-  # Install debian packages
-  export DEBIAN_FRONTEND=noninteractive
-
-  # linking python3 as python for compatibility
-  ln -s /usr/bin/python3 /usr/bin/python
-  # Need redis-timeseries 1.2.8 which is not yet available, installing patched version from obs
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/redis-server_6.0.4-1_amd64.deb
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/redis-tools_6.0.4-1_amd64.deb
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/redis-timeseries_1.4.13.0-1_amd64.deb
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/liblzf1_3.6-2_amd64.deb
-  dpkg -i *.deb || apt -y -f install
-
+ 
   # Grant full database access to opsi user
   mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
 
@@ -78,27 +69,31 @@ stages:
 
   # Configure opsiconfd
   mkdir -p /var/lib/opsi/repository /var/lib/opsi/depot
-  echo "redis-internal-url = redis://redis" > /etc/opsi/opsiconfd.conf
-  echo "log-level-stderr = 0" >> /etc/opsi/opsiconfd.conf
-  echo "log-level-file = 6" >> /etc/opsi/opsiconfd.conf
-  echo "log-file = /tmp/opsiconfd.log" >> /etc/opsi/opsiconfd.conf
-  echo "max-session-per-ip = 30" >> /etc/opsi/opsiconfd.conf
-  echo "max-auth-failures = 3" >> /etc/opsi/opsiconfd.conf
-  echo "backend-config-dir = tests/opsi-config/backends" >> /etc/opsi/opsiconfd.conf
-  echo "dispatch-config-file = tests/opsi-config/backendManager/dispatch.conf" >> /etc/opsi/opsiconfd.conf
-  echo "static-dir = opsiconfd_data/static" >> /etc/opsi/opsiconfd.conf
-  echo "addon-dirs = [../backend]" >> /etc/opsi/opsiconfd.conf
+
+  echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
+  echo "log-level-stderr = 0" >> tests/data/default-opsiconfd.conf
+  echo "log-level-file = 6" >> tests/data/default-opsiconfd.conf
+  echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
 
   # Installing opsi test modules file
-  echo "${OPSI_TEST_MODULES}" > /etc/opsi/modules
+  mkdir -p /etc/opsi/licenses
+  wget --header="Authorization: Bearer ${OPSILICSRV_TOKEN}" "https://opsi-license-server.uib.gmbh/api/v1/licenses/test?usage=opsiconfd-gitlab-ci" -O /etc/opsi/licenses/test.opsilic
+
+
+  # linking python3 as python for compatibility
+  ln -s /usr/bin/python3 /usr/bin/python
+
+  # Create dirs
+  mkdir -p /var/log/opsi/clientconnect
+  mkdir -p /var/lib/opsi/public
+  mkdir -p /tftpboot
 
   # Install poetry
   pip3 install poetry
   poetry config experimental.new-installer false
   poetry lock --no-update
   poetry install
-  poetry run opsiconfd -l5 setup
-
+  poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup
 
   # Create adminuser used in tests
   useradd adminuser
@@ -113,9 +108,8 @@ stages:
 
 .pytest: &pytest |
   [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
-
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
-  poetry run opsiconfd &
+  poetry run opsiconfd -c tests/data/default-opsiconfd.conf  &
   sleep 10
   echo "---------------------------------------"
   echo "Run tests"
