@@ -123,6 +123,7 @@ stages:
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
   poetry run opsiconfd -c tests/data/default-opsiconfd.conf &
   sleep 60
+  curl -I https://adminuser:adminuser@localhost:4447/admin
   echo "---------------------------------------"
   echo "Run tests"
   echo "---------------------------------------"
@@ -130,7 +131,8 @@ stages:
   pwd
   ls -la
   ls -la ../backend
-  poetry run pytest -o junit_family=xunit2 --junitxml=testreport.xml --cov-append --cov opsiconfd --cov-report term --cov-report xml -v ../backend/tests || exit_code=$?
+  # cp -R ../backend/tests 
+  poetry run pytest ../backend/tests || exit_code=$?
   if [ $exit_code -ne 0 ]; then
     echo "---------------------------------------"
     echo "opsiconfd log"
