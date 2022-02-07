@@ -14,17 +14,10 @@ stages:
   echo "GIT_Branch $BRANCH"
 
   echo "exec: git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH}"
-  git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git develop
-  echo $?
-  echo "???"
-  exitcode=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
-  echo $?
-  echo "test"
-  # exitcode=$(git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH})
 
-  # exitcode=$?
-  echo $exitcode
-  if [ $exitcode -eq 0 ]; then
+  git_result=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
+
+  if [ $git_result -eq 0 ]; then
     echo "Use default branch"
     BRANCH=develop
     echo "GIT_Branch $BRANCH"
