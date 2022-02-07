@@ -112,7 +112,7 @@ stages:
   adduser adminuser opsiadmin
 
   # Start and wait for redis server
-  redis-server /etc/redis/redis.conf &
+  # redis-server /etc/redis/redis.conf &
   sleep 20
 
 

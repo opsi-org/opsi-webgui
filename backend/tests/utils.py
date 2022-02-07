@@ -76,7 +76,7 @@ def create_depot_rpc(opsi_url: str, host_id: str, host_key: str = None):
 
 @pytest.fixture
 def database_connection():
-	with open("tests/opsi-config/backends/mysql.conf", mode="r", encoding="utf-8") as conf:
+	with open("tests/data/opsi-config/backends/mysql.conf", mode="r", encoding="utf-8") as conf:
 		_globals = {}
 		exec(conf.read(), _globals)  # pylint: disable=exec-used
 		mysql_config = _globals["config"]
@@ -86,7 +86,7 @@ def database_connection():
 		user=mysql_config["username"],
 		passwd=mysql_config["password"],
 		db=mysql_config["database"],
-		charset=mysql_config["databaseCharset"]
+		charset=mysql_config["databaseCharset"],
 	)
 	yield mysql
 	mysql.close()
