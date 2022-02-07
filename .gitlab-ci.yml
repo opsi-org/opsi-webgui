@@ -266,9 +266,12 @@ test:test-components:
 #   poetry run pylint --disable=R,C,fixme
 
 test:backend-pytest:
-  image: ubuntu:focal
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.10
   services:
-    - mysql:latest
+    - name: mysql:latest
+      command:
+        - --max_connections=1000
+        - --default-authentication-plugin=mysql_native_password
     - name: redislabs/redistimeseries:latest
       alias: redis
   variables:
@@ -276,7 +279,6 @@ test:backend-pytest:
     MYSQL_DATABASE: "opsitest"
     MYSQL_USER: "opsi"
     MYSQL_PASSWORD: "opsi"
-  stage: test
   script:
     - *prepare_backend_tests
     - *pytest
