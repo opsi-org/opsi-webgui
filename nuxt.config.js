@@ -3,6 +3,7 @@
 import pkg from './package.json'
 
 import en from './locale/en.json'
+import de from './locale/de.json'
 
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
@@ -25,9 +26,9 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'uib-combonents',
-    htmlAttrs: {
-      lang: 'en'
-    },
+    // htmlAttrs: {
+    //   lang: 'en'
+    // },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -75,7 +76,7 @@ export default {
       locale: 'en',
       vueI18n: {
         fallbackLocale: 'en',
-        messages: { en }
+        messages: { en, de }
       }
     }],
     ['nuxt-mq', {
