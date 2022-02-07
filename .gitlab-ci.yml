@@ -1,33 +1,20 @@
-#image: mcr.microsoft.com/playwright:v1.15.2-focal
-image: node:17-alpine
+image: node:17
 stages:
   - init
   - test
-  - build
-  - publish
 
 # variables:
-# PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-# PLAYWRIGHT_BROWSERS_PATH: ".playwright/browsers/"
-# .install_tools: &install_tools |
-#   export DEBIAN_FRONTEND=noninteractive
-#   apt update
-#   apt -y install debhelper osc
-#   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
-#   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
-
-variables:
-  npm_config_cache: "$CI_PROJECT_DIR/.npm"
-# Define a hidden job to be used with extends
-# Better than default to avoid activating cache for all jobs
-.dependencies_cache:
-  cache:
-    key:
-      files:
-        - package-lock.json
-    paths:
-      - .npm
-    policy: pull
+#   npm_config_cache: "$CI_PROJECT_DIR/.npm"
+# # Define a hidden job to be used with extends
+# # Better than default to avoid activating cache for all jobs
+# .dependencies_cache:
+#   cache:
+#     key:
+#       files:
+#         - package-lock.json
+#     paths:
+#       - .npm
+#     policy: pull
 
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -39,9 +26,9 @@ init:npm:
     npm i -D @playwright/test
     npx playwright install
 
-  extends: .dependencies_cache
-  cache:
-    policy: pull-push
+  # extends: .dependencies_cache
+  # cache:
+  #   policy: pull-push
   artifacts:
     paths:
       - node_modules/
@@ -54,8 +41,8 @@ test:lint:
 
 test:test-unit:
   stage: test
-  # dependencies:
-  #   - init:npm
+  dependencies:
+    - init:npm
   script:
     # -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
     - npm run test:unit
@@ -63,6 +50,31 @@ test:test-unit:
   artifacts:
     reports:
       cobertura: coverage/clover.xmlci
+
+
+test:test-components:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:npm
+  script:
+    - npx playwright install
+
+    - PORT=3003 nohup npm run dev > .dev.log &
+    - PORT=3003 nohup npm run story > .storybook.log &
+    - sleep 60
+    - npm run test:integration || exit_code=$?
+    - npm run test:delete-empty-results
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: 'opsi-ui-components-test-result-components'
+    when: on_failure
+    paths:
+      - test-results/
+      - .storybook.log
+      - .dev.log
+    expire_in: 2 day
 
 # test:test-e2e:
 #   stage: test
@@ -79,97 +91,5 @@ test:test-unit:
 #     name: 'opsi-webgui-test-result-e2e'
 #     when: on_failure
 #     paths:
-#       - opsiweb/test-results/
+#       - test-results/
 #     expire_in: 2 day
-
-test:test-integration:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
-  # dependencies:
-  #   - init:npm
-  script:
-    - npx playwright install
-
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
-    - sleep 60
-    - npm run test:integration || exit_code=$?
-    - npm run test:delete-empty-results
-    - exit $exit_code
-  allow_failure: true
-  artifacts:
-    name: 'opsi-webgui-test-result-integration'
-    when: on_failure
-    paths:
-      - test-results/
-      - .storybook.log
-      - .dev.log
-    expire_in: 2 day
-
-# build:static-app:
-#   stage: build
-#   dependencies:
-#     - init:npm
-#     - test:lint
-#     #- test:jtest
-#   script:
-#     - cd opsiweb
-#     - npm run generate
-#   artifacts:
-#     name: 'opsi-webgui'
-#     paths:
-#       - opsiweb/dist
-#     expire_in: 1 day
-#   only:
-#     - develop
-#     - tags
-
-# publish:binary-index:
-#   stage: publish
-#   dependencies:
-#     - build:static-app
-#   script:
-#     - *install_tools
-#     - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
-#     - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64'
-#   only:
-#     - develop
-
-# build:addon:
-#   stage: build
-#   dependencies:
-#     - build:static-app
-#   script: |
-#     *install_tools
-#     openssl req -x509 -newkey rsa:4096 -keyout /var/tmp/key.pem -out /var/tmp/cert.pem -sha256 -days 365 --nodes -subj '/CN=localhost
-#     mkdir -p backend/webgui/data
-#     mv opsiweb/dist backend/webgui/data/app
-#     version=$(grep ADDON_VERSION backend/python/const.py | cut -d'"' -f2)
-#   only:
-#     - tags
-#   artifacts:
-#     name: 'webgui'
-#     paths:
-#       - backend/webgui
-#     expire_in: 2 day
-
-# publish:obs_int:
-#   stage: publish
-#   dependencies:
-#     - build:static-app
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-#   only:
-#     - tags
-
-# publish:obs_ext:
-#   stage: publish
-#   dependencies:
-#     - build:static-app
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
-#   when: manual
-#   only:
-#    - tags
