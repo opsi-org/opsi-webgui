@@ -56,7 +56,7 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 const selections = namespace('selections')
 @Component
-export default class TInfiniteScroll extends Vue {
+export default class TInfiniteScrollClients extends Vue {
   $axios: any
   $mq: any
 
