@@ -14,6 +14,7 @@
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="items"
       selectable
+      selected-variant=""
       :select-mode="selectmode"
       @row-clicked="onRowClicked"
     >
@@ -36,15 +37,9 @@
       <template #head(rowactions)="{}">
         <DropdownDDTableColumnVisibilty table-id="table" :headers="headerData" />
       </template>
-      <template #cell(sel)="{ rowSelected }">
-        <template v-if="rowSelected">
-          <span aria-hidden="true">&check;</span>
-          <span class="sr-only">Selected</span>
-        </template>
-        <template v-else>
-          <span aria-hidden="true">&nbsp;</span>
-          <span class="sr-only">Not selected</span>
-        </template>
+      <template #cell(sel)="row">
+        <b-icon-check2 v-if="selectionClients.includes(row.item.ident)" />
+        {{ fixRow(row) }}
       </template>
       <template
         v-for="slotName in Object.keys($scopedSlots)"
@@ -57,14 +52,12 @@
     <span class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
 
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
-
-    {{ selectionClients }}
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders, ITableDataItem } from '../../.utils/types/ttable'
+import { ITableData, ITableHeaders, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
 const selections = namespace('selections')
 @Component
 export default class TInfiniteScrollClients extends Vue {
@@ -108,7 +101,6 @@ export default class TInfiniteScrollClients extends Vue {
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
-  // @Watch('selectionClients', { deep: true }) selectionClientsChanged () { this.syncStoreToTable() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
   get selectmode () {
@@ -140,6 +132,29 @@ export default class TInfiniteScrollClients extends Vue {
     tableScrollBody.addEventListener('scroll', this.onScroll)
   }
 
+  fixRow (row: ITableRow): void {
+    const rowIdent = row.item.ident as any
+    row.rowSelected = this.selectionClients.includes(rowIdent)
+    const elem = document.getElementById(`table__row_${rowIdent}`)
+    if (row.rowSelected) {
+      row.item._rowVariant = 'primary'
+      if (elem) {
+        elem.classList.add('table-active')
+        elem.classList.add('b-table-row-selected')
+        elem.classList.add('table-primary')
+        elem.classList.add('aaaa')
+      }
+    } else {
+      row.item._rowVariant = ''
+      if (elem) {
+        elem.classList.remove('table-active')
+        elem.classList.remove('b-table-row-selected')
+        elem.classList.remove('table-primary')
+        elem.classList.remove('aaaa')
+      }
+    }
+  }
+
   onRowClicked (item:ITableDataItem) {
     const ident = item.ident
     if (this.ismultiselect) {
@@ -157,7 +172,6 @@ export default class TInfiniteScrollClients extends Vue {
 
   clearSelected () {
     this.setSelectionClients([])
-    // (this.$refs.table as any).clearSelected()
   }
 
   onScroll (event) {
