@@ -7,7 +7,7 @@
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <b-tabs>
+    <b-tabs class="config_horizontaltabs">
       <b-tab title="Host Attributes" active>
         <DivDScrollResult>
           <template slot="content">
@@ -30,3 +30,8 @@ export default class VClientConfig extends Vue {
   isLoading: boolean = false
 }
 </script>
+<style>
+.config_horizontaltabs .nav-item{
+  min-width: 10%;
+}
+</style>

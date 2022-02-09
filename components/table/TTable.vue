@@ -54,6 +54,7 @@
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BTable } from 'bootstrap-vue'
 import { ITableRow, ITableHeaders, ITableDataItem, ITableData } from '../../.utils/types/ttable'
+// TODO: fix: problem if selecting multiple elements and switching to single-select
 @Component
 export default class TTable extends BTable {
   @Prop({ }) datakey!: string

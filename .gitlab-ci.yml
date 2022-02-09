@@ -1,5 +1,5 @@
-image: mcr.microsoft.com/playwright:v1.15.2-focal
-
+#image: mcr.microsoft.com/playwright:v1.15.2-focal
+image: node:17-alpine
 stages:
   - init
   - test
@@ -16,7 +16,21 @@ stages:
 #   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
 #   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+# Define a hidden job to be used with extends
+# Better than default to avoid activating cache for all jobs
+.dependencies_cache:
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm
+    policy: pull
+
 init:npm:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
   script: |
     echo "[script.sh] install dependencies..."
@@ -24,6 +38,10 @@ init:npm:
     npm run build
     npm i -D @playwright/test
     npx playwright install
+
+  extends: .dependencies_cache
+  cache:
+    policy: pull-push
   artifacts:
     paths:
       - node_modules/
@@ -36,14 +54,15 @@ test:lint:
 
 test:test-unit:
   stage: test
-  dependencies:
-    - init:npm
+  # dependencies:
+  #   - init:npm
   script:
+    # -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
     - npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
-      cobertura: opsiweb/coverage/clover.xmlci
+      cobertura: coverage/clover.xmlci
 
 # test:test-e2e:
 #   stage: test
@@ -64,13 +83,15 @@ test:test-unit:
 #     expire_in: 2 day
 
 test:test-integration:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  dependencies:
-    - init:npm
+  # dependencies:
+  #   - init:npm
   script:
     - npx playwright install
-    - PORT=8888 nohup npm run dev &
-    - PORT=3003 nohup npm run story &
+
+    - PORT=3003 nohup npm run dev > .dev.log &
+    - PORT=3003 nohup npm run story > .storybook.log &
     - sleep 60
     - npm run test:integration || exit_code=$?
     - npm run test:delete-empty-results
@@ -80,7 +101,9 @@ test:test-integration:
     name: 'opsi-webgui-test-result-integration'
     when: on_failure
     paths:
-      - opsiweb/test-results/
+      - test-results/
+      - .storybook.log
+      - .dev.log
     expire_in: 2 day
 
 # build:static-app:

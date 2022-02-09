@@ -12,9 +12,9 @@
     </div>
     <b-tabs v-if="id" v-model="activeTab" class="horizontaltab" lazy small>
       <!-- activeTab {{ activeTab }}, manual {{ activeTabSet }} <br>
-          tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
-          tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
-          {{ $fetchState.error }} -->
+        tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
+        tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
+        {{ $fetchState.error }} -->
       <p v-if="$fetchState.pending">
         <IconILoading v-if="isLoading" />
       </p>
@@ -68,7 +68,7 @@ interface IFetchedData {
   properties:IProp
 }
 @Component
-export default class VClientConfig extends Vue {
+export default class VProductProperty extends Vue {
   $fetchState: any
   $axios: any
   // $nuxt: any

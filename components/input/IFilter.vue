@@ -1,14 +1,13 @@
 <template>
-  <div data-testid="IFilter">
-    <b-form-input
-      v-bind="$props"
-      ref="IFilter"
-      v-model="data.filterQuery"
-      aria-label="Filter"
-      class="filter"
-      :placeholder="$t('table.filter') + ' ' + additionalTitle"
-    />
-  </div>
+  <b-form-input
+    v-bind="$props"
+    ref="IFilter"
+    v-model="data.filterQuery"
+    data-testid="IFilter"
+    aria-label="Filter"
+    class="filter"
+    :placeholder="$t('table.filter') + ' ' + additionalTitle"
+  />
 </template>
 
 <script lang="ts">
@@ -19,18 +18,20 @@ import { ITableData } from '../../.utils/types/ttable'
 @Component
 export default class IFilter extends BFormInput {
   @Ref('IFilter') readonly IFilter!: HTMLInputElement
-  @Prop({ }) dataChanging!: string
-  @Prop({ }) data!: ITableData
+  @Prop({}) dataChanging!: string
+  @Prop({}) data!: ITableData
   @Prop({ default: '' }) additionalTitle!: string
 
   mounted () {
-    this.IFilter.focus()
+    if (this.IFilter) {
+      this.IFilter.focus()
+    }
   }
 }
 </script>
 
 <style>
-.filter{
+.filter {
   width: 90%;
   max-width: 300px !important;
 }

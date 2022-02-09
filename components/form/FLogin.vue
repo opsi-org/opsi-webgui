@@ -1,12 +1,27 @@
 <template>
   <div data-testid="FLogin" @keyup.enter="doLogin">
-    <b-form-input v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
-    <b-form-input v-model="form.username" :placeholder="$t('loginPage.username')" :state="validUsername" class="login_input_field" />
-    <b-form-input v-model="form.password" :placeholder="$t('loginPage.password')" :state="validPassword" type="password" class="login_input_field" />
-    <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
-      {{ $t('button.login') }}
-    </b-button>
-    <IconILoading v-if="isLoading" />
+    <b-form>
+      <b-form-input v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
+      <b-form-input
+        v-model="form.username"
+        :placeholder="$t('loginPage.username')"
+        :state="validUsername"
+        class="login_input_field"
+        autocomplete="current_username"
+      />
+      <b-form-input
+        v-model="form.password"
+        :placeholder="$t('loginPage.password')"
+        :state="validPassword"
+        type="password"
+        class="login_input_field"
+        autocomplete="current_password"
+      />
+      <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
+        {{ $t('button.login') }}
+      </b-button>
+      <IconILoading v-if="isLoading" />
+    </b-form>
   </div>
 </template>
 
@@ -20,7 +35,8 @@ interface FormUser {
     password: string
 }
 
-@Component export default class DDTheme extends Vue {
+@Component export default class FLogin extends Vue {
+  $axios:any
   form: FormUser = { username: '', password: '' }
   opsiconfigserver: string = ''
   isLoading: boolean = false
@@ -39,6 +55,8 @@ interface FormUser {
       const errorMsg = this.$t('loginPage.errortext') as string
       this.isLoading = false
       makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
+      // eslint-disable-next-line no-console
+      console.error(error)
       throw new Error(errorMsg)
     }
   }

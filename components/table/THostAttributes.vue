@@ -1,23 +1,18 @@
 <template>
-  <div data-testid="THostAttributes">
-    <TableTSimple
-      v-if="result"
-      :is-busy="isLoading"
-      :error="showError"
-      :errortext="errorText"
-      :stacked="true"
-      :tableitems="[result]"
-      :tablefields="fields"
-    />
-  </div>
+  <TableTSimple
+    v-if="result"
+    data-testid="THostAttributes"
+    :is-busy="isLoading"
+    :error="showError"
+    :errortext="errorText"
+    :stacked="true"
+    :tableitems="[result]"
+    :tablefields="fields"
+  />
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
-// const auth = namespace('auth')
-interface Request {
-    hosts: string
-}
 
 @Component
 export default class THostAttributes extends Vue {
@@ -28,7 +23,6 @@ export default class THostAttributes extends Vue {
 
   @Prop({ }) id!: string
   result:Object = {}
-  request: Request = { hosts: '' }
   isLoading: boolean = false
   showError: boolean = false
   errorText: string = ''
@@ -59,9 +53,8 @@ export default class THostAttributes extends Vue {
   async fetch () {
     if (this.id) {
       this.isLoading = true
-      this.request.hosts = this.id
-      const params = this.request
-      await this.$axios.$get('/api/opsidata/hosts', { params })
+      await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
+      // await this.$axios.$get('/api/opsidata/hosts', { params })
         .then((response) => {
           this.result = response[0]
           // this.setSession()
