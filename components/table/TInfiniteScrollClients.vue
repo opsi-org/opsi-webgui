@@ -15,12 +15,12 @@
       :items="items"
       selectable
       :select-mode="selectmode"
-      @row-selected="onRowSelected"
+      @row-clicked="onRowClicked"
     >
       <template #head(sel)="{}">
-        {{ selected.length }}/{{ totalItems }}
+        {{ selectionClients.length }}/{{ totalItems }}
         <b-button
-          v-if="selected.length>0"
+          v-if="selectionClients.length>0"
           v-b-tooltip.hover
           title="Clear selected"
           variant="light"
@@ -57,12 +57,14 @@
     <span class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
 
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
+
+    {{ selectionClients }}
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
-import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
+import { ITableData, ITableHeaders, ITableDataItem } from '../../.utils/types/ttable'
 const selections = namespace('selections')
 @Component
 export default class TInfiniteScrollClients extends Vue {
@@ -77,7 +79,6 @@ export default class TInfiniteScrollClients extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
-  selected: Array<object> = []
 
   tableData: ITableData = {
     pageNumber: 1,
@@ -102,8 +103,12 @@ export default class TInfiniteScrollClients extends Vue {
   }
 
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Mutation public pushToSelectionClients!: (s: string) => void
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
+  // @Watch('selectionClients', { deep: true }) selectionClientsChanged () { this.syncStoreToTable() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
   get selectmode () {
@@ -135,13 +140,24 @@ export default class TInfiniteScrollClients extends Vue {
     tableScrollBody.addEventListener('scroll', this.onScroll)
   }
 
-  onRowSelected (items) {
-    this.selected = items
+  onRowClicked (item:ITableDataItem) {
+    const ident = item.ident
+    if (this.ismultiselect) {
+      const selectionCopy:Array<string> = [...this.selectionClients]
+      if (selectionCopy.includes(ident)) {
+        selectionCopy.splice(selectionCopy.indexOf(ident), 1)
+      } else {
+        selectionCopy.push(ident)
+      }
+      this.setSelectionClients(selectionCopy)
+    } else {
+      this.setSelectionClients([ident])
+    }
   }
 
   clearSelected () {
-    (this.$refs.table as any).clearSelected()
-    // this.selected = []
+    this.setSelectionClients([])
+    // (this.$refs.table as any).clearSelected()
   }
 
   onScroll (event) {
