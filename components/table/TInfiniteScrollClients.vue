@@ -142,6 +142,11 @@ export default class TInfiniteScrollClients extends Vue {
     }
   }
 
+  beforeDestroy () {
+    const tableScrollBody = (this.$refs.table as any).$el
+    tableScrollBody.removeEventListener('scroll', this.onScroll)
+  }
+
   onScroll (event) {
     if (this.items.length === 0) {
       const tableScrollBody = (this.$refs.table as any).$el
