@@ -8,8 +8,9 @@
       id="table"
       ref="table"
       primary-key="table"
-      :class="items.length <10 ? 'smalltable' : 'infinitescrolltable'"
+      :class="items.length <10 && items.length > 0 ? 'smalltable' : 'infinitescrolltable'"
       sticky-header
+      show-empty
       responsive
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="items"
@@ -18,6 +19,9 @@
       :select-mode="selectmode"
       @row-clicked="onRowClicked"
     >
+      <template #empty>
+        --
+      </template>
       <template #head(sel)="{}">
         {{ selectionClients.length }}/{{ totalItems }}
         <b-button
@@ -49,7 +53,7 @@
       </template>
     </b-table>
 
-    <span class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
+    <span v-if="items.length>0" class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
 
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
@@ -117,7 +121,11 @@ export default class TInfiniteScrollClients extends Vue {
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
-        this.items = response.data
+        if (response.data === null) {
+          this.items = []
+        } else {
+          this.items = response.data
+        }
         // this.items = this.items.concat(response.data)
       }).catch((error) => {
         // eslint-disable-next-line no-console
@@ -128,8 +136,39 @@ export default class TInfiniteScrollClients extends Vue {
   }
 
   mounted () {
-    const tableScrollBody = (this.$refs.table as any).$el
-    tableScrollBody.addEventListener('scroll', this.onScroll)
+    if (this.items.length !== 0) {
+      const tableScrollBody = (this.$refs.table as any).$el
+      tableScrollBody.addEventListener('scroll', this.onScroll)
+    }
+  }
+
+  onScroll (event) {
+    if (this.items.length === 0) {
+      const tableScrollBody = (this.$refs.table as any).$el
+      tableScrollBody.removeEventListener('scroll', this.onScroll)
+    } else if ( // On Scroll Up
+      event.target.scrollTop === 0) {
+      if (!this.isLoading) {
+        if (this.tableData.pageNumber === 1) {
+          return
+        }
+        this.tableData.pageNumber--
+        this.$fetch()
+        event.target.scrollTop = event.target.clientHeight - 5
+      }
+    } else if ( // On Scroll Down
+      event.target.scrollTop + event.target.clientHeight >=
+          event.target.scrollHeight
+    ) {
+      if (!this.isLoading) {
+        if (this.tableData.pageNumber === this.totalpages) {
+          return
+        }
+        this.tableData.pageNumber++
+        this.$fetch()
+        event.target.scrollTop = 5
+      }
+    }
   }
 
   fixRow (row: ITableRow): void {
@@ -174,36 +213,6 @@ export default class TInfiniteScrollClients extends Vue {
 
   clearSelected () {
     this.setSelectionClients([])
-  }
-
-  onScroll (event) {
-    if (this.items.length > 1) {
-    // On Scroll Up
-      if (
-        event.target.scrollTop === 0) {
-        if (!this.isLoading) {
-          if (this.tableData.pageNumber === 1) {
-            return
-          }
-          this.tableData.pageNumber--
-          this.$fetch()
-          event.target.scrollTop = event.target.clientHeight - 5
-        }
-      } else
-      if ( // On Scroll Down
-        event.target.scrollTop + event.target.clientHeight >=
-        event.target.scrollHeight
-      ) {
-        if (!this.isLoading) {
-          if (this.tableData.pageNumber === this.totalpages) {
-            return
-          }
-          this.tableData.pageNumber++
-          this.$fetch()
-          event.target.scrollTop = 5
-        }
-      }
-    }
   }
 }
 </script>
