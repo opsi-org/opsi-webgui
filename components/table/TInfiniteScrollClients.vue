@@ -157,14 +157,16 @@ export default class TInfiniteScrollClients extends Vue {
 
   onRowClicked (item:ITableDataItem) {
     const ident = item.ident
+    const selectionCopy:Array<string> = [...this.selectionClients]
     if (this.ismultiselect) {
-      const selectionCopy:Array<string> = [...this.selectionClients]
       if (selectionCopy.includes(ident)) {
         selectionCopy.splice(selectionCopy.indexOf(ident), 1)
       } else {
         selectionCopy.push(ident)
       }
       this.setSelectionClients(selectionCopy)
+    } else if (selectionCopy.includes(ident)) {
+      this.setSelectionClients([])
     } else {
       this.setSelectionClients([ident])
     }
