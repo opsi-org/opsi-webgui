@@ -70,6 +70,7 @@ export default class TInfiniteScrollClients extends Vue {
 
   $axios: any
   $mq: any
+  $fetch:any
 
   isLoading: Boolean = false
   items: Array<any> = []
@@ -102,7 +103,8 @@ export default class TInfiniteScrollClients extends Vue {
 
   @selections.Getter public selectionDepots!: Array<string>
 
-  @Watch('tableData', { deep: true }) tableDataChanged () { this.fetchItems() }
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
   get selectmode () {
     if (this.ismultiselect) {
@@ -110,8 +112,25 @@ export default class TInfiniteScrollClients extends Vue {
     } else { return 'single' }
   }
 
+  async fetch () {
+    this.isLoading = true
+    this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+    const params = this.tableData
+    await this.$axios.get('/api/opsidata/clients', { params })
+      .then((response) => {
+        this.totalItems = response.headers['x-total-count']
+        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+        this.items = response.data
+        // this.items = this.items.concat(response.data)
+      }).catch((error) => {
+        // eslint-disable-next-line no-console
+        console.error(error)
+        this.error = this.$t('message.errortext') as string
+      })
+    this.isLoading = false
+  }
+
   mounted () {
-    this.fetchItems()
     const tableScrollBody = (this.$refs.table as any).$el
     tableScrollBody.addEventListener('scroll', this.onScroll)
   }
@@ -135,7 +154,7 @@ export default class TInfiniteScrollClients extends Vue {
             return
           }
           this.tableData.pageNumber--
-          this.fetchItems()
+          this.$fetch()
           event.target.scrollTop = event.target.clientHeight - 5
         }
       } else
@@ -148,29 +167,11 @@ export default class TInfiniteScrollClients extends Vue {
             return
           }
           this.tableData.pageNumber++
-          this.fetchItems()
+          this.$fetch()
           event.target.scrollTop = 5
         }
       }
     }
-  }
-
-  async fetchItems () {
-    this.isLoading = true
-    this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
-    const params = this.tableData
-    await this.$axios.get('/api/opsidata/clients', { params })
-      .then((response) => {
-        this.totalItems = response.headers['x-total-count']
-        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
-        this.items = response.data
-        // this.items = this.items.concat(response.data)
-      }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        this.error = this.$t('message.errortext') as string
-      })
-    this.isLoading = false
   }
 }
 </script>
