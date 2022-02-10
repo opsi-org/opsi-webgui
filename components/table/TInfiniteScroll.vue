@@ -1,6 +1,10 @@
 <template>
   <div>
+    <p v-if="error">
+      {{ error }}
+    </p>
     <b-table
+      v-else
       :id="id"
       :ref="id"
       :primary-key="id"
@@ -48,6 +52,8 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
+    <span v-if="items.length>0" class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
+    <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
 
@@ -55,11 +61,15 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
 @Component
-export default class Tbvtable extends Vue {
+export default class TInfiniteScroll extends Vue {
+  @Prop({ }) error!: string
+  @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
+  @Prop({ }) totalpages!: number
   @Prop({ }) totalItems!: number
   @Prop({ }) ismultiselect!: boolean
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
+  @Prop({ default: () => { return () => { /* default */ } } }) fetchitems!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) setselection!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeaders
   @Prop({ }) tableData!: ITableData
@@ -69,6 +79,51 @@ export default class Tbvtable extends Vue {
     if (this.ismultiselect) {
       return 'multi'
     } else { return 'single' }
+  }
+
+  async fetch () {
+    await this.fetchitems()
+  }
+
+  mounted () {
+    this.$nextTick(() => {
+      const tableScrollBody = (this.$refs[this.id] as any).$el
+      tableScrollBody.addEventListener('scroll', this.onScroll)
+    })
+  }
+
+  beforeDestroy () {
+    const tableScrollBody = (this.$refs[this.id] as any).$el
+    tableScrollBody.removeEventListener('scroll', this.onScroll)
+  }
+
+  onScroll (event) {
+    if (this.items.length === 0) {
+      const tableScrollBody = (this.$refs[this.id] as any).$el
+      tableScrollBody.removeEventListener('scroll', this.onScroll)
+    } else if ( // On Scroll Up
+      event.target.scrollTop === 0) {
+      if (!this.isLoading) {
+        if (this.tableData.pageNumber === 1) {
+          return
+        }
+        this.tableData.pageNumber--
+        this.fetchitems()
+        event.target.scrollTop = event.target.clientHeight - 5
+      }
+    } else if ( // On Scroll Down
+      event.target.scrollTop + event.target.clientHeight >=
+          event.target.scrollHeight
+    ) {
+      if (!this.isLoading) {
+        if (this.tableData.pageNumber === this.totalpages) {
+          return
+        }
+        this.tableData.pageNumber++
+        this.fetchitems()
+        event.target.scrollTop = 5
+      }
+    }
   }
 
   fixRow (row: ITableRow): void {

@@ -11,7 +11,7 @@
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
           </template>
         </BarBPageHeader>
-        <TableTInfiniteScrollClients :ismultiselect="ismultiselect">
+        <TableTClients :ismultiselect="ismultiselect">
           <template #cell(actionResult_failed)="row">
             <ButtonBTNRowLinkTo
               :label="row.item.version_outdated"
@@ -58,7 +58,7 @@
               </b-dropdown>
             </b-badge>
           </template>
-        </TableTInfiniteScrollClients>
+        </TableTClients>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
