@@ -129,23 +129,10 @@ export default class TInfiniteScroll extends Vue {
   fixRow (row: ITableRow): void {
     const rowIdent = row.item.ident as any
     row.rowSelected = this.selection.includes(rowIdent)
-    const elem = document.getElementById(`${this.id}__row_${rowIdent}`)
     if (row.rowSelected) {
       row.item._rowVariant = 'primary'
-      if (elem) {
-        elem.classList.add('table-active')
-        elem.classList.add('b-table-row-selected')
-        elem.classList.add('table-primary')
-        elem.classList.add('aaaa')
-      }
     } else {
       row.item._rowVariant = ''
-      if (elem) {
-        elem.classList.remove('table-active')
-        elem.classList.remove('b-table-row-selected')
-        elem.classList.remove('table-primary')
-        elem.classList.remove('aaaa')
-      }
     }
   }
 
