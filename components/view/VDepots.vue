@@ -2,7 +2,19 @@
   <div data-testid="VDepots">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
-        <template v-if="totalData == 1">
+        <TableTDepots :ismultiselect="true">
+          <template #cell(rowactions)="row">
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              icon="gear"
+              to="/depots/config"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+          </template>
+        </TableTDepots>
+        <!-- <template v-if="totalData == 1">
           <b-table borderless stacked :items="Object.values(fetchedData)" :fields="['depotId', 'type', 'ip', 'description', 'configuration']">
             <template #cell(configuration)>
               <ButtonBTNRowLinkTo
@@ -62,7 +74,7 @@
               />
             </template>
           </TableTCollapseableForMobile>
-        </template>
+        </template> -->
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
