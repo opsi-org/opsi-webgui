@@ -3,11 +3,25 @@
     <p v-if="error">
       {{ error }}
     </p>
-    <b-table
+    <TableTbvtable
       v-else
-      id="table"
-      ref="table"
-      primary-key="table"
+      id="tableclients"
+      ref="tableclients"
+      primary-key="tableclients"
+      :is-loading="isLoading"
+      :table-data="tableData"
+      :header-data="headerData"
+      :items="items"
+      :total-items="totalItems"
+      :ismultiselect="ismultiselect"
+      :selection="selectionClients"
+      :setselection="setSelectionClients"
+    />
+    <!-- <b-table
+      v-else
+      id="tableclients"
+      ref="tableclients"
+      primary-key="tableclients"
       :class="items.length <10 && items.length > 0 ? 'smalltable' : 'infinitescrolltable'"
       sticky-header
       show-empty
@@ -51,10 +65,8 @@
       >
         <slot :name="slotName" v-bind="slotScope" />
       </template>
-    </b-table>
-
+    </b-table> -->
     <span v-if="items.length>0" class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
-
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
@@ -70,6 +82,7 @@ export default class TInfiniteScrollClients extends Vue {
   $axios: any
   $mq: any
   $fetch:any
+  $nuxt:any
 
   isLoading: Boolean = false
   items: Array<any> = []
@@ -107,11 +120,11 @@ export default class TInfiniteScrollClients extends Vue {
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  get selectmode () {
-    if (this.ismultiselect) {
-      return 'multi'
-    } else { return 'single' }
-  }
+  // get selectmode () {
+  //   if (this.ismultiselect) {
+  //     return 'multi'
+  //   } else { return 'single' }
+  // }
 
   async fetch () {
     this.isLoading = true
@@ -136,21 +149,24 @@ export default class TInfiniteScrollClients extends Vue {
   }
 
   mounted () {
-    if (this.items.length !== 0) {
-      const tableScrollBody = (this.$refs.table as any).$el
+    this.$nextTick(() => {
+      this.$nuxt.$loading.start()
+      setTimeout(() => this.$nuxt.$loading.finish(), 500)
+      const tableScrollBody = (this.$refs.tableclients as any).$el
       tableScrollBody.addEventListener('scroll', this.onScroll)
-    }
+    })
   }
 
   beforeDestroy () {
-    const tableScrollBody = (this.$refs.table as any).$el
+    const tableScrollBody = (this.$refs.tableclients as any).$el
     tableScrollBody.removeEventListener('scroll', this.onScroll)
   }
 
   onScroll (event) {
     if (this.items.length === 0) {
-      const tableScrollBody = (this.$refs.table as any).$el
+      const tableScrollBody = (this.$refs.tableclients as any).$el
       tableScrollBody.removeEventListener('scroll', this.onScroll)
+      console.log('scroliong')
     } else if ( // On Scroll Up
       event.target.scrollTop === 0) {
       if (!this.isLoading) {
@@ -176,49 +192,49 @@ export default class TInfiniteScrollClients extends Vue {
     }
   }
 
-  fixRow (row: ITableRow): void {
-    const rowIdent = row.item.ident as any
-    row.rowSelected = this.selectionClients.includes(rowIdent)
-    const elem = document.getElementById(`table__row_${rowIdent}`)
-    if (row.rowSelected) {
-      row.item._rowVariant = 'primary'
-      if (elem) {
-        elem.classList.add('table-active')
-        elem.classList.add('b-table-row-selected')
-        elem.classList.add('table-primary')
-        elem.classList.add('aaaa')
-      }
-    } else {
-      row.item._rowVariant = ''
-      if (elem) {
-        elem.classList.remove('table-active')
-        elem.classList.remove('b-table-row-selected')
-        elem.classList.remove('table-primary')
-        elem.classList.remove('aaaa')
-      }
-    }
-  }
+  // fixRow (row: ITableRow): void {
+  //   const rowIdent = row.item.ident as any
+  //   row.rowSelected = this.selectionClients.includes(rowIdent)
+  //   const elem = document.getElementById(`table__row_${rowIdent}`)
+  //   if (row.rowSelected) {
+  //     row.item._rowVariant = 'primary'
+  //     if (elem) {
+  //       elem.classList.add('table-active')
+  //       elem.classList.add('b-table-row-selected')
+  //       elem.classList.add('table-primary')
+  //       elem.classList.add('aaaa')
+  //     }
+  //   } else {
+  //     row.item._rowVariant = ''
+  //     if (elem) {
+  //       elem.classList.remove('table-active')
+  //       elem.classList.remove('b-table-row-selected')
+  //       elem.classList.remove('table-primary')
+  //       elem.classList.remove('aaaa')
+  //     }
+  //   }
+  // }
 
-  onRowClicked (item:ITableDataItem) {
-    const ident = item.ident
-    const selectionCopy:Array<string> = [...this.selectionClients]
-    if (this.ismultiselect) {
-      if (selectionCopy.includes(ident)) {
-        selectionCopy.splice(selectionCopy.indexOf(ident), 1)
-      } else {
-        selectionCopy.push(ident)
-      }
-      this.setSelectionClients(selectionCopy)
-    } else if (selectionCopy.includes(ident)) {
-      this.setSelectionClients([])
-    } else {
-      this.setSelectionClients([ident])
-    }
-  }
+  // onRowClicked (item:ITableDataItem) {
+  //   const ident = item.ident
+  //   const selectionCopy:Array<string> = [...this.selectionClients]
+  //   if (this.ismultiselect) {
+  //     if (selectionCopy.includes(ident)) {
+  //       selectionCopy.splice(selectionCopy.indexOf(ident), 1)
+  //     } else {
+  //       selectionCopy.push(ident)
+  //     }
+  //     this.setSelectionClients(selectionCopy)
+  //   } else if (selectionCopy.includes(ident)) {
+  //     this.setSelectionClients([])
+  //   } else {
+  //     this.setSelectionClients([ident])
+  //   }
+  // }
 
-  clearSelected () {
-    this.setSelectionClients([])
-  }
+  // clearSelected () {
+  //   this.setSelectionClients([])
+  // }
 }
 </script>
 
@@ -227,10 +243,10 @@ export default class TInfiniteScrollClients extends Vue {
   color: gray;
   font-size: 15px;
 }
-.infinitescrolltable.b-table-sticky-header {
+/* .infinitescrolltable.b-table-sticky-header {
   max-height: 70vh;
 }
 .smalltable.b-table-sticky-header {
   max-height: 10vh;
-}
+} */
 </style>
