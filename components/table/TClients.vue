@@ -1,9 +1,9 @@
 <template>
   <div>
     <TableTInfiniteScroll
-      id="tableclients"
-      ref="tableclients"
-      primary-key="tableclients"
+      id="Clients"
+      ref="Clients"
+      primary-key="Clients"
       :error="error"
       :is-loading="isLoading"
       :table-data="tableData"
@@ -16,6 +16,9 @@
       :setselection="setSelectionClients"
       :fetchitems="$fetch"
     >
+      <template #head(clientId)>
+        <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
+      </template>
       <template
         v-for="slotName in Object.keys($scopedSlots)"
         #[slotName]="slotScope"
