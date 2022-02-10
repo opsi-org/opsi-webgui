@@ -12,6 +12,8 @@
       sticky-header
       show-empty
       responsive
+      :stacked="totalItems == 1"
+      :borderless="totalItems == 1"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="items"
       selectable
@@ -35,11 +37,8 @@
           <b-icon-brush />
         </b-button>
       </template>
-      <template #head(clientId)>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
-      </template>
       <template #head(rowactions)="{}">
-        <DropdownDDTableColumnVisibilty table-id="table" :headers="headerData" />
+        <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />
       </template>
       <template #cell(sel)="row">
         <b-icon-check2 v-if="selection.includes(row.item.ident)" />
@@ -52,7 +51,7 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <span v-if="items.length>0" class="tablefooter">Showing {{ items.length }} Clients from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
+    <span v-if="items.length>0" class="tablefooter">Showing {{ items.length }} {{ id }} from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
@@ -86,6 +85,7 @@ export default class TInfiniteScroll extends Vue {
   }
 
   mounted () {
+    console.error(typeof this.totalItems)
     this.$nextTick(() => {
       const tableScrollBody = (this.$refs[this.id] as any).$el
       tableScrollBody.addEventListener('scroll', this.onScroll)
@@ -181,6 +181,6 @@ export default class TInfiniteScroll extends Vue {
   max-height: 70vh;
 }
 .smalltable.b-table-sticky-header {
-  max-height: 10vh;
+  max-height: 12vh;
 }
 </style>
