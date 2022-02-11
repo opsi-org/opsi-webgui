@@ -3,6 +3,10 @@
     <p v-if="error">
       {{ error }}
     </p>
+    <!-- TODO: Error when filter contains one item. totalItems/ response.headers['x-total-count']
+    should always return total data, not total filtered data -->
+    <!-- :stacked="totalItems == 1"
+      :borderless="totalItems == 1" -->
     <b-table
       v-else
       :id="id"
@@ -12,8 +16,6 @@
       sticky-header
       show-empty
       responsive
-      :stacked="totalItems == 1"
-      :borderless="totalItems == 1"
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="items"
       selectable
@@ -55,7 +57,7 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <span v-if="items.length>0" class="tablefooter">Showing {{ items.length }} {{ id }} from page {{ tableData.pageNumber }} / {{ totalpages }}</span>
+    <span v-if="items.length>0" class="tablefooter">Showing Page {{ tableData.pageNumber }} / {{ totalpages }}</span>
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
