@@ -136,9 +136,7 @@ export default class TProductsNetboot extends Vue {
     perPage: 15,
     sortBy: this.sortby ? this.sortby : 'productId',
     sortDesc: false,
-    filterQuery: '',
-    setPageNumber: () => {},
-    setPerPage: () => {}
+    filterQuery: ''
   }
 
   headerData: ITableHeaders = {

@@ -115,9 +115,7 @@ const selections = namespace('selections')
     perPage: 15,
     sortBy: 'clientId',
     sortDesc: false,
-    filterQuery: '',
-    setPageNumber: () => {},
-    setPerPage: () => {}
+    filterQuery: ''
   }
 
   headerData: ITableHeaders = {

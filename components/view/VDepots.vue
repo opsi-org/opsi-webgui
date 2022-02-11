@@ -63,9 +63,7 @@ const selections = namespace('selections')
     perPage: 15,
     sortBy: 'depotId',
     sortDesc: false,
-    filterQuery: '',
-    setPageNumber: () => {},
-    setPerPage: () => {}
+    filterQuery: ''
   }
 
   headerData: ITableHeaders = {
