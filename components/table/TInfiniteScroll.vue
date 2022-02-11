@@ -19,13 +19,17 @@
       selectable
       selected-variant=""
       :select-mode="selectmode"
+      sort-icon-left
       @row-clicked="onRowClicked"
     >
       <template #empty>
         --
       </template>
+      <template #head()="data">
+        <small> <b>{{ data.label }} </b> </small>
+      </template>
       <template #head(sel)="{}">
-        {{ selection.length }}/{{ totalItems }}
+        <small> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
         <b-button
           v-if="selection.length>0"
           v-b-tooltip.hover
@@ -85,7 +89,6 @@ export default class TInfiniteScroll extends Vue {
   }
 
   mounted () {
-    console.error(typeof this.totalItems)
     this.$nextTick(() => {
       const tableScrollBody = (this.$refs[this.id] as any).$el
       tableScrollBody.addEventListener('scroll', this.onScroll)
