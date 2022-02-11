@@ -15,6 +15,7 @@
           id="Clients"
           ref="Clients"
           primary-key="Clients"
+          rowident="clientId"
           :error="error"
           :is-loading="isLoading"
           :table-data="tableData"

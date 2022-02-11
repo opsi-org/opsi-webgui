@@ -6,6 +6,7 @@
           id="Depots"
           ref="Depots"
           primary-key="Depots"
+          rowident="depotId"
           :error="error"
           :is-loading="isLoading"
           :table-data="tableData"

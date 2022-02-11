@@ -45,7 +45,7 @@
         <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />
       </template>
       <template #cell(sel)="row">
-        <b-icon-check2 v-if="selection.includes(row.item.ident)" />
+        <b-icon-check2 v-if="selection.includes(row.item[rowident])" />
         {{ fixRow(row) }}
       </template>
       <template
@@ -68,6 +68,7 @@ export default class TInfiniteScroll extends Vue {
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
+  @Prop({ }) rowident!: string
   @Prop({ }) totalpages!: number
   @Prop({ }) totalItems!: number
   @Prop({ }) ismultiselect!: boolean
@@ -130,7 +131,7 @@ export default class TInfiniteScroll extends Vue {
   }
 
   fixRow (row: ITableRow): void {
-    const rowIdent = row.item.ident as any
+    const rowIdent = row.item[this.rowident] as any
     row.rowSelected = this.selection.includes(rowIdent)
     if (row.rowSelected) {
       row.item._rowVariant = 'primary'
@@ -140,7 +141,7 @@ export default class TInfiniteScroll extends Vue {
   }
 
   onRowClicked (item:ITableDataItem) {
-    const ident = item.ident
+    const ident = item[this.rowident]
     const selectionCopy:Array<string> = [...this.selection]
     if (this.ismultiselect) {
       if (selectionCopy.includes(ident)) {
