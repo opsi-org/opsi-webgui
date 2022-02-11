@@ -19,7 +19,7 @@
           :setselection="setSelectionDepots"
           :fetchitems="$fetch"
         >
-          <template #head(clientId)>
+          <template #head(depotId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
           <template #cell(rowactions)="row">
