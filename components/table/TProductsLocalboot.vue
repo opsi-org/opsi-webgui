@@ -98,7 +98,6 @@ import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
-// const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -125,7 +124,6 @@ export default class TProductsLocalboot extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
-
   action: string = ''
   // fetchedData: Array<ITableRowItemProducts> = []
   fetchedDataClients2Depots: IObjectString2String = {}
@@ -247,7 +245,6 @@ export default class TProductsLocalboot extends Vue {
         this.error = this.$t('message.errortext') as string
         // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
       }
-      // console.log('products', this.fetchedData)
     }
     this.isLoading = false
   }
