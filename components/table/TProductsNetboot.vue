@@ -5,6 +5,7 @@
       id="tableproducts"
       datakey="productId"
       :title="$t('title.netboot')"
+      :collapseable="false"
       :visible="false"
       :tabledata="tableData"
       :headers="headerData"
