@@ -1,31 +1,22 @@
 <template>
   <div data-testid="TProductsLocalboot">
-    <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.localboot') }}</h4></div> -->
-    <TableTCollapseableForMobile
-      id="tableproducts"
-      datakey="productId"
-      :visible="true"
-      :collapseable="false"
-      :tabledata="tableData"
-      :title="$t('title.localboot')"
-      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-      :headers="headerData"
-      :items="fetchedData"
-      :selection="selectionProducts"
-      :onchangeselection="setSelectionProducts"
-      :routechild="routeToChild"
-      :busy="isLoading"
-      :error-text="errorText"
-      :totalrows="totalData"
+    <TableTInfiniteScroll
+      id="Localboot"
+      ref="Localboot"
+      primary-key="Localboot"
+      rowident="productId"
+      :error="error"
+      :is-loading="isLoading"
+      :table-data="tableData"
+      :header-data="headerData"
+      :items="items"
+      :total-items="totalItems"
+      :totalpages="totalpages"
       :ismultiselect="multiselect"
-      :stacked="$mq=='mobile'"
+      :selection="selectionProducts"
+      :setselection="setSelectionProducts"
+      :fetchitems="$fetch"
     >
-      <!-- :no-local-sorting="true"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc" -->
-      <template #filter>
-        <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.localbootid')" />
-      </template>
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
       </template>
@@ -38,23 +29,12 @@
           @details="toogleDetailsTooltip"
         />
       </template>
-      <!-- <template #cell(clientVersions)="row">
-        <TableCellTCProductVersionCell
-          v-if="fetchedDataClients2Depots"
-          type="clientVersion"
-          :rowitem="row.item"
-          :clients2depots="fetchedDataClients2Depots"
-        />
-      </template> -->
-
       <template #head(installationStatus)>
         <b-icon icon="box-seam" alt="installation status" />
       </template>
-
       <template #head(actionResult)>
         <b-icon icon="hourglass-bottom" alt="action result" />
       </template>
-
       <template #cell(installationStatus)="row">
         <TableCellTCBadgeCompares
           type="installationStatus"
@@ -64,7 +44,6 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
-
       <template #cell(actionResult)="row">
         <TableCellTCBadgeCompares
           type="actionResult"
@@ -74,12 +53,6 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
-      <!-- <template #cell(name)="row">
-          <TableCellTCProductCellComparable :list2text="row.item.name" />
-        </template> -->
-      <!-- <template #cell(productId)="row">
-          <TableCellTCProductCellComparable :list2text="row.item.productId" />
-        </template> -->
       <template v-if="selectionClients.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
           v-if="selectionClients.length>0 && selectionProducts.length>0"
@@ -89,29 +62,21 @@
         />
         <div v-else />
       </template>
-
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
-        <!-- {{row.item.actionRequest}} -->
-        <!-- :title="'Set actionrequest for all selected products'" -->
-        <!-- {{row.item.installationStatus}} -->
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
           :requestoptions="[...row.item.actions]"
           :rowitem="row.item"
           :save="saveActionRequest"
         />
-      <!-- {{row.item.versionDepot}} -->
       </template>
-
       <template #row-details="row">
-        <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
         <TableTTooltipContent
           v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
           type="version"
           :details="row.item.tooltiptext"
           :depot-version-diff="row.item.depot_version_diff"
         />
-      <!-- {{ row.item.tooltiptext }} -->
       </template>
       <template #cell(rowactions)="row">
         <ButtonBTNRowLinkTo
@@ -123,25 +88,12 @@
           :click-parent="routeRedirectToParent"
         />
       </template>
-
-      <template #footer>
-        <ButtonBTNClearSelection store="products" />
-      </template>
-
-      <template #pagination>
-        <BarBTablePagination
-          :tabledata="tableData"
-          :total-rows="totalData"
-          aria-controls="tableproducts"
-        />
-      </template>
-    </TableTCollapseableForMobile>
+    </TableTInfiniteScroll>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import Cookie from 'js-cookie'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
@@ -155,15 +107,10 @@ interface IFetchOptions {
   fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-// interface FetchProd {
-//   products:Array<ITableRowItemProducts>,
-//   total:Number,
-// }
 @Component
 export default class TProductsLocalboot extends Vue {
   $axios: any
   $nuxt: any
-  // $t: any
   $mq: any
   $fetch: any
 
@@ -173,28 +120,27 @@ export default class TProductsLocalboot extends Vue {
   @Prop() child!: boolean
   @Prop({ }) sortby!: string
 
+  isLoading: Boolean = false
+  items: Array<any> = []
+  totalItems: number = 0
+  totalpages: number = 0
+  error: string = ''
+
   action: string = ''
-  // type: string = ''
-  // rowId: string = ''
-  isLoading: boolean = true
-  errorText: string = ''
-  fetchedData: Array<ITableRowItemProducts> = []
-  totalData: number = 0
+  // fetchedData: Array<ITableRowItemProducts> = []
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchedDataDepotIds: Array<string> = []
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
+
   tableData: ITableData = {
     type: 'LocalbootProduct',
     pageNumber: 1,
-    perPage: Cookie.get('perpage_localboot') ? Cookie.get('perpage_localboot') as unknown as number : 10,
-    setPerPage: (pp:number) => {
-      this.tableData.perPage = pp
-      Cookie.set('perpage_localboot', this.tableData.perPage as unknown as string, { expires: 365 })
-    },
+    perPage: 15,
     sortBy: this.sortby ? this.sortby : 'productId',
     sortDesc: false,
     filterQuery: '',
-    setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
+    setPageNumber: () => {},
+    setPerPage: () => {}
   }
 
   headerData: ITableHeaders = {
@@ -211,15 +157,14 @@ export default class TProductsLocalboot extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
-  @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
-  // @auth.Mutation public setSession!: () => void
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -245,15 +190,11 @@ export default class TProductsLocalboot extends Vue {
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
-    // console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
     row.toggleDetails()
   }
 
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
-      // this.fetchOptions.fetchClients2Depots = true
-      // this.headerData._majorVersion.visible = true
-      // this.headerData._majorVersion.disabled = true
       this.headerData.selectedClients.disabled = true
       this.headerData.installationStatus.visible = true
       this.headerData.installationStatus.disabled = true
@@ -262,9 +203,6 @@ export default class TProductsLocalboot extends Vue {
       this.headerData.actionRequest.visible = true
       this.headerData.actionRequest.disabled = true
     } else {
-      // this.fetchOptions.fetchClients2Depots = false
-      // this.headerData._majorVersion.visible = false
-      // this.headerData._majorVersion.disabled = false
       this.headerData.selectedClients.disabled = false
       this.headerData.installationStatus.visible = false
       this.headerData.installationStatus.disabled = false
@@ -278,19 +216,14 @@ export default class TProductsLocalboot extends Vue {
   async fetch () {
     this.isLoading = true
     this.updateColumnVisibility()
-    // if (this.fetchOptions.fetchDepotIds) {
-    //   this.fetchedDataDepotIds = (await this.$axios.$get('/api/opsidata/depot_ids')).result
-    //   this.fetchOptions.fetchDepotIds = false
-    // }
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
-          // this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          this.errorText = this.$t('message.errortext') as string
+          this.error = this.$t('message.errortext') as string
         })
       this.fetchOptions.fetchClients2Depots = false
     }
@@ -303,13 +236,15 @@ export default class TProductsLocalboot extends Vue {
       try {
         const params = this.tableData
         const response = (await this.$axios.get('/api/opsidata/products', { params }))
-        this.fetchedData = response.data
-        this.totalData = response.headers['x-total-count']
-        // this.setSession()
+        this.totalItems = response.headers['x-total-count']
+        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+        if (response.data === null) {
+          this.items = []
+        } else {
+          this.items = response.data
+        }
       } catch (error) {
-        this.errorText = this.$t('message.errortext') as string
-        // eslint-disable-next-line no-console
-        console.error('error in fetchData ', this.fetchedData)
+        this.error = this.$t('message.errortext') as string
         // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
       }
       // console.log('products', this.fetchedData)
@@ -318,14 +253,11 @@ export default class TProductsLocalboot extends Vue {
   }
 
   async save (change: object) {
-    // let responseError: IObjectString2String = {}
     const t:any = this
-
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        // this.setSession()
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
@@ -347,7 +279,6 @@ export default class TProductsLocalboot extends Vue {
       for (const c in this.selectionClients) {
         const d: Object = {
           user: localStorage.getItem('username'),
-          // user: 'dummy-user',
           clientId: this.selectionClients[c],
           productId: rowitem.productId,
           actionRequest: newrequest
@@ -369,7 +300,6 @@ export default class TProductsLocalboot extends Vue {
 
   async saveActionRequests () {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    // rowitem.request = [newrequest]
     const data = {
       clientIds: this.selectionClients,
       productIds: this.selectionProducts,
@@ -394,8 +324,6 @@ export default class TProductsLocalboot extends Vue {
     } else {
       await this.save(data)
       this.$nuxt.refresh()
-      // this.fetchOptions.fetchClients = true
-      // this.$fetch()
     }
   }
 
