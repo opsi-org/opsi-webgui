@@ -7,9 +7,9 @@
             <TreeTSDepots />
             <TreeTSHostGroupLazyLoad />
           </template>
-          <template #right>
+          <!-- <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
-          </template>
+          </template> -->
         </BarBPageHeader>
         <TableTInfiniteScroll
           id="Clients"
@@ -23,7 +23,7 @@
           :items="items"
           :total-items="totalItems"
           :totalpages="totalpages"
-          :ismultiselect="ismultiselect"
+          ismultiselect="true"
           :selection="selectionClients"
           :setselection="setSelectionClients"
           :fetchitems="$fetch"
@@ -101,7 +101,7 @@ const selections = namespace('selections')
   $fetch:any
   $nuxt:any
 
-  ismultiselect: boolean = false
+  // ismultiselect: boolean = false
   rowId: string = ''
 
   isLoading: Boolean = false
@@ -136,7 +136,7 @@ const selections = namespace('selections')
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
-  @Watch('ismultiselect', { deep: true }) multiselectChanged () { this.setSelectionClients([]) }
+  // @Watch('ismultiselect', { deep: true }) multiselectChanged () { this.setSelectionClients([]) }
 
   async fetch () {
     this.isLoading = true
@@ -162,13 +162,13 @@ const selections = namespace('selections')
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
-    this.setClientSelection(rowIdent)
+    // this.setClientSelection(rowIdent)
     this.$router.push(to)
   }
 
-  setClientSelection (id: string) {
-    this.setSelectionClients([id])
-  }
+  // setClientSelection (id: string) {
+  //   this.setSelectionClients([id])
+  // }
 
   isRouteActive (to: string, rowIdent: string) {
     return this.$route.path.includes(to) && this.rowId === rowIdent
