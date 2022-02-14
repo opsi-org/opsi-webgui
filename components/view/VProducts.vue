@@ -19,23 +19,28 @@
               v-if="expert && changesProducts"
               :changelist="changesProducts.filter((o) => o.user === username)"
             />
-            <!-- <ButtonBTNClearSelection style="margin-left: 10px" store="products" /> -->
           </template>
         </BarBPageHeader>
-        <TableTProductsNetboot
-          :multiselect="ismultiselect"
-          :sortby="sortby"
-          :rowident="rowId"
-          :route-redirect-with="routeRedirectWith"
-          :child="child"
-        />
-        <TableTProductsLocalboot
-          :multiselect="ismultiselect"
-          :sortby="sortby"
-          :rowident="rowId"
-          :route-redirect-with="routeRedirectWith"
-          :child="child"
-        />
+        <b-tabs class="products_horizontaltabs">
+          <b-tab :title="$t('title.localboot')" active>
+            <TableTProductsLocalboot
+              :multiselect="ismultiselect"
+              :sortby="sortby"
+              :rowident="rowId"
+              :route-redirect-with="routeRedirectWith"
+              :child="child"
+            />
+          </b-tab>
+          <b-tab :title="$t('title.netboot')">
+            <TableTProductsNetboot
+              :multiselect="ismultiselect"
+              :sortby="sortby"
+              :rowident="rowId"
+              :route-redirect-with="routeRedirectWith"
+              :child="child"
+            />
+          </b-tab>
+        </b-tabs>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -82,3 +87,9 @@ export default class VProducts extends Vue {
   }
 }
 </script>
+
+<style>
+.products_horizontaltabs .nav-item{
+  min-width: 10%;
+}
+</style>
