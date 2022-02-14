@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="TInfiniteScroll">
     <p v-if="error">
       {{ error }}
     </p>
@@ -95,10 +95,10 @@ export default class TInfiniteScroll extends Vue {
   }
 
   mounted () {
-    this.$nextTick(() => {
-      const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.addEventListener('scroll', this.onScroll)
-    })
+    // this.$nextTick(() => {
+    const tableScrollBody = (this.$refs[this.id] as any).$el
+    tableScrollBody.addEventListener('scroll', this.onScroll)
+    // })
   }
 
   beforeDestroy () {
