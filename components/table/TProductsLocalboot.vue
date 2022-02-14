@@ -15,6 +15,7 @@
       :ismultiselect="multiselect"
       :selection="selectionProducts"
       :setselection="setSelectionProducts"
+      :routechild="routeToChild"
       :fetchitems="$fetch"
     >
       <template #head(productId)>

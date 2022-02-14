@@ -79,6 +79,7 @@ export default class TInfiniteScroll extends Vue {
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) fetchitems!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) setselection!: Function
+  @Prop({ default: () => { return () => { /* default */ } } }) routechild!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeaders
   @Prop({ }) tableData!: ITableData
   @Prop({ }) items!: Array<any>
@@ -154,10 +155,15 @@ export default class TInfiniteScroll extends Vue {
         selectionCopy.push(ident)
       }
       this.setselection(selectionCopy)
-    } else if (selectionCopy.includes(ident)) {
-      this.setselection([])
-    } else {
-      this.setselection([ident])
+    }
+    if (!this.ismultiselect) {
+      if (this.rowident === 'productId') {
+        this.routechild(ident)
+      } else if (selectionCopy.includes(ident)) {
+        this.setselection([])
+      } else {
+        this.setselection([ident])
+      }
     }
   }
 
