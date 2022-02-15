@@ -238,6 +238,7 @@ export default class TProductsNetboot extends Vue {
       await this.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           this.totalItems = response.headers['x-total-count']
+          this.$emit('update:totalnetboot', this.totalItems)
           this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
           if (response.data === null) {
             this.items = []

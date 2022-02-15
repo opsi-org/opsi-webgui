@@ -1,7 +1,7 @@
 <template>
   <b-button
     v-b-tooltip.hover
-    title="Clear selected"
+    title="Clear selection"
     variant="light"
     size="sm"
     @click="clearselection"

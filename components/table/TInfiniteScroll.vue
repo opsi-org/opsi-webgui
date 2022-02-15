@@ -33,18 +33,8 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #head(sel)="{}">
-        <small> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
+        <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" :clearselection="clearSelected" />
-        <!-- <b-button
-          v-if="selection.length>0"
-          v-b-tooltip.hover
-          title="Clear selected"
-          variant="light"
-          size="sm"
-          @click="clearSelected"
-        >
-          <b-icon-brush />
-        </b-button> -->
       </template>
       <template #head(rowactions)="{}">
         <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />

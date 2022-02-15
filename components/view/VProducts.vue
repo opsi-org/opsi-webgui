@@ -22,8 +22,14 @@
           </template>
         </BarBPageHeader>
         <b-tabs class="products_horizontaltabs">
-          <b-tab :title="$t('title.localboot')" active>
+          <b-tab disabled>
+            <template #title>
+              <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
+            </template>
+          </b-tab>
+          <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
             <TableTProductsLocalboot
+              :totallocalboot.sync="localboot"
               :multiselect="ismultiselect"
               :sortby="sortby"
               :rowident="rowId"
@@ -31,8 +37,9 @@
               :child="child"
             />
           </b-tab>
-          <b-tab :title="$t('title.netboot')">
+          <b-tab :title="$t('title.netboot') + ' (' + netboot + ')'">
             <TableTProductsNetboot
+              :totalnetboot.sync="netboot"
               :multiselect="ismultiselect"
               :sortby="sortby"
               :rowident="rowId"
@@ -61,13 +68,16 @@ export default class VProducts extends Vue {
   @Prop({}) id!: string;
   @Prop({}) sortby!: string;
   @selections.Getter public selectionClients!: Array<string>
-  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void;
+  @selections.Getter public selectionProducts!: Array<string>
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean;
   @changes.Getter public changesProducts!: Array<ChangeObj>;
 
   rowId: string = '';
   isLoading: boolean = true;
   ismultiselect: boolean = false;
+  localboot: string = ''
+  netboot: string = ''
 
   @Watch('ismultiselect', { deep: true }) multiselectChanged () {
     this.setSelectionProducts([])

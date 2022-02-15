@@ -234,6 +234,7 @@ export default class TProductsLocalboot extends Vue {
         const params = this.tableData
         const response = (await this.$axios.get('/api/opsidata/products', { params }))
         this.totalItems = response.headers['x-total-count']
+        this.$emit('update:totallocalboot', this.totalItems)
         this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
         if (response.data === null) {
           this.items = []
