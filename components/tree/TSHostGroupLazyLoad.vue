@@ -27,7 +27,7 @@
         </div>
       </div>
     </treeselect>
-    <ButtonBTNClearSelection store="clients" component="tree" />
+    <ButtonBTNClearSelection v-if="selectionClients.length>0" :clearselection="clearSelected" />
   </div>
 </template>
 
@@ -36,7 +36,6 @@ import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { filterObjectLabel, filterObject } from '../../.utils/utils/sfilters'
 import { Group } from '../../.utils/types/tbackendmethods'
 import { arrayEqual } from '../../.utils/utils/scompares'
-// const auth = namespace('auth')
 const selections = namespace('selections')
 interface Request {
     selectedDepots: string
@@ -87,9 +86,9 @@ export default class TSDelayedLoading extends Vue {
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
-  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
@@ -116,7 +115,6 @@ export default class TSDelayedLoading extends Vue {
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    // this.setSession()
     for (const c in result) {
       const client = result[c]
       clientList.push({ id: client + ';clientlist', text: client, type: 'ObjectToGroup' })
@@ -133,7 +131,6 @@ export default class TSDelayedLoading extends Vue {
       } else {
         const params = this.request
         const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).groups.children)
-        // this.setSession()
         if (result !== null) {
           parentNode.children = Object.values(result)
         }
@@ -186,6 +183,10 @@ export default class TSDelayedLoading extends Vue {
 
   groupDeselect (deselection: object) {
     this.groupChange(deselection, 'deselect')
+  }
+
+  clearSelected () {
+    this.setSelectionClients([])
   }
 }
 </script>

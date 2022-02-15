@@ -25,6 +25,10 @@
         </div>
       </div>
     </treeselect>
+    <ButtonBTNClearSelection
+      v-if="type === 'depots' ? selectionDepots.length>0: selectionProducts.length>0"
+      :clearselection="clearSelected"
+    />
   </div>
 </template>
 
@@ -54,9 +58,11 @@ export default class TSTreeselect extends Vue {
   groupIdList: Array<string> = []
 
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public pushToSelectionDepots!: (s: string) => void
   @selections.Mutation public delFromSelectionDepots!: (s: string) => void
   @selections.Getter public selectionProducts!: Array<string>
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
 
@@ -129,6 +135,14 @@ export default class TSTreeselect extends Vue {
 
   groupDeselect (deselection: object) {
     this.groupChange(deselection, 'deselect')
+  }
+
+  clearSelected () {
+    if (this.type === 'depots') {
+      this.setSelectionDepots([])
+    } else {
+      this.setSelectionProducts([])
+    }
   }
 }
 </script>
