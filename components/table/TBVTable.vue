@@ -26,6 +26,9 @@
       <template #head()="data">
         <small> <b>{{ data.label }} </b> </small>
       </template>
+      <template #cell()="row">
+        <b-form-input v-model="row.value" size="sm" readonly />
+      </template>
       <template
         v-for="slotName in Object.keys($scopedSlots)"
         #[slotName]="slotScope"
@@ -43,7 +46,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 export default class BVTable extends Vue {
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
-  @Prop({ }) stacked!: boolean
+  @Prop({ }) stacked?: boolean
   @Prop({ }) items!: Array<object>
   @Prop({ }) fields!: Array<object>
 }

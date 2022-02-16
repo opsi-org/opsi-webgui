@@ -1,14 +1,38 @@
 <template>
-  <TableTSimple
-    v-if="result"
+  <TableTBVTable
     data-testid="THostAttributes"
-    :is-busy="isLoading"
-    :error="showError"
-    :errortext="errorText"
     :stacked="true"
-    :tableitems="[result]"
-    :tablefields="fields"
-  />
+    :is-loading="isLoading"
+    :error="errorText"
+    :items="[result]"
+    :fields="fields"
+  >
+    <template #cell(opsiHostKey)="row">
+      <b-input-group>
+        <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
+          <b-icon v-if="showValue" icon="eye-slash" />
+          <b-icon v-else icon="eye" />
+        </b-button>
+        <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
+      </b-input-group>
+    </template>
+    <template #cell(notes)="row">
+      <b-form-textarea
+        v-model="row.item.notes"
+        size="sm"
+        rows="2"
+        max-rows="3"
+        no-resize
+        readonly
+      />
+    </template>
+    <template #cell(created)="row">
+      <b-form-input :value="new Date(row.value)" size="sm" readonly />
+    </template>
+    <template #cell(lastSeen)="row">
+      <b-form-input :value="new Date(row.value)" size="sm" readonly />
+    </template>
+  </TableTBVTable>
 </template>
 
 <script lang="ts">
@@ -19,14 +43,12 @@ export default class THostAttributes extends Vue {
   $axios: any
   $t: any
   $fetch: any
-  // $mq: any
 
   @Prop({ }) id!: string
+  showValue : boolean = false
   result:Object = {}
   isLoading: boolean = false
-  showError: boolean = false
   errorText: string = ''
-  // @auth.Mutation public setSession!: () => void
 
   get fields () {
     return [
@@ -54,14 +76,11 @@ export default class THostAttributes extends Vue {
     if (this.id) {
       this.isLoading = true
       await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
-      // await this.$axios.$get('/api/opsidata/hosts', { params })
         .then((response) => {
           this.result = response[0]
-          // this.setSession()
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          this.showError = true
           this.errorText = this.$t('message.errortext') as string
         })
       this.isLoading = false
@@ -71,5 +90,4 @@ export default class THostAttributes extends Vue {
 </script>
 
 <style>
-
 </style>
