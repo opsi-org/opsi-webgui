@@ -3,16 +3,11 @@
     <InputIFilterTChanges :filter.sync="filter" />
     <div v-for="changes, k in groupedById" :key="changes.productId">
       <small><b>{{ k }}</b></small>
-      <b-table
-        size="sm"
+      <TableTBVTable
+        :noheader="true"
+        :hover="true"
         :filter="filter"
-        :filter-included-fields="['depotId','clientId']"
-        hover
-        borderless
-        sticky-header
-        fixed
-        class="changes_table"
-        thead-class="table-header-none"
+        :filterfields="['depotId','clientId']"
         :items="changes"
         :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
       >
@@ -25,7 +20,7 @@
             <b-icon icon="check2" />
           </b-button>
         </template>
-      </b-table>
+      </TableTBVTable>
     </div>
   </div>
 </template>
@@ -35,20 +30,16 @@ import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
-// const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component
 export default class TChanges extends Vue {
   $axios: any
-  // $t: any
-  // $fetch: any
   $mq: any
   $nuxt: any
 
   @Prop({ }) tableitems!: Array<object>
   filter: string = ''
-  // @auth.Mutation public setSession!: () => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
@@ -80,7 +71,6 @@ export default class TChanges extends Vue {
         console.log(response)
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
-        // this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
       })
@@ -113,7 +103,6 @@ export default class TChanges extends Vue {
         console.log(response)
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
-        // this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
       })
@@ -133,12 +122,3 @@ export default class TChanges extends Vue {
   }
 }
 </script>
-
-<style>
-.changes_table{
-  max-height: 160px !important;
-}
-.table-header-none{
-  display: none;
-}
-</style>
