@@ -7,7 +7,11 @@
       v-else
       class="bvtable"
       v-bind="$props"
+      :thead-class="noheader? 'table-header-none' : ''"
+      :filter="filter"
+      :filter-included-fields="filterfields"
       small
+      :hover="hover"
       :items="items"
       :fields="fields"
       :stacked="stacked"
@@ -45,14 +49,22 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class BVTable extends Vue {
   @Prop({ }) error?: string
-  @Prop({ }) isLoading!: boolean
+  @Prop({ }) isLoading?: boolean
   @Prop({ }) stacked?: boolean
+  @Prop({ }) hover?: boolean
+  @Prop({ }) noheader?: boolean
+  @Prop({ }) filter?: string
+  @Prop({ }) filterfields?: Array<string>
   @Prop({ }) items!: Array<object>
   @Prop({ }) fields!: Array<object>
 }
 </script>
 
 <style>
+.table-header-none{
+  display: none;
+}
+
 .bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   width: 15%;
   /* float: left; */
