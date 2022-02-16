@@ -44,7 +44,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class BVTable extends Vue {
-  @Prop({ }) error!: string
+  @Prop({ }) error?: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) stacked?: boolean
   @Prop({ }) items!: Array<object>

@@ -25,15 +25,12 @@
     <p v-if="errorText">
       {{ errorText }}
     </p>
-    <TableTTable
+    <TableTBVTable
       class="TProductProperties_Table"
-      :is-busy="isLoading"
+      :is-loading="isLoading"
+      :error="errorText"
       :items="Object.values(properties.properties)"
       :fields="fields"
-      :stacked="false"
-      :small="true"
-      :disable-selection="true"
-      show-empty
     >
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
@@ -111,7 +108,7 @@
           <br>
         </b-container>
       </template>
-    </TableTTable>
+    </TableTBVTable>
   </div>
 </template>
 

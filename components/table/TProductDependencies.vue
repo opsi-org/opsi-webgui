@@ -1,14 +1,9 @@
 <template>
   <div data-testid="TProductDependencies">
-    <TableTTable
-      v-if="dependencies.dependencies"
-      :is-busy="isLoading"
-      :stacked="false"
-      :small="true"
-      :disable-selection="true"
+    <TableTBVTable
+      :is-loading="isLoading"
       :items="Object.values(dependencies.dependencies)"
       :fields="fields"
-      :value-is-input-field="false"
     >
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
@@ -32,7 +27,7 @@
           ({{ getType(row.item.requirementType, row.item.productAction) }})
         </small>
       </template>
-    </TableTTable>
+    </TableTBVTable>
   </div>
 </template>
 
