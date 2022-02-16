@@ -71,13 +71,5 @@ export default class TProductProperties extends Vue {
   getType (type:string, productAction:string) {
     return this.types2text[`${type}-${productAction}`] || this.$t('table.fields.unknown') as string
   }
-
-  // async fetch () {
-
-  // }
 }
 </script>
-
-<style>
-
-</style>

@@ -88,6 +88,3 @@ export default class THostAttributes extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

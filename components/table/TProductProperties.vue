@@ -119,7 +119,6 @@ import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { arrayEqual } from '../../.utils/utils/scompares'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { ChangeObj } from '../../.utils/types/tchanges'
-// const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -133,7 +132,7 @@ export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: '' }) errorText!: string
   @Prop({ }) properties!: IProp
-  // @auth.Mutation public setSession!: () => void
+
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @changes.Getter public changesProducts!: Array<ChangeObj>
