@@ -148,8 +148,11 @@ export default class TSTreeselect extends Vue {
 </script>
 
 <style>
+.form-inline{
+  flex-flow: nowrap;
+}
 .treeselect{
-  max-width: 300px;
+  max-width: 250px;
 }
 .treeselect .vue-treeselect__multi-value-item {
   display: none;
@@ -160,9 +163,6 @@ export default class TSTreeselect extends Vue {
 /* .treeselect .vue-treeselect-helper-hide {
   display: inline;
 } */
-.form-inline {
-  flex-flow: nowrap;
-}
 .selection_badge{
   margin-top: 20px;
 }

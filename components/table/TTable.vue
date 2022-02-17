@@ -191,36 +191,23 @@ export default class TTable extends BTable {
 </script>
 
 <style>
-.tablediv{
+/* .tablediv{
   max-height: 80vh;
-  /* overflow-y: auto; */
 }
 .tableproducts.b-table-sticky-header {
   max-height: 60vh;
-  /* overflow-y: auto; */
 }
 .tabledefault.b-table-sticky-header {
   max-height: 70vh;
-  /* overflow-y: auto; */
 }
 .fixed_column_selection{
   float: right;
 }
-/* .table-active, .table-active > th, .table-active > td {
-  background-color: unset !important;
-} */
 
 .b-table-row-selected.table-primary{
   background-color: #7aafca !important;
-  /* background-color: var(--primary) !important; */
-  /* background-color: inherit !important; */
 }
 .table-primary, .table-primary > td, .table-primary > th {
   background-color: #7aafca !important;
-}
-
-/* .table.b-table > tbody > .table-active, .table.b-table > tbody > .table-active > th, .table.b-table > tbody > .table-active > td,
-.table-active, .table-active > td, .table-active > th {
-  background-color: unset;
 } */
 </style>
