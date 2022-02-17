@@ -66,7 +66,7 @@ export default class BVTable extends Vue {
 }
 
 .bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
-  max-width: 30%;
+  width: 20%;
   font-weight: normal;
 }
 

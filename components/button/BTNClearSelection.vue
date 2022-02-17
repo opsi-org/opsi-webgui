@@ -2,7 +2,7 @@
   <b-button
     v-b-tooltip.hover
     title="Clear selection"
-    variant="light"
+    variant="transparent"
     size="sm"
     @click="clearselection"
   >

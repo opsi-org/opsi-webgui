@@ -3,11 +3,9 @@
     :id="id"
     data-testid="ButtonBTNHelp"
     size="sm"
-    pill
     variant="transparent"
-    class="border-primary"
   >
-    <b-icon-question />
+    <b-icon-question-circle />
   </b-button>
 </template>
 

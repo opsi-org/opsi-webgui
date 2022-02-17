@@ -49,11 +49,11 @@
               <template #editable-button>
                 <b-button
                   v-if="row.item.editable"
-                  variant="primary"
+                  variant="outer-primary"
                   size="sm"
                   @click="row.toggleDetails()"
                 >
-                  +
+                  <b-icon-plus />
                 </b-button>
               </template>
             </TableCellTCProductPropertyValue>
@@ -74,7 +74,7 @@
               <b-button
                 size="sm"
                 aria-label="add new property value"
-                variant="outline-secondary"
+                variant="outline-primary"
                 @click="updateNewPropertyValuesRow(row.item)"
               >
                 {{ $t('values.add') }}
@@ -252,17 +252,15 @@ export default class TProductProperties extends Vue {
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;
 }
-.TProductProperties_Table td[aria-colindex$="1"] {
+/* .TProductProperties_Table td[aria-colindex$="1"] {
   min-width: 30%;
 }
 .TProductProperties_Table td[aria-colindex$="2"] {
   max-width: 70%;
-  /* max-width: 100%; */
-  /* background-color: blue !important; */
 }
 .TProductProperties_Table {
   max-width: 100% !important;
-}
+} */
 .TableProductsDetails_EditableProdProp_AddValue_BVFormIInput {
   max-width: calc(100% - 30px);
 }

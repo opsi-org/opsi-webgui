@@ -3,12 +3,10 @@
     <b-button
       :id="id"
       data-testid="BTNHelpTooltip"
-      class="border-primary"
       variant="transparent"
       size="sm"
-      pill
     >
-      <b-icon-question />
+      <b-icon-question-circle />
     </b-button>
     <TooltipTTTooltip variant="info" :target="id" :triggers="triggers" :tooltip="tooltip" />
   </div>
