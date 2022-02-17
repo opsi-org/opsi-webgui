@@ -14,7 +14,7 @@
     <slot name="left" />
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
-      <b-button v-if="closeroute" variant="light" :to="closeroute">
+      <b-button v-if="closeroute" variant="transparent" :to="closeroute">
         <b-icon icon="x" />
       </b-button>
     </b-navbar-nav>

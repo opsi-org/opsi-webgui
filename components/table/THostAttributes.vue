@@ -9,7 +9,7 @@
   >
     <template #cell(opsiHostKey)="row">
       <b-input-group>
-        <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
+        <b-button :pressed.sync="showValue" size="sm" variant="transparent">
           <b-icon v-if="showValue" icon="eye-slash" />
           <b-icon v-else icon="eye" />
         </b-button>
@@ -19,6 +19,7 @@
     <template #cell(notes)="row">
       <b-form-textarea
         v-model="row.item.notes"
+        class="forminput"
         size="sm"
         rows="2"
         max-rows="3"
@@ -27,10 +28,10 @@
       />
     </template>
     <template #cell(created)="row">
-      <b-form-input :value="new Date(row.value)" size="sm" readonly />
+      <b-form-input :value="new Date(row.value)" class="forminput" size="sm" readonly />
     </template>
     <template #cell(lastSeen)="row">
-      <b-form-input :value="new Date(row.value)" size="sm" readonly />
+      <b-form-input :value="new Date(row.value)" class="forminput" size="sm" readonly />
     </template>
   </TableTBVTable>
 </template>

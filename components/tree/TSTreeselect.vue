@@ -17,6 +17,12 @@
       @select="groupSelect"
       @deselect="groupDeselect"
     >
+      <div slot="before-list">
+        <ButtonBTNClearSelection
+          v-if="type === 'depots' ? selectionDepots.length>0: selectionProducts.length>0"
+          :clearselection="clearSelected"
+        />
+      </div>
       <div slot="option-label" slot-scope="{ node }">
         <div :ref="'tree-item-'+node.id">
           <b-icon v-if="node.isBranch" icon="diagram2" />
@@ -25,10 +31,6 @@
         </div>
       </div>
     </treeselect>
-    <ButtonBTNClearSelection
-      v-if="type === 'depots' ? selectionDepots.length>0: selectionProducts.length>0"
-      :clearselection="clearSelected"
-    />
   </div>
 </template>
 

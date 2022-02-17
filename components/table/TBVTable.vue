@@ -31,7 +31,7 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #cell()="row">
-        <b-form-input v-model="row.value" size="sm" readonly />
+        <b-form-input v-model="row.value" class="forminput" size="sm" readonly />
       </template>
       <template
         v-for="slotName in Object.keys($scopedSlots)"
@@ -72,5 +72,8 @@ export default class BVTable extends Vue {
 
 .bvtable.b-table-sticky-header {
   max-height: 64vh;
+}
+.forminput.form-control[readonly] {
+  background-color: white;
 }
 </style>
