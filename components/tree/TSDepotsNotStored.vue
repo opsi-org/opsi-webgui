@@ -50,6 +50,6 @@ export default class TSDepotsNotStored extends Vue {
 
 <style>
 .treeselect_idselect{
-  max-width: 300px;
+  max-width: 305px;
 }
 </style>

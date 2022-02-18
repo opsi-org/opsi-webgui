@@ -2,6 +2,7 @@
   <div data-testid="VClients">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
+        <div style="height: 48px" v-if="secondColumnOpened"/>
         <BarBPageHeader>
           <template #left>
             <TreeTSDepots />

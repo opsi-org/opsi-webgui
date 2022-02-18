@@ -1,15 +1,14 @@
 <template>
-  <div data-testid="SBLoglevel">
-    <b-form-spinbutton
-      v-model="level"
-      class="loglevel_spinbutton"
-      min="0"
-      max="8"
-      step="1"
-      inline
-      @change="$emit('update:loglevel', level)"
-    />
-  </div>
+  <b-form-spinbutton
+    v-model="level"
+    data-testid="SBLoglevel"
+    class="loglevel_spinbutton"
+    min="0"
+    max="8"
+    step="1"
+    inline
+    @change="$emit('update:loglevel', level)"
+  />
 </template>
 
 <script lang="ts">
@@ -23,6 +22,6 @@ export default class SLoglevel extends Vue {
 
 <style>
 .loglevel_spinbutton{
-  min-width: 160px !important;
+  min-width: 145px !important;
 }
 </style>

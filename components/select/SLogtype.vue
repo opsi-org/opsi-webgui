@@ -1,13 +1,11 @@
 <template>
-  <div data-testid="SLogtype">
-    <b-form-select v-model="type" class="logtype" :options="logTypes" @change="$emit('update:logtype', type)">
-      <template #first>
-        <b-form-select-option :value="null" disabled>
-          -- {{ $t('formselect.logtype') }} --
-        </b-form-select-option>
-      </template>
-    </b-form-select>
-  </div>
+  <b-form-select v-model="type" class="logtype" data-testid="SLogtype" :options="logTypes" @change="$emit('update:logtype', type)">
+    <template #first>
+      <b-form-select-option :value="null" disabled>
+        -- {{ $t('formselect.logtype') }} --
+      </b-form-select-option>
+    </template>
+  </b-form-select>
 </template>
 
 <script lang="ts">
@@ -22,6 +20,7 @@ export default class SLogtype extends Vue {
 
 <style>
 .logtype{
-  max-width: 200px;
+  max-width: 150px;
+  margin-right: 10px;
 }
 </style>
