@@ -1,15 +1,25 @@
 <template>
-  <b-row data-testid="GTwoColumnLayout">
-    <b-col
-      :class="{'d-none' : showchild && $mq === 'mobile', column2visible: showchild,
-               'col-2': $route.path.includes('clients/products/config') && parentId === 'tableclients'}"
+  <div>
+    <b-button
+      v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
+      variant="outline-primary"
+      :pressed.sync="expandClients"
     >
-      <slot name="parent" />
-    </b-col>
-    <b-col v-if="showchild" :class="{column2visible: Boolean(showchild)}">
-      <slot name="child" />
-    </b-col>
-  </b-row>
+      <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '': '>>' }}</b></small>
+    </b-button>
+    <b-row data-testid="GTwoColumnLayout">
+      <b-col
+        id="parentcol"
+        :class="{'d-none' : showchild && $mq === 'mobile' || $route.path.includes('clients/products/config') && parentId === 'tableclients' && !expandClients ,
+                 column2visible: showchild}"
+      >
+        <slot name="parent" />
+      </b-col>
+      <b-col v-if="showchild" :class="{column2visible: Boolean(showchild)}">
+        <slot name="child" />
+      </b-col>
+    </b-row>
+  </div>
 </template>
 
 <script lang="ts">
@@ -18,6 +28,8 @@ const settings = namespace('settings')
 
 @Component
 export default class GTwoColumnLayout extends Vue {
+  $mq:any
+  expandClients: boolean = false
   @Prop({ default: 'default' }) parentId!: string
   @Prop({ }) showchild!: string
 
