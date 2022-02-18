@@ -71,7 +71,8 @@ export default class BVTable extends Vue {
 }
 
 .bvtable.b-table-sticky-header {
-  max-height: 64vh;
+  /* max-height: 64vh; */
+  max-height: 445px;
 }
 .forminput.form-control[readonly] {
   background-color: white;
