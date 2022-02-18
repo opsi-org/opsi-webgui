@@ -6,7 +6,7 @@
     size="sm"
     @click="clearselection"
   >
-    <b-icon-brush />
+    <b-icon-brush variant="primary" />
   </b-button>
 </template>
 

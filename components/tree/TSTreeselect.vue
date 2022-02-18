@@ -1,7 +1,7 @@
 <template>
   <div class="form-inline" style="margin-right:30px" data-testid="TSTreeselect">
-    <b-icon :icon="icon" variant="primary" font-scale="2" />
-    <b-badge class="selection_badge" variant="light" size="sm">
+    <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
+    <b-badge class="selection_badge" variant="transparent" size="sm">
       {{ type === 'depots' ? selectionDepots.length: selectionProducts.length }}
     </b-badge>
     <treeselect
@@ -154,7 +154,7 @@ export default class TSTreeselect extends Vue {
   flex-flow: nowrap;
 }
 .treeselect{
-  max-width: 250px;
+  max-width: 280px;
 }
 .treeselect .vue-treeselect__multi-value-item {
   display: none;

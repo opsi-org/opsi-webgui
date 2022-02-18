@@ -1,7 +1,5 @@
 <template>
   <div class="TProductProperties_PropertyId_Row">
-    <!-- <CollapseCContent :id="'pp_row-'+row.item.propertyId" :bold="false">
-      <template #left> -->
     <ButtonBTNInfo aria-label="information about property" :click="row.toggleDetails" />
     <i
       v-if="row.item.anyDepotDifferentFromDefault"
