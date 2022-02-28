@@ -28,10 +28,10 @@
       />
     </template>
     <template #cell(created)="row">
-      <b-form-input :value="new Date(row.value)" class="forminput" size="sm" readonly />
+      <b-form-input :value="date(row.value)" class="forminput" size="sm" readonly />
     </template>
     <template #cell(lastSeen)="row">
-      <b-form-input :value="new Date(row.value)" class="forminput" size="sm" readonly />
+      <b-form-input :value="date(row.value)" class="forminput" size="sm" readonly />
     </template>
   </TableTBVTable>
 </template>
@@ -86,6 +86,12 @@ export default class THostAttributes extends Vue {
         })
       this.isLoading = false
     }
+  }
+
+  date (value:any) {
+    if (value !== '') {
+      return new Date(value).toString()
+    } else { return value }
   }
 }
 </script>

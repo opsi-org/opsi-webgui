@@ -3,10 +3,6 @@
     <p v-if="error">
       {{ error }}
     </p>
-    <!-- TODO: Error when filter contains one item. totalItems/ response.headers['x-total-count']
-    should always return total data, not total filtered data -->
-    <!-- :stacked="totalItems == 1"
-      :borderless="totalItems == 1" -->
     <b-table
       v-else
       :id="id"
