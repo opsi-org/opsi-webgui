@@ -85,6 +85,7 @@ const selections = namespace('selections')
     this.isLoading = true
     if (this.tableData.sortBy === 'sel') {
       this.tableData.sortDesc = true
+      this.tableData.sortBy = 'selected'
       this.tableData.selected = this.selectionDepots
     }
     const params = this.tableData

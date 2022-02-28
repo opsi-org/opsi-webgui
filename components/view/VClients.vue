@@ -144,6 +144,7 @@ const selections = namespace('selections')
     this.isLoading = true
     this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
     if (this.tableData.sortBy === 'sel') {
+      this.tableData.sortBy = 'selected'
       this.tableData.sortDesc = true
       this.tableData.selected = this.selectionClients
     }

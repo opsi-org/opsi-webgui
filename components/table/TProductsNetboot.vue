@@ -236,6 +236,7 @@ export default class TProductsNetboot extends Vue {
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
       if (this.tableData.sortBy === 'sel') {
         this.tableData.sortDesc = true
+        this.tableData.sortBy = 'selected'
         this.tableData.selected = this.selectionProducts
       }
 
