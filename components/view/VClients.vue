@@ -8,9 +8,16 @@
             <TreeTSDepots />
             <TreeTSHostGroupLazyLoad />
           </template>
-          <!-- <template #right>
-            <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
-          </template> -->
+          <template #right>
+            <ButtonBTNRowLinkTo
+              label="Show Products"
+              icon="grid"
+              to="/clients/products"
+              ident="dummy"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+          </template>
         </BarBPageHeader>
         <TableTInfiniteScroll
           id="Clients"
@@ -32,25 +39,19 @@
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
-          <template #cell(actionResult_failed)="row">
+          <!-- <template #head(actionResult_failed)="data">
+            <small> <b>{{ data.label }} </b> </small>
             <ButtonBTNRowLinkTo
-              :label="row.item.version_outdated"
-              to="/clients/products"
-              sortby="actionResult"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-          </template>
-          <template #cell(rowactions)="row">
-            <ButtonBTNRowLinkTo
-              title="Products"
+              title="Show failed products"
               icon="grid"
               to="/clients/products"
-              :ident="row.item.ident"
+              sortby="actionResult"
+              ident="dummyid"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+          </template> -->
+          <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               icon="gear"
@@ -102,7 +103,6 @@ const selections = namespace('selections')
   $fetch:any
   $nuxt:any
 
-  // ismultiselect: boolean = false
   rowId: string = ''
 
   isLoading: Boolean = false
@@ -138,7 +138,6 @@ const selections = namespace('selections')
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
-  // @Watch('ismultiselect', { deep: true }) multiselectChanged () { this.setSelectionClients([]) }
 
   async fetch () {
     this.isLoading = true
@@ -169,13 +168,8 @@ const selections = namespace('selections')
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
-    // this.setClientSelection(rowIdent)
     this.$router.push(to)
   }
-
-  // setClientSelection (id: string) {
-  //   this.setSelectionClients([id])
-  // }
 
   isRouteActive (to: string, rowIdent: string) {
     return this.$route.path.includes(to) && this.rowId === rowIdent
