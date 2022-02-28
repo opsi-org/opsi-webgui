@@ -40,6 +40,7 @@ export interface ITableRow {
 export interface ITableData {
   pageNumber: number,
   perPage: number,
+  selected: Array<string>,
   sortBy: string,
   sortDesc: boolean,
   filterQuery: string,

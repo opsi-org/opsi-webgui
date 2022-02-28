@@ -2,7 +2,7 @@
   <div data-testid="VClients">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
-        <div style="height: 48px" v-if="secondColumnOpened"/>
+        <div v-if="secondColumnOpened" style="height: 48px" />
         <BarBPageHeader>
           <template #left>
             <TreeTSDepots />
@@ -114,13 +114,14 @@ const selections = namespace('selections')
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 15,
+    selected: [],
     sortBy: 'clientId',
     sortDesc: false,
     filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
     clientId: { label: this.$t('table.fields.id') as string, key: 'clientId', visible: true, _fixed: true, sortable: true },
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     ipAddress: { label: this.$t('table.fields.ip') as string, key: 'ipAddress', visible: false, sortable: true },
@@ -142,6 +143,10 @@ const selections = namespace('selections')
   async fetch () {
     this.isLoading = true
     this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+    if (this.tableData.sortBy === 'sel') {
+      this.tableData.sortDesc = true
+      this.tableData.selected = this.selectionClients
+    }
     const params = this.tableData
     await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {

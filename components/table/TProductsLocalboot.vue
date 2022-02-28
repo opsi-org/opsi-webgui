@@ -135,13 +135,14 @@ export default class TProductsLocalboot extends Vue {
     type: 'LocalbootProduct',
     pageNumber: 1,
     perPage: 15,
+    selected: [],
     sortBy: this.sortby ? this.sortby : 'productId',
     sortDesc: false,
     filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: true },
     actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: true, sortable: true },
     productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
@@ -230,6 +231,10 @@ export default class TProductsLocalboot extends Vue {
       this.tableData.selectedClients = JSON.stringify(this.selectionClients)
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
+      if (this.tableData.sortBy === 'sel') {
+        this.tableData.sortDesc = true
+        this.tableData.selected = this.selectionProducts
+      }
       try {
         const params = this.tableData
         const response = (await this.$axios.get('/api/opsidata/products', { params }))

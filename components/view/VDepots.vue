@@ -61,13 +61,14 @@ const selections = namespace('selections')
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 15,
+    selected: [],
     sortBy: 'depotId',
     sortDesc: false,
     filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
     depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
@@ -82,6 +83,10 @@ const selections = namespace('selections')
 
   async fetch () {
     this.isLoading = true
+    if (this.tableData.sortBy === 'sel') {
+      this.tableData.sortDesc = true
+      this.tableData.selected = this.selectionDepots
+    }
     const params = this.tableData
     await this.$axios.get('/api/opsidata/depots', { params })
       .then((response) => {

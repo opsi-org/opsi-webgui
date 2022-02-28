@@ -24,6 +24,9 @@
       selected-variant=""
       :select-mode="selectmode"
       sort-icon-left
+      :no-local-sorting="true"
+      :sort-by.sync="tableData.sortBy"
+      :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
     >
       <template #empty>
