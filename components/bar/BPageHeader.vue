@@ -50,6 +50,7 @@ export default class BPageHeader extends Vue {
   padding: 5px 0px !important;
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 .BPageHeader_Navbar .dropdown {
   margin: 0px !important;

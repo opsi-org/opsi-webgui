@@ -1,13 +1,14 @@
 <template>
   <div>
-    <b-button
-      v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
-      variant="outline-primary"
-      :pressed.sync="expandClients"
-    >
-      <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '': '>>' }}</b></small>
-    </b-button>
     <b-row data-testid="GTwoColumnLayout">
+      <b-button
+        v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
+        class="clients_button border-primary"
+        variant="transparent"
+        :pressed.sync="expandClients"
+      >
+        <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '<<': '>>' }}</b></small>
+      </b-button>
       <b-col
         id="parentcol"
         :class="{'d-none' : showchild && $mq === 'mobile' || $route.path.includes('clients/products/config') && parentId === 'tableclients' && !expandClients ,
@@ -45,3 +46,10 @@ export default class GTwoColumnLayout extends Vue {
   }
 }
 </script>
+
+<style>
+.clients_button{
+  max-width:60px;
+  max-height:800px;
+}
+</style>
