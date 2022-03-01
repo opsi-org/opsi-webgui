@@ -20,7 +20,7 @@
       @deselect="groupDeselect"
     >
       <div slot="before-list">
-        <ButtonBTNClearSelection v-if="selectionClients.length>0" :clearselection="clearSelected" />
+        <ButtonBTNClearSelection v-if="selectionClients.length>0" :clearselection="clearSelected" label="Clear Selection" />
       </div>
       <div slot="option-label" slot-scope="{ node }">
         <div :ref="'tree-item-'+node.id">

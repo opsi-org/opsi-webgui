@@ -21,6 +21,7 @@
         <ButtonBTNClearSelection
           v-if="type === 'depots' ? selectionDepots.length>0: selectionProducts.length>0"
           :clearselection="clearSelected"
+          label="Clear Selection"
         />
       </div>
       <div slot="option-label" slot-scope="{ node }">
