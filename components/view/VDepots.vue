@@ -81,6 +81,11 @@ const selections = namespace('selections')
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
+  async mounted () {
+    const opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    this.routeRedirectWith('/depots/config', opsiconfigserver)
+  }
+
   async fetch () {
     this.isLoading = true
     if (this.tableData.sortBy === 'sel') {
