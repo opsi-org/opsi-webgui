@@ -15,12 +15,12 @@
           </b-button>
         </b-navbar-nav>
         <b-navbar-brand href="/" class="topbar_brand">
-          <b-badge class="topbar_badge_logo" style="margin-left:5px;margin-right:5px">
+          <b-badge class="topbar_badge_logo">
             <IconIOpsiLogo class="topbar_logo" />
-            <!-- 2<img src="~/assets/images/LogoOpsi.png" class="topbar_logo" alt="opsi logo"> -->
           </b-badge>
           {{ getTitleUppercase() }}
-          <span class="topbar_version"> {{ $config.packageVersion }}</span>
+          <span class="topbar_version"> {{ $config.packageVersion }} </span>
+          <span class="topbar_expert"> <IconIExpert /> </span>
         </b-navbar-brand>
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
@@ -28,9 +28,6 @@
           </b-button>
         </b-navbar-nav>
         <b-collapse id="nav-collapse" is-nav variant="primary">
-          <b-navbar-nav v-if="$mq!='mobile'">
-            <IconIExpert />
-          </b-navbar-nav>
           <b-navbar-nav class="ml-auto float-right">
             <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
             <!-- TODO: remove for production start -->
@@ -70,6 +67,7 @@ export default class BTop extends Vue {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
 .topbar{
   background-color: var(--primary) !important;
   position: fixed;
@@ -79,46 +77,51 @@ export default class BTop extends Vue {
   padding-right: 0px !important;
   padding: 0em !important;
 }
+
 .topbar::before {
   content: unset !important;
 }
+
 .topbar::after {
   content: unset !important;
 }
+
 .topbar_brand{
   max-height: var(--height-navbar) !important;
   display: inline-flex !important;
   padding-bottom: 0px !important;
 }
+
 .topbar_version{
   font-size: 10px;
   margin-left: 5px;
 }
+.topbar_expert {
+  font-size: 15px;
+  /* margin-left: 5px; */
+  margin-top: -3px;
+}
+
 .topbar_badge_logo  {
+    margin-left:5px;
     margin-right: 5px;
-    /* background-color: #ffffff00 !important; */
     background-color: var(--bg-type) !important;
     padding: 0;
 }
-  /* filter: saturate(0) brightness(0);
-  filter: saturate(0) brightness(6); */
+
 .topbar_logo {
   height: 25px !important;
-  /* filter: saturate(0) brightness(0); */
-  /* filter: saturate(0) brightness(6);
-  filter: saturate(0) brightness(6) invert(100%); */
-  /* filter: saturate(0) brightness(6) invert(calc(var(--fg-type))); */
 }
-/* .navbar-dark .topbar_logo {
-  filter: saturate(0) brightness(0);
-} */
+
 .desktop .navbar-brand{
   margin-right: 0px !important;
 }
+
 .desktop #nav-collapse {
   margin-left: 0px !important;
   padding-left: 0px !important;
 }
+
 .mobile #nav-collapse {
   max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
   overflow: auto;

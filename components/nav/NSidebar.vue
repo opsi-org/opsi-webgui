@@ -51,8 +51,9 @@ export default class NSidebar extends Vue {
     //     // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
     //   ]
     // },
+    // title.manage
     {
-      title: 'title.manage',
+      title: '',
       menu: [
         {
           title: 'title.depots',
@@ -109,5 +110,9 @@ export default class NSidebar extends Vue {
 .sidebar_collapsed .sidemenu_nav .nav-link > svg{
   width: 100% !important;
   margin: 0 auto !important;
+}
+.timer {
+  margin-left: 15px;
+  margin-top: 5px;
 }
 </style>
