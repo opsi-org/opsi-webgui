@@ -60,6 +60,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
 @Component
 export default class TInfiniteScroll extends Vue {
+  $axios: any
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
@@ -158,8 +159,12 @@ export default class TInfiniteScroll extends Vue {
     }
   }
 
-  clearSelected () {
+  async clearSelected () {
     this.setselection([])
+    if (this.rowident === 'depotId') {
+      const opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+      this.setselection([opsiconfigserver])
+    }
   }
 }
 </script>

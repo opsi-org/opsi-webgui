@@ -140,9 +140,11 @@ export default class TSTreeselect extends Vue {
     this.groupChange(deselection, 'deselect')
   }
 
-  clearSelected () {
+  async clearSelected () {
     if (this.type === 'depots') {
       this.setSelectionDepots([])
+      const opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+      this.setSelectionDepots([opsiconfigserver])
     } else {
       this.setSelectionProducts([])
     }
