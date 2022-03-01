@@ -10,7 +10,8 @@
       :primary-key="id"
       :class="{smalltable: items.length <10 && items.length > 0,
                infinitescrolltable: items.length > 10,
-               tableproducts: rowident === 'productId'}"
+               tableproducts: rowident === 'productId',
+               noscroll: totalItems < tableData.perPage}"
       sticky-header
       show-empty
       responsive
@@ -169,14 +170,17 @@ export default class TInfiniteScroll extends Vue {
   font-size: 15px;
 }
 .infinitescrolltable.b-table-sticky-header {
-  /* max-height: 70vh; */
-  max-height:550px;
+  /* max-height: 65vh; */
+  max-height:650px;
 }
 .tableproducts.b-table-sticky-header {
   /* max-height: 60vh; */
-  max-height:490px;
+  max-height:610px;
 }
 .smalltable.b-table-sticky-header {
   max-height: 12vh;
+}
+.noscroll.b-table-sticky-header {
+  max-height: 70vh;
 }
 </style>
