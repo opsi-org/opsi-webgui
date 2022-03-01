@@ -132,7 +132,7 @@ export default class TSDelayedLoading extends Vue {
         await this.fetchClientList({ parentNode })
       } else {
         const params = this.request
-        const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).groups.children)
+        const result = (await this.$axios.$get('/api/opsidata/hosts/groups', { params })).groups.children
         if (result !== null) {
           parentNode.children = Object.values(result)
         }

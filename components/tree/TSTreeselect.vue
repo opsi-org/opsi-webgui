@@ -155,7 +155,7 @@ export default class TSTreeselect extends Vue {
   flex-flow: nowrap;
 }
 .treeselect{
-  max-width: 280px;
+  max-width: 280px !important;
 }
 .treeselect .vue-treeselect__multi-value-item {
   display: none;
