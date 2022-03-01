@@ -7,7 +7,7 @@
         variant="transparent"
         :pressed.sync="expandClients"
       >
-        <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '<<': '>>' }}</b></small>
+        <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '': '>>' }}</b></small>
       </b-button>
       <b-col
         id="parentcol"
