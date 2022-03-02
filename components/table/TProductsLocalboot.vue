@@ -107,7 +107,6 @@ const settings = namespace('settings')
 const changes = namespace('changes')
 interface IFetchOptions {
   fetchClients:boolean,
-  fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
 @Component
@@ -131,8 +130,7 @@ export default class TProductsLocalboot extends Vue {
   action: string = ''
   // fetchedData: Array<ITableRowItemProducts> = []
   fetchedDataClients2Depots: IObjectString2String = {}
-  fetchedDataDepotIds: Array<string> = []
-  fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
+  fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
 
   tableData: ITableData = {
     type: 'LocalbootProduct',
