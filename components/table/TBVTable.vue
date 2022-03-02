@@ -5,7 +5,7 @@
     </p>
     <b-table
       v-else
-      class="bvtable"
+      :class="type === 'small' ? 'bvtable_small' : 'bvtable'"
       v-bind="$props"
       :thead-class="noheader? 'table-header-none' : ''"
       :filter="filter"
@@ -15,7 +15,6 @@
       :items="items"
       :fields="fields"
       :stacked="stacked"
-      sticky-header
       show-empty
       responsive
       borderless
@@ -49,6 +48,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class BVTable extends Vue {
   @Prop({ }) error?: string
+  @Prop({ }) type?: string
   @Prop({ }) isLoading?: boolean
   @Prop({ }) stacked?: boolean
   @Prop({ }) hover?: boolean
@@ -69,10 +69,15 @@ export default class BVTable extends Vue {
   width: 20%;
   font-weight: normal;
 }
+.bvtable_small{
+  max-height: 200px;
+  overflow-y: auto;
+}
 
-.bvtable.b-table-sticky-header {
+.bvtable {
   /* max-height: 64vh; */
   max-height: 610px;
+  overflow-y: auto;
 }
 .forminput.form-control[readonly] {
   background-color: white;
