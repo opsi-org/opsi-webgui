@@ -1,9 +1,10 @@
 <template>
   <div class="form-inline" style="margin-right:30px" data-testid="TSHostGroupLazyLoad">
     <b-icon-laptop variant="transparent" font-scale="1.5" />
-    <b-badge class="selection_badge" variant="transparent" size="sm">
-      {{ selectionClients.length }}
-    </b-badge>
+    <ModalMSelections
+      type="clients"
+      :selections="selectionClients"
+    />
     <treeselect
       v-model="groupSelection"
       class="treeselect"

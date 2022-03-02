@@ -1,9 +1,10 @@
 <template>
   <div class="form-inline" style="margin-right:30px" data-testid="TSTreeselect">
     <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
-    <b-badge class="selection_badge" variant="transparent" size="sm">
-      {{ type === 'depots' ? selectionDepots.length: selectionProducts.length }}
-    </b-badge>
+    <ModalMSelections
+      :type="type"
+      :selections="type === 'depots' ? selectionDepots: selectionProducts"
+    />
     <treeselect
       v-model="groupSelection"
       :placeholder="$t(placeholder)"
