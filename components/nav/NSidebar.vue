@@ -101,6 +101,7 @@ export default class NSidebar extends Vue {
 .sidemenu_nav{
   position:absolute;
   width: 100%;
+  max-height:70vh;
 }
 
 .sidebar_collapsed .sidemenu_nav .nav-item{
