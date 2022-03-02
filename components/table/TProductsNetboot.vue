@@ -21,6 +21,9 @@
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
+      <template #cell(desc)="row">
+        {{ row.item.description }}
+      </template>
       <template #cell(version)="row">
         <TableCellTCProductVersionCell
           type="depotVersions"
