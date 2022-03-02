@@ -30,4 +30,3 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
   @Prop({ }) selections!: Array<string>
 }
 </script>
-
