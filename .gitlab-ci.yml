@@ -1,5 +1,5 @@
 
-image: node:17
+image: node:lts
 stages:
   - init
   - test
@@ -65,7 +65,7 @@ stages:
   pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
   pip3 install poetry
 
- 
+
   # Grant full database access to opsi user
   mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
 
@@ -116,10 +116,8 @@ stages:
   # redis-server /etc/redis/redis.conf &
   sleep 20
 
-
-
 .pytest: &pytest |
-  
+
   [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
   poetry run opsiconfd -c tests/data/default-opsiconfd.conf &
@@ -132,7 +130,7 @@ stages:
   pwd
   ls -la
   ls -la ../backend
-  # cp -R ../backend/tests 
+  # cp -R ../backend/tests
   poetry run pytest ../backend/tests || exit_code=$?
   if [ $exit_code -ne 0 ]; then
     echo "---------------------------------------"
@@ -307,7 +305,7 @@ build:static-app:
   artifacts:
     name: 'opsi-webgui'
     paths:
-      - opsiweb/ui/dist
+      - ./opsiweb/ui/dist
     expire_in: 1 day
   only:
     - develop
