@@ -16,7 +16,7 @@ stages:
   echo "exec: git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH}"
 
   git_result=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
-
+  echo "gitresult $git_result"
   if [ $git_result -eq 0 ]; then
     echo "Use default branch"
     BRANCH=develop
