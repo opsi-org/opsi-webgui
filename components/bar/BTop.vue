@@ -14,7 +14,7 @@
             <b-icon icon="list" />
           </b-button>
         </b-navbar-nav>
-        <b-navbar-brand href="/" class="topbar_brand">
+        <b-navbar-brand href="/addons/webgui/app/clients" class="topbar_brand">
           <b-badge class="topbar_badge_logo">
             <IconIOpsiLogo class="topbar_logo" />
           </b-badge>
