@@ -22,9 +22,10 @@ stages:
     BRANCH=develop
     echo "GIT_Branch $BRANCH"
   fi
-  echo "GIT_Branch1 $BRANCH"
-  BRANCH=$(echo ${BRANCH} || echo "develop")
-  echo "GIT_Branch2 $BRANCH"
+  if [ -z "$BRANCH" ]; then
+    BRANCH=$(echo "develop")
+  fi
+  echo "GIT_Branch $BRANCH"
 
   # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   # Testing using current branch (othewise job failes on "tag"-execution)
