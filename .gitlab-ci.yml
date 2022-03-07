@@ -12,6 +12,17 @@ stages:
   BRANCH=$(echo ${CI_COMMIT_BRANCH} || echo "develop")
   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
   echo "GIT_Branch $BRANCH"
+
+  echo "exec: git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH}"
+
+  git_result=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
+
+  if [ $git_result -eq 0 ]; then
+    echo "Use default branch"
+    BRANCH=develop
+    echo "GIT_Branch $BRANCH"
+  fi
+
   # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
   # Testing using current branch (othewise job failes on "tag"-execution)
 
@@ -40,30 +51,21 @@ stages:
   apt update
   echo "install stuff"
   apt -y install git
-  apt -y install bc wget python3-pip python3-dev python3-venv libmysqlclient-dev mysql-client iproute2 net-tools iputils-ping librsync2
+  apt -y install bc wget python3-pip python3-dev python3-venv iproute2 net-tools iputils-ping
   git clone -b devel https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiconfd.git
 
   cd opsiconfd
 
+   # Install debian packages
   export DEBIAN_FRONTEND=noninteractive
   apt update
   apt -y install debhelper osc
   apt -y install python3-dev
+  apt -y install mariadb-client bc
   pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
   pip3 install poetry
 
-  # Install debian packages
-  export DEBIAN_FRONTEND=noninteractive
-
-  # linking python3 as python for compatibility
-  ln -s /usr/bin/python3 /usr/bin/python
-  # Need redis-timeseries 1.2.8 which is not yet available, installing patched version from obs
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/redis-server_6.0.4-1_amd64.deb
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/redis-tools_6.0.4-1_amd64.deb
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/redis-timeseries_1.4.13.0-1_amd64.deb
-  wget http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/amd64/liblzf1_3.6-2_amd64.deb
-  dpkg -i *.deb || apt -y -f install
-
+ 
   # Grant full database access to opsi user
   mysql --host=mysql --user=root --password=${MYSQL_ROOT_PASSWORD} -e "GRANT ALL ON opsitest.* TO 'opsi'@'%';"
 
@@ -78,27 +80,32 @@ stages:
 
   # Configure opsiconfd
   mkdir -p /var/lib/opsi/repository /var/lib/opsi/depot
-  echo "redis-internal-url = redis://redis" > /etc/opsi/opsiconfd.conf
-  echo "log-level-stderr = 0" >> /etc/opsi/opsiconfd.conf
-  echo "log-level-file = 6" >> /etc/opsi/opsiconfd.conf
-  echo "log-file = /tmp/opsiconfd.log" >> /etc/opsi/opsiconfd.conf
-  echo "max-session-per-ip = 30" >> /etc/opsi/opsiconfd.conf
-  echo "max-auth-failures = 3" >> /etc/opsi/opsiconfd.conf
-  echo "backend-config-dir = tests/opsi-config/backends" >> /etc/opsi/opsiconfd.conf
-  echo "dispatch-config-file = tests/opsi-config/backendManager/dispatch.conf" >> /etc/opsi/opsiconfd.conf
-  echo "static-dir = opsiconfd_data/static" >> /etc/opsi/opsiconfd.conf
-  echo "addon-dirs = [../backend]" >> /etc/opsi/opsiconfd.conf
+
+  echo "redis-internal-url = redis://redis" >> tests/data/default-opsiconfd.conf
+  echo "log-level-stderr = 0" >> tests/data/default-opsiconfd.conf
+  echo "log-level-file = 6" >> tests/data/default-opsiconfd.conf
+  echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
+  echo "addon-dirs = [../backend]" >> tests/data/default-opsiconfd.conf
 
   # Installing opsi test modules file
-  echo "${OPSI_TEST_MODULES}" > /etc/opsi/modules
+  mkdir -p /etc/opsi/licenses
+  wget --header="Authorization: Bearer ${OPSILICSRV_TOKEN}" "https://opsi-license-server.uib.gmbh/api/v1/licenses/test?usage=opsiconfd-gitlab-ci" -O /etc/opsi/licenses/test.opsilic
+
+
+  # linking python3 as python for compatibility
+  # ln -s /usr/bin/python3 /usr/bin/python
+
+  # Create dirs
+  mkdir -p /var/log/opsi/clientconnect
+  mkdir -p /var/lib/opsi/public
+  mkdir -p /tftpboot
 
   # Install poetry
   pip3 install poetry
   poetry config experimental.new-installer false
   poetry lock --no-update
   poetry install
-  poetry run opsiconfd -l5 setup
-
+  poetry run opsiconfd -c tests/data/default-opsiconfd.conf -l5 setup
 
   # Create adminuser used in tests
   useradd adminuser
@@ -106,17 +113,18 @@ stages:
   adduser adminuser opsiadmin
 
   # Start and wait for redis server
-  redis-server /etc/redis/redis.conf &
-  sleep 10
+  # redis-server /etc/redis/redis.conf &
+  sleep 20
 
 
 
 .pytest: &pytest |
+  
   [ -e /tmp/opsiconfd.log ] && rm /tmp/opsiconfd.log
-
   export OPSICONFD_MAX_SESSIONS_PER_IP=20000
-  poetry run opsiconfd &
-  sleep 10
+  poetry run opsiconfd -c tests/data/default-opsiconfd.conf &
+  sleep 60
+  curl -I https://adminuser:adminuser@localhost:4447/admin
   echo "---------------------------------------"
   echo "Run tests"
   echo "---------------------------------------"
@@ -124,7 +132,8 @@ stages:
   pwd
   ls -la
   ls -la ../backend
-  poetry run pytest -o junit_family=xunit2 --junitxml=testreport.xml --cov-append --cov opsiconfd --cov-report term --cov-report xml -v ../backend/tests || exit_code=$?
+  # cp -R ../backend/tests 
+  poetry run pytest ../backend/tests || exit_code=$?
   if [ $exit_code -ne 0 ]; then
     echo "---------------------------------------"
     echo "opsiconfd log"
@@ -261,9 +270,12 @@ test:test-components:
 #   poetry run pylint --disable=R,C,fixme
 
 test:backend-pytest:
-  image: ubuntu:focal
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.10
   services:
-    - mysql:latest
+    - name: mysql:latest
+      command:
+        - --max_connections=1000
+        - --default-authentication-plugin=mysql_native_password
     - name: redislabs/redistimeseries:latest
       alias: redis
   variables:
@@ -271,9 +283,11 @@ test:backend-pytest:
     MYSQL_DATABASE: "opsitest"
     MYSQL_USER: "opsi"
     MYSQL_PASSWORD: "opsi"
-  stage: test
   script:
     - *prepare_backend_tests
+    - echo "##########################################"
+    - echo "##################pytest##################"
+    - echo "##########################################"
     - *pytest
 
 
