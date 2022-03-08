@@ -12,4 +12,4 @@ const PrimaryTemplate = () => ({
 })
 
 // named export Primary to create respective story
-export const TSProductGroup = PrimaryTemplate.bind({})
+export const TSProductGroups = PrimaryTemplate.bind({})

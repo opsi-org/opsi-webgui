@@ -3,7 +3,7 @@
     <TreeTSDefault
       id="Clients"
       type="clients"
-      data-testid="TSClients"
+      data-testid="TSHostGroups"
       :nested="true"
       :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
       :lazy-load="true"

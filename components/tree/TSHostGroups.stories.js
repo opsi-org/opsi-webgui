@@ -1,11 +1,11 @@
 export default {
-  title: 'Tree/T S Hostgroup Lazyload',
+  title: 'Tree/TS Host Groups',
   parameters: { docs: { description: { component: 'Treeselect for host groups with delayed loading children' } } }
 }
 
 const PrimaryTemplate = () => ({
-  template: '<TreeTSHostGroupLazyLoad />'
+  template: '<TreeTSHostGroups />'
 })
 
 // named export Primary to create respective story
-export const TSHostGroupLazyLoad = PrimaryTemplate.bind({})
+export const TSHostGroups = PrimaryTemplate.bind({})
