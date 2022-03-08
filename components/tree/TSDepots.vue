@@ -16,7 +16,7 @@
       :lazy-load="false"
       :multi="true"
       :text="$t('title.depots')"
-      :text-no-result="'NoResult'"
+      :text-no-result="$t('treeselect.noresult')"
       :validate="() => true"
       :validate-description="''"
       :data="undefined"

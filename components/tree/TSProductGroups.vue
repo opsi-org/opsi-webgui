@@ -15,7 +15,7 @@
       data-testid="TSProductGroups"
       :multi="true"
       :text="$t('treeselect.prodGroups')"
-      :text-no-result="'NoResult'"
+      :text-no-result="$t('treeselect.noresult')"
       :validate="() => true"
       :validate-description="''"
       :data="undefined"

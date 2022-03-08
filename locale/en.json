@@ -93,6 +93,7 @@
   "button.add": "Add",
   "treeselect.hostGroups": "Host Groups",
   "treeselect.prodGroups": "Product Groups",
+  "treeselect.noresult": "No such item found",
   "formselect.depot": "Select a Depot",
   "formselect.client": "Select a Client",
   "formselect.logtype": "Select a Log type",
