@@ -1,14 +1,19 @@
 <template>
-  <div class="form-inline" style="margin-right:30px" data-testid="TSTreeselect">
-    <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
+  <div class="form-inline treeselect-wrapper" style="margin-right:30px" data-testid="TSTreeselect">
+    <b-icon :icon="icon" variant="transparent" font-scale="1.5"/>
+
+    <!-- {{ $t(placeholder) }} -->
+
     <ModalMSelections
       :type="type"
       :selections="type === 'depots' ? selectionDepots: selectionProducts"
     />
-    <treeselect
+    <TreeTSDefaultWithAdding
       v-model="groupSelection"
-      :placeholder="$t(placeholder)"
       class="treeselect"
+      :placeholder="$t(placeholder)"
+      :searchable="searchable"
+      :editable="editable"
       :multiple="true"
       :clearable="false"
       :options="options"
@@ -18,6 +23,9 @@
       @select="groupSelect"
       @deselect="groupDeselect"
     >
+      <!-- <div slot="value-label" slot-scope="{ node }">
+      </div> -->
+
       <div slot="before-list">
         <ButtonBTNClearSelection
           v-if="type === 'depots' ? selectionDepots.length>0: selectionProducts.length>0"
@@ -32,7 +40,7 @@
           <small> {{ node.label }} </small>
         </div>
       </div>
-    </treeselect>
+    </TreeTSDefaultWithAdding>
   </div>
 </template>
 
@@ -40,6 +48,7 @@
 import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
 import { filterObject, filterObjectLabel } from '../../.utils/utils/sfilters'
 import { arrayEqual } from '../../.utils/utils/scompares'
+// import TSDefaultWithAdding from './TSDefaultWithAdding.vue'
 const selections = namespace('selections')
 
 interface Group {
@@ -53,8 +62,12 @@ interface Group {
 
 @Component
 export default class TSTreeselect extends Vue {
+  node:any
+  $axios:any
   @Prop({ }) options!: Array<object>
   @Prop({ }) placeholder!: string
+  @Prop({ default: false }) editable!: boolean
+  @Prop({ default: false }) searchable!: boolean
   @Prop({ }) type!: string
   @Prop({ }) icon!: string
 
@@ -157,19 +170,54 @@ export default class TSTreeselect extends Vue {
 .form-inline{
   flex-flow: nowrap;
 }
-.treeselect{
-  max-width: 280px !important;
-}
-.treeselect .vue-treeselect__multi-value-item {
-  display: none;
-}
-.treeselect .vue-treeselect__placeholder {
+/* .treeselect .vue-treeselect__placeholder {
     color: gray;
+} */
+.treeselect-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  min-width: 200px !important;
+  max-width: 200px !important;
+  /* border: 1px solid green; */
+  padding-left: 10px;
+  padding-right: 15px;
+}
+.treeselect-wrapper .treeselect .vue-treeselect__placeholder {
+  padding-bottom: 5px;
+  margin-top: -5px;
+}
+.treeselect-wrapper .treeselect .vue-treeselect-helper-hide,
+.treeselect-wrapper .treeselect .vue-treeselect__control-arrow-container {
+  display: inline !important;
+}
+.treeselect-wrapper .treeselect .vue-treeselect__control{
+  max-height: fit-content !important;
+  height: 15px !important;
+  margin-top: 0px !important;
+  padding-top: 0px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+.treeselect-wrapper .treeselect {
+  max-width: 280px !important;
+  max-height: 20px;
+  width: 72% !important;
+}
+.treeselect-wrapper .treeselect > .vue-treeselect__control{
+  border: none !important;
+  border-radius: 0px !important;
+}
+.treeselect-wrapper .treeselect .vue-treeselect__menu {
+  min-width: 280px !important;
+}
+
+.treeselect-wrapper .treeselect .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
+  display: none;
 }
 /* .treeselect .vue-treeselect-helper-hide {
   display: inline;
 } */
-.selection_badge{
+.treeselect-wrapper .selection_badge{
   margin-top: 20px;
 }
 </style>

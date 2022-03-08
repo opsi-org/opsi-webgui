@@ -5,7 +5,7 @@
       type="clients"
       :selections="selectionClients"
     />
-    <treeselect
+    <TreeTSDefaultWithAdding
       v-model="groupSelection"
       class="treeselect"
       :flat="true"
@@ -30,7 +30,7 @@
           <small> {{ node.label }} </small>
         </div>
       </div>
-    </treeselect>
+    </TreeTSDefaultWithAdding>
   </div>
 </template>
 

@@ -5,8 +5,10 @@
         <BarBPageHeader v-if="secondColumnOpened" title="Clients" />
         <BarBPageHeader>
           <template #left>
+            <!-- <TreeTSDepots />
+            <TreeTSHostGroupLazyLoad /> -->
             <TreeTSDepots />
-            <TreeTSHostGroupLazyLoad />
+            <TreeTSHostGroups />
           </template>
           <template #right>
             <ButtonBTNRowLinkTo
@@ -150,6 +152,7 @@ const selections = namespace('selections')
     const params = this.tableData
     await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {
+        console.log('response', response)
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
         if (response.data === null) {

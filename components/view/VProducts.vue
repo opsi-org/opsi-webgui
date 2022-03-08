@@ -10,8 +10,8 @@
         <BarBPageHeader>
           <template #left>
             <TreeTSDepots v-if="!child" />
-            <TreeTSHostGroupLazyLoad v-if="!child" />
-            <TreeTSProductGroup />
+            <TreeTSHostGroups v-if="!child" />
+            <TreeTSProductGroups />
           </template>
           <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
@@ -22,10 +22,20 @@
           </template>
         </BarBPageHeader>
         <b-tabs class="products_horizontaltabs">
+          <template #tabs-end>
+            <!-- <TreeTSDepots v-if="!child" />
+            <TreeTSHostGroups v-if="!child" />
+            <TreeTSProductGroups /> -->
+          </template>
           <b-tab disabled>
             <template #title>
               <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
             </template>
+          <!-- </b-tab>
+          <b-tab> -->
+            <!-- <template #title>
+              <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
+            </template> -->
           </b-tab>
           <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
             <TableTProductsLocalboot
@@ -100,6 +110,6 @@ export default class VProducts extends Vue {
 
 <style>
 .products_horizontaltabs .nav-item{
-  min-width: 10%;
+  min-width: min-content;
 }
 </style>
