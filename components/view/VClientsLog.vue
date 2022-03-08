@@ -122,6 +122,7 @@ export default class VClientLog extends Vue {
 
 <style>
 .filter_logs{
-  max-width: 300px;
+  max-width: 305px;
+  margin-right: 10px;
 }
 </style>

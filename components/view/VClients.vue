@@ -2,60 +2,58 @@
   <div data-testid="VClients">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
+        <BarBPageHeader v-if="secondColumnOpened" title="Clients" />
         <BarBPageHeader>
           <template #left>
+            <!-- <TreeTSDepots />
+            <TreeTSHostGroupLazyLoad /> -->
             <TreeTSDepots />
-            <!-- <DropdownDDDepotIds v-if="fetchedDataDepotIds.length > 1" /> -->
-            <TreeTSHostGroupLazyLoad />
-            <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.id')" />
+            <TreeTSHostGroups />
           </template>
           <template #right>
-            <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
-            <DropdownDDTableColumnVisibilty v-if="$mq=='mobile'" :headers="headerData" />
+            <ButtonBTNRowLinkTo
+              label="Show Products"
+              icon="grid"
+              to="/clients/products"
+              ident="dummy"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
           </template>
         </BarBPageHeader>
-        <TableTCollapseableForMobile
-          id="tableclients"
-          datakey="clientId"
-          :collapseable="false"
-          :tabledata="tableData"
-          :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-          :headers="headerData"
-          :items="fetchedData"
+        <TableTInfiniteScroll
+          id="Clients"
+          ref="Clients"
+          primary-key="Clients"
+          rowident="clientId"
+          :error="error"
+          :is-loading="isLoading"
+          :table-data="tableData"
+          :header-data="headerData"
+          :items="items"
+          :total-items="totalItems"
+          :totalpages="totalpages"
+          ismultiselect="true"
           :selection="selectionClients"
-          :onchangeselection="setSelectionClients"
-          :routechild="routeToChild"
-          :busy="isLoading"
-          :error-text="errorText"
-          :totalrows="totalData"
-          :ismultiselect="ismultiselect"
+          :setselection="setSelectionClients"
+          :fetchitems="$fetch"
         >
-          <template #head(_majorStats)>
-            {{ '' }}
-          </template>
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
-          <template #cell(actionResult_failed)="row">
+          <!-- <template #head(actionResult_failed)="data">
+            <small> <b>{{ data.label }} </b> </small>
             <ButtonBTNRowLinkTo
-              :label="row.item.version_outdated"
-              to="/clients/products"
-              sortby="actionResult"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-          </template>
-          <template #cell(rowactions)="row">
-            <ButtonBTNRowLinkTo
-              title="Products"
+              title="Show failed products"
               icon="grid"
               to="/clients/products"
-              :ident="row.item.ident"
+              sortby="actionResult"
+              ident="dummyid"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-
+          </template> -->
+          <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               icon="gear"
@@ -64,7 +62,6 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-
             <ButtonBTNRowLinkTo
               :title="$t('title.log')"
               icon="file-earmark-text"
@@ -78,21 +75,17 @@
                 <template #button-content>
                   <b-icon icon="three-dots-vertical" />
                 </template>
-                <ModalMDeleteClient :id="row.item.ident.trim()" :update-table.sync="updateTable" />
+                <ModalMDeleteClient :id="row.item.ident.trim()" />
               </b-dropdown>
             </b-badge>
           </template>
-          <template #footer>
-            <ButtonBTNClearSelection style="margin-left: 10px;" store="clients" />
+          <template
+            v-for="slotName in Object.keys($scopedSlots)"
+            #[slotName]="slotScope"
+          >
+            <slot :name="slotName" v-bind="slotScope" />
           </template>
-          <template #pagination>
-            <BarBTablePagination
-              :tabledata="tableData"
-              :total-rows="totalData"
-              aria-controls="tableclients"
-            />
-          </template>
-        </TableTCollapseableForMobile>
+        </TableTInfiniteScroll>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -102,47 +95,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import Cookie from 'js-cookie'
+import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
-
 const selections = namespace('selections')
-interface IFetchOptions {
-  fetchClients:boolean,
-  fetchDepotIds:boolean,
-}
+
 @Component export default class VClients extends Vue {
   $axios: any
-  // $nuxt: any
-  $fetch: any
   $mq: any
-  $nuxt: any
-  // $t: any
+  $fetch:any
+  $nuxt:any
 
-  ismultiselect: boolean = false
   rowId: string = ''
-  isLoading: boolean = true
-  errorText: string = 'lalala'
-  fetchedData: Array<string> = []
-  totalData: number = 0
-  fetchedDataDepotIds: Array<string> = []
-  fetchOptions: IFetchOptions = { fetchClients: true, fetchDepotIds: true }
-  updateTable: boolean = false
+
+  isLoading: Boolean = false
+  items: Array<any> = []
+  totalItems: number = 0
+  totalpages: number = 0
+  error: string = ''
+
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: Cookie.get('perpage_clients') ? Cookie.get('perpage_clients') as unknown as number : 10,
-    setPerPage: (pp:number) => {
-      this.tableData.perPage = pp
-      Cookie.set('perpage_clients', this.tableData.perPage as unknown as string, { expires: 365 })
-    },
+    perPage: 15,
+    selected: [],
     sortBy: 'clientId',
     sortDesc: false,
-    filterQuery: '',
-    setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
+    filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
     clientId: { label: this.$t('table.fields.id') as string, key: 'clientId', visible: true, _fixed: true, sortable: true },
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     ipAddress: { label: this.$t('table.fields.ip') as string, key: 'ipAddress', visible: false, sortable: true },
@@ -153,59 +134,44 @@ interface IFetchOptions {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
-  @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
-  @selections.Mutation public pushToSelectionClients!: (s: string) => void
-  // @settings.Mutation public setColumnLayoutCollapsed!: (tableId: string, value: boolean) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
-  @Watch('updateTable', { deep: true }) updateTableChanged () { if (this.updateTable === true) { this.$fetch() } }
-  // @Watch('secondColumnOpened') layoutColumnChanged () {
-  //   this.setColumnLayoutCollapsed('tableclients', Boolean(this.secondColumnOpened && this.rowId))
-  // }
-  @Watch('ismultiselect', { deep: true }) multiselectChanged () {
-    this.setSelectionClients([])
-  }
 
   async fetch () {
     this.isLoading = true
-    if (this.fetchOptions.fetchClients) {
-      this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
-      const params = this.tableData
-      await this.$axios.get('/api/opsidata/clients', { params })
-        .then((response) => {
-          this.fetchedData = response.data
-          this.totalData = response.headers['x-total-count']
-        }).catch((error) => {
-        // eslint-disable-next-line no-console
-          console.error(error)
-          this.errorText = this.$t('message.errortext') as string
-        })
+    this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+    if (this.tableData.sortBy === 'sel') {
+      this.tableData.sortBy = 'selected'
+      this.tableData.sortDesc = true
+      this.tableData.selected = this.selectionClients
     }
-    if (this.fetchOptions.fetchDepotIds) {
-      await this.$axios.$get('/api/opsidata/depot_ids')
-        .then((response) => {
-          this.fetchedDataDepotIds = response
-        }).catch((error) => {
+    const params = this.tableData
+    await this.$axios.get('/api/opsidata/clients', { params })
+      .then((response) => {
+        console.log('response', response)
+        this.totalItems = response.headers['x-total-count']
+        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+        if (response.data === null) {
+          this.items = []
+        } else {
+          this.items = response.data
+        }
+        // this.items = this.items.concat(response.data)
+      }).catch((error) => {
         // eslint-disable-next-line no-console
-          console.error(error)
-          this.errorText = this.$t('message.errortext') as string
-        })
-      this.fetchOptions.fetchDepotIds = false
-    }
+        console.error(error)
+        this.error = this.$t('message.errortext') as string
+      })
     this.isLoading = false
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
-    this.setClientSelection(rowIdent)
     this.$router.push(to)
-  }
-
-  setClientSelection (id: string) {
-    this.setSelectionClients([id])
   }
 
   isRouteActive (to: string, rowIdent: string) {

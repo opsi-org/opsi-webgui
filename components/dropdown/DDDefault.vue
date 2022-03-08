@@ -116,6 +116,7 @@ export default class DDDefault extends BDropdown {
 <style>
 .DDDefault-BtnContent {
   text-align: left !important;
+  min-width: 150px !important;
 }
 .dropdown-menu {
   height: max-content !important;

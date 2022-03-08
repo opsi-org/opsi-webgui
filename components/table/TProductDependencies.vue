@@ -1,14 +1,9 @@
 <template>
   <div data-testid="TProductDependencies">
-    <TableTTable
-      v-if="dependencies.dependencies"
-      :is-busy="isLoading"
-      :stacked="false"
-      :small="true"
-      :disable-selection="true"
+    <TableTBVTable
+      :is-loading="isLoading"
       :items="Object.values(dependencies.dependencies)"
       :fields="fields"
-      :value-is-input-field="false"
     >
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
@@ -32,7 +27,7 @@
           ({{ getType(row.item.requirementType, row.item.productAction) }})
         </small>
       </template>
-    </TableTTable>
+    </TableTBVTable>
   </div>
 </template>
 
@@ -76,13 +71,5 @@ export default class TProductProperties extends Vue {
   getType (type:string, productAction:string) {
     return this.types2text[`${type}-${productAction}`] || this.$t('table.fields.unknown') as string
   }
-
-  // async fetch () {
-
-  // }
 }
 </script>
-
-<style>
-
-</style>

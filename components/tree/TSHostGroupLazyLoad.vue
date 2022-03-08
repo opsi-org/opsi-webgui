@@ -1,10 +1,11 @@
 <template>
   <div class="form-inline" style="margin-right:30px" data-testid="TSHostGroupLazyLoad">
-    <b-icon-laptop variant="primary" font-scale="2" />
-    <b-badge class="selection_badge" variant="light" size="sm">
-      {{ selectionClients.length }}
-    </b-badge>
-    <treeselect
+    <b-icon-laptop variant="transparent" font-scale="1.5" />
+    <ModalMSelections
+      type="clients"
+      :selections="selectionClients"
+    />
+    <TreeTSDefaultWithAdding
       v-model="groupSelection"
       class="treeselect"
       :flat="true"
@@ -19,6 +20,9 @@
       @select="groupSelect"
       @deselect="groupDeselect"
     >
+      <div slot="before-list">
+        <ButtonBTNClearSelection v-if="selectionClients.length>0" :clearselection="clearSelected" label="Clear Selection" />
+      </div>
       <div slot="option-label" slot-scope="{ node }">
         <div :ref="'tree-item-'+node.id">
           <b-icon v-if="node.isBranch" icon="diagram2" />
@@ -26,8 +30,7 @@
           <small> {{ node.label }} </small>
         </div>
       </div>
-    </treeselect>
-    <ButtonBTNClearSelection store="clients" component="tree" />
+    </TreeTSDefaultWithAdding>
   </div>
 </template>
 
@@ -36,7 +39,6 @@ import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { filterObjectLabel, filterObject } from '../../.utils/utils/sfilters'
 import { Group } from '../../.utils/types/tbackendmethods'
 import { arrayEqual } from '../../.utils/utils/scompares'
-// const auth = namespace('auth')
 const selections = namespace('selections')
 interface Request {
     selectedDepots: string
@@ -87,9 +89,9 @@ export default class TSDelayedLoading extends Vue {
 
   groupSelection: Array<any> = []
   groupIdList: Array<string> = []
-  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
@@ -116,7 +118,6 @@ export default class TSDelayedLoading extends Vue {
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    // this.setSession()
     for (const c in result) {
       const client = result[c]
       clientList.push({ id: client + ';clientlist', text: client, type: 'ObjectToGroup' })
@@ -132,8 +133,7 @@ export default class TSDelayedLoading extends Vue {
         await this.fetchClientList({ parentNode })
       } else {
         const params = this.request
-        const result = Object.values((await this.$axios.$get('/api/opsidata/hosts/groups', { params })).groups.children)
-        // this.setSession()
+        const result = (await this.$axios.$get('/api/opsidata/hosts/groups', { params })).groups.children
         if (result !== null) {
           parentNode.children = Object.values(result)
         }
@@ -186,6 +186,10 @@ export default class TSDelayedLoading extends Vue {
 
   groupDeselect (deselection: object) {
     this.groupChange(deselection, 'deselect')
+  }
+
+  clearSelected () {
+    this.setSelectionClients([])
   }
 }
 </script>

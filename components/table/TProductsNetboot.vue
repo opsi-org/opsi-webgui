@@ -1,33 +1,30 @@
 <template>
-  <!-- <div v-if="$mq=='mobile'"><h4>{{ $t('title.netboot') }}</h4></div> -->
   <div data-testid="TProductsNetboot">
-    <TableTCollapseableForMobile
-      id="tableproducts"
-      datakey="productId"
-      :title="$t('title.netboot')"
-      :visible="false"
-      :tabledata="tableData"
-      :headers="headerData"
-      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-      :selection="selectionProducts"
-      :items="fetchedData"
-      :totalrows="totalData"
-      :busy="isLoading"
-      :error-text="errorText"
-      :onchangeselection="setSelectionProducts"
-      :routechild="routeToChild"
+    <TableTInfiniteScroll
+      id="Netboot"
+      ref="Netboot"
+      primary-key="Netboot"
+      rowident="productId"
+      :error="error"
+      :is-loading="isLoading"
+      :table-data="tableData"
+      :header-data="headerData"
+      :items="items"
+      :total-items="totalItems"
+      :totalpages="totalpages"
       :ismultiselect="multiselect"
-      :stacked="$mq=='mobile'"
+      :selection="selectionProducts"
+      :setselection="setSelectionProducts"
+      :routechild="routeToChild"
+      :fetchitems="$fetch"
     >
-      <template #filter>
-        <InputIFilter v-if="$mq=='mobile'" :data="tableData" :additional-title="$t('table.fields.netbootid')" />
-      </template>
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
-
+      <template #cell(desc)="row">
+        {{ row.item.description }}
+      </template>
       <template #cell(version)="row">
-        <!-- v-if="Object.keys(fetchedDataClients2Depots).length > 0" -->
         <TableCellTCProductVersionCell
           type="depotVersions"
           :row="row"
@@ -35,15 +32,12 @@
           @details="toogleDetailsTooltip"
         />
       </template>
-
       <template #head(installationStatus)>
         <b-icon icon="box-seam" alt="installation status" />
       </template>
-
       <template #head(actionResult)>
         <b-icon icon="hourglass-bottom" alt="action result" />
       </template>
-
       <template #cell(installationStatus)="row">
         <TableCellTCBadgeCompares
           type="installationStatus"
@@ -53,7 +47,6 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
-
       <template #cell(actionResult)="row">
         <TableCellTCBadgeCompares
           type="actionResult"
@@ -72,7 +65,6 @@
         />
         <div v-else />
       </template>
-
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
@@ -81,16 +73,13 @@
           :save="saveActionRequest"
         />
       </template>
-
       <template #row-details="row">
-        <!-- :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`" -->
         <TableTTooltipContent
           v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
           type="version"
           :details="row.item.tooltiptext"
           :depot-version-diff="row.item.depot_version_diff"
         />
-      <!-- {{ row.item.tooltiptext }} -->
       </template>
       <template #cell(rowactions)="row">
         <ButtonBTNRowLinkTo
@@ -102,41 +91,23 @@
           :click-parent="routeRedirectToParent"
         />
       </template>
-      <template #footer>
-        <ButtonBTNClearSelection store="products" />
-      </template>
-
-      <template #pagination>
-        <BarBTablePagination
-          :tabledata="tableData"
-          :total-rows="totalData"
-          aria-controls="tableproducts"
-        />
-      </template>
-    </TableTCollapseableForMobile>
+    </TableTInfiniteScroll>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import Cookie from 'js-cookie'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
-// const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 interface IFetchOptions {
   fetchClients:boolean,
-  fetchDepotIds:boolean,
   fetchClients2Depots:boolean,
 }
-// interface FetchProd {
-//   products:Array<ITableRowItemProducts>,
-//   total:Number,
-// }
 
 @Component
 export default class TProductsNetboot extends Vue {
@@ -144,41 +115,35 @@ export default class TProductsNetboot extends Vue {
   $nuxt: any
   $fetch: any
   $mq: any
-  // $t: any
 
-  // @Prop() tableData!: ITableData
   @Prop() rowId!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
   @Prop() child!: boolean
   @Prop({ }) sortby!: string
 
+  isLoading: Boolean = false
+  items: Array<any> = []
+  totalItems: number = 0
+  totalpages: number = 0
+  error: string = ''
   action: string = ''
-  // type: string = ''
-  isLoading: boolean = true
-  errorText: string = ''
-  fetchedData: Array<ITableRowItemProducts> = []
-  totalData: number = 0
+  // fetchedData: Array<ITableRowItemProducts> = []
   fetchedDataClients2Depots: IObjectString2String = {}
-  fetchedDataDepotIds: Array<string> = []
-  fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true, fetchDepotIds: true }
+  fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
 
   tableData: ITableData = {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: Cookie.get('perpage_netboot') ? Cookie.get('perpage_netboot') as unknown as number : 5,
-    setPerPage: (pp:number) => {
-      this.tableData.perPage = pp
-      Cookie.set('perpage_netboot', this.tableData.perPage as unknown as string, { expires: 365 })
-    },
+    perPage: 15,
+    selected: [],
     sortBy: this.sortby ? this.sortby : 'productId',
     sortDesc: false,
-    filterQuery: '',
-    setPageNumber: (pn:number) => { this.tableData.pageNumber = pn }
+    filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true },
+    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
     ident: { label: '', key: 'ident', visible: true, _fixed: true },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
     actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: true },
@@ -187,20 +152,19 @@ export default class TProductsNetboot extends Vue {
     name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: true },
+    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false },
     actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
-  @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
-  // @auth.Mutation public setSession!: () => void
 
   @Watch('selectionDepots', { deep: true })
   selectionDepotsChanged () {
@@ -227,8 +191,6 @@ export default class TProductsNetboot extends Vue {
 
   updateColumnVisibility () {
     if (this.selectionClients.length > 0) {
-      // this.headerData._majorVersion.visible = true
-      // this.headerData._majorVersion.disabled = true
       this.headerData.selectedClients.disabled = true
       this.headerData.installationStatus.visible = true
       this.headerData.installationStatus.disabled = true
@@ -237,8 +199,6 @@ export default class TProductsNetboot extends Vue {
       this.headerData.actionRequest.visible = true
       this.headerData.actionRequest.disabled = true
     } else {
-      // this.headerData._majorVersion.visible = false
-      // this.headerData._majorVersion.disabled = false
       this.headerData.selectedClients.disabled = false
       this.headerData.installationStatus.visible = false
       this.headerData.installationStatus.disabled = false
@@ -251,7 +211,6 @@ export default class TProductsNetboot extends Vue {
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
-    // console.debug('toogle Details', (row.item as ITableRowItemProducts).tooltiptext)
     row.toggleDetails()
   }
 
@@ -266,7 +225,7 @@ export default class TProductsNetboot extends Vue {
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          this.errorText = this.$t('message.errortext') as string
+          this.error = this.$t('message.errortext') as string
         })
       this.fetchOptions.fetchClients2Depots = false
     }
@@ -276,17 +235,28 @@ export default class TProductsNetboot extends Vue {
       this.tableData.selectedClients = JSON.stringify(this.selectionClients)
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
+      if (this.tableData.sortBy === 'sel') {
+        this.tableData.sortDesc = true
+        this.tableData.sortBy = 'selected'
+        this.tableData.selected = this.selectionProducts
+      }
+
       const params = this.tableData
       // this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
       await this.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
-          this.fetchedData = response.data
-          this.totalData = response.headers['x-total-count']
-          // this.setSession()
+          this.totalItems = response.headers['x-total-count']
+          this.$emit('update:totalnetboot', this.totalItems)
+          this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+          if (response.data === null) {
+            this.items = []
+          } else {
+            this.items = response.data
+          }
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          this.errorText = this.$t('message.errortext') as string
+          this.error = this.$t('message.errortext') as string
         })
     }
     this.isLoading = false
@@ -364,8 +334,6 @@ export default class TProductsNetboot extends Vue {
     } else {
       await this.save(data)
       this.$nuxt.refresh()
-      // this.fetchOptions.fetchClients = true
-      // this.$fetch()
     }
   }
 

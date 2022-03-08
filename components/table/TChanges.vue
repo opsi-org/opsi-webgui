@@ -2,30 +2,31 @@
   <div v-if="tableitems.length>0" data-testid="TChanges">
     <InputIFilterTChanges :filter.sync="filter" />
     <div v-for="changes, k in groupedById" :key="changes.productId">
-      <small><b>{{ k }}</b></small>
-      <b-table
-        size="sm"
-        :filter="filter"
-        :filter-included-fields="['depotId','clientId']"
-        hover
-        borderless
-        sticky-header
-        fixed
-        class="changes_table"
-        thead-class="table-header-none"
-        :items="changes"
-        :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
-      >
-        <template #cell()="row">
-          <small>{{ row.value }}</small>
-        </template>
-        <template #cell(_action)="row">
-          <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-          <b-button size="sm" variant="light" @click="save(row.item)">
-            <b-icon icon="check2" />
-          </b-button>
-        </template>
-      </b-table>
+      <b-button v-b-toggle="k" block class="m-1 text-left" variant="light">
+        <small><b>{{ k }}</b></small>
+        <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
+      </b-button>
+      <b-collapse :id="k" :visible="filter === '' ? false : true">
+        <TableTBVTable
+          type="small"
+          :noheader="true"
+          :hover="true"
+          :filter="filter"
+          :filterfields="['depotId','clientId']"
+          :items="changes"
+          :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
+        >
+          <template #cell()="row">
+            <small>{{ row.value }}</small>
+          </template>
+          <template #cell(_action)="row">
+            <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
+            <b-button size="sm" variant="light" @click="save(row.item)">
+              <b-icon icon="check2" />
+            </b-button>
+          </template>
+        </TableTBVTable>
+      </b-collapse>
     </div>
   </div>
 </template>
@@ -35,20 +36,16 @@ import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
-// const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component
 export default class TChanges extends Vue {
   $axios: any
-  // $t: any
-  // $fetch: any
   $mq: any
   $nuxt: any
 
   @Prop({ }) tableitems!: Array<object>
   filter: string = ''
-  // @auth.Mutation public setSession!: () => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
@@ -80,7 +77,6 @@ export default class TChanges extends Vue {
         console.log(response)
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
-        // this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
       })
@@ -113,7 +109,6 @@ export default class TChanges extends Vue {
         console.log(response)
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
-        // this.setSession()
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
       })
@@ -133,12 +128,3 @@ export default class TChanges extends Vue {
   }
 }
 </script>
-
-<style>
-.changes_table{
-  max-height: 160px !important;
-}
-.table-header-none{
-  display: none;
-}
-</style>

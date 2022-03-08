@@ -1,7 +1,7 @@
 import { IObjectString2ObjectString2String, IObjectString2String, IObjectString2StringOrUndefined } from './tgeneral'
 
 export interface ITableDataItem {
-  // ident: string
+  ident: string
   productId?: string
   depotId?: string
   clientId?: string
@@ -39,9 +39,8 @@ export interface ITableRow {
 
 export interface ITableData {
   pageNumber: number,
-  setPageNumber: Function,
   perPage: number,
-  setPerPage: Function,
+  selected: Array<string>,
   sortBy: string,
   sortDesc: boolean,
   filterQuery: string,

@@ -10,8 +10,8 @@
         <BarBPageHeader>
           <template #left>
             <TreeTSDepots v-if="!child" />
-            <TreeTSHostGroupLazyLoad v-if="!child" />
-            <TreeTSProductGroup />
+            <TreeTSHostGroups v-if="!child" />
+            <TreeTSProductGroups />
           </template>
           <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
@@ -19,23 +19,45 @@
               v-if="expert && changesProducts"
               :changelist="changesProducts.filter((o) => o.user === username)"
             />
-            <!-- <ButtonBTNClearSelection style="margin-left: 10px" store="products" /> -->
           </template>
         </BarBPageHeader>
-        <TableTProductsNetboot
-          :multiselect="ismultiselect"
-          :sortby="sortby"
-          :rowident="rowId"
-          :route-redirect-with="routeRedirectWith"
-          :child="child"
-        />
-        <TableTProductsLocalboot
-          :multiselect="ismultiselect"
-          :sortby="sortby"
-          :rowident="rowId"
-          :route-redirect-with="routeRedirectWith"
-          :child="child"
-        />
+        <b-tabs class="products_horizontaltabs">
+          <template #tabs-end>
+            <!-- <TreeTSDepots v-if="!child" />
+            <TreeTSHostGroups v-if="!child" />
+            <TreeTSProductGroups /> -->
+          </template>
+          <b-tab disabled>
+            <template #title>
+              <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
+            </template>
+          <!-- </b-tab>
+          <b-tab> -->
+            <!-- <template #title>
+              <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
+            </template> -->
+          </b-tab>
+          <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
+            <TableTProductsLocalboot
+              :totallocalboot.sync="localboot"
+              :multiselect="ismultiselect"
+              :sortby="sortby"
+              :rowident="rowId"
+              :route-redirect-with="routeRedirectWith"
+              :child="child"
+            />
+          </b-tab>
+          <b-tab :title="$t('title.netboot') + ' (' + netboot + ')'">
+            <TableTProductsNetboot
+              :totalnetboot.sync="netboot"
+              :multiselect="ismultiselect"
+              :sortby="sortby"
+              :rowident="rowId"
+              :route-redirect-with="routeRedirectWith"
+              :child="child"
+            />
+          </b-tab>
+        </b-tabs>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -56,13 +78,16 @@ export default class VProducts extends Vue {
   @Prop({}) id!: string;
   @Prop({}) sortby!: string;
   @selections.Getter public selectionClients!: Array<string>
-  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void;
+  @selections.Getter public selectionProducts!: Array<string>
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean;
   @changes.Getter public changesProducts!: Array<ChangeObj>;
 
   rowId: string = '';
   isLoading: boolean = true;
   ismultiselect: boolean = false;
+  localboot: string = ''
+  netboot: string = ''
 
   @Watch('ismultiselect', { deep: true }) multiselectChanged () {
     this.setSelectionProducts([])
@@ -82,3 +107,9 @@ export default class VProducts extends Vue {
   }
 }
 </script>
+
+<style>
+.products_horizontaltabs .nav-item{
+  min-width: min-content;
+}
+</style>

@@ -25,15 +25,12 @@
     <p v-if="errorText">
       {{ errorText }}
     </p>
-    <TableTTable
+    <TableTBVTable
       class="TProductProperties_Table"
-      :is-busy="isLoading"
+      :is-loading="isLoading"
+      :error="errorText"
       :items="Object.values(properties.properties)"
       :fields="fields"
-      :stacked="false"
-      :small="true"
-      :disable-selection="true"
-      show-empty
     >
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
@@ -52,11 +49,11 @@
               <template #editable-button>
                 <b-button
                   v-if="row.item.editable"
-                  variant="primary"
+                  variant="outer-primary"
                   size="sm"
                   @click="row.toggleDetails()"
                 >
-                  +
+                  <b-icon-plus />
                 </b-button>
               </template>
             </TableCellTCProductPropertyValue>
@@ -77,7 +74,7 @@
               <b-button
                 size="sm"
                 aria-label="add new property value"
-                variant="outline-secondary"
+                variant="outline-primary"
                 @click="updateNewPropertyValuesRow(row.item)"
               >
                 {{ $t('values.add') }}
@@ -111,7 +108,7 @@
           <br>
         </b-container>
       </template>
-    </TableTTable>
+    </TableTBVTable>
   </div>
 </template>
 
@@ -122,7 +119,6 @@ import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { arrayEqual } from '../../.utils/utils/scompares'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { ChangeObj } from '../../.utils/types/tchanges'
-// const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -136,7 +132,7 @@ export default class TProductProperties extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: '' }) errorText!: string
   @Prop({ }) properties!: IProp
-  // @auth.Mutation public setSession!: () => void
+
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @changes.Getter public changesProducts!: Array<ChangeObj>
@@ -256,17 +252,15 @@ export default class TProductProperties extends Vue {
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;
 }
-.TProductProperties_Table td[aria-colindex$="1"] {
+/* .TProductProperties_Table td[aria-colindex$="1"] {
   min-width: 30%;
 }
 .TProductProperties_Table td[aria-colindex$="2"] {
   max-width: 70%;
-  /* max-width: 100%; */
-  /* background-color: blue !important; */
 }
 .TProductProperties_Table {
   max-width: 100% !important;
-}
+} */
 .TableProductsDetails_EditableProdProp_AddValue_BVFormIInput {
   max-width: calc(100% - 30px);
 }

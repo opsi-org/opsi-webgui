@@ -1,22 +1,16 @@
 <template>
-  <b-container fluid data-testid="CardCSupport">
-    <b-card>
+  <div data-testid="CardCSupport">
+    <b-card :sub-title="$t(item.title)">
       <b-row>
-        <b-col md="7">
-          <b-card-body :title="$t(item.title)">
-            <b-card-text>
-              {{ $t(item.description) }}
-            </b-card-text>
-          </b-card-body>
+        <b-col md="8">
+          <span class="carddescription"> {{ $t(item.description) }} </span>
         </b-col>
-        <b-col md="5">
-          <b-card-body>
-            <a class="btn btn-default border support-button" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
-          </b-card-body>
+        <b-col md="4">
+          <a class="btn btn-default border carddescription" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
         </b-col>
       </b-row>
     </b-card>
-  </b-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -27,9 +21,8 @@ export default class CSupport extends Vue {
   @Prop({ }) item!: object
 }
 </script>
-
 <style>
-.support-button {
-    width: 230px !important;
+.carddescription {
+  font-size: 14px;
 }
 </style>

@@ -7,6 +7,7 @@
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
+    <br>
     <div class="VProductProperty-Card-Description">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
@@ -30,6 +31,7 @@
         :title="$t('title.properties') + ((tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'')"
         :disabled="tabPropertiesDisabled"
       >
+        <br>
         <LazyTableTProductProperties
           v-if="id"
           :id="id"
@@ -43,6 +45,7 @@
         :disabled="tabDependenciesDisabled"
         :active="activeTab===1"
       >
+        <br>
         <LazyTableTProductDependencies
           v-if="id"
           :id="id"
@@ -156,7 +159,7 @@ export default class VProductProperty extends Vue {
 
 <style>
 .horizontaltab .nav-item{
-  min-width: 50%;
+  min-width: 20%;
 }
 .VProductProperty-Card-Description {
   margin-bottom: 10px;

@@ -1,7 +1,8 @@
 <template>
   <b-nav vertical tabs class="sidemenu_nav" data-testid="NSidebar">
     <span v-for="catogery in navItems" :key="catogery.title">
-      <NavItemNITitle :expanded="expanded" :title="catogery.title" />
+      <br>
+      <!-- <NavItemNITitle :expanded="expanded" :title="catogery.title" /> -->
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
           <NavItemNICollapsible
@@ -77,9 +78,8 @@ export default class NSidebar extends Vue {
         { title: 'title.products', icon: 'grid', route: '/products/' }
       ]
     },
-    // title.configure
     {
-      title: '',
+      title: 'title.configure',
       menu: [
         { title: 'title.support', icon: 'headset', route: '/support' },
         { title: 'title.settings', icon: 'gear', route: '/settings' }
@@ -101,6 +101,7 @@ export default class NSidebar extends Vue {
 .sidemenu_nav{
   position:absolute;
   width: 100%;
+  max-height:70vh;
 }
 
 .sidebar_collapsed .sidemenu_nav .nav-item{
@@ -109,5 +110,9 @@ export default class NSidebar extends Vue {
 .sidebar_collapsed .sidemenu_nav .nav-link > svg{
   width: 100% !important;
   margin: 0 auto !important;
+}
+.timer {
+  margin-left: 15px;
+  margin-top: 5px;
 }
 </style>

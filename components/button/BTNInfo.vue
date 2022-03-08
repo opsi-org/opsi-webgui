@@ -1,13 +1,14 @@
 <template>
+  <!-- variant="transparent"
+    class="border-primary" -->
   <b-button
     v-bind="$attrs"
     data-testid="ButtonBTNInfo"
     size="sm"
-    variant="transparent"
-    class="border-primary"
+    variant="outer-primary"
     @click="click"
   >
-    <b-icon-info />
+    <b-icon-info-circle />
   </b-button>
 </template>
 
@@ -15,7 +16,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class BTNHelp extends Vue {
+export default class BTNInfo extends Vue {
   @Prop() click?: Function
 }
 </script>
