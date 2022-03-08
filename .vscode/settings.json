@@ -122,4 +122,5 @@
   "gitlens.heatmap.toggleMode": "file",
   "playwrightrunner.playwrightCommand": "npm-uib run vscode:test:all:components",
   "playwrightrunner.playwrightConfigPath": ".config/playwright-all-components.config.js",
+  "explorer.sortOrder": "mixed",
 }
