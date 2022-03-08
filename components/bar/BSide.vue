@@ -14,11 +14,6 @@
     <NavNSidebar :expanded="attributes.expanded" />
     <template v-if="$mq === 'desktop'" #footer>
       <DivDCountdowntimer :small="!attributes.expanded" />
-<!-- TODO check if following code is better
-    <NavNSidebar :expanded="attributes.expanded" />
-    <template #footer>
-      <DivDCountdowntimer class="timer" />
--->
       <div class="sidemenu_footer">
         <b-button
           v-if="$mq === 'desktop'"
