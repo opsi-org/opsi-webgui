@@ -1,43 +1,71 @@
 <template>
-  <div>
+  <div data-testid="DivDCounttimer">
     <small> {{ countdowntimer }} </small>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 // import Cookie from 'js-cookie'
 import { makeToast } from '../../.utils/utils/scomponents'
 const auth = namespace('auth')
 @Component
 export default class BCountdowntimer extends Vue {
-  countdowntimer : string = ''
+  @Prop({ default: false }) small!: boolean
+  $mq:any
+  $t:any
+
+  timeinterval: any
+  countdowntimer: string = ''
   notify: boolean = false
-  @auth.Mutation public logout!: () => void
   @auth.Getter public sessionEndTime!: string
+  @auth.Getter public isAuthenticated!: Boolean
   @auth.Mutation public clearSession!: () => void
+  @auth.Mutation public logout!: () => void
 
   mounted () {
     this.initCountdownTimer()
   }
 
   initCountdownTimer () {
-    const timeinterval = setInterval(() => {
-      const t = this.getRemainingTime()
-      this.countdowntimer = 'Expires in ' + t.days + 'd ' + t.hours + 'h ' + t.minutes + 'm ' + t.seconds + 's'
-      const notifyInMinutes = 5
-      const notifyInMilliSec = notifyInMinutes * 60000
-      if (t.diff <= notifyInMilliSec && !this.notify) {
-        this.notify = true
-        makeToast(this, 'Session expires in ' + notifyInMinutes + ' minutes', 'Session Timeout', 'warning', notifyInMilliSec)
+    this.calcTimeout()
+    this.timeinterval = setInterval(this.calcTimeout, 1000)
+  }
+
+  calcTimeout () {
+    const t = this.getRemainingTime()
+    this.countdowntimer = this.getText(t)
+    const notifyInMinutes = (this.isAuthenticated) ? 5 : -1
+    const notifyInMilliSec = notifyInMinutes * 60000
+    if (t.diff <= notifyInMilliSec && !this.notify) {
+      this.notify = true
+      makeToast(this, this.$t('message.session.expiresInMinutesOnly', { min: notifyInMinutes }) as string, this.$t('message.session.title') as string, 'warning', notifyInMilliSec)
+    }
+    if (isNaN(t.diff) || t.diff === 0 || notifyInMinutes === -1) {
+      this.countdowntimer = this.$t('message.session.expired') as string
+      clearInterval(this.timeinterval)
+      this.logout()
+      this.clearSession()
+    }
+  }
+
+  getText (t) {
+    if (t.days > 0) {
+      if (this.small === true) {
+        return ` ${t.days}d ${t.hours}:${t.minutes}:${t.seconds}`
+      } else {
+        return this.$t('message.session.expiresInDays', { d: t.days, h: t.hours, min: t.minutes, s: t.seconds }) as string
       }
-      if (isNaN(t.diff) || t.diff === 0) {
-        this.countdowntimer = 'EXPIRED'
-        clearInterval(timeinterval)
-        this.logout()
-        this.clearSession()
+    } else if (t.hours > 0) {
+      if (this.small === true) {
+        return ` ${t.hours}:${t.minutes}:${t.seconds}`
+      } else {
+        return this.$t('message.session.expiresInHours', { h: t.hours, min: t.minutes, s: t.seconds }) as string
       }
-    }, 1000)
+    } else if (this.small === true) {
+      return ` ${t.minutes}:${t.seconds}`
+    }
+    return this.$t('message.session.expiresInMinutes', { min: t.minutes, s: t.seconds }) as string
   }
 
   getRemainingTime () {
