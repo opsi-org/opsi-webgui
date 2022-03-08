@@ -30,7 +30,6 @@
       :fetch-data="fetchData"
       @change="changeSelection"
     />
-      <!-- :lazy-load="true" -->
   </div>
 </template>
 
@@ -50,7 +49,6 @@ export default class TSProductGroups extends Vue {
 
   async fetchData () {
     const x = Object.values((await this.$axios.$get('/api/opsidata/products/groups')).groups)
-    console.log(JSON.stringify(x))
     return x
   }
 
@@ -58,7 +56,6 @@ export default class TSProductGroups extends Vue {
     if (selection === undefined) { return }
     if (!Array.isArray(selection)) { return }
 
-    console.log('try to select products/groups: ', selection)
     if (selection.length > 0) {
       this.setSelectionProducts([...selection])
     } else {

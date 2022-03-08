@@ -149,7 +149,6 @@ export default class TSDefault extends Vue {
 
   async fetch () {
     this.data = await this.fetchData()
-    console.log('got data ', this.type, this.data)
     this.updateLocalFromParent()
   }
 
@@ -209,9 +208,6 @@ export default class TSDefault extends Vue {
           }
         }
       }
-      console.log('selectionDefault: ', this.selectionDefault)
-      console.log('data: ', this.data)
-      console.log('options: ', this.options)
     }
     if (updateSelections && !this.nested) {
       this.selection = [...this.selectionDefault]
@@ -219,7 +215,6 @@ export default class TSDefault extends Vue {
   }
 
   normalizer (node: Group) {
-    console.debug(`normalize ${JSON.stringify(node)}: id ${node.id} text: ${node.text}`)
     return {
       id: node.id,
       type: node.type,
@@ -240,7 +235,6 @@ export default class TSDefault extends Vue {
   }
 
   async loadOptionsChildren ({ action, parentNode, callback }: any) {
-    console.log('loadChildren ', this.lazyLoad)
     if (this.lazyLoad !== true) {
       callback()
       return
@@ -255,20 +249,14 @@ export default class TSDefault extends Vue {
   }
 
   async select (s: any) {
-    console.log('payload:', JSON.stringify(s))
     if (!s) {
       return
     }
-    if (Array.isArray(s)) {
-      console.log('isArray:', s)
-    }
     if (this.nested && (s.isBranch === true || ['HostGroup', 'ProductGroup'].includes(s.type))) {
-      console.log('isBranch:', s)
       await this.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
       this.groupChange(s, 'select')
       return
     }
-    console.log('isValue:', s)
     if (this.validate && !this.validate(s.id)) {
       this.selection = this.data
       makeToast(

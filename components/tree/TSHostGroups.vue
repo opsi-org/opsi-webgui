@@ -1,15 +1,5 @@
 <template>
-  <!-- <LazyTreeTSTreeselect
-    v-if="depotsList"
-    data-testid="TSDepots"
-    :searchable="false"
-    :options="depotsList"
-    :placeholder="'title.depots'"
-    icon="hdd-network"
-  /> -->
-  <!-- v-else-if="getType(obj.type)=='multiselect'" -->
   <div>
-      <!-- :flat="true" -->
     <TreeTSDefault
       id="Clients"
       type="clients"
@@ -89,12 +79,10 @@ export default class TSHostGroups extends Vue {
     request.selectedDepots = JSON.stringify(this.selectionDepots)
     request.parentGroup = parentNode.text
 
-    console.log('try fetch Children from ', parentNode.text)
     if (parentNode.text === 'clientlist') {
       //
     } else {
       const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=${this.selectionDepots}&parentGroup=${parentNode.text}`)).groups.children
-      console.log(result)
       if (result !== null) {
         return Object.values(result)
       }
@@ -108,7 +96,6 @@ export default class TSHostGroups extends Vue {
     if (selection.length > 0) {
       this.setSelectionClients([...selection])
     } else {
-      // const opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
       this.setSelectionClients([])
     }
   }
