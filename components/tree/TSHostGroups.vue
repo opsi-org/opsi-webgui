@@ -50,7 +50,7 @@ export default class TSHostGroups extends Vue {
         isBranch: true,
         type: 'HostGroup',
         isDefaultExpanded: false,
-        isDisabled: false, // will be disabled through css. workaround for: treeselect not able to enable children ?
+        isDisabled: false,
         children: null
       },
       {
@@ -59,7 +59,7 @@ export default class TSHostGroups extends Vue {
         isBranch: true,
         type: 'HostGroup',
         isDefaultExpanded: false,
-        isDisabled: true, // will be disabled through css. workaround for: treeselect not able to enable children ?
+        isDisabled: false,
         children: null
       },
       {
@@ -68,7 +68,7 @@ export default class TSHostGroups extends Vue {
         isBranch: true,
         isDefaultExpanded: false,
         type: 'HostGroup',
-        isDisabled: false, // will be disabled through css. workaround for: treeselect not able to enable children ?
+        isDisabled: false,
         children: clientlist
       }
     ]
