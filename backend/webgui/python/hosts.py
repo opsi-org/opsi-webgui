@@ -20,12 +20,14 @@ from fastapi import APIRouter, Depends
 # from opsiconfd.logging import logger
 from opsiconfd.backend import get_mysql
 from opsiconfd.rest import order_by, pagination, common_query_parameters, rest_api
-from opsiconfd.application.utils import get_configserver_id, build_tree, get_allowed_objects
-
+from opsiconfd.application.utils import get_configserver_id, get_allowed_objects
+from opsiconfd.logging import logger
 
 from .utils import (
 	parse_depot_list,
-	parse_hosts_list
+	parse_hosts_list,
+	parse_client_list,
+	build_tree
 )
 
 from .utils import mysql
@@ -106,12 +108,15 @@ def get_host_data(
 
 @host_router.get("/api/opsidata/hosts/groups")
 @rest_api
-def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), parentGroup: Optional[str] = []): # pylint: disable=too-many-locals, too-many-branches, invalid-name, dangerous-default-value
+def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), parentGroup: Optional[str] = [], selectedClients: List[str] = Depends(parse_client_list)): # pylint: disable=too-many-locals, too-many-branches, invalid-name, dangerous-default-value
 	"""
 	Get host groups as tree.
 	If a parent group (parentGroupId) is given only child groups will be returned.
 	"""
 	allowed = get_allowed_objects()
+
+	logger.devel("S: %s", selectedClients)
+	
 
 	params = {}
 	if selectedDepots == [] or selectedDepots is None:
@@ -129,8 +134,11 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 	where = text("g.`type` = 'HostGroup'")
 
 	if parentGroup:
-		if parentGroup in ("groups", "root") :
+		if parentGroup == "groups" :
 			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))
+			where_hosts = text("og.groupId IS NULL")
+		elif parentGroup== "root" :
+			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))
 			where_hosts = text("og.groupId IS NULL")
 		else:
 			params["parent"] = parentGroup
@@ -187,8 +195,10 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 		result = result.fetchall()
 
 		all_groups = {}
+		group_ids = []
 		for row in result:
 			if not row["group_id"] in all_groups:
+				group_ids.append(row["group_id"])
 				all_groups[row["group_id"]] = {
 					"id": row["group_id"],
 					"type": "HostGroup",
@@ -196,6 +206,8 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 					"parent": row["parent_id"] or root_group["id"]
 				}
 			if row["object_id"]:
+				if row["object_id"] in selectedClients:
+					all_groups[row["group_id"]]["isDefaultExpanded"] = True
 				if not "children" in all_groups[row["group_id"]]:
 					all_groups[row["group_id"]]["children"] = {}
 				if row.group_id == row.parent_id:
@@ -214,7 +226,61 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 						"parent": row["group_id"]
 					}
 
+		if selectedClients is not None:
+			params = {}
+		
+			logger.devel(params)
+			logger.devel(selectedClients)
 
-		host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
+			for idx, client in enumerate(selectedClients):
+				if idx > 0:
+					where = or_(where,text(f"og.objectId = '{client}'"))#
+				else:
+					where = text(f"og.objectId = '{client}'")
+			query = select(text("""
+				og.groupId AS group_id,
+				og.groupId AS parent_Id,
+				og.objectId AS object_id
+			"""))\
+			.select_from(text("`OBJECT_TO_GROUP` AS og"))\
+			.where(where)
+			logger.devel(query)
+			
+			logger.devel(query)
+			result = session.execute(query)
+			result = result.fetchall()
+
+			groups_to_mark = []
+			for row in result:
+				groups_to_mark.append(row["group_id"])
+
+			for pg in groups_to_mark: 
+				while pg not in group_ids:
+					pg = find_parent(pg)
+					logger.devel(pg)
+				
+				all_groups[pg]["isDefaultExpanded"] = True
+		
+		
+
+			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"], selection=True)
+		else:
+			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
 
 		return {"data": {"groups": host_groups}}
+
+
+def find_parent(group):
+	logger.devel("find_parent")
+	with mysql.session() as session:
+		query = select(text("""
+			g.parentGroupId AS parent_id,
+			g.groupId AS group_id
+		"""))\
+		.select_from(text("`GROUP` AS g"))\
+		.where(text(f"g.groupId = '{group}'"))
+			# pylint: disable=redefined-outer-name
+	
+		logger.devel(query)
+		result = session.execute(query)
+		return result.fetchone()["parent_id"]
