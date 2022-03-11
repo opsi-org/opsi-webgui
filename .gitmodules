@@ -6,4 +6,4 @@
 [submodule "uib-components"]
     path = opsiweb/uib-components
     url = ../opsiweb-ui-components.git
-    branch = 152-test-tests-integration
+    branch = develop

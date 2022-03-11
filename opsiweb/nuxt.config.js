@@ -1,11 +1,12 @@
 import path from 'path'
 import fs from 'fs'
-import pkg from '../package.json'
 
-import delib from '../uib-components/locale/de.json'
-import enlib from '../uib-components/locale/en.json'
+import delib from 'uib-components/locale/de.json'
+import enlib from 'uib-components/locale/en.json'
 import enui from './locale/en.json'
 import deui from './locale/de.json'
+
+import pkg from './package-dry.json'
 
 const de = { ...delib, ...deui } // merge language files from components and local one
 const en = { ...enlib, ...enui } // have to be nested to avoid overwriting sections
@@ -45,27 +46,35 @@ export default {
   },
   ignoreOptions: [],
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['~/assets/css/custom'],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios',
     { src: '~/plugins/vuex-persist', ssr: false },
-
-    { src: '~/../uib-components/plugins/vue-treeselect.js', mode: 'client' }
+    { src: '~/uib-components/plugins/vue-treeselect.js', mode: 'client' }
     // '~/plugins/vue-i18n.js'
   ],
 
+  css: ['uib-components/assets/css/custom'],
+  dir: {
+    layouts: 'uib-components/layouts',
+    store: 'uib-components/store',
+    assets: 'uib-components/assets'
+    // components: 'uib-components/layouts/',
+    // layouts: path.resolve(process.cwd(), '../uib-components/layouts/'),
+    // store: '.tmpstore'
+    // store: '~/../uib-components/store/'
+  },
   // Auto import components: https://go.nuxtjs.dev/config-components
   // components: true,
-  components: ['../uib-components/components/', 'components/'],
+  components: ['uib-components/components/', 'components/'],
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/typescript
-    '@nuxt/typescript-build',
+    '@nuxt/typescript-build'
     // '~/../uib-components/index.js'
-    'uib-components/.nuxt-integration'
+    // 'uib-components/.nuxt-integration'
   ],
 
   router: {
