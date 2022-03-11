@@ -25,8 +25,8 @@ export default {
     // host: 'localhost', // default: localhost
     // port: 8888, // default: 3000
     https: {
-      key: fs.readFileSync(path.resolve(__dirname, 'https/server.key')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'https/server.crt'))
+      key: fs.readFileSync(path.resolve(__dirname, '.config/https/server.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, '.config/https/server.crt'))
     }
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
