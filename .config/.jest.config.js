@@ -1,4 +1,3 @@
-console.error("MY TSCONFIG 1")
 module.exports = {
   // preset: 'jest-playwright-preset',
   testRegex: '(<rootDir>/components/.*|)\\.test.unit\\.jsx?$',
@@ -19,7 +18,7 @@ module.exports = {
     '.*\\.(vue)$': 'vue-jest'
   },
   verbose: true,
-  collectCoverage: false,
+  collectCoverage: true,
   collectCoverageFrom: [
     'components/**/*.{vue}'
     // 'layouts/**/*.{js,ts,vue}',
@@ -38,4 +37,3 @@ module.exports = {
     'package-lock.json'
   ]
 }
-console.error("MY TSCONFIG 2")
