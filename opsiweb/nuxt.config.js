@@ -59,7 +59,8 @@ export default {
   dir: {
     layouts: 'uib-components/layouts',
     store: 'uib-components/store',
-    assets: 'uib-components/assets'
+    assets: 'uib-components/assets',
+    static: 'uib-components/static'
     // components: 'uib-components/layouts/',
     // layouts: path.resolve(process.cwd(), '../uib-components/layouts/'),
     // store: '.tmpstore'
@@ -146,7 +147,7 @@ export default {
     // }
   },
   storybook: {
-    stories: ['~/../**/*.stories.js'],
+    stories: ['~/**/*.stories.js'],
     decorators: ['<div><link rel=\\"stylesheet\\" href=\\"/themes/opsi-bootstrap-theme-light.css\\"/><story/></div>']
     // addons: ['storybook-addon-mock/register']//, '@storybook/preset-typescript'] //, '@storybook/addon-mock']
   }
