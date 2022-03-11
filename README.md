@@ -1,7 +1,9 @@
 # Installation (Production)
 ## Quick install (only intern-obs)
 * use development branch of obs e.g. content of `/etc/apt/sources.list.d/opsi.list`: `deb http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04 ./`
+* may add key: `wget -q -O - http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04/Release.key | sudo apt-key add -`
 * run `sudo apt update && sudo apt install opsi-webgui`
+* restart opsiconfd: `sudo systemctl restart opsiconfd`
 
 # Development
 See [wiki](https://gitlab.uib.gmbh/uib/opsiweb-ui/-/wikis/Usage-webgui-with-components-lib) for detailed information about file-structure, installation, workflow, testing, ...
