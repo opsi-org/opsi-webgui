@@ -18,9 +18,9 @@ module.exports = {
     '.*\\.(vue)$': 'vue-jest'
   },
   verbose: true,
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
-    'components/**/*.{vue}'
+    '<rootDir>/components/**/*.{vue}'
     // 'layouts/**/*.{js,ts,vue}',
     // 'pages/**/*.{js,ts,vue}',
     // 'scripts/**/*.{js,ts,vue}'
@@ -31,9 +31,9 @@ module.exports = {
     'test/e2e/'
   ],
   coveragePathIgnorePatterns: [
-    'node_modules/',
-    '.*\\config.js',
-    'package.json',
-    'package-lock.json'
+    '<rootDir>/node_modules/',
+    '<rootDir>/.*\\config.js',
+    '<rootDir>/package.json',
+    '<rootDir>/package-lock.json'
   ]
 }
