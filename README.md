@@ -1,4 +1,9 @@
-> IMPORTANT
+
+# Installation Production
+## Quick install (only intern-obs)
+* use development branch of obs e.g. content of `/etc/apt/sources.list.d/opsi.list`: `deb http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04 ./`
+* run `sudo apt update && sudo apt install opsi-webgui`
+
 # Development
 See [wiki](https://gitlab.uib.gmbh/uib/opsiweb-ui/-/wikis/Usage-webgui-with-components-lib) for detailed information about file-structure, installation, workflow, testing, ...
 ## Important
@@ -32,7 +37,3 @@ See [wiki](https://gitlab.uib.gmbh/uib/opsiweb-ui/-/wikis/Usage-webgui-with-comp
 * Optional open: `http://localhost:3003/` for webgui-storybook
 
 
-# Production
-## Quick install (only intern-obs)
-* use development branch of obs e.g. content of `/etc/apt/sources.list.d/opsi.list`: `deb http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/development/xUbuntu_20.04 ./`
-* run `sudo apt update && sudo apt install opsi-webgui`
