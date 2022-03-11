@@ -36,7 +36,7 @@
       "lint": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui",
     "//test": "commands for testing unit/playwright",
       "test": "jest && playwright test test/e2e test/integration",
-      "test:unit": "jest --config ./config/.jest.config.js  ./",
+      "test:unit": "jest --config .config/.jest.config.js  ./",
       "test:unit-lib": "jest --config uib-components/.config/.jest.config.js  uib-components/",
       "test:unit:components": "jest --config uib-components/.config/.jest.config.js uib-components/",
       "test:integration": "cd uib-components && playwright test -c .utils/playwright/config/playwright-integration.config.js",
