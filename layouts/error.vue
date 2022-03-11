@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch, namespace } from 'nuxt-property-decorator'
-import { ITheme, ISidebarAttributes } from 'uib-components/.utils/types/tsettings'
+import { ITheme, ISidebarAttributes } from '../.utils/types/tsettings'
 const settings = namespace('settings')
 @Component({ layout: 'default' })
 export default class LError extends Vue {
