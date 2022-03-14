@@ -10,7 +10,6 @@
       {{ text }}
     </b-badge>
     <TooltipTTProductCell
-      v-if="text=='mixed' && tooltiptext"
       :target="`TCBadgeCompares_${type}_hover_${rowid}`"
       :details="tooltiptext"
       :type="type"
