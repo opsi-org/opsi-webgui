@@ -219,9 +219,9 @@ test:test-e2e:
     - cd opsiweb
     - ls -lah uib-components
     - *define_globals
-    - npm i -D @playwright/test
+    - npm-uib i -D @playwright/test
     - npx playwright install
-    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
+    - PORT=8888 nohup npm run dev &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm run test:all:e2e || exit_code=$?
@@ -245,10 +245,10 @@ test:test-components:
   script:
     - cd opsiweb
     - *define_globals
-    - npm i -D @playwright/test
+    - npm-uib i -D @playwright/test
     - npx playwright install
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+    - PORT=3003 nohup npm run dev > .dev.log &
+    - PORT=3003 nohup npm run story > .storybook.log &
     - sleep 60
     - npm run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
