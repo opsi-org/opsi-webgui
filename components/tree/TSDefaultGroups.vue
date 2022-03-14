@@ -65,12 +65,13 @@ export default class TSDefaultGroups extends TSDefault {
     console.log('selection', selection)
 
     const storeSelect = this.store.selection
-    let treeSelect = selection.filter(item => item.type === 'ObjectToGroup')
-    treeSelect = treeSelect.map(e => e.text)
-    treeSelect = [...new Set(treeSelect)]
-    if (arrayEqual(storeSelect, treeSelect)) {
-      return
-    }
+    // let treeSelect = selection.filter(item => item.type === 'ObjectToGroup')
+    // treeSelect = treeSelect.map(e => e.text)
+
+    // treeSelect = [...new Set(treeSelect)]
+    // if (arrayEqual(storeSelect, treeSelect)) {
+    //   return
+    // }
     const resultObjects = []
     filterObjectByValues(options, storeSelect, this.selectionKey, resultObjects)
     console.log('sync given options ', JSON.stringify(options))

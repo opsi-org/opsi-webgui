@@ -141,6 +141,7 @@ export default class TSDefault extends Vue {
   async fetch () {
     this.data = await this.fetchData()
     this.updateLocalFromParent()
+    this.syncWrapper()
   }
 
   mounted () {
@@ -170,6 +171,7 @@ export default class TSDefault extends Vue {
   }
 
   syncWrapper () {
+    console.log('syncWrapper')
     if (this.syncFunction) {
       console.log('options:', JSON.stringify(this.options))
       this.syncFunction({ selection: this.selectionWrapper, options: this.options })
@@ -245,6 +247,7 @@ export default class TSDefault extends Vue {
   }
 
   async loadOptionsChildren ({ action, parentNode, callback }: any) {
+    console.log('loadchildren?')
     if (this.lazyLoad !== true) {
       callback()
       return
@@ -285,7 +288,7 @@ export default class TSDefault extends Vue {
       console.log('add to selection', JSON.stringify(this.selection))
     } else {
       console.log('deselect')
-      this.deselect(s)
+      this.deselectDefault(s)
     }
     this.$emit('change', this.selection)
   }

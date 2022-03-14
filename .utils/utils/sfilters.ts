@@ -32,14 +32,19 @@
  * @param resultArray
  */
  export function filterObjectByValues (elements: Array<any>, matchingValues: Array<string>, key: string, resultArray:Array<string>) {
+  console.group('')
   for (const elementKey in elements) {
     const element = elements[elementKey]
+    console.log('check element ', element)
     if (matchingValues.includes(element[key])) {
+      console.log('found element ', element[key])
       resultArray.push(element)
     } else if (element.children != null) {
-      filterObject(element.children, matchingValues, key, resultArray)
+      console.log('continue in subgroups ')
+      filterObjectByValues(element.children, matchingValues, key, resultArray)
     }
   }
+  console.groupEnd('')
 }
 
 /**
