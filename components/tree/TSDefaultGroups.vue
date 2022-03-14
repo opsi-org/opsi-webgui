@@ -43,7 +43,6 @@ export default class TSDefaultGroups extends TSDefault {
     throw new Error('Internal error: cannot set selectionKeys')
   }
 
-
   // get selectionModel () { // overwrites parent
   //   return this.selectionKeys
   // }
@@ -51,7 +50,6 @@ export default class TSDefaultGroups extends TSDefault {
   // set selectionModel (s) { // overwrites parent
   //   this.selectionKeys = s
   // }
-
 
   syncStoreToTree ({ selection, options }) {
     console.log('syncStoreToTree')
@@ -89,7 +87,6 @@ export default class TSDefaultGroups extends TSDefault {
     // }
     // this.selection = treeSelect // elementsInTree
   }
-
 
   isGroup (s) {
     return s.isBranch === true || ['HostGroup', 'ProductGroup'].includes(s.type)
