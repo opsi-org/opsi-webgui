@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableRowItemProducts } from '../../.utils/types/ttable'
 import { mapValues2Objects } from '../../.utils/utils/smappings'
@@ -52,6 +52,12 @@ export default class DDProductRequest extends BDropdown {
   currentReq: string = this.request
   mounted () {
     this.preRequest = this.visibleRequest
+  }
+
+  @Watch('selectionClients', { deep: true })
+  selectionClientsChanged () {
+    console.log('selected clients changed, so row might change', this.selectionClients, this.rowitem, this.visibleRequest)
+    this.$nextTick()
   }
 
   @selections.Getter public selectionClients!: Array<string>

@@ -8,7 +8,7 @@
     />
     <TreeTSDefaultWithAdding
       :id="`id-select-${id}`"
-      v-model="selection"
+      v-model="selectionWrapper"
       :flat="flat"
       :placeholder="text ? text
         : lazyLoad? '' : $t(editable ? 'client.dropdown.searchOrAdd' : 'client.dropdown.search')
@@ -38,9 +38,9 @@
       :value-format="valueFormat"
       :value-consists-of="valueConsistsOf"
 
-      @new-node="select"
-      @deselect="deselect"
-      @select="select"
+      @new-node="selectWrapper"
+      @select="selectWrapper"
+      @deselect="deselectWrapper"
     >
       <div
         v-if="limitVisibleSelection>0"
@@ -80,21 +80,12 @@
         </div>
       </div>
     </TreeTSDefaultWithAdding>
-
-    <!-- <TooltipTTTooltip
-      variant="dark"
-      :target="`id-select-${id}`"
-      triggers="hover"
-      :tooltip="validateDescription"
-    /> -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
-import { filterObjectLabel, filterObject } from '../../.utils/utils/sfilters'
-import { makeToast } from '../../.utils/utils/scomponents'
-import { arrayEqual } from '../../.utils/utils/scompares'
+import { filterObject } from '../../.utils/utils/sfilters'
 
 interface Group {
   id: string
@@ -116,7 +107,6 @@ export default class TSDefault extends Vue {
   node: any
   $axios: any
 
-  // @Prop({}) data!: Array<any>
   @Prop({}) selectionDefault!: Array<string>
   @Prop({}) type!: string
   @Prop({}) id!: string
@@ -139,12 +129,13 @@ export default class TSDefault extends Vue {
   @Prop({ default: () => {} }) store!: StoreSelection
   @Prop({ default: () => { return ['empty'] } }) fetchData!: Function
   @Prop({ default: () => { return [] } }) fetchChildren!: Function
-  // @Prop({ default: '/api/clients/groups?parentGroup=' }) URLwithChildren!: string
-  // parentGroup: string = ''
+  @Prop({}) selectFunction?: Function
+  @Prop({}) deselectFunction?: Function
+  @Prop({}) syncFunction?: Function
+
   searchText: string = ''
-  selection: Array<any> = []
+  model: object = { default: [], nested: [] }
   options: Array<Group> = []
-  groupIdList: Array<string> = []
   data!: Array<any> // to be fetched
 
   async fetch () {
@@ -152,36 +143,49 @@ export default class TSDefault extends Vue {
     this.updateLocalFromParent()
   }
 
-  beforeUpdate () {
-    if (this.nested) {
-      filterObjectLabel(this.options, 'ObjectToGroup', 'type', 'text', this.groupIdList)
-      this.syncStoreToTree()
+  mounted () {
+    this.syncWrapper()
+  }
+
+  @Watch('selectionDefault', { deep: true }) selectionChanged () {
+    this.syncWrapper()
+  }
+
+  get selectionWrapper () { // can be overwritten by children
+    return this.selection
+  }
+
+  set selectionWrapper (s) { // can be overwritten by children
+    this.selection = s
+  }
+
+  get selection () {
+    console.log('TSDefault get selection ', (this.nested) ? 'nested' : 'default')
+    return this.model[(this.nested) ? 'nested' : 'default']
+  }
+
+  set selection (s) {
+    console.log('TSDefault set selection ', (this.nested) ? 'nested' : 'default')
+    this.model[(this.nested) ? 'nested' : 'default'] = s
+  }
+
+  syncWrapper () {
+    if (this.syncFunction) {
+      console.log('options:', JSON.stringify(this.options))
+      this.syncFunction({ selection: this.selectionWrapper, options: this.options })
     }
   }
 
-  @Watch('store.selection', { deep: true }) selectionChanged () {
-    if (this.nested) {
-      this.syncStoreToTree()
-    }
+  selectWrapper (s:any) {
+    if (this.selectFunction) {
+      this.selectFunction(s, this)
+    } else { this.selectDefault(s) }
   }
 
-  syncStoreToTree () {
-    const storeSelect = this.store.selection
-    let treeData = this.selection.filter(item => item.type === 'ObjectToGroup')
-    treeData = [...new Set(treeData)]
-    if (arrayEqual(storeSelect, treeData)) {
-      // eslint-disable-next-line no-useless-return
-      return
-    }
-    const elementsInTree: Array<string> = []
-    for (const index in storeSelect) {
-      if (this.groupIdList.includes(storeSelect[index])) {
-        filterObject(
-          this.options, storeSelect[index],
-          'text', elementsInTree)
-      }
-    }
-    this.selection = elementsInTree
+  deselectWrapper (s:any) {
+    if (this.deselectFunction) {
+      this.deselectFunction(s, this)
+    } else { this.deselectDefault(s) }
   }
 
   updateLocalFromParent (updateOptions = true, updateSelections = true) {
@@ -194,12 +198,18 @@ export default class TSDefault extends Vue {
           this.options.push({ id: element, text: element, type: 'ObjectToGroup' })
         })
         if (!this.nested) {
+          const resultObjects = []
+          for (const sitem in this.selectionDefault) {
+            filterObject(this.data, sitem, 'id', resultObjects)
+          }
+
+          // only one level
           const optionIds = this.options.map((e:any) => e.id)
-          for (const s in this.selectionDefault) {
-            if (!optionIds.includes(this.selectionDefault[s])) {
+          for (const s in resultObjects) {
+            if (!optionIds.includes(resultObjects[s])) {
               const elem = {
-                id: this.selectionDefault[s],
-                text: this.selectionDefault[s],
+                id: resultObjects[s],
+                text: resultObjects[s],
                 type: 'ObjectToGroup',
                 isNew: true
               }
@@ -243,56 +253,45 @@ export default class TSDefault extends Vue {
       parentNode.children = await this.fetchChildren(parentNode)
       // const children = await this.fetchChildren(parentNode)
       // parentNode.children = children.map(n => { const nn= this.normalizer(n); console.log(nn); return nn })
-      this.syncStoreToTree()
+      this.syncWrapper()
       callback()
     }
   }
 
-  async select (s: any) {
+  selectDefault (s: any) {
+    console.log('TSDefault s', s)
     if (!s) {
       return
     }
-    if (this.nested && (s.isBranch === true || ['HostGroup', 'ProductGroup'].includes(s.type))) {
-      await this.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
-      this.groupChange(s, 'select')
-      return
-    }
-    if (this.validate && !this.validate(s.id)) {
-      this.selection = this.data
-      makeToast(
-        this,
-        this.$t('message.error.invalidInput.text', [s.id, this.id]) as string,
-        this.$t('message.error.invalidInput') as string,
-        'danger'
-      )
-      return
-    }
+
     if (!Array.isArray(this.selection)) {
       this.selection = [this.selection]
     }
     if (Object.keys(s).length <= 0) {
+      console.log('why?')
       this.selection = []
     }
     if (!this.selection.includes(s.id)) {
       if (!this.nested && !Object.values(this.options.map((o:any) => o.id)).includes(s.id)) {
+        console.log('new item')
         this.options.push(s)
       }
       if (!this.multi) {
+        console.log('not multi')
         this.selection.length = 0
       }
       // console.log(this.options, ' includes ', s)
       this.selection.push(s.text)
+      console.log('add to selection', JSON.stringify(this.selection))
     } else {
+      console.log('deselect')
       this.deselect(s)
     }
     this.$emit('change', this.selection)
   }
 
-  deselect (deselection: any, isObject = false) {
-    if (this.nested) {
-      this.groupChange(deselection, 'deselect')
-      return
-    }
+  deselectDefault (deselection: any, isObject = false) {
+    console.log('TSDefault deselect')
     if (this.selection.includes(deselection.id) || this.selection.includes(deselection)) {
       if (isObject) {
         this.selection.splice(this.selection.indexOf(deselection.id), 1) // deleting
@@ -303,34 +302,8 @@ export default class TSDefault extends Vue {
     }
   }
 
-  // change (item) {
-  //   const itemlist = []
-  //   if (item.isBranch === true) {
-  //     this.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: item })
-
-  //   }
-  //   if (item.)
-  // }
-
-  groupChange (value: object, type: string) {
-    const idList : Array<string> = []
-    const storeSel = this.store.selection
-    filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList)
-
-    for (const i in idList) {
-      const objectId = idList[i]
-      if (type === 'select') {
-        this.store.pushSelection(objectId)
-      }
-      if (type === 'deselect') {
-        if (storeSel.includes(objectId)) {
-          this.store.delSelection(objectId)
-        }
-      }
-    }
-  }
-
   clearSelected () {
+    console.log('TSDefault clearSelected')
     this.selection = []
     this.$emit('change', this.selection)
   }

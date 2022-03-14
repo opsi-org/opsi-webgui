@@ -9,27 +9,27 @@
   /> -->
   <!-- v-else-if="getType(obj.type)=='multiselect'" -->
   <div>
-    <TreeTSDefault
+    <TreeTSDefaultGroups
       id="ProductGroups"
       type="products"
       data-testid="TSProductGroups"
-      :multi="true"
       :text="$t('treeselect.prodGroups')"
       :text-no-result="$t('treeselect.noresult')"
       :validate="() => true"
       :validate-description="''"
-      :data="undefined"
       :selection-default="selectionProducts"
-      :editable="false"
 
-      :is-list="false"
-      :nested="true"
-      value-format="object"
       icon="grid"
       :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
       :fetch-data="fetchData"
       @change="changeSelection"
     />
+      <!-- :data="undefined"
+      :multi="true"
+      :editable="false"
+      :is-list="false"
+      :nested="true"
+      value-format="object" -->
   </div>
 </template>
 
@@ -48,7 +48,7 @@ export default class TSProductGroups extends Vue {
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void;
 
   async fetchData () {
-    const x = Object.values((await this.$axios.$get('/api/opsidata/products/groups')).groups)
+    const x = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
     return x
   }
 
