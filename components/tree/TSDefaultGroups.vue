@@ -11,14 +11,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch } from 'nuxt-property-decorator'
-import { arrayEqual } from '../../.utils/utils/scompares'
+import { Component, Prop } from 'nuxt-property-decorator'
 import { filterObjectLabel, filterObjectByValues } from '../../.utils/utils/sfilters'
 // import { filterObjectLabel, filterObject } from '../../.utils/utils/sfilters'
 // import { makeToast } from '../../.utils/utils/scomponents'
 // import { arrayEqual } from '../../.utils/utils/scompares'
 import TSDefault from './TSDefault.vue'
-
 
 @Component
 export default class TSDefaultGroups extends TSDefault {

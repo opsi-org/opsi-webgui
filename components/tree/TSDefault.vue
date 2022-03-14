@@ -246,7 +246,8 @@ export default class TSDefault extends Vue {
           ? this.getChildren(node).sort(function (a: Group, b: Group) {
             if (a.text < b.text) { return -1 }
             if (a.text > b.text) { return 1 }
-            return 0 })
+            return 0
+          })
           : {}
     }
   }
