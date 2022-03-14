@@ -42,7 +42,7 @@
         <TableCellTCBadgeCompares
           type="installationStatus"
           :rowid="row.item.productId"
-          :values="row.item.installationStatusDetails || []"
+          :values="row.item.installationStatusDetails || [row.item.installationStatus] || []"
           :objects="row.item.selectedClients || []"
           :objectsorigin="selectionClients || []"
         />
@@ -51,7 +51,7 @@
         <TableCellTCBadgeCompares
           type="actionResult"
           :rowid="row.item.productId"
-          :values="row.item.actionResultDetails || []"
+          :values="row.item.actionResultDetails || [row.item.actionResult] || []"
           :objects="row.item.selectedClients || []"
           :objectsorigin="selectionClients || []"
         />
