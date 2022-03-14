@@ -44,11 +44,11 @@ export default class TSHostGroups extends Vue {
     const clientlist:Array<object> = []
     resultclients.forEach((c) => { clientlist.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup' }) })
 
-    // const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=${this.selectionDepots}&selectionClients=${this.selectionClients}&parentGroup=root`)).groups.children
-    // if (result.clientlist) { // todo: just a workaround till groups return highest level for hosts
-    //   result.clientlist.children = clientlist
-    //   return Object.values(result)
-    // }
+    const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=${this.selectionDepots}&selectionClients=${this.selectionClients}&parentGroup=root`)).groups.children
+    if (result.clientlist) { // todo: just a workaround till groups return highest level for hosts
+      result.clientlist.children = clientlist
+      return Object.values(result)
+    }
     return [
       {
         id: 'clientdirectory',
