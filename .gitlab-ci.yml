@@ -157,6 +157,7 @@ init:dry:
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
   artifacts:
     paths:
+      - opsiweb/package.json
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
@@ -172,6 +173,7 @@ init:dry:production:
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
   artifacts:
     paths:
+      - opsiweb/package.json
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
@@ -193,7 +195,7 @@ test:lint:
     - ls -lah node_modules/
     - npm --version
     - *define_globals
-    - npm-uib run lint
+    - npm run lint
 
 test:test-unit:
   stage: test
@@ -202,7 +204,7 @@ test:test-unit:
   script:
     - cd opsiweb
     - *define_globals
-    - npm-uib run test:unit
+    - npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
@@ -217,13 +219,13 @@ test:test-e2e:
     - cd opsiweb
     - ls -lah uib-components
     - *define_globals
-    - npm-uib i -D @playwright/test
+    - npm i -D @playwright/test
     - npx playwright install
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:all:e2e || exit_code=$?
-    - npm-uib run test:all:delete-empty-results
+    - npm run test:all:e2e || exit_code=$?
+    - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
   artifacts:
@@ -243,13 +245,13 @@ test:test-components:
   script:
     - cd opsiweb
     - *define_globals
-    - npm-uib i -D @playwright/test
+    - npm i -D @playwright/test
     - npx playwright install
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 60
-    - npm-uib run test:all:components || exit_code=$?
-    - npm-uib run test:all:delete-empty-results
+    - npm run test:all:components || exit_code=$?
+    - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
   artifacts:
@@ -305,7 +307,7 @@ build:static-app:
   script:
     - cd opsiweb
     - *define_globals
-    - npm-uib run generate
+    - npm run generate
   artifacts:
     name: 'opsi-webgui'
     paths:
@@ -329,7 +331,7 @@ build:addon:
     - cd opsiweb
     - *define_globals
     #- npm install
-    - npm-uib run generate
+    - npm run generate
     #- npm run generate
     - cd ..
     - mkdir -p backend/webgui/data
