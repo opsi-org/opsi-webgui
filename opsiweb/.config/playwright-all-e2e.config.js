@@ -3,7 +3,7 @@ const generalconfig = require('../uib-components/.utils/playwright/config/playwr
 
 // /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  // testDir: '../', // /workspace/opsiweb
+  testDir: '../', // /workspace/opsiweb
   // testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(e2e).js',
 
