@@ -48,7 +48,9 @@ export default class TSProductGroups extends Vue {
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void;
 
   async fetchData () {
-    const x = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
+    const x = Object.values((await this.$axios.$get('api/opsidata/products/groups')).groups)
+    console.log('product groups', JSON.stringify(x))
+    // const x = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
     return x
   }
 

@@ -74,7 +74,6 @@ export default class TSDefaultGroups extends TSDefault {
     // }
     const resultObjects = []
     filterObjectByValues(options, storeSelect, this.selectionKey, resultObjects)
-    console.log('sync given options ', JSON.stringify(options))
     console.log('sync found objects ', JSON.stringify(resultObjects))
     for (const i in resultObjects) {
       selection.push(resultObjects[i])

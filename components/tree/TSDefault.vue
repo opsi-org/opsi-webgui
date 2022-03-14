@@ -1,7 +1,7 @@
 <template>
   <div class="form-inline TSDefault-wrapper" style="margin-right: 30px">
     <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
-    <!-- {{ $t(placeholder) }} -->
+
     <ModalMSelections
       :type="type"
       :selections="selectionDefault"
@@ -173,7 +173,6 @@ export default class TSDefault extends Vue {
   syncWrapper () {
     console.log('syncWrapper')
     if (this.syncFunction) {
-      console.log('options:', JSON.stringify(this.options))
       this.syncFunction({ selection: this.selectionWrapper, options: this.options })
     }
   }
@@ -234,16 +233,33 @@ export default class TSDefault extends Vue {
       isBranch: node.type === 'HostGroup' || node.type === 'ProductGroup' || node.isBranch || false,
       isDisabled: (node.isDisabled === true) || false,
       label: node.text ? node.text.replace(/_+$/, '') : node.id,
+      // children: node.children
+      //   ? this.getChildren(node).sort(function (a: Group, b: Group) {
+      //     if (a.text < b.text) { return -1 }
+      //     if (a.text > b.text) { return 1 }
+      //     return 0
+      //   })
+      //   : {}
       children: this.lazyLoad
-        ? node.children
+        ? this.getChildren(node)
         : node.children
-          ? Object.values(node.children).sort(function (a: Group, b: Group) {
+          ? this.getChildren(node).sort(function (a: Group, b: Group) {
             if (a.text < b.text) { return -1 }
             if (a.text > b.text) { return 1 }
-            return 0
-          })
+            return 0 })
           : {}
     }
+  }
+
+  getChildren (node) {
+    if (!node.children) {
+      return node.children
+    }
+
+    if (node.type === 'ProductGroup') {
+      return Object.values(node.children)
+    }
+    return node.children
   }
 
   async loadOptionsChildren ({ action, parentNode, callback }: any) {
