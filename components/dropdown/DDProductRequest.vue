@@ -50,20 +50,22 @@ export default class DDProductRequest extends BDropdown {
 
   preRequest: string = this.request
   currentReq: string = this.request
-  mounted () {
+
+  @selections.Getter public selectionClients!: Array<string>
+
+  updated () {
     this.preRequest = this.visibleRequest
   }
 
-  @Watch('selectionClients', { deep: true })
-  selectionClientsChanged () {
-    console.log('selected clients changed, so row might change', this.selectionClients, this.rowitem, this.visibleRequest)
-    this.$nextTick()
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+    this.currentReq = this.request
+    this.preRequest = this.request
+    return this.currentReq
   }
 
-  @selections.Getter public selectionClients!: Array<string>
   get visibleRequest () {
+    this.currentReq = this.request
     if (this.rowitem === undefined) {
-      this.currentReq = this.request
       return this.currentReq
     }
     if (this.rowitem.selectedClients && this.rowitem.selectedClients.length !== this.selectionClients.length) {
@@ -90,8 +92,8 @@ export default class DDProductRequest extends BDropdown {
     if (this.rowitem === undefined) {
       return {}
     }
-    if (this.rowitem.actionRequestDetails) {
-      return mapValues2Objects(this.rowitem.actionRequestDetails, this.rowitem.selectedClients as Array<string>, this.selectionClients, 'none')
+    if (this.rowitem.actionRequestDetails || this.selectionClients.length > 1) {
+      return mapValues2Objects(this.rowitem.actionRequestDetails || [this.rowitem.actionRequest], this.rowitem.selectedClients as Array<string>, this.selectionClients, 'none')
     }
     return {}
   }
