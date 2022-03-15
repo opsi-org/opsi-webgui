@@ -15,7 +15,7 @@ ENV DOCKER_ENV=${DOCKER_ENV} \
 	DOCKERIZE_VERSION=v0.6.1 \
 	# opsi
 	OPSI_HOSTNAME="opsi.dev.internal" \
-	OPSI_REPO=http://obs.uib.gmbh:82/home:/uibmz:/opsi:/4.2:/experimental/Debian_11/
+	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/experimental/Debian_11/
 
 
 RUN apt-get update \
