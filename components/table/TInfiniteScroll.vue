@@ -130,10 +130,19 @@ export default class TInfiniteScroll extends Vue {
   fixRow (row: ITableRow): void {
     const rowIdent = row.item[this.rowident] as any
     row.rowSelected = this.selection.includes(rowIdent)
+    const elem = document.getElementById(`${this.id}__row_${this.rowident}`)
     if (row.rowSelected) {
       row.item._rowVariant = 'primary'
+      if (elem) {
+        // elem.setAttribute('aria-selected', 'true')
+        elem.classList.add('b-table-row-selected')
+      }
     } else {
       row.item._rowVariant = ''
+      if (elem) {
+        // elem.setAttribute('aria-selected', 'false')
+        elem.classList.remove('b-table-row-selected')
+      }
     }
   }
 
@@ -171,8 +180,8 @@ export default class TInfiniteScroll extends Vue {
 
 <style>
 .tablefooter {
-  color: gray;
-  font-size: 15px;
+  color: black;
+  font-size: 12px;
 }
 .infinitescrolltable.b-table-sticky-header {
   /* max-height: 65vh; */

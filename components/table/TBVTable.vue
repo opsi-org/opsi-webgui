@@ -30,7 +30,15 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #cell()="row">
-        <b-form-input v-model="row.value" class="forminput" size="sm" readonly />
+        <label :for="row.field.label" class="sr-only">  {{ row.field.label }} </label>
+        <b-form-input
+          :id="row.field.label"
+          v-model="row.value"
+          :aria-label="row.value"
+          class="forminput"
+          size="sm"
+          readonly
+        />
       </template>
       <template
         v-for="slotName in Object.keys($scopedSlots)"

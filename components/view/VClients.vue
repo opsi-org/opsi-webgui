@@ -73,6 +73,7 @@
             <b-badge variant="outline-primary">
               <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
                 <template #button-content>
+                  <span class="sr-only">More actions</span>
                   <b-icon icon="three-dots-vertical" />
                 </template>
                 <ModalMDeleteClient :id="row.item.ident.trim()" />

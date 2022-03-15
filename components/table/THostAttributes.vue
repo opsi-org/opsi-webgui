@@ -10,14 +10,18 @@
     <template #cell(opsiHostKey)="row">
       <b-input-group>
         <b-button :pressed.sync="showValue" size="sm" variant="transparent">
+          <span class="sr-only">{{ showValue? 'Hide opsiHostKey': 'Show opsiHostKey' }}</span>
           <b-icon v-if="showValue" icon="eye-slash" />
           <b-icon v-else icon="eye" />
         </b-button>
-        <b-form-input v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
+        <label for="opsiHostKey" class="sr-only">  {{ row.field.label }} </label>
+        <b-form-input id="opsiHostKey" v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
       </b-input-group>
     </template>
     <template #cell(notes)="row">
+      <label for="notes" class="sr-only">  {{ row.field.label }} </label>
       <b-form-textarea
+        id="notes"
         v-model="row.item.notes"
         class="forminput"
         size="sm"
@@ -28,10 +32,12 @@
       />
     </template>
     <template #cell(created)="row">
-      <b-form-input :value="date(row.value)" class="forminput" size="sm" readonly />
+      <label for="created" class="sr-only">  {{ row.field.label }} </label>
+      <b-form-input id="created" :value="date(row.value)" class="forminput" size="sm" readonly />
     </template>
     <template #cell(lastSeen)="row">
-      <b-form-input :value="date(row.value)" class="forminput" size="sm" readonly />
+      <label for="lastSeen" class="sr-only">  {{ row.field.label }} </label>
+      <b-form-input id="lastSeen" :value="date(row.value)" class="forminput" size="sm" readonly />
     </template>
   </TableTBVTable>
 </template>

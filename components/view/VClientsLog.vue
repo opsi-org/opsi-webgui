@@ -14,36 +14,34 @@
       {{ errorText }}
     </p>
     <DivDScrollResult v-else>
-      <template slot="content">
-        <div v-if="filteredLog == ''" class="container-fluid">
-          --
-        </div>
-        <div
-          v-for="(log, index) in filteredLog"
-          :key="index"
-          :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
+      <div v-if="filteredLog == ''" class="container-fluid">
+        --
+      </div>
+      <div
+        v-for="(log, index) in filteredLog"
+        :key="index"
+        :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
+      >
+        <span
+          v-if="index != 0"
+          style="font-family: monospace;"
+          :class="{
+            'text-secondary': true,
+            'text-secondary': log.startsWith('[0]'),
+            'text-secondary': log.startsWith('[1]'),
+            'text-danger': log.startsWith('[2]'),
+            'text-warning': log.startsWith('[3]'),
+            'text-primary': log.startsWith('[4]'),
+            'text-success': log.startsWith('[5]'),
+            'text-secondary': log.startsWith('[6]'),
+            'text-muted': log.startsWith('[7]'),
+            'text-muted': log.startsWith('[8]'),
+            'text-muted': log.startsWith('[9]')
+          }"
         >
-          <span
-            v-if="index != 0"
-            style="font-family: monospace;"
-            :class="{
-              'text-secondary': true,
-              'text-secondary': log.startsWith('[0]'),
-              'text-secondary': log.startsWith('[1]'),
-              'text-danger': log.startsWith('[2]'),
-              'text-warning': log.startsWith('[3]'),
-              'text-primary': log.startsWith('[4]'),
-              'text-success': log.startsWith('[5]'),
-              'text-secondary': log.startsWith('[6]'),
-              'text-muted': log.startsWith('[7]'),
-              'text-muted': log.startsWith('[8]'),
-              'text-muted': log.startsWith('[9]')
-            }"
-          >
-            ({{ index }}) {{ log }}
-          </span>
-        </div>
-      </template>
+          ({{ index }}) {{ log }}
+        </span>
+      </div>
     </DivDScrollResult>
   </div>
 </template>
