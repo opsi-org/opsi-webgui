@@ -21,8 +21,8 @@ init:npm:
   stage: init
   script: |
     echo "[script.sh] install dependencies..."
-    npm run clean
-    npm run build
+    npm run libclean
+    npm run libbuild
     npm i -D @playwright/test
     npx playwright install
 
@@ -37,7 +37,7 @@ init:npm:
 test:lint:
   stage: test
   script:
-    - npm run lint
+    - npm run liblint
 
 test:test-unit:
   stage: test
@@ -45,7 +45,7 @@ test:test-unit:
     - init:npm
   script:
     # -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
-    - npm run test:unit
+    - npm run libtest:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
@@ -60,11 +60,11 @@ test:test-components:
   script:
     - npx playwright install
 
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
+    - PORT=3003 nohup npm run libdev > .dev.log &
+    - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
-    - npm run test:integration || exit_code=$?
-    - npm run test:delete-empty-results
+    - npm run libtest:integration || exit_code=$?
+    - npm run libtest:delete-empty-results
     - exit $exit_code
   allow_failure: true
   artifacts:
@@ -82,10 +82,10 @@ test:test-components:
 #     - init:npm
 #   script:
 #     - npx playwright install
-#     - PORT=8888 nohup npm run dev &
+#     - PORT=8888 nohup npm run libdev &
 #     - sleep 20
 #     - echo $PLAYWRIGHT_BROWSERS_PATH
-#     - npm run test:e2e
+#     - npm run libtest:e2e
 #   allow_failure: true
 #   artifacts:
 #     name: 'opsi-webgui-test-result-e2e'
