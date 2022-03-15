@@ -25,11 +25,11 @@
     "baseUrl": ".",
     "paths": {
       "~/*": [
-        "ui/*",
+        ".",
         "uib-components/*"
       ],
       "@/*": [
-        "ui/*",
+        ".",
         "uib-components/*"
       ]
     },
