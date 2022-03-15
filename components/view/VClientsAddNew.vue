@@ -152,7 +152,7 @@ interface ClientRequest {
       makeToast(this, this.newClient.hostId + this.$t('message.exists'), 'OOPS!', 'warning')
       return
     }
-    await this.$axios.$post('/api/opsidata/clients', JSON.stringify(this.newClient))
+    await this.$axios.$post('/api/opsidata/clients', this.newClient)
       .then(() => {
         // eslint-disable-next-line no-console
         makeToast(this, this.newClient.hostId + this.$t('message.add'), this.$t('message.success') as string, 'success')
