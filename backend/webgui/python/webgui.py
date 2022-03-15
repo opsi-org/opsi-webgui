@@ -21,8 +21,8 @@ from .utils import mysql
 webgui_router = APIRouter()
 
 
-@router.get("")
-@router.get("/")
+@webgui_router.get("")
+@webgui_router.get("/")
 async def route_index(request: Request):
 	return RedirectResponse(
 		url=f"{request.scope['path'].rstrip('/')}/app/",
