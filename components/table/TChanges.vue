@@ -1,34 +1,36 @@
 <template>
   <div v-if="tableitems.length>0" data-testid="TChanges">
     <InputIFilterTChanges :filter.sync="filter" />
-    <div v-for="changes, k in groupedById" :key="changes.productId">
-      <b-button v-b-toggle="k" block class="m-1 text-left" variant="light">
-        <small><b>{{ k }}</b></small>
-        <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
-      </b-button>
-      <b-collapse :id="k" :visible="filter === '' ? false : true">
-        <TableTBVTable
-          type="small"
-          :noheader="true"
-          :hover="true"
-          :filter="filter"
-          :filterfields="['depotId','clientId']"
-          :items="changes"
-          :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
-        >
-          <template #cell()="row">
-            <small>{{ row.value }}</small>
-          </template>
-          <template #cell(_action)="row">
-            <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
-            <b-button size="sm" variant="light" @click="save(row.item)">
-              <span class="sr-only">Save</span>
-              <b-icon icon="check2" />
-            </b-button>
-          </template>
-        </TableTBVTable>
-      </b-collapse>
-    </div>
+    <DivDScrollResult>
+      <div v-for="changes, k in groupedById" :key="changes.productId">
+        <b-button v-b-toggle="k" block class="m-1 text-left" variant="light">
+          <small><b>{{ k }}</b></small>
+          <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
+        </b-button>
+        <b-collapse :id="k" :visible="filter === '' ? false : true">
+          <TableTBVTable
+            type="small"
+            :noheader="true"
+            :hover="true"
+            :filter="filter"
+            :filterfields="['depotId','clientId']"
+            :items="changes"
+            :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
+          >
+            <template #cell()="row">
+              <small>{{ row.value }}</small>
+            </template>
+            <template #cell(_action)="row">
+              <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
+              <b-button size="sm" variant="light" @click="save(row.item)">
+                <span class="sr-only">Save</span>
+                <b-icon icon="check2" />
+              </b-button>
+            </template>
+          </TableTBVTable>
+        </b-collapse>
+      </div>
+    </DivDScrollResult>
   </div>
 </template>
 
