@@ -193,7 +193,7 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 					{'id': 'clientlist', 'type': 'HostGroup', 'text': 'clientlist', 'parent': None,}
 				}
 			if selectedClients:
-				all_groups["clientlist"]["isDefaultExpanded"] = True
+				all_groups["clientlist"]["hasAnySelection"] = True
 		else:
 			query = select(text("""
 				g.parentGroupId AS parent_id,
@@ -239,9 +239,9 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 				while parent_group not in all_groups.keys() and parent_group is not None:
 					parent_group = find_parent(parent_group)
 				if parent_group:
-					all_groups[parent_group]["isDefaultExpanded"] = True
+					all_groups[parent_group]["hasAnySelection"] = True
 				elif "groups" in all_groups.keys():
-					all_groups["groups"]["isDefaultExpanded"] = True
+					all_groups["groups"]["hasAnySelection"] = True
 			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"], default_expanded=True)
 		else:
 			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
@@ -275,7 +275,7 @@ def read_groups(raw_groups, root_group, selectedClients):
 			}
 		if row["object_id"]:
 			if row["object_id"] in selectedClients:
-				all_groups[row["group_id"]]["isDefaultExpanded"] = True
+				all_groups[row["group_id"]]["hasAnySelection"] = True
 			if not "children" in all_groups[row["group_id"]]:
 				all_groups[row["group_id"]]["children"] = {}
 			if row.group_id == row.parent_id:

@@ -68,16 +68,16 @@ def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 	children = {}
 	for grp in groups:
 		if grp["id"] == group["id"]:
-			if default_expanded and grp.get("isDefaultExpanded"):
-					group["isDefaultExpanded"] = True
+			if default_expanded and grp.get("hasAnySelection"):
+					group["hasAnySelection"] = True
 			continue
 		if grp["parent"] == group["id"]:
 			if grp["id"] in processed:
 				logger.error("Loop: %s %s", grp["id"], processed)
 			else:
 				children[grp["id"]] = build_tree(grp, groups, allowed, processed, default_expanded=default_expanded)
-				if default_expanded and grp.get("isDefaultExpanded"):
-					group["isDefaultExpanded"] = True
+				if default_expanded and grp.get("hasAnySelection"):
+					group["hasAnySelection"] = True
 	if children:
 		if "children" not in group:
 			group["children"] = {}
