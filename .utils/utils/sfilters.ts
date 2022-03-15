@@ -80,7 +80,7 @@ export function filterObjectLabel (elements:Array<any>, matchingValue: string, c
     if (matchingValues.includes(element[compareKey])) {
       resultArray.push(element[mapKey])
     } else if (element.children != null) {
-      filterObjectLabel(element.children, matchingValues, compareKey, mapKey, resultArray)
+      filterObjectLabels(element.children, matchingValues, compareKey, mapKey, resultArray)
     }
   }
 }
