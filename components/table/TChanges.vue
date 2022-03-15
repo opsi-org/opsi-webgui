@@ -22,6 +22,7 @@
           <template #cell(_action)="row">
             <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
             <b-button size="sm" variant="light" @click="save(row.item)">
+              <span class="sr-only">Save</span>
               <b-icon icon="check2" />
             </b-button>
           </template>

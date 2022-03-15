@@ -23,6 +23,7 @@
       <b-form-textarea
         id="notes"
         v-model="row.item.notes"
+        :aria-label="row.item.notes"
         class="forminput"
         size="sm"
         rows="2"
@@ -33,11 +34,25 @@
     </template>
     <template #cell(created)="row">
       <label for="created" class="sr-only">  {{ row.field.label }} </label>
-      <b-form-input id="created" :value="date(row.value)" class="forminput" size="sm" readonly />
+      <b-form-input
+        id="created"
+        :value="date(row.value)"
+        :aria-label="date(row.value)"
+        class="forminput"
+        size="sm"
+        readonly
+      />
     </template>
     <template #cell(lastSeen)="row">
       <label for="lastSeen" class="sr-only">  {{ row.field.label }} </label>
-      <b-form-input id="lastSeen" :value="date(row.value)" class="forminput" size="sm" readonly />
+      <b-form-input
+        id="lastSeen"
+        :value="date(row.value)"
+        :aria-label="date(row.value)"
+        class="forminput"
+        size="sm"
+        readonly
+      />
     </template>
   </TableTBVTable>
 </template>

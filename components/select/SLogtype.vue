@@ -1,11 +1,21 @@
 <template>
-  <b-form-select v-model="type" class="logtype" data-testid="SLogtype" :options="logTypes" @change="$emit('update:logtype', type)">
-    <template #first>
-      <b-form-select-option :value="null" disabled>
-        -- {{ $t('formselect.logtype') }} --
-      </b-form-select-option>
-    </template>
-  </b-form-select>
+  <div>
+    <label for="logtype" class="sr-only"> {{ $t('formselect.logtype') }} </label>
+    <b-form-select
+      id="logtype"
+      v-model="type"
+      class="logtype"
+      data-testid="SLogtype"
+      :options="logTypes"
+      @change="$emit('update:logtype', type)"
+    >
+      <template #first>
+        <b-form-select-option :value="null" disabled>
+          -- {{ $t('formselect.logtype') }} --
+        </b-form-select-option>
+      </template>
+    </b-form-select>
+  </div>
 </template>
 
 <script lang="ts">

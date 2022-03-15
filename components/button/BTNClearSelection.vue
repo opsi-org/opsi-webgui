@@ -7,7 +7,7 @@
     size="sm"
     @click="clearselection"
   >
-    <slot />
+    <span class="sr-only">Clear selection</span>
     <b-icon-brush variant="primary" /> <span>{{ label }} </span>
   </b-button>
 </template>

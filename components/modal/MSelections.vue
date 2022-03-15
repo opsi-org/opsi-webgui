@@ -1,9 +1,10 @@
 <template>
   <div>
     <b-badge
-      class="selection_badge"
+      class="selection_badge btn"
       variant="transparent"
       size="sm"
+      tabindex="0"
       @click="$bvModal.show(type + 'selection')"
     >
       {{ selections.length }}
@@ -30,3 +31,8 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
   @Prop({ }) selections!: Array<string>
 }
 </script>
+<style>
+.selection_badge {
+  margin-top: 18px;
+}
+</style>
