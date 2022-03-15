@@ -5,6 +5,7 @@
     :disabled="disabled"
     :variant="disabled ? 'light' : 'success'"
   >
+    <span class="sr-only">{{ disabled ? '' : 'Open product changes overview' }}</span>
     <b-icon :icon="icon" :variant="disabled ? 'dark' : 'light'" />
   </b-button>
 </template>

@@ -1,7 +1,9 @@
 <template>
   <div class="btn btn-primary dd_theme text-left">
+    <label for="theme" class="sr-only"> Theme </label>
     <b-nav-item-dropdown
       v-if="navbar"
+      id="theme"
       style="height:100%;margin:0px;max-width:150px;"
       variant="primary"
       :text="theme.title"

@@ -1,15 +1,20 @@
 <template>
   <div data-testid="FLogin" @keyup.enter="doLogin">
     <b-form>
-      <b-form-input v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
+      <label for="configserver" class="sr-only"> Configserver </label>
+      <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
+      <label for="username" class="sr-only"> {{ $t('loginPage.username') }} </label>
       <b-form-input
+        id="username"
         v-model="form.username"
         :placeholder="$t('loginPage.username')"
         :state="validUsername"
         class="login_input_field"
         autocomplete="current_username"
       />
+      <label for="password" class="sr-only"> {{ $t('loginPage.password') }} </label>
       <b-form-input
+        id="password"
         v-model="form.password"
         :placeholder="$t('loginPage.password')"
         :state="validPassword"

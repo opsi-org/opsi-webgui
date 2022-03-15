@@ -1,5 +1,6 @@
 <template>
   <b-button data-testid="ButtonBTNDeleteObj" size="sm" variant="light" @click="deleteChanges()">
+    <span class="sr-only">Delete</span>
     <b-icon icon="trash" />
   </b-button>
 </template>

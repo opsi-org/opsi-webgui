@@ -15,6 +15,7 @@
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
       <b-button v-if="closeroute" variant="transparent" :to="closeroute">
+        <span class="sr-only">Close</span>
         <b-icon icon="x" />
       </b-button>
     </b-navbar-nav>

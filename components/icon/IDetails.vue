@@ -4,7 +4,7 @@
       v-bind="$props"
       :variant="variant"
     >
-      {{ content==='unequal'? '&ne;':content }}
+      <span class="badgecontent">{{ content==='unequal'? '&ne;':content }} </span>
     </b-badge>
   </div>
 </template>
@@ -20,4 +20,7 @@ export default class IDetails extends Vue {
 </script>
 
 <style>
+.badgecontent{
+  color: black;
+}
 </style>
