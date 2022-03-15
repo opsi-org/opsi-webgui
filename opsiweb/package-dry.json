@@ -17,7 +17,7 @@
     "//project-handling":"",
       "_prepare": "function npm-uib() { dry --dry-save-package-json-to package-merged.json --dry-keep-package-json }; export -f npm-uib",
       "build": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i",
-      "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt",
+      "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt .",
       "clean": "rm -rf node_modules uib-components/node_modules; rm -f package-lock.json uib-components/package-lock.json",
       "clean:all": "rm -rf node_modules uib-components/node_modules ./node_modules .nuxt ./.nuxt .nuxt-storybook ./.nuxt-storybook test-results ./test-results uib-components/test-results ./dist ; rm -f package.json package-lock.json package-merged.json uib-components/package-lock.json test-result-pw-reporter-* ;",
       "buildclean": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run clean && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run build #&& dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev",
