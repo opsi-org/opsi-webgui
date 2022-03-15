@@ -308,7 +308,7 @@ build:static-app:
   script:
     - cd opsiweb
     - *define_globals
-    - npm run generate
+    - npm-uib run generate
   artifacts:
     name: 'opsi-webgui'
     paths:
@@ -332,7 +332,7 @@ build:addon:
     - cd opsiweb
     - *define_globals
     #- npm install
-    - npm run generate
+    - npm-uib run generate
     #- npm run generate
     - cd ..
     - mkdir -p backend/webgui/data
