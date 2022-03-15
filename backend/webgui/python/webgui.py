@@ -10,7 +10,7 @@ webgui
 
 from typing import Optional
 
-from fastapi import Request, APIRouter
+from fastapi import Request, APIRouter, status
 from fastapi.responses import JSONResponse, PlainTextResponse
 
 from opsiconfd import contextvar_client_session
@@ -20,6 +20,14 @@ from .utils import mysql
 
 webgui_router = APIRouter()
 
+
+@webgui_router.get("")
+@webgui_router.get("/")
+async def route_index(request: Request):
+	return RedirectResponse(
+		url=f"{request.scope['path'].rstrip('/')}/app/",
+		status_code=status.HTTP_307_TEMPORARY_REDIRECT
+	)
 
 
 @webgui_router.options("/api/{any:path}")

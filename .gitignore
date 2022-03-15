@@ -20,3 +20,6 @@ opsiweb/test-result-pw-reporter-components.xml
 opsiweb/test-result-pw-reporter-e2e.xml
 .devcontainer/*modules*
 package-lock.json
+
+# python 
+__pycache__
