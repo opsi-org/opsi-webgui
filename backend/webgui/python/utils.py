@@ -57,10 +57,7 @@ def parse_client_list(selectedClients: List[str] = Query(None)) -> Optional[List
 def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
 	return parse_list(selected)
 
-def build_tree(group, groups, allowed, processed=None, selection=None):
-	# logger.devel("build_tree")
-	# logger.devel(group)
-	# logger.devel(groups)
+def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 	if not processed:
 		processed = []
 	processed.append(group["id"])
@@ -71,16 +68,16 @@ def build_tree(group, groups, allowed, processed=None, selection=None):
 	children = {}
 	for grp in groups:
 		if grp["id"] == group["id"]:
+			if default_expanded and grp.get("isDefaultExpanded"):
+					group["isDefaultExpanded"] = True
 			continue
 		if grp["parent"] == group["id"]:
 			if grp["id"] in processed:
 				logger.error("Loop: %s %s", grp["id"], processed)
 			else:
-				children[grp["id"]] = build_tree(grp, groups, allowed, processed, selection=selection)
-			# logger.devel("isDefaultExpanded: %s, %s", grp["id"], grp.get("isDefaultExpanded"))
-			# logger.devel("selection: %s", selection)
-			if selection and grp.get("isDefaultExpanded"):
-				group["isDefaultExpanded"] = True
+				children[grp["id"]] = build_tree(grp, groups, allowed, processed, default_expanded=default_expanded)
+				if default_expanded and grp.get("isDefaultExpanded"):
+					group["isDefaultExpanded"] = True
 	if children:
 		if "children" not in group:
 			group["children"] = {}
@@ -88,7 +85,6 @@ def build_tree(group, groups, allowed, processed=None, selection=None):
 	else:
 		if group["type"] == "HostGroup":
 			group["children"] = None
-
 
 	if not is_root_group and group.get("children"):
 		for child in group["children"].values():
