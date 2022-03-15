@@ -1,26 +1,20 @@
 <template>
   <b-button
-    v-if="navbar"
     v-model="localMode"
     data-testid="ButtonBTNExpertMode"
-    style="height:100%;margin:0px;width:100%;"
     variant="primary"
-    class="btn text-left btn_expertmode"
+    :class="navbar? 'navmodebutton': 'modebutton'"
     :pressed.sync="localMode"
     @click="changeMode(localMode)"
   >
-    {{ $t('settingsPage.mode') }}: {{ expert? 'Expert': 'Normal' }}
-  </b-button>
-  <b-button
-    v-else
-    v-model="localMode"
-    data-testid="ButtonBTNExpertMode"
-    style="height:45px;margin:0px;width:184px;"
-    variant="primary"
-    :pressed.sync="localMode"
-    @click="changeMode(localMode)"
-  >
-    {{ expert? 'Expert': 'Normal' }}
+    <template v-if="navbar">
+      <span class="sr-only">{{ expert? 'Expert': 'Normal' }}</span>
+      <b-icon-star-fill v-if="expert" variant="light" />
+      <b-icon-star v-else variant="light" />
+    </template>
+    <span v-else>
+      {{ expert? 'Expert': 'Normal' }}
+    </span>
   </b-button>
 </template>
 
@@ -50,4 +44,15 @@ const settings = namespace('settings')
   padding-left: 1em !important;
   padding-right: 1em !important;
 }
+
+.navmodebutton{
+  height:45px;
+  width:45px;
+}
+.modebutton{
+  height:45px;
+  margin:0px;
+  width:184px;
+}
+
 </style>
