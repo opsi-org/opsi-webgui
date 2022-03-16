@@ -26,15 +26,16 @@ from opsiconfd.rest import OpsiApiException, order_by, pagination, common_query_
 from opsiconfd.application.utils import (
 	get_configserver_id,
 	bool_product_property,
-	unicode_product_property,
-	merge_dicts
+	unicode_product_property
+	
 )
 
 from .utils import (
 	get_depot_of_client,
 	parse_depot_list,
 	parse_client_list,
-	parse_selected_list
+	parse_selected_list,
+	merge_dicts
 )
 from .utils import mysql
 
@@ -732,7 +733,10 @@ def product_properties(
 					del property["editable"]
 					del property["values"]
 					property["allValues"] = list(property.get("allValues"))
-					data["properties"][property["propertyId"]] = merge_dicts(property, data["properties"][property["propertyId"]])
+					logger.devel(property)
+					logger.devel(data.get("properties",{}).get(property["propertyId"],{}))
+					# logger.devel(data["properties"][property["propertyId"]])
+					data["properties"][property["propertyId"]] = merge_dicts(property, data.get("properties",{}).get(property["propertyId"],{}))
 
 			data["productVersions"] = {}
 			data["productDescriptionDetails"] = {}
