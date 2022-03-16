@@ -142,7 +142,7 @@ export default class TInfiniteScroll extends Vue {
         }
         this.tableData.pageNumber--
         this.fetchitems()
-        event.target.scrollTop = event.target.clientHeight - 5
+        event.target.scrollTop = 20
       }
     } else if ( // On Scroll Down
       event.target.scrollTop + event.target.clientHeight >=
@@ -154,7 +154,7 @@ export default class TInfiniteScroll extends Vue {
         }
         this.tableData.pageNumber++
         this.fetchitems()
-        event.target.scrollTop = 5
+        event.target.scrollTop = 20
       }
     }
   }
@@ -210,17 +210,22 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
+.b-table-sticky-header > .table.b-table > thead > tr > th {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  /* scroll-padding-bottom: 100px; */
+}
 .tablefooter {
   color: black;
   font-size: 12px;
 }
 .infinitescrolltable.b-table-sticky-header {
-  /* max-height: 65vh; */
-  max-height:650px;
+  max-height: 66vh;
+  /* max-height:650px; */
 }
 .tableproducts.b-table-sticky-header {
-  /* max-height: 60vh; */
-  max-height:610px;
+  max-height: 60vh;
+  /* max-height:610px; */
 }
 .smalltable.b-table-sticky-header {
   max-height: 12vh;
