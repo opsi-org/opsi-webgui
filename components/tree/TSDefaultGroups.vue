@@ -13,9 +13,6 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { filterObjectLabel, filterObjectByValues } from '../../.utils/utils/sfilters'
-// import { filterObjectLabel, filterObject } from '../../.utils/utils/sfilters'
-// import { makeToast } from '../../.utils/utils/scomponents'
-// import { arrayEqual } from '../../.utils/utils/scompares'
 import TSDefault from './TSDefault.vue'
 
 @Component
@@ -43,14 +40,6 @@ export default class TSDefaultGroups extends TSDefault {
     throw new Error('Internal error: cannot set selectionKeys')
   }
 
-  // get selectionModel () { // overwrites parent
-  //   return this.selectionKeys
-  // }
-
-  // set selectionModel (s) { // overwrites parent
-  //   this.selectionKeys = s
-  // }
-
   syncStoreToTree ({ selection, options }) {
     console.log('syncStoreToTree')
     if (this.valueFormat !== 'object') {
@@ -71,8 +60,18 @@ export default class TSDefaultGroups extends TSDefault {
     const resultObjects = []
     filterObjectByValues(options, storeSelect, this.selectionKey, resultObjects)
     console.log('sync found objects ', JSON.stringify(resultObjects))
+    selection.length = 0
     for (const i in resultObjects) {
+      // if (resultObjects[i][this.selectionKey]) {
+      //   if (!selection.includes(resultObjects[i][this.selectionKey])) {
+      //     console.log('add object key ', resultObjects[i][this.selectionKey])
+      //     selection.push(resultObjects[i][this.selectionKey])
+      //   }
+      // } else
+      console.log('add key ', resultObjects[i])
       selection.push(resultObjects[i])
+      // if (!selection.includes(resultObjects[i])) {
+      // }
     }
     // // const elementsInTree: Array<string> = []
     // for (const index in storeSelect) {
@@ -88,31 +87,42 @@ export default class TSDefaultGroups extends TSDefault {
     // this.selection = treeSelect // elementsInTree
   }
 
-  isGroup (s) {
-    return s.isBranch === true || ['HostGroup', 'ProductGroup'].includes(s.type)
-  }
-
   async selectGroups (s: any, thiss:any) {
     console.log('TSDefaultGroups s', s)
     if (!s) { return }
-
-    if (this.isGroup(s)) {
+    if (thiss.isGroup(s)) {
       console.log('TSDefaultGroups isBranch ... load children and select')
       await thiss.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
+      this.groupChange(s, 'select')
+      return
     }
-    this.groupChange(s, 'select')
+    console.log('select not a group: ', s)
+    if (!this.store.selection.includes(s[this.selectionKey])) {
+      console.log('PUSHSELECTION', s[this.selectionKey])
+      this.store.pushSelection(s[this.selectionKey])
+    }
   }
 
-  deselectGroups (deselection: any) {
+  deselectGroups (deselection: any, thiss:any) {
     console.log('TSDefaultGroups deselect')
-    this.groupChange(deselection, 'deselect')
+    if (thiss.isGroup(deselection)) {
+      this.groupChange(deselection, 'deselect')
+      return
+    }
+    console.log('deselect not a group ', deselection)
+    if (this.store.selection.includes(deselection[this.selectionKey])) {
+      console.log('DELSELECTION', deselection[this.selectionKey])
+      this.store.delSelection(deselection[this.selectionKey])
+    }
   }
 
   groupChange (value: object, type: string) {
-    console.log('TSDefaultGroups groupChange')
+    console.log('TSDefaultGroups groupChange ', value, type)
     const idList : Array<string> = []
     const storeSel = this.store.selection
-    filterObjectLabel([value], 'ObjectToGroup', 'type', 'text', idList) // get all texts elements where type is ObjectToGroup
+    console.log('TSDefaultGroups store ', storeSel)
+    filterObjectLabel([value], 'ObjectToGroup', 'type', this.selectionKey, idList) // get all texts elements where type is ObjectToGroup
+    console.log('TSDefaultGroups foundIds ', idList)
 
     for (const i in idList) {
       const objectId = idList[i]
@@ -122,6 +132,7 @@ export default class TSDefaultGroups extends TSDefault {
       }
       if (type === 'deselect') {
         if (storeSel.includes(objectId)) {
+          console.log('DELSELECTION', objectId)
           this.store.delSelection(objectId)
         }
       }

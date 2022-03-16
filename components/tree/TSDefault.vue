@@ -1,7 +1,6 @@
 <template>
   <div class="form-inline TSDefault-wrapper" style="margin-right: 30px">
     <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
-
     <ModalMSelections
       :type="type"
       :selections="selectionDefault"
@@ -14,8 +13,10 @@
         : lazyLoad? '' : $t(editable ? 'client.dropdown.searchOrAdd' : 'client.dropdown.search')
       "
       class="treeselect"
+      :class="selectedListAsClass"
       :searchable="!lazyLoad"
       :editable="editable"
+      :loading-text="'load...'"
       :clearable="clearable"
       :multiple="multi"
       :options="options"
@@ -54,25 +55,31 @@
         {{ Array.isArray(node.label) ? node.label[0] : node.label }}
       </div>
 
-      <div
-        v-if="multi"
-        slot="before-list"
-      >
+      <div slot="before-list">
         <ButtonBTNClearSelection
-          v-if="selection.length>0"
+          v-if="multi"
+          class="BTNClearSelection"
+          :disabled="selection.length<=0"
           :clearselection="clearSelected"
           label="Clear Selection"
         />
+        <br v-if="multi && $fetchState.pending">
+        <IconILoading v-if="$fetchState.pending" />
       </div>
+      <!-- <div
+        v-if="$fetchState.loading"
+        slot="before-list"
+      >
+      </div> -->
       <div
         slot="option-label"
         slot-scope="{ node }"
         :class="{
+          'test':true,
           'form-control is-invalid':
             validate && node.label ? !validate(node.label) : false,
         }"
       >
-        <!-- @click="alert('hi')" -->
         <div :ref="'tree-item-'+node.id">
           <b-icon v-if="node.isBranch||false" icon="diagram2" />
           <b-icon v-else :icon="type === 'products' ? 'grid-fill':'laptop'" />
@@ -94,6 +101,7 @@ interface Group {
   type: string
   isDisabled?: boolean
   isNew?: boolean
+  hasAnySelection?: boolean
   children?: null | Array<any>
 }
 interface StoreSelection {
@@ -106,6 +114,8 @@ interface StoreSelection {
 export default class TSDefault extends Vue {
   node: any
   $axios: any
+  $fetch: any
+  $fetchState: any
 
   @Prop({}) selectionDefault!: Array<string>
   @Prop({}) type!: string
@@ -137,11 +147,26 @@ export default class TSDefault extends Vue {
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched
+  // async requestData () {
+  //   }
+
+  get selectedListAsClass () {
+    if (this.store && this.store.selection) {
+      const r = {}
+      this.store.selection.forEach((x) => { r['selected-' + x] = true })
+      return r
+    }
+    return {}
+  }
 
   async fetch () {
+    // await this.requestData()
+    this.$fetchState.pending = true
     this.data = await this.fetchData()
     this.updateLocalFromParent()
     this.syncWrapper()
+    this.$fetchState.pending = false
+    console.log('end fetching hostgroups')
   }
 
   mounted () {
@@ -149,7 +174,7 @@ export default class TSDefault extends Vue {
   }
 
   @Watch('selectionDefault', { deep: true }) selectionChanged () {
-    this.syncWrapper()
+    this.$fetch()
   }
 
   get selectionWrapper () { // can be overwritten by children
@@ -180,13 +205,18 @@ export default class TSDefault extends Vue {
   selectWrapper (s:any) {
     if (this.selectFunction) {
       this.selectFunction(s, this)
+      this.syncWrapper()
     } else { this.selectDefault(s) }
   }
 
   deselectWrapper (s:any) {
+    console.log('TRY deselect: ', JSON.stringify(s))
     if (this.deselectFunction) {
       this.deselectFunction(s, this)
-    } else { this.deselectDefault(s) }
+      this.syncWrapper()
+    } else {
+      this.deselectDefault(s)
+    }
   }
 
   updateLocalFromParent (updateOptions = true, updateSelections = true) {
@@ -232,14 +262,8 @@ export default class TSDefault extends Vue {
       isNew: node.isNew || false,
       isBranch: node.type === 'HostGroup' || node.type === 'ProductGroup' || node.isBranch || false,
       isDisabled: (node.isDisabled === true) || false,
+      // isDefaultExpanded: node.hasAnySelection || false,
       label: node.text ? node.text.replace(/_+$/, '') : node.id,
-      // children: node.children
-      //   ? this.getChildren(node).sort(function (a: Group, b: Group) {
-      //     if (a.text < b.text) { return -1 }
-      //     if (a.text > b.text) { return 1 }
-      //     return 0
-      //   })
-      //   : {}
       children: this.lazyLoad
         ? this.getChildren(node)
         : node.children
@@ -270,11 +294,14 @@ export default class TSDefault extends Vue {
       return
     }
     if (action === 'LOAD_CHILDREN_OPTIONS') {
+      this.$fetchState.pending = true
       parentNode.children = await this.fetchChildren(parentNode)
+
       // const children = await this.fetchChildren(parentNode)
       // parentNode.children = children.map(n => { const nn= this.normalizer(n); console.log(nn); return nn })
       this.syncWrapper()
       callback()
+      this.$fetchState.pending = false
     }
   }
 
@@ -291,7 +318,7 @@ export default class TSDefault extends Vue {
       console.log('why?')
       this.selection = []
     }
-    if (!this.selection.includes(s.id)) {
+    if (!this.selection.includes(s.text)) {
       if (!this.nested && !Object.values(this.options.map((o:any) => o.id)).includes(s.id)) {
         console.log('new item')
         this.options.push(s)
@@ -312,9 +339,9 @@ export default class TSDefault extends Vue {
 
   deselectDefault (deselection: any, isObject = false) {
     console.log('TSDefault deselect')
-    if (this.selection.includes(deselection.id) || this.selection.includes(deselection)) {
+    if (this.selection.includes(deselection.text) || this.selection.includes(deselection)) {
       if (isObject) {
-        this.selection.splice(this.selection.indexOf(deselection.id), 1) // deleting
+        this.selection.splice(this.selection.indexOf(deselection.text), 1) // deleting
       } else {
         this.selection.splice(this.selection.indexOf(deselection), 1) // deleting
       }
@@ -326,6 +353,10 @@ export default class TSDefault extends Vue {
     console.log('TSDefault clearSelected')
     this.selection = []
     this.$emit('change', this.selection)
+  }
+
+  isGroup (s) {
+    return s.isBranch === true || ['HostGroup', 'ProductGroup'].includes(s.type)
   }
 }
 </script>
@@ -346,6 +377,10 @@ export default class TSDefault extends Vue {
   /* border: 1px solid green; */
   padding-left: 10px;
   padding-right: 15px;
+}
+.TSDefault-wrapper .treeselect .BTNClearSelection{
+  width: 100% !important;
+  text-align: left;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
@@ -402,4 +437,9 @@ export default class TSDefault extends Vue {
 /* .TSDefault-wrapper .selection_badge {
   margin-top: 20px;
 } */
+
+.TSDefault-wrapper [class^="selected-"] .vue-treeselect__checkbox{
+  background-color: blue;
+}
+
 </style>

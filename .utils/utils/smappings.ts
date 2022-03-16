@@ -55,6 +55,7 @@ export function mapValues2Objects (values: Array<string>, objects: Array<string>
   return client2value
 }
 
+
 export default {
   mapValues2Value,
   mapValues2Objects
