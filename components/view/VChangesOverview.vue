@@ -1,9 +1,9 @@
 <template>
   <div data-testid="VChangesOverview">
-    <template v-if="changesProducts.length !== 0">
-      <TableTChanges :tableitems="changelist" />
-      <ButtonBTNDeleteAll hide="ProductSaveModal" />
-      <b-button class="float-right" size="sm" variant="primary" @click="saveAll()">
+    <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
+      <TableTChanges />
+      <ButtonBTNClearChanges />
+      <b-button class="float-right" size="sm" variant="success" @click="saveAll()">
         <b-icon icon="check2" /> Save All
       </b-button>
     </template>
@@ -31,10 +31,6 @@ export default class VProducts extends Vue {
 
   get username () {
     return localStorage.getItem('username')
-  }
-
-  mounted () {
-    this.changelist = this.changesProducts.filter(o => o.user === this.username)
   }
 
   async saveProd (item: ChangeObj) {
@@ -94,6 +90,7 @@ export default class VProducts extends Vue {
   }
 
   saveAll () {
+    this.changelist = this.changesProducts.filter(o => o.user === this.username)
     for (const p in this.changelist) {
       const change = this.changelist[p]
       if (change.actionRequest) {
