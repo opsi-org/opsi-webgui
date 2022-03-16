@@ -22,6 +22,12 @@
           <template #head(depotId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
+          <template #cell(depotId)="row">
+            <b v-if="row.item.depotId==opsiconfigserver">
+              {{ row.item.depotId }}
+            </b>
+            {{(row.item.depotId!=opsiconfigserver) ? row.item.depotId:''}}
+          </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
@@ -45,6 +51,7 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 const selections = namespace('selections')
+const cache = namespace('data-cache')
 
 @Component export default class VDepots extends Vue {
   $axios: any
@@ -76,15 +83,15 @@ const selections = namespace('selections')
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
+  @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  async mounted () {
+  mounted () {
     if (this.$mq === 'desktop') {
-      const opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
-      this.routeRedirectWith('/depots/config', opsiconfigserver)
+      this.routeRedirectWith('/depots/config', this.opsiconfigserver)
     }
   }
 

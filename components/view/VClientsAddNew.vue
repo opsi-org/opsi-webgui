@@ -75,7 +75,9 @@
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 
+const cache = namespace('data-cache')
 const selections = namespace('selections')
+
 interface NewClient {
   hostId: string,
   description: string,
@@ -97,7 +99,6 @@ interface ClientRequest {
 
   clientRequest: ClientRequest = { selectedDepots: [] }
   clientIds: Array<string> = []
-  opsiconfigserver: string = ''
   result: string = ''
   isLoading: boolean = false
   domain: string = ''
@@ -112,6 +113,7 @@ interface ClientRequest {
   }
 
   // @auth.Mutation public setSession!: () => void
+  @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
 
   get domainName () {
@@ -135,7 +137,7 @@ interface ClientRequest {
     this.clientRequest.selectedDepots = this.selectionDepots
     const params = this.clientRequest
     this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+    // this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
     // this.setSession()
   }
 

@@ -56,8 +56,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
+const cache = namespace('data-cache')
 @Component
 export default class TInfiniteScroll extends Vue {
   $axios: any
@@ -76,6 +77,7 @@ export default class TInfiniteScroll extends Vue {
   @Prop({ }) tableData!: ITableData
   @Prop({ }) items!: Array<any>
 
+  @cache.Getter public opsiconfigserver!: string
   get selectmode () {
     if (this.ismultiselect) {
       return 'multi'
@@ -162,8 +164,7 @@ export default class TInfiniteScroll extends Vue {
   async clearSelected () {
     this.setselection([])
     if (this.rowident === 'depotId') {
-      const opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
-      this.setselection([opsiconfigserver])
+      this.setselection([this.opsiconfigserver])
     }
   }
 }

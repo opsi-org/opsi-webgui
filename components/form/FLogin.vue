@@ -30,6 +30,7 @@ import { Component, Vue, namespace } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents' // 'uib-components/.utils/utils/scomponents'
 const auth = namespace('auth')
 const selections = namespace('selections')
+const cache = namespace('data-cache')
 interface FormUser {
     username: string,
     password: string
@@ -38,9 +39,10 @@ interface FormUser {
 @Component export default class FLogin extends Vue {
   $axios:any
   form: FormUser = { username: '', password: '' }
-  opsiconfigserver: string = ''
   isLoading: boolean = false
 
+  @cache.Getter public opsiconfigserver!: string
+  @cache.Mutation public setOpsiconfigserver!: (s: string) => void
   @auth.Mutation public login!: (username: string) => void
   @auth.Mutation public logout!: () => void
   // @auth.Mutation public setSession!: () => void
@@ -49,7 +51,7 @@ interface FormUser {
 
   async fetch () {
     try {
-      this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
+      this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
       // this.setSession()
     } catch (error) {
       const errorMsg = this.$t('loginPage.errortext') as string
