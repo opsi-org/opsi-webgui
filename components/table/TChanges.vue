@@ -1,5 +1,5 @@
 <template>
-  <div v-if="tableitems.length>0" data-testid="TChanges">
+  <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges">
     <InputIFilterTChanges :filter.sync="filter" />
     <DivDScrollResult>
       <div v-for="changes, k in groupedById" :key="changes.productId">
@@ -21,7 +21,7 @@
               <small>{{ row.value }}</small>
             </template>
             <template #cell(_action)="row">
-              <ButtonBTNDeleteObj :item="row.item" from="products" hide="ProductSaveModal" />
+              <ButtonBTNDeleteObj :item="row.item" from="products" />
               <b-button size="sm" variant="light" @click="save(row.item)">
                 <span class="sr-only">Save</span>
                 <b-icon icon="check2" />
@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
@@ -47,17 +47,25 @@ export default class TChanges extends Vue {
   $mq: any
   $nuxt: any
 
-  @Prop({ }) tableitems!: Array<object>
+  // @Prop({ }) tableitems!: Array<object>
   filter: string = ''
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   groupedById: Array<object> = []
 
-  @Watch('tableitems', { deep: true }) tableitemsChanged () { this.groupedById = this.groupArrayOfObjects(this.tableitems, 'productId') }
+  get username () {
+    return localStorage.getItem('username')
+  }
+
+  @Watch('changesProducts', { deep: true }) changesProductsChanged () {
+    const tableitems = this.changesProducts.filter(o => o.user === this.username)
+    this.groupedById = this.groupArrayOfObjects(tableitems, 'productId')
+  }
 
   beforeMount () {
-    this.groupedById = this.groupArrayOfObjects(this.tableitems, 'productId')
+    const tableitems = this.changesProducts.filter(o => o.user === this.username)
+    this.groupedById = this.groupArrayOfObjects(tableitems, 'productId')
   }
 
   groupArrayOfObjects (list: Array<any>, key:any) {
@@ -84,10 +92,10 @@ export default class TChanges extends Vue {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
       })
 
-    if (this.changesProducts.length === 0) {
-      this.$bvModal.hide('ProductSaveModal')
-      this.$nuxt.refresh()
-    }
+    // if (this.changesProducts.length === 0) {
+    //   this.$bvModal.hide('ProductSaveModal')
+    //   this.$nuxt.refresh()
+    // }
   }
 
   async saveProdProp (item: ChangeObj) {
@@ -115,10 +123,10 @@ export default class TChanges extends Vue {
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
       })
-    if (this.changesProducts.length === 0) {
-      this.$bvModal.hide('ProductSaveModal')
-      this.$nuxt.refresh()
-    }
+    // if (this.changesProducts.length === 0) {
+    //   this.$bvModal.hide('ProductSaveModal')
+    //   this.$nuxt.refresh()
+    // }
   }
 
   save (rowItem: ChangeObj) {
