@@ -57,13 +57,14 @@
 
       <div slot="before-list">
         <ButtonBTNClearSelection
-          v-if="multi && selection.length>0"
+          v-if="multi"
           class="BTNClearSelection"
+          :disabled="selection.length<=0"
           :clearselection="clearSelected"
           label="Clear Selection"
         />
-        <br>
-        <IconILoading v-if="fetchStatePending" />
+        <br v-if="multi && $fetchState.pending">
+        <IconILoading v-if="$fetchState.pending" />
       </div>
       <!-- <div
         v-if="$fetchState.loading"
@@ -90,7 +91,6 @@
 </template>
 
 <script lang="ts">
-import { BIconFacebook } from 'bootstrap-vue'
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { filterObject } from '../../.utils/utils/sfilters'
 
@@ -144,7 +144,6 @@ export default class TSDefault extends Vue {
   @Prop({}) syncFunction?: Function
 
   searchText: string = ''
-  fetchStatePending: boolean = false
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched
@@ -161,16 +160,13 @@ export default class TSDefault extends Vue {
   }
 
   async fetch () {
-    await this.fetchDefault()
-  }
-
-  async fetchDefault () {
     // await this.requestData()
-    this.fetchStatePending = true
+    this.$fetchState.pending = true
     this.data = await this.fetchData()
     this.updateLocalFromParent()
     this.syncWrapper()
-    this.fetchStatePending = false
+    this.$fetchState.pending = false
+    console.log('end fetching hostgroups')
   }
 
   mounted () {
@@ -178,7 +174,7 @@ export default class TSDefault extends Vue {
   }
 
   @Watch('selectionDefault', { deep: true }) selectionChanged () {
-    this.fetchDefault()
+    this.$fetch()
   }
 
   get selectionWrapper () { // can be overwritten by children
@@ -298,14 +294,14 @@ export default class TSDefault extends Vue {
       return
     }
     if (action === 'LOAD_CHILDREN_OPTIONS') {
-      this.fetchStatePending = true
+      this.$fetchState.pending = true
       parentNode.children = await this.fetchChildren(parentNode)
 
       // const children = await this.fetchChildren(parentNode)
       // parentNode.children = children.map(n => { const nn= this.normalizer(n); console.log(nn); return nn })
       this.syncWrapper()
       callback()
-      this.fetchStatePending = false
+      this.$fetchState.pending = false
     }
   }
 

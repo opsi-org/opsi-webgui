@@ -27,8 +27,6 @@
 
 <script lang="ts">
 import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
-
-import { asyncForEach } from '../../.utils/utils/smappings'
 const selections = namespace('selections')
 
 @Component
@@ -59,14 +57,12 @@ export default class TSHostGroups extends Vue {
       throw new Error('No root host-groups found')
     }
 
-    console.log('groups ', JSON.stringify(result))
     if (result.clientlist) { // todo: just a workaround till groups return highest level for hosts
       const values = Object.values(result)
-      console.log('ROOT1', values)
 
-      await this.asyncForEach(values, async (c:any) => { console.log(c); if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
+      await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
       // await values.forEach(async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
-      console.log('ROOT2', values)
+      console.log('ROOT', values)
       return values
     }
     return [
@@ -111,12 +107,11 @@ export default class TSHostGroups extends Vue {
       return clientlist
     } else {
       const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=${parentNode.text}`)).groups.children
+
       if (result !== null) {
         console.log('Children ', result)
-        // return Object.values(result)
-
         const values = Object.values(result)
-        await this.asyncForEach(values, async (c:any) => { console.log(c); if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
+        await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
         return values
       }
       console.warn('Children null')

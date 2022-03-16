@@ -13,9 +13,6 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { filterObjectLabel, filterObjectByValues } from '../../.utils/utils/sfilters'
-// import { filterObjectLabel, filterObject } from '../../.utils/utils/sfilters'
-// import { makeToast } from '../../.utils/utils/scomponents'
-// import { arrayEqual } from '../../.utils/utils/scompares'
 import TSDefault from './TSDefault.vue'
 
 @Component
@@ -42,14 +39,6 @@ export default class TSDefaultGroups extends TSDefault {
   set selectionKeys (s) {
     throw new Error('Internal error: cannot set selectionKeys')
   }
-
-  // get selectionModel () { // overwrites parent
-  //   return this.selectionKeys
-  // }
-
-  // set selectionModel (s) { // overwrites parent
-  //   this.selectionKeys = s
-  // }
 
   syncStoreToTree ({ selection, options }) {
     console.log('syncStoreToTree')
@@ -79,8 +68,8 @@ export default class TSDefaultGroups extends TSDefault {
       //     selection.push(resultObjects[i][this.selectionKey])
       //   }
       // } else
-        console.log('add key ', resultObjects[i])
-        selection.push(resultObjects[i])
+      console.log('add key ', resultObjects[i])
+      selection.push(resultObjects[i])
       // if (!selection.includes(resultObjects[i])) {
       // }
     }
