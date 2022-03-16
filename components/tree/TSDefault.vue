@@ -390,6 +390,7 @@ export default class TSDefault extends Vue {
   max-height: max-content !important;
   padding-bottom: 0px;
   margin-top: -6px !important;
+  color: black;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
 .TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {

@@ -11,6 +11,7 @@
       <div class="container-fluid">
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button :pressed.sync="attributes.visible">
+            <span class="sr-only">Open sidemenu</span>
             <b-icon icon="list" />
           </b-button>
         </b-navbar-nav>
@@ -20,10 +21,12 @@
           </b-badge>
           {{ getTitleUppercase() }}
           <span class="topbar_version"> {{ $config.packageVersion }} </span>
-          <span class="topbar_expert"> <IconIExpert /> </span>
+          <!-- <span class="topbar_expert"> <IconIExpert /> </span> -->
         </b-navbar-brand>
+        <ButtonBTNExpertMode :navbar="true" />
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
+            <span class="sr-only">Open topmenu</span>
             <b-icon-three-dots-vertical font-scale="1.1" />
           </b-button>
         </b-navbar-nav>
@@ -95,11 +98,6 @@ export default class BTop extends Vue {
 .topbar_version{
   font-size: 10px;
   margin-left: 5px;
-}
-.topbar_expert {
-  font-size: 15px;
-  /* margin-left: 5px; */
-  margin-top: -3px;
 }
 
 .topbar_badge_logo  {

@@ -1,13 +1,17 @@
 <template>
-  <b-form-input
-    v-bind="$props"
-    ref="IFilter"
-    v-model="data.filterQuery"
-    data-testid="IFilter"
-    aria-label="Filter"
-    class="filter"
-    :placeholder="$t('table.filter') + ' ' + additionalTitle"
-  />
+  <div>
+    <label for="filter" class="sr-only"> {{ $t('table.filter') + ' ' + additionalTitle }} </label>
+    <b-form-input
+      id="filter"
+      v-bind="$props"
+      ref="IFilter"
+      v-model="data.filterQuery"
+      data-testid="IFilter"
+      aria-label="Filter"
+      class="filter"
+      :placeholder="$t('table.filter') + ' ' + additionalTitle"
+    />
+  </div>
 </template>
 
 <script lang="ts">

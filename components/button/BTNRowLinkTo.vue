@@ -6,6 +6,7 @@
     :title="title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
+    :aria-label="title"
     @click="action"
   >
     <!-- v-bind="$props" -->

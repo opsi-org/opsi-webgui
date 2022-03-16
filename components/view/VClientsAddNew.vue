@@ -18,10 +18,12 @@
           {{ $t('table.fields.id') }}:
         </b-col>
         <b-col>
-          <b-form-input v-model="clientName" type="text" required />
+          <label for="clientname" class="sr-only"> clientName </label>
+          <b-form-input id="clientname" v-model="clientName" type="text" required />
         </b-col>
         <b-col>
-          <b-form-input v-model="domainName" type="text" required />
+          <label for="domainName" class="sr-only"> domainName </label>
+          <b-form-input id="domainName" v-model="domainName" type="text" required />
         </b-col>
       </b-row>
       <b>{{ $t('table.clientDetails') }}: </b>
@@ -30,7 +32,8 @@
           {{ $t('table.fields.description') }}:
         </b-col>
         <b-col>
-          <b-form-input v-model="newClient.description" type="text" />
+          <label for="description" class="sr-only"> {{ $t('table.fields.description') }} </label>
+          <b-form-input id="description" v-model="newClient.description" type="text" />
         </b-col>
       </b-row>
       <b-row class="mb-2">
@@ -38,7 +41,8 @@
           {{ $t('table.fields.inventNum') }}:
         </b-col>
         <b-col>
-          <b-form-input v-model="newClient.inventoryNumber" type="text" />
+          <label for="inventNum" class="sr-only"> {{ $t('table.fields.inventNum') }} </label>
+          <b-form-input id="inventNum" v-model="newClient.inventoryNumber" type="text" />
         </b-col>
       </b-row>
       <b-row class="mb-2">
@@ -46,7 +50,8 @@
           {{ $t('table.fields.hwAddr') }}:
         </b-col>
         <b-col>
-          <b-form-input v-model="newClient.hardwareAddress" type="text" />
+          <label for="hwAddr" class="sr-only"> {{ $t('table.fields.hwAddr') }} </label>
+          <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" type="text" />
         </b-col>
       </b-row>
 
@@ -55,7 +60,8 @@
           {{ $t('table.fields.ip') }}:
         </b-col>
         <b-col>
-          <b-form-input v-model="newClient.ipAddress" type="text" />
+          <label for="ip" class="sr-only"> {{ $t('table.fields.ip') }} </label>
+          <b-form-input id="ip" v-model="newClient.ipAddress" type="text" />
         </b-col>
       </b-row>
       <b>{{ $t('table.addtnlInfo') }}: </b>
@@ -64,7 +70,8 @@
           {{ $t('table.fields.notes') }}:
         </b-col>
         <b-col>
-          <b-form-textarea v-model="newClient.notes" rows="2" no-resize />
+          <label for="notes" class="sr-only"> {{ $t('table.fields.notes') }} </label>
+          <b-form-textarea id="notes" v-model="newClient.notes" rows="2" no-resize />
         </b-col>
       </b-row>
     </div>

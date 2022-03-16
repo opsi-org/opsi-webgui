@@ -1,6 +1,8 @@
 <template>
   <div data-testid="IFilterTChanges">
+    <label for="filterchanges" class="sr-only"> Filter by Depot ID / Client ID </label>
     <b-form-input
+      id="filterchanges"
       v-model="filter"
       size="sm"
       type="search"

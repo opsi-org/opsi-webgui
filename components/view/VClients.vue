@@ -5,8 +5,6 @@
         <BarBPageHeader v-if="secondColumnOpened" title="Clients" />
         <BarBPageHeader>
           <template #left>
-            <!-- <TreeTSDepots />
-            <TreeTSHostGroupLazyLoad /> -->
             <TreeTSDepots />
             <TreeTSHostGroups />
           </template>
@@ -70,14 +68,25 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <b-badge variant="outline-primary">
-              <b-dropdown variant="outline-primary" class="actions_dropdown" size="sm" no-caret>
-                <template #button-content>
-                  <b-icon icon="three-dots-vertical" />
-                </template>
-                <ModalMDeleteClient :id="row.item.ident.trim()" />
-              </b-dropdown>
-            </b-badge>
+            <b-button
+              v-b-tooltip.focus
+              variant="outline-primary"
+              size="sm"
+              class="border-0"
+              :title="row.detailsShowing ? 'Cancel' : 'Delete'"
+              @click="row.toggleDetails"
+            >
+              <b-icon :icon="row.detailsShowing ? 'x' : 'trash'" />
+              <span class="sr-only">{{ row.detailsShowing ? 'Cancel' : 'Delete' }}</span>
+            </b-button>
+          </template>
+          <template #row-details="row">
+            <b-card>
+              {{ $t('message.deleteConfirm') }} <b>{{ row.item.ident }}</b> ?
+              <b-button class="float-right" variant="danger" size="sm" @click="deleteOpsiClient(row.item.ident)">
+                <b-icon icon="trash" /> {{ $t('message.delete') }}
+              </b-button>
+            </b-card>
           </template>
           <template
             v-for="slotName in Object.keys($scopedSlots)"
@@ -96,8 +105,12 @@
 
 <script lang="ts">
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
+import { makeToast } from '../../.utils/utils/scomponents'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 const selections = namespace('selections')
+interface DeleteClient {
+  clientid: string
+}
 
 @Component export default class VClients extends Vue {
   $axios: any
@@ -105,8 +118,11 @@ const selections = namespace('selections')
   $fetch:any
   $nuxt:any
 
-  rowId: string = ''
+  deleteClient: DeleteClient = {
+    clientid: ''
+  }
 
+  rowId: string = ''
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
@@ -137,6 +153,7 @@ const selections = namespace('selections')
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
@@ -152,7 +169,6 @@ const selections = namespace('selections')
     const params = this.tableData
     await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {
-        console.log('response', response)
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
         if (response.data === null) {
@@ -184,6 +200,21 @@ const selections = namespace('selections')
 
   routeToChild (id: string) {
     this.routeRedirectWith('/clients/config', id)
+  }
+
+  async deleteOpsiClient (ident:string) {
+    const id = ident
+    await this.$axios.$delete('/api/opsidata/clients/' + id)
+      .then((response) => {
+        // eslint-disable-next-line no-console
+        console.error(response)
+        makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
+        this.delFromSelectionClients(id)
+      }).catch((error) => {
+        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
+        // eslint-disable-next-line no-console
+        console.error(error)
+      })
   }
 }
 </script>

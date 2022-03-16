@@ -1,11 +1,13 @@
 <template>
   <b-button
     v-b-tooltip.hover
+    aria-label="clearSelection"
     :title="label? '' : 'Clear selection'"
     variant="transparent"
     size="sm"
     @click="clearselection"
   >
+    <span class="sr-only">Clear selection</span>
     <b-icon-brush variant="primary" /> <span>{{ label }} </span>
   </b-button>
 </template>

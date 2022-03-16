@@ -2,6 +2,7 @@
   <b-sidebar
     id="sidemenu"
     data-testid="BarBSide"
+    aria-label="sideMenu"
     no-header
     bg-variant="primary"
     text-variant="light"
@@ -22,6 +23,7 @@
           :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
           :pressed.sync="attributes.expanded"
         >
+          <span class="sr-only">{{ attributes.expanded? 'Collapse sidemenu': 'Expand sidemenu' }}</span>
           <b-icon v-if="attributes.expanded" icon="chevron-double-left" />
           <b-icon v-else icon="chevron-double-right" />
         </b-button>

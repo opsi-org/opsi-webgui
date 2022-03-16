@@ -60,6 +60,7 @@ export default class BBreadcrumbRow extends Vue {
         case 'clientsaddnew': pathArray[c] = this.$t('title.addNewClient') as string; break
         case 'products': pathArray[c] = this.$t('title.products') as string; break
         case 'settings': pathArray[c] = this.$t('title.settings') as string; break
+        case 'changes': pathArray[c] = 'Overview of changes'; break
       }
     }
     return pathArray.filter(p => p !== '')

@@ -1,6 +1,8 @@
 <template>
   <div class="btn btn-primary dd_lang text-left">
+    <label for="language" class="sr-only"> Language </label>
     <b-nav-item-dropdown
+      id="language"
       style="height:100%;margin:0px;"
       data-testid="DropdownDDLang"
       :text="$i18n.locale"

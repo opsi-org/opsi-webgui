@@ -1,6 +1,6 @@
 <template>
   <div class="content-scroll" data-testid="DivDScrollResult">
-    <slot name="content" />
+    <slot />
   </div>
 </template>
 

@@ -10,9 +10,7 @@
     <b-tabs class="config_horizontaltabs">
       <b-tab title="Host Attributes" active>
         <DivDScrollResult>
-          <template slot="content">
-            <LazyTableTHostAttributes v-if="id" :id="id" />
-          </template>
+          <LazyTableTHostAttributes v-if="id" :id="id" />
         </DivDScrollResult>
       </b-tab>
     </b-tabs>

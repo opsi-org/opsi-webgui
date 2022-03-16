@@ -1,6 +1,7 @@
 <template>
   <b-form-checkbox v-model="checked" class="multiselect" size="sm" switch @change="$emit('update:multiselect', checked)">
     Multiselection
+    <span class="sr-only">{{ checked ? 'Enable multiselection': 'Disable multiselection' }}</span>
   </b-form-checkbox>
 </template>
 

@@ -1,5 +1,5 @@
 <template>
-  <img data-testid="IconIOpsiLogo" src="../../assets/images/LogoOpsi.png" alt="opsi logo" class="OpsiLogo_Img">
+  <img data-testid="IconIOpsiLogo" src="../../assets/images/LogoOpsi.png" alt="Click here to reload app" class="OpsiLogo_Img">
 </template>
 
 <script lang="ts">

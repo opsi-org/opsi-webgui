@@ -23,7 +23,15 @@
           />
         </template>
         <template v-else>
-          <NavItemNIItem :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
+          <template v-if="menuitem.title == 'Track Changes'">
+            <b-nav-item v-if="expert || changesProducts.filter((o) => o.user === username).length!==0" :to="menuitem.route">
+              <b-icon v-b-tooltip.hover :title="$t(menuitem.title)" :icon="menuitem.icon" />
+              <span v-if="expanded">
+                {{ $t(menuitem.title) }}
+              </span>
+            </b-nav-item>
+          </template>
+          <NavItemNIItem v-else :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
         </template>
       </span>
       <br>
@@ -32,7 +40,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, namespace } from 'nuxt-property-decorator'
+import { ChangeObj } from '../../.utils/types/tchanges'
+const settings = namespace('settings')
+const changes = namespace('changes')
 
 interface IMenuItem {
   title:string
@@ -45,6 +56,14 @@ interface IMenuItem {
 @Component
 export default class NSidebar extends Vue {
   @Prop({ }) expanded!: boolean
+
+  @settings.Getter public expert!: boolean;
+  @changes.Getter public changesProducts!: Array<ChangeObj>;
+
+  get username () {
+    return localStorage.getItem('username')
+  }
+
   navItems : Array<IMenuItem> = [
     // {
     //   title: 'title.overview',
@@ -75,7 +94,8 @@ export default class NSidebar extends Vue {
             { title: 'title.log', route: '/clientslog' }
           ]
         },
-        { title: 'title.products', icon: 'grid', route: '/products/' }
+        { title: 'title.products', icon: 'grid', route: '/products/' },
+        { title: 'Track Changes', icon: 'list-check', route: '/changes/' }
       ]
     },
     {
