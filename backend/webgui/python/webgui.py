@@ -90,7 +90,7 @@ async def user_opsiserver():
 @webgui_router.post("/api/opsidata/modulesContent")
 async def modules_content():
 	return JSONResponse({
-		"result": get_backend().backend_info()["modules"]
+		"result": get_backend().backend_getLicensingInfo()["available_modules"]
 	})
 
 @webgui_router.get("/api/opsidata/log")
