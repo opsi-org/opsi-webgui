@@ -24,8 +24,8 @@
           :pressed.sync="attributes.expanded"
         >
           <span class="sr-only">{{ attributes.expanded? 'Collapse sidemenu': 'Expand sidemenu' }}</span>
-          <b-icon v-if="attributes.expanded" icon="chevron-double-left" />
-          <b-icon v-else icon="chevron-double-right" />
+          <b-icon v-if="attributes.expanded" :icon="iconnames.arrowDoubleLeft" />
+          <b-icon v-else :icon="iconnames.arrowDoubleRight" />
         </b-button>
       </div>
     </template>
@@ -35,10 +35,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
+import { Constants } from '../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [Constants] })
 export default class BSide extends Vue {
   $mq:any
+  iconnames:any
   @Prop({ }) attributes!: ISidebarAttributes
 }
 </script>

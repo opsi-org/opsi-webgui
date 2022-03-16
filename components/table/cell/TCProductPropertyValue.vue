@@ -31,8 +31,8 @@
     </b-col>
     <b-col v-if="rowItem.propertyId.includes('password')" class="TCProductPropertyValue_ShowBtn" cols="*">
       <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
-        <b-icon v-if="showValue" icon="eye-slash" />
-        <b-icon v-else icon="eye" />
+        <b-icon v-if="showValue" :icon="iconnames.valueShow" />
+        <b-icon v-else :icon="iconnames.valueHide" />
       </b-button>
     </b-col>
     <b-col v-if="showTooltip" class="TCProductPropertyValue_MixedTT" cols="*">
@@ -52,10 +52,13 @@ import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IProperty } from '../../../.utils/types/ttable'
 import { IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
+import { Constants } from '../../../mixins/uib-mixins'
 const selections = namespace('selections')
 // const mixed = '<mixed>'
-@Component
+
+@Component({ mixins: [Constants] })
 export default class TProductPropertyValue extends Vue {
+  iconnames:any
   // @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String

@@ -31,7 +31,7 @@
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
-              icon="gear"
+              :icon="iconnames.settingsobject"
               to="/depots/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -50,10 +50,13 @@
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
-@Component export default class VDepots extends Vue {
+@Component({ mixins: [Constants] })
+export default class VDepots extends Vue {
+  iconnames: any
   $axios: any
   $fetch: any
   $mq: any

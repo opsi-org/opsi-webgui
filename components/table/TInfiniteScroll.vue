@@ -40,7 +40,7 @@
         <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />
       </template>
       <template #cell(selected)="row">
-        <b-icon-check2 v-if="selection.includes(row.item[rowident])" />
+        <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" />
         {{ fixRow(row) }}
       </template>
       <template
@@ -58,9 +58,12 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
+import { Constants } from '../../mixins/uib-mixins'
 const cache = namespace('data-cache')
-@Component
+
+@Component({ mixins: [Constants] })
 export default class TInfiniteScroll extends Vue {
+  iconnames: any
   $axios: any
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean

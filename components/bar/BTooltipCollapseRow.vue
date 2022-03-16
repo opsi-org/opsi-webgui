@@ -8,8 +8,8 @@
     >
       <b-th class="text-left">
         <span v-if="collapseable">
-          <b-icon v-if="collapsed" icon="chevron-double-down" />
-          <b-icon v-else icon="chevron-double-right" />
+          <b-icon v-if="collapsed" :icon="iconnames.arrowDoubleDown" />
+          <b-icon v-else :icon="iconnames.arrowDoubleRight" />
         </span>
         {{ title }}
       </b-th>
@@ -27,9 +27,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [Constants] })
 export default class BTooltipCollapseRow extends Vue {
+  iconnames: any
   @Prop({ }) title!: string
   @Prop({ }) value!: string
   @Prop({ default: 'info' }) valueVariant!: string

@@ -4,7 +4,7 @@
       <TableTChanges />
       <ButtonBTNClearChanges />
       <b-button class="float-right" size="sm" variant="success" @click="saveAll()">
-        <b-icon icon="check2" /> Save All
+        <b-icon :icon="iconnames.save" /> Save All
       </b-button>
     </template>
     <template v-else>
@@ -18,9 +18,12 @@ import { Component, Vue, Prop, namespace } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 const changes = namespace('changes')
-@Component
+
+@Component({ mixins: [Constants] })
 export default class VProducts extends Vue {
+  iconnames: any
   $axios: any
   changelist: Array<ChangeObj> = []
 

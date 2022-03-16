@@ -3,10 +3,10 @@
     &#8800;
   </b-badge>
   <b-badge v-else-if="text=='installed'" variant="success">
-    <b-icon :icon="iconnames.client" alt="installed" title="installed" />
+    <b-icon :icon="iconnames.productInstallationStatusInstalled" alt="installed" title="installed" />
   </b-badge>
   <b-badge v-else-if="text=='unknown'" variant="warning" text-variant="dark">
-    <b-icon icon="question" alt="unknown" />
+    <b-icon :icon="iconnames.productInstallationStatusUnknown" alt="unknown" />
   </b-badge>
   <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">
     {{ ($mq=='mobile')? '-':'' }}

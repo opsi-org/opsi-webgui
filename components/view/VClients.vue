@@ -11,7 +11,7 @@
           <template #right>
             <ButtonBTNRowLinkTo
               label="Show Products"
-              icon="grid"
+              :icon="iconnames.product"
               to="/clients/products"
               ident="dummy"
               :pressed="isRouteActive"
@@ -39,11 +39,22 @@
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
+          <template #head(version_outdated)>
+            <b-icon :icon="iconnames.product" />
+            <b-icon font-scale="1.2" :icon="iconnames.productsOutdated" />
+          </template>
+
+          <template #head(actionResult_failed)>
+            <b-icon :icon="iconnames.product" />
+            <b-icon :icon="iconnames. productsFailedActionResult" />
+            <!-- <b-icon :icon="iconnames.product" />
+            <b-icon :icon="iconnames.productsFailedActionResult" /> -->
+          </template>
           <!-- <template #head(actionResult_failed)="data">
             <small> <b>{{ data.label }} </b> </small>
             <ButtonBTNRowLinkTo
               title="Show failed products"
-              icon="grid"
+              :icon="iconname.product"
               to="/clients/products"
               sortby="actionResult"
               ident="dummyid"
@@ -54,7 +65,7 @@
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
-              icon="gear"
+              :icon="iconnames.settingsobject"
               to="/clients/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -62,7 +73,7 @@
             />
             <ButtonBTNRowLinkTo
               :title="$t('title.log')"
-              icon="file-earmark-text"
+              :icon="iconnames.log"
               to="/clients/log"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -76,7 +87,7 @@
               :title="row.detailsShowing ? 'Cancel' : 'Delete'"
               @click="row.toggleDetails"
             >
-              <b-icon :icon="row.detailsShowing ? 'x' : 'trash'" />
+              <b-icon :icon="row.detailsShowing ? iconnames.x : iconnames.delete" />
               <span class="sr-only">{{ row.detailsShowing ? 'Cancel' : 'Delete' }}</span>
             </b-button>
           </template>
@@ -84,7 +95,7 @@
             <b-card>
               {{ $t('message.deleteConfirm') }} <b>{{ row.item.ident }}</b> ?
               <b-button class="float-right" variant="danger" size="sm" @click="deleteOpsiClient(row.item.ident)">
-                <b-icon icon="trash" /> {{ $t('message.delete') }}
+                <b-icon :icon="iconnames.delete" /> {{ $t('message.delete') }}
               </b-button>
             </b-card>
           </template>
@@ -107,12 +118,15 @@
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
 }
 
-@Component export default class VClients extends Vue {
+@Component({ mixins: [Constants] })
+export default class VClients extends Vue {
+  iconnames: any
   $axios: any
   $mq: any
   $fetch:any

@@ -81,8 +81,8 @@
         }"
       >
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch||false" icon="diagram2" />
-          <b-icon v-else :icon="type === 'products' ? iconnames.product:iconnames.client" />
+          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" />
+          <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
           <small> {{ node.label }} </small>
         </div>
       </div>

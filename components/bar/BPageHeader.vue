@@ -1,8 +1,8 @@
 <template>
   <b-navbar class="BPageHeader_Navbar" data-testid="BarBPageHeader" :variant="variant">
     <span v-if="navbartype == 'collapse'">
-      <b-icon v-if="collapsed" icon="chevron-double-down" />
-      <b-icon v-else icon="chevron-double-right" />
+      <b-icon v-if="collapsed" :icon="iconnames.arrowDoubleDown" />
+      <b-icon v-else :icon="iconnames.arrowDoubleRight" />
     </span>
     <b v-if="title && bold">{{ title }}</b>
     <p v-else-if="title && !bold">
@@ -16,7 +16,7 @@
       <slot name="right" />
       <b-button v-if="closeroute" variant="transparent" :to="closeroute">
         <span class="sr-only">Close</span>
-        <b-icon icon="x" />
+        <b-icon :icon="iconnames.x" />
       </b-button>
     </b-navbar-nav>
   </b-navbar>
@@ -24,9 +24,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [Constants] })
 export default class BPageHeader extends Vue {
+  iconnames:any
   @Prop({ default: 'transparent' }) variant!: string;
   @Prop({ default: true }) bold!: boolean;
   @Prop({}) navbartype!: string;

@@ -34,10 +34,10 @@
         />
       </template>
       <template #head(installationStatus)>
-        <b-icon icon="box-seam" alt="installation status" />
+        <b-icon :icon="iconnames.productInstallationStatus" alt="installation status" />
       </template>
       <template #head(actionResult)>
-        <b-icon icon="hourglass-bottom" alt="action result" />
+        <b-icon :icon="iconnames.productActionResult" alt="action result" />
       </template>
       <template #cell(installationStatus)="row">
         <TableCellTCBadgeCompares
@@ -85,7 +85,7 @@
       <template #cell(rowactions)="row">
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
-          icon="gear"
+          :icon="iconnames.settingsobject"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
           :pressed="isRouteActive"
@@ -102,6 +102,7 @@ import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -109,8 +110,10 @@ interface IFetchOptions {
   fetchClients:boolean,
   fetchClients2Depots:boolean,
 }
-@Component
+
+@Component({ mixins: [Constants] })
 export default class TProductsLocalboot extends Vue {
+  iconnames: any
   $axios: any
   $nuxt: any
   $mq: any

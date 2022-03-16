@@ -53,7 +53,7 @@
                   size="sm"
                   @click="row.toggleDetails()"
                 >
-                  <b-icon-plus />
+                  <b-icon :icon="iconnames.add" />
                 </b-button>
               </template>
             </TableCellTCProductPropertyValue>
@@ -119,12 +119,14 @@ import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { arrayEqual } from '../../.utils/utils/scompares'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class TProductProperties extends Vue {
+  iconnames: any
   $axios: any
   $nuxt: any
   $mq: any

@@ -1,13 +1,4 @@
 <template>
-  <!-- <LazyTreeTSTreeselect
-    v-if="depotsList"
-    data-testid="TSDepots"
-    :searchable="false"
-    :options="depotsList"
-    :placeholder="'title.depots'"
-    icon="hdd-network"
-  /> -->
-  <!-- v-else-if="getType(obj.type)=='multiselect'" -->
   <div>
     <TreeTSDefault
       id="Depots"

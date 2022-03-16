@@ -5,14 +5,17 @@
     size="sm"
     variant="transparent"
   >
-    <b-icon-question-circle />
+    <b-icon :icon="iconnames.help" />
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-@Component
+import { Constants } from '../../mixins/uib-mixins'
+
+@Component({ mixins: [Constants] })
 export default class BTNHelp extends Vue {
+  iconnames: any
   @Prop({ }) id!: string
 }
 </script>

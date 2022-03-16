@@ -1,32 +1,61 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 
-console.log('MIXIN')
-const _iconnames = {
-  depot: 'server',
-  client: 'laptop',
-  product: 'grid',
-  changes: 'list-check',
-  support: 'headset',
-  settings: 'gear',
-  columns: 'grid3x3'
-}
-
+// const _icons = {
+//   depot: 'server',
+//   client: 'laptop',
+//   product: 'grid',
+//   changes: 'list-check',
+//   support: 'headset',
+//   settings: 'gear',
+//   settingsobject: 'gear',
+//   columns: 'grid3x3',
+//   arrowDownDouble: 'chevron-double-down'
+// }
 @Component
 export class Constants extends Vue {
-  iconnames: any = _iconnames
-  // get iconnames () {
-  //   return _iconnames
-  // }
+  // iconnames: any = _icons
+  iconnames: any = {
+    depot: 'server',
+    client: 'laptop',
+    // product: 'grid',
+    product: 'box-seam',
+    changes: 'list-check',
+    support: 'headset',
+    settings: 'gear',
+    settingsobject: 'gear',
+    menu: 'three-dots-vertical',
+    log: 'file-earmark-text',
+    columns: 'grid3x3',
+    x: 'x',
+    add: 'plus',
+    menuOpen: 'list',
+    delete: 'trash',
+    loading: 'three-dots',
+    save: 'check2',
+    arrowDoubleDown: 'chevron-double-down',
+    arrowDoubleLeft: 'chevron-double-left',
+    arrowDoubleRight: 'chevron-double-right',
+    arrowFillDown: 'caret-down-fill',
+    valueShow: 'eye-slash',
+    valueHide: 'eye',
+    productInstallationStatus: 'box-seam',
+    productInstallationStatusInstalled: 'laptop',
+    productInstallationStatusUnknown: 'question',
+    productActionResult: 'hourglass-bottom',
+    productActionResultSuccessful: 'check',
+    productActionResultFailed: 'x',
+    productsOutdated: 'cloud-arrow-down',
+    productsFailedActionResult: 'x-circle',
+    // productsFailedActionResult: 'exclamation-triangle',
+    group: 'diagram2',
+    // reset: 'arrow-counterclockwise',
+    reset: 'brush',
+    clear: 'brush',
+    usermodeExpert: 'star-fill',
+    usermodeNormal: 'star',
+    help: 'question-circle',
+    info: 'info-circle',
+    tablerowSelected: 'check2',
+    logout: 'power'
+  }
 }
-
-// import Vue from 'vue'
-
-// const mixin = {
-//   data: () => {
-//     return {
-//     }
-//   }
-// }
-
-// Vue.mixin(mixin)
-// mixin.ts

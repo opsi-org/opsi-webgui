@@ -1,13 +1,4 @@
 <template>
-  <!-- <LazyTreeTSTreeselect
-    v-if="depotsList"
-    data-testid="TSDepots"
-    :searchable="false"
-    :options="depotsList"
-    :placeholder="'title.depots'"
-    icon="hdd-network"
-  /> -->
-  <!-- v-else-if="getType(obj.type)=='multiselect'" -->
   <div>
     <TreeTSDefaultGroups
       id="ProductGroups"
@@ -19,26 +10,22 @@
       :validate-description="''"
       :selection-default="selectionProducts"
 
-      icon="grid"
+      :icon="iconnames.product"
       :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
       :fetch-data="fetchData"
       @change="changeSelection"
     />
-      <!-- :data="undefined"
-      :multi="true"
-      :editable="false"
-      :is-list="false"
-      :nested="true"
-      value-format="object" -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class TSProductGroups extends Vue {
+  iconnames: any // from mixin
   $axios: any
 
   @selections.Getter public selectionProducts!: Array<string>;

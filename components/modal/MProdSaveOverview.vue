@@ -1,6 +1,6 @@
 <template>
   <div data-testid="MProdSaveOverview">
-    <ButtonBTNOpenModal modal-id="ProductSaveModal" icon="list-check" :disabled="changelist.length == 0" />
+    <ButtonBTNOpenModal modal-id="ProductSaveModal" :icon="iconnames.changes" :disabled="changelist.length == 0" />
     <b-modal
       id="ProductSaveModal"
       size="xl"
@@ -12,7 +12,7 @@
       <template #modal-footer>
         <ButtonBTNDeleteAll hide="ProductSaveModal" />
         <b-button size="sm" variant="primary" @click="saveAll()">
-          <b-icon icon="check2" /> Save All
+          <b-icon :icon="iconnames.save" /> Save All
         </b-button>
       </template>
     </b-modal>
@@ -24,11 +24,13 @@ import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 // const auth = namespace('auth')
 const changes = namespace('changes')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class MProdSaveOverview extends Vue {
+  iconnames: any
   $axios: any
   // $t: any
   // $fetch: any

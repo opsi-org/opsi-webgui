@@ -11,8 +11,8 @@
       <b-input-group>
         <b-button :pressed.sync="showValue" size="sm" variant="transparent">
           <span class="sr-only">{{ showValue? 'Hide opsiHostKey': 'Show opsiHostKey' }}</span>
-          <b-icon v-if="showValue" icon="eye-slash" />
-          <b-icon v-else icon="eye" />
+          <b-icon v-if="showValue" :icon="iconnames.valueShow" />
+          <b-icon v-else :icon="iconnames.valueHide" />
         </b-button>
         <label for="opsiHostKey" class="sr-only">  {{ row.field.label }} </label>
         <b-form-input id="opsiHostKey" v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
@@ -59,9 +59,11 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [Constants] })
 export default class THostAttributes extends Vue {
+  iconnames: any
   $axios: any
   $t: any
   $fetch: any

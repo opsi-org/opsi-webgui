@@ -12,7 +12,7 @@
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button :pressed.sync="attributes.visible">
             <span class="sr-only">Open sidemenu</span>
-            <b-icon icon="list" />
+            <b-icon :icon="iconnames.menuOpen" />
           </b-button>
         </b-navbar-nav>
         <b-navbar-brand href="/addons/webgui/app/clients" class="topbar_brand">
@@ -27,7 +27,7 @@
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
             <span class="sr-only">Open topmenu</span>
-            <b-icon-three-dots-vertical font-scale="1.1" />
+            <b-icon :icon="iconnames.menu" font-scale="1.1" />
           </b-button>
         </b-navbar-nav>
         <b-collapse id="nav-collapse" is-nav variant="primary">
@@ -47,12 +47,14 @@
 <script lang="ts">
 import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
+import { Constants } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class BTop extends Vue {
   $mq:any
   $config:any
+  iconnames:any
 
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
   @settings.Getter public expert!: boolean
