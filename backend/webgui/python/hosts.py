@@ -115,8 +115,6 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 	"""
 	allowed = get_allowed_objects()
 
-	logger.devel(selectedClients)
-
 	params = {}
 	if selectedDepots == [] or selectedDepots is None:
 		params["depots"] = [get_configserver_id()]
