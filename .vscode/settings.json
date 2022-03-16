@@ -8,10 +8,16 @@
   // },
   "js/ts.implicitProjectConfig.experimentalDecorators": true,
 
-  "i18n-ally.localesPaths": ["/workspace/opsiweb/uib-components/locale", "/Workspace/opsiweb/locale"],
+  "i18n-ally.localesPaths": [
+    "/workspace/opsiweb/uib-components/locale",
+    "opsiweb/locale",
+    "opsiweb/uib-components/locale"
+  ],
   "i18n-ally.keystyle": "flat",
   "i18n-ally.sourceLanguage": "de",
-  "i18n-ally.enabledParsers": ["json" ],
+  "i18n-ally.enabledParsers": ["json"],
+  "i18n-ally.autoDetection": true,
+  "i18n-ally.extract.autoDetect": true,
   // "packageManager": "npm",
   "eslint.onIgnoredFiles": "warn",
   // // "eslint.workingDirectories": [
