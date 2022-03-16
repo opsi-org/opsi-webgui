@@ -11,6 +11,7 @@
   --margin-left-maincontent-if-sidebar-expanded:205px;
   --color-hover: 155, 155, 155, .1;
   --min-height-button: 31px;
+  --min-line-height: 12px;
 }
 
 [class$="bg-orange"] { background-color: var(--orange) !important;}

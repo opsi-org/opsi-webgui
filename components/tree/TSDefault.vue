@@ -1,5 +1,5 @@
 <template>
-  <div class="form-inline TSDefault-wrapper" style="margin-right: 30px">
+  <div class="form-inline TSDefault-wrapper">
     <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
     <ModalMSelections
       :type="type"
@@ -377,6 +377,7 @@ export default class TSDefault extends Vue {
   /* border: 1px solid green; */
   padding-left: 10px;
   padding-right: 15px;
+  margin-right: 10px;
 }
 .TSDefault-wrapper .treeselect .BTNClearSelection{
   width: 100% !important;
@@ -437,9 +438,5 @@ export default class TSDefault extends Vue {
 /* .TSDefault-wrapper .selection_badge {
   margin-top: 20px;
 } */
-
-.TSDefault-wrapper [class^="selected-"] .vue-treeselect__checkbox{
-  background-color: blue;
-}
 
 </style>

@@ -35,6 +35,7 @@
           :id="row.field.label"
           v-model="row.value"
           :aria-label="row.value"
+          type="text"
           class="forminput"
           size="sm"
           readonly

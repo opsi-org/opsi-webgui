@@ -90,7 +90,7 @@ const cache = namespace('data-cache')
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
   mounted () {
-    if (this.$mq === 'desktop') {
+    if (this.$mq === 'desktop' && this.selectionDepots.length === 1 && this.selectionDepots[0] === this.opsiconfigserver) {
       this.routeRedirectWith('/depots/config', this.opsiconfigserver)
     }
   }

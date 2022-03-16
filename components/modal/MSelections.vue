@@ -33,6 +33,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 </script>
 <style>
 .selection_badge {
-  margin-top: 18px;
+  margin-top: var(--min-line-height);
+  line-height: 1.5 !important;
 }
 </style>
