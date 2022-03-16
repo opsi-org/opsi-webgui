@@ -134,7 +134,8 @@ interface DeleteClient {
     perPage: 15,
     sortBy: 'clientId',
     sortDesc: false,
-    filterQuery: ''
+    filterQuery: '',
+    selected: ''
   }
 
   headerData: ITableHeaders = {
