@@ -95,3 +95,22 @@ def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 				group["allowed"] = True
 
 	return group
+
+def merge_dicts(dict_a: dict, dict_b: dict, path=None) -> dict:
+	if dict_a is None or dict_b is None:
+		raise ValueError("Merge_dicts: At least one of the dicts (a and b) is not set.")
+	if path is None:
+		path = []
+	for key in dict_b:
+		if key in dict_a:
+			if isinstance(dict_a[key], dict) and isinstance(dict_b[key], dict):
+				merge_dicts(dict_a[key], dict_b[key], path + [str(key)])
+			elif isinstance(dict_a[key], list) and isinstance(dict_b[key], list):
+				dict_a[key] = list(set(dict_a[key] + dict_b[key]))
+			elif dict_a[key] == dict_b[key]:
+				pass
+			else:
+				raise Exception(f"Conflict at { '.'.join(path + [str(key)])}")
+		else:
+			dict_a[key] = dict_b[key]
+	return dict_a

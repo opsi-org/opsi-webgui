@@ -26,15 +26,16 @@ from opsiconfd.rest import OpsiApiException, order_by, pagination, common_query_
 from opsiconfd.application.utils import (
 	get_configserver_id,
 	bool_product_property,
-	unicode_product_property,
-	merge_dicts
+	unicode_product_property
+	
 )
 
 from .utils import (
 	get_depot_of_client,
 	parse_depot_list,
 	parse_client_list,
-	parse_selected_list
+	parse_selected_list,
+	merge_dicts
 )
 from .utils import mysql
 
