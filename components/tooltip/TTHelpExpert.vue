@@ -1,23 +1,13 @@
 <template>
   <div data-testid="TTHelpExpert">
     <b-tooltip :target="target" variant="light">
-      <b> {{ $t('settingsPage.mode') }} </b>
-      <b-row class="text-left">
-        <b-col>
-          {{ $t('userinfo.normal') }}:
-        </b-col>
-        <b-col>
-          {{ $t('userinfo.normal_desc') }}
-        </b-col>
-      </b-row>
-      <b-row class="text-left">
-        <b-col>
-          {{ $t('userinfo.expert') }}:
-        </b-col>
-        <b-col>
-          {{ $t('userinfo.expert_desc') }}
-        </b-col>
-      </b-row>
+      <!-- stacked -->
+      <b-table
+        id="TTHelpExpertDetails"
+        borderless
+        responsive="md"
+        :items="tooltiptext"
+      />
     </b-tooltip>
   </div>
 </template>
@@ -27,8 +17,24 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class TTHelpExpert extends Vue {
-   @Prop({ }) target!: string
+  @Prop({ }) target!: string
+
+  get tooltiptext () {
+    return [
+      // stacked:
+      // { [this.$t('settingsPage.mode') as string]: '', [this.$t('userinfo.normal') as string]: this.$t('userinfo.normal_desc'), [this.$t('userinfo.expert') as string]: this.$t('userinfo.expert_desc') }
+
+      // { [this.$t('settingsPage.mode') as string]: this.$t('userinfo.normal'), ' ': this.$t('userinfo.normal_desc') },
+      // { [this.$t('settingsPage.mode') as string]: this.$t('userinfo.expert'), ' ': this.$t('userinfo.expert_desc') }
+
+      { '  ': this.$t('userinfo.normal'), ' ': this.$t('userinfo.normal_desc') },
+      { '  ': this.$t('userinfo.expert'), ' ': this.$t('userinfo.expert_desc') }
+    ]
+  }
 }
 </script>
 <style>
+#TTHelpExpertDetails {
+  max-width: 500px !important;
+}
 </style>
