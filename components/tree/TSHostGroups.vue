@@ -91,7 +91,7 @@ export default class TSHostGroups extends Vue {
         isDefaultExpanded: false,
         type: 'HostGroup',
         isDisabled: false,
-        children: clientlist
+        children: null
       }
     ]
   }
