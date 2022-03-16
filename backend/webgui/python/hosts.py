@@ -181,7 +181,7 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 			result = session.execute(query, params)
 			result = result.fetchall()
 
-			all_groups = read_groups(result, root_group, bool(selectedClients))
+			all_groups = read_groups(result, root_group, selectedClients)
 
 		elif parentGroup == "root":
 			all_groups = {
@@ -211,7 +211,7 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 			result = session.execute(query, params)
 			result = result.fetchall()
 
-			all_groups = read_groups(result, root_group, bool(selectedClients))
+			all_groups = read_groups(result, root_group, selectedClients)
 
 		if selectedClients:
 			params = {}
@@ -264,6 +264,8 @@ def find_parent(group):
 		return parent_id
 
 def read_groups(raw_groups, root_group, selectedClients):
+	if not isinstance(selectedClients, list):
+		selectedClients = []
 	all_groups = {}
 	for row in raw_groups:
 		if not row["group_id"] in all_groups:
