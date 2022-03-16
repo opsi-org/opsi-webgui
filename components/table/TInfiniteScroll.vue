@@ -91,6 +91,7 @@ export default class TInfiniteScroll extends Vue {
   mounted () {
     // this.$nextTick(() => {
     const tableScrollBody = (this.$refs[this.id] as any).$el
+    // const tableScrollBody = (this.$root.$children[2].$refs.LayoutDefaultContent as any)
     tableScrollBody.addEventListener('scroll', this.onScroll)
     // })
   }

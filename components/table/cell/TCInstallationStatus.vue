@@ -3,7 +3,7 @@
     &#8800;
   </b-badge>
   <b-badge v-else-if="text=='installed'" variant="success">
-    <b-icon icon="laptop" alt="installed" title="installed" />
+    <b-icon :icon="iconnames.client" alt="installed" title="installed" />
   </b-badge>
   <b-badge v-else-if="text=='unknown'" variant="warning" text-variant="dark">
     <b-icon icon="question" alt="unknown" />
@@ -19,9 +19,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [Constants] })
 export default class TCSpan extends Vue {
+  iconnames: any // from mixin
+  $mq:any
+
   @Prop({ }) text!: string
 }
 </script>

@@ -82,7 +82,7 @@
       >
         <div :ref="'tree-item-'+node.id">
           <b-icon v-if="node.isBranch||false" icon="diagram2" />
-          <b-icon v-else :icon="type === 'products' ? 'grid-fill':'laptop'" />
+          <b-icon v-else :icon="type === 'products' ? iconnames.product:iconnames.client" />
           <small> {{ node.label }} </small>
         </div>
       </div>
@@ -91,8 +91,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { filterObject } from '../../.utils/utils/sfilters'
+import { Constants } from '../../mixins/uib-mixins'
 
 interface Group {
   id: string
@@ -110,8 +111,10 @@ interface StoreSelection {
   delSelection: Function
 }
 
-@Component
+@Component({ mixins: [Constants] })
+// export default class TSDefault extends mixins(Constants) {
 export default class TSDefault extends Vue {
+  iconnames: any // from mixin
   node: any
   $axios: any
   $fetch: any
@@ -147,8 +150,6 @@ export default class TSDefault extends Vue {
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched
-  // async requestData () {
-  //   }
 
   get selectedListAsClass () {
     if (this.store && this.store.selection) {

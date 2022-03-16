@@ -40,8 +40,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, namespace } from 'nuxt-property-decorator'
+import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
@@ -53,60 +54,67 @@ interface IMenuItem {
   menu?: Array<IMenuItem>
 }
 
-@Component
+@Component({ mixins: [Constants] })
 export default class NSidebar extends Vue {
+  iconnames: any // from mixin
   @Prop({ }) expanded!: boolean
 
   @settings.Getter public expert!: boolean;
   @changes.Getter public changesProducts!: Array<ChangeObj>;
 
+  created () {
+    console.log('constants: ', this.iconnames)
+  }
+
   get username () {
     return localStorage.getItem('username')
   }
 
-  navItems : Array<IMenuItem> = [
-    // {
-    //   title: 'title.overview',
-    //   menu: [
-    //     // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-    //   ]
-    // },
-    {
-      title: 'title.manage',
-      menu: [
-        {
-          title: 'title.depots',
-          route: '/depots/',
-          icon: 'hdd-network',
-          submenu: [
-            { title: 'title.allDepots', route: '/depots' },
-            { title: 'title.config', route: '/depotsconfig' }
-          ]
-        },
-        {
-          title: 'title.clients',
-          route: '/clients/',
-          icon: 'laptop',
-          submenu: [
-            { title: 'title.allClients', route: '/clients/' },
-            { title: 'title.addNew', route: '/clientsaddnew' },
-            { title: 'title.config', route: '/clientsconfig' },
-            { title: 'title.log', route: '/clientslog' }
-          ]
-        },
-        { title: 'title.products', icon: 'grid', route: '/products/' },
-        { title: 'Track Changes', icon: 'list-check', route: '/changes/' }
-      ]
-    },
-    {
-      title: 'title.configure',
-      menu: [
-        { title: 'title.support', icon: 'headset', route: '/support' },
-        { title: 'title.settings', icon: 'gear', route: '/settings' }
-        // { title: 'Index page', icon: 'collection-fill', route: '/' }
-      ]
-    }
-  ]
+  get navItems (): Array<IMenuItem> {
+    return [
+      // {
+      //   title: 'title.overview',
+      //   menu: [
+      //     // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
+      //   ]
+      // },
+      {
+        title: 'title.manage',
+        menu: [
+          {
+            title: 'title.depots',
+            route: '/depots/',
+            icon: this.iconnames.depot,
+            submenu: [
+              { title: 'title.allDepots', route: '/depots' },
+              { title: 'title.config', route: '/depotsconfig' }
+            ]
+          },
+          {
+            title: 'title.clients',
+            route: '/clients/',
+            icon: this.iconnames.client,
+            submenu: [
+              { title: 'title.allClients', route: '/clients/' },
+              { title: 'title.addNew', route: '/clientsaddnew' },
+              { title: 'title.config', route: '/clientsconfig' },
+              { title: 'title.log', route: '/clientslog' }
+            ]
+          },
+          { title: 'title.products', icon: this.iconnames.product, route: '/products/' },
+          { title: 'Track Changes', icon: this.iconnames.changes, route: '/changes/' }
+        ]
+      },
+      {
+        title: 'title.configure',
+        menu: [
+          { title: 'title.support', icon: this.iconnames.support, route: '/support' },
+          { title: 'title.settings', icon: this.iconnames.settings, route: '/settings' }
+          // { title: 'Index page', icon: 'collection-fill', route: '/' }
+        ]
+      }
+    ]
+  }
 }
 </script>
 
