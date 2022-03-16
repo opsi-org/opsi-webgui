@@ -170,7 +170,7 @@ export default class TInfiniteScroll extends Vue {
     }
   }
 
-  async clearSelected () {
+  clearSelected () {
     this.setselection([])
     if (this.rowident === 'depotId') {
       this.setselection([this.opsiconfigserver])
