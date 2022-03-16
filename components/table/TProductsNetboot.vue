@@ -136,14 +136,13 @@ export default class TProductsNetboot extends Vue {
     type: 'NetbootProduct',
     pageNumber: 1,
     perPage: 15,
-    selected: [],
     sortBy: this.sortby ? this.sortby : 'productId',
     sortDesc: false,
     filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
+    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
     ident: { label: '', key: 'ident', visible: true, _fixed: true },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
     actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: true },
@@ -235,10 +234,10 @@ export default class TProductsNetboot extends Vue {
       this.tableData.selectedClients = JSON.stringify(this.selectionClients)
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-      if (this.tableData.sortBy === 'sel') {
+      if (this.tableData.sortBy === 'selected') {
         this.tableData.sortDesc = true
         this.tableData.sortBy = 'selected'
-        this.tableData.selected = this.selectionProducts
+        this.tableData.selected = JSON.stringify(this.selectionProducts)
       }
 
       const params = this.tableData
