@@ -115,6 +115,8 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 	"""
 	allowed = get_allowed_objects()
 
+	logger.devel(selectedClients)
+
 	params = {}
 	if selectedDepots == [] or selectedDepots is None:
 		params["depots"] = [get_configserver_id()]
@@ -181,7 +183,7 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 			result = session.execute(query, params)
 			result = result.fetchall()
 
-			all_groups = read_groups(result, root_group, selectedClients)
+			all_groups = read_groups(result, root_group, bool(selectedClients))
 
 		elif parentGroup == "root":
 			all_groups = {
@@ -211,9 +213,9 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 			result = session.execute(query, params)
 			result = result.fetchall()
 
-			all_groups = read_groups(result, root_group, selectedClients)
+			all_groups = read_groups(result, root_group, bool(selectedClients))
 
-		if selectedClients is not None:
+		if selectedClients:
 			params = {}
 			for idx, client in enumerate(selectedClients):
 				if idx > 0:
