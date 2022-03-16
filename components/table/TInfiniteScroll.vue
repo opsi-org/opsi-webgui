@@ -50,7 +50,17 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <span v-if="items.length>0" class="tablefooter">Showing Page {{ tableData.pageNumber }} / {{ totalpages }}</span>
+    <div class="inline">
+      <span v-if="items.length>0" class="tablefooter">Showing Page {{ tableData.pageNumber }} / {{ totalpages }}</span>
+      <template v-if="totalpages > 1">
+        <b-button size="sm" variant="outline-primary" @click="previousPage">
+          Prev
+        </b-button>
+        <b-button size="sm" variant="outline-primary" @click="nextPage">
+          Next
+        </b-button>
+      </template>
+    </div>
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
@@ -98,6 +108,26 @@ export default class TInfiniteScroll extends Vue {
   beforeDestroy () {
     const tableScrollBody = (this.$refs[this.id] as any).$el
     tableScrollBody.removeEventListener('scroll', this.onScroll)
+  }
+
+  previousPage () {
+    if (!this.isLoading) {
+      if (this.tableData.pageNumber === 1) {
+        return
+      }
+      this.tableData.pageNumber--
+      this.fetchitems()
+    }
+  }
+
+  nextPage () {
+    if (!this.isLoading) {
+      if (this.tableData.pageNumber === this.totalpages) {
+        return
+      }
+      this.tableData.pageNumber++
+      this.fetchitems()
+    }
   }
 
   onScroll (event) {
