@@ -15,10 +15,13 @@
           </template>
           <template #right>
             <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
-            <ModalMProdSaveOverview
+            <b-button v-if="changesProducts.filter((o) => o.user === username).length != 0" class="changeslink border" variant="link" to="/changes/">
+              Track Changes
+            </b-button>
+            <!-- <ModalMProdSaveOverview
               v-if="expert && changesProducts"
               :changelist="changesProducts.filter((o) => o.user === username)"
-            />
+            /> -->
           </template>
         </BarBPageHeader>
         <b-tabs class="products_horizontaltabs">
@@ -111,5 +114,9 @@ export default class VProducts extends Vue {
 <style>
 .products_horizontaltabs .nav-item{
   min-width: min-content;
+}
+.changeslink.btn-link {
+  font-weight: bold;
+  color: green;
 }
 </style>
