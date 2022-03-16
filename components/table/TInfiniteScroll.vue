@@ -32,14 +32,14 @@
       <template #head()="data">
         <small> <b>{{ data.label }} </b> </small>
       </template>
-      <template #head(sel)="{}">
+      <template #head(selcted)="{}">
         <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" :clearselection="clearSelected" />
       </template>
       <template #head(rowactions)="{}">
         <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />
       </template>
-      <template #cell(sel)="row">
+      <template #cell(selected)="row">
         <b-icon-check2 v-if="selection.includes(row.item[rowident])" />
         {{ fixRow(row) }}
       </template>
