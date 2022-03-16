@@ -24,8 +24,8 @@
         </template>
         <template v-else>
           <template v-if="menuitem.title == 'Track Changes'">
-            <b-nav-item v-if="expert && changesProducts.length!==0" variant="success" :to="menuitem.route" class="NItem-nav-item">
-              <b-icon v-b-tooltip.hover variant="success" :title="$t(menuitem.title)" class="" :icon="menuitem.icon" />
+            <b-nav-item v-if="expert || changesProducts.filter((o) => o.user === username).length!==0" :to="menuitem.route">
+              <b-icon v-b-tooltip.hover :title="$t(menuitem.title)" :icon="menuitem.icon" />
               <span v-if="expanded">
                 {{ $t(menuitem.title) }}
               </span>
@@ -59,6 +59,10 @@ export default class NSidebar extends Vue {
 
   @settings.Getter public expert!: boolean;
   @changes.Getter public changesProducts!: Array<ChangeObj>;
+
+  get username () {
+    return localStorage.getItem('username')
+  }
 
   navItems : Array<IMenuItem> = [
     // {
