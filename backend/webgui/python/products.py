@@ -733,10 +733,7 @@ def product_properties(
 					del property["editable"]
 					del property["values"]
 					property["allValues"] = list(property.get("allValues"))
-					logger.devel(property)
-					logger.devel(data.get("properties",{}).get(property["propertyId"],{}))
-					# logger.devel(data["properties"][property["propertyId"]])
-					data["properties"][property["propertyId"]] = merge_dicts(property, data.get("properties",{}).get(property["propertyId"],{}))
+					data["properties"][property["propertyId"]] = merge_dicts(property, data["properties"][property["propertyId"]])
 
 			data["productVersions"] = {}
 			data["productDescriptionDetails"] = {}
