@@ -83,7 +83,8 @@
         <div :ref="'tree-item-'+node.id">
           <b-icon v-if="node.isBranch||false" :icon="iconnames.group" />
           <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
-          <small> {{ node.label }} </small>
+          <small v-if="type=='depots' && node.label===opsiconfigserver"> <b> {{ node.label }} </b></small>
+          <small v-else> {{ node.label }} </small>
         </div>
       </div>
     </TreeTSDefaultWithAdding>
@@ -91,9 +92,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { filterObject } from '../../.utils/utils/sfilters'
 import { Constants } from '../../mixins/uib-mixins'
+
+const cache = namespace('data-cache')
 
 interface Group {
   id: string
@@ -150,6 +153,8 @@ export default class TSDefault extends Vue {
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched
+
+  @cache.Getter public opsiconfigserver!: Array<string>;
 
   get selectedListAsClass () {
     if (this.store && this.store.selection) {
