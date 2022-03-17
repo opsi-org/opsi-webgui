@@ -339,9 +339,9 @@ export default class TSDefault extends Vue {
   }
 
   deselectDefault (deselection: any, isObject = false) {
-    console.log('TSDefault deselect')
+    console.log('TSDefault deselect ', deselection, this.selection)
     if (this.selection.includes(deselection.text) || this.selection.includes(deselection)) {
-      if (isObject) {
+      if (isObject || this.selection.includes(deselection.text)) {
         this.selection.splice(this.selection.indexOf(deselection.text), 1) // deleting
       } else {
         this.selection.splice(this.selection.indexOf(deselection), 1) // deleting
