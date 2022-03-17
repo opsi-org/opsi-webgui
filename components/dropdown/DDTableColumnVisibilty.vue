@@ -1,7 +1,7 @@
 <template>
   <b-dropdown
     v-bind="$props"
-    data-testid="DropdownDDProductRequest"
+    data-testid="DropdownDDTableColumnVisibilty"
     no-caret
     lazy
     dropleft

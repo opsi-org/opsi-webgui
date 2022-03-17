@@ -8,14 +8,17 @@
     @click="clearselection"
   >
     <span class="sr-only">Clear selection</span>
-    <b-icon-brush variant="primary" /> <span>{{ label }} </span>
+    <b-icon :icon="iconnames.clear" variant="primary" /> <span>{{ label }} </span>
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-@Component
+import { Constants } from '../../mixins/uib-mixins'
+
+@Component({ mixins: [Constants] })
 export default class BTNDeleteAll extends Vue {
+  iconnames:any
   @Prop({}) label?: string;
   @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
 }

@@ -1,15 +1,18 @@
 <template>
   <b-button data-testid="ButtonBTNDeleteObj" size="sm" variant="light" @click="deleteChanges()">
     <span class="sr-only">Delete</span>
-    <b-icon icon="trash" />
+    <b-icon :icon="iconnames.delete" />
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 const changes = namespace('changes')
-@Component
+
+@Component({ mixins: [Constants] })
 export default class BTNDeleteObj extends Vue {
+  iconnames: any
   @Prop({ }) item!: object
   // @Prop({ }) hide!: string
   @Prop({ }) from!: string

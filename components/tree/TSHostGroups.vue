@@ -10,7 +10,7 @@
       :validate="() => true"
       :validate-description="''"
       :selection-default="selectionClients"
-      icon="laptop"
+      :icon="iconnames.client"
       :fetch-data="fetchHostGroupsData"
       :fetch-children="fetchChildren"
       @change="changeSelection"
@@ -26,11 +26,14 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
+
 const selections = namespace('selections')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class TSHostGroups extends Vue {
+  iconnames: any // from mixin
   $axios: any
 
   @selections.Getter public selectionClients!: Array<string>;
@@ -42,6 +45,10 @@ export default class TSHostGroups extends Vue {
   @Watch('selectionDefault', { deep: true }) selectionChanged () {
     this.setSelectionClients(this.selectionClients)
   }
+
+  // getIconnames () {
+  //   return icons.iconnames
+  // }
 
   async asyncForEach (array, callback) {
     for (let index = 0; index < array.length; index++) {

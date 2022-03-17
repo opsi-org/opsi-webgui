@@ -6,18 +6,20 @@
     class="btn_logout text-left"
     @click="doLogout"
   >
-    <b-icon-power />
+    <b-icon :icon="iconnames.logout" />
     {{ $t('button.logout') }}
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue, namespace } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 const auth = namespace('auth')
 const selections = namespace('selections')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class BTNLogout extends Vue {
+  iconnames: any
   @Prop({ default: false }) abortClick!: boolean
   @auth.Mutation public logout!: () => void
   @auth.Mutation public clearSession!: () => void

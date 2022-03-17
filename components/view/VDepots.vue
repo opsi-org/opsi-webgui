@@ -31,7 +31,7 @@
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
-              icon="gear"
+              :icon="iconnames.settingsobject"
               to="/depots/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -50,10 +50,13 @@
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
-@Component export default class VDepots extends Vue {
+@Component({ mixins: [Constants] })
+export default class VDepots extends Vue {
+  iconnames: any
   $axios: any
   $fetch: any
   $mq: any
@@ -68,14 +71,13 @@ const cache = namespace('data-cache')
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 15,
-    selected: [],
     sortBy: 'depotId',
     sortDesc: false,
     filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
+    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
     depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
@@ -97,10 +99,10 @@ const cache = namespace('data-cache')
 
   async fetch () {
     this.isLoading = true
-    if (this.tableData.sortBy === 'sel') {
+    if (this.tableData.sortBy === 'selected') {
       this.tableData.sortDesc = true
       this.tableData.sortBy = 'selected'
-      this.tableData.selected = this.selectionDepots
+      this.tableData.selected = JSON.stringify(this.selectionDepots)
     }
     const params = this.tableData
     await this.$axios.get('/api/opsidata/depots', { params })

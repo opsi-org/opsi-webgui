@@ -33,10 +33,10 @@
         />
       </template>
       <template #head(installationStatus)>
-        <b-icon icon="box-seam" alt="installation status" />
+        <b-icon :icon="iconnames.productInstallationStatus" alt="installation status" />
       </template>
       <template #head(actionResult)>
-        <b-icon icon="hourglass-bottom" alt="action result" />
+        <b-icon :icon="iconnames.productActionResult" alt="action result" />
       </template>
       <template #cell(installationStatus)="row">
         <TableCellTCBadgeCompares
@@ -84,7 +84,7 @@
       <template #cell(rowactions)="row">
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
-          icon="gear"
+          :icon="iconnames.settingsobject"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
           :pressed="isRouteActive"
@@ -101,6 +101,7 @@ import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -109,8 +110,9 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component
+@Component({ mixins: [Constants] })
 export default class TProductsNetboot extends Vue {
+  iconnames: any
   $axios: any
   $nuxt: any
   $fetch: any
@@ -136,14 +138,13 @@ export default class TProductsNetboot extends Vue {
     type: 'NetbootProduct',
     pageNumber: 1,
     perPage: 15,
-    selected: [],
     sortBy: this.sortby ? this.sortby : 'productId',
     sortDesc: false,
     filterQuery: ''
   }
 
   headerData: ITableHeaders = {
-    sel: { label: '', key: 'sel', visible: true, _fixed: true, sortable: true },
+    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
     ident: { label: '', key: 'ident', visible: true, _fixed: true },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
     actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: true },
@@ -235,10 +236,10 @@ export default class TProductsNetboot extends Vue {
       this.tableData.selectedClients = JSON.stringify(this.selectionClients)
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_versoin_outdated' }
-      if (this.tableData.sortBy === 'sel') {
+      if (this.tableData.sortBy === 'selected') {
         this.tableData.sortDesc = true
         this.tableData.sortBy = 'selected'
-        this.tableData.selected = this.selectionProducts
+        this.tableData.selected = JSON.stringify(this.selectionProducts)
       }
 
       const params = this.tableData

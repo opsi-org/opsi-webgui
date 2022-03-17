@@ -27,6 +27,7 @@ interface SideBarAttr {
 
 @Component
 export default class LayoutDefault extends Vue {
+  $mq: any
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
   @settings.Getter public colortheme!: any
 
@@ -74,7 +75,7 @@ export default class LayoutDefault extends Vue {
   position:absolute;
   margin-top: var(--margin-top-maincontent);
   margin-left: var(--margin-left-maincontent);
-  overflow: auto;
+  overflow: hidden;
   width: calc(100% - 2 * var(--margin-left-maincontent));
   height: calc(100% - var(--margin-top-maincontent));
 }

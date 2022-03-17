@@ -38,15 +38,15 @@
       <template #head()="data">
         <small> <b>{{ data.label }} </b> </small>
       </template>
-      <template #head(sel)="{}">
+      <template #head(selected)>
         <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" :clearselection="clearSelected" />
       </template>
-      <template #head(rowactions)="{}">
+      <template #head(rowactions)>
         <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />
       </template>
-      <template #cell(sel)="row">
-        <b-icon-check2 v-if="selection.includes(row.item[rowident])" />
+      <template #cell(selected)="row">
+        <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" />
         {{ fixRow(row) }}
       </template>
       <template
@@ -77,9 +77,12 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
+import { Constants } from '../../mixins/uib-mixins'
 const cache = namespace('data-cache')
-@Component
+
+@Component({ mixins: [Constants] })
 export default class TInfiniteScroll extends Vue {
+  iconnames: any
   $axios: any
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
@@ -110,6 +113,7 @@ export default class TInfiniteScroll extends Vue {
   mounted () {
     // this.$nextTick(() => {
     const tableScrollBody = (this.$refs[this.id] as any).$el
+    // const tableScrollBody = (this.$root.$children[2].$refs.LayoutDefaultContent as any)
     tableScrollBody.addEventListener('scroll', this.onScroll)
     // })
   }

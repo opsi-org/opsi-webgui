@@ -33,7 +33,6 @@
         {{ selection.length }}/{{ totalrows }}
       </template>
       <template #cell(sel)="row">
-        <!-- <b-icon-check v-if="row.rowSelected || selection.includes(row.item[datakey])" /> -->
         {{ fixRow(row) }}
       </template>
 

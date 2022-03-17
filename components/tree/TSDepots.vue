@@ -1,13 +1,4 @@
 <template>
-  <!-- <LazyTreeTSTreeselect
-    v-if="depotsList"
-    data-testid="TSDepots"
-    :searchable="false"
-    :options="depotsList"
-    :placeholder="'title.depots'"
-    icon="hdd-network"
-  /> -->
-  <!-- v-else-if="getType(obj.type)=='multiselect'" -->
   <div>
     <TreeTSDefault
       id="Depots"
@@ -23,7 +14,7 @@
       :selection-default="selectionDepots"
       :editable="false"
       :is-list="true"
-      icon="hdd-network"
+      :icon="iconnames.depot"
       :fetch-data="fetchDepotData"
       @change="changeSelection"
     />
@@ -32,12 +23,13 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class TSDepots extends Vue {
+  iconnames: any // from mixin
   $axios: any
-
   @selections.Getter public selectionDepots!: Array<string>;
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void;
 
@@ -52,7 +44,6 @@ export default class TSDepots extends Vue {
     if (selection.length > 0) {
       this.setSelectionDepots([...selection])
     } else {
-      // const opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
       this.setSelectionDepots([])
     }
   }

@@ -20,7 +20,7 @@
       :clearable="clearable"
       :multiple="multi"
       :options="options"
-      :open-on-focus="true"
+      :open-on-focus="false"
       :branch-nodes-first="true"
       :max-height="400"
       :always-open="false"
@@ -81,8 +81,8 @@
         }"
       >
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch||false" icon="diagram2" />
-          <b-icon v-else :icon="type === 'products' ? 'grid-fill':'laptop'" />
+          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" />
+          <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
           <small> {{ node.label }} </small>
         </div>
       </div>
@@ -91,8 +91,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { filterObject } from '../../.utils/utils/sfilters'
+import { Constants } from '../../mixins/uib-mixins'
 
 interface Group {
   id: string
@@ -110,8 +111,10 @@ interface StoreSelection {
   delSelection: Function
 }
 
-@Component
+@Component({ mixins: [Constants] })
+// export default class TSDefault extends mixins(Constants) {
 export default class TSDefault extends Vue {
+  iconnames: any // from mixin
   node: any
   $axios: any
   $fetch: any
@@ -147,8 +150,6 @@ export default class TSDefault extends Vue {
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched
-  // async requestData () {
-  //   }
 
   get selectedListAsClass () {
     if (this.store && this.store.selection) {
@@ -338,9 +339,9 @@ export default class TSDefault extends Vue {
   }
 
   deselectDefault (deselection: any, isObject = false) {
-    console.log('TSDefault deselect')
+    console.log('TSDefault deselect ', deselection, this.selection)
     if (this.selection.includes(deselection.text) || this.selection.includes(deselection)) {
-      if (isObject) {
+      if (isObject || this.selection.includes(deselection.text)) {
         this.selection.splice(this.selection.indexOf(deselection.text), 1) // deleting
       } else {
         this.selection.splice(this.selection.indexOf(deselection), 1) // deleting

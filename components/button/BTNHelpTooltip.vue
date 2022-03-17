@@ -6,7 +6,7 @@
       variant="transparent"
       size="sm"
     >
-      <b-icon-question-circle />
+      <b-icon :icon="iconnames.help" />
     </b-button>
     <TooltipTTTooltip variant="info" :target="id" :triggers="triggers" :tooltip="tooltip" />
   </div>
@@ -14,8 +14,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-@Component
+import { Constants } from '../../mixins/uib-mixins'
+
+@Component({ mixins: [Constants] })
 export default class BTNHelpTooltip extends Vue {
+  iconnames: any
   @Prop({ }) id!: string
   @Prop({ }) tooltip!: string
   @Prop({ default: 'hover' }) triggers!: string

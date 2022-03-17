@@ -5,7 +5,7 @@
       <div v-for="changes, k in groupedById" :key="changes.productId">
         <b-button v-b-toggle="k" block class="m-1 text-left" variant="light">
           <small><b>{{ k }}</b></small>
-          <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
+          <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
         </b-button>
         <b-collapse :id="k" :visible="filter === '' ? false : true">
           <TableTBVTable
@@ -24,7 +24,7 @@
               <ButtonBTNDeleteObj :item="row.item" from="products" />
               <b-button size="sm" variant="light" @click="save(row.item)">
                 <span class="sr-only">Save</span>
-                <b-icon icon="check2" />
+                <b-icon :icon="iconnames.save" />
               </b-button>
             </template>
           </TableTBVTable>
@@ -39,10 +39,12 @@ import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 const changes = namespace('changes')
 
-@Component
+@Component({ mixins: [Constants] })
 export default class TChanges extends Vue {
+  iconnames: any
   $axios: any
   $mq: any
   $nuxt: any

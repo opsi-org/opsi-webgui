@@ -2,7 +2,7 @@
   <div>
     <b-nav-item v-b-toggle="'collapse-navitem-'+title" @click="changeRoute">
       <b-icon :icon="icon" /> {{ $t(title) }}
-      <b-icon icon="caret-down-fill" class="caret_icon" font-scale="0.8" />
+      <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
     </b-nav-item>
     <b-collapse :id="'collapse-navitem-'+title" accordion="sidebarAccordion">
       <b-nav vertical>
@@ -18,13 +18,15 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [Constants] })
 export default class NICollapsible extends Vue {
+  iconnames: any
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
-  @Prop({ }) submenu!: Array<object>
+  @Prop({ }) submenu!: Array<any>
   changeRoute () {
     if ((this as any).$mq === 'desktop') {
       this.$router.push({ path: this.route })

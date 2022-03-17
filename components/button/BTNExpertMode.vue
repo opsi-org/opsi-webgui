@@ -9,8 +9,8 @@
   >
     <template v-if="navbar">
       <span class="sr-only">{{ expert? 'Expert': 'Normal' }}</span>
-      <b-icon-star-fill v-if="expert" variant="light" />
-      <b-icon-star v-else variant="light" />
+      <b-icon v-if="expert" :icon="iconnames.usermodeExpert" variant="light" />
+      <b-icon v-else :icon="iconnames.usermodeNormale" variant="light" />
     </template>
     <span v-else>
       {{ expert? 'Expert': 'Normal' }}
@@ -20,9 +20,12 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
 
-@Component export default class BTNExpertMode extends Vue {
+@Component({ mixins: [Constants] })
+export default class BTNExpertMode extends Vue {
+  iconnames: any
   @Prop({ default: false }) navbar!: boolean
 
   localMode: boolean = false
