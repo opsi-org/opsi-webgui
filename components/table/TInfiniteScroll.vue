@@ -119,52 +119,42 @@ export default class TInfiniteScroll extends Vue {
     tableScrollBody.removeEventListener('scroll', this.onScroll)
   }
 
-  previousPage () {
+  async previousPage () {
     if (!this.isLoading) {
       if (this.tableData.pageNumber === 1) {
         return
       }
       this.tableData.pageNumber--
-      this.fetchitems()
+      await this.fetchitems()
+      const tableScrollBody = (this.$refs[this.id] as any).$el
+      tableScrollBody.scrollTop = 180
     }
   }
 
-  nextPage () {
+  async nextPage () {
     if (!this.isLoading) {
       if (this.tableData.pageNumber === this.totalpages) {
         return
       }
       this.tableData.pageNumber++
-      this.fetchitems()
+      await this.fetchitems()
+      const tableScrollBody = (this.$refs[this.id] as any).$el
+      tableScrollBody.scrollTop = 180
     }
   }
 
-  onScroll (event) {
+  async onScroll (event) {
     if (this.items.length === 0) {
       const tableScrollBody = (this.$refs[this.id] as any).$el
       tableScrollBody.removeEventListener('scroll', this.onScroll)
     } else if ( // On Scroll Up
       event.target.scrollTop === 0) {
-      if (!this.isLoading) {
-        if (this.tableData.pageNumber === 1) {
-          return
-        }
-        this.tableData.pageNumber--
-        this.fetchitems()
-        event.target.scrollTop = 100
-      }
+      await this.previousPage()
     } else if ( // On Scroll Down
       event.target.scrollTop + event.target.clientHeight >=
           event.target.scrollHeight
     ) {
-      if (!this.isLoading) {
-        if (this.tableData.pageNumber === this.totalpages) {
-          return
-        }
-        this.tableData.pageNumber++
-        this.fetchitems()
-        event.target.scrollTop = 100
-      }
+      await this.nextPage()
     }
   }
 
@@ -219,10 +209,6 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
-/* .b-table-sticky-header > .table.b-table > thead > tr > th {
-  padding-top: 20px;
-  padding-bottom: 20px;
-} */
 .table.b-table > caption {
   padding-top: 2rem;
   padding-bottom: 10rem;
@@ -232,7 +218,7 @@ export default class TInfiniteScroll extends Vue {
 }
 .tablehead{
   height: 200px;
-  display:inline-flex;
+  /* display:inline-flex; */
 }
 .uppercaption {
   padding-top: 10rem;
