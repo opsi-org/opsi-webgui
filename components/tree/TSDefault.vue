@@ -20,7 +20,7 @@
       :clearable="clearable"
       :multiple="multi"
       :options="options"
-      :open-on-focus="true"
+      :open-on-focus="false"
       :branch-nodes-first="true"
       :max-height="400"
       :always-open="false"
