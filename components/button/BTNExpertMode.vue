@@ -10,7 +10,7 @@
     <template v-if="navbar">
       <span class="sr-only">{{ expert? 'Expert': 'Normal' }}</span>
       <b-icon v-if="expert" :icon="iconnames.usermodeExpert" variant="light" />
-      <b-icon v-else :icon="iconnames.usermodeNormale" variant="light" />
+      <b-icon v-else :icon="iconnames.usermodeNormal" variant="light" />
     </template>
     <span v-else>
       {{ expert? 'Expert': 'Normal' }}
