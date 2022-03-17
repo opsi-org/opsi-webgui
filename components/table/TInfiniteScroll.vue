@@ -26,6 +26,12 @@
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
     >
+      <template v-if="totalpages > 1 && tableData.pageNumber !=1" #thead-top>
+        <b-tr class="tablehead">
+          <span class="uppercaption">  Scroll up to load previous page </span>
+        </b-tr>
+      </template>
+
       <template #empty>
         --
       </template>
@@ -49,14 +55,17 @@
       >
         <slot :name="slotName" v-bind="slotScope" />
       </template>
+      <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" #table-caption>
+        <span>  Scroll down to load next page </span>
+      </template>
     </b-table>
     <div class="inline">
       <span v-if="items.length>0" class="tablefooter">Showing Page {{ tableData.pageNumber }} / {{ totalpages }}</span>
       <template v-if="totalpages > 1">
-        <b-button size="sm" variant="outline-primary" @click="previousPage">
+        <b-button v-if="tableData.pageNumber !=1" size="sm" variant="outline-primary" @click="previousPage">
           Prev
         </b-button>
-        <b-button size="sm" variant="outline-primary" @click="nextPage">
+        <b-button v-if="tableData.pageNumber != totalpages" size="sm" variant="outline-primary" @click="nextPage">
           Next
         </b-button>
       </template>
@@ -142,7 +151,7 @@ export default class TInfiniteScroll extends Vue {
         }
         this.tableData.pageNumber--
         this.fetchitems()
-        event.target.scrollTop = 20
+        event.target.scrollTop = 100
       }
     } else if ( // On Scroll Down
       event.target.scrollTop + event.target.clientHeight >=
@@ -154,7 +163,7 @@ export default class TInfiniteScroll extends Vue {
         }
         this.tableData.pageNumber++
         this.fetchitems()
-        event.target.scrollTop = 20
+        event.target.scrollTop = 100
       }
     }
   }
@@ -210,10 +219,31 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
-.b-table-sticky-header > .table.b-table > thead > tr > th {
+/* .b-table-sticky-header > .table.b-table > thead > tr > th {
   padding-top: 20px;
   padding-bottom: 20px;
-  /* scroll-padding-bottom: 100px; */
+} */
+.table.b-table > caption {
+  padding-top: 2rem;
+  padding-bottom: 10rem;
+  color: #6c757d;
+  caption-side: bottom;
+  font-size: medium;
+}
+.tablehead{
+  height: 200px;
+  display:inline-flex;
+}
+.uppercaption {
+  padding-top: 10rem;
+  padding-bottom: 2rem;
+  color: #6c757d;
+  display:inline-flex;
+  font-size: medium;
+  font-weight: normal;
+}
+.b-table-sticky-header, .table-responsive, [class*="table-responsive-"] {
+  margin-bottom: 60px;
 }
 .tablefooter {
   color: black;
@@ -221,11 +251,9 @@ export default class TInfiniteScroll extends Vue {
 }
 .infinitescrolltable.b-table-sticky-header {
   max-height: 66vh;
-  /* max-height:650px; */
 }
 .tableproducts.b-table-sticky-header {
   max-height: 60vh;
-  /* max-height:610px; */
 }
 .smalltable.b-table-sticky-header {
   max-height: 12vh;
