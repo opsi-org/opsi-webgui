@@ -176,7 +176,7 @@ export default class VClients extends Vue {
     this.isLoading = true
     this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
     if (this.tableData.sortBy === 'selected') {
-      this.tableData.sortBy = 'selected'
+      // this.tableData.sortBy = 'selected'
       this.tableData.sortDesc = true
       this.tableData.selected = JSON.stringify(this.selectionClients)
     }

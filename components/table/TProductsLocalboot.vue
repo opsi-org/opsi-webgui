@@ -236,7 +236,7 @@ export default class TProductsLocalboot extends Vue {
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
       if (this.tableData.sortBy === 'selected') {
         this.tableData.sortDesc = true
-        this.tableData.sortBy = 'selected'
+        // this.tableData.sortBy = 'selected'
         this.tableData.selected = JSON.stringify(this.selectionProducts)
       }
       try {
