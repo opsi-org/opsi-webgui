@@ -29,7 +29,7 @@ export default class NIDropdownHoverable extends Vue {
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
-  @Prop({ }) submenu!: Array<object>
+  @Prop({ }) submenu!: Array<any>
 
   onMouseOver () {
     (this.$refs.dropdown as any).visible = true
