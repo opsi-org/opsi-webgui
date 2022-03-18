@@ -10,7 +10,8 @@
         "created": "2021-10-22T12:03:51",
         "lastSeen": "2021-10-22T12:03:51",
         "opsiHostKey": null,
-        "oneTimePassword": null
+        "oneTimePassword": null,
+        "uefi": false
     },
     {
         "hostId": "pytest-client-1.uib.local",
@@ -23,6 +24,7 @@
         "created": "2021-10-22T12:03:51",
         "lastSeen": "2021-10-22T12:03:51",
         "opsiHostKey": null,
-        "oneTimePassword": null
+        "oneTimePassword": null,
+        "uefi": false
     }
 ]
