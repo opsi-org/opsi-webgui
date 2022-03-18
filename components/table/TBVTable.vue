@@ -48,7 +48,6 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
 

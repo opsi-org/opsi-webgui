@@ -31,7 +31,6 @@
           <span class="uppercaption">  Scroll up to load previous page </span>
         </b-tr>
       </template>
-
       <template #empty>
         --
       </template>
@@ -118,10 +117,10 @@ export default class TInfiniteScroll extends Vue {
     // })
   }
 
-  beforeDestroy () {
-    const tableScrollBody = (this.$refs[this.id] as any).$el
-    tableScrollBody.removeEventListener('scroll', this.onScroll)
-  }
+  // beforeDestroy () {
+  //   const tableScrollBody = (this.$refs[this.id] as any).$el
+  //   tableScrollBody.removeEventListener('scroll', this.onScroll)
+  // }
 
   async previousPage () {
     if (!this.isLoading) {
@@ -148,10 +147,11 @@ export default class TInfiniteScroll extends Vue {
   }
 
   async onScroll (event) {
-    if (this.items.length === 0) {
-      const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.removeEventListener('scroll', this.onScroll)
-    } else if ( // On Scroll Up
+    // if (this.items.length === 0) {
+    //   const tableScrollBody = (this.$refs[this.id] as any).$el
+    //   tableScrollBody.removeEventListener('scroll', this.onScroll)
+    // } else
+    if ( // On Scroll Up
       event.target.scrollTop === 0) {
       await this.previousPage()
     } else if ( // On Scroll Down
@@ -233,9 +233,9 @@ export default class TInfiniteScroll extends Vue {
   font-size: medium;
   font-weight: normal;
 }
-.b-table-sticky-header, .table-responsive, [class*="table-responsive-"] {
+/* .b-table-sticky-header, .table-responsive, [class*="table-responsive-"] {
   margin-bottom: 60px;
-}
+} */
 .tablefooter {
   color: black;
   font-size: 12px;
