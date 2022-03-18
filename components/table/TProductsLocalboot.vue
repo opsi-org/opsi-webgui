@@ -145,7 +145,7 @@ export default class TProductsLocalboot extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
+    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true, class: 'minimalwidth' },
     installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: true },
     actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: true, sortable: true },
     productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
@@ -359,3 +359,9 @@ export default class TProductsLocalboot extends Vue {
   }
 }
 </script>
+
+<style>
+.minimalwidth {
+  max-width: fit-content;
+}
+</style>

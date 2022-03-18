@@ -15,19 +15,17 @@
     <NavNSidebar :expanded="attributes.expanded" />
     <template v-if="$mq === 'desktop'" #footer>
       <DivDCountdowntimer :small="!attributes.expanded" />
-      <div class="sidemenu_footer">
-        <b-button
-          v-if="$mq === 'desktop'"
-          v-b-tooltip.hover
-          variant="primary"
-          :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
-          :pressed.sync="attributes.expanded"
-        >
-          <span class="sr-only">{{ attributes.expanded? 'Collapse sidemenu': 'Expand sidemenu' }}</span>
-          <b-icon v-if="attributes.expanded" :icon="iconnames.arrowDoubleLeft" />
-          <b-icon v-else :icon="iconnames.arrowDoubleRight" />
-        </b-button>
-      </div>
+      <b-button
+        v-if="$mq === 'desktop'"
+        v-b-tooltip.hover
+        variant="primary"
+        :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
+        :pressed.sync="attributes.expanded"
+      >
+        <span class="sr-only">{{ attributes.expanded? 'Collapse sidemenu': 'Expand sidemenu' }}</span>
+        <b-icon v-if="attributes.expanded" :icon="iconnames.arrowDoubleLeft" />
+        <b-icon v-else :icon="iconnames.arrowDoubleRight" />
+      </b-button>
     </template>
   </b-sidebar>
 </template>
@@ -47,22 +45,27 @@ export default class BSide extends Vue {
 
 <style>
 #sidemenu {
-  top: calc(var(--height-navbar) - 3px) !important;
+  top: calc(var(--height-navbar) - 2px) !important;
   width: var(--width-sidebar-expanded);
-  height: 100%;
+  height: 100% !important;
+  display: inline-flex !important;
 }
 .sidemenu_small > #sidemenu {
   width: var(--width-sidebar-collapsed);
 }
-.sidemenu_footer .btn {
-  padding: 10px;
-  border: 1px solid var(--light) !important;
-  z-index: 2200;
-}
-.sidemenu_footer {
+#sidemenu .b-sidebar-footer {
+  border-top: 1px solid var(--light) !important;
+  background-color: var(--primary);
+  z-index: 100;
+  height: auto;
   display: inline;
   float: right;
   margin-right: 2px;
-  margin-bottom: 70px;
+  margin-bottom: 0px;
+}
+#sidemenu .b-sidebar-footer .btn {
+  width: 100%;
+  text-align: right;
+  z-index: 100;
 }
 </style>

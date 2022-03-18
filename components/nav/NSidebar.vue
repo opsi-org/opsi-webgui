@@ -125,22 +125,36 @@ export default class NSidebar extends Vue {
   padding-top: 0px;
   padding-bottom: 0px;
 }
-
+#sidemenu .b-sidebar-body {
+  display: inline-block;
+  width: inherit;
+  /* height: inherit;
+  max-height: inherit; */
+  max-height: calc(100% - var(--height-navbar) - 80px);
+  /* max-height: 200px; */
+}
 .sidemenu_nav{
-  position:absolute;
+  display: inline-flex;
+  position: absolute;
+  flex-wrap: nowrap !important;
+  /* width: 100%; */
+  /* overflow-y: auto; */
+  /*overflow-x: visible; /*horizontal scrollbar*/
   width: 100%;
-  max-height:70vh;
+  height: 100%;
+  overflow-x: visible;
 }
 
 .sidebar_collapsed .sidemenu_nav .nav-item{
   margin-right: 0px !important;
 }
 .sidebar_collapsed .sidemenu_nav .nav-link > svg{
-  width: 100% !important;
+  /* width: 100% !important; */
   margin: 0 auto !important;
 }
 .timer {
-  margin-left: 15px;
-  margin-top: 5px;
+  margin: auto;
+  /* margin-left: 15px;
+  margin-top: 5px; */
 }
 </style>
