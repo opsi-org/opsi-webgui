@@ -102,7 +102,7 @@ export default class TInfiniteScroll extends Vue {
   @cache.Getter public opsiconfigserver!: string
   get selectmode () {
     if (this.ismultiselect) {
-      return 'multi'
+      return 'range'
     } else { return 'single' }
   }
 
@@ -195,6 +195,7 @@ export default class TInfiniteScroll extends Vue {
     if (!this.ismultiselect) {
       if (this.rowident === 'productId') {
         this.routechild(ident)
+        this.setselection([ident])
       } else if (selectionCopy.includes(ident)) {
         this.setselection([])
       } else {

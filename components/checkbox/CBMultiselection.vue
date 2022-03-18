@@ -1,16 +1,17 @@
 <template>
-  <b-form-checkbox v-model="checked" class="multiselect" size="sm" switch @change="$emit('update:multiselect', checked)">
+  <b-form-checkbox v-model="multiselect" class="multiselect" size="sm" switch @change="$emit('update:multiselect', multiselect)">
     Multiselection
-    <span class="sr-only">{{ checked ? 'Enable multiselection': 'Disable multiselection' }}</span>
+    <span class="sr-only">{{ multiselect ? 'Enable multiselection': 'Disable multiselection' }}</span>
   </b-form-checkbox>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class CBMultiSelection extends Vue {
-  checked: boolean = false
+  // checked: boolean = false
+  @Prop() multiselect!: boolean;
 }
 </script>
 

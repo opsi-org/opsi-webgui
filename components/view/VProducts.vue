@@ -70,6 +70,7 @@
 </template>
 
 <script lang="ts">
+import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 const selections = namespace('selections')
@@ -92,7 +93,14 @@ export default class VProducts extends Vue {
   localboot: string = ''
   netboot: string = ''
 
+  created () {
+    if (Cookie.get('multiselect_products')) {
+      this.ismultiselect = JSON.parse(Cookie.get('multiselect_products') as unknown as any)
+    }
+  }
+
   @Watch('ismultiselect', { deep: true }) multiselectChanged () {
+    Cookie.set('multiselect_products', JSON.stringify(this.ismultiselect), { expires: 365 })
     this.setSelectionProducts([])
   }
 
