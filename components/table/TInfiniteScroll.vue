@@ -233,9 +233,9 @@ export default class TInfiniteScroll extends Vue {
   font-size: medium;
   font-weight: normal;
 }
-.b-table-sticky-header, .table-responsive, [class*="table-responsive-"] {
+/* .b-table-sticky-header, .table-responsive, [class*="table-responsive-"] {
   margin-bottom: 60px;
-}
+} */
 .tablefooter {
   color: black;
   font-size: 12px;

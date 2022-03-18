@@ -4,7 +4,7 @@
     :stacked="true"
     :is-loading="isLoading"
     :error="errorText"
-    :items="[result]"
+    :items="result"
     :fields="fields"
   >
     <template #cell(opsiHostKey)="row">
@@ -101,7 +101,7 @@ export default class THostAttributes extends Vue {
       this.isLoading = true
       await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
         .then((response) => {
-          this.result = response[0]
+          this.result = response
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
