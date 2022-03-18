@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="DivDCounttimer" class="DCounttimer">
+  <div data-testid="DivDCounttimer" class="DCountdowntimer">
     <small> {{ countdowntimer }} </small>
   </div>
 </template>
@@ -81,7 +81,7 @@ export default class BCountdowntimer extends Vue {
 }
 </script>
 <style>
-.DCounttimer {
+.DCountdowntimer {
   text-align: center;
 }
 </style>
