@@ -171,14 +171,14 @@ export default class TProductsLocalboot extends Vue {
   selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
-    this.$fetch()
+    this.fetchPageOne()
   }
 
   @Watch('selectionClients', { deep: true })
   selectionClientsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
-    this.$fetch()
+    this.fetchPageOne()
     this.updateColumnVisibility()
   }
 
@@ -212,6 +212,11 @@ export default class TProductsLocalboot extends Vue {
       this.headerData.actionRequest.visible = false
       this.headerData.actionRequest.disabled = false
     }
+  }
+
+  async fetchPageOne () {
+    this.tableData.pageNumber = 1
+    await this.$fetch()
   }
 
   async fetch () {

@@ -171,14 +171,14 @@ export default class TProductsNetboot extends Vue {
   selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
-    this.$fetch()
+    this.fetchPageOne()
   }
 
   @Watch('selectionClients', { deep: true })
   selectionClientsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
-    this.$fetch()
+    this.fetchPageOne()
     this.updateColumnVisibility()
   }
 
@@ -213,6 +213,11 @@ export default class TProductsNetboot extends Vue {
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
     row.toggleDetails()
+  }
+
+  async fetchPageOne () {
+    this.tableData.pageNumber = 1
+    await this.$fetch()
   }
 
   async fetch () {

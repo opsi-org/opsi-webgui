@@ -247,7 +247,7 @@ export default class TInfiniteScroll extends Vue {
   max-height: 60vh;
 }
 .smalltable.b-table-sticky-header {
-  max-height: 12vh;
+  max-height: 16vh;
 }
 .noscroll.b-table-sticky-header {
   max-height: 70vh;

@@ -169,8 +169,13 @@ export default class VClients extends Vue {
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
-  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.$fetch() }
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.fetchPageOne() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+
+  async fetchPageOne () {
+    this.tableData.pageNumber = 1
+    await this.$fetch()
+  }
 
   async fetch () {
     this.isLoading = true
