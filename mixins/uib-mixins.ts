@@ -52,7 +52,7 @@ export class Constants extends Vue {
     reset: 'brush',
     clear: 'brush',
     usermodeExpert: 'star-fill',
-    usermodeNormal: 'star',
+    usermodeBasic: 'star',
     help: 'question-circle',
     info: 'info-circle',
     tablerowSelected: 'check2',

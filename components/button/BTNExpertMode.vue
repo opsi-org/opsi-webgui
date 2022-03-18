@@ -8,12 +8,12 @@
     @click="changeMode(localMode)"
   >
     <template v-if="navbar">
-      <span class="sr-only">{{ expert? 'Expert': 'Normal' }}</span>
+      <span class="sr-only">{{ expert? 'Expert': 'Basic' }}</span>
       <b-icon v-if="expert" :icon="iconnames.usermodeExpert" variant="light" />
-      <b-icon v-else :icon="iconnames.usermodeNormal" variant="light" />
+      <b-icon v-else :icon="iconnames.usermodeBasic" variant="light" />
     </template>
     <span v-else>
-      {{ expert? 'Expert': 'Normal' }}
+      {{ expert? 'Expert': 'Basic' }}
     </span>
   </b-button>
 </template>

@@ -43,7 +43,7 @@ export default class Settings extends VuexModule {
 
   @VuexMutation public setExpertmode (isExpert: boolean) {
     this._expert = isExpert
-    Cookie.set('ExpertMode', (isExpert) ? 'expert' : 'normal', { expires: 365 })
+    Cookie.set('ExpertMode', (isExpert) ? 'expert' : 'basic', { expires: 365 })
   }
 
   @VuexMutation public setColumnLayoutCollapsed (obj: IColumnLayoutCollaped) {

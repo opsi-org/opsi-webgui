@@ -27,7 +27,7 @@ export default class TTHelpExpert extends Vue {
       // { [this.$t('settingsPage.mode') as string]: this.$t('userinfo.normal'), ' ': this.$t('userinfo.normal_desc') },
       // { [this.$t('settingsPage.mode') as string]: this.$t('userinfo.expert'), ' ': this.$t('userinfo.expert_desc') }
 
-      { '  ': this.$t('userinfo.normal'), ' ': this.$t('userinfo.normal_desc') },
+      { '  ': this.$t('userinfo.basic'), ' ': this.$t('userinfo.basic_desc') },
       { '  ': this.$t('userinfo.expert'), ' ': this.$t('userinfo.expert_desc') }
     ]
   }
