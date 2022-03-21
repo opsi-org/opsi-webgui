@@ -10,7 +10,8 @@
         "created": "2021-10-22T12:03:51",
         "lastSeen": "2021-10-22T12:03:51",
         "opsiHostKey": "bfa761b19c01026bbc59568aa74254b4",
-        "oneTimePassword": null
+        "oneTimePassword": null,
+        "uefi": false
     },
     {
         "hostId": "pytest-test-depot.uib.gmbh",
@@ -23,6 +24,7 @@
         "created": "2021-10-22T12:03:51",
         "lastSeen": "2021-10-22T12:03:51",
         "opsiHostKey": "90adb7778a743bbc8f0ebdb5c647481f",
-        "oneTimePassword": null
+        "oneTimePassword": null,
+        "uefi": false
     }
 ]
