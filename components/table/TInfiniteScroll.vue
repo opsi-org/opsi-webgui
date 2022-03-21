@@ -63,6 +63,18 @@
     </b-table>
 
     <div class="inline">
+      <b-pagination
+        v-model="tableData.pageNumber"
+        :total-rows="totalItems"
+        :per-page="tableData.perPage"
+        last-number
+      />
+<!--
+
+  // "table.infinit.first":"1",
+  // "table.infinit.previous":"Zurück",
+  // "table.infinit.next":"Weiter",
+  // "table.infinit.last":"Letzte",
       <span v-if="items.length>0" class="tablefooter">Showing Page {{ tableData.pageNumber }} / {{ totalpages }}</span>
       <template v-if="totalpages > 1">
         <b-button :disabled="tableData.pageNumber ===1" size="sm" variant="outline-primary" @click="firstPage">
@@ -77,7 +89,7 @@
         <b-button :disabled="tableData.pageNumber === totalpages" size="sm" variant="outline-primary" @click="lastPage">
           {{ (totalpages) ? totalpages : $t('table.infinit.last') }}
         </b-button>
-      </template>
+      </template> -->
     </div>
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
