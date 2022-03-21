@@ -266,9 +266,11 @@ export default class TInfiniteScroll extends Vue {
 <style>
 .tablehead {
   padding-top: 200px !important;
+  text-align: center;
 }
 .tablefooter {
   padding-bottom: 200px !important;
+  text-align: center;
 }
 .scrollcaption {
   text-align: center;
