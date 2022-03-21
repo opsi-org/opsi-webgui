@@ -35,7 +35,7 @@
       </template>
       <!-- <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" class="table-footer" #custom-foot> -->
       <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" #table-caption>
-        <span> {{ $t('table.infinit.scrolldown') }} </span>
+        <span class="tablefooter"> {{ $t('table.infinit.scrolldown') }} </span>
       </template>
       <template #empty>
         --
@@ -61,16 +61,10 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
+    <BarBTableFooter :pagination="{currentPage: tableData.pageNumber, totalRows:totalItems, perPage: tableData.perPage }" />
 
     <div class="inline">
-      <b-pagination
-        v-model="tableData.pageNumber"
-        :total-rows="totalItems"
-        :per-page="tableData.perPage"
-        last-number
-      />
 <!--
-
   // "table.infinit.first":"1",
   // "table.infinit.previous":"Zurück",
   // "table.infinit.next":"Weiter",
@@ -270,7 +264,7 @@ export default class TInfiniteScroll extends Vue {
 .tablehead > th {
   position: unset !important;
 }
-.tablehead{
+.tablehead, .tablefooter {
   height: 200px;
   width: 100%;
   text-align: center;
@@ -287,12 +281,11 @@ export default class TInfiniteScroll extends Vue {
 /* .b-table-sticky-header, .table-responsive, [class*="table-responsive-"] {
   margin-bottom: 60px;
 } */
-.tablefooter {
-  /* color: black; */
+/* .tablefooter {
   align-items: flex-end;
   color: var(--dark);
   font-size: 12px;
-}
+} */
 .infinitescrolltable.b-table-sticky-header {
   max-height: 66vh;
 }
