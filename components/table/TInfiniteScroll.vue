@@ -28,8 +28,14 @@
     >
       <template v-if="totalpages > 1 && tableData.pageNumber !=1" #thead-top>
         <b-tr class="tablehead">
-          <span class="uppercaption">  Scroll up to load previous page </span>
+          <b-th variant="light" :colspan="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) }).length">
+            <span class="uppercaption"> {{ $t('table.infinit.scrollup') }} </span>
+          </b-th>
         </b-tr>
+      </template>
+      <!-- <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" class="table-footer" #custom-foot> -->
+      <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" #table-caption>
+        <span> {{ $t('table.infinit.scrolldown') }} </span>
       </template>
       <template #empty>
         --
@@ -54,18 +60,22 @@
       >
         <slot :name="slotName" v-bind="slotScope" />
       </template>
-      <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" #table-caption>
-        <span>  Scroll down to load next page </span>
-      </template>
     </b-table>
+
     <div class="inline">
       <span v-if="items.length>0" class="tablefooter">Showing Page {{ tableData.pageNumber }} / {{ totalpages }}</span>
       <template v-if="totalpages > 1">
-        <b-button v-if="tableData.pageNumber !=1" size="sm" variant="outline-primary" @click="previousPage">
-          Prev
+        <b-button :disabled="tableData.pageNumber ===1" size="sm" variant="outline-primary" @click="firstPage">
+          {{ $t('table.infinit.first') }}
         </b-button>
-        <b-button v-if="tableData.pageNumber != totalpages" size="sm" variant="outline-primary" @click="nextPage">
-          Next
+        <b-button :disabled="tableData.pageNumber ===1" size="sm" variant="outline-primary" @click="previousPage">
+          {{ $t('table.infinit.previous') }}
+        </b-button>
+        <b-button :disabled="tableData.pageNumber === totalpages" size="sm" variant="outline-primary" @click="nextPage">
+          {{ $t('table.infinit.next') }}
+        </b-button>
+        <b-button :disabled="tableData.pageNumber === totalpages" size="sm" variant="outline-primary" @click="lastPage">
+          {{ (totalpages) ? totalpages : $t('table.infinit.last') }}
         </b-button>
       </template>
     </div>
@@ -140,6 +150,30 @@ export default class TInfiniteScroll extends Vue {
         return
       }
       this.tableData.pageNumber++
+      await this.fetchitems()
+      const tableScrollBody = (this.$refs[this.id] as any).$el
+      tableScrollBody.scrollTop = 180
+    }
+  }
+
+  async firstPage () {
+    if (!this.isLoading) {
+      if (this.tableData.pageNumber === 1) {
+        return
+      }
+      this.tableData.pageNumber = 1
+      await this.fetchitems()
+      const tableScrollBody = (this.$refs[this.id] as any).$el
+      tableScrollBody.scrollTop = 180
+    }
+  }
+
+  async lastPage () {
+    if (!this.isLoading) {
+      if (this.tableData.pageNumber === this.totalpages) {
+        return
+      }
+      this.tableData.pageNumber = this.totalpages
       await this.fetchitems()
       const tableScrollBody = (this.$refs[this.id] as any).$el
       tableScrollBody.scrollTop = 180
@@ -221,11 +255,16 @@ export default class TInfiniteScroll extends Vue {
   caption-side: bottom;
   font-size: medium;
 }
+.tablehead > th {
+  position: unset !important;
+}
 .tablehead{
   height: 200px;
+  width: 100%;
+  text-align: center;
   /* display:inline-flex; */
 }
-.uppercaption {
+.uppercaption, .table-footer {
   padding-top: 10rem;
   padding-bottom: 2rem;
   color: #6c757d;
@@ -237,7 +276,9 @@ export default class TInfiniteScroll extends Vue {
   margin-bottom: 60px;
 } */
 .tablefooter {
-  color: black;
+  /* color: black; */
+  align-items: flex-end;
+  color: var(--dark);
   font-size: 12px;
 }
 .infinitescrolltable.b-table-sticky-header {
@@ -252,4 +293,7 @@ export default class TInfiniteScroll extends Vue {
 .noscroll.b-table-sticky-header {
   max-height: 70vh;
 }
+/* .b-table-sticky-header thead > tr:last-child{
+  background-color: var(--primary) !important;
+} */
 </style>
