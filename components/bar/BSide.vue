@@ -11,9 +11,8 @@
     :no-close-on-route-change="$mq == 'desktop' ? true : false"
     :visible="attributes.visible"
   >
-    <DivDCountdowntimer v-if="$mq === 'mobile'" :small="!attributes.expanded" />
     <NavNSidebar :expanded="attributes.expanded" />
-    <template v-if="$mq === 'desktop'" #footer>
+    <template #footer>
       <DivDCountdowntimer :small="!attributes.expanded" />
       <b-button
         v-if="$mq === 'desktop'"
