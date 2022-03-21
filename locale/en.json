@@ -120,8 +120,8 @@
   "settingsPage.theme": "Color theme",
   "settingsPage.mode": "User Mode",
   "settingsPage.modules": "Modules Content",
-  "userinfo.normal": "Normal Mode",
-  "userinfo.normal_desc": "Changes will be saved immediately.",
+  "userinfo.basic": "Basic Mode",
+  "userinfo.basic_desc": "Changes will be saved immediately.",
   "userinfo.expert": "Expert Mode",
   "userinfo.expert_desc": "Changes are not saved immediately. An overview lists all locally made changes. These can be viewed and changed before saving."
 }
