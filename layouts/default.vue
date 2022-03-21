@@ -18,6 +18,7 @@
 </template>
 
 <script lang="ts">
+import Cookie from 'js-cookie'
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 const settings = namespace('settings')
 interface SideBarAttr {
@@ -33,6 +34,16 @@ export default class LayoutDefault extends Vue {
 
   @Watch('$mq', { deep: true }) mqChanged () {
     this.updateSidebarAttr()
+  }
+
+  @Watch('sidebarAttr', { deep: true }) attributesChanged () {
+    Cookie.set('menu_attributes', JSON.stringify(this.sidebarAttr), { expires: 365 })
+  }
+
+  mounted () {
+    if (Cookie.get('menu_attributes')) {
+      this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes') as unknown as any)
+    }
   }
 
   head () {

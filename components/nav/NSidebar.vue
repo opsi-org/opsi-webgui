@@ -2,7 +2,7 @@
   <b-nav vertical tabs class="sidemenu_nav" data-testid="NSidebar">
     <span v-for="catogery in navItems" :key="catogery.title">
       <br>
-      <!-- <NavItemNITitle :expanded="expanded" :title="catogery.title" /> -->
+      <NavItemNITitle :expanded="expanded" :title="catogery.title" />
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
           <NavItemNICollapsible
@@ -126,7 +126,7 @@ export default class NSidebar extends Vue {
   padding-bottom: 0px;
 }
 #sidemenu .b-sidebar-body {
-  display: inline-block;
+  /* display: inline-block; */
   width: inherit;
   /* height: inherit;
   max-height: inherit; */
@@ -134,7 +134,7 @@ export default class NSidebar extends Vue {
   /* max-height: 200px; */
 }
 .sidemenu_nav{
-  display: inline-flex;
+  /* display: inline-flex; */
   position: absolute;
   flex-wrap: nowrap !important;
   /* width: 100%; */

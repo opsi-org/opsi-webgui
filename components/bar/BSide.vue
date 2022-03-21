@@ -48,7 +48,7 @@ export default class BSide extends Vue {
   top: calc(var(--height-navbar) - 2px) !important;
   width: var(--width-sidebar-expanded);
   height: 100% !important;
-  display: inline-flex !important;
+  /* display: inline-flex !important; */
 }
 .sidemenu_small > #sidemenu {
   width: var(--width-sidebar-collapsed);

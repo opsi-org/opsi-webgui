@@ -1,47 +1,45 @@
 <template>
-  <div>
-    <b-navbar
-      data-testid="BarBTop"
-      class="topbar"
-      toggleable="md"
-      fixed="top"
-      type="dark"
-      variant="primary"
-    >
-      <div class="container-fluid">
-        <b-navbar-nav v-if="$mq === 'mobile'">
-          <b-button :pressed.sync="attributes.visible">
-            <span class="sr-only">Open sidemenu</span>
-            <b-icon :icon="iconnames.menuOpen" />
-          </b-button>
+  <b-navbar
+    data-testid="BarBTop"
+    class="topbar"
+    toggleable="md"
+    fixed="top"
+    type="dark"
+    variant="primary"
+  >
+    <div class="container-fluid">
+      <b-navbar-nav v-if="$mq === 'mobile'">
+        <b-button :pressed.sync="attributes.visible">
+          <span class="sr-only">Open sidemenu</span>
+          <b-icon :icon="iconnames.menuOpen" />
+        </b-button>
+      </b-navbar-nav>
+      <b-navbar-brand href="/addons/webgui/app/clients" class="topbar_brand">
+        <b-badge class="topbar_badge_logo">
+          <IconIOpsiLogo class="topbar_logo" />
+        </b-badge>
+        {{ getTitleUppercase() }}
+        <span class="topbar_version"> {{ $config.packageVersion }} </span>
+        <!-- <span class="topbar_expert"> <IconIExpert /> </span> -->
+      </b-navbar-brand>
+      <ButtonBTNExpertMode :navbar="true" />
+      <b-navbar-nav v-if="$mq === 'mobile'">
+        <b-button v-b-toggle.nav-collapse variant="primary">
+          <span class="sr-only">Open topmenu</span>
+          <b-icon :icon="iconnames.menu" font-scale="1.1" />
+        </b-button>
+      </b-navbar-nav>
+      <b-collapse id="nav-collapse" is-nav variant="primary">
+        <b-navbar-nav class="ml-auto float-right">
+          <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
+          <!-- TODO: remove for production start -->
+          <DropdownDDTheme v-if="$mq!='mobile'" class="navbar-collapse-child" :navbar="true" />
+          <!-- TODO: remove for production end -->
+          <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
         </b-navbar-nav>
-        <b-navbar-brand href="/addons/webgui/app/clients" class="topbar_brand">
-          <b-badge class="topbar_badge_logo">
-            <IconIOpsiLogo class="topbar_logo" />
-          </b-badge>
-          {{ getTitleUppercase() }}
-          <span class="topbar_version"> {{ $config.packageVersion }} </span>
-          <!-- <span class="topbar_expert"> <IconIExpert /> </span> -->
-        </b-navbar-brand>
-        <ButtonBTNExpertMode :navbar="true" />
-        <b-navbar-nav v-if="$mq === 'mobile'">
-          <b-button v-b-toggle.nav-collapse variant="primary">
-            <span class="sr-only">Open topmenu</span>
-            <b-icon :icon="iconnames.menu" font-scale="1.1" />
-          </b-button>
-        </b-navbar-nav>
-        <b-collapse id="nav-collapse" is-nav variant="primary">
-          <b-navbar-nav class="ml-auto float-right">
-            <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-            <!-- TODO: remove for production start -->
-            <DropdownDDTheme v-if="$mq!='mobile'" class="navbar-collapse-child" :navbar="true" />
-            <!-- TODO: remove for production end -->
-            <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
-          </b-navbar-nav>
-        </b-collapse>
-      </div>
-    </b-navbar>
-  </div>
+      </b-collapse>
+    </div>
+  </b-navbar>
 </template>
 
 <script lang="ts">
