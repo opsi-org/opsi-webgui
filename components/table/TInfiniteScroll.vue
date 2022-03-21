@@ -26,16 +26,15 @@
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
     >
-      <template v-if="totalpages > 1 && tableData.pageNumber !=1" #thead-top>
-        <b-tr class="tablehead">
-          <b-th variant="light" :colspan="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) }).length">
-            <span class="uppercaption"> {{ $t('table.infinit.scrollup') }} </span>
-          </b-th>
-        </b-tr>
+      <template v-if="totalpages > 1 && tableData.pageNumber !=1" #top-row="{ columns }" class="tablehead-outer">
+        <b-th variant="light" :colspan="columns" class="tablehead">
+          <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
+        </b-th>
       </template>
-      <!-- <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" class="table-footer" #custom-foot> -->
-      <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" #table-caption>
-        <span class="tablefooter"> {{ $t('table.infinit.scrolldown') }} </span>
+      <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" #bottom-row="{ columns }" class="tablefooter-outer">
+        <b-th variant="light" :colspan="columns" class="tablefooter">
+          <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
+        </b-th>
       </template>
       <template #empty>
         --
@@ -61,7 +60,7 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <BarBTableFooter :pagination="{currentPage: tableData.pageNumber, totalRows:totalItems, perPage: tableData.perPage }" />
+    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems }" />
 
     <div class="inline">
 <!--
@@ -138,6 +137,17 @@ export default class TInfiniteScroll extends Vue {
   //   tableScrollBody.removeEventListener('scroll', this.onScroll)
   // }
 
+  // async previousPage () {
+  //   if (!this.isLoading) {
+  //     if (this.tableData.pageNumber === 1) {
+  //       return
+  //     }
+  //     this.tableData.pageNumber--
+  //     await this.fetchitems()
+  //     const tableScrollBody = (this.$refs[this.id] as any).$el
+  //     tableScrollBody.scrollTop = 180
+  //   }
+  // }
   async previousPage () {
     if (!this.isLoading) {
       if (this.tableData.pageNumber === 1) {
@@ -146,7 +156,7 @@ export default class TInfiniteScroll extends Vue {
       this.tableData.pageNumber--
       await this.fetchitems()
       const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.scrollTop = 180
+      tableScrollBody.scrollTop = 190
     }
   }
 
@@ -158,33 +168,33 @@ export default class TInfiniteScroll extends Vue {
       this.tableData.pageNumber++
       await this.fetchitems()
       const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.scrollTop = 180
+      tableScrollBody.scrollTop = 190
     }
   }
 
-  async firstPage () {
-    if (!this.isLoading) {
-      if (this.tableData.pageNumber === 1) {
-        return
-      }
-      this.tableData.pageNumber = 1
-      await this.fetchitems()
-      const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.scrollTop = 180
-    }
-  }
+  // async firstPage () {
+  //   if (!this.isLoading) {
+  //     if (this.tableData.pageNumber === 1) {
+  //       return
+  //     }
+  //     this.tableData.pageNumber = 1
+  //     await this.fetchitems()
+  //     const tableScrollBody = (this.$refs[this.id] as any).$el
+  //     tableScrollBody.scrollTop = 180
+  //   }
+  // }
 
-  async lastPage () {
-    if (!this.isLoading) {
-      if (this.tableData.pageNumber === this.totalpages) {
-        return
-      }
-      this.tableData.pageNumber = this.totalpages
-      await this.fetchitems()
-      const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.scrollTop = 180
-    }
-  }
+  // async lastPage () {
+  //   if (!this.isLoading) {
+  //     if (this.tableData.pageNumber === this.totalpages) {
+  //       return
+  //     }
+  //     this.tableData.pageNumber = this.totalpages
+  //     await this.fetchitems()
+  //     const tableScrollBody = (this.$refs[this.id] as any).$el
+  //     tableScrollBody.scrollTop = 180
+  //   }
+  // }
 
   async onScroll (event) {
     // if (this.items.length === 0) {
@@ -254,38 +264,19 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
-.table.b-table > caption {
-  padding-top: 2rem;
-  padding-bottom: 10rem;
-  color: #6c757d;
-  caption-side: bottom;
-  font-size: medium;
+.tablehead {
+  padding-top: 200px !important;
 }
-.tablehead > th {
-  position: unset !important;
+.tablefooter {
+  padding-bottom: 200px !important;
 }
-.tablehead, .tablefooter {
-  height: 200px;
-  width: 100%;
+.scrollcaption {
   text-align: center;
-  /* display:inline-flex; */
-}
-.uppercaption, .table-footer {
-  padding-top: 10rem;
-  padding-bottom: 2rem;
+  height: 200px;
+  margin-top: 200px;
   color: #6c757d;
-  display:inline-flex;
-  font-size: medium;
-  font-weight: normal;
+  font-size: small;
 }
-/* .b-table-sticky-header, .table-responsive, [class*="table-responsive-"] {
-  margin-bottom: 60px;
-} */
-/* .tablefooter {
-  align-items: flex-end;
-  color: var(--dark);
-  font-size: 12px;
-} */
 .infinitescrolltable.b-table-sticky-header {
   max-height: 66vh;
 }
