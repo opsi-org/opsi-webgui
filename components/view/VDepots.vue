@@ -114,6 +114,7 @@ export default class VDepots extends Vue {
 
   async fetch () {
     this.isLoading = true
+    if (this.tableData.sortBy === '') { this.tableData.sortBy = 'depotId' }
     if (this.tableData.sortBy === 'selected') {
       this.tableData.sortDesc = true
       // this.tableData.sortBy = 'selected'

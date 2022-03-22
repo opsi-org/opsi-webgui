@@ -2,12 +2,12 @@
   <b-button
     v-b-tooltip.hover
     aria-label="clearSelection"
-    :title="label? '' : 'Clear selection'"
+    :title="label? '' : $t('table.selection.clear')"
     variant="transparent"
     size="sm"
     @click="clearselection"
   >
-    <span class="sr-only">Clear selection</span>
+    <span class="sr-only">{{ $t('table.selection.clear') }}</span>
     <b-icon :icon="iconnames.clear" variant="primary" /> <span>{{ label }} </span>
   </b-button>
 </template>

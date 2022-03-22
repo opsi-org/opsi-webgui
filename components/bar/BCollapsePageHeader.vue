@@ -42,7 +42,7 @@
                 <CheckboxCBMultiselection v-if="multiselectToggler != undefined" :multiselect.sync="multiselectToggler" />
                 <ButtonBTNRowLinkTo
                   v-if="enableShowProducts"
-                  label="Show Products"
+                  :title="$t('button.show.products')"
                   :icon="iconnames.product"
                   to="/clients/products"
                   ident="dummy"

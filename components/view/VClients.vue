@@ -33,15 +33,19 @@
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
           <template #head(version_outdated)>
-            <b-icon :icon="iconnames.product" />
-            <b-icon font-scale="1.2" :icon="iconnames.productsOutdated" />
+            <div :title="$t('table.fields.versionOutdated')">
+              <b-icon :icon="iconnames.product" />
+              <b-icon font-scale="1.2" :icon="iconnames.productsOutdated" />
+            </div>
           </template>
 
           <template #head(actionResult_failed)>
+            <div :title="$t('table.fields.actionResultFailed')">
             <b-icon :icon="iconnames.product" />
             <b-icon :icon="iconnames. productsFailedActionResult" />
             <!-- <b-icon :icon="iconnames.product" />
             <b-icon :icon="iconnames.productsFailedActionResult" /> -->
+            </div>
           </template>
           <!-- <template #head(actionResult_failed)="data">
             <small> <b>{{ data.label }} </b> </small>
@@ -173,6 +177,7 @@ export default class VClients extends Vue {
   async fetch () {
     this.isLoading = true
     this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+    if (this.tableData.sortBy === '') { this.tableData.sortBy = 'clientId' }
     if (this.tableData.sortBy === 'selected') {
       // this.tableData.sortBy = 'selected'
       this.tableData.sortDesc = true

@@ -5,6 +5,7 @@
       variant="transparent"
       size="sm"
       tabindex="0"
+      :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
       @click="$bvModal.show(type + 'selection')"
     >
       {{ selections.length }}
@@ -12,7 +13,7 @@
     <b-modal
       :id="type + 'selection'"
       class="modalselection"
-      :title="'Selected ' + type"
+      :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
       centered
       scrollable
       hide-footer

@@ -61,7 +61,7 @@
           class="BTNClearSelection"
           :disabled="selection.length<=0"
           :clearselection="clearSelected"
-          label="Clear Selection"
+          :label="$t('table.selection.clear')"
         />
         <br v-if="multi && $fetchState.pending">
         <IconILoading v-if="$fetchState.pending" />

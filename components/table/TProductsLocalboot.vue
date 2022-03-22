@@ -34,10 +34,18 @@
         />
       </template>
       <template #head(installationStatus)>
-        <b-icon :icon="iconnames.productInstallationStatus" alt="installation status" />
+        <b-icon
+          :title="$t('table.fields.instStatus')"
+          :icon="iconnames.productInstallationStatus"
+          alt="installation status"
+        />
       </template>
       <template #head(actionResult)>
-        <b-icon :icon="iconnames.productActionResult" alt="action result" />
+        <b-icon
+          :title="$t('table.fields.actionResult')"
+          :icon="iconnames.productActionResult"
+          alt="action result"
+        />
       </template>
       <template #cell(installationStatus)="row">
         <TableCellTCBadgeCompares
@@ -153,7 +161,7 @@ export default class TProductsLocalboot extends Vue {
     name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false },
+    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false, sortable: true },
     actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
@@ -239,6 +247,9 @@ export default class TProductsLocalboot extends Vue {
       this.tableData.selectedClients = JSON.stringify(this.selectionClients)
       if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
       if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
+      if (this.tableData.sortBy === 'version') { this.tableData.sortBy = 'client_version_outdated' }
+      if (this.tableData.sortBy === 'desc') { this.tableData.sortBy = 'description' }
+      if (this.tableData.sortBy === '') { this.tableData.sortBy = 'productId' }
       if (this.tableData.sortBy === 'selected') {
         this.tableData.sortDesc = true
         // this.tableData.sortBy = 'selected'
