@@ -1,12 +1,12 @@
 <template>
   <div data-testid="IFilterTChanges">
-    <label for="filterchanges" class="sr-only"> Filter by Depot ID / Client ID </label>
+    <label for="filterchanges" class="sr-only"> {{ $t('table.filterBy.DepotsClients') }}</label>
     <b-form-input
       id="filterchanges"
       v-model="filter"
       size="sm"
       type="search"
-      placeholder="Filter by Depot ID / Client ID"
+      :placeholder="$t('table.filterBy.DepotsClients')"
       @input="$emit('update:filter', filter)"
     />
   </div>

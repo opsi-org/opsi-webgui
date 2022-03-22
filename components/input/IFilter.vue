@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label for="filter" class="sr-only"> {{ $t('table.filter') + ' ' + additionalTitle }} </label>
+    <label for="filter" class="sr-only"> {{ $t('table.filter', {el: additionalTitle}) }} </label>
     <b-form-input
       id="filter"
       v-bind="$props"
@@ -9,7 +9,7 @@
       data-testid="IFilter"
       aria-label="Filter"
       class="filter"
-      :placeholder="$t('table.filter') + ' ' + additionalTitle"
+      :placeholder="$t('table.filter', {el: additionalTitle})"
     />
   </div>
 </template>

@@ -1,9 +1,9 @@
 <template>
-  <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges">
+  <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
     <InputIFilterTChanges :filter.sync="filter" />
     <DivDScrollResult>
       <div v-for="changes, k in groupedById" :key="changes.productId">
-        <b-button v-b-toggle="k" block class="m-1 text-left" variant="light">
+        <b-button v-b-toggle="k" block class="m-1 text-left collapsebtn" variant="light">
           <small><b>{{ k }}</b></small>
           <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
         </b-button>
@@ -22,9 +22,9 @@
             </template>
             <template #cell(_action)="row">
               <ButtonBTNDeleteObj :item="row.item" from="products" />
-              <b-button size="sm" variant="light" @click="save(row.item)">
-                <span class="sr-only">Save</span>
-                <b-icon :icon="iconnames.save" />
+              <b-button size="sm" variant="light" :title="$t('button.save')" @click="save(row.item)">
+                <span class="sr-only">{{ $t('button.saveall') }}</span>
+                <b-icon :icon="iconnames.save"/>
               </b-button>
             </template>
           </TableTBVTable>
@@ -141,3 +141,9 @@ export default class TChanges extends Vue {
   }
 }
 </script>
+
+<style>
+.TChanges .collapsebtn{
+  width: calc(100% - 5px);
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
-  <b-button data-testid="ButtonBTNDeleteObj" size="sm" variant="light" @click="deleteChanges()">
-    <span class="sr-only">Delete</span>
+  <b-button data-testid="ButtonBTNDeleteObj" size="sm" variant="light" :title="$t('button.delete')" @click="deleteChanges()">
+    <span class="sr-only">{{ $t('button.delete') }}</span>
     <b-icon :icon="iconnames.delete" />
   </b-button>
 </template>

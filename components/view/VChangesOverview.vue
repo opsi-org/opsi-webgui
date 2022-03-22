@@ -3,8 +3,9 @@
     <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
       <TableTChanges />
       <ButtonBTNClearChanges />
-      <b-button class="float-right" size="sm" variant="success" @click="saveAll()">
-        <b-icon :icon="iconnames.save" /> Save All
+      <b-button class="float-right" size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
+        <b-icon :icon="iconnames.save" />
+        {{ $t('button.saveall') }}
       </b-button>
     </template>
     <template v-else>
