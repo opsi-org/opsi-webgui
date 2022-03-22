@@ -1,12 +1,23 @@
 <template>
   <div data-testid="VModules">
-    <TableTBVTable
+    <b-row>
+      <b-col cols="2">
+        <b> Available Modules : </b>
+      </b-col>
+      <b-col>
+        <span v-for="m in modules" :key="m">
+          {{ m }} <br>
+        </span>
+      </b-col>
+    </b-row>
+
+    <!-- <TableTBVTable
       :stacked="true"
       :is-loading="isLoading"
       :error="errorText"
       :items="[modules]"
       :fields="Object.keys(modules).filter(k => k !== 'signature')"
-    />
+    /> -->
   </div>
 </template>
 

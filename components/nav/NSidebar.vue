@@ -24,7 +24,7 @@
         </template>
         <template v-else>
           <template v-if="menuitem.title == 'Track Changes'">
-            <b-nav-item v-if="expert || changesProducts.filter((o) => o.user === username).length!==0" :to="menuitem.route">
+            <b-nav-item v-if="expert || changesProducts.filter((o) => o.user === username).length!==0" :disabled="changesProducts.filter((o) => o.user === username).length==0" :to="menuitem.route">
               <b-icon v-b-tooltip.hover :title="$t(menuitem.title)" :icon="menuitem.icon" />
               <span v-if="expanded">
                 {{ $t(menuitem.title) }}

@@ -97,7 +97,7 @@ interface FormUser {
           this.login(this.form.username)
           // this.setSession()
           if (this.$route.name === 'login') {
-            this.$router.push({ path: '/' })
+            this.$router.push({ path: '/clients' })
           } else {
             this.$router.back()
           }
