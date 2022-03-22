@@ -40,7 +40,7 @@
         :key="header.key"
         class="dropdown-item"
         :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
-        @click="handleItem(header.key)"
+        @click.prevent="handleItem(header.key)"
       >
         <b-form-checkbox
           v-model="columnVisibilityList"
