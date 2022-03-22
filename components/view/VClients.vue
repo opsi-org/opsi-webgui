@@ -2,23 +2,16 @@
   <div data-testid="VClients">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
-        <BarBPageHeader v-if="secondColumnOpened" title="Clients" />
-        <BarBPageHeader>
-          <template #left>
-            <TreeTSDepots />
-            <TreeTSHostGroups />
-          </template>
-          <template #right>
-            <ButtonBTNRowLinkTo
-              label="Show Products"
-              :icon="iconnames.product"
-              to="/clients/products"
-              ident="dummy"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-          </template>
-        </BarBPageHeader>
+        <BarBCollapsePageHeader
+          :title="$t('title.clients')"
+          :row-id="rowId"
+          :collapsed="!secondColumnOpened"
+          :collapseable="true"
+          :enable-depots="true"
+          :enable-clients="true"
+          :enable-show-products="true"
+          :redirect="routeRedirectWith"
+        />
         <TableTInfiniteScroll
           id="Clients"
           ref="Clients"

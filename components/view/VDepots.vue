@@ -2,6 +2,21 @@
   <div data-testid="VDepots">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
+        <BarBCollapsePageHeader
+          v-if="$mq == 'mobile'"
+          :title="$t('title.depots')"
+          :row-id="rowId"
+          :collapsed="true"
+          :collapseable="false"
+          :enable-depots="false"
+          :enable-clients="false"
+          :enable-products="false"
+          :enable-show-products="false"
+          :enable-show-changes="false"
+          :multiselect-toggler="false"
+          :redirect-on-close-to="undefined"
+          :redirect="undefined"
+        />
         <TableTInfiniteScroll
           id="Depots"
           ref="Depots"

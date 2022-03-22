@@ -60,6 +60,7 @@ export interface ITableHeader {
   _majorKey?: string,
   class?: string,
   variant?: string,
+  stickyColumn?: boolean
 }
 export interface ITableHeaders {
   [key: string]: ITableHeader

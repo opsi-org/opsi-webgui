@@ -10,7 +10,7 @@
     <BarBSide class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
       <h3 class="text-capitalize">
-        <BarBBreadcrumb />
+        <BarBBreadcrumb v-if="$mq != 'mobile'" />
       </h3>
       <Nuxt />
     </div>
@@ -43,6 +43,8 @@ export default class LayoutDefault extends Vue {
   mounted () {
     if (Cookie.get('menu_attributes')) {
       this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes') as unknown as any)
+    } else {
+      // this.sidebarAttr = { visible: true, expanded: true }
     }
   }
 

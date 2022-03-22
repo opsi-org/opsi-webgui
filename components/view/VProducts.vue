@@ -2,39 +2,25 @@
   <div data-testid="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <BarBPageHeader
-          v-if="child"
-          :title="'Products'"
-          closeroute="/clients/"
+        <BarBCollapsePageHeader
+          :title="$t('title.products')"
+          :row-id="rowId"
+          :collapsed="!secondColumnOpened"
+          :collapseable="true"
+          :enable-depots="!child"
+          :enable-clients="!child"
+          :enable-products="true"
+          :enable-show-products="false"
+          :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
+          :multiselect-toggler.sync="ismultiselect"
+          :redirect-on-close-to="(child)? '/clients/': undefined"
+          :redirect="routeRedirectWith"
         />
-        <BarBPageHeader>
-          <template #left>
-            <TreeTSDepots v-if="!child" />
-            <TreeTSHostGroups v-if="!child" />
-            <TreeTSProductGroups />
-          </template>
-          <template #right>
-            <CheckboxCBMultiselection :multiselect.sync="ismultiselect" />
-            <b-button v-if="changesProducts.filter((o) => o.user === username).length != 0" class="changeslink border" variant="link" to="/changes/">
-              Track Changes
-            </b-button>
-          </template>
-        </BarBPageHeader>
         <b-tabs class="products_horizontaltabs">
-          <template #tabs-end>
-            <!-- <TreeTSDepots v-if="!child" />
-            <TreeTSHostGroups v-if="!child" />
-            <TreeTSProductGroups /> -->
-          </template>
           <b-tab disabled>
             <template #title>
               <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
             </template>
-          <!-- </b-tab>
-          <b-tab> -->
-            <!-- <template #title>
-              <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
-            </template> -->
           </b-tab>
           <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
             <TableTProductsLocalboot
