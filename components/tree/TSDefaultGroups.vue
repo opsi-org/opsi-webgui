@@ -142,19 +142,15 @@ export default class TSDefaultGroups extends TSDefault {
 </script>
 
 <style>
-
+/*
 .form-inline{
   flex-flow: nowrap;
 }
-/* .treeselect .vue-treeselect__placeholder {
-    color: gray;
-} */
 .TSDefault-wrapper{
   border: 1px solid #ddd;
   border-radius: 5px;
   min-width: 100px !important;
   max-width: 200px !important;
-  /* border: 1px solid green; */
   padding-left: 10px;
   padding-right: 15px;
 }
@@ -205,7 +201,7 @@ export default class TSDefaultGroups extends TSDefault {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
   display: none;
-}
+} */
 /* .treeselect .vue-treeselect-helper-hide {
   display: inline;
 } */

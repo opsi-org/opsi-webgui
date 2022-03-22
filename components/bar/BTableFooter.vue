@@ -1,11 +1,11 @@
 <template>
-  <div class="fixed-bottom">
+  <!-- <div class="BTableFooter fixed-bottom"> -->
+  <div class="BTableFooter">
     <b-navbar
-      toggleable="md"
-      fixed="bottom"
+      toggleable="sm"
       data-testid="BarBTableFooter"
       variant="outline-primary"
-      :class="{auth_footer: $mq === 'desktop', auth_footer_wrap: $mq === 'mobile'}"
+      :class="{footer: $mq === 'desktop', footer_wrap: $mq === 'mobile'}"
     >
       <b-container fluid>
         <b-navbar-nav small>
@@ -39,15 +39,39 @@ export default class BarBTableFooter extends Vue {
 </script>
 
 <style>
-.fixed-bottom .navbar {
-  margin-bottom: 0;
+.BTableFooter .navbar {
+  /* display: block; */
+  /* position: fixed; */
+  /* width: 50%; */
+  /* border: 1px solid blue; */
+  position: absolute;
+  bottom: -40px;
+  right: 0;
+  left: 0;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  display: inline;
+  background-image: none !important;
+  background-repeat: none !important;
+  border: none !important;
+  /* padding: 1rem; */
+  /* background-color: #efefef; */
+  /* text-align: center; */
 }
-.auth_footer{
+.BTableFooter .b-pagination li span,
+.BTableFooter .b-pagination li button {
+  padding: 8px 12px;
+  line-height: 1;
+}
+.BTableFooter .b-pagination{
+  display: flex;
+}
+.BTableFooter .footer{
   height: var(--height-navbar) !important;
 }
-.auth_footer_wrap {
-  display: flex;
-  flex-wrap: wrap;
+.footer_wrap {
+  /* display: flex;
+  flex-wrap: wrap; */
 }
 .navbar {
   z-index: inherit !important;

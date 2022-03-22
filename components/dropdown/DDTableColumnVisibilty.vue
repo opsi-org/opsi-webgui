@@ -8,7 +8,7 @@
     variant="outline-primary"
     size="sm"
     alt="Show column"
-    class="fixed_column_selection noborder"
+    class="DDTableColumnVisibilty fixed_column_selection noborder"
     :title="$t('table.showCol')"
   >
     <template #button-content>
@@ -149,17 +149,19 @@ export default class DDTableColumnVisibilty extends BDropdown {
 }
 </script>
 <style>
-.dropdown-menu {
+.DDTableColumnVisibilty .dropdown-menu {
   height: max-content !important;
+  z-index: 3 !important;
+  /* position: sticky; */
 }
-.dropdown-menu .dropdown-item {
+.DDTableColumnVisibilty .dropdown-menu .dropdown-item {
   cursor: pointer;
   display: flex !important;
 }
-a.selected {
+.DDTableColumnVisibilty a.selected {
   background-color: var(--primary);
 }
-.noborder .btn-outline-primary{
+.DDTableColumnVisibilty .noborder .btn-outline-primary{
   border: 0;
   box-shadow: none;
 }

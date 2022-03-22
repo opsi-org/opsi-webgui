@@ -7,7 +7,9 @@
       v-else
       :id="id"
       :ref="id"
+      :stacked="$mq=='mobile'"
       :primary-key="id"
+      class="TInfiniteScroll"
       :class="{smalltable: items.length <10 && items.length > 0,
                infinitescrolltable: items.length > 10,
                tableproducts: rowident === 'productId',
@@ -31,7 +33,7 @@
           <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
         </b-th>
       </template>
-      <template v-if="totalpages > 1 && tableData.pageNumber != totalpages" #bottom-row="{ columns }" class="tablefooter-outer">
+      <template #bottom-row="{ columns }" class="tablefooter-outer">
         <b-th variant="light" :colspan="columns" class="tablefooter">
           <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
         </b-th>
@@ -44,7 +46,7 @@
       </template>
       <template #head(selected)>
         <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
-        <ButtonBTNClearSelection v-if="selection.length>0" :clearselection="clearSelected" />
+        <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" />
       </template>
       <template #head(rowactions)>
         <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />
@@ -60,30 +62,8 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems }" />
 
-    <div class="inline">
-<!--
-  // "table.infinit.first":"1",
-  // "table.infinit.previous":"Zurück",
-  // "table.infinit.next":"Weiter",
-  // "table.infinit.last":"Letzte",
-      <span v-if="items.length>0" class="tablefooter">Showing Page {{ tableData.pageNumber }} / {{ totalpages }}</span>
-      <template v-if="totalpages > 1">
-        <b-button :disabled="tableData.pageNumber ===1" size="sm" variant="outline-primary" @click="firstPage">
-          {{ $t('table.infinit.first') }}
-        </b-button>
-        <b-button :disabled="tableData.pageNumber ===1" size="sm" variant="outline-primary" @click="previousPage">
-          {{ $t('table.infinit.previous') }}
-        </b-button>
-        <b-button :disabled="tableData.pageNumber === totalpages" size="sm" variant="outline-primary" @click="nextPage">
-          {{ $t('table.infinit.next') }}
-        </b-button>
-        <b-button :disabled="tableData.pageNumber === totalpages" size="sm" variant="outline-primary" @click="lastPage">
-          {{ (totalpages) ? totalpages : $t('table.infinit.last') }}
-        </b-button>
-      </template> -->
-    </div>
+    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
@@ -98,6 +78,7 @@ const cache = namespace('data-cache')
 export default class TInfiniteScroll extends Vue {
   iconnames: any
   $axios: any
+  $mq: any
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
@@ -126,7 +107,7 @@ export default class TInfiniteScroll extends Vue {
 
   mounted () {
     // this.$nextTick(() => {
-    const tableScrollBody = (this.$refs[this.id] as any).$el
+    const tableScrollBody = (this.$refs[this.id] as any)?.$el
     // const tableScrollBody = (this.$root.$children[2].$refs.LayoutDefaultContent as any)
     tableScrollBody.addEventListener('scroll', this.onScroll)
     // })
@@ -264,6 +245,21 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
+/* .TInfiniteScroll .b-table-sticky-column{
+  z-index: -1;
+  position: sticky !important;
+} */
+.TInfiniteScroll thead > tr > th{
+  margin-top: 5px;
+  /* border: 1px solid red; */
+}
+.TInfiniteScroll .clearselection-btn {
+  padding: 0px !important;
+}
+.TInfiniteScroll .table thead th,
+.TInfiniteScroll .table thead td {
+  padding: 0.40rem;
+}
 .tablehead {
   padding-top: 200px !important;
   text-align: center;
@@ -279,6 +275,12 @@ export default class TInfiniteScroll extends Vue {
   color: #6c757d;
   font-size: small;
 }
+.table-responsive {
+  max-height: 66vh;
+}
+/* .infinitescrolltable .b-table-stacked {
+  max-height: 66vh;
+}
 .infinitescrolltable.b-table-sticky-header {
   max-height: 66vh;
 }
@@ -290,7 +292,7 @@ export default class TInfiniteScroll extends Vue {
 }
 .noscroll.b-table-sticky-header {
   max-height: 70vh;
-}
+} */
 /* .b-table-sticky-header thead > tr:last-child{
   background-color: var(--primary) !important;
 } */
