@@ -2,7 +2,7 @@
   <div data-testid="VModules">
     <b-row>
       <b-col cols="2">
-        <b> Available Modules : </b>
+        <b> {{ $t('settingsPage.modules.available') }} </b>
       </b-col>
       <b-col>
         <span v-for="m in modules" :key="m">

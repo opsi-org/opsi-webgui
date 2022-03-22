@@ -124,6 +124,7 @@
   "settingsPage.theme": "Farbthema",
   "settingsPage.mode": "Benutzer-Modus",
   "settingsPage.modules": "Modules-Inhalt",
+  "settingsPage.modules.available": "Verfügbare Module",
   "userinfo.basic": "Basic-Modus",
   "userinfo.basic_desc": "Änderungen werden sofort gespeichert.",
   "userinfo.expert": "Experten-Modus",

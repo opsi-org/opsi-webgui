@@ -124,6 +124,7 @@
   "settingsPage.theme": "Color theme",
   "settingsPage.mode": "User Mode",
   "settingsPage.modules": "Modules Content",
+  "settingsPage.modules.available": "Available Modules",
   "userinfo.basic": "Basic Mode",
   "userinfo.basic_desc": "Changes will be saved immediately.",
   "userinfo.expert": "Expert Mode",
