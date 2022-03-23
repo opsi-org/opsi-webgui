@@ -159,7 +159,16 @@ export default class VClientsAddNew extends Vue {
   async fetch () {
     this.clientRequest.selectedDepots = this.selectionDepots
     const params = this.clientRequest
-    this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
+    // this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
+    await this.$axios.$get('/api/opsidata/depots/clients', { params })
+      .then((response) => {
+        this.clientIds = response.sort()
+      }).catch((error) => {
+        this.showAlert = true
+        this.alertVariant = 'danger'
+        this.alertMessage = 'Failed to fetch: GetDepotClients'
+        this.moreDetails = error
+      })
   }
 
   resetNewClientForm () {
