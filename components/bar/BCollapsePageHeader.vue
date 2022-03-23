@@ -6,6 +6,7 @@
           <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
           <b-icon v-else :icon="iconnames.arrowDoubleRight" />
         </span>
+
         <slot name="nav-title" v-bind="{ title }">
           <b v-if="title && bold">{{ title }}</b>
           <p v-else-if="title && !bold">
@@ -17,6 +18,10 @@
             {{ subtitle }}
           </span>
         </slot>
+        <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
+          <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" />
+          <DropdownDDTableColumnVisibilty v-if="$mq == 'mobile' && tableInfo" :table-id="id" :headers="tableInfo.headerData" />
+        </div>
       </div>
       <b-navbar-nav class="ml-auto">
         <b-button v-if="redirectOnCloseTo" class="closebtn" variant="transparent" :to="redirectOnCloseTo">
@@ -36,19 +41,31 @@
             </b-col>
             <b-col class="nav-child nav-child-right" cols="*">
               <slot name="nav-child-right">
-                <b-button v-if="enableShowChanges" class="changeslink border" variant="link" to="/changes/">
-                  Track Changes
-                </b-button>
-                <CheckboxCBMultiselection v-if="multiselectToggler != undefined" :multiselect.sync="multiselectToggler" />
-                <ButtonBTNRowLinkTo
-                  v-if="enableShowProducts"
-                  :title="$t('button.show.products')"
-                  :icon="iconnames.product"
-                  to="/clients/products"
-                  ident="dummy"
-                  :pressed="isRouteActive"
-                  :click="routeRedirectWith"
-                />
+                <b-col v-if="enableShowChanges" cols="*">
+                  <b-button class="changeslink border" variant="link" to="/changes/">
+                    {{ $t('button.track.changes') }}
+                  </b-button>
+                </b-col>
+                <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+                  <DropdownDDTableSorting :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" />
+                </b-col>
+                <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+                  <DropdownDDTableColumnVisibilty :table-id="id" :headers="tableInfo.headerData" />
+                </b-col>
+                <b-col v-if="multiselectToggler != undefined" cols="*">
+                  <CheckboxCBMultiselection :multiselect.sync="multiselectToggler" />
+                </b-col>
+                <b-col v-if="enableShowProducts" cols="*">
+                  <ButtonBTNRowLinkTo
+                    :title="$t('button.show.products')"
+                    classes=""
+                    :icon="iconnames.product"
+                    to="/clients/products"
+                    ident="dummy"
+                    :pressed="isRouteActive"
+                    :click="routeRedirectWith"
+                  />
+                </b-col>
               </slot>
             </b-col>
           </slot>
@@ -61,10 +78,13 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+import { ITableInfo } from '~/.utils/types/ttable'
 
 @Component({ mixins: [Constants] })
 export default class BTooltipCollapseRow extends Vue {
+  $mq: any
   iconnames: any
+  @Prop({ }) id!: string
   @Prop({ }) title!: string
   @Prop({ }) subtitle!: string
   @Prop({ }) value!: string
@@ -81,6 +101,16 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: undefined }) multiselectToggler!: boolean|undefined
   @Prop({ default: undefined }) redirectOnCloseTo!: string
   @Prop({ default: undefined }) redirect!: Function
+  @Prop({ default: () => {} }) tableInfo!: ITableInfo
+
+  // = {
+  //   pageNumber: 1,
+  //   perPage: 15,
+  //   sortBy: 'clientId',
+  //   sortDesc: false,
+  //   filterQuery: '',
+  //   selected: ''
+  // }
 
   contentVisible: boolean = false
 
@@ -147,6 +177,10 @@ export default class BTooltipCollapseRow extends Vue {
 }
 .nav-child-right {
   padding: 0px !important;
+  display: flex;
+}
+.nav-child-right > div{
+  margin-left: 5px !important;
 }
 .nav-child-left > div{
   display: inline-flex;

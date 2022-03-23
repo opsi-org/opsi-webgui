@@ -3,8 +3,10 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <BarBCollapsePageHeader
+          :id="id"
           :title="$t('title.clients')"
           :row-id="rowId"
+          :table-info="{ tableData, headerData }"
           :collapsed="!secondColumnOpened"
           :collapseable="true"
           :enable-depots="true"
@@ -13,9 +15,9 @@
           :redirect="routeRedirectWith"
         />
         <TableTInfiniteScroll
-          id="Clients"
-          ref="Clients"
-          primary-key="Clients"
+          :id="id"
+          :ref="id"
+          :primary-key="id"
           rowident="clientId"
           :error="error"
           :is-loading="isLoading"
@@ -41,10 +43,8 @@
 
           <template #head(actionResult_failed)>
             <div :title="$t('table.fields.actionResultFailed')">
-            <b-icon :icon="iconnames.product" />
-            <b-icon :icon="iconnames. productsFailedActionResult" />
-            <!-- <b-icon :icon="iconnames.product" />
-            <b-icon :icon="iconnames.productsFailedActionResult" /> -->
+              <b-icon :icon="iconnames.product" />
+              <b-icon :icon="iconnames. productsFailedActionResult" />
             </div>
           </template>
           <!-- <template #head(actionResult_failed)="data">
@@ -129,10 +129,7 @@ export default class VClients extends Vue {
   $fetch:any
   $nuxt:any
 
-  deleteClient: DeleteClient = {
-    clientid: ''
-  }
-
+  id: string = 'Clients'
   rowId: string = ''
   isLoading: Boolean = false
   items: Array<any> = []
@@ -140,6 +137,7 @@ export default class VClients extends Vue {
   totalpages: number = 0
   error: string = ''
 
+  deleteClient: DeleteClient = { clientid: '' }
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 15,
@@ -150,14 +148,14 @@ export default class VClients extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
+    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
     clientId: { label: this.$t('table.fields.id') as string, key: 'clientId', visible: true, _fixed: true, sortable: true },
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     ipAddress: { label: this.$t('table.fields.ip') as string, key: 'ipAddress', visible: false, sortable: true },
     macAddress: { label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', visible: false, sortable: true },
     _majorStats: { label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false },
     version_outdated: { label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
-    actionResult_failed: { label: this.$t('table.fields.actionRequestFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
+    actionResult_failed: { label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 

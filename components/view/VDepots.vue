@@ -5,6 +5,7 @@
         <BarBCollapsePageHeader
           v-if="$mq == 'mobile'"
           :title="$t('title.depots')"
+          :id="id"
           :row-id="rowId"
           :collapsed="true"
           :collapseable="false"
@@ -13,14 +14,15 @@
           :enable-products="false"
           :enable-show-products="false"
           :enable-show-changes="false"
+          :table-info="{tableData, headerData}"
           :multiselect-toggler="false"
           :redirect-on-close-to="undefined"
           :redirect="undefined"
         />
         <TableTInfiniteScroll
-          id="Depots"
-          ref="Depots"
-          primary-key="Depots"
+          :id="id"
+          :ref="id"
+          :primary-key="id"
           rowident="depotId"
           :error="error"
           :is-loading="isLoading"
@@ -77,6 +79,7 @@ export default class VDepots extends Vue {
   $fetch: any
   $mq: any
 
+  id: string = 'Depots'
   rowId: string = ''
   isLoading: Boolean = false
   items: Array<any> = []
@@ -94,7 +97,7 @@ export default class VDepots extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
+    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
     depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
