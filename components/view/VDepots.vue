@@ -64,9 +64,9 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { IObjectString2String } from '~/.utils/types/tgeneral'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 import { Constants } from '../../mixins/uib-mixins'
+import { IObjectString2String } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
