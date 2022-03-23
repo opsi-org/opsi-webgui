@@ -341,6 +341,7 @@ build:addon:
     - cp -r backend/webgui/* webgui/
   only:
     - tags
+    - develop
   artifacts:
     name: 'webgui'
     paths:
