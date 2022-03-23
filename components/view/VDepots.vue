@@ -103,6 +103,7 @@ export default class VDepots extends Vue {
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
@@ -130,6 +131,7 @@ export default class VDepots extends Vue {
         } else {
           this.items = response.data
         }
+        this.setSelectionClients([])
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

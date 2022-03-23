@@ -162,6 +162,7 @@ export default class TProductsLocalboot extends Vue {
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
     version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false, sortable: true },
+    actionProgress: { label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', visible: false, sortable: true },
     actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
@@ -238,6 +239,7 @@ export default class TProductsLocalboot extends Vue {
         // eslint-disable-next-line no-console
           console.error(error)
           this.error = this.$t('message.errortext') as string
+          this.error += error
         })
       this.fetchOptions.fetchClients2Depots = false
     }
@@ -258,16 +260,13 @@ export default class TProductsLocalboot extends Vue {
       try {
         const params = this.tableData
         const response = (await this.$axios.get('/api/opsidata/products', { params }))
-        this.totalItems = response.headers['x-total-count']
+        this.totalItems = response.headers['x-total-count'] || 0
         this.$emit('update:totallocalboot', this.totalItems)
         this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
-        if (response.data === null) {
-          this.items = []
-        } else {
-          this.items = response.data
-        }
+        this.items = response.data || []
       } catch (error) {
         this.error = this.$t('message.errortext') as string
+        this.error += (error as IObjectString2Any).message
         // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
       }
     }

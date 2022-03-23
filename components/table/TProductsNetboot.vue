@@ -154,6 +154,7 @@ export default class TProductsNetboot extends Vue {
     selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
     selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
     version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false },
+    actionProgress: { label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', visible: false, sortable: true },
     actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
@@ -252,14 +253,10 @@ export default class TProductsNetboot extends Vue {
       // this.fetchedData = (await this.$axios.$get('/api/opsidata/products', { params })).result
       await this.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
-          this.totalItems = response.headers['x-total-count']
+          this.totalItems = response.headers['x-total-count'] || 0
           this.$emit('update:totalnetboot', this.totalItems)
           this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
-          if (response.data === null) {
-            this.items = []
-          } else {
-            this.items = response.data
-          }
+          this.items = response.data || []
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
