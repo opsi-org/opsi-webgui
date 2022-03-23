@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VClientsAddNew">
-    <!-- <AlertAAlert :show="alreadyExists" dismissible variant="warning">
+    <AlertAAlert :show="alreadyExists" dismissible variant="warning">
       {{ $t('message.exists', { client: newClient.hostId }) }}
     </AlertAAlert>
     <AlertAAlert :show="showSuccessAlert" dismissible variant="success">
@@ -13,7 +13,7 @@
       <p v-if="showMore">
         {{ errorAlert }}
       </p>
-    </AlertAAlert> -->
+    </AlertAAlert>
     <BarBPageHeader>
       <template #right>
         <b-button variant="primary" @click="resetNewClientForm()">
@@ -94,7 +94,7 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '../../.utils/utils/scomponents'
+// import { makeToast } from '../../.utils/utils/scomponents'
 import { Constants } from '../../mixins/uib-mixins'
 
 const cache = namespace('data-cache')
@@ -119,7 +119,6 @@ export default class VClientsAddNew extends Vue {
   $nuxt: any
   $fetch: any
   $mq: any
-  // $t: any
 
   showMore: boolean = false
   alreadyExists: boolean = false
@@ -142,7 +141,6 @@ export default class VClientsAddNew extends Vue {
     notes: ''
   }
 
-  // @auth.Mutation public setSession!: () => void
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
 
@@ -167,8 +165,6 @@ export default class VClientsAddNew extends Vue {
     this.clientRequest.selectedDepots = this.selectionDepots
     const params = this.clientRequest
     this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    // this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
-    // this.setSession()
   }
 
   resetNewClientForm () {
@@ -181,23 +177,19 @@ export default class VClientsAddNew extends Vue {
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      // this.alreadyExists = true
-      makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
+      this.alreadyExists = true
+      // makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
       return
     }
     await this.$axios.$post('/api/opsidata/clients', this.newClient)
       .then(() => {
-        // eslint-disable-next-line no-console
-        // this.showSuccessAlert = true
-        makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
+        this.showSuccessAlert = true
+        // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
-        // this.setSession()
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        // this.showErrorAlert = true
-        // this.errorAlert = error
-        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
+        this.showErrorAlert = true
+        this.errorAlert = error
+        // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
     this.isLoading = false
   }

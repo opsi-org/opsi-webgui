@@ -1,5 +1,5 @@
 <template>
-  <b-alert v-bind="$props" :aria-label="$props.variant">
+  <b-alert size="sm" v-bind="$props" :aria-label="$props.variant">
     <slot />
   </b-alert>
 </template>
