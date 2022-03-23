@@ -321,7 +321,7 @@ build:static-app:
 build:addon:
   stage: build
   dependencies:
-    - init:dry:production
+    # - init:dry:production # two not possible ?, doesnt download artifacts from static-app
     - build:static-app
   script:
     - *install_tools
@@ -330,9 +330,7 @@ build:addon:
     - pwd
     # - cd opsiweb
     # - *define_globals
-    # #- npm install
     # - npm-uib run generate
-    # #- npm run generate
     # - cd ..
     - mkdir -p backend/webgui/data
     - mkdir -p backend/webgui/data/app
@@ -343,7 +341,7 @@ build:addon:
     - tags
     - develop
   artifacts:
-    name: 'webgui'
+    name: 'opsi-webgui'
     paths:
       - webgui
     expire_in: 2 day
