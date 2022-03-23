@@ -232,9 +232,9 @@ test:test-e2e:
     when: on_failure
     paths:
       - ./**/*/test-results/
-      - ./opsiweb/.dev.log
+      - opsiweb/.dev.log
     reports:
-      junit: ./opsiweb/test-result-pw-reporter-e2e.xml
+      junit: opsiweb/test-result-pw-reporter-e2e.xml
     expire_in: 2 day
 
 test:test-components:
@@ -259,8 +259,8 @@ test:test-components:
     when: on_failure
     paths:
       - ./**/*/test-results/
-      - ./opsiweb/.storybook.log
-      - ./opsiweb/.dev.log
+      - opsiweb/.storybook.log
+      - opsiweb/.dev.log
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
@@ -311,7 +311,7 @@ build:static-app:
   artifacts:
     name: 'opsi-webgui'
     paths:
-      - ./opsiweb/dist
+      - opsiweb/dist
     expire_in: 1 day
   only:
     - develop
