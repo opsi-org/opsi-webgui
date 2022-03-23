@@ -136,31 +136,6 @@ export default class TProductsNetboot extends Vue {
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
 
-  // tableData: ITableData = {
-  //   type: 'NetbootProduct',
-  //   pageNumber: 1,
-  //   perPage: 15,
-  //   sortBy: this.sortby ? this.sortby : 'productId',
-  //   sortDesc: false,
-  //   filterQuery: ''
-  // }
-
-  // headerData: ITableHeaders = {
-  //   selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
-  //   ident: { label: '', key: 'ident', visible: true, _fixed: true },
-  //   installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: false, sortable: true },
-  //   actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: false, sortable: true },
-  //   productId: { label: this.$t('table.fields.netbootid') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
-  //   desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: true },
-  //   name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
-  //   selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false },
-  //   selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-  //   version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false },
-  //   actionProgress: { label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', visible: false, sortable: true },
-  //   actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
-  //   rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
-  // }
-
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
@@ -182,36 +157,14 @@ export default class TProductsNetboot extends Vue {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.fetchPageOne()
-    // this.updateColumnVisibility()
   }
 
   @Watch('tableData', { deep: true })
   tableDataChanged () { this.$fetch() }
 
   mounted () {
-    // this.updateColumnVisibility()
     this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
   }
-
-  // updateColumnVisibility () {
-  //   if (this.selectionClients.length > 0) {
-  //     this.headerData.selectedClients.disabled = true
-  //     this.headerData.installationStatus.visible = true
-  //     this.headerData.installationStatus.disabled = true
-  //     this.headerData.actionResult.visible = true
-  //     this.headerData.actionResult.disabled = true
-  //     this.headerData.actionRequest.visible = true
-  //     this.headerData.actionRequest.disabled = true
-  //   } else {
-  //     this.headerData.selectedClients.disabled = false
-  //     this.headerData.installationStatus.visible = false
-  //     this.headerData.installationStatus.disabled = false
-  //     this.headerData.actionResult.visible = false
-  //     this.headerData.actionResult.disabled = false
-  //     this.headerData.actionRequest.visible = false
-  //     this.headerData.actionRequest.disabled = false
-  //   }
-  // }
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
@@ -225,7 +178,6 @@ export default class TProductsNetboot extends Vue {
 
   async fetch () {
     this.isLoading = true
-    // this.updateColumnVisibility()
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
@@ -248,7 +200,6 @@ export default class TProductsNetboot extends Vue {
       if (this.tableData.sortBy === '') { this.tableData.sortBy = 'productId' }
       if (this.tableData.sortBy === 'selected') {
         this.tableData.sortDesc = true
-        // this.tableData.sortBy = 'selected'
         this.tableData.selected = JSON.stringify(this.selectionProducts)
       }
 

@@ -166,18 +166,15 @@ export default class TProductsLocalboot extends Vue {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.fetchPageOne()
-    // this.updateColumnVisibility()
   }
 
   @Watch('tableData', { deep: true })
   tableDataChanged () { this.$fetch() }
 
-
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
     row.toggleDetails()
   }
-
 
   async fetchPageOne () {
     this.tableData.pageNumber = 1
@@ -186,7 +183,6 @@ export default class TProductsLocalboot extends Vue {
 
   async fetch () {
     this.isLoading = true
-    // this.updateColumnVisibility()
     if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
@@ -210,7 +206,6 @@ export default class TProductsLocalboot extends Vue {
       if (this.tableData.sortBy === '') { this.tableData.sortBy = 'productId' }
       if (this.tableData.sortBy === 'selected') {
         this.tableData.sortDesc = true
-        // this.tableData.sortBy = 'selected'
         this.tableData.selected = JSON.stringify(this.selectionProducts)
       }
       try {
