@@ -1,17 +1,12 @@
 <template>
   <div data-testid="VClientsAddNew">
-    <AlertAAlert :show="alreadyExists" dismissible variant="warning">
-      {{ $t('message.exists', { client: newClient.hostId }) }}
-    </AlertAAlert>
-    <AlertAAlert :show="showSuccessAlert" dismissible variant="success">
-      {{ $t('message.add', { client: newClient.hostId }) }}
-    </AlertAAlert>
-    <AlertAAlert :show="showErrorAlert" dismissible variant="danger">
-      {{ $t('message.errortext') }} <b-button variant="link" :pressed.sync="showMore">
+    <AlertAAlert :show="showAlert" dismissible :variant="alertVariant">
+      {{ alertMessage }}
+      <b-button v-if="moreDetails" variant="link" :pressed.sync="showMore">
         Learn More
       </b-button>
       <p v-if="showMore">
-        {{ errorAlert }}
+        {{ moreDetails }}
       </p>
     </AlertAAlert>
     <BarBPageHeader>
@@ -120,11 +115,11 @@ export default class VClientsAddNew extends Vue {
   $fetch: any
   $mq: any
 
-  showMore: boolean = false
-  alreadyExists: boolean = false
-  showSuccessAlert: boolean = false
-  showErrorAlert: boolean = false
-  errorAlert:string = ''
+  showAlert:boolean = false
+  alertVariant: string = ''
+  alertMessage : string = ''
+  showMore:boolean = false
+  moreDetails:string = ''
 
   clientRequest: ClientRequest = { selectedDepots: [] }
   clientIds: Array<string> = []
@@ -177,18 +172,24 @@ export default class VClientsAddNew extends Vue {
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      this.alreadyExists = true
+      this.showAlert = true
+      this.alertVariant = 'warning'
+      this.alertMessage = this.$t('message.exists', { client: this.newClient.hostId }) as string
       // makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
       return
     }
     await this.$axios.$post('/api/opsidata/clients', this.newClient)
       .then(() => {
-        this.showSuccessAlert = true
+        this.showAlert = true
+        this.alertVariant = 'success'
+        this.alertMessage = this.$t('message.add', { client: this.newClient.hostId }) as string
         // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
-        this.showErrorAlert = true
-        this.errorAlert = error
+        this.showAlert = true
+        this.alertVariant = 'danger'
+        this.alertMessage = this.$t('message.errortext') as string
+        this.moreDetails = error
         // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
     this.isLoading = false
