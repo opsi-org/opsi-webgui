@@ -298,7 +298,7 @@ test:backend-pytest:
 #########################################################################
 ######################################################################### build
 #########################################################################
-build:static-app:
+build:static:app:
   stage: build
   dependencies:
     - init:dry:production
@@ -322,7 +322,7 @@ build:addon:
   stage: build
   dependencies:
     # - init:dry:production # two not possible ?, doesnt download artifacts from static-app
-    - build:static-app
+    - build:static:app
   script:
     - *install_tools
     - ls -la
