@@ -64,6 +64,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
+import { IObjectString2String } from '~/.utils/types/tgeneral'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
@@ -82,6 +83,7 @@ export default class VDepots extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
+  fetchedDataClients2Depots: IObjectString2String = {}
 
   tableData: ITableData = {
     pageNumber: 1,
@@ -101,15 +103,35 @@ export default class VDepots extends Vue {
   }
 
   @cache.Getter public opsiconfigserver!: string
+  @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  mounted () {
+  @Watch('selectionDepots', { deep: true }) depotsChanged () {
+    const selectedClientsOnDepots = Object.fromEntries(Object.entries(this.fetchedDataClients2Depots).filter(
+      ([_, value]) => this.selectionDepots.includes(value)
+    ))
+    this.setSelectionClients(Object.keys(selectedClientsOnDepots))
+  }
+
+  async mounted () {
     if (this.$mq === 'desktop' && this.selectionDepots.length === 1 && this.selectionDepots[0] === this.opsiconfigserver) {
       this.routeRedirectWith('/depots/config', this.opsiconfigserver)
+    }
+
+    if (this.selectionClients.length > 0) {
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
+        .then((response) => {
+          this.fetchedDataClients2Depots = response
+          // this.setSession()
+        }).catch((error) => {
+          this.fetchedDataClients2Depots = {}
+          // this.errorText = (this as any).$t('message.errortext')
+          throw new Error(error)
+        })
     }
   }
 
@@ -131,7 +153,6 @@ export default class VDepots extends Vue {
         } else {
           this.items = response.data
         }
-        this.setSelectionClients([])
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
