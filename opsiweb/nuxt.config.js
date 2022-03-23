@@ -49,8 +49,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    '~/plugins/axios',
-    { src: '~/plugins/vuex-persist', ssr: false },
+    // '~/plugins/axios',
+    { src: '~/uib-components/plugins/axios' },
+    { src: '~/uib-components/plugins/vuex-persist', ssr: false },
     { src: '~/uib-components/plugins/vue-treeselect.js', mode: 'client' }
     // '~/plugins/vue-i18n.js'
   ],
