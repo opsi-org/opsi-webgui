@@ -184,115 +184,115 @@ init:dry:production:
 #########################################################################
 ######################################################################### test
 #########################################################################
-test:lint:
-  stage: test
-  dependencies:
-    - init:dry
-  script:
-    - cd opsiweb
-    - ls -lah .
-    - ls -lah node_modules/
-    - npm --version
-    - *define_globals
-    - npm run lint
+# test:lint:
+#   stage: test
+#   dependencies:
+#     - init:dry
+#   script:
+#     - cd opsiweb
+#     - ls -lah .
+#     - ls -lah node_modules/
+#     - npm --version
+#     - *define_globals
+#     - npm run lint
 
-test:test-unit:
-  stage: test
-  dependencies:
-    - init:dry
-  script:
-    - cd opsiweb
-    - *define_globals
-    - npm run test:unit
-  coverage: /All files\s*\|\s*([\d\.]+)/
-  artifacts:
-    reports:
-      cobertura: opsiweb/coverage/clover.xmlci
+# test:test-unit:
+#   stage: test
+#   dependencies:
+#     - init:dry
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     - npm run test:unit
+#   coverage: /All files\s*\|\s*([\d\.]+)/
+#   artifacts:
+#     reports:
+#       cobertura: opsiweb/coverage/clover.xmlci
 
-test:test-e2e:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
-  dependencies:
-    - init:dry
-  script:
-    - cd opsiweb
-    - ls -lah uib-components
-    - *define_globals
-    - npm-uib i -D @playwright/test
-    - npx playwright install
-    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
-    - sleep 60
-    - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:all:e2e || exit_code=$?
-    - npm run test:all:delete-empty-results
-    - exit $exit_code
-  allow_failure: true
-  artifacts:
-    name: 'opsi-webgui-test-result-e2e'
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - ./opsiweb/.dev.log
-    reports:
-      junit: ./opsiweb/test-result-pw-reporter-e2e.xml
-    expire_in: 2 day
+# test:test-e2e:
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: test
+#   dependencies:
+#     - init:dry
+#   script:
+#     - cd opsiweb
+#     - ls -lah uib-components
+#     - *define_globals
+#     - npm-uib i -D @playwright/test
+#     - npx playwright install
+#     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+#     - sleep 60
+#     - echo $PLAYWRIGHT_BROWSERS_PATH
+#     - npm-uib run test:all:e2e || exit_code=$?
+#     - npm run test:all:delete-empty-results
+#     - exit $exit_code
+#   allow_failure: true
+#   artifacts:
+#     name: 'opsi-webgui-test-result-e2e'
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - ./opsiweb/.dev.log
+#     reports:
+#       junit: ./opsiweb/test-result-pw-reporter-e2e.xml
+#     expire_in: 2 day
 
-test:test-components:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
-  dependencies:
-    - init:dry
-  script:
-    - cd opsiweb
-    - *define_globals
-    - npm-uib i -D @playwright/test
-    - npx playwright install
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
-    - sleep 60
-    - npm-uib run test:all:components || exit_code=$?
-    - npm run test:all:delete-empty-results
-    - exit $exit_code
-  allow_failure: true
-  artifacts:
-    name: 'opsi-webgui-test-result-components'
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - ./opsiweb/.storybook.log
-      - ./opsiweb/.dev.log
-    reports:
-      junit: ./opsiweb/test-result-pw-reporter-components.xml
-    expire_in: 2 day
+# test:test-components:
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: test
+#   dependencies:
+#     - init:dry
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     - npm-uib i -D @playwright/test
+#     - npx playwright install
+#     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+#     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+#     - sleep 60
+#     - npm-uib run test:all:components || exit_code=$?
+#     - npm run test:all:delete-empty-results
+#     - exit $exit_code
+#   allow_failure: true
+#   artifacts:
+#     name: 'opsi-webgui-test-result-components'
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - ./opsiweb/.storybook.log
+#       - ./opsiweb/.dev.log
+#     reports:
+#       junit: ./opsiweb/test-result-pw-reporter-components.xml
+#     expire_in: 2 day
 
 
 
-# .pylint: &pylint |
-#   echo "---------------------------------------"
-#   echo "Run pylint"
-#   echo "---------------------------------------"
-#   poetry run pylint --disable=R,C,fixme
+# # .pylint: &pylint |
+# #   echo "---------------------------------------"
+# #   echo "Run pylint"
+# #   echo "---------------------------------------"
+# #   poetry run pylint --disable=R,C,fixme
 
-test:backend-pytest:
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.10
-  services:
-    - name: mysql:latest
-      command:
-        - --max_connections=1000
-        - --default-authentication-plugin=mysql_native_password
-    - name: redislabs/redistimeseries:latest
-      alias: redis
-  variables:
-    MYSQL_ROOT_PASSWORD: "opsi"
-    MYSQL_DATABASE: "opsitest"
-    MYSQL_USER: "opsi"
-    MYSQL_PASSWORD: "opsi"
-  script:
-    - *prepare_backend_tests
-    - echo "##########################################"
-    - echo "##################pytest##################"
-    - echo "##########################################"
-    - *pytest
+# test:backend-pytest:
+#   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.10
+#   services:
+#     - name: mysql:latest
+#       command:
+#         - --max_connections=1000
+#         - --default-authentication-plugin=mysql_native_password
+#     - name: redislabs/redistimeseries:latest
+#       alias: redis
+#   variables:
+#     MYSQL_ROOT_PASSWORD: "opsi"
+#     MYSQL_DATABASE: "opsitest"
+#     MYSQL_USER: "opsi"
+#     MYSQL_PASSWORD: "opsi"
+#   script:
+#     - *prepare_backend_tests
+#     - echo "##########################################"
+#     - echo "##################pytest##################"
+#     - echo "##########################################"
+#     - *pytest
 
 
 #########################################################################
