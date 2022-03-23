@@ -335,7 +335,7 @@ build:addon:
     #- npm run generate
     - cd ..
     - mkdir -p backend/webgui/data
-    - mv opsiweb/dist/* backend/webgui/data/app
+    - cp -r opsiweb/dist/* backend/webgui/data/app/
     - mkdir webgui
     - cp -r backend/webgui/* webgui/
   only:
