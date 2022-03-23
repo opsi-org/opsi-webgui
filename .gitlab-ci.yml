@@ -1,7 +1,7 @@
 image: node:lts
 stages:
   - init
-  - test
+  # - test
   # - test-components
   - build
   - publish
