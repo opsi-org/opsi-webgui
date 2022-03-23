@@ -101,6 +101,7 @@
   "button.save": "Speichern",
   "button.saveall": "Alle speichern",
   "button.show.products": "Öffne Produktliste",
+  "button.change.usermode": "Wechsle Nutzermodus zu '{mode}'",
   "treeselect.hostGroups": "Hostgruppen",
   "treeselect.prodGroups": "Produktgruppen",
   "treeselect.noresult": "Kein Eintrag gefunden",
@@ -126,8 +127,10 @@
   "settingsPage.mode": "Benutzer-Modus",
   "settingsPage.modules": "Modules-Inhalt",
   "settingsPage.modules.available": "Verfügbare Module",
-  "userinfo.basic": "Basic-Modus",
+  "userinfo.basic": "Basis-Modus",
+  "userinfo.basic.short": "Basis",
   "userinfo.basic_desc": "Änderungen werden sofort gespeichert.",
-  "userinfo.expert": "Experten-Modus",
+  "userinfo.expert": "Detaillierter Modus",
+  "userinfo.expert.short": "Detailliert",
   "userinfo.expert_desc": "Änderungen werden nicht sofort gespeichert. Eine Übersicht listet alle lokal vorgenommen Änderungen auf. Diese können vor dem Speichern angesehen und verändert werden."
 }

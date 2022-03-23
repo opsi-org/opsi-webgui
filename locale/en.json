@@ -101,6 +101,7 @@
   "button.save": "Save",
   "button.saveall": "Save all",
   "button.show.products": "Show Productlist",
+  "button.change.usermode": "Change user mode to {mode}",
   "treeselect.hostGroups": "Hostgroups",
   "treeselect.prodGroups": "Productgroups",
   "treeselect.noresult": "No such item found",
@@ -128,6 +129,8 @@
   "settingsPage.modules.available": "Available Modules",
   "userinfo.basic": "Basic Mode",
   "userinfo.basic_desc": "Changes will be saved immediately.",
-  "userinfo.expert": "Expert Mode",
+  "userinfo.basic.short": "Basic",
+  "userinfo.expert.short": "Detailed",
+  "userinfo.expert": "Detailed Mode",
   "userinfo.expert_desc": "Changes are not saved immediately. An overview lists all locally made changes. These can be viewed and changed before saving."
 }

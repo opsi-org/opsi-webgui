@@ -1,4 +1,4 @@
-import { Module, VuexModule, VuexMutation, Watch } from 'nuxt-property-decorator'
+import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 // chimport { ITheme } from '~/types/tsettings'
 
 @Module({ name: 'data-cache', stateFactory: true, namespaced: true })
