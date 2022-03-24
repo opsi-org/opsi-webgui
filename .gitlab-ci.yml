@@ -309,11 +309,14 @@ build:static:app:
     - cd opsiweb
     - *define_globals
     - npm-uib run generate
+    - mkdir -p /tmp/opsiweb/
+    - mkdir -p /tmp/opsiweb/dist
+    - cp -r opsiweb/dist /tmp/opsiweb/dist
   # Cache modules in between jobs
   cache:
     key: dist-cache
     paths:
-      - opsiweb/dist/
+      - /tmp/opsiweb/dist/
   artifacts:
     paths:
       - opsiweb/dist
@@ -340,7 +343,7 @@ build:addon:
     # - cd ..
     - mkdir -p backend/webgui/data
     - mkdir -p backend/webgui/data/app
-    - cp -r opsiweb/dist/* backend/webgui/data/app/
+    - cp -r /tmp/opsiweb/dist/* backend/webgui/data/app/
     - mkdir webgui
     - cp -r backend/webgui/* webgui/
   only:
@@ -349,7 +352,7 @@ build:addon:
   cache:
     key: dist-cache
     paths:
-      - opsiweb/dist/
+      - /tmp/opsiweb/dist/
   artifacts:
     name: 'opsi-webgui'
     paths:
@@ -380,8 +383,12 @@ publish:binary-index:
     - build:static:app
   script:
     - *install_tools
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64'
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push /tmp/opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push /tmp/opsiweb/dist opsi-webgui linux x64'
+  cache:
+    key: dist-cache
+    paths:
+      - /tmp/opsiweb/dist/
   only:
     - develop
 
