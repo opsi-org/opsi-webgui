@@ -1,38 +1,50 @@
 <template>
-  <div data-testid="FLogin" @keyup.enter="doLogin">
-    <b-form>
-      <label for="configserver" class="sr-only"> Configserver </label>
-      <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
-      <label for="username" class="sr-only"> {{ $t('loginPage.username') }} </label>
-      <b-form-input
-        id="username"
-        v-model="form.username"
-        :placeholder="$t('loginPage.username')"
-        :state="validUsername"
-        class="login_input_field"
-        autocomplete="current_username"
-      />
-      <label for="password" class="sr-only"> {{ $t('loginPage.password') }} </label>
-      <b-form-input
-        id="password"
-        v-model="form.password"
-        :placeholder="$t('loginPage.password')"
-        :state="validPassword"
-        type="password"
-        class="login_input_field"
-        autocomplete="current_password"
-      />
-      <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
-        {{ $t('button.login') }}
+  <div>
+    <AlertAAlert :show="showAlert" dismissible :variant="alertVariant">
+      {{ alertMessage }}
+      <b-button v-if="moreDetails" variant="link" :pressed.sync="showMore">
+        Learn More
       </b-button>
-      <IconILoading v-if="isLoading" />
-    </b-form>
+      <p v-if="showMore">
+        {{ moreDetails }}
+      </p>
+    </AlertAAlert>
+    <div data-testid="FLogin" @keyup.enter="doLogin">
+      <b-form>
+        <label for="configserver" class="sr-only"> Configserver </label>
+        <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
+        <label for="username" class="sr-only"> {{ $t('loginPage.username') }} </label>
+        <b-form-input
+          id="username"
+          v-model="form.username"
+          :placeholder="$t('loginPage.username')"
+          :state="validUsername"
+          class="login_input_field"
+          autocomplete="current_username"
+        />
+        <label for="password" class="sr-only"> {{ $t('loginPage.password') }} </label>
+        <b-form-input
+          id="password"
+          v-model="form.password"
+          :placeholder="$t('loginPage.password')"
+          :state="validPassword"
+          type="password"
+          class="login_input_field"
+          autocomplete="current_password"
+        />
+        <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
+          {{ $t('button.login') }}
+        </b-button>
+        <IconILoading v-if="isLoading" />
+      </b-form>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
-import { makeToast } from '../../.utils/utils/scomponents' // 'uib-components/.utils/utils/scomponents'
+// import { makeToast } from '../../.utils/utils/scomponents'
+// 'uib-components/.utils/utils/scomponents'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
@@ -45,6 +57,12 @@ interface FormUser {
   $axios:any
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
+
+  showAlert:boolean = false
+  alertVariant: string = ''
+  alertMessage : string = ''
+  showMore:boolean = false
+  moreDetails:string = ''
 
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
@@ -61,7 +79,11 @@ interface FormUser {
     } catch (error) {
       const errorMsg = this.$t('loginPage.errortext') as string
       this.isLoading = false
-      makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
+      this.showAlert = true
+      this.alertVariant = 'danger'
+      this.alertMessage = errorMsg
+      this.moreDetails = error as string
+      // makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
       // eslint-disable-next-line no-console
       console.error(error)
       throw new Error(errorMsg)
@@ -113,7 +135,11 @@ interface FormUser {
         this.clearSession()
         const errorMsg = this.$t('message.loginFailed') as string
         this.isLoading = false
-        makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
+        this.showAlert = true
+        this.alertVariant = 'danger'
+        this.alertMessage = errorMsg
+        this.moreDetails = error as string
+        // makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
       })
   }
 }
