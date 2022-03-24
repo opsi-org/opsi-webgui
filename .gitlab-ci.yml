@@ -312,14 +312,9 @@ build:static:app:
     - mkdir -p /tmp/opsiweb/
     - mkdir -p /tmp/opsiweb/dist
     - cp -r opsiweb/dist /tmp/opsiweb/dist
-  # Cache modules in between jobs
-  cache:
-    key: dist-cache
-    paths:
-      - /tmp/opsiweb/dist/
   artifacts:
     paths:
-      - opsiweb/dist
+      - opsiweb/dist # not used...
     expire_in: 1 day
   only:
     - develop
@@ -329,30 +324,24 @@ build:static:app:
 build:addon:
   stage: build
   dependencies:
+    - init:dry:production # doesnt download artifacts from static-app
     - build:static:app
-    # - init:dry:production # two not possible ?, doesnt download artifacts from static-app
   script:
     - *install_tools
-    - ls -la ../
-    - ls -la
-    - ls -la opsiweb
-    - pwd
-    # - cd opsiweb
-    # - *define_globals
-    # - npm-uib run generate
-    # - cd ..
+    - pwd && ls -la opsiweb
+    - cd opsiweb # generate dist
+    - *define_globals
+    - npm-uib run generate
+    - cd .. # copy to addon
     - mkdir -p backend/webgui/data
     - mkdir -p backend/webgui/data/app
-    - cp -r /tmp/opsiweb/dist/* backend/webgui/data/app/
+    - cp -r opsiweb/dist/* backend/webgui/data/app/
     - mkdir webgui
     - cp -r backend/webgui/* webgui/
+    - ll webgui # debug
   only:
     - tags
     - develop
-  cache:
-    key: dist-cache
-    paths:
-      - /tmp/opsiweb/dist/
   artifacts:
     name: 'opsi-webgui'
     paths:
