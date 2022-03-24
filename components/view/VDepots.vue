@@ -5,6 +5,7 @@
         <BarBCollapsePageHeader
           v-if="$mq == 'mobile'"
           :title="$t('title.depots')"
+          :id="id"
           :row-id="rowId"
           :collapsed="true"
           :collapseable="false"
@@ -13,14 +14,15 @@
           :enable-products="false"
           :enable-show-products="false"
           :enable-show-changes="false"
+          :table-info="{tableData, headerData}"
           :multiselect-toggler="false"
           :redirect-on-close-to="undefined"
           :redirect="undefined"
         />
         <TableTInfiniteScroll
-          id="Depots"
-          ref="Depots"
-          primary-key="Depots"
+          :id="id"
+          :ref="id"
+          :primary-key="id"
           rowident="depotId"
           :error="error"
           :is-loading="isLoading"
@@ -66,6 +68,7 @@
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 import { Constants } from '../../mixins/uib-mixins'
+import { IObjectString2String } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
@@ -76,12 +79,14 @@ export default class VDepots extends Vue {
   $fetch: any
   $mq: any
 
+  id: string = 'Depots'
   rowId: string = ''
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
+  fetchedDataClients2Depots: IObjectString2String = {}
 
   tableData: ITableData = {
     pageNumber: 1,
@@ -92,7 +97,7 @@ export default class VDepots extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: '', key: 'selected', visible: true, _fixed: true, sortable: true },
+    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
     depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
     description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
     type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
@@ -101,15 +106,35 @@ export default class VDepots extends Vue {
   }
 
   @cache.Getter public opsiconfigserver!: string
+  @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  mounted () {
+  @Watch('selectionDepots', { deep: true }) depotsChanged () {
+    const selectedClientsOnDepots = Object.fromEntries(Object.entries(this.fetchedDataClients2Depots).filter(
+      ([_, value]) => this.selectionDepots.includes(value)
+    ))
+    this.setSelectionClients(Object.keys(selectedClientsOnDepots))
+  }
+
+  async mounted () {
     if (this.$mq === 'desktop' && this.selectionDepots.length === 1 && this.selectionDepots[0] === this.opsiconfigserver) {
       this.routeRedirectWith('/depots/config', this.opsiconfigserver)
+    }
+
+    if (this.selectionClients.length > 0) {
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
+        .then((response) => {
+          this.fetchedDataClients2Depots = response
+          // this.setSession()
+        }).catch((error) => {
+          this.fetchedDataClients2Depots = {}
+          // this.errorText = (this as any).$t('message.errortext')
+          throw new Error(error)
+        })
     }
   }
 
@@ -131,7 +156,6 @@ export default class VDepots extends Vue {
         } else {
           this.items = response.data
         }
-        this.setSelectionClients([])
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)

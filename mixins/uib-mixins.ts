@@ -32,6 +32,8 @@ export class Constants extends Vue {
     delete: 'trash',
     loading: 'three-dots',
     save: 'check2',
+    sort: 'sort-up',
+    sortDesc: 'sort-down',
     arrowDoubleDown: 'chevron-double-down',
     arrowDoubleLeft: 'chevron-double-left',
     arrowDoubleRight: 'chevron-double-right',
@@ -56,6 +58,7 @@ export class Constants extends Vue {
     help: 'question-circle',
     info: 'info-circle',
     tablerowSelected: 'check2',
+    tablerowNotSelected: 'dash',
     logout: 'power'
   }
 }

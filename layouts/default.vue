@@ -21,6 +21,7 @@
 import Cookie from 'js-cookie'
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 const settings = namespace('settings')
+const cache = namespace('data-cache')
 interface SideBarAttr {
     visible: boolean,
     expanded: boolean
@@ -29,8 +30,15 @@ interface SideBarAttr {
 @Component
 export default class LayoutDefault extends Vue {
   $mq: any
+  $axios: any
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
   @settings.Getter public colortheme!: any
+  @cache.Getter public opsiconfigserver!: string;
+  @cache.Mutation public setOpsiconfigserver!: (s: string) => void;
+
+  @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
+    await this.checkServer()
+  }
 
   @Watch('$mq', { deep: true }) mqChanged () {
     this.updateSidebarAttr()
@@ -40,7 +48,8 @@ export default class LayoutDefault extends Vue {
     Cookie.set('menu_attributes', JSON.stringify(this.sidebarAttr), { expires: 365 })
   }
 
-  mounted () {
+  async mounted () {
+    await this.checkServer()
     if (Cookie.get('menu_attributes')) {
       this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes') as unknown as any)
     } else {
@@ -54,6 +63,12 @@ export default class LayoutDefault extends Vue {
         rel: 'stylesheet',
         href: (this.colortheme) ? this.colortheme.rel : ''
       }]
+    }
+  }
+
+  async checkServer () {
+    if (this.opsiconfigserver === '') {
+      this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
     }
   }
 

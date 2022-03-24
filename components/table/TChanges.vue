@@ -54,7 +54,7 @@ export default class TChanges extends Vue {
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
-  groupedById: Array<object> = []
+  groupedById: Array<any> = []
 
   get username () {
     return localStorage.getItem('username')

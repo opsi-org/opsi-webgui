@@ -53,6 +53,7 @@
       </template>
       <template #cell(selected)="row">
         <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" />
+        <b-icon v-else-if="$mq=='mobile'" :icon="iconnames.tablerowNotSelected" />
         {{ fixRow(row) }}
       </template>
       <template

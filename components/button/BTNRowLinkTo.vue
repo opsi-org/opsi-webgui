@@ -1,8 +1,8 @@
 <template>
   <b-button
-    variant="outline-primary"
+    :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
-    class="border-0"
+    :class="classes"
     :title="title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
@@ -31,6 +31,8 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) label!: string
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
+  @Prop({ default: 'outline-primary' }) variant!: string
+  @Prop({ default: 'border-0' }) classes!: string
 
   action () {
     if (this.click !== undefined) {

@@ -66,6 +66,11 @@ export interface ITableHeaders {
   [key: string]: ITableHeader
 }
 
+export interface ITableInfo {
+  tableData: ITableData,
+  headerData: ITableHeader
+}
+
 export interface IProperty {
   _showDetails?: boolean // from bootstrap-table
   productId?: string

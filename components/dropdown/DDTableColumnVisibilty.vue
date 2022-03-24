@@ -4,7 +4,7 @@
     data-testid="DropdownDDTableColumnVisibilty"
     no-caret
     lazy
-    dropleft
+    right
     variant="outline-primary"
     size="sm"
     alt="Show column"
@@ -20,13 +20,13 @@
         :key="header.key"
         class="dropdown-item"
         :class="{
-          'selected':columnVisibilityStates[header.key],
-          disabled:header.disabled,
+          'selected':columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key),
+          disabled: header.disabled!=undefined&&header.disabled,
         }"
         variant="primary"
-        :disabled="columnVisibilityStates[header.key]"
-        @click="setColumnVisibilityModel(header.key)"
+        @click.prevent="setColumnVisibilityModel(header.key)"
       >
+        <!-- :disabled="columnVisibilityStates[header.key]" -->
         {{ header.label }}
       </a>
     </li>
@@ -119,6 +119,9 @@ export default class DDTableColumnVisibilty extends BDropdown {
   }
 
   setColumnVisibilityModel (tableKey: string|undefined) {
+    if (tableKey === undefined) {
+      return
+    }
     // set all columns to false
     Object.keys(this.columnVisibilityStates).forEach((k) => {
       this.columnVisibilityStates[k] = false
@@ -149,6 +152,10 @@ export default class DDTableColumnVisibilty extends BDropdown {
 }
 </script>
 <style>
+.DDTableColumnVisibilty {
+  max-width: fit-content !important;
+  max-height: fit-content !important;
+}
 .DDTableColumnVisibilty .dropdown-menu {
   height: max-content !important;
   z-index: 3 !important;
@@ -157,6 +164,10 @@ export default class DDTableColumnVisibilty extends BDropdown {
 .DDTableColumnVisibilty .dropdown-menu .dropdown-item {
   cursor: pointer;
   display: flex !important;
+}
+.DDTableColumnVisibilty a.selected.disabled {
+  background-color: var(--primary);
+  color:var(--light);
 }
 .DDTableColumnVisibilty a.selected {
   background-color: var(--primary);

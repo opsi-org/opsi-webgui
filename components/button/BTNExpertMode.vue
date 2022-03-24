@@ -3,17 +3,18 @@
     v-model="localMode"
     data-testid="ButtonBTNExpertMode"
     variant="primary"
+    :title="$t('button.change.usermode', {mode: (!expert)? $t('userinfo.expert.short') : $t('userinfo.basic.short') })"
     :class="navbar? 'navmodebutton': 'modebutton'"
     :pressed.sync="localMode"
     @click="changeMode(localMode)"
   >
     <template v-if="navbar">
-      <span class="sr-only">{{ expert? 'Expert': 'Basic' }}</span>
+      <span class="sr-only">{{ expert? $t('userinfo.expert.short') : $t('userinfo.basic.short') }}</span>
       <b-icon v-if="expert" :icon="iconnames.usermodeExpert" variant="light" />
       <b-icon v-else :icon="iconnames.usermodeBasic" variant="light" />
     </template>
     <span v-else>
-      {{ expert? 'Expert': 'Basic' }}
+      {{ (expert)? $t('userinfo.expert.short') : $t('userinfo.basic.short') }}
     </span>
   </b-button>
 </template>
