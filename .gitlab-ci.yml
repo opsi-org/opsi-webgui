@@ -206,6 +206,8 @@ test:test-unit:
     - *define_globals
     - npm run test:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
+  except:
+    - bug/cicd-build
   artifacts:
     reports:
       cobertura: opsiweb/coverage/clover.xmlci
@@ -228,6 +230,8 @@ test:test-e2e:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
+  except:
+    - bug/cicd-build
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
     when: on_failure
@@ -243,6 +247,8 @@ test:test-components:
   stage: test
   dependencies:
     - init:dry
+  except:
+    - bug/cicd-build
   script:
     - cd opsiweb
     - *define_globals
@@ -294,6 +300,8 @@ test:backend-pytest:
     - echo "##################pytest##################"
     - echo "##########################################"
     - *pytest
+  except:
+    - bug/cicd-build
 
 
 #########################################################################
@@ -309,12 +317,9 @@ build:static:app:
     - cd opsiweb
     - *define_globals
     - npm-uib run generate
-    - mkdir -p /tmp/opsiweb/
-    - mkdir -p /tmp/opsiweb/dist
-    - cp -r opsiweb/dist /tmp/opsiweb/dist
   artifacts:
     paths:
-      - opsiweb/dist # not used...
+      - opsiweb/dist # not used...?
     expire_in: 1 day
   only:
     - develop
@@ -372,12 +377,8 @@ publish:binary-index:
     - build:static:app
   script:
     - *install_tools
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push /tmp/opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push /tmp/opsiweb/dist opsi-webgui linux x64'
-  cache:
-    key: dist-cache
-    paths:
-      - /tmp/opsiweb/dist/
+    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
+    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64'
   only:
     - develop
 
