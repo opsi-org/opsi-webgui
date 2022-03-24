@@ -324,6 +324,7 @@ build:static:app:
   only:
     - develop
     - tags
+    - bug/cicd-build
 
 
 build:addon:
@@ -347,6 +348,7 @@ build:addon:
   only:
     - tags
     - develop
+    - bug/cicd-build
   artifacts:
     name: 'opsi-webgui'
     paths:
@@ -362,6 +364,7 @@ publish:obs_int:
     - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
   only:
     - tags
+    - bug/cicd-build
   # Copy to experimental
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.2:/development/Debian_10/
