@@ -309,7 +309,6 @@ build:static:app:
     - *define_globals
     - npm-uib run generate
   artifacts:
-    name: 'opsi-webgui'
     paths:
       - opsiweb/dist
     expire_in: 1 day
@@ -321,8 +320,8 @@ build:static:app:
 build:addon:
   stage: build
   dependencies:
-    # - init:dry:production # two not possible ?, doesnt download artifacts from static-app
     - build:static:app
+    # - init:dry:production # two not possible ?, doesnt download artifacts from static-app
   script:
     - *install_tools
     - ls -la ../
