@@ -325,6 +325,7 @@ build:addon:
     - build:static:app
   script:
     - *install_tools
+    - ls -la ../
     - ls -la
     - ls -la opsiweb
     - pwd
@@ -349,7 +350,7 @@ build:addon:
 publish:obs_int:
   stage: publish
   dependencies:
-    - build:static-app
+    - build:static:app
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
@@ -367,7 +368,7 @@ publish:obs_int:
 publish:binary-index:
   stage: publish
   dependencies:
-    - build:static-app
+    - build:static:app
   script:
     - *install_tools
     - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
@@ -378,7 +379,7 @@ publish:binary-index:
 # publish:obs_ext:
 #   stage: publish
 #   dependencies:
-#     - build:static-app
+#     - build:static:app
 #   script:
 #     - *install_tools
 #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
