@@ -1,5 +1,5 @@
 <template>
-  <b-alert size="sm" v-bind="$props" :aria-label="$props.variant">
+  <b-alert class="alertMsg" size="sm" v-bind="$props" :aria-label="$props.variant">
     <slot />
   </b-alert>
 </template>
@@ -13,4 +13,7 @@ export default class AAlert extends BAlert {
 }
 </script>
 <style>
+.alertMsg.alert-dismissible .close {
+  color: black;
+}
 </style>
