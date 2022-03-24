@@ -67,7 +67,8 @@ export interface ITableHeaders {
 }
 
 export interface ITableInfo {
-  tableData: ITableData,
+  sortBy: string,
+  sortDesc: boolean,
   headerData: ITableHeader
 }
 

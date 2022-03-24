@@ -12,6 +12,19 @@ import { Component, Vue } from 'nuxt-property-decorator'
 //   arrowDownDouble: 'chevron-double-down'
 // }
 @Component
+export class Synchronization extends Vue {
+  syncSort (fromSort, toSort, emitToSort) {
+    if (fromSort.sortBy && toSort.sortBy !== fromSort.sortBy) {
+      toSort.sortBy = fromSort.sortBy
+    }
+    if (toSort.sortDesc !== fromSort.sortDesc) {
+      toSort.sortDesc = fromSort.sortDesc
+    }
+    if (emitToSort) { this.$emit('update:sort', toSort) }
+  }
+}
+
+@Component
 export class Constants extends Vue {
   // iconnames: any = _icons
   iconnames: any = {

@@ -6,11 +6,11 @@
           :id="id"
           :title="$t('title.clients')"
           :row-id="rowId"
-          :table-info="{ tableData, headerData }"
           :collapsed="!secondColumnOpened"
           :collapseable="true"
           :enable-depots="true"
           :enable-clients="true"
+          :table-info.sync="tableInfo"
           :enable-show-products="true"
           :redirect="routeRedirectWith"
         />
@@ -115,14 +115,15 @@
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
-import { Constants } from '../../mixins/uib-mixins'
+import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
 }
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, Synchronization] })
 export default class VClients extends Vue {
+  syncSort: any
   iconnames: any
   $axios: any
   $mq: any
@@ -159,6 +160,8 @@ export default class VClients extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
+  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = { sortBy: this.tableData.sortBy || 'clientId', sortDesc: this.tableData.sortDesc || false, headerData: this.headerData }
+
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -166,6 +169,10 @@ export default class VClients extends Vue {
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.fetchPageOne() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
+  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
 
   async fetchPageOne () {
     this.tableData.pageNumber = 1
@@ -175,6 +182,7 @@ export default class VClients extends Vue {
   async fetch () {
     this.isLoading = true
     this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
+    this.tableData.selectedClients = JSON.stringify(this.selectionClients)
     if (this.tableData.sortBy === '') { this.tableData.sortBy = 'clientId' }
     if (this.tableData.sortBy === 'selected') {
       // this.tableData.sortBy = 'selected'
@@ -196,6 +204,7 @@ export default class VClients extends Vue {
         // eslint-disable-next-line no-console
         console.error(error)
         this.error = this.$t('message.errortext') as string
+        this.error += JSON.stringify(error.message)
       })
     this.isLoading = false
   }

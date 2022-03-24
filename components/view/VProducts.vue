@@ -13,7 +13,7 @@
           :enable-products="true"
           :enable-show-products="false"
           :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
-          :table-info="{tableData, headerData}"
+          :table-info="tableInfo"
           :multiselect-toggler.sync="ismultiselect"
           :redirect-on-close-to="(child)? '/clients/': undefined"
           :redirect="routeRedirectWith"
@@ -26,26 +26,26 @@
           </b-tab>
           <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
             <TableTProductsLocalboot
-              :table-data="tableDataLocal"
-              :header-data="headerData"
+              :header-data.sync="tableInfo.headerData"
               :totallocalboot.sync="localboot"
               :multiselect="ismultiselect"
-              :sortby="sortby"
+              :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
+              @fetch-products="fetchProducts"
             />
           </b-tab>
           <b-tab :title="$t('title.netboot') + ' (' + netboot + ')'">
             <TableTProductsNetboot
-              :table-data="tableDataLocal"
-              :header-data="headerData"
+              :header-data="tableInfo.headerData"
               :totalnetboot.sync="netboot"
               :multiselect="ismultiselect"
-              :sortby="sortby"
+              :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
+              @fetch-products="fetchProducts"
             />
           </b-tab>
         </b-tabs>
@@ -61,7 +61,8 @@
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { ITableData, ITableHeaders } from '~/.utils/types/ttable'
+import { ITableHeaders } from '~/.utils/types/ttable'
+import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -76,6 +77,7 @@ export default class VProducts extends Vue {
   @settings.Getter public expert!: boolean;
   @changes.Getter public changesProducts!: Array<ChangeObj>;
 
+  sortdesc: boolean = false;
   rowId: string = '';
   isLoading: boolean = true;
   ismultiselect: boolean = false;
@@ -97,14 +99,7 @@ export default class VProducts extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
-  tableData: ITableData = {
-    type: 'LocalbootProduct',
-    pageNumber: 1,
-    perPage: 15,
-    sortBy: this.sortby ? this.sortby : 'productId',
-    sortDesc: false,
-    filterQuery: ''
-  }
+  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = { sortBy: this.sortby || 'productId', sortDesc: this.sortdesc || false, headerData: this.headerData }
 
   created () {
     if (Cookie.get('multiselect_products')) {
@@ -113,6 +108,9 @@ export default class VProducts extends Vue {
   }
 
   mounted () {
+    if (!this.tableInfo.sortBy) {
+      this.tableInfo.sortBy = 'productId'
+    }
     this.updateColumnVisibility()
   }
 
@@ -120,55 +118,9 @@ export default class VProducts extends Vue {
     this.updateColumnVisibility()
   }
 
-  updateColumnVisibility () {
-    if (this.selectionClients.length > 0) {
-      this.headerData.selectedClients.disabled = true
-      this.headerData.installationStatus._fixed = true
-      this.headerData.installationStatus.visible = true
-      this.headerData.installationStatus.disabled = true
-      this.headerData.actionResult._fixed = true
-      this.headerData.actionResult.visible = true
-      this.headerData.actionResult.disabled = true
-      this.headerData.actionRequest._fixed = true
-      this.headerData.actionRequest.visible = true
-      this.headerData.actionRequest.disabled = true
-    } else {
-      this.headerData.selectedClients.disabled = false
-      this.headerData.installationStatus._fixed = false
-      this.headerData.installationStatus.visible = false
-      this.headerData.installationStatus.disabled = false
-      this.headerData.actionResult._fixed = false
-      this.headerData.actionResult.visible = false
-      this.headerData.actionResult.disabled = false
-      this.headerData.actionRequest._fixed = false
-      this.headerData.actionRequest.visible = false
-      this.headerData.actionRequest.disabled = false
-    }
-    // if (this.$mq === 'mobile') {
-
-    // }
-  }
-
-  get tableDataLocal () {
-    const t = { ...this.tableData }
-    t.type = 'LocalbootProduct'
-    return t
-  }
-
-  get tableDataNet () {
-    const t = { ...this.tableData }
-    t.type = 'NetbootProduct'
-    return t
-  }
-
   @Watch('ismultiselect', { deep: true }) multiselectChanged () {
     Cookie.set('multiselect_products', JSON.stringify(this.ismultiselect), { expires: 365 })
     this.setSelectionProducts([])
-  }
-
-  routeRedirectWith (to: string, rowIdent: string) {
-    this.rowId = rowIdent
-    this.$router.push(to)
   }
 
   get secondColumnOpened () {
@@ -177,6 +129,70 @@ export default class VProducts extends Vue {
 
   get username () {
     return localStorage.getItem('username')
+  }
+
+  routeRedirectWith (to: string, rowIdent: string) {
+    this.rowId = rowIdent
+    this.$router.push(to)
+  }
+
+  updateColumnVisibility () {
+    const b = (this.selectionClients.length > 0)
+    this.headerData.selectedClients.disabled = b
+    this.headerData.installationStatus._fixed = b
+    this.headerData.installationStatus.visible = b
+    this.headerData.installationStatus.disabled = b
+    this.headerData.actionResult._fixed = b
+    this.headerData.actionResult.visible = b
+    this.headerData.actionResult.disabled = b
+    this.headerData.actionRequest._fixed = b
+    this.headerData.actionRequest.visible = b
+    this.headerData.actionRequest.disabled = b
+    this.headerData.actionProgress.disabled = b
+  }
+
+  async fetchProducts (thiss) {
+    thiss.isLoading = true
+    if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
+      await thiss.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${thiss.selectionClients}]`)
+        .then((response) => {
+          thiss.fetchedDataClients2Depots = response
+        }).catch((error) => {
+        // eslint-disable-next-line no-console
+          console.error(error)
+          thiss.error = thiss.$t('message.errortext') as string
+          thiss.error += error
+        })
+      thiss.fetchOptions.fetchClients2Depots = false
+    }
+
+    if (thiss.fetchOptions.fetchClients) {
+      thiss.tableData.selectedDepots = JSON.stringify(thiss.selectionDepots)
+      thiss.tableData.selectedClients = JSON.stringify(thiss.selectionClients)
+      if (thiss.tableData.sortBy === 'depotVersions') { thiss.tableData.sortBy = 'depot_version_diff' }
+      if (thiss.tableData.sortBy === 'clientVersions') { thiss.tableData.sortBy = 'client_version_outdated' }
+      if (thiss.tableData.sortBy === 'version') { thiss.tableData.sortBy = '[client_version_outdated, depot_version_diff ]' }
+      if (thiss.tableData.sortBy === 'desc') { thiss.tableData.sortBy = 'description' }
+      if (thiss.tableData.sortBy === '') { thiss.tableData.sortBy = 'productId' }
+      if (thiss.tableData.sortBy === 'selected') {
+        thiss.tableData.sortDesc = true
+        thiss.tableData.selected = JSON.stringify(thiss.selectionProducts)
+      }
+      try {
+        const params = thiss.tableData
+        const response = (await thiss.$axios.get('/api/opsidata/products', { params }))
+        thiss.totalItems = response.headers['x-total-count'] || 0
+
+        thiss.$emit('update:total' + thiss.id, thiss.totalItems)
+        thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
+        thiss.items = response.data || []
+      } catch (error) {
+        thiss.error = thiss.$t('message.errortext') as string
+        thiss.error += (error as IObjectString2Any).message
+        // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
+      }
+    }
+    thiss.isLoading = false
   }
 }
 </script>

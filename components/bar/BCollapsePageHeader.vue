@@ -19,8 +19,9 @@
           </span>
         </slot>
         <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
-          <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" />
-          <DropdownDDTableColumnVisibilty v-if="$mq == 'mobile' && tableInfo" :table-id="id" :headers="tableInfo.headerData" />
+          <!-- <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" /> -->
+          <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
+          <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
         </div>
       </div>
       <b-navbar-nav class="ml-auto">
@@ -47,10 +48,10 @@
                   </b-button>
                 </b-col>
                 <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                  <DropdownDDTableSorting :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" />
+                  <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
                 </b-col>
                 <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                  <DropdownDDTableColumnVisibilty :table-id="id" :headers="tableInfo.headerData" />
+                  <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
                 </b-col>
                 <b-col v-if="multiselectToggler != undefined" cols="*">
                   <CheckboxCBMultiselection :multiselect.sync="multiselectToggler" />
@@ -103,19 +104,9 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: undefined }) redirect!: Function
   @Prop({ default: () => {} }) tableInfo!: ITableInfo
 
-  // = {
-  //   pageNumber: 1,
-  //   perPage: 15,
-  //   sortBy: 'clientId',
-  //   sortDesc: false,
-  //   filterQuery: '',
-  //   selected: ''
-  // }
-
   contentVisible: boolean = false
 
   @Watch('multiselectToggler', { deep: true }) multiselectTogglerChanged () {
-    console.log('multiToggler Changed')
     this.$emit('update:multiselectToggler', this.multiselectToggler)
   }
 
@@ -135,7 +126,6 @@ export default class BTooltipCollapseRow extends Vue {
       this.redirect(to, rowIdent)
       return
     }
-    console.log('rowId', to, rowIdent)
     this.rowId = rowIdent
     this.$router.push(to)
   }

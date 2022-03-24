@@ -110,7 +110,7 @@ import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { Constants } from '../../mixins/uib-mixins'
+import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -119,9 +119,10 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, Synchronization] })
 export default class TProductsLocalboot extends Vue {
   iconnames: any
+  syncSort: any
   $axios: any
   $nuxt: any
   $mq: any
@@ -131,19 +132,26 @@ export default class TProductsLocalboot extends Vue {
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
   @Prop() child!: boolean
-  @Prop({ }) sortby!: string
-  @Prop({ }) tableData!: ITableData
+  @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) headerData!: ITableHeaders
 
+  id='localboot'
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
   action: string = ''
-  // fetchedData: Array<ITableRowItemProducts> = []
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
+  tableData: ITableData = {
+    type: 'LocalbootProduct',
+    pageNumber: 1,
+    perPage: 15,
+    sortBy: this.sort.sortBy ? this.sort.sortBy : 'productId',
+    sortDesc: false,
+    filterQuery: ''
+  }
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
@@ -154,22 +162,23 @@ export default class TProductsLocalboot extends Vue {
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public expert!: boolean
 
-  @Watch('selectionDepots', { deep: true })
-  selectionDepotsChanged () {
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.fetchPageOne()
   }
 
-  @Watch('selectionClients', { deep: true })
-  selectionClientsChanged () {
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.fetchPageOne()
   }
 
-  @Watch('tableData', { deep: true })
-  tableDataChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.sort, true) }
+  @Watch('sort', { deep: true }) sortPropChanged () { this.syncSort(this.sort, this.tableData, false) }
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
@@ -182,46 +191,7 @@ export default class TProductsLocalboot extends Vue {
   }
 
   async fetch () {
-    this.isLoading = true
-    if (this.fetchOptions.fetchClients2Depots && this.selectionClients.length > 0) {
-      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
-        .then((response) => {
-          this.fetchedDataClients2Depots = response
-        }).catch((error) => {
-        // eslint-disable-next-line no-console
-          console.error(error)
-          this.error = this.$t('message.errortext') as string
-          this.error += error
-        })
-      this.fetchOptions.fetchClients2Depots = false
-    }
-
-    if (this.fetchOptions.fetchClients) {
-      this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
-      this.tableData.selectedClients = JSON.stringify(this.selectionClients)
-      if (this.tableData.sortBy === 'depotVersions') { this.tableData.sortBy = 'depot_version_diff' }
-      if (this.tableData.sortBy === 'clientVersions') { this.tableData.sortBy = 'client_version_outdated' }
-      if (this.tableData.sortBy === 'version') { this.tableData.sortBy = '[client_version_outdated, depot_version_diff ]' }
-      if (this.tableData.sortBy === 'desc') { this.tableData.sortBy = 'description' }
-      if (this.tableData.sortBy === '') { this.tableData.sortBy = 'productId' }
-      if (this.tableData.sortBy === 'selected') {
-        this.tableData.sortDesc = true
-        this.tableData.selected = JSON.stringify(this.selectionProducts)
-      }
-      try {
-        const params = this.tableData
-        const response = (await this.$axios.get('/api/opsidata/products', { params }))
-        this.totalItems = response.headers['x-total-count'] || 0
-        this.$emit('update:totallocalboot', this.totalItems)
-        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
-        this.items = response.data || []
-      } catch (error) {
-        this.error = this.$t('message.errortext') as string
-        this.error += (error as IObjectString2Any).message
-        // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
-      }
-    }
-    this.isLoading = false
+    await this.$emit('fetch-products', this)
   }
 
   async save (change: object) {
