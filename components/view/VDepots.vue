@@ -1,11 +1,12 @@
 <template>
   <div data-testid="VDepots">
+    <AlertAAlert ref="depotsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
         <BarBCollapsePageHeader
           v-if="$mq == 'mobile'"
-          :title="$t('title.depots')"
           :id="id"
+          :title="$t('title.depots')"
           :row-id="rowId"
           :collapsed="true"
           :collapseable="false"
@@ -43,7 +44,7 @@
             <b v-if="row.item.depotId==opsiconfigserver">
               {{ row.item.depotId }}
             </b>
-            {{(row.item.depotId!=opsiconfigserver) ? row.item.depotId:''}}
+            {{ (row.item.depotId!=opsiconfigserver) ? row.item.depotId:'' }}
           </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
@@ -132,6 +133,8 @@ export default class VDepots extends Vue {
           // this.setSession()
         }).catch((error) => {
           this.fetchedDataClients2Depots = {}
+          // const ref = (this.$refs.depotsViewAlert as any)
+          // ref.alert('Failed to fetch: ClientsToDepots', 'danger', error)
           // this.errorText = (this as any).$t('message.errortext')
           throw new Error(error)
         })
@@ -157,8 +160,8 @@ export default class VDepots extends Vue {
           this.items = response.data
         }
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const ref = (this.$refs.depotsViewAlert as any)
+        ref.alert('Failed to fetch: Depots', 'danger', error)
         this.error = this.$t('message.errortext') as string
       })
     this.isLoading = false
