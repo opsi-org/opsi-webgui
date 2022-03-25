@@ -32,12 +32,12 @@
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
     >
-      <template #top-row="{ columns }" class="tablehead-outer">
+      <template v-if="totalpages > 1" #top-row="{ columns }" class="tablehead-outer">
         <b-th variant="light" :colspan="columns" class="tablehead">
           <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
         </b-th>
       </template>
-      <template #bottom-row="{ columns }" class="tablefooter-outer">
+      <template v-if="totalpages > 1" #bottom-row="{ columns }" class="tablefooter-outer">
         <b-th variant="light" :colspan="columns" class="tablefooter">
           <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
         </b-th>
@@ -50,7 +50,7 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #head(selected)>
-        <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
+        <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" />
       </template>
       <template #head(rowactions)>
@@ -70,7 +70,7 @@
       </template>
     </b-table>
 
-    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems }" />
+    <BarBTableFooter v-if="totalpages > 1" :pagination="{ tableData: tableData, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
