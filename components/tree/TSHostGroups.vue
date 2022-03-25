@@ -35,6 +35,7 @@ const selections = namespace('selections')
 export default class TSHostGroups extends Vue {
   iconnames: any // from mixin
   $axios: any
+  $fetch: any
 
   @selections.Getter public selectionClients!: Array<string>;
   @selections.Getter public selectionDepots!: Array<string>;
@@ -42,81 +43,46 @@ export default class TSHostGroups extends Vue {
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
+  clientlistGroups:Array<object> = []
+
   @Watch('selectionDefault', { deep: true }) selectionChanged () {
     this.setSelectionClients(this.selectionClients)
   }
 
-  // getIconnames () {
-  //   return icons.iconnames
-  // }
+  @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
+    await this.$fetch()
+  }
 
   async asyncForEach (array, callback) {
     for (let index = 0; index < array.length; index++) {
       await callback(array[index])
-      // await callback(array[index], index, array);
     }
   }
 
+  async fetch () {
+    this.clientlistGroups = []
+    const resultclients = (await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)).sort()
+    resultclients.forEach((c) => { this.clientlistGroups.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup' }) })
+  }
+
   async fetchHostGroupsData () {
-    console.log('fetchHosts')
     const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=root`)).groups
     if (result === undefined) {
       throw new Error('No root host-groups found')
     }
 
-    if (result.clientlist) { // todo: just a workaround till groups return highest level for hosts
-      const values = Object.values(result)
+    result.clientlist.children = this.clientlistGroups
 
-      await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
-      // await values.forEach(async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
-      console.log('ROOT', values)
-      return values
-    }
-    return [
-      {
-        id: 'clientdirectory',
-        text: 'clientdirectory',
-        isBranch: true,
-        type: 'HostGroup',
-        isDefaultExpanded: false,
-        isDisabled: false,
-        children: null
-      },
-      {
-        id: 'groups',
-        text: 'groups',
-        isBranch: true,
-        type: 'HostGroup',
-        isDefaultExpanded: false,
-        isDisabled: false,
-        children: null
-      },
-      {
-        id: 'clientlist',
-        text: 'clientlist',
-        isBranch: true,
-        isDefaultExpanded: false,
-        type: 'HostGroup',
-        isDisabled: false,
-        children: null
-      }
-    ]
+    const values = Object.values(result)
+    await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
+    return values
   }
 
   async fetchChildren (parentNode) {
-    if (parentNode.text === 'clientlist') {
-      const resultclients = (await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)).sort()
-      const clientlist:Array<object> = []
-      resultclients.forEach((c) => { clientlist.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup' }) })
-      console.log('clientlist', clientlist)
-      parentNode.children = clientlist
-      console.log('dont fetch children', parentNode)
-      return clientlist
-    } else {
+    if (parentNode.text !== 'clientlist') {
       const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=${parentNode.text}`)).groups.children
 
       if (result !== null) {
-        console.log('Children ', result)
         const values = Object.values(result)
         await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
         return values
@@ -128,6 +94,7 @@ export default class TSHostGroups extends Vue {
   changeSelection (selection: Event) {
     if (selection === undefined) { return }
     if (!Array.isArray(selection)) { return }
+
     console.log('changeSelection', JSON.stringify(selection))
     if (selection.length > 0) {
       this.setSelectionClients([...selection])
