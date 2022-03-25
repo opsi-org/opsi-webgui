@@ -1,14 +1,6 @@
 <template>
   <div>
-    <AlertAAlert :show="showAlert" dismissible :variant="alertVariant">
-      {{ alertMessage }}
-      <b-button v-if="moreDetails" variant="link" :pressed.sync="showMore">
-        Learn More
-      </b-button>
-      <p v-if="showMore">
-        {{ moreDetails }}
-      </p>
-    </AlertAAlert>
+    <AlertAAlert ref="loginAlert" />
     <div data-testid="FLogin" @keyup.enter="doLogin">
       <b-form>
         <label for="configserver" class="sr-only"> Configserver </label>
@@ -58,31 +50,21 @@ interface FormUser {
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
 
-  showAlert:boolean = false
-  alertVariant: string = ''
-  alertMessage : string = ''
-  showMore:boolean = false
-  moreDetails:string = ''
-
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
   @auth.Mutation public login!: (username: string) => void
   @auth.Mutation public logout!: () => void
-  // @auth.Mutation public setSession!: () => void
   @auth.Mutation public clearSession!: () => void
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
     try {
       this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
-      // this.setSession()
     } catch (error) {
       const errorMsg = this.$t('loginPage.errortext') as string
       this.isLoading = false
-      this.showAlert = true
-      this.alertVariant = 'danger'
-      this.alertMessage = errorMsg
-      this.moreDetails = error as string
+      const ref = (this.$refs.loginAlert as any)
+      ref.alert(errorMsg, 'danger', error as string)
       // makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
       // eslint-disable-next-line no-console
       console.error(error)
@@ -117,7 +99,6 @@ interface FormUser {
       .then((response) => {
         if (response.data.result === 'Login success') {
           this.login(this.form.username)
-          // this.setSession()
           if (this.$route.name === 'login') {
             this.$router.push({ path: '/clients' })
           } else {
@@ -135,10 +116,8 @@ interface FormUser {
         this.clearSession()
         const errorMsg = this.$t('message.loginFailed') as string
         this.isLoading = false
-        this.showAlert = true
-        this.alertVariant = 'danger'
-        this.alertMessage = errorMsg
-        this.moreDetails = error as string
+        const ref = (this.$refs.loginAlert as any)
+        ref.alert(errorMsg, 'danger', error as string)
         // makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
       })
   }
