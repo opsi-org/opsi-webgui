@@ -1,6 +1,13 @@
 <template>
   <div data-testid="VClientsAddNew">
-    <AlertAAlert :show="showAlert" dismissible :variant="alertVariant">
+    <!-- <AlertAAAlertExtended :ref="alertId" /> -->
+    <!-- :show-alert="showAlert" -->
+    <!-- <AlertAAlertWithDetails
+      :alert-variant="alertVariant"
+      :alert-message="alertMessage"
+      :more-details="moreDetails"
+    /> -->
+    <AlertAAlert v-model="showAlert" dismissible :variant="alertVariant" @dismissed="showAlert=false">
       {{ alertMessage }}
       <b-button v-if="moreDetails" variant="link" :pressed.sync="showMore">
         Learn More
@@ -9,6 +16,15 @@
         {{ moreDetails }}
       </p>
     </AlertAAlert>
+    <!-- <AlertAAlert :show="showAlert" dismissible :variant="alertVariant">
+      {{ alertMessage }}
+      <b-button v-if="moreDetails" variant="link" :pressed.sync="showMore">
+        Learn More
+      </b-button>
+      <p v-if="showMore">
+        {{ moreDetails }}
+      </p>
+    </AlertAAlert> -->
     <BarBPageHeader>
       <template #right>
         <b-button variant="primary" @click="resetNewClientForm()">
@@ -116,6 +132,7 @@ export default class VClientsAddNew extends Vue {
   $mq: any
 
   showAlert:boolean = false
+  alertId: string= 'fetchClients'
   alertVariant: string = ''
   alertMessage : string = ''
   showMore:boolean = false
@@ -165,8 +182,12 @@ export default class VClientsAddNew extends Vue {
         this.clientIds = response.sort()
       }).catch((error) => {
         this.showAlert = true
+        // this.alertId = 'fetchClients'
+        // const ref = (this.$refs[this.alertId] as any)
+        // const ref = (this.$refs.clientsAddNew as any)
+        // ref.alert('Failed to fetch: GetDepotClients', 'danger')
         this.alertVariant = 'danger'
-        this.alertMessage = 'Failed to fetch: GetDepotClients'
+        this.alertMessage = 'Failed to fetch: DepotClients'
         this.moreDetails = error
       })
   }
@@ -184,6 +205,10 @@ export default class VClientsAddNew extends Vue {
       this.showAlert = true
       this.alertVariant = 'warning'
       this.alertMessage = this.$t('message.exists', { client: this.newClient.hostId }) as string
+      // this.alertId = 'clientExists'
+      // const ref = (this.$refs[this.alertId] as any)
+      // const ref = (this.$refs.clientsAddNew as any)
+      // ref.alert(this.$t('message.exists', { client: this.newClient.hostId }) as string, 'warning')
       // makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
       return
     }
@@ -195,6 +220,7 @@ export default class VClientsAddNew extends Vue {
         // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
+        // console.error('showAlert', this.showAlert)
         this.showAlert = true
         this.alertVariant = 'danger'
         this.alertMessage = this.$t('message.errortext') as string
