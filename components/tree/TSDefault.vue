@@ -56,6 +56,7 @@
       </div>
 
       <div slot="before-list">
+        <IconILoading v-if="$fetchState.pending" />
         <ButtonBTNClearSelection
           v-if="multi"
           class="BTNClearSelection"
@@ -64,7 +65,6 @@
           :label="$t('table.selection.clear')"
         />
         <br v-if="multi && $fetchState.pending">
-        <IconILoading v-if="$fetchState.pending" />
       </div>
       <!-- <div
         v-if="$fetchState.loading"
