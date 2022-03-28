@@ -7,13 +7,17 @@
       v-else
       :id="id"
       :ref="id"
+      :busy="isLoading"
       :stacked="$mq=='mobile'"
       :primary-key="id"
       class="TInfiniteScroll"
       :class="{smalltable: items.length <10 && items.length > 0,
                infinitescrolltable: items.length > 10,
                tableproducts: rowident === 'productId',
-               noscroll: totalItems < tableData.perPage}"
+               noscroll: totalItems < tableData.perPage,
+               firstpage: isFirstPage,
+               lastpage: isLastPage
+      }"
       sticky-header
       show-empty
       responsive
@@ -28,28 +32,30 @@
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
     >
-      <template v-if="totalpages > 1 && tableData.pageNumber !=1" #top-row="{ columns }" class="tablehead-outer">
+      <template v-if="totalpages > 1" #top-row="{ columns }" class="tablehead-outer">
         <b-th variant="light" :colspan="columns" class="tablehead">
           <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
         </b-th>
       </template>
-      <template #bottom-row="{ columns }" class="tablefooter-outer">
+      <template v-if="totalpages > 1" #bottom-row="{ columns }" class="tablefooter-outer">
         <b-th variant="light" :colspan="columns" class="tablefooter">
           <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
         </b-th>
       </template>
+
       <template #empty>
-        --
+        {{ (isLoading) ? '' : $t('table.emptyText') }}
       </template>
       <template #head()="data">
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #head(selected)>
-        <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems }} </b> </small>
+        <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" />
       </template>
       <template #head(rowactions)>
-        <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" />
+        <!-- <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" /> -->
+        <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
       </template>
       <template #cell(selected)="row">
         <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" />
@@ -64,13 +70,13 @@
       </template>
     </b-table>
 
-    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems }" />
+    <BarBTableFooter v-if="totalpages > 1" :pagination="{ tableData: tableData, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
 import { Constants } from '../../mixins/uib-mixins'
 const cache = namespace('data-cache')
@@ -96,40 +102,35 @@ export default class TInfiniteScroll extends Vue {
   @Prop({ }) items!: Array<any>
 
   @cache.Getter public opsiconfigserver!: string
-  get selectmode () {
-    if (this.ismultiselect) {
-      return 'range'
-    } else { return 'single' }
+
+  get tableScrollBody () { return (this.$refs[this.id] as any)?.$el }
+  get isFirstPage () { return this.totalpages > 0 && this.tableData.pageNumber === 1 }
+  get isLastPage () { return this.tableData.pageNumber === this.totalpages }
+  get selectmode () { return (this.ismultiselect) ? 'range' : 'single' }
+
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.addScrollEvent() }
+  @Watch('items', { deep: false }) pageChanged () { this.scrollTop() }
+
+  async fetch () { await this.fetchitems() }
+  mounted () { this.addScrollEvent() }
+
+  addScrollEvent () {
+    try {
+      this.tableScrollBody.removeEventListener('scroll', this.onScroll)
+    } catch (error) {
+      console.warn('cannot remove event listener', this.tableData)
+    }
+    this.tableScrollBody.addEventListener('scroll', this.onScroll)
   }
 
-  async fetch () {
-    await this.fetchitems()
+  scrollTop () {
+    if (this.isFirstPage) {
+      this.tableScrollBody.scrollTop = 0
+    } else {
+      this.tableScrollBody.scrollTop = 190
+    }
   }
 
-  mounted () {
-    // this.$nextTick(() => {
-    const tableScrollBody = (this.$refs[this.id] as any)?.$el
-    // const tableScrollBody = (this.$root.$children[2].$refs.LayoutDefaultContent as any)
-    tableScrollBody.addEventListener('scroll', this.onScroll)
-    // })
-  }
-
-  // beforeDestroy () {
-  //   const tableScrollBody = (this.$refs[this.id] as any).$el
-  //   tableScrollBody.removeEventListener('scroll', this.onScroll)
-  // }
-
-  // async previousPage () {
-  //   if (!this.isLoading) {
-  //     if (this.tableData.pageNumber === 1) {
-  //       return
-  //     }
-  //     this.tableData.pageNumber--
-  //     await this.fetchitems()
-  //     const tableScrollBody = (this.$refs[this.id] as any).$el
-  //     tableScrollBody.scrollTop = 180
-  //   }
-  // }
   async previousPage () {
     if (!this.isLoading) {
       if (this.tableData.pageNumber === 1) {
@@ -137,8 +138,6 @@ export default class TInfiniteScroll extends Vue {
       }
       this.tableData.pageNumber--
       await this.fetchitems()
-      const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.scrollTop = 190
     }
   }
 
@@ -149,40 +148,10 @@ export default class TInfiniteScroll extends Vue {
       }
       this.tableData.pageNumber++
       await this.fetchitems()
-      const tableScrollBody = (this.$refs[this.id] as any).$el
-      tableScrollBody.scrollTop = 190
     }
   }
 
-  // async firstPage () {
-  //   if (!this.isLoading) {
-  //     if (this.tableData.pageNumber === 1) {
-  //       return
-  //     }
-  //     this.tableData.pageNumber = 1
-  //     await this.fetchitems()
-  //     const tableScrollBody = (this.$refs[this.id] as any).$el
-  //     tableScrollBody.scrollTop = 180
-  //   }
-  // }
-
-  // async lastPage () {
-  //   if (!this.isLoading) {
-  //     if (this.tableData.pageNumber === this.totalpages) {
-  //       return
-  //     }
-  //     this.tableData.pageNumber = this.totalpages
-  //     await this.fetchitems()
-  //     const tableScrollBody = (this.$refs[this.id] as any).$el
-  //     tableScrollBody.scrollTop = 180
-  //   }
-  // }
-
   async onScroll (event) {
-    // if (this.items.length === 0) {
-    //   const tableScrollBody = (this.$refs[this.id] as any).$el
-    //   tableScrollBody.removeEventListener('scroll', this.onScroll)
-    // } else
     if ( // On Scroll Up
       event.target.scrollTop === 0) {
       await this.previousPage()
@@ -246,13 +215,8 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
-/* .TInfiniteScroll .b-table-sticky-column{
-  z-index: -1;
-  position: sticky !important;
-} */
 .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
-  /* border: 1px solid red; */
 }
 .TInfiniteScroll .clearselection-btn {
   padding: 0px !important;
@@ -261,6 +225,24 @@ export default class TInfiniteScroll extends Vue {
 .TInfiniteScroll .table thead td {
   padding: 0.40rem;
 }
+.data-transfer-status-table
+  .b-table-sticky-header
+  > .table.b-table
+  > thead
+  > tr
+  > th:not(.v-th) {
+  top: 32px;
+}
+.TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
+.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 200px !important;}
+.TInfiniteScroll.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
+.TInfiniteScroll.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
+
+.TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
+.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 200px !important;}
+.TInfiniteScroll.lastpage> .b-table-stacked > tbody > tr:last-of-type {margin-top: 0px !important;}
+.TInfiniteScroll.lastpage .b-table-bottom-row { display: none;}
+
 .tablehead {
   padding-top: 200px !important;
   text-align: center;
@@ -277,9 +259,10 @@ export default class TInfiniteScroll extends Vue {
   font-size: small;
 }
 .table-responsive {
-  max-height: 66vh;
+  max-height: 66vh ;
 }
-/* .infinitescrolltable .b-table-stacked {
+/*
+.infinitescrolltable .b-table-stacked {
   max-height: 66vh;
 }
 .infinitescrolltable.b-table-sticky-header {

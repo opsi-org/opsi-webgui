@@ -13,7 +13,7 @@
   >
     <!-- dropleft -->
     <template #button-content>
-      <b-icon :icon="(tableData.sortDesc)? iconnames.sortDesc: iconnames.sort" />
+      <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
     </template>
     <li>
       <a
@@ -21,17 +21,17 @@
         @click.prevent="changeSortDirection()"
       >
         <b-form-checkbox
-          :checked="tableData.sortDesc"
+          :checked="sortDesc"
         />
         <!-- :name="'hi'" -->
         {{ $t('button.sort.tablecolumns.sortDirection') }}
       </a>
       <a
-        v-for="header in Object.values(headers).filter(h=>h.sortable)"
+        v-for="header in Object.values(headerData).filter(h=>h.sortable)"
         :key="header.key"
         class="dropdown-item"
         :class="{
-          'selected':tableData.sortBy==header.key,
+          'selected':sortBy==header.key,
         }"
         variant="primary"
         @click="changeSortBy(header.key)"
@@ -45,25 +45,19 @@
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
-import { ITableData, ITableHeader } from '../../.utils/types/ttable'
+import { ITableHeader } from '../../.utils/types/ttable'
 import { Constants } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
 export default class DDTableColumnVisibilty extends BDropdown {
   $mq:any
   iconnames: any
-  @Prop({ default: 'table' }) tableId!: string
-  @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeader
-  @Prop({ default: () => { return () => { /* default */ } } }) tableData!: ITableData
+  @Prop({ default: '' }) sortBy!: string
+  @Prop({ default: false }) sortDesc!: boolean
+  @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeader
 
-  changeSortDirection () {
-    this.tableData.sortDesc = !this.tableData.sortDesc
-    console.log('new sort direction desc ', this.tableData.sortDesc)
-  }
-
-  changeSortBy (key:string) {
-    this.tableData.sortBy = key
-  }
+  changeSortDirection () { this.$emit('update:sortDesc', (!this.sortDesc)) }
+  changeSortBy (key:string) { this.$emit('update:sortBy', key) }
 }
 </script>
 <style>

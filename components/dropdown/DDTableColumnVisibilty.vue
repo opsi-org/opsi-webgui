@@ -14,7 +14,7 @@
     <template #button-content>
       <IconITableColumn />
     </template>
-    <li v-if="$mq=='mobile' || twoColumnLayoutCollapsed[tableId]">
+    <li v-if="!multiCondition">
       <a
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
         :key="header.key"
@@ -65,6 +65,8 @@ const settings = namespace('settings')
 @Component
 export default class DDTableColumnVisibilty extends BDropdown {
   @Prop({ default: 'table' }) tableId!: string
+  @Prop({ }) sortBy!: string
+  @Prop({ default: undefined }) multi!: boolean|undefined
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   $mq:any
 
@@ -72,6 +74,10 @@ export default class DDTableColumnVisibilty extends BDropdown {
 
   columnVisibilityList: Array<string> = []
   columnVisibilityStates: IObjectString2Boolean = {}
+
+  get multiCondition () {
+    return this.multi || (this.$mq === 'mobile' || this.twoColumnLayoutCollapsed[this.tableId])
+  }
 
   created () {
     if (Cookie.get('column_' + this.tableId)) {
@@ -88,18 +94,32 @@ export default class DDTableColumnVisibilty extends BDropdown {
     }
   }
 
+  @Watch('headers', { deep: true }) headersChanged () { this.$emit('update:headers', this.headers) }
+  @Watch('sortBy', { deep: true }) sortByChanged () {
+    if (this.headers[this.sortBy].visible) { return }
+    const majorKey = this.headers[this.sortBy]._majorKey
+    let sortBy = this.sortBy
+    if (majorKey) { sortBy = majorKey }
+
+    if (!this.multiCondition) {
+      this.setColumnVisibilityModel(sortBy)
+    } else {
+      this.handleItem(sortBy)
+    }
+  }
+
   @Watch('$mq') mqChanged () {
-    if (this.$mq === 'mobile') {
+    if (!this.multiCondition && this.$mq === 'mobile') {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
     }
   }
 
   @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
-    if (this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+    if (this.multiCondition && this.twoColumnLayoutCollapsed[this.tableId]) {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
-    } else if (!this.twoColumnLayoutCollapsed[this.tableId] && this.$mq !== 'mobile') {
+    } else if (this.multiCondition && !this.twoColumnLayoutCollapsed[this.tableId]) {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
     }
@@ -119,9 +139,6 @@ export default class DDTableColumnVisibilty extends BDropdown {
   }
 
   setColumnVisibilityModel (tableKey: string|undefined) {
-    if (tableKey === undefined) {
-      return
-    }
     // set all columns to false
     Object.keys(this.columnVisibilityStates).forEach((k) => {
       this.columnVisibilityStates[k] = false
@@ -148,6 +165,8 @@ export default class DDTableColumnVisibilty extends BDropdown {
         })
       }
     })
+    // triggerupdate
+    this.$emit('update:headers', this.headers)
   }
 }
 </script>

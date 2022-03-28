@@ -15,7 +15,7 @@
           :enable-products="false"
           :enable-show-products="false"
           :enable-show-changes="false"
-          :table-info="{tableData, headerData}"
+          :table-info.sync="tableInfo"
           :multiselect-toggler="false"
           :redirect-on-close-to="undefined"
           :redirect="undefined"
@@ -68,14 +68,15 @@
 <script lang="ts">
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
-import { Constants } from '../../mixins/uib-mixins'
+import { Constants, Synchronization } from '../../mixins/uib-mixins'
 import { IObjectString2String } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, Synchronization] })
 export default class VDepots extends Vue {
   iconnames: any
+  syncSort: any
   $axios: any
   $fetch: any
   $mq: any
@@ -106,6 +107,8 @@ export default class VDepots extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
+  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = { sortBy: this.tableData.sortBy || 'depotId', sortDesc: this.tableData.sortDesc || false, headerData: this.headerData }
+
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
@@ -113,6 +116,10 @@ export default class VDepots extends Vue {
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
+  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
 
   @Watch('selectionDepots', { deep: true }) depotsChanged () {
     const selectedClientsOnDepots = Object.fromEntries(Object.entries(this.fetchedDataClients2Depots).filter(
