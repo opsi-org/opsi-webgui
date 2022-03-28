@@ -102,7 +102,7 @@ export default class THostAttributes extends Vue {
   async fetch () {
     if (this.id) {
       this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/host?hosts=${this.id}`)
+      await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
         .then((response) => {
           this.result = response
         }).catch((error) => {
