@@ -83,7 +83,7 @@
         }"
       >
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" />
+          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" :variant="(node.raw.hasAnySelection)? 'primary':''" />
           <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
           <small v-if="type=='depots' && node.label===opsiconfigserver"> <b> {{ node.label }} </b></small>
           <small v-else> {{ node.label }} </small>
@@ -144,6 +144,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: false }) flat!: boolean
   @Prop({ default: true }) isList!: boolean
   @Prop({ default: false }) nested!: boolean
+  @Prop({ default: false }) disableRootObjects!: boolean
   @Prop({ default: () => {} }) store!: StoreSelection
   @Prop({ default: () => { return ['empty'] } }) fetchData!: Function
   @Prop({ default: () => { return [] } }) fetchChildren!: Function
@@ -159,12 +160,11 @@ export default class TSDefault extends Vue {
   @cache.Getter public opsiconfigserver!: Array<string>;
 
   get selectedListAsClass () {
+    const r = { 'disable-roots': this.disableRootObjects }
     if (this.store && this.store.selection) {
-      const r = {}
       this.store.selection.forEach((x) => { r['selected-' + x] = true })
-      return r
     }
-    return {}
+    return r
   }
 
   async fetch () {
@@ -279,6 +279,7 @@ export default class TSDefault extends Vue {
       id: node.id,
       type: node.type,
       isNew: node.isNew || false,
+      hasAnySelection: node.hasAnySelection || false,
       isBranch: node.type === 'HostGroup' || node.type === 'ProductGroup' || node.isBranch || false,
       isDisabled: (node.isDisabled === true) || false,
       // isDefaultExpanded: node.hasAnySelection || false,
@@ -394,9 +395,17 @@ export default class TSDefault extends Vue {
 .form-inline{
   flex-flow: nowrap;
 }
-/* .treeselect .vue-treeselect__placeholder {
-    color: gray;
-} */
+
+
+/* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container > .vue-treeselect__checkbox-container{ display:none }
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container {
+  cursor: not-allowed;
+  pointer-events: none;
+
+  /*Button disabled - CSS color class*/
+  /* color: var(--gray); */
+}
 .TSDefault-wrapper{
   border: 1px solid #ddd;
   border-radius: 5px;

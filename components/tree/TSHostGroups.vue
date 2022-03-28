@@ -13,6 +13,7 @@
       :icon="iconnames.client"
       :fetch-data="fetchHostGroupsData"
       :fetch-children="fetchChildren"
+      :disable-root-objects="true"
       @change="changeSelection"
     />
       <!-- :nested="true"
@@ -64,7 +65,7 @@ export default class TSHostGroups extends Vue {
     console.warn(this.id, 'fetch clientlist')
     this.clientlistGroups = []
     const resultclients = (await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)).sort()
-    resultclients.forEach((c) => { this.clientlistGroups.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup' }) })
+    resultclients.forEach((c) => { this.clientlistGroups.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup', isDisabled: false }) })
   }
 
   async fetchHostGroupsData () {
@@ -79,7 +80,7 @@ export default class TSHostGroups extends Vue {
       result.clientlist.children = this.clientlistGroups
     }
     const values = Object.values(result)
-    await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { await this.setChildren(c) } })
+    await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
     console.log(this.id + ' fetch client groups end')
     return values
   }
@@ -97,7 +98,7 @@ export default class TSHostGroups extends Vue {
 
       if (result !== null) {
         const values = Object.values(result)
-        await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { await this.setChildren(c) } })
+        await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
         // console.log(this.id + ' fetch client children ', parentNode.text, ' end')
         return values
       }
@@ -105,11 +106,11 @@ export default class TSHostGroups extends Vue {
     }
   }
 
-  async setChildren (node) {
-    const c = await this.fetchChildren(node)
-    if (c) {
-      console.log(this.id + ' loadchildren result != undefined ', node.id)
-      node.children = c
+  async loadChilds (node) {
+    // if (node.hasAnySelection === true && !['groups', 'clientdirectory', 'clientlist'].includes(node.text)) {
+    if (node.hasAnySelection === true) {
+      const c = await this.fetchChildren(node)
+      if (c) { node.children = c }
     }
   }
 
