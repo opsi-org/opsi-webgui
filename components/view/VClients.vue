@@ -1,5 +1,6 @@
 <template>
   <div data-testid="VClients">
+    <AlertAAlert ref="clientsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <BarBCollapsePageHeader
@@ -113,7 +114,7 @@
 
 <script lang="ts">
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '../../.utils/utils/scomponents'
+// import { makeToast } from '../../.utils/utils/scomponents'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
@@ -201,8 +202,8 @@ export default class VClients extends Vue {
         }
         // this.items = this.items.concat(response.data)
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const ref = (this.$refs.clientsViewAlert as any)
+        ref.alert('Failed to fetch: Clients', 'danger', error)
         this.error = this.$t('message.errortext') as string
         this.error += JSON.stringify(error.message)
       })
@@ -232,12 +233,14 @@ export default class VClients extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.error(response)
-        makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
+        const ref = (this.$refs.clientsViewAlert as any)
+        ref.alert(id + this.$t('message.deleteMessage'), 'success')
+        // makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(id)
       }).catch((error) => {
-        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const ref = (this.$refs.clientsViewAlert as any)
+        ref.alert(this.$t('message.errortext') as string, 'danger', error)
+        // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
   }
 }
