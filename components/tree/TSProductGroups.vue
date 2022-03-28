@@ -36,7 +36,7 @@ export default class TSProductGroups extends Vue {
 
   async fetchData () {
     const x = Object.values((await this.$axios.$get('api/opsidata/products/groups')).groups)
-    console.log('product groups', JSON.stringify(x))
+    // console.log('product groups', JSON.stringify(x))
     // const x = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
     return x
   }

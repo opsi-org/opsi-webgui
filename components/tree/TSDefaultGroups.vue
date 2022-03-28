@@ -12,13 +12,17 @@
 
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
+import { arrayEqual } from '../../.utils/utils/scompares'
 import { filterObjectLabel, filterObjectByValues } from '../../.utils/utils/sfilters'
 import TSDefault from './TSDefault.vue'
-
+const typeSelect = 'select'
+const typeDeselect = 'deselect'
+const groupSelectionDeep = true
 @Component
 export default class TSDefaultGroups extends TSDefault {
   node: any
   $axios: any
+  @Prop({ }) id!: string
   @Prop({ default: true }) lazyLoad!: boolean
   @Prop({ default: true }) multi!: boolean
   @Prop({ default: true }) nested!: boolean
@@ -28,8 +32,8 @@ export default class TSDefaultGroups extends TSDefault {
   @Prop({ default: 'text' }) selectionKey!: string
 
   emitChange (s) {
-    console.log('TSDefaultGroups receive change', s)
-    this.$emit('change', s)
+    console.log(this.id + ' TSDefaultGroups receive change', s)
+    this.$emit('change', s, this)
   }
 
   get selectionKeys () {
@@ -37,29 +41,30 @@ export default class TSDefaultGroups extends TSDefault {
   }
 
   set selectionKeys (s) {
-    throw new Error('Internal error: cannot set selectionKeys')
+    throw new Error(this.id + ' Internal error: cannot set selectionKeys')
   }
 
-  syncStoreToTree ({ selection, options }) {
-    console.log('syncStoreToTree')
+  syncStoreToTree (selection:Array<any>, options:any) {
+    console.log(this.id + ' sync StoreToTree')
     if (this.valueFormat !== 'object') {
       return
     }
 
-    console.log('storeselection', this.store.selection)
-    console.log('selection', selection)
+    console.log(this.id + ' sync storeselection', this.store.selection)
+    console.log(this.id + ' sync selection', JSON.stringify(selection))
 
     const storeSelect = this.store.selection
-    // let treeSelect = selection.filter(item => item.type === 'ObjectToGroup')
-    // treeSelect = treeSelect.map(e => e.text)
+    let treeSelect = selection.filter(item => item.type === 'ObjectToGroup')
+    treeSelect = treeSelect.map(e => e.text)
 
-    // treeSelect = [...new Set(treeSelect)]
-    // if (arrayEqual(storeSelect, treeSelect)) {
-    //   return
-    // }
+    treeSelect = [...new Set(treeSelect)]
+    if (arrayEqual(storeSelect, treeSelect)) {
+      return
+    }
+
     const resultObjects = []
     filterObjectByValues(options, storeSelect, this.selectionKey, resultObjects)
-    console.log('sync found objects ', JSON.stringify(resultObjects))
+    console.log(this.id + ' sync found objects ', JSON.stringify(resultObjects))
     selection.length = 0
     for (const i in resultObjects) {
       // if (resultObjects[i][this.selectionKey]) {
@@ -68,15 +73,15 @@ export default class TSDefaultGroups extends TSDefault {
       //     selection.push(resultObjects[i][this.selectionKey])
       //   }
       // } else
-      console.log('add key ', resultObjects[i])
+      console.log(this.id + ' sync add key ', resultObjects[i])
       selection.push(resultObjects[i])
       // if (!selection.includes(resultObjects[i])) {
       // }
     }
-    // // const elementsInTree: Array<string> = []
+    // const elementsInTree: Array<string> = []
     // for (const index in storeSelect) {
 
-    //   if (thiss.data.includes(storeSelect[index]) && !this.selection.includes(storeSelect[index])
+    //   if (options.includes(storeSelect[index]) && !this.selection.includes(storeSelect[index])
     //   ) {
     //     this.selection.push(storeSelect[index])
     //   //   filterObject(
@@ -84,59 +89,73 @@ export default class TSDefaultGroups extends TSDefault {
     //   //     'text', elementsInTree)
     //   }
     // }
-    // this.selection = treeSelect // elementsInTree
+    this.selection = selection // elementsInTree
   }
 
   async selectGroups (s: any, thiss:any) {
-    console.log('TSDefaultGroups s', s)
+    console.log(this.id + ' TSDefaultGroups s', s)
     if (!s) { return }
     if (thiss.isGroup(s)) {
-      console.log('TSDefaultGroups isBranch ... load children and select')
-      await thiss.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
-      this.groupChange(s, 'select')
-      return
+      console.log(this.id + ' TSDefaultGroups isBranch ... load children and select')
+      if (s.children == null) {
+        await thiss.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
+      }
+      if (groupSelectionDeep && s.children != null) {
+        const subgroups = s.children.filter(e => thiss.isGroup(e))
+        for (const g in subgroups) {
+          await this.selectGroups(subgroups[g], thiss)
+        }
+      }
+      return this.groupChange(s, typeSelect) // todo nested !!
     }
-    console.log('select not a group: ', s)
+    console.log(this.id + ' select not a group: ', s)
     if (!this.store.selection.includes(s[this.selectionKey])) {
-      console.log('PUSHSELECTION', s[this.selectionKey])
+      console.log(this.id + ' PUSHSELECTION', s[this.selectionKey])
       this.store.pushSelection(s[this.selectionKey])
     }
   }
 
   deselectGroups (deselection: any, thiss:any) {
-    console.log('TSDefaultGroups deselect')
+    console.log(this.id + ' TSDefaultGroups deselect')
     if (thiss.isGroup(deselection)) {
-      this.groupChange(deselection, 'deselect')
+      this.groupChange(deselection, typeDeselect)
       return
     }
-    console.log('deselect not a group ', deselection)
+    console.log(this.id + ' TSDefaultGroups deselect not a group ', deselection)
     if (this.store.selection.includes(deselection[this.selectionKey])) {
-      console.log('DELSELECTION', deselection[this.selectionKey])
+      console.log(this.id + ' TSDefaultGroups DELSELECTION', deselection[this.selectionKey])
       this.store.delSelection(deselection[this.selectionKey])
     }
+    // thiss.selection.length = 0
+    // this.selection.length = 0
+    // await thiss.$fetch()
   }
 
   groupChange (value: object, type: string) {
-    console.log('TSDefaultGroups groupChange ', value, type)
+    console.log(this.id + ' TSDefaultGroups groupChange ', value, type)
     const idList : Array<string> = []
     const storeSel = this.store.selection
-    console.log('TSDefaultGroups store ', storeSel)
+    console.log(this.id + ' TSDefaultGroups store ', storeSel)
     filterObjectLabel([value], 'ObjectToGroup', 'type', this.selectionKey, idList) // get all texts elements where type is ObjectToGroup
-    console.log('TSDefaultGroups foundIds ', idList)
+    console.log(this.id + ' TSDefaultGroups foundIds ', idList)
 
     for (const i in idList) {
       const objectId = idList[i]
-      if (type === 'select') {
-        console.log('PUSHSELECTION', objectId)
+      console.log(this.id + ' TSDefaultGroups id ', objectId, type)
+      if (type === typeSelect) {
+        console.log(this.id + ' PUSHSELECTION', objectId)
         this.store.pushSelection(objectId)
       }
-      if (type === 'deselect') {
-        if (storeSel.includes(objectId)) {
-          console.log('DELSELECTION', objectId)
-          this.store.delSelection(objectId)
-        }
+      if (type === typeDeselect) {
+        console.log(this.id + ' DELSELECTION', objectId)
+        this.store.delSelection(objectId)
       }
     }
+
+    this.store.selection = [...this.store.selection]
+    // thiss.selection.length = 0
+    // this.selection.length = 0
+    // await thiss.$fetch()
   }
 }
 </script>
