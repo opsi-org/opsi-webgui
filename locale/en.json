@@ -101,6 +101,7 @@
   "button.deleteall": "Delete all",
   "button.save": "Save",
   "button.saveall": "Save all",
+  "button.close": "Close",
   "button.show.products": "Show Productlist",
   "button.sort.tablecolumns": "Sort table by",
   "button.sort.tablecolumns.sortDirection": "Sort descending",

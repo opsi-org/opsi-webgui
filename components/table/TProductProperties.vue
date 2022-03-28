@@ -1,13 +1,13 @@
 <template>
   <div data-testid="TProductProperties">
-    <div v-if="!errorText && $mq=='mobile'">
-      <AlertAAlert show variant="secondary">
-        <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
-      </AlertAAlert>
-    </div>
-    <div v-else-if="!errorText && selectionClients.length <= 0">
+    <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlert show variant="warning">
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
+      </AlertAAlert>
+    </div>
+    <div v-else-if="!errorText && $mq=='mobile'">
+      <AlertAAlert show variant="secondary">
+        <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
       </AlertAAlert>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">

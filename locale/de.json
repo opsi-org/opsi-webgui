@@ -101,6 +101,7 @@
   "button.deleteall": "Alle entfernen",
   "button.save": "Speichern",
   "button.saveall": "Alle speichern",
+  "button.close": "Schließen",
   "button.show.products": "Öffne Produktliste",
   "button.change.usermode": "Wechsle Nutzermodus zu '{mode}'",
   "button.sort.tablecolumns": "Sortiere Tabelle nach",

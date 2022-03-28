@@ -10,7 +10,6 @@
         :placeholder="$t('loginPage.username')"
         :state="validUsername"
         class="login_input_field"
-        autocomplete="current_username"
       />
       <label for="password" class="sr-only"> {{ $t('loginPage.password') }} </label>
       <b-form-input
@@ -20,7 +19,7 @@
         :state="validPassword"
         type="password"
         class="login_input_field"
-        autocomplete="current_password"
+        autocomplete="current-password"
       />
       <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
         {{ $t('button.login') }}

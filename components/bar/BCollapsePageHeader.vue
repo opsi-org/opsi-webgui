@@ -1,15 +1,15 @@
 <template>
   <div>
-    <b-navbar class="BPageHeader_Navbar" data-testid="BarBPageHeader" :variant="variant">
-      <div class="BPageHeader_Navbar_toggler" @click="toggleCollapse">
+    <b-navbar class="BCollapsePageHeader_Navbar" data-testid="BarBCollapsePageHeader" :variant="variant">
+      <div class="BCollapsePageHeader_Navbar_toggler" @click="toggleCollapse">
         <span v-if="collapseable">
           <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
           <b-icon v-else :icon="iconnames.arrowDoubleRight" />
         </span>
 
         <slot name="nav-title" v-bind="{ title }">
-          <b v-if="title && bold">{{ title }}</b>
-          <p v-else-if="title && !bold">
+          <b v-if="title && bold" class="nav-title">{{ title }}</b>
+          <p v-else-if="title && !bold" class="nav-title">
             {{ title }}
           </p>
         </slot>
@@ -26,7 +26,7 @@
       </div>
       <b-navbar-nav class="ml-auto">
         <b-button v-if="redirectOnCloseTo" class="closebtn" variant="transparent" :to="redirectOnCloseTo">
-          <span class="sr-only">Close</span>
+          <span class="sr-only">{{ $t('button.close') }}</span>
           <b-icon :icon="iconnames.x" />
         </b-button>
       </b-navbar-nav>
@@ -90,7 +90,7 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ }) subtitle!: string
   @Prop({ }) value!: string
   @Prop({ }) rowId!: string
-  @Prop({ default: 'transparent' }) variant!: string
+  @Prop({ default: '' }) variant!: string
   @Prop({ default: true }) bold!: boolean
   @Prop({ default: false }) collapseable!: boolean
   @Prop({ default: false }) collapsed!: boolean
@@ -137,60 +137,82 @@ export default class BTooltipCollapseRow extends Vue {
 </script>
 
 <style>
-.BarBTooltipCollapseRow .nav-link {
-  padding-left: 0px;
+.BCollapsePageHeader_Navbar.navbar {
+  z-index: inherit !important;
+  /* padding-left: 0rem !important;
+  padding-right: 0rem !important; */
+  background-image: none !important;
+  background: inherit !important;
 }
-.BPageHeader_Navbar .closebtn {
-  max-height: 25px;
+.BCollapsePageHeader_Navbar.navbar-expand {
+  flex-flow: row wrap;
 }
-.BPageHeader_Navbar {
+.BCollapsePageHeader_Navbar {
+  background-color: inherit !important;
+  color: inherit !important;
+  background-image: none !important;
+  padding: 5px 0px !important;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
   min-height: 45px;
   padding: 0px !important;
   /* min-height: 45px; */
 }
-.BPageHeader_Navbar_toggler {
-  /* height: 45px; */
+.BCollapsePageHeader_Navbar .dropdown {
+  margin: 0px !important;
+}
+.BarBTooltipCollapseRow .nav-link {
+  padding-left: 0px;
+}
+
+.BCollapsePageHeader_Navbar .closebtn {
+  max-height: 25px;
+}
+
+.BCollapsePageHeader_Navbar_toggler {
+  /* min-height: 45px; */
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
   width: calc(100% - 48px);
   /* border: 1px solid green; */
 }
 .BarBTooltipCollapseRow {
   list-style: none !important;
 }
-.collapse-navitem > .row{
+.BCollapsePageHeader_Navbar .collapse-navitem > .row{
   width: 100%;
 }
-.collapse-navitem {
+.BCollapsePageHeader_Navbar.collapse-navitem {
   width: 100%;
   max-width: 100% !important;
   margin-left: 20px !important;
   margin-right: 10px !important;
 }
-.nav-child-right {
+.BCollapsePageHeader_Navbar .nav-child-right {
   padding: 0px !important;
   display: flex;
 }
-.nav-child-right > div{
+.BCollapsePageHeader_Navbar .nav-child-right > div{
   margin-left: 5px !important;
 }
-.nav-child-left > div{
+.BCollapsePageHeader_Navbar .nav-child-left > div{
   display: inline-flex;
 }
-.nav-child-left {
+.BCollapsePageHeader_Navbar .nav-child-left {
   padding: 0px !important;
   min-width: auto !important;
 }
-.title-row {
+.BCollapsePageHeader_Navbar .title-row {
   color: var(--dark);
 }
-.pageheader{
+.BCollapsePageHeader_Navbar .pageheader{
   height: var(--height-navbar) !important;
 }
-.pageheader_wrap {
+.BCollapsePageHeader_Navbar .pageheader_wrap {
   display: inline-flex;
   flex-wrap: wrap;
-}
-.navbar {
-  z-index: inherit !important;
 }
 .collapse{
   padding-left: 20px;

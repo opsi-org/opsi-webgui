@@ -18,7 +18,7 @@
       :class="selectedListAsClass"
       :searchable="!lazyLoad"
       :editable="editable"
-      :loading-text="'load...'"
+      :loading-text="$t('message.loading')"
       :clearable="clearable"
       :multiple="multi"
       :options="options"
@@ -29,7 +29,6 @@
 
       :cache-options="false"
       :normalizer="normalizer"
-      :auto-load-root-options="type!='clients'"
       :load-options="loadOptionsChildren"
       :limit="limitVisibleSelection"
       :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('components.treeselect .limitText', { count })"
@@ -58,8 +57,6 @@
       </div>
 
       <div slot="before-list">
-        <!-- <IconILoading v-if="$fetchState.pending" />
-        <br v-if="multi && $fetchState.pending"> -->
         <ButtonBTNClearSelection
           v-if="multi"
           class="BTNClearSelection"
@@ -68,11 +65,6 @@
           :label="$t('table.selection.clear')"
         />
       </div>
-      <!-- <div
-        v-if="$fetchState.loading"
-        slot="before-list"
-      >
-      </div> -->
       <div
         slot="option-label"
         slot-scope="{ node }"
@@ -83,7 +75,7 @@
         }"
       >
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" :variant="(node.raw.hasAnySelection)? 'primary':''" />
+          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
           <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
           <small v-if="type=='depots' && node.label===opsiconfigserver"> <b> {{ node.label }} </b></small>
           <small v-else> {{ node.label }} </small>
@@ -392,22 +384,45 @@ export default class TSDefault extends Vue {
 
 <style>
 
-.form-inline{
-  flex-flow: nowrap;
-}
-
-
 /* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
-.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container > .vue-treeselect__checkbox-container{ display:none }
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container {
   cursor: not-allowed;
   pointer-events: none;
+  color: var(--dark);
+}
 
-  /*Button disabled - CSS color class*/
-  /* color: var(--gray); */
+/* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
+  color: var(--light);
+}
+
+.form-inline{
+  flex-flow: nowrap;
+}
+.TSDefault-wrapper,
+.TSDefault-wrapper .treeselect,
+.TSDefault-wrapper .vue-treeselect__menu-container,
+.TSDefault-wrapper .vue-treeselect__menu {
+  background-color: var(--light);
+}
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
+  background: var(--primary);
+  color: var(--light);
+}
+.TSDefault-wrapper .hasSelection {
+  color: var(--primary);
+}
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
+  color: var(--light) !important;
+}
+.TSDefault-wrapper .vue-treeselect__menu {
+  border: 1px solid var(--primary) !important;
+  border-radius: 5px;
 }
 .TSDefault-wrapper{
-  border: 1px solid #ddd;
+  border: 1px solid var(--primary);
   border-radius: 5px;
   min-width: 200px !important;
   max-width: 200px !important;
@@ -425,13 +440,13 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
-  color: black;
+  color: inherit !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
   max-height: max-content !important;
   padding-bottom: 0px;
   margin-top: -6px !important;
-  color: black;
+  color: inherit !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
 .TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {
@@ -444,12 +459,13 @@ export default class TSDefault extends Vue {
   padding-top: 0px !important;
   padding-left: 0px !important;
   padding-right: 0px !important;
-  background: transparent !important;
+  background: inherit !important;
 }
 .TSDefault-wrapper .treeselect {
   max-width: max-content !important;
   max-height: 20px;
   width: 72% !important;
+  cursor: pointer;
 }
 .TSDefault-wrapper .treeselect > .vue-treeselect__control{
   border: none !important;
