@@ -1,7 +1,9 @@
 <template>
   <div class="form-inline TSDefault-wrapper">
     <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
+    <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
+      v-else
       :type="type"
       :selections="selectionDefault"
     />
@@ -216,21 +218,23 @@ export default class TSDefault extends Vue {
   }
 
   selectWrapper (s:any) {
+    this.$fetchState.pending = true
     console.log(this.id + ' TRY select: ', JSON.stringify(s))
     if (this.selectFunction) {
       this.selectFunction(s, this)
       this.syncWrapper()
     } else { this.selectDefault(s) }
+    this.$fetchState.pending = false
   }
 
   deselectWrapper (s:any) {
+    this.$fetchState.pending = true
     console.log(this.id + ' TRY deselect: ', JSON.stringify(s))
     if (this.deselectFunction) {
       this.deselectFunction(s, this)
       this.syncWrapper()
-    } else {
-      this.deselectDefault(s)
-    }
+    } else { this.deselectDefault(s) }
+    this.$fetchState.pending = false
   }
 
   updateLocalFromParent (updateOptions = true, updateSelections = true) {
@@ -403,6 +407,8 @@ export default class TSDefault extends Vue {
   padding-left: 10px;
   padding-right: 15px;
   margin-right: 10px;
+  line-height: 1.5 !important;
+  min-height: 40px !important;
 }
 .TSDefault-wrapper .treeselect .BTNClearSelection{
   width: 100% !important;

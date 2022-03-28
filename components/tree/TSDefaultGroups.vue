@@ -17,7 +17,7 @@ import { filterObjectLabel, filterObjectByValues } from '../../.utils/utils/sfil
 import TSDefault from './TSDefault.vue'
 const typeSelect = 'select'
 const typeDeselect = 'deselect'
-const groupSelectionDeep = true
+const groupSelectionDeep = true // cause needs more care and tests
 @Component
 export default class TSDefaultGroups extends TSDefault {
   node: any
@@ -106,7 +106,7 @@ export default class TSDefaultGroups extends TSDefault {
           await this.selectGroups(subgroups[g], thiss)
         }
       }
-      return this.groupChange(s, typeSelect) // todo nested !!
+      return this.groupChange(s, typeSelect)
     }
     console.log(this.id + ' select not a group: ', s)
     if (!this.store.selection.includes(s[this.selectionKey])) {

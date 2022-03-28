@@ -71,6 +71,7 @@ export default class TSHostGroups extends Vue {
     console.warn(this.id, 'fetch groups')
     console.log(this.id + ' fetch client groups')
     const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=root`)).groups
+
     if (result === undefined) {
       throw new Error(this.id + ' No root host-groups found')
     }
