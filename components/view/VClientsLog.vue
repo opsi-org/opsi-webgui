@@ -1,5 +1,6 @@
 <template>
   <div data-testid="VClientsLog">
+    <AlertAAlert ref="logAlert" />
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
@@ -110,8 +111,8 @@ export default class VClientLog extends Vue {
         this.filteredLog = this.logResult
         // this.setSession()
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const ref = this.$refs.logAlert as any
+        ref.alert('Failed to fetch: Log', 'danger', error)
         this.errorText = this.$t('message.errortext') as string
       })
     this.isLoading = false
