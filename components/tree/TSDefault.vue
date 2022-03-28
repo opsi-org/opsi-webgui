@@ -58,8 +58,8 @@
       </div>
 
       <div slot="before-list">
-        <IconILoading v-if="$fetchState.pending" />
-        <br v-if="multi && $fetchState.pending">
+        <!-- <IconILoading v-if="$fetchState.pending" />
+        <br v-if="multi && $fetchState.pending"> -->
         <ButtonBTNClearSelection
           v-if="multi"
           class="BTNClearSelection"
