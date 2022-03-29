@@ -1,29 +1,20 @@
 <template>
-  <div>
-    <TreeTSDefaultGroups
-      :id="id"
-      type="clients"
-      data-testid="TSHostGroups"
-      :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
-      :text="$t('treeselect.hostGroups')"
-      :text-no-result="'NoResult'"
-      :validate="() => true"
-      :validate-description="''"
-      :selection-default="selectionClients"
-      :icon="iconnames.client"
-      :fetch-data="fetchHostGroupsData"
-      :fetch-children="fetchChildren"
-      :disable-root-objects="true"
-      @change="changeSelection"
-    />
-      <!-- :nested="true"
-      :lazy-load="true"
-      :multi="true"
-      :data="undefined"
-      :editable="false"
-      :is-list="false" -->
-      <!-- value-format="object" -->
-  </div>
+  <TreeTSDefaultGroups
+    :id="id"
+    type="clients"
+    data-testid="TSHostGroups"
+    :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
+    :text="$t('treeselect.hostGroups')"
+    :text-no-result="$t('treeselect.noresult')"
+    :validate="() => true"
+    :validate-description="''"
+    :selection-default="selectionClients"
+    :icon="iconnames.client"
+    :fetch-data="fetchHostGroupsData"
+    :fetch-children="fetchChildren"
+    :disable-root-objects="true"
+    @change="changeSelection"
+  />
 </template>
 
 <script lang="ts">
@@ -37,7 +28,7 @@ export default class TSHostGroups extends Vue {
   iconnames: any // from mixin
   $axios: any
   $fetch: any
-  id: string = 'Clients'
+  id: string = 'HostGroups'
   @selections.Getter public selectionClients!: Array<string>;
   @selections.Getter public selectionDepots!: Array<string>;
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void;
@@ -45,10 +36,6 @@ export default class TSHostGroups extends Vue {
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
   clientlistGroups:Array<object> = []
-
-  // @Watch('selectionDefault', { deep: true }) selectionChanged () {
-  //   this.setSelectionClients(this.selectionClients)
-  // }
 
   @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
     console.log(this.id + ' depot changed')

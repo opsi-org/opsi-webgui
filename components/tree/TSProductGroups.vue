@@ -1,21 +1,17 @@
 <template>
-  <div>
-    <TreeTSDefaultGroups
-      id="ProductGroups"
-      type="products"
-      data-testid="TSProductGroups"
-      :text="$t('treeselect.prodGroups')"
-      :text-no-result="$t('treeselect.noresult')"
-      :validate="() => true"
-      :validate-description="''"
-      :selection-default="selectionProducts"
-
-      :icon="iconnames.product"
-      :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
-      :fetch-data="fetchData"
-      @change="changeSelection"
-    />
-  </div>
+  <TreeTSDefaultGroups
+    id="ProductGroups"
+    type="products"
+    data-testid="TSProductGroups"
+    :text="$t('treeselect.prodGroups')"
+    :text-no-result="$t('treeselect.noresult')"
+    :selection-default="selectionProducts"
+    :icon="iconnames.product"
+    :fetch-data="fetchData"
+    :disable-root-objects="false"
+    :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
+    @change="changeSelection"
+  />
 </template>
 
 <script lang="ts">
@@ -33,12 +29,13 @@ export default class TSProductGroups extends Vue {
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void;
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void;
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void;
-
+  groups: Array<any>|undefined = undefined
   async fetchData () {
-    const x = Object.values((await this.$axios.$get('api/opsidata/products/groups')).groups)
-    // console.log('product groups', JSON.stringify(x))
-    // const x = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
-    return x
+    // return Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectionProducts=${this.selectionProducts}`)).groups)
+    if (this.groups === undefined) { // dont refetch
+      this.groups = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
+    }
+    return this.groups
   }
 
   changeSelection (selection: Event) {

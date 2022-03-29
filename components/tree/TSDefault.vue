@@ -15,7 +15,7 @@
         : lazyLoad? '' : $t(editable ? 'client.dropdown.searchOrAdd' : 'client.dropdown.search')
       "
       class="treeselect"
-      :class="selectedListAsClass"
+      :class="{ 'disable-roots': disableRootObjects }"
       :searchable="!lazyLoad"
       :editable="editable"
       :loading-text="$t('message.loading')"
@@ -151,68 +151,47 @@ export default class TSDefault extends Vue {
 
   @cache.Getter public opsiconfigserver!: Array<string>;
 
-  get selectedListAsClass () {
-    const r = { 'disable-roots': this.disableRootObjects }
-    if (this.store && this.store.selection) {
-      this.store.selection.forEach((x) => { r['selected-' + x] = true })
-    }
-    return r
-  }
-
   async fetch () {
-    console.warn(this.id, 'fetch data')
-    console.log(this.id + ' TSDefault fetch start')
-    // await this.requestData()
+    console.warn(this.id, 'TSDefault fetch')
     this.$fetchState.pending = true
-    this.data = []
+    // this.data = []
     this.data = await this.fetchData()
     this.updateLocalFromParent()
     this.syncWrapper()
+    this.selection = [...this.selection] // needed for deselection
     this.$fetchState.pending = false
-    this.selection = [...this.selection]
     console.log(this.id + ' TSDefault fetch end')
   }
 
-  mounted () {
-    // this.syncWrapper()
+  updated () {
   }
 
-  @Watch('selectionDefault', { deep: true }) selectionChanged () {
-    console.log(this.id + ' selection changed')
-    console.log(this.id + ' selection changed this.selection ', JSON.stringify(this.selection))
-    console.log(this.id + ' selection changed this.selectionDefault ', JSON.stringify(this.selectionDefault))
-    this.$fetch()
+  @Watch('selectionDefault', { deep: true }) async selectionChanged () {
+    console.log(this.id + ' TSDefault selectionDefaultChanged this.selection ', JSON.stringify(this.selection))
+    console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionDefault ', JSON.stringify(this.selectionDefault))
+    console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionWrapper ', JSON.stringify(this.selectionWrapper))
+
+    await this.$fetch()
   }
 
-  get selectionWrapper () { // can be overwritten by children
-    return this.selection
-  }
+  get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }
+  set selection (s) { this.model[(this.nested) ? 'nested' : 'default'] = s }
 
-  set selectionWrapper (s) { // can be overwritten by children
-    this.selection = s
-  }
-
-  get selection () {
-    console.log(this.id + ' TSDefault get selection ', (this.nested) ? 'nested' : 'default')
-    return this.model[(this.nested) ? 'nested' : 'default']
-  }
-
-  set selection (s) {
-    console.log(this.id + ' TSDefault set selection ', (this.nested) ? 'nested' : 'default')
-    this.model[(this.nested) ? 'nested' : 'default'] = s
-  }
+  // can be overwritten by children
+  set selectionWrapper (s) { this.selection = s }
+  get selectionWrapper () { return this.selection }
 
   syncWrapper () {
-    console.log(this.id + ' syncWrapper')
-    if (this.syncFunction) {
+    console.log(this.id + ' TSDefault syncWrapper')
+    if (this.syncFunction) { // e.g. from TSDefaultGroups
       this.syncFunction(this.selection, this.options)
     }
   }
 
   selectWrapper (s:any) {
     this.$fetchState.pending = true
-    console.log(this.id + ' TRY select: ', JSON.stringify(s))
-    if (this.selectFunction) {
+    console.log(this.id + ' TSDefault selectWrapper TRY select: ', JSON.stringify(s))
+    if (this.selectFunction) { // e.g. from TSDefaultGroups
       this.selectFunction(s, this)
       this.syncWrapper()
     } else { this.selectDefault(s) }
@@ -221,8 +200,8 @@ export default class TSDefault extends Vue {
 
   deselectWrapper (s:any) {
     this.$fetchState.pending = true
-    console.log(this.id + ' TRY deselect: ', JSON.stringify(s))
-    if (this.deselectFunction) {
+    console.log(this.id + ' TSDefault deselectWrapper TRY deselect: ', JSON.stringify(s))
+    if (this.deselectFunction) { // e.g. from TSDefaultGroups
       this.deselectFunction(s, this)
       this.syncWrapper()
     } else { this.deselectDefault(s) }
@@ -230,6 +209,7 @@ export default class TSDefault extends Vue {
   }
 
   updateLocalFromParent (updateOptions = true, updateSelections = true) {
+    console.log(this.id + ' TSDefault updateLocalFromParent')
     if (updateOptions) {
       if (this.isList === false) {
         this.options = [...this.data]
@@ -260,7 +240,7 @@ export default class TSDefault extends Vue {
         }
       }
     }
-    if (updateSelections && !this.nested) {
+    if (updateSelections && !this.nested) { // not TSDefaultGroups
       this.selection = [...this.selectionDefault]
       console.log(this.id, ' updateLocal ', this.selection)
     }
@@ -289,18 +269,18 @@ export default class TSDefault extends Vue {
   }
 
   getChildren (node) {
-    if (!node.children) {
-      return node.children
-    }
+    if (!node.children) { return node.children } // null/undefined
 
     if (node.type === 'ProductGroup') {
+      console.log('access PG chilren')
       return Object.values(node.children)
     }
     return node.children
   }
 
   async loadOptionsChildren ({ action, parentNode, callback }: any) {
-    console.log(this.id + ' loadchildren parentNode ', parentNode.id)
+    // loadchildren only for hostgroups
+    console.log(this.id + ' TSDefault loadchildren parentNode ', parentNode.id)
     if (this.lazyLoad !== true) {
       callback()
       return
@@ -309,16 +289,13 @@ export default class TSDefault extends Vue {
       this.$fetchState.pending = true
       const c = await this.fetchChildren(parentNode)
       if (c) {
-        console.log(this.id + ' loadchildren result != undefined')
-        parentNode.children = c
+        console.log(this.id + ' TSDefault loadchildren result != undefined', c)
+        parentNode.children = Array.isArray(c) ? c : Object.values(c)
       }
       if (parentNode.text === 'clientlist' && parentNode.parent == null) {
-        console.log(this.id + ' loadchildren clientlist children are', parentNode.children)
+        console.log(this.id + ' TSDefault loadchildren clientlist children are', parentNode.children)
       }
-      // parentNode.children = await this.fetchChildren(parentNode)
 
-      // const children = await this.fetchChildren(parentNode)
-      // parentNode.children = children.map(n => { const nn= this.normalizer(n); console.log(nn); return nn })
       this.syncWrapper()
       callback()
       this.$fetchState.pending = false
@@ -326,39 +303,37 @@ export default class TSDefault extends Vue {
   }
 
   selectDefault (s: any) {
-    console.log(this.id + ' TSDefault s', s)
-    if (!s) {
-      return
-    }
+    console.log(this.id + ' TSDefault selectDefault s', s)
+    if (!s) { return }
 
     if (!Array.isArray(this.selection)) {
       this.selection = [this.selection]
     }
     if (Object.keys(s).length <= 0) {
-      console.log(this.id + ' why?')
+      console.log(this.id + ' TSDefault selectDefault why?')
       this.selection = []
     }
     if (!this.selection.includes(s.text)) {
       if (!this.nested && !Object.values(this.options.map((o:any) => o.id)).includes(s.id)) {
-        console.log(this.id + ' new item')
+        console.log(this.id + ' TSDefault selectDefault new item')
         this.options.push(s)
       }
       if (!this.multi) {
-        console.log(this.id + ' not multi')
+        console.log(this.id + ' TSDefault selectDefault not multi')
         this.selection.length = 0
       }
       // console.log(this.options, ' includes ', s)
       this.selection.push(s.text)
-      console.log(this.id + ' add to selection', JSON.stringify(this.selection))
+      console.log(this.id + ' TSDefault selectDefault add to selection', JSON.stringify(this.selection))
     } else {
-      console.log(this.id + ' deselect')
+      console.log(this.id + ' TSDefault selectDefault deselect')
       this.deselectDefault(s)
     }
     this.$emit('change', this.selection)
   }
 
   deselectDefault (deselection: any, isObject = false) {
-    console.log(this.id + ' TSDefault deselect ', deselection, this.selection)
+    console.log(this.id + ' TSDefault deselectDefault ', deselection, this.selection)
     if (this.selection.includes(deselection.text) || this.selection.includes(deselection)) {
       if (isObject || this.selection.includes(deselection.text)) {
         this.selection.splice(this.selection.indexOf(deselection.text), 1) // deleting
