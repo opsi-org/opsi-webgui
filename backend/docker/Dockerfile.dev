@@ -1,0 +1,99 @@
+# FROM python:3.7-buster as opsiconfd_development_build
+FROM docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.10 as opsiui_backend_build
+
+ARG DOCKER_ENV
+ARG USER
+ARG UID
+
+ENV DOCKER_ENV=${DOCKER_ENV} \
+	DEV_USER=${USER} \
+	DEV_UID=${UID} \
+	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/development/Debian_9.0/ \
+	# python:
+	PYTHONFAULTHANDLER=1 \
+	PYTHONUNBUFFERED=1 \
+	PYTHONHASHSEED=random \
+	# pip:
+	PIP_NO_CACHE_DIR=off \
+	PIP_DISABLE_PIP_VERSION_CHECK=on \
+	PIP_DEFAULT_TIMEOUT=100
+
+# System deps:
+RUN apt-get update \
+	&& apt-get --yes dist-upgrade \
+	&& apt-get --yes install \
+		cpio \
+		vim \
+		wget \
+		gettext \
+		mariadb-client \
+		libmariadb-dev \
+		psmisc \
+		librsync1 \
+		sqlite3 \
+		sudo \
+		git \
+		bash-completion \
+		nano
+
+# grafana
+RUN wget -q -O - https://packages.grafana.com/gpg.key |  apt-key add - \
+	&& echo "deb https://packages.grafana.com/oss/deb stable main" | tee -a /etc/apt/sources.list.d/grafana.list
+
+RUN apt-get update \
+	&& apt-get --yes install \
+		apt-transport-https \
+		software-properties-common \
+		grafana
+
+# mysql
+RUN apt-get update \
+	&& apt-get --yes install \
+		mariadb-server
+
+# redis:
+RUN  echo "deb $OPSI_REPO /" > /etc/apt/sources.list.d/opsi.list
+
+RUN wget -nv ${OPSI_REPO}Release.key -O Release.key \
+	&& apt-key add - < Release.key
+
+RUN apt-get update \
+	&& apt-get --yes install \
+		redis-tools \
+		redis-server \
+		redis-timeseries
+
+# opsi-utils
+RUN apt-get update \
+	&& apt-get --yes install \
+		opsi-utils
+
+COPY docker/files/ /
+
+# Setup poetry
+WORKDIR /workspace
+
+RUN useradd --create-home -s /bin/bash ${DEV_USER} \
+	&& (getent group opsifileadmins || groupadd opsifileadmins) \
+	&& (getent group opsiadmin || groupadd opsiadmin) \
+	&& (getent passwd opsiconfd || useradd --system -g opsifileadmins -d /var/lib/opsi -s /bin/bash opsiconfd) \
+	&& (getent passwd adminuser || useradd --create-home --home-dir /home/adminuser -s /bin/bash adminuser) \
+	&& echo "adminuser:adminuser" | chpasswd \
+	&& adduser adminuser opsifileadmins \
+	&& adduser adminuser opsiadmin \
+	&& echo "${DEV_USER}:adminuser" | chpasswd \
+	&& adduser ${DEV_USER} opsifileadmins \
+	&& adduser ${DEV_USER} opsiadmin \
+	&& adduser ${DEV_USER} sudo \
+	&& adduser ${DEV_USER} shadow \
+	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/ \
+	&& echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+	&& cp -r /root/.bash* /home/adminuser/ \
+	&& cp -r /root/.bash* /home/${DEV_USER}/
+
+# RUN chmod g+rw -R .
+
+RUN chmod +x "/docker-entrypoint.sh" \
+	&& mkdir tftpboot \
+	&& chown -R $DEV_USER /workspace
+
