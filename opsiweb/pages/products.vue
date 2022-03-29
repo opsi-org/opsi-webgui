@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <ViewVProducts />
+    <ViewVProducts id="products" />
   </div>
 </template>
 
