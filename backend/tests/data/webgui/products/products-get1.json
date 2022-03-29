@@ -141,7 +141,7 @@
         "actionRequest": "mixed",
         "actionProgress": null,
         "actionResult": "none",
-        "client_version_outdated": true,
+        "client_version_outdated": false,
         "selected": 0
     }
 ]
