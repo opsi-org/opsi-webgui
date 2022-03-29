@@ -27,6 +27,7 @@
           </b-tab>
           <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
             <TableTProductsLocalboot
+              :parent-id="id"
               :header-data.sync="tableInfo.headerData"
               :totallocalboot.sync="localboot"
               :multiselect="ismultiselect"
@@ -39,6 +40,7 @@
           </b-tab>
           <b-tab :title="$t('title.netboot') + ' (' + netboot + ')'">
             <TableTProductsNetboot
+              :parent-id="id"
               :header-data="tableInfo.headerData"
               :totalnetboot.sync="netboot"
               :multiselect="ismultiselect"
@@ -100,7 +102,11 @@ export default class VProducts extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
-  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = { sortBy: this.sortby || 'productId', sortDesc: this.sortdesc || false, headerData: this.headerData }
+  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = {
+    sortBy: this.sortby || Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'productId',
+    sortDesc: this.sortdesc || Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
+    headerData: this.headerData
+  }
 
   created () {
     if (Cookie.get('multiselect_products')) {

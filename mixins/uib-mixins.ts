@@ -1,3 +1,4 @@
+import Cookie from 'js-cookie'
 import { Component, Vue } from 'nuxt-property-decorator'
 
 // const _icons = {
@@ -13,7 +14,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 // }
 @Component
 export class Synchronization extends Vue {
-  syncSort (fromSort, toSort, emitToSort) {
+  syncSort (fromSort, toSort, emitToSort, id) {
     if (fromSort.sortBy && toSort.sortBy !== fromSort.sortBy) {
       toSort.sortBy = fromSort.sortBy
     }
@@ -21,6 +22,7 @@ export class Synchronization extends Vue {
       toSort.sortDesc = fromSort.sortDesc
     }
     if (emitToSort) { this.$emit('update:sort', toSort) }
+    Cookie.set('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
   }
 }
 

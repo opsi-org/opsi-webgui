@@ -113,6 +113,7 @@
 </template>
 
 <script lang="ts">
+import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 // import { makeToast } from '../../.utils/utils/scomponents'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
@@ -143,8 +144,8 @@ export default class VClients extends Vue {
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 15,
-    sortBy: 'clientId',
-    sortDesc: false,
+    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'clientId',
+    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
     filterQuery: '',
     selected: ''
   }
@@ -171,9 +172,9 @@ export default class VClients extends Vue {
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.fetchPageOne() }
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
-  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
-  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
+  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
 
   async fetchPageOne () {
     this.tableData.pageNumber = 1

@@ -66,6 +66,7 @@
 </template>
 
 <script lang="ts">
+import Cookie from 'js-cookie'
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
@@ -93,8 +94,8 @@ export default class VDepots extends Vue {
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 15,
-    sortBy: 'depotId',
-    sortDesc: false,
+    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'depotId',
+    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
     filterQuery: ''
   }
 
@@ -117,9 +118,9 @@ export default class VDepots extends Vue {
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
-  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
-  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
+  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
 
   @Watch('selectionDepots', { deep: true }) depotsChanged () {
     const selectedClientsOnDepots = Object.fromEntries(Object.entries(this.fetchedDataClients2Depots).filter(

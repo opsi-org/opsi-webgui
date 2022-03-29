@@ -119,6 +119,7 @@ export default class TProductsNetboot extends Vue {
   $fetch: any
   $mq: any
 
+  @Prop() parentId!: string
   @Prop() rowId!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
@@ -169,9 +170,9 @@ export default class TProductsNetboot extends Vue {
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true) }
-  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.sort, true) }
-  @Watch('sort', { deep: true }) sortPropChanged () { this.syncSort(this.sort, this.tableData, false) }
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
+  @Watch('sort', { deep: true }) sortPropChanged () { this.syncSort(this.sort, this.tableData, false, this.parentId) }
 
   mounted () {
     this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
