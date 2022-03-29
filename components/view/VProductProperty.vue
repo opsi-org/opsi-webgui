@@ -1,6 +1,7 @@
 
 <template>
   <div data-testid="VProductProperty">
+    <AlertAAlert ref="productPropViewAlert" />
     <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #left>
@@ -123,20 +124,6 @@ export default class VProductProperty extends Vue {
     }
     this.errorText = { properties: '', dependencies: '' }
 
-    await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
-      .then((response) => {
-        this.fetchedData.dependencies.dependencies = response.dependencies
-        this.fetchedData.dependencies.productDescriptionDetails = response.productDescriptionDetails // { 'bonifax.uib.local': 'string' }
-        this.fetchedData.dependencies.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0' }
-        this.fetchedData.dependencies.productDescription = response.productDescription
-        // this.setSession()
-      }).catch((error) => {
-        this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
-        this.activeTabSet = -3
-        // eslint-disable-next-line no-console
-        console.error(error)
-        // throw new Error(error)
-      })
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.properties.properties = response.properties
@@ -147,8 +134,23 @@ export default class VProductProperty extends Vue {
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
         this.activeTabSet = -3
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const ref = (this.$refs.productPropViewAlert as any)
+        ref.alert('Failed to fetch: Properties', 'danger', error)
+        // throw new Error(error)
+      })
+
+    await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
+      .then((response) => {
+        this.fetchedData.dependencies.dependencies = response.dependencies
+        this.fetchedData.dependencies.productDescriptionDetails = response.productDescriptionDetails // { 'bonifax.uib.local': 'string' }
+        this.fetchedData.dependencies.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0' }
+        this.fetchedData.dependencies.productDescription = response.productDescription
+        // this.setSession()
+      }).catch((error) => {
+        this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
+        this.activeTabSet = -3
+        const ref = (this.$refs.productPropViewAlert as any)
+        ref.alert('Failed to fetch: Dependencies', 'danger', error)
         // throw new Error(error)
       })
     if (this.activeTabSet >= -1) { this.activeTabSet = -1 }

@@ -20,6 +20,7 @@ const selections = namespace('selections')
 @Component({ mixins: [Constants] })
 export default class BTNLogout extends Vue {
   iconnames: any
+  $axios:any
   @Prop({ default: false }) abortClick!: boolean
   @auth.Mutation public logout!: () => void
   @auth.Mutation public clearSession!: () => void

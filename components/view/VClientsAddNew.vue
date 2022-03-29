@@ -1,5 +1,6 @@
 <template>
   <div data-testid="VClientsAddNew">
+    <AlertAAlert ref="newClientAlert" />
     <BarBPageHeader>
       <template #right>
         <b-button variant="primary" @click="resetNewClientForm()">
@@ -80,7 +81,7 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '../../.utils/utils/scomponents'
+// import { makeToast } from '../../.utils/utils/scomponents'
 import { Constants } from '../../mixins/uib-mixins'
 
 const cache = namespace('data-cache')
@@ -105,7 +106,6 @@ export default class VClientsAddNew extends Vue {
   $nuxt: any
   $fetch: any
   $mq: any
-  // $t: any
 
   clientRequest: ClientRequest = { selectedDepots: [] }
   clientIds: Array<string> = []
@@ -122,7 +122,6 @@ export default class VClientsAddNew extends Vue {
     notes: ''
   }
 
-  // @auth.Mutation public setSession!: () => void
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
 
@@ -146,9 +145,14 @@ export default class VClientsAddNew extends Vue {
   async fetch () {
     this.clientRequest.selectedDepots = this.selectionDepots
     const params = this.clientRequest
-    this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    // this.opsiconfigserver = (await this.$axios.$get('/api/user/opsiserver')).result
-    // this.setSession()
+    // this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
+    await this.$axios.$get('/api/opsidata/depots/clients', { params })
+      .then((response) => {
+        this.clientIds = response.sort()
+      }).catch((error) => {
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert('Failed to fetch: DepotClients', 'danger', error)
+      })
   }
 
   resetNewClientForm () {
@@ -161,19 +165,21 @@ export default class VClientsAddNew extends Vue {
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
+      const ref = (this.$refs.newClientAlert as any)
+      ref.alert(this.$t('message.exists', { client: this.newClient.hostId }) as string, 'warning')
+      // makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
       return
     }
     await this.$axios.$post('/api/opsidata/clients', this.newClient)
       .then(() => {
-        // eslint-disable-next-line no-console
-        makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert(this.$t('message.add', { client: this.newClient.hostId }) as string, 'success')
+        // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
-        // this.setSession()
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
-        makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert(this.$t('message.errortext') as string, 'danger', error)
+        // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
     this.isLoading = false
   }

@@ -1,5 +1,6 @@
 <template>
   <div data-testid="VProducts">
+    <AlertAAlert ref="productsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
         <BarBCollapsePageHeader
@@ -160,6 +161,8 @@ export default class VProducts extends Vue {
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
+          // const ref = (this.$refs.productsViewAlert as any)
+          // ref.alert('Failed to fetch: ClientsToDepots', 'danger', error)
           thiss.error = thiss.$t('message.errortext') as string
           thiss.error += error
         })
@@ -189,6 +192,8 @@ export default class VProducts extends Vue {
       } catch (error) {
         thiss.error = thiss.$t('message.errortext') as string
         thiss.error += (error as IObjectString2Any).message
+        const ref = (this.$refs.productsViewAlert as any)
+        ref.alert('Failed to fetch: Products', 'danger', error)
         // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
       }
     }

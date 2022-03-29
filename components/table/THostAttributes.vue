@@ -1,60 +1,63 @@
 <template>
-  <TableTBVTable
-    data-testid="THostAttributes"
-    :stacked="true"
-    :is-loading="isLoading"
-    :error="errorText"
-    :items="result"
-    :fields="fields"
-  >
-    <template #cell(opsiHostKey)="row">
-      <b-input-group>
-        <b-button :pressed.sync="showValue" size="sm" variant="transparent">
-          <span class="sr-only">{{ showValue? 'Hide opsiHostKey': 'Show opsiHostKey' }}</span>
-          <b-icon v-if="showValue" :icon="iconnames.valueShow" />
-          <b-icon v-else :icon="iconnames.valueHide" />
-        </b-button>
-        <label for="opsiHostKey" class="sr-only">  {{ row.field.label }} </label>
-        <b-form-input id="opsiHostKey" v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
-      </b-input-group>
-    </template>
-    <template #cell(notes)="row">
-      <label for="notes" class="sr-only">  {{ row.field.label }} </label>
-      <b-form-textarea
-        id="notes"
-        v-model="row.item.notes"
-        :aria-label="row.item.notes"
-        class="forminput"
-        size="sm"
-        rows="2"
-        max-rows="3"
-        no-resize
-        readonly
-      />
-    </template>
-    <template #cell(created)="row">
-      <label for="created" class="sr-only">  {{ row.field.label }} </label>
-      <b-form-input
-        id="created"
-        :value="date(row.value)"
-        :aria-label="date(row.value)"
-        class="forminput"
-        size="sm"
-        readonly
-      />
-    </template>
-    <template #cell(lastSeen)="row">
-      <label for="lastSeen" class="sr-only">  {{ row.field.label }} </label>
-      <b-form-input
-        id="lastSeen"
-        :value="date(row.value)"
-        :aria-label="date(row.value)"
-        class="forminput"
-        size="sm"
-        readonly
-      />
-    </template>
-  </TableTBVTable>
+  <div>
+    <AlertAAlert ref="hostAttrAlert" />
+    <TableTBVTable
+      data-testid="THostAttributes"
+      :stacked="true"
+      :is-loading="isLoading"
+      :error="errorText"
+      :items="result"
+      :fields="fields"
+    >
+      <template #cell(opsiHostKey)="row">
+        <b-input-group>
+          <b-button :pressed.sync="showValue" size="sm" variant="transparent">
+            <span class="sr-only">{{ showValue? 'Hide opsiHostKey': 'Show opsiHostKey' }}</span>
+            <b-icon v-if="showValue" :icon="iconnames.valueShow" />
+            <b-icon v-else :icon="iconnames.valueHide" />
+          </b-button>
+          <label for="opsiHostKey" class="sr-only">  {{ row.field.label }} </label>
+          <b-form-input id="opsiHostKey" v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
+        </b-input-group>
+      </template>
+      <template #cell(notes)="row">
+        <label for="notes" class="sr-only">  {{ row.field.label }} </label>
+        <b-form-textarea
+          id="notes"
+          v-model="row.item.notes"
+          :aria-label="row.item.notes"
+          class="forminput"
+          size="sm"
+          rows="2"
+          max-rows="3"
+          no-resize
+          readonly
+        />
+      </template>
+      <template #cell(created)="row">
+        <label for="created" class="sr-only">  {{ row.field.label }} </label>
+        <b-form-input
+          id="created"
+          :value="date(row.value)"
+          :aria-label="date(row.value)"
+          class="forminput"
+          size="sm"
+          readonly
+        />
+      </template>
+      <template #cell(lastSeen)="row">
+        <label for="lastSeen" class="sr-only">  {{ row.field.label }} </label>
+        <b-form-input
+          id="lastSeen"
+          :value="date(row.value)"
+          :aria-label="date(row.value)"
+          class="forminput"
+          size="sm"
+          readonly
+        />
+      </template>
+    </TableTBVTable>
+  </div>
 </template>
 
 <script lang="ts">
@@ -103,8 +106,8 @@ export default class THostAttributes extends Vue {
         .then((response) => {
           this.result = response
         }).catch((error) => {
-        // eslint-disable-next-line no-console
-          console.error(error)
+          const ref = (this.$refs.hostAttrAlert as any)
+          ref.alert('Failed to fetch: Hosts', 'danger', error)
           this.errorText = this.$t('message.errortext') as string
         })
       this.isLoading = false
