@@ -3,6 +3,8 @@
     <AlertAAlert ref="productsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
+        <!-- TODO: Test multiselect=true, if its fine, remove table select mode settings-->
+        <!-- :multiselect-toggler.sync="ismultiselect" -->
         <BarBCollapsePageHeader
           :id="'Products'"
           :title="$t('title.products')"
@@ -15,7 +17,6 @@
           :enable-show-products="false"
           :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
           :table-info="tableInfo"
-          :multiselect-toggler.sync="ismultiselect"
           :redirect-on-close-to="(child)? '/clients/': undefined"
           :redirect="routeRedirectWith"
         />
@@ -59,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
+// import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { ITableHeaders } from '~/.utils/types/ttable'
@@ -81,7 +82,7 @@ export default class VProducts extends Vue {
   sortdesc: boolean = false;
   rowId: string = '';
   isLoading: boolean = true;
-  ismultiselect: boolean = false;
+  ismultiselect: boolean = true;
   localboot: string = ''
   netboot: string = ''
 
@@ -102,11 +103,11 @@ export default class VProducts extends Vue {
 
   tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = { sortBy: this.sortby || 'productId', sortDesc: this.sortdesc || false, headerData: this.headerData }
 
-  created () {
-    if (Cookie.get('multiselect_products')) {
-      this.ismultiselect = JSON.parse(Cookie.get('multiselect_products') as unknown as any)
-    }
-  }
+  // created () {
+  //   if (Cookie.get('multiselect_products')) {
+  //     this.ismultiselect = JSON.parse(Cookie.get('multiselect_products') as unknown as any)
+  //   }
+  // }
 
   mounted () {
     if (!this.tableInfo.sortBy) {
@@ -119,10 +120,10 @@ export default class VProducts extends Vue {
     this.updateColumnVisibility()
   }
 
-  @Watch('ismultiselect', { deep: true }) multiselectChanged () {
-    Cookie.set('multiselect_products', JSON.stringify(this.ismultiselect), { expires: 365 })
-    this.setSelectionProducts([])
-  }
+  // @Watch('ismultiselect', { deep: true }) multiselectChanged () {
+  //   Cookie.set('multiselect_products', JSON.stringify(this.ismultiselect), { expires: 365 })
+  //   this.setSelectionProducts([])
+  // }
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
