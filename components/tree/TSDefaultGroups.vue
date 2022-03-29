@@ -12,7 +12,6 @@
 
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
-import { arrayEqual } from '../../.utils/utils/scompares'
 import { filterObjectLabel, filterObjectByValues } from '../../.utils/utils/sfilters'
 import TSDefault from './TSDefault.vue'
 const typeSelect = 'select'
