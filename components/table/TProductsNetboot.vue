@@ -158,6 +158,7 @@ export default class TProductsNetboot extends Vue {
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
+    this.setSelectionProducts([])
     this.fetchPageOne()
   }
 
