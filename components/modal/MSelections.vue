@@ -6,12 +6,12 @@
       size="sm"
       tabindex="0"
       :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
-      @click="$bvModal.show(type + 'selection')"
+      @click="$bvModal.show(type + '-selection-' + id)"
     >
       {{ selections.length }}
     </b-badge>
     <b-modal
-      :id="type + 'selection'"
+      :id="type + '-selection-' + id"
       class="modalselection"
       :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
       centered
@@ -28,6 +28,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component export default class MSelections extends Vue {
+  @Prop({ }) id!: string
   @Prop({ }) type!: string
   @Prop({ }) selections!: Array<string>
 }

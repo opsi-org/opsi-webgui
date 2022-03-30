@@ -15,7 +15,7 @@ export default class ITableColumn extends Vue {
 </script>
 <style>
 .ITableColumn-icon {
-  color: var(--dark) !important;
+  color: var(--primary) !important;
 }
 .ITableColumn-icon:hover {
   color: var(--light) !important;

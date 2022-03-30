@@ -16,18 +16,21 @@
       >
         {{ isOrigin? '': '*' }}
       </b-form-checkbox>
-      <LazyDropdownDDDefault
+
+      <TreeTSDefault
         v-else-if="rowItem.type=='UnicodeProductProperty'"
+        :id="'PropertyValue-' + rowItem.propertyId"
+        type="propertyvalues"
+        :text="undefined"
+        :limit-visible-selection="1"
+        :multi="rowItem.multiValue"
+        :editable="rowItem.editable"
+        :selection-default.sync="selectedValues"
+        :is-list="true"
+        :fetch-data="() => allOptionsUnique"
         :is-origin="isOrigin"
-        :options="allOptionsUnique"
-        :selected-items="selectedValues"
-        :multiple="rowItem.multiValue"
         @change="selectionChanged"
       />
-      <!-- {{!arrayEqual(selectedValuesOriginal, selectedValues)? 'CHANGED-notsaved':''}} -->
-    </b-col>
-    <b-col v-if="rowItem.editable" :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" cols="*">
-      <slot :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" name="editable-button" />
     </b-col>
     <b-col v-if="rowItem.propertyId.includes('password')" class="TCProductPropertyValue_ShowBtn" cols="*">
       <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
@@ -82,6 +85,7 @@ export default class TProductPropertyValue extends Vue {
     // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
     //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     // }
+    console.log('ProuctPropertyValue changeValue ', this.selectedValues)
     this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
   }
@@ -104,7 +108,11 @@ export default class TProductPropertyValue extends Vue {
     if (this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)) {
       options.push(this.$t('values.mixed') as string)
     }
-    return options
+    return options.filter(val => val !== null && val !== undefined)
+    // if (options.includes(null) && options.includes('')) {
+    //   options.splice(options.indexOf(''), 1)
+    // }
+    // return options
   }
 
   get selectedValuesOriginal () {
@@ -143,17 +151,17 @@ export default class TProductPropertyValue extends Vue {
     return true
   }
 
-  uniques (arr:Array<any>) {
-    return [...new Set(arr)]
-  }
+  uniques (arr:Array<any>) { return [...new Set(arr)] }
 
   handleBoolChange () {
     this.selectedValues = JSON.parse(JSON.stringify([!this.selectedValues[0]]))
+    // this.selectedValues = [!this.selectedValues[0]]
     this.selectedValuesChanged()
   }
 
   selectionChanged (values: Array<string|boolean>) {
     this.selectedValues = JSON.parse(JSON.stringify(values))
+    // this.selectedValues = values
     this.selectedValuesChanged()
   }
 }

@@ -32,6 +32,7 @@
               :totallocalboot.sync="localboot"
               :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
+              :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
@@ -45,6 +46,7 @@
               :totalnetboot.sync="netboot"
               :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
+              :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
@@ -64,7 +66,7 @@
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { ITableHeaders } from '~/.utils/types/ttable'
+import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
 import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const settings = namespace('settings')
@@ -102,9 +104,10 @@ export default class VProducts extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
-  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = {
+  tableInfo: ITableInfo = {
     sortBy: this.sortby || Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'productId',
     sortDesc: this.sortdesc || Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
+    filterQuery: '',
     headerData: this.headerData
   }
 

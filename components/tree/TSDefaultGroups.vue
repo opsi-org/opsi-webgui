@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <TreeTSDefault
-      v-bind="$props"
-      :select-function="selectGroups"
-      :deselect-function="deselectGroups"
-      :sync-function="syncStoreToTree"
-      @change="emitChange"
-    />
-  </div>
+  <TreeTSDefault
+    v-bind="$props"
+    :select-function="selectGroups"
+    :deselect-function="deselectGroups"
+    :sync-function="syncStoreToTree"
+    @change="emitChange"
+  />
 </template>
 
 <script lang="ts">

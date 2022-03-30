@@ -45,24 +45,13 @@
               :clients2depots="fetchedDataClients2Depots"
               :row-item="row.item"
               @change="handleChange"
-            >
-              <template #editable-button>
-                <b-button
-                  v-if="row.item.editable"
-                  variant="outer-primary"
-                  size="sm"
-                  @click="row.toggleDetails()"
-                >
-                  <b-icon :icon="iconnames.add" />
-                </b-button>
-              </template>
-            </TableCellTCProductPropertyValue>
+            />
           </div>
         </b-row>
       </template>
       <template #row-details="row">
         <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${row.item.propertyId}`">
-          <b-input-group v-if="row.item.editable">
+          <!-- <b-input-group v-if="row.item.editable">
             <b-form-input
               v-model="row.item.newValue"
               size="sm"
@@ -81,7 +70,7 @@
               </b-button>
               <ButtonBTNHelpTooltip :id="`btn_tt_${row.item.propertyId}`" tooltip="middle click on value-dropdown will copy the text" />
             </template>
-          </b-input-group>
+          </b-input-group> -->
           <small>
             Defaults: <b v-if="row.item.default!='mixed'">[{{ row.item.details }}]</b>
             <div v-else>

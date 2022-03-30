@@ -22,6 +22,7 @@
           <!-- <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" /> -->
           <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
           <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+          <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
         </div>
       </div>
       <b-navbar-nav class="ml-auto">
@@ -46,6 +47,9 @@
                   <b-button class="changeslink border" variant="link" to="/changes/">
                     {{ $t('button.track.changes') }}
                   </b-button>
+                </b-col>
+                <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+                  <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
                 </b-col>
                 <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
                   <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />

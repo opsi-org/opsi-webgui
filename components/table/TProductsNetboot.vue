@@ -121,6 +121,7 @@ export default class TProductsNetboot extends Vue {
 
   @Prop() parentId!: string
   @Prop() rowId!: string
+  @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
   @Prop() child!: boolean
@@ -144,7 +145,7 @@ export default class TProductsNetboot extends Vue {
     perPage: 15,
     sortBy: this.sort.sortBy ? this.sort.sortBy : 'productId',
     sortDesc: false,
-    filterQuery: ''
+    filterQuery: this.filterQuery || ''
   }
 
   @selections.Getter public selectionDepots!: Array<string>
@@ -173,6 +174,7 @@ export default class TProductsNetboot extends Vue {
   @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
   @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
   @Watch('sort', { deep: true }) sortPropChanged () { this.syncSort(this.sort, this.tableData, false, this.parentId) }
+  @Watch('filterQuery', { deep: true }) filterPropChanged () { this.syncSort({ filterQuery: this.filterQuery }, this.tableData, false, this.parentId) }
 
   mounted () {
     this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
