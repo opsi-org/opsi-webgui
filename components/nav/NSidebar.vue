@@ -131,6 +131,13 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
+a.nuxt-link-active {
+  font-weight:bolder;
+}
+/* exact link will show the primary color for only the exact matching link */
+a.nuxt-link-exact-active {
+  font-weight:bolder;
+}
 .checkactive.nav-item {
   font-weight:bolder;
   background-color: grey;
