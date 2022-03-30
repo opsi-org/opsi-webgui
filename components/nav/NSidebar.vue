@@ -36,7 +36,14 @@
               </span>
             </b-nav-item>
           </template>
-          <NavItemNIItem v-else :class="{checkactive: $route.path.includes(menuitem.route)}" :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
+          <NavItemNIItem
+            v-else
+            :class="{checkactive: $route.path.includes(menuitem.route)}"
+            :expanded="expanded"
+            :title="menuitem.title"
+            :icon="menuitem.icon"
+            :route="menuitem.route"
+          />
         </template>
       </span>
       <br>
