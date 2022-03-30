@@ -24,14 +24,19 @@
         </template>
         <template v-else>
           <template v-if="menuitem.title == 'Track Changes'">
-            <b-nav-item v-if="expert || changesProducts.filter((o) => o.user === username).length!==0" :disabled="changesProducts.filter((o) => o.user === username).length==0" :to="menuitem.route">
+            <b-nav-item
+              v-if="expert || changesProducts.filter((o) => o.user === username).length!==0"
+              :class="{checkactive: $route.path.includes(menuitem.route)}"
+              :disabled="changesProducts.filter((o) => o.user === username).length==0"
+              :to="menuitem.route"
+            >
               <b-icon v-b-tooltip.hover :title="$t(menuitem.title)" :icon="menuitem.icon" />
               <span v-if="expanded">
                 {{ $t(menuitem.title) }}
               </span>
             </b-nav-item>
           </template>
-          <NavItemNIItem v-else :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
+          <NavItemNIItem v-else :class="{checkactive: $route.path.includes(menuitem.route)}" :expanded="expanded" :title="menuitem.title" :icon="menuitem.icon" :route="menuitem.route" />
         </template>
       </span>
       <br>
@@ -119,6 +124,10 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
+.checkactive.nav-item {
+  font-weight:bolder;
+  background-color: grey;
+}
 .navbar-light .navbar-nav .nav .nav-item{
   color: inherit !important;
   font-weight: normal !important;
@@ -126,20 +135,12 @@ export default class NSidebar extends Vue {
   padding-bottom: 0px;
 }
 #sidemenu .b-sidebar-body {
-  /* display: inline-block; */
   width: inherit;
-  /* height: inherit;
-  max-height: inherit; */
   max-height: calc(100% - var(--height-navbar) - 80px);
-  /* max-height: 200px; */
 }
 .sidemenu_nav{
-  /* display: inline-flex; */
   position: absolute;
   flex-wrap: nowrap !important;
-  /* width: 100%; */
-  /* overflow-y: auto; */
-  /*overflow-x: visible; /*horizontal scrollbar*/
   width: 100%;
   height: 100%;
   overflow-x: visible;
@@ -149,12 +150,9 @@ export default class NSidebar extends Vue {
   margin-right: 0px !important;
 }
 .sidebar_collapsed .sidemenu_nav .nav-link > svg{
-  /* width: 100% !important; */
   margin: 0 auto !important;
 }
 .timer {
   margin: auto;
-  /* margin-left: 15px;
-  margin-top: 5px; */
 }
 </style>

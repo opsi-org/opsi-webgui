@@ -1,12 +1,22 @@
 <template>
   <div>
-    <b-nav-item v-b-toggle="'collapse-navitem-'+title" @click="changeRoute">
+    <b-nav-item
+      id="parentnav"
+      v-b-toggle="'collapse-navitem-'+title"
+      :class="{checkactive: $route.path.includes(route)}"
+      @click="changeRoute"
+    >
       <b-icon :icon="icon" /> {{ $t(title) }}
       <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
     </b-nav-item>
     <b-collapse :id="'collapse-navitem-'+title" accordion="sidebarAccordion">
       <b-nav vertical>
-        <b-nav-item v-for="sub in submenu" :key="sub.title" :to="sub.route">
+        <b-nav-item
+          v-for="sub in submenu"
+          :key="sub.title"
+          :class="{checksubactive: $route.path == (sub.route)}"
+          :to="sub.route"
+        >
           <span class="submenu">
             {{ $t(sub.title) }}
           </span>
@@ -36,6 +46,13 @@ export default class NICollapsible extends Vue {
 </script>
 
 <style>
+.checksubactive.nav-item {
+  background-color: grey;
+}
+.checksubactive > #parentnav .nav-item {
+  font-weight:bolder;
+  background-color: grey;
+}
 .submenu{
   margin-left: 5px;
 }
