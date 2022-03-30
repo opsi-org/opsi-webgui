@@ -89,7 +89,7 @@ stages:
   echo "log-level-stderr = 0" >> tests/data/default-opsiconfd.conf
   echo "log-level-file = 6" >> tests/data/default-opsiconfd.conf
   echo "log-file = /tmp/opsiconfd.log" >> tests/data/default-opsiconfd.conf
-  echo "addon-dirs = [../backend]" >> tests/data/default-opsiconfd.conf
+  echo "addon-dirs = [../backend/addon]" >> tests/data/default-opsiconfd.conf
 
   # Installing opsi test modules file
   mkdir -p /etc/opsi/licenses
@@ -134,8 +134,9 @@ stages:
   pwd
   ls -la
   ls -la ../backend
+  ls -la ../backend/addon
   # cp -R ../backend/tests
-  poetry run pytest ../backend/tests || exit_code=$?
+  poetry run pytest  --tb=short -v ../backend/tests || exit_code=$?
   if [ $exit_code -ne 0 ]; then
     echo "---------------------------------------"
     echo "opsiconfd log"
@@ -339,11 +340,11 @@ build:addon:
     - *define_globals
     - npm-uib run generate
     - cd .. # copy to addon
-    - mkdir -p backend/webgui/data
-    - mkdir -p backend/webgui/data/app
+    - mkdir -p backend/addon/webgui/data
+    - mkdir -p backend/addon/webgui/data/app
     - cp -r opsiweb/dist/* backend/webgui/data/app/
     - mkdir webgui
-    - cp -r backend/webgui/* webgui/
+    - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
   only:
     - tags
