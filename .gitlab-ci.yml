@@ -342,7 +342,7 @@ build:addon:
     - cd .. # copy to addon
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
-    - cp -r opsiweb/dist/* backend/webgui/data/app/
+    - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
