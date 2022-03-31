@@ -176,58 +176,42 @@ export default class TProductProperties extends Vue {
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    const propObj: any = {}
-    propObj[propertyId] = values
-    let data = {}
-    if (this.selectionClients.length > 0) {
-      data = {
-        clientIds: this.selectionClients,
-        properties: propObj
-      }
-    } else {
-      data = {
-        depotIds: this.selectionDepots,
-        properties: propObj
-      }
-    }
+    console.log('expert? ', this.expert)
     if (this.expert) {
       if (this.selectionClients.length > 0) {
-        for (const c in this.selectionClients) {
-          const d: Object = {
-            user: localStorage.getItem('username'),
-            clientId: this.selectionClients[c],
-            productId: this.id,
-            property: propertyId,
-            propertyValue: values
-          }
-          const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.id && item.property === propertyId)
-          if (objIndex > -1) {
-            this.delWithIndexChangesProducts(objIndex)
-          }
-          if (!arrayEqual(values, orgValues)) {
-            this.pushToChangesProducts(d)
-          }
-        }
+        this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
       } else {
-        for (const dep in this.selectionDepots) {
-          const d: Object = {
-            user: localStorage.getItem('username'),
-            depotId: this.selectionDepots[dep],
-            productId: this.id,
-            property: propertyId,
-            propertyValue: values
-          }
-          const objIndex = this.changesProducts.findIndex(i => i.depotId === this.selectionDepots[dep] && i.productId === this.id && i.property === propertyId)
-          if (objIndex > -1) {
-            this.delWithIndexChangesProducts(objIndex)
-          }
-          if (!arrayEqual(values, orgValues)) {
-            this.pushToChangesProducts(d)
-          }
-        }
+        this.handleTrackingChanges(this.selectionDepots, 'depotId', propertyId, values, orgValues)
       }
-    } else if (!arrayEqual(values, orgValues)) {
+      return
+    }
+    if (!arrayEqual(values, orgValues)) {
+      const propObj: any = {}
+      propObj[propertyId] = values
+      let data = { depotIds: this.selectionDepots, properties: propObj }
+      if (this.selectionClients.length > 0) {
+        data.clientIds = this.selectionClients
+      }
       await this.saveProdProp(data)
+    }
+  }
+
+  handleTrackingChanges (hosts:Array<string>, key:string, propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> ) {
+    for (const h in hosts) {
+      const changeObject: Object = {
+        user: localStorage.getItem('username'),
+        clientId: hosts[h],
+        productId: this.id,
+        property: propertyId,
+        propertyValue: values
+      }
+      const objIndex = this.changesProducts.findIndex(item => item[key] === hosts[c] && item.productId === this.id && item.property === propertyId)
+      if (objIndex > -1) {
+        this.delWithIndexChangesProducts(objIndex)
+      }
+      if (!arrayEqual(values, orgValues)) {
+        this.pushToChangesProducts(changeObject)
+      }
     }
   }
 
