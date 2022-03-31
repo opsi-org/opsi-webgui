@@ -200,12 +200,12 @@ export default class TProductProperties extends Vue {
     for (const h in hosts) {
       const changeObject: Object = {
         user: localStorage.getItem('username'),
-        clientId: hosts[h],
+        [key]: hosts[h],
         productId: this.id,
         property: propertyId,
         propertyValue: values
       }
-      const objIndex = this.changesProducts.findIndex(item => item[key] === hosts[c] && item.productId === this.id && item.property === propertyId)
+      const objIndex = this.changesProducts.findIndex(item => item[key] === hosts[h] && item.productId === this.id && item.property === propertyId)
       if (objIndex > -1) {
         this.delWithIndexChangesProducts(objIndex)
       }
