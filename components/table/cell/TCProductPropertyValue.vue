@@ -45,6 +45,7 @@
         type="property"
         :target="`DDProductProperty_value_hover_${rowItem.propertyId}`"
         :details="rowItem.clients"
+        :changes="tooltipChanges"
       />
     </b-col>
   </b-form-row>
@@ -57,6 +58,7 @@ import { IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
 import { Constants } from '../../../mixins/uib-mixins'
 const selections = namespace('selections')
+const changes = namespace('changes')
 // const mixed = '<mixed>'
 
 @Component({ mixins: [Constants] })
@@ -67,16 +69,30 @@ export default class TProductPropertyValue extends Vue {
   @Prop() clients2depots!: IObjectString2String
   @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
+  @selections.Getter public selectionDepots!: Array<string>
+  @changes.Getter public changesProducts!: Array<any>
+  @changes.Mutation public deleteFromChangesWhere!: (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) => void
   showValue : boolean = false
   changedValue: Array<string>|undefined
   selectedValues!: Array<string|boolean>
+  tooltipChanges!: object
   // selectedValuesOriginal!: Array<string|boolean>
   isOrigin: boolean = true
   visibleValueBool!: boolean
   visibleValueBoolIndeterminate!: boolean
 
   created () {
-    this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    this.initSelection()
+  }
+
+  initSelection () {
+    if (this.selectionClients.length > 0) {
+      this.selectedValues = [...this.updateDefaultWithChanges(this.selectionClients, 'clientId')]
+      this.tooltipChanges = this.updateChangesForTooltip(this.selectionClients, 'clientId')
+    } else {
+      this.selectedValues = [...this.updateDefaultWithChanges(this.selectionDepots, 'depotId')]
+      this.tooltipChanges = this.updateChangesForTooltip(this.selectionDepots, 'depotId')
+    }
   }
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
@@ -101,6 +117,10 @@ export default class TProductPropertyValue extends Vue {
       this.selectedValues = [this.rowItem.newValue || '']
     }
     this.selectedValuesChanged()
+  }
+
+  get username () {
+    return localStorage.getItem('username')
   }
 
   get allOptionsUnique () {
@@ -159,10 +179,75 @@ export default class TProductPropertyValue extends Vue {
     this.selectedValuesChanged()
   }
 
-  selectionChanged (values: Array<string|boolean>) {
-    this.selectedValues = JSON.parse(JSON.stringify(values))
-    // this.selectedValues = values
-    this.selectedValuesChanged()
+  selectionChanged (values: Array<string|boolean>, reset: boolean = false) {
+    if (!reset) {
+      this.selectedValues = JSON.parse(JSON.stringify(values))
+      this.selectedValuesChanged()
+    }
+
+    const hostKey = (this.selectionClients.length > 0) ? 'clientId' : 'depotId'
+    const hostValues = (this.selectionClients.length > 0) ? this.selectionClients : this.selectionDepots
+    this.deleteFromChangesWhere(
+      [hostKey, hostValues],
+      ['productId', this.rowItem.productId],
+      ['property', this.rowItem.propertyId]
+    )
+    this.isOrigin = true
+    this.initSelection()
+  }
+
+  updateChangesForTooltip (selectionHosts: Array<string>, key: string) {
+    const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    const changes = {}
+    let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
+    changesList = changesList.filter(e => e.user === this.username)
+    changesList = changesList.filter(e => selectionHosts.includes(e[key]))
+    if (changesList.length > 0) {
+      // save selection if any host has different value in changes as original
+      changesList.forEach((e) => {
+        if (arrayEqual(e.propertyValue, originalValue)) { return } // everything ok
+
+        // value != originalValue
+        if (selectionHosts.length > 1) { // at least one host has different value
+          changes[e[key]] = e.propertyValue
+        }
+      })
+    }
+    return changes
+  }
+
+  updateDefaultWithChanges (selectionHosts: Array<string>, key: string) {
+    const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    let newValue
+    let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
+    changesList = changesList.filter(e => e.user === this.username)
+    changesList = changesList.filter(e => selectionHosts.includes(e[key]))
+    // get changes for property and user and selected hosts (depot or client)
+    if (changesList.length > 0) {
+      let anyValuesDifferent = false
+      // overwrite selection if any host has different value in changes as original
+      changesList.forEach((e) => {
+        if (arrayEqual(e.propertyValue, originalValue)) { return } // everything ok
+
+        // value != originalValue
+        if (selectionHosts.length === 1) { // it is only one host, so show changedValue
+          newValue = e.propertyValue
+        } else { // at least one host has different value
+          anyValuesDifferent = true
+        }
+
+        // break up if any is different
+        if (anyValuesDifferent) {
+          this.isOrigin = false
+          return [this.$t('values.mixed') as string]
+        }
+      })
+    }
+    if (newValue) {
+      this.isOrigin = false
+      return newValue
+    }
+    return originalValue
   }
 }
 </script>

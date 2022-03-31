@@ -50,6 +50,10 @@
             <b-badge :variant="getVariant(v)">
               {{ v }}
             </b-badge>
+            <b-badge v-if="changes && changes[c]" variant="warning">
+              {{ changes[c] }}
+            </b-badge>
+            {{ (changes && changes[c]) ? '*':'' }}
           </b-th>
         </b-tr>
       </b-tbody>
@@ -58,8 +62,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IObjectString2String, IObjectString2Function } from '../../.utils/types/tgeneral'
+const changes = namespace('changes')
 // import { ITableRowItemProducts } from '~/types/ttable'
 
 @Component
@@ -69,10 +74,13 @@ export default class TTProductCell extends Vue {
   @Prop({ default: 'danger' }) variant!: string
   @Prop({ default: false }) dark!: boolean
   @Prop({ }) details!: IObjectString2String
+  @Prop({ default: () => {} }) changes?: object
   // @Prop({ }) detailsDepots!: IObjectString2String
   // @Prop({ }) rowitem?: ITableRowItemProducts
   // @Prop({ }) row:Object,
   // @Prop({ }) text!: {type:Boolean, default:false},
+  @changes.Getter public changesProducts!: Array<any>
+
   variants: IObjectString2Function = {
     actionRequest: (r:string) => {
       if (r === 'uninstall') { return 'info' }
@@ -98,10 +106,16 @@ export default class TTProductCell extends Vue {
     // ppversion:(v:string)=> {v.startsWith('*')? 'pps_client_uneq_depot':'not_bold'},
   }
 
+  // mounted () {
+  //   let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
+  //   changesList = changesList.filter(e => e.user === this.username)
+  //   changesList = changesList.filter(e => selectionHosts.includes(e[key]))
+  // }
+
   getVariant (value: string) {
     if (this.variants[this.type] === undefined) {
       // console.error(`Type ${this.type} not in variants`)
-      return ''
+      return 'info'
     }
     // return (v) => {
     // console.error(`Variants for ${this.type}`, variants[this.type](value))
@@ -120,9 +134,12 @@ export default class TTProductCell extends Vue {
   margin-right: auto;
   width: 30%;
 }
+.tooltip.b-tooltip {
+  opacity: 0.95 !important;
+}
 .tt-table,
 .tt-table th {
-  background-color: transparent !important;
+  background: var(--light) !important;
 }
 .tooltip-inner {
   max-width: inherit !important;

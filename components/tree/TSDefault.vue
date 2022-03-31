@@ -67,6 +67,12 @@
           :clearselection="clearSelected"
           :label="$t('table.selection.clear')"
         />
+        <ButtonBTNClearSelection
+          v-if="!isOrigin"
+          class="BTNResetSelection"
+          :clearselection="resetSelected"
+          :label="$t('button.reset')"
+        />
       </div>
       <div
         slot="option-label"
@@ -266,7 +272,7 @@ export default class TSDefault extends Vue {
       isNew: node.isNew || false,
       hasAnySelection: node.hasAnySelection || false,
       isBranch: node.type === 'HostGroup' || node.type === 'ProductGroup' || node.isBranch || false,
-      isDisabled: (node.isDisabled === true) || false,
+      isDisabled: (node.isDisabled === true) || (node.id === this.$t('values.mixed')) || false,
       // isDefaultExpanded: node.hasAnySelection || false,
       label: node.text ? node.text.replace(/_+$/, '') : node.id,
       children: this.lazyLoad
@@ -342,7 +348,11 @@ export default class TSDefault extends Vue {
       this.selectionWrapper.length = 0
     }
     // console.log(this.options, ' includes ', s)
-    this.selectionWrapper.push(s.text)
+    if (this.selectionWrapper.includes(this.$t('values.mixed')) && s.text !== this.$t('values.mixed')) {
+      this.selectionWrapper = s.text
+    } else {
+      this.selectionWrapper.push(s.text)
+    }
     console.log(this.id + ' TSDefault selectDefault add to selectionWrapper', JSON.stringify(this.selectionWrapper))
     this.$emit('change', this.selectionWrapper)
   }
@@ -364,6 +374,12 @@ export default class TSDefault extends Vue {
     console.log(this.id + ' TSDefault clearSelected')
     this.selectionWrapper = []
     this.$emit('change', this.selectionWrapper)
+  }
+
+  resetSelected () {
+    console.log(this.id + ' TSDefault resetSelected')
+    // this.$fetch()
+    this.$emit('change', this.selectionDefault, true)
   }
 
   isGroup (s) {

@@ -1,9 +1,5 @@
 <template>
   <div data-testid="TTProductCell">
-    <!-- <b-tooltip v-if="(type=='version' && text)" :target="target" triggers="hover" :variant="variant"> Depot:{{row.item.versionDepot}}</b-tooltip>
-  <b-tooltip v-else-if="(type=='ppversion' && text)" :target="target" triggers="hover" :variant="variant"> only on Depot:{{row.item.objectIdsDepots}}</b-tooltip>
-  <b-tooltip v-else-if="(type=='productId' && text)" :target="target" triggers="hover" variant="danger">only on: {{row.item.depotId}}</b-tooltip>
-  <b-tooltip v-else-if="(type=='installationStatus' && text)" :target="target" triggers="hover" :variant="variant">Status: {{row.item.installationStatus}}</b-tooltip> -->
     <b-tooltip :target="target" triggers="hover" :placement="placement">
       <TableTTooltipContent
         :target="target"
@@ -12,8 +8,8 @@
         :variant="variant"
         :type="type"
         :dark="dark"
+        :changes="changes"
       />
-    <!-- :details-depots="detailsDepots" -->
     </b-tooltip>
   </div>
 </template>
@@ -31,6 +27,7 @@ export default class TTProductCell extends Vue {
   @Prop({ default: 'version' }) type!: string
   @Prop({ default: true }) dark!: boolean
   @Prop({ default: false }) depotVersionDiff?: boolean
+  @Prop({ default: () => {} }) changes?: object
   @Prop({ default: 'warning' }) variant!: string
   // @Prop({ }) detailsDepots!: IObjectString2String
 }

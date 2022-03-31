@@ -188,9 +188,11 @@ export default class TProductProperties extends Vue {
     if (!arrayEqual(values, orgValues)) {
       const propObj: any = {}
       propObj[propertyId] = values
-      let data = { depotIds: this.selectionDepots, properties: propObj }
+      let data = { properties: propObj }
       if (this.selectionClients.length > 0) {
         data.clientIds = this.selectionClients
+      } else {
+        data.depotIds = this.selectionDepots
       }
       await this.saveProdProp(data)
     }
