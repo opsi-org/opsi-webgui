@@ -4,7 +4,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
         <BarBCollapsePageHeader
-          :id="'Products'"
+          :id="id"
           :title="$t('title.products')"
           :row-id="rowId"
           :collapsed="!secondColumnOpened"

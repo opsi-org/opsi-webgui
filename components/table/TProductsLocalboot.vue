@@ -1,6 +1,5 @@
 <template>
   <div data-testid="TProductsLocalboot">
-  {{ filterQuery }} - {{tableData.filterQuery}}
     <TableTInfiniteScroll
       id="Localboot"
       ref="Localboot"
@@ -182,7 +181,7 @@ export default class TProductsLocalboot extends Vue {
   @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
   @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
   @Watch('sort', { deep: true }) sortPropChanged () { this.syncSort(this.sort, this.tableData, false, this.parentId) }
-  @Watch('filterQuery', { deep: true }) filterQueryPropChanged () { console.log('sync filter'); this.syncSort({ filteQuery: this.filterQuery }, this.tableData, false, this.parentId) }
+  @Watch('filterQuery', { deep: true }) filterPropChanged () { this.syncSort({ filterQuery: this.filterQuery }, this.tableData, false, this.parentId) }
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
