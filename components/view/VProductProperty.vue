@@ -2,12 +2,20 @@
 <template>
   <div data-testid="VProductProperty">
     <AlertAAlert ref="productPropViewAlert" />
-    <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
+    <!-- <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #left>
         <slot name="IDSelection" />
       </template>
-    </BarBPageHeader>
+    </BarBPageHeader> -->
+
+    <BarBCollapsePageHeader
+      :id="id"
+      :title="$t('title.config')"
+      :subtitle="id"
+      :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
+      :redirect-on-close-to="(asChild)? closeroute: undefined"
+    />
     <br>
     <div class="VProductProperty-Card-Description">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
@@ -63,6 +71,7 @@ import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IDepend, IProp } from '../../.utils/types/ttable'
 
 const selections = namespace('selections')
+const changes = namespace('changes')
 interface IErrorDepProp {
   dependencies: string
   properties: string
@@ -92,6 +101,7 @@ export default class VProductProperty extends Vue {
     properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {} }
   }
 
+  get username () { return localStorage.getItem('username') }
   get tabPropertiesDisabled () { return Object.keys(this.fetchedData.properties.properties).length <= 0 }
   get tabDependenciesDisabled () { return this.fetchedData.dependencies.dependencies.length <= 0 }
   get tabPropertiesActive () { return !this.tabPropertiesDisabled || this.tabDependenciesDisabled }
@@ -102,6 +112,7 @@ export default class VProductProperty extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @changes.Getter public changesProducts!: Array<ChangeObj>;
 
   @Watch('selectionClients') selectionClientsChanged () { this.$fetch() }
   @Watch('selectionDepots') selectionDepotsChanged () { this.$fetch() }
