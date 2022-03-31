@@ -25,7 +25,7 @@
         <template v-else>
           <template v-if="menuitem.title == 'Track Changes'">
             <b-nav-item
-              v-if="expert || changesProducts.filter((o) => o.user === username).length!==0"
+              v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
               :class="{checkactive: $route.path.includes(menuitem.route)}"
               :disabled="changesProducts.filter((o) => o.user === username).length==0"
               :to="menuitem.route"
