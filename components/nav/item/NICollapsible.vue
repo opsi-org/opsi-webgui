@@ -16,6 +16,7 @@
           :key="sub.title"
           :class="{checksubactive: $route.path == (sub.route)}"
           :to="sub.route"
+          @click="refresh(sub.route)"
         >
           <span class="submenu">
             {{ $t(sub.title) }}
@@ -32,6 +33,7 @@ import { Constants } from '../../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
 export default class NICollapsible extends Vue {
+  $nuxt: any
   iconnames: any
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
@@ -40,6 +42,12 @@ export default class NICollapsible extends Vue {
   changeRoute () {
     if ((this as any).$mq === 'desktop') {
       this.$router.push({ path: this.route })
+    }
+  }
+
+  refresh (route) {
+    if (this.$route.path.includes(route)) {
+      this.$nuxt.refresh()
     }
   }
 }

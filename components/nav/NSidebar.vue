@@ -29,6 +29,7 @@
               :class="{checkactive: $route.path.includes(menuitem.route)}"
               :disabled="changesProducts.filter((o) => o.user === username).length==0"
               :to="menuitem.route"
+              @click="refresh(menuitem.route)"
             >
               <b-icon v-b-tooltip.hover :title="$t(menuitem.title)" :icon="menuitem.icon" />
               <span v-if="expanded">
@@ -68,6 +69,7 @@ interface IMenuItem {
 
 @Component({ mixins: [Constants] })
 export default class NSidebar extends Vue {
+  $nuxt: any
   iconnames: any // from mixin
   @Prop({ }) expanded!: boolean
 
@@ -76,6 +78,12 @@ export default class NSidebar extends Vue {
 
   created () {
     console.log('constants: ', this.iconnames)
+  }
+
+  refresh (route) {
+    if (this.$route.path.includes(route)) {
+      this.$nuxt.refresh()
+    }
   }
 
   get username () {

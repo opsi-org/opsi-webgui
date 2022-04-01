@@ -50,6 +50,7 @@ const settings = namespace('settings')
 
 @Component({ mixins: [Constants] })
 export default class BTop extends Vue {
+  $nuxt: any
   $mq:any
   $config:any
   iconnames:any

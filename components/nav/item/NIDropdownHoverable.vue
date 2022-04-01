@@ -20,6 +20,7 @@
         :key="sub.title"
         :class="{checksubactive: $route.path == (sub.route)}"
         :to="sub.route"
+        @click="refresh(sub.route)"
       >
         {{ $t(sub.title) }}
       </b-dropdown-item>
@@ -32,6 +33,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class NIDropdownHoverable extends Vue {
+  $nuxt: any
   @Prop({ }) title!: string
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
@@ -47,6 +49,13 @@ export default class NIDropdownHoverable extends Vue {
 
   changeRoute () {
     this.$router.push({ path: this.route })
+    this.refresh(this.route)
+  }
+
+  refresh (route) {
+    if (this.$route.path.includes(route)) {
+      this.$nuxt.refresh()
+    }
   }
 }
 </script>
