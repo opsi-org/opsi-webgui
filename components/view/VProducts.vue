@@ -119,7 +119,9 @@ export default class VProducts extends Vue {
   // }
 
   mounted () {
-    this.$router.push('/products/')
+    if (this.secondColumnOpened && !this.child) {
+      this.$router.push('/products/')
+    }
     if (!this.tableInfo.sortBy) {
       this.tableInfo.sortBy = 'productId'
     }

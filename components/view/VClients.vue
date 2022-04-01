@@ -185,7 +185,9 @@ export default class VClients extends Vue {
   @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
 
   mounted () {
-    this.$router.push('/clients/')
+    if (this.secondColumnOpened) {
+      this.$router.push('/clients/')
+    }
   }
 
   async fetchPageOne () {
