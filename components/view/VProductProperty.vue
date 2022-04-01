@@ -136,7 +136,7 @@ export default class VProductProperty extends Vue {
     this.isLoading = false
   }
 
-  async fetchProperties(refetch:boolean=false) {
+  async fetchProperties (refetch:boolean = false) {
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.properties.properties = response.properties
@@ -144,7 +144,7 @@ export default class VProductProperty extends Vue {
         this.fetchedData.properties.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
         this.fetchedData.properties.productDescription = response.productDescription
         if (refetch) {
-          this.fetchedData.properties = {...this.fetchedData.properties}
+          this.fetchedData.properties = { ...this.fetchedData.properties }
         }
         // this.setSession()
       }).catch((error) => {
@@ -155,7 +155,8 @@ export default class VProductProperty extends Vue {
         // throw new Error(error)
       })
   }
-  async fetchDependencies() {
+
+  async fetchDependencies () {
     await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.dependencies.dependencies = response.dependencies
