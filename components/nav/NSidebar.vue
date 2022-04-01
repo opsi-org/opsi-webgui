@@ -98,7 +98,7 @@ export default class NSidebar extends Vue {
             route: '/depots/',
             icon: this.iconnames.depot,
             submenu: [
-              { title: 'title.allDepots', route: '/depots' },
+              { title: 'title.allDepots', route: '/depots/' },
               { title: 'title.config', route: '/depotsconfig' }
             ]
           },
@@ -114,7 +114,7 @@ export default class NSidebar extends Vue {
             ]
           },
           { title: 'title.products', icon: this.iconnames.product, route: '/products/' },
-          { title: 'Track Changes', icon: this.iconnames.changes, route: '/changes/' }
+          { title: 'Track Changes', icon: this.iconnames.changes, route: '/changes' }
         ]
       },
       {
