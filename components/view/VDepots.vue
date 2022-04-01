@@ -132,6 +132,8 @@ export default class VDepots extends Vue {
   async mounted () {
     if (this.$mq === 'desktop' && this.selectionDepots.length === 1 && this.selectionDepots[0] === this.opsiconfigserver) {
       this.routeRedirectWith('/depots/config', this.opsiconfigserver)
+    } else {
+      this.$router.push('/depots/')
     }
 
     if (this.selectionClients.length > 0) {
