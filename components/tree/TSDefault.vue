@@ -208,6 +208,8 @@ export default class TSDefault extends Vue {
   }
 
   deselectWrapper (s:any) {
+    console.log(this.id + ' -----------------TSDefault deselectWrapper ', this.editable, this.multi)
+    if (!this.editable && !this.multi) { return }
     this.$fetchState.pending = true
     console.log(this.id + ' TSDefault deselectWrapper TRY deselect: ', JSON.stringify(s))
     if (this.deselectFunction) { // e.g. from TSDefaultGroups
@@ -344,6 +346,9 @@ export default class TSDefault extends Vue {
   }
 
   deselectDefault (deselection: any, isObject = false) {
+    console.log(this.id + ' -----------------TSDefault deselectDefault ', this.editable, this.multi)
+    if (!this.editable && !this.multi) { return }
+
     console.log(this.id + ' TSDefault deselectDefault ', deselection, this.selection)
     if (this.selectionWrapper.includes(deselection.text) || this.selectionWrapper.includes(deselection)) {
       if (isObject || this.selectionWrapper.includes(deselection.text)) {
