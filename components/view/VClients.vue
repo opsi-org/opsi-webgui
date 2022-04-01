@@ -178,6 +178,10 @@ export default class VClients extends Vue {
   @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
   @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
 
+  mounted () {
+    this.$router.push('/clients/')
+  }
+
   async fetchPageOne () {
     this.tableData.pageNumber = 1
     await this.$fetch()
