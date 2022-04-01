@@ -1,0 +1,49 @@
+{
+	"name": "opsiui-backend",
+	"dockerComposeFile": "../docker/dev-opsiconfd-compose.yml",
+	"service": "opsiui-backend-dev",
+	"workspaceFolder": "/workspace",
+	"postCreateCommand": ".devcontainer/post_create.sh",
+	"postStartCommand": ".devcontainer/post_start.sh",
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+		"DEV_USER": "${localEnv:USER}",
+		"DEV_UID": "${localEnv:UID}"
+	},
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"python.pythonPath": "opsiconfd/.venv/bin/python",
+		"editor.formatOnSave": true,
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": true,
+		},
+		"editor.formatOnType": true,
+		"python.formatting.provider": "black",
+		"python.formatting.blackPath": "opsiconfd/.venv/bin/tan",
+		"python.terminal.activateEnvironment": false,
+		"python.testing.pytestArgs": [
+			"-vv",
+			"tests"
+		],
+		"python.testing.unittestEnabled": false,
+		"python.testing.nosetestsEnabled": false,
+		"python.testing.pytestEnabled": true,
+		"python.testing.pytestPath": "opsiconfd/.venv/bin/pytest",
+		"python.linting.enabled": true,
+		"python.linting.flake8Enabled": true,
+		"python.linting.pylintEnabled": true,
+		"python.linting.pylintCategorySeverity.refactor": "Information",
+		"python.linting.mypyEnabled": true,
+		"python.linting.mypyArgs": [
+			"--show-error-codes"
+		],
+		"files.trimTrailingWhitespace": true,
+		"python.languageServer": "Pylance"
+	},
+	"extensions": [
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"ryanluker.vscode-coverage-gutters"
+	],
+	"remoteUser": "${localEnv:USER}"
+}
