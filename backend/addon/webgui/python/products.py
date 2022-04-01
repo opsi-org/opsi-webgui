@@ -8,6 +8,7 @@
 webgui product methods
 """
 
+import json
 from functools import lru_cache
 from typing import Dict, List, Optional
 
@@ -901,7 +902,6 @@ def save_poduct_property(
 
 	result_data = {}
 	depot_product_version = {}
-
 	objects = []
 	if data.clientIds and data.depotIds:
 		raise OpsiApiException(
@@ -920,12 +920,12 @@ def save_poduct_property(
 
 	with mysql.session() as session:
 		for object_id in objects:
-			if not object_id in result_data:
+			if object_id not in result_data:
 				result_data[object_id] = {}
 
 			depot_id = get_depot_of_client(object_id)
 
-			if not depot_id in depot_product_version:
+			if depot_id not in depot_product_version:
 				depot_product_version[depot_id] = {}
 				depot_product_version[depot_id][productId] = depot_get_product_version(depot_id, productId)
 
@@ -944,7 +944,7 @@ def save_poduct_property(
 				if isinstance(data.properties[property_id], bool):
 					pp_values = f"[{data.properties[property_id]}]".lower()
 				elif isinstance(data.properties[property_id], list):
-					pp_values = f"{data.properties[property_id]}"
+					pp_values = json.dumps(data.properties[property_id])
 				else:
 					pp_values = f'["{data.properties[property_id]}"]'
 
@@ -973,7 +973,7 @@ def save_poduct_property(
 							.on_duplicate_key_update(**values)
 						)
 						session.execute(stmt)
-
+					values["values"] = data.properties[property_id]
 					result_data[object_id][property_id] = values
 				except Exception as err:  # pylint: disable=broad-except
 					if isinstance(err, OpsiApiException):
