@@ -7,7 +7,7 @@
           :id="id"
           :title="$t('title.clients')"
           :row-id="rowId"
-          :collapsed="!secondColumnOpened"
+          :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"
           :enable-depots="true"
           :enable-clients="true"

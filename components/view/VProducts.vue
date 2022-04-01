@@ -9,7 +9,7 @@
           :id="id"
           :title="$t('title.products')"
           :row-id="rowId"
-          :collapsed="!secondColumnOpened"
+          :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"
           :enable-depots="!child"
           :enable-clients="!child"
@@ -74,6 +74,7 @@ const settings = namespace('settings')
 const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
+  $mq: any
   @Prop() child!: boolean;
   @Prop({}) id!: string;
   @Prop({}) sortby!: string;

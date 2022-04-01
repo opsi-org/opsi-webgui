@@ -8,7 +8,7 @@
           :id="id"
           :title="$t('title.depots')"
           :row-id="rowId"
-          :collapsed="true"
+          :collapsed="$mq=='mobile'"
           :collapseable="false"
           :enable-depots="false"
           :enable-clients="false"

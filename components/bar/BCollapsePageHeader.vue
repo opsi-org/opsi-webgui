@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 import { ITableInfo } from '~/.utils/types/ttable'
 
@@ -110,9 +110,9 @@ export default class BTooltipCollapseRow extends Vue {
 
   contentVisible: boolean = false
 
-  // @Watch('multiselectToggler', { deep: true }) multiselectTogglerChanged () {
-  //   this.$emit('update:multiselectToggler', this.multiselectToggler)
-  // }
+  @Watch('collapsed', { deep: true }) multiselectTogglerChanged () {
+    this.contentVisible = !this.collapsed
+  }
 
   mounted () {
     this.contentVisible = !this.collapsed
@@ -188,11 +188,12 @@ export default class BTooltipCollapseRow extends Vue {
 .BCollapsePageHeader_Navbar .collapse-navitem > .row{
   width: 100%;
 }
-.BCollapsePageHeader_Navbar.collapse-navitem {
+.BCollapsePageHeader_Navbar .collapse-navitem {
   width: 100%;
+  min-width: 100% !important;
   max-width: 100% !important;
   margin-left: 20px !important;
-  margin-right: 10px !important;
+  margin-right: 20px !important;
 }
 .BCollapsePageHeader_Navbar .nav-child-right {
   padding: 0px !important;
