@@ -174,12 +174,15 @@ export default class VClients extends Vue {
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
-  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () { this.fetchPageOne() }
-  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
+    this.setSelectionClients([])
+    this.fetchPageOne()
+  }
 
-  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
-  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
-  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
+  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
+  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
 
   async fetchPageOne () {
     this.tableData.pageNumber = 1

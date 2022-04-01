@@ -78,7 +78,7 @@ export default class DDProductRequest extends BDropdown {
 
   get options () {
     const options = this.requestoptions
-    if (this.currentReq === 'mixed') {
+    if (this.currentReq === 'mixed' && !options.includes('mixed')) {
       options.push('mixed')
     }
     return options

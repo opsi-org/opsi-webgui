@@ -57,9 +57,9 @@
                 <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
                   <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
                 </b-col>
-                <b-col v-if="multiselectToggler != undefined" cols="*">
+                <!-- <b-col v-if="multiselectToggler != undefined" cols="*">
                   <CheckboxCBMultiselection :multiselect.sync="multiselectToggler" />
-                </b-col>
+                </b-col> -->
                 <b-col v-if="enableShowProducts" cols="*">
                   <ButtonBTNRowLinkTo
                     :title="$t('button.show.products')"
@@ -81,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 import { ITableInfo } from '~/.utils/types/ttable'
 
@@ -103,16 +103,16 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: false }) enableProducts!: boolean
   @Prop({ default: false }) enableShowProducts!: boolean
   @Prop({ default: false }) enableShowChanges!: boolean
-  @Prop({ default: undefined }) multiselectToggler!: boolean|undefined
+  // @Prop({ default: undefined }) multiselectToggler!: boolean|undefined
   @Prop({ default: undefined }) redirectOnCloseTo!: string
   @Prop({ default: undefined }) redirect!: Function
   @Prop({ default: () => {} }) tableInfo!: ITableInfo
 
   contentVisible: boolean = false
 
-  @Watch('multiselectToggler', { deep: true }) multiselectTogglerChanged () {
-    this.$emit('update:multiselectToggler', this.multiselectToggler)
-  }
+  // @Watch('multiselectToggler', { deep: true }) multiselectTogglerChanged () {
+  //   this.$emit('update:multiselectToggler', this.multiselectToggler)
+  // }
 
   mounted () {
     this.contentVisible = !this.collapsed

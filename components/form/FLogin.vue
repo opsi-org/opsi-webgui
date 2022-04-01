@@ -15,15 +15,22 @@
           autocomplete="current_username"
         />
         <label for="password" class="sr-only"> {{ $t('loginPage.password') }} </label>
-        <b-form-input
-          id="password"
-          v-model="form.password"
-          :placeholder="$t('loginPage.password')"
-          :state="validPassword"
-          type="password"
-          class="login_input_field"
-          autocomplete="current_password"
-        />
+        <b-input-group>
+          <b-form-input
+            id="password"
+            v-model="form.password"
+            :placeholder="$t('loginPage.password')"
+            :state="validPassword"
+            :type="showPassword? 'text': 'password'"
+            class="login_input_field"
+            autocomplete="current_password"
+          />
+          <b-button :pressed.sync="showPassword" size="sm" variant="primary">
+            <span class="sr-only">{{ showPassword? 'Hide Password': 'Show Password' }}</span>
+            <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
+            <b-icon v-else :icon="iconnames.valueHide" />
+          </b-button>
+        </b-input-group>
         <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
           {{ $t('button.login') }}
         </b-button>
@@ -35,6 +42,7 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 // import { makeToast } from '../../.utils/utils/scomponents'
 // 'uib-components/.utils/utils/scomponents'
 const auth = namespace('auth')
@@ -45,10 +53,13 @@ interface FormUser {
     password: string
 }
 
-@Component export default class FLogin extends Vue {
+@Component({ mixins: [Constants] })
+export default class FLogin extends Vue {
+  iconnames: any
   $axios:any
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
+  showPassword : boolean = false
 
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
