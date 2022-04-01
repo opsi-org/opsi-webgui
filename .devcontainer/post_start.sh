@@ -34,7 +34,7 @@ echo '.* : mysql' > /etc/opsi/backendManager/dispatch.conf
 opsi-set-rights
 grep -v addon-dirs /etc/opsi/opsiconfd.conf > /tmp/opsiconfd.conf
 mv /tmp/opsiconfd.conf /etc/opsi/opsiconfd.conf
-echo "addon-dirs = /workspace/backend" >>/etc/opsi/opsiconfd.conf
+echo "addon-dirs = /workspace/backend/addon" >>/etc/opsi/opsiconfd.conf
 
 chown -R opsiconfd /workspace/backend
 
