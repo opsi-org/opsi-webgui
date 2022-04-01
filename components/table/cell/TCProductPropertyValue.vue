@@ -16,18 +16,20 @@
       >
         {{ isOrigin? '': '*' }}
       </b-form-checkbox>
-      <LazyDropdownDDDefault
+      <TreeTSDefault
         v-else-if="rowItem.type=='UnicodeProductProperty'"
+        :id="'PropertyValue-' + rowItem.propertyId"
+        type="propertyvalues"
+        :text="undefined"
+        :limit-visible-selection="1"
+        :multi="rowItem.multiValue"
+        :editable="rowItem.editable"
+        :selection-default="selectedValues"
+        :is-list="true"
+        :fetch-data="() => allOptionsUnique"
         :is-origin="isOrigin"
-        :options="allOptionsUnique"
-        :selected-items="selectedValues"
-        :multiple="rowItem.multiValue"
         @change="selectionChanged"
       />
-      <!-- {{!arrayEqual(selectedValuesOriginal, selectedValues)? 'CHANGED-notsaved':''}} -->
-    </b-col>
-    <b-col v-if="rowItem.editable" :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" cols="*">
-      <slot :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}" name="editable-button" />
     </b-col>
     <b-col v-if="rowItem.propertyId.includes('password')" class="TCProductPropertyValue_ShowBtn" cols="*">
       <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
@@ -42,6 +44,7 @@
         type="property"
         :target="`DDProductProperty_value_hover_${rowItem.propertyId}`"
         :details="rowItem.clients"
+        :changes="tooltipChanges"
       />
     </b-col>
   </b-form-row>
@@ -54,6 +57,7 @@ import { IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
 import { Constants } from '../../../mixins/uib-mixins'
 const selections = namespace('selections')
+const changes = namespace('changes')
 // const mixed = '<mixed>'
 
 @Component({ mixins: [Constants] })
@@ -64,21 +68,40 @@ export default class TProductPropertyValue extends Vue {
   @Prop() clients2depots!: IObjectString2String
   @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
+  @selections.Getter public selectionDepots!: Array<string>
+  @changes.Getter public changesProducts!: Array<any>
+  @changes.Mutation public deleteFromChangesWhere!: (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) => void
   showValue : boolean = false
   changedValue: Array<string>|undefined
   selectedValues!: Array<string|boolean>
+  tooltipChanges!: object
   // selectedValuesOriginal!: Array<string|boolean>
   isOrigin: boolean = true
   visibleValueBool!: boolean
   visibleValueBoolIndeterminate!: boolean
 
   created () {
-    this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    this.initSelection()
+  }
+
+  initSelection () {
+    console.log('init selection with changes', this.selectedValues)
+    const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    console.log('init selection with changes', originalValue)
+    if (this.selectionClients.length > 0) {
+      this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionClients, 'clientId')
+      this.tooltipChanges = this.updateChangesForTooltip(this.selectionClients, 'clientId')
+    } else {
+      this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionDepots, 'depotId')
+      this.tooltipChanges = this.updateChangesForTooltip(this.selectionDepots, 'depotId')
+    }
+    console.log('init selection with changes selectedValues', this.selectedValues)
   }
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
   @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
+    console.log('-------------ProductPropertyValue changeValue ', this.selectedValues)
     // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
     //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     // }
@@ -99,12 +122,20 @@ export default class TProductPropertyValue extends Vue {
     this.selectedValuesChanged()
   }
 
+  get username () {
+    return localStorage.getItem('username')
+  }
+
   get allOptionsUnique () {
     const options = this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues || []])
     if (this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)) {
       options.push(this.$t('values.mixed') as string)
     }
-    return options
+    return options.filter(val => val !== null && val !== undefined)
+    // if (options.includes(null) && options.includes('')) {
+    //   options.splice(options.indexOf(''), 1)
+    // }
+    // return options
   }
 
   get selectedValuesOriginal () {
@@ -143,18 +174,90 @@ export default class TProductPropertyValue extends Vue {
     return true
   }
 
-  uniques (arr:Array<any>) {
-    return [...new Set(arr)]
-  }
+  uniques (arr:Array<any>) { return [...new Set(arr)] }
 
   handleBoolChange () {
     this.selectedValues = JSON.parse(JSON.stringify([!this.selectedValues[0]]))
+    // this.selectedValues = [!this.selectedValues[0]]
     this.selectedValuesChanged()
   }
 
-  selectionChanged (values: Array<string|boolean>) {
-    this.selectedValues = JSON.parse(JSON.stringify(values))
-    this.selectedValuesChanged()
+  selectionChanged (values: Array<string|boolean>, reset: boolean = false) {
+    console.log('selectionChanged PPValue ', values, reset)
+    if (reset !== true) {
+      console.log('not reseting - overwrite PPValue ', values, reset)
+      this.selectedValues = JSON.parse(JSON.stringify(values))
+      this.selectedValuesChanged()
+      this.initSelection()
+      return
+    }
+
+    const hostKey = (this.selectionClients.length > 0) ? 'clientId' : 'depotId'
+    const hostValues = (this.selectionClients.length > 0) ? this.selectionClients : this.selectionDepots
+    this.deleteFromChangesWhere(
+      [hostKey, hostValues],
+      ['productId', this.rowItem.productId],
+      ['property', this.rowItem.propertyId]
+    )
+    this.isOrigin = true
+    this.initSelection()
+  }
+
+  updateChangesForTooltip (selectionHosts: Array<string>, key: string) {
+    const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    const changes = {}
+    let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
+    changesList = changesList.filter(e => e.user === this.username)
+    changesList = changesList.filter(e => selectionHosts.includes(e[key]))
+    if (changesList.length > 0) {
+      // save selection if any host has different value in changes as original
+      changesList.forEach((e) => {
+        if (arrayEqual(e.propertyValue, originalValue)) { return } // everything ok
+
+        // value != originalValue
+        if (selectionHosts.length > 1) { // at least one host has different value
+          changes[e[key]] = e.propertyValue
+        }
+      })
+    }
+    return changes
+  }
+
+  getValuesWithChanges (originalValue:Array<any>, selectionHosts: Array<string>, key: string) {
+    console.log('update selectionValues with changes')
+    let newValue
+    let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
+    changesList = changesList.filter(e => e.user === this.username)
+    changesList = changesList.filter(e => selectionHosts.includes(e[key]))
+    // get changes for property and user and selected hosts (depot or client)
+    if (changesList.length > 0) {
+      let anyValuesDifferent = false
+      // overwrite selection if any host has different value in changes as original
+      changesList.forEach((e) => {
+        if (arrayEqual(e.propertyValue, originalValue)) { return } // everything ok
+
+        // value != originalValue
+        if (selectionHosts.length === 1) { // it is only one host, so show changedValue
+          newValue = e.propertyValue
+        } else { // at least one host has different value
+          anyValuesDifferent = true
+        }
+
+        // break up if any is different
+        if (anyValuesDifferent) {
+          this.isOrigin = false
+          return [this.$t('values.mixed') as string]
+        }
+      })
+    }
+    if (newValue) {
+      this.isOrigin = false
+      console.log('update selectionValues with changes - return newValue', newValue)
+      return newValue
+    }
+    this.isOrigin = true
+    console.log('update selectionValues with changes - return original', originalValue)
+    return originalValue
   }
 }
 </script>

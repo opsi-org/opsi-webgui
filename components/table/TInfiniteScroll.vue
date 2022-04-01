@@ -51,7 +51,7 @@
       </template>
       <template #head(selected)>
         <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
-        <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" />
+        <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
       </template>
       <template #head(rowactions)>
         <!-- <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" /> -->

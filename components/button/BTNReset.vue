@@ -1,0 +1,43 @@
+<template>
+  <b-button
+    v-b-tooltip.hover
+    aria-label="reset"
+    :title="label? '' : $t('button.reset')"
+    variant="transparent"
+    class="reset"
+    size="sm"
+    @click="action"
+  >
+    <span class="sr-only">{{ $t('button.reset') }}</span>
+    <b-icon :icon="iconnames.reset" class="icon-primary" /> <span>{{ label? '' : $t('button.reset') }} </span>
+  </b-button>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
+
+@Component({ mixins: [Constants] })
+export default class BTNReset extends Vue {
+  iconnames:any
+  @Prop({}) label?: string;
+  @Prop({ default: () => { return () => { /* default */ } } }) action!: Function
+}
+</script>
+<style>
+.reset {
+  color: var(--dark) !important;
+  border: none !important
+  /* background: green !important; */
+}
+.reset .icon-primary{
+  color: var(--primary) !important;
+}
+.reset:hover .icon-primary{
+  color: var(--light) !important;
+}
+.reset:hover {
+  background: var(--primary) !important;
+  color: var(--light) !important;
+}
+</style>

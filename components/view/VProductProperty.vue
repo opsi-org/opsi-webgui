@@ -1,13 +1,13 @@
-
 <template>
   <div data-testid="VProductProperty">
     <AlertAAlert ref="productPropViewAlert" />
-    <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
-    <BarBPageHeader v-if="!asChild">
-      <template #left>
-        <slot name="IDSelection" />
-      </template>
-    </BarBPageHeader>
+    <BarBCollapsePageHeader
+      :id="id"
+      :title="$t('title.config')"
+      :subtitle="id"
+      :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
+      :redirect-on-close-to="(asChild)? closeroute: undefined"
+    />
     <br>
     <div class="VProductProperty-Card-Description">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
@@ -38,6 +38,7 @@
           :id="id"
           :properties="fetchedData.properties"
           :error-text="errorText.properties"
+          @refetch="fetchProperties"
         />
       </b-tab>
       <b-tab
@@ -60,9 +61,11 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { ChangeObj } from '../../.utils/types/tchanges'
 import { IDepend, IProp } from '../../.utils/types/ttable'
 
 const selections = namespace('selections')
+const changes = namespace('changes')
 interface IErrorDepProp {
   dependencies: string
   properties: string
@@ -92,6 +95,7 @@ export default class VProductProperty extends Vue {
     properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {} }
   }
 
+  get username () { return localStorage.getItem('username') }
   get tabPropertiesDisabled () { return Object.keys(this.fetchedData.properties.properties).length <= 0 }
   get tabDependenciesDisabled () { return this.fetchedData.dependencies.dependencies.length <= 0 }
   get tabPropertiesActive () { return !this.tabPropertiesDisabled || this.tabDependenciesDisabled }
@@ -102,6 +106,7 @@ export default class VProductProperty extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @changes.Getter public changesProducts!: Array<ChangeObj>;
 
   @Watch('selectionClients') selectionClientsChanged () { this.$fetch() }
   @Watch('selectionDepots') selectionDepotsChanged () { this.$fetch() }
@@ -124,12 +129,23 @@ export default class VProductProperty extends Vue {
     }
     this.errorText = { properties: '', dependencies: '' }
 
+    await this.fetchProperties()
+    await this.fetchDependencies()
+
+    if (this.activeTabSet >= -1) { this.activeTabSet = -1 }
+    this.isLoading = false
+  }
+
+  async fetchProperties (refetch:boolean = false) {
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.properties.properties = response.properties
         this.fetchedData.properties.productDescriptionDetails = response.productDescriptionDetails
         this.fetchedData.properties.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
         this.fetchedData.properties.productDescription = response.productDescription
+        if (refetch) {
+          this.fetchedData.properties = { ...this.fetchedData.properties }
+        }
         // this.setSession()
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
@@ -138,7 +154,9 @@ export default class VProductProperty extends Vue {
         ref.alert('Failed to fetch: Properties', 'danger', error)
         // throw new Error(error)
       })
+  }
 
+  async fetchDependencies () {
     await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.dependencies.dependencies = response.dependencies
@@ -153,8 +171,6 @@ export default class VProductProperty extends Vue {
         ref.alert('Failed to fetch: Dependencies', 'danger', error)
         // throw new Error(error)
       })
-    if (this.activeTabSet >= -1) { this.activeTabSet = -1 }
-    this.isLoading = false
   }
 }
 </script>

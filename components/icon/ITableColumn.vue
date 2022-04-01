@@ -1,6 +1,6 @@
 <template>
-  <div data-testid="ITableColumn">
-    <b-icon :icon="iconnames.columns" />
+  <div data-testid="ITableColumn" class="ITableColumn">
+    <b-icon :icon="iconnames.columns" class="ITableColumn-icon" />
   </div>
 </template>
 
@@ -13,3 +13,11 @@ export default class ITableColumn extends Vue {
   iconnames:any // mixin/plugin
 }
 </script>
+<style>
+.ITableColumn-icon {
+  color: var(--primary) !important;
+}
+.ITableColumn-icon:hover {
+  color: var(--light) !important;
+}
+</style>

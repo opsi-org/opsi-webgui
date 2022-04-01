@@ -113,9 +113,10 @@
 </template>
 
 <script lang="ts">
+import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 // import { makeToast } from '../../.utils/utils/scomponents'
-import { ITableData, ITableHeaders } from '../../.utils/types/ttable'
+import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 interface DeleteClient {
@@ -143,8 +144,8 @@ export default class VClients extends Vue {
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 15,
-    sortBy: 'clientId',
-    sortDesc: false,
+    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'clientId',
+    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
     filterQuery: '',
     selected: ''
   }
@@ -161,7 +162,12 @@ export default class VClients extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
   }
 
-  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = { sortBy: this.tableData.sortBy || 'clientId', sortDesc: this.tableData.sortDesc || false, headerData: this.headerData }
+  tableInfo: ITableInfo = {
+    sortBy: this.tableData.sortBy || 'clientId',
+    sortDesc: this.tableData.sortDesc || false,
+    headerData: this.headerData,
+    filterQuery: this.tableData.filterQuery
+  }
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>

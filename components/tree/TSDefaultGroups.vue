@@ -1,24 +1,25 @@
 <template>
-  <div>
-    <TreeTSDefault
-      v-bind="$props"
-      :select-function="selectGroups"
-      :deselect-function="deselectGroups"
-      :sync-function="syncStoreToTree"
-      @change="emitChange"
-    />
-  </div>
+  <TreeTSDefault
+    v-bind="$props"
+    :select-function="selectGroups"
+    :deselect-function="deselectGroups"
+    :sync-function="syncStoreToTree"
+    @change="emitChange"
+  />
 </template>
 
 <script lang="ts">
 import { Component, Prop } from 'nuxt-property-decorator'
 import { filterObjectLabel, filterObjectByValues } from '../../.utils/utils/sfilters'
 import TSDefault from './TSDefault.vue'
-
+const typeSelect = 'select'
+const typeDeselect = 'deselect'
+const groupSelectionDeep = true // cause needs more care and tests
 @Component
 export default class TSDefaultGroups extends TSDefault {
   node: any
   $axios: any
+  @Prop({ }) id!: string
   @Prop({ default: true }) lazyLoad!: boolean
   @Prop({ default: true }) multi!: boolean
   @Prop({ default: true }) nested!: boolean
@@ -27,185 +28,103 @@ export default class TSDefaultGroups extends TSDefault {
   @Prop({ default: 'object' }) valueFormat!: string
   @Prop({ default: 'text' }) selectionKey!: string
 
-  emitChange (s) {
-    console.log('TSDefaultGroups receive change', s)
-    this.$emit('change', s)
-  }
+  /**
+   * passes the emit call from TSDefault to Caller of TSDefaultGroups - e.g TSHostGroups
+   * @param s selectionlist
+   */
+  emitChange (s) { this.$emit('change', s, this) }
 
-  get selectionKeys () {
-    return this.selection.map(s => s[this.selectionKey])
-  }
+  /**
+   * used from TSDefault (Parent) to keep store and component in sync
+   * nested search and select for store-elements in options-data
+   * @param selection the local selected tree elements
+   * @param options the tree data
+   */
+  syncStoreToTree (selection:Array<any>, options:any) {
+    console.log(this.id + ' sync StoreToTree')
+    console.log(this.id + ' sync storeselection', this.store.selection)
+    console.log(this.id + ' sync selection', JSON.stringify(selection))
+    console.log(this.id + ' sync valueFormat', this.valueFormat)
+    if (this.valueFormat !== 'object') { return }
 
-  set selectionKeys (s) {
-    throw new Error('Internal error: cannot set selectionKeys')
-  }
+    // let treeSelection = selection.filter(item => item.type === 'ObjectToGroup')
+    // treeSelection = [...new Set(treeSelection.map(e => e[this.selectionKey]))]
+    // if (arrayEqual(this.store.selection, treeSelection)) { return }
 
-  syncStoreToTree ({ selection, options }) {
-    console.log('syncStoreToTree')
-    if (this.valueFormat !== 'object') {
-      return
-    }
-
-    console.log('storeselection', this.store.selection)
-    console.log('selection', selection)
-
-    const storeSelect = this.store.selection
-    // let treeSelect = selection.filter(item => item.type === 'ObjectToGroup')
-    // treeSelect = treeSelect.map(e => e.text)
-
-    // treeSelect = [...new Set(treeSelect)]
-    // if (arrayEqual(storeSelect, treeSelect)) {
-    //   return
-    // }
     const resultObjects = []
-    filterObjectByValues(options, storeSelect, this.selectionKey, resultObjects)
-    console.log('sync found objects ', JSON.stringify(resultObjects))
-    selection.length = 0
+    // filter all elements which values of selectionKey are represented in store
+    filterObjectByValues(options, this.store.selection, this.selectionKey, resultObjects)
+    console.log(this.id + ' sync found other objects with same texts: ', JSON.stringify(resultObjects))
+    selection.length = 0 // reset selection
     for (const i in resultObjects) {
-      // if (resultObjects[i][this.selectionKey]) {
-      //   if (!selection.includes(resultObjects[i][this.selectionKey])) {
-      //     console.log('add object key ', resultObjects[i][this.selectionKey])
-      //     selection.push(resultObjects[i][this.selectionKey])
-      //   }
-      // } else
-      console.log('add key ', resultObjects[i])
       selection.push(resultObjects[i])
-      // if (!selection.includes(resultObjects[i])) {
-      // }
     }
-    // // const elementsInTree: Array<string> = []
-    // for (const index in storeSelect) {
-
-    //   if (thiss.data.includes(storeSelect[index]) && !this.selection.includes(storeSelect[index])
-    //   ) {
-    //     this.selection.push(storeSelect[index])
-    //   //   filterObject(
-    //   //     this.options, storeSelect[index],
-    //   //     'text', elementsInTree)
-    //   }
-    // }
-    // this.selection = treeSelect // elementsInTree
+    console.log(this.id + ' sync set local selection to  ', selection)
+    this.selection = selection
   }
 
   async selectGroups (s: any, thiss:any) {
-    console.log('TSDefaultGroups s', s)
+    console.log(this.id + ' TSDefaultGroups selectGroup s', s)
     if (!s) { return }
     if (thiss.isGroup(s)) {
-      console.log('TSDefaultGroups isBranch ... load children and select')
-      await thiss.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
-      this.groupChange(s, 'select')
-      return
+      console.log(this.id + ' TSDefaultGroups selectGroup isBranch ... load children and select')
+      if (s.children == null) {
+        await thiss.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
+      }
+      if (groupSelectionDeep && s.children != null) {
+        console.log(this.id, 'TSDefaultGroups selectGroup s.children ', s.children)
+        const subgroups = Object.values(s.children).filter(e => thiss.isGroup(e))
+        for (const g in subgroups) {
+          await this.selectGroups(subgroups[g], thiss)
+        }
+      }
+      return this.groupChange(s, typeSelect)
     }
-    console.log('select not a group: ', s)
+    console.log(this.id + ' TSDefaultGroups selectGroup select not a group: ', s)
     if (!this.store.selection.includes(s[this.selectionKey])) {
-      console.log('PUSHSELECTION', s[this.selectionKey])
+      console.log(this.id + ' TSDefaultGroups selectGroup PUSHSELECTION', s[this.selectionKey])
       this.store.pushSelection(s[this.selectionKey])
     }
   }
 
   deselectGroups (deselection: any, thiss:any) {
-    console.log('TSDefaultGroups deselect')
+    console.log(this.id + ' TSDefaultGroups deselectGroups')
     if (thiss.isGroup(deselection)) {
-      this.groupChange(deselection, 'deselect')
+      this.groupChange(deselection, typeDeselect)
       return
     }
-    console.log('deselect not a group ', deselection)
+    console.log(this.id + ' TSDefaultGroups deselectGroups not a group ', deselection)
     if (this.store.selection.includes(deselection[this.selectionKey])) {
-      console.log('DELSELECTION', deselection[this.selectionKey])
+      console.log(this.id + ' TSDefaultGroups deselectGroups DELSELECTION', deselection[this.selectionKey])
       this.store.delSelection(deselection[this.selectionKey])
     }
   }
 
   groupChange (value: object, type: string) {
-    console.log('TSDefaultGroups groupChange ', value, type)
+    console.log(this.id + ' TSDefaultGroups groupChange ', value, type)
     const idList : Array<string> = []
     const storeSel = this.store.selection
-    console.log('TSDefaultGroups store ', storeSel)
+    console.log(this.id + ' TSDefaultGroups groupChange store ', storeSel)
     filterObjectLabel([value], 'ObjectToGroup', 'type', this.selectionKey, idList) // get all texts elements where type is ObjectToGroup
-    console.log('TSDefaultGroups foundIds ', idList)
+    console.log(this.id + ' TSDefaultGroups foundIds ', idList)
 
     for (const i in idList) {
       const objectId = idList[i]
-      if (type === 'select') {
-        console.log('PUSHSELECTION', objectId)
+      console.log(this.id + ' TSDefaultGroups groupChange id ', objectId, type)
+      if (type === typeSelect) {
+        console.log(this.id + ' TSDefaultGroups groupChange PUSHSELECTION', objectId)
         this.store.pushSelection(objectId)
       }
-      if (type === 'deselect') {
-        if (storeSel.includes(objectId)) {
-          console.log('DELSELECTION', objectId)
-          this.store.delSelection(objectId)
-        }
+      if (type === typeDeselect) {
+        console.log(this.id + ' TSDefaultGroups groupChange DELSELECTION', objectId)
+        this.store.delSelection(objectId)
       }
     }
+
+    this.store.selection = [...this.store.selection]
   }
 }
 </script>
 
 <style>
-/*
-.form-inline{
-  flex-flow: nowrap;
-}
-.TSDefault-wrapper{
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  min-width: 100px !important;
-  max-width: 200px !important;
-  padding-left: 10px;
-  padding-right: 15px;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
-  cursor: pointer;
-  color: black;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
-  max-height: max-content !important;
-  padding-bottom: 0px;
-  margin-top: -6px !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
-.TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {
-  display: inline !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__control{
-  max-height: 10px !important;
-  height: 10px !important;
-  margin-top: 0px !important;
-  padding-top: 0px !important;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-  background: transparent !important;
-}
-.TSDefault-wrapper .treeselect {
-  max-width: max-content !important;
-  max-height: 20px;
-  width: 72% !important;
-}
-.TSDefault-wrapper .treeselect > .vue-treeselect__control{
-  border: none !important;
-  border-radius: 0px !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__menu {
-  min-width: 380px !important;
-  margin-left: -52px;
-  margin-top: 8px;
-}
-
-.TSDefault-wrapper .treeselect .vue-treeselect__input-container {
-  margin-left: 55px;
-  margin-top: -5px;
-  max-width: 50px;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value {
-  margin-bottom: 0px !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
-  display: none;
-} */
-/* .treeselect .vue-treeselect-helper-hide {
-  display: inline;
-} */
-/* .TSDefault-wrapper .selection_badge {
-  margin-top: 20px;
-} */
 </style>

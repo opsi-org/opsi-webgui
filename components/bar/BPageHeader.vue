@@ -40,7 +40,7 @@ export default class BPageHeader extends Vue {
 </script>
 
 <style>
-.navbar {
+.BPageHeader_Navbar.navbar {
   z-index: inherit !important;
   padding-left: 0rem !important;
   padding-right: 0rem !important;
