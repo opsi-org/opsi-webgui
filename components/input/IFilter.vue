@@ -11,20 +11,23 @@
       class="filter"
       :placeholder="$t('table.filter', {el: additionalTitle})"
     />
+      <!-- @change="changeModel" -->
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Ref } from 'nuxt-property-decorator'
 import { BFormInput } from 'bootstrap-vue'
-import { ITableData } from '../../.utils/types/ttable'
+import { ITableData, ITableInfo } from '../../.utils/types/ttable'
 
 @Component
 export default class IFilter extends BFormInput {
   @Ref('IFilter') readonly IFilter!: HTMLInputElement
   @Prop({}) dataChanging!: string
-  @Prop({}) data!: ITableData
+  @Prop({}) data!: ITableData|ITableInfo
   @Prop({ default: '' }) additionalTitle!: string
+
+  // changeModel (data) { this.$emit('update:data', data) }
 
   mounted () {
     if (this.IFilter) {

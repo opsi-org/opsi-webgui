@@ -1,13 +1,13 @@
 <template>
-  <div data-testid="TProductProperties">
-    <div v-if="!errorText && $mq=='mobile'">
-      <AlertAAlert show variant="secondary">
-        <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
-      </AlertAAlert>
-    </div>
-    <div v-else-if="!errorText && selectionClients.length <= 0">
+  <div data-testid="TProductProperties" class="TProductProperties">
+    <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlert show variant="warning">
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
+      </AlertAAlert>
+    </div>
+    <div v-else-if="!errorText && $mq=='mobile'">
+      <AlertAAlert show variant="secondary">
+        <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
       </AlertAAlert>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
@@ -40,50 +40,17 @@
       </template>
       <template #cell(value)="row">
         <b-row>
-          <div>
-            <TableCellTCProductPropertyValue
-              :clients2depots="fetchedDataClients2Depots"
-              :row-item="row.item"
-              @change="handleChange"
-            >
-              <template #editable-button>
-                <b-button
-                  v-if="row.item.editable"
-                  variant="outer-primary"
-                  size="sm"
-                  @click="row.toggleDetails()"
-                >
-                  <b-icon :icon="iconnames.add" />
-                </b-button>
-              </template>
-            </TableCellTCProductPropertyValue>
-          </div>
+          <TableCellTCProductPropertyValue
+            :clients2depots="fetchedDataClients2Depots"
+            :row-item="row.item"
+            @change="handleChange"
+          />
         </b-row>
       </template>
       <template #row-details="row">
         <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${row.item.propertyId}`">
-          <b-input-group v-if="row.item.editable">
-            <b-form-input
-              v-model="row.item.newValue"
-              size="sm"
-              aria-label="new property value text"
-              class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
-              @keyup.enter="updateNewPropertyValuesRow(row.item)"
-            />
-            <template #append>
-              <b-button
-                size="sm"
-                aria-label="add new property value"
-                variant="outline-primary"
-                @click="updateNewPropertyValuesRow(row.item)"
-              >
-                {{ $t('values.add') }}
-              </b-button>
-              <ButtonBTNHelpTooltip :id="`btn_tt_${row.item.propertyId}`" tooltip="middle click on value-dropdown will copy the text" />
-            </template>
-          </b-input-group>
           <small>
-            Defaults: <b v-if="row.item.default!='mixed'">[{{ row.item.details }}]</b>
+            {{ $t('table.details.productproperty.defaults') }} <b v-if="row.item.default!==$t('values.mixed')">[{{ row.item.details }}]</b>
             <div v-else>
               <p v-for="v,k in row.item.defaultDetails" :key="k">
                 {{ k }}: <b>{{ v }}</b>
@@ -91,13 +58,13 @@
             </div>
             <br>
             <div v-if="row.item.anyDepotDifferentFromDefault">
-              Depots:
+              {{ $t('table.details.productproperty.server') }}
               <p v-for="v,k in row.item.depots" :key="k">
                 {{ k }}: <b>{{ v }}</b>
               </p>
             </div>
             <br>
-            Description: <b v-if="row.item.description!='mixed'">{{ row.item.description }}</b>
+            {{ $t('table.fields.description') }} <b v-if="row.item.description!=$t('values.mixed')">{{ row.item.description }}</b>
             <div v-else>
               <p v-for="v,k in row.item.descriptionDetails" :key="k">
                 {{ k }}: <b>{{ v }}</b>
@@ -175,10 +142,11 @@ export default class TProductProperties extends Vue {
         // eslint-disable-next-line no-console
         console.log(response)
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
-        setTimeout(() => {
-          this.$nuxt.refresh()
-        }, 5000)
+        // this.$nuxt.refresh()
+        this.$emit('refetch', true)
+        // setTimeout(() => { this.$nuxt.refresh() }, 50)
         // this.setSession()
+        // this.properties[change.]
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
         // eslint-disable-next-line no-console
@@ -187,58 +155,46 @@ export default class TProductProperties extends Vue {
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    const propObj: any = {}
-    propObj[propertyId] = values
-    let data = {}
-    if (this.selectionClients.length > 0) {
-      data = {
-        clientIds: this.selectionClients,
-        properties: propObj
-      }
-    } else {
-      data = {
-        depotIds: this.selectionDepots,
-        properties: propObj
-      }
-    }
+    console.log('expert? ', this.expert)
     if (this.expert) {
       if (this.selectionClients.length > 0) {
-        for (const c in this.selectionClients) {
-          const d: Object = {
-            user: localStorage.getItem('username'),
-            clientId: this.selectionClients[c],
-            productId: this.id,
-            property: propertyId,
-            propertyValue: values
-          }
-          const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.id && item.property === propertyId)
-          if (objIndex > -1) {
-            this.delWithIndexChangesProducts(objIndex)
-          }
-          if (!arrayEqual(values, orgValues)) {
-            this.pushToChangesProducts(d)
-          }
-        }
+        this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
       } else {
-        for (const dep in this.selectionDepots) {
-          const d: Object = {
-            user: localStorage.getItem('username'),
-            depotId: this.selectionDepots[dep],
-            productId: this.id,
-            property: propertyId,
-            propertyValue: values
-          }
-          const objIndex = this.changesProducts.findIndex(i => i.depotId === this.selectionDepots[dep] && i.productId === this.id && i.property === propertyId)
-          if (objIndex > -1) {
-            this.delWithIndexChangesProducts(objIndex)
-          }
-          if (!arrayEqual(values, orgValues)) {
-            this.pushToChangesProducts(d)
-          }
-        }
+        this.handleTrackingChanges(this.selectionDepots, 'depotId', propertyId, values, orgValues)
       }
-    } else if (!arrayEqual(values, orgValues)) {
+      console.log('handleChange changes ', this.changesProducts)
+      return
+    }
+    if (!arrayEqual(values, orgValues)) {
+      const propObj: any = {}
+      propObj[propertyId] = values
+      const data: IObjectString2Any = { properties: propObj }
+      if (this.selectionClients.length > 0) {
+        data.clientIds = this.selectionClients
+      } else {
+        data.depotIds = this.selectionDepots
+      }
       await this.saveProdProp(data)
+    }
+  }
+
+  handleTrackingChanges (hosts:Array<string>, key:string, propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean>) {
+    for (const h in hosts) {
+      const changeObject: Object = {
+        user: localStorage.getItem('username'),
+        [key]: hosts[h],
+        productId: this.id,
+        property: propertyId,
+        propertyValue: values
+      }
+      const objIndex = this.changesProducts.findIndex(item => item[key] === hosts[h] && item.productId === this.id && item.property === propertyId)
+      if (objIndex > -1) {
+        this.delWithIndexChangesProducts(objIndex)
+      }
+      if (!arrayEqual(values, orgValues)) {
+        console.log('changeobject', changeObject)
+        this.pushToChangesProducts(changeObject)
+      }
     }
   }
 
@@ -251,6 +207,10 @@ export default class TProductProperties extends Vue {
 </script>
 
 <style>
+.TProductProperties  {
+  max-height: 100%;
+}
+
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;
 }

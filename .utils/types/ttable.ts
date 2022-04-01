@@ -69,7 +69,8 @@ export interface ITableHeaders {
 export interface ITableInfo {
   sortBy: string,
   sortDesc: boolean,
-  headerData: ITableHeader
+  filterQuery?: string,
+  headerData: ITableHeaders
 }
 
 export interface IProperty {

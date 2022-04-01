@@ -6,7 +6,7 @@
         <!-- TODO: Test multiselect=true, if its fine, remove table select mode settings-->
         <!-- :multiselect-toggler.sync="ismultiselect" -->
         <BarBCollapsePageHeader
-          :id="'Products'"
+          :id="id"
           :title="$t('title.products')"
           :row-id="rowId"
           :collapsed="!secondColumnOpened"
@@ -28,10 +28,12 @@
           </b-tab>
           <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
             <TableTProductsLocalboot
+              :parent-id="id"
               :header-data.sync="tableInfo.headerData"
               :totallocalboot.sync="localboot"
               :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
+              :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
@@ -40,10 +42,12 @@
           </b-tab>
           <b-tab :title="$t('title.netboot') + ' (' + netboot + ')'">
             <TableTProductsNetboot
+              :parent-id="id"
               :header-data="tableInfo.headerData"
               :totalnetboot.sync="netboot"
               :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
+              :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
@@ -60,10 +64,10 @@
 </template>
 
 <script lang="ts">
-// import Cookie from 'js-cookie'
+import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { ITableHeaders } from '~/.utils/types/ttable'
+import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
 import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const settings = namespace('settings')
@@ -101,7 +105,12 @@ export default class VProducts extends Vue {
     rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
   }
 
-  tableInfo: {sortBy: string, sortDesc: boolean, headerData: ITableHeaders} = { sortBy: this.sortby || 'productId', sortDesc: this.sortdesc || false, headerData: this.headerData }
+  tableInfo: ITableInfo = {
+    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId',
+    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : this.sortdesc || false,
+    filterQuery: '',
+    headerData: this.headerData
+  }
 
   // created () {
   //   if (Cookie.get('multiselect_products')) {

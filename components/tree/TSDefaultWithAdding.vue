@@ -9,6 +9,13 @@ export default {
   data () {
     return { overridesLastNodeId: 0 }
   },
+  watch: {
+    'trigger.searchQuery' () {
+      if (this.searchable) {
+        this.$emit('search-not-empty', this.trigger.searchQuery.length > 0)
+      }
+    }
+  },
   methods: {
     overridesFindValue () {
       if (this.$refs.control) {
@@ -39,7 +46,6 @@ export default {
        * doesn't exist and then proxy this method to the original!
        */
       const value = this.overridesFindValue()
-
       if (typeof value === 'string' && value.length === 0) {
         // This function gets called internally a lot, so we need
         // to make sure it's proxied when there is no value
@@ -48,6 +54,7 @@ export default {
         }
         // eslint-disable-next-line no-console
         console.debug('Nothing to add')
+
         return
       }
 
@@ -58,6 +65,7 @@ export default {
           return Treeselect.mixins[0].methods.select.call(this, node)
         }
       }
+
       if (!this.editable) { return }
       /**
        * Finally, here's the solution to your question.

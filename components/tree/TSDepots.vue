@@ -1,24 +1,19 @@
 <template>
-  <div>
-    <TreeTSDefault
-      id="Depots"
-      type="depots"
-      data-testid="TSDepots"
-      :lazy-load="false"
-      :multi="true"
-      :text="$t('title.depots')"
-      :text-no-result="$t('treeselect.noresult')"
-      :validate="() => true"
-      :validate-description="''"
-      :data="undefined"
-      :selection-default="selectionDepots"
-      :editable="false"
-      :is-list="true"
-      :icon="iconnames.depot"
-      :fetch-data="fetchDepotData"
-      @change="changeSelection"
-    />
-  </div>
+  <TreeTSDefault
+    id="Depots"
+    type="depots"
+    data-testid="TSDepots"
+    :lazy-load="false"
+    :multi="true"
+    :text="$t('title.depots')"
+    :text-no-result="$t('treeselect.noresult')"
+    :selection-default="selectionDepots"
+    :editable="false"
+    :is-list="true"
+    :icon="iconnames.depot"
+    :fetch-data="fetchDepotData"
+    @change="changeSelection"
+  />
 </template>
 
 <script lang="ts">

@@ -128,7 +128,9 @@ export default class TProductsLocalboot extends Vue {
   $mq: any
   $fetch: any
 
+  @Prop() parentId!: string
   @Prop() rowident!: string
+  @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
   @Prop() multiselect!: boolean
   @Prop() child!: boolean
@@ -150,7 +152,7 @@ export default class TProductsLocalboot extends Vue {
     perPage: 15,
     sortBy: this.sort.sortBy ? this.sort.sortBy : 'productId',
     sortDesc: false,
-    filterQuery: ''
+    filterQuery: this.filterQuery || ''
   }
 
   @selections.Getter public selectionDepots!: Array<string>
@@ -176,9 +178,10 @@ export default class TProductsLocalboot extends Vue {
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
 
-  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true) }
-  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.sort, true) }
-  @Watch('sort', { deep: true }) sortPropChanged () { this.syncSort(this.sort, this.tableData, false) }
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
+  @Watch('sort', { deep: true }) sortPropChanged () { this.syncSort(this.sort, this.tableData, false, this.parentId) }
+  @Watch('filterQuery', { deep: true }) filterPropChanged () { this.syncSort({ filterQuery: this.filterQuery }, this.tableData, false, this.parentId) }
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext

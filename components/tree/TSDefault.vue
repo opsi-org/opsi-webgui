@@ -1,22 +1,24 @@
 <template>
-  <div class="form-inline TSDefault-wrapper">
-    <b-icon :icon="icon" variant="transparent" font-scale="1.5" />
+  <div :class="'form-inline TSDefault-wrapper ' + type + ' ' + ((isOrigin)? 'is-origin':'')">
+    <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
+    <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
+      v-else
+      :id="id"
       :type="type"
       :selections="selectionDefault"
     />
     <TreeTSDefaultWithAdding
       :id="`id-select-${id}`"
+      :ref="`id-select-${id}`"
       v-model="selectionWrapper"
       :flat="flat"
-      :placeholder="text ? text
-        : lazyLoad? '' : $t(editable ? 'client.dropdown.searchOrAdd' : 'client.dropdown.search')
-      "
+      :placeholder="placeholderWrapper"
       class="treeselect"
-      :class="selectedListAsClass"
+      :class="{ 'disable-roots': disableRootObjects, [type]:true, 'search-filled': treeselectSearchQueryFilled }"
       :searchable="!lazyLoad"
       :editable="editable"
-      :loading-text="'load...'"
+      :loading-text="$t('message.loading')"
       :clearable="clearable"
       :multiple="multi"
       :options="options"
@@ -27,24 +29,25 @@
 
       :cache-options="false"
       :normalizer="normalizer"
-      :auto-load-root-options="type!='clients'"
       :load-options="loadOptionsChildren"
-      :limit="limitVisibleSelection"
-      :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('components.treeselect .limitText', { count })"
       :no-results-text="
         textNoResult
           ? textNoResult
-          : $t(editable? 'client.dropdown.noResultTextEditable': 'client.dropdown.noResultText')
+          : $t(editable? 'treeselect.noResultTextEditable': 'treeselect.noresult')
       "
+      :limit="limitVisibleSelection"
+      :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('treeselect.limitText', { count })"
+
       :value-format="valueFormat"
       :value-consists-of="valueConsistsOf"
 
+      @search-not-empty="treeselectSearchQueryChanged"
       @new-node="selectWrapper"
       @select="selectWrapper"
       @deselect="deselectWrapper"
     >
       <div
-        v-if="limitVisibleSelection>0"
+        v-if="limitVisibleSelection>0 && multi"
         slot="value-label"
         slot-scope="{ node }"
         :class="{
@@ -54,23 +57,19 @@
       >
         {{ Array.isArray(node.label) ? node.label[0] : node.label }}
       </div>
-
       <div slot="before-list">
         <ButtonBTNClearSelection
-          v-if="multi"
-          class="BTNClearSelection"
+          v-if="multi && !treeselectSearchQueryFilled"
+          class="BTN-before-list"
           :disabled="selection.length<=0"
           :clearselection="clearSelected"
-          :label="$t('table.selection.clear')"
         />
-        <br v-if="multi && $fetchState.pending">
-        <IconILoading v-if="$fetchState.pending" />
+        <ButtonBTNReset
+          v-if="!isOrigin"
+          class="BTN-before-list"
+          :action="resetSelected"
+        />
       </div>
-      <!-- <div
-        v-if="$fetchState.loading"
-        slot="before-list"
-      >
-      </div> -->
       <div
         slot="option-label"
         slot-scope="{ node }"
@@ -81,7 +80,7 @@
         }"
       >
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" />
+          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
           <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
           <small v-if="type=='depots' && node.label===opsiconfigserver"> <b> {{ node.label }} </b></small>
           <small v-else> {{ node.label }} </small>
@@ -93,7 +92,6 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-import { filterObject } from '../../.utils/utils/sfilters'
 import { Constants } from '../../mixins/uib-mixins'
 
 const cache = namespace('data-cache')
@@ -136,12 +134,14 @@ export default class TSDefault extends Vue {
   @Prop({ default: '' }) placeholder?: string
   @Prop({ default: 0 }) limitVisibleSelection!: number
   @Prop({ default: false }) clearable!: boolean
+  @Prop({ default: true }) isOrigin!: boolean
   @Prop({ default: false }) multi!: boolean
   @Prop({ default: false }) editable!: boolean
   @Prop({ default: false }) lazyLoad!: boolean
   @Prop({ default: false }) flat!: boolean
   @Prop({ default: true }) isList!: boolean
   @Prop({ default: false }) nested!: boolean
+  @Prop({ default: false }) disableRootObjects!: boolean
   @Prop({ default: () => {} }) store!: StoreSelection
   @Prop({ default: () => { return ['empty'] } }) fetchData!: Function
   @Prop({ default: () => { return [] } }) fetchChildren!: Function
@@ -153,110 +153,102 @@ export default class TSDefault extends Vue {
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched
+  treeselectSearchQueryFilled:boolean = false
 
   @cache.Getter public opsiconfigserver!: Array<string>;
 
-  get selectedListAsClass () {
-    if (this.store && this.store.selection) {
-      const r = {}
-      this.store.selection.forEach((x) => { r['selected-' + x] = true })
-      return r
-    }
-    return {}
-  }
-
   async fetch () {
-    // await this.requestData()
+    console.warn(this.id, 'TSDefault fetch')
     this.$fetchState.pending = true
+    // this.data = []
     this.data = await this.fetchData()
     this.updateLocalFromParent()
     this.syncWrapper()
+    this.selection = [...this.selection] // needed for deselection
     this.$fetchState.pending = false
-    console.log('end fetching hostgroups')
+    console.log(this.id + ' TSDefault fetch end')
   }
 
-  mounted () {
-    this.syncWrapper()
+  @Watch('selectionDefault', { deep: true }) async selectionChanged () {
+    console.log(this.id + ' TSDefault selectionDefaultChanged this.selection ', JSON.stringify(this.selection))
+    console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionDefault ', JSON.stringify(this.selectionDefault))
+    console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionWrapper ', JSON.stringify(this.selectionWrapper))
+    await this.$fetch()
   }
 
-  @Watch('selectionDefault', { deep: true }) selectionChanged () {
-    this.$fetch()
+  get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }
+  set selection (s) { this.model[(this.nested) ? 'nested' : 'default'] = s }
+  // can be overwritten by children
+  set selectionWrapper (s) { (Array.isArray(s)) ? this.selection = s : this.selection = [s] }
+  get selectionWrapper () { return this.selection }
+  get placeholderWrapper () {
+    if (this.multi && !this.text) { return '' }
+    let txt = this.text ? this.text : '' + this.selectionWrapper
+    if (!this.isOrigin) { txt += ' * ' }
+    return txt
   }
 
-  get selectionWrapper () { // can be overwritten by children
-    return this.selection
-  }
-
-  set selectionWrapper (s) { // can be overwritten by children
-    this.selection = s
-  }
-
-  get selection () {
-    console.log('TSDefault get selection ', (this.nested) ? 'nested' : 'default')
-    return this.model[(this.nested) ? 'nested' : 'default']
-  }
-
-  set selection (s) {
-    console.log('TSDefault set selection ', (this.nested) ? 'nested' : 'default')
-    this.model[(this.nested) ? 'nested' : 'default'] = s
-  }
+  treeselectSearchQueryChanged (filled) { this.treeselectSearchQueryFilled = filled }
 
   syncWrapper () {
-    console.log('syncWrapper')
-    if (this.syncFunction) {
-      this.syncFunction({ selection: this.selectionWrapper, options: this.options })
+    console.log(this.id + ' TSDefault syncWrapper')
+    if (this.syncFunction) { // e.g. from TSDefaultGroups
+      this.syncFunction(this.selection, this.options)
     }
   }
 
   selectWrapper (s:any) {
-    if (this.selectFunction) {
+    this.$fetchState.pending = true
+    console.log(this.id + ' TSDefault selectWrapper TRY select: ', JSON.stringify(s))
+    if (this.selectFunction) { // e.g. from TSDefaultGroups
       this.selectFunction(s, this)
       this.syncWrapper()
     } else { this.selectDefault(s) }
+    this.$fetchState.pending = false
   }
 
   deselectWrapper (s:any) {
-    console.log('TRY deselect: ', JSON.stringify(s))
-    if (this.deselectFunction) {
+    console.log(this.id + ' -----------------TSDefault deselectWrapper ', this.editable, this.multi)
+    if (!this.editable && !this.multi) { return }
+    this.$fetchState.pending = true
+    console.log(this.id + ' TSDefault deselectWrapper TRY deselect: ', JSON.stringify(s))
+    if (this.deselectFunction) { // e.g. from TSDefaultGroups
       this.deselectFunction(s, this)
       this.syncWrapper()
-    } else {
-      this.deselectDefault(s)
-    }
+    } else { this.deselectDefault(s) }
+    this.$fetchState.pending = false
   }
 
   updateLocalFromParent (updateOptions = true, updateSelections = true) {
+    console.log(this.id + ' TSDefault updateLocalFromParent')
     if (updateOptions) {
       if (this.isList === false) {
         this.options = [...this.data]
-      } else {
-        this.options.length = 0
-        this.data.forEach((element) => {
-          this.options.push({ id: element, text: element, type: 'ObjectToGroup' })
-        })
-        if (!this.nested) {
-          const resultObjects = []
-          for (const sitem in this.selectionDefault) {
-            filterObject(this.data, sitem, 'id', resultObjects)
-          }
+        return
+      }
 
-          // only one level
-          const optionIds = this.options.map((e:any) => e.id)
-          for (const s in resultObjects) {
-            if (!optionIds.includes(resultObjects[s])) {
-              const elem = {
-                id: resultObjects[s],
-                text: resultObjects[s],
-                type: 'ObjectToGroup',
-                isNew: true
-              }
-              this.options.push(elem)
-            }
-          }
+      // build treestructure from list
+      this.options.length = 0
+      this.data.forEach((element) => { this.options.push({ id: element, text: element, type: 'ObjectToGroup' }) })
+      if (this.nested) { return }
+
+      // const resultObjects = []
+      // for (const sitem in this.selectionDefault) {
+      //   filterObject(this.options, sitem, 'id', resultObjects)
+      // }
+
+      // if its not nested: add selection to options if not already inside (e.g. newValue)
+      const optionIds = this.options.map((e:any) => e.id)
+      for (const i in this.selectionDefault) {
+        const s = this.selectionDefault[i]
+        if (!optionIds.includes(s)) {
+          const elem = { id: s, text: s, type: 'ObjectToGroup', isNew: true }
+          this.options.push(elem)
         }
       }
     }
-    if (updateSelections && !this.nested) {
+    if (updateSelections && !this.nested) { // not TSDefaultGroups
+      console.log(this.id, ' updateLocal ', this.selection)
       this.selection = [...this.selectionDefault]
     }
   }
@@ -266,8 +258,9 @@ export default class TSDefault extends Vue {
       id: node.id,
       type: node.type,
       isNew: node.isNew || false,
+      hasAnySelection: node.hasAnySelection || false,
       isBranch: node.type === 'HostGroup' || node.type === 'ProductGroup' || node.isBranch || false,
-      isDisabled: (node.isDisabled === true) || false,
+      isDisabled: (node.isDisabled === true) || (node.id === this.$t('values.mixed')) || false,
       // isDefaultExpanded: node.hasAnySelection || false,
       label: node.text ? node.text.replace(/_+$/, '') : node.id,
       children: this.lazyLoad
@@ -283,28 +276,33 @@ export default class TSDefault extends Vue {
   }
 
   getChildren (node) {
-    if (!node.children) {
-      return node.children
-    }
+    if (!node.children) { return node.children } // null/undefined
 
     if (node.type === 'ProductGroup') {
+      console.log('access PG chilren')
       return Object.values(node.children)
     }
     return node.children
   }
 
   async loadOptionsChildren ({ action, parentNode, callback }: any) {
-    console.log('loadchildren?')
+    // loadchildren only for hostgroups
+    console.log(this.id + ' TSDefault loadchildren parentNode ', parentNode.id)
     if (this.lazyLoad !== true) {
       callback()
       return
     }
     if (action === 'LOAD_CHILDREN_OPTIONS') {
       this.$fetchState.pending = true
-      parentNode.children = await this.fetchChildren(parentNode)
+      const c = await this.fetchChildren(parentNode)
+      if (c) {
+        console.log(this.id + ' TSDefault loadchildren result != undefined', c)
+        parentNode.children = Array.isArray(c) ? c : Object.values(c)
+      }
+      if (parentNode.text === 'clientlist' && parentNode.parent == null) {
+        console.log(this.id + ' TSDefault loadchildren clientlist children are', parentNode.children)
+      }
 
-      // const children = await this.fetchChildren(parentNode)
-      // parentNode.children = children.map(n => { const nn= this.normalizer(n); console.log(nn); return nn })
       this.syncWrapper()
       callback()
       this.$fetchState.pending = false
@@ -312,53 +310,67 @@ export default class TSDefault extends Vue {
   }
 
   selectDefault (s: any) {
-    console.log('TSDefault s', s)
-    if (!s) {
-      return
-    }
+    console.log(this.id + ' TSDefault selectDefault s', s)
+    if (!s) { return }
 
-    if (!Array.isArray(this.selection)) {
-      this.selection = [this.selection]
+    if (!Array.isArray(this.selectionWrapper)) {
+      this.selectionWrapper = [this.selectionWrapper]
     }
     if (Object.keys(s).length <= 0) {
-      console.log('why?')
-      this.selection = []
+      console.log(this.id + ' TSDefault selectDefault why?')
+      this.selectionWrapper = []
     }
-    if (!this.selection.includes(s.text)) {
-      if (!this.nested && !Object.values(this.options.map((o:any) => o.id)).includes(s.id)) {
-        console.log('new item')
-        this.options.push(s)
-      }
-      if (!this.multi) {
-        console.log('not multi')
-        this.selection.length = 0
-      }
-      // console.log(this.options, ' includes ', s)
-      this.selection.push(s.text)
-      console.log('add to selection', JSON.stringify(this.selection))
-    } else {
-      console.log('deselect')
+    if (this.selectionWrapper.includes(s.text)) {
+      console.log(this.id + ' TSDefault selectDefault deselect')
       this.deselectDefault(s)
+      return
     }
-    this.$emit('change', this.selection)
+    // select element
+    if (!this.nested && !Object.values(this.options.map((o:any) => o.id)).includes(s.id)) {
+      // this.options.push(s)
+      this.options = [...this.options, s]
+      console.log(this.id + ' TSDefault selectDefault new item to options', JSON.stringify(this.options))
+    }
+    if (!this.multi) {
+      console.log(this.id + ' TSDefault selectDefault not multi')
+      this.selectionWrapper.length = 0
+    }
+    // console.log(this.options, ' includes ', s)
+    if (this.selectionWrapper.includes(this.$t('values.mixed')) && s.text !== this.$t('values.mixed')) {
+      this.selectionWrapper = [s.text]
+    } else {
+      this.selectionWrapper.push(s.text)
+    }
+    console.log(this.id + ' TSDefault selectDefault add to selectionWrapper', JSON.stringify(this.selectionWrapper))
+    this.$emit('change', this.selectionWrapper)
   }
 
   deselectDefault (deselection: any, isObject = false) {
-    console.log('TSDefault deselect ', deselection, this.selection)
-    if (this.selection.includes(deselection.text) || this.selection.includes(deselection)) {
-      if (isObject || this.selection.includes(deselection.text)) {
-        this.selection.splice(this.selection.indexOf(deselection.text), 1) // deleting
+    console.log(this.id + ' -----------------TSDefault deselectDefault ', this.editable, this.multi)
+    if (!this.editable && !this.multi) { return }
+
+    console.log(this.id + ' TSDefault deselectDefault ', deselection, this.selection)
+    if (this.selectionWrapper.includes(deselection.text) || this.selectionWrapper.includes(deselection)) {
+      if (isObject || this.selectionWrapper.includes(deselection.text)) {
+        this.selectionWrapper.splice(this.selectionWrapper.indexOf(deselection.text), 1) // deleting
       } else {
-        this.selection.splice(this.selection.indexOf(deselection), 1) // deleting
+        this.selectionWrapper.splice(this.selectionWrapper.indexOf(deselection), 1) // deleting
       }
-      this.$emit('change', this.selection)
+      this.$emit('change', this.selectionWrapper)
+      // await this.$fetch()
     }
   }
 
   clearSelected () {
-    console.log('TSDefault clearSelected')
-    this.selection = []
-    this.$emit('change', this.selection)
+    console.log(this.id + ' TSDefault clearSelected')
+    this.selectionWrapper = []
+    this.$emit('change', this.selectionWrapper)
+  }
+
+  resetSelected () {
+    console.log(this.id + ' TSDefault resetSelected')
+    // this.$fetch()
+    this.$emit('change', this.selectionDefault, true)
   }
 
   isGroup (s) {
@@ -369,14 +381,48 @@ export default class TSDefault extends Vue {
 
 <style>
 
+/* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container {
+  cursor: not-allowed;
+  pointer-events: none;
+  color: var(--dark);
+}
+
+/* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
+.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
+  color: var(--light);
+}
+
 .form-inline{
   flex-flow: nowrap;
 }
-/* .treeselect .vue-treeselect__placeholder {
-    color: gray;
-} */
+.TSDefault-wrapper,
+.TSDefault-wrapper .treeselect,
+.TSDefault-wrapper .vue-treeselect__menu-container,
+.TSDefault-wrapper .vue-treeselect__menu {
+  background-color: var(--light);
+}
+.TSDefault-wrapper:not(.is-origin) {
+  border: 1px solid var(--warning);
+}
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
+  background: var(--primary);
+  color: var(--light);
+}
+.TSDefault-wrapper .hasSelection {
+  color: var(--primary);
+}
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
+  color: var(--light) !important;
+}
+.TSDefault-wrapper .vue-treeselect__menu {
+  border: 1px solid var(--primary) !important;
+  border-radius: 5px;
+}
 .TSDefault-wrapper{
-  border: 1px solid #ddd;
+  border: 1px solid var(--primary);
   border-radius: 5px;
   min-width: 200px !important;
   max-width: 200px !important;
@@ -385,20 +431,26 @@ export default class TSDefault extends Vue {
   padding-left: 10px;
   padding-right: 15px;
   margin-right: 10px;
+  line-height: 1.5 !important;
+  min-height: 40px !important;
 }
-.TSDefault-wrapper .treeselect .BTNClearSelection{
+.TSDefault-wrapper.propertyvalues {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+.TSDefault-wrapper .treeselect .BTN-before-list{
   width: 100% !important;
   text-align: left;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
-  color: black;
+  color: inherit !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
   max-height: max-content !important;
-  padding-bottom: 0px;
+  padding-bottom: 5px;
   margin-top: -6px !important;
-  color: black;
+  color: inherit !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
 .TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {
@@ -411,12 +463,17 @@ export default class TSDefault extends Vue {
   padding-top: 0px !important;
   padding-left: 0px !important;
   padding-right: 0px !important;
-  background: transparent !important;
+  background: inherit !important;
 }
 .TSDefault-wrapper .treeselect {
   max-width: max-content !important;
   max-height: 20px;
   width: 72% !important;
+  cursor: pointer;
+}
+.TSDefault-wrapper .treeselect.propertyvalues {
+  max-width: calc(100% - 30px) !important;
+  width: calc(100% - 30px) !important;
 }
 .TSDefault-wrapper .treeselect > .vue-treeselect__control{
   border: none !important;
@@ -432,12 +489,47 @@ export default class TSDefault extends Vue {
   margin-left: 55px;
   margin-top: -5px;
   max-width: 50px;
+  padding-bottom: 5px;
+}
+.TSDefault-wrapper .treeselect.treeselect.propertyvalues .vue-treeselect__input-container {
+  margin-left: 0px;
+  max-width: 100%;
+}
+.TSDefault-wrapper .treeselect .vue-treeselect__input {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 5px;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__multi-value {
   margin-bottom: 0px !important;
 }
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
-  display: none;
+
+.TSDefault-wrapper .treeselect.search-filled .vue-treeselect__multi-value-item,
+.TSDefault-wrapper .treeselect.search-filled .vue-treeselect__single-value,
+.TSDefault-wrapper .treeselect.search-filled .vue-treeselect__placeholder,
+.TSDefault-wrapper .treeselect.search-filled.propertyvalues .vue-treeselect__limit-tip,
+.TSDefault-wrapper .treeselect:not(.propertyvalues) .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder),
+.TSDefault-wrapper .treeselect .vue-treeselect__icon.vue-treeselect__value-remove {
+  display: none !important;
+}
+.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.TSDefault-wrapper .treeselect .vue-treeselect__single-value,
+.TSDefault-wrapper .treeselect .vue-treeselect__multi-value {
+  margin-top: -5px;
+}
+.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item.vue-treeselect__multi-value-item,
+.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item.vue-treeselect__multi-value-item-new {
+  background: var(--primary);
+  color: var(--light);
+  min-height: 20px;
+}
+.TSDefault-wrapper .treeselect.propertyvalues .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
+  max-height: 20px;
+  white-space: normal;
+
 }
 /* .treeselect .vue-treeselect-helper-hide {
   display: inline;

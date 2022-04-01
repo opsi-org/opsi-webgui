@@ -1,28 +1,20 @@
 <template>
-  <div>
-    <TreeTSDefaultGroups
-      id="Clients"
-      type="clients"
-      data-testid="TSHostGroups"
-      :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
-      :text="$t('treeselect.hostGroups')"
-      :text-no-result="'NoResult'"
-      :validate="() => true"
-      :validate-description="''"
-      :selection-default="selectionClients"
-      :icon="iconnames.client"
-      :fetch-data="fetchHostGroupsData"
-      :fetch-children="fetchChildren"
-      @change="changeSelection"
-    />
-      <!-- :nested="true"
-      :lazy-load="true"
-      :multi="true"
-      :data="undefined"
-      :editable="false"
-      :is-list="false" -->
-      <!-- value-format="object" -->
-  </div>
+  <TreeTSDefaultGroups
+    :id="id"
+    type="clients"
+    data-testid="TSHostGroups"
+    :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
+    :text="$t('treeselect.hostGroups')"
+    :text-no-result="$t('treeselect.noresult')"
+    :validate="() => true"
+    :validate-description="''"
+    :selection-default="selectionClients"
+    :icon="iconnames.client"
+    :fetch-data="fetchHostGroupsData"
+    :fetch-children="fetchChildren"
+    :disable-root-objects="true"
+    @change="changeSelection"
+  />
 </template>
 
 <script lang="ts">
@@ -35,100 +27,85 @@ const selections = namespace('selections')
 export default class TSHostGroups extends Vue {
   iconnames: any // from mixin
   $axios: any
-
+  $fetch: any
+  id: string = 'HostGroups'
   @selections.Getter public selectionClients!: Array<string>;
   @selections.Getter public selectionDepots!: Array<string>;
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void;
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
-  @Watch('selectionDefault', { deep: true }) selectionChanged () {
-    this.setSelectionClients(this.selectionClients)
-  }
+  clientlistGroups:Array<object> = []
 
-  // getIconnames () {
-  //   return icons.iconnames
-  // }
+  @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
+    console.log(this.id + ' depot changed')
+    await this.$fetch()
+  }
 
   async asyncForEach (array, callback) {
     for (let index = 0; index < array.length; index++) {
       await callback(array[index])
-      // await callback(array[index], index, array);
     }
+  }
+
+  async fetch () { // clientlist
+    console.warn(this.id, 'fetch clientlist')
+    this.clientlistGroups = []
+    const resultclients = (await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)).sort()
+    resultclients.forEach((c) => { this.clientlistGroups.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup', isDisabled: false }) })
   }
 
   async fetchHostGroupsData () {
-    console.log('fetchHosts')
+    console.warn(this.id, 'fetch groups')
+    console.log(this.id + ' fetch client groups')
     const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=root`)).groups
+
     if (result === undefined) {
-      throw new Error('No root host-groups found')
+      throw new Error(this.id + ' No root host-groups found')
     }
-
-    if (result.clientlist) { // todo: just a workaround till groups return highest level for hosts
-      const values = Object.values(result)
-
-      await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
-      // await values.forEach(async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
-      console.log('ROOT', values)
-      return values
+    if (result.clientlist) {
+      result.clientlist.children = this.clientlistGroups
     }
-    return [
-      {
-        id: 'clientdirectory',
-        text: 'clientdirectory',
-        isBranch: true,
-        type: 'HostGroup',
-        isDefaultExpanded: false,
-        isDisabled: false,
-        children: null
-      },
-      {
-        id: 'groups',
-        text: 'groups',
-        isBranch: true,
-        type: 'HostGroup',
-        isDefaultExpanded: false,
-        isDisabled: false,
-        children: null
-      },
-      {
-        id: 'clientlist',
-        text: 'clientlist',
-        isBranch: true,
-        isDefaultExpanded: false,
-        type: 'HostGroup',
-        isDisabled: false,
-        children: null
-      }
-    ]
+    const values = Object.values(result)
+    await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
+    console.log(this.id + ' fetch client groups end')
+    return values
   }
 
   async fetchChildren (parentNode) {
-    if (parentNode.text === 'clientlist') {
-      const resultclients = (await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)).sort()
-      const clientlist:Array<object> = []
-      resultclients.forEach((c) => { clientlist.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup' }) })
-      console.log('clientlist', clientlist)
-      parentNode.children = clientlist
-      console.log('dont fetch children', parentNode)
-      return clientlist
+    if (parentNode.text === 'clientlist' && parentNode.parent == null) {
+      if (!parentNode.children) {
+        console.log(this.id + ' dont fetch client children - clientlist, but set cause empty children')
+        parentNode.children = this.clientlistGroups
+      }
     } else {
+      console.warn(this.id, 'fetch children', parentNode.id)
+      console.log(this.id + ' fetch client children ', parentNode.id)
       const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=${parentNode.text}`)).groups.children
 
       if (result !== null) {
-        console.log('Children ', result)
         const values = Object.values(result)
-        await this.asyncForEach(values, async (c:any) => { if (c.hasAnySelection === true) { c.children = await this.fetchChildren(c) } })
+        await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
+        // console.log(this.id + ' fetch client children ', parentNode.text, ' end')
         return values
       }
-      console.warn('Children null')
+      console.warn(this.id + ' Children null')
+    }
+  }
+
+  async loadChilds (node) {
+    // if (node.hasAnySelection === true && !['groups', 'clientdirectory', 'clientlist'].includes(node.text)) {
+    if (node.hasAnySelection === true) {
+      const c = await this.fetchChildren(node)
+      if (c) { node.children = c }
     }
   }
 
   changeSelection (selection: Event) {
     if (selection === undefined) { return }
     if (!Array.isArray(selection)) { return }
-    console.log('changeSelection', JSON.stringify(selection))
+
+    console.log(this.id + ' changeSelection', JSON.stringify(selection))
     if (selection.length > 0) {
       this.setSelectionClients([...selection])
     } else {
