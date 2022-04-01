@@ -167,7 +167,7 @@ export default class TProductProperties extends Vue {
     if (!arrayEqual(values, orgValues)) {
       const propObj: any = {}
       propObj[propertyId] = values
-      let data = { properties: propObj }
+      const data: IObjectString2Any = { properties: propObj }
       if (this.selectionClients.length > 0) {
         data.clientIds = this.selectionClients
       } else {
@@ -177,7 +177,7 @@ export default class TProductProperties extends Vue {
     }
   }
 
-  handleTrackingChanges (hosts:Array<string>, key:string, propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> ) {
+  handleTrackingChanges (hosts:Array<string>, key:string, propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean>) {
     for (const h in hosts) {
       const changeObject: Object = {
         user: localStorage.getItem('username'),
