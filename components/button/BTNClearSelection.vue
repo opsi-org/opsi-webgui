@@ -9,7 +9,8 @@
     @click="clearselection"
   >
     <span class="sr-only">{{ $t('table.selection.clear') }}</span>
-    <b-icon :icon="iconnames.clear" class="icon-primary" /> <span>{{ label? label: $t('table.selection.clear') }} </span>
+    <b-icon :icon="iconnames.clear" class="icon-primary" />
+    <span v-if="showLabel">{{ label? label: $t('table.selection.clear') }} </span>
   </b-button>
 </template>
 
@@ -20,7 +21,8 @@ import { Constants } from '../../mixins/uib-mixins'
 @Component({ mixins: [Constants] })
 export default class BTNDeleteAll extends Vue {
   iconnames:any
-  @Prop({}) label?: string;
+  @Prop({}) label?: string
+  @Prop({ default: true }) showLabel?: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
 }
 </script>

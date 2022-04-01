@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-// import Cookie from 'js-cookie'
+import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
@@ -106,8 +106,8 @@ export default class VProducts extends Vue {
   }
 
   tableInfo: ITableInfo = {
-    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy || this.sortby : 'productId',
-    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc || this.sortdesc : false,
+    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId',
+    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : this.sortdesc || false,
     filterQuery: '',
     headerData: this.headerData
   }

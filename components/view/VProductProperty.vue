@@ -38,6 +38,7 @@
           :id="id"
           :properties="fetchedData.properties"
           :error-text="errorText.properties"
+          @refetch="fetchProperties"
         />
       </b-tab>
       <b-tab
@@ -128,12 +129,23 @@ export default class VProductProperty extends Vue {
     }
     this.errorText = { properties: '', dependencies: '' }
 
+    await this.fetchProperties()
+    await this.fetchDependencies()
+
+    if (this.activeTabSet >= -1) { this.activeTabSet = -1 }
+    this.isLoading = false
+  }
+
+  async fetchProperties(refetch:boolean=false) {
     await this.$axios.$get(`/api/opsidata/products/${this.id}/properties?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.properties.properties = response.properties
         this.fetchedData.properties.productDescriptionDetails = response.productDescriptionDetails
         this.fetchedData.properties.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0', 'bondepot.uib.local': undefined }
         this.fetchedData.properties.productDescription = response.productDescription
+        if (refetch) {
+          this.fetchedData.properties = {...this.fetchedData.properties}
+        }
         // this.setSession()
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
@@ -142,7 +154,8 @@ export default class VProductProperty extends Vue {
         ref.alert('Failed to fetch: Properties', 'danger', error)
         // throw new Error(error)
       })
-
+  }
+  async fetchDependencies() {
     await this.$axios.$get(`/api/opsidata/products/${this.id}/dependencies?selectedClients=[${this.selectionClients}]&selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.fetchedData.dependencies.dependencies = response.dependencies
@@ -157,8 +170,6 @@ export default class VProductProperty extends Vue {
         ref.alert('Failed to fetch: Dependencies', 'danger', error)
         // throw new Error(error)
       })
-    if (this.activeTabSet >= -1) { this.activeTabSet = -1 }
-    this.isLoading = false
   }
 }
 </script>

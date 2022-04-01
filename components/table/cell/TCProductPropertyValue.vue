@@ -255,6 +255,7 @@ export default class TProductPropertyValue extends Vue {
       console.log('update selectionValues with changes - return newValue', newValue)
       return newValue
     }
+    this.isOrigin = true
     console.log('update selectionValues with changes - return original', originalValue)
     return originalValue
   }

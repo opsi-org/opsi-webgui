@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TProductProperties">
+  <div data-testid="TProductProperties" class="TProductProperties">
     <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlert show variant="warning">
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
@@ -142,10 +142,11 @@ export default class TProductProperties extends Vue {
         // eslint-disable-next-line no-console
         console.log(response)
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
-        setTimeout(() => {
-          this.$nuxt.refresh()
-        }, 5000)
+        // this.$nuxt.refresh()
+        this.$emit('refetch', true)
+        // setTimeout(() => { this.$nuxt.refresh() }, 50)
         // this.setSession()
+        // this.properties[change.]
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
         // eslint-disable-next-line no-console
@@ -206,6 +207,10 @@ export default class TProductProperties extends Vue {
 </script>
 
 <style>
+.TProductProperties  {
+  max-height: 100%;
+}
+
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;
 }

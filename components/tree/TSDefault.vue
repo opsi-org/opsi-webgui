@@ -173,7 +173,6 @@ export default class TSDefault extends Vue {
     console.log(this.id + ' TSDefault selectionDefaultChanged this.selection ', JSON.stringify(this.selection))
     console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionDefault ', JSON.stringify(this.selectionDefault))
     console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionWrapper ', JSON.stringify(this.selectionWrapper))
-
     await this.$fetch()
   }
 
