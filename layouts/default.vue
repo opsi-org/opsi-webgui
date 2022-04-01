@@ -49,6 +49,10 @@ export default class LayoutDefault extends Vue {
   }
 
   async mounted () {
+    window.addEventListener('beforeunload', function (e) {
+      e.preventDefault()
+      e.returnValue = ''
+    })
     await this.checkServer()
     if (Cookie.get('menu_attributes')) {
       this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes') as unknown as any)
