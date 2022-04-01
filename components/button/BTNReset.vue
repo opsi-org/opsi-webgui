@@ -1,15 +1,15 @@
 <template>
   <b-button
     v-b-tooltip.hover
-    aria-label="clearSelection"
-    :title="label? '' : $t('table.selection.clear')"
+    aria-label="reset"
+    :title="label? '' : $t('button.reset')"
     variant="transparent"
-    class="ClearSelection"
+    class="reset"
     size="sm"
-    @click="clearselection"
+    @click="action"
   >
-    <span class="sr-only">{{ $t('table.selection.clear') }}</span>
-    <b-icon :icon="iconnames.clear" class="icon-primary" /> <span>{{ label? label: $t('table.selection.clear') }} </span>
+    <span class="sr-only">{{ $t('button.reset') }}</span>
+    <b-icon :icon="iconnames.reset" class="icon-primary" /> <span>{{ label? '' : $t('button.reset') }} </span>
   </b-button>
 </template>
 
@@ -18,25 +18,25 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
-export default class BTNDeleteAll extends Vue {
+export default class BTNReset extends Vue {
   iconnames:any
   @Prop({}) label?: string;
-  @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
+  @Prop({ default: () => { return () => { /* default */ } } }) action!: Function
 }
 </script>
 <style>
-.ClearSelection {
+.reset {
   color: var(--dark) !important;
   border: none !important
   /* background: green !important; */
 }
-.ClearSelection .icon-primary{
+.reset .icon-primary{
   color: var(--primary) !important;
 }
-.ClearSelection:hover .icon-primary{
+.reset:hover .icon-primary{
   color: var(--light) !important;
 }
-.ClearSelection:hover {
+.reset:hover {
   background: var(--primary) !important;
   color: var(--light) !important;
 }

@@ -1,14 +1,6 @@
-
 <template>
   <div data-testid="VProductProperty">
     <AlertAAlert ref="productPropViewAlert" />
-    <!-- <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
-    <BarBPageHeader v-if="!asChild">
-      <template #left>
-        <slot name="IDSelection" />
-      </template>
-    </BarBPageHeader> -->
-
     <BarBCollapsePageHeader
       :id="id"
       :title="$t('title.config')"
@@ -68,6 +60,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { ChangeObj } from '../../.utils/types/tchanges'
 import { IDepend, IProp } from '../../.utils/types/ttable'
 
 const selections = namespace('selections')

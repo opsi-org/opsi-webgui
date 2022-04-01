@@ -16,7 +16,6 @@
       >
         {{ isOrigin? '': '*' }}
       </b-form-checkbox>
-
       <TreeTSDefault
         v-else-if="rowItem.type=='UnicodeProductProperty'"
         :id="'PropertyValue-' + rowItem.propertyId"
@@ -25,7 +24,7 @@
         :limit-visible-selection="1"
         :multi="rowItem.multiValue"
         :editable="rowItem.editable"
-        :selection-default.sync="selectedValues"
+        :selection-default="selectedValues"
         :is-list="true"
         :fetch-data="() => allOptionsUnique"
         :is-origin="isOrigin"
@@ -86,22 +85,26 @@ export default class TProductPropertyValue extends Vue {
   }
 
   initSelection () {
+    console.log('init selection with changes', this.selectedValues)
+    const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    console.log('init selection with changes', originalValue)
     if (this.selectionClients.length > 0) {
-      this.selectedValues = [...this.updateDefaultWithChanges(this.selectionClients, 'clientId')]
+      this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionClients, 'clientId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionClients, 'clientId')
     } else {
-      this.selectedValues = [...this.updateDefaultWithChanges(this.selectionDepots, 'depotId')]
+      this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionDepots, 'depotId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionDepots, 'depotId')
     }
+    console.log('init selection with changes selectedValues', this.selectedValues)
   }
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
   @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
+    console.log('-------------ProductPropertyValue changeValue ', this.selectedValues)
     // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
     //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     // }
-    console.log('ProuctPropertyValue changeValue ', this.selectedValues)
     this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
   }
@@ -180,9 +183,13 @@ export default class TProductPropertyValue extends Vue {
   }
 
   selectionChanged (values: Array<string|boolean>, reset: boolean = false) {
-    if (!reset) {
+    console.log('selectionChanged PPValue ', values, reset)
+    if (reset !== true) {
+      console.log('not reseting - overwrite PPValue ', values, reset)
       this.selectedValues = JSON.parse(JSON.stringify(values))
       this.selectedValuesChanged()
+      this.initSelection()
+      return
     }
 
     const hostKey = (this.selectionClients.length > 0) ? 'clientId' : 'depotId'
@@ -216,8 +223,8 @@ export default class TProductPropertyValue extends Vue {
     return changes
   }
 
-  updateDefaultWithChanges (selectionHosts: Array<string>, key: string) {
-    const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+  getValuesWithChanges (originalValue:Array<any>, selectionHosts: Array<string>, key: string) {
+    console.log('update selectionValues with changes')
     let newValue
     let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
     changesList = changesList.filter(e => e.user === this.username)
@@ -245,8 +252,10 @@ export default class TProductPropertyValue extends Vue {
     }
     if (newValue) {
       this.isOrigin = false
+      console.log('update selectionValues with changes - return newValue', newValue)
       return newValue
     }
+    console.log('update selectionValues with changes - return original', originalValue)
     return originalValue
   }
 }

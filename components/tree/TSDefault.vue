@@ -55,23 +55,19 @@
             validate && node.label ? !validate(node.label) : false,
         }"
       >
-        {{node.label}}
-        <!-- {{ Array.isArray(node.label) ? node.label[0] : node.label }} -->
+        {{ Array.isArray(node.label) ? node.label[0] : node.label }}
       </div>
-
       <div slot="before-list">
         <ButtonBTNClearSelection
           v-if="multi && !treeselectSearchQueryFilled"
-          class="BTNClearSelection"
+          class="BTN-before-list"
           :disabled="selection.length<=0"
           :clearselection="clearSelected"
-          :label="$t('table.selection.clear')"
         />
-        <ButtonBTNClearSelection
+        <ButtonBTNReset
           v-if="!isOrigin"
-          class="BTNResetSelection"
-          :clearselection="resetSelected"
-          :label="$t('button.reset')"
+          class="BTN-before-list"
+          :action="resetSelected"
         />
       </div>
       <div
@@ -96,7 +92,6 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-import { filterObject } from '../../.utils/utils/sfilters'
 import { Constants } from '../../mixins/uib-mixins'
 
 const cache = namespace('data-cache')
@@ -189,7 +184,7 @@ export default class TSDefault extends Vue {
   get selectionWrapper () { return this.selection }
   get placeholderWrapper () {
     if (this.multi && !this.text) { return '' }
-    let txt = this.text ? this.text : '' + this.selectionDefault
+    let txt = this.text ? this.text : '' + this.selectionWrapper
     if (!this.isOrigin) { txt += ' * ' }
     return txt
   }
@@ -231,37 +226,29 @@ export default class TSDefault extends Vue {
         return
       }
 
+      // build treestructure from list
       this.options.length = 0
-      this.data.forEach((element) => {
-        this.options.push({ id: element, text: element, type: 'ObjectToGroup' })
-      })
-      if (this.nested) {
-        return
-      }
+      this.data.forEach((element) => { this.options.push({ id: element, text: element, type: 'ObjectToGroup' }) })
+      if (this.nested) { return }
 
-      const resultObjects = []
-      for (const sitem in this.selectionDefault) {
-        filterObject(this.options, sitem, 'id', resultObjects)
-      }
+      // const resultObjects = []
+      // for (const sitem in this.selectionDefault) {
+      //   filterObject(this.options, sitem, 'id', resultObjects)
+      // }
 
-      // only one level
+      // if its not nested: add selection to options if not already inside (e.g. newValue)
       const optionIds = this.options.map((e:any) => e.id)
       for (const i in this.selectionDefault) {
         const s = this.selectionDefault[i]
         if (!optionIds.includes(s)) {
-          const elem = {
-            id: s,
-            text: s,
-            type: 'ObjectToGroup',
-            isNew: true
-          }
+          const elem = { id: s, text: s, type: 'ObjectToGroup', isNew: true }
           this.options.push(elem)
         }
       }
     }
     if (updateSelections && !this.nested) { // not TSDefaultGroups
-      this.selection = [...this.selectionDefault]
       console.log(this.id, ' updateLocal ', this.selection)
+      this.selection = [...this.selectionDefault]
     }
   }
 
@@ -349,7 +336,7 @@ export default class TSDefault extends Vue {
     }
     // console.log(this.options, ' includes ', s)
     if (this.selectionWrapper.includes(this.$t('values.mixed')) && s.text !== this.$t('values.mixed')) {
-      this.selectionWrapper = s.text
+      this.selectionWrapper = [s.text]
     } else {
       this.selectionWrapper.push(s.text)
     }
@@ -447,7 +434,7 @@ export default class TSDefault extends Vue {
   max-width: 100% !important;
   width: 100% !important;
 }
-.TSDefault-wrapper .treeselect .BTNClearSelection{
+.TSDefault-wrapper .treeselect .BTN-before-list{
   width: 100% !important;
   text-align: left;
 }

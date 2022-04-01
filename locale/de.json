@@ -92,6 +92,8 @@
   "table.fields.on-deinstall": "on-deinstall",
   "table.fields.requiredType": "typ",
   "table.fields.unknown": "unbekannt",
+  "table.details.productproperty.defaults":"Produkt Default",
+  "table.details.productproperty.server":"Server Default",
   "button.login": "Anmeldung",
   "button.logout": "Ausloggen",
   "button.expand": "Maximieren",

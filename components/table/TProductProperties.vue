@@ -40,39 +40,17 @@
       </template>
       <template #cell(value)="row">
         <b-row>
-          <div>
-            <TableCellTCProductPropertyValue
-              :clients2depots="fetchedDataClients2Depots"
-              :row-item="row.item"
-              @change="handleChange"
-            />
-          </div>
+          <TableCellTCProductPropertyValue
+            :clients2depots="fetchedDataClients2Depots"
+            :row-item="row.item"
+            @change="handleChange"
+          />
         </b-row>
       </template>
       <template #row-details="row">
         <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${row.item.propertyId}`">
-          <!-- <b-input-group v-if="row.item.editable">
-            <b-form-input
-              v-model="row.item.newValue"
-              size="sm"
-              aria-label="new property value text"
-              class="TableProductsDetails_EditableProdProp_AddValue_BVFormIInput"
-              @keyup.enter="updateNewPropertyValuesRow(row.item)"
-            />
-            <template #append>
-              <b-button
-                size="sm"
-                aria-label="add new property value"
-                variant="outline-primary"
-                @click="updateNewPropertyValuesRow(row.item)"
-              >
-                {{ $t('values.add') }}
-              </b-button>
-              <ButtonBTNHelpTooltip :id="`btn_tt_${row.item.propertyId}`" tooltip="middle click on value-dropdown will copy the text" />
-            </template>
-          </b-input-group> -->
           <small>
-            Defaults: <b v-if="row.item.default!='mixed'">[{{ row.item.details }}]</b>
+            {{ $t('table.details.productproperty.defaults') }} <b v-if="row.item.default!==$t('values.mixed')">[{{ row.item.details }}]</b>
             <div v-else>
               <p v-for="v,k in row.item.defaultDetails" :key="k">
                 {{ k }}: <b>{{ v }}</b>
@@ -80,13 +58,13 @@
             </div>
             <br>
             <div v-if="row.item.anyDepotDifferentFromDefault">
-              Depots:
+              {{ $t('table.details.productproperty.server') }}
               <p v-for="v,k in row.item.depots" :key="k">
                 {{ k }}: <b>{{ v }}</b>
               </p>
             </div>
             <br>
-            Description: <b v-if="row.item.description!='mixed'">{{ row.item.description }}</b>
+            {{ $t('table.fields.description') }} <b v-if="row.item.description!=$t('values.mixed')">{{ row.item.description }}</b>
             <div v-else>
               <p v-for="v,k in row.item.descriptionDetails" :key="k">
                 {{ k }}: <b>{{ v }}</b>
@@ -183,6 +161,7 @@ export default class TProductProperties extends Vue {
       } else {
         this.handleTrackingChanges(this.selectionDepots, 'depotId', propertyId, values, orgValues)
       }
+      console.log('handleChange changes ', this.changesProducts)
       return
     }
     if (!arrayEqual(values, orgValues)) {
@@ -212,6 +191,7 @@ export default class TProductProperties extends Vue {
         this.delWithIndexChangesProducts(objIndex)
       }
       if (!arrayEqual(values, orgValues)) {
+        console.log('changeobject', changeObject)
         this.pushToChangesProducts(changeObject)
       }
     }

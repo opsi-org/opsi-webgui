@@ -7,7 +7,6 @@ export default class Changes extends VuexModule {
   _changesProducts: Array<any> = []
 
   get changesProducts (): Array<any> {
-    console.log('CHANGES: ', this._changesProducts)
     return this._changesProducts
   }
 
