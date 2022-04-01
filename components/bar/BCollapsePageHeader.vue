@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar class="BCollapsePageHeader_Navbar" data-testid="BarBCollapsePageHeader" :variant="variant">
+    <b-navbar class="BCollapsePageHeader_Navbar" :class="{collapseable: collapseable}" data-testid="BarBCollapsePageHeader" :variant="variant">
       <div class="BCollapsePageHeader_Navbar_toggler" @click="toggleCollapse">
         <span v-if="collapseable">
           <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
@@ -141,6 +141,9 @@ export default class BTooltipCollapseRow extends Vue {
 </script>
 
 <style>
+.BCollapsePageHeader_Navbar.collapseable {
+  cursor: pointer;
+}
 .BCollapsePageHeader_Navbar.navbar {
   z-index: inherit !important;
   /* padding-left: 0rem !important;
