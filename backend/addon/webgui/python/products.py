@@ -20,7 +20,7 @@ from opsiconfd.application.utils import (
 	get_configserver_id,
 	unicode_product_property,
 )
-from opsiconfd.backend import execute_on_secondary_backends, get_mysql
+from opsiconfd.backend import execute_on_secondary_backends
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -426,15 +426,15 @@ def save_poduct_on_client(data: PocItem):  # pylint: disable=too-many-locals, to
 	depot_get_product_version.cache_clear()
 
 	for client_id in data.clientIds:
-		if not client_id in result_data:
+		if client_id not in result_data:
 			result_data[client_id] = {}
 
 		depot_id = get_depot_of_client(client_id)
 
 		for product_id in data.productIds:
-			if not depot_id in depot_product_version:
+			if depot_id not in depot_product_version:
 				depot_product_version[depot_id] = {}
-			if not product_id in depot_product_version[depot_id]:
+			if product_id not in depot_product_version[depot_id]:
 				depot_product_version[depot_id][product_id] = depot_get_product_version(depot_id, product_id)
 			if not depot_product_version[depot_id][product_id]:
 				http_status = status.HTTP_400_BAD_REQUEST
@@ -444,11 +444,11 @@ def save_poduct_on_client(data: PocItem):  # pylint: disable=too-many-locals, to
 			version = depot_product_version[depot_id][product_id]
 			product_version, package_version = version.split("-", 1)
 
-			if not product_id in product_actions:
+			if product_id not in product_actions:
 				product_actions[product_id] = {}
-			if not product_version in product_actions[product_id]:
+			if product_version not in product_actions[product_id]:
 				product_actions[product_id][product_version] = {}
-			if not package_version in product_actions[product_id][product_version]:
+			if package_version not in product_actions[product_id][product_version]:
 				product_actions[product_id][product_version][package_version] = get_product_actions(
 					product_id, product_version, package_version
 				)
@@ -551,7 +551,7 @@ def get_product_groups():  # pylint: disable=too-many-locals
 					"parent": row["parent_id"] or root_group["id"],
 				}
 			if row["object_id"]:
-				if not "children" in all_groups[row["group_id"]]:
+				if "children" not in all_groups[row["group_id"]]:
 					all_groups[row["group_id"]]["children"] = {}
 				if row.group_id == row.parent_id:
 					if not row["object_id"] in all_groups:
