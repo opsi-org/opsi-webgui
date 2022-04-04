@@ -10,13 +10,13 @@ export default {
   }
 }
 
-const DefaultAuthVisibleTemplate = (_args, { argTypes }) => ({
+const DefaultAuthVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   store: store(), // to keep the default (duration: 2min) (note: authentication is enabled by default currently)
   template: `<BarBSide class="sidebar_content"
     :attributes="{
-      visible: $props.visible,
-      expanded: $props.expanded
+      visible: ${args.visible}||$props.visible,
+      expanded: ${args.expanded}||$props.expanded
     }" />
   `
 })

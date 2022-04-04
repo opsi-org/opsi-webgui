@@ -9,8 +9,8 @@ test('bar bside small snapshot', async ({ page }) => {
 
 test('bar bside small authenticated snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-side', 'b-side-small-authenticated')
-  const component = await page.locator('[data-testid="BarBSide"]')
-  expect(await component.screenshot()).toMatchSnapshot('bar-bside_small-authenticated.png')
+  // const component = await page.locator('[data-testid="BarBSide"]')
+  expect(await page.screenshot()).toMatchSnapshot('bar-bside_small-authenticated.png')
 })
 
 // expanded
@@ -22,6 +22,6 @@ test('bar bside expanded snapshot', async ({ page }) => {
 
 test('bar bside expanded authenticated snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-side', 'b-side-expanded-authenticated')
-  const component = await page.locator('[data-testid="BarBSide"]')
-  expect(await component.screenshot()).toMatchSnapshot('bar-bside_expanded-authenticated.png')
+  // const component = await page.locator('[data-testid="BarBSide"]')
+  expect(await page.screenshot()).toMatchSnapshot('bar-bside_expanded-authenticated.png')
 })
