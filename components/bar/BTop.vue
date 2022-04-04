@@ -29,6 +29,7 @@
           <b-icon :icon="iconnames.menu" font-scale="1.1" />
         </b-button>
       </b-navbar-nav>
+      <ModalMTrackChanges v-if="expert && changesProducts.filter((o) => o.user === username).length!==0" />
       <b-collapse id="nav-collapse" is-nav variant="primary">
         <b-navbar-nav class="ml-auto float-right">
           <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
@@ -45,8 +46,10 @@
 <script lang="ts">
 import { Component, Vue, namespace, Prop } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
+import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
+const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
 export default class BTop extends Vue {
@@ -57,6 +60,11 @@ export default class BTop extends Vue {
 
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
   @settings.Getter public expert!: boolean
+  @changes.Getter public changesProducts!: Array<ChangeObj>
+
+  get username () {
+    return localStorage.getItem('username')
+  }
 
   getTitleUppercase () {
     return (this.$t('title.project') as string).toUpperCase()

@@ -23,22 +23,7 @@
           />
         </template>
         <template v-else>
-          <template v-if="menuitem.title == 'Track Changes'">
-            <b-nav-item
-              v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
-              :class="{checkactive: $route.path.includes(menuitem.route)}"
-              :disabled="changesProducts.filter((o) => o.user === username).length==0"
-              :to="menuitem.route"
-              @click="refresh(menuitem.route)"
-            >
-              <b-icon v-b-tooltip.hover :title="$t(menuitem.title)" :icon="menuitem.icon" />
-              <span v-if="expanded">
-                {{ $t(menuitem.title) }}
-              </span>
-            </b-nav-item>
-          </template>
           <NavItemNIItem
-            v-else
             :class="{checkactive: $route.path.includes(menuitem.route)}"
             :expanded="expanded"
             :title="menuitem.title"
@@ -53,11 +38,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
-import { ChangeObj } from '../../.utils/types/tchanges'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
-const settings = namespace('settings')
-const changes = namespace('changes')
 
 interface IMenuItem {
   title:string
@@ -73,9 +55,6 @@ export default class NSidebar extends Vue {
   iconnames: any // from mixin
   @Prop({ }) expanded!: boolean
 
-  @settings.Getter public expert!: boolean;
-  @changes.Getter public changesProducts!: Array<ChangeObj>;
-
   created () {
     console.log('constants: ', this.iconnames)
   }
@@ -84,10 +63,6 @@ export default class NSidebar extends Vue {
     if (this.$route.path.includes(route)) {
       this.$nuxt.refresh()
     }
-  }
-
-  get username () {
-    return localStorage.getItem('username')
   }
 
   get navItems (): Array<IMenuItem> {
@@ -121,8 +96,7 @@ export default class NSidebar extends Vue {
               { title: 'title.log', route: '/clientslog' }
             ]
           },
-          { title: 'title.products', icon: this.iconnames.product, route: '/products/' },
-          { title: 'Track Changes', icon: this.iconnames.changes, route: '/changes' }
+          { title: 'title.products', icon: this.iconnames.product, route: '/products/' }
         ]
       },
       {

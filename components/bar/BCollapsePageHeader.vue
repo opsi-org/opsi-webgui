@@ -43,11 +43,6 @@
             </b-col>
             <b-col class="nav-child nav-child-right" cols="*">
               <slot name="nav-child-right">
-                <b-col v-if="enableShowChanges" cols="*">
-                  <b-button class="changeslink border" variant="link" to="/changes/">
-                    {{ $t('button.track.changes') }}
-                  </b-button>
-                </b-col>
                 <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
                   <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
                 </b-col>
@@ -102,7 +97,6 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: false }) enableClients!: boolean
   @Prop({ default: false }) enableProducts!: boolean
   @Prop({ default: false }) enableShowProducts!: boolean
-  @Prop({ default: false }) enableShowChanges!: boolean
   // @Prop({ default: undefined }) multiselectToggler!: boolean|undefined
   @Prop({ default: undefined }) redirectOnCloseTo!: string
   @Prop({ default: undefined }) redirect!: Function

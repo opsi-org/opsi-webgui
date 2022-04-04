@@ -15,7 +15,6 @@
           :enable-clients="!child"
           :enable-products="true"
           :enable-show-products="false"
-          :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
           :table-info="tableInfo"
           :redirect-on-close-to="(child)? '/clients/': undefined"
           :redirect="routeRedirectWith"
@@ -66,12 +65,10 @@
 <script lang="ts">
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
-import { ChangeObj } from '../../.utils/types/tchanges'
 import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
 import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const settings = namespace('settings')
-const changes = namespace('changes')
 @Component
 export default class VProducts extends Vue {
   $mq: any
@@ -82,7 +79,6 @@ export default class VProducts extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
   @settings.Getter public expert!: boolean;
-  @changes.Getter public changesProducts!: Array<ChangeObj>;
 
   sortdesc: boolean = false;
   rowId: string = '';
@@ -140,10 +136,6 @@ export default class VProducts extends Vue {
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
-  }
-
-  get username () {
-    return localStorage.getItem('username')
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
