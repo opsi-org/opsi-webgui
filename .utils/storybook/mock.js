@@ -26,9 +26,7 @@ const auth = (durationMin=2) => {
   }
 }
 mystore = ({ enable_auth=true, auth_durationMin=2 } = {}) => new Store({
-  modules: {
-    auth: (enable_auth)? auth(auth_durationMin): {}
-  }
+  modules: { auth: (enable_auth)? auth(auth_durationMin): {} }
 })
 
 //////////////////
