@@ -46,7 +46,8 @@
       "test:all:delete-empty-results": "find test-results -empty -delete",
       "test:all:unit": "jest --config .config/.jest.config.js  ./ ",
       "test:all:e2e": "playwright test -c .config/playwright-all-e2e.config.js",
-      "test:all:components": "playwright test -c .config/playwright-all-components.config.js",
+      "test:all:components": "playwright test -c .config/playwright-all-components.config.js ",
+      "test:all:components:update": "playwright test -c .config/playwright-all-components.config.js --update-snapshots ",
       "vscode:test:all:components": "playwright"
   },
   "eslintConfig": {

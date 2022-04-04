@@ -233,6 +233,8 @@ test:test-e2e:
   allow_failure: true
   except:
     - bug/cicd-build
+  only:
+    - develop
   artifacts:
     name: 'opsi-webgui-test-result-e2e'
     when: on_failure
@@ -262,6 +264,8 @@ test:test-components:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
+  only:
+    - develop
   artifacts:
     name: 'opsi-webgui-test-result-components'
     when: on_failure
@@ -321,7 +325,7 @@ build:static:app:
   artifacts:
     paths:
       - opsiweb/dist # not used...?
-    expire_in: 1 day
+    expire_in: 3 day
   only:
     - develop
     - tags
@@ -354,7 +358,7 @@ build:addon:
     name: 'opsi-webgui'
     paths:
       - webgui
-    expire_in: 2 day
+    expire_in: 3 day
 
 publish:obs_int:
   stage: publish
