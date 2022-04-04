@@ -265,7 +265,7 @@ def products(
 					IF(
 						LENGTH(GROUP_CONCAT(DISTINCT poc.actionRequest SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.actionRequest SEPARATOR ','), ',', '')) > 0,
 						"mixed",
-						poc.actionRequest
+						IFNULL(poc.actionRequest, "none")
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 			) AS actionRequest,
@@ -358,7 +358,10 @@ def products(
 			)
 		)
 
+		query = query.order_by(text("actionRequest='none' ASC"))
+		query = query.order_by(text("installationStatus='not_installed' ASC"))
 		query = order_by(query, commons)
+		# logger.debug(query)
 		query = pagination(query, commons)
 
 		result = session.execute(query, params)
