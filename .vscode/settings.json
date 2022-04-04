@@ -58,27 +58,47 @@
     "/workspace/opsiweb/.config/playwright-all-e2e.config.js",
     "/workspace/opsiweb/.config/playwright-all-components.config.js"
   ],
-  "runOnSave.statusMessageTimeout": 5000,
-  "runOnSave.commands": [
-    // { "match": ".*", "isAsync": true, "cmd": "echo 'I run for all files.'" },
-    {
-      "match": "\\.vue$",
-      "runIn": "terminal",
-      "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .vue .test.integration.js test:all:components"
-    },
-    {
-      "match": "\\.stories.js$",
-      "runIn": "terminal",
-      "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .stories.js .test.integration.js test:all:components"
-    },
-    {
-      "match": "\\.test.integration.js$",
-      "runIn": "terminal",
-      "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js .test.integration.js test:all:components"
-    },
-    // { "match": ".*", "cmd": "echo 'I am ${env.USERNAME}.'" }
-  ],
-
+  // "runOnSave.statusMessageTimeout": 5000,
+  // "runOnSave.commands": [
+  //   // { "match": ".*", "isAsync": true, "cmd": "echo 'I run for all files.'" },
+  //   {
+  //     "match": "\\.vue$",
+  //     "runIn": "terminal",
+  //     "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update"
+  //   },
+  //   {
+  //     "match": "\\.stories.js$",
+  //     "runIn": "terminal",
+  //     "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update"
+  //   },
+  //   {
+  //     "match": "\\.test.integration.js$",
+  //     "runIn": "terminal",
+  //     "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update"
+  //   },
+  //   // { "match": ".*", "cmd": "echo 'I am ${env.USERNAME}.'" }
+  // ],
+  "actionButtons": {
+    "defaultColor": "#ff0034", // Can also use string color names.
+    "loadNpmCommands":false, // Disables automatic generation of actions for npm commands.
+    "reloadButton":null, // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
+    "commands": [
+      {
+        "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
+        "name": "Run UI Test",
+        "color": "white",
+        "singleInstance": true,
+        "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components", // This is executed in the terminal.
+      },
+      {
+        "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
+        "name": "Update UI Snapshot",
+        "color": "white",
+        "singleInstance": true,
+        "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update", // This is executed in the terminal.
+      },
+    ]
+  },
 
 
 
