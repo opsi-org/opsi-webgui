@@ -1,6 +1,11 @@
 <template>
   <div data-testid="MTrackChanges">
-    <b-button v-b-tooltip.hover :title="$t('button.track.changes')" @click="$bvModal.show('trackChangesModal')">
+    <b-button
+      v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
+      v-b-tooltip.hover
+      :title="$t('button.track.changes')"
+      @click="$bvModal.show('trackChangesModal')"
+    >
       <b-icon class="bg-success" font-scale="2" :icon="iconnames.save" />
     </b-button>
     <b-modal
@@ -31,6 +36,7 @@ import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
+const settings = namespace('settings')
 const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
@@ -41,6 +47,7 @@ export default class MTrackChanges extends Vue {
 
   @Prop() child!: boolean;
   @Prop() closeroute!: string;
+  @settings.Getter public expert!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>;
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 

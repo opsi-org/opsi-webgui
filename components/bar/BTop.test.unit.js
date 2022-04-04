@@ -19,7 +19,7 @@ describe('BTop', () => {
         $t: () => 'some specific text',
         $config: { packageVersion: 'x.x' }
       },
-      stubs: ['IconIExpert', 'DropdownDDLang', 'DropdownDDTheme', 'ButtonBTNLogout'],
+      stubs: ['IconIExpert', 'DropdownDDLang', 'DropdownDDTheme', 'ButtonBTNLogout', 'ModalMTrackChanges'],
       propsData: {
         attributes: { visible: true, expanded: false }
       }
