@@ -4,6 +4,7 @@
   </b-alert> -->
   <b-alert
     v-model="showAlert"
+    data-testid="AAlert"
     class="alertMsg"
     v-bind="$props"
     dismissible
@@ -12,8 +13,8 @@
   >
     <slot />
     {{ alertMessage }}
-    <b-button v-if="moreDetails" variant="link" :pressed.sync="showMore">
-      Learn More
+    <b-button v-if="moreDetails" class="btn-showDetails" variant="link" :pressed.sync="showMore">
+      {{ $t('message.learnmore') }}
     </b-button>
     <p v-if="showMore">
       {{ moreDetails }}
