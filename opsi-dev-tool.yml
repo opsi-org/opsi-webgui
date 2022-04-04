@@ -17,7 +17,7 @@ package:
     mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
     cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
     mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
-    cp -a "${SRC}/opsiweb/dist" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
+    cp -a "${SRC}/opsiweb/dist/*" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app/"
   postinst_script:
     - echo "OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'"
     - exit 0
