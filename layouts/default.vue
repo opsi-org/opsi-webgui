@@ -20,7 +20,9 @@
 <script lang="ts">
 import Cookie from 'js-cookie'
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
+import { ChangeObj } from '../.utils/types/tchanges'
 const settings = namespace('settings')
+const changes = namespace('changes')
 const cache = namespace('data-cache')
 interface SideBarAttr {
     visible: boolean,
@@ -33,8 +35,9 @@ export default class LayoutDefault extends Vue {
   $axios: any
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
   @settings.Getter public colortheme!: any
-  @cache.Getter public opsiconfigserver!: string;
-  @cache.Mutation public setOpsiconfigserver!: (s: string) => void;
+  @changes.Getter public changesProducts!: Array<ChangeObj>
+  @cache.Getter public opsiconfigserver!: string
+  @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
     await this.checkServer()
@@ -48,16 +51,25 @@ export default class LayoutDefault extends Vue {
     Cookie.set('menu_attributes', JSON.stringify(this.sidebarAttr), { expires: 365 })
   }
 
+  get username () {
+    return localStorage.getItem('username')
+  }
+
   async mounted () {
-    window.addEventListener('beforeunload', function (e) {
-      e.preventDefault()
-      e.returnValue = ''
-    })
+    window.onbeforeunload = this.confirmToSaveChanges
     await this.checkServer()
     if (Cookie.get('menu_attributes')) {
       this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes') as unknown as any)
     } else {
       // this.sidebarAttr = { visible: true, expanded: true }
+    }
+  }
+
+  confirmToSaveChanges () {
+    if (this.changesProducts.filter(o => o.user === this.username).length !== 0) {
+      return true
+    } else {
+      return null
     }
   }
 
