@@ -1,9 +1,9 @@
-
 [
     {
         "clientId": "pytest-lost-client.uib.local",
         "ident": "pytest-lost-client.uib.local",
         "macAddress": null,
+        "ipAddress": null,
         "description": null,
         "notes": null,
         "version_outdated": 0,
