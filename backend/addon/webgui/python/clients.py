@@ -8,35 +8,33 @@
 webgui client methods
 """
 
-from typing import Dict, List, Optional
-
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
-
-from pydantic import BaseModel # pylint: disable=no-name-in-module
-from sqlalchemy import select, text, and_, alias, column, delete
-from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.sql.expression import table
-from sqlalchemy.exc import IntegrityError
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
-
-from opsiconfd.logging import logger
-from opsiconfd.backend import execute_on_secondary_backends
-from opsiconfd.rest import order_by, pagination, common_query_parameters, rest_api, OpsiApiException
 from opsiconfd.application.utils import get_configserver_id
-
-from .utils import (
-	parse_depot_list,
-	parse_client_list,
-	parse_selected_list
+from opsiconfd.backend import execute_on_secondary_backends
+from opsiconfd.logging import logger
+from opsiconfd.rest import (
+	OpsiApiException,
+	common_query_parameters,
+	order_by,
+	pagination,
+	rest_api,
 )
-from .utils import mysql
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import alias, and_, column, delete, select, text
+from sqlalchemy.dialects.mysql import insert
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql.expression import table
+
+from .utils import mysql, parse_client_list, parse_depot_list, parse_selected_list
 
 client_router = APIRouter()
 
 
-class ClientList(BaseModel): # pylint: disable=too-few-public-methods
+class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 	clientId: str
 	ident: str
 	macAddress: str
@@ -49,7 +47,7 @@ class ClientList(BaseModel): # pylint: disable=too-few-public-methods
 	actionResult_successful: int
 
 
-class Client(BaseModel): # pylint: disable=too-few-public-methods
+class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
 	opsiHostKey: Optional[str]
 	description: Optional[str]
@@ -68,8 +66,7 @@ def clients(
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
 	selectedDepots: List[str] = Depends(parse_depot_list),
-	selected: Optional[List[str]] = Depends(parse_selected_list)
-
+	selected: Optional[List[str]] = Depends(parse_selected_list),
 ):  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument
 	"""
 	Get Clients on selected depots with infos on the client.
@@ -79,15 +76,13 @@ def clients(
 		where = text("h.type = 'OpsiClient'")
 		params = {}
 		if commons.get("filterQuery"):
-			where = and_(
-				where,
-				text("(h.hostId LIKE :search OR h.description LIKE :search)")
-			)
+			where = and_(where, text("(h.hostId LIKE :search OR h.description LIKE :search)"))
 			params["search"] = f"%{commons.get('filterQuery')}%"
 		if selectedDepots:
 			where = and_(
 				where,
-				text("""
+				text(
+					"""
 				COALESCE(
 					(
 						SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) FROM CONFIG_STATE AS cs
@@ -95,7 +90,8 @@ def clients(
 					),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1)
 				) IN :depot_ids
-				""")
+				"""
+				),
 			)
 			params["depot_ids"] = selectedDepots
 
@@ -105,10 +101,13 @@ def clients(
 			params["selected"] = [""]
 
 		client_with_depot = alias(
-			select(text("""
+			select(
+				text(
+					"""
 				h.hostId AS clientId,
 				h.hostId AS ident,
 				h.hardwareAddress AS macAddress,
+				h.ipAddress as ipAddress,
 				h.description,
 				h.notes,
 				COALESCE(
@@ -118,15 +117,20 @@ def clients(
 					),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1)
 				) AS depotId
-			""")) \
-				.select_from(text("HOST AS h")) \
-				.where(where)
-			, name="hd"
+			"""
+				)
+			)
+			.select_from(text("HOST AS h"))
+			.where(where),
+			name="hd",
 		)
-		query = select(text("""
+		query = select(
+			text(
+				"""
 			hd.clientId,
 			hd.ident,
 			hd.macAddress,
+			hd.ipAddress,
 			hd.description,
 			hd.notes,
 			(
@@ -163,8 +167,9 @@ def clients(
 				TRUE,
 				FALSE
 			) AS selected
-		""")) \
-		.select_from(client_with_depot)
+		"""
+			)
+		).select_from(client_with_depot)
 
 		query = order_by(query, commons)
 		query = pagination(query, commons)
@@ -172,39 +177,29 @@ def clients(
 		result = session.execute(query, params)
 		result = result.fetchall()
 
-		total = session.execute(
-			select(text("COUNT(*)")).select_from(client_with_depot),
-			params
-		).fetchone()[0]
+		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]
 
-
-		return {
-				"data": [ dict(row) for row in result if row is not None ],
-				"total": total
-		}
-
-
+		return {"data": [dict(row) for row in result if row is not None], "total": total}
 
 
 @client_router.get("/api/opsidata/clients/depots", response_model=Dict[str, str])
 @rest_api
-def depots_of_clients(selectedClients: List[str] = Depends(parse_client_list)): # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
+def depots_of_clients(
+	selectedClients: List[str] = Depends(parse_client_list),
+):  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
 	"""
 	Get a mapping of clients to depots.
 	"""
 
-	#TODO check if clients of config server always work
+	# TODO check if clients of config server always work
 	params = {}
 	if selectedClients != [""] and selectedClients is not None:
 		params["clients"] = selectedClients
 
-
 	with mysql.session() as session:
 		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId IN :clients")
 
-		query = select(text("cs.objectId AS client, cs.values"))\
-			.select_from(text("CONFIG_STATE AS cs"))\
-			.where(where)
+		query = select(text("cs.objectId AS client, cs.values")).select_from(text("CONFIG_STATE AS cs")).where(where)
 
 		result = session.execute(query, params)
 		result = result.fetchall()
@@ -218,12 +213,12 @@ def depots_of_clients(selectedClients: List[str] = Depends(parse_client_list)): 
 		for client in params["clients"]:
 			response[client] = get_configserver_id()
 
-		return { "data": response }
+		return {"data": response}
 
 
 @client_router.post("/api/opsidata/clients")
 @rest_api
-def create_client(request: Request, client: Client): # pylint: disable=too-many-locals
+def create_client(request: Request, client: Client):  # pylint: disable=too-many-locals
 	"""
 	Create OPSI-Client.
 	"""
@@ -236,12 +231,11 @@ def create_client(request: Request, client: Client): # pylint: disable=too-many-
 
 	try:
 		with mysql.session() as session:
-			query = insert(table(
-					"HOST",
-					column("type"),
-					*[column(key) for key in vars(client).keys()] # pylint: disable=consider-iterating-dictionary
-				))\
-				.values(values)
+			query = insert(
+				table(
+					"HOST", column("type"), *[column(key) for key in vars(client).keys()]  # pylint: disable=consider-iterating-dictionary
+				)
+			).values(values)
 			session.execute(query)
 
 		headers = {"Location": f"{request.url}/{client.hostId}"}
@@ -263,21 +257,18 @@ def create_client(request: Request, client: Client): # pylint: disable=too-many-
 	except IntegrityError as err:
 		logger.error("Could not create client object.")
 		logger.error(err)
-		raise  OpsiApiException(
-			message = f"Could not create client object. Client '{client.hostId}'' already exists",
-			http_status = status.HTTP_409_CONFLICT,
-			error=err
+		raise OpsiApiException(
+			message=f"Could not create client object. Client '{client.hostId}'' already exists",
+			http_status=status.HTTP_409_CONFLICT,
+			error=err,
 		) from err
 
-	except Exception as err: # pylint: disable=broad-except
+	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could not create client object.")
 		logger.error(err)
 		raise OpsiApiException(
-			message = "Could not create client object.",
-			http_status = status.HTTP_500_INTERNAL_SERVER_ERROR,
-			error=err
+			message="Could not create client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 		) from err
-
 
 
 @client_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
@@ -289,7 +280,10 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 
 	with mysql.session() as session:
 		try:
-			query = select(text("""
+			query = (
+				select(
+					text(
+						"""
 				h.hostId AS hostId,
 				h.type AS type,
 				h.description AS description,
@@ -301,9 +295,12 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 				h.lastSeen AS lastSeen,
 				h.opsiHostKey AS opsiHostKey,
 				h.oneTimePassword AS oneTimePassword
-			"""))\
-			.select_from(text("`HOST` AS h"))\
-			.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'")) # pylint: disable=redefined-outer-name
+			"""
+					)
+				)
+				.select_from(text("`HOST` AS h"))
+				.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'"))
+			)  # pylint: disable=redefined-outer-name
 
 			result = session.execute(query)
 			result = result.fetchone()
@@ -312,22 +309,20 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 				for key in data.keys():
 					if isinstance(data.get(key), (date, datetime)):
 						data[key] = data.get(key).strftime("%Y-%m-%d %H:%M:%S")
-				return { "data": data }
+				return {"data": data}
 			logger.error("Client with id '%s' not found.", clientid)
 			raise OpsiApiException(
-				message =f"Client with id '{clientid}' not found.",
-				http_status = status.HTTP_404_NOT_FOUND,
+				message=f"Client with id '{clientid}' not found.",
+				http_status=status.HTTP_404_NOT_FOUND,
 			)
 
-		except Exception as err: # pylint: disable=broad-except
+		except Exception as err:  # pylint: disable=broad-except
 			if isinstance(err, OpsiApiException):
 				raise err
 			logger.error("Could not get client object.")
 			logger.error(err)
 			raise OpsiApiException(
-				message = "Could not get client object.",
-				http_status = status.HTTP_500_INTERNAL_SERVER_ERROR,
-				error=err
+				message="Could not get client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 			) from err
 
 
@@ -340,11 +335,17 @@ def delete_client(clientid: str):
 
 	with mysql.session() as session:
 		try:
-			query = select(text("""
+			query = (
+				select(
+					text(
+						"""
 				h.hostId AS hostId
-			"""))\
-			.select_from(text("`HOST` AS h"))\
-			.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'")) # pylint: disable=redefined-outer-name
+			"""
+					)
+				)
+				.select_from(text("`HOST` AS h"))
+				.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'"))
+			)  # pylint: disable=redefined-outer-name
 
 			result = session.execute(query)
 			result = result.fetchone()
@@ -353,30 +354,20 @@ def delete_client(clientid: str):
 				logger.info("Client does not exist")
 				logger.error("Client with id '%s' not found.", clientid)
 				raise OpsiApiException(
-					message = f"Client with id '{clientid}' not found.",
-					http_status = status.HTTP_404_NOT_FOUND,
+					message=f"Client with id '{clientid}' not found.",
+					http_status=status.HTTP_404_NOT_FOUND,
 				)
 
-			tables = [
-				"OBJECT_TO_GROUP",
-				"CONFIG_STATE",
-				"PRODUCT_PROPERTY_STATE"
-			]
+			tables = ["OBJECT_TO_GROUP", "CONFIG_STATE", "PRODUCT_PROPERTY_STATE"]
 
 			for table_name in tables:
-				query = delete(table(table_name))\
-				.where(text(f"objectId = '{clientid}'"))
+				query = delete(table(table_name)).where(text(f"objectId = '{clientid}'"))
 				session.execute(query)
 
-			tables = [
-				"PRODUCT_ON_CLIENT",
-				"LICENSE_ON_CLIENT",
-				"SOFTWARE_CONFIG"
-			]
+			tables = ["PRODUCT_ON_CLIENT", "LICENSE_ON_CLIENT", "SOFTWARE_CONFIG"]
 
 			for table_name in tables:
-				query = delete(table(table_name))\
-				.where(text(f"clientId = '{clientid}'"))
+				query = delete(table(table_name)).where(text(f"clientId = '{clientid}'"))
 				session.execute(query)
 
 			tables = [
@@ -411,28 +402,24 @@ def delete_client(clientid: str):
 				"HARDWARE_CONFIG_TPM",
 				"HARDWARE_CONFIG_USB_CONTROLLER",
 				"HARDWARE_CONFIG_USB_DEVICE",
-				"HARDWARE_CONFIG_VIDEO_CONTROLLER"
+				"HARDWARE_CONFIG_VIDEO_CONTROLLER",
 			]
 
 			for table_name in tables:
-				query = delete(table(table_name))\
-				.where(text(f"hostId = '{clientid}'"))
+				query = delete(table(table_name)).where(text(f"hostId = '{clientid}'"))
 				session.execute(query)
 
-			query = delete(table("HOST"))\
-			.where(text(f"HOST.hostId = '{clientid}' and HOST.type = 'OpsiClient'"))
+			query = delete(table("HOST")).where(text(f"HOST.hostId = '{clientid}' and HOST.type = 'OpsiClient'"))
 			session.execute(query)
 			execute_on_secondary_backends("host_delete", id=clientid)
 
 			return {"http_status": status.HTTP_200_OK}
 
-		except Exception as err: # pylint: disable=broad-except
+		except Exception as err:  # pylint: disable=broad-except
 			if isinstance(err, OpsiApiException):
 				raise err
 			logger.error("Could not delete client object.")
 			logger.error(err)
 			raise OpsiApiException(
-				message = "Could not delete client object.",
-				http_status = status.HTTP_500_INTERNAL_SERVER_ERROR,
-				error=err
+				message="Could not delete client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 			) from err
