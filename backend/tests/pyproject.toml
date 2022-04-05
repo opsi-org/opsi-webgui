@@ -1,0 +1,8 @@
+[tool.black]
+line-length = 140
+target-version = ['py310']
+use-tabs = true
+
+[tool.isort]
+profile = "black"
+
