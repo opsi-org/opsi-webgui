@@ -5,9 +5,9 @@
 # $3: test-full-extension           e.g. .test.integration.js
 # $4: playwright-config-path(rel)   e.g. .config/playwright-all-components.js
 file=$1
-file_ext=$2
-file_ext_new=$3
-npm_command=$4
+# file_ext=$2
+file_ext_new=$2
+npm_command=$3
 
 # import bash-aliases to be able to use npm-uib
 shopt -s expand_aliases
