@@ -1,9 +1,9 @@
-
 [
     {
         "clientId": "pytest-client-2.uib.local",
         "ident": "pytest-client-2.uib.local",
         "macAddress": "af:fe:af:fe:af:f2",
+        "ipAddress": null,
         "description": "description client2",
         "notes": "notes client2",
         "version_outdated": 0,
@@ -17,6 +17,7 @@
         "clientId": "pytest-client-3.uib.local",
         "ident": "pytest-client-3.uib.local",
         "macAddress": "af:fe:af:fe:af:f3",
+        "ipAddress": null,
         "description": "description client3",
         "notes": "notes client3",
         "version_outdated": 0,
