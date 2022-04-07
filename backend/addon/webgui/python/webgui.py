@@ -10,12 +10,17 @@ webgui
 
 from typing import Optional
 
-from fastapi import Request, APIRouter, status
-from fastapi.responses import JSONResponse, PlainTextResponse
-
+from fastapi import APIRouter, Request, status
+from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from opsiconfd import contextvar_client_session
-from opsiconfd.backend import get_backend, get_mysql
-from opsiconfd.application.utils import get_allowed_objects, build_tree, get_username, get_configserver_id
+from opsiconfd.application.utils import (
+	build_tree,
+	get_allowed_objects,
+	get_configserver_id,
+	get_username,
+)
+from opsiconfd.backend import get_backend
+
 from .utils import mysql
 
 webgui_router = APIRouter()
@@ -75,7 +80,7 @@ async def user_create_activity(request: Request):
 		pass
 	if request_data.get("type").lower() == "login":
 		pass
-	return JSONResponse({"result":{}})
+	return JSONResponse({"result": {}})
 
 
 @webgui_router.get("/api/user/opsiserver")
