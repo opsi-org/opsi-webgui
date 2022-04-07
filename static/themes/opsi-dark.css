@@ -4339,7 +4339,7 @@ input[type="submit"].btn-block {
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   list-style: none;
-  background-color: #e9ecef;
+  background-color: transparent;
   border-radius: 0.25rem;
 }
 .breadcrumb-item {
@@ -4351,17 +4351,14 @@ input[type="submit"].btn-block {
 .breadcrumb-item + .breadcrumb-item::before {
   display: inline-block;
   padding-right: 0.5rem;
-  color: #6c757d;
+  color: #fff;
   content: "/";
-}
-.breadcrumb-item + .breadcrumb-item:hover::before {
-  text-decoration: underline;
 }
 .breadcrumb-item + .breadcrumb-item:hover::before {
   text-decoration: none;
 }
 .breadcrumb-item.active {
-  color: #6c757d;
+  color: #fff;
 }
 .pagination {
   display: flex;

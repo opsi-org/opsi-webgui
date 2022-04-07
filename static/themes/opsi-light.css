@@ -4338,7 +4338,7 @@ input[type="submit"].btn-block {
   padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   list-style: none;
-  background-color: #e9ecef;
+  background-color: transparent;
   border-radius: 0.25rem;
 }
 .breadcrumb-item {
@@ -4388,7 +4388,7 @@ input[type="submit"].btn-block {
 .page-link:focus {
   z-index: 3;
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0, 101, 153, 0.25);
+  box-shadow: 0 0 0 0.2rem #00659940;
 }
 .page-item:first-child .page-link {
   margin-left: 0;
