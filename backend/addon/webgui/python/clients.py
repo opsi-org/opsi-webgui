@@ -13,6 +13,7 @@ from ipaddress import IPv4Address, IPv6Address
 from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
+from OPSI.Object import OpsiClient
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends
 from opsiconfd.logging import logger
@@ -239,26 +240,22 @@ def create_client(request: Request, client: Client):  # pylint: disable=too-many
 			session.execute(query)
 
 		headers = {"Location": f"{request.url}/{client.hostId}"}
-		execute_on_secondary_backends(
-			"host_createOpsiClient",
-			id=values.get("hostid"),
-			opsiHostKey=values.get("opsiHostKey"),
-			description=values.get("description"),
-			notes=values.get("notes"),
-			hardwareAddress=values.get("hardwareAddress"),
-			ipAddress=values.get("ipAddress"),
-			inventoryNumber=values.get("inventoryNumber"),
-			oneTimePassword=values.get("oneTimePassword"),
-			created=values.get("created"),
-			lastSeen=values.get("lastSeen"),
-		)
+
+		client_data = {
+			"id": values.get("hostId"),
+			"hardwareAddress": values.get("hardwareAddress"),
+			"ipAddress": values.get("ipAddress")
+		}
+
+		execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
+
 		return {"http_status": status.HTTP_201_CREATED, "headers": headers, "data": values}
 
 	except IntegrityError as err:
 		logger.error("Could not create client object.")
 		logger.error(err)
 		raise OpsiApiException(
-			message=f"Could not create client object. Client '{client.hostId}'' already exists",
+			message=f"Could not create client object. Client '{client.hostId}' already exists",
 			http_status=status.HTTP_409_CONFLICT,
 			error=err,
 		) from err
