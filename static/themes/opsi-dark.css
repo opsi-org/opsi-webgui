@@ -64,7 +64,7 @@ body {
   line-height: 1.5;
   color: #f8f9fa;
   text-align: left;
-  background-color: #343a40;
+  background-color: #40464e;
 }
 [tabindex="-1"]:focus:not(:focus-visible) {
   outline: 0 !important;
@@ -1507,7 +1507,8 @@ pre code {
 .table-primary,
 .table-primary > td,
 .table-primary > th {
-  background-color: #b8d4e2;
+  color: #fff;
+  background-color: #5d6468;
 }
 .table-primary tbody + tbody,
 .table-primary td,
