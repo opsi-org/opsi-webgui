@@ -4405,8 +4405,9 @@ input[type="submit"].btn-block {
   border-color: #006599;
 }
 .page-item.disabled .page-link {
+  background-color: #006599;
   color: #fff;
-  background-color: #6c757d;
+  /* background-color: #6c757d; */
   pointer-events: none;
   cursor: auto;
   border-color: #6c757d;
