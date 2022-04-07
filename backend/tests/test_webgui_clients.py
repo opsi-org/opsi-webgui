@@ -9,19 +9,24 @@
 test opsiconfd webgui products
 """
 
-import socket
-import pytest
-import requests
 import json
 import os
+import socket
 from datetime import datetime
+
+import pytest
+import requests
 from fastapi import status
 from starlette.status import HTTP_200_OK, HTTP_409_CONFLICT
 
-
-from .utils import ( # pylint: disable=unused-import
-	config, clean_redis, database_connection, create_check_data, disable_request_warning,
-	ADMIN_USER, ADMIN_PASS
+from .utils import (  # pylint: disable=unused-import
+    ADMIN_PASS,
+    ADMIN_USER,
+    clean_redis,
+    config,
+    create_check_data,
+    database_connection,
+    disable_request_warning,
 )
 
 API_ROOT = "/addons/webgui/api/opsidata"
@@ -152,7 +157,7 @@ async def test_clients_create_integrity_error(config): # pylint: disable=too-man
 	res_body = res.json()
 	assert res.status_code == status.HTTP_409_CONFLICT
 	assert res_body.get("class") == "IntegrityError"
-	assert res_body.get("message") == "Could not create client object. Client 'myclient.test.local'' already exists"
+	assert res_body.get("message") == "Could not create client object. Client 'myclient.test.local' already exists"
 
 
 test_data = [
