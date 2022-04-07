@@ -61,7 +61,7 @@ const settings = namespace('settings')
   padding-right: 1em !important;
   list-style: none;
 }
-.dd_lang a {
+/* .dd_lang a {
   color: inherit !important
-}
+} */
 </style>
