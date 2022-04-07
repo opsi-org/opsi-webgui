@@ -1752,10 +1752,8 @@ pre code {
   line-height: 1.5;
   color: #fff;
   background-color: #495057;
-  /* color: #495057;
-  background-color: #fff; */
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: 1px solid #495057;
   border-radius: 0.25rem;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -1775,22 +1773,18 @@ pre code {
 .form-control:focus {
   color: #fff;
   background-color: #495057;
-  /* color: #495057;
-  background-color: #fff; */
   border-color: #1ab1ff;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(0, 101, 153, 0.25);
 }
 .form-control::placeholder {
   color: #fff;
-  /* color: #6c757d; */
   opacity: 1;
 }
 .form-control:disabled,
 .form-control[readonly] {
   color: #fff;
   background-color: #495057;
-  /* background-color: #e9ecef; */
   opacity: 1;
 }
 input[type="date"].form-control,
@@ -1802,8 +1796,6 @@ input[type="time"].form-control {
 select.form-control:focus::-ms-value {
   color: #fff;
   background-color: #495057;
-  /* color: #495057;
-  background-color: #fff; */
 }
 .form-control-file,
 .form-control-range {
@@ -2851,10 +2843,10 @@ input[type="submit"].btn-block {
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
   font-size: 1rem;
-  color: #212529;
   text-align: left;
   list-style: none;
-  background-color: #fff;
+  color: #fff;
+  background-color: #495057;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 0.25rem;
@@ -2999,23 +2991,22 @@ input[type="submit"].btn-block {
   padding: 0.25rem 1.5rem;
   clear: both;
   font-weight: 400;
-  color: #212529;
+  color: #fff;
+  background-color: #495057;
   text-align: inherit;
   white-space: nowrap;
-  background-color: transparent;
   border: 0;
 }
 .dropdown-item:focus,
 .dropdown-item:hover {
-  color: #16181b;
+  color: #495057;
+  background-color: #fff;
   text-decoration: none;
-  background-color: #f8f9fa;
 }
 .dropdown-item.active,
 .dropdown-item:active {
-  color: #fff;
   text-decoration: none;
-  background-color: #006599;
+  color: #006599;
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {
@@ -3037,7 +3028,8 @@ input[type="submit"].btn-block {
 .dropdown-item-text {
   display: block;
   padding: 0.25rem 1.5rem;
-  color: #212529;
+  color: #fff;
+  background-color: #495057;
 }
 .btn-group,
 .btn-group-vertical {
