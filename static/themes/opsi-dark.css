@@ -4373,16 +4373,16 @@ input[type="submit"].btn-block {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #006599;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
+  background-color: #006599;
+  color: #fff;
+  border: 1px solid #006599;
 }
 .page-link:hover {
   z-index: 2;
-  color: #00334d;
+  background-color: #5f6163;
+  color: #fff;
   text-decoration: none;
-  background-color: #e9ecef;
-  border-color: #dee2e6;
+  border-color: #006599;
 }
 .page-link:focus {
   z-index: 3;
@@ -4401,15 +4401,15 @@ input[type="submit"].btn-block {
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
-  background-color: #006599;
+  background-color: #00334d;
   border-color: #006599;
 }
 .page-item.disabled .page-link {
-  color: #6c757d;
+  color: #fff;
+  background-color: #6c757d;
   pointer-events: none;
   cursor: auto;
-  background-color: #fff;
-  border-color: #dee2e6;
+  border-color: #6c757d;
 }
 .pagination-lg .page-link {
   padding: 0.75rem 1.5rem;
