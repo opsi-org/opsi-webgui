@@ -1467,25 +1467,25 @@ pre code {
 .table th {
   padding: 0.75rem;
   vertical-align: top;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid #000;
 }
 .table thead th {
   vertical-align: bottom;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid #000;
 }
 .table tbody + tbody {
-  border-top: 2px solid #dee2e6;
+  border-top: 2px solid #000;
 }
 .table-sm td,
 .table-sm th {
   padding: 0.3rem;
 }
 .table-bordered {
-  border: 1px solid #dee2e6;
+  border: 1px solid #000;
 }
 .table-bordered td,
 .table-bordered th {
-  border: 1px solid #dee2e6;
+  border: 1px solid #000;
 }
 .table-bordered thead td,
 .table-bordered thead th {
@@ -1498,11 +1498,11 @@ pre code {
   border: 0;
 }
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: #000;
 }
 .table-hover tbody tr:hover {
   color: #212529;
-  background-color: rgba(0, 0, 0, 0.075);
+  background-color: #000;
 }
 .table-primary,
 .table-primary > td,
@@ -1514,7 +1514,7 @@ pre code {
 .table-primary td,
 .table-primary th,
 .table-primary thead th {
-  border-color: #7aafca;
+  border-color: #000;
 }
 .table-hover .table-primary:hover {
   background-color: #a6c9db;
@@ -1774,7 +1774,7 @@ pre code {
 .form-control:focus {
   color: #ffffffb4;
   background-color: #495057;
-  border-color: #1ab1ff;
+  border-color: #006599;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(0, 101, 153, 0.25);
 }
@@ -3450,17 +3450,15 @@ input[type="submit"].btn-block {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #495057;
   vertical-align: middle;
-  background: #fff
-    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
-    no-repeat right 0.75rem center/8px 10px;
-  border: 1px solid #ced4da;
+  color: #ffffffb4;
+  background-color: #495057;
+  border: 1px solid #495057;
   border-radius: 0.25rem;
   appearance: none;
 }
 .custom-select:focus {
-  border-color: #1ab1ff;
+  border-color: #006599;
   outline: 0;
   box-shadow: 0 0 0 0.2rem rgba(0, 101, 153, 0.25);
 }
@@ -3724,7 +3722,7 @@ input[type="submit"].btn-block {
   cursor: default;
 }
 .nav-tabs {
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #000;
 }
 .nav-tabs .nav-item {
   margin-bottom: -1px;
@@ -3739,7 +3737,7 @@ input[type="submit"].btn-block {
 .nav-tabs .nav-link:hover {
   color: #495057;
   background-color: #ffffffb4;
-  border-color: #495057;
+  border-color: #000;
 }
 .nav-tabs .nav-link.disabled {
   color: #6c757d;
@@ -3748,9 +3746,9 @@ input[type="submit"].btn-block {
 }
 .nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
-  background-color: #495057;
-  color: #ffffffb4;
-  border-color: #ffffffb4;
+  background-color: #006599;
+  color: #fff;
+  border-color: #000;
   border-bottom: #495057;
 }
 .nav-tabs .dropdown-menu {
@@ -4151,9 +4149,10 @@ input[type="submit"].btn-block {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  color: #ffffffb4;
+  background-color: #40464e;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid #40464e;
   border-radius: 0.25rem;
 }
 .card > hr {
@@ -4377,16 +4376,16 @@ input[type="submit"].btn-block {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  background-color: #40464e;
+  background-color: #495057;
   color: #ffffffb4;
-  border: 1px solid #006599;
+  border: 1px solid #495057;
 }
 .page-link:hover {
   z-index: 2;
   background-color: #5f6163;
   color: #ffffffb4;
   text-decoration: none;
-  border-color: #40464e;
+  border-color: #495057;
 }
 .page-link:focus {
   z-index: 3;
@@ -4406,14 +4405,14 @@ input[type="submit"].btn-block {
   z-index: 3;
   color: #fff;
   background-color: #006599;
-  border-color: #006599;
+  border-color: #495057;
 }
 .page-item.disabled .page-link {
-  background-color: #40464e;
+  background-color: #495057;
   color: #ffffffb4;
   pointer-events: none;
   cursor: auto;
-  border-color: #006599;
+  border-color: #495057;
 }
 .pagination-lg .page-link {
   padding: 0.75rem 1.5rem;
