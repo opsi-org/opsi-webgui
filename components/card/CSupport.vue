@@ -1,12 +1,12 @@
 <template>
   <div data-testid="CardCSupport">
-    <b-card :sub-title="$t(item.title)">
+    <b-card :title="$t(item.title)">
       <b-row>
         <b-col md="8">
           <span class="carddescription"> {{ $t(item.description) }} </span>
         </b-col>
         <b-col md="4">
-          <a class="btn btn-default border carddescription" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
+          <a class="btn btn-outline-primary border carddescription" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
         </b-col>
       </b-row>
     </b-card>
