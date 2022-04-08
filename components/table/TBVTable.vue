@@ -36,7 +36,6 @@
           v-model="row.value"
           :aria-label="row.value"
           type="text"
-          class="forminput"
           size="sm"
           readonly
         />
@@ -74,7 +73,7 @@ export default class BVTable extends Vue {
 }
 
 .bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
-  width: 20%;
+  width: 25%;
   font-weight: normal;
 }
 .bvtable_small{
@@ -86,8 +85,5 @@ export default class BVTable extends Vue {
   /* max-height: 64vh; */
   max-height: 610px;
   overflow-y: auto;
-}
-.forminput.form-control[readonly] {
-  background-color: white;
 }
 </style>

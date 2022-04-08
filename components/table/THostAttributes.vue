@@ -11,7 +11,7 @@
     >
       <template #cell(opsiHostKey)="row">
         <b-input-group>
-          <b-button :pressed.sync="showValue" size="sm" variant="transparent">
+          <b-button :pressed.sync="showValue" size="sm" variant="primary">
             <span class="sr-only">{{ showValue? 'Hide opsiHostKey': 'Show opsiHostKey' }}</span>
             <b-icon v-if="showValue" :icon="iconnames.valueShow" />
             <b-icon v-else :icon="iconnames.valueHide" />
