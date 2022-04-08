@@ -3735,8 +3735,8 @@ input[type="submit"].btn-block {
 }
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover {
-  color: #495057;
-  background-color: #ffffffb4;
+  color: #ffffffb4;
+  background-color: #5f6163;
   border-color: #000;
 }
 .nav-tabs .nav-link.disabled {
