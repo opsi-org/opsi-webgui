@@ -4377,16 +4377,16 @@ input[type="submit"].btn-block {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  background-color: #006599;
-  color: #fff;
+  background-color: #40464e;
+  color: #ffffffb4;
   border: 1px solid #006599;
 }
 .page-link:hover {
   z-index: 2;
   background-color: #5f6163;
-  color: #fff;
+  color: #ffffffb4;
   text-decoration: none;
-  border-color: #006599;
+  border-color: #40464e;
 }
 .page-link:focus {
   z-index: 3;
@@ -4405,16 +4405,15 @@ input[type="submit"].btn-block {
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
-  background-color: #00334d;
+  background-color: #006599;
   border-color: #006599;
 }
 .page-item.disabled .page-link {
-  background-color: #006599;
-  color: #fff;
-  /* background-color: #6c757d; */
+  background-color: #40464e;
+  color: #ffffffb4;
   pointer-events: none;
   cursor: auto;
-  border-color: #6c757d;
+  border-color: #006599;
 }
 .pagination-lg .page-link {
   padding: 0.75rem 1.5rem;
