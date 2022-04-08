@@ -408,8 +408,10 @@ def delete_client(clientid: str):
 
 			query = delete(table("HOST")).where(text(f"HOST.hostId = '{clientid}' and HOST.type = 'OpsiClient'"))
 			session.execute(query)
-			execute_on_secondary_backends("host_delete", id=clientid)
 
+			client_data = {"id": clientid}
+
+			execute_on_secondary_backends("host_deleteObjects", [OpsiClient(**client_data)])
 			return {"http_status": status.HTTP_200_OK}
 
 		except Exception as err:  # pylint: disable=broad-except
