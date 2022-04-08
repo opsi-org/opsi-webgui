@@ -48,18 +48,6 @@
               <b-icon :icon="iconnames. productsFailedActionResult" />
             </div>
           </template>
-          <!-- <template #head(actionResult_failed)="data">
-            <small> <b>{{ data.label }} </b> </small>
-            <ButtonBTNRowLinkTo
-              title="Show failed products"
-              :icon="iconname.product"
-              to="/clients/products"
-              sortby="actionResult"
-              ident="dummyid"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-          </template> -->
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
