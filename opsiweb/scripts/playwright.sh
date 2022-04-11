@@ -21,13 +21,18 @@ echo ""
 echo ""
 cd /workspace/opsiweb/
 # build filename of testfile
-echo "filename: ${file} - change extension from '${file_ext}' to '${file_ext_new}'"
+echo "filename: ${file} - change file-extension to '${file_ext_new}'"
 # testfile=$(sed 's/'"$file_ext"'/'"$file_ext_new"'/g' <<<"$file")
 dots=$(echo "${file}" | grep -o "\." | wc -l)
-if [ ${dots} = '1' ]; then
+if [ ${dots} = '3' ]; then
+    testfile="${file%.*.*.*}${file_ext_new}"
+elif [ ${dots} = '2' ]; then
+    testfile="${file%.*.*}${file_ext_new}"
+elif [ ${dots} = '1' ]; then
     testfile="${file%.*}${file_ext_new}"
 else
-    testfile="${file%.*.*}${file_ext_new}"
+    echo "Cannot create testfile-filename"
+    exit -1
 fi
 echo "---> testing file: $testfile"
 
