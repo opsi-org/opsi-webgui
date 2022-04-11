@@ -26,7 +26,7 @@
         </div>
       </div>
       <b-navbar-nav class="ml-auto">
-        <b-button v-if="redirectOnCloseTo" class="closebtn" variant="transparent" :to="redirectOnCloseTo">
+        <b-button v-if="redirectOnCloseTo" class="closebtn border-0" variant="outline-primary" :to="redirectOnCloseTo">
           <span class="sr-only">{{ $t('button.close') }}</span>
           <b-icon :icon="iconnames.x" />
         </b-button>

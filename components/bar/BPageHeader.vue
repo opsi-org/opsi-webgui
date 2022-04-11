@@ -14,9 +14,9 @@
     <slot name="left" />
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
-      <b-button v-if="closeroute" class="closeButton" variant="primary" :to="closeroute">
-        <span class="sr-only">Close</span>
-        <b-icon shift-v="1" shift-h="-8" :icon="iconnames.x" />
+      <b-button v-if="closeroute" class="closeButton border-0" variant="outline-primary" :to="closeroute">
+        <span class="sr-only">{{ $t('button.close') }}</span>
+        <b-icon :icon="iconnames.x" />
       </b-button>
     </b-navbar-nav>
   </b-navbar>
@@ -41,8 +41,7 @@ export default class BPageHeader extends Vue {
 
 <style>
 .closeButton {
-  height:20px;
-  width: 20px;
+  max-height: 25px;
 }
 .BPageHeader_Navbar.navbar {
   z-index: inherit !important;
