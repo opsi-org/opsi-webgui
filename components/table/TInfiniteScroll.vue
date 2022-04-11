@@ -283,7 +283,8 @@ export default class TInfiniteScroll extends Vue {
 .noscroll.b-table-sticky-header {
   max-height: 70vh;
 } */
-/* .b-table-sticky-header thead > tr:last-child{
-  background-color: var(--primary) !important;
-} */
+.b-table-sticky-header thead > tr:last-child{
+  /* background-color: var(--primary) !important; */
+  background-color: var(--header) !important;
+}
 </style>
