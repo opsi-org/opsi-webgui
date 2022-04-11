@@ -1,19 +1,7 @@
 import Cookie from 'js-cookie'
 import { Component, Vue } from 'nuxt-property-decorator'
 
-// const _icons = {
-//   depot: 'server',
-//   client: 'laptop',
-//   product: 'grid',
-//   changes: 'list-check',
-//   support: 'headset',
-//   settings: 'gear',
-//   settingsobject: 'gear',
-//   columns: 'grid3x3',
-//   arrowDownDouble: 'chevron-double-down'
-// }
-@Component
-export class Synchronization extends Vue {
+@Component export class Synchronization extends Vue {
   syncSort (fromSort, toSort, emitToSort, id) {
     if (fromSort.filterQuery && toSort.filterQuery !== fromSort.filterQuery) {
       toSort.filterQuery = fromSort.filterQuery
@@ -30,8 +18,7 @@ export class Synchronization extends Vue {
   }
 }
 
-@Component
-export class Constants extends Vue {
+@Component export class Constants extends Vue {
   // iconnames: any = _icons
   iconnames: any = {
     depot: 'server',

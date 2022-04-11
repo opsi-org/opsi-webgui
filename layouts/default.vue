@@ -9,9 +9,9 @@
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
-      <h3 class="text-capitalize">
-        <BarBBreadcrumb v-if="$mq != 'mobile'" />
-      </h3>
+      <h5 class="text-capitalize">
+        <BarBBreadcrumbRow v-if="$mq != 'mobile'" />
+      </h5>
       <Nuxt />
     </div>
   </div>
