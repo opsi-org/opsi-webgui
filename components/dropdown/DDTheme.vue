@@ -1,10 +1,11 @@
 <template>
-  <div class="btn btn-primary dd_theme text-left">
+  <!-- class="btn btn-primary dd_theme text-left" -->
+  <div class="dd_theme">
     <label for="theme" class="sr-only"> Theme </label>
+    <!-- style="height:100%;margin:0px;max-width:150px;" -->
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"
-      style="height:100%;margin:0px;max-width:150px;"
       variant="primary"
       :text="theme.title"
       alt="select theme"
@@ -24,8 +25,8 @@
       :text="theme.title"
       size="sm"
       style="width:150px;"
+      variant="outline-primary"
       :dropup="dropup"
-      variant="primary"
     >
       <b-dropdown-item
         v-for="t in themes"
@@ -47,6 +48,7 @@ const settings = namespace('settings')
 @Component export default class DDTheme extends Vue {
   @Prop({ default: false }) dropup!: boolean
   @Prop({ default: false }) navbar!: boolean
+  t: string = ''
   themes: Array<ITheme> = [
     // Created with https://bootstrap.build/app :
     // Used from https://bootswatch.com/ :
@@ -81,6 +83,7 @@ const settings = namespace('settings')
 
 <style>
 .dd_theme{
+  margin-top: 3px;
   padding-left: 1em !important;
   padding-right: 1em !important;
 }
