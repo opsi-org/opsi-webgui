@@ -18,6 +18,7 @@
         :disable="t.title==theme"
         @click="theme = t;"
       >
+        <b-icon v-if="t.icon" :icon="t.icon" />
         {{ t.title }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
@@ -35,6 +36,7 @@
         :disable="t.title==theme"
         @click="theme = t;"
       >
+        <b-icon v-if="t.icon" :icon="t.icon" />
         {{ t.title }}
       </b-dropdown-item>
     </b-dropdown>
@@ -53,8 +55,8 @@ const settings = namespace('settings')
   themes: Array<ITheme> = [
     // Created with https://bootstrap.build/app :
     // Used from https://bootswatch.com/ :
-    { title: 'dark', rel: 'themes/opsi-dark.css' },
-    { title: 'light', rel: 'themes/opsi-light.css' },
+    { title: 'dark', rel: 'themes/opsi-dark.css', icon: 'moon' },
+    { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' },
     { title: 'Bootswatch-Cerulean', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css' },
     { title: 'Bootswatch-Cosmo', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css' },
     { title: 'Bootswatch-Lumen', rel: 'https://bootswatch.com/3/lumen/bootstrap.min.css' },

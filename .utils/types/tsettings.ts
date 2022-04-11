@@ -7,5 +7,6 @@ export interface ISidebarAttributes {
 export interface ITheme {
     title: string
     rel: string
+    icon?: string
     timestamp?: number
 }
