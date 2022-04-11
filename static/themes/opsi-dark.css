@@ -2993,7 +2993,7 @@ input[type="submit"].btn-block {
   padding: 0.25rem 1.5rem;
   clear: both;
   font-weight: 400;
-  color: #fff;
+  color: #ffffffb4;
   background-color: #495057;
   text-align: inherit;
   white-space: nowrap;
@@ -3001,8 +3001,8 @@ input[type="submit"].btn-block {
 }
 .dropdown-item:focus,
 .dropdown-item:hover {
-  color: #495057;
-  background-color: #fff;
+  color: #ffffffb4;
+  background-color: #5f6163;
   text-decoration: none;
 }
 .dropdown-item.active,
