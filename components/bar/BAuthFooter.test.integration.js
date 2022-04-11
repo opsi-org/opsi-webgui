@@ -8,6 +8,7 @@ const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
 test('bar bauthfooter snapshot', async ({ page }) => {
   await callStoryId(page, 'bar-b-auth-footer', 'b-auth-footer')
-  await page.evaluate(() => { document.querySelector('.BAuthFooter-version').innerHTML = 'x.x.x' })
-  expect(await page.screenshot()).toMatchSnapshot('bar-bauthfooter.png')
+  const component = await page.locator('[data-testid="BarBAuthFooter"]')
+  await component.evaluate(() => { document.querySelector('.BAuthFooter-version').innerHTML = 'x.x.x' })
+  expect(await page.screenshot()).toMatchSnapshot('BAuthFooter.png')
 })
