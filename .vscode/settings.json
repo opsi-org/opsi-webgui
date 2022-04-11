@@ -79,23 +79,25 @@
   //   // { "match": ".*", "cmd": "echo 'I am ${env.USERNAME}.'" }
   // ],
   "actionButtons": {
-    "defaultColor": "#ff0034", // Can also use string color names.
+    "defaultColor": "orange", // Can also use string color names.
     "loadNpmCommands":false, // Disables automatic generation of actions for npm commands.
     "reloadButton":null, // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
     "commands": [
       {
-        "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        "name": "Run UI Test",
-        "color": "white",
+        "name": "$(testing-run-icon)",
+        "tooltip": "Run UI Test on opened file",
         "singleInstance": true,
-        "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components", // This is executed in the terminal.
+        "color": "defaultColor",
+        "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
+        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components", // This is executed in the terminal.
       },
       {
         "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        "name": "Update UI Snapshot",
+        "name": "$(device-camera)",
+        "tooltip": "Update UI Snapshot",
         "color": "white",
         "singleInstance": true,
-        "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update", // This is executed in the terminal.
+        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components:update", // This is executed in the terminal.
       },
     ]
   },
