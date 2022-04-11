@@ -89,7 +89,7 @@
         "singleInstance": true,
         "color": "defaultColor",
         "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components", // This is executed in the terminal.
+        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components-devices", // This is executed in the terminal.
       },
       {
         "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
@@ -97,7 +97,7 @@
         "tooltip": "Update UI Snapshot",
         "color": "white",
         "singleInstance": true,
-        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components:update", // This is executed in the terminal.
+        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components-devices:update", // This is executed in the terminal.
       },
     ]
   },

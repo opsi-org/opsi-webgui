@@ -12,3 +12,5 @@ dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i
 printf "${ORANGE}[install.sh] install playwright...${NC}\n"
 dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i -D @playwright/test
 npx playwright install
+npx playwright install-deps
+
