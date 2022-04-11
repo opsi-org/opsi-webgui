@@ -2,8 +2,8 @@
   <b-row data-testid="GTwoColumnLayout">
     <b-button
       v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
-      class="clients_button border-primary"
-      variant="transparent"
+      class="clients_button"
+      variant="outline-primary"
       :pressed.sync="expandClients"
     >
       <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '': '>>' }}</b></small>
