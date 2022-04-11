@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VModules">
-    <b-row>
+    <b-row class="mb-4">
       <b-col class="text-sm-right" cols="2">
         {{ $t('settingsPage.modules.available') }}
       </b-col>

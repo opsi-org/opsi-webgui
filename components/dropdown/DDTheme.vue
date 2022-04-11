@@ -1,11 +1,12 @@
 <template>
   <!-- class="btn btn-primary dd_theme text-left" -->
-  <div class="dd_theme">
+  <div>
     <label for="theme" class="sr-only"> Theme </label>
     <!-- style="height:100%;margin:0px;max-width:150px;" -->
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"
+      class="dd_theme"
       variant="primary"
       :text="theme.title"
       alt="select theme"
@@ -24,7 +25,7 @@
       v-else
       :text="theme.title"
       size="sm"
-      style="width:150px;"
+      style="width:200px;"
       variant="outline-primary"
       :dropup="dropup"
     >

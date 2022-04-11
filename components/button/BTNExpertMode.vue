@@ -2,7 +2,9 @@
   <b-button
     v-model="localMode"
     data-testid="ButtonBTNExpertMode"
-    variant="primary"
+    variant="transparent"
+    class="border"
+    size="sm"
     :title="$t('button.change.usermode', {mode: (!expert)? $t('userinfo.expert.short') : $t('userinfo.basic.short') })"
     :class="navbar? 'navmodebutton': 'modebutton'"
     :pressed.sync="localMode"
@@ -13,7 +15,7 @@
       <b-icon v-if="expert" :icon="iconnames.usermodeExpert" variant="light" />
       <b-icon v-else :icon="iconnames.usermodeBasic" variant="light" />
     </template>
-    <span v-else>
+    <span v-else class="btntext">
       {{ (expert)? $t('userinfo.expert.short') : $t('userinfo.basic.short') }}
     </span>
   </b-button>
@@ -54,9 +56,12 @@ export default class BTNExpertMode extends Vue {
   width:45px;
 }
 .modebutton{
-  height:45px;
-  margin:0px;
-  width:184px;
+  /* height:45px; */
+  /* margin:0px; */
+  width:200px
+}
+.btntext {
+  color:var(--color)
 }
 
 </style>

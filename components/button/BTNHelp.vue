@@ -3,7 +3,8 @@
     :id="id"
     data-testid="ButtonBTNHelp"
     size="sm"
-    variant="transparent"
+    class="border-0"
+    variant="outline-primary"
   >
     <b-icon :icon="iconnames.help" />
   </b-button>

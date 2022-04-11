@@ -1,7 +1,6 @@
 <template>
   <div data-testid="TTHelpExpert">
-    <b-tooltip :target="target" variant="light">
-      <!-- stacked -->
+    <b-tooltip :target="target">
       <b-table
         id="TTHelpExpertDetails"
         borderless

@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VSettingsLocalSpecific">
-    <b-row>
+    <b-row class="mb-4">
       <b-col class="text-sm-right" cols="2">
         {{ $t('settingsPage.theme') }}
       </b-col>
@@ -8,7 +8,7 @@
         <DropdownDDTheme />
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="mb-4">
       <b-col class="text-sm-right" cols="2">
         <ButtonBTNHelp id="expert-help" />
         {{ $t('settingsPage.mode') }}
