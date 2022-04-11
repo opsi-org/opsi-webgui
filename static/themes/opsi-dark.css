@@ -20,7 +20,8 @@
   --danger: #dc3545;
   --light: #f8f9fa;
   --dark: #343a40;
-  --header:#40464e;
+  --color:#ffffffb4;
+  --background:#40464e;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -1617,7 +1618,9 @@ pre code {
 .table-light,
 .table-light > td,
 .table-light > th {
-  background-color: #fdfdfe;
+  /* 40464e */
+  background-color: transparent;
+  /* background-color: #fdfdfe; */
 }
 .table-light tbody + tbody,
 .table-light td,
@@ -3008,7 +3011,8 @@ input[type="submit"].btn-block {
 .dropdown-item.active,
 .dropdown-item:active {
   text-decoration: none;
-  color: #006599;
+  background-color: #006599;
+  color: #fff;
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {

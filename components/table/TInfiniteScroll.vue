@@ -261,7 +261,8 @@ export default class TInfiniteScroll extends Vue {
   text-align: center;
   height: 200px;
   margin-top: 200px;
-  color: #6c757d;
+  color: var(--color, #6c757d);
+  /* color: #6c757d; */
   font-size: small;
 }
 .table-responsive {
@@ -284,6 +285,6 @@ export default class TInfiniteScroll extends Vue {
   max-height: 70vh;
 } */
 .b-table-sticky-header thead > tr:last-child{
-  background-color: var(--header, var(--primary, white));
+  background-color: var(--background, var(--primary, white));
 }
 </style>
