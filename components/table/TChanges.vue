@@ -3,7 +3,7 @@
     <InputIFilterTChanges :filter.sync="filter" />
     <DivDScrollResult>
       <div v-for="changes, k in groupedById" :key="changes.productId">
-        <b-button v-b-toggle="k" block class="m-1 text-left collapsebtn" variant="light">
+        <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" variant="outline-primary">
           <small><b>{{ k }}</b></small>
           <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
         </b-button>
@@ -22,9 +22,9 @@
             </template>
             <template #cell(_action)="row">
               <ButtonBTNDeleteObj :item="row.item" from="products" />
-              <b-button size="sm" variant="light" :title="$t('button.save')" @click="save(row.item)">
+              <b-button size="sm" class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(row.item)">
                 <span class="sr-only">{{ $t('button.saveall') }}</span>
-                <b-icon :icon="iconnames.save"/>
+                <b-icon :icon="iconnames.save" />
               </b-button>
             </template>
           </TableTBVTable>

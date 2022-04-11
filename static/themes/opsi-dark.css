@@ -1503,8 +1503,8 @@ pre code {
   background-color: #000;
 }
 .table-hover tbody tr:hover {
-  color: #212529;
-  background-color: #000;
+  color: #ffffffb4;
+  background-color: #5f6163;
 }
 .table-primary,
 .table-primary > td,
@@ -5219,7 +5219,9 @@ a.close.disabled {
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: #fff;
+  color: #ffffffb4;
+  background-color: #40464e;
+  /* background-color: #fff; */
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 0.3rem;
