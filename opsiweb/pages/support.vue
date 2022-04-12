@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div>
     <b-row>
       <b-col v-for="item in supportItems" :key="item.title">
         <CardCSupport :item="item" />
