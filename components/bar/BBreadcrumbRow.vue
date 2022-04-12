@@ -1,0 +1,61 @@
+<template>
+  <b-breadcrumb v-if="crumbs.length > 0" data-testid="BarBBreadcrumb" class="View-Breadcrumb" :items="crumbs" />
+</template>
+
+<script lang="ts">
+import { Vue, Component, Prop } from 'nuxt-property-decorator'
+
+@Component
+export default class BBreadcrumbRow extends Vue {
+  @Prop({ default: undefined }) specificItems!: Array<string>|undefined
+
+  // get breadcrumbItems (): Array<string> {
+  //   if (this.$router === null || this.$router === undefined) {
+  //     return []
+  //   } else if (this.$router.currentRoute === null || this.$router.currentRoute === undefined) {
+  //     return []
+  //   } else if (this.$router.currentRoute.name === null || this.$router.currentRoute.name === undefined) {
+  //     return []
+  //   } else {
+  //     return this.$router.currentRoute.name.split('/')
+  //   }
+  // }
+
+  get crumbs (): Array<string> {
+    if (this.specificItems !== undefined) { return this.specificItems }
+    const pathArray : Array<string> = this.$route.path.split('/')
+    pathArray.shift()
+    const items:any = []
+    for (const c in pathArray) {
+      const obj:any = {}
+      switch (pathArray[c]) {
+        case 'support': obj.text = this.$t('title.support') as string; break
+        case 'depots': obj.text = this.$t('title.depots') as string; break
+        case 'config': obj.text = this.$t('title.config') as string; break
+        case 'log': obj.text = this.$t('title.log') as string; break
+        case 'depotsconfig': obj.text = this.$t('title.depotsconfig') as string; break
+        case 'clientsconfig': obj.text = this.$t('title.clientsconfig') as string; break
+        case 'clientslog': obj.text = this.$t('title.clientslog') as string; break
+        case 'clientsaddnew': obj.text = this.$t('title.addNewClient') as string; break
+        case 'products': obj.text = this.$t('title.products') as string; break
+        case 'settings': obj.text = this.$t('title.settings') as string; break
+        case '': break
+        default: obj.text = pathArray[c]
+      }
+
+      obj.to = { path: '/' + pathArray.slice(0, Number(c) + 1).join('/') }
+      if (pathArray[c] !== '') {
+        items.push(obj)
+      }
+    }
+    // const texts = pathArray.filter(p => p !== '')
+    return items
+  }
+}
+</script>
+
+<style>
+a.nuxt-link-active {
+  font-weight: normal !important;
+}
+</style>

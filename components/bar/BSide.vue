@@ -1,5 +1,6 @@
 <template>
   <b-sidebar
+    v-if="attributes.visible"
     id="sidemenu"
     data-testid="BarBSide"
     aria-label="sideMenu"
@@ -8,7 +9,7 @@
     text-variant="light"
     :class="{sidemenu_small: !attributes.expanded}"
     :backdrop="$mq == 'mobile'"
-    :no-close-on-route-change="$mq == 'desktop' ? true : false"
+    :no-close-on-route-change="$mq == 'desktop'"
     :visible="attributes.visible"
   >
     <NavNSidebar :expanded="attributes.expanded" />
