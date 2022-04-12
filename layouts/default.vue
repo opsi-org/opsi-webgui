@@ -39,7 +39,9 @@ export default class LayoutDefault extends Vue {
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
-  sidebarAttr: SideBarAttr = { visible: this.$mq !== 'mobile', expanded: this.$mq !== 'mobile' }
+  sidebarAttr: SideBarAttr = { visible: true, expanded: true }
+
+  // sidebarAttr: SideBarAttr = { visible: this.$mq !== 'mobile', expanded: this.$mq !== 'mobile' }
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
     await this.checkServer()
