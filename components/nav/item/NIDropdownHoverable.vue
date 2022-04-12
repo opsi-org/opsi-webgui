@@ -64,7 +64,4 @@ export default class NIDropdownHoverable extends Vue {
 .sidemenu_dropdown .dropdown-menu{
   left: calc(var(--width-sidebar-collapsed) - 6px) !important;
 }
-/* .checksubactive .dropdown-item {
-  font-weight: bolder;
-} */
 </style>

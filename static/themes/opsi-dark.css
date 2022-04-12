@@ -3745,7 +3745,8 @@ input[type="submit"].btn-block {
   border-color: #000;
 }
 .nav-tabs .nav-link.disabled {
-  color: #6c757d;
+  /* color: #6c757d; */
+  color: #ffffffb4;
   background-color: transparent;
   border-color: transparent;
 }
