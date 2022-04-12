@@ -5,10 +5,11 @@
     v-bind="$attrs"
     data-testid="ButtonBTNInfo"
     size="sm"
-    variant="outer-primary"
+    class="border-0"
+    variant="outline-primary"
     @click="click"
   >
-    <b-icon :icon="iconnames.info"/>
+    <b-icon :icon="iconnames.info" />
   </b-button>
 </template>
 

@@ -126,4 +126,7 @@ export default class MTrackChanges extends Vue {
 </script>
 
 <style>
+.modal-header .close {
+  color: var(--color, var(--primary, black));
+}
 </style>
