@@ -1,78 +1,76 @@
 <template>
-  <div>
-    <b-navbar class="BCollapsePageHeader_Navbar" :class="{collapseable: collapseable}" data-testid="BarBCollapsePageHeader" :variant="variant">
-      <div class="BCollapsePageHeader_Navbar_toggler" @click="toggleCollapse">
-        <span v-if="collapseable">
-          <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
-          <b-icon v-else :icon="iconnames.arrowDoubleRight" />
-        </span>
+  <b-navbar class="BCollapsePageHeader_Navbar" :class="{collapseable: collapseable}" data-testid="BarBCollapsePageHeader" :variant="variant">
+    <div class="BCollapsePageHeader_Navbar_toggler" @click="toggleCollapse">
+      <span v-if="collapseable">
+        <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
+        <b-icon v-else :icon="iconnames.arrowDoubleRight" />
+      </span>
 
-        <slot name="nav-title" v-bind="{ title }">
-          <b v-if="title && bold" class="nav-title">{{ title }}</b>
-          <p v-else-if="title && !bold" class="nav-title">
-            {{ title }}
-          </p>
-        </slot>
-        <slot name="nav-subtitle" v-bind="{ title }">
-          <span v-if="subtitle" class="font-italic" style="margin-left: 5px !important">
-            {{ subtitle }}
-          </span>
-        </slot>
-        <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
-          <!-- <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" /> -->
-          <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
-          <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-          <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
-        </div>
+      <slot name="nav-title" v-bind="{ title }">
+        <b v-if="title && bold" class="nav-title">{{ title }}</b>
+        <p v-else-if="title && !bold" class="nav-title">
+          {{ title }}
+        </p>
+      </slot>
+      <slot name="nav-subtitle" v-bind="{ title }">
+        <span v-if="subtitle" class="font-italic" style="margin-left: 5px !important">
+          {{ subtitle }}
+        </span>
+      </slot>
+      <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
+        <!-- <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" /> -->
+        <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
+        <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+        <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
       </div>
-      <b-navbar-nav class="ml-auto">
-        <b-button v-if="redirectOnCloseTo" class="closebtn border-0" variant="outline-primary" :to="redirectOnCloseTo">
-          <span class="sr-only">{{ $t('button.close') }}</span>
-          <b-icon :icon="iconnames.x" />
-        </b-button>
-      </b-navbar-nav>
-      <b-collapse :id="'collapse-navitem-'+title" v-model="contentVisible" accordion="sidebarAccordion" :visible="contentVisible" class="collapse-navitem container">
-        <b-row class="">
-          <slot name="nav-child">
-            <b-col class="nav-child nav-child-left" col>
-              <slot name="nav-child-left">
-                <TreeTSDepots v-if="enableDepots" />
-                <TreeTSHostGroups v-if="enableClients" />
-                <TreeTSProductGroups v-if="enableProducts" />
-              </slot>
-            </b-col>
-            <b-col class="nav-child nav-child-right" cols="*">
-              <slot name="nav-child-right">
-                <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                  <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
-                </b-col>
-                <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                  <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
-                </b-col>
-                <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                  <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-                </b-col>
-                <!-- <b-col v-if="multiselectToggler != undefined" cols="*">
+    </div>
+    <b-navbar-nav class="ml-auto">
+      <b-button v-if="redirectOnCloseTo" class="closebtn border-0" variant="outline-primary" :to="redirectOnCloseTo">
+        <span class="sr-only">{{ $t('button.close') }}</span>
+        <b-icon :icon="iconnames.x" />
+      </b-button>
+    </b-navbar-nav>
+    <b-collapse :id="'collapse-navitem-'+title" v-model="contentVisible" accordion="sidebarAccordion" :visible="contentVisible" class="collapse-navitem container">
+      <b-row class="">
+        <slot name="nav-child">
+          <b-col class="nav-child nav-child-left" col>
+            <slot name="nav-child-left">
+              <TreeTSDepots v-if="enableDepots" />
+              <TreeTSHostGroups v-if="enableClients" />
+              <TreeTSProductGroups v-if="enableProducts" />
+            </slot>
+          </b-col>
+          <b-col class="nav-child nav-child-right" cols="*">
+            <slot name="nav-child-right">
+              <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+                <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
+              </b-col>
+              <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+                <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
+              </b-col>
+              <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+                <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+              </b-col>
+              <!-- <b-col v-if="multiselectToggler != undefined" cols="*">
                   <CheckboxCBMultiselection :multiselect.sync="multiselectToggler" />
                 </b-col> -->
-                <b-col v-if="enableShowProducts" cols="*">
-                  <ButtonBTNRowLinkTo
-                    :title="$t('button.show.products')"
-                    classes=""
-                    :icon="iconnames.product"
-                    to="/clients/products"
-                    ident="dummy"
-                    :pressed="isRouteActive"
-                    :click="routeRedirectWith"
-                  />
-                </b-col>
-              </slot>
-            </b-col>
-          </slot>
-        </b-row>
-      </b-collapse>
-    </b-navbar>
-  </div>
+              <b-col v-if="enableShowProducts" cols="*">
+                <ButtonBTNRowLinkTo
+                  :title="$t('button.show.products')"
+                  classes=""
+                  :icon="iconnames.product"
+                  to="/clients/products"
+                  ident="dummy"
+                  :pressed="isRouteActive"
+                  :click="routeRedirectWith"
+                />
+              </b-col>
+            </slot>
+          </b-col>
+        </slot>
+      </b-row>
+    </b-collapse>
+  </b-navbar>
 </template>
 
 <script lang="ts">

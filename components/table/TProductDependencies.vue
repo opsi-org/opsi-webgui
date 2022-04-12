@@ -6,26 +6,22 @@
       :fields="fields"
     >
       <template #empty>
-        <small>{{ $t('table.emptyText') }}</small>
+        {{ $t('table.emptyText') }}
       </template>
       <template #head()="row">
-        <small><b>{{ row.label }}</b></small>
+        <b>{{ row.label }}</b>
       </template>
       <template #cell(requiredProductId)="row">
-        <small><b>{{ row.item.requiredProductId }}</b></small>
+        <b>{{ row.item.requiredProductId }}</b>
       </template>
       <template #head(requiredProductId)>
-        <small>{{ }}</small>
+        {{ }}
       </template>
       <template #cell(required)="row">
-        <small>
-          {{ getValue(row.item) }}
-        </small>
+        {{ getValue(row.item) }}
       </template>
       <template #cell(type)="row">
-        <small>
-          ({{ getType(row.item.requirementType, row.item.productAction) }})
-        </small>
+        ({{ getType(row.item.requirementType, row.item.productAction) }})
       </template>
     </TableTBVTable>
   </div>

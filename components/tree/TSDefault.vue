@@ -386,14 +386,15 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container {
   cursor: not-allowed;
   pointer-events: none;
-  color: var(--dark);
+  /* color: var(--dark); */
 }
 
 /* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
-.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
+
+/* .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
   color: var(--light);
-}
+} */
 
 .form-inline{
   flex-flow: nowrap;
@@ -402,7 +403,8 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .treeselect,
 .TSDefault-wrapper .vue-treeselect__menu-container,
 .TSDefault-wrapper .vue-treeselect__menu {
-  background-color: var(--light);
+  background-color: var(--background, var(--light, white));
+  /* background-color: var(--light); */
 }
 .TSDefault-wrapper:not(.is-origin) {
   border: 1px solid var(--warning);

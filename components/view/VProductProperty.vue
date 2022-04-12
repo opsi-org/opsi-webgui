@@ -8,11 +8,10 @@
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
       :redirect-on-close-to="(asChild)? closeroute: undefined"
     />
-    <br>
     <div class="VProductProperty-Card-Description">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
-    <b-tabs v-if="id" v-model="activeTab" class="horizontaltab" lazy small>
+    <b-tabs v-if="id" v-model="activeTab" class="horizontaltab" lazy>
       <!-- activeTab {{ activeTab }}, manual {{ activeTabSet }} <br>
         tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
         tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
