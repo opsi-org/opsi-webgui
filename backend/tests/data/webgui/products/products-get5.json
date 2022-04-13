@@ -64,7 +64,8 @@
         "name": "Pytest dummy PRODUCT 3",
         "description": null,
         "selectedDepots": [
-            "${FQDN}"
+            "pytest-test-depot.uib.gmbh",
+            "pytest-test-depot2.uib.gmbh"
         ],
         "selectedClients": null,
         "clientVersions": null,
@@ -75,6 +76,7 @@
             "none"
         ],
         "depotVersions": [
+            "1.0-1",
             "1.0-1"
         ],
         "productType": "LocalbootProduct",
