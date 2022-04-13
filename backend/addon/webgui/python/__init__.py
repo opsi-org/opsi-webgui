@@ -80,7 +80,8 @@ class Webgui(Addon):
 		connection.scope["required_access_role"] = ACCESS_ROLE_AUTHENTICATED
 
 		if (
-			connection.scope["path"].startswith(f"{self.router_prefix}/api/opsidata") and
+			(connection.scope["path"].startswith(f"{self.router_prefix}/api/auth") or 
+			connection.scope["path"].startswith(f"{self.router_prefix}/api/opsidata")) and
 			connection.base_url.hostname in  ("127.0.0.1", "::1", "0.0.0.0", "localhost")
 		):
 			if connection.scope.get("method") == "OPTIONS":
