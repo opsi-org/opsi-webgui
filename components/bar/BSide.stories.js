@@ -1,40 +1,40 @@
 import { store } from '../../.utils/storybook/mock'
-import { argTypeBoolFalse, argTypeBoolTrue } from '../../.utils/types/ttestconsts'
 
 export default {
   title: 'bar/B Side',
-  parameters: { docs: { description: { component: 'Bar/BSide description' } } },
-  argTypes: {
-    visible: argTypeBoolTrue,
-    expanded: argTypeBoolFalse
-  }
+  parameters: { docs: { description: { component: 'Bar/BSide description' } } }
 }
-
-const DefaultAuthVisibleTemplate = (args, { argTypes }) => ({
-  props: Object.keys(argTypes),
-  store: store(), // to keep the default (duration: 2min) (note: authentication is enabled by default currently)
-  template: `<BarBSide class="sidebar_content"
-    :attributes="{
-      visible: ${args.visible}||$props.visible,
-      expanded: ${args.expanded}||$props.expanded
-    }" />
-  `
-})
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<BarBSide class="sidebar_content"
-  :attributes="{
-    visible: ${args.visible}||$props.visible,
-    expanded: ${args.expanded}||$props.expanded
-  }" />
-  `
+  computed: { args () { return args } },
+  template: '<BarBSide class="sidebar_content" :always-visible="true" :attributes="args.attributes" /> '
+  // data () { return { attributes: { visible: args.attributes.visible, collapsed: args.attributes.collapsed } } },
+  // template: '<BarBSide class="sidebar_content" :always-visible="true" :attributes="attributes" /> '
 })
 
-export const BSideSmall = DefaultVisibleTemplate.bind({})
-export const BSideSmallAuthenticated = DefaultAuthVisibleTemplate.bind({})
+const DefaultVisibleAuthTemplate = (args, { argTypes }) => ({
+  store: store(), // to keep the default (duration: 2min) (note: authentication is enabled by default currently)
+  props: Object.keys(argTypes),
+  computed: { args () { return args } },
+  template: '<BarBSide class="sidebar_content" :always-visible="true" :attributes="args.attributes" /> '
+})
 
-export const BSideExpanded = DefaultVisibleTemplate.bind({})
-BSideExpanded.args = { expanded: true }
-export const BSideExpandedAuthenticated = DefaultAuthVisibleTemplate.bind({})
-BSideExpandedAuthenticated.args = { expanded: true }
+export const BSide = DefaultVisibleTemplate.bind({})
+BSide.args = { attributes: { expanded: false, visible: true } }
+
+export const BSideAuthenticated = DefaultVisibleAuthTemplate.bind({})
+BSideAuthenticated.args = { attributes: { expanded: false, visible: true, authenticated: true } } // small
+
+// todo clicking on expand-btn not possible (only in storebook - why??)
+// export const BSideSmall = DefaultVisibleTemplate.bind({})
+// BSideSmall.args = { attributes: { expanded: false, visible: true } }
+
+// export const BSideSmallAuthenticated = DefaultVisibleAuthTemplate.bind({})
+// BSideSmallAuthenticated.args = { attributes: { expanded: false, visible: true, authenticated: true } } // small
+
+// export const BSideSmall = DefaultVisibleTemplate.bind({})
+// export const BSideSmallAuthenticated = DefaultVisibleTemplate.bind({})
+// BSideSmall.args = { ...attrs }
+// BSideSmallAuthenticated.args = { ...attrs, authenticated: true }
+
