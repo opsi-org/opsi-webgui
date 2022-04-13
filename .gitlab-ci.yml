@@ -9,8 +9,8 @@ stages:
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
   echo "$basenames"
-  testfilesUnique=$(echo $basenames | tr ' ' '.test.integration.js\n' | awk '!a[$0]++')
-  # todo checking if each file in testfilesUnique exosts
+  testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
+  # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
 
 init:npm:
