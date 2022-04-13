@@ -59,6 +59,7 @@ test:test-components:
     - init:npm
   script:
     - npx playwright install
+    - npx playwright install-deps
 
     - PORT=3003 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
