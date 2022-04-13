@@ -56,7 +56,6 @@ export default class BSide extends Vue {
     if (this.$mq !== 'mobile' && !this.alwaysVisible) {
       Cookie.set('menu_attributes_desktop', JSON.stringify(this.attributes), { expires: 365 })
     }
-    console.log('attributesChanged', this.attributes)
     // this.$emit('attributes:update', this.attributes)
   }
 
