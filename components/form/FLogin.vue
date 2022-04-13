@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div data-testid="FLogin">
     <AlertAAlert ref="loginAlert" />
-    <div data-testid="FLogin" @keyup.enter="doLogin">
+    <div @keyup.enter="doLogin">
       <b-form>
         <label for="configserver" class="sr-only"> Configserver </label>
         <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
@@ -140,6 +140,7 @@ export default class FLogin extends Vue {
   margin-bottom: 5px;
 }
 .login_input_field_btn {
+  margin-top: 5px;
   border: 0.5px solid var(--light) !important;
 }
 </style>

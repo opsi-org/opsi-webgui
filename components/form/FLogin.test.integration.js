@@ -10,5 +10,5 @@ test('form-login snapshot', async ({ page }) => {
   // await apiMock(page, apiServerPath, { result: 'mydepot.uib.local' })
 
   const component = await page.locator('[data-testid="FLogin"]')
-  expect(await component.screenshot()).toMatchSnapshot('form-flogin.png')
+  expect(await component.screenshot()).toMatchSnapshot('FLogin.png')
 })
