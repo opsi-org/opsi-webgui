@@ -13,8 +13,8 @@
     "liblint2": "eslint .",
     "libtest": "jest && playwright test test/e2e test/integration",
     "libtest:unit": "jest --config .config/.jest.config.js .",
-    "libtest:integration": "playwright test -c .utils/playwright/config/playwright-integration.config.js  --project=chromium",
-    "libtest:e2e": "playwright test -c .utils/playwright/config/playwright-e2e.config.js --project=chromium",
+    "libtest:integration": "playwright test -c .utils/playwright/config/playwright-integration.config.js  --project=Chromium-Desktop",
+    "libtest:e2e": "playwright test -c .utils/playwright/config/playwright-e2e.config.js --project=Chromium-Desktop",
     "libtest:delete-empty-results": "find test-results -empty -delete",
     "//devDep: storybook-addon-mock": "^2.0.2"
   },
