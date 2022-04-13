@@ -19,7 +19,7 @@
           <b-badge class="topbar_badge_logo">
             <IconIOpsiLogo class="topbar_logo" />
           </b-badge>
-          {{ getTitleUppercase() }}
+          <span class="topbar_title"> {{ getTitleUppercase() }} </span>
           <span class="topbar_version"> {{ $config.packageVersion }} </span>
         <!-- <span class="topbar_expert"> <IconIExpert /> </span> -->
         </b-navbar-brand>
