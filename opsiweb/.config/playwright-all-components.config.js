@@ -4,6 +4,7 @@ const generalconfig = require('../uib-components/.utils/playwright/config/playwr
 // /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   // testDir: '../../../../', // /workspace/opsiweb
+  timeout: 1000 * 10, // 1ms * x sec
   testDir: '../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(int|integration|component|comp).js',
   reporter: [
