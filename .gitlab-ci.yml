@@ -266,8 +266,6 @@ test:test-components:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
-  only:
-    - develop
   artifacts:
     name: 'opsi-webgui-test-result-components'
     when: on_failure
