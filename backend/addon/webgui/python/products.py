@@ -291,7 +291,7 @@ def products(
 					IF(
 						LENGTH(GROUP_CONCAT(DISTINCT poc.actionResult SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.actionResult SEPARATOR ','), ',', '')) > 0,
 						"mixed",
-						poc.actionResult
+						IFNULL(poc.actionResult, "none")
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 			) AS actionResult,
@@ -358,8 +358,12 @@ def products(
 			)
 		)
 
-		query = query.order_by(text("actionRequest='none' ASC"))
-		query = query.order_by(text("installationStatus='not_installed' ASC"))
+		if "actionRequest" in commons.get("sortBy", []):
+			query = query.order_by(text("actionRequest='none' ASC"))
+		if "installationStatus" in commons.get("sortBy", []):
+			query = query.order_by(text("installationStatus='not_installed' ASC"))
+		if "actionResult" in commons.get("sortBy", []):
+			query = query.order_by(text("actionResult='none' ASC"))
 		query = order_by(query, commons)
 		# logger.debug(query)
 		query = pagination(query, commons)
