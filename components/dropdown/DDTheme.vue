@@ -1,7 +1,7 @@
 <template>
   <!-- class="btn btn-primary dd_theme text-left" -->
-  <div>
-    <label for="theme" class="sr-only"> Theme </label>
+  <div data-testid="DropdownDDTheme">
+    <label for="theme" class="sr-only"> {{ $t('settingsPage.theme') }} </label>
     <!-- style="height:100%;margin:0px;max-width:150px;" -->
     <b-nav-item-dropdown
       v-if="navbar"
@@ -56,20 +56,21 @@ const settings = namespace('settings')
     // Created with https://bootstrap.build/app :
     // Used from https://bootswatch.com/ :
     { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' },
-    { title: 'dark', rel: 'themes/opsi-dark.css', icon: 'moon' },
-    { title: 'Bootswatch-Cerulean', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css' },
-    { title: 'Bootswatch-Cosmo', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css' },
-    { title: 'Bootswatch-Lumen', rel: 'https://bootswatch.com/3/lumen/bootstrap.min.css' },
-    { title: 'Bootswatch-Cyborg', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cyborg/bootstrap.min.css' },
-    { title: 'Bootswatch-Solar', rel: '//stackpath.bootstrapcdn.com/bootswatch/4.5.2/solar/bootstrap.min.css' },
-    { title: 'Bootswatch-Yeti', rel: '//stackpath.bootstrapcdn.com/bootswatch/4.5.2/yeti/bootstrap.min.css' },
-    { title: 'Bootswatch-Slate', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/slate/bootstrap.min.css' },
-    { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' },
-    { title: 'Bootswatch-Lux', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css' },
-    { title: 'opsi-dark', rel: 'themes/opsi-bootstrap-theme-dark.css' },
-    { title: 'opsi-dark-inversed', rel: 'themes/opsi-bootstrap-theme-dark-inversed.css' },
-    { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' },
-    { title: 'opsi-light-inversed', rel: 'themes/opsi-bootstrap-theme-light-inversed.css' }
+    { title: 'dark', rel: 'themes/opsi-dark.css', icon: 'moon' }
+    // ,
+    // { title: 'Bootswatch-Cerulean', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css' },
+    // { title: 'Bootswatch-Cosmo', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css' },
+    // { title: 'Bootswatch-Lumen', rel: 'https://bootswatch.com/3/lumen/bootstrap.min.css' },
+    // { title: 'Bootswatch-Cyborg', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cyborg/bootstrap.min.css' },
+    // { title: 'Bootswatch-Solar', rel: '//stackpath.bootstrapcdn.com/bootswatch/4.5.2/solar/bootstrap.min.css' },
+    // { title: 'Bootswatch-Yeti', rel: '//stackpath.bootstrapcdn.com/bootswatch/4.5.2/yeti/bootstrap.min.css' },
+    // { title: 'Bootswatch-Slate', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/slate/bootstrap.min.css' },
+    // { title: 'Bootswatch-Sketchy', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css' },
+    // { title: 'Bootswatch-Lux', rel: 'https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/lux/bootstrap.min.css' },
+    // { title: 'opsi-dark', rel: 'themes/opsi-bootstrap-theme-dark.css' },
+    // { title: 'opsi-dark-inversed', rel: 'themes/opsi-bootstrap-theme-dark-inversed.css' },
+    // { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' },
+    // { title: 'opsi-light-inversed', rel: 'themes/opsi-bootstrap-theme-light-inversed.css' }
   ]
 
   @settings.Getter public colortheme!: ITheme
