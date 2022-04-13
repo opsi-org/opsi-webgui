@@ -258,6 +258,7 @@ test:test-components:
     - *define_globals
     - npm-uib i -D @playwright/test
     - npx playwright install
+    - npx playwright install-deps
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 60
@@ -267,7 +268,6 @@ test:test-components:
   allow_failure: true
   only:
     - develop
-    - tags
   artifacts:
     name: 'opsi-webgui-test-result-components'
     when: on_failure
@@ -279,6 +279,39 @@ test:test-components:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
 
+
+test:test-components:allbrowsers:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:dry
+  except:
+    - bug/cicd-build
+  script:
+    - cd opsiweb
+    - *define_globals
+    - npm-uib i -D @playwright/test
+    - npx playwright install
+    - npx playwright install-deps
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+    - sleep 60
+    - npm-uib run test:all:components-devices || exit_code=$?
+    - npm run test:all:delete-empty-results
+    - exit $exit_code
+  allow_failure: true
+  only:
+    - tags
+  artifacts:
+    name: 'opsi-webgui-test-result-components'
+    when: on_failure
+    paths:
+      - ./**/*/test-results/
+      - opsiweb/.storybook.log
+      - opsiweb/.dev.log
+    reports:
+      junit: ./opsiweb/test-result-pw-reporter-components.xml
+    expire_in: 2 day
 
 
 # .pylint: &pylint |

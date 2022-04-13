@@ -55,5 +55,5 @@ echo ""
 echo ""
 echo "run: npm-uib run $npm_command $testfile"
 npm-uib run $npm_command $testfile
-
+npm run test:all:delete-empty-results
 cd -
