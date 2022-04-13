@@ -1,14 +1,14 @@
 <template>
   <b-dropdown
     v-bind="$props"
-    data-testid="DropdownDDTableColumnVisibilty"
+    data-testid="DropdownDDTableColumnVisibility"
     no-caret
     lazy
     right
     variant="outline-primary"
     size="sm"
     alt="Show column"
-    class="DDTableColumnVisibilty fixed_column_selection noborder"
+    class="DDTableColumnVisibility fixed_column_selection noborder"
     :title="$t('table.showCol')"
   >
     <template #button-content>
@@ -65,7 +65,7 @@ import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const settings = namespace('settings')
 
 @Component
-export default class DDTableColumnVisibilty extends BDropdown {
+export default class DDTableColumnVisibility extends BDropdown {
   @Prop({ default: 'table' }) tableId!: string
   @Prop({ }) sortBy!: string
   @Prop({ default: undefined }) multi!: boolean|undefined
@@ -173,28 +173,28 @@ export default class DDTableColumnVisibilty extends BDropdown {
 }
 </script>
 <style>
-.DDTableColumnVisibilty {
+.DDTableColumnVisibility {
   max-width: fit-content !important;
   max-height: fit-content !important;
 }
-.DDTableColumnVisibilty .dropdown-menu {
+.DDTableColumnVisibility .dropdown-menu {
   height: max-content !important;
   width: 350px !important;
   z-index: 3 !important;
   /* position: sticky; */
 }
-/* .DDTableColumnVisibilty .dropdown-menu .dropdown-item {
+/* .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   cursor: pointer;
   display: flex !important;
 } */
-/* .DDTableColumnVisibilty a.selected.disabled {
+/* .DDTableColumnVisibility a.selected.disabled {
   background-color: var(--primary);
   color:var(--light);
 }
-.DDTableColumnVisibilty a.selected {
+.DDTableColumnVisibility a.selected {
   background-color: var(--primary);
 } */
-/* .DDTableColumnVisibilty .noborder .btn-outline-primary{
+/* .DDTableColumnVisibility .noborder .btn-outline-primary{
   border: 0;
   box-shadow: none;
 } */
