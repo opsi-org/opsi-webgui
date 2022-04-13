@@ -52,11 +52,13 @@ test:test-unit:
       cobertura: coverage/clover.xmlci
 
 
-test:test-components:
+test:test-components:changed:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:npm
+  except:
+    - develop
   script:
     - npx playwright install
     - npx playwright install-deps
@@ -64,7 +66,9 @@ test:test-components:
     - PORT=3003 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
-    - npm run libtest:integration || exit_code=$?
+    - files=(git diff-tree --no-commit-id --name-only -r $CI_COMMIT_SHA)
+    - echo "$files"
+    - npm run libtest:integration $files|| exit_code=$?
     - npm run libtest:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -77,6 +81,32 @@ test:test-components:
       - .dev.log
     expire_in: 2 day
 
+test:test-components:all:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:npm
+  only:
+    - develop
+  script:
+    - npx playwright install
+    - npx playwright install-deps
+
+    - PORT=3003 nohup npm run libdev > .dev.log &
+    - PORT=3003 nohup npm run libstory > .storybook.log &
+    - sleep 60
+    - npm run libtest:integration $files|| exit_code=$?
+    - npm run libtest:delete-empty-results
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: 'opsi-ui-components-test-result-components'
+    when: on_failure
+    paths:
+      - test-results/
+      - .storybook.log
+      - .dev.log
+    expire_in: 2 day
 # test:test-e2e:
 #   stage: test
 #   dependencies:
