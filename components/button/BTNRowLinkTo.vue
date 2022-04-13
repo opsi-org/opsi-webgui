@@ -29,8 +29,8 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) sortby!: string
   @Prop({ }) ident!: string
   @Prop({ }) label!: string
-  @Prop({ }) title!: string
-  @Prop({ }) icon!: string
+  @Prop({ default: 'title' }) title!: string
+  @Prop({ default: '' }) icon!: string
   @Prop({ default: 'outline-primary' }) variant!: string
   @Prop({ default: 'border-0' }) classes!: string
 
