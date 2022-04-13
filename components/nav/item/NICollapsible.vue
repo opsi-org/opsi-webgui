@@ -55,12 +55,9 @@ export default class NICollapsible extends Vue {
 
 <style>
 .checksubactive.nav-item {
-  background-color: grey;
+  color:white;
+  background-color: #025077;
 }
-/* .checksubactive > #parentnav .nav-item {
-  font-weight:bolder;
-  background-color: grey;
-} */
 .submenu{
   margin-left: 5px;
 }

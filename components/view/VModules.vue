@@ -1,23 +1,15 @@
 <template>
   <div data-testid="VModules">
-    <b-row>
-      <b-col cols="2">
-        <b> {{ $t('settingsPage.modules.available') }} </b>
+    <b-row class="mb-4">
+      <b-col class="text-sm-right" cols="2">
+        {{ $t('settingsPage.modules.available') }}
       </b-col>
       <b-col>
         <span v-for="m in modules" :key="m">
-          {{ m }} <br>
+          <b-form-input :value="m" readonly />
         </span>
       </b-col>
     </b-row>
-
-    <!-- <TableTBVTable
-      :stacked="true"
-      :is-loading="isLoading"
-      :error="errorText"
-      :items="[modules]"
-      :fields="Object.keys(modules).filter(k => k !== 'signature')"
-    /> -->
   </div>
 </template>
 

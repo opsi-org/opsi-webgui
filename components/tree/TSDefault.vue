@@ -1,5 +1,5 @@
 <template>
-  <div :class="'form-inline TSDefault-wrapper ' + type + ' ' + ((isOrigin)? 'is-origin':'')">
+  <div :class="'form-control form-inline TSDefault-wrapper ' + type + ' ' + ((isOrigin)? 'is-origin':'')">
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
@@ -391,43 +391,51 @@ export default class TSDefault extends Vue {
 
 /* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
-.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
+
+/* .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
   color: var(--light);
+} */
+
+.TSDefault-wrapper,
+.TSDefault-wrapper .treeselect,
+.TSDefault-wrapper .vue-treeselect__menu-container,
+.TSDefault-wrapper .vue-treeselect__menu {
+  background-color: inherit;
+  /* background-color: var(--light); */
+}
+
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
+  /* background: var(--primary);
+  color: var(--light); */
+  color: black;
+  background-color: var(--primary);
+}
+
+/* .TSDefault-wrapper .hasSelection {
+  color: var(--primary);
+} */
+
+/* .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
+  color: var(--light) !important;
+} */
+
+.TSDefault-wrapper .vue-treeselect__menu {
+  border: 1px solid var(--primary) !important;
+  /* border-radius: 5px; */
 }
 
 .form-inline{
   flex-flow: nowrap;
 }
-.TSDefault-wrapper,
-.TSDefault-wrapper .treeselect,
-.TSDefault-wrapper .vue-treeselect__menu-container,
-.TSDefault-wrapper .vue-treeselect__menu {
-  background-color: var(--light);
-}
 .TSDefault-wrapper:not(.is-origin) {
-  border: 1px solid var(--warning);
-}
-.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
-  background: var(--primary);
-  color: var(--light);
-}
-.TSDefault-wrapper .hasSelection {
-  color: var(--primary);
-}
-.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
-  color: var(--light) !important;
-}
-.TSDefault-wrapper .vue-treeselect__menu {
-  border: 1px solid var(--primary) !important;
-  border-radius: 5px;
+  border: 1px solid var(--orange);
 }
 .TSDefault-wrapper{
-  border: 1px solid var(--primary);
+  /* border: 1px solid var(--primary); */
   border-radius: 5px;
   min-width: 200px !important;
   max-width: 200px !important;
   flex-flow: inherit !important;
-  /* border: 1px solid green; */
   padding-left: 10px;
   padding-right: 15px;
   margin-right: 10px;
@@ -529,13 +537,6 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .treeselect.propertyvalues .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
   max-height: 20px;
   white-space: normal;
-
 }
-/* .treeselect .vue-treeselect-helper-hide {
-  display: inline;
-} */
-/* .TSDefault-wrapper .selection_badge {
-  margin-top: 20px;
-} */
 
 </style>

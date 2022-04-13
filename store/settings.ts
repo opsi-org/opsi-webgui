@@ -10,7 +10,8 @@ interface IColumnLayoutCollaped {
 export default class Settings extends VuexModule {
   _language: string = Cookie.get('Language') as string || 'en'
   _expert: boolean = Cookie.get('ExpertMode') as string === 'expert' || false
-  colorthemeobj: ITheme = { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' }
+  colorthemeobj: ITheme = { title: 'dark', rel: 'themes/opsi-dark.css', icon: 'moon' }
+  // colorthemeobj: ITheme = { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' }
   _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
 
   get twoColumnLayoutCollapsed (): IObjectString2Boolean { return this._twoColumnLayoutCollapsed }

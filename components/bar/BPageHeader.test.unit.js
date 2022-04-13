@@ -20,6 +20,9 @@ describe('BPageHeader', () => {
         collapsed: true,
         title: 'true',
         closeroute: 'true'
+      },
+      mocks: {
+        $t: () => 'test text'
       }
     })
   })

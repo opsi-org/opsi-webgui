@@ -1,10 +1,12 @@
 <template>
-  <div class="btn btn-primary dd_theme text-left">
+  <!-- class="btn btn-primary dd_theme text-left" -->
+  <div>
     <label for="theme" class="sr-only"> Theme </label>
+    <!-- style="height:100%;margin:0px;max-width:150px;" -->
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"
-      style="height:100%;margin:0px;max-width:150px;"
+      class="dd_theme"
       variant="primary"
       :text="theme.title"
       alt="select theme"
@@ -16,6 +18,7 @@
         :disable="t.title==theme"
         @click="theme = t;"
       >
+        <b-icon v-if="t.icon" :icon="t.icon" />
         {{ t.title }}
       </b-dropdown-item>
     </b-nav-item-dropdown>
@@ -23,9 +26,9 @@
       v-else
       :text="theme.title"
       size="sm"
-      style="width:150px;"
+      style="width:200px;"
+      variant="outline-primary"
       :dropup="dropup"
-      variant="primary"
     >
       <b-dropdown-item
         v-for="t in themes"
@@ -33,6 +36,7 @@
         :disable="t.title==theme"
         @click="theme = t;"
       >
+        <b-icon v-if="t.icon" :icon="t.icon" />
         {{ t.title }}
       </b-dropdown-item>
     </b-dropdown>
@@ -47,9 +51,12 @@ const settings = namespace('settings')
 @Component export default class DDTheme extends Vue {
   @Prop({ default: false }) dropup!: boolean
   @Prop({ default: false }) navbar!: boolean
+  t: string = ''
   themes: Array<ITheme> = [
     // Created with https://bootstrap.build/app :
     // Used from https://bootswatch.com/ :
+    { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' },
+    { title: 'dark', rel: 'themes/opsi-dark.css', icon: 'moon' },
     { title: 'Bootswatch-Cerulean', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css' },
     { title: 'Bootswatch-Cosmo', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css' },
     { title: 'Bootswatch-Lumen', rel: 'https://bootswatch.com/3/lumen/bootstrap.min.css' },
@@ -79,6 +86,7 @@ const settings = namespace('settings')
 
 <style>
 .dd_theme{
+  margin-top: 3px;
   padding-left: 1em !important;
   padding-right: 1em !important;
 }

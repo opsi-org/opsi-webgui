@@ -14,7 +14,7 @@
         :indeterminate="visibleValueBoolIndeterminate"
         @change="handleBoolChange"
       >
-        {{ isOrigin? '': '*' }}
+        <span style="font-size: 25px;"> {{ isOrigin? '': '*' }} </span>
       </b-form-checkbox>
       <TreeTSDefault
         v-else-if="rowItem.type=='UnicodeProductProperty'"

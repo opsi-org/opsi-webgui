@@ -14,8 +14,8 @@
     <template #button-content>
       <IconITableColumn />
     </template>
-    <li v-if="!multiCondition">
-      <a
+    <template v-if="!multiCondition">
+      <b-dropdown-form
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
         :key="header.key"
         class="dropdown-item"
@@ -28,29 +28,31 @@
       >
         <!-- :disabled="columnVisibilityStates[header.key]" -->
         {{ header.label }}
-      </a>
-    </li>
-    <li
+      </b-dropdown-form>
+    </template>
+    <template
       v-else
       id="selectableColumns-group"
       name="selectableColumns"
     >
-      <a
+      <b-dropdown-form
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
         :key="header.key"
         class="dropdown-item"
         :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
         @click.prevent="handleItem(header.key)"
       >
-        <b-form-checkbox
-          v-model="columnVisibilityList"
-          :name="header.label"
-          :value="header.key"
-          :class="{'selected':columnVisibilityStates[header.key]}"
-        />
-        {{ header.label }}
-      </a>
-    </li>
+        <b-input-group>
+          <b-form-checkbox
+            v-model="columnVisibilityList"
+            :name="header.label"
+            :value="header.key"
+            :class="{'selected':columnVisibilityStates[header.key]}"
+          />
+          {{ header.label }}
+        </b-input-group>
+      </b-dropdown-form>
+    </template>
   </b-dropdown>
 </template>
 
@@ -177,22 +179,23 @@ export default class DDTableColumnVisibilty extends BDropdown {
 }
 .DDTableColumnVisibilty .dropdown-menu {
   height: max-content !important;
+  width: 350px !important;
   z-index: 3 !important;
   /* position: sticky; */
 }
-.DDTableColumnVisibilty .dropdown-menu .dropdown-item {
+/* .DDTableColumnVisibilty .dropdown-menu .dropdown-item {
   cursor: pointer;
   display: flex !important;
-}
-.DDTableColumnVisibilty a.selected.disabled {
+} */
+/* .DDTableColumnVisibilty a.selected.disabled {
   background-color: var(--primary);
   color:var(--light);
 }
 .DDTableColumnVisibilty a.selected {
   background-color: var(--primary);
-}
-.DDTableColumnVisibilty .noborder .btn-outline-primary{
+} */
+/* .DDTableColumnVisibilty .noborder .btn-outline-primary{
   border: 0;
   box-shadow: none;
-}
+} */
 </style>

@@ -140,6 +140,6 @@ export default class FLogin extends Vue {
   margin-bottom: 5px;
 }
 .login_input_field_btn {
-  border: 1px solid var(--light) !important;
+  border: 0.5px solid var(--light) !important;
 }
 </style>

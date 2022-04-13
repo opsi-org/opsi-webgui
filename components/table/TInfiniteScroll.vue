@@ -215,6 +215,12 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
+.table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
+  /* color: #212529;
+  background-color: #fff; */
+  color: inherit;
+  background-color: inherit;
+}
 .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
 }
@@ -255,7 +261,8 @@ export default class TInfiniteScroll extends Vue {
   text-align: center;
   height: 200px;
   margin-top: 200px;
-  color: #6c757d;
+  color: var(--color, #6c757d);
+  /* color: #6c757d; */
   font-size: small;
 }
 .table-responsive {
@@ -277,7 +284,7 @@ export default class TInfiniteScroll extends Vue {
 .noscroll.b-table-sticky-header {
   max-height: 70vh;
 } */
-/* .b-table-sticky-header thead > tr:last-child{
-  background-color: var(--primary) !important;
-} */
+.b-table-sticky-header thead > tr:last-child{
+  background-color: var(--background, var(--primary, white));
+}
 </style>

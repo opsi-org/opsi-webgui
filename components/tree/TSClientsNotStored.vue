@@ -49,13 +49,3 @@ export default class TSClientsNotStored extends Vue {
   }
 }
 </script>
-
-<style>
-.treeselect_idselect{
-  max-width: 305px;
-  margin-right: 10px;
-}
-.treeselect_idselect .vue-treeselect__placeholder {
-  color: black;
-}
-</style>
