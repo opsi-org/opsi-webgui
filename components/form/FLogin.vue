@@ -3,7 +3,7 @@
     <AlertAAlert ref="loginAlert" />
     <div @keyup.enter="doLogin">
       <b-form>
-        <label for="configserver" class="sr-only"> Configserver </label>
+        <label for="configserver" class="sr-only"> {{ $t('title.configserver') }} </label>
         <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
         <label for="username" class="sr-only"> {{ $t('loginPage.username') }} </label>
         <b-form-input

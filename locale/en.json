@@ -27,6 +27,7 @@
   "title.overview": "OVERVIEW",
   "title.support": "Support",
   "title.manage": "MANAGE",
+  "title.configserver": "Configserver",
   "title.depots": "Server",
   "title.allDepots": "All Server",
   "title.depotsconfig": "Server - Configuration",
