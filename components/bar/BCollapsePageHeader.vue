@@ -20,7 +20,7 @@
       <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
         <!-- <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" /> -->
         <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
-        <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+        <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
         <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
       </div>
     </div>
@@ -49,7 +49,7 @@
                 <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
               </b-col>
               <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+                <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
               </b-col>
               <!-- <b-col v-if="multiselectToggler != undefined" cols="*">
                   <CheckboxCBMultiselection :multiselect.sync="multiselectToggler" />

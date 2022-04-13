@@ -54,8 +54,8 @@
         <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
       </template>
       <template #head(rowactions)>
-        <!-- <DropdownDDTableColumnVisibilty :table-id="id" :headers="headerData" /> -->
-        <DropdownDDTableColumnVisibilty :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
+        <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
+        <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
       </template>
       <template #cell(selected)="row">
         <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" />

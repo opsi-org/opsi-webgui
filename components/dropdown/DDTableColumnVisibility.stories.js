@@ -1,12 +1,12 @@
 export default {
   title: 'Dropdown/DD Table Column Visibility',
-  parameters: { docs: { description: { component: 'Dropdown/DDTableColumnVisibilty description' } } }
+  parameters: { docs: { description: { component: 'Dropdown/DDTableColumnVisibility description' } } }
 }
 
 const DefaultVisibleTemplateHead = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<DropdownDDTableColumnVisibilty :table-id="args.id" :headers.sync="args.headers" :sort-by="args.sortBy" :multi="args.multi" />'
+  template: '<DropdownDDTableColumnVisibility :table-id="args.id" :headers.sync="args.headers" :sort-by="args.sortBy" :multi="args.multi" />'
 })
 
 export const DDTableColumnVisibility = DefaultVisibleTemplateHead.bind({})
