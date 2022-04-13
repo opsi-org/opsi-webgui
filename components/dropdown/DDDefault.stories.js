@@ -3,14 +3,15 @@ export default {
   parameters: { docs: { description: { component: 'Dropdown/DDDefault description' } } }
 }
 
-const DefaultVisibleTemplate = (_args, { argTypes }) => ({
+const DefaultVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
+  computed: { args () { return args } },
   template: `<DropdownDDDefault
-    :is-origin="$props.isOrigin"
-    :options="$props.options"
-    :selected-items="$props.selectedItems"
-    :multiple="$props.multiple"
-    @change="(s) => { (JSON.stringify([...s].sort())==JSON.stringify([...$props.selectedItems].sort()))? $props.isOrigin = true : $props.isOrigin = false }"
+    :is-origin="args.isOrigin"
+    :options="args.options"
+    :selected-items="args.selectedItems"
+    :multiple="args.multiple"
+    @change="(s) => { (JSON.stringify([...s].sort())==JSON.stringify([...args.selectedItems].sort()))? args.isOrigin = true : args.isOrigin = false }"
   />
   `
 })
