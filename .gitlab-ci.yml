@@ -9,20 +9,9 @@ stages:
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
   echo "$basenames"
-  basenamesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
-  echo "$basenamesUnique"
-# variables:
-#   npm_config_cache: "$CI_PROJECT_DIR/.npm"
-# # Define a hidden job to be used with extends
-# # Better than default to avoid activating cache for all jobs
-# .dependencies_cache:
-#   cache:
-#     key:
-#       files:
-#         - package-lock.json
-#     paths:
-#       - .npm
-#     policy: pull
+  testfilesUnique=$(echo $basenames | tr ' ' '.test.integration.js\n' | awk '!a[$0]++')
+  # todo checking if each file in testfilesUnique exosts
+  echo "$testfilesUnique"
 
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -69,14 +58,14 @@ test:components:changed:
     - develop
   script:
     - *get_changed_files
-    - echo "$basenamesUnique"
+    - echo "$testfilesUnique"
     - npx playwright install
     - npx playwright install-deps
 
     - PORT=3003 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
-    - npm run libtest:integration $basenamesUnique|| exit_code=$?
+    - npm run libtest:integration $testfilesUnique|| exit_code=$?
     - npm run libtest:delete-empty-results
     - exit $exit_code
   allow_failure: true
