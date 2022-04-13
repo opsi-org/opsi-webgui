@@ -253,6 +253,7 @@ test:test-components:
     - init:dry
   except:
     - bug/cicd-build
+    - tags # cause in tags we test all browsers
   script:
     - cd opsiweb
     - *define_globals
