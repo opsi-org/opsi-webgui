@@ -6,7 +6,7 @@
       :stacked="true"
       :is-loading="isLoading"
       :error="errorText"
-      :items="[result]"
+      :items="Object.values(result)"
       :fields="fields"
     >
       <template #cell(opsiHostKey)="row">
