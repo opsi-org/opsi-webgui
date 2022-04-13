@@ -37,4 +37,3 @@ BSideAuthenticated.args = { attributes: { expanded: false, visible: true, authen
 // export const BSideSmallAuthenticated = DefaultVisibleTemplate.bind({})
 // BSideSmall.args = { ...attrs }
 // BSideSmallAuthenticated.args = { ...attrs, authenticated: true }
-
