@@ -1830,14 +1830,14 @@ select.form-control:focus::-ms-value {
 .form-control-plaintext {
   display: block;
   width: 100%;
-  padding: 0.375rem 0;
+  padding: 0.375rem 0.75rem;
   margin-bottom: 0;
   font-size: 1rem;
   line-height: 1.5;
-  color: #212529;
-  background-color: transparent;
-  border: solid transparent;
   border-width: 1px 0;
+  color: #ffffffb4;
+  background-color: #495057;
+  border: 1px solid #495057;
 }
 .form-control-plaintext.form-control-lg,
 .form-control-plaintext.form-control-sm {
