@@ -22,7 +22,7 @@
   --dark: #343a40;
   --color:#ffffffb4;
   --background:#40464e;
-  --backgroundlight:#495057;
+  --component:#495057;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -1757,7 +1757,8 @@ pre code {
   font-weight: 400;
   line-height: 1.5;
   color: #ffffffb4;
-  background-color: #495057;
+  background-color: var(--component, #495057) !important;
+  /* background-color: #495057; */
   background-clip: padding-box;
   border: 1px solid #495057;
   border-radius: 0.25rem;

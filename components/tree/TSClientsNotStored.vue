@@ -13,7 +13,6 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-// const auth = namespace('auth')
 const selections = namespace('selections')
 interface ClientRequest {
     selectedDepots: string
@@ -27,14 +26,12 @@ export default class TSClientsNotStored extends Vue {
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
-  // @auth.Mutation public setSession!: () => void
 
   async fetch () {
     const clients: Array<object> = []
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
     const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    // this.setSession()
     for (const c in result) {
       const client = result[c]
       clients.push({ id: client, label: client })
@@ -55,17 +52,21 @@ export default class TSClientsNotStored extends Vue {
   max-width: 305px;
 }
 .treeselect_idselect .vue-treeselect__control {
-  background-color: var(--backgroundlight, var(--background, black));
+  background-color: var(--component, var(--background, black));
   color: var(--color, var(--light, white));
 }
 .treeselect_idselect .vue-treeselect__menu {
-  background-color: var(--backgroundlight, var(--background, black));
+  background-color: var(--component, var(--background, black));
   color: var(--color, var(--light, white));
 }
 .treeselect_idselect .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
 }
 .treeselect_idselect .vue-treeselect__menu .vue-treeselect__option--highlight {
+  color: black;
+  background-color: #e9ecef;
+}
+.treeselect_idselect.vue-treeselect--single .vue-treeselect__option--selected{
   color: black;
   background-color: var(--primary);
 }
