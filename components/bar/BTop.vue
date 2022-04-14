@@ -15,22 +15,24 @@
             <b-icon :icon="iconnames.menuOpen" />
           </b-button>
         </b-navbar-nav>
-        <b-navbar-brand href="/addons/webgui/app/clients" class="topbar_brand">
-          <b-badge class="topbar_badge_logo">
-            <IconIOpsiLogo class="topbar_logo" />
-          </b-badge>
-          {{ getTitleUppercase() }}
+        <b-navbar-brand class="topbar_brand">
+          <div href="/addons/webgui/app/clients">
+            <b-badge class="topbar_badge_logo">
+              <IconIOpsiLogo class="topbar_logo" />
+            </b-badge>
+            <span class="topbar_title"> {{ getTitleUppercase() }} </span>
+          </div>
           <span class="topbar_version"> {{ $config.packageVersion }} </span>
-        <!-- <span class="topbar_expert"> <IconIExpert /> </span> -->
+          <ButtonBTNExpertMode :navbar="true" />
+          <ModalMTrackChanges />
         </b-navbar-brand>
-        <ButtonBTNExpertMode :navbar="true" />
+
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
             <span class="sr-only">Open topmenu</span>
             <b-icon :icon="iconnames.menu" font-scale="1.1" />
           </b-button>
         </b-navbar-nav>
-        <ModalMTrackChanges />
         <b-collapse id="nav-collapse" is-nav variant="primary">
           <b-navbar-nav class="ml-auto float-right">
             <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
@@ -101,7 +103,10 @@ export default class BTop extends Vue {
   display: inline-flex !important;
   padding-bottom: 0px !important;
 }
-
+.topbar_title{
+  font-size: 18px;
+  margin-left: -7px;
+}
 .topbar_version{
   font-size: 10px;
   margin-left: 5px;

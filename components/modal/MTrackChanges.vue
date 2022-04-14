@@ -4,6 +4,7 @@
       v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
       v-b-tooltip.hover
       :title="$t('button.track.changes')"
+      size="sm"
       @click="$bvModal.show('trackChangesModal')"
     >
       <b-icon class="bg-success" font-scale="2" :icon="iconnames.save" />
@@ -128,5 +129,9 @@ export default class MTrackChanges extends Vue {
 <style>
 .modal-header .close {
   color: var(--color, var(--primary, black));
+}
+.modal-dialog {
+  left: 0% !important;
+  top:10% !important;
 }
 </style>
