@@ -15,6 +15,8 @@
       size="xl"
       :title="$t('button.track.changes')"
       hide-footer
+      scrollable
+      no-fade
     >
       <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
         <TableTChanges />
