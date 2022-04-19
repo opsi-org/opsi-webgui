@@ -3,13 +3,14 @@
     v-b-tooltip.hover
     aria-label="reset"
     :title="label? '' : $t('button.reset')"
-    variant="transparent"
+    variant="outline-primary"
     class="reset"
     size="sm"
     @click="action"
   >
     <span class="sr-only">{{ $t('button.reset') }}</span>
-    <b-icon :icon="iconnames.reset" class="icon-primary" /> <span>{{ label? '' : $t('button.reset') }} </span>
+    <!-- class="icon-primary" -->
+    <b-icon :icon="iconnames.reset" /> <span>{{ label? '' : $t('button.reset') }} </span>
   </b-button>
 </template>
 
@@ -25,10 +26,9 @@ export default class BTNReset extends Vue {
 }
 </script>
 <style>
-.reset {
+/* .reset {
   color: var(--dark) !important;
   border: none !important
-  /* background: green !important; */
 }
 .reset .icon-primary{
   color: var(--primary) !important;
@@ -39,5 +39,5 @@ export default class BTNReset extends Vue {
 .reset:hover {
   background: var(--primary) !important;
   color: var(--light) !important;
-}
+} */
 </style>
