@@ -4,11 +4,11 @@
     size="sm"
     class="border-0"
     variant="outline-primary"
-    :title="$t('button.delete')"
+    :title="$t('button.reset')"
     @click="deleteChanges()"
   >
-    <span class="sr-only">{{ $t('button.delete') }}</span>
-    <b-icon :icon="iconnames.delete" />
+    <span class="sr-only">{{ $t('button.reset') }}</span>
+    <b-icon :icon="iconnames.reset" />
   </b-button>
 </template>
 

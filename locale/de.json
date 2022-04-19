@@ -101,6 +101,7 @@
   "button.expand": "Maximieren",
   "button.collapse": "Minimieren",
   "button.reset": "Zurücksetzen",
+  "button.resetAll": "Alle zurücksetzen",
   "button.add": "Hinzufügen",
   "button.delete": "Entfernen",
   "button.deleteall": "Alle entfernen",
