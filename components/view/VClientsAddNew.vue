@@ -1,16 +1,6 @@
 <template>
   <div data-testid="VClientsAddNew">
     <AlertAAlert ref="newClientAlert" />
-    <!-- <BarBPageHeader>
-      <template #right>
-        <b-button variant="primary" @click="resetNewClientForm()">
-          <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
-        </b-button>
-        <b-button variant="success" :disabled="!clientName" @click="createOpsiClient()">
-          <b-icon :icon="iconnames.add" /> {{ $t('button.add') }}
-        </b-button>
-      </template>
-    </BarBPageHeader> -->
     <IconILoading v-if="isLoading" />
     <div v-else>
       <br>
