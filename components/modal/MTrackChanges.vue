@@ -18,11 +18,13 @@
     >
       <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
         <TableTChanges />
-        <b-button class="float-right" size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
-          <b-icon :icon="iconnames.save" />
-          {{ $t('button.saveall') }}
-        </b-button>
-        <ButtonBTNClearChanges class="float-right" />
+        <DivDComponentGroup class="float-right">
+          <ButtonBTNClearChanges />
+          <b-button size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
+            <b-icon :icon="iconnames.save" />
+            {{ $t('button.saveall') }}
+          </b-button>
+        </DivDComponentGroup>
       </template>
       <template v-else>
         -- No changes to track --
