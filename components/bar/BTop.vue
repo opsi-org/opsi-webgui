@@ -16,12 +16,10 @@
           </b-button>
         </b-navbar-nav>
         <b-navbar-brand class="topbar_brand">
-          <div href="/addons/webgui/app/clients">
-            <b-badge class="topbar_badge_logo">
-              <IconIOpsiLogo class="topbar_logo" />
-            </b-badge>
-            <span class="topbar_title"> {{ getTitleUppercase() }} </span>
-          </div>
+          <b-badge href="/addons/webgui/app/clients" class="topbar_badge_logo">
+            <IconIOpsiLogo class="topbar_logo" />
+          </b-badge>
+          <span class="topbar_title"> {{ getTitleUppercase() }} </span>
           <span class="topbar_version"> {{ $config.packageVersion }} </span>
           <ButtonBTNExpertMode :navbar="true" />
           <ModalMTrackChanges />
