@@ -1,6 +1,8 @@
 <template>
   <div data-testid="TTooltipContent">
-    <b-table-simple small :dark="dark" class="tt-table">
+    <!-- TODO: Test style, tootlips with below commented style classes are not visible in production -->
+    <!-- :dark="dark" class="tt-table" -->
+    <b-table-simple small>
       <b-tbody v-if="type=='version'">
         <div v-for="(depotClientDetails, depotId) in details" :key="depotId">
           <!-- {{depotClientDetails}}, {{depotId}} -->

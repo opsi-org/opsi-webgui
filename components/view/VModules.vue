@@ -5,9 +5,13 @@
         {{ $t('settingsPage.modules.available') }}
       </b-col>
       <b-col>
-        <span v-for="m in modules" :key="m">
-          <b-form-input :value="m" readonly />
-        </span>
+        <b-form-textarea
+          rows="3"
+          max-rows="6"
+          no-resize
+          plaintext
+          :value="modules"
+        />
       </b-col>
     </b-row>
   </div>

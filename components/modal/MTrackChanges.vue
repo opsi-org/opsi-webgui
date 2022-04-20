@@ -4,6 +4,7 @@
       v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
       v-b-tooltip.hover
       :title="$t('button.track.changes')"
+      size="sm"
       @click="$bvModal.show('trackChangesModal')"
     >
       <b-icon class="bg-success" font-scale="2" :icon="iconnames.save" />
@@ -14,14 +15,18 @@
       size="xl"
       :title="$t('button.track.changes')"
       hide-footer
+      scrollable
+      no-fade
     >
       <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
         <TableTChanges />
-        <b-button class="float-right" size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
-          <b-icon :icon="iconnames.save" />
-          {{ $t('button.saveall') }}
-        </b-button>
-        <ButtonBTNClearChanges class="float-right" />
+        <DivDComponentGroup class="float-right">
+          <ButtonBTNClearChanges />
+          <b-button size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
+            <b-icon :icon="iconnames.save" />
+            {{ $t('button.saveall') }}
+          </b-button>
+        </DivDComponentGroup>
       </template>
       <template v-else>
         -- No changes to track --
@@ -128,5 +133,9 @@ export default class MTrackChanges extends Vue {
 <style>
 .modal-header .close {
   color: var(--color, var(--primary, black));
+}
+.modal-dialog {
+  left: 0% !important;
+  top:10% !important;
 }
 </style>
