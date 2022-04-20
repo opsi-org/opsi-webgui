@@ -10,7 +10,7 @@
         "installationStatus": "not_installed",
         "actionRequest": "none",
         "actionProgress": null,
-        "actionResult": null,
+        "actionResult": "none",
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -35,7 +35,7 @@
         "installationStatus": "not_installed",
         "actionRequest": "none",
         "actionProgress": null,
-        "actionResult": null,
+        "actionResult": "none",
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -60,7 +60,7 @@
         "installationStatus": "not_installed",
         "actionRequest": "none",
         "actionProgress": null,
-        "actionResult": null,
+        "actionResult": "none",
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -85,7 +85,7 @@
         "installationStatus": "not_installed",
         "actionRequest": "none",
         "actionProgress": null,
-        "actionResult": null,
+        "actionResult": "none",
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -110,7 +110,7 @@
         "installationStatus": "not_installed",
         "actionRequest": "none",
         "actionProgress": null,
-        "actionResult": null,
+        "actionResult": "none",
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [

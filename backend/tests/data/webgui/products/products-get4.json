@@ -1,7 +1,7 @@
 [
     {
-        "productId": "pytest-prod-0",
-        "name": "Pytest dummy PRODUCT 0",
+        "productId": "pytest-prod-2",
+        "name": "Pytest dummy PRODUCT 2",
         "description": null,
         "selectedDepots": [
             "${FQDN}"
@@ -10,7 +10,7 @@
         "installationStatus": "not_installed",
         "actionRequest": "none",
         "actionProgress": null,
-        "actionResult": null,
+        "actionResult": "none",
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -26,17 +26,13 @@
         "selected": 0
     },
     {
-        "productId": "pytest-prod-2",
-        "name": "Pytest dummy PRODUCT 2",
+        "productId": "pytest-prod-3",
+        "name": "Pytest dummy PRODUCT 3",
         "description": null,
         "selectedDepots": [
             "${FQDN}"
         ],
         "selectedClients": null,
-        "installationStatus": "not_installed",
-        "actionRequest": "none",
-        "actionProgress": null,
-        "actionResult": null,
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -44,11 +40,15 @@
             "uninstall",
             "none"
         ],
-        "depot_version_diff": false,
         "depotVersions": [
             "1.0-1"
         ],
         "productType": "LocalbootProduct",
+        "depot_version_diff": false,
+        "installationStatus": "not_installed",
+        "actionRequest": "none",
+        "actionProgress": null,
+        "actionResult": "none",
         "selected": 0
     }
 ]

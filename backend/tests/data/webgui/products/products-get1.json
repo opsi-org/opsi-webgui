@@ -1,5 +1,31 @@
 [
     {
+        "productId": "pytest-prod-0",
+        "name": "Pytest dummy PRODUCT 0",
+        "description": null,
+        "selectedDepots": [
+            "${FQDN}"
+        ],
+        "selectedClients": null,
+        "clientVersions": null,
+        "client_version_outdated": false,
+        "actions": [
+            "setup",
+            "uninstall",
+            "none"
+        ],
+        "depotVersions": [
+            "1.0-1"
+        ],
+        "productType": "LocalbootProduct",
+        "depot_version_diff": false,
+        "installationStatus": "not_installed",
+        "actionRequest": "none",
+        "actionProgress": null,
+        "actionResult": "none",
+        "selected": 0
+    },
+    {
         "productId": "pytest-prod-1",
         "name": "Pytest dummy PRODUCT 1",
         "description": null,
@@ -27,6 +53,58 @@
         "actionProgress": null,
         "actionResult": "none",
         "client_version_outdated": false,
+        "selected": 0
+    },
+    {
+        "productId": "pytest-prod-2",
+        "name": "Pytest dummy PRODUCT 2",
+        "description": null,
+        "selectedDepots": [
+            "${FQDN}"
+        ],
+        "selectedClients": null,
+        "clientVersions": null,
+        "client_version_outdated": false,
+        "actions": [
+            "setup",
+            "uninstall",
+            "none"
+        ],
+        "depotVersions": [
+            "1.0-1"
+        ],
+        "productType": "LocalbootProduct",
+        "depot_version_diff": false,
+        "installationStatus": "not_installed",
+        "actionRequest": "none",
+        "actionProgress": null,
+        "actionResult": "none",
+        "selected": 0
+    },
+    {
+        "productId": "pytest-prod-3",
+        "name": "Pytest dummy PRODUCT 3",
+        "description": null,
+        "selectedDepots": [
+            "${FQDN}"
+        ],
+        "selectedClients": null,
+        "clientVersions": null,
+        "client_version_outdated": false,
+        "actions": [
+            "setup",
+            "uninstall",
+            "none"
+        ],
+        "depotVersions": [
+            "1.0-1"
+        ],
+        "productType": "LocalbootProduct",
+        "depot_version_diff": false,
+        "installationStatus": "not_installed",
+        "actionRequest": "none",
+        "actionProgress": null,
+        "actionResult": "none",
         "selected": 0
     },
     {
@@ -64,84 +142,6 @@
         "actionProgress": null,
         "actionResult": "none",
         "client_version_outdated": false,
-        "selected": 0
-    },
-    {
-        "productId": "pytest-prod-0",
-        "name": "Pytest dummy PRODUCT 0",
-        "description": null,
-        "selectedDepots": [
-            "${FQDN}"
-        ],
-        "selectedClients": null,
-        "clientVersions": null,
-        "client_version_outdated": false,
-        "actions": [
-            "setup",
-            "uninstall",
-            "none"
-        ],
-        "depotVersions": [
-            "1.0-1"
-        ],
-        "productType": "LocalbootProduct",
-        "depot_version_diff": false,
-        "installationStatus": "not_installed",
-        "actionRequest": "none",
-        "actionProgress": null,
-        "actionResult": null,
-        "selected": 0
-    },
-    {
-        "productId": "pytest-prod-2",
-        "name": "Pytest dummy PRODUCT 2",
-        "description": null,
-        "selectedDepots": [
-            "${FQDN}"
-        ],
-        "selectedClients": null,
-        "clientVersions": null,
-        "client_version_outdated": false,
-        "actions": [
-            "setup",
-            "uninstall",
-            "none"
-        ],
-        "depotVersions": [
-            "1.0-1"
-        ],
-        "productType": "LocalbootProduct",
-        "depot_version_diff": false,
-        "installationStatus": "not_installed",
-        "actionRequest": "none",
-        "actionProgress": null,
-        "actionResult": null,
-        "selected": 0
-    },
-    {
-        "productId": "pytest-prod-3",
-        "name": "Pytest dummy PRODUCT 3",
-        "description": null,
-        "selectedDepots": [
-            "${FQDN}"
-        ],
-        "selectedClients": null,
-        "clientVersions": null,
-        "client_version_outdated": false,
-        "actions": [
-            "setup",
-            "uninstall",
-            "none"
-        ],
-        "depotVersions": [
-            "1.0-1"
-        ],
-        "productType": "LocalbootProduct",
-        "depot_version_diff": false,
-        "installationStatus": "not_installed",
-        "actionRequest": "none",
-        "actionProgress": null,
-        "actionResult": null,
         "selected": 0
     }
 ]
