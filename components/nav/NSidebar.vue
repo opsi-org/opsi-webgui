@@ -5,7 +5,7 @@
       <!-- <NavItemNITitle :expanded="expanded" :title="catogery.title" /> -->
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
-          <NavItemNICollapsible
+          <LazyNavItemNICollapsible
             v-if="expanded"
             :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
@@ -13,7 +13,7 @@
             :route="menuitem.route"
             :submenu="menuitem.submenu"
           />
-          <NavItemNIDropdownHoverable
+          <LazyNavItemNIDropdownHoverable
             v-else
             :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
@@ -23,7 +23,7 @@
           />
         </template>
         <template v-else>
-          <NavItemNIItem
+          <LazyNavItemNIItem
             :class="{checkactive: $route.path.includes(menuitem.route)}"
             :expanded="expanded"
             :title="menuitem.title"
@@ -113,15 +113,16 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
+/* .a {
+  color: white !important;
+  background-color: var(--primary);
+} */
 a.nuxt-link-active {
-  font-weight:bolder;
-  /* color: red; */
-  /* background-color: #023e5c */
+  color:white;
 }
 a.nuxt-link-exact-active {
-  font-weight:bolder;
-  /* color: red; */
-  /* background-color: #023e5c */
+  color:white;
+  background-color: #023e5c
 }
 .checkactive.nav-item {
   color:white;
