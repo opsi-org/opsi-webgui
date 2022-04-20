@@ -3,6 +3,7 @@
     <b-nav-item
       id="parentnav"
       v-b-toggle="'collapse-navitem-'+title"
+      :data-testid="'NICollapsible-'+title"
       :class="{checkactive: $route.path.includes(route)}"
       @click="changeRoute"
     >
@@ -18,7 +19,7 @@
           :to="sub.route"
           @click="refresh(sub.route)"
         >
-          <span class="submenu">
+          <span class="submenu" :data-testid="'NICollapsible-submenu-'+sub.title">
             {{ $t(sub.title) }}
           </span>
         </b-nav-item>
