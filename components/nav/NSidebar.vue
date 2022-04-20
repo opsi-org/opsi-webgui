@@ -5,7 +5,7 @@
       <!-- <NavItemNITitle :expanded="expanded" :title="catogery.title" /> -->
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
-          <LazyNavItemNICollapsible
+          <NavItemNICollapsible
             v-if="expanded"
             :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
@@ -13,7 +13,7 @@
             :route="menuitem.route"
             :submenu="menuitem.submenu"
           />
-          <LazyNavItemNIDropdownHoverable
+          <NavItemNIDropdownHoverable
             v-else
             :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
@@ -23,7 +23,7 @@
           />
         </template>
         <template v-else>
-          <LazyNavItemNIItem
+          <NavItemNIItem
             :class="{checkactive: $route.path.includes(menuitem.route)}"
             :expanded="expanded"
             :title="menuitem.title"
