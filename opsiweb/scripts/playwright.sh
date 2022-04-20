@@ -24,6 +24,27 @@ echo ""
 echo "---------------------------------------"
 echo "ATTENTION: webgui-storybook have to be started!"
 echo "---------------------------------------"
+
+if [[ ${file} == "all-changed" ]]; then
+    echo "try to get changed filenames"
+    cd /workspace/opsiweb/uib-components
+    changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
+    # echo "$changedFiles"
+    basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
+    # Iterate the string variable using for loop
+    basenamesWithSlash=""
+    for val in $basenames; do
+        basenamesWithSlash+="/$val "
+    done
+    # echo "$basenamesWithSlash"
+    testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )
+    cd ..
+    echo "run: npm-uib run $npm_command '$testfilesUnique'"
+    npm-uib run $npm_command "$testfilesUnique"
+    npm run test:all:delete-empty-results
+    exit 0
+fi
+
 cd /workspace/opsiweb/
 # build filename of testfile
 echo "filename: ${file} - change file-extension to '${file_ext_new}'"
