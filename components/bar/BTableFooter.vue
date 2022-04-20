@@ -45,7 +45,7 @@ export default class BarBTableFooter extends Vue {
   /* width: 50%; */
   /* border: 1px solid blue; */
   position: absolute;
-  bottom: -40px;
+  bottom: 0px;
   right: 0;
   left: 0;
   margin-top: 10px;
