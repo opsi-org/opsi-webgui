@@ -300,6 +300,8 @@ test:test-components:
   except:
     - bug/cicd-build
     - tags # cause in tags we test all browsers
+  only:
+    - develop # cause in develop we test all files, but only chromium browser
   script:
     - cd opsiweb
     - *define_globals
@@ -332,6 +334,8 @@ test:test-components:all-variants:
     - init:dry
   except:
     - bug/cicd-build
+  only:
+    - tags # cause in tags we test each file and browser
   script:
     - cd opsiweb
     - *define_globals
@@ -345,8 +349,6 @@ test:test-components:all-variants:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
-  only:
-    - tags
   artifacts:
     name: 'opsi-webgui-test-result-components'
     when: on_failure
