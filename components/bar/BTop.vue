@@ -22,7 +22,7 @@
           <span class="topbar_title"> {{ getTitleUppercase() }} </span>
           <span class="topbar_version"> {{ $config.packageVersion }} </span>
           <ButtonBTNExpertMode :navbar="true" />
-          <ModalMTrackChanges />
+          <ModalMTrackChanges v-if="$mq === 'mobile'" />
         </b-navbar-brand>
 
         <b-navbar-nav v-if="$mq === 'mobile'">
@@ -33,6 +33,7 @@
         </b-navbar-nav>
         <b-collapse id="nav-collapse" is-nav variant="primary">
           <b-navbar-nav class="ml-auto float-right">
+            <ModalMTrackChanges v-if="$mq != 'mobile'" />
             <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
             <!-- TODO: remove for production start -->
             <DropdownDDTheme v-if="$mq!='mobile'" class="navbar-collapse-child" :navbar="true" />

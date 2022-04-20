@@ -76,10 +76,10 @@ export default class BVTable extends Vue {
   width: 25%;
   font-weight: normal;
 }
-/* .bvtable_small.table-responsive {
+.bvtable_small.table-responsive {
   max-height: 200px;
   overflow-y: auto;
-} */
+}
 
 .bvtable {
   min-height: 200px;
