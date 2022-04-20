@@ -28,18 +28,22 @@ const auth = (durationMin=2) => {
 mystore = ({ enable_auth=true, auth_durationMin=2 } = {}) => new Store({
   modules: { auth: (enable_auth)? auth(auth_durationMin): {} }
 })
-mystore = (module, getters = {foo () {}}, mutation = {}) => new Store({
+customstore = (module, getters = {foo () {}}, mutation = {}) => new Store({
   modules: { [module]: {
     namespaced: true,
     getters: getters,
     mutation: mutation,
   } }
 })
+customstores = (modules = {}) => new Store({
+  modules: modules
+})
 
 //////////////////
 // exports
 module.exports.store = mystore
-module.exports.customstore = mystore
+module.exports.customstore = customstore
+module.exports.customstores = customstores
 module.exports.mock = mock
 module.exports.data = {
   depotIds: ['depot1.uib.local', 'depot2.uib.local', 'depot3.uib.local'],
@@ -101,10 +105,28 @@ module.exports.data = {
     depotId: { label: 'depotId', key: 'depotId', visible: true, sortable: true, _fixed: true },
     rowactions: { key: 'rowactions', label: 'actions', visible: true, _fixed: true }
   },
+  headerDataProducts: {
+    selected: { label: 'selected', key: 'selected', visible: true, sortable: true, _fixed: true },
+    ident: { label: 'ident', key: 'ident', visible: false, sortable: false, _fixed: false },
+    productId: { label: 'productId', key: 'productId', visible: true, sortable: true, _fixed: true },
+    name: { label: 'name', key: 'name', visible: false, sortable: true, _fixed: false },
+    actionRequest: { label: 'actionRequest', key: 'actionRequest', visible: false, sortable: true, _fixed: false },
+    // actionProgress: { label: 'actionProgress', key: 'actionProgress', visible: true, sortable: true, _fixed: true },
+    // installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: true, sortable: true, _fixed: true },
+    // version: { label: 'version', key: 'version', visible: true, sortable: true, _fixed: true },
+    rowactions: { key: 'rowactions', label: 'actions', visible: true, _fixed: true }
+  },
   tableData: {
     pageNumber: 1,
     perPage: 2,
     sortBy: 'depotId',
+    sortDesc: false,
+    filterQuery: ''
+  },
+  tableDataMoreElements: {
+    pageNumber: 1,
+    perPage: 3,
+    sortBy: '',
     sortDesc: false,
     filterQuery: ''
   }
