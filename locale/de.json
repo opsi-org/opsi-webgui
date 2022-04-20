@@ -114,6 +114,7 @@
   "button.sort.tablecolumns": "Sortiere Tabelle nach",
   "button.sort.tablecolumns.sortDirection": "Absteigende Sortierung",
   "button.track.changes": "Änderungen",
+  "button.change.loglevel": "Log level ändern",
   "treeselect.hostGroups": "Hostgruppen",
   "treeselect.prodGroups": "Produktgruppen",
   "treeselect.noresult": "Kein Eintrag gefunden",
