@@ -10,27 +10,26 @@ addon webgui
 
 import os
 
-from fastapi import FastAPI, Request, status, HTTPException, APIRouter
-from fastapi.responses import PlainTextResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.requests import HTTPConnection
-from starlette.types import Receive, Send
-from starlette.concurrency import run_in_threadpool
-
+from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.staticfiles import StaticFiles
+from OPSI.Exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
-from opsiconfd.logging import logger
-from opsiconfd.utils import remove_route_path
 from opsiconfd.backend import get_client_backend
-
+from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
+from opsiconfd.utils import remove_route_path
+from starlette.concurrency import run_in_threadpool
+from starlette.types import Receive, Send
 
-from .const import ADDON_ID, ADDON_NAME, ADDON_VERSION
 from .clients import client_router
-from .products import product_router
+from .const import ADDON_ID, ADDON_NAME, ADDON_VERSION
 from .depots import depot_router
 from .hosts import host_router
-from .webgui import webgui_router
+from .products import product_router
 from .utils import mysql
+from .webgui import webgui_router
 
 SESSION_LIFETIME = 60*30
 
@@ -48,8 +47,6 @@ class Webgui(Addon):
 			def webgui_error():
 				return PlainTextResponse("No mysql backend found! Webgui only works with mysql backend.", status_code=501)
 			app.include_router(error_router)
-			logger.devel(app)
-
 			return
 
 		app.include_router(webgui_router, prefix=self.router_prefix)
@@ -78,11 +75,10 @@ class Webgui(Addon):
 		"""Called on every request where the path matches the addons router prefix.
 		Return true to skip further request processing."""
 		connection.scope["required_access_role"] = ACCESS_ROLE_AUTHENTICATED
-
 		if (
-			(connection.scope["path"].startswith(f"{self.router_prefix}/api/auth") or 
+			(connection.scope["path"].startswith(f"{self.router_prefix}/api/auth") or
 			connection.scope["path"].startswith(f"{self.router_prefix}/api/opsidata")) and
-			connection.base_url.hostname in  ("127.0.0.1", "::1", "0.0.0.0", "localhost")
+			connection.base_url.hostname in ("127.0.0.1", "::1", "0.0.0.0", "localhost")
 		):
 			if connection.scope.get("method") == "OPTIONS":
 				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
@@ -105,11 +101,46 @@ class Webgui(Addon):
 
 		return False
 
+	async def handle_request_exception(self, err: Exception, connection: HTTPConnection, receive: Receive, send: Send) -> bool:  # pylint: disable=no-self-use,unused-argument
+		"""Called on every request exception where the path matches the addons router prefix.
+		Return true to skip further request processing."""
+		message = str(err)
+		status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+		headers = {}
+
+		if isinstance(err, (BackendAuthenticationError, BackendPermissionDeniedError)):
+			status_code = status.HTTP_403_FORBIDDEN
+		if isinstance(err, HTTPException):
+			status_code = err.status_code
+			message = err.detail
+
+		if status_code == status.HTTP_401_UNAUTHORIZED:
+			message = "Not logged in"
+
+		if connection.scope.get("session"):
+			headers = connection.scope["session"].get_headers()
+
+		if status_code == status.HTTP_500_INTERNAL_SERVER_ERROR:
+			logger.error(err, exc_info=True)
+
+		response = JSONResponse(
+			content={
+				"http_status": status_code,
+				"error": str(err),
+				"message": message
+			},
+			status_code=status_code,
+			headers=headers
+		)
+		await response(connection.scope, receive, send)
+		return True
+
+
 async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	logger.info("Start authentication of client %s", connection.client.host)
 	username = None
 	password = None
-	# if connection.scope["path"] == "/webgui/app/api/auth/login":
+	# if connection.scope["path"] == "/addons/webgui/api/auth/login":
 	req = Request(connection.scope, receive)
 	form = await req.form()
 	username = form.get("username")
