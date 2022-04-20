@@ -28,10 +28,18 @@ const auth = (durationMin=2) => {
 mystore = ({ enable_auth=true, auth_durationMin=2 } = {}) => new Store({
   modules: { auth: (enable_auth)? auth(auth_durationMin): {} }
 })
+mystore = (module, getters = {foo () {}}, mutation = {}) => new Store({
+  modules: { [module]: {
+    namespaced: true,
+    getters: getters,
+    mutation: mutation,
+  } }
+})
 
 //////////////////
 // exports
 module.exports.store = mystore
+module.exports.customstore = mystore
 module.exports.mock = mock
 module.exports.data = {
   depotIds: ['depot1.uib.local', 'depot2.uib.local', 'depot3.uib.local'],
