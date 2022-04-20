@@ -1,10 +1,10 @@
 export default {
-  title: 'Navitem/N I Collapsible',
+  title: 'Nav/NI Collapsible',
   parameters: { docs: { description: { component: 'Navitem Collapsible' } } }
 }
 
 const PrimaryTemplate = () => ({
-  template: '<NavItemNICollapsible />'
+  template: '<NavItemNICollapsible title="menuitem.title" icon="menuitem.icon" submenu="menuitem.submenu" />'
 })
 
 // named export Primary to create respective story
