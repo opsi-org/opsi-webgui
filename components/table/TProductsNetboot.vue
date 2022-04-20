@@ -123,7 +123,7 @@ export default class TProductsNetboot extends Vue {
   @Prop() rowId!: string
   @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
-  @Prop() multiselect!: boolean
+  @Prop({ default: true }) multiselect!: boolean
   @Prop() child!: boolean
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   // @Prop({ }) tableData!: ITableData
