@@ -1,10 +1,12 @@
 <template>
   <div>
+    <!-- @click="changeRoute" -->
     <b-nav-item
       id="parentnav"
       v-b-toggle="'collapse-navitem-'+title"
-      :class="{checkactive: $route.path.includes(route)}"
-      @click="changeRoute"
+      :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
+      :to="$mq === 'desktop' ? route: null "
+      @click="refresh(route)"
     >
       <b-icon :icon="icon" /> {{ $t(title) }}
       <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
@@ -14,7 +16,7 @@
         <b-nav-item
           v-for="sub in submenu"
           :key="sub.title"
-          :class="{checksubactive: $route.path == (sub.route)}"
+          :class="{checkactive: $route.path.includes(sub.route)}"
           :to="sub.route"
           @click="refresh(sub.route)"
         >
@@ -39,11 +41,11 @@ export default class NICollapsible extends Vue {
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>
-  changeRoute () {
-    if ((this as any).$mq === 'desktop') {
-      this.$router.push({ path: this.route })
-    }
-  }
+  // changeRoute () {
+  //   if ((this as any).$mq === 'desktop') {
+  //     this.$router.push({ path: this.route })
+  //   }
+  // }
 
   refresh (route) {
     if (this.$route.path.includes(route)) {

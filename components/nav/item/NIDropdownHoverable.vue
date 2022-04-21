@@ -3,7 +3,7 @@
     <b-nav-item-dropdown
       ref="dropdown"
       class="sidemenu_dropdown"
-      :class="{checkactive: $route.path.includes(route)}"
+      :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       block
       dropright
       no-caret
@@ -18,7 +18,7 @@
       <b-dropdown-item
         v-for="sub in submenu"
         :key="sub.title"
-        :class="{checksubactive: $route.path == (sub.route)}"
+        :class="{checkactive: $route.path.includes(sub.route)}"
         :to="sub.route"
         @click="refresh(sub.route)"
       >
@@ -63,5 +63,9 @@ export default class NIDropdownHoverable extends Vue {
 <style>
 .sidemenu_dropdown .dropdown-menu{
   left: calc(var(--width-sidebar-collapsed) - 6px) !important;
+}
+.checkactive.nav-item {
+  color:white;
+  background-color: #025077
 }
 </style>
