@@ -118,7 +118,7 @@ export default class NSidebar extends Vue {
   background-color: var(--primary);
 } */
 a.nuxt-link-active {
-  color:white;
+  color:var(--color, black);
 }
 a.nuxt-link-exact-active {
   color:white;
