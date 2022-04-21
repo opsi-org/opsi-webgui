@@ -30,7 +30,7 @@
         <b-icon :icon="iconnames.x" />
       </b-button>
     </b-navbar-nav>
-    <b-collapse :id="'collapse-navitem-'+title" v-model="contentVisible" accordion="sidebarAccordion" :visible="contentVisible" class="collapse-navitem container">
+    <b-collapse :id="'collapse-navitem-'+title" v-model="contentVisible" accordion="pageHeaderAccordion" :visible="contentVisible" class="collapse-navitem container">
       <b-row class="">
         <slot name="nav-child">
           <b-col class="nav-child nav-child-left" col>

@@ -19,7 +19,7 @@
         </b-badge>
       </b-th>
     </b-nav-item>
-    <b-collapse :id="'collapse-navitem-'+title" accordion="sidebarAccordion" :visible="collapsed">
+    <b-collapse :id="'collapse-navitem-'+title" accordion="tooltipCollapseAccordion" :visible="collapsed">
       <slot name="nav-child" />
     </b-collapse>
   </div>
