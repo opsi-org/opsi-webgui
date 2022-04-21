@@ -16,8 +16,7 @@
           </b-button>
         </b-navbar-nav>
         <b-navbar-brand class="topbar_brand">
-          <!-- href="/addons/webgui/app/clients" -->
-          <b-badge to="/clients/" class="topbar_badge_logo">
+          <b-badge href="/clients/" class="topbar_badge_logo">
             <IconIOpsiLogo class="topbar_logo" />
           </b-badge>
           <span class="topbar_title"> {{ getTitleUppercase() }} </span>

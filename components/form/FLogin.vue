@@ -111,7 +111,7 @@ export default class FLogin extends Vue {
         if (response.data.result === 'Login success') {
           this.login(this.form.username)
           if (this.$route.name === 'login') {
-            this.$router.push({ path: '/clients' })
+            this.$router.push({ path: '/clients/' })
           } else {
             this.$router.back()
           }
