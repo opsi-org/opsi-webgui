@@ -26,7 +26,7 @@
       >
         <span
           v-if="index != 0"
-          style="font-family: monospace;"
+          style="font-family: monospace; font-size: 15px; text-align: justify ; display:block;"
           :class="{
             'text-secondary': true,
             'text-secondary': log.startsWith('[0]'),
