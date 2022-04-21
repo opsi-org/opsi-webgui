@@ -4,5 +4,5 @@ const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 test('card support snapshot', async ({ page }) => {
   await callStoryId(page, 'card-c-support', 'c-support')
   const component = await page.locator('[data-testid="CardCSupport"]')
-  expect(await component.screenshot()).toMatchSnapshot('card-csupport.png')
+  expect(await component.screenshot()).toMatchSnapshot('CSupport.png')
 })

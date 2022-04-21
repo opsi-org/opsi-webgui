@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
+// import Cookie from 'js-cookie'
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../.utils/types/tchanges'
 const settings = namespace('settings')
@@ -47,16 +47,6 @@ export default class LayoutDefault extends Vue {
     await this.checkServer()
   }
 
-  @Watch('$mq', { deep: true }) mqChanged () {
-    this.updateSidebarAttr()
-  }
-
-  @Watch('sidebarAttr', { deep: true }) attributesChanged () {
-    if (this.$mq !== 'mobile') {
-      Cookie.set('menu_attributes_desktop', JSON.stringify(this.sidebarAttr), { expires: 365 })
-    }
-  }
-
   get username () {
     return localStorage.getItem('username')
   }
@@ -69,7 +59,7 @@ export default class LayoutDefault extends Vue {
     // } else {
     //   // this.sidebarAttr = { visible: true, expanded: true }
     // }
-    this.updateSidebarAttr()
+    // this.updateSidebarAttr()
   }
 
   confirmToSaveChanges () {
@@ -92,20 +82,6 @@ export default class LayoutDefault extends Vue {
   async checkServer () {
     if (this.opsiconfigserver === '') {
       this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
-    }
-  }
-
-  updateSidebarAttr () {
-    if ((this as any).$mq === 'mobile') {
-      this.sidebarAttr.visible = false
-      this.sidebarAttr.expanded = true
-    } else {
-      if (Cookie.get('menu_attributes_desktop')) {
-        this.sidebarAttr.expanded = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any).expanded
-      } else {
-        this.sidebarAttr.expanded = true
-      }
-      this.sidebarAttr.visible = true
     }
   }
 }

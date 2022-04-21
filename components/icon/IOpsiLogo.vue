@@ -14,7 +14,7 @@ export default class IOpsiLogo extends Vue {
 .OpsiLogo_Img {
   /* max-width: 60%;
   max-height: 60%; */
-  filter: saturate(0) brightness(6) !important;
+  filter: saturate(0) brightness(5) !important;
   /* filter: saturate(0) brightness(0); */
   /* filter: saturate(0) brightness(6); */
   /* filter: saturate(0) brightness(20%); */

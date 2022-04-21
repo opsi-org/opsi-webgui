@@ -1,14 +1,14 @@
 <template>
   <b-dropdown
     v-bind="$props"
-    data-testid="DropdownDDTableSort"
+    data-testid="DropdownDDTableSorting"
     no-caret
     right
     lazy
     variant="outline-primary"
     size="sm"
     alt="Show column"
-    class="DropdownDDTableSort fixed_column_selection noborder"
+    class="DropdownDDTableSorting fixed_column_selection noborder"
     :title="$t('button.sort.tablecolumns')"
   >
     <!-- dropleft -->
@@ -49,7 +49,7 @@ import { ITableHeader } from '../../.utils/types/ttable'
 import { Constants } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
-export default class DDTableColumnVisibilty extends BDropdown {
+export default class DDTableSorting extends BDropdown {
   $mq:any
   iconnames: any
   @Prop({ default: '' }) sortBy!: string
@@ -61,24 +61,24 @@ export default class DDTableColumnVisibilty extends BDropdown {
 }
 </script>
 <style>
-.DropdownDDTableSort {
+.DropdownDDTableSorting {
   max-width: fit-content !important;
   max-height: fit-content !important;
   display: unset !important;
 }
-.DropdownDDTableSort .dropdown-menu {
+.DropdownDDTableSorting .dropdown-menu {
   height: max-content !important;
   z-index: 3 !important;
   /* position: sticky; */
 }
-.DropdownDDTableSort .dropdown-menu .dropdown-item {
+.DropdownDDTableSorting .dropdown-menu .dropdown-item {
   cursor: pointer;
   display: flex !important;
 }
-.DropdownDDTableSort a.selected {
+.DropdownDDTableSorting a.selected {
   background-color: var(--primary);
 }
-.DropdownDDTableSort .noborder .btn-outline-primary{
+.DropdownDDTableSorting .noborder .btn-outline-primary{
   border: 0;
   box-shadow: none;
 }

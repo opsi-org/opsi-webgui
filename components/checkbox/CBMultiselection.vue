@@ -1,7 +1,15 @@
 <template>
-  <b-form-checkbox v-model="multiselect" class="multiselect" size="sm" switch @change="$emit('update:multiselect', multiselect)">
-    Multiselection
-    <span class="sr-only">{{ multiselect ? 'Enable multiselection': 'Disable multiselection' }}</span>
+  <b-form-checkbox
+    v-model="multiselect"
+    data-testid="CBMultiselection"
+    class="CBMultiselection"
+    size="sm"
+    switch
+    @change="$emit('update:multiselect', multiselect)"
+  >
+    {{ $t('button.multiselection') }}
+    <span class="sr-only">{{ multiselect ? $t('button.multiselectEnable'): $t('button.multiselectDisable') }}</span>
+    <!-- TODO: add to translation: Multiselection, Enable/Disable multiselection -->
   </b-form-checkbox>
 </template>
 
@@ -15,7 +23,7 @@ export default class CBMultiSelection extends Vue {
 </script>
 
 <style>
-.multiselect {
+.CBMultiselection {
   margin-top: 8px;
   margin-right: 8px;
 }

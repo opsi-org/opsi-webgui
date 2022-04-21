@@ -1,32 +1,20 @@
-import { argTypeBoolFalse, argTypeBoolTrue, argTypeTextContent, argTypeTextTitle, argTypeVariants } from '../../.utils/types/ttestconsts'
 
 export default {
   title: 'bar/B Tooltip Collapse Row',
-  parameters: { docs: { description: { component: 'Bar/BTooltipCollapseRow description' } } },
-  argTypes: {
-    title: argTypeTextTitle,
-    value: argTypeTextContent,
-    valueVariant: argTypeVariants,
-    collapseable: argTypeBoolTrue,
-    collapsed: argTypeBoolFalse
-  }
+  parameters: { docs: { description: { component: 'Bar/BTooltipCollapseRow description' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: ` <BarBTooltipCollapseRow
-  :title="${args.title}||$props.title"
-  :value="${args.value}||$props.value"
-  :collapsed="${args.collapsed}||$props.collapsed"
-  :collapseable="${args.collapseable}||$props.collapseable"
-  :value-variant="${args.valueVariant}||$props.valueVariant"
->
-  `
+  computed: { args () { return args } },
+  template: '<BarBTooltipCollapseRow v-bind="args" />'
 })
 
 export const BTooltipCollapseRow = DefaultVisibleTemplate.bind({})
-// BTooltipCollapseRow.args = {
-//   totalRows: 20,
-//   pageNumber: 1,
-//   perPage: 10
-// }
+BTooltipCollapseRow.args = {
+  title: 'Title',
+  value: 'Content',
+  valueVariant: 'primary',
+  collapseable: true,
+  collapsed: false
+}

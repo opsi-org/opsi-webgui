@@ -1,6 +1,7 @@
 <template>
   <b-button
     v-b-tooltip.hover
+    data-testid="ButtonBTNReset"
     aria-label="reset"
     :title="label? '' : $t('button.reset')"
     variant="outline-primary"

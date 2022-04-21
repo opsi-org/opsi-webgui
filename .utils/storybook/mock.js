@@ -54,7 +54,8 @@ module.exports.data = {
           swaudit:{ id:'swaudit;audit', type:'ObjectToGroup', text:'swaudit', parent:'audit'}
         }}
       }
-    }
+    },
+    hosts: {"groups":{"groups":{"id":"groups;None","type":"HostGroup","text":"groups","parent":null,"allowed":true,"children":null},"clientdirectory":{"id":"clientdirectory;None","type":"HostGroup","text":"clientdirectory","parent":null,"allowed":true,"children":null},"clientlist":{"id":"clientlist;None","type":"HostGroup","text":"clientlist","parent":null,"hasAnySelection":false,"allowed":true,"children":null}}},
   },
 
   products: [

@@ -4,12 +4,14 @@ const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 test('div dscrollresult snapshot', async ({ page }) => {
   await callStoryId(page, 'div-d-scroll-result', 'd-scroll-result')
   const component = await page.locator('[data-testid="DivDScrollResult"]')
-  expect(await component.screenshot()).toMatchSnapshot('div-dscrollresult.png')
+  expect(await component.screenshot()).toMatchSnapshot('DScrollResult.png')
 })
 
-// TODO: Test scrolling..
+// // TODO: Test scrolling..
 // test('div dscrollresult scroll2bottom snapshot', async ({ page }) => {
-//   await page.goto('http://localhost:3003/iframe.html?id=div-d-scroll-result--d-scroll-result&args=&viewMode=story')
-//   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-//   expect(await page.screenshot()).toMatchSnapshot('comp-div-dscrollresult-scrolled.png')
+//   await callStoryId(page, 'div-d-scroll-result', 'd-scroll-result')
+//   const component = await page.locator('[data-testid="DivDScrollResult"]')
+//   // await component.scrollTo(0, component.scrollHeight)
+//   await page.evaluate(() => component.scrollTo(0, component.scrollHeight))
+//   expect(await component.screenshot()).toMatchSnapshot('DScrollResult-scrolled.png')
 // })

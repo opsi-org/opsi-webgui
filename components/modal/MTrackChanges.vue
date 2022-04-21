@@ -2,12 +2,19 @@
   <div data-testid="MTrackChanges">
     <b-button
       v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
-      v-b-tooltip.hover
-      :title="$t('button.track.changes')"
       size="sm"
+      class="mt-2"
       @click="$bvModal.show('trackChangesModal')"
     >
-      <b-icon class="bg-success" font-scale="2" :icon="iconnames.save" />
+      <span v-if="$mq!='mobile'" class="text-warning"> {{ $t('button.track.changes') }} </span>
+      <b-icon
+        v-if="$mq === 'mobile'"
+        v-b-tooltip.hover
+        :title="$t('button.track.changes')"
+        variant="warning"
+        font-scale="2"
+        :icon="iconnames.save"
+      />
     </b-button>
     <b-modal
       id="trackChangesModal"
@@ -15,14 +22,17 @@
       size="xl"
       :title="$t('button.track.changes')"
       hide-footer
+      no-fade
     >
       <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
         <TableTChanges />
-        <b-button class="float-right" size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
-          <b-icon :icon="iconnames.save" />
-          {{ $t('button.saveall') }}
-        </b-button>
-        <ButtonBTNClearChanges class="float-right" />
+        <DivDComponentGroup class="float-right">
+          <ButtonBTNClearChanges />
+          <b-button size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
+            <b-icon :icon="iconnames.save" />
+            {{ $t('button.saveall') }}
+          </b-button>
+        </DivDComponentGroup>
       </template>
       <template v-else>
         -- No changes to track --

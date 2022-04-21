@@ -7,10 +7,10 @@ export default {
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: ` <ButtonBTNRowLinkTo
-    :title="$t('title.config')"
+    title="title"
     icon="gear"
-    to="/products/config"
-    :ident="'row.item.productId'"
+    to="#"
+    :ident="'ident'"
     :pressed="() => {}"
     :click-parent="() => {}"
   />`

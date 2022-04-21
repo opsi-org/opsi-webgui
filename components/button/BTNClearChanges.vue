@@ -1,7 +1,7 @@
 <template>
-  <b-button data-testid="BTNClearChanges" size="sm" variant="danger" :title="$t('button.deleteall')" @click="deleteAll()">
-    <b-icon :icon="iconnames.delete" />
-    {{ $t('button.deleteall') }}
+  <b-button data-testid="BTNClearChanges" size="sm" variant="primary" :title="$t('button.resetAll')" @click="deleteAll()">
+    <b-icon :icon="iconnames.reset" />
+    {{ $t('button.resetAll') }}
   </b-button>
 </template>
 

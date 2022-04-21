@@ -3,18 +3,15 @@ stages:
   - init
   - test
 
-# variables:
-#   npm_config_cache: "$CI_PROJECT_DIR/.npm"
-# # Define a hidden job to be used with extends
-# # Better than default to avoid activating cache for all jobs
-# .dependencies_cache:
-#   cache:
-#     key:
-#       files:
-#         - package-lock.json
-#     paths:
-#       - .npm
-#     policy: pull
+
+.get_changed_files: &get_changed_files |
+  changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
+  echo "$changedFiles"
+  basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
+  echo "$basenames"
+  testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
+  # todo checking if each file in testfilesUnique exists
+  echo "$testfilesUnique"
 
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -39,7 +36,7 @@ test:lint:
   script:
     - npm run liblint
 
-test:test-unit:
+test:unit:
   stage: test
   dependencies:
     - init:npm
@@ -52,18 +49,23 @@ test:test-unit:
       cobertura: coverage/clover.xmlci
 
 
-test:test-components:
+test:components:changed:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:npm
+  except:
+    - develop
   script:
+    - *get_changed_files
+    - echo "$testfilesUnique"
     - npx playwright install
+    - npx playwright install-deps
 
     - PORT=3003 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
-    - npm run libtest:integration || exit_code=$?
+    - npm run libtest:integration $testfilesUnique|| exit_code=$?
     - npm run libtest:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -76,6 +78,32 @@ test:test-components:
       - .dev.log
     expire_in: 2 day
 
+test:components:all:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:npm
+  only:
+    - develop
+  script:
+    - npx playwright install
+    - npx playwright install-deps
+
+    - PORT=3003 nohup npm run libdev > .dev.log &
+    - PORT=3003 nohup npm run libstory > .storybook.log &
+    - sleep 60
+    - npm run libtest:integration $files|| exit_code=$?
+    - npm run libtest:delete-empty-results
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: 'opsi-ui-components-test-result-components'
+    when: on_failure
+    paths:
+      - test-results/
+      - .storybook.log
+      - .dev.log
+    expire_in: 2 day
 # test:test-e2e:
 #   stage: test
 #   dependencies:

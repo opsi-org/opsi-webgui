@@ -131,4 +131,7 @@ export default class DDDefault extends BDropdown {
   cursor: pointer;
   /* display: grid !important; */
 }
+.dropdown-menu .custom-control.custom-checkbox {
+  display: inline;
+}
 </style>

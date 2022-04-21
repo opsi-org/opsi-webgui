@@ -18,6 +18,7 @@
       <b-button
         v-if="$mq === 'desktop'"
         v-b-tooltip.hover
+        data-testid="BarBSideBtnExpand"
         variant="primary"
         :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
         :pressed.sync="attributes.expanded"
@@ -31,7 +32,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import Cookie from 'js-cookie'
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
 import { Constants } from '../../mixins/uib-mixins'
 
@@ -40,6 +42,40 @@ export default class BSide extends Vue {
   $mq:any
   iconnames:any
   @Prop({ }) attributes!: ISidebarAttributes
+  @Prop({ default: false }) alwaysVisible!: boolean
+
+  mounted () {
+    this.updateAttributes()
+  }
+
+  @Watch('$mq', { deep: true }) mqChanged () {
+    this.updateAttributes()
+  }
+
+  @Watch('attributes', { deep: true }) attributesChanged () {
+    if (this.$mq !== 'mobile' && !this.alwaysVisible) {
+      Cookie.set('menu_attributes_desktop', JSON.stringify(this.attributes), { expires: 365 })
+    }
+    // this.$emit('attributes:update', this.attributes)
+  }
+
+  // toggleExpanded () {
+  //   this.attributes.expanded = !this.attributes.expanded
+  // }
+
+  updateAttributes () {
+    if ((this as any).$mq === 'mobile') {
+      this.attributes.visible = this.alwaysVisible
+      this.attributes.expanded = true
+    } else {
+      if (!this.alwaysVisible && Cookie.get('menu_attributes_desktop')) {
+        this.attributes.expanded = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any).expanded
+      } else {
+        // this.attributes.expanded = true // default
+      }
+      this.attributes.visible = true
+    }
+  }
 }
 </script>
 

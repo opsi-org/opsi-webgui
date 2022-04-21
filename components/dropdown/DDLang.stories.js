@@ -3,12 +3,10 @@ export default {
   parameters: { docs: { description: { component: 'Dropdown/DDLang description' } } }
 }
 
-const DefaultVisibleTemplate = (_args, { argTypes }) => ({
+const DefaultVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<DropdownDDLang
-    :dropup="$props.dropup"
-  />
-  `
+  computed: { args () { return args } },
+  template: '<DropdownDDLang :dropup="args.dropup" />'
 })
 
 export const DDLang = DefaultVisibleTemplate.bind({})
