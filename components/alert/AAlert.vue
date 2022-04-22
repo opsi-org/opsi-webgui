@@ -1,7 +1,4 @@
 <template>
-  <!-- <b-alert class="alertMsg" v-bind="$props" :aria-label="$props.variant">
-    <slot />
-  </b-alert> -->
   <b-alert
     v-model="showAlert"
     data-testid="AAlert"
