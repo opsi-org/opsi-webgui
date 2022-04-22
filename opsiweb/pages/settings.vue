@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <b-tabs class="horizontaltabs">
+    <b-tabs>
       <b-tab :title="$t('settingsPage.localspecific')" active>
         <b-card>
           <ViewVSettingsLocalSpecific />
@@ -21,9 +21,3 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class PSettings extends Vue {
 }
 </script>
-
-<style>
-.horizontaltabs .nav-item{
-  min-width: 10%;
-}
-</style>
