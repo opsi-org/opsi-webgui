@@ -15,15 +15,15 @@
             <b-icon :icon="iconnames.menuOpen" />
           </b-button>
         </b-navbar-nav>
-        <b-navbar-brand class="topbar_brand">
-          <b-badge href="/clients/" class="topbar_badge_logo">
-            <IconIOpsiLogo class="topbar_logo" />
-          </b-badge>
+        <b-navbar-brand href="/clients/" class="topbar_brand">
+          <IconIOpsiLogo class="mr-2" :light="true" height="25" />
           <span class="topbar_title"> {{ getTitleUppercase() }} </span>
           <span class="topbar_version"> {{ $config.packageVersion }} </span>
+        </b-navbar-brand>
+        <b-navbar-nav>
           <ButtonBTNExpertMode :navbar="true" />
           <ModalMTrackChanges v-if="$mq === 'mobile'" />
-        </b-navbar-brand>
+        </b-navbar-nav>
 
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
@@ -116,10 +116,6 @@ export default class BTop extends Vue {
     margin-right: 5px;
     background-color: var(--bg-type) !important;
     padding: 0;
-}
-
-.topbar_logo {
-  height: 25px !important;
 }
 
 .desktop .navbar-brand{
