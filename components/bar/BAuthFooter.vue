@@ -27,7 +27,6 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import DropdownDDLang from '../dropdown/DDLang.vue'
-// console.error('TRY ACCESS VUE CONFIG:', Vue.config.packageVersion)
 @Component({ components: { DropdownDDLang } })
 export default class BAuthFooter extends Vue {
   $mq: any

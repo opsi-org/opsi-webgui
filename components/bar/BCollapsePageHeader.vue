@@ -18,7 +18,6 @@
         </span>
       </slot>
       <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
-        <!-- <DropdownDDTableSorting v-if="$mq == 'mobile' && tableInfo" :table-id="id" :table-data="tableInfo.tableData" :headers="tableInfo.headerData" /> -->
         <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
         <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
         <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
@@ -138,8 +137,6 @@ export default class BTooltipCollapseRow extends Vue {
 }
 .BCollapsePageHeader_Navbar.navbar {
   z-index: inherit !important;
-  /* padding-left: 0rem !important;
-  padding-right: 0rem !important; */
   background-image: none !important;
   background: inherit !important;
 }
@@ -156,7 +153,6 @@ export default class BTooltipCollapseRow extends Vue {
   margin-bottom: 10px;
   min-height: 45px;
   padding: 0px !important;
-  /* min-height: 45px; */
 }
 .BCollapsePageHeader_Navbar .dropdown {
   margin: 0px !important;
@@ -170,12 +166,10 @@ export default class BTooltipCollapseRow extends Vue {
 }
 
 .BCollapsePageHeader_Navbar_toggler {
-  /* min-height: 45px; */
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
   width: calc(100% - 48px);
-  /* border: 1px solid green; */
 }
 .BarBTooltipCollapseRow {
   list-style: none !important;
@@ -213,8 +207,5 @@ export default class BTooltipCollapseRow extends Vue {
 .BCollapsePageHeader_Navbar .pageheader_wrap {
   display: inline-flex;
   flex-wrap: wrap;
-}
-.collapse{
-  padding-left: 20px;
 }
 </style>

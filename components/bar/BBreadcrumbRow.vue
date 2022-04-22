@@ -9,18 +9,6 @@ import { Vue, Component, Prop } from 'nuxt-property-decorator'
 export default class BBreadcrumbRow extends Vue {
   @Prop({ default: undefined }) specificItems!: Array<string>|undefined
 
-  // get breadcrumbItems (): Array<string> {
-  //   if (this.$router === null || this.$router === undefined) {
-  //     return []
-  //   } else if (this.$router.currentRoute === null || this.$router.currentRoute === undefined) {
-  //     return []
-  //   } else if (this.$router.currentRoute.name === null || this.$router.currentRoute.name === undefined) {
-  //     return []
-  //   } else {
-  //     return this.$router.currentRoute.name.split('/')
-  //   }
-  // }
-
   get crumbs (): Array<string> {
     if (this.specificItems !== undefined) { return this.specificItems }
     const pathArray : Array<string> = this.$route.path.split('/')
@@ -48,7 +36,6 @@ export default class BBreadcrumbRow extends Vue {
         items.push(obj)
       }
     }
-    // const texts = pathArray.filter(p => p !== '')
     return items
   }
 }
