@@ -25,7 +25,7 @@
     <p v-if="errorText">
       {{ errorText }}
     </p>
-    <TableTBVTable
+    <TableTDefault
       class="TProductProperties_Table"
       :is-loading="isLoading"
       :error="errorText"
@@ -75,7 +75,7 @@
           <br>
         </b-container>
       </template>
-    </TableTBVTable>
+    </TableTDefault>
   </div>
 </template>
 

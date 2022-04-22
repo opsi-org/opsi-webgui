@@ -1,6 +1,6 @@
 <template>
   <div data-testid="TProductDependencies">
-    <TableTBVTable
+    <TableTDefault
       :is-loading="isLoading"
       :items="Object.values(dependencies.dependencies)"
       :fields="fields"
@@ -23,7 +23,7 @@
       <template #cell(type)="row">
         ({{ getType(row.item.requirementType, row.item.productAction) }})
       </template>
-    </TableTBVTable>
+    </TableTDefault>
   </div>
 </template>
 

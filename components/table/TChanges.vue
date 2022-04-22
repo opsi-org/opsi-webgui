@@ -8,7 +8,7 @@
           <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
         </b-button>
         <b-collapse :id="k" :visible="filter === '' ? false : true">
-          <TableTBVTable
+          <TableTDefault
             type="small"
             :noheader="true"
             :hover="true"
@@ -27,7 +27,7 @@
                 <b-icon :icon="iconnames.save" />
               </b-button>
             </template>
-          </TableTBVTable>
+          </TableTDefault>
         </b-collapse>
       </div>
     </DivDScrollResult>

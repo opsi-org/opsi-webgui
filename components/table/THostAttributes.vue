@@ -1,7 +1,7 @@
 <template>
   <div>
     <AlertAAlert ref="hostAttrAlert" />
-    <TableTBVTable
+    <TableTDefault
       data-testid="THostAttributes"
       :stacked="true"
       :is-loading="isLoading"
@@ -56,7 +56,7 @@
           readonly
         />
       </template>
-    </TableTBVTable>
+    </TableTDefault>
   </div>
 </template>
 
