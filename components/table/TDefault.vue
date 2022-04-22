@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TBVTable">
+  <div data-testid="TDefault">
     <p v-if="error">
       {{ error }}
     </p>
