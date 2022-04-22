@@ -1,14 +1,10 @@
 <template>
   <div class="container-fluid">
     <b-card class="text-center bg-primary mt-3 mx-auto login_card">
-      <div class="mb-2">
-        <b-badge class="d-inline-block bg-light">
-          <img src="~/uib-components/assets/images/LogoOpsi.png" height="35" alt="opsi logo">
-        </b-badge>
-        <h1 class="d-inline-block text-light">
-          {{ getTitleUppercase() }}
-        </h1>
-      </div>
+      <IconIOpsiLogo class="mb-3" height="35" />
+      <h1 class="d-inline-block text-light">
+        {{ getTitleUppercase() }}
+      </h1>
       <FormFLogin />
     </b-card>
   </div>
