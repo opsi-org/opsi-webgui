@@ -57,7 +57,4 @@ export default class BTooltipCollapseRow extends Vue {
 .collapse{
   padding-left: 20px;
 }
-.nav-item {
-  min-width: 100%;
-}
 </style>
