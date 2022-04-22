@@ -25,7 +25,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class PageSupport extends Vue {
+export default class PSupport extends Vue {
   get supportItems (): Array<object> {
     return [
       {
