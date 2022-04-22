@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <ViewVProductProperty :id="id" :as-child="asChild" closeroute="/products/" />
-  </div>
+  <ViewVProductProperty :id="id" :as-child="asChild" closeroute="/products/" />
 </template>
 
 <script lang="ts">

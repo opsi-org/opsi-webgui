@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <!-- <BarBPageHeader :title="'Products -'" :subtitle="id" closeroute="/clients/" /> -->
-    <ViewVProducts :sortby="sortby" :child="true" />
-  </div>
+  <ViewVProducts :sortby="sortby" :child="true" />
 </template>
 
 <script lang="ts">
