@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <b-card class="text-center bg-primary mt-3 mx-auto login_card">
-      <IconIOpsiLogo class="mb-3" height="35" />
+      <IconIOpsiLogo :light="true" class="mb-3" height="35" />
       <h1 class="d-inline-block text-light">
         {{ getTitleUppercase() }}
       </h1>
