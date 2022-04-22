@@ -23,7 +23,7 @@
         :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
         :pressed.sync="attributes.expanded"
       >
-        <span class="sr-only">{{ attributes.expanded? 'Collapse sidemenu': 'Expand sidemenu' }}</span>
+        <span class="sr-only">{{ attributes.expanded? $t('button.collapse'): $t('button.expand') }}</span>
         <b-icon v-if="attributes.expanded" :icon="iconnames.arrowDoubleLeft" />
         <b-icon v-else :icon="iconnames.arrowDoubleRight" />
       </b-button>
@@ -56,12 +56,7 @@ export default class BSide extends Vue {
     if (this.$mq !== 'mobile' && !this.alwaysVisible) {
       Cookie.set('menu_attributes_desktop', JSON.stringify(this.attributes), { expires: 365 })
     }
-    // this.$emit('attributes:update', this.attributes)
   }
-
-  // toggleExpanded () {
-  //   this.attributes.expanded = !this.attributes.expanded
-  // }
 
   updateAttributes () {
     if ((this as any).$mq === 'mobile') {
@@ -70,8 +65,6 @@ export default class BSide extends Vue {
     } else {
       if (!this.alwaysVisible && Cookie.get('menu_attributes_desktop')) {
         this.attributes.expanded = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any).expanded
-      } else {
-        // this.attributes.expanded = true // default
       }
       this.attributes.visible = true
     }
@@ -84,7 +77,6 @@ export default class BSide extends Vue {
   top: calc(var(--height-navbar) - 2px) !important;
   width: var(--width-sidebar-expanded);
   height: 100% !important;
-  /* display: inline-flex !important; */
 }
 .sidemenu_small > #sidemenu {
   width: var(--width-sidebar-collapsed);

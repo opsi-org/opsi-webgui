@@ -1,5 +1,4 @@
 <template>
-  <!-- <div class="BTableFooter fixed-bottom"> -->
   <div class="BTableFooter">
     <b-navbar
       toggleable="sm"
@@ -40,10 +39,6 @@ export default class BarBTableFooter extends Vue {
 
 <style>
 .BTableFooter .navbar {
-  /* display: block; */
-  /* position: fixed; */
-  /* width: 50%; */
-  /* border: 1px solid blue; */
   position: absolute;
   bottom: -40px;
   right: 0;
@@ -54,9 +49,6 @@ export default class BarBTableFooter extends Vue {
   background-image: none !important;
   background-repeat: none !important;
   border: none !important;
-  /* padding: 1rem; */
-  /* background-color: #efefef; */
-  /* text-align: center; */
 }
 .BTableFooter .b-pagination li span,
 .BTableFooter .b-pagination li button {
@@ -70,8 +62,8 @@ export default class BarBTableFooter extends Vue {
   height: var(--height-navbar) !important;
 }
 .footer_wrap {
-  /* display: flex;
-  flex-wrap: wrap; */
+  display: flex;
+  flex-wrap: wrap;
 }
 .navbar {
   z-index: inherit !important;

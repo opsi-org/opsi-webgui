@@ -8,40 +8,38 @@
       type="dark"
       variant="primary"
     >
-      <div class="container-fluid">
-        <b-navbar-nav v-if="$mq === 'mobile'">
-          <b-button :pressed.sync="attributes.visible">
-            <span class="sr-only">Open sidemenu</span>
-            <b-icon :icon="iconnames.menuOpen" />
-          </b-button>
-        </b-navbar-nav>
-        <b-navbar-brand href="/clients/" class="topbar_brand">
-          <IconIOpsiLogo class="mr-2" :light="true" height="25" />
-          <span class="topbar_title"> {{ getTitleUppercase() }} </span>
-          <span class="topbar_version"> {{ $config.packageVersion }} </span>
-        </b-navbar-brand>
-        <b-navbar-nav>
-          <ButtonBTNExpertMode :navbar="true" />
-          <ModalMTrackChanges v-if="$mq === 'mobile'" />
-        </b-navbar-nav>
+      <b-navbar-nav v-if="$mq === 'mobile'">
+        <b-button :pressed.sync="attributes.visible">
+          <span class="sr-only">Open sidemenu</span>
+          <b-icon :icon="iconnames.menuOpen" />
+        </b-button>
+      </b-navbar-nav>
+      <b-navbar-brand href="/clients/">
+        <IconIOpsiLogo :light="true" height="25" />
+        <span class="fs-5"> {{ getTitleUppercase() }} </span>
+        <span class="topbar_version"> {{ $config.packageVersion }} </span>
+      </b-navbar-brand>
+      <b-navbar-nav>
+        <ButtonBTNExpertMode :navbar="true" />
+        <ModalMTrackChanges v-if="$mq === 'mobile'" />
+      </b-navbar-nav>
 
-        <b-navbar-nav v-if="$mq === 'mobile'">
-          <b-button v-b-toggle.nav-collapse variant="primary">
-            <span class="sr-only">Open topmenu</span>
-            <b-icon :icon="iconnames.menu" font-scale="1.1" />
-          </b-button>
+      <b-navbar-nav v-if="$mq === 'mobile'">
+        <b-button v-b-toggle.nav-collapse variant="primary">
+          <span class="sr-only">Open topmenu</span>
+          <b-icon :icon="iconnames.menu" font-scale="1.1" />
+        </b-button>
+      </b-navbar-nav>
+      <b-collapse id="nav-collapse" is-nav variant="primary">
+        <b-navbar-nav class="ml-auto float-right">
+          <ModalMTrackChanges v-if="$mq != 'mobile'" />
+          <DropdownDDLang :navbar="true" />
+          <!-- TODO: remove for production start -->
+          <DropdownDDTheme v-if="$mq!='mobile'" :navbar="true" />
+          <!-- TODO: remove for production end -->
+          <ButtonBTNLogout :navbar="true" />
         </b-navbar-nav>
-        <b-collapse id="nav-collapse" is-nav variant="primary">
-          <b-navbar-nav class="ml-auto float-right">
-            <ModalMTrackChanges v-if="$mq != 'mobile'" />
-            <DropdownDDLang class="navbar-collapse-child" :navbar="true" />
-            <!-- TODO: remove for production start -->
-            <DropdownDDTheme v-if="$mq!='mobile'" class="navbar-collapse-child" :navbar="true" />
-            <!-- TODO: remove for production end -->
-            <ButtonBTNLogout class="navbar-collapse-child" :navbar="true" />
-          </b-navbar-nav>
-        </b-collapse>
-      </div>
+      </b-collapse>
     </b-navbar>
   </div>
 </template>
@@ -71,69 +69,20 @@ export default class BTop extends Vue {
 </script>
 
 <style>
-.navbar-light .navbar-nav .nav-link{
-  color: unset !important;
-  font-weight: normal !important;
-  padding-top: 0px;
-  padding-bottom: 0px;
-}
-
 .topbar{
   background: var(--primary) !important;
-  /* background-color: var(--primary) !important; */
   position: fixed;
   height: var(--height-navbar) !important;
-  margin-bottom: 0px !important;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-  padding: 0em !important;
-}
-
-.topbar::before {
-  content: unset !important;
-}
-
-.topbar::after {
-  content: unset !important;
-}
-
-.topbar_brand{
-  max-height: var(--height-navbar) !important;
-  display: inline-flex !important;
-  padding-bottom: 0px !important;
-}
-.topbar_title{
-  font-size: 18px;
-  margin-left: -7px;
 }
 .topbar_version{
-  font-size: 10px;
-  margin-left: 5px;
+  font-size: 12px;
 }
-
-.topbar_badge_logo  {
-    margin-left:5px;
-    margin-right: 5px;
-    background-color: var(--bg-type) !important;
-    padding: 0;
-}
-
-.desktop .navbar-brand{
-  margin-right: 0px !important;
-}
-
-.desktop #nav-collapse {
-  margin-left: 0px !important;
-  padding-left: 0px !important;
-}
-
 .mobile #nav-collapse {
   max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
   overflow: auto;
   background-color: var(--primary) !important;
   border-bottom: 3px solid var(--primary) !important;
 }
-
 .mobile #nav-collapse,
 .mobile #nav-collapse .navbar-nav {
   top:0px !important;

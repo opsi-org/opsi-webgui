@@ -2,7 +2,7 @@
   <b-alert
     v-model="showAlert"
     data-testid="AAlert"
-    class="alertMsg"
+    class="alertbar"
     v-bind="$props"
     dismissible
     :variant="alertVariant"
@@ -39,7 +39,7 @@ export default class AAlert extends BAlert {
 }
 </script>
 <style>
-.alertMsg.alert-dismissible .close {
+.alertbar.alert-dismissible .close {
   color: black;
 }
 </style>
