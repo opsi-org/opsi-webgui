@@ -10,7 +10,3 @@ export default class PProductsConfigColumn extends Vue {
   @Prop({ default: false }) asChild!: string
 }
 </script>
-
-<style>
-
-</style>
