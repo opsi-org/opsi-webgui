@@ -3,6 +3,13 @@
   --primary-dark: var(--opsi-red-dark);
   --secondary: var(--opsi-blue);
   --secondary-dark: var(--opsi-blue-dark);
+  --success: #198754;
+  --success-dark: #136740;
+  --danger: #dc3545;
+  --warning: #ffc107;
+  --info: #0db1f0;
+  --light: #f8f9fa;
+  --dark: #343a40;
 
   --opsi-blue: #006599;
   --opsi-blue-dark: #025781;
@@ -144,7 +151,38 @@ body {
 .bg-primary {
   background-color: var(--primary) !important;
 }
-
 .bg-secondary {
   background-color: var(--secondary) !important;
+}
+
+.text-white {
+  color: #fff !important;
+}
+.text-primary {
+  color:#ffffff !important;
+  background: #0071bc !important;
+}
+.text-secondary {
+  color: #dce4ef !important;
+}
+.text-success {
+  color:#ffffff !important;
+  background: #2e8540 !important;
+}
+.text-danger {
+  background: #cd2026 !important; 
+  color: #fff !important;
+}
+.text-warning {
+  color:#212121 !important;
+  background: #fdb81e !important;
+}
+.text-info {
+  color: #0db1f0 !important;
+}
+.text-light {
+  color: #f8f9fa !important;
+}
+.text-dark {
+  color: #343a40 !important;
 }
