@@ -1,4 +1,6 @@
 :root {
+  --log-secondary: #dce4ef;
+  --log-muted: #ffffffb4;
   --color:#ffffffb4;
   --background:#40464e;
   --component:#495057;
