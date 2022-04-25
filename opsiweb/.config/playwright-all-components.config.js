@@ -7,6 +7,7 @@ const config = {
   timeout: 1000 * 15, // 1ms * x sec
   testDir: '../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(int|integration|component|comp).js',
+  fullyParallel: true,
   reporter: [
     ['list'],
     ['junit', { outputFile: 'test-result-pw-reporter-components.xml' }]

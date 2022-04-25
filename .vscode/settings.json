@@ -81,7 +81,7 @@
   "actionButtons": {
     "defaultColor": "orange", // Can also use string color names.
     "loadNpmCommands":false, // Disables automatic generation of actions for npm commands.
-    "reloadButton":null, // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
+    "reloadButton": null, // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
     "commands": [
       {
         "name": "$(testing-run-icon)",
@@ -98,6 +98,14 @@
         "color": "white",
         "singleInstance": true,
         "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components-devices:update", // This is executed in the terminal.
+      },
+      {
+        "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
+        "name": "$(testing-run-all-icon)",
+        "tooltip": "Run test for changed files",
+        "color": "white",
+        "singleInstance": true,
+        "command": "bash /workspace/opsiweb/scripts/playwright.sh all-changed .test.integration.js test:all:components", // This is executed in the terminal.
       },
     ]
   },

@@ -145,6 +145,15 @@ stages:
     exit $exit_code
   fi
 
+
+.get_changed_files: &get_changed_files |
+  changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
+  echo "$changedFiles"
+  basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
+  echo "$basenames"
+  testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
+  # todo checking if each file in testfilesUnique exists
+  echo "$testfilesUnique"
 #########################################################################
 ######################################################################### init
 #########################################################################
@@ -246,6 +255,43 @@ test:test-e2e:
       junit: opsiweb/test-result-pw-reporter-e2e.xml
     expire_in: 2 day
 
+test:test-components:changes:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:dry
+  except:
+    - tags # cause in tags we test all browsers (and all files)
+    - develop # cause in develop we test all files
+  script:
+    - cd opsiweb
+    - *define_globals
+    - cd uib-components
+    - *get_changed_files
+    - cd ..
+    - echo "$testfilesUnique"
+
+    - npm-uib i -D @playwright/test
+    - npx playwright install
+    - npx playwright install-deps
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+    - sleep 60
+    - npm-uib run test:all:components $testfilesUnique || exit_code=$?
+    - npm run test:all:delete-empty-results
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: 'opsi-webgui-test-result-components'
+    when: on_failure
+    paths:
+      - ./**/*/test-results/
+      - opsiweb/.storybook.log
+      - opsiweb/.dev.log
+    reports:
+      junit: ./opsiweb/test-result-pw-reporter-components.xml
+    expire_in: 2 day
+
 test:test-components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
@@ -254,6 +300,8 @@ test:test-components:
   except:
     - bug/cicd-build
     - tags # cause in tags we test all browsers
+  only:
+    - develop # cause in develop we test all files, but only chromium browser
   script:
     - cd opsiweb
     - *define_globals
@@ -279,13 +327,15 @@ test:test-components:
     expire_in: 2 day
 
 
-test:test-components:allbrowsers:
+test:test-components:all-variants:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:dry
   except:
     - bug/cicd-build
+  only:
+    - tags # cause in tags we test each file and browser
   script:
     - cd opsiweb
     - *define_globals
@@ -299,8 +349,6 @@ test:test-components:allbrowsers:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
-  only:
-    - tags
   artifacts:
     name: 'opsi-webgui-test-result-components'
     when: on_failure
