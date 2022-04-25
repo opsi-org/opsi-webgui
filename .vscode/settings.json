@@ -11,7 +11,8 @@
   "i18n-ally.localesPaths": [
     "/workspace/opsiweb/uib-components/locale",
     "opsiweb/locale",
-    "opsiweb/uib-components/locale"
+    "opsiweb/uib-components/locale",
+    "backend/docker/files/etc/opsi/hwaudit/locales"
   ],
   "i18n-ally.keystyle": "flat",
   "i18n-ally.sourceLanguage": "de",
@@ -47,7 +48,7 @@
   "volar.tsPlugin": true,
   "volar.tsPluginStatus": true,
   "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
-  "typescript.tsdk": "/workspace/opsiweb/node_modules/typescript/lib",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "volar.codeLens.pugTools": true,
 
   // "volar.completion.autoImportComponent": false,
@@ -58,54 +59,71 @@
     "/workspace/opsiweb/.config/playwright-all-e2e.config.js",
     "/workspace/opsiweb/.config/playwright-all-components.config.js"
   ],
-  // "runOnSave.statusMessageTimeout": 5000,
-  // "runOnSave.commands": [
-  //   // { "match": ".*", "isAsync": true, "cmd": "echo 'I run for all files.'" },
-  //   {
-  //     "match": "\\.vue$",
-  //     "runIn": "terminal",
-  //     "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update"
-  //   },
-  //   {
-  //     "match": "\\.stories.js$",
-  //     "runIn": "terminal",
-  //     "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update"
-  //   },
-  //   {
-  //     "match": "\\.test.integration.js$",
-  //     "runIn": "terminal",
-  //     "command": "bash /workspace/opsiweb/scripts/playwright.sh \"${fileBasename}\" .test.integration.js test:all:components:update"
-  //   },
-  //   // { "match": ".*", "cmd": "echo 'I am ${env.USERNAME}.'" }
-  // ],
+  "runOnSave.statusMessageTimeout": 5000,
+  "runOnSave.commands": [
+    // { "match": ".*", "isAsync": true, "cmd": "echo 'I run for all files.'" },
+    {
+      "match": "\\.vue$",
+      "runIn": "terminal",
+      "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
+    },
+    // {
+    //   "match": "\\.stories.js$",
+    //   "runIn": "terminal",
+    //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
+    // },
+    // {
+    //   "match": "\\.test.integration.js$",
+    //   "runIn": "terminal",
+    //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
+    // },
+    // { "match": ".*", "cmd": "echo 'I am ${env.USERNAME}.'" }
+  ],
   "actionButtons": {
     "defaultColor": "orange", // Can also use string color names.
     "loadNpmCommands":false, // Disables automatic generation of actions for npm commands.
-    "reloadButton": null, // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
+    "reloadButton": "null", // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
     "commands": [
-      {
-        "name": "$(testing-run-icon)",
+      { // reinstall application/node_modules/..
+        "cwd": "/workspace/opsiweb",
+        "name": "$(timeline-refresh)",
+        "tooltip": "Clean rebuild and install",
+        "color": "white",
+        "singleInstance": true,
+        "command": "npm run clean && npm-uib i",
+      },
+      // { // test opened file (if .vue/.stories.js/.test.integration.js )
+      //   "name": "$(testing-run-icon) lint",
+      //   "tooltip": "Run Lint on opened file",
+      //   "singleInstance": true,
+      //   "color": "defaultColor",
+      //   "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
+      //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'", // This is executed in the terminal.
+      // },
+      { // test opened file (if .vue/.stories.js/.test.integration.js )
+        "name": "$(testing-run-icon) pw",
         "tooltip": "Run UI Test on opened file",
         "singleInstance": true,
         "color": "defaultColor",
         "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components-devices", // This is executed in the terminal.
+        "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.integration.js test:all:components-devices /", // This is executed in the terminal.
       },
-      {
+      { // update snapshots for opened file (if .vue/.stories.js/.test.integration.js )
         "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        "name": "$(device-camera)",
+        "name": "$(device-camera) current",
         "tooltip": "Update UI Snapshot",
         "color": "white",
         "singleInstance": true,
-        "command": "bash /workspace/opsiweb/scripts/playwright.sh ${fileBasename} .test.integration.js test:all:components-devices:update", // This is executed in the terminal.
+        "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.integration.js test:all:components-devices:update /", // This is executed in the terminal.
       },
-      {
+      { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.integration.js ) //
+        // may not work if currently in develop
         "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        "name": "$(testing-run-all-icon)",
+        "name": "$(testing-run-all-icon) changed",
         "tooltip": "Run test for changed files",
         "color": "white",
         "singleInstance": true,
-        "command": "bash /workspace/opsiweb/scripts/playwright.sh all-changed .test.integration.js test:all:components", // This is executed in the terminal.
+        "command": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.integration.js test:all:components /", // This is executed in the terminal.
       },
     ]
   },
@@ -121,32 +139,37 @@
   "[yaml]": { "editor.insertSpaces": true,"editor.tabSize": 2 },
   "[json]": { "editor.insertSpaces": true,"editor.tabSize": 2 },
 
-  "workspace.isHidden": false,
+  "workspace.isHidden": true,
   "files.exclude": {
-    ".mockups": false,
-    ".nuxt": false,
-    "https": false,
-    "node_modules": false,
-    "static": false,
-    ".babelrc": false,
-    ".editorconfig": false,
-    ".eslintignore": false,
-    ".eslintrc.js": false,
-    ".gitignore": false,
-    "jest.config.js": false,
-    "package-lock.json": false,
-    "vue-shim.d.ts": false,
-    "vue-shim.d.ts.tmp": false,
-    "tsconfig.json": false,
-    "plugins/README.md": false,
-    "pages/README.md": false,
-    "middleware/README.md": false,
-    "layouts/README.md": false,
-    "components/README.md": false,
-    "assets/README.md": false,
-    "dist": false,
-    ".nuxt-storybook": false,
-    "coverage": false
+    ".env": true,
+    ".gitlab": true,
+    ".gitmodules": true,
+    "docker": true,
+    "README.md": true,
+    ".devcontainer": true,
+    "**/.devcontainer": true,
+    "*/.mockups": true,
+    "**/https": true,
+    "**/node_modules": true,
+    "**/.npmignore": true,
+    "static": true,
+    "**/.babelrc": true,
+    "**/.editorconfig": true,
+    "**/.eslintignore": true,
+    "**/.eslintrc.js": true,
+    "**/.gitignore": true,
+    "**/jest.config.js": true,
+    "**/package-lock.json": true,
+    "**/package-merged.json": true,
+    "**/test-result-pw*": true,
+    "**/vue-shim.d.ts": true,
+    "**/vue-shim.d.ts.tmp": true,
+    "**/tsconfig.json": true,
+    "**/README.md": true,
+    "**/dist": true,
+    "**/.nuxt": true,
+    "**/.nuxt-storybook": true,
+    "**/coverage": true
   },
   "gitlens.currentLine.format": "${author, }${agoOrDate}${' via 'pullRequest}${ • message|50?}",
   "gitlens.blame.toggleMode": "file",

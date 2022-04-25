@@ -145,7 +145,6 @@ stages:
     exit $exit_code
   fi
 
-
 .get_changed_files: &get_changed_files |
   changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
   echo "$changedFiles"
@@ -154,6 +153,7 @@ stages:
   testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
+
 #########################################################################
 ######################################################################### init
 #########################################################################
@@ -174,6 +174,9 @@ init:dry:
 
 init:dry:production:
   stage: init
+  only:
+    - develop
+    - tags
   script:
     - *prepare_repo
     - cd opsiweb
@@ -266,17 +269,19 @@ test:test-components:changes:
   script:
     - cd opsiweb
     - *define_globals
-    - cd uib-components
-    - *get_changed_files
-    - cd ..
-    - echo "$testfilesUnique"
-
+    # install and start services
     - npm-uib i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+    # get changed files (in comparison to develop branch)
+    - cd uib-components
+    - *get_changed_files
+    - cd ..
+    - echo "$testfilesUnique"
     - sleep 60
+    # run tests
     - npm-uib run test:all:components $testfilesUnique || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
