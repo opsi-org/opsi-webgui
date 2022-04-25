@@ -1,5 +1,5 @@
 
-import { mock } from '../../.utils/storybook/mock'
+import { data, mock } from '../../.utils/storybook/mock'
 
 const result = [
   {
@@ -66,35 +66,42 @@ export default {
   parameters: { docs: { description: { component: 'Table for ProductsLocalboot' } } }
 }
 
-const PrimaryTemplate = (_args, { argTypes }) => ({
+const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<TableTProductsLocalboot  v-bind="$props"></TableTProductsLocalboot>'
-  // template: `<TableTProductsLocalboot
-  //   :rowident="$props.rowident"
-  //   :routeRedirectWith="$props.routeRedirectWith"
-  //   :multiselect="$props.multiselect"
-  //   :child="$props.child"
-  //   :sortBy="$props.sortBy"
-  // />
-  // `
+  computed: { args () { return args } },
+  methods: {
+    fetchProducts (thiss) {
+      thiss.totalItems = args.items.length
+      thiss.totalpages = (args.items.length / args.tableData.perPage)
+      thiss.items = args.items
+    }
+  },
+  // template: '<div> {{args}} <TableTProductsLocalboot  v-bind="args" /></div>'
+  template: `<TableTProductsLocalboot
+    :rowident="args.rowident"
+    :routeRedirectWith="args.routeRedirectWith"
+    :multiselect="args.multiselect"
+    :child="args.child"
+    :sortBy="args.sortBy"
+    :parentId="args.parentId"
+    :sort="args.sort"
+    :header-data="args.headerData"
+    :filter-query="args.filterQuery"
+    @fetch-products="fetchProducts"
+  />
+  `
 })
 
 // named export Primary to create respective story
-export const TProductsLocalbootSingle = PrimaryTemplate.bind({})
-TProductsLocalbootSingle.args = {
+export const TProductsLocalboot = PrimaryTemplate.bind({})
+TProductsLocalboot.args = {
+  parentId: 'productId',
   rowident: '',
+  filterQuery: '',
   routeRedirectWith: () => {},
-  multiselect: false,
   child: false,
-  sortby: 'productId'
-}
-
-export const TProductsLocalbootMulti = PrimaryTemplate.bind({})
-TProductsLocalbootMulti.args = {
-  rowident: '',
-  routeRedirectWith: () => {},
-  multiselect: true,
-  child: false,
-  sortby: 'productId'
-
+  sort: { sortBy: 'productId', sortDesc: false },
+  headerData: data.headerDataProducts,
+  items: data.products,
+  tableData: data.tableDataMoreElements
 }

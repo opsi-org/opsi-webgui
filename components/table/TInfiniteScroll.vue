@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TInfiniteScroll">
+  <div data-testid="TInfiniteScroll" class="TInfiniteScrollWrapper">
     <p v-if="error">
       {{ error }}
     </p>
@@ -27,6 +27,7 @@
       selected-variant=""
       :select-mode="selectmode"
       sort-icon-left
+      :per-page="tableData.perPage"
       :no-local-sorting="true"
       :sort-by.sync="tableData.sortBy"
       :sort-desc.sync="tableData.sortDesc"
@@ -120,10 +121,17 @@ export default class TInfiniteScroll extends Vue {
     } catch (error) {
       console.warn('cannot remove event listener', this.tableData)
     }
-    this.tableScrollBody.addEventListener('scroll', this.onScroll)
+    try {
+      this.tableScrollBody.addEventListener('scroll', this.onScroll)
+    } catch (error) {
+      console.warn('cannot add event listener', this.tableData)
+    }
   }
 
   scrollTop () {
+    if (!this.tableScrollBody) {
+      return
+    }
     if (this.isFirstPage) {
       this.tableScrollBody.scrollTop = 0
     } else {
@@ -152,10 +160,10 @@ export default class TInfiniteScroll extends Vue {
   }
 
   async onScroll (event) {
-    if ( // On Scroll Up
+    if (event.target && // On Scroll Up
       event.target.scrollTop === 0) {
       await this.previousPage()
-    } else if ( // On Scroll Down
+    } else if (event.target && // On Scroll Down
       event.target.scrollTop + event.target.clientHeight >=
           event.target.scrollHeight
     ) {
@@ -223,6 +231,9 @@ export default class TInfiniteScroll extends Vue {
 }
 .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
+}
+.TInfiniteScrollWrapper {
+  padding-bottom: 50px;
 }
 .TInfiniteScroll .clearselection-btn {
   padding: 0px !important;

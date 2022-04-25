@@ -1,5 +1,5 @@
 export default {
-  title: 'Navitem/N I Dropdownhoverable',
+  title: 'Nav/NI Dropdown Hoverable',
   parameters: { docs: { description: { component: 'Navitem Dropdown hoverable' } } }
 }
 

@@ -114,6 +114,7 @@
   "button.sort.tablecolumns.sortDirection": "Sort descending",
   "button.change.usermode": "Change user mode to {mode}",
   "button.track.changes": "Track Changes",
+  "button.change.loglevel": "Change log level",
   "treeselect.hostGroups": "Hostgroups",
   "treeselect.prodGroups": "Productgroups",
   "treeselect.noresult": "No such item found",

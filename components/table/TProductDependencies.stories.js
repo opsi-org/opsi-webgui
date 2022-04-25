@@ -10,9 +10,10 @@ const dependencies = {
   productDescription: 'Installs opsi-server packages, configures and create adminuser'
 }
 
-const PrimaryTemplate = (_args, { argTypes }) => ({
+const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<TableTProductDependencies :id="$props.id" :dependencies="$props.deps"/>
+  computed: { args () { return args } },
+  template: `<TableTProductDependencies :id="args.id" :dependencies="args.deps"/>
   `
 })
 

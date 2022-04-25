@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TProductProperties" class="TProductProperties">
+  <div data-testid="TProductProperties" class="TProductProperties" :class="{mobile:$mq=='mobile'}">
     <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlert show variant="warning">
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
@@ -31,6 +31,7 @@
       :error="errorText"
       :items="Object.values(properties.properties)"
       :fields="fields"
+      type="productproperties"
     >
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
@@ -38,8 +39,8 @@
       <template #cell(propertyId)="row">
         <TableCellTCProductPropertyId :row="row" :product-versions="properties.productVersions" />
       </template>
-      <template #cell(value)="row">
-        <b-row>
+      <template #cell(value)="row" :class="{ boolean: row.item.type == 'BoolProductProperty'}">
+        <b-row :class="{ booli: row.item.type == 'BoolProductProperty'}">
           <TableCellTCProductPropertyValue
             :clients2depots="fetchedDataClients2Depots"
             :row-item="row.item"
@@ -210,6 +211,13 @@ export default class TProductProperties extends Vue {
 .TProductProperties  {
   max-height: 100%;
 }
+/* .mobile.TProductProperties  {
+  border: 1px solid green;
+  height: 100%;
+}
+.mobile.TProductProperties .row td:first  {
+  border: 1px solid #000;
+} */
 
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;

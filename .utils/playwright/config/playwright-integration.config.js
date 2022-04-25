@@ -6,6 +6,7 @@ const config = {
   // testDir: '../../../../', // /workspace/opsiweb
   testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(int|integration).js',
+  fullyParallel: true,
   reporter: [
     ['list'],
     ['junit', { outputFile: 'test-result-pw-reporter-integration.xml' }]

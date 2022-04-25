@@ -12,6 +12,7 @@
     <p
       v-else
       :id="`TProductProperties_PropertyId_hover_${row.item.propertyId}`"
+      class="TProductProperties_Property_p"
     >
       <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
       {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
@@ -42,4 +43,19 @@ export default class TCProductPropertyId extends Vue {
 </script>
 
 <style>
+.TProductProperties_Property_p {
+  margin-block-end: 0px;
+}
+.mobile .TProductProperties_PropertyId_Row {
+  width: max-content;
+  max-width: 300px;
+  word-break: break-all;
+  display: flex;
+}
+.TProductProperties_PropertyId_Row {
+  width: max-content;
+  max-width: 200px;
+  word-break: break-all;
+  display: flex;
+}
 </style>

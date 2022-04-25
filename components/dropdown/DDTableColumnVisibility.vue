@@ -159,7 +159,7 @@ export default class DDTableColumnVisibility extends BDropdown {
     }
     // change visibilty of children if any major column is selected
     Object.keys(this.columnVisibilityStates).forEach((k) => {
-      if (!this.headers[k]._isMajor) {
+      if (this.headers[k] && !this.headers[k]._isMajor) {
         this.headers[k].visible = this.columnVisibilityStates[k]
       } else {
         Object.values(this.headers).filter(h => h._majorKey === k).map(h => h.key).forEach((ck) => {

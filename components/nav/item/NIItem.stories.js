@@ -1,5 +1,5 @@
 export default {
-  title: 'Navitem/N I Item',
+  title: 'Nav/NI Item',
   parameters: { docs: { description: { component: 'Nav item' } } }
 }
 

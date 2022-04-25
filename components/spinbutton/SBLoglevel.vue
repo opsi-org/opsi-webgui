@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <label for="loglevel" class="sr-only"> Increment/Decrement log level </label>
+  <div data-testid="SBLoglevel">
+    <label for="loglevel" class="sr-only"> {{ $t('button.change.loglevel') }} </label>
     <b-form-spinbutton
       id="loglevel"
       v-model="level"
-      data-testid="SBLoglevel"
       class="loglevel_spinbutton"
       min="0"
       max="8"

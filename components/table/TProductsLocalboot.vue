@@ -66,13 +66,13 @@
         />
       </template>
       <template v-if="selectionClients.length>0" #head(actionRequest)>
+          <!-- v-if="selectionClients.length>0 && selectionProducts.length>0" -->
         <DropdownDDProductRequest
-          v-if="selectionClients.length>0 && selectionProducts.length>0"
           :action.sync="action"
           :title="$t('formselect.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
-        <div v-else />
+        <!-- <div v-else /> -->
       </template>
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
@@ -132,7 +132,7 @@ export default class TProductsLocalboot extends Vue {
   @Prop() rowident!: string
   @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
-  @Prop() multiselect!: boolean
+  @Prop({ default: true }) multiselect!: boolean
   @Prop() child!: boolean
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) headerData!: ITableHeaders
