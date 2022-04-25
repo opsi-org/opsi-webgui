@@ -1,26 +1,26 @@
 <template>
   <div data-testid="TProductProperties" class="TProductProperties" :class="{mobile:$mq=='mobile'}">
     <div v-if="!errorText && selectionClients.length <= 0">
-      <AlertAAlert show variant="warning">
+      <AlertAAlertLocal show variant="warning">
         <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
-      </AlertAAlert>
+      </AlertAAlertLocal>
     </div>
     <div v-else-if="!errorText && $mq=='mobile'">
-      <AlertAAlert show variant="secondary">
+      <AlertAAlertLocal show variant="secondary">
         <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
-      </AlertAAlert>
+      </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
-      <AlertAAlert show variant="warning">
+      <AlertAAlertLocal show variant="warning">
         <small>
           {{ $t('message.notOnEachDepot', {count:Object.values(properties.productVersions).filter(n => n).length, countall:selectionDepots.length}) }}
         </small>
-      </AlertAAlert>
+      </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).some((v)=>v!=Object.values(properties.productVersions).filter(n => n)[0])">
-      <AlertAAlert show variant="warning">
+      <AlertAAlertLocal show variant="warning">
         <small>{{ $t('message.differentProductVersions') }}</small>
-      </AlertAAlert>
+      </AlertAAlertLocal>
     </div>
     <p v-if="errorText">
       {{ errorText }}

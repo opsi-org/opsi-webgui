@@ -1,14 +1,9 @@
 <template>
-  <!-- <b-alert class="alertMsg" v-bind="$props" :aria-label="$props.variant">
-    <slot />
-  </b-alert> -->
   <b-alert
-    :ref="ref+'-intern'"
     v-model="showAlert"
-    data-testid="AAlert"
+    data-testid="AAlertLocal"
     class="alertMsg"
     v-bind="$props"
-    dismissible
     :variant="alertVariant"
     :aria-label="$props.variant"
   >
@@ -28,26 +23,26 @@ import { Component, Prop } from 'nuxt-property-decorator'
 import { BAlert } from 'bootstrap-vue'
 
 @Component
-export default class AAlert extends BAlert {
-  showAlert: boolean = false
+export default class AAlertLocal extends BAlert {
+  showAlert: boolean = true
   alertMessage: string = ''
-  alertVariant : string = ''
   showMore:boolean = false
   moreDetails: string = ''
   @Prop({ default: false }) show!: string
+  @Prop({ default: 'warning' }) alertVariant!: string
 
   mounted () {
-    if (this.show && this.ref) {
-      const ref = (this.$refs[this.ref + '-intern'] as any)
-      ref.alert(this.alertMessage, this.alertVariant, this.moreDetails)
-    }
+    // if (this.show && this.ref) {
+    //   const ref = (this.$refs[this.ref + '-intern'] as any)
+    // }
+    this.alert(this.alertMessage, this.alertVariant, this.moreDetails)
   }
 
   alert (message, variant = '', details = '') {
     this.alertMessage = message
     this.alertVariant = variant
     this.moreDetails = details
-    this.showAlert = true
+    // this.showAlert = true
   }
 }
 </script>
