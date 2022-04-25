@@ -67,6 +67,11 @@
       "runIn": "terminal",
       "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
     },
+    {
+      "match": "\\.test.unit.js$",
+      "runIn": "terminal",
+      "command": "cd /workspace/opsiweb/ && npm run test:unit:current '${fileBasename}' && cd -"
+    },
     // {
     //   "match": "\\.stories.js$",
     //   "runIn": "terminal",
@@ -82,7 +87,7 @@
   "actionButtons": {
     "defaultColor": "orange", // Can also use string color names.
     "loadNpmCommands":false, // Disables automatic generation of actions for npm commands.
-    "reloadButton": "null", // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
+    "reloadButton": null, // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
     "commands": [
       { // reinstall application/node_modules/..
         "cwd": "/workspace/opsiweb",
