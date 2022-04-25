@@ -34,7 +34,7 @@ if [[ ${file} == "all-changed" ]]; then
     # Iterate the string variable using for loop
     basenamesWithSlash=""
     for val in $basenames; do
-        basenamesWithSlash+="/$val "
+        basenamesWithSlash+="/$val.test.integration.js "
     done
     # echo "$basenamesWithSlash"
     testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )
