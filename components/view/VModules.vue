@@ -1,13 +1,15 @@
 <template>
-  <div data-testid="VModules">
-    <b-row class="mb-4">
-      <b-col class="text-sm-right" cols="2">
-        {{ $t('settingsPage.modules.available') }}
+  <div data-testid="VModules" :class="'VModules ' + $mq">
+    <b-row class="mt-4">
+      <b-col class="text-sm-right col" cols="2">
+        <label for="modules-list"> {{ $t('settingsPage.modules.available') }} </label>
       </b-col>
       <b-col>
         <b-form-textarea
+          id="modules-list"
           rows="3"
-          max-rows="6"
+          :label="$t('settingsPage.modules.available')"
+          max-rows="30"
           no-resize
           plaintext
           :value="modules"
@@ -31,7 +33,7 @@ export default class VModules extends Vue {
     this.isLoading = true
     await this.$axios.$get('/api/opsidata/modulesContent')
       .then((response) => {
-        this.modules = response.result
+        this.modules = response.result.join('\n')
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
@@ -41,3 +43,8 @@ export default class VModules extends Vue {
   }
 }
 </script>
+<style>
+.VModules.mobile .col{
+  display: contents;
+}
+</style>
