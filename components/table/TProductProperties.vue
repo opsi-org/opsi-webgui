@@ -39,7 +39,7 @@
       <template #cell(propertyId)="row">
         <TableCellTCProductPropertyId :row="row" :product-versions="properties.productVersions" />
       </template>
-      <template #cell(value)="row" :class="{ boolean: row.item.type == 'BoolProductProperty'}">
+      <template #cell(value)="row">
         <b-row :class="{ booli: row.item.type == 'BoolProductProperty'}">
           <TableCellTCProductPropertyValue
             :clients2depots="fetchedDataClients2Depots"

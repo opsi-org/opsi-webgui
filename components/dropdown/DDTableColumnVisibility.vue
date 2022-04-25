@@ -30,11 +30,9 @@
         {{ header.label }}
       </b-dropdown-form>
     </template>
-    <template
-      v-else
-      id="selectableColumns-group"
-      name="selectableColumns"
-    >
+    <template v-else>
+      <!-- id="selectableColumns-group"
+      name="selectableColumns" -->
       <b-dropdown-form
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
         :key="header.key"

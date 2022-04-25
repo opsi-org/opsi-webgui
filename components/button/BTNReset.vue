@@ -22,7 +22,7 @@ import { Constants } from '../../mixins/uib-mixins'
 @Component({ mixins: [Constants] })
 export default class BTNReset extends Vue {
   iconnames:any
-  @Prop({}) label?: string;
+  @Prop({}) label?: string
   @Prop({ default: () => { return () => { /* default */ } } }) action!: Function
 }
 </script>

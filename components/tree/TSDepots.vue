@@ -26,10 +26,10 @@ const selections = namespace('selections')
 export default class TSDepots extends Vue {
   iconnames: any // from mixin
   $axios: any
-  @selections.Getter public selectionDepots!: Array<string>;
-  @selections.Getter public selectionClients!: Array<string>;
-  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void;
-  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void;
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   fetchedDataClients2Depots: IObjectString2String = {}
 
   @Watch('selectionClients', { deep: true }) async clientsChanged () {

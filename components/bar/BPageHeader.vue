@@ -29,13 +29,13 @@ import { Constants } from '../../mixins/uib-mixins'
 @Component({ mixins: [Constants] })
 export default class BPageHeader extends Vue {
   iconnames:any
-  @Prop({ default: 'transparent' }) variant!: string;
-  @Prop({ default: true }) bold!: boolean;
-  @Prop({}) navbartype!: string;
-  @Prop({}) collapsed!: boolean;
-  @Prop({}) title!: string;
-  @Prop({}) subtitle!: string;
-  @Prop({}) closeroute!: string;
+  @Prop({ default: 'transparent' }) variant!: string
+  @Prop({ default: true }) bold!: boolean
+  @Prop({}) navbartype!: string
+  @Prop({}) collapsed!: boolean
+  @Prop({}) title!: string
+  @Prop({}) subtitle!: string
+  @Prop({}) closeroute!: string
 }
 </script>
 

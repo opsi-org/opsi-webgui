@@ -137,7 +137,7 @@ export default class TProductsLocalboot extends Vue {
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) headerData!: ITableHeaders
 
-  id='localboot'
+  id = 'localboot'
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0

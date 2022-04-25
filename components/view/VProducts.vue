@@ -72,18 +72,18 @@ const settings = namespace('settings')
 @Component
 export default class VProducts extends Vue {
   $mq: any
-  @Prop() child!: boolean;
-  @Prop({}) id!: string;
-  @Prop({}) sortby!: string;
+  @Prop() child!: boolean
+  @Prop({}) id!: string
+  @Prop({}) sortby!: string
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-  @settings.Getter public expert!: boolean;
+  @settings.Getter public expert!: boolean
 
-  sortdesc: boolean = false;
-  rowId: string = '';
-  isLoading: boolean = true;
-  ismultiselect: boolean = true;
+  sortdesc: boolean = false
+  rowId: string = ''
+  isLoading: boolean = true
+  ismultiselect: boolean = true
   localboot: string = ''
   netboot: string = ''
 

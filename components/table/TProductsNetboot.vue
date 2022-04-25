@@ -129,7 +129,7 @@ export default class TProductsNetboot extends Vue {
   // @Prop({ }) tableData!: ITableData
   @Prop({ }) headerData!: ITableHeaders
 
-  id='netboot'
+  id = 'netboot'
   isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0

@@ -29,9 +29,9 @@ export default class TSHostGroups extends Vue {
   $axios: any
   $fetch: any
   id: string = 'HostGroups'
-  @selections.Getter public selectionClients!: Array<string>;
-  @selections.Getter public selectionDepots!: Array<string>;
-  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void;
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
   @selections.Mutation public pushToSelectionClients!: (s: string) => void
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 

@@ -156,7 +156,7 @@ export default class TSDefault extends Vue {
   data!: Array<any> // to be fetched
   treeselectSearchQueryFilled:boolean = false
 
-  @cache.Getter public opsiconfigserver!: Array<string>;
+  @cache.Getter public opsiconfigserver!: Array<string>
 
   async fetch () {
     console.warn(this.id, 'TSDefault fetch')
