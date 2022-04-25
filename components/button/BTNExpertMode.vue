@@ -58,7 +58,8 @@ export default class BTNExpertMode extends Vue {
 .modebutton{
   /* height:45px; */
   /* margin:0px; */
-  width:200px
+  width:100%;
+  max-width:200px;
 }
 .btntext {
   color:var(--color)
