@@ -1,6 +1,6 @@
 import { mock, data } from '../../.utils/storybook/mock'
 
-mock.onGet('/api/opsidata/products/groups').reply(200, data.groups.products)
+mock.onGet(`/api/opsidata/products/groups?selectedProducts=${''}`).reply(200, data.groups.products)
 
 export default {
   title: 'Tree/TS Product Groups',
