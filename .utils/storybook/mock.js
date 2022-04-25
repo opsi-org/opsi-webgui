@@ -143,5 +143,8 @@ module.exports.data = {
         "[8] [2021-08-23 13:28:07.151] [productId] next row",
         "[9] [2021-08-23 13:28:07.151] [productId] next row",
       ]}
+  },
+  config:{
+    client:[{"hostId":"client1.uib.local","type":"OpsiClient","description":"a client description","notes":"Ubuntu 20.04","hardwareAddress":"af:fe:af:fe:af:fe","ipAddress":"1.2.3.4","inventoryNumber":"","created":"2021-01-10T14:59:44","lastSeen":"2022-04-21T13:24:26","opsiHostKey":"abcdef","oneTimePassword":null,"uefi":false}]
   }
 }
