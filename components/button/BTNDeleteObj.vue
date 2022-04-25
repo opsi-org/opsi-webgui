@@ -1,7 +1,6 @@
 <template>
   <b-button
     data-testid="ButtonBTNDeleteObj"
-    size="sm"
     class="border-0"
     variant="outline-primary"
     :title="$t('button.reset')"

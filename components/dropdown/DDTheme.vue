@@ -1,13 +1,10 @@
 <template>
-  <!-- class="btn btn-primary dd_theme text-left" -->
   <div data-testid="DropdownDDTheme">
     <label for="theme" class="sr-only"> {{ $t('settingsPage.theme') }} </label>
-    <!-- style="height:100%;margin:0px;max-width:150px;" -->
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"
-      class="dd_theme"
-      variant="primary"
+      class="px-2 text-left"
       :text="theme.title"
       alt="select theme"
       :dropup="dropup"
@@ -25,8 +22,7 @@
     <b-dropdown
       v-else
       :text="theme.title"
-      size="sm"
-      style="width:200px;"
+      class="settingstheme"
       variant="outline-primary"
       :dropup="dropup"
     >
@@ -86,9 +82,7 @@ const settings = namespace('settings')
 </script>
 
 <style>
-.dd_theme{
-  margin-top: 3px;
-  padding-left: 1em !important;
-  padding-right: 1em !important;
+.settingstheme {
+  width: var(--component-width) !important;
 }
 </style>

@@ -1,12 +1,12 @@
 <template>
-  <div class="dd_lang">
+  <div>
     <label for="language" class="sr-only"> Language </label>
-    <!-- style="height:100%;margin:0px;" -->
     <b-nav-item-dropdown
       id="language"
       data-testid="DropdownDDLang"
       :text="$i18n.locale"
       alt="select theme"
+      class="px-2"
       variant="primary"
       :dropup="dropup"
     >
@@ -55,15 +55,3 @@ const settings = namespace('settings')
   }
 }
 </script>
-
-<style>
-.dd_lang{
-  margin-top: 3px;
-  padding-left: 1em !important;
-  padding-right: 1em !important;
-  list-style: none;
-}
-/* .dd_lang a {
-  color: inherit !important
-} */
-</style>

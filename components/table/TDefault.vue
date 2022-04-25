@@ -10,7 +10,6 @@
       :thead-class="noheader? 'table-header-none' : ''"
       :filter="filter"
       :filter-included-fields="filterfields"
-      small
       :hover="hover"
       :items="items"
       :fields="fields"

@@ -2,9 +2,8 @@
   <div data-testid="MTrackChanges">
     <b-button
       v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
-      size="sm"
-      :class="$mq!='mobile' ? 'mt-2' : null"
-      pill
+      class="px-2"
+      variant="transparent"
       @click="$bvModal.show('trackChangesModal')"
     >
       <span v-if="$mq!='mobile'" class="text-warning"> {{ $t('button.track.changes') }} </span>
@@ -29,7 +28,7 @@
         <TableTChanges />
         <DivDComponentGroup class="float-right">
           <ButtonBTNClearChanges hide="trackChangesModal" />
-          <b-button size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
+          <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
             <b-icon :icon="iconnames.save" />
             {{ $t('button.saveall') }}
           </b-button>

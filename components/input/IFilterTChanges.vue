@@ -4,7 +4,6 @@
     <b-form-input
       id="filterchanges"
       v-model="filter"
-      size="sm"
       type="search"
       :placeholder="$t('table.filterBy.DepotsClients')"
       @input="$emit('update:filter', filter)"

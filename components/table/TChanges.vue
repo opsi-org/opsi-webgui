@@ -4,7 +4,7 @@
     <DivDScrollResult>
       <div v-for="changes, k in groupedById" :key="changes.productId">
         <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" variant="outline-primary">
-          <small><b>{{ k }}</b></small>
+          <b>{{ k }}</b>
           <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
         </b-button>
         <b-collapse :id="k" :visible="filter === '' ? false : true">
@@ -18,11 +18,11 @@
             :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
           >
             <template #cell()="row">
-              <small>{{ row.value }}</small>
+              {{ row.value }}
             </template>
             <template #cell(_action)="row">
               <ButtonBTNDeleteObj :item="row.item" from="products" />
-              <b-button size="sm" class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(row.item)">
+              <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(row.item)">
                 <span class="sr-only">{{ $t('button.saveall') }}</span>
                 <b-icon :icon="iconnames.save" />
               </b-button>

@@ -4,9 +4,8 @@
     data-testid="ButtonBTNExpertMode"
     variant="transparent"
     class="border"
-    size="sm"
     :title="$t('button.change.usermode', {mode: (!expert)? $t('userinfo.expert.short') : $t('userinfo.basic.short') })"
-    :class="navbar? 'navmodebutton': 'modebutton'"
+    :class="navbar? 'px-2 text-left': 'settingsusermode'"
     :pressed.sync="localMode"
     @click="changeMode(localMode)"
   >
@@ -46,19 +45,8 @@ export default class BTNExpertMode extends Vue {
 </script>
 
 <style>
-.btn_expertmode{
-  padding-left: 1em !important;
-  padding-right: 1em !important;
-}
-
-.navmodebutton{
-  height:45px;
-  width:45px;
-}
-.modebutton{
-  /* height:45px; */
-  /* margin:0px; */
-  width:200px
+.settingsusermode{
+  width: var(--component-width) !important;
 }
 .btntext {
   color:var(--color)

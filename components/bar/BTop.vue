@@ -6,7 +6,6 @@
       toggleable="md"
       fixed="top"
       type="dark"
-      variant="primary"
     >
       <b-navbar-nav v-if="$mq === 'mobile'">
         <b-button :pressed.sync="attributes.visible">
@@ -23,12 +22,12 @@
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
 
       <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button v-b-toggle.nav-collapse variant="primary">
+        <b-button v-b-toggle.nav-collapse>
           <span class="sr-only">Open topmenu</span>
           <b-icon :icon="iconnames.menu" font-scale="1.1" />
         </b-button>
       </b-navbar-nav>
-      <b-collapse id="nav-collapse" is-nav variant="primary">
+      <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto float-right">
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <ButtonBTNExpertMode :navbar="true" />
@@ -69,18 +68,18 @@ export default class BTop extends Vue {
 
 <style>
 .topbar{
-  background: var(--primary) !important;
+  background: var(--secondary) !important;
   position: fixed;
   height: var(--height-navbar) !important;
 }
 .topbar_version{
-  font-size: 12px;
+  font-size: var(--text-small-size)!important;
 }
 .mobile #nav-collapse {
   max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
   overflow: auto;
-  background-color: var(--primary) !important;
-  border-bottom: 3px solid var(--primary) !important;
+  background-color: var(--secondary) !important;
+  border-bottom: 3px solid var(--secondary) !important;
 }
 .mobile #nav-collapse,
 .mobile #nav-collapse .navbar-nav {
