@@ -1,9 +1,13 @@
 :root{
+  --primary: var(--opsi-red);
+  --primary-dark: var(--opsi-red-dark);
+  --secondary: var(--opsi-blue);
+  --secondary-dark: var(--opsi-blue-dark);
+
   --opsi-blue: #006599;
   --opsi-blue-dark: #025781;
   --opsi-red: #c33b67;
   --opsi-red-dark: #b31c4c;
-  --component-height: 40px;
 
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
@@ -15,6 +19,11 @@
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
+
+  --text-small-size: 12px;
+
+  --component-height: 40px;
+  --component-width: 200px;
   
   --max-height-window:500px;
   --height-navbar: 56px;
@@ -119,6 +128,7 @@ body {
 
 .btn{
   height: var(--component-height) !important;
+  border-color: inherit !important;
 }
 .btn-secondary {
   color: #fff !important;

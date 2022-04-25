@@ -12,10 +12,6 @@
   --white: #fff;
   --gray: #6c757d;
   --gray-dark: #343a40;
-  --primary: var(--opsi-red);
-  --primary-dark: var(--opsi-red-dark);
-  --secondary: var(--opsi-blue);
-  --secondary-dark: var(--opsi-blue-dark);
   --success: #198754;
   --info: #0db1f0;
   --warning: #ffc107;
@@ -2620,7 +2616,7 @@ fieldset:disabled a.btn {
 .show > .btn-outline-info.dropdown-toggle:focus {
   box-shadow: 0 0 0 0.2rem rgba(13, 177, 240, 0.5);
 }
-.btn-outline-warning {
+/* .btn-outline-warning {
   color: #ffc107;
   border-color: #ffc107;
 }
@@ -2649,7 +2645,7 @@ fieldset:disabled a.btn {
 .btn-outline-warning:not(:disabled):not(.disabled):active:focus,
 .show > .btn-outline-warning.dropdown-toggle:focus {
   box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.5);
-}
+} */
 .btn-outline-danger {
   color: #dc3545;
   border-color: #dc3545;
