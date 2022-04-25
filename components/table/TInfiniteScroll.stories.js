@@ -11,7 +11,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   computed: {
     args () { return args },
     // todo: pagination broken only for tests
-    items () { return args.items.slice(((args.tableData.pageNumber - 1) * args.tableData.perPage), args.tableData.perPage) }
+    itemsPage () { return args.items.slice(((args.tableData.pageNumber - 1) * args.tableData.perPage), args.tableData.perPage) }
   },
   template: `
   <TableTInfiniteScroll
@@ -19,11 +19,11 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 
     rowident="depotId"
     :total-items="args.items.length"
-    :totalpages="(args.items.length/args.tableData.perPage)"
+    :totalpages="Math.ceil(args.items.length/args.tableData.perPage)"
 
     :header-data="args.headerData"
     :table-data="args.tableData"
-    :items="items"
+    :items="itemsPage"
     />
     `
 })
