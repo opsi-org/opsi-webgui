@@ -4,14 +4,14 @@
     <div @keyup.enter="doLogin">
       <b-form>
         <label for="configserver" class="sr-only"> {{ $t('title.configserver') }} </label>
-        <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="login_input_field server" :placeholder="opsiconfigserver" />
+        <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="mb-2" :placeholder="opsiconfigserver" />
         <label for="username" class="sr-only"> {{ $t('loginPage.username') }} </label>
         <b-form-input
           id="username"
           v-model="form.username"
           :placeholder="$t('loginPage.username')"
           :state="validUsername"
-          class="login_input_field"
+          class="mb-2"
           autocomplete="current_username"
         />
         <label for="password" class="sr-only"> {{ $t('loginPage.password') }} </label>
@@ -22,16 +22,16 @@
             :placeholder="$t('loginPage.password')"
             :state="validPassword"
             :type="showPassword? 'text': 'password'"
-            class="login_input_field"
+            class="mb-2"
             autocomplete="current_password"
           />
-          <b-button :pressed.sync="showPassword" size="sm" variant="primary">
+          <b-button :pressed.sync="showPassword" size="sm">
             <span class="sr-only">{{ showPassword? 'Hide Password': 'Show Password' }}</span>
             <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
             <b-icon v-else :icon="iconnames.valueHide" />
           </b-button>
         </b-input-group>
-        <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin">
+        <b-button data-testid="btn-login" class="mt-1 border-light" block @click="doLogin">
           {{ $t('button.login') }}
         </b-button>
         <IconILoading v-if="isLoading" />
@@ -134,13 +134,3 @@ export default class FLogin extends Vue {
   }
 }
 </script>
-
-<style>
-.login_input_field {
-  margin-bottom: 5px;
-}
-.login_input_field_btn {
-  margin-top: 5px;
-  border: 0.5px solid var(--light) !important;
-}
-</style>
