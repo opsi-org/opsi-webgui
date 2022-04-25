@@ -56,7 +56,8 @@ module.exports.data = {
     { clientId: 'client5.uib.local', ident: 'client5.uib.local', macAddress: 'af:fe:af:fe:af:f5', description: '', notes: '', version_outdated: 5, installationStatus_unknown: 5, installationStatus_installed: 5, actionResult_failed: 5, actionResult_successful: 5, selected: 0 }
   ],
   depots: [
-    { depotId: 'depot1.uib.local', ident: 'depot1.uib.local', type: 'Configserver', ip: '', description: '' },
+    { depotId: '<config-server-id>', ident: '<config-server-id>', type: 'Configserver', ip: '', description: '' },
+    { depotId: 'depot1.uib.local', ident: 'depot1.uib.local', type: 'Depotserver', ip: '', description: '' },
     { depotId: 'depot2.uib.local', ident: 'depot2.uib.local', type: 'Depotserver', ip: '', description: '' },
     { depotId: 'depot3.uib.local', ident: 'depot3.uib.local', type: 'Depotserver', ip: '', description: '' },
     { depotId: 'depot4.uib.local', ident: 'depot4.uib.local', type: 'Depotserver', ip: '', description: '' },
