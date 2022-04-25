@@ -1,5 +1,5 @@
 export default {
-  title: 'Tooltip/T T Productcell',
+  title: 'Tooltip/TT Product Cell',
   parameters: { docs: { description: { component: 'Tooltip for ProductCell' } } }
 }
 

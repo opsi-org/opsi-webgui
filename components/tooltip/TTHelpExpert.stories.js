@@ -1,10 +1,15 @@
 export default {
-  title: 'Tooltip/T T Helpexpert',
+  title: 'Tooltip/TT Help Expert',
   parameters: { docs: { description: { component: 'Tooltip for Expertmode Help' } } }
 }
 
 const PrimaryTemplate = () => ({
-  template: '<TooltipTTHelpExpert target="expert-help" />'
+  template: `
+    <div>
+    <button id="target">tooltip test</button>
+    <TooltipTTHelpExpert target="target" />
+    </div>
+    `
 })
 
 // named export Primary to create respective story
