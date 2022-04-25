@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <b-card class="text-center bg-primary mt-3 mx-auto w-25">
+    <b-card class="text-center bg-secondary mt-3 mx-auto w-25">
       <IconIOpsiLogo :light="true" class="mb-3" height="35" />
       <h1 class="d-inline-block text-light">
         {{ getTitleUppercase() }}
