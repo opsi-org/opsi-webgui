@@ -14,15 +14,13 @@
           <b-icon :icon="iconnames.menuOpen" />
         </b-button>
       </b-navbar-nav>
-      <b-navbar-brand href="/clients/">
+      <b-navbar-brand class="d-inline-flex" href="/clients/">
         <IconIOpsiLogo :light="true" height="25" />
-        <span class="fs-5"> {{ getTitleUppercase() }} </span>
-        <span class="topbar_version"> {{ $config.packageVersion }} </span>
+        <span class="ml-1"> {{ getTitleUppercase() }} </span>
+        <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
       </b-navbar-brand>
-      <b-navbar-nav>
-        <ButtonBTNExpertMode :navbar="true" />
-        <ModalMTrackChanges v-if="$mq === 'mobile'" />
-      </b-navbar-nav>
+
+      <ModalMTrackChanges v-if="$mq === 'mobile'" />
 
       <b-navbar-nav v-if="$mq === 'mobile'">
         <b-button v-b-toggle.nav-collapse variant="primary">
@@ -33,6 +31,7 @@
       <b-collapse id="nav-collapse" is-nav variant="primary">
         <b-navbar-nav class="ml-auto float-right">
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
+          <ButtonBTNExpertMode :navbar="true" />
           <DropdownDDLang :navbar="true" />
           <!-- TODO: remove for production start -->
           <DropdownDDTheme v-if="$mq!='mobile'" :navbar="true" />
