@@ -4,5 +4,6 @@ const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 test('view-products snapshot', async ({ page }) => {
   await callStoryId(page, 'view-v-products', 'v-products')
   const component = await page.locator('[data-testid="VProducts"]')
-  expect(await component.screenshot()).toMatchSnapshot('view-vproducts.png')
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
+  expect(await component.screenshot()).toMatchSnapshot('VProducts-main.png')
 })
