@@ -12,7 +12,7 @@
           max-rows="30"
           no-resize
           plaintext
-          :value="modules"
+          :value="Object.values(modules).join('\n')"
         />
       </b-col>
     </b-row>
@@ -33,7 +33,7 @@ export default class VModules extends Vue {
     this.isLoading = true
     await this.$axios.$get('/api/opsidata/modulesContent')
       .then((response) => {
-        this.modules = response.result.join('\n')
+        this.modules = response.result
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
