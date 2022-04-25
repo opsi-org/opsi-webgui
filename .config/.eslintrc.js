@@ -22,10 +22,5 @@ module.exports = {
     // 'no-unused-vars': 'off',
   ],
   // add your custom rules here
-  rules: {
-    "vue/first-attribute-linebreak": ["error", {
-      "singleline": "beside",
-      "multiline": "below"
-    }]
-  }
+  rules: {}
 }

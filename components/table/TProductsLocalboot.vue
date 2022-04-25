@@ -66,7 +66,7 @@
         />
       </template>
       <template v-if="selectionClients.length>0" #head(actionRequest)>
-          <!-- v-if="selectionClients.length>0 && selectionProducts.length>0" -->
+        <!-- v-if="selectionClients.length>0 && selectionProducts.length>0" -->
         <DropdownDDProductRequest
           :action.sync="action"
           :title="$t('formselect.tooltip.actionRequest')"
