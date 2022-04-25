@@ -7,7 +7,6 @@
   //   "source.fixAll.eslint": false
   // },
   "js/ts.implicitProjectConfig.experimentalDecorators": true,
-
   "i18n-ally.localesPaths": [
     "/workspace/opsiweb/uib-components/locale",
     "opsiweb/locale",

@@ -6,6 +6,7 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES6",
+
     // "target": "ES2018",
     "module": "ESNext",
     "noImplicitAny": false,
@@ -17,6 +18,10 @@
       "ESNext.AsyncIterable",
       "DOM"
     ],
+
+    "vueCompilerOptions": {
+      "experimentalDisableTemplateSupport": true
+    },
     "esModuleInterop": true,
     "allowJs": true,
     "sourceMap": true,
