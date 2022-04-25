@@ -5,7 +5,7 @@
     data-testid="BarBSide"
     aria-label="sideMenu"
     no-header
-    bg-variant="primary"
+    bg-variant="secondary"
     text-variant="light"
     :class="{sidemenu_small: !attributes.expanded}"
     :backdrop="$mq == 'mobile'"
@@ -19,7 +19,6 @@
         v-if="$mq === 'desktop'"
         v-b-tooltip.hover
         data-testid="BarBSideBtnExpand"
-        variant="primary"
         :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
         :pressed.sync="attributes.expanded"
       >
@@ -83,7 +82,7 @@ export default class BSide extends Vue {
 }
 #sidemenu .b-sidebar-footer {
   border-top: 1px solid var(--light) !important;
-  background-color: var(--primary);
+  background-color: var(--secondary);
   z-index: 100;
   height: auto;
   display: inline;

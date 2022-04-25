@@ -140,3 +140,11 @@ body {
   background-color: var(--secondary-dark) !important;
   border-color: var(--secondary-dark) !important;
 }
+
+.bg-primary {
+  background-color: var(--primary) !important;
+}
+
+.bg-secondary {
+  background-color: var(--secondary) !important;
+}

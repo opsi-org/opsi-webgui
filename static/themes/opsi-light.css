@@ -5790,7 +5790,7 @@ a.close.disabled {
 .align-text-top {
   vertical-align: text-top !important;
 }
-.bg-primary {
+/* .bg-primary {
   background-color: #006599 !important;
 }
 a.bg-primary:focus,
@@ -5807,7 +5807,7 @@ a.bg-secondary:hover,
 button.bg-secondary:focus,
 button.bg-secondary:hover {
   background-color: #9c2f52 !important;
-}
+} */
 .bg-success {
   background-color: #198754 !important;
 }
