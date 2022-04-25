@@ -33,7 +33,7 @@
     <b-collapse :id="'collapse-navitem-'+title" v-model="contentVisible" accordion="sidebarAccordion" :visible="contentVisible" class="collapse-navitem container">
       <b-row class="">
         <slot name="nav-child">
-          <b-col class="nav-child nav-child-left" col>
+          <b-col class="nav-child nav-child-left y">
             <slot name="nav-child-left">
               <TreeTSDepots v-if="enableDepots" />
               <TreeTSHostGroups v-if="enableClients" />
@@ -200,9 +200,17 @@ export default class BTooltipCollapseRow extends Vue {
 .BCollapsePageHeader_Navbar .nav-child-left > div{
   display: inline-flex;
 }
+.BCollapsePageHeader_Navbar .row,
+.BCollapsePageHeader_Navbar .row > * {
+  width: auto;
+  /* display: flex; */
+}
+
 .BCollapsePageHeader_Navbar .nav-child-left {
   padding: 0px !important;
   min-width: auto !important;
+  width: calc(100% - 50px) !important;
+  display: block;
 }
 .BCollapsePageHeader_Navbar .title-row {
   color: var(--dark);
