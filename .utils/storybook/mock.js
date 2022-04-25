@@ -129,5 +129,19 @@ module.exports.data = {
     sortBy: '',
     sortDesc: false,
     filterQuery: ''
+  },
+  logs:{
+    clients: {
+      result: ["",
+        "[0] [2021-08-23 13:28:07.151] [] ",
+        "[1] [2021-08-23 13:28:07.151] [] --",
+        "[2] [2021-08-23 13:28:07.151] [productId] next row",
+        "[3] [2021-08-23 13:28:07.151] [productId] next row",
+        "[4] [2021-08-23 13:28:07.151] [productId] next row",
+        "[6] [2021-08-23 13:28:07.151] [productId] next row",
+        "[7] [2021-08-23 13:28:07.151] [productId] next row",
+        "[8] [2021-08-23 13:28:07.151] [productId] next row",
+        "[9] [2021-08-23 13:28:07.151] [productId] next row",
+      ]}
   }
 }
