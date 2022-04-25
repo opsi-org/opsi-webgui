@@ -6,22 +6,22 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
 export default class BTNClearChanges extends Vue {
-  // $nuxt: any
+  $nuxt: any
   iconnames: any
-  // @Prop({ }) hide!: string
+  @Prop({ }) hide!: string
 
   @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public deleteAllChanges!: () => void
 
   deleteAll () {
     this.deleteAllChanges()
-    // if (this.hide) { this.$bvModal.hide(this.hide) }
+    if (this.hide) { this.$bvModal.hide(this.hide) }
     // this.$nuxt.refresh()
   }
 }

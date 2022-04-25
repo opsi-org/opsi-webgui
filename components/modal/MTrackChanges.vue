@@ -3,7 +3,8 @@
     <b-button
       v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
       size="sm"
-      class="mt-2"
+      :class="$mq!='mobile' ? 'mt-2' : null"
+      pill
       @click="$bvModal.show('trackChangesModal')"
     >
       <span v-if="$mq!='mobile'" class="text-warning"> {{ $t('button.track.changes') }} </span>
@@ -27,7 +28,7 @@
       <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
         <TableTChanges />
         <DivDComponentGroup class="float-right">
-          <ButtonBTNClearChanges />
+          <ButtonBTNClearChanges hide="trackChangesModal" />
           <b-button size="sm" variant="success" :title="$t('button.saveall')" @click="saveAll()">
             <b-icon :icon="iconnames.save" />
             {{ $t('button.saveall') }}
@@ -53,6 +54,7 @@ const changes = namespace('changes')
 @Component({ mixins: [Constants] })
 export default class MTrackChanges extends Vue {
   iconnames: any
+  $nuxt: any
   $axios: any
   changelist: Array<ChangeObj> = []
 
@@ -116,8 +118,8 @@ export default class MTrackChanges extends Vue {
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
       })
-    // if (this.changelist.length === 0) {
-    //   this.$bvModal.hide('ProductSaveModal')
+    // if (this.changesProducts.filter(o => o.user === this.username).length === 0) {
+    //   this.$bvModal.hide('trackChangesModal')
     //   this.$nuxt.refresh()
     // }
   }
