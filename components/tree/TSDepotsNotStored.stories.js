@@ -1,5 +1,9 @@
+// import { mock } from '../../.utils/storybook/mock'
+// const hostconfig = ['depot1', 'depot2']
+// mock.onGet('/api/opsidata/depot_ids').reply(200, hostconfig)
+
 export default {
-  title: 'Tree/T S Depots Not Stored',
+  title: 'Tree/TS Depots Not Stored',
   parameters: { docs: { description: { component: 'Treeselect for depot selection, where selection not stored' } } }
 }
 

@@ -123,6 +123,7 @@
   "treeselect.search": "Suche",
   "treeselect.searchOrAdd": "Suchen oder hinzufügen",
   "treeselect.limitText": "... (+{count})",
+  "formselect.select.server": "-- Please select a Depot --",
   "formselect.depot": "Serverauswahl",
   "formselect.client": "Clientauswahl",
   "formselect.logtype": "Logtypauswahl",

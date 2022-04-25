@@ -46,7 +46,7 @@ module.exports.customstore = customstore
 module.exports.customstores = customstores
 module.exports.mock = mock
 module.exports.data = {
-  depotIds: ['depot1.uib.local', 'depot2.uib.local', 'depot3.uib.local'],
+  depotIds: ['<config-server-id>', 'depot1.uib.local', 'depot2.uib.local', 'depot3.uib.local'],
   clientIds: ['client1.uib.local', 'client2.uib.local', 'client3.uib.local', 'client4.uib.local', 'client5.uib.local'],
   clients: [
     { clientId: 'client1.uib.local', ident: 'client1.uib.local', macAddress: 'af:fe:af:fe:af:f1', description: '', notes: '', version_outdated: 0, installationStatus_unknown: 0, installationStatus_installed: 0, actionResult_failed: 0, actionResult_successful: 0, selected: 0 },

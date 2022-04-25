@@ -126,6 +126,7 @@
   "formselect.depot": "Select a server",
   "formselect.client": "Select a client",
   "formselect.logtype": "Select a log type",
+  "formselect.select.server": "-- Please select a Depot --",
   "formselect.tooltip.actionRequest": "Set actionRequest for all selected products",
   "loginPage.username": "Username",
   "loginPage.password": "Password",

@@ -5,7 +5,7 @@
       v-model="idselection"
       class="treeselect_idselect"
       :options="depotIds"
-      placeholder="-- Please select a Depot --"
+      :placeholder="$t('treeselect.select.server')"
       @input="$emit('update:id', idselection)"
     />
   </div>
