@@ -24,6 +24,8 @@
   "message.session.expiresInMinutesOnly": "Session läuft ab in {min} minutes.",
   "message.session.title": "Session Timeout",
   "description.version": "Version:",
+  "menu.open-sidemenu.sr-only":"Seitenmenu öffnen",
+  "menu.open-topmenu.sr-only":"Hauptmenu öffnen",
   "title.overview": "ÜBERBLICK",
   "title.support": "Support",
   "title.manage": "VERWALTEN",

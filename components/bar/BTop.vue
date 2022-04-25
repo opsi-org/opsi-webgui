@@ -11,7 +11,7 @@
       <div class="container-fluid">
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button :pressed.sync="attributes.visible">
-            <span class="sr-only">Open sidemenu</span>
+            <span class="sr-only">{{$t('menu.open-sidemenu.sr-only')}}</span>
             <b-icon :icon="iconnames.menuOpen" />
           </b-button>
         </b-navbar-nav>
@@ -27,7 +27,7 @@
 
         <b-navbar-nav v-if="$mq === 'mobile'">
           <b-button v-b-toggle.nav-collapse variant="primary">
-            <span class="sr-only">Open topmenu</span>
+            <span class="sr-only">{{$t('menu.open-topmenu.sr-only')}}</span>
             <b-icon :icon="iconnames.menu" font-scale="1.1" />
           </b-button>
         </b-navbar-nav>
@@ -104,7 +104,8 @@ export default class BTop extends Vue {
 }
 .topbar_title{
   font-size: 18px;
-  margin-left: -7px;
+  margin-left: -3px;
+  margin-top: 7px;
 }
 .topbar_version{
   font-size: 10px;

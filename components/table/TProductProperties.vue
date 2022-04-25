@@ -210,6 +210,11 @@ export default class TProductProperties extends Vue {
 <style>
 .TProductProperties  {
   max-height: 100%;
+  width: 100%;
+}
+.TProductProperties .row > * {
+  padding-left: 0px;
+  padding-right: 0px;
 }
 /* .mobile.TProductProperties  {
   border: 1px solid green;
@@ -240,7 +245,7 @@ export default class TProductProperties extends Vue {
 }
 
 .TProductProperties_row_details > small p {
-  margin-left: 10px !important;
+  margin-left: 0px !important;
   margin-bottom: 0 !important;
 }
 </style>

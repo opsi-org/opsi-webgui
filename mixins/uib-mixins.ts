@@ -65,6 +65,9 @@ import { Component, Vue } from 'nuxt-property-decorator'
     info: 'info-circle',
     tablerowSelected: 'check2',
     tablerowNotSelected: 'dash',
-    logout: 'power'
+    logout: 'power',
+    themelight: 'sun',
+    themedark: 'moon'
+
   }
 }

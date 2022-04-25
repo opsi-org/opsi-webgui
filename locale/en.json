@@ -24,6 +24,8 @@
   "message.session.expiresInMinutesOnly": "Session expires in {min} minutes.",
   "message.session.title": "Session Timeoout",
   "description.version": "version:",
+  "menu.open-sidemenu.sr-only":"Open sidemenu",
+  "menu.open-topmenu.sr-only":"Open topmenu",
   "title.overview": "OVERVIEW",
   "title.support": "Support",
   "title.manage": "MANAGE",
