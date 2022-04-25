@@ -1,4 +1,21 @@
 :root{
+  --opsi-blue: #006599;
+  --opsi-blue-dark: #025781;
+  --opsi-red: #c33b67;
+  --opsi-red-dark: #b31c4c;
+  --component-height: 40px;
+
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  
   --max-height-window:500px;
   --height-navbar: 56px;
 
@@ -98,4 +115,18 @@ body {
   border-top: none !important;
   border-bottom: none !important;
   background-color: transparent !important;
+}
+
+.btn{
+  height: var(--component-height) !important;
+}
+.btn-secondary {
+  color: #fff !important;
+  background-color: var(--secondary) !important;
+  border-color: var(--secondary) !important;
+}
+.btn-secondary:hover {
+  color: #fff !important;
+  background-color: var(--secondary-dark) !important;
+  border-color: var(--secondary-dark) !important;
 }
