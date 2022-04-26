@@ -30,7 +30,6 @@ export default class SLogtype extends Vue {
 
 <style>
 .logtype{
-  max-width: 150px;
-  margin-right: 10px;
+  max-width: var(--component-width) !important;
 }
 </style>

@@ -4,17 +4,25 @@
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
-        <label for="filter" class="sr-only"> Filter Logs </label>
-        <b-form-input id="filter" v-model.trim="filterQuery" class="filter_logs" placeholder="Filter Logs" @keyup="filterLog" />
         <slot v-if="!asChild" name="IDSelection" />
-        <SelectSLogtype :logtype.sync="logtype" />
-        <SpinbuttonSBLoglevel :loglevel.sync="loglevel" />
+        <SelectSLogtype class="ml-1" :logtype.sync="logtype" />
+        <SpinbuttonSBLoglevel class="ml-1" :loglevel.sync="loglevel" />
+        <b-form-input
+          v-if="logResult.length > 1"
+          id="filter"
+          v-model.trim="filterQuery"
+          class="ml-1 filter_logs"
+          placeholder="Filter Logs"
+          @keyup="filterLog"
+        />
       </template>
     </BarBPageHeader>
+    <label for="filter" class="sr-only"> Filter Logs </label>
     <IconILoading v-if="isLoading" />
     <p v-else-if="errorText">
       {{ errorText }}
     </p>
+
     <DivDScrollResult v-else>
       <div v-if="filteredLog == ''" class="container-fluid">
         --
@@ -122,7 +130,6 @@ export default class VClientLog extends Vue {
 
 <style>
 .filter_logs{
-  max-width: 305px;
-  margin-right: 10px;
+  max-width: var(--component-width) !important;
 }
 </style>

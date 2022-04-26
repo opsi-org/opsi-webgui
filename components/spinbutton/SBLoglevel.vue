@@ -26,6 +26,6 @@ export default class SLoglevel extends Vue {
 
 <style>
 .loglevel_spinbutton{
-  min-width: 145px !important;
+  min-width: var(--component-width) !important;
 }
 </style>
