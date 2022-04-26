@@ -18,10 +18,6 @@
       "ESNext.AsyncIterable",
       "DOM"
     ],
-
-    "vueCompilerOptions": {
-      "experimentalDisableTemplateSupport": true
-    },
     "esModuleInterop": true,
     "allowJs": true,
     "sourceMap": true,
