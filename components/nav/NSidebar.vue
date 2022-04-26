@@ -113,10 +113,6 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
-/* .a {
-  color: white !important;
-  background-color: var(--primary);
-} */
 a.nuxt-link-active {
   color:var(--color, black);
 }
@@ -151,8 +147,5 @@ a.nuxt-link-exact-active {
 }
 .sidebar_collapsed .sidemenu_nav .nav-link > svg{
   margin: 0 auto !important;
-}
-.timer {
-  margin: auto;
 }
 </style>
