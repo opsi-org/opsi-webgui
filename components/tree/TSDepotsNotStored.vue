@@ -48,6 +48,7 @@ export default class TSDepotsNotStored extends Vue {
 .treeselect_idselect .vue-treeselect__control {
   background-color: var(--component, var(--background, black));
   color: var(--color, var(--light, white));
+  border:1px solid var(--border, #ced4da );
 }
 .treeselect_idselect .vue-treeselect__menu {
   background-color: var(--component, var(--background, black));

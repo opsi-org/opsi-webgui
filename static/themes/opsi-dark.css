@@ -3,6 +3,7 @@
   --log-muted: #ffffffb4;
   --color:#ffffffb4;
   --background:#40464e;
+  --border: var(--background);
   --component:#495057;
 }
 *,
