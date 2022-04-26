@@ -33,7 +33,7 @@
             'text-secondary': log.startsWith('[1]'),
             'text-danger': log.startsWith('[2]'),
             'text-warning': log.startsWith('[3]'),
-            'text-primary': log.startsWith('[4]'),
+            'text-info': log.startsWith('[4]'),
             'text-success': log.startsWith('[5]'),
             'text-secondary': log.startsWith('[6]'),
             'text-muted': log.startsWith('[7]'),

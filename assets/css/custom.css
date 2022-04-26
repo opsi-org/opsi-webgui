@@ -112,9 +112,6 @@ body {
   background-color: transparent !important;
 }
 
-.btn{
-  height: var(--component-height) !important;
-}
 .btn-primary {
   color: #fff;
   background-color: var(--primary) !important;

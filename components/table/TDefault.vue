@@ -14,6 +14,7 @@
       :items="items"
       :fields="fields"
       :stacked="stacked"
+      small
       show-empty
       responsive
       borderless
