@@ -25,6 +25,7 @@ stages:
         - package-lock.json
     paths:
       - node_modules
+      - /ms-playwright/
     policy: pull
 
 init:npm:
@@ -44,8 +45,10 @@ test:lint:
   dependencies:
     - init:npm
   script:
-    - npm run liblint
+    - ls -lah
     - ls -lah node_modules
+    - ls -lah /ms-playwright
+    - npm run liblint
 
 test:unit:
   stage: test
