@@ -113,6 +113,9 @@ export default class TInfiniteScroll extends Vue {
 
   async fetch () { await this.fetchitems() }
   mounted () { this.addScrollEvent() }
+  beforeDestroy () {
+    window.removeEventListener('scroll', this.onScroll)
+  }
 
   addScrollEvent () {
     try {
