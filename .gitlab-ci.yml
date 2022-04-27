@@ -18,20 +18,33 @@ stages:
 
 # Define a hidden job to be used with extends
 # Better than default to avoid activating cache for all jobs
-.dependencies_cache:
+.dependencies_cache_develop:
   cache:
-    key:
-      files:
-        - package-lock.json
+    key: $CI_COMMIT_REF_SLUG
     paths:
+      - package-lock.json
       - node_modules
       - /ms-playwright/
     policy: pull
+.dependencies_cache_productive:
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - test.txt
+    policy: pull
+
+init:npm:prod:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: init
+  extends: .dependencies_cache_productive
+  script: |
+    echo "test" >> test.txt
+    cat test.txt
 
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
-  extends: .dependencies_cache
+  extends: .dependencies_cache_develop
   script: |
     echo "[script.sh] install dependencies..."
     npm run libclean
@@ -39,9 +52,22 @@ init:npm:
     npm i -D @playwright/test
     npx playwright install
 
+
+
+test:file-prod:
+  stage: test
+  extends: .dependencies_cache_productive
+  dependencies:
+    - init:npm
+  script:
+    - ls -lah
+    - cat test.txt
+    - ls -lah /ms-playwright
+    - npm run liblint
+
 test:lint:
   stage: test
-  extends: .dependencies_cache
+  extends: .dependencies_cache_develop
   dependencies:
     - init:npm
   script:
@@ -52,7 +78,7 @@ test:lint:
 
 test:unit:
   stage: test
-  extends: .dependencies_cache
+  extends: .dependencies_cache_develop
   dependencies:
     - init:npm
   script:
@@ -67,7 +93,7 @@ test:unit:
 test:components:changed:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  extends: .dependencies_cache
+  extends: .dependencies_cache_develop
   dependencies:
     - init:npm
   except:
@@ -97,7 +123,7 @@ test:components:changed:
 test:components:all:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  extends: .dependencies_cache
+  extends: .dependencies_cache_develop
   dependencies:
     - init:npm
   only:
@@ -123,7 +149,7 @@ test:components:all:
     expire_in: 2 day
 # test:test-e2e:
 #   stage: test
-#   extends: .dependencies_cache
+#   extends: .dependencies_cache_develop
 #   dependencies:
 #     - init:npm
 #   script:
