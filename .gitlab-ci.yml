@@ -28,12 +28,11 @@ cache: &dependencies_cache_develop
   policy: pull
 # .dependencies_cache_productive:
 cache: &dependencies_cache_productive
-  cache:
-    key: productive-$CI_COMMIT_REF_SLUG
-    untracked: true
-    paths:
-      - test.txt
-    policy: pull
+  key: productive-$CI_COMMIT_REF_SLUG
+  untracked: true
+  paths:
+    - test.txt
+  policy: pull
 
 #################################################################################### init
 init:npm:prod:
