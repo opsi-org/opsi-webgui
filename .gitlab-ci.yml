@@ -19,16 +19,15 @@ stages:
 #################################################################################### cache
 # .dependencies_cache_develop:
 cache: &dependencies_cache_develop
-  key: devel-$CI_COMMIT_REF_SLUG
+  key: devel-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
   untracked: true
   paths:
     - package-lock.json
     - node_modules
-    - /ms-playwright/
   policy: pull
 # .dependencies_cache_productive:
 cache: &dependencies_cache_productive
-  key: productive-$CI_COMMIT_REF_SLUG
+  key: productive-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
   untracked: true
   paths:
     - test.txt
