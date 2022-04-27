@@ -2,7 +2,7 @@ image: node:17
 stages:
   - init
   - test
-  - cache-test
+  - cleanup
 
 
 .get_changed_files: &get_changed_files |
@@ -33,6 +33,31 @@ cache: &dependencies_cache_productive
     - test.txt
   policy: pull
 
+#################################################################################### cleanup
+cleanup:cache:devel:
+  stage: cleanup
+  when: always
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
+    policy: pull-push # override the policy
+  script:
+    - echo "Cleaning up"
+    - rm -rf package-lock.json
+    - rm -rf node_modules
+  tags:
+    - test-anna
+cleanup:cache:productive:
+  stage: cleanup
+  when: always
+  cache:
+    <<: *dependencies_cache_productive  # inherit all global cache settings
+    policy: pull-push # override the policy
+  script:
+    - echo "Cleaning up"
+    - rm -rf test.txt
+  tags:
+    - test-anna
+
 #################################################################################### init
 init:npm:prod:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -43,6 +68,8 @@ init:npm:prod:
   script: |
     echo "test" >> test.txt
     cat test.txt
+  tags:
+    - test-anna
 
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -55,6 +82,8 @@ init:npm:
     npm run libclean
     npm run libbuild
     npm i -D @playwright/test
+  tags:
+    - test-anna
 
 
 #################################################################################### test
@@ -67,6 +96,8 @@ test:file-prod:
   script:
     - ls -lah
     - cat test.txt
+  tags:
+    - test-anna
 
 test:lint:
   stage: test
@@ -78,6 +109,8 @@ test:lint:
     - ls -lah
     - ls -lah node_modules
     - npm run liblint
+  tags:
+    - test-anna
 
 test:unit:
   stage: test
@@ -94,6 +127,8 @@ test:unit:
   artifacts:
     reports:
       cobertura: coverage/clover.xmlci
+  tags:
+    - test-anna
 
 
 test:components:changed:
@@ -126,6 +161,8 @@ test:components:changed:
       - .storybook.log
       - .dev.log
     expire_in: 2 day
+  tags:
+    - test-anna
 
 test:components:all:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -155,6 +192,8 @@ test:components:all:
       - .storybook.log
       - .dev.log
     expire_in: 2 day
+  tags:
+    - test-anna
 # test:test-e2e:
 #   stage: test
 #   cache:
