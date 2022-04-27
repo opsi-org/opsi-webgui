@@ -2,6 +2,7 @@ image: node:17
 stages:
   - init
   - test
+  - cache-test
 
 
 .get_changed_files: &get_changed_files |
@@ -15,9 +16,21 @@ stages:
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
 
+# Define a hidden job to be used with extends
+# Better than default to avoid activating cache for all jobs
+.dependencies_cache:
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
+    policy: pull
+
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
+  extends: .dependencies_cache
   script: |
     echo "[script.sh] install dependencies..."
     npm run libclean
@@ -25,21 +38,37 @@ init:npm:
     npm i -D @playwright/test
     npx playwright install
 
-  # extends: .dependencies_cache
-  # cache:
-  #   policy: pull-push
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 day
+init:npm-nocache:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: init
+  script: |
+    ls -lah node_modules
+    echo "[script.sh] install dependencies..."
+    npm run libclean
+    npm run libbuild
+    npm i -D @playwright/test
+    npx playwright install
+
+test:lint-nocache:
+  stage: test
+  dependencies:
+    - init:npm-nocache
+  script:
+    - ls -lah node_modules
+    - npm run liblint
 
 test:lint:
   stage: test
+  extends: .dependencies_cache
+  dependencies:
+    - init:npm
   script:
     - npm run liblint
+    - ls -lah node_modules
 
 test:unit:
   stage: test
+  extends: .dependencies_cache
   dependencies:
     - init:npm
   script:
@@ -54,6 +83,7 @@ test:unit:
 test:components:changed:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
+  extends: .dependencies_cache
   dependencies:
     - init:npm
   except:
@@ -64,7 +94,7 @@ test:components:changed:
     - npx playwright install
     - npx playwright install-deps
 
-    - PORT=3003 nohup npm run libdev > .dev.log &
+    - PORT=8888 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
     - npm run libtest:integration '$testfilesUnique' || exit_code=$?
@@ -83,6 +113,7 @@ test:components:changed:
 test:components:all:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
+  extends: .dependencies_cache
   dependencies:
     - init:npm
   only:
@@ -91,7 +122,7 @@ test:components:all:
     - npx playwright install
     - npx playwright install-deps
 
-    - PORT=3003 nohup npm run libdev > .dev.log &
+    - PORT=8888 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
     - npm run libtest:integration || exit_code=$?
@@ -108,6 +139,7 @@ test:components:all:
     expire_in: 2 day
 # test:test-e2e:
 #   stage: test
+#   extends: .dependencies_cache
 #   dependencies:
 #     - init:npm
 #   script:
