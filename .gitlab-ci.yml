@@ -17,16 +17,17 @@ stages:
   echo "$testfilesUnique"
 
 #################################################################################### cache
-.dependencies_cache_develop:
-  cache:
-    key: devel-$CI_COMMIT_REF_SLUG
-    untracked: true
-    paths:
-      - package-lock.json
-      - node_modules
-      - /ms-playwright/
-    policy: pull
-.dependencies_cache_productive:
+# .dependencies_cache_develop:
+cache: &dependencies_cache_develop
+  key: devel-$CI_COMMIT_REF_SLUG
+  untracked: true
+  paths:
+    - package-lock.json
+    - node_modules
+    - /ms-playwright/
+  policy: pull
+# .dependencies_cache_productive:
+cache: &dependencies_cache_productive
   cache:
     key: productive-$CI_COMMIT_REF_SLUG
     untracked: true
@@ -38,9 +39,9 @@ stages:
 init:npm:prod:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
-  extends: .dependencies_cache_productive
-  cache: # overwrite?
-    policy: pull-push
+  cache:
+    <<: *dependencies_cache_productive  # inherit all global cache settings
+    policy: pull-push # override the policy
   script: |
     echo "test" >> test.txt
     cat test.txt
@@ -48,9 +49,9 @@ init:npm:prod:
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
-  extends: .dependencies_cache_develop
-  cache: # overwrite?
-    policy: pull-push
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
+    policy: pull-push # override the policy
   script: |
     echo "[script.sh] install dependencies..."
     npm run libclean
@@ -61,7 +62,8 @@ init:npm:
 #################################################################################### test
 test:file-prod:
   stage: test
-  extends: .dependencies_cache_productive
+  cache:
+    <<: *dependencies_cache_productive  # inherit all global cache settings
   dependencies:
     - init:npm:prod
   script:
@@ -70,7 +72,8 @@ test:file-prod:
 
 test:lint:
   stage: test
-  extends: .dependencies_cache_develop
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   script:
@@ -80,7 +83,8 @@ test:lint:
 
 test:unit:
   stage: test
-  extends: .dependencies_cache_develop
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   script:
@@ -97,7 +101,8 @@ test:unit:
 test:components:changed:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  extends: .dependencies_cache_develop
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   except:
@@ -127,7 +132,8 @@ test:components:changed:
 test:components:all:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  extends: .dependencies_cache_develop
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   only:
@@ -153,7 +159,8 @@ test:components:all:
     expire_in: 2 day
 # test:test-e2e:
 #   stage: test
-#   extends: .dependencies_cache_develop
+#   cache:
+#     <<: *dependencies_cache_develop  # inherit all global cache settings
 #   dependencies:
 #     - init:npm
 #   script:
