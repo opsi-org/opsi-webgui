@@ -26,19 +26,21 @@ stages:
       - package-lock.json
       - node_modules
       - /ms-playwright/
-    policy: pull-push
+    policy: pull
 .dependencies_cache_productive:
   cache:
     key: productive-$CI_COMMIT_REF_SLUG
     untracked: true
     paths:
       - test.txt
-    policy: pull-push
+    policy: pull
 
 init:npm:prod:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
   extends: .dependencies_cache_productive
+  cache: # overwrite?
+    policy: pull-push
   script: |
     echo "test" >> test.txt
     cat test.txt
@@ -47,6 +49,8 @@ init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
   extends: .dependencies_cache_develop
+  cache: # overwrite?
+    policy: pull-push
   script: |
     echo "[script.sh] install dependencies..."
     npm run libclean
