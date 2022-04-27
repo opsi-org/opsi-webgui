@@ -187,21 +187,36 @@ export default class VProducts extends Vue {
         thiss.tableData.sortDesc = true
         thiss.tableData.selected = JSON.stringify(thiss.selectionProducts)
       }
-      try {
-        const params = thiss.tableData
-        const response = (await thiss.$axios.get('/api/opsidata/products', { params }))
-        thiss.totalItems = response.headers['x-total-count'] || 0
+      const params = thiss.tableData
+      await thiss.$axios.get('/api/opsidata/products', { params })
+        .then((response) => {
+          thiss.totalItems = response.headers['x-total-count'] || 0
+          thiss.$emit('update:total' + thiss.id, thiss.totalItems)
+          thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
+          thiss.items = response.data || []
+        }).catch((error) => {
+          thiss.error = thiss.$t('message.errortext') as string
+          thiss.error += (error as IObjectString2Any).message
+          const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+          const ref = (this.$refs.productsViewAlert as any)
+          ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
+        })
+      // try {
+      //   const params = thiss.tableData
+      //   const response = (await thiss.$axios.get('/api/opsidata/products', { params }))
+      //   thiss.totalItems = response.headers['x-total-count'] || 0
 
-        thiss.$emit('update:total' + thiss.id, thiss.totalItems)
-        thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
-        thiss.items = response.data || []
-      } catch (error) {
-        thiss.error = thiss.$t('message.errortext') as string
-        thiss.error += (error as IObjectString2Any).message
-        const ref = (this.$refs.productsViewAlert as any)
-        ref.alert('Failed to fetch: Products', 'danger', error)
-        // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
-      }
+      //   thiss.$emit('update:total' + thiss.id, thiss.totalItems)
+      //   thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
+      //   thiss.items = response.data || []
+      // } catch (error) {
+      //   thiss.error = thiss.$t('message.errortext') as string
+      //   thiss.error += (error as IObjectString2Any).message
+      //   const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+      //   const ref = (this.$refs.productsViewAlert as any)
+      //   ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
+      //   // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
+      // }
     }
     thiss.isLoading = false
   }

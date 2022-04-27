@@ -149,8 +149,9 @@ export default class VProductProperty extends Vue {
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
         this.activeTabSet = -3
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.productPropViewAlert as any)
-        ref.alert('Failed to fetch: Properties', 'danger', error)
+        ref.alert(this.$t('message.error.fetch') as string + 'Properties', 'danger', detailedError)
         // throw new Error(error)
       })
   }
@@ -166,8 +167,9 @@ export default class VProductProperty extends Vue {
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
         this.activeTabSet = -3
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.productPropViewAlert as any)
-        ref.alert('Failed to fetch: Dependencies', 'danger', error)
+        ref.alert(this.$t('message.error.fetch') as string + 'Dependencies', 'danger', detailedError)
         // throw new Error(error)
       })
   }

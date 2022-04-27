@@ -69,18 +69,15 @@ export default class FLogin extends Vue {
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
-    try {
-      this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
-    } catch (error) {
-      const errorMsg = this.$t('loginPage.errortext') as string
-      this.isLoading = false
-      const ref = (this.$refs.loginAlert as any)
-      ref.alert(errorMsg, 'danger', error as string)
-      // makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
-      // eslint-disable-next-line no-console
-      console.error(error)
-      throw new Error(errorMsg)
-    }
+    await this.$axios.$get('/api/user/opsiserver')
+      .then((response) => {
+        this.setOpsiconfigserver(response.result)
+      }).catch((error) => {
+        const errorMsg = this.$t('loginPage.errortext') as string
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+        const ref = (this.$refs.loginAlert as any)
+        ref.alert(errorMsg, 'danger', detailedError as string)
+      })
   }
 
   get validUsername () {
@@ -108,6 +105,8 @@ export default class FLogin extends Vue {
     // this.$axios.post('/api/auth/login', User, { headers: { 'X-opsi-session-lifetime': 60 * 20 } })
     this.$axios.post('/api/auth/login', User)
       .then((response) => {
+        // eslint-disable-next-line no-console
+        console.error('response:', JSON.stringify(response))
         if (response.data.result === 'Login success') {
           this.login(this.form.username)
           if (this.$route.name === 'login') {
@@ -121,14 +120,12 @@ export default class FLogin extends Vue {
           this.isLoading = false
         }
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
         this.logout()
         this.clearSession()
-        const errorMsg = this.$t('message.loginFailed') as string
         this.isLoading = false
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.loginAlert as any)
-        ref.alert(errorMsg, 'danger', error as string)
+        ref.alert(this.$t('message.loginFailed') as string, 'danger', detailedError)
         // makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
       })
   }

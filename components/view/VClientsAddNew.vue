@@ -148,8 +148,9 @@ export default class VClientsAddNew extends Vue {
       .then((response) => {
         this.clientIds = response.sort()
       }).catch((error) => {
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.newClientAlert as any)
-        ref.alert('Failed to fetch: DepotClients', 'danger', error)
+        ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
       })
   }
 
@@ -175,8 +176,9 @@ export default class VClientsAddNew extends Vue {
         // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.errortext') as string, 'danger', error)
+        ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
         // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
     this.isLoading = false

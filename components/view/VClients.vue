@@ -205,8 +205,9 @@ export default class VClients extends Vue {
         }
         // this.items = this.items.concat(response.data)
       }).catch((error) => {
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.clientsViewAlert as any)
-        ref.alert('Failed to fetch: Clients', 'danger', error)
+        ref.alert(this.$t('message.error.fetch') as string + 'Clients', 'danger', detailedError)
         this.error = this.$t('message.errortext') as string
         this.error += JSON.stringify(error.message)
       })
@@ -241,8 +242,9 @@ export default class VClients extends Vue {
         // makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(id)
       }).catch((error) => {
+        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.clientsViewAlert as any)
-        ref.alert(this.$t('message.errortext') as string, 'danger', error)
+        ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
         // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
   }
