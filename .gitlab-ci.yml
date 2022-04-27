@@ -21,17 +21,19 @@ stages:
 .dependencies_cache_develop:
   cache:
     key: devel-$CI_COMMIT_REF_SLUG
+    untracked: true
     paths:
       - package-lock.json
       - node_modules
       - /ms-playwright/
-    policy: pull
+    policy: pull-push
 .dependencies_cache_productive:
   cache:
     key: productive-$CI_COMMIT_REF_SLUG
+    untracked: true
     paths:
       - test.txt
-    policy: pull
+    policy: pull-push
 
 init:npm:prod:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -62,8 +64,6 @@ test:file-prod:
   script:
     - ls -lah
     - cat test.txt
-    - ls -lah /ms-playwright
-    - npm run liblint
 
 test:lint:
   stage: test
