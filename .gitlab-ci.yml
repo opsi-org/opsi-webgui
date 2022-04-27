@@ -16,8 +16,7 @@ stages:
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
 
-# Define a hidden job to be used with extends
-# Better than default to avoid activating cache for all jobs
+#################################################################################### cache
 .dependencies_cache_develop:
   cache:
     key: devel-$CI_COMMIT_REF_SLUG
@@ -35,6 +34,7 @@ stages:
       - test.txt
     policy: pull
 
+#################################################################################### init
 init:npm:prod:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
@@ -56,10 +56,9 @@ init:npm:
     npm run libclean
     npm run libbuild
     npm i -D @playwright/test
-    npx playwright install
 
 
-
+#################################################################################### test
 test:file-prod:
   stage: test
   extends: .dependencies_cache_productive
@@ -77,7 +76,6 @@ test:lint:
   script:
     - ls -lah
     - ls -lah node_modules
-    - ls -lah /ms-playwright
     - npm run liblint
 
 test:unit:
@@ -87,6 +85,8 @@ test:unit:
     - init:npm
   script:
     # -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
+    - ls -lah
+    - ls -lah node_modules
     - npm run libtest:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
