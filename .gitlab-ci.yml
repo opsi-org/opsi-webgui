@@ -20,7 +20,7 @@ stages:
 # Better than default to avoid activating cache for all jobs
 .dependencies_cache_develop:
   cache:
-    key: $CI_COMMIT_REF_SLUG
+    key: devel-$CI_COMMIT_REF_SLUG
     paths:
       - package-lock.json
       - node_modules
@@ -28,7 +28,7 @@ stages:
     policy: pull
 .dependencies_cache_productive:
   cache:
-    key: $CI_COMMIT_REF_SLUG
+    key: productive-$CI_COMMIT_REF_SLUG
     paths:
       - test.txt
     policy: pull
