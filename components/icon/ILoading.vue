@@ -19,5 +19,6 @@ export default class ILoading extends Vue {
 <style>
 .ILoading {
   max-width: fit-content;
+  color: var(--color, black) !important;
 }
 </style>
