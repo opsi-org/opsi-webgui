@@ -38,25 +38,6 @@ init:npm:
     npm i -D @playwright/test
     npx playwright install
 
-init:npm-nocache:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: init
-  script: |
-    ls -lah node_modules
-    echo "[script.sh] install dependencies..."
-    npm run libclean
-    npm run libbuild
-    npm i -D @playwright/test
-    npx playwright install
-
-test:lint-nocache:
-  stage: test
-  dependencies:
-    - init:npm-nocache
-  script:
-    - ls -lah node_modules
-    - npm run liblint
-
 test:lint:
   stage: test
   extends: .dependencies_cache
