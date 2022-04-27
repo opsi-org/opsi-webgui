@@ -280,7 +280,7 @@ test:test-components:changes:
     - npx playwright install-deps
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
-    - sleep 60
+    - sleep 120
     # run tests
     - npm-uib run test:all:components $testfilesUnique || exit_code=$?
     - npm run test:all:delete-empty-results
