@@ -14,10 +14,12 @@ export default class Settings extends VuexModule {
   colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' }
   // colorthemeobj: ITheme = { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' }
   _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
+  _expiresInterval!: NodeJS.Timeout|undefined
 
   get twoColumnLayoutCollapsed (): IObjectString2Boolean { return this._twoColumnLayoutCollapsed }
   get language (): string { return this._language }
   get expert (): boolean { return this._expert }
+  get expiresInterval (): NodeJS.Timeout|undefined { return this._expiresInterval }
   get colortheme (): ITheme {
     if (Cookie.get('theme.title')) {
       const c: ITheme = {
@@ -36,6 +38,13 @@ export default class Settings extends VuexModule {
       }
     }
     return this.colorthemeobj
+  }
+
+  @VuexMutation public setExpiresInterval (int: NodeJS.Timeout|undefined) {
+    if ((int === null || int === undefined) && this._expiresInterval) {
+      clearInterval(this._expiresInterval)
+    }
+    this._expiresInterval = int
   }
 
   @VuexMutation public setLanguage (lang: string) {

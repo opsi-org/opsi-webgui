@@ -1,7 +1,7 @@
 <template>
   <div class="ILoading container-fluid" data-testid="ILoading">
     {{ (small)? '': $t('message.loading') }}
-    <b-icon :icon="iconnames.loading" :animation="animation" :title="$t('message.loading')" />
+    <b-icon class="loading-icon" :icon="iconnames.loading" :animation="animation" :title="$t('message.loading')" />
   </div>
 </template>
 

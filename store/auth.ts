@@ -1,12 +1,12 @@
 import Cookie from 'js-cookie'
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
-// chimport { ITheme } from '~/types/tsettings'
 
+const expirySec = 60 * 30 // Default=30min
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
   myusername: string = localStorage.getItem('username') as string
+  sessionexpiry: number = expirySec // sec
   sessionendTime: string = ''
-  sessionexpiry: number = 60 * 20
 
   get sessionEndTime (): string { return this.sessionendTime }
   get sessionExpiry (): number { return this.sessionexpiry }
@@ -16,18 +16,22 @@ export default class Settings extends VuexModule {
   @VuexMutation login (username: string) {
     this.myusername = username
     localStorage.setItem('username', username)
-    // console.log('cookie set')
   }
 
   @VuexMutation logout () {
     localStorage.removeItem('username')
     this.myusername = ''
-    // Cookie.remove('opsiconf-session')
-    // console.log('cookie removed')
+  }
+
+  @VuexMutation setExpiredMin (m: number) {
+    this.sessionexpiry = m
   }
 
   @VuexMutation setSession () {
-    const expiryInSec = this.sessionexpiry
+    let expiryInSec = this.sessionexpiry
+    if (!expiryInSec) { expiryInSec = this.sessionExpiry }
+    if (!expiryInSec) { expiryInSec = expirySec }
+
     const expiryTime = new Date(new Date().getTime() + (expiryInSec * 1000))
     this.sessionendTime = expiryTime as unknown as string
     // Cookie.set('opsiweb-session', expiryTime as unknown as string, { expires: expiryTime })

@@ -42,6 +42,10 @@ export default class AAlert extends BAlert {
     this.moreDetails = details
     this.showAlert = true
   }
+
+  hide () {
+    this.showAlert = false
+  }
 }
 </script>
 <style>
