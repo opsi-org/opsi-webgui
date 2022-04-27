@@ -58,7 +58,7 @@ test:file-prod:
   stage: test
   extends: .dependencies_cache_productive
   dependencies:
-    - init:npm
+    - init:npm:prod
   script:
     - ls -lah
     - cat test.txt
