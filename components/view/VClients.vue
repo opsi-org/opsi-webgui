@@ -79,7 +79,7 @@
           </template>
           <template #row-details="row">
             <b-card>
-              {{ $t('message.deleteConfirm') }} <b>{{ row.item.ident }}</b> ?
+              {{ $t('message.confirm.deleteClient', { client: row.item.ident }) }}
               <b-button class="float-right" variant="danger" size="sm" @click="deleteOpsiClient(row.item.ident)">
                 <b-icon :icon="iconnames.delete" /> {{ $t('message.delete') }}
               </b-button>
@@ -238,7 +238,7 @@ export default class VClients extends Vue {
         // eslint-disable-next-line no-console
         console.error(response)
         const ref = (this.$refs.clientsViewAlert as any)
-        ref.alert(id + this.$t('message.deleteMessage'), 'success')
+        ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
         // makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(id)
       }).catch((error) => {

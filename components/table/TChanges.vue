@@ -88,7 +88,7 @@ export default class TChanges extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
+        makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
@@ -120,7 +120,7 @@ export default class TChanges extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
+        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)

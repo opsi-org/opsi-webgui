@@ -172,7 +172,7 @@ export default class VClientsAddNew extends Vue {
     await this.$axios.$post('/api/opsidata/clients', this.newClient)
       .then(() => {
         const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.add', { client: this.newClient.hostId }) as string, 'success')
+        ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
