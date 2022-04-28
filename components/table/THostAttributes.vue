@@ -109,7 +109,7 @@ export default class THostAttributes extends Vue {
           const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
           const ref = (this.$refs.hostAttrAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Hosts', 'danger', detailedError)
-          this.errorText = this.$t('message.errortext') as string
+          this.errorText = this.$t('message.error.defaulttext') as string
         })
       this.isLoading = false
     }

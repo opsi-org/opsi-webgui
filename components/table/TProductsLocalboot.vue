@@ -205,7 +205,7 @@ export default class TProductsLocalboot extends Vue {
         console.log(response)
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
   }
 

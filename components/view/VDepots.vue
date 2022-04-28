@@ -173,7 +173,7 @@ export default class VDepots extends Vue {
         const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.depotsViewAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Depots', 'danger', detailedError)
-        this.error = this.$t('message.errortext') as string
+        this.error = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false
   }

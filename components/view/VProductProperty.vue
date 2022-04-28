@@ -147,7 +147,7 @@ export default class VProductProperty extends Vue {
         }
         // this.setSession()
       }).catch((error) => {
-        this.errorText.properties = (this as any).$t('message.errorInPropertyFetch')
+        this.errorText.properties = (this as any).$t('message.error.fetch.productProperty')
         this.activeTabSet = -3
         const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.productPropViewAlert as any)
@@ -165,7 +165,7 @@ export default class VProductProperty extends Vue {
         this.fetchedData.dependencies.productDescription = response.productDescription
         // this.setSession()
       }).catch((error) => {
-        this.errorText.dependencies = (this as any).$t('message.errorInDependenciesFetch')
+        this.errorText.dependencies = (this as any).$t('message.error.fetch.productDependency')
         this.activeTabSet = -3
         const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.productPropViewAlert as any)

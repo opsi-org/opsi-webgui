@@ -169,7 +169,7 @@ export default class VProducts extends Vue {
           console.error(error)
           // const ref = (this.$refs.productsViewAlert as any)
           // ref.alert('Failed to fetch: ClientsToDepots', 'danger', error)
-          thiss.error = thiss.$t('message.errortext') as string
+          thiss.error = thiss.$t('message.error.defaulttext') as string
           thiss.error += error
         })
       thiss.fetchOptions.fetchClients2Depots = false
@@ -195,7 +195,7 @@ export default class VProducts extends Vue {
           thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
           thiss.items = response.data || []
         }).catch((error) => {
-          thiss.error = thiss.$t('message.errortext') as string
+          thiss.error = thiss.$t('message.error.defaulttext') as string
           thiss.error += (error as IObjectString2Any).message
           const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
           const ref = (this.$refs.productsViewAlert as any)

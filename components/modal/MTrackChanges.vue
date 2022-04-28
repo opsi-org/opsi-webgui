@@ -83,7 +83,7 @@ export default class MTrackChanges extends Vue {
         this.delFromChangesProducts(item)
         // this.setSession()
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
     // if (this.changelist.length === 0) {
     //   this.$bvModal.hide('ProductSaveModal')
@@ -115,7 +115,7 @@ export default class MTrackChanges extends Vue {
         this.delFromChangesProducts(item)
         // this.setSession()
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
       })
     // if (this.changesProducts.filter(o => o.user === this.username).length === 0) {
     //   this.$bvModal.hide('trackChangesModal')

@@ -91,7 +91,7 @@ export default class TChanges extends Vue {
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger')
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
 
     // if (this.changesProducts.length === 0) {
@@ -123,7 +123,7 @@ export default class TChanges extends Vue {
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
       })
     // if (this.changesProducts.length === 0) {
     //   this.$bvModal.hide('ProductSaveModal')

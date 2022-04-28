@@ -73,7 +73,7 @@ export default class FLogin extends Vue {
       .then((response) => {
         this.setOpsiconfigserver(response.result)
       }).catch((error) => {
-        const errorMsg = this.$t('loginPage.errortext') as string
+        const errorMsg = this.$t('message.error.opsiconfd') as string
         const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.loginAlert as any)
         ref.alert(errorMsg, 'danger', detailedError as string)
@@ -125,8 +125,7 @@ export default class FLogin extends Vue {
         this.isLoading = false
         const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
         const ref = (this.$refs.loginAlert as any)
-        ref.alert(this.$t('message.loginFailed') as string, 'danger', detailedError)
-        // makeToast(this, errorMsg, this.$t('message.error') as string, 'danger')
+        ref.alert(this.$t('message.error.login') as string, 'danger', detailedError)
       })
   }
 }

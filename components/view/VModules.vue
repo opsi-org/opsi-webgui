@@ -35,7 +35,7 @@ export default class VModules extends Vue {
       }).catch((error) => {
         // eslint-disable-next-line no-console
         console.error(error)
-        this.errorText = this.$t('message.errortext') as string
+        this.errorText = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false
   }

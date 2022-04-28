@@ -129,7 +129,7 @@ export default class TProductProperties extends Vue {
           this.fetchedDataClients2Depots = response
           // this.setSession()
         }).catch((error) => {
-          this.errorText = (this as any).$t('message.errortext')
+          this.errorText = (this as any).$t('message.error.defaulttext')
           throw new Error(error)
         })
     }
@@ -148,7 +148,7 @@ export default class TProductProperties extends Vue {
         // this.setSession()
         // this.properties[change.]
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error') as string, 'danger', 8000)
+        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
         // eslint-disable-next-line no-console
         console.error(error)
       })
