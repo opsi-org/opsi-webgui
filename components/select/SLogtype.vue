@@ -1,6 +1,6 @@
 <template>
   <div>
-    <label for="logtype" class="sr-only"> {{ $t('formselect.logtype') }} </label>
+    <label for="logtype" class="sr-only"> {{ $t('form.logtype') }} </label>
     <b-form-select
       id="logtype"
       v-model="type"
@@ -11,7 +11,7 @@
     >
       <template #first>
         <b-form-select-option :value="null" disabled>
-          -- {{ $t('formselect.logtype') }} --
+          -- {{ $t('form.logtype') }} --
         </b-form-select-option>
       </template>
     </b-form-select>

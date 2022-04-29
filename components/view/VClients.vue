@@ -81,7 +81,7 @@
             <b-card>
               {{ $t('message.confirm.deleteClient', { client: row.item.ident }) }}
               <b-button class="float-right" variant="danger" size="sm" @click="deleteOpsiClient(row.item.ident)">
-                <b-icon :icon="iconnames.delete" /> {{ $t('message.delete') }}
+                <b-icon :icon="iconnames.delete" /> {{ $t('label.delete') }}
               </b-button>
             </b-card>
           </template>

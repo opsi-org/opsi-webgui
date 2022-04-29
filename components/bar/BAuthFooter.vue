@@ -16,7 +16,7 @@
         </b-navbar-nav>
         <b-navbar-nav class="ml-auto" small>
           <b-nav-text class="BAuthFooter-version">
-            {{ $t('description.version') }} {{ $config.packageVersion }}
+            {{ $t('label.version') }} {{ $config.packageVersion }}
           </b-nav-text>
         </b-navbar-nav>
       </b-container>

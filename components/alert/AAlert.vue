@@ -11,7 +11,7 @@
     <slot />
     {{ alertMessage }}
     <b-button v-if="moreDetails" class="btn-showDetails" variant="link" :pressed.sync="showMore">
-      {{ $t('message.learnmore') }}
+      {{ $t('label.learnmore') }}
     </b-button>
     <p v-if="showMore">
       {{ moreDetails }}

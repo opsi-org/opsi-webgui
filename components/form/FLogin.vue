@@ -5,21 +5,21 @@
       <b-form>
         <label for="configserver" class="sr-only"> {{ $t('title.configserver') }} </label>
         <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="mb-2" :placeholder="opsiconfigserver" />
-        <label for="username" class="sr-only"> {{ $t('loginPage.username') }} </label>
+        <label for="username" class="sr-only"> {{ $t('form.username') }} </label>
         <b-form-input
           id="username"
           v-model="form.username"
-          :placeholder="$t('loginPage.username')"
+          :placeholder="$t('form.username')"
           :state="validUsername"
           class="mb-2"
           autocomplete="current_username"
         />
-        <label for="password" class="sr-only"> {{ $t('loginPage.password') }} </label>
+        <label for="password" class="sr-only"> {{ $t('form.password') }} </label>
         <b-input-group>
           <b-form-input
             id="password"
             v-model="form.password"
-            :placeholder="$t('loginPage.password')"
+            :placeholder="$t('form.password')"
             :state="validPassword"
             :type="showPassword? 'text': 'password'"
             class="mb-2"

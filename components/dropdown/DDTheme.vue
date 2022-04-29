@@ -1,6 +1,6 @@
 <template>
   <div data-testid="DropdownDDTheme">
-    <label for="theme" class="sr-only"> {{ $t('settingsPage.theme') }} </label>
+    <label for="theme" class="sr-only"> {{ $t('form.theme') }} </label>
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"

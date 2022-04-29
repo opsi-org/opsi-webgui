@@ -2,7 +2,7 @@
   <div data-testid="VModules">
     <b-row class="mb-4">
       <b-col class="text-sm-right" cols="2">
-        {{ $t('settingsPage.modules.available') }}
+        {{ $t('form.modules.available') }}
       </b-col>
       <b-col>
         <b-form-textarea

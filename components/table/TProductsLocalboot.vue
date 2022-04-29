@@ -69,7 +69,7 @@
         <DropdownDDProductRequest
           v-if="selectionClients.length>0 && selectionProducts.length>0"
           :action.sync="action"
-          :title="$t('formselect.tooltip.actionRequest')"
+          :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
         <div v-else />

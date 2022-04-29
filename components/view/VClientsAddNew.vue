@@ -165,7 +165,7 @@ export default class VClientsAddNew extends Vue {
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
       const ref = (this.$refs.newClientAlert as any)
-      ref.alert(this.$t('message.exists', { client: this.newClient.hostId }) as string, 'warning')
+      ref.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
       // makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
       return
     }

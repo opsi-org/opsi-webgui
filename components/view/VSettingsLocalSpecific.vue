@@ -2,7 +2,7 @@
   <div data-testid="VSettingsLocalSpecific">
     <b-row class="mb-4">
       <b-col class="text-sm-right" cols="2">
-        {{ $t('settingsPage.theme') }}
+        {{ $t('form.theme') }}
       </b-col>
       <b-col>
         <DropdownDDTheme />
@@ -11,7 +11,7 @@
     <b-row class="mb-4">
       <b-col class="text-sm-right" cols="2">
         <ButtonBTNHelp id="expert-help" />
-        {{ $t('settingsPage.mode') }}
+        {{ $t('form.mode') }}
         <TooltipTTHelpExpert target="expert-help" />
       </b-col>
       <b-col>
