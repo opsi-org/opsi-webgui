@@ -70,11 +70,11 @@
               variant="outline-primary"
               size="sm"
               class="border-0"
-              :title="row.detailsShowing ? 'Cancel' : 'Delete'"
+              :title="row.detailsShowing ? $t('label.cancel') : $t('label.delete')"
               @click="row.toggleDetails"
             >
               <b-icon :icon="row.detailsShowing ? iconnames.x : iconnames.delete" />
-              <span class="sr-only">{{ row.detailsShowing ? 'Cancel' : 'Delete' }}</span>
+              <span class="sr-only">{{ row.detailsShowing ? $t('label.cancel') : $t('label.delete') }}</span>
             </b-button>
           </template>
           <template #row-details="row">

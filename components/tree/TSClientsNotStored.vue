@@ -5,7 +5,7 @@
       v-model="idselection"
       class="treeselect_idselect"
       :options="clientIds"
-      placeholder="-- Please select a Client --"
+      :placeholder="$t('form.client')"
       @input="$emit('update:id', idselection)"
     />
   </div>
