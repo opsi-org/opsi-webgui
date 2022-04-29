@@ -72,7 +72,7 @@
       <b-button
         v-if="!isLoading"
         v-b-tooltip.hover
-        variant="outline-primary"
+        variant="outline-primary border-0"
         :title="$t('button.refresh', {id: id})"
         @click="$fetch"
       >

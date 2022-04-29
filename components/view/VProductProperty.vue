@@ -7,7 +7,17 @@
       :subtitle="id"
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
       :redirect-on-close-to="(asChild)? closeroute: undefined"
-    />
+    >
+      <b-button
+        v-if="!isLoading"
+        v-b-tooltip.hover
+        variant="outline-primary border-0"
+        :title="$t('button.refresh', {id: id})"
+        @click="$fetch"
+      >
+        <b-icon :icon="iconnames.refresh" />
+      </b-button>
+    </BarBCollapsePageHeader>
     <div class="VProductProperty-Card-Description">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
@@ -61,6 +71,7 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Constants } from '../../mixins/uib-mixins'
 import { IDepend, IProp } from '../../.utils/types/ttable'
 
 const selections = namespace('selections')
@@ -73,7 +84,7 @@ interface IFetchedData {
   dependencies:IDepend,
   properties:IProp
 }
-@Component
+@Component({ mixins: [Constants] })
 export default class VProductProperty extends Vue {
   $fetchState: any
   $axios: any

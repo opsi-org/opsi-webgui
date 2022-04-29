@@ -17,6 +17,7 @@
           {{ subtitle }}
         </span>
       </slot>
+      <slot />
       <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
         <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
         <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
