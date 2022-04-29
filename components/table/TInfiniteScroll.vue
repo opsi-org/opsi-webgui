@@ -69,7 +69,13 @@
       </template>
     </b-table>
     <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }">
-      <b-button v-if="!isLoading" v-b-tooltip.hover variant="outline-primary" :title="'Refresh '+id" @click="$fetch">
+      <b-button
+        v-if="!isLoading"
+        v-b-tooltip.hover
+        variant="outline-primary"
+        :title="$t('button.refresh', {id: id})"
+        @click="$fetch"
+      >
         <b-icon :icon="iconnames.refresh" />
       </b-button>
     </BarBTableFooter>

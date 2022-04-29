@@ -106,6 +106,7 @@
   "button.logout": "Ausloggen",
   "button.expand": "Maximieren",
   "button.collapse": "Minimieren",
+  "button.refresh": "{id} aktualisieren",
   "button.reset": "Zurücksetzen",
   "button.resetAll": "Alle zurücksetzen",
   "button.add": "Hinzufügen",
