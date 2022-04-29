@@ -199,6 +199,7 @@ export default class TProductsLocalboot extends Vue {
 
   async save (change: object) {
     const t:any = this
+    this.isLoading = true
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
         // eslint-disable-next-line no-console
@@ -207,6 +208,7 @@ export default class TProductsLocalboot extends Vue {
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
+    this.isLoading = false
   }
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
@@ -268,7 +270,7 @@ export default class TProductsLocalboot extends Vue {
       }
     } else {
       await this.save(data)
-      this.$nuxt.refresh()
+      this.$fetch()
     }
   }
 

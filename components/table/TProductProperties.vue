@@ -137,6 +137,7 @@ export default class TProductProperties extends Vue {
 
   async saveProdProp (change: object) {
     const t:any = this
+    this.isLoading = true
     await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, change)
       .then((response) => {
         // eslint-disable-next-line no-console
@@ -144,14 +145,12 @@ export default class TProductProperties extends Vue {
         makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         // this.$nuxt.refresh()
         this.$emit('refetch', true)
-        // setTimeout(() => { this.$nuxt.refresh() }, 50)
-        // this.setSession()
-        // this.properties[change.]
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
         // eslint-disable-next-line no-console
         console.error(error)
       })
+    this.isLoading = false
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
@@ -214,15 +213,6 @@ export default class TProductProperties extends Vue {
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;
 }
-/* .TProductProperties_Table td[aria-colindex$="1"] {
-  min-width: 30%;
-}
-.TProductProperties_Table td[aria-colindex$="2"] {
-  max-width: 70%;
-}
-.TProductProperties_Table {
-  max-width: 100% !important;
-} */
 .TableProductsDetails_EditableProdProp_AddValue_BVFormIInput {
   max-width: calc(100% - 30px);
 }

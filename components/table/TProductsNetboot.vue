@@ -197,15 +197,16 @@ export default class TProductsNetboot extends Vue {
 
   async save (change : object) {
     const t:any = this
+    this.isLoading = true
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        // this.setSession()
         makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
       }).catch((error) => {
         makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
+    this.isLoading = false
   }
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
@@ -266,7 +267,7 @@ export default class TProductsNetboot extends Vue {
       }
     } else {
       await this.save(data)
-      this.$nuxt.refresh()
+      this.$fetch()
     }
   }
 
