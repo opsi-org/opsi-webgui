@@ -7,7 +7,6 @@
       v-else
       :id="id"
       :ref="id"
-      :busy="isLoading"
       :stacked="$mq=='mobile'"
       :primary-key="id"
       class="TInfiniteScroll"
