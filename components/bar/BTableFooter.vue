@@ -16,11 +16,13 @@
         <b-navbar-nav class="ml-auto" small>
           <!-- right -->
           <b-pagination
+            v-if="pagination.totalpages > 1"
             v-model="pagination.tableData.pageNumber"
             :total-rows="pagination.totalRows"
             :per-page="pagination.tableData.perPage"
             last-number
           />
+          <slot />
         </b-navbar-nav>
       </b-container>
     </b-navbar>

@@ -68,8 +68,11 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-
-    <BarBTableFooter v-if="totalpages > 1" :pagination="{ tableData: tableData, totalRows:totalItems }" />
+    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }">
+      <b-button v-if="!isLoading" v-b-tooltip.hover variant="outline-primary" :title="'Refresh '+id" @click="$fetch">
+        <b-icon :icon="iconnames.refresh" />
+      </b-button>
+    </BarBTableFooter>
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>

@@ -57,6 +57,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     // productsFailedActionResult: 'exclamation-triangle',
     group: 'diagram2',
     reset: 'arrow-counterclockwise',
+    refresh: 'arrow-repeat',
     // reset: 'brush',
     clear: 'brush',
     usermodeExpert: 'star-fill',
