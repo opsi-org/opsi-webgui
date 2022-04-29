@@ -1,12 +1,12 @@
 <template>
   <div class="container-fluid">
     <b-tabs>
-      <b-tab :title="$t('settingsPage.localspecific')" active>
+      <b-tab :title="$t('form.localspecific')" active>
         <b-card>
           <ViewVSettingsLocalSpecific />
         </b-card>
       </b-tab>
-      <b-tab :title="$t('settingsPage.modules')">
+      <b-tab :title="$t('form.modules')">
         <b-card>
           <ViewVModules />
         </b-card>
