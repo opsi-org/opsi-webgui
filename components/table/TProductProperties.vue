@@ -1,26 +1,26 @@
 <template>
-  <div data-testid="TProductProperties" class="TProductProperties">
+  <div data-testid="TProductProperties" class="TProductProperties" :class="{mobile:$mq=='mobile'}">
     <div v-if="!errorText && selectionClients.length <= 0">
-      <AlertAAlert show variant="warning">
-        <small>{{ $t('message.warning.noClientsSelectedShowDepot') }}</small>
-      </AlertAAlert>
+      <AlertAAlertLocal show variant="warning">
+        <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
+      </AlertAAlertLocal>
     </div>
     <div v-else-if="!errorText && $mq=='mobile'">
-      <AlertAAlert show variant="secondary">
+      <AlertAAlertLocal show variant="secondary">
         <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
-      </AlertAAlert>
+      </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
-      <AlertAAlert show variant="warning">
+      <AlertAAlertLocal show variant="warning">
         <small>
           {{ $t('message.warning.notOnEachDepot', {count:Object.values(properties.productVersions).filter(n => n).length, countall:selectionDepots.length}) }}
         </small>
-      </AlertAAlert>
+      </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).some((v)=>v!=Object.values(properties.productVersions).filter(n => n)[0])">
-      <AlertAAlert show variant="warning">
-        <small>{{ $t('message.warning.differentProductVersions') }}</small>
-      </AlertAAlert>
+      <AlertAAlertLocal show variant="warning">
+        <small>{{ $t('message.differentProductVersions') }}</small>
+      </AlertAAlertLocal>
     </div>
     <p v-if="errorText">
       {{ errorText }}
@@ -31,6 +31,7 @@
       :error="errorText"
       :items="Object.values(properties.properties)"
       :fields="fields"
+      type="productproperties"
     >
       <template #empty>
         <small>{{ $t('table.emptyText') }}</small>
@@ -39,7 +40,7 @@
         <TableCellTCProductPropertyId :row="row" :product-versions="properties.productVersions" />
       </template>
       <template #cell(value)="row">
-        <b-row>
+        <b-row :class="{ booli: row.item.type == 'BoolProductProperty'}">
           <TableCellTCProductPropertyValue
             :clients2depots="fetchedDataClients2Depots"
             :row-item="row.item"
@@ -208,7 +209,19 @@ export default class TProductProperties extends Vue {
 <style>
 .TProductProperties  {
   max-height: 100%;
+  width: 100%;
 }
+.TProductProperties .row > * {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+/* .mobile.TProductProperties  {
+  border: 1px solid green;
+  height: 100%;
+}
+.mobile.TProductProperties .row td:first  {
+  border: 1px solid #000;
+} */
 
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;
@@ -222,7 +235,7 @@ export default class TProductProperties extends Vue {
 }
 
 .TProductProperties_row_details > small p {
-  margin-left: 10px !important;
+  margin-left: 0px !important;
   margin-bottom: 0 !important;
 }
 </style>

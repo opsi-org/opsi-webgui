@@ -22,8 +22,9 @@ test('div dcounttimer snapshot not expired small', async ({ page }) => {
   const component = await page.locator('[data-testid="DivDCounttimer"]')
   expect(await component.screenshot()).toMatchSnapshot('DCountdowntimer-12auth-small.png')
 })
-test('div dcounttimer snapshot not expired but gonna to (toast)', async ({ page }) => {
-  await callStoryId(page, 'div-d-counttimer', 'd-counttimer-auth-small')
-  const component = await page.locator('.b-toaster-slot') // this only works if auth-duration < 5min
-  expect(await component.screenshot()).toMatchSnapshot('DCountdowntimer-toast.png')
-})
+// todo: test if expired alert works
+// test('div dcounttimer snapshot not expired but gonna to (toast)', async ({ page }) => {
+//   await callStoryId(page, 'div-d-counttimer', 'd-counttimer-auth-small')
+//   const component = await page.locator('.b-toaster-slot') // this only works if auth-duration < 5min
+//   expect(await component.screenshot()).toMatchSnapshot('DCountdowntimer-toast.png')
+// })

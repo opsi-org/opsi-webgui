@@ -2,56 +2,140 @@ image: node:17
 stages:
   - init
   - test
+  - cleanup
 
 
 .get_changed_files: &get_changed_files |
   changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
-  echo "$changedFiles"
+  # echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
-  echo "$basenames"
-  testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
+  basenamesWithSlash=""
+  for val in $basenames; do basenamesWithSlash+="/$val "; done
+  testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' ')
+  # echo "$basenames"
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
+
+#################################################################################### cache
+# .dependencies_cache_develop:
+cache: &dependencies_cache_develop
+  key: devel-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
+  untracked: true
+  paths:
+    - package-lock.json
+    - node_modules
+  policy: pull
+# .dependencies_cache_productive:
+cache: &dependencies_cache_productive
+  key: productive-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
+  untracked: true
+  paths:
+    - test.txt
+  policy: pull
+
+#################################################################################### cleanup
+cleanup:cache:devel:
+  stage: cleanup
+  when: always
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
+    policy: pull-push # override the policy
+  script:
+    - echo "Cleaning up"
+    - rm -rf package-lock.json
+    - rm -rf node_modules
+  tags:
+    - test-anna
+cleanup:cache:productive:
+  stage: cleanup
+  when: always
+  cache:
+    <<: *dependencies_cache_productive  # inherit all global cache settings
+    policy: pull-push # override the policy
+  script:
+    - echo "Cleaning up"
+    - rm -rf test.txt
+  tags:
+    - test-anna
+
+#################################################################################### init
+init:npm:prod:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: init
+  cache:
+    <<: *dependencies_cache_productive  # inherit all global cache settings
+    policy: pull-push # override the policy
+  script: |
+    echo "test" >> test.txt
+    cat test.txt
+  tags:
+    - test-anna
 
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
+    policy: pull-push # override the policy
   script: |
     echo "[script.sh] install dependencies..."
     npm run libclean
     npm run libbuild
     npm i -D @playwright/test
-    npx playwright install
+  tags:
+    - test-anna
 
-  # extends: .dependencies_cache
-  # cache:
-  #   policy: pull-push
-  artifacts:
-    paths:
-      - node_modules/
-    expire_in: 1 day
+
+#################################################################################### test
+test:file-prod:
+  stage: test
+  cache:
+    <<: *dependencies_cache_productive  # inherit all global cache settings
+  dependencies:
+    - init:npm:prod
+  script:
+    - ls -lah
+    - cat test.txt
+  tags:
+    - test-anna
 
 test:lint:
   stage: test
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
+  dependencies:
+    - init:npm
   script:
+    - ls -lah
+    - ls -lah node_modules
     - npm run liblint
+  tags:
+    - test-anna
 
 test:unit:
   stage: test
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   script:
     # -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
+    - ls -lah
+    - ls -lah node_modules
     - npm run libtest:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
       cobertura: coverage/clover.xmlci
+  tags:
+    - test-anna
 
 
 test:components:changed:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   except:
@@ -62,10 +146,10 @@ test:components:changed:
     - npx playwright install
     - npx playwright install-deps
 
-    - PORT=3003 nohup npm run libdev > .dev.log &
+    - PORT=8888 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
-    - npm run libtest:integration $testfilesUnique|| exit_code=$?
+    - npm run libtest:integration '$testfilesUnique' || exit_code=$?
     - npm run libtest:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -77,10 +161,14 @@ test:components:changed:
       - .storybook.log
       - .dev.log
     expire_in: 2 day
+  tags:
+    - test-anna
 
 test:components:all:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
+  cache:
+    <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   only:
@@ -89,10 +177,10 @@ test:components:all:
     - npx playwright install
     - npx playwright install-deps
 
-    - PORT=3003 nohup npm run libdev > .dev.log &
+    - PORT=8888 nohup npm run libdev > .dev.log &
     - PORT=3003 nohup npm run libstory > .storybook.log &
     - sleep 60
-    - npm run libtest:integration $files|| exit_code=$?
+    - npm run libtest:integration || exit_code=$?
     - npm run libtest:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -104,8 +192,12 @@ test:components:all:
       - .storybook.log
       - .dev.log
     expire_in: 2 day
+  tags:
+    - test-anna
 # test:test-e2e:
 #   stage: test
+#   cache:
+#     <<: *dependencies_cache_develop  # inherit all global cache settings
 #   dependencies:
 #     - init:npm
 #   script:

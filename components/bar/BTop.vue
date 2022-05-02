@@ -9,7 +9,7 @@
     >
       <b-navbar-nav v-if="$mq === 'mobile'">
         <b-button :pressed.sync="attributes.visible">
-          <span class="sr-only">Open sidemenu</span>
+          <span class="sr-only">{{$t('menu.open-sidemenu.sr-only')}}</span>
           <b-icon :icon="iconnames.menuOpen" />
         </b-button>
       </b-navbar-nav>
@@ -23,7 +23,7 @@
 
       <b-navbar-nav v-if="$mq === 'mobile'">
         <b-button v-b-toggle.nav-collapse>
-          <span class="sr-only">Open topmenu</span>
+          <span class="sr-only">{{$t('menu.open-topmenu.sr-only')}}</span>
           <b-icon :icon="iconnames.menu" font-scale="1.1" />
         </b-button>
       </b-navbar-nav>
@@ -71,7 +71,31 @@ export default class BTop extends Vue {
   background: var(--secondary) !important;
   position: fixed;
   height: var(--height-navbar) !important;
+  margin-bottom: 0px !important;
+  padding-left: 20px !important;
+  padding-right: 0px !important;
+  padding: 0em !important;
 }
+
+.topbar::before {
+  content: unset !important;
+}
+
+.topbar::after {
+  content: unset !important;
+}
+
+.topbar_brand{
+  max-height: var(--height-navbar) !important;
+  display: inline-flex !important;
+  padding-bottom: 0px !important;
+}
+.topbar_title{
+  font-size: 18px;
+  margin-left: -3px;
+  margin-top: 7px;
+}
+
 .topbar_version{
   font-size: var(--text-small-size)!important;
 }

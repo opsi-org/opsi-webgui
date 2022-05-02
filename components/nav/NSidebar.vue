@@ -1,5 +1,5 @@
 <template>
-  <b-nav vertical tabs class="sidemenu_nav" data-testid="NSidebar">
+  <b-nav vertical tabs class="sidemenu_nav" :class="{expanded:expanded}" data-testid="NSidebar">
     <span v-for="catogery in navItems" :key="catogery.title">
       <br>
       <!-- <NavItemNITitle :expanded="expanded" :title="catogery.title" /> -->
@@ -113,17 +113,39 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
-a.nuxt-link-active {
-  color:var(--color, black);
+/* .a {
+  color: white !important;
+  background-color: var(--primary);
+} */
+/* .sidemenu_nav a.nuxt-link-active {
+  color:var(--light);
+  background-color: var(--primary);
+} */
+/* .sidemenu_nav a.nuxt-link-exact-active {
+  color:var(--light);
+  background-color: var(--primary);
+} */
+.sidemenu_nav a.nuxt-link-active,
+.sidemenu_nav a.nuxt-link-exact-active,
+.sidemenu_nav .checkactive.nav-item {
+  color:var(--light);
+  background-color: var(--primary);
+  filter: saturate(.4) brightness(1) !important;
 }
-a.nuxt-link-exact-active {
-  color:white;
-  background-color: #023e5c
+/* .sidemenu_nav:not(.expanded) a.nuxt-link-active,
+.sidemenu_nav:not(.expanded) a.nuxt-link-exact-active,
+.sidemenu_nav:not(.expanded) .checkactive.nav-item {
+  color:var(--light);
+  background-color: var(--primary);
+  filter: saturate(.4) brightness(1) !important;
 }
-.checkactive.nav-item {
-  color:white;
-  background-color: #025077
-}
+.sidemenu_nav.expanded a.nuxt-link-active,
+.sidemenu_nav.expanded a.nuxt-link-exact-active,
+.sidemenu_nav.expanded .checkactive.nav-item {
+  color: var(--light) !important;
+  background-color: var(--primary);
+  filter: saturate(.4) brightness(1) !important;
+} */
 .navbar-light .navbar-nav .nav .nav-item{
   color: inherit !important;
   font-weight: normal !important;

@@ -22,12 +22,15 @@ export default {
   parameters: { docs: { description: { component: 'Product property and dependency view' } } }
 }
 
-const PrimaryTemplate = (_args, { argTypes }) => ({
+const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<ViewVProductProperty :id='$props.id' :asChild='$props.asChild' :closeroute='$props.closeroute'/>
+  computed: { args () { return args } },
+  template: `<ViewVProductProperty :id='args.id' :asChild='args.asChild' :closeroute='args.closeroute'/>
   `
 })
+mock.onGet(`/api/opsidata/products/${pid}/dependencies?selectedClients=[]&selectedDepots=[<config-server-id>]`).reply(200, dependencies)
 mock.onGet(`/api/opsidata/products/${pid}/dependencies?selectedClients=[]&selectedDepots=[]`).reply(200, dependencies)
+mock.onGet(`/api/opsidata/products/${pid}/properties?selectedClients=[]&selectedDepots=[<config-server-id>]`).reply(200, properties)
 mock.onGet(`/api/opsidata/products/${pid}/properties?selectedClients=[]&selectedDepots=[]`).reply(200, properties)
 
 export const VProductProperty = PrimaryTemplate.bind({})

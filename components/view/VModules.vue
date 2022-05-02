@@ -6,11 +6,13 @@
       </b-col>
       <b-col>
         <b-form-textarea
+          id="modules-list"
           rows="3"
-          max-rows="6"
+          :label="$t('settingsPage.modules.available')"
+          max-rows="30"
           no-resize
           plaintext
-          :value="modules"
+          :value="Object.values(modules).join('\n')"
         />
       </b-col>
     </b-row>
@@ -41,3 +43,8 @@ export default class VModules extends Vue {
   }
 }
 </script>
+<style>
+.VModules.mobile .col{
+  display: contents;
+}
+</style>

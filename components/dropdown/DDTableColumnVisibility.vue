@@ -30,11 +30,9 @@
         {{ header.label }}
       </b-dropdown-form>
     </template>
-    <template
-      v-else
-      id="selectableColumns-group"
-      name="selectableColumns"
-    >
+    <template v-else>
+      <!-- id="selectableColumns-group"
+      name="selectableColumns" -->
       <b-dropdown-form
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
         :key="header.key"
@@ -159,7 +157,7 @@ export default class DDTableColumnVisibility extends BDropdown {
     }
     // change visibilty of children if any major column is selected
     Object.keys(this.columnVisibilityStates).forEach((k) => {
-      if (!this.headers[k]._isMajor) {
+      if (this.headers[k] && !this.headers[k]._isMajor) {
         this.headers[k].visible = this.columnVisibilityStates[k]
       } else {
         Object.values(this.headers).filter(h => h._majorKey === k).map(h => h.key).forEach((ck) => {

@@ -20,7 +20,7 @@
           :to="sub.route"
           @click="refresh(sub.route)"
         >
-          <span class="submenu">
+          <span class="submenu" :data-testid="'NICollapsible-submenu-'+sub.title">
             {{ $t(sub.title) }}
           </span>
         </b-nav-item>

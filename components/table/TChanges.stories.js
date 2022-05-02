@@ -1,15 +1,22 @@
+import { customstore } from '../../.utils/storybook/mock'
+
 export default {
   title: 'Table/T Changes',
   parameters: { docs: { description: { component: 'Table for Changes' } } }
 }
 
-const PrimaryTemplate = (_args, { argTypes }) => ({
+const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<TableTChanges :tableitems="$props.changeslist" />
-  />
-  `
+  store: customstore('changes',
+    { changesProducts () { return args.changeslist } }, // getters
+    { delFromChangesProducts () { } } // mutation
+  ),
+  computed: {
+    args () { return args },
+    username () { return 'user' }
+  },
+  template: '<TableTChanges :username="username"/>'
 })
-// TODO: story(+test) for after save (including mocking method)
 
 export const TChanges = PrimaryTemplate.bind({})
 TChanges.args = {
@@ -25,24 +32,54 @@ TChanges.args = {
       actionRequest: 'actionRequest1'
     },
     {
-      user: 'user2',
-      depotId: 'depotId2',
-      clientId: 'clientId2',
-      productId: 'productId2',
-      property: 'property2',
-      propertyValue: ['propertyValue2'],
-      type: 'type2',
-      actionRequest: 'actionRequest2'
+      user: 'user',
+      depotId: 'depot',
+      clientId: 'client',
+      productId: 'product1',
+      type: 'Product',
+      property: '',
+      propertyValue: '',
+      actionRequest: 'setup'
     },
     {
-      user: 'user3',
-      depotId: 'depotId3',
-      clientId: 'clientId3',
-      productId: 'productId3',
-      property: 'property3',
-      propertyValue: ['propertyValue3'],
-      type: 'type3',
-      actionRequest: 'actionRequest3'
+      user: 'user',
+      depotId: 'depot',
+      clientId: 'client2',
+      productId: 'product1',
+      type: 'Product',
+      property: '',
+      propertyValue: '',
+      actionRequest: 'setup'
+    },
+    {
+      user: 'user',
+      depotId: 'depot',
+      clientId: 'client',
+      productId: 'product2',
+      actionRequest: 'setup',
+      property: '',
+      propertyValue: '',
+      type: 'Product'
+    },
+    {
+      user: 'user',
+      depotId: 'depot',
+      clientId: 'client',
+      productId: 'product1',
+      property: 'prop',
+      propertyValue: ['test'],
+      actionRequest: '',
+      type: 'Product'
+    },
+    {
+      user: 'user2',
+      depotId: 'depot',
+      clientId: 'client',
+      productId: 'productX',
+      property: 'prop',
+      propertyValue: ['test'],
+      actionRequest: '',
+      type: 'Product'
     }
   ]
 }

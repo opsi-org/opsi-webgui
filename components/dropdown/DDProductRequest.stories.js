@@ -3,10 +3,11 @@ export default {
   parameters: { docs: { description: { component: 'Dropdown/DDProductRequest description' } } }
 }
 
-const DefaultVisibleTemplateHead = (_args, { argTypes }) => ({
+const DefaultVisibleTemplateHead = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
+  computed: { args () { return args } },
   template: `<DropdownDDProductRequest
-  :action.sync="$props.action"
+  :action.sync="args.action"
   :save="() => {}"
   />
   `
@@ -14,11 +15,12 @@ const DefaultVisibleTemplateHead = (_args, { argTypes }) => ({
 export const DDProductRequestHead = DefaultVisibleTemplateHead.bind({})
 DDProductRequestHead.args = { action: 'setup' }
 
-const DefaultVisibleTemplateCell = (_args, { argTypes }) => ({
+const DefaultVisibleTemplateCell = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
+  computed: { args () { return args } },
   template: `<DropdownDDProductRequest
-  :request="$props.action"
-  :requestoptions="$props.actions"
+  :request="args.action"
+  :requestoptions="args.actions"
   :save="() => {}"
   />
   `

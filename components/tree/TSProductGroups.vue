@@ -24,11 +24,11 @@ export default class TSProductGroups extends Vue {
   iconnames: any // from mixin
   $axios: any
 
-  @selections.Getter public selectionProducts!: Array<string>;
-  @selections.Getter public selectionDepots!: Array<string>;
-  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void;
-  @selections.Mutation public pushToSelectionProducts!: (s: string) => void;
-  @selections.Mutation public delFromSelectionProducts!: (s: string) => void;
+  @selections.Getter public selectionProducts!: Array<string>
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+  @selections.Mutation public pushToSelectionProducts!: (s: string) => void
+  @selections.Mutation public delFromSelectionProducts!: (s: string) => void
   groups: Array<any>|undefined = undefined
   async fetchData () {
     // return Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectionProducts=${this.selectionProducts}`)).groups)

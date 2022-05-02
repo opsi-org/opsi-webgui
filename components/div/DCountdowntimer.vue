@@ -5,46 +5,67 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 // import Cookie from 'js-cookie'
-import { makeToast } from '../../.utils/utils/scomponents'
+// import { makeToast } from '../../.utils/utils/scomponents'
 const auth = namespace('auth')
+const settings = namespace('settings')
 @Component
 export default class BCountdowntimer extends Vue {
   @Prop({ default: false }) small!: boolean
   $mq:any
   $t:any
 
-  timeinterval: any
+  refAlert: any
+  notifyInMilliSec: number = 0
   countdowntimer: string = ''
-  notify: boolean = false
+  first_notification_showed: boolean = false
   @auth.Getter public sessionEndTime!: string
   @auth.Getter public isAuthenticated!: Boolean
+  @auth.Mutation public setSession!: () => void
   @auth.Mutation public clearSession!: () => void
   @auth.Mutation public logout!: () => void
 
+  @settings.Getter public expiresInterval!: any
+  @settings.Mutation public setExpiresInterval!: (any) => void
+
+  @Watch('expiresInterval', { deep: false }) intervalChanged () {
+    clearInterval(this.expiresInterval)
+  }
+
   mounted () {
+    this.first_notification_showed = false
+    this.refAlert = (this.$root.$children[2]?.$refs.expiringAlert as any)
+    this.notifyInMilliSec = ((this.isAuthenticated) ? 5 : -1) * 60000
+    if (!this.sessionEndTime) {
+      this.setSession()
+    }
     this.initCountdownTimer()
   }
 
   initCountdownTimer () {
     this.calcTimeout()
-    this.timeinterval = setInterval(this.calcTimeout, 1000)
+    this.setExpiresInterval(setInterval(this.calcTimeout, 1000))
   }
 
   calcTimeout () {
     const t = this.getRemainingTime()
     this.countdowntimer = this.getText(t)
-    const notifyInMinutes = (this.isAuthenticated) ? 5 : -1
-    const notifyInMilliSec = notifyInMinutes * 60000
-    if (t.diff <= notifyInMilliSec && !this.notify) {
-      this.notify = true
-      makeToast(this, this.$t('message.session.expiresInMinutesOnly', { min: notifyInMinutes }) as string, this.$t('message.session.title') as string, 'warning', notifyInMilliSec)
+    // console.warn('time remaining: ', t.diff, ' notify if <', this.notifyInMilliSec, '-> ', (t.diff <= this.notifyInMilliSec))
+    if (t.diff <= this.notifyInMilliSec && !this.first_notification_showed) {
+      this.first_notification_showed = true
+      this.refAlert?.alert(this.$t('message.session.expiresInMinutesDetails', { min: t.minutes, s: t.seconds }) as string, 'warning')
+    } else if (t.diff <= this.notifyInMilliSec && this.first_notification_showed) {
+      this.refAlert?.alert(this.$t('message.session.expiresInMinutesDetails', { min: t.minutes, s: t.seconds }) as string, 'warning')
+    } else {
+      this.first_notification_showed = false
+      this.refAlert?.hide()
     }
-    if (isNaN(t.diff) || t.diff === 0 || notifyInMinutes === -1) {
+    if (isNaN(t.diff) || t.diff === 0 || this.notifyInMilliSec <= 0) {
       this.countdowntimer = this.$t('message.session.expired') as string
-      clearInterval(this.timeinterval)
+      clearInterval(this.expiresInterval)
       this.logout()
+      this.$router.push('/login')
       this.clearSession()
     }
   }

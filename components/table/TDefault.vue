@@ -1,11 +1,12 @@
 <template>
-  <div data-testid="TDefault">
+  <div data-testid="TDefault" class="TDefault" :class="{ mobile: $mq=='mobile' }">
     <p v-if="error">
       {{ error }}
     </p>
     <b-table
       v-else
-      :class="type === 'small' ? 'bvtable_small' : 'bvtable'"
+      :class="type"
+      class="bvtable"
       v-bind="$props"
       :thead-class="noheader? 'table-header-none' : ''"
       :filter="filter"
@@ -65,12 +66,28 @@ export default class BVTable extends Vue {
 </script>
 
 <style>
+.TDefault:not(.mobile) .productproperties tr > td {
+  padding-bottom: 5px;
+}
+.TDefault.mobile .productproperties tr > td {
+  /* display: block; */
+  width: 100%;
+  display: block;
+  min-width: 100%!important;
+}
+.TDefault.mobile .productproperties tr > td:first-of-type {
+  padding-bottom: 0px;
+}
+.TDefault.mobile .productproperties tr > td:last-of-type {
+  padding-left: 40px;
+  padding-top: 0px;
+}
 .table-header-none{
   display: none;
 }
 
-.bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
-  width: 25%;
+.bvtable:not(.small) .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
+  width: 35%;
   font-weight: normal;
 }
 .bvtable_small.table-responsive {
@@ -78,7 +95,7 @@ export default class BVTable extends Vue {
   overflow-y: auto;
 }
 
-.bvtable {
+.TDefault {
   min-height: 200px;
   /* max-height: 610px; */
   overflow-y: auto;

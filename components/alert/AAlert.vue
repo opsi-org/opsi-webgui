@@ -30,11 +30,16 @@ export default class AAlert extends BAlert {
   alertVariant : string = ''
   showMore:boolean = false
   moreDetails: string = ''
+
   alert (message, variant = '', details = '') {
     this.alertMessage = message
     this.alertVariant = variant
     this.moreDetails = details
     this.showAlert = true
+  }
+
+  hide () {
+    this.showAlert = false
   }
 }
 </script>

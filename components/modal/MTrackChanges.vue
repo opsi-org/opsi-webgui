@@ -57,10 +57,10 @@ export default class MTrackChanges extends Vue {
   $axios: any
   changelist: Array<ChangeObj> = []
 
-  @Prop() child!: boolean;
-  @Prop() closeroute!: string;
+  @Prop() child!: boolean
+  @Prop() closeroute!: string
   @settings.Getter public expert!: boolean
-  @changes.Getter public changesProducts!: Array<ChangeObj>;
+  @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   get username () {

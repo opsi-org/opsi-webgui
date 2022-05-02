@@ -32,6 +32,11 @@
           </b-button>
         </b-input-group>
         <b-button data-testid="btn-login" class="mt-1 border-light" block @click="doLogin">
+        <!-- Quickly change expired time curently only for testing purposes  -->
+        <!-- <b-input-group>
+          <InputIExpiredTimeChanger />
+        </b-input-group> -->
+        <!-- <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin"> -->
           {{ $t('button.login') }}
         </b-button>
         <IconILoading v-if="isLoading" />
@@ -66,6 +71,7 @@ export default class FLogin extends Vue {
   @auth.Mutation public login!: (username: string) => void
   @auth.Mutation public logout!: () => void
   @auth.Mutation public clearSession!: () => void
+  @auth.Mutation public setSession!: () => void
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
@@ -102,7 +108,6 @@ export default class FLogin extends Vue {
     const User = new FormData()
     User.append('username', this.form.username)
     User.append('password', this.form.password)
-    // this.$axios.post('/api/auth/login', User, { headers: { 'X-opsi-session-lifetime': 60 * 20 } })
     this.$axios.post('/api/auth/login', User)
       .then((response) => {
         // eslint-disable-next-line no-console
@@ -117,6 +122,7 @@ export default class FLogin extends Vue {
           const selectionDepot: Array<string> = []
           selectionDepot.push(this.opsiconfigserver)
           this.setSelectionDepots([...selectionDepot])
+          this.setSession()
           this.isLoading = false
         }
       }).catch((error) => {

@@ -7,8 +7,7 @@
     >
       <b-form-checkbox
         v-if="rowItem.type=='BoolProductProperty'"
-        style="display:inline"
-        :class="{'value-changed-not-saved': !isOrigin }"
+        :class="{'TCProductPropertyValue_ValueBool':true,'value-changed-not-saved': !isOrigin }"
         :checked="selectedValues[0]"
         :aria-label="rowItem.propertyId + (selectedValues[0]?'checked':'unchecked')"
         :indeterminate="visibleValueBoolIndeterminate"
@@ -21,6 +20,7 @@
         :id="'PropertyValue-' + rowItem.propertyId"
         type="propertyvalues"
         :text="undefined"
+        :show-selection-count="selectedValues.length>1"
         :limit-visible-selection="1"
         :multi="rowItem.multiValue"
         :editable="rowItem.editable"
@@ -267,6 +267,9 @@ export default class TProductPropertyValue extends Vue {
   max-width: -moz-available;
   max-width: -moz-available;          /* For Mozzila */
   max-width: -webkit-fill-available;  /* For Chrome */
+}
+.TCProductPropertyValue_ValueBool {
+  display:inline-block !important;
 }
 .TCProductPropertyValue_Value .dropdown > .dropdown-menu,
 .TCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {

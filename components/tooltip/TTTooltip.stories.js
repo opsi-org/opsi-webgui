@@ -4,7 +4,12 @@ export default {
 }
 
 const PrimaryTemplate = () => ({
-  template: '<TooltipTTTooltip />'
+  template: `
+    <div>
+    <button id="target">tooltip test</button>
+    <TooltipTTTooltip target="target" tooltip="tooltip text content"/>
+    </div>
+    `
 })
 
 // named export Primary to create respective story

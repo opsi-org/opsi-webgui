@@ -4,8 +4,13 @@ export default {
 }
 
 const PrimaryTemplate = () => ({
-  template: '<TableTTooltipContent />'
+  template: `<TableTTooltipContent
+    type="version"
+    :details="{server:{server:'baz',client1:'foo', client2:'bar'}}"
+    :depot-version-diff="true" />
+  `
 })
+// TODO: more stories/tests
 
 // named export Primary to create respective story
 export const TTooltipContent = PrimaryTemplate.bind({})

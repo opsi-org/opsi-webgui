@@ -9,6 +9,7 @@
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
+      <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
       <h5 class="text-capitalize">
         <BarBBreadcrumbRow v-if="$mq !== 'mobile'" />
       </h5>

@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VClientsAddNew">
+  <div data-testid="VClientsAddNew" class="VClientsAddNew">
     <AlertAAlert ref="newClientAlert" />
     <IconILoading v-if="isLoading" />
     <div v-else>
@@ -185,3 +185,9 @@ export default class VClientsAddNew extends Vue {
   }
 }
 </script>
+
+<style>
+.VClientsAddNew {
+  display: flow-root;
+}
+</style>

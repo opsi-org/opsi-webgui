@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Watch, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
@@ -50,15 +50,15 @@ export default class TChanges extends Vue {
   $nuxt: any
 
   // @Prop({ }) tableitems!: Array<object>
+  @Prop({ default: localStorage.getItem('username') }) username!: string
+  // get username () {
+  //   return localStorage.getItem('username')
+  // }
   filter: string = ''
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   groupedById: Array<any> = []
-
-  get username () {
-    return localStorage.getItem('username')
-  }
 
   @Watch('changesProducts', { deep: true }) changesProductsChanged () {
     const tableitems = this.changesProducts.filter(o => o.user === this.username)

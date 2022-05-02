@@ -1,9 +1,9 @@
 <template>
-  <div :class="'form-control form-inline TSDefault-wrapper ' + type + ' ' + ((isOrigin)? 'is-origin':'')">
+  <div :class="{'form-control':true, 'form-inline':true, 'TSDefault-wrapper':true, [type]:true , 'is-origin': isOrigin, 'has-counter':showSelectionCount===true}">
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
-      v-else
+      v-else-if="showSelectionCount===true"
       :id="id"
       :type="type"
       :selections="selectionDefault"
@@ -133,6 +133,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: 'LEAF_PRIORITY' }) valueConsistsOf!: string
   @Prop({ default: '' }) placeholder?: string
   @Prop({ default: 0 }) limitVisibleSelection!: number
+  @Prop({ default: true }) showSelectionCount!: boolean
   @Prop({ default: false }) clearable!: boolean
   @Prop({ default: true }) isOrigin!: boolean
   @Prop({ default: false }) multi!: boolean
@@ -155,7 +156,7 @@ export default class TSDefault extends Vue {
   data!: Array<any> // to be fetched
   treeselectSearchQueryFilled:boolean = false
 
-  @cache.Getter public opsiconfigserver!: Array<string>;
+  @cache.Getter public opsiconfigserver!: Array<string>
 
   async fetch () {
     console.warn(this.id, 'TSDefault fetch')
@@ -474,6 +475,7 @@ export default class TSDefault extends Vue {
   background-color: var(--component, var(--background, inherit));
   color: var(--color, var(--light, inherit));
 }
+
 .TSDefault-wrapper .treeselect {
   max-width: max-content !important;
   max-height: 20px;
@@ -481,8 +483,12 @@ export default class TSDefault extends Vue {
   cursor: pointer;
 }
 .TSDefault-wrapper .treeselect.propertyvalues {
-  max-width: calc(100% - 30px) !important;
-  width: calc(100% - 30px) !important;
+  max-width: calc(100% - 10px) !important;
+  width: calc(100% - 10px) !important;
+}
+.TSDefault-wrapper.propertyvalues.has-counter .treeselect.propertyvalues {
+  max-width: calc(100% - 32px) !important;
+  width: calc(100% - 32px) !important;
 }
 .TSDefault-wrapper .treeselect > .vue-treeselect__control{
   border: none !important;

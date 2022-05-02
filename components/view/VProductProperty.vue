@@ -116,7 +116,7 @@ export default class VProductProperty extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
-  @changes.Getter public changesProducts!: Array<ChangeObj>;
+  @changes.Getter public changesProducts!: Array<ChangeObj>
 
   @Watch('selectionClients') selectionClientsChanged () { this.$fetch() }
   @Watch('selectionDepots') selectionDepotsChanged () { this.$fetch() }

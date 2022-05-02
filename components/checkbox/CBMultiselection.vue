@@ -18,7 +18,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class CBMultiSelection extends Vue {
-  @Prop() multiselect!: boolean;
+  @Prop() multiselect!: boolean
 }
 </script>
 
