@@ -102,7 +102,7 @@
   "table.fields.unknown": "unknown",
   "table.details.productproperty.defaults":"Product Default",
   "table.details.productproperty.server":"Server Default",
-  "label.learnmore": "Learn more",
+  "label.learnmore": "Show details",
   "label.delete": "Delete",
   "label.cancel": "Cancel",
   "label.version": "Version:",
