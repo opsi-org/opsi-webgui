@@ -27,7 +27,7 @@
 		// "ldd-vs-code.better-package-json",
 		"misterj.vue-volar-extention-pack",
 		"johnsoncodehk.vscode-typescript-vue-plugin",
-		// "pucelle.run-on-save",
+		"pucelle.run-on-save",
 		"seunlanlege.action-buttons"
 	]
 }
