@@ -3,6 +3,7 @@
     v-bind="$props"
     data-testid="ButtonBTNLogout"
     class="text-left"
+    variant="primary"
     @click="doLogout"
   >
     <b-icon :icon="iconnames.logout" />

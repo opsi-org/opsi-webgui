@@ -4,7 +4,7 @@
       toggleable="md"
       fixed="bottom"
       data-testid="BarBAuthFooter"
-      variant="secondary"
+      variant="primary"
       :class="{auth_footer: $mq === 'desktop', auth_footer_wrap: $mq === 'mobile'}"
     >
       <b-container fluid>

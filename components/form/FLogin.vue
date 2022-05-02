@@ -25,13 +25,13 @@
             class="mb-2"
             autocomplete="current_password"
           />
-          <b-button :pressed.sync="showPassword">
+          <b-button variant="primary" :pressed.sync="showPassword">
             <span class="sr-only">{{ showPassword? 'Hide Password': 'Show Password' }}</span>
             <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
             <b-icon v-else :icon="iconnames.valueHide" />
           </b-button>
         </b-input-group>
-        <b-button data-testid="btn-login" class="mt-1 border-light" block @click="doLogin">
+        <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light" block @click="doLogin">
         <!-- Quickly change expired time curently only for testing purposes  -->
         <!-- <b-input-group>
           <InputIExpiredTimeChanger />

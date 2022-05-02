@@ -4,10 +4,10 @@
   --opsi-red: #c33b67;
   --opsi-red-dark: #b31c4c;
 
-  --primary: var(--opsi-red);
-  --primary-dark: var(--opsi-red-dark);
-  --secondary: var(--opsi-blue);
-  --secondary-dark: var(--opsi-blue-dark);
+  --primary: var(--opsi-blue);
+  --primary-dark: var(--opsi-blue-dark);
+  --secondary: var(--opsi-red);
+  --secondary-dark: var(--opsi-red-dark);
   --success: #2e8540;
   --success-dark: #246b32;
   --danger: #cd2026;
