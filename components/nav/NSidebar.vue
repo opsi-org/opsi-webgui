@@ -129,7 +129,7 @@ export default class NSidebar extends Vue {
 .sidemenu_nav a.nuxt-link-exact-active,
 .sidemenu_nav .checkactive.nav-item {
   color:var(--light);
-  background-color: var(--primary);
+  background-color: var(--secondary);
   filter: saturate(.4) brightness(1) !important;
 }
 /* .sidemenu_nav:not(.expanded) a.nuxt-link-active,
