@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <b-card
-      class="text-center bg-secondary mt-3 mx-auto"
+      class="text-center bg-primary mt-3 mx-auto"
       :class="$mq === 'mobile'? 'w-100' : 'w-25'"
     >
       <IconIOpsiLogo :light="true" class="mb-3" height="35" />
