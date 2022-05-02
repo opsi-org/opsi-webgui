@@ -82,6 +82,12 @@ init:npm:
     npm run libclean
     npm run libbuild
     npm i -D @playwright/test
+  artifacts:
+    name: 'node_modules'
+    when: on_failure
+    paths:
+      - node_modules/
+    expire_in: 2 day
   # tags:
   #   - test-anna
 
