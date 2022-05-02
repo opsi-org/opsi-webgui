@@ -15,7 +15,7 @@
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/clients/">
         <IconIOpsiLogo :light="true" height="25" />
-        <span class="ml-1"> {{ getTitleUppercase() }} </span>
+        <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
       </b-navbar-brand>
 
