@@ -18,104 +18,104 @@ stages:
 
 #################################################################################### cache
 # .dependencies_cache_develop:
-cache: &dependencies_cache_develop
-  key: devel-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
-  untracked: true
-  paths:
-    - package-lock.json
-    - node_modules
-  policy: pull
-# .dependencies_cache_productive:
-cache: &dependencies_cache_productive
-  key: productive-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
-  untracked: true
-  paths:
-    - test.txt
-  policy: pull
+# cache: &dependencies_cache_develop
+#   key: devel-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
+#   untracked: true
+#   paths:
+#     - package-lock.json
+#     - node_modules
+#   policy: pull
+# # .dependencies_cache_productive:
+# cache: &dependencies_cache_productive
+#   key: productive-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
+#   untracked: true
+#   paths:
+#     - test.txt
+#   policy: pull
 
 #################################################################################### cleanup
-cleanup:cache:devel:
-  stage: cleanup
-  when: always
-  cache:
-    <<: *dependencies_cache_develop  # inherit all global cache settings
-    policy: pull-push # override the policy
-  script:
-    - echo "Cleaning up"
-    - rm -rf package-lock.json
-    - rm -rf node_modules
-  tags:
-    - test-anna
-cleanup:cache:productive:
-  stage: cleanup
-  when: always
-  cache:
-    <<: *dependencies_cache_productive  # inherit all global cache settings
-    policy: pull-push # override the policy
-  script:
-    - echo "Cleaning up"
-    - rm -rf test.txt
-  tags:
-    - test-anna
+# cleanup:cache:devel:
+#   stage: cleanup
+#   when: always
+#   cache:
+#     <<: *dependencies_cache_develop  # inherit all global cache settings
+#     policy: pull-push # override the policy
+#   script:
+#     - echo "Cleaning up"
+#     - rm -rf package-lock.json
+#     - rm -rf node_modules
+#   tags:
+#     - test-anna
+# cleanup:cache:productive:
+#   stage: cleanup
+#   when: always
+#   cache:
+#     <<: *dependencies_cache_productive  # inherit all global cache settings
+#     policy: pull-push # override the policy
+#   script:
+#     - echo "Cleaning up"
+#     - rm -rf test.txt
+#   tags:
+#     - test-anna
 
 #################################################################################### init
-init:npm:prod:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: init
-  cache:
-    <<: *dependencies_cache_productive  # inherit all global cache settings
-    policy: pull-push # override the policy
-  script: |
-    echo "test" >> test.txt
-    cat test.txt
-  tags:
-    - test-anna
+# init:npm:prod:
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: init
+#   cache:
+#     <<: *dependencies_cache_productive  # inherit all global cache settings
+#     policy: pull-push # override the policy
+#   script: |
+#     echo "test" >> test.txt
+#     cat test.txt
+#   tags:
+#     - test-anna
 
 init:npm:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: init
-  cache:
-    <<: *dependencies_cache_develop  # inherit all global cache settings
-    policy: pull-push # override the policy
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
+  #   policy: pull-push # override the policy
   script: |
     echo "[script.sh] install dependencies..."
     npm run libclean
     npm run libbuild
     npm i -D @playwright/test
-  tags:
-    - test-anna
+  # tags:
+  #   - test-anna
 
 
 #################################################################################### test
-test:file-prod:
-  stage: test
-  cache:
-    <<: *dependencies_cache_productive  # inherit all global cache settings
-  dependencies:
-    - init:npm:prod
-  script:
-    - ls -lah
-    - cat test.txt
-  tags:
-    - test-anna
+# test:file-prod:
+#   stage: test
+#   cache:
+#     <<: *dependencies_cache_productive  # inherit all global cache settings
+#   dependencies:
+#     - init:npm:prod
+#   script:
+#     - ls -lah
+#     - cat test.txt
+#   # tags:
+#   #   - test-anna
 
 test:lint:
   stage: test
-  cache:
-    <<: *dependencies_cache_develop  # inherit all global cache settings
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   script:
     - ls -lah
     - ls -lah node_modules
     - npm run liblint
-  tags:
-    - test-anna
+  # tags:
+  #   - test-anna
 
 test:unit:
   stage: test
-  cache:
-    <<: *dependencies_cache_develop  # inherit all global cache settings
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   script:
@@ -127,15 +127,15 @@ test:unit:
   artifacts:
     reports:
       cobertura: coverage/clover.xmlci
-  tags:
-    - test-anna
+  # tags:
+  #   - test-anna
 
 
 test:components:changed:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  cache:
-    <<: *dependencies_cache_develop  # inherit all global cache settings
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   except:
@@ -161,14 +161,14 @@ test:components:changed:
       - .storybook.log
       - .dev.log
     expire_in: 2 day
-  tags:
-    - test-anna
+  # tags:
+  #   - test-anna
 
 test:components:all:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
-  cache:
-    <<: *dependencies_cache_develop  # inherit all global cache settings
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
   dependencies:
     - init:npm
   only:
@@ -192,8 +192,8 @@ test:components:all:
       - .storybook.log
       - .dev.log
     expire_in: 2 day
-  tags:
-    - test-anna
+  # tags:
+  #   - test-anna
 # test:test-e2e:
 #   stage: test
 #   cache:
