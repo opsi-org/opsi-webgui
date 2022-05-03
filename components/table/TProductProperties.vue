@@ -6,7 +6,7 @@
       </AlertAAlertLocal>
     </div>
     <div v-else-if="!errorText && $mq=='mobile'">
-      <AlertAAlertLocal show variant="secondary">
+      <AlertAAlertLocal show variant="primary">
         <small>{{ $t('table.fields.clientsIds') }}: {{ selectionClients.length }}</small>
       </AlertAAlertLocal>
     </div>
