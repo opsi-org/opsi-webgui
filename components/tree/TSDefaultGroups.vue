@@ -103,7 +103,7 @@ export default class TSDefaultGroups extends TSDefault {
   groupChange (value: object, type: string) {
     // console.log(this.id + ' TSDefaultGroups groupChange ', value, type)
     const idList : Array<string> = []
-    const storeSel = this.store.selection
+    // const storeSel = this.store.selection
     // console.log(this.id + ' TSDefaultGroups groupChange store ', storeSel)
     filterObjectLabel([value], 'ObjectToGroup', 'type', this.selectionKey, idList) // get all texts elements where type is ObjectToGroup
     // console.log(this.id + ' TSDefaultGroups foundIds ', idList)
