@@ -37,7 +37,7 @@ export default class IDetails extends Vue {
 </script>
 
 <style>
-.badgecontent{
+/* .badgecontent{
   color: var(--dark);
-}
+} */
 </style>
