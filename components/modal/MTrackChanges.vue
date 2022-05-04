@@ -1,7 +1,7 @@
 <template>
   <div data-testid="MTrackChanges">
     <b-button
-      v-if="expert && changesProducts.filter((o) => o.user === username).length!==0"
+      v-if="!quicksave && changesProducts.filter((o) => o.user === username).length!==0"
       class="px-2"
       variant="transparent"
       @click="$bvModal.show('trackChangesModal')"
@@ -59,7 +59,7 @@ export default class MTrackChanges extends Vue {
 
   @Prop() child!: boolean
   @Prop() closeroute!: string
-  @settings.Getter public expert!: boolean
+  @settings.Getter public quicksave!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 

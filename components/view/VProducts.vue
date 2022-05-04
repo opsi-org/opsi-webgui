@@ -68,7 +68,6 @@ import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
 import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
-const settings = namespace('settings')
 @Component
 export default class VProducts extends Vue {
   $mq: any
@@ -78,7 +77,6 @@ export default class VProducts extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-  @settings.Getter public expert!: boolean
 
   sortdesc: boolean = false
   rowId: string = ''

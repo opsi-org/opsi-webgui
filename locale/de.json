@@ -107,6 +107,10 @@
   "label.cancel": "Abbrechen",
   "label.version": "Version:",
   "label.ppId-onlyOnDepots" : "Property existiert nur für server \"{depots}\" (Grund: Unterschiedliche Produkt Versionen)",
+  "label.on": "AN",
+  "label.off": "AUS",
+  "description.quicksave.on": "Änderungen werden sofort gespeichert.",
+  "description.quicksave.off": "Änderungen werden nicht sofort gespeichert. Eine Übersicht listet alle lokal vorgenommen Änderungen auf. Diese können vor dem Speichern angesehen und verändert werden.",
   "button.login": "Anmeldung",
   "button.logout": "Ausloggen",
   "button.expand": "Maximieren",
@@ -143,7 +147,7 @@
   "form.password": "Passwort",
   "form.localspecific": "Lokale Einstellungen",
   "form.theme": "Farbthema",
-  "form.mode": "Benutzer-Modus",
+  "form.quicksave": "Sofort speichern",
   "form.modules": "Modules-Inhalt",
   "form.modules.available": "Verfügbare Module",
   "formselect.select.server": "//-- Please select a Depot --",
@@ -155,11 +159,5 @@
   "supportPage.forum.button": "OPSI Forum Besuchen",
   "supportPage.support.title": "Support",
   "supportPage.support.description": "Benötigen Sie Support bei OPSI? Wir besorgen Ihnen die Hilfe, die Sie brauchen.",
-  "supportPage.support.button": "Mehr Erfahren",
-  "userinfo.basic": "Basis-Modus",
-  "userinfo.basic.short": "Basis",
-  "userinfo.basic_desc": "Änderungen werden sofort gespeichert.",
-  "userinfo.expert": "Detaillierter Modus",
-  "userinfo.expert.short": "Detailliert",
-  "userinfo.expert_desc": "Änderungen werden nicht sofort gespeichert. Eine Übersicht listet alle lokal vorgenommen Änderungen auf. Diese können vor dem Speichern angesehen und verändert werden."
-}
+  "supportPage.support.button": "Mehr Erfahren"
+  }

@@ -11,11 +11,11 @@
     <b-row class="mb-4">
       <b-col class="text-sm-right" cols="2">
         <ButtonBTNHelp id="expert-help" />
-        {{ $t('form.mode') }}
+        {{ $t('form.quicksave') }}
         <TooltipTTHelpExpert target="expert-help" />
       </b-col>
       <b-col col="*">
-        <ButtonBTNExpertMode />
+        <CheckboxCBQuickSave />
       </b-col>
     </b-row>
   </div>

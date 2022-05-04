@@ -9,7 +9,6 @@
   >
     {{ $t('button.multiselection') }}
     <span class="sr-only">{{ multiselect ? $t('button.multiselectEnable'): $t('button.multiselectDisable') }}</span>
-    <!-- TODO: add to translation: Multiselection, Enable/Disable multiselection -->
   </b-form-checkbox>
 </template>
 

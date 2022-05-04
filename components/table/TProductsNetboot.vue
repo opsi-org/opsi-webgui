@@ -155,7 +155,7 @@ export default class TProductsNetboot extends Vue {
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
-  @settings.Getter public expert!: boolean
+  @settings.Getter public quicksave!: boolean
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
@@ -220,7 +220,7 @@ export default class TProductsNetboot extends Vue {
       productIds: [rowitem.productId],
       actionRequest: newrequest
     }
-    if (this.expert) {
+    if (!this.quicksave) {
       for (const c in this.selectionClients) {
         const d = {
           user: localStorage.getItem('username'),
@@ -249,7 +249,7 @@ export default class TProductsNetboot extends Vue {
       productIds: this.selectionProducts,
       actionRequest: this.action
     }
-    if (this.expert) {
+    if (!this.quicksave) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {
           const d = {

@@ -107,6 +107,10 @@
   "label.cancel": "Cancel",
   "label.version": "Version:",
   "label.ppId-onlyOnDepots" : "property only exists on server \"{depots}\" (reason: different product versions)",
+  "label.on": "ON",
+  "label.off": "OFF",
+  "description.quicksave.on": "Changes will be saved immediately.",
+  "description.quicksave.off": "Changes are not saved immediately. An overview lists all locally made changes. These can be viewed and changed before saving.",
   "button.login": "Login",
   "button.logout": "Logout",
   "button.expand": "Maximize",
@@ -143,7 +147,7 @@
   "form.password": "Password",
   "form.localspecific": "Local Settings",
   "form.theme": "Color theme",
-  "form.mode": "User Mode",
+  "form.quicksave": "Quick save",
   "form.modules": "Modules Content",
   "form.modules.available": "Available Modules",
   "formselect.select.server": "//-- Please select a Depot --",
@@ -155,11 +159,5 @@
   "supportPage.forum.button": "Visit OPSI Forum",
   "supportPage.support.title": "Support",
   "supportPage.support.description": "Do you need support at OPSI? We will get you the help you need. ",
-  "supportPage.support.button": "Learn More",
-  "userinfo.basic": "Basic Mode",
-  "userinfo.basic_desc": "Changes will be saved immediately.",
-  "userinfo.basic.short": "Basic",
-  "userinfo.expert.short": "Detailed",
-  "userinfo.expert": "Detailed Mode",
-  "userinfo.expert_desc": "Changes are not saved immediately. An overview lists all locally made changes. These can be viewed and changed before saving."
-}
+  "supportPage.support.button": "Learn More"
+  }
