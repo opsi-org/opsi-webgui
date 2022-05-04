@@ -194,9 +194,9 @@ export default class VClients extends Vue {
   }
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
-  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
-  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false) }
-  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false) }
+  @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
+  @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
+  @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
 
   mounted () {
     if (this.secondColumnOpened) {
@@ -211,6 +211,8 @@ export default class VClients extends Vue {
 
   async fetch () {
     this.isLoading = true
+    const lastSyncSortBy = this.tableData.sortBy
+    const lastSyncSortDesc = this.tableData.sortDesc
     this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
     this.tableData.selectedClients = JSON.stringify(this.selectionClients)
     if (this.tableData.sortBy === '') { this.tableData.sortBy = 'clientId' }
@@ -237,6 +239,8 @@ export default class VClients extends Vue {
         this.error = this.$t('message.error.defaulttext') as string
         this.error += JSON.stringify(error.message)
       })
+    this.tableData.sortBy = lastSyncSortBy
+    this.tableData.sortDesc = lastSyncSortDesc
     this.isLoading = false
   }
 

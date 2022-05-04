@@ -1,4 +1,3 @@
-/* eslint-disable object-property-newline */
 <template>
   <div data-testid="VProducts">
     <AlertAAlert ref="productsViewAlert" />
@@ -157,7 +156,7 @@ export default class VProducts extends Vue {
       this.$router.push('/products/')
     }
     if (!this.tableInfo.sortBy) {
-      this.tableInfo.sortBy = 'productId'
+      this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
     }
     this.updateColumnVisibility()
   }
@@ -165,6 +164,9 @@ export default class VProducts extends Vue {
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
     this.updateColumnVisibility()
   }
+  // @Watch('tableInfo.sortBy', { deep: true }) selectionClientsChanged () {
+  //   this.updateColumnVisibility()
+  // }
 
   // @Watch('ismultiselect', { deep: true }) multiselectChanged () {
   //   Cookie.set('multiselect_products', JSON.stringify(this.ismultiselect), { expires: 365 })
@@ -211,7 +213,8 @@ export default class VProducts extends Vue {
         })
       thiss.fetchOptions.fetchClients2Depots = false
     }
-
+    const lastSyncSortBy = thiss.tableData.sortBy
+    const lastSyncSortDesc = thiss.tableData.sortDesc
     if (thiss.fetchOptions.fetchClients) {
       thiss.tableData.selectedDepots = JSON.stringify(thiss.selectionDepots)
       thiss.tableData.selectedClients = JSON.stringify(thiss.selectionClients)
@@ -234,7 +237,7 @@ export default class VProducts extends Vue {
         }).catch((error) => {
           thiss.error = thiss.$t('message.error.defaulttext') as string
           thiss.error += (error as IObjectString2Any).message
-          const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
+          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
           const ref = (this.$refs.productsViewAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
         })
@@ -255,6 +258,8 @@ export default class VProducts extends Vue {
       //   // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
       // }
     }
+    thiss.tableData.sortBy = lastSyncSortBy
+    thiss.tableData.sortDesc = lastSyncSortDesc
     thiss.isLoading = false
   }
 }

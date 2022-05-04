@@ -171,6 +171,10 @@ export default class VDepots extends Vue {
 
   async fetch () {
     this.isLoading = true
+
+    const lastSyncSortBy = this.tableData.sortBy
+    const lastSyncSortDesc = this.tableData.sortDesc
+
     if (this.tableData.sortBy === '') { this.tableData.sortBy = 'depotId' }
     if (this.tableData.sortBy === 'selected') {
       this.tableData.sortDesc = true
@@ -193,6 +197,9 @@ export default class VDepots extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Depots', 'danger', detailedError)
         this.error = this.$t('message.error.defaulttext') as string
       })
+
+    this.tableData.sortBy = lastSyncSortBy
+    this.tableData.sortDesc = lastSyncSortDesc
     this.isLoading = false
   }
 
