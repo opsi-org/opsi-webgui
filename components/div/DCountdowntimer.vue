@@ -1,6 +1,6 @@
 <template>
-  <div data-testid="DivDCounttimer" class="text-center bg-primary">
-    <small> {{ countdowntimer }} </small>
+  <div data-testid="DivDCounttimer" class="DCountdowntimer text-center bg-primary">
+    <small class="timer"> {{ countdowntimer }} </small>
   </div>
 </template>
 
