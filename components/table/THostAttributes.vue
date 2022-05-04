@@ -106,7 +106,8 @@ export default class THostAttributes extends Vue {
         .then((response) => {
           this.result = response
         }).catch((error) => {
-          const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+          console.error(error.response.data.error, error.response.data.message)
+          const detailedError = ((error.response.data.error) ? error.response.data.error : '') + ' ' + ((error.response.data.message) ? error.response.data.message : '')
           const ref = (this.$refs.hostAttrAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Hosts', 'danger', detailedError)
           this.errorText = this.$t('message.error.defaulttext') as string
