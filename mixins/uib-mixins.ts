@@ -60,8 +60,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
     refresh: 'arrow-repeat',
     // reset: 'brush',
     clear: 'brush',
-    usermodeExpert: 'star-fill',
-    usermodeBasic: 'star',
     help: 'question-circle',
     info: 'info-circle',
     tablerowSelected: 'check2',

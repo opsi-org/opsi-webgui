@@ -30,7 +30,6 @@
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto float-right">
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
-          <ButtonBTNExpertMode :navbar="true" />
           <DropdownDDLang :navbar="true" />
           <!-- TODO: remove for production start -->
           <DropdownDDTheme v-if="$mq!='mobile'" :navbar="true" />

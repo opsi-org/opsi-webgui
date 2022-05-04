@@ -10,17 +10,13 @@ interface IColumnLayoutCollaped {
 export default class Settings extends VuexModule {
   _language: string = Cookie.get('Language') as string || 'en'
   _quicksave: boolean = Cookie.get('Quicksave') as string === 'true' || false
-  _expert: boolean = Cookie.get('ExpertMode') as string === 'expert' || false
-  // colorthemeobj: ITheme = { title: 'dark', rel: 'themes/opsi-dark.css', icon: 'moon' }
   colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' }
-  // colorthemeobj: ITheme = { title: 'opsi-light', rel: 'themes/opsi-bootstrap-theme-light.css' }
   _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
   _expiresInterval!: NodeJS.Timeout|undefined
 
   get twoColumnLayoutCollapsed (): IObjectString2Boolean { return this._twoColumnLayoutCollapsed }
   get language (): string { return this._language }
   get quicksave (): boolean { return this._quicksave }
-  get expert (): boolean { return this._expert }
   get expiresInterval (): NodeJS.Timeout|undefined { return this._expiresInterval }
   get colortheme (): ITheme {
     if (Cookie.get('theme.title')) {
@@ -57,11 +53,6 @@ export default class Settings extends VuexModule {
   @VuexMutation public setQuicksave (isQuickSave: boolean) {
     this._quicksave = isQuickSave
     Cookie.set('Quicksave', (isQuickSave) ? 'true' : 'false', { expires: 365 })
-  }
-
-  @VuexMutation public setExpertmode (isExpert: boolean) {
-    this._expert = isExpert
-    Cookie.set('ExpertMode', (isExpert) ? 'expert' : 'basic', { expires: 365 })
   }
 
   @VuexMutation public setColumnLayoutCollapsed (obj: IColumnLayoutCollaped) {

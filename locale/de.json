@@ -142,7 +142,7 @@
   "form.password": "Passwort",
   "form.localspecific": "Lokale Einstellungen",
   "form.theme": "Farbthema",
-  "form.mode": "Benutzer-Modus",
+  "form.quicksave": "Sofort speichern",
   "form.modules": "Modules-Inhalt",
   "form.modules.available": "Verfügbare Module",
   "formselect.select.server": "//-- Please select a Depot --",
