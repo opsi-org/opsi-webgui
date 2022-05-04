@@ -68,7 +68,6 @@ import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
 import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
-const settings = namespace('settings')
 @Component
 export default class VProducts extends Vue {
   $mq: any
