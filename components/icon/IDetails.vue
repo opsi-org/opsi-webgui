@@ -13,6 +13,9 @@
       <span v-else-if="content=='client-outdated'" class="badgecontent">
         {{ '&ne;' }} <b-icon :icon="iconnames.client" />
       </span>
+      <span v-else-if="content=='ppv-client-different'" class="badgecontent">
+        {{ '&ne;' }} <b-icon :icon="iconnames.client" />
+      </span>
       <span v-else-if="content=='ppid-not-exists-on-depot'" class="badgecontent">
         {{ '&ne;' }} <b-icon :icon="iconnames.depot" />
       </span>

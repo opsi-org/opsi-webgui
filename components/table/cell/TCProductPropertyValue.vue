@@ -39,7 +39,7 @@
       </b-button>
     </b-col>
     <b-col v-if="showTooltip" class="TCProductPropertyValue_MixedTT" cols="*">
-      <IconIDetails :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" />
+      <IconIDetails :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" content="ppv-client-different" />
       <TooltipTTProductCell
         v-if="showTooltip"
         type="property"
