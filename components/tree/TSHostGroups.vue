@@ -86,7 +86,7 @@ export default class TSHostGroups extends Vue {
       if (result !== null) {
         const values = Object.values(result)
         await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
-        console.log(this.id + ' fetch client children ', parentNode.text, ' end')
+        // console.log(this.id + ' fetch client children ', parentNode.text, ' end')
         return values
       }
       // console.warn(this.id + ' Children null')
