@@ -1,10 +1,10 @@
 <template>
-  <div :id="`TCBadgeCompares_${type}_hover_${rowid}`">
-    <TableCellTCInstallationStatus v-if="type=='installationStatus' && text=='mixed'" :text="text" />
-    <TableCellTCInstallationStatus v-else-if="type=='installationStatus'" :text="text" />
+  <div :id="`TCBadgeCompares_${type}_hover_${rowid}`" class="TCBadgeCompares">
+    <TableCellTCInstallationStatus v-if="type=='installationStatus' && text=='mixed'" :text="text" :variant="variant" />
+    <TableCellTCInstallationStatus v-else-if="type=='installationStatus'" :text="text" :variant="variant" />
 
-    <TableCellTCActionResult v-else-if="type=='actionResult' && text=='mixed'" :text="text" />
-    <TableCellTCActionResult v-else-if="type=='actionResult'" :text="text" />
+    <TableCellTCActionResult v-else-if="type=='actionResult' && text=='mixed'" :text="text" :variant="variant" />
+    <TableCellTCActionResult v-else-if="type=='actionResult'" :text="text" :variant="variant" />
 
     <b-badge v-else>
       {{ text }}
@@ -32,6 +32,17 @@ export default class TCSpan extends Vue {
   defaults: IObjectString2String = {
     actionResult: 'none',
     installationStatus: 'not_installed'
+  }
+
+  get variant () {
+    // if (this.values.some(v => v === 'failed' || v === 'unknown')) {
+    if (this.values.includes('failed')) {
+      return 'danger'
+    }
+    if (this.values.every(v => v === '' || v === 'successful' || v === 'installed')) {
+      return 'success'
+    }
+    return 'warning'
   }
 
   get text () {

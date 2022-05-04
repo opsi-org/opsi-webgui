@@ -1,5 +1,5 @@
 <template>
-  <b-badge v-if="text=='mixed'" variant="warning">
+  <b-badge v-if="text=='mixed'" :variant="variant">
     &#8800;
   </b-badge>
   <b-badge v-else-if="text=='successful'" variant="success">
@@ -26,8 +26,6 @@ export default class TCSpan extends Vue {
   $mq: any
   iconnames: any
   @Prop({ }) text!: string
+  @Prop({ default: 'warning' }) variant!: string
 }
 </script>
-
-<style scoped>
-</style>
