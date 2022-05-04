@@ -36,10 +36,34 @@ export default class TSHostGroups extends Vue {
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
   clientlistGroups:Array<object> = []
+  fetchedDataClients2Depots: IObjectString2String = {}
 
   @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
     // console.log(this.id + ' depot changed')
     await this.$fetch()
+  }
+
+  @Watch('selectionClients', { deep: true }) async clientsChanged () {
+    if (this.selectionClients.length <= 0) {
+      this.fetchedDataClients2Depots = {}
+    } else {
+      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
+        .then((response) => {
+          this.fetchedDataClients2Depots = response
+          // console.log('fetchedDataClients2Depots', this.fetchedDataClients2Depots)
+        }).catch((error) => {
+          this.fetchedDataClients2Depots = {}
+          throw new Error(error)
+        })
+    }
+  }
+
+  @Watch('selectionDepots', { deep: true }) depotsChanged () {
+    const selectedClientsOnDepots = Object.fromEntries(Object.entries(this.fetchedDataClients2Depots).filter(
+      ([_, value]) => this.selectionDepots.includes(value)
+    ))
+    // console.log('client2depot', selectedClientsOnDepots)
+    this.setSelectionClients(Object.keys(selectedClientsOnDepots))
   }
 
   async asyncForEach (array, callback) {
