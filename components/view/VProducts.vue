@@ -213,26 +213,27 @@ export default class VProducts extends Vue {
         })
       thiss.fetchOptions.fetchClients2Depots = false
     }
-    const lastSyncSortBy = thiss.tableData.sortBy
-    const lastSyncSortDesc = thiss.tableData.sortDesc
+    // const lastSyncSortBy = thiss.tableData.sortBy
+    // const lastSyncSortDesc = thiss.tableData.sortDesc
+    // const tableDataCopy = { ...thiss.tableData }
     if (thiss.fetchOptions.fetchClients) {
-      thiss.tableData.selectedDepots = JSON.stringify(thiss.selectionDepots)
-      thiss.tableData.selectedClients = JSON.stringify(thiss.selectionClients)
-      if (thiss.tableData.sortBy === 'depotVersions') { thiss.tableData.sortBy = 'depot_version_diff' }
-      if (thiss.tableData.sortBy === 'clientVersions') { thiss.tableData.sortBy = 'client_version_outdated' }
-      if (thiss.tableData.sortBy === 'version') { thiss.tableData.sortBy = '[client_version_outdated, depot_version_diff ]' }
-      if (thiss.tableData.sortBy === 'desc') { thiss.tableData.sortBy = 'description' }
-      if (thiss.tableData.sortBy === '') { thiss.tableData.sortBy = 'productId' }
-      if (thiss.tableData.sortBy === 'selected') {
-        thiss.tableData.sortDesc = true
-        thiss.tableData.selected = JSON.stringify(thiss.selectionProducts)
+      const params = { ...thiss.tableData }
+      params.selectedDepots = JSON.stringify(thiss.selectionDepots)
+      params.selectedClients = JSON.stringify(thiss.selectionClients)
+      if (params.sortBy === 'depotVersions') { params.sortBy = 'depot_version_diff' }
+      if (params.sortBy === 'clientVersions') { params.sortBy = 'client_version_outdated' }
+      if (params.sortBy === 'version') { params.sortBy = '[client_version_outdated, depot_version_diff ]' }
+      if (params.sortBy === 'desc') { params.sortBy = 'description' }
+      if (params.sortBy === '') { params.sortBy = 'productId' }
+      if (params.sortBy === 'selected') {
+        params.sortDesc = true
+        params.selected = JSON.stringify(thiss.selectionProducts)
       }
-      const params = thiss.tableData
       await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
           thiss.$emit('update:total' + thiss.id, thiss.totalItems)
-          thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
+          thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
           thiss.items = response.data || []
         }).catch((error) => {
           thiss.error = thiss.$t('message.error.defaulttext') as string
@@ -258,8 +259,8 @@ export default class VProducts extends Vue {
       //   // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
       // }
     }
-    thiss.tableData.sortBy = lastSyncSortBy
-    thiss.tableData.sortDesc = lastSyncSortDesc
+    // thiss.tableData.sortBy = lastSyncSortBy
+    // thiss.tableData.sortDesc = lastSyncSortDesc
     thiss.isLoading = false
   }
 }

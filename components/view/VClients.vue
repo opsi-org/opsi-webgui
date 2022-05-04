@@ -211,21 +211,19 @@ export default class VClients extends Vue {
 
   async fetch () {
     this.isLoading = true
-    const lastSyncSortBy = this.tableData.sortBy
-    const lastSyncSortDesc = this.tableData.sortDesc
-    this.tableData.selectedDepots = JSON.stringify(this.selectionDepots)
-    this.tableData.selectedClients = JSON.stringify(this.selectionClients)
-    if (this.tableData.sortBy === '') { this.tableData.sortBy = 'clientId' }
-    if (this.tableData.sortBy === 'selected') {
-      // this.tableData.sortBy = 'selected'
-      this.tableData.sortDesc = true
-      this.tableData.selected = JSON.stringify(this.selectionClients)
+    const params = { ...this.tableData }
+    params.selectedDepots = JSON.stringify(this.selectionDepots)
+    params.selectedClients = JSON.stringify(this.selectionClients)
+    if (params.sortBy === '') { params.sortBy = 'clientId' }
+    if (params.sortBy === 'selected') {
+      // params.sortBy = 'selected'
+      params.sortDesc = true
+      params.selected = JSON.stringify(this.selectionClients)
     }
-    const params = this.tableData
     await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
-        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+        this.totalpages = Math.ceil(this.totalItems / params.perPage)
         if (response.data === null) {
           this.items = []
         } else {
@@ -239,8 +237,6 @@ export default class VClients extends Vue {
         this.error = this.$t('message.error.defaulttext') as string
         this.error += JSON.stringify(error.message)
       })
-    this.tableData.sortBy = lastSyncSortBy
-    this.tableData.sortDesc = lastSyncSortDesc
     this.isLoading = false
   }
 

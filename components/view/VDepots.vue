@@ -172,20 +172,18 @@ export default class VDepots extends Vue {
   async fetch () {
     this.isLoading = true
 
-    const lastSyncSortBy = this.tableData.sortBy
-    const lastSyncSortDesc = this.tableData.sortDesc
+    const params = { ...this.tableData }
 
-    if (this.tableData.sortBy === '') { this.tableData.sortBy = 'depotId' }
-    if (this.tableData.sortBy === 'selected') {
-      this.tableData.sortDesc = true
-      // this.tableData.sortBy = 'selected'
-      this.tableData.selected = JSON.stringify(this.selectionDepots)
+    if (params.sortBy === '') { params.sortBy = 'depotId' }
+    if (params.sortBy === 'selected') {
+      params.sortDesc = true
+      // params.sortBy = 'selected'
+      params.selected = JSON.stringify(this.selectionDepots)
     }
-    const params = this.tableData
     await this.$axios.get('/api/opsidata/depots', { params })
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
-        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+        this.totalpages = Math.ceil(this.totalItems / params.perPage)
         if (response.data === null) {
           this.items = []
         } else {
@@ -198,8 +196,6 @@ export default class VDepots extends Vue {
         this.error = this.$t('message.error.defaulttext') as string
       })
 
-    this.tableData.sortBy = lastSyncSortBy
-    this.tableData.sortDesc = lastSyncSortDesc
     this.isLoading = false
   }
 
