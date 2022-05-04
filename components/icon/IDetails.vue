@@ -13,6 +13,9 @@
       <span v-else-if="content=='client-outdated'" class="badgecontent">
         {{ '&ne;' }} <b-icon :icon="iconnames.client" />
       </span>
+      <span v-else-if="content=='ppid-not-exists-on-depot'" class="badgecontent">
+        {{ '&ne;' }} <b-icon :icon="iconnames.depot" />
+      </span>
       <span v-else class="badgecontent">{{ content==='unequal'? '&ne;':content }} </span>
     </b-badge>
   </div>

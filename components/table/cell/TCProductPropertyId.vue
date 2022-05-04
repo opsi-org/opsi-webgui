@@ -20,8 +20,8 @@
     <IconIDetails
       v-if="Object.values(productVersions).filter(n => n).length == selectionDepots.length && Object.keys(row.item.depots).length!=selectionDepots.length"
       :id="`btn_tt_${row.item.propertyId}`"
-      :title="`product-version only on depots: ${Object.keys(row.item.depots)}`"
-      content="*"
+      :title="$t('label.ppId-onlyOnDepots', {depots: Object.keys(row.item.depots) })"
+      content="ppid-not-exists-on-depot"
     />
   </div>
 </template>

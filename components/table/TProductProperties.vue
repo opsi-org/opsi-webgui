@@ -2,7 +2,7 @@
   <div data-testid="TProductProperties" class="TProductProperties" :class="{mobile:$mq=='mobile'}">
     <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlertLocal show variant="warning">
-        <small>{{ $t('message.noClientsSelectedShowDepot') }}</small>
+        <small>{{ $t('message.warning.noClientsSelectedShowDepot') }}</small>
       </AlertAAlertLocal>
     </div>
     <div v-else-if="!errorText && $mq=='mobile'">
@@ -19,7 +19,7 @@
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).some((v)=>v!=Object.values(properties.productVersions).filter(n => n)[0])">
       <AlertAAlertLocal show variant="warning">
-        <small>{{ $t('message.differentProductVersions') }}</small>
+        <small>{{ $t('message.warning.differentProductVersions') }}</small>
       </AlertAAlertLocal>
     </div>
     <p v-if="errorText">

@@ -106,6 +106,7 @@
   "label.delete": "Löschen",
   "label.cancel": "Abbrechen",
   "label.version": "Version:",
+  "label.ppId-onlyOnDepots" : "Property existiert nur für server \"{depots}\" (Grund: Unterschiedliche Produkt Versionen)",
   "button.login": "Anmeldung",
   "button.logout": "Ausloggen",
   "button.expand": "Maximieren",

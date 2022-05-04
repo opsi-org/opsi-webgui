@@ -153,10 +153,11 @@ export default class TProductPropertyValue extends Vue {
       this.visibleValueBoolIndeterminate = true
       return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
     }
-
-    if (Object.keys(this.rowItem.depots).length > 0 && Object.values(this.rowItem.depots).every(v => v === Object.values(this.rowItem.depots)[0])) {
-      return Object.values(this.rowItem.depots)[0]
-    } else if (Object.keys(this.rowItem.depots).length > 0 && Object.values(this.rowItem.depots).some(v => v !== Object.values(this.rowItem.depots)[0])) {
+    const depotValues = Object.values(this.rowItem.depots) || []
+    console.log(JSON.stringify(depotValues), depotValues.length, depotValues.every(v => v === ''))
+    if ((depotValues.length > 0) && depotValues.every(v => arrayEqual(v, depotValues[0]))) {
+      return depotValues[0]
+    } else if (depotValues.length > 0 && depotValues.some(v => !arrayEqual(v, depotValues[0]))) {
       this.visibleValueBoolIndeterminate = true
       return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
     }
