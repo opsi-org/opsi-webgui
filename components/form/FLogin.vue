@@ -25,7 +25,7 @@
             class="mb-2"
             autocomplete="current_password"
           />
-          <b-button variant="primary" :pressed.sync="showPassword">
+          <b-button variant="primary" :pressed.sync="showPassword" class="mb-2">
             <span class="sr-only">{{ showPassword? 'Hide Password': 'Show Password' }}</span>
             <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
             <b-icon v-else :icon="iconnames.valueHide" />
