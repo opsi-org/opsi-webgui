@@ -159,7 +159,7 @@ export default class TSDefault extends Vue {
   @cache.Getter public opsiconfigserver!: Array<string>
 
   async fetch () {
-    console.warn(this.id, 'TSDefault fetch')
+    // console.warn(this.id, 'TSDefault fetch')
     this.$fetchState.pending = true
     // this.data = []
     this.data = await this.fetchData()
@@ -167,13 +167,13 @@ export default class TSDefault extends Vue {
     this.syncWrapper()
     this.selection = [...this.selection] // needed for deselection
     this.$fetchState.pending = false
-    console.log(this.id + ' TSDefault fetch end')
+    // console.log(this.id + ' TSDefault fetch end')
   }
 
   @Watch('selectionDefault', { deep: true }) async selectionChanged () {
-    console.log(this.id + ' TSDefault selectionDefaultChanged this.selection ', JSON.stringify(this.selection))
-    console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionDefault ', JSON.stringify(this.selectionDefault))
-    console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionWrapper ', JSON.stringify(this.selectionWrapper))
+    // console.log(this.id + ' TSDefault selectionDefaultChanged this.selection ', JSON.stringify(this.selection))
+    // console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionDefault ', JSON.stringify(this.selectionDefault))
+    // console.log(this.id + ' TSDefault selectionDefaultChanged this.selectionWrapper ', JSON.stringify(this.selectionWrapper))
     await this.$fetch()
   }
 
@@ -192,7 +192,7 @@ export default class TSDefault extends Vue {
   treeselectSearchQueryChanged (filled) { this.treeselectSearchQueryFilled = filled }
 
   syncWrapper () {
-    console.log(this.id + ' TSDefault syncWrapper')
+    // console.log(this.id + ' TSDefault syncWrapper')
     if (this.syncFunction) { // e.g. from TSDefaultGroups
       this.syncFunction(this.selection, this.options)
     }
@@ -200,7 +200,7 @@ export default class TSDefault extends Vue {
 
   selectWrapper (s:any) {
     this.$fetchState.pending = true
-    console.log(this.id + ' TSDefault selectWrapper TRY select: ', JSON.stringify(s))
+    // console.log(this.id + ' TSDefault selectWrapper TRY select: ', JSON.stringify(s))
     if (this.selectFunction) { // e.g. from TSDefaultGroups
       this.selectFunction(s, this)
       this.syncWrapper()
@@ -209,10 +209,10 @@ export default class TSDefault extends Vue {
   }
 
   deselectWrapper (s:any) {
-    console.log(this.id + ' -----------------TSDefault deselectWrapper ', this.editable, this.multi)
+    // console.log(this.id + ' -----------------TSDefault deselectWrapper ', this.editable, this.multi)
     if (!this.editable && !this.multi) { return }
     this.$fetchState.pending = true
-    console.log(this.id + ' TSDefault deselectWrapper TRY deselect: ', JSON.stringify(s))
+    // console.log(this.id + ' TSDefault deselectWrapper TRY deselect: ', JSON.stringify(s))
     if (this.deselectFunction) { // e.g. from TSDefaultGroups
       this.deselectFunction(s, this)
       this.syncWrapper()
@@ -221,7 +221,7 @@ export default class TSDefault extends Vue {
   }
 
   updateLocalFromParent (updateOptions = true, updateSelections = true) {
-    console.log(this.id + ' TSDefault updateLocalFromParent')
+    // console.log(this.id + ' TSDefault updateLocalFromParent')
     if (updateOptions) {
       if (this.isList === false) {
         this.options = [...this.data]
@@ -249,7 +249,7 @@ export default class TSDefault extends Vue {
       }
     }
     if (updateSelections && !this.nested) { // not TSDefaultGroups
-      console.log(this.id, ' updateLocal ', this.selection)
+      // console.log(this.id, ' updateLocal ', this.selection)
       this.selection = [...this.selectionDefault]
     }
   }
@@ -280,7 +280,7 @@ export default class TSDefault extends Vue {
     if (!node.children) { return node.children } // null/undefined
 
     if (node.type === 'ProductGroup') {
-      console.log('access PG chilren')
+      // console.log('access PG chilren')
       return Object.values(node.children)
     }
     return node.children
@@ -288,7 +288,7 @@ export default class TSDefault extends Vue {
 
   async loadOptionsChildren ({ action, parentNode, callback }: any) {
     // loadchildren only for hostgroups
-    console.log(this.id + ' TSDefault loadchildren parentNode ', parentNode.id)
+    // console.log(this.id + ' TSDefault loadchildren parentNode ', parentNode.id)
     if (this.lazyLoad !== true) {
       callback()
       return
@@ -297,11 +297,11 @@ export default class TSDefault extends Vue {
       this.$fetchState.pending = true
       const c = await this.fetchChildren(parentNode)
       if (c) {
-        console.log(this.id + ' TSDefault loadchildren result != undefined', c)
+        // console.log(this.id + ' TSDefault loadchildren result != undefined', c)
         parentNode.children = Array.isArray(c) ? c : Object.values(c)
       }
       if (parentNode.text === 'clientlist' && parentNode.parent == null) {
-        console.log(this.id + ' TSDefault loadchildren clientlist children are', parentNode.children)
+        // console.log(this.id + ' TSDefault loadchildren clientlist children are', parentNode.children)
       }
 
       this.syncWrapper()
@@ -311,18 +311,18 @@ export default class TSDefault extends Vue {
   }
 
   selectDefault (s: any) {
-    console.log(this.id + ' TSDefault selectDefault s', s)
+    // console.log(this.id + ' TSDefault selectDefault s', s)
     if (!s) { return }
 
     if (!Array.isArray(this.selectionWrapper)) {
       this.selectionWrapper = [this.selectionWrapper]
     }
     if (Object.keys(s).length <= 0) {
-      console.log(this.id + ' TSDefault selectDefault why?')
+      // console.log(this.id + ' TSDefault selectDefault why?')
       this.selectionWrapper = []
     }
     if (this.selectionWrapper.includes(s.text)) {
-      console.log(this.id + ' TSDefault selectDefault deselect')
+      // console.log(this.id + ' TSDefault selectDefault deselect')
       this.deselectDefault(s)
       return
     }
@@ -330,27 +330,27 @@ export default class TSDefault extends Vue {
     if (!this.nested && !Object.values(this.options.map((o:any) => o.id)).includes(s.id)) {
       // this.options.push(s)
       this.options = [...this.options, s]
-      console.log(this.id + ' TSDefault selectDefault new item to options', JSON.stringify(this.options))
+      // console.log(this.id + ' TSDefault selectDefault new item to options', JSON.stringify(this.options))
     }
     if (!this.multi) {
-      console.log(this.id + ' TSDefault selectDefault not multi')
+      // console.log(this.id + ' TSDefault selectDefault not multi')
       this.selectionWrapper.length = 0
     }
-    // console.log(this.options, ' includes ', s)
+    console.log(this.options, ' includes ', s)
     if (this.selectionWrapper.includes(this.$t('values.mixed')) && s.text !== this.$t('values.mixed')) {
       this.selectionWrapper = [s.text]
     } else {
       this.selectionWrapper.push(s.text)
     }
-    console.log(this.id + ' TSDefault selectDefault add to selectionWrapper', JSON.stringify(this.selectionWrapper))
+    // console.log(this.id + ' TSDefault selectDefault add to selectionWrapper', JSON.stringify(this.selectionWrapper))
     this.$emit('change', this.selectionWrapper)
   }
 
   deselectDefault (deselection: any, isObject = false) {
-    console.log(this.id + ' -----------------TSDefault deselectDefault ', this.editable, this.multi)
+    // console.log(this.id + ' -----------------TSDefault deselectDefault ', this.editable, this.multi)
     if (!this.editable && !this.multi) { return }
 
-    console.log(this.id + ' TSDefault deselectDefault ', deselection, this.selection)
+    // console.log(this.id + ' TSDefault deselectDefault ', deselection, this.selection)
     if (this.selectionWrapper.includes(deselection.text) || this.selectionWrapper.includes(deselection)) {
       if (isObject || this.selectionWrapper.includes(deselection.text)) {
         this.selectionWrapper.splice(this.selectionWrapper.indexOf(deselection.text), 1) // deleting
@@ -363,13 +363,13 @@ export default class TSDefault extends Vue {
   }
 
   clearSelected () {
-    console.log(this.id + ' TSDefault clearSelected')
+    // console.log(this.id + ' TSDefault clearSelected')
     this.selectionWrapper = []
     this.$emit('change', this.selectionWrapper)
   }
 
   resetSelected () {
-    console.log(this.id + ' TSDefault resetSelected')
+    // console.log(this.id + ' TSDefault resetSelected')
     // this.$fetch()
     this.$emit('change', this.selectionDefault, true)
   }

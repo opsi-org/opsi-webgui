@@ -100,12 +100,30 @@ export default class VDepots extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
-    depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
-    description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
-    type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
-    ip: { label: this.$t('table.fields.ip') as string, key: 'ip', visible: false, sortable: true },
-    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
+    selected: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+    },
+    depotId: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.id') as string, key: 'depotId', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('depotId') : true
+    },
+    description: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('description') : false
+    },
+    type: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.type') as string, key: 'type', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('type') : false
+    },
+    ip: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.ip') as string, key: 'ip', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ip') : false
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+    }
   }
 
   tableInfo: ITableInfo = { sortBy: this.tableData.sortBy || 'depotId', sortDesc: this.tableData.sortDesc || false, headerData: this.headerData, filterQuery: this.tableData.filterQuery }
@@ -153,28 +171,31 @@ export default class VDepots extends Vue {
 
   async fetch () {
     this.isLoading = true
-    if (this.tableData.sortBy === '') { this.tableData.sortBy = 'depotId' }
-    if (this.tableData.sortBy === 'selected') {
-      this.tableData.sortDesc = true
-      // this.tableData.sortBy = 'selected'
-      this.tableData.selected = JSON.stringify(this.selectionDepots)
+
+    const params = { ...this.tableData }
+
+    if (params.sortBy === '') { params.sortBy = 'depotId' }
+    if (params.sortBy === 'selected') {
+      params.sortDesc = true
+      // params.sortBy = 'selected'
+      params.selected = JSON.stringify(this.selectionDepots)
     }
-    const params = this.tableData
     await this.$axios.get('/api/opsidata/depots', { params })
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
-        this.totalpages = Math.ceil(this.totalItems / this.tableData.perPage)
+        this.totalpages = Math.ceil(this.totalItems / params.perPage)
         if (response.data === null) {
           this.items = []
         } else {
           this.items = response.data
         }
       }).catch((error) => {
-        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+        const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
         const ref = (this.$refs.depotsViewAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Depots', 'danger', detailedError)
         this.error = this.$t('message.error.defaulttext') as string
       })
+
     this.isLoading = false
   }
 

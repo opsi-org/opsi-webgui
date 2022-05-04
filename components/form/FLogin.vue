@@ -32,11 +32,11 @@
           </b-button>
         </b-input-group>
         <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light" block @click="doLogin">
-        <!-- Quickly change expired time curently only for testing purposes  -->
-        <!-- <b-input-group>
-          <InputIExpiredTimeChanger />
-        </b-input-group> -->
-        <!-- <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin"> -->
+          <!-- Quickly change expired time curently only for testing purposes  -->
+          <!-- <b-input-group>
+            <InputIExpiredTimeChanger />
+          </b-input-group> -->
+          <!-- <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin"> -->
           {{ $t('button.login') }}
         </b-button>
         <IconILoading v-if="isLoading" />
@@ -129,7 +129,7 @@ export default class FLogin extends Vue {
         this.logout()
         this.clearSession()
         this.isLoading = false
-        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+        const detailedError = (error.response.data.error) ? error.response.data.error : '' + ' ' + (error.response.data.message) ? error.response.data.message : ''
         const ref = (this.$refs.loginAlert as any)
         ref.alert(this.$t('message.error.login') as string, 'danger', detailedError)
       })

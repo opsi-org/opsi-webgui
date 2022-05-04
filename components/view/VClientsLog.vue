@@ -119,7 +119,7 @@ export default class VClientLog extends Vue {
         this.filteredLog = this.logResult
         // this.setSession()
       }).catch((error) => {
-        const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+        const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
         const ref = this.$refs.logAlert as any
         ref.alert(this.$t('message.error.fetch') as string + 'Log', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string

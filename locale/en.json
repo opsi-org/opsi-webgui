@@ -24,7 +24,7 @@
   "message.session.expiresInDays": "Session expires in {d} d {h} h, {min} min and {s} s.",
   "message.session.expiresInHours": "Session expires in {h}:{min}:{s}",
   "message.session.expiresInMinutes": "Session expires in {min}:{s}",
-  "expiresInMinutesDetails": "Session expires in {min} minutes und {s} seconds.",
+  "message.session.expiresInMinutesDetails": "Session expires in {min} minutes und {s} seconds.",
   "message.session.expiresInMinutesOnly": "Session expires in {min} minutes.",
   "description.version": "version:",
   "menu.open-sidemenu.sr-only":"Open sidemenu",

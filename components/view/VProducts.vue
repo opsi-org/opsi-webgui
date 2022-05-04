@@ -86,18 +86,54 @@ export default class VProducts extends Vue {
   netboot: string = ''
 
   headerData: ITableHeaders = {
-    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
-    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: true },
-    actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: true, sortable: true },
-    productId: { label: this.$t('table.fields.productId') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
-    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: true },
-    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
-    selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false, disabled: true },
-    selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false, sortable: true },
-    actionProgress: { label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', visible: false, sortable: true },
-    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
-    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
+    selected: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+    },
+    installationStatus: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus') : true
+    },
+    actionResult: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.actionResult') as string, key: 'actionResult', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult') : true
+    },
+    productId: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.productId') as string, key: 'productId', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('productId') : true
+    },
+    desc: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.description') as string, key: 'desc', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('desc') : false
+    },
+    name: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('name') : false
+    },
+    selectedDepots: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', disabled: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedDepots') : false
+    },
+    selectedClients: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', disabled: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedClients') : false
+    },
+    version: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : false
+    },
+    actionProgress: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionProgress') : false
+    },
+    actionRequest: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', sortable: true, _fixed: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionRequest') : false
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true, class: '',
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+    }
   }
 
   tableInfo: ITableInfo = {
@@ -118,7 +154,7 @@ export default class VProducts extends Vue {
       this.$router.push('/products/')
     }
     if (!this.tableInfo.sortBy) {
-      this.tableInfo.sortBy = 'productId'
+      this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
     }
     this.updateColumnVisibility()
   }
@@ -126,6 +162,9 @@ export default class VProducts extends Vue {
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
     this.updateColumnVisibility()
   }
+  // @Watch('tableInfo.sortBy', { deep: true }) selectionClientsChanged () {
+  //   this.updateColumnVisibility()
+  // }
 
   // @Watch('ismultiselect', { deep: true }) multiselectChanged () {
   //   Cookie.set('multiselect_products', JSON.stringify(this.ismultiselect), { expires: 365 })
@@ -172,30 +211,32 @@ export default class VProducts extends Vue {
         })
       thiss.fetchOptions.fetchClients2Depots = false
     }
-
+    // const lastSyncSortBy = thiss.tableData.sortBy
+    // const lastSyncSortDesc = thiss.tableData.sortDesc
+    // const tableDataCopy = { ...thiss.tableData }
     if (thiss.fetchOptions.fetchClients) {
-      thiss.tableData.selectedDepots = JSON.stringify(thiss.selectionDepots)
-      thiss.tableData.selectedClients = JSON.stringify(thiss.selectionClients)
-      if (thiss.tableData.sortBy === 'depotVersions') { thiss.tableData.sortBy = 'depot_version_diff' }
-      if (thiss.tableData.sortBy === 'clientVersions') { thiss.tableData.sortBy = 'client_version_outdated' }
-      if (thiss.tableData.sortBy === 'version') { thiss.tableData.sortBy = '[client_version_outdated, depot_version_diff ]' }
-      if (thiss.tableData.sortBy === 'desc') { thiss.tableData.sortBy = 'description' }
-      if (thiss.tableData.sortBy === '') { thiss.tableData.sortBy = 'productId' }
-      if (thiss.tableData.sortBy === 'selected') {
-        thiss.tableData.sortDesc = true
-        thiss.tableData.selected = JSON.stringify(thiss.selectionProducts)
+      const params = { ...thiss.tableData }
+      params.selectedDepots = JSON.stringify(thiss.selectionDepots)
+      params.selectedClients = JSON.stringify(thiss.selectionClients)
+      if (params.sortBy === 'depotVersions') { params.sortBy = 'depot_version_diff' }
+      if (params.sortBy === 'clientVersions') { params.sortBy = 'client_version_outdated' }
+      if (params.sortBy === 'version') { params.sortBy = '[client_version_outdated, depot_version_diff ]' }
+      if (params.sortBy === 'desc') { params.sortBy = 'description' }
+      if (params.sortBy === '') { params.sortBy = 'productId' }
+      if (params.sortBy === 'selected') {
+        params.sortDesc = true
+        params.selected = JSON.stringify(thiss.selectionProducts)
       }
-      const params = thiss.tableData
       await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
           thiss.$emit('update:total' + thiss.id, thiss.totalItems)
-          thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
+          thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
           thiss.items = response.data || []
         }).catch((error) => {
           thiss.error = thiss.$t('message.error.defaulttext') as string
           thiss.error += (error as IObjectString2Any).message
-          const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
+          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
           const ref = (this.$refs.productsViewAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
         })
@@ -216,6 +257,8 @@ export default class VProducts extends Vue {
       //   // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
       // }
     }
+    // thiss.tableData.sortBy = lastSyncSortBy
+    // thiss.tableData.sortDesc = lastSyncSortDesc
     thiss.isLoading = false
   }
 }
