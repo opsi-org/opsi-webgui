@@ -20,6 +20,7 @@
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+import { IObjectString2String } from '../../.utils/types/tgeneral.ts'
 
 const selections = namespace('selections')
 
