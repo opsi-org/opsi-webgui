@@ -139,15 +139,41 @@ export default class VClients extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
-    clientId: { label: this.$t('table.fields.id') as string, key: 'clientId', visible: true, _fixed: true, sortable: true },
-    description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
-    ipAddress: { label: this.$t('table.fields.ip') as string, key: 'ipAddress', visible: false, sortable: true },
-    macAddress: { label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', visible: false, sortable: true },
-    _majorStats: { label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false },
-    version_outdated: { label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', visible: true, sortable: true },
-    actionResult_failed: { label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', visible: true, sortable: true },
-    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
+    selected: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+    },
+    clientId: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.id') as string, key: 'clientId', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('clientId') : true
+    },
+    description: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('description') : false
+    },
+    ipAddress: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.ip') as string, key: 'ipAddress', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ipAddress') : false
+    },
+    macAddress: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('macAddress') : false
+    },
+    _majorStats: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false
+    },
+    version_outdated: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version_outdated') : true
+    },
+    actionResult_failed: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult_failed') : true
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+    }
   }
 
   tableInfo: ITableInfo = {
@@ -234,9 +260,7 @@ export default class VClients extends Vue {
   async deleteOpsiClient (ident:string) {
     const id = ident
     await this.$axios.$delete('/api/opsidata/clients/' + id)
-      .then((response) => {
-        // eslint-disable-next-line no-console
-        console.error(response)
+      .then(() => {
         const ref = (this.$refs.clientsViewAlert as any)
         ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
         // makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')

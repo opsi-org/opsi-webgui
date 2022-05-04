@@ -1,3 +1,4 @@
+/* eslint-disable object-property-newline */
 <template>
   <div data-testid="VProducts">
     <AlertAAlert ref="productsViewAlert" />
@@ -88,18 +89,54 @@ export default class VProducts extends Vue {
   netboot: string = ''
 
   headerData: ITableHeaders = {
-    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
-    installationStatus: { label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', visible: true, sortable: true },
-    actionResult: { label: this.$t('table.fields.actionResult') as string, key: 'actionResult', visible: true, sortable: true },
-    productId: { label: this.$t('table.fields.productId') as string, key: 'productId', visible: true, _fixed: true, sortable: true },
-    desc: { label: this.$t('table.fields.description') as string, key: 'desc', visible: false, sortable: true },
-    name: { label: this.$t('table.fields.name') as string, key: 'name', visible: false, sortable: true },
-    selectedDepots: { label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', visible: false, disabled: true },
-    selectedClients: { label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', visible: false, disabled: true },
-    version: { label: this.$t('table.fields.version') as string, key: 'version', visible: false, sortable: true },
-    actionProgress: { label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', visible: false, sortable: true },
-    actionRequest: { label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', visible: false, sortable: true, _fixed: false },
-    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true, class: '' }
+    selected: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+    },
+    installationStatus: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus') : true
+    },
+    actionResult: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.actionResult') as string, key: 'actionResult', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult') : true
+    },
+    productId: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.productId') as string, key: 'productId', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('productId') : true
+    },
+    desc: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.description') as string, key: 'desc', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('desc') : false
+    },
+    name: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('name') : false
+    },
+    selectedDepots: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', disabled: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedDepots') : false
+    },
+    selectedClients: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', disabled: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedClients') : false
+    },
+    version: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : false
+    },
+    actionProgress: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionProgress') : false
+    },
+    actionRequest: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', sortable: true, _fixed: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionRequest') : false
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true, class: '',
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+    }
   }
 
   tableInfo: ITableInfo = {

@@ -100,12 +100,30 @@ export default class VDepots extends Vue {
   }
 
   headerData: ITableHeaders = {
-    selected: { label: this.$t('table.fields.selection') as string, key: 'selected', visible: true, _fixed: true, sortable: true },
-    depotId: { label: this.$t('table.fields.id') as string, key: 'depotId', visible: true, _fixed: true, sortable: true },
-    description: { label: this.$t('table.fields.description') as string, key: 'description', visible: false, sortable: true },
-    type: { label: this.$t('table.fields.type') as string, key: 'type', visible: false, sortable: true },
-    ip: { label: this.$t('table.fields.ip') as string, key: 'ip', visible: false, sortable: true },
-    rowactions: { key: 'rowactions', label: this.$t('table.fields.rowactions') as string, visible: true, _fixed: true }
+    selected: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+    },
+    depotId: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.id') as string, key: 'depotId', _fixed: true, sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('depotId') : true
+    },
+    description: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('description') : false
+    },
+    type: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.type') as string, key: 'type', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('type') : false
+    },
+    ip: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.ip') as string, key: 'ip', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ip') : false
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+    }
   }
 
   tableInfo: ITableInfo = { sortBy: this.tableData.sortBy || 'depotId', sortDesc: this.tableData.sortDesc || false, headerData: this.headerData, filterQuery: this.tableData.filterQuery }

@@ -69,6 +69,7 @@ export default class DDTableColumnVisibility extends BDropdown {
   @Prop({ default: undefined }) multi!: boolean|undefined
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   $mq:any
+  viewId = ((this.tableId === 'Localboot') || (this.tableId === 'Netboot')) ? 'products' : this.tableId
 
   @settings.Getter public twoColumnLayoutCollapsed!: IObjectString2Boolean
 
@@ -76,12 +77,12 @@ export default class DDTableColumnVisibility extends BDropdown {
   columnVisibilityStates: IObjectString2Boolean = {}
 
   get multiCondition () {
-    return this.multi || (this.$mq === 'mobile' || this.twoColumnLayoutCollapsed[this.tableId])
+    return this.multi || (this.$mq === 'mobile' || this.twoColumnLayoutCollapsed[this.viewId])
   }
 
   created () {
-    if (Cookie.get('column_' + this.tableId)) {
-      this.columnVisibilityList = JSON.parse(Cookie.get('column_' + this.tableId) as unknown as any)
+    if (Cookie.get('column_' + this.viewId)) {
+      this.columnVisibilityList = JSON.parse(Cookie.get('column_' + this.viewId) as unknown as any)
     } else {
       Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
         if (h._majorKey) {
@@ -116,10 +117,10 @@ export default class DDTableColumnVisibility extends BDropdown {
   }
 
   @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
-    if (this.multiCondition && this.twoColumnLayoutCollapsed[this.tableId]) {
+    if (this.multiCondition && this.twoColumnLayoutCollapsed[this.viewId]) {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
-    } else if (this.multiCondition && !this.twoColumnLayoutCollapsed[this.tableId]) {
+    } else if (this.multiCondition && !this.twoColumnLayoutCollapsed[this.viewId]) {
       const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
       this.setColumnVisibilityModel(firstVisible)
     }
@@ -135,7 +136,7 @@ export default class DDTableColumnVisibility extends BDropdown {
     } else {
       this.columnVisibilityList.push(key)
     }
-    Cookie.set('column_' + this.tableId, JSON.stringify(this.columnVisibilityList), { expires: 365 })
+    Cookie.set('column_' + this.viewId, JSON.stringify(this.columnVisibilityList), { expires: 365 })
   }
 
   setColumnVisibilityModel (tableKey: string|undefined) {
