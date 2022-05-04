@@ -154,7 +154,7 @@ export default class TProductPropertyValue extends Vue {
       return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
     }
     const depotValues = Object.values(this.rowItem.depots) || []
-    console.log(JSON.stringify(depotValues), depotValues.length, depotValues.every(v => v === ''))
+    console.log(JSON.stringify(depotValues), depotValues.length, depotValues.every(v => v === depotValues[0]))
     if ((depotValues.length > 0) && depotValues.every(v => arrayEqual(v, depotValues[0]))) {
       return depotValues[0]
     } else if (depotValues.length > 0 && depotValues.some(v => !arrayEqual(v, depotValues[0]))) {
