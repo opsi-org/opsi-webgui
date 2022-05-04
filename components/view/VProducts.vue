@@ -197,7 +197,6 @@ export default class VProducts extends Vue {
         }).catch((error) => {
           thiss.error = thiss.$t('message.error.defaulttext') as string
           thiss.error += (error as IObjectString2Any).message
-          console.error(error.response.data.message, error.response.data.details)
           const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
           const ref = (this.$refs.productsViewAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)

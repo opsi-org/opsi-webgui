@@ -148,7 +148,6 @@ export default class VClientsAddNew extends Vue {
       .then((response) => {
         this.clientIds = response.sort()
       }).catch((error) => {
-        console.error(error.response.data.message, error.response.data.details)
         const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
@@ -177,7 +176,6 @@ export default class VClientsAddNew extends Vue {
         // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
-        console.error(error.response.data.message, error.response.data.details)
         const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
