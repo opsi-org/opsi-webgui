@@ -2,7 +2,7 @@
   <div class="BTableFooter">
     <b-navbar
       toggleable="sm"
-      data-testid="BarBTableFooter"
+      data-testid="BTableFooter"
       variant="outline-primary"
       :class="{footer: $mq === 'desktop', footer_wrap: $mq === 'mobile'}"
     >
