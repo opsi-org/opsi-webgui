@@ -22,6 +22,16 @@ fi
 
 # echo "---> change filename '${file}' to '${file_prepattern_new}<filenameBase>${file_ext_new}'"
 
+if [[ ${file} == "all" ]]; then
+    echo ""
+    echo "run: npm-uib run $npm_command "
+    npm run $npm_command
+
+    if [[ ${npm_command} == "test:all:components*" ]]; then
+        npm run test:all:delete-empty-results
+    fi;
+    exit 0
+fi
 if [[ ${file} == "all-changed" ]]; then
     echo "- try to get changed filenames "
     cd /workspace/opsiweb/uib-components
