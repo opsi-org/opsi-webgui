@@ -2,21 +2,28 @@
   <div>
     <div
       :id="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
+      class="TCProductVersionCell_hover"
     >
+      {{ (row.item.depot_version_diff)? '' : row.item.depotVersions[0] }}
       <IconIDetails
         v-if="row.item.depot_version_diff"
-        content="unequal"
+        class="details depot-unequal"
+        content="depot-unequal"
         :variant="(row.item.depot_version_diff||false)?'warning':''"
         @click="$emit('details', row, tooltiptext)"
       />
-      {{ (row.item.depot_version_diff)? '' : row.item.depotVersions[0] }}
       <IconIDetails
         v-if="(row.item.selectedDepots.length != selectionDepots.length)"
         :variant="(row.item.selectedDepots.length != selectionDepots.length)?'warning':''"
+        class="details depot-wo-prod"
+        content="depot-wo-prod"
       />
+
       <IconIDetails
         v-if="row.item.client_version_outdated||false"
         :variant="(row.item.client_version_outdated||false)?'danger':''"
+        class="details client-outdated"
+        content="client-outdated"
         @click="$emit('details', row, tooltiptext)"
       />
     </div>
@@ -73,5 +80,19 @@ export default class TableCellTCProductVersionCell extends Vue {
 <style scoped>
 .version_outdated {
   color:red
+}
+.TCProductVersionCell_hover {
+  /* border: 1px solid green; */
+  width: auto;
+  height: auto;
+  /* display: block; */
+  display: flow-root;
+}
+.TCProductVersionCell_hover > .details{
+  display: flex;
+  float: left;
+}
+.TCProductVersionCell_hover > .details.client-outdated{
+  float: right;
 }
 </style>
