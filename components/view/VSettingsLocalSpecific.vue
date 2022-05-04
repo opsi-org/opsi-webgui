@@ -18,6 +18,14 @@
         <ButtonBTNExpertMode />
       </b-col>
     </b-row>
+    <b-row class="mb-4">
+      <b-col class="text-sm-right" cols="2">
+        Quick save
+      </b-col>
+      <b-col col="*">
+        <CheckboxCBQuickSave />
+      </b-col>
+    </b-row>
   </div>
 </template>
 

@@ -108,7 +108,7 @@ export default class TProductProperties extends Vue {
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
-  @settings.Getter public expert!: boolean
+  @settings.Getter public quicksave!: boolean
 
   // errorText: string = ''
   result:Object = {}
@@ -155,8 +155,8 @@ export default class TProductProperties extends Vue {
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    console.log('expert? ', this.expert)
-    if (this.expert) {
+    console.log('quicksave? ', this.quicksave)
+    if (!this.quicksave) {
       if (this.selectionClients.length > 0) {
         this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
       } else {
