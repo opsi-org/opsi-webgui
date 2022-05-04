@@ -5,7 +5,10 @@ export default {
 
 const DefaultVisibleTemplateHead = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<IconIOpsiLogo style="background-color: black"/>
+  template: `<div data-testid="IconIOpsiLogo-all">
+    <IconIOpsiLogo style="background-color: black" :light="true"/>
+    <IconIOpsiLogo style="background-color: black" :light="false"/>
+  </div>
   `
 })
 export const IOpsiLogo = DefaultVisibleTemplateHead.bind({})

@@ -5,6 +5,7 @@
     alt="Click here to reload app"
     :class="{opsilogo_light: light}"
   >
+  <!-- TODO: translate alt text -->
 </template>
 
 <script lang="ts">
