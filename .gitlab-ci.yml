@@ -278,7 +278,7 @@ test:test-components:changes:
     - npm-uib i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
-    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 120
     # run tests
@@ -313,7 +313,7 @@ test:test-components:
     - npm-uib i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
-    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 60
     - npm-uib run test:all:components || exit_code=$?
@@ -347,7 +347,7 @@ test:test-components:all-variants:
     - npm-uib i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
-    - PORT=8888 nohup npm run dev > .dev.log & # npm-cause package.json already created through npm-uib command in this task
+    - PORT=3003 nohup npm run dev > .dev.log & # npm-cause package.json already created through npm-uib command in this task
     - PORT=3003 nohup npm run story > .storybook.log & # npm-cause package.json already created through npm-uib command in this task
     - sleep 60
     - npm-uib run test:all:components-devices || exit_code=$?
