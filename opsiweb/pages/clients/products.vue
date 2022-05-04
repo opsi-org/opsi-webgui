@@ -1,5 +1,5 @@
 <template>
-  <ViewVProducts :sortby="sortby" :child="true" />
+  <ViewVProducts id="products" :sortby="sortby" :child="true" />
 </template>
 
 <script lang="ts">
