@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="DivDCounttimer" class="text-center">
+  <div data-testid="DivDCounttimer" class="text-center bg-primary">
     <small> {{ countdowntimer }} </small>
   </div>
 </template>

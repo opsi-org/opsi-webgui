@@ -8,8 +8,8 @@
       type="dark"
     >
       <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button :pressed.sync="attributes.visible">
-          <span class="sr-only">{{$t('menu.open-sidemenu.sr-only')}}</span>
+        <b-button variant="primary" :pressed.sync="attributes.visible">
+          <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
           <b-icon :icon="iconnames.menuOpen" />
         </b-button>
       </b-navbar-nav>
@@ -22,8 +22,8 @@
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
 
       <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button v-b-toggle.nav-collapse>
-          <span class="sr-only">{{$t('menu.open-topmenu.sr-only')}}</span>
+        <b-button v-b-toggle.nav-collapse variant="primary">
+          <span class="sr-only">{{ $t('menu.open-topmenu.sr-only') }}</span>
           <b-icon :icon="iconnames.menu" font-scale="1.1" />
         </b-button>
       </b-navbar-nav>
@@ -68,7 +68,7 @@ export default class BTop extends Vue {
 
 <style>
 .topbar{
-  background: var(--secondary) !important;
+  background: var(--primary) !important;
   position: fixed;
   height: var(--height-navbar) !important;
   margin-bottom: 0px !important;
@@ -102,8 +102,8 @@ export default class BTop extends Vue {
 .mobile #nav-collapse {
   max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
   overflow: auto;
-  background-color: var(--secondary) !important;
-  border-bottom: 3px solid var(--secondary) !important;
+  background-color: var(--primary) !important;
+  border-bottom: 3px solid var(--primary) !important;
 }
 .mobile #nav-collapse,
 .mobile #nav-collapse .navbar-nav {

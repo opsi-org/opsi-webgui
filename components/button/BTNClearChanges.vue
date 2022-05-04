@@ -1,5 +1,5 @@
 <template>
-  <b-button data-testid="BTNClearChanges" :title="$t('button.resetAll')" @click="deleteAll()">
+  <b-button data-testid="BTNClearChanges" variant="primary" :title="$t('button.resetAll')" @click="deleteAll()">
     <b-icon :icon="iconnames.reset" />
     {{ $t('button.resetAll') }}
   </b-button>

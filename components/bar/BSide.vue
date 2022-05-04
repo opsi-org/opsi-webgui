@@ -5,7 +5,7 @@
     data-testid="BarBSide"
     aria-label="sideMenu"
     no-header
-    bg-variant="secondary"
+    bg-variant="primary"
     text-variant="light"
     :class="{sidemenu_small: !attributes.expanded}"
     :backdrop="$mq == 'mobile'"
@@ -17,6 +17,7 @@
       <DivDCountdowntimer :small="!attributes.expanded" />
       <b-button
         v-if="$mq === 'desktop'"
+        variant="primary"
         v-b-tooltip.hover
         data-testid="BarBSideBtnExpand"
         :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
@@ -82,7 +83,7 @@ export default class BSide extends Vue {
 }
 #sidemenu .b-sidebar-footer {
   border-top: 1px solid var(--light) !important;
-  background-color: var(--secondary);
+  background-color: var(--primary);
   z-index: 100;
   height: auto;
   display: inline;

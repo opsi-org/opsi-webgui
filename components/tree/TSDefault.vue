@@ -408,7 +408,7 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
   /* color: var(--light); */
   color: white;
-  background-color: var(--secondary);
+  background-color: var(--primary);
 }
 
 /* .TSDefault-wrapper .hasSelection {
@@ -420,7 +420,7 @@ export default class TSDefault extends Vue {
 } */
 
 .TSDefault-wrapper .vue-treeselect__menu {
-  border: 1px solid var(--secondary) !important;
+  border: 1px solid var(--primary) !important;
   /* border-radius: 5px; */
 }
 
@@ -539,7 +539,7 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item.vue-treeselect__multi-value-item,
 .TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item.vue-treeselect__multi-value-item-new {
-  background: var(--secondary);
+  background: var(--primary);
   color: var(--light);
   min-height: 20px;
 }
