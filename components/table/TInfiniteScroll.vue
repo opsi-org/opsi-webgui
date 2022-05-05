@@ -10,13 +10,8 @@
       :stacked="$mq=='mobile'"
       :primary-key="id"
       class="TInfiniteScroll"
-      :class="{smalltable: items.length <10 && items.length > 0,
-               infinitescrolltable: items.length > 10,
-               tableproducts: rowident === 'productId',
-               noscroll: totalItems < tableData.perPage,
-               firstpage: isFirstPage,
-               lastpage: isLastPage
-      }"
+      :class="{ firstpage: isFirstPage,
+                lastpage: isLastPage }"
       sticky-header
       show-empty
       responsive
@@ -235,8 +230,6 @@ export default class TInfiniteScroll extends Vue {
 
 <style>
 .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
-  /* color: #212529;
-  background-color: #fff; */
   color: inherit;
   background-color: inherit;
 }
@@ -284,28 +277,11 @@ export default class TInfiniteScroll extends Vue {
   height: 200px;
   margin-top: 200px;
   color: var(--color, #6c757d);
-  /* color: #6c757d; */
   font-size: small;
 }
 .table-responsive {
   max-height: 66vh ;
 }
-/*
-.infinitescrolltable .b-table-stacked {
-  max-height: 66vh;
-}
-.infinitescrolltable.b-table-sticky-header {
-  max-height: 66vh;
-}
-.tableproducts.b-table-sticky-header {
-  max-height: 60vh;
-}
-.smalltable.b-table-sticky-header {
-  max-height: 16vh;
-}
-.noscroll.b-table-sticky-header {
-  max-height: 70vh;
-} */
 .b-table-sticky-header thead > tr:last-child{
   background-color: var(--background, white);
 }
