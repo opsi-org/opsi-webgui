@@ -86,18 +86,17 @@ export default class BVTable extends Vue {
   display: none;
 }
 
-.bvtable:not(.small) .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
+/* .bvtable:not(.small) .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   width: 35%;
   font-weight: normal;
-}
-.bvtable_small.table-responsive {
+} */
+.small.table-responsive {
   max-height: 200px;
   overflow-y: auto;
 }
 
-.TDefault {
-  min-height: 200px;
-  /* max-height: 610px; */
+.productproperties.table-responsive {
+  min-height: 100vh;
   overflow-y: auto;
 }
 </style>
