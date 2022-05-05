@@ -6061,7 +6061,8 @@ button.bg-dark:hover {
   position: static !important;
 }
 .position-relative {
-  position: relative !important;
+  /* position: relative !important; */
+  position: sticky !important;
 }
 .position-absolute {
   position: absolute !important;
