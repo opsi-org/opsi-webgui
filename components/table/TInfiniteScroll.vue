@@ -1,8 +1,6 @@
 <template>
   <div data-testid="TInfiniteScroll" class="TInfiniteScrollWrapper">
-    <p v-if="error">
-      {{ error }}
-    </p>
+    <p v-if="error" />
     <b-table
       v-else
       :id="id"
