@@ -57,6 +57,17 @@
         />
       </template>
     </TableTDefault>
+    <div class="d-flex justify-content-end">
+      <b-button
+        v-if="!isLoading"
+        v-b-tooltip.hover
+        variant="outline-primary border-0"
+        :title="$t('button.refresh', {id: id})"
+        @click="$fetch"
+      >
+        <b-icon :icon="iconnames.refresh" />
+      </b-button>
+    </div>
   </div>
 </template>
 

@@ -1,8 +1,6 @@
 <template>
   <div data-testid="TDefault" class="TDefault" :class="{ mobile: $mq=='mobile' }">
-    <p v-if="error">
-      {{ error }}
-    </p>
+    <p v-if="error" />
     <b-table
       v-else
       :class="type"
