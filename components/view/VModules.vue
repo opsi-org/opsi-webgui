@@ -32,7 +32,7 @@ export default class VModules extends Vue {
 
   async fetch () {
     this.isLoading = true
-    await this.$axios.$get('/api/opsidata/modulesConten')
+    await this.$axios.$get('/api/opsidata/modulesContent')
       .then((response) => {
         this.modules = response.result
       }).catch((error) => {
