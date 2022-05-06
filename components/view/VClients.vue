@@ -266,7 +266,7 @@ export default class VClients extends Vue {
         // makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(id)
       }).catch((error) => {
-        const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
+        const detailedError = error.response ? ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '') : ''
         const ref = (this.$refs.clientsViewAlert as any)
         ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
         // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
