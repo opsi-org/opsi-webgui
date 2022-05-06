@@ -6,7 +6,7 @@
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype class="ml-1" :logtype.sync="logtype" />
-        <SpinbuttonSBLoglevel class="ml-1" :loglevel.sync="loglevel" />
+        <SpinbuttonSBLoglevel v-if="logResult.length > 1" class="ml-1" :loglevel.sync="loglevel" />
         <b-form-input
           v-if="logResult.length > 1"
           id="filter"
@@ -19,9 +19,7 @@
     </BarBPageHeader>
     <label for="filter" class="sr-only"> Filter Logs </label>
     <IconILoading v-if="isLoading" />
-    <p v-else-if="errorText">
-      {{ errorText }}
-    </p>
+    <p v-else-if="errorText" />
 
     <DivDScrollResult v-else>
       <div v-if="filteredLog == ''" class="container-fluid">
@@ -53,16 +51,29 @@
         </span>
       </div>
     </DivDScrollResult>
+    <div class="d-flex justify-content-end">
+      <b-button
+        v-if="!isLoading"
+        v-b-tooltip.hover
+        variant="outline-primary border-0"
+        :title="$t('button.refresh', {id: id})"
+        @click="getLog(id, logtype)"
+      >
+        <b-icon :icon="iconnames.refresh" />
+      </b-button>
+    </div>
+  </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 interface LogRequest {
     selectedClient: string,
     selectedLogType: string
 }
-@Component
+@Component({ mixins: [Constants] })
 export default class VClientLog extends Vue {
   $axios: any
   // $nuxt: any
