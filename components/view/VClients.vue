@@ -79,6 +79,7 @@
           </template>
           <template #row-details="row">
             <b-card>
+              <AlertAAlert ref="deleteClientAlert" />
               {{ $t('message.confirm.deleteClient', { client: row.item.ident }) }}
               <b-button class="float-right" variant="danger" size="sm" @click="deleteOpsiClient(row.item.ident)">
                 <b-icon :icon="iconnames.delete" /> {{ $t('label.delete') }}
@@ -103,7 +104,6 @@
 <script lang="ts">
 import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
-// import { makeToast } from '../../.utils/utils/scomponents'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
@@ -259,17 +259,14 @@ export default class VClients extends Vue {
 
   async deleteOpsiClient (ident:string) {
     const id = ident
+    const ref = (this.$refs.deleteClientAlert as any)
     await this.$axios.$delete('/api/opsidata/clients/' + id)
       .then(() => {
-        const ref = (this.$refs.clientsViewAlert as any)
         ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
-        // makeToast(this, id + this.$t('message.deleteMessage'), this.$t('message.success') as string, 'success')
         this.delFromSelectionClients(id)
       }).catch((error) => {
         const detailedError = error.response ? ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '') : ''
-        const ref = (this.$refs.clientsViewAlert as any)
         ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
-        // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
   }
 }
