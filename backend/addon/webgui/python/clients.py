@@ -30,7 +30,15 @@ from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import table
 
-from .utils import mysql, parse_client_list, parse_depot_list, parse_selected_list
+from .utils import (
+	mysql,
+	parse_client_list,
+	parse_depot_list,
+	parse_selected_list,
+	read_only_check,
+	read_only_user,
+	user_register,
+)
 
 client_router = APIRouter()
 
@@ -219,6 +227,7 @@ def depots_of_clients(
 
 @client_router.post("/api/opsidata/clients")
 @rest_api
+@read_only_check
 def create_client(request: Request, client: Client):  # pylint: disable=too-many-locals
 	"""
 	Create OPSI-Client.
@@ -325,7 +334,8 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 
 @client_router.delete("/api/opsidata/clients/{clientid}")
 @rest_api
-def delete_client(clientid: str):
+@read_only_check
+def delete_client(request: Request, clientid: str):
 	"""
 	Delete Client with ID.
 	"""

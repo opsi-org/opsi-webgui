@@ -7,14 +7,20 @@
 """
 webgui utils
 """
-from typing import Optional, List
+from functools import wraps
+from typing import List, Optional
 
-from sqlalchemy import select, text
-from fastapi import Query
-
-from opsiconfd.application.utils import get_configserver_id, parse_list
+from fastapi import Query, status
+from opsiconfd.application.utils import (
+	bool_product_property,
+	get_configserver_id,
+	parse_list,
+)
 from opsiconfd.backend import get_mysql as backend_get_mysql
 from opsiconfd.logging import logger
+from opsiconfd.rest import OpsiApiException
+from sqlalchemy import select, text
+
 
 def get_mysql():
 	try:
@@ -114,3 +120,59 @@ def merge_dicts(dict_a: dict, dict_b: dict, path=None) -> dict:
 		else:
 			dict_a[key] = dict_b[key]
 	return dict_a
+
+
+def user_register() -> bool:
+	with mysql.session() as session:
+
+		where = text("cv.configId='user.{}.register'")
+
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+
+def read_only_user(user):
+
+	with mysql.session() as session:
+		# user = "{" + user + "}"
+		where = text("cv.configId='user.{" + user + "}.privilege.host.all.registered_readonly'")
+
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+
+def read_only_check(func):
+	@wraps(func)
+	def check_user(*args, **kwargs):
+		if user_register():
+			print(kwargs.get("request"))
+			username = kwargs.get("request").scope.get("session").user_store.username
+			if read_only_user(username):
+				logger.error(f"User {username} is a read only user.")
+				raise OpsiApiException(
+					message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN
+				)
+		return func(*args, **kwargs)
+	return check_user

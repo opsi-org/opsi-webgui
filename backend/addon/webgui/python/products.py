@@ -12,7 +12,7 @@ import json
 from functools import lru_cache
 from typing import Dict, List, Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from opsicommon.objects import ProductOnClient
 from opsiconfd.application.utils import (
@@ -41,6 +41,7 @@ from .utils import (
 	parse_client_list,
 	parse_depot_list,
 	parse_selected_list,
+	read_only_check,
 )
 
 product_router = APIRouter()
@@ -417,7 +418,8 @@ class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
 
 @product_router.post("/api/opsidata/clients/products")
 @rest_api
-def save_poduct_on_client(data: PocItem):  # pylint: disable=too-many-locals, too-many-statements, too-many-branches
+@read_only_check
+def save_poduct_on_client(request: Request, data: PocItem):  # pylint: disable=too-many-locals, too-many-statements, too-many-branches
 	"""
 	Save a Product On Client object.
 	"""
@@ -897,7 +899,9 @@ class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
 
 @product_router.post("/api/opsidata/products/{productId}/properties")
 @rest_api
+@read_only_check
 def save_poduct_property(
+	request: Request,
 	productId: str, data: ProductProperty
 ):  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches
 	"""
