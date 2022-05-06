@@ -9,11 +9,10 @@
     :aria-label="$props.variant"
   >
     <slot />
-    {{ alertMessage }}
-    <b-button v-if="moreDetails" class="btn-showDetails" variant="link" :pressed.sync="showMore">
-      {{ $t('label.learnmore') }}
-    </b-button>
-    <p v-if="showMore">
+    <p class="text-justify font-weight-bold">
+      {{ alertMessage }}
+    </p>
+    <p v-if="moreDetails" class="text-justify mh-25">
       {{ moreDetails }}
     </p>
   </b-alert>
@@ -28,7 +27,6 @@ export default class AAlert extends BAlert {
   showAlert: boolean = false
   alertMessage: string = ''
   alertVariant : string = ''
-  showMore:boolean = false
   moreDetails: string = ''
 
   alert (message, variant = '', details = '') {
