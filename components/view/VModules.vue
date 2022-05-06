@@ -1,6 +1,7 @@
 <template>
   <div data-testid="VModules">
-    <b-row class="mb-4">
+    <AlertAAlert ref="modulesAlert" />
+    <b-row v-if="!errorText" class="mb-4">
       <b-col class="text-sm-right" cols="2">
         {{ $t('form.modules.available') }}
       </b-col>
@@ -31,12 +32,13 @@ export default class VModules extends Vue {
 
   async fetch () {
     this.isLoading = true
-    await this.$axios.$get('/api/opsidata/modulesContent')
+    await this.$axios.$get('/api/opsidata/modulesConten')
       .then((response) => {
         this.modules = response.result
       }).catch((error) => {
-        // eslint-disable-next-line no-console
-        console.error(error)
+        const detailedError = ((error.response.data.message) ? error.response.data.message : '') + ' ' + ((error.response.data.details) ? error.response.data.details : '')
+        const ref = (this.$refs.modulesAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'Modules', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false
