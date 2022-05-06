@@ -13,7 +13,7 @@
           <b-icon :icon="iconnames.menuOpen" />
         </b-button>
       </b-navbar-nav>
-      <b-navbar-brand class="d-inline-flex" href="/clients/">
+      <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
         <IconIOpsiLogo :light="true" height="25" />
         <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
