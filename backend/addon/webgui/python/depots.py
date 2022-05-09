@@ -9,21 +9,15 @@ webgui depot methods
 """
 
 from typing import List, Optional
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import select, text, and_, or_
 
 from fastapi import APIRouter, Depends
-
-from opsiconfd.backend import get_mysql
-from opsiconfd.rest import order_by, pagination, common_query_parameters, rest_api
 from opsiconfd.application.utils import get_configserver_id
+from opsiconfd.backend import get_mysql
+from opsiconfd.rest import common_query_parameters, order_by, pagination, rest_api
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import and_, or_, select, text
 
-from .utils import (
-	parse_depot_list,
-	parse_selected_list
-)
-
-from .utils import mysql
+from .utils import filter_depot_access, mysql, parse_depot_list, parse_selected_list
 
 depot_router = APIRouter()
 
@@ -122,9 +116,10 @@ def clients_on_depots(selectedDepots: List[str] = Depends(parse_depot_list)): # 
 
 	with mysql.session() as session:
 		where = text("h.type='OpsiClient'")
+		where_depots = None
 		for idx, depot in enumerate(params["depots"]):
 			if idx > 0:
-				where_depots = or_(where_depots,text(f"cs.values LIKE '%{depot}%'"))#
+				where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))
 			else:
 				where_depots = text(f"cs.values LIKE '%{depot}%'")
 		if get_configserver_id() in params["depots"]:

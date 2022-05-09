@@ -8,6 +8,7 @@
 webgui utils
 """
 from functools import wraps
+from operator import and_
 from typing import List, Optional
 
 from fastapi import Query, status
@@ -28,7 +29,9 @@ def get_mysql():
 	except RuntimeError as err:
 		return None
 
+
 mysql = get_mysql()
+
 
 def get_depot_of_client(client):
 	params = {}
@@ -143,15 +146,11 @@ def user_register() -> bool:
 
 
 def read_only_user(user):
-
 	with mysql.session() as session:
-		# user = "{" + user + "}"
 		where = text("cv.configId='user.{" + user + "}.privilege.host.all.registered_readonly'")
-
 		query = select(text("cv.value, cv.isDefault"))\
 			.select_from(text("CONFIG_VALUE AS cv"))\
 			.where(where)
-
 		result = session.execute(query)
 		result = result.fetchall()
 
@@ -163,16 +162,53 @@ def read_only_user(user):
 	return False
 
 
+def get_allowd_depots(user):
+	with mysql.session() as session:
+		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.depots'")
+		where = and_(where, text("cv.isDefault=1"))
+		query = select(text("cv.value"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+		result = session.execute(query)
+		result = result.fetchall()
+		depots = []
+		for row in result:
+			depots.append(dict(row).get("value"))
+	return depots
+
+
 def read_only_check(func):
 	@wraps(func)
 	def check_user(*args, **kwargs):
 		if user_register():
-			print(kwargs.get("request"))
 			username = kwargs.get("request").scope.get("session").user_store.username
 			if read_only_user(username):
-				logger.error(f"User {username} is a read only user.")
+				logger.error("User %s is a read only user.", username)
 				raise OpsiApiException(
 					message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN
 				)
+		return func(*args, **kwargs)
+	return check_user
+
+
+def filter_depot_access(func):
+	@wraps(func)
+	def check_user(*args, **kwargs):
+		logger.devel("%s - check user", func)
+		if user_register():
+			username = kwargs.get("request").scope.get("session").user_store.username
+			logger.devel(username)
+			allowed_depots = get_allowd_depots(username)
+			selected_depots = kwargs.get("selectedDepots")
+			for depot in selected_depots:
+				logger.devel("depot %s", depot)
+				logger.devel(depot not in selected_depots)
+				if depot not in allowed_depots:
+					selected_depots.remove(depot)
+			if selected_depots:
+				kwargs["selectedDepots"] = selected_depots
+			else:
+				kwargs["selectedDepots"] = None
+			logger.devel(kwargs)
 		return func(*args, **kwargs)
 	return check_user

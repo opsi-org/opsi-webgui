@@ -31,6 +31,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import table
 
 from .utils import (
+	filter_depot_access,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
@@ -71,6 +72,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 
 @client_router.get("/api/opsidata/clients", response_model=List[ClientList])
 @rest_api
+@filter_depot_access
 def clients(
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
@@ -80,6 +82,8 @@ def clients(
 	"""
 	Get Clients on selected depots with infos on the client.
 	"""
+	if selectedDepots is None:
+		return {"data": [], "total": 0}
 
 	with mysql.session() as session:
 		where = text("h.type = 'OpsiClient'")
