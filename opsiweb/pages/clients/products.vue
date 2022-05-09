@@ -1,15 +1,11 @@
 <template>
-  <div>
-    <!-- <BarBPageHeader :title="'Products -'" :subtitle="id" closeroute="/clients/" /> -->
-    <ViewVProducts :sortby="sortby" :child="true" />
-  </div>
+  <ViewVProducts id="products" :sortby="sortby" :child="true" />
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class PClientsProductsColumn extends Vue {
-  // @Prop({ }) id!: string
   @Prop({ }) sortby!: string
 }
 </script>

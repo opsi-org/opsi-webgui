@@ -8,6 +8,7 @@ file=$1
 # file_ext=$2
 file_ext_new=$2
 npm_command=$3
+file_prepattern_new=$4
 
 # import bash-aliases to be able to use npm-uib
 shopt -s expand_aliases
@@ -19,14 +20,20 @@ if [[ ${file} == "null" ]]; then
     exit -2
 fi
 
-echo ""
-echo ""
-echo "---------------------------------------"
-echo "ATTENTION: webgui-storybook have to be started!"
-echo "---------------------------------------"
+# echo "---> change filename '${file}' to '${file_prepattern_new}<filenameBase>${file_ext_new}'"
 
+if [[ ${file} == "all" ]]; then
+    echo ""
+    echo "run: npm-uib run $npm_command "
+    npm run $npm_command
+
+    if [[ ${npm_command} == "test:all:components*" ]]; then
+        npm run test:all:delete-empty-results
+    fi;
+    exit 0
+fi
 if [[ ${file} == "all-changed" ]]; then
-    echo "try to get changed filenames"
+    echo "- try to get changed filenames "
     cd /workspace/opsiweb/uib-components
     changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
     # echo "$changedFiles"
@@ -34,7 +41,7 @@ if [[ ${file} == "all-changed" ]]; then
     # Iterate the string variable using for loop
     basenamesWithSlash=""
     for val in $basenames; do
-        basenamesWithSlash+="/$val.test.integration.js "
+        basenamesWithSlash+="${file_prepattern_new}$val.test.integration.js "
     done
     # echo "$basenamesWithSlash"
     testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )
@@ -47,7 +54,6 @@ fi
 
 cd /workspace/opsiweb/
 # build filename of testfile
-echo "filename: ${file} - change file-extension to '${file_ext_new}'"
 # testfile=$(sed 's/'"$file_ext"'/'"$file_ext_new"'/g' <<<"$file")
 dots=$(echo "${file}" | grep -o "\." | wc -l)
 if [[ ${file} == *".png" ]]; then
@@ -70,11 +76,14 @@ if [[ ${testfile} == ${file_ext_new} ]]; then
     exit -2
 fi
 
-echo "---> testing file: $testfile"
+# echo "---> testing file: $file_prepattern_new$testfile"
 # run playwright test on the testfile
+# echo ""
 echo ""
-echo ""
-echo "run: npm-uib run $npm_command $testfile"
-npm-uib run $npm_command "/$testfile"
-npm run test:all:delete-empty-results
+echo "run: npm-uib run $npm_command $file_prepattern_new$testfile"
+npm run $npm_command "$file_prepattern_new$testfile"
+
+if [[ ${npm_command} == "test:all:components*" ]]; then
+    npm run test:all:delete-empty-results
+fi;
 cd -

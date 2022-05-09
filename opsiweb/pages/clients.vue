@@ -8,6 +8,6 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class PageClients extends Vue {
+export default class PClients extends Vue {
 }
 </script>

@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PClientLogColumn extends Vue {
+export default class PClientsLogColumn extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: false }) asChild!: string
 }

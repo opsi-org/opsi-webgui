@@ -1,12 +1,13 @@
+/* eslint-disable import/order */
 import path from 'path'
 import fs from 'fs'
+import pkg from './package-dry.json'
 
 import delib from 'uib-components/locale/de.json'
 import enlib from 'uib-components/locale/en.json'
+
 import enui from './locale/en.json'
 import deui from './locale/de.json'
-
-import pkg from './package-dry.json'
 
 const de = { ...delib, ...deui } // merge language files from components and local one
 const en = { ...enlib, ...enui } // have to be nested to avoid overwriting sections

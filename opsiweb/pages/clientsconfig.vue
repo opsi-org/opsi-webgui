@@ -11,7 +11,7 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PClientsconfig extends Vue {
+export default class PClientsConfig extends Vue {
   id: string = ''
 }
 </script>

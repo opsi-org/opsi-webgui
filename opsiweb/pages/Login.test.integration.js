@@ -23,15 +23,15 @@ test.beforeEach(async ({ page }) => {
   // console.log('TESTING VERSION ' + version)
 })
 
-test('login page return title opsiweb', async ({ page }) => {
-  const title = page.locator('.login_title')
-  await expect(title).toHaveText('OPSIWEB')
-})
+// test('login page return title opsiweb', async ({ page }) => {
+//   const title = page.locator('.login_title')
+//   await expect(title).toHaveText('OPSIWEB')
+// })
 
-test('login page return mocked depot', async ({ page }) => {
-  const content = page.locator('.server')
-  await expect(content).toHaveAttribute('placeholder', 'mydepot.uib.local')
-})
+// test('login page return mocked depot', async ({ page }) => {
+//   const content = page.locator('.server')
+//   await expect(content).toHaveAttribute('placeholder', 'mydepot.uib.local')
+// })
 
 test('login page snapshot is matching', async ({ page }) => {
   // test.fail(browserName === 'webkit', 'This feature currently has problems on webkit')
