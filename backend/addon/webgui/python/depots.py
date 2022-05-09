@@ -10,7 +10,7 @@ webgui depot methods
 
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import get_mysql
 from opsiconfd.rest import common_query_parameters, order_by, pagination, rest_api
@@ -103,10 +103,14 @@ def depots(commons: dict = Depends(common_query_parameters), selected: Optional[
 
 @depot_router.get("/api/opsidata/depots/clients", response_model=List[str])
 @rest_api
-def clients_on_depots(selectedDepots: List[str] = Depends(parse_depot_list)): # pylint: disable=invalid-name
+@filter_depot_access
+def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(parse_depot_list)): # pylint: disable=invalid-name
 	"""
 	Get all client ids on selected depots.
 	"""
+
+	if selectedDepots is None:
+		return { "data": [] }
 
 	params = {}
 	if selectedDepots == [] or selectedDepots is None:

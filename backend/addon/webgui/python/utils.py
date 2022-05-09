@@ -144,8 +144,28 @@ def user_register() -> bool:
 				return True
 	return False
 
+def depot_access_configured(user: str) -> bool:
+	with mysql.session() as session:
 
-def read_only_user(user):
+		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.configured'")
+
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+
+
+def read_only_user(user: str) -> bool:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.all.registered_readonly'")
 		query = select(text("cv.value, cv.isDefault"))\
@@ -162,7 +182,7 @@ def read_only_user(user):
 	return False
 
 
-def get_allowd_depots(user):
+def get_allowd_depots(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.depots'")
 		where = and_(where, text("cv.isDefault=1"))
@@ -198,17 +218,16 @@ def filter_depot_access(func):
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
 			logger.devel(username)
-			allowed_depots = get_allowd_depots(username)
-			selected_depots = kwargs.get("selectedDepots")
-			for depot in selected_depots:
-				logger.devel("depot %s", depot)
-				logger.devel(depot not in selected_depots)
-				if depot not in allowed_depots:
-					selected_depots.remove(depot)
-			if selected_depots:
-				kwargs["selectedDepots"] = selected_depots
-			else:
-				kwargs["selectedDepots"] = None
-			logger.devel(kwargs)
+			if depot_access_configured(username):
+				allowed_depots = get_allowd_depots(username)
+				selected_depots = kwargs.get("selectedDepots")
+				for depot in selected_depots:
+					if depot not in allowed_depots:
+						selected_depots.remove(depot)
+				if selected_depots:
+					kwargs["selectedDepots"] = selected_depots
+				else:
+					kwargs["selectedDepots"] = None
+				logger.devel(kwargs)
 		return func(*args, **kwargs)
 	return check_user
