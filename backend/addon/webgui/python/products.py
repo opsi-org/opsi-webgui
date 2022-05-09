@@ -12,7 +12,6 @@ import json
 from functools import lru_cache
 from typing import Dict, List, Optional
 
-from addon.webgui.python.depots import depot_ids
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from opsicommon.objects import ProductOnClient

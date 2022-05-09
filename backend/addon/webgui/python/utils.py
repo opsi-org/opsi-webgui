@@ -57,14 +57,18 @@ def get_depot_of_client(client):
 def parse_hosts_list(hosts: List[str] = Query(None)) -> Optional[List]:
 	return parse_list(hosts)
 
+
 def parse_depot_list(selectedDepots: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
 	return parse_list(selectedDepots)
+
 
 def parse_client_list(selectedClients: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
 	return parse_list(selectedClients)
 
+
 def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
 	return parse_list(selected)
+
 
 def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 	if not processed:
@@ -231,3 +235,4 @@ def filter_depot_access(func):
 				logger.devel(kwargs)
 		return func(*args, **kwargs)
 	return check_user
+
