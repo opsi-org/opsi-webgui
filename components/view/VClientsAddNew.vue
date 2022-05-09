@@ -10,7 +10,7 @@
         </b-col>
         <b-col>
           <label for="clientname" class="sr-only"> clientName </label>
-          <b-form-input id="clientname" v-model="clientName" type="text" required />
+          <b-form-input id="clientname" v-model="clientName" type="text" :state="checkValid" required />
         </b-col>
         <b-col>
           <label for="domainName" class="sr-only"> domainName </label>
@@ -93,9 +93,6 @@ interface NewClient {
   ipAddress: any,
   notes: string
 }
-interface ClientRequest {
-    selectedDepots: Array<string>
-}
 
 @Component({ mixins: [Constants] })
 export default class VClientsAddNew extends Vue {
@@ -104,8 +101,8 @@ export default class VClientsAddNew extends Vue {
   $nuxt: any
   $fetch: any
   $mq: any
+  $t: any
 
-  clientRequest: ClientRequest = { selectedDepots: [] }
   clientIds: Array<string> = []
   result: string = ''
   isLoading: boolean = false
@@ -140,11 +137,19 @@ export default class VClientsAddNew extends Vue {
     this.$fetch()
   }
 
+  resetNewClientForm () {
+    this.clientName = ''
+    this.newClient = {} as NewClient
+  }
+
+  get checkValid () {
+    return this.clientName.length > 0  && !this.clientIds.includes(this.clientName + this.domainName)
+    // return this.clientName.length > 0  && isNaN(this.clientName[0] as any) && !this.clientIds.includes(this.clientName + this.domainName)
+  }
+
   async fetch () {
-    this.clientRequest.selectedDepots = this.selectionDepots
-    const params = this.clientRequest
     // this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
-    await this.$axios.$get('/api/opsidata/depots/clients', { params })
+    await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.clientIds = response.sort()
       }).catch((error) => {
@@ -154,10 +159,6 @@ export default class VClientsAddNew extends Vue {
       })
   }
 
-  resetNewClientForm () {
-    this.clientName = ''
-    this.newClient = {} as NewClient
-  }
 
   async createOpsiClient () {
     this.isLoading = true
