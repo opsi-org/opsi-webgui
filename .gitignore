@@ -4,6 +4,8 @@
 .env
 *backup*
 backend/opsibackup
+backend/addon/webgui
+backend/addon/webgui/data/app/README.md
 .nuxt/
 .nuxt-storybook/
 *node_modules*
@@ -21,5 +23,5 @@ opsiweb/test-result-pw-reporter-e2e.xml
 .devcontainer/*modules*
 package-lock.json
 
-# python 
+# python
 __pycache__
