@@ -13,6 +13,7 @@ const settings = namespace('settings')
 @Component
 export default class BCountdowntimer extends Vue {
   @Prop({ default: false }) small!: boolean
+  $router:any
   $mq:any
   $t:any
 
@@ -35,7 +36,10 @@ export default class BCountdowntimer extends Vue {
 
   mounted () {
     this.first_notification_showed = false
-    this.refAlert = (this.$root.$children[2]?.$refs.expiringAlert as any)
+    // ref is different in development and production: children[1] is correct for production children[2] for development
+    this.refAlert = (this.$root.$children[1].$refs.expiringAlert as any) || (this.$root.$children[2]?.$refs.expiringAlert as any)
+    console.warn('Ref Alert ', this.refAlert)
+
     this.notifyInMilliSec = ((this.isAuthenticated) ? 5 : -1) * 60000
     if (!this.sessionEndTime) {
       this.setSession()
@@ -52,11 +56,12 @@ export default class BCountdowntimer extends Vue {
     const t = this.getRemainingTime()
     this.countdowntimer = this.getText(t)
     // console.warn('time remaining: ', t.diff, ' notify if <', this.notifyInMilliSec, '-> ', (t.diff <= this.notifyInMilliSec))
+    const time = { min: t.minutes, s: t.seconds }
     if (t.diff <= this.notifyInMilliSec && !this.first_notification_showed) {
       this.first_notification_showed = true
-      this.refAlert?.alert(this.$t('message.session.expiresInMinutesDetails', { min: t.minutes, s: t.seconds }) as string, 'warning')
+      this.initRef(time)
     } else if (t.diff <= this.notifyInMilliSec && this.first_notification_showed) {
-      this.refAlert?.alert(this.$t('message.session.expiresInMinutesDetails', { min: t.minutes, s: t.seconds }) as string, 'warning')
+      this.initRef(time)
     } else {
       this.first_notification_showed = false
       this.refAlert?.hide()
@@ -70,6 +75,17 @@ export default class BCountdowntimer extends Vue {
     }
   }
 
+  initRef (time: any) {
+    if (this.refAlert == undefined) {
+      this.refAlert = (this.$root.$children[1].$refs.expiringAlert as any) || (this.$root.$children[2].$refs.expiringAlert as any)
+    }
+    if (this.refAlert !== undefined) {
+      this.refAlert.alert(this.$t('message.session.expiresInMinutesDetails', time) as string, 'warning')
+    }else {
+      console.warn(this.$t('message.session.expiresInMinutesDetails', time))
+
+    }
+  }
   getText (t) {
     if (t.days > 0) {
       if (this.small === true) {

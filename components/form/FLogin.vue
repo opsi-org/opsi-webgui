@@ -61,7 +61,11 @@ interface FormUser {
 @Component({ mixins: [Constants] })
 export default class FLogin extends Vue {
   iconnames: any
+  $router:any
+  $route:any
   $axios:any
+  $t: any
+
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
   showPassword : boolean = false
@@ -110,8 +114,6 @@ export default class FLogin extends Vue {
     User.append('password', this.form.password)
     this.$axios.post('/api/auth/login', User)
       .then((response) => {
-        // eslint-disable-next-line no-console
-        console.error('response:', JSON.stringify(response))
         if (response.data.result === 'Login success') {
           this.login(this.form.username)
           if (this.$route.name === 'login') {
