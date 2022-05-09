@@ -143,7 +143,7 @@ export default class VClientsAddNew extends Vue {
   }
 
   get checkValid () {
-    return this.clientName.length > 0  && !this.clientIds.includes(this.clientName + this.domainName)
+    return this.clientName.length > 0 && !this.clientIds.includes(this.clientName + this.domainName)
     // return this.clientName.length > 0  && isNaN(this.clientName[0] as any) && !this.clientIds.includes(this.clientName + this.domainName)
   }
 
@@ -158,7 +158,6 @@ export default class VClientsAddNew extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
       })
   }
-
 
   async createOpsiClient () {
     this.isLoading = true
