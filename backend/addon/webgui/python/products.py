@@ -12,6 +12,7 @@ import json
 from functools import lru_cache
 from typing import Dict, List, Optional
 
+from addon.webgui.python.depots import depot_ids
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from opsicommon.objects import ProductOnClient
@@ -34,6 +35,7 @@ from sqlalchemy import alias, and_, column, select, text
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.sql.expression import table, update
 
+from .depots import depot_ids
 from .utils import (
 	filter_depot_access,
 	get_depot_of_client,
@@ -213,7 +215,7 @@ def products(
 	Get products from selected depots and clients.
 	"""
 
-	if selectedDepots is None:
+	if selectedDepots == []:
 		return {"data": [], "total": 0}
 
 	params = {}
@@ -223,7 +225,7 @@ def products(
 	else:
 		params["clients"] = selectedClients
 	if selectedDepots == []:
-		params["depots"] = [get_configserver_id()]
+		params["depots"] = [depot_ids()]
 	else:
 		params["depots"] = selectedDepots
 	if selected:

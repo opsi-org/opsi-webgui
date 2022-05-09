@@ -109,12 +109,12 @@ def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(pars
 	Get all client ids on selected depots.
 	"""
 
-	if selectedDepots is None:
-		return { "data": [] }
+	if selectedDepots == []:
+		return {"data": []}
 
 	params = {}
 	if selectedDepots == [] or selectedDepots is None:
-		params["depots"] = [get_configserver_id()]
+		params["depots"] = [depot_ids()]
 	else:
 		params["depots"] = selectedDepots
 

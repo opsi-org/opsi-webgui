@@ -227,7 +227,7 @@ def filter_depot_access(func):
 				if selected_depots:
 					kwargs["selectedDepots"] = selected_depots
 				else:
-					kwargs["selectedDepots"] = None
+					kwargs["selectedDepots"] = []
 				logger.devel(kwargs)
 		return func(*args, **kwargs)
 	return check_user

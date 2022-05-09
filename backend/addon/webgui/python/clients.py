@@ -82,7 +82,7 @@ def clients(
 	"""
 	Get Clients on selected depots with infos on the client.
 	"""
-	if selectedDepots is None:
+	if selectedDepots == []:
 		return {"data": [], "total": 0}
 
 	with mysql.session() as session:
