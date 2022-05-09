@@ -27,6 +27,7 @@ export default function ({ $axios, redirect, store, route }) {
     // }
     // else
     if (code === 401) {
+      localStorage.removeItem('username')
       store.commit('auth/logout')
       if (route.name !== 'login') {
         redirect('/login')
