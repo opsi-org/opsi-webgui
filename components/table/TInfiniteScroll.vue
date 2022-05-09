@@ -26,12 +26,12 @@
       @row-clicked="onRowClicked"
     >
       <template v-if="totalpages > 1" #top-row="{ columns }">
-        <b-th variant="light" :colspan="columns" class="tablehead">
+        <b-th :colspan="columns" class="tablehead">
           <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
         </b-th>
       </template>
       <template v-if="totalpages > 1" #bottom-row="{ columns }">
-        <b-th variant="light" :colspan="columns" class="tablefooter">
+        <b-th :colspan="columns" class="tablefooter">
           <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
         </b-th>
       </template>
