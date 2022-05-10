@@ -80,9 +80,9 @@ body {
 .table > :not(caption) > * > * {
   border-bottom-width: 0px;
 }
-.badge-warning{
+/* .badge-warning{
   color: var(--light) !important;
-}
+} */
 .value-changed-not-saved {
   color: var(--orange) !important;
 }
