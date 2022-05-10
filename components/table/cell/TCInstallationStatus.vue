@@ -1,19 +1,23 @@
 <template>
   <b-badge v-if="text=='mixed'" :variant="variant">
-    &#8800;
+    <span class="h5"> &#8800; </span>
   </b-badge>
   <b-badge v-else-if="text=='installed'" variant="success">
-    <b-icon :icon="iconnames.productInstallationStatusInstalled" alt="installed" title="installed" />
+    <span class="h5">
+      <b-icon :icon="iconnames.productInstallationStatusInstalled" alt="installed" title="installed" />
+    </span>
   </b-badge>
   <b-badge v-else-if="text=='unknown'" variant="warning" text-variant="dark">
-    <b-icon :icon="iconnames.productInstallationStatusUnknown" alt="unknown" />
+    <span class="h5">
+      <b-icon :icon="iconnames.productInstallationStatusUnknown" alt="unknown" />
+    </span>
   </b-badge>
   <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">
-    {{ ($mq=='mobile')? '-':'' }}
+    <span class="h5"> {{ ($mq=='mobile')? '-':'' }} </span>
   </b-badge>
   <b-badge v-else-if="$mq!='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent" />
   <b-badge v-else>
-    {{ text }}
+    <span class="h5"> {{ text }} </span>
   </b-badge>
 </template>
 
