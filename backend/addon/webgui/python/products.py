@@ -34,7 +34,7 @@ from sqlalchemy import alias, and_, column, select, text
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.sql.expression import table, update
 
-from .depots import depot_ids
+from .depots import get_depots
 from .utils import (
 	filter_depot_access,
 	get_depot_of_client,
@@ -223,8 +223,9 @@ def products(
 		params["clients"] = [""]
 	else:
 		params["clients"] = selectedClients
-	if selectedDepots == []:
-		params["depots"] = [depot_ids()]
+	if selectedDepots == None:
+		username = request.scope.get("session").user_store.username
+		params["depots"] = get_depots(username)
 	else:
 		params["depots"] = selectedDepots
 	if selected:

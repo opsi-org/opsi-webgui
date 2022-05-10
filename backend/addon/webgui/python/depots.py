@@ -13,6 +13,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, Request
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import get_mysql
+from opsiconfd.logging import logger
 from opsiconfd.rest import common_query_parameters, order_by, pagination, rest_api
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, or_, select, text
@@ -29,6 +30,7 @@ from .utils import (
 
 depot_router = APIRouter()
 
+
 class Depot(BaseModel):  # pylint: disable=too-few-public-methods
 	depotId: str
 	ident: str
@@ -37,12 +39,7 @@ class Depot(BaseModel):  # pylint: disable=too-few-public-methods
 	description: str
 
 
-@depot_router.get("/api/opsidata/depot_ids", response_model=List[str])
-@rest_api
-def depot_ids(request: Request):
-	"""
-	Get all depotIds.
-	"""
+def get_depots(username: str = None):
 	with mysql.session() as session:
 		query = (
 			"SELECT hostId FROM HOST "
@@ -52,14 +49,26 @@ def depot_ids(request: Request):
 		result = session.execute(query).fetchall()
 		result = [row[0] for row in result if row is not None]
 
-		if user_register():
-			username = request.scope.get("session").user_store.username
-			if depot_access_configured(username):
-				allowed_depots = get_allowd_depots(username)
-			for depot in result:
+		if username and user_register() and depot_access_configured(username):
+			allowed_depots = get_allowd_depots(username)
+			for depot in result.copy():
+				logger.devel(depot)
 				if depot not in allowed_depots:
 					result.remove(depot)
-		return {"data": result}
+		return result
+
+
+@depot_router.get("/api/opsidata/depot_ids", response_model=List[str])
+@rest_api
+def depot_ids(request: Request):
+	"""
+	Get all depotIds.
+	"""
+
+	username = request.scope.get("session").user_store.username
+	depots = get_depots(username)
+
+	return {"data": depots}
 
 
 @depot_router.get("/api/opsidata/depots", response_model=List[Depot])
@@ -111,21 +120,20 @@ def depots(request: Request, commons: dict = Depends(common_query_parameters), s
 			params
 		).fetchone()[0]
 
-		depots = []
-		if user_register():
-			username = request.scope.get("session").user_store.username
-			if depot_access_configured(username):
-				allowed_depots = get_allowd_depots(username)
+		depot_list = []
+		username = request.scope.get("session").user_store.username
+		if user_register() and depot_access_configured(username):
+			allowed_depots = get_allowd_depots(username)
 			for row in result:
 				if row is not None:
 					depot_data = dict(row)
 					if depot_data.get("depotId") in allowed_depots:
-						depots.append(depot_data)
+						depot_list.append(depot_data)
 		else:
-			depots =  [ dict(row) for row in result if row is not None ]
+			depot_list =  [dict(row) for row in result if row is not None]
 
 		return {
-				"data": depots,
+				"data": depot_list,
 				"total": total
 			}
 
@@ -142,8 +150,9 @@ def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(pars
 		return {"data": []}
 
 	params = {}
-	if selectedDepots == [] or selectedDepots is None:
-		params["depots"] = [depot_ids()]
+	if selectedDepots is None:
+		username = request.scope.get("session").user_store.username
+		params["depots"] = get_depots(username)
 	else:
 		params["depots"] = selectedDepots
 
