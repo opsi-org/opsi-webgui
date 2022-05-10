@@ -5,8 +5,8 @@
     <div v-else>
       <br>
       <b-row class="mb-2">
-        <b-col sm="3" class="text-sm-right">
-          {{ $t('table.fields.id') }}:
+        <b-col sm="2">
+          {{ $t('table.fields.id') }}
         </b-col>
         <b-col>
           <label for="clientname" class="sr-only"> clientName </label>
@@ -17,10 +17,12 @@
           <b-form-input id="domainName" v-model="domainName" type="text" required />
         </b-col>
       </b-row>
-      <b>{{ $t('table.clientDetails') }}: </b>
+      <b-row class="mt-5 mb-4">
+        <b>{{ $t('table.clientDetails') }}: </b>
+      </b-row>
       <b-row class="mb-2">
-        <b-col sm="3" class="text-sm-right">
-          {{ $t('table.fields.description') }}:
+        <b-col sm="2">
+          {{ $t('table.fields.description') }}
         </b-col>
         <b-col>
           <label for="description" class="sr-only"> {{ $t('table.fields.description') }} </label>
@@ -28,8 +30,8 @@
         </b-col>
       </b-row>
       <b-row class="mb-2">
-        <b-col sm="3" class="text-sm-right">
-          {{ $t('table.fields.inventNum') }}:
+        <b-col sm="2">
+          {{ $t('table.fields.inventNum') }}
         </b-col>
         <b-col>
           <label for="inventNum" class="sr-only"> {{ $t('table.fields.inventNum') }} </label>
@@ -37,8 +39,8 @@
         </b-col>
       </b-row>
       <b-row class="mb-2">
-        <b-col sm="3" class="text-sm-right">
-          {{ $t('table.fields.hwAddr') }}:
+        <b-col sm="2">
+          {{ $t('table.fields.hwAddr') }}
         </b-col>
         <b-col>
           <label for="hwAddr" class="sr-only"> {{ $t('table.fields.hwAddr') }} </label>
@@ -47,18 +49,20 @@
       </b-row>
 
       <b-row class="mb-2">
-        <b-col sm="3" class="text-sm-right">
-          {{ $t('table.fields.ip') }}:
+        <b-col sm="2">
+          {{ $t('table.fields.ip') }}
         </b-col>
         <b-col>
           <label for="ip" class="sr-only"> {{ $t('table.fields.ip') }} </label>
           <b-form-input id="ip" v-model="newClient.ipAddress" type="text" />
         </b-col>
       </b-row>
-      <b>{{ $t('table.addtnlInfo') }}: </b>
+      <b-row class="mt-5 mb-4">
+        <b>{{ $t('table.addtnlInfo') }}:</b>
+      </b-row>
       <b-row class="mb-2">
-        <b-col sm="3" class="text-sm-right">
-          {{ $t('table.fields.notes') }}:
+        <b-col sm="2">
+          {{ $t('table.fields.notes') }}
         </b-col>
         <b-col>
           <label for="notes" class="sr-only"> {{ $t('table.fields.notes') }} </label>

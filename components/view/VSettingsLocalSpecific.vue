@@ -1,17 +1,17 @@
 <template>
   <div data-testid="VSettingsLocalSpecific" :class="'VSettingsLocalSpecific '+ $mq">
-    <b-row class="mb-4">
-      <b-col class="text-sm-right" cols="2">
+    <b-row class="mb-2">
+      <b-col cols="2">
         {{ $t('form.theme') }}
       </b-col>
       <b-col col="*">
         <DropdownDDTheme />
       </b-col>
     </b-row>
-    <b-row class="mb-4">
-      <b-col class="text-sm-right" cols="2">
-        <ButtonBTNHelp id="expert-help" />
+    <b-row class="mb-2">
+      <b-col cols="2">
         {{ $t('form.quicksave') }}
+        <ButtonBTNHelp id="expert-help" />
         <TooltipTTHelpExpert target="expert-help" />
       </b-col>
       <b-col col="*">

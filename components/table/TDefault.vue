@@ -68,7 +68,6 @@ export default class BVTable extends Vue {
   padding-bottom: 5px;
 }
 .TDefault.mobile .productproperties tr > td {
-  /* display: block; */
   width: 100%;
   display: block;
   min-width: 100%!important;
