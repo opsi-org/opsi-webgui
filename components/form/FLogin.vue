@@ -3,19 +3,33 @@
     <AlertAAlert ref="loginAlert" />
     <div @keyup.enter="doLogin">
       <b-form>
-        <label for="configserver" class="sr-only"> {{ $t('title.configserver') }} </label>
-        <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="mb-2" :placeholder="opsiconfigserver" />
-        <label for="username" class="sr-only"> {{ $t('form.username') }} </label>
-        <b-form-input
-          id="username"
-          v-model="form.username"
-          :placeholder="$t('form.username')"
-          :state="validUsername"
-          class="mb-2"
-          autocomplete="current_username"
-        />
-        <label for="password" class="sr-only"> {{ $t('form.password') }} </label>
         <b-input-group>
+          <label for="configserver" class="sr-only"> {{ $t('title.configserver') }} </label>
+          <b-button variant="transparent" disabled>
+            <b-icon variant="light" :icon="iconnames.depot" />
+          </b-button>
+          <b-form-input id="configserver" v-model="opsiconfigserver" readonly class="mb-2" :placeholder="opsiconfigserver" />
+        </b-input-group>
+        <b-input-group>
+          <label for="username" class="sr-only"> {{ $t('form.username') }} </label>
+          <b-button variant="transparent" disabled>
+            <b-icon variant="light" :icon="iconnames.user" />
+          </b-button>
+          <b-form-input
+            id="username"
+            v-model="form.username"
+            :placeholder="$t('form.username')"
+            :state="validUsername"
+            class="mb-2"
+            autocomplete="current_username"
+          />
+        </b-input-group>
+        <b-input-group>
+          <label for="password" class="sr-only"> {{ $t('form.password') }} </label>
+          <b-button variant="transparent" disabled>
+            <b-icon variant="light" :icon="iconnames.password" />
+          </b-button>
+
           <b-form-input
             id="password"
             v-model="form.password"
