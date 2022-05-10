@@ -23,6 +23,7 @@ from opsiconfd.backend import get_backend
 
 from .depots import get_depots
 from .utils import (
+	client_creation_allowed,
 	depot_access_configured,
 	get_allowd_depots,
 	mysql,
@@ -111,7 +112,8 @@ def user_configuration(request: Request):
 			"user": username,
 			"configuration": {
 				"read_only": read_only_user(username),
-				"depot_access": depot_access
+				"depot_access": depot_access,
+				"client_creation": client_creation_allowed(username)
 			}
 	})
 

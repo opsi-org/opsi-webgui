@@ -168,10 +168,26 @@ def depot_access_configured(user: str) -> bool:
 	return False
 
 
-
 def read_only_user(user: str) -> bool:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.all.registered_readonly'")
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+
+def client_creation_allowed(user: str) -> bool:
+	with mysql.session() as session:
+		where = text("cv.configId='user.{" + user + "}.privilege.host.createclient'")
 		query = select(text("cv.value, cv.isDefault"))\
 			.select_from(text("CONFIG_VALUE AS cv"))\
 			.where(where)
@@ -236,3 +252,16 @@ def filter_depot_access(func):
 		return func(*args, **kwargs)
 	return check_user
 
+
+def check_client_creation_rights(func):
+	@wraps(func)
+	def check_user(*args, **kwargs):
+		if user_register():
+			username = kwargs.get("request").scope.get("session").user_store.username
+			if not client_creation_allowed(username):
+				logger.error("User %s is not allowed to create clients.", username)
+				raise OpsiApiException(
+					message=f"User {username} is not allowed to create clients.", http_status=status.HTTP_403_FORBIDDEN
+				)
+		return func(*args, **kwargs)
+	return check_user

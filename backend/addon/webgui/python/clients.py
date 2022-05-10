@@ -31,6 +31,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import table
 
 from .utils import (
+	check_client_creation_rights,
 	filter_depot_access,
 	mysql,
 	parse_client_list,
@@ -232,6 +233,7 @@ def depots_of_clients(
 @client_router.post("/api/opsidata/clients")
 @rest_api
 @read_only_check
+@check_client_creation_rights
 def create_client(request: Request, client: Client):  # pylint: disable=too-many-locals
 	"""
 	Create OPSI-Client.
