@@ -94,7 +94,7 @@ export default class LayoutDefault extends Vue {
     try {
       this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
     } catch (error) {
-      this.setConfig({"user":"adminuser1","configuration":{"read_only":true,"depot_access":true,"group_access":true,"client_creation":false}}.configuration)
+      // this.setConfig({"user":"adminuser","configuration":{"read_only":false,"depot_access":false,"group_access":false,"client_creation":true}}.configuration)
     }
     console.log('CONFIG', this.config)
   }

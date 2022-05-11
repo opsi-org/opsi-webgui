@@ -70,6 +70,7 @@
               variant="outline-primary"
               size="sm"
               class="border-0"
+              :disabled="(config)?config.read_only:false"
               :title="row.detailsShowing ? $t('label.cancel') : $t('label.delete')"
               @click="row.toggleDetails"
             >
@@ -81,7 +82,13 @@
             <b-card>
               <AlertAAlert ref="deleteClientAlert" />
               {{ $t('message.confirm.deleteClient', { client: row.item.ident }) }}
-              <b-button class="float-right" variant="danger" size="sm" @click="deleteOpsiClient(row.item.ident)">
+              <b-button
+                class="float-right"
+                variant="danger"
+                size="sm"
+                :disabled="(config)?config.read_only:false"
+                @click="deleteOpsiClient(row.item.ident)"
+              >
                 <b-icon :icon="iconnames.delete" /> {{ $t('label.delete') }}
               </b-button>
             </b-card>
@@ -104,9 +111,11 @@
 <script lang="ts">
 import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
+const config = namespace('config-app')
 interface DeleteClient {
   clientid: string
 }
@@ -116,6 +125,7 @@ export default class VClients extends Vue {
   syncSort: any
   iconnames: any
   $axios: any
+  $t: any
   $mq: any
   $fetch:any
   $nuxt:any
@@ -183,6 +193,7 @@ export default class VClients extends Vue {
     filterQuery: this.tableData.filterQuery
   }
 
+  @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
