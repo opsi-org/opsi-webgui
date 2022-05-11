@@ -33,6 +33,10 @@ from sqlalchemy.sql.expression import table
 from .utils import (
 	check_client_creation_rights,
 	filter_depot_access,
+	get_allowd_host_groups,
+	get_allowed_clients,
+	get_username,
+	host_group_access_configured,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
@@ -86,6 +90,10 @@ def clients(
 	if selectedDepots == []:
 		return {"data": [], "total": 0}
 
+	username = get_username()
+	allowed_clients = None
+	if user_register() and host_group_access_configured(username):
+		allowed_clients = get_allowed_clients(username)
 	with mysql.session() as session:
 		where = text("h.type = 'OpsiClient'")
 		params = {}
@@ -108,7 +116,9 @@ def clients(
 				),
 			)
 			params["depot_ids"] = selectedDepots
-
+		if allowed_clients:
+			params["allowed_clients"] = allowed_clients
+			where = and_(where, text("(h.hostId in :allowed_clients)"))
 		if selected:
 			params["selected"] = selected
 		else:
@@ -192,8 +202,8 @@ def clients(
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]
-
 		return {"data": [dict(row) for row in result if row is not None], "total": total}
+
 
 
 @client_router.get("/api/opsidata/clients/depots", response_model=Dict[str, str])

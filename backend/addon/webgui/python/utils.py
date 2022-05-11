@@ -8,10 +8,12 @@
 webgui utils
 """
 from functools import wraps
+from json import JSONDecodeError, loads
 from operator import and_
 from typing import List, Optional
 
 from fastapi import Query, status
+from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import (
 	bool_product_property,
 	get_configserver_id,
@@ -70,6 +72,56 @@ def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]: # 
 	return parse_list(selected)
 
 
+def get_username():
+	client_session = contextvar_client_session.get()
+	if not client_session:
+		raise RuntimeError("Session invalid")
+	return client_session.user_store.username
+
+
+
+def get_user_privileges():
+	username = get_username()
+	privileges = {}
+	# mysql = get_mysql()  # pylint: disable=invalid-name
+	filter_ = {"config_id_filter": f"user.{{{username}}}.privilege.%"}
+	with mysql.session() as session:
+		for row in session.execute(
+			"""
+			SELECT
+				cv.configId,
+				cv.value
+			FROM
+				CONFIG_VALUE AS cv
+			WHERE
+				cv.configId LIKE :config_id_filter AND cv.isDefault=1
+			GROUP BY
+				cv.configId
+			ORDER BY
+				cv.configId
+			""",
+			filter_,
+		).fetchall():
+			try:  # pylint: disable=loop-try-except-usage
+				priv = ".".join(row["configId"].split(".")[3:])
+				privileges[priv] = [val for val in loads(row["value"]) if val != ""]  # pylint: disable=loop-invariant-statement
+			except JSONDecodeError as err:
+				logger.error("Failed to parse privilege %s: %s", row, err)
+
+		return privileges
+
+
+def get_allowed_objects():
+	allowed = {"product_groups": ..., "host_groups": ...}
+	# privileges = get_user_privileges()
+	# if True in privileges.get("product.groupaccess.configured", [False]):
+	# 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
+	username = get_username()
+	if host_group_access_configured(username):
+		allowed["host_groups"] = get_allowd_host_groups(username)
+	return allowed
+
+
 def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 	if not processed:
 		processed = []
@@ -82,7 +134,7 @@ def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 	for grp in groups:
 		if grp["id"] == group["id"]:
 			if default_expanded and grp.get("hasAnySelection"):
-					group["hasAnySelection"] = True
+				group["hasAnySelection"] = True
 			continue
 		if grp["parent"] == group["id"]:
 			if grp["id"] in processed:
@@ -147,6 +199,27 @@ def user_register() -> bool:
 			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
 				return True
 	return False
+
+
+def host_group_access_configured(user: str) -> bool:
+	with mysql.session() as session:
+
+		where = text("cv.configId='user.{" + user + "}.privilege.host.groupaccess.configured'")
+
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
 
 def depot_access_configured(user: str) -> bool:
 	with mysql.session() as session:
@@ -217,6 +290,36 @@ def get_allowd_depots(user: str) -> list:
 	return depots
 
 
+def get_allowd_host_groups(user: str) -> list:
+	with mysql.session() as session:
+		where = text("cv.configId='user.{" + user + "}.privilege.host.groupaccess.hostgroups'")
+		where = and_(where, text("cv.isDefault=1"))
+		query = select(text("cv.value"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+		result = session.execute(query)
+		result = result.fetchall()
+		groups = []
+		for row in result:
+			groups.append(dict(row).get("value"))
+	return groups
+
+
+def get_allowed_clients(user: str) -> list:
+	allowed_groups = get_allowd_host_groups(user)
+	allowed_clients = []
+	with mysql.session() as session:
+		for group in allowed_groups:
+			query = select(text("otg.objectId AS client"))\
+				.select_from(text("OBJECT_TO_GROUP AS otg"))\
+				.where(text(f"otg.groupId='{group}'"))
+			otg_result = session.execute(query)
+			otg_result = otg_result.fetchall()
+			for otg_row in otg_result:
+				if otg_row is not None:
+					allowed_clients.append(dict(otg_row).get("client"))
+	return allowed_clients
+
 def read_only_check(func):
 	@wraps(func)
 	def check_user(*args, **kwargs):
@@ -234,10 +337,9 @@ def read_only_check(func):
 def filter_depot_access(func):
 	@wraps(func)
 	def check_user(*args, **kwargs):
-		logger.devel("%s - check user", func)
+		logger.debug("%s - check user", func)
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
-			logger.devel(username)
 			if depot_access_configured(username):
 				allowed_depots = get_allowd_depots(username)
 				selected_depots = kwargs.get("selectedDepots")
@@ -248,7 +350,6 @@ def filter_depot_access(func):
 					kwargs["selectedDepots"] = selected_depots
 				else:
 					kwargs["selectedDepots"] = []
-				logger.devel(kwargs)
 		return func(*args, **kwargs)
 	return check_user
 

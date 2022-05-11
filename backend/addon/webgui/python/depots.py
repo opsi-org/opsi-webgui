@@ -22,6 +22,11 @@ from .utils import (
 	depot_access_configured,
 	filter_depot_access,
 	get_allowd_depots,
+	get_allowd_host_groups,
+	get_allowed_clients,
+	get_allowed_objects,
+	get_username,
+	host_group_access_configured,
 	mysql,
 	parse_depot_list,
 	parse_selected_list,
@@ -52,7 +57,6 @@ def get_depots(username: str = None):
 		if username and user_register() and depot_access_configured(username):
 			allowed_depots = get_allowd_depots(username)
 			for depot in result.copy():
-				logger.devel(depot)
 				if depot not in allowed_depots:
 					result.remove(depot)
 		return result
@@ -141,7 +145,7 @@ def depots(request: Request, commons: dict = Depends(common_query_parameters), s
 @depot_router.get("/api/opsidata/depots/clients", response_model=List[str])
 @rest_api
 @filter_depot_access
-def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(parse_depot_list)): # pylint: disable=invalid-name
+def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(parse_depot_list)):  # pylint: disable=invalid-name
 	"""
 	Get all client ids on selected depots.
 	"""
@@ -177,9 +181,18 @@ def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(pars
 		result = result.fetchall()
 
 		clients = [] # pylint: disable=redefined-outer-name
-		for row in result:
-			if row is not None:
-				if dict(row).get("client"):
-					clients.append( dict(row).get("client"))
+		username = get_username()
+		if user_register() and host_group_access_configured(username):
+			allowed_clients = get_allowed_clients(username)
+			for row in result:
+				if row is not None:
+
+					if dict(row).get("client") and dict(row).get("client") in allowed_clients:
+						clients.append(dict(row).get("client"))
+		else:
+			for row in result:
+				if row is not None:
+					if dict(row).get("client"):
+						clients.append( dict(row).get("client"))
 
 		return {"data": clients}
