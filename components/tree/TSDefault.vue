@@ -397,7 +397,7 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
 
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
-  color: var(--light);
+  color: var(--color);
 }
 
 .TSDefault-wrapper,
