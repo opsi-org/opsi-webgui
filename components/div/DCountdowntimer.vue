@@ -70,8 +70,8 @@ export default class BCountdowntimer extends Vue {
       this.countdowntimer = this.$t('message.session.expired') as string
       clearInterval(this.expiresInterval)
       this.logout()
-      this.$router.push('/login')
       this.clearSession()
+      this.$router.push('/login')
     }
   }
 
