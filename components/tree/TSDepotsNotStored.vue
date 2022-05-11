@@ -57,6 +57,9 @@ export default class TSDepotsNotStored extends Vue {
 .treeselect_idselect .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
 }
+.treeselect_idselect .vue-treeselect__input {
+  color: var(--color) !important;
+}
 .treeselect_idselect .vue-treeselect__menu .vue-treeselect__option--highlight {
   color: black;
   background-color: #e9ecef;

@@ -514,6 +514,7 @@ export default class TSDefault extends Vue {
   width: 100%;
   max-width: 100%;
   margin-top: 5px;
+  color: var(--color) !important;
 }
 /* .TSDefault-wrapper .vue-treeselect__value-container, */
 .TSDefault-wrapper .treeselect .vue-treeselect__multi-value {
