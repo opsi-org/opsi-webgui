@@ -39,7 +39,7 @@ export default class TCSpan extends Vue {
     if (this.values.includes('failed')) {
       return 'danger'
     }
-    if (this.values.every(v => v === '' || v === 'successful' || v === 'installed')) {
+    if (this.values.every(v => v === '' || v === 'None' || v === 'none' || v === 'not_installed' || v === 'successful' || v === 'installed')) {
       return 'success'
     }
     return 'warning'
