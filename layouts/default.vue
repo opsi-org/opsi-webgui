@@ -22,9 +22,11 @@
 // import Cookie from 'js-cookie'
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../.utils/types/tchanges'
+import { IObjectString2Boolean } from '../.utils/types/tgeneral'
 const settings = namespace('settings')
 const changes = namespace('changes')
 const cache = namespace('data-cache')
+const config = namespace('config-app')
 interface SideBarAttr {
     visible: boolean,
     expanded: boolean
@@ -35,6 +37,8 @@ export default class LayoutDefault extends Vue {
   $mq: any
   $axios: any
 
+  @config.Getter public config!: IObjectString2Boolean
+  @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
   @settings.Getter public colortheme!: any
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @cache.Getter public opsiconfigserver!: string
@@ -55,6 +59,7 @@ export default class LayoutDefault extends Vue {
   async mounted () {
     window.onbeforeunload = this.confirmToSaveChanges
     await this.checkServer()
+    await this.checkConfig()
     // if (Cookie.get('menu_attributes_desktop')) {
     //   this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any)
     // } else {
@@ -84,6 +89,14 @@ export default class LayoutDefault extends Vue {
     if (this.opsiconfigserver === '') {
       this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
     }
+  }
+  async checkConfig () {
+    try {
+      this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
+    } catch (error) {
+      this.setConfig({"user":"adminuser1","configuration":{"read_only":true,"depot_access":true,"group_access":true,"client_creation":false}}.configuration)
+    }
+    console.log('CONFIG', this.config)
   }
 }
 </script>

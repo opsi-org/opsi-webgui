@@ -7,6 +7,7 @@
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       :to="$mq === 'desktop' ? route: null "
       @click="refresh(route)"
+      :disabled="disabled"
     >
       <b-icon :icon="icon" /> {{ $t(title) }}
       <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
@@ -16,6 +17,7 @@
         <b-nav-item
           v-for="sub in submenu"
           :key="sub.title"
+          :disabled="sub.disabled"
           :class="{checkactive: $route.path.includes(sub.route)}"
           :to="sub.route"
           @click="refresh(sub.route)"
@@ -35,9 +37,11 @@ import { Constants } from '../../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
 export default class NICollapsible extends Vue {
+  $route: any
   $nuxt: any
   iconnames: any
   @Prop({ }) title!: string
+  @Prop({ default: false }) disabled!: boolean
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>
