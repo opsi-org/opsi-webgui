@@ -26,12 +26,12 @@
       @row-clicked="onRowClicked"
     >
       <template v-if="totalpages > 1" #top-row="{ columns }">
-        <b-th variant="light" :colspan="columns" class="tablehead">
+        <b-th :colspan="columns" class="tablehead">
           <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
         </b-th>
       </template>
       <template v-if="totalpages > 1" #bottom-row="{ columns }">
-        <b-th variant="light" :colspan="columns" class="tablefooter">
+        <b-th :colspan="columns" class="tablefooter">
           <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
         </b-th>
       </template>
@@ -43,8 +43,10 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #head(selected)>
-        <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
-        <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+        <div style="min-width: 60px;">
+          <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
+          <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+        </div>
       </template>
       <template #head(rowactions)>
         <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->

@@ -67,6 +67,5 @@ import { Component, Vue } from 'nuxt-property-decorator'
     logout: 'power',
     themelight: 'sun',
     themedark: 'moon'
-
   }
 }

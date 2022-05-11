@@ -22,7 +22,7 @@
         --
       </template>
       <template #head()="data">
-        <small> <b>{{ data.label }} </b> </small>
+        {{ data.label }}
       </template>
       <template #cell()="row">
         <label :for="row.field.label" class="sr-only">  {{ row.field.label }} </label>
@@ -68,7 +68,6 @@ export default class BVTable extends Vue {
   padding-bottom: 5px;
 }
 .TDefault.mobile .productproperties tr > td {
-  /* display: block; */
   width: 100%;
   display: block;
   min-width: 100%!important;
@@ -82,6 +81,17 @@ export default class BVTable extends Vue {
 }
 .table-header-none{
   display: none;
+}
+.bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
+  width: 20%;
+  font-weight: normal;
+}
+
+.bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label] > div {
+  display: inline-block;
+  width: calc(100% - 20%);
+  padding: 0 0 0 calc(1rem / 2);
+  margin: 0;
 }
 
 /* .bvtable:not(.small) .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {

@@ -1,8 +1,8 @@
 <template>
   <div data-testid="VModules">
     <AlertAAlert ref="modulesAlert" />
-    <b-row v-if="!errorText" class="mb-4">
-      <b-col class="text-sm-right" cols="2">
+    <b-row v-if="!errorText" class="mb-2">
+      <b-col cols="2" class="text-sm-right">
         {{ $t('form.modules.available') }}
       </b-col>
       <b-col>

@@ -80,9 +80,9 @@ body {
 .table > :not(caption) > * > * {
   border-bottom-width: 0px;
 }
-.badge-warning{
+/* .badge-warning{
   color: var(--light) !important;
-}
+} */
 .value-changed-not-saved {
   color: var(--orange) !important;
 }
@@ -113,6 +113,11 @@ body {
   border-top: none !important;
   border-bottom: none !important;
   background-color: transparent !important;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
 }
 
 .btn-primary {
