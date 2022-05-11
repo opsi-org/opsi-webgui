@@ -26,6 +26,7 @@
       :branch-nodes-first="true"
       :max-height="400"
       :always-open="false"
+      :disabled="disabled"
 
       :cache-options="false"
       :normalizer="normalizer"
@@ -134,6 +135,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: '' }) placeholder?: string
   @Prop({ default: 0 }) limitVisibleSelection!: number
   @Prop({ default: true }) showSelectionCount!: boolean
+  @Prop({ default: false }) disabled!: boolean
   @Prop({ default: false }) clearable!: boolean
   @Prop({ default: true }) isOrigin!: boolean
   @Prop({ default: false }) multi!: boolean

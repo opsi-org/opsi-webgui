@@ -9,6 +9,7 @@
         v-if="rowItem.type=='BoolProductProperty'"
         :class="{'TCProductPropertyValue_ValueBool':true,'value-changed-not-saved': !isOrigin }"
         :checked="selectedValues[0]"
+        :disabled="(config)? config.read_only : false"
         :aria-label="rowItem.propertyId + (selectedValues[0]?'checked':'unchecked')"
         :indeterminate="visibleValueBoolIndeterminate"
         @change="handleBoolChange"
@@ -20,6 +21,7 @@
         v-else-if="rowItem.type=='UnicodeProductProperty'"
         :id="'PropertyValue-' + rowItem.propertyId"
         type="propertyvalues"
+        :disabled="(config)? config.read_only : false"
         :text="undefined"
         :show-selection-count="selectedValues.length>1"
         :limit-visible-selection="1"
@@ -54,24 +56,29 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IProperty } from '../../../.utils/types/ttable'
-import { IObjectString2String } from '../../../.utils/types/tgeneral'
+import { IObjectString2Boolean, IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
 import { Constants } from '../../../mixins/uib-mixins'
 const selections = namespace('selections')
 const changes = namespace('changes')
+const config = namespace('config-app')
 // const mixed = '<mixed>'
 
 @Component({ mixins: [Constants] })
 export default class TProductPropertyValue extends Vue {
+  $t:any
   iconnames:any
   // @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String
   @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
+
+  @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @changes.Getter public changesProducts!: Array<any>
   @changes.Mutation public deleteFromChangesWhere!: (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) => void
+
   showValue : boolean = false
   changedValue: Array<string>|undefined
   selectedValues!: Array<string|boolean>

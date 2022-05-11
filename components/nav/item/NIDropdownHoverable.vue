@@ -7,6 +7,7 @@
       block
       dropright
       no-caret
+      :disabled="disabled"
     >
       <template #button-content>
         <b-icon :icon="icon" @click="changeRoute" />
@@ -15,15 +16,21 @@
         {{ $t(title) }}
       </b-dropdown-item>
       <b-dropdown-divider />
-      <b-dropdown-item
+        <!-- class="d-inline-block" -->
+      <span
         v-for="sub in submenu"
         :key="sub.title"
-        :class="{checkactive: $route.path.includes(sub.route)}"
-        :to="sub.route"
-        @click="refresh(sub.route)"
       >
-        {{ $t(sub.title) }}
-      </b-dropdown-item>
+        <b-dropdown-item
+          :class="{checkactive: $route.path.includes(sub.route)}"
+          :to="sub.route"
+          :style="(sub.disabled)? 'pointer-events: none;':''"
+          :disabled="sub.disabled"
+          @click="refresh(sub.route)"
+        >
+          {{ $t(sub.title) }}
+        </b-dropdown-item>
+      </span>
     </b-nav-item-dropdown>
   </div>
 </template>
@@ -33,8 +40,11 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class NIDropdownHoverable extends Vue {
+  $route: any
+  $router: any
   $nuxt: any
   @Prop({ }) title!: string
+  @Prop({ default: false }) disabled!: boolean
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>

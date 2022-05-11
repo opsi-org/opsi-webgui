@@ -108,6 +108,7 @@
   "label.version": "Version:",
   "label.ppId-onlyOnDepots" : "Property existiert nur für server \"{depots}\" (Grund: Unterschiedliche Produkt Versionen)",
   "label.on": "AN",
+  "label.readonly": "Read-Only Modus aktiv",
   "label.off": "AUS",
   "description.quicksave.on": "Änderungen werden sofort gespeichert.",
   "description.quicksave.off": "Änderungen werden nicht sofort gespeichert. Eine Übersicht listet alle lokal vorgenommen Änderungen auf. Diese können vor dem Speichern angesehen und verändert werden.",

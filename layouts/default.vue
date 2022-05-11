@@ -22,9 +22,13 @@
 // import Cookie from 'js-cookie'
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../.utils/types/tchanges'
+import { IObjectString2Boolean } from '../.utils/types/tgeneral'
+
 const settings = namespace('settings')
 const changes = namespace('changes')
 const cache = namespace('data-cache')
+const config = namespace('config-app')
+
 interface SideBarAttr {
     visible: boolean,
     expanded: boolean
@@ -35,13 +39,14 @@ export default class LayoutDefault extends Vue {
   $mq: any
   $axios: any
 
+  @config.Getter public config!: IObjectString2Boolean
+  @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
   @settings.Getter public colortheme!: any
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
-
   // sidebarAttr: SideBarAttr = { visible: this.$mq !== 'mobile', expanded: this.$mq !== 'mobile' }
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
@@ -55,6 +60,7 @@ export default class LayoutDefault extends Vue {
   async mounted () {
     window.onbeforeunload = this.confirmToSaveChanges
     await this.checkServer()
+    await this.checkConfig()
     // if (Cookie.get('menu_attributes_desktop')) {
     //   this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any)
     // } else {
@@ -83,6 +89,14 @@ export default class LayoutDefault extends Vue {
   async checkServer () {
     if (this.opsiconfigserver === '') {
       this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
+    }
+  }
+
+  async checkConfig () {
+    try {
+      this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
+    } catch (error) {
+      // this.setConfig({"user":"adminuser","configuration":{"read_only":false,"depot_access":false,"group_access":false,"client_creation":true}}.configuration)
     }
   }
 }

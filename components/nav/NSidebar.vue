@@ -9,6 +9,7 @@
             v-if="expanded"
             :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
+            :disabled="menuitem.disabled"
             :icon="menuitem.icon"
             :route="menuitem.route"
             :submenu="menuitem.submenu"
@@ -17,6 +18,7 @@
             v-else
             :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
+            :disabled="menuitem.disabled"
             :icon="menuitem.icon"
             :route="menuitem.route"
             :submenu="menuitem.submenu"
@@ -27,6 +29,7 @@
             :class="{checkactive: $route.path.includes(menuitem.route)}"
             :expanded="expanded"
             :title="menuitem.title"
+            :disabled="menuitem.disabled"
             :icon="menuitem.icon"
             :route="menuitem.route"
           />
@@ -38,13 +41,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Constants } from '../../mixins/uib-mixins'
+const config = namespace('config-app')
 
 interface IMenuItem {
   title:string
   route?: string
   icon?: string
+  disabled?: boolean
   submenu?: Array<IMenuItem>
   menu?: Array<IMenuItem>
 }
@@ -59,6 +65,7 @@ export default class NSidebar extends Vue {
   // created () {
   //   console.log('constants: ', this.iconnames)
   // }
+  @config.Getter public config!: IObjectString2Boolean
 
   refresh (route) {
     if (this.$route.path.includes(route)) {
@@ -92,7 +99,7 @@ export default class NSidebar extends Vue {
             icon: this.iconnames.client,
             submenu: [
               { title: 'title.allClients', route: '/clients/' },
-              { title: 'title.addNew', route: '/clientsaddnew' },
+              { title: 'title.addNew', route: '/clientsaddnew', disabled: !this.config?.client_creation || false },
               { title: 'title.config', route: '/clientsconfig' },
               { title: 'title.log', route: '/clientslog' }
             ]
