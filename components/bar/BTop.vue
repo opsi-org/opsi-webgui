@@ -17,6 +17,7 @@
         <IconIOpsiLogo :light="true" height="25" />
         <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
+        <IconIReadOnly />
       </b-navbar-brand>
 
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
@@ -42,19 +43,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, namespace, Vue, Prop } from 'nuxt-property-decorator'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
 import { Constants } from '../../mixins/uib-mixins'
+const config = namespace('config-app')
 
 @Component({ mixins: [Constants] })
 export default class BTop extends Vue {
   $nuxt: any
   $mq:any
+  $t:any
   $config:any
   iconnames:any
 
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
 
+  @config.Getter public config!: IObjectString2Boolean
   get username () {
     return localStorage.getItem('username')
   }

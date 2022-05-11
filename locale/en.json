@@ -109,6 +109,7 @@
   "label.ppId-onlyOnDepots" : "property only exists on server \"{depots}\" (reason: different product versions)",
   "label.on": "ON",
   "label.off": "OFF",
+  "label.readonly": "Read-only mode activ",
   "description.quicksave.on": "Changes will be saved immediately.",
   "description.quicksave.off": "Changes are not saved immediately. An overview lists all locally made changes. These can be viewed and changed before saving.",
   "button.login": "Login",

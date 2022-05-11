@@ -7,6 +7,7 @@
       no-caret
       lazy
       dropdown
+      :disabled="(config)? config.read_only : false"
       variant="outline-primary"
       size="sm"
       alt="Show column"
@@ -40,7 +41,9 @@ import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableRowItemProducts } from '../../.utils/types/ttable'
 import { mapValues2Objects } from '../../.utils/utils/smappings'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
+const config = namespace('config-app')
 @Component
 export default class DDProductRequest extends BDropdown {
   @Prop({ }) rowitem!: ITableRowItemProducts|undefined
@@ -51,6 +54,7 @@ export default class DDProductRequest extends BDropdown {
   preRequest: string = this.request
   currentReq: string = this.request
 
+  @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionClients!: Array<string>
 
   updated () {
