@@ -38,7 +38,6 @@ export default class BCountdowntimer extends Vue {
     this.first_notification_showed = false
     // ref is different in development and production: children[1] is correct for production children[2] for development
     this.refAlert = (this.$root.$children[1].$refs.expiringAlert as any) || (this.$root.$children[2]?.$refs.expiringAlert as any)
-    console.warn('Ref Alert ', this.refAlert)
 
     this.notifyInMilliSec = ((this.isAuthenticated) ? 5 : -1) * 60000
     if (!this.sessionEndTime) {
@@ -55,7 +54,7 @@ export default class BCountdowntimer extends Vue {
   calcTimeout () {
     const t = this.getRemainingTime()
     this.countdowntimer = this.getText(t)
-    // console.warn('time remaining: ', t.diff, ' notify if <', this.notifyInMilliSec, '-> ', (t.diff <= this.notifyInMilliSec))
+    // console.debug('time remaining: ', t.diff, ' notify if <', this.notifyInMilliSec, '-> ', (t.diff <= this.notifyInMilliSec))
     const time = { min: t.minutes, s: t.seconds }
     if (t.diff <= this.notifyInMilliSec && !this.first_notification_showed) {
       this.first_notification_showed = true
@@ -68,9 +67,10 @@ export default class BCountdowntimer extends Vue {
     }
     if (isNaN(t.diff) || t.diff === 0 || this.notifyInMilliSec <= 0) {
       this.countdowntimer = this.$t('message.session.expired') as string
-      clearInterval(this.expiresInterval)
       this.logout()
       this.clearSession()
+      clearInterval(this.expiresInterval)
+      this.setExpiresInterval(undefined)
       this.$router.push('/login')
     }
   }
@@ -108,6 +108,7 @@ export default class BCountdowntimer extends Vue {
   getRemainingTime () {
     // const endtime = Cookie.get('opsiweb-session')
     const endtime = this.sessionEndTime
+    if (!endtime) { this.setSession() }
     const diff = Date.parse(endtime as unknown as string) - Date.parse(new Date() as unknown as string)
     const seconds = Math.floor((diff / 1000) % 60)
     const minutes = Math.floor((diff / 1000 / 60) % 60)
