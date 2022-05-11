@@ -21,7 +21,15 @@ from opsiconfd.application.utils import (
 )
 from opsiconfd.backend import get_backend
 
-from .utils import mysql
+from .depots import get_depots
+from .utils import (
+	client_creation_allowed,
+	depot_access_configured,
+	get_allowd_depots,
+	mysql,
+	read_only_user,
+	user_register,
+)
 
 webgui_router = APIRouter()
 
@@ -89,6 +97,31 @@ async def user_opsiserver():
 	return JSONResponse({
 		"result": get_configserver_id()
 	})
+
+
+@webgui_router.get("/api/user/configuration")
+def user_configuration(request: Request):
+	username = request.scope.get("session").user_store.username
+	if user_register():
+
+		depot_access = get_depots(username)
+		if depot_access_configured(username):
+			depot_access = get_allowd_depots(username)
+
+		return JSONResponse({
+			"user": username,
+			"configuration": {
+				"read_only": read_only_user(username),
+				"depot_access": depot_access,
+				"client_creation": client_creation_allowed(username)
+			}
+	})
+
+	return JSONResponse({
+		"user": username,
+		"configuration": None
+	})
+
 
 
 @webgui_router.get("/api/opsidata/modulesContent")

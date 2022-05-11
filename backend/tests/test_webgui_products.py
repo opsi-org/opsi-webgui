@@ -18,13 +18,13 @@ import pytest
 import requests
 
 from .utils import (  # pylint: disable=unused-import
-	ADMIN_PASS,
-	ADMIN_USER,
-	clean_redis,
-	config,
-	create_check_data,
-	database_connection,
-	disable_request_warning,
+    ADMIN_PASS,
+    ADMIN_USER,
+    clean_redis,
+    config,
+    create_check_data,
+    database_connection,
+    disable_request_warning,
 )
 
 API_ROOT = "/addons/webgui/api/opsidata"
@@ -51,6 +51,7 @@ test_data = [
 	(
 		{
 			"type": "LocalbootProduct",
+			"selectedDepots": [FQDN],
 			"pageNumber": 1,
 			"perPage": 90,
 			"sortBy": "productId",

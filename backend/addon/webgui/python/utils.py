@@ -7,14 +7,21 @@
 """
 webgui utils
 """
-from typing import Optional, List
+from functools import wraps
+from operator import and_
+from typing import List, Optional
 
-from sqlalchemy import select, text
-from fastapi import Query
-
-from opsiconfd.application.utils import get_configserver_id, parse_list
+from fastapi import Query, status
+from opsiconfd.application.utils import (
+	bool_product_property,
+	get_configserver_id,
+	parse_list,
+)
 from opsiconfd.backend import get_mysql as backend_get_mysql
 from opsiconfd.logging import logger
+from opsiconfd.rest import OpsiApiException
+from sqlalchemy import select, text
+
 
 def get_mysql():
 	try:
@@ -22,7 +29,9 @@ def get_mysql():
 	except RuntimeError as err:
 		return None
 
+
 mysql = get_mysql()
+
 
 def get_depot_of_client(client):
 	params = {}
@@ -48,14 +57,18 @@ def get_depot_of_client(client):
 def parse_hosts_list(hosts: List[str] = Query(None)) -> Optional[List]:
 	return parse_list(hosts)
 
+
 def parse_depot_list(selectedDepots: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
 	return parse_list(selectedDepots)
+
 
 def parse_client_list(selectedClients: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
 	return parse_list(selectedClients)
 
+
 def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
 	return parse_list(selected)
+
 
 def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 	if not processed:
@@ -114,3 +127,141 @@ def merge_dicts(dict_a: dict, dict_b: dict, path=None) -> dict:
 		else:
 			dict_a[key] = dict_b[key]
 	return dict_a
+
+
+def user_register() -> bool:
+	with mysql.session() as session:
+
+		where = text("cv.configId='user.{}.register'")
+
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+def depot_access_configured(user: str) -> bool:
+	with mysql.session() as session:
+
+		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.configured'")
+
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+
+def read_only_user(user: str) -> bool:
+	with mysql.session() as session:
+		where = text("cv.configId='user.{" + user + "}.privilege.host.all.registered_readonly'")
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+
+def client_creation_allowed(user: str) -> bool:
+	with mysql.session() as session:
+		where = text("cv.configId='user.{" + user + "}.privilege.host.createclient'")
+		query = select(text("cv.value, cv.isDefault"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+		result = session.execute(query)
+		result = result.fetchall()
+
+	if result:
+		for row in result:
+			row_dict = dict(row)
+			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
+				return True
+	return False
+
+
+def get_allowd_depots(user: str) -> list:
+	with mysql.session() as session:
+		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.depots'")
+		where = and_(where, text("cv.isDefault=1"))
+		query = select(text("cv.value"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+		result = session.execute(query)
+		result = result.fetchall()
+		depots = []
+		for row in result:
+			depots.append(dict(row).get("value"))
+	return depots
+
+
+def read_only_check(func):
+	@wraps(func)
+	def check_user(*args, **kwargs):
+		if user_register():
+			username = kwargs.get("request").scope.get("session").user_store.username
+			if read_only_user(username):
+				logger.error("User %s is a read only user.", username)
+				raise OpsiApiException(
+					message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN
+				)
+		return func(*args, **kwargs)
+	return check_user
+
+
+def filter_depot_access(func):
+	@wraps(func)
+	def check_user(*args, **kwargs):
+		logger.devel("%s - check user", func)
+		if user_register():
+			username = kwargs.get("request").scope.get("session").user_store.username
+			logger.devel(username)
+			if depot_access_configured(username):
+				allowed_depots = get_allowd_depots(username)
+				selected_depots = kwargs.get("selectedDepots")
+				for depot in selected_depots:
+					if depot not in allowed_depots:
+						selected_depots.remove(depot)
+				if selected_depots:
+					kwargs["selectedDepots"] = selected_depots
+				else:
+					kwargs["selectedDepots"] = []
+				logger.devel(kwargs)
+		return func(*args, **kwargs)
+	return check_user
+
+
+def check_client_creation_rights(func):
+	@wraps(func)
+	def check_user(*args, **kwargs):
+		if user_register():
+			username = kwargs.get("request").scope.get("session").user_store.username
+			if not client_creation_allowed(username):
+				logger.error("User %s is not allowed to create clients.", username)
+				raise OpsiApiException(
+					message=f"User {username} is not allowed to create clients.", http_status=status.HTTP_403_FORBIDDEN
+				)
+		return func(*args, **kwargs)
+	return check_user

@@ -9,23 +9,27 @@ webgui depot methods
 """
 
 from typing import List, Optional
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import select, text, and_, or_
 
-from fastapi import APIRouter, Depends
-
-from opsiconfd.backend import get_mysql
-from opsiconfd.rest import order_by, pagination, common_query_parameters, rest_api
+from fastapi import APIRouter, Depends, Request
 from opsiconfd.application.utils import get_configserver_id
+from opsiconfd.backend import get_mysql
+from opsiconfd.logging import logger
+from opsiconfd.rest import common_query_parameters, order_by, pagination, rest_api
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import and_, or_, select, text
 
 from .utils import (
+	depot_access_configured,
+	filter_depot_access,
+	get_allowd_depots,
+	mysql,
 	parse_depot_list,
-	parse_selected_list
+	parse_selected_list,
+	user_register,
 )
 
-from .utils import mysql
-
 depot_router = APIRouter()
+
 
 class Depot(BaseModel):  # pylint: disable=too-few-public-methods
 	depotId: str
@@ -35,12 +39,7 @@ class Depot(BaseModel):  # pylint: disable=too-few-public-methods
 	description: str
 
 
-@depot_router.get("/api/opsidata/depot_ids", response_model=List[str])
-@rest_api
-def depot_ids():
-	"""
-	Get all depotIds.
-	"""
+def get_depots(username: str = None):
 	with mysql.session() as session:
 		query = (
 			"SELECT hostId FROM HOST "
@@ -48,13 +47,33 @@ def depot_ids():
 			"ORDER BY hostId"
 		)
 		result = session.execute(query).fetchall()
-		result = [ row[0] for row in result if row is not None ]
-		return {"data": result}
+		result = [row[0] for row in result if row is not None]
+
+		if username and user_register() and depot_access_configured(username):
+			allowed_depots = get_allowd_depots(username)
+			for depot in result.copy():
+				logger.devel(depot)
+				if depot not in allowed_depots:
+					result.remove(depot)
+		return result
+
+
+@depot_router.get("/api/opsidata/depot_ids", response_model=List[str])
+@rest_api
+def depot_ids(request: Request):
+	"""
+	Get all depotIds.
+	"""
+
+	username = request.scope.get("session").user_store.username
+	depots = get_depots(username)
+
+	return {"data": depots}
 
 
 @depot_router.get("/api/opsidata/depots", response_model=List[Depot])
 @rest_api
-def depots(commons: dict = Depends(common_query_parameters), selected: Optional[List[str]] = Depends(parse_selected_list)):
+def depots(request: Request, commons: dict = Depends(common_query_parameters), selected: Optional[List[str]] = Depends(parse_selected_list)):
 	"""
 	Get all depots with depotId, ident, type, ip and description.
 	"""
@@ -101,30 +120,48 @@ def depots(commons: dict = Depends(common_query_parameters), selected: Optional[
 			params
 		).fetchone()[0]
 
+		depot_list = []
+		username = request.scope.get("session").user_store.username
+		if user_register() and depot_access_configured(username):
+			allowed_depots = get_allowd_depots(username)
+			for row in result:
+				if row is not None:
+					depot_data = dict(row)
+					if depot_data.get("depotId") in allowed_depots:
+						depot_list.append(depot_data)
+		else:
+			depot_list =  [dict(row) for row in result if row is not None]
+
 		return {
-				"data": [ dict(row) for row in result if row is not None ],
+				"data": depot_list,
 				"total": total
 			}
 
 
 @depot_router.get("/api/opsidata/depots/clients", response_model=List[str])
 @rest_api
-def clients_on_depots(selectedDepots: List[str] = Depends(parse_depot_list)): # pylint: disable=invalid-name
+@filter_depot_access
+def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(parse_depot_list)): # pylint: disable=invalid-name
 	"""
 	Get all client ids on selected depots.
 	"""
 
+	if selectedDepots == []:
+		return {"data": []}
+
 	params = {}
-	if selectedDepots == [] or selectedDepots is None:
-		params["depots"] = [get_configserver_id()]
+	if selectedDepots is None:
+		username = request.scope.get("session").user_store.username
+		params["depots"] = get_depots(username)
 	else:
 		params["depots"] = selectedDepots
 
 	with mysql.session() as session:
 		where = text("h.type='OpsiClient'")
+		where_depots = None
 		for idx, depot in enumerate(params["depots"]):
 			if idx > 0:
-				where_depots = or_(where_depots,text(f"cs.values LIKE '%{depot}%'"))#
+				where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))
 			else:
 				where_depots = text(f"cs.values LIKE '%{depot}%'")
 		if get_configserver_id() in params["depots"]:
@@ -145,4 +182,4 @@ def clients_on_depots(selectedDepots: List[str] = Depends(parse_depot_list)): # 
 				if dict(row).get("client"):
 					clients.append( dict(row).get("client"))
 
-		return { "data": clients }
+		return {"data": clients}

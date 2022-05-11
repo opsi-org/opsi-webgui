@@ -1,5 +1,9 @@
 [
     "pytest-client-0.uib.local",
+    "pytest-client-1.uib.local",
+    "pytest-client-2.uib.local",
+    "pytest-client-3.uib.local",
+    "pytest-client-4.uib.local",
     "pytest-lost-client-fp.uib.local",
     "pytest-lost-client-fp2.uib.local",
     "pytest-lost-client.uib.local"

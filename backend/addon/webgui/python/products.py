@@ -12,7 +12,7 @@ import json
 from functools import lru_cache
 from typing import Dict, List, Optional
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from opsicommon.objects import ProductOnClient
 from opsiconfd.application.utils import (
@@ -34,13 +34,16 @@ from sqlalchemy import alias, and_, column, select, text
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.sql.expression import table, update
 
+from .depots import get_depots
 from .utils import (
+	filter_depot_access,
 	get_depot_of_client,
 	merge_dicts,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
 	parse_selected_list,
+	read_only_check,
 )
 
 product_router = APIRouter()
@@ -198,16 +201,21 @@ class Product(BaseModel):  # pylint: disable=too-few-public-methods
 
 @product_router.get("/api/opsidata/products", response_model=List[Product])
 @rest_api
+@filter_depot_access
 def products(
+	request: Request,
 	commons: dict = Depends(common_query_parameters),
 	type: str = "LocalbootProduct",
 	selectedClients: List[str] = Depends(parse_client_list),
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	selected: Optional[List[str]] = Depends(parse_selected_list),
-):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name
+):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument
 	"""
 	Get products from selected depots and clients.
 	"""
+
+	if selectedDepots == []:
+		return {"data": [], "total": 0}
 
 	params = {}
 	params["product_type"] = type
@@ -215,8 +223,9 @@ def products(
 		params["clients"] = [""]
 	else:
 		params["clients"] = selectedClients
-	if selectedDepots == [] or selectedDepots is None:
-		params["depots"] = [get_configserver_id()]
+	if selectedDepots == None:
+		username = request.scope.get("session").user_store.username
+		params["depots"] = get_depots(username)
 	else:
 		params["depots"] = selectedDepots
 	if selected:
@@ -417,7 +426,8 @@ class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
 
 @product_router.post("/api/opsidata/clients/products")
 @rest_api
-def save_poduct_on_client(data: PocItem):  # pylint: disable=too-many-locals, too-many-statements, too-many-branches
+@read_only_check
+def save_poduct_on_client(request: Request, data: PocItem):  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
 	"""
 	Save a Product On Client object.
 	"""
@@ -897,7 +907,9 @@ class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
 
 @product_router.post("/api/opsidata/products/{productId}/properties")
 @rest_api
+@read_only_check
 def save_poduct_property(
+	request: Request,
 	productId: str, data: ProductProperty
 ):  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches
 	"""

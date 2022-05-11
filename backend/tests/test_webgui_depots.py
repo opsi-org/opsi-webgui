@@ -9,20 +9,24 @@
 test opsiconfd webgui products
 """
 
-import socket
-import pytest
-from string import Template
-import requests
 import json
 import os
+import socket
 from datetime import datetime
+from string import Template
+
+import pytest
+import requests
 from fastapi import status
 
-
-
-from .utils import ( # pylint: disable=unused-import
-	config, clean_redis, database_connection, create_check_data, disable_request_warning,
-	ADMIN_USER, ADMIN_PASS
+from .utils import (  # pylint: disable=unused-import
+    ADMIN_PASS,
+    ADMIN_USER,
+    clean_redis,
+    config,
+    create_check_data,
+    database_connection,
+    disable_request_warning,
 )
 
 API_ROOT = "/addons/webgui/api/opsidata"
@@ -39,7 +43,7 @@ test_data = [
 	),
 	(
 		"depot_ids",
-		{},
+		{"selectedDepots": FQDN},
 		f"{FILE_DIR}/depot-ids-get1.json"
 	),
 	(

@@ -30,7 +30,17 @@ from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import table
 
-from .utils import mysql, parse_client_list, parse_depot_list, parse_selected_list
+from .utils import (
+	check_client_creation_rights,
+	filter_depot_access,
+	mysql,
+	parse_client_list,
+	parse_depot_list,
+	parse_selected_list,
+	read_only_check,
+	read_only_user,
+	user_register,
+)
 
 client_router = APIRouter()
 
@@ -63,6 +73,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 
 @client_router.get("/api/opsidata/clients", response_model=List[ClientList])
 @rest_api
+@filter_depot_access
 def clients(
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
@@ -72,6 +83,8 @@ def clients(
 	"""
 	Get Clients on selected depots with infos on the client.
 	"""
+	if selectedDepots == []:
+		return {"data": [], "total": 0}
 
 	with mysql.session() as session:
 		where = text("h.type = 'OpsiClient'")
@@ -219,6 +232,8 @@ def depots_of_clients(
 
 @client_router.post("/api/opsidata/clients")
 @rest_api
+@read_only_check
+@check_client_creation_rights
 def create_client(request: Request, client: Client):  # pylint: disable=too-many-locals
 	"""
 	Create OPSI-Client.
@@ -325,7 +340,8 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 
 @client_router.delete("/api/opsidata/clients/{clientid}")
 @rest_api
-def delete_client(clientid: str):
+@read_only_check
+def delete_client(request: Request, clientid: str):
 	"""
 	Delete Client with ID.
 	"""
