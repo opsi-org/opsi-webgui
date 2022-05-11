@@ -21,8 +21,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component export class Constants extends Vue {
   // iconnames: any = _icons
   iconnames: any = {
-    user: 'person-fill',
-    password: 'lock-fill',
     depot: 'server',
     client: 'laptop',
     // product: 'grid',
@@ -69,6 +67,5 @@ import { Component, Vue } from 'nuxt-property-decorator'
     logout: 'power',
     themelight: 'sun',
     themedark: 'moon'
-
   }
 }
