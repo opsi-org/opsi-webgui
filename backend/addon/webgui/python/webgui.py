@@ -26,6 +26,7 @@ from .utils import (
 	client_creation_allowed,
 	depot_access_configured,
 	get_allowd_depots,
+	host_group_access_configured,
 	mysql,
 	read_only_user,
 	user_register,
@@ -101,18 +102,14 @@ async def user_opsiserver():
 
 @webgui_router.get("/api/user/configuration")
 def user_configuration(request: Request):
-	username = request.scope.get("session").user_store.username
+	username = get_username()
 	if user_register():
-
-		depot_access = get_depots(username)
-		if depot_access_configured(username):
-			depot_access = get_allowd_depots(username)
-
 		return JSONResponse({
 			"user": username,
 			"configuration": {
 				"read_only": read_only_user(username),
-				"depot_access": depot_access,
+				"depot_access":  depot_access_configured(username),
+				"group_access": host_group_access_configured(username),
 				"client_creation": client_creation_allowed(username)
 			}
 	})
