@@ -230,8 +230,13 @@ export default class TInfiniteScroll extends Vue {
 
 <style>
 .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
+  /* each header cell */
   color: inherit;
   background-color: inherit;
+}
+.TInfiniteScroll{
+  padding-bottom: 70px;
+  min-height: 350px;
 }
 .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
