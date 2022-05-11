@@ -305,6 +305,21 @@ def get_allowd_host_groups(user: str) -> list:
 	return groups
 
 
+def get_allowed_clients(user: str) -> list:
+	allowed_groups = get_allowd_host_groups(user)
+	allowed_clients = []
+	with mysql.session() as session:
+		for group in allowed_groups:
+			query = select(text("otg.objectId AS client"))\
+				.select_from(text("OBJECT_TO_GROUP AS otg"))\
+				.where(text(f"otg.groupId='{group}'"))
+			otg_result = session.execute(query)
+			otg_result = otg_result.fetchall()
+			for otg_row in otg_result:
+				if otg_row is not None:
+					allowed_clients.append(dict(otg_row).get("client"))
+	return allowed_clients
+
 def read_only_check(func):
 	@wraps(func)
 	def check_user(*args, **kwargs):
@@ -322,10 +337,9 @@ def read_only_check(func):
 def filter_depot_access(func):
 	@wraps(func)
 	def check_user(*args, **kwargs):
-		logger.devel("%s - check user", func)
+		logger.debug("%s - check user", func)
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
-			logger.devel(username)
 			if depot_access_configured(username):
 				allowed_depots = get_allowd_depots(username)
 				selected_depots = kwargs.get("selectedDepots")
@@ -336,7 +350,6 @@ def filter_depot_access(func):
 					kwargs["selectedDepots"] = selected_depots
 				else:
 					kwargs["selectedDepots"] = []
-				logger.devel(kwargs)
 		return func(*args, **kwargs)
 	return check_user
 

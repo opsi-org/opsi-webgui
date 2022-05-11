@@ -23,6 +23,7 @@ from .utils import (
 	filter_depot_access,
 	get_allowd_depots,
 	get_allowd_host_groups,
+	get_allowed_clients,
 	get_allowed_objects,
 	get_username,
 	host_group_access_configured,
@@ -56,7 +57,6 @@ def get_depots(username: str = None):
 		if username and user_register() and depot_access_configured(username):
 			allowed_depots = get_allowd_depots(username)
 			for depot in result.copy():
-				logger.devel(depot)
 				if depot not in allowed_depots:
 					result.remove(depot)
 		return result
@@ -145,7 +145,7 @@ def depots(request: Request, commons: dict = Depends(common_query_parameters), s
 @depot_router.get("/api/opsidata/depots/clients", response_model=List[str])
 @rest_api
 @filter_depot_access
-def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(parse_depot_list)): # pylint: disable=invalid-name
+def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(parse_depot_list)):  # pylint: disable=invalid-name
 	"""
 	Get all client ids on selected depots.
 	"""
@@ -183,19 +183,7 @@ def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(pars
 		clients = [] # pylint: disable=redefined-outer-name
 		username = get_username()
 		if user_register() and host_group_access_configured(username):
-
-			allowed_groups = get_allowd_host_groups(username)
-			allowed_clients = []
-			for group in allowed_groups:
-				query = select(text("otg.objectId AS client"))\
-					.select_from(text("OBJECT_TO_GROUP AS otg"))\
-					.where(text(f"otg.groupId='{group}'"))
-				otg_result = session.execute(query, params)
-				otg_result = otg_result.fetchall()
-				for otg_row in otg_result:
-					if otg_row is not None:
-						allowed_clients.append(dict(otg_row).get("client"))
-
+			allowed_clients = get_allowed_clients(username)
 			for row in result:
 				if row is not None:
 
