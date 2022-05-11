@@ -97,7 +97,7 @@ export default class DDTableColumnVisibility extends BDropdown {
 
   @Watch('headers', { deep: true }) headersChanged () { this.$emit('update:headers', this.headers) }
   @Watch('sortBy', { deep: true }) sortByChanged () {
-    if (this.headers[this.sortBy].visible) { return }
+    if (!this.headers[this.sortBy] || this.headers[this.sortBy].visible) { return }
     const majorKey = this.headers[this.sortBy]._majorKey
     let sortBy = this.sortBy
     if (majorKey) { sortBy = majorKey }
@@ -175,12 +175,19 @@ export default class DDTableColumnVisibility extends BDropdown {
 .DDTableColumnVisibility {
   max-width: fit-content !important;
   max-height: fit-content !important;
+  z-index: 30 !important;
 }
 .DDTableColumnVisibility .dropdown-menu {
-  height: max-content !important;
-  width: 350px !important;
-  z-index: 3 !important;
-  /* position: sticky; */
+  overflow: visible !important;
+  /* height: max-content !important; */
+  max-height: 300px !important;
+  min-width: 300px !important;
+  max-width: 350px !important;
+  z-index: 30 !important;
+  /* position: sticky !important; */
+}
+.DDTableColumnVisibility .dropdown-menu .dropdown-item {
+  padding: 0px !important;
 }
 /* .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   cursor: pointer;
