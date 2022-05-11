@@ -1,6 +1,9 @@
 <template>
-  <div v-if="config && config.read_only" class="IReadOnly container-fluid" data-testid="IReadOnly"
+  <div
+    v-if="config && config.read_only"
+    data-testid="IReadOnly"
     :title="$t('label.readonly')"
+    class="IReadOnly container-fluid"
   >
     <b-iconstack font-scale="1.5">
       <b-icon
@@ -8,16 +11,12 @@
         :key="el.icon"
         stacked
         :icon="el.icon"
-        :scale="el.scale||'1'"
+        :scale="el.scale || '1'"
         v-bind="el.attr"
       />
-      <!-- <b-icon stacked icon="camera" variant="info" scale="0.75"></b-icon>
-      <b-icon stacked icon="slash-circle" variant="danger"></b-icon> -->
     </b-iconstack>
-    <!-- <b-icon class="loading-icon" :icon="iconnames.loading" :animation="animation" :title="$t('message.loading')" /> -->
   </div>
 </template>
-
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
@@ -37,6 +36,5 @@ export default class ILoading extends Vue {
 <style>
 .IReadOnly .text-danger {
   color: var(--danger) !important;
-  /* color: #fff !important; */
 }
 </style>

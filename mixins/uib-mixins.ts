@@ -69,8 +69,8 @@ import { Component, Vue } from 'nuxt-property-decorator'
     themedark: 'moon',
     _stackedIcons:{
       readonly: [
-        { icon:'pencil', scale:"0.55"},
-        { icon:'slash-circle', attr:{ 'flip-h':true, variant: 'danger' }} // variant/color need also be defined in css of IconIReadOnly
+        { icon: 'pencil', scale: '0.55' },
+        { icon: 'slash-circle', attr: { 'flip-h': true, variant: 'danger' } } // variant/color need also be defined in css of IconIReadOnly
       ]
 
     }

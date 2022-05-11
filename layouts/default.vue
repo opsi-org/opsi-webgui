@@ -23,10 +23,12 @@
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
+
 const settings = namespace('settings')
 const changes = namespace('changes')
 const cache = namespace('data-cache')
 const config = namespace('config-app')
+
 interface SideBarAttr {
     visible: boolean,
     expanded: boolean
@@ -45,7 +47,6 @@ export default class LayoutDefault extends Vue {
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
-
   // sidebarAttr: SideBarAttr = { visible: this.$mq !== 'mobile', expanded: this.$mq !== 'mobile' }
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
@@ -90,13 +91,13 @@ export default class LayoutDefault extends Vue {
       this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
     }
   }
+
   async checkConfig () {
     try {
       this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
     } catch (error) {
       // this.setConfig({"user":"adminuser","configuration":{"read_only":false,"depot_access":false,"group_access":false,"client_creation":true}}.configuration)
     }
-    console.log('CONFIG', this.config)
   }
 }
 </script>
