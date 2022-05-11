@@ -11,26 +11,24 @@ webgui host methods
 import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel # pylint: disable=no-name-in-module
-from sqlalchemy import select, union, text, and_, or_
-
 from fastapi import APIRouter, Depends
-
+from opsiconfd.application.utils import get_configserver_id
 
 # from opsiconfd.logging import logger
 from opsiconfd.backend import get_mysql
-from opsiconfd.rest import order_by, pagination, common_query_parameters, rest_api
-from opsiconfd.application.utils import get_configserver_id, get_allowed_objects
 from opsiconfd.logging import logger
+from opsiconfd.rest import common_query_parameters, order_by, pagination, rest_api
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import and_, or_, select, text, union
 
 from .utils import (
+	build_tree,
+	get_allowed_objects,
+	mysql,
+	parse_client_list,
 	parse_depot_list,
 	parse_hosts_list,
-	parse_client_list,
-	build_tree
 )
-
-from .utils import mysql
 
 host_router = APIRouter()
 
@@ -84,8 +82,8 @@ def get_host_data(
 			h.lastSeen AS lastSeen,
 			h.opsiHostKey AS opsiHostKey,
 			h.oneTimePassword AS oneTimePassword,
-			(	SELECT cs.values 
-				FROM CONFIG_STATE AS cs 
+			(	SELECT cs.values
+				FROM CONFIG_STATE AS cs
 				WHERE cs.objectId=h.hostId AND cs.configId=\"clientconfig.dhcpd.filename\"
 			) as uefi
 		"""))\
@@ -106,7 +104,7 @@ def get_host_data(
 						if row_dict[key] and row_dict[key] == "[\"linux/pxelinux.cfg/elilo.efi\"]":
 							row_dict[key] = True
 						else:
-							row_dict[key] = False	
+							row_dict[key] = False
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
 						row_dict[key] = row_dict.get(key).isoformat()
 				host_data.append(row_dict)
@@ -142,7 +140,7 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 		if parentGroup == "groups" :
 			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))
 			where_hosts = text("og.groupId IS NULL")
-		elif parentGroup== "root" :
+		elif parentGroup == "root" :
 			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))
 			where_hosts = text("og.groupId IS NULL")
 			root_group = {
@@ -193,11 +191,11 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 
 		elif parentGroup == "root":
 			all_groups = {
-				'groups': 
-					{'id': 'groups', 'type': 'HostGroup', 'text': 'groups', 'parent': None}, 
-				'clientdirectory': 
-					{'id': 'clientdirectory', 'type': 'HostGroup', 'text': 'clientdirectory', 'parent': None,}, 
-				'clientlist': 
+				'groups':
+					{'id': 'groups', 'type': 'HostGroup', 'text': 'groups', 'parent': None},
+				'clientdirectory':
+					{'id': 'clientdirectory', 'type': 'HostGroup', 'text': 'clientdirectory', 'parent': None,},
+				'clientlist':
 					{'id': 'clientlist', 'type': 'HostGroup', 'text': 'clientlist', 'parent': None,}
 				}
 			if selectedClients:
@@ -243,7 +241,7 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 			for row in result:
 				groups_to_mark.append(row["group_id"])
 
-			for parent_group in groups_to_mark: 
+			for parent_group in groups_to_mark:
 				while parent_group not in all_groups.keys() and parent_group is not None:
 					parent_group = find_parent(parent_group)
 				if parent_group:

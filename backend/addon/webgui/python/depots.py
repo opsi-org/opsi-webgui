@@ -22,6 +22,10 @@ from .utils import (
 	depot_access_configured,
 	filter_depot_access,
 	get_allowd_depots,
+	get_allowd_host_groups,
+	get_allowed_objects,
+	get_username,
+	host_group_access_configured,
 	mysql,
 	parse_depot_list,
 	parse_selected_list,
@@ -177,9 +181,30 @@ def clients_on_depots(request: Request, selectedDepots: List[str] = Depends(pars
 		result = result.fetchall()
 
 		clients = [] # pylint: disable=redefined-outer-name
-		for row in result:
-			if row is not None:
-				if dict(row).get("client"):
-					clients.append( dict(row).get("client"))
+		username = get_username()
+		if user_register() and host_group_access_configured(username):
+
+			allowed_groups = get_allowd_host_groups(username)
+			allowed_clients = []
+			for group in allowed_groups:
+				query = select(text("otg.objectId AS client"))\
+					.select_from(text("OBJECT_TO_GROUP AS otg"))\
+					.where(text(f"otg.groupId='{group}'"))
+				otg_result = session.execute(query, params)
+				otg_result = otg_result.fetchall()
+				for otg_row in otg_result:
+					if otg_row is not None:
+						allowed_clients.append(dict(otg_row).get("client"))
+
+			for row in result:
+				if row is not None:
+
+					if dict(row).get("client") and dict(row).get("client") in allowed_clients:
+						clients.append(dict(row).get("client"))
+		else:
+			for row in result:
+				if row is not None:
+					if dict(row).get("client"):
+						clients.append( dict(row).get("client"))
 
 		return {"data": clients}

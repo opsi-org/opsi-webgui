@@ -33,6 +33,9 @@ from sqlalchemy.sql.expression import table
 from .utils import (
 	check_client_creation_rights,
 	filter_depot_access,
+	get_allowd_host_groups,
+	get_username,
+	host_group_access_configured,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
@@ -191,8 +194,31 @@ def clients(
 		result = session.execute(query, params)
 		result = result.fetchall()
 
-		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]
+		username = get_username()
+		if user_register() and host_group_access_configured(username):
+			username = get_username()
+			allowed_groups = get_allowd_host_groups(username)
+			allowed_clients = []
+			for group in allowed_groups:
+				query = select(text("otg.objectId AS client"))\
+					.select_from(text("OBJECT_TO_GROUP AS otg"))\
+					.where(text(f"otg.groupId='{group}'"))
+				otg_result = session.execute(query, params)
+				otg_result = otg_result.fetchall()
+				for otg_row in otg_result:
+					if otg_row is not None:
+						allowed_clients.append(dict(otg_row).get("client"))
+			clients = []
+			total = 0
+			for row in result:
+				logger.devel(allowed_clients)
+				logger.devel(dict(row).get("clientId"))
+				if row is not None and dict(row).get("clientId") in allowed_clients:
+					clients.append(dict(row))
+					total = total + 1
+			return {"data": clients, "total": total}
 
+		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]
 		return {"data": [dict(row) for row in result if row is not None], "total": total}
 
 
