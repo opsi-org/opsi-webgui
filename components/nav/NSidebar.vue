@@ -55,9 +55,9 @@ export default class NSidebar extends Vue {
   iconnames: any // from mixin
   @Prop({ }) expanded!: boolean
 
-  created () {
-    console.log('constants: ', this.iconnames)
-  }
+  // created () {
+  //   console.log('constants: ', this.iconnames)
+  // }
 
   refresh (route) {
     if (this.$route.path.includes(route)) {
