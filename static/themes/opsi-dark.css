@@ -4,6 +4,7 @@
   --color:#ffffffb4;
   --background:#40464e;
   --border: var(--background);
+  --hover: #5f6163;
   --component:#495057;
 }
 *,
@@ -1476,8 +1477,8 @@ pre code {
   background-color: #000;
 }
 .table-hover tbody tr:hover {
-  color: #ffffffb4;
-  background-color: #5f6163;
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table-primary,
 .table-primary > td,
@@ -1492,11 +1493,15 @@ pre code {
   border-color: #000;
 }
 .table-hover .table-primary:hover {
-  background-color: #a6c9db;
+  /* background-color: #a6c9db; */
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table-hover .table-primary:hover > td,
 .table-hover .table-primary:hover > th {
-  background-color: #a6c9db;
+  /* background-color: #a6c9db; */
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table-secondary,
 .table-secondary > td,
@@ -1510,11 +1515,15 @@ pre code {
   border-color: #e099b0;
 }
 .table-hover .table-secondary:hover {
-  background-color: #e8b5c5;
+  /* background-color: #e8b5c5; */
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table-hover .table-secondary:hover > td,
 .table-hover .table-secondary:hover > th {
-  background-color: #e8b5c5;
+  /* background-color: #e8b5c5; */
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table-success,
 .table-success > td,
@@ -1591,9 +1600,7 @@ pre code {
 .table-light,
 .table-light > td,
 .table-light > th {
-  /* 40464e */
   background-color: transparent;
-  /* background-color: #fdfdfe; */
 }
 .table-light tbody + tbody,
 .table-light td,
@@ -2658,7 +2665,7 @@ input[type="submit"].btn-block {
 .dropdown-item:focus,
 .dropdown-item:hover {
   color: #ffffffb4;
-  background-color: #5f6163;
+  background-color: var(--hover);
   text-decoration: none;
 }
 .dropdown-item.active,
@@ -3387,7 +3394,7 @@ input[type="submit"].btn-block {
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover {
   color: #ffffffb4;
-  background-color: #5f6163;
+  background-color: var(--hover);
   border-color: #000;
 }
 .nav-tabs .nav-link.disabled {
@@ -3669,8 +3676,8 @@ input[type="submit"].btn-block {
 }
 .page-link:hover {
   z-index: 2;
-  background-color: #5f6163;
-  color: #ffffffb4;
+  background-color: var(--hover);
+  color: var(--color);
   text-decoration: none;
   border-color: #495057;
 }
