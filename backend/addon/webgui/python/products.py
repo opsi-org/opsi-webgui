@@ -37,13 +37,17 @@ from sqlalchemy.sql.expression import table, update
 from .depots import get_depots
 from .utils import (
 	filter_depot_access,
+	get_allowed_products,
 	get_depot_of_client,
+	get_username,
 	merge_dicts,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
 	parse_selected_list,
+	product_group_access_configured,
 	read_only_check,
+	user_register,
 )
 
 product_router = APIRouter()
@@ -216,7 +220,7 @@ def products(
 
 	if selectedDepots == []:
 		return {"data": [], "total": 0}
-
+	username = get_username()
 	params = {}
 	params["product_type"] = type
 	if selectedClients == [] or selectedClients is None:
@@ -224,7 +228,6 @@ def products(
 	else:
 		params["clients"] = selectedClients
 	if selectedDepots == None:
-		username = request.scope.get("session").user_store.username
 		params["depots"] = get_depots(username)
 	else:
 		params["depots"] = selectedDepots
@@ -232,13 +235,18 @@ def products(
 		params["selected"] = selected
 	else:
 		params["selected"] = [""]
+	allowed_products = None
+	if user_register() and product_group_access_configured(username):
+		allowed_products = get_allowed_products(username)
 
 	with mysql.session() as session:
 		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
 		if commons.get("filterQuery"):
 			where = and_(where, text("(pod.productId LIKE :search)"))
 			params["search"] = f"%{commons['filterQuery']}%"
-
+		if allowed_products:
+			params["allowed_products"] = allowed_products
+			where = and_(where, text("(pod.productId in :allowed_products)"))
 		query = (
 			select(
 				text(

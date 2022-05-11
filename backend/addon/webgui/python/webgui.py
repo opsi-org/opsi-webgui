@@ -28,6 +28,7 @@ from .utils import (
 	get_allowd_depots,
 	host_group_access_configured,
 	mysql,
+	product_group_access_configured,
 	read_only_user,
 	user_register,
 )
@@ -101,7 +102,7 @@ async def user_opsiserver():
 
 
 @webgui_router.get("/api/user/configuration")
-def user_configuration(request: Request):
+def user_configuration():
 	username = get_username()
 	if user_register():
 		return JSONResponse({
@@ -109,7 +110,8 @@ def user_configuration(request: Request):
 			"configuration": {
 				"read_only": read_only_user(username),
 				"depot_access":  depot_access_configured(username),
-				"group_access": host_group_access_configured(username),
+				"host_group_access": host_group_access_configured(username),
+				"product_group_access": product_group_access_configured(username),
 				"client_creation": client_creation_allowed(username)
 			}
 	})
