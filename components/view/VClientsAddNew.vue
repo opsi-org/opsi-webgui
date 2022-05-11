@@ -4,71 +4,52 @@
     <IconILoading v-if="isLoading" />
     <div v-else>
       <br>
-      <b-row class="mb-2">
-        <b-col sm="2" class="text-sm-right">
-          {{ $t('table.fields.id') }}
-        </b-col>
-        <b-col>
+      <GridGFormItem :label=" $t('table.fields.id')" value-more="true">
+        <template #value>
           <label for="clientname" class="sr-only"> clientName </label>
           <b-form-input id="clientname" v-model="clientName" type="text" :state="checkValid" required />
-        </b-col>
-        <b-col>
+        </template>
+        <template #valueMore>
           <label for="domainName" class="sr-only"> domainName </label>
           <b-form-input id="domainName" v-model="domainName" type="text" required />
-        </b-col>
-      </b-row>
+        </template>
+      </GridGFormItem>
       <b-row class="mt-5 mb-4">
         <b>{{ $t('table.clientDetails') }}: </b>
       </b-row>
-      <b-row class="mb-2">
-        <b-col sm="2" class="text-sm-right">
-          {{ $t('table.fields.description') }}
-        </b-col>
-        <b-col>
+      <GridGFormItem :label=" $t('table.fields.description')">
+        <template #value>
           <label for="description" class="sr-only"> {{ $t('table.fields.description') }} </label>
           <b-form-input id="description" v-model="newClient.description" type="text" />
-        </b-col>
-      </b-row>
-      <b-row class="mb-2">
-        <b-col sm="2" class="text-sm-right">
-          {{ $t('table.fields.inventNum') }}
-        </b-col>
-        <b-col>
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label=" $t('table.fields.inventNum')">
+        <template #value>
           <label for="inventNum" class="sr-only"> {{ $t('table.fields.inventNum') }} </label>
           <b-form-input id="inventNum" v-model="newClient.inventoryNumber" type="text" />
-        </b-col>
-      </b-row>
-      <b-row class="mb-2">
-        <b-col sm="2" class="text-sm-right">
-          {{ $t('table.fields.hwAddr') }}
-        </b-col>
-        <b-col>
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label=" $t('table.fields.hwAddr')">
+        <template #value>
           <label for="hwAddr" class="sr-only"> {{ $t('table.fields.hwAddr') }} </label>
           <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" type="text" />
-        </b-col>
-      </b-row>
-
-      <b-row class="mb-2">
-        <b-col sm="2" class="text-sm-right">
-          {{ $t('table.fields.ip') }}
-        </b-col>
-        <b-col>
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label=" $t('table.fields.ip')">
+        <template #value>
           <label for="ip" class="sr-only"> {{ $t('table.fields.ip') }} </label>
           <b-form-input id="ip" v-model="newClient.ipAddress" type="text" />
-        </b-col>
-      </b-row>
+        </template>
+      </GridGFormItem>
       <b-row class="mt-5 mb-4">
         <b>{{ $t('table.addtnlInfo') }}:</b>
       </b-row>
-      <b-row class="mb-2">
-        <b-col sm="2" class="text-sm-right">
-          {{ $t('table.fields.notes') }}
-        </b-col>
-        <b-col>
+      <GridGFormItem :label=" $t('table.fields.notes')">
+        <template #value>
           <label for="notes" class="sr-only"> {{ $t('table.fields.notes') }} </label>
           <b-form-textarea id="notes" v-model="newClient.notes" rows="2" no-resize />
-        </b-col>
-      </b-row>
+        </template>
+      </GridGFormItem>
     </div>
     <DivDComponentGroup class="float-right">
       <b-button variant="primary" @click="resetNewClientForm()">
@@ -83,7 +64,6 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-// import { makeToast } from '../../.utils/utils/scomponents'
 import { Constants } from '../../mixins/uib-mixins'
 
 const cache = namespace('data-cache')
@@ -170,20 +150,17 @@ export default class VClientsAddNew extends Vue {
       this.isLoading = false
       const ref = (this.$refs.newClientAlert as any)
       ref.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
-      // makeToast(this, this.$t('message.exists', { client: this.newClient.hostId }) as string, 'OOPS!', 'warning')
       return
     }
     await this.$axios.$post('/api/opsidata/clients', this.newClient)
       .then(() => {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
-        // makeToast(this, this.$t('message.add', { client: this.newClient.hostId }) as string, this.$t('message.success') as string, 'success')
         this.$nuxt.refresh()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
-        // makeToast(this, this.$t('message.errortext') as string, this.$t('message.error') as string, 'danger', 8000)
       })
     this.isLoading = false
   }

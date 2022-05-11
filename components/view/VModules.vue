@@ -1,11 +1,8 @@
 <template>
   <div data-testid="VModules">
     <AlertAAlert ref="modulesAlert" />
-    <b-row v-if="!errorText" class="mb-2">
-      <b-col cols="2" class="text-sm-right">
-        {{ $t('form.modules.available') }}
-      </b-col>
-      <b-col>
+    <GridGFormItem v-if="!errorText" :label="$t('form.modules.available')">
+      <template #value>
         <b-form-textarea
           id="modules-list"
           rows="3"
@@ -15,8 +12,8 @@
           plaintext
           :value="Object.values(modules).join('\n')"
         />
-      </b-col>
-    </b-row>
+      </template>
+    </GridGFormItem>
   </div>
 </template>
 
