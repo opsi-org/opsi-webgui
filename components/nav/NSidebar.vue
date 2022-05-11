@@ -51,6 +51,7 @@ interface IMenuItem {
 
 @Component({ mixins: [Constants] })
 export default class NSidebar extends Vue {
+  $route: any
   $nuxt: any
   iconnames: any // from mixin
   @Prop({ }) expanded!: boolean
