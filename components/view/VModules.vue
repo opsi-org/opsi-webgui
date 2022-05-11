@@ -2,7 +2,7 @@
   <div data-testid="VModules">
     <AlertAAlert ref="modulesAlert" />
     <b-row v-if="!errorText" class="mb-2">
-      <b-col cols="2">
+      <b-col cols="2" class="text-sm-right">
         {{ $t('form.modules.available') }}
       </b-col>
       <b-col>

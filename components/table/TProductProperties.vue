@@ -26,7 +26,6 @@
       {{ errorText }}
     </p>
     <TableTDefault
-      class="TProductProperties_Table"
       :is-loading="isLoading"
       :error="errorText"
       :items="Object.values(properties.properties)"

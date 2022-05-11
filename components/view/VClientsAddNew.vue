@@ -5,7 +5,7 @@
     <div v-else>
       <br>
       <b-row class="mb-2">
-        <b-col sm="2">
+        <b-col sm="2" class="text-sm-right">
           {{ $t('table.fields.id') }}
         </b-col>
         <b-col>
@@ -21,7 +21,7 @@
         <b>{{ $t('table.clientDetails') }}: </b>
       </b-row>
       <b-row class="mb-2">
-        <b-col sm="2">
+        <b-col sm="2" class="text-sm-right">
           {{ $t('table.fields.description') }}
         </b-col>
         <b-col>
@@ -30,7 +30,7 @@
         </b-col>
       </b-row>
       <b-row class="mb-2">
-        <b-col sm="2">
+        <b-col sm="2" class="text-sm-right">
           {{ $t('table.fields.inventNum') }}
         </b-col>
         <b-col>
@@ -39,7 +39,7 @@
         </b-col>
       </b-row>
       <b-row class="mb-2">
-        <b-col sm="2">
+        <b-col sm="2" class="text-sm-right">
           {{ $t('table.fields.hwAddr') }}
         </b-col>
         <b-col>
@@ -49,7 +49,7 @@
       </b-row>
 
       <b-row class="mb-2">
-        <b-col sm="2">
+        <b-col sm="2" class="text-sm-right">
           {{ $t('table.fields.ip') }}
         </b-col>
         <b-col>
@@ -61,7 +61,7 @@
         <b>{{ $t('table.addtnlInfo') }}:</b>
       </b-row>
       <b-row class="mb-2">
-        <b-col sm="2">
+        <b-col sm="2" class="text-sm-right">
           {{ $t('table.fields.notes') }}
         </b-col>
         <b-col>
