@@ -408,25 +408,21 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .treeselect,
 .TSDefault-wrapper .vue-treeselect__menu-container,
 .TSDefault-wrapper .vue-treeselect__menu {
-  background-color: var(--component, inherit);
+  background-color: var(--component, white);
 }
 
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
-  /* color: white;
-  background-color: var(--primary); */
   color: var(--color);
   background-color: var(--hover);
 }
 
 .TSDefault-wrapper .hasSelection {
-  /* color: var(--primary); */
   color: var(--light);
   background-color: var(--primary);
 }
 
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
-  /* color: var(--light) !important; */
-  color: var(--light);
+  color: var(--light)!important;
   background-color: var(--primary);
 }
 
@@ -463,7 +459,11 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
-  color: inherit !important;
+  color: var(--color)!important;
+  /* color: inherit !important; */
+}
+.TSDefault-wrapper .treeselect .vue-treeselect__label-container {
+  margin-left: 10px;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
   max-height: max-content !important;
@@ -475,6 +475,9 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
 .TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {
   display: inline !important;
+}
+.TSDefault-wrapper .vue-treeselect__option-arrow-container:hover .vue-treeselect__option-arrow{
+ color: var(--color, black) !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__control{
   max-height: 10px !important;
@@ -558,6 +561,17 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .treeselect.propertyvalues .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
   max-height: 20px;
   white-space: normal;
+}
+
+.TSDefault-wrapper .vue-treeselect--single .vue-treeselect__option--selected {
+  color: var(--light);
+  background-color: var(--primary);
+}
+
+.TSDefault-wrapper .vue-treeselect--single .vue-treeselect__option--highlight .hasSelection{
+  /* color: var(--light) !important; */
+  color: var(--dark);
+  background-color: var(--primary);
 }
 
 </style>
