@@ -439,7 +439,7 @@ export default class TSDefault extends Vue {
   flex-flow: nowrap;
 }
 .TSDefault-wrapper:not(.is-origin) {
-  border: 1px solid var(--orange);
+  border: 1px solid var(--warning, yellow);
 }
 .TSDefault-wrapper{
   /* border: 1px solid var(--primary); */
