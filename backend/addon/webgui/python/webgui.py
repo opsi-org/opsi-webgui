@@ -13,21 +13,19 @@ from typing import Optional
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from opsiconfd import contextvar_client_session
-from opsiconfd.application.utils import (
-	build_tree,
-	get_allowed_objects,
-	get_configserver_id,
-	get_username,
-)
+from opsiconfd.application.utils import get_configserver_id, get_username
 from opsiconfd.backend import get_backend
 
 from .depots import get_depots
 from .utils import (
+	build_tree,
 	client_creation_allowed,
 	depot_access_configured,
 	get_allowd_depots,
+	get_allowed_objects,
 	host_group_access_configured,
 	mysql,
+	product_group_access_configured,
 	read_only_user,
 	user_register,
 )
@@ -101,7 +99,7 @@ async def user_opsiserver():
 
 
 @webgui_router.get("/api/user/configuration")
-def user_configuration(request: Request):
+def user_configuration():
 	username = get_username()
 	if user_register():
 		return JSONResponse({
@@ -109,7 +107,8 @@ def user_configuration(request: Request):
 			"configuration": {
 				"read_only": read_only_user(username),
 				"depot_access":  depot_access_configured(username),
-				"group_access": host_group_access_configured(username),
+				"host_group_access": host_group_access_configured(username),
+				"product_group_access": product_group_access_configured(username),
 				"client_creation": client_creation_allowed(username)
 			}
 	})

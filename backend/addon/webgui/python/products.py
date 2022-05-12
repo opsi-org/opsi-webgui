@@ -37,13 +37,19 @@ from sqlalchemy.sql.expression import table, update
 from .depots import get_depots
 from .utils import (
 	filter_depot_access,
+	get_allowd_product_groups,
+	get_allowed_objects,
+	get_allowed_products,
 	get_depot_of_client,
+	get_username,
 	merge_dicts,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
 	parse_selected_list,
+	product_group_access_configured,
 	read_only_check,
+	user_register,
 )
 
 product_router = APIRouter()
@@ -216,7 +222,7 @@ def products(
 
 	if selectedDepots == []:
 		return {"data": [], "total": 0}
-
+	username = get_username()
 	params = {}
 	params["product_type"] = type
 	if selectedClients == [] or selectedClients is None:
@@ -224,7 +230,6 @@ def products(
 	else:
 		params["clients"] = selectedClients
 	if selectedDepots == None:
-		username = request.scope.get("session").user_store.username
 		params["depots"] = get_depots(username)
 	else:
 		params["depots"] = selectedDepots
@@ -232,13 +237,18 @@ def products(
 		params["selected"] = selected
 	else:
 		params["selected"] = [""]
+	allowed_products = None
+	if user_register() and product_group_access_configured(username):
+		allowed_products = get_allowed_products(username)
 
 	with mysql.session() as session:
 		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
 		if commons.get("filterQuery"):
 			where = and_(where, text("(pod.productId LIKE :search)"))
 			params["search"] = f"%{commons['filterQuery']}%"
-
+		if allowed_products:
+			params["allowed_products"] = allowed_products
+			where = and_(where, text("(pod.productId in :allowed_products)"))
 		query = (
 			select(
 				text(
@@ -532,6 +542,8 @@ def get_product_groups():  # pylint: disable=too-many-locals
 	Get all product groups as a tree of groups.
 	"""
 
+	allowed = get_allowd_product_groups(get_username())
+
 	params = {}
 	where = text("g.`type` = 'ProductGroup'")
 
@@ -557,7 +569,10 @@ def get_product_groups():  # pylint: disable=too-many-locals
 		root_group = {"id": "root", "type": "ProductGroup", "text": "root", "parent": None}
 		all_groups = {}
 		for row in result:
-			if not row["group_id"] in all_groups:
+			if user_register() and product_group_access_configured(get_username()):
+				if row["group_id"] not in allowed:
+					continue
+			if row["group_id"] not in all_groups:
 				all_groups[row["group_id"]] = {
 					"id": row["group_id"],
 					"type": "ProductGroup",

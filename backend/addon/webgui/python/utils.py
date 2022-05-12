@@ -8,17 +8,12 @@
 webgui utils
 """
 from functools import wraps
-from json import JSONDecodeError, loads
 from operator import and_
 from typing import List, Optional
 
 from fastapi import Query, status
 from opsiconfd import contextvar_client_session
-from opsiconfd.application.utils import (
-	bool_product_property,
-	get_configserver_id,
-	parse_list,
-)
+from opsiconfd.application.utils import get_configserver_id, parse_list
 from opsiconfd.backend import get_mysql as backend_get_mysql
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
@@ -28,7 +23,7 @@ from sqlalchemy import select, text
 def get_mysql():
 	try:
 		return backend_get_mysql()
-	except RuntimeError as err:
+	except RuntimeError:
 		return None
 
 
@@ -38,7 +33,6 @@ mysql = get_mysql()
 def get_depot_of_client(client):
 	params = {}
 	with mysql.session() as session:
-
 		params["client"] = client
 		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId = :client")
 
@@ -60,15 +54,15 @@ def parse_hosts_list(hosts: List[str] = Query(None)) -> Optional[List]:
 	return parse_list(hosts)
 
 
-def parse_depot_list(selectedDepots: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
+def parse_depot_list(selectedDepots: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
 	return parse_list(selectedDepots)
 
 
-def parse_client_list(selectedClients: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
+def parse_client_list(selectedClients: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
 	return parse_list(selectedClients)
 
 
-def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]: # pylint: disable=invalid-name
+def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
 	return parse_list(selected)
 
 
@@ -79,44 +73,14 @@ def get_username():
 	return client_session.user_store.username
 
 
-
-def get_user_privileges():
-	username = get_username()
-	privileges = {}
-	# mysql = get_mysql()  # pylint: disable=invalid-name
-	filter_ = {"config_id_filter": f"user.{{{username}}}.privilege.%"}
-	with mysql.session() as session:
-		for row in session.execute(
-			"""
-			SELECT
-				cv.configId,
-				cv.value
-			FROM
-				CONFIG_VALUE AS cv
-			WHERE
-				cv.configId LIKE :config_id_filter AND cv.isDefault=1
-			GROUP BY
-				cv.configId
-			ORDER BY
-				cv.configId
-			""",
-			filter_,
-		).fetchall():
-			try:  # pylint: disable=loop-try-except-usage
-				priv = ".".join(row["configId"].split(".")[3:])
-				privileges[priv] = [val for val in loads(row["value"]) if val != ""]  # pylint: disable=loop-invariant-statement
-			except JSONDecodeError as err:
-				logger.error("Failed to parse privilege %s: %s", row, err)
-
-		return privileges
-
-
 def get_allowed_objects():
 	allowed = {"product_groups": ..., "host_groups": ...}
 	# privileges = get_user_privileges()
 	# if True in privileges.get("product.groupaccess.configured", [False]):
 	# 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
 	username = get_username()
+	if product_group_access_configured(username):
+		allowed["product_groups"] = get_allowd_product_groups(username)
 	if host_group_access_configured(username):
 		allowed["host_groups"] = get_allowd_host_groups(username)
 	return allowed
@@ -161,6 +125,7 @@ def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 
 	return group
 
+
 def merge_dicts(dict_a: dict, dict_b: dict, path=None) -> dict:
 	if dict_a is None or dict_b is None:
 		raise ValueError("Merge_dicts: At least one of the dicts (a and b) is not set.")
@@ -181,98 +146,44 @@ def merge_dicts(dict_a: dict, dict_b: dict, path=None) -> dict:
 	return dict_a
 
 
-def user_register() -> bool:
+def _get_bool_config_value(config_id: str) -> bool:
 	with mysql.session() as session:
-
-		where = text("cv.configId='user.{}.register'")
-
+		where = text(f"cv.configId='{config_id}'")
 		query = select(text("cv.value, cv.isDefault"))\
 			.select_from(text("CONFIG_VALUE AS cv"))\
 			.where(where)
-
 		result = session.execute(query)
 		result = result.fetchall()
-
 	if result:
 		for row in result:
 			row_dict = dict(row)
 			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
 				return True
 	return False
+
+
+def user_register() -> bool:
+	return _get_bool_config_value("user.{}.register")
 
 
 def host_group_access_configured(user: str) -> bool:
-	with mysql.session() as session:
-
-		where = text("cv.configId='user.{" + user + "}.privilege.host.groupaccess.configured'")
-
-		query = select(text("cv.value, cv.isDefault"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
-
-		result = session.execute(query)
-		result = result.fetchall()
-
-	if result:
-		for row in result:
-			row_dict = dict(row)
-			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
-				return True
-	return False
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.groupaccess.configured")
 
 
 def depot_access_configured(user: str) -> bool:
-	with mysql.session() as session:
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.depotaccess.configured")
 
-		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.configured'")
 
-		query = select(text("cv.value, cv.isDefault"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
-
-		result = session.execute(query)
-		result = result.fetchall()
-
-	if result:
-		for row in result:
-			row_dict = dict(row)
-			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
-				return True
-	return False
+def product_group_access_configured(user: str) -> bool:
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.product.groupaccess.configured")
 
 
 def read_only_user(user: str) -> bool:
-	with mysql.session() as session:
-		where = text("cv.configId='user.{" + user + "}.privilege.host.all.registered_readonly'")
-		query = select(text("cv.value, cv.isDefault"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
-		result = session.execute(query)
-		result = result.fetchall()
-
-	if result:
-		for row in result:
-			row_dict = dict(row)
-			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
-				return True
-	return False
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.all.registered_readonly")
 
 
 def client_creation_allowed(user: str) -> bool:
-	with mysql.session() as session:
-		where = text("cv.configId='user.{" + user + "}.privilege.host.createclient'")
-		query = select(text("cv.value, cv.isDefault"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
-		result = session.execute(query)
-		result = result.fetchall()
-
-	if result:
-		for row in result:
-			row_dict = dict(row)
-			if row_dict.get("isDefault") == 1 and row_dict.get("value") == "1":
-				return True
-	return False
+	return _get_bool_config_value(f"user.{{{user}}}.privilege.host.createclient")
 
 
 def get_allowd_depots(user: str) -> list:
@@ -288,6 +199,21 @@ def get_allowd_depots(user: str) -> list:
 		for row in result:
 			depots.append(dict(row).get("value"))
 	return depots
+
+
+def get_allowd_product_groups(user: str) -> list:
+	with mysql.session() as session:
+		where = text("cv.configId='user.{" + user + "}.privilege.product.groupaccess.productgroups'")
+		where = and_(where, text("cv.isDefault=1"))
+		query = select(text("cv.value"))\
+			.select_from(text("CONFIG_VALUE AS cv"))\
+			.where(where)
+		result = session.execute(query)
+		result = result.fetchall()
+		groups = []
+		for row in result:
+			groups.append(dict(row).get("value"))
+	return groups
 
 
 def get_allowd_host_groups(user: str) -> list:
@@ -319,6 +245,23 @@ def get_allowed_clients(user: str) -> list:
 				if otg_row is not None:
 					allowed_clients.append(dict(otg_row).get("client"))
 	return allowed_clients
+
+
+def get_allowed_products(user: str) -> list:
+	allowed_groups = get_allowd_product_groups(user)
+	allowed_products = []
+	with mysql.session() as session:
+		for group in allowed_groups:
+			query = select(text("otg.objectId AS product"))\
+				.select_from(text("OBJECT_TO_GROUP AS otg"))\
+				.where(text(f"otg.groupId='{group}'"))
+			otg_result = session.execute(query)
+			otg_result = otg_result.fetchall()
+			for otg_row in otg_result:
+				if otg_row is not None:
+					allowed_products.append(dict(otg_row).get("product"))
+	return allowed_products
+
 
 def read_only_check(func):
 	@wraps(func)
