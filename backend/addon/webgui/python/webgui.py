@@ -13,19 +13,16 @@ from typing import Optional
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 from opsiconfd import contextvar_client_session
-from opsiconfd.application.utils import (
-	build_tree,
-	get_allowed_objects,
-	get_configserver_id,
-	get_username,
-)
+from opsiconfd.application.utils import get_configserver_id, get_username
 from opsiconfd.backend import get_backend
 
 from .depots import get_depots
 from .utils import (
+	build_tree,
 	client_creation_allowed,
 	depot_access_configured,
 	get_allowd_depots,
+	get_allowed_objects,
 	host_group_access_configured,
 	mysql,
 	product_group_access_configured,
