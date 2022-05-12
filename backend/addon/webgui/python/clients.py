@@ -255,8 +255,8 @@ def create_client(request: Request, client: Client):  # pylint: disable=too-many
 		values["created"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 		values["lastSeen"] = values["created"]
 
-	try:
-		with mysql.session() as session:
+	with mysql.session() as session:
+		try:
 			query = insert(
 				table(
 					"HOST", column("type"), *[column(key) for key in vars(client).keys()]  # pylint: disable=consider-iterating-dictionary
@@ -264,33 +264,35 @@ def create_client(request: Request, client: Client):  # pylint: disable=too-many
 			).values(values)
 			session.execute(query)
 
-		headers = {"Location": f"{request.url}/{client.hostId}"}
 
-		client_data = {
-			"id": values.get("hostId"),
-			"hardwareAddress": values.get("hardwareAddress"),
-			"ipAddress": values.get("ipAddress")
-		}
+			headers = {"Location": f"{request.url}/{client.hostId}"}
 
-		execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
+			client_data = {
+				"id": values.get("hostId"),
+				"hardwareAddress": values.get("hardwareAddress"),
+				"ipAddress": values.get("ipAddress")
+			}
 
-		return {"http_status": status.HTTP_201_CREATED, "headers": headers, "data": values}
+			execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
 
-	except IntegrityError as err:
-		logger.error("Could not create client object.")
-		logger.error(err)
-		raise OpsiApiException(
-			message=f"Could not create client object. Client '{client.hostId}' already exists",
-			http_status=status.HTTP_409_CONFLICT,
-			error=err,
-		) from err
+			return {"http_status": status.HTTP_201_CREATED, "headers": headers, "data": values}
 
-	except Exception as err:  # pylint: disable=broad-except
-		logger.error("Could not create client object.")
-		logger.error(err)
-		raise OpsiApiException(
-			message="Could not create client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
-		) from err
+		except IntegrityError as err:
+			logger.error("Could not create client object.")
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message=f"Could not create client object. Client '{client.hostId}' already exists",
+				http_status=status.HTTP_409_CONFLICT,
+				error=err,
+			) from err
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not create client object.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not create client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
 
 
 @client_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
