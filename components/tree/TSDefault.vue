@@ -83,8 +83,12 @@
         <div :ref="'tree-item-'+node.id">
           <b-icon v-if="node.isBranch||false" :icon="iconnames.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
           <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
-          <small v-if="type=='depots' && node.label===opsiconfigserver"> <b> {{ node.label }} </b></small>
-          <small v-else> {{ node.label }} </small>
+          <template v-if="type=='depots' && node.label===opsiconfigserver">
+            <b> {{ node.label }} </b>
+          </template>
+          <template v-else>
+            {{ node.label }}
+          </template>
         </div>
       </div>
     </TreeTSDefaultWithAdding>
@@ -414,13 +418,17 @@ export default class TSDefault extends Vue {
   background-color: var(--hover);
 }
 
-/* .TSDefault-wrapper .hasSelection {
-  color: var(--primary);
-} */
+.TSDefault-wrapper .hasSelection {
+  /* color: var(--primary); */
+  color: var(--light);
+  background-color: var(--primary);
+}
 
-/* .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
-  color: var(--light) !important;
-} */
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
+  /* color: var(--light) !important; */
+  color: var(--light);
+  background-color: var(--primary);
+}
 
 .TSDefault-wrapper .vue-treeselect__menu {
   border: 1px solid var(--primary) !important;
@@ -505,9 +513,9 @@ export default class TSDefault extends Vue {
 
 .TSDefault-wrapper .treeselect .vue-treeselect__input-container {
   margin-left: 55px;
-  margin-top: -5px;
+  /* margin-top: -5px; */
   max-width: 50px;
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
 }
 .TSDefault-wrapper .treeselect.treeselect.propertyvalues .vue-treeselect__input-container {
   margin-left: 0px;

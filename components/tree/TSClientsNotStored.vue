@@ -3,7 +3,6 @@
     <treeselect
       v-if="clientIds"
       v-model="idselection"
-      :always-open="false"
       class="treeselect_idselect"
       :options="clientIds"
       :placeholder="$t('form.client')"
