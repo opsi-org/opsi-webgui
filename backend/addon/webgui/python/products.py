@@ -37,6 +37,8 @@ from sqlalchemy.sql.expression import table, update
 from .depots import get_depots
 from .utils import (
 	filter_depot_access,
+	get_allowd_product_groups,
+	get_allowed_objects,
 	get_allowed_products,
 	get_depot_of_client,
 	get_username,
@@ -540,6 +542,8 @@ def get_product_groups():  # pylint: disable=too-many-locals
 	Get all product groups as a tree of groups.
 	"""
 
+	allowed = get_allowd_product_groups(get_username())
+
 	params = {}
 	where = text("g.`type` = 'ProductGroup'")
 
@@ -565,7 +569,10 @@ def get_product_groups():  # pylint: disable=too-many-locals
 		root_group = {"id": "root", "type": "ProductGroup", "text": "root", "parent": None}
 		all_groups = {}
 		for row in result:
-			if not row["group_id"] in all_groups:
+			if user_register() and product_group_access_configured(get_username()):
+				if row["group_id"] not in allowed:
+					continue
+			if row["group_id"] not in all_groups:
 				all_groups[row["group_id"]] = {
 					"id": row["group_id"],
 					"type": "ProductGroup",
