@@ -348,7 +348,7 @@ def products(
 					p.productVersion=pod.productVERSION AND p.packageVersion=pod.packageVersion
 			) AS actions,
 			IF(
-				LENGTH(GROUP_CONCAT(DISTINCT pod.productVersion SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT pod.productVersion SEPARATOR ','), ',', '')) > 0,
+				LENGTH(GROUP_CONCAT(DISTINCT pod.productVersion SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT pod.productVersion SEPARATOR ','), ',', '')) > 0 OR LENGTH(GROUP_CONCAT(DISTINCT pod.packageVersion SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT pod.packageVersion SEPARATOR ','), ',', '')) > 0,
 				TRUE,
 				FALSE
 			) AS depot_version_diff,
