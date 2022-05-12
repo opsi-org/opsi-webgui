@@ -7,7 +7,7 @@ export function makeToast (
     };
   },
   message: string = '', title: string = '', variant: string = 'primary',
-  autoHideDelay: number = 5000, append = false): void {
+  autoHideDelay: number = 6000, append = false): void {
   vm.$bvToast.toast(message, {
     // id: 'MakeToast', // MakeToast__toast_outer
     title,

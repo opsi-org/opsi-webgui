@@ -133,6 +133,10 @@ export default class MTrackChanges extends Vue {
         this.saveProdProp(change)
       }
     }
+    if (this.changelist.length === 0) {
+      this.$bvModal.hide('trackChangesModal')
+      this.$nuxt.refresh()
+    }
   }
 }
 </script>

@@ -23,7 +23,7 @@
             <template #cell(_action)="row">
               <ButtonBTNDeleteObj :item="row.item" from="products" />
               <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(row.item)">
-                <span class="sr-only">{{ $t('button.saveall') }}</span>
+                <span class="sr-only">{{ $t('button.save') }}</span>
                 <b-icon :icon="iconnames.save" />
               </b-button>
             </template>
