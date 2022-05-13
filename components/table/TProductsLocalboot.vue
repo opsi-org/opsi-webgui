@@ -1,5 +1,6 @@
 <template>
   <div data-testid="TProductsLocalboot">
+    <AlertAAlert ref="productsAlert" />
     <TableTInfiniteScroll
       id="Localboot"
       ref="Localboot"
@@ -106,8 +107,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
-import { makeToast } from '../../.utils/utils/scomponents'
-import { IObjectString2Any, IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
+// import { makeToast } from '../../.utils/utils/scomponents'
+import { IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
@@ -198,15 +199,20 @@ export default class TProductsLocalboot extends Vue {
   }
 
   async save (change: object) {
-    const t:any = this
+    // const t:any = this
     this.isLoading = true
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
+        const ref = (this.$refs.productsAlert as any)
+        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+        // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
+        const ref = (this.$refs.productsAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
     this.isLoading = false
   }
