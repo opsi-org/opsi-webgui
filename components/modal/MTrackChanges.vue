@@ -24,6 +24,7 @@
       hide-footer
       no-fade
     >
+      <AlertAAlert ref="trackChangesAlert" />
       <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
         <TableTChanges />
         <DivDComponentGroup class="float-right">
@@ -35,7 +36,7 @@
         </DivDComponentGroup>
       </template>
       <template v-else>
-        -- No changes to track --
+        --
       </template>
     </b-modal>
   </div>
@@ -43,8 +44,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, namespace } from 'nuxt-property-decorator'
-import { makeToast } from '../../.utils/utils/scomponents'
-import { IObjectString2Any } from '../../.utils/types/tgeneral'
+// import { makeToast } from '../../.utils/utils/scomponents'
+// import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
@@ -56,6 +57,7 @@ export default class MTrackChanges extends Vue {
   $nuxt: any
   $axios: any
   changelist: Array<ChangeObj> = []
+  error: string = ''
 
   @Prop() child!: boolean
   @Prop() closeroute!: string
@@ -73,26 +75,23 @@ export default class MTrackChanges extends Vue {
       productIds: [item.productId],
       actionRequest: item.actionRequest
     }
-    const t:any = this
+    // const t:any = this
 
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
+        // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
-        // this.setSession()
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        this.error = detailedError
+        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
-    // if (this.changelist.length === 0) {
-    //   this.$bvModal.hide('ProductSaveModal')
-    //   this.$nuxt.refresh()
-    // }
   }
 
   async saveProdProp (item: ChangeObj) {
-    const t:any = this
+    // const t:any = this
     const propObj: any = {}
     propObj[item.property] = item.propertyValue
     let change = {}
@@ -111,31 +110,31 @@ export default class MTrackChanges extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
+        // makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
-        // this.setSession()
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        this.error = detailedError
+        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
       })
-    // if (this.changesProducts.filter(o => o.user === this.username).length === 0) {
-    //   this.$bvModal.hide('trackChangesModal')
-    //   this.$nuxt.refresh()
-    // }
   }
 
-  saveAll () {
+  async saveAll () {
     this.changelist = this.changesProducts.filter(o => o.user === this.username)
     for (const p in this.changelist) {
       const change = this.changelist[p]
       if (change.actionRequest) {
-        this.saveProd(change)
+        await this.saveProd(change)
       } else if (change.property) {
-        this.saveProdProp(change)
+        await this.saveProdProp(change)
       }
     }
-    if (this.changelist.length === 0) {
-      this.$bvModal.hide('trackChangesModal')
-      this.$nuxt.refresh()
+    if (this.error) {
+      const ref = (this.$refs.trackChangesAlert as any)
+      ref.alert(this.$t('message.error.title'), 'danger', this.error)
+    } else {
+      const ref = (this.$refs.trackChangesAlert as any)
+      ref.alert(this.$t('message.success.trackChanges.saveAll'), 'success')
     }
   }
 }
