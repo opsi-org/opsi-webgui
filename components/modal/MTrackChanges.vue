@@ -25,19 +25,14 @@
       no-fade
     >
       <AlertAAlert ref="trackChangesAlert" />
-      <template v-if="changesProducts.filter(o => o.user === username).length !== 0">
-        <TableTChanges />
-        <DivDComponentGroup class="float-right">
-          <ButtonBTNClearChanges hide="trackChangesModal" />
-          <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
-            <b-icon :icon="iconnames.save" />
-            {{ $t('button.saveall') }}
-          </b-button>
-        </DivDComponentGroup>
-      </template>
-      <template v-else>
-        --
-      </template>
+      <TableTChanges />
+      <DivDComponentGroup v-if="changesProducts.filter(o => o.user === username).length !== 0" class="float-right">
+        <ButtonBTNClearChanges hide="trackChangesModal" />
+        <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
+          <b-icon :icon="iconnames.save" />
+          {{ $t('button.saveall') }}
+        </b-button>
+      </DivDComponentGroup>
     </b-modal>
   </div>
 </template>
@@ -120,6 +115,7 @@ export default class MTrackChanges extends Vue {
   }
 
   async saveAll () {
+    const ref = (this.$refs.trackChangesAlert as any)
     this.changelist = this.changesProducts.filter(o => o.user === this.username)
     for (const p in this.changelist) {
       const change = this.changelist[p]
@@ -130,10 +126,8 @@ export default class MTrackChanges extends Vue {
       }
     }
     if (this.error) {
-      const ref = (this.$refs.trackChangesAlert as any)
       ref.alert(this.$t('message.error.title'), 'danger', this.error)
     } else {
-      const ref = (this.$refs.trackChangesAlert as any)
       ref.alert(this.$t('message.success.trackChanges.saveAll'), 'success')
     }
   }

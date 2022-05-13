@@ -1,43 +1,49 @@
 <template>
-  <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
-    <InputIFilterTChanges :filter.sync="filter" />
-    <DivDScrollResult>
-      <div v-for="changes, k in groupedById" :key="changes.productId">
-        <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" variant="outline-primary">
-          <b>{{ k }}</b>
-          <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
-        </b-button>
-        <b-collapse :id="k" :visible="filter === '' ? false : true">
-          <TableTDefault
-            type="small"
-            :noheader="true"
-            :hover="true"
-            :filter="filter"
-            :filterfields="['depotId','clientId']"
-            :items="changes"
-            :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
-          >
-            <template #cell()="row">
-              {{ row.value }}
-            </template>
-            <template #cell(_action)="row">
-              <ButtonBTNDeleteObj :item="row.item" from="products" />
-              <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(row.item)">
-                <span class="sr-only">{{ $t('button.save') }}</span>
-                <b-icon :icon="iconnames.save" />
-              </b-button>
-            </template>
-          </TableTDefault>
-        </b-collapse>
-      </div>
-    </DivDScrollResult>
+  <div>
+    <AlertAAlert ref="changesAlert" />
+    <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
+      <InputIFilterTChanges :filter.sync="filter" />
+      <DivDScrollResult>
+        <div v-for="changes, k in groupedById" :key="changes.productId">
+          <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" variant="outline-primary">
+            <b>{{ k }}</b>
+            <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
+          </b-button>
+          <b-collapse :id="k" :visible="filter === '' ? false : true">
+            <TableTDefault
+              type="small"
+              :noheader="true"
+              :hover="true"
+              :filter="filter"
+              :filterfields="['depotId','clientId']"
+              :items="changes"
+              :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
+            >
+              <template #cell()="row">
+                {{ row.value }}
+              </template>
+              <template #cell(_action)="row">
+                <ButtonBTNDeleteObj :item="row.item" from="products" />
+                <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(row.item)">
+                  <span class="sr-only">{{ $t('button.save') }}</span>
+                  <b-icon :icon="iconnames.save" />
+                </b-button>
+              </template>
+            </TableTDefault>
+          </b-collapse>
+        </div>
+      </DivDScrollResult>
+    </div>
+    <div v-else>
+      --
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Watch, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { makeToast } from '../../.utils/utils/scomponents'
-import { IObjectString2Any } from '../../.utils/types/tgeneral'
+// import { makeToast } from '../../.utils/utils/scomponents'
+// import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
 const changes = namespace('changes')
@@ -49,11 +55,7 @@ export default class TChanges extends Vue {
   $mq: any
   $nuxt: any
 
-  // @Prop({ }) tableitems!: Array<object>
   @Prop({ default: localStorage.getItem('username') }) username!: string
-  // get username () {
-  //   return localStorage.getItem('username')
-  // }
   filter: string = ''
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
@@ -78,30 +80,30 @@ export default class TChanges extends Vue {
   }
 
   async saveProd (item: ChangeObj) {
+    const ref = (this.$refs.changesAlert as any)
     const change = {
       clientIds: [item.clientId],
       productIds: [item.productId],
       actionRequest: item.actionRequest
     }
-    const t:any = this
+    // const t:any = this
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
+        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+        // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
-
-    // if (this.changesProducts.length === 0) {
-    //   this.$bvModal.hide('ProductSaveModal')
-    //   this.$nuxt.refresh()
-    // }
   }
 
   async saveProdProp (item: ChangeObj) {
-    const t:any = this
+    const ref = (this.$refs.changesAlert as any)
+    // const t:any = this
     const propObj: any = {}
     propObj[item.property] = item.propertyValue
     let change = {}
@@ -120,15 +122,14 @@ export default class TChanges extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
+        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+        // makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
       })
-    // if (this.changesProducts.length === 0) {
-    //   this.$bvModal.hide('ProductSaveModal')
-    //   this.$nuxt.refresh()
-    // }
   }
 
   save (rowItem: ChangeObj) {
