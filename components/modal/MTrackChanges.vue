@@ -129,6 +129,7 @@ export default class MTrackChanges extends Vue {
       ref.alert(this.$t('message.error.title'), 'danger', this.error)
     } else {
       ref.alert(this.$t('message.success.trackChanges.saveAll'), 'success')
+      this.$nuxt.refresh()
     }
   }
 }

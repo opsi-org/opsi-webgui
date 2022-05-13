@@ -92,6 +92,7 @@ export default class TChanges extends Vue {
         // eslint-disable-next-line no-console
         console.log(response)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+        this.$nuxt.refresh()
         // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
@@ -123,6 +124,7 @@ export default class TChanges extends Vue {
         // eslint-disable-next-line no-console
         console.log(response)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+        this.$nuxt.refresh()
         // makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
