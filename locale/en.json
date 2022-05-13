@@ -3,6 +3,7 @@
   "message.success.title": "SUCCESS",
   "message.success.createClient": "{client} has been added succesfully.",
   "message.success.deleteClient": "{client} has been deleted successfully.",
+  "message.success.trackChanges.save": "Saved.",
   "message.success.trackChanges.saveAll": "Changes saved.",
   "message.confirm.deleteClient": "Are you sure you want to delete the client {client} ?",
   "message.warning.title": "WARNING",
