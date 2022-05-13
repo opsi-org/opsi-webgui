@@ -80,7 +80,6 @@ export default class TChanges extends Vue {
   }
 
   async saveProd (item: ChangeObj) {
-    const ref = (this.$refs.changesAlert as any)
     const change = {
       clientIds: [item.clientId],
       productIds: [item.productId],
@@ -91,11 +90,13 @@ export default class TChanges extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
+        const ref = (this.$refs.changesAlert as any)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
         this.$nuxt.refresh()
         // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
+        const ref = (this.$refs.changesAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.title'), 'danger', detailedError)
         // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
@@ -103,7 +104,6 @@ export default class TChanges extends Vue {
   }
 
   async saveProdProp (item: ChangeObj) {
-    const ref = (this.$refs.changesAlert as any)
     // const t:any = this
     const propObj: any = {}
     propObj[item.property] = item.propertyValue
@@ -123,11 +123,13 @@ export default class TChanges extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
+        const ref = (this.$refs.changesAlert as any)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
         this.$nuxt.refresh()
         // makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
+        const ref = (this.$refs.changesAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.title'), 'danger', detailedError)
         // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)

@@ -270,12 +270,13 @@ export default class VClients extends Vue {
 
   async deleteOpsiClient (ident:string) {
     const id = ident
-    const ref = (this.$refs.deleteClientAlert as any)
     await this.$axios.$delete('/api/opsidata/clients/' + id)
       .then(() => {
+        const ref = (this.$refs.deleteClientAlert as any)
         ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
         this.delFromSelectionClients(id)
       }).catch((error) => {
+        const ref = (this.$refs.deleteClientAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
       })

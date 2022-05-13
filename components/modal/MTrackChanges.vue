@@ -115,7 +115,6 @@ export default class MTrackChanges extends Vue {
   }
 
   async saveAll () {
-    const ref = (this.$refs.trackChangesAlert as any)
     this.changelist = this.changesProducts.filter(o => o.user === this.username)
     for (const p in this.changelist) {
       const change = this.changelist[p]
@@ -126,8 +125,10 @@ export default class MTrackChanges extends Vue {
       }
     }
     if (this.error) {
+      const ref = (this.$refs.trackChangesAlert as any)
       ref.alert(this.$t('message.error.title'), 'danger', this.error)
     } else {
+      const ref = (this.$refs.trackChangesAlert as any)
       ref.alert(this.$t('message.success.trackChanges.saveAll'), 'success')
       this.$nuxt.refresh()
     }
