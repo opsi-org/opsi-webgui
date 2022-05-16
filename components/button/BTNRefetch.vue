@@ -5,7 +5,7 @@
     class="float-right"
     @click="refetch"
   >
-    Try Again
+    {{ $t('button.tryAgain') }}
   </b-button>
 </template>
 

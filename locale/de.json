@@ -133,6 +133,7 @@
   "button.sort.tablecolumns.sortDirection": "Absteigende Sortierung",
   "button.track.changes": "Änderungen",
   "button.change.loglevel": "Log level ändern",
+  "button.tryAgain": "Nochmal versuchen",
   "input.expiredTimeChanger": "Abmelden nach {min} Minuten ohne Aktivität.",
   "treeselect.hostGroups": "Hostgruppen",
   "treeselect.prodGroups": "Produktgruppen",
