@@ -1,6 +1,8 @@
 <template>
   <div>
-    <AlertAAlert ref="hostAttrAlert" />
+    <AlertAAlert ref="hostAttrErrorAlert">
+      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+    </AlertAAlert>
     <TableTDefault
       data-testid="THostAttributes"
       :stacked="true"
@@ -57,17 +59,6 @@
         />
       </template>
     </TableTDefault>
-    <div class="d-flex justify-content-end">
-      <b-button
-        v-if="!isLoading"
-        v-b-tooltip.hover
-        variant="outline-primary border-0"
-        :title="$t('button.refresh', {id: id})"
-        @click="$fetch"
-      >
-        <b-icon :icon="iconnames.refresh" />
-      </b-button>
-    </div>
   </div>
 </template>
 
@@ -118,7 +109,7 @@ export default class THostAttributes extends Vue {
           this.result = response
         }).catch((error) => {
           const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrAlert as any)
+          const ref = (this.$refs.hostAttrErrorAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Hosts', 'danger', detailedError)
           this.errorText = this.$t('message.error.defaulttext') as string
         })
