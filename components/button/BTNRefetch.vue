@@ -1,11 +1,16 @@
 <template>
   <b-button
     v-if="!isLoading"
-    variant="outline-dark"
+    v-b-tooltip.hover
+    :title="tooltip? tooltip : ''"
+    :variant="tooltip? 'outline-primary border-0' : 'outline-dark'"
     class="float-right"
     @click="refetch"
   >
-    {{ $t('button.tryAgain') }}
+    <b-icon v-if="tooltip" :icon="iconnames.refresh" />
+    <div v-else>
+      {{ $t('button.tryAgain') }}
+    </div>
   </b-button>
 </template>
 
@@ -17,6 +22,7 @@ import { Constants } from '../../mixins/uib-mixins'
 export default class BTNRefetch extends Vue {
   iconnames:any
   @Prop({ default: true }) isLoading?: boolean
+  @Prop({ default: '' }) tooltip?: string
   @Prop({ default: () => { return () => { /* default */ } } }) refetch!: Function
 }
 </script>

@@ -1,6 +1,15 @@
 <template>
   <div data-testid="VClientsLog">
-    <AlertAAlert ref="logAlert" />
+    <AlertAAlert ref="logErrorAlert">
+      <b-button
+        v-if="!isLoading"
+        variant="outline-dark"
+        class="float-right"
+        @click="getLog(id, logtype)"
+      >
+        {{ $t('button.tryAgain') }}
+      </b-button>
+    </AlertAAlert>
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
@@ -51,18 +60,6 @@
         </span>
       </div>
     </DivDScrollResult>
-    <div class="d-flex justify-content-end">
-      <b-button
-        v-if="!isLoading"
-        v-b-tooltip.hover
-        variant="outline-primary border-0"
-        :title="$t('button.refresh', {id: id})"
-        @click="getLog(id, logtype)"
-      >
-        <b-icon :icon="iconnames.refresh" />
-      </b-button>
-    </div>
-  </div>
   </div>
 </template>
 
@@ -76,9 +73,6 @@ interface LogRequest {
 @Component({ mixins: [Constants] })
 export default class VClientLog extends Vue {
   $axios: any
-  // $nuxt: any
-  // $fetch: any
-  // $mq: any
   $t: any
 
   @Prop({ }) id!: string
@@ -92,7 +86,6 @@ export default class VClientLog extends Vue {
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   isLoading: boolean = false
   errorText: string = ''
-  // @auth.Mutation public setSession!: () => void
 
   @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
   @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
@@ -130,7 +123,7 @@ export default class VClientLog extends Vue {
         this.filteredLog = this.logResult
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = this.$refs.logAlert as any
+        const ref = this.$refs.logErrorAlert as any
         ref.alert(this.$t('message.error.fetch') as string + 'Log', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })

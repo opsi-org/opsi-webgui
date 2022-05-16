@@ -65,15 +65,7 @@
       </template>
     </b-table>
     <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }">
-      <b-button
-        v-if="!isLoading"
-        v-b-tooltip.hover
-        variant="outline-primary border-0"
-        :title="$t('button.refresh', {id: id})"
-        @click="$fetch"
-      >
-        <b-icon :icon="iconnames.refresh" />
-      </b-button>
+      <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="$fetch" />
     </BarBTableFooter>
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>

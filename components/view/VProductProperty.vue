@@ -1,23 +1,15 @@
 <template>
   <div data-testid="VProductProperty">
-    <AlertAAlert ref="productPropViewAlert" />
+    <AlertAAlert ref="productPropViewAlert">
+      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+    </AlertAAlert>
     <BarBCollapsePageHeader
       :id="id"
       :title="$t('title.config')"
       :subtitle="id"
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
       :redirect-on-close-to="(asChild)? closeroute: undefined"
-    >
-      <b-button
-        v-if="!isLoading"
-        v-b-tooltip.hover
-        variant="outline-primary border-0"
-        :title="$t('button.refresh', {id: id})"
-        @click="$fetch"
-      >
-        <b-icon :icon="iconnames.refresh" />
-      </b-button>
-    </BarBCollapsePageHeader>
+    />
     <div class="VProductProperty-Card-Description">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
