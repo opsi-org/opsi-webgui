@@ -136,4 +136,7 @@ export default class VClientLog extends Vue {
 .filter_logs{
   max-width: var(--component-width) !important;
 }
+.b-form-spinbutton output > div, .b-form-spinbutton output > bdi  {
+  color: var(--color) !important;
+}
 </style>
