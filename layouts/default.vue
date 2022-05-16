@@ -104,7 +104,8 @@ export default class LayoutDefault extends Vue {
 
 <style>
 .topbar_content {
-  z-index: 2000;
+  /* z-index: 2000; */
+  z-index: 1;
 }
 
 .topbar_content,
@@ -114,7 +115,7 @@ export default class LayoutDefault extends Vue {
 }
 
 .topbar_content {
-  position: absolute !important;
+  /* position: absolute !important; */
   width: 100% !important;
   max-height: 100px;
 }

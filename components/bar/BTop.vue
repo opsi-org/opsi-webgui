@@ -73,7 +73,7 @@ export default class BTop extends Vue {
 <style>
 .topbar{
   background: var(--primary) !important;
-  position: fixed;
+  /* position: fixed; */
   height: var(--height-navbar) !important;
   margin-bottom: 0px !important;
   padding: 0em !important;
