@@ -243,3 +243,13 @@ body {
 .text-muted {
   color: var(--log-muted, gray) !important;
 }
+.disabled {
+  cursor: not-allowed;
+  color: var(--log-muted, gray) !important;
+}
+.nav-link.disabled {
+  color: var(--log-muted, gray) !important;
+  /* pointer-events: none;
+  cursor: default; */
+  cursor: not-allowed;
+}
