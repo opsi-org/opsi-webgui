@@ -22,7 +22,7 @@ export default class BTNClearChanges extends Vue {
   deleteAll () {
     this.deleteAllChanges()
     if (this.hide) { this.$bvModal.hide(this.hide) }
-    // this.$nuxt.refresh()
+    this.$nuxt.refresh()
   }
 }
 </script>
