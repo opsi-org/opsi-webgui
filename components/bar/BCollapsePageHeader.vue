@@ -184,6 +184,7 @@ export default class BTooltipCollapseRow extends Vue {
   max-width: 100% !important;
   margin-left: 20px !important;
   margin-right: 20px !important;
+  cursor: default;
 }
 .BCollapsePageHeader_Navbar .nav-child-right {
   padding: 0px !important;
