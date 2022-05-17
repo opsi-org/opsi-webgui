@@ -133,9 +133,9 @@ export default class BTooltipCollapseRow extends Vue {
 </script>
 
 <style>
-.BCollapsePageHeader_Navbar.collapseable {
+/* .BCollapsePageHeader_Navbar.collapseable {
   cursor: pointer;
-}
+} */
 .BCollapsePageHeader_Navbar.navbar {
   z-index: inherit !important;
   background-image: none !important;
@@ -171,6 +171,7 @@ export default class BTooltipCollapseRow extends Vue {
   padding-bottom: 10px;
   padding-left: 10px;
   width: calc(100% - 48px);
+  cursor: pointer;
 }
 .BarBTooltipCollapseRow {
   list-style: none !important;
@@ -184,7 +185,7 @@ export default class BTooltipCollapseRow extends Vue {
   max-width: 100% !important;
   margin-left: 20px !important;
   margin-right: 20px !important;
-  cursor: default;
+  /* cursor: default; */
 }
 .BCollapsePageHeader_Navbar .nav-child-right {
   padding: 0px !important;
