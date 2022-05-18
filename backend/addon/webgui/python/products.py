@@ -741,7 +741,11 @@ def product_properties(
 
 						if property["type"] == "BoolProductProperty":
 							property["allValues"].update([bool_product_property(value) for value in property["values"].split(",")])
-							property["defaultDetails"][depot] = [bool_product_property(property["defaultDetails"])]
+							if type(property["defaultDetails"]) is dict:
+								property["defaultDetails"][depot] = [bool_product_property(property.get("defaultDetails",{}).get(depot))]
+
+							else:
+								property["defaultDetails"][depot] = [bool_product_property(property["defaultDetails"])]
 							property["possibleValues"][depot] = [bool_product_property(value) for value in property["values"].split(",")]
 						else:
 							property["allValues"].update(unicode_product_property(property["values"]))
