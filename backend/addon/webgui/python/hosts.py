@@ -53,7 +53,7 @@ def get_host_data(
 	commons: dict = Depends(common_query_parameters),
 	hosts: List[str] = Depends(parse_hosts_list),
 	type: Optional[str] = None,
-): # pylint: disable=redefined-builtin
+):  # pylint: disable=redefined-builtin
 	"""
 	Get host data.
 	"""
@@ -70,7 +70,10 @@ def get_host_data(
 		where = and_(where, text("h.type = :type"))
 
 	with mysql.session() as session:
-		query = select(text("""
+		query = (
+			select(
+				text(
+					"""
 			h.hostId AS hostId,
 			h.type AS type,
 			h.description AS description,
@@ -86,9 +89,12 @@ def get_host_data(
 				FROM CONFIG_STATE AS cs
 				WHERE cs.objectId=h.hostId AND cs.configId=\"clientconfig.dhcpd.filename\"
 			) as uefi
-		"""))\
-		.select_from(text("`HOST` AS h"))\
-		.where(where) # pylint: disable=redefined-outer-name
+		"""
+				)
+			)
+			.select_from(text("`HOST` AS h"))
+			.where(where)
+		)  # pylint: disable=redefined-outer-name
 
 		query = order_by(query, commons)
 		query = pagination(query, commons)
@@ -101,7 +107,7 @@ def get_host_data(
 				row_dict = dict(row)
 				for key in row_dict.keys():
 					if key == "uefi":
-						if row_dict[key] and row_dict[key] == "[\"linux/pxelinux.cfg/elilo.efi\"]":
+						if row_dict[key] and row_dict[key] == '["linux/pxelinux.cfg/elilo.efi"]':
 							row_dict[key] = True
 						else:
 							row_dict[key] = False
@@ -109,12 +115,16 @@ def get_host_data(
 						row_dict[key] = row_dict.get(key).isoformat()
 				host_data.append(row_dict)
 
-		return { "data": host_data }
+		return {"data": host_data}
 
 
 @host_router.get("/api/opsidata/hosts/groups")
 @rest_api
-def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), parentGroup: Optional[str] = [], selectedClients: List[str] = Depends(parse_client_list)): # pylint: disable=too-many-locals, too-many-branches, invalid-name, dangerous-default-value
+def get_host_groups(
+	selectedDepots: List[str] = Depends(parse_depot_list),
+	parentGroup: Optional[str] = [],
+	selectedClients: List[str] = Depends(parse_client_list),
+):  # pylint: disable=too-many-locals, too-many-branches, invalid-name, dangerous-default-value
 	"""
 	Get host groups as tree.
 	If a parent group (parentGroup) is given only child groups will be returned.
@@ -127,63 +137,68 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 	else:
 		params["depots"] = selectedDepots
 
-	root_group = {
-		"id": "groups",
-		"type": "HostGroup",
-		"text": "groups",
-		"parent": None
-	}
+	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
 
 	where = text("g.`type` = 'HostGroup'")
 
 	if parentGroup:
-		if parentGroup == "groups" :
+		if parentGroup == "groups":
 			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))
 			where_hosts = text("og.groupId IS NULL")
-		elif parentGroup == "root" :
+		elif parentGroup == "root":
 			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))
 			where_hosts = text("og.groupId IS NULL")
-			root_group = {
-				"id": None,
-				"type": "HostGroup",
-				"text": None,
-				"parent": None
-			}
+			root_group = {"id": None, "type": "HostGroup", "text": None, "parent": None}
 		else:
 			params["parent"] = parentGroup
 			where = and_(where, text("g.parentGroupId = :parent"))
 			where_hosts = text("og.groupId = :parent")
-			root_group = {
-				"id": parentGroup,
-				"type": "HostGroup",
-				"text": parentGroup,
-				"parent": None
-			}
+			root_group = {"id": parentGroup, "type": "HostGroup", "text": parentGroup, "parent": None}
 
 	for idx, depot in enumerate(params["depots"]):
 		if idx > 0:
-			where_depots = or_(where_depots,text(f"cs.values LIKE '%{depot}%'"))#
+			where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))  #
 		else:
 			where_depots = text(f"cs.values LIKE '%{depot}%'")
+		if depot == get_configserver_id():
+			where_depots = or_(where_depots, text(f"cs.values IS NULL"))
 
 	with mysql.session() as session:
 
 		if parentGroup and parentGroup != "root":
-			query = union(select(text("""
+			query = union(
+				select(
+					text(
+						"""
 				g.parentGroupId AS parent_id,
 				g.groupId AS group_id,
 				NULL AS object_id
-			"""))\
-			.select_from(text("`GROUP` AS g"))\
-			.where(where),
-			select(text("""
+			"""
+					)
+				)
+				.select_from(text("`GROUP` AS g"))
+				.where(where),
+				select(
+					text(
+						"""
 				og.groupId AS group_id,
 				og.groupId AS parent_Id,
 				og.objectId AS object_id
-			"""))\
-			.select_from(text("OBJECT_TO_GROUP AS og"))\
-			.where(where_hosts)
+			"""
+					)
+				)
+				.select_from(text("OBJECT_TO_GROUP AS og"))
+				.join(
+					text("CONFIG_STATE AS cs"),
+					and_(
+						text("og.objectId = cs.objectId"),
+						text("cs.configId = 'clientconfig.depot.id'"),
+					),
+					isouter=True,
+				)
+				.where(and_(where_hosts, where_depots)),
 			)
+			logger.devel(query)
 			result = session.execute(query, params)
 			result = result.fetchall()
 
@@ -191,29 +206,47 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 
 		elif parentGroup == "root":
 			all_groups = {
-				'groups':
-					{'id': 'groups', 'type': 'HostGroup', 'text': 'groups', 'parent': None},
-				'clientdirectory':
-					{'id': 'clientdirectory', 'type': 'HostGroup', 'text': 'clientdirectory', 'parent': None,},
-				'clientlist':
-					{'id': 'clientlist', 'type': 'HostGroup', 'text': 'clientlist', 'parent': None,}
-				}
+				"groups": {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None},
+				"clientdirectory": {
+					"id": "clientdirectory",
+					"type": "HostGroup",
+					"text": "clientdirectory",
+					"parent": None,
+				},
+				"clientlist": {
+					"id": "clientlist",
+					"type": "HostGroup",
+					"text": "clientlist",
+					"parent": None,
+				},
+			}
 			if selectedClients:
 				all_groups["clientlist"]["hasAnySelection"] = True
 		else:
-			query = select(text("""
+			query = (
+				select(
+					text(
+						"""
 				g.parentGroupId AS parent_id,
 				g.groupId AS group_id,
 				og.objectId AS object_id,
 				TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) AS depot_id
-			"""))\
-			.select_from(text("`GROUP` AS g"))\
-			.join(text("OBJECT_TO_GROUP AS og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)\
-			.join(
-				text("CONFIG_STATE AS cs"),
-				and_(text("og.objectId = cs.objectId"), or_(text("cs.configId = 'clientconfig.depot.id'"),text("cs.values IS NULL")), where_depots),
-				isouter=True)\
-			.where(where)
+			"""
+					)
+				)
+				.select_from(text("`GROUP` AS g"))
+				.join(text("OBJECT_TO_GROUP AS og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
+				.join(
+					text("CONFIG_STATE AS cs"),
+					and_(
+						text("og.objectId = cs.objectId"),
+						or_(text("cs.configId = 'clientconfig.depot.id'"), text("cs.values IS NULL")),
+						where_depots,
+					),
+					isouter=True,
+				)
+				.where(where)
+			)
 			result = session.execute(query, params)
 			result = result.fetchall()
 
@@ -223,16 +256,22 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 			params = {}
 			for idx, client in enumerate(selectedClients):
 				if idx > 0:
-					where = or_(where,text(f"og.objectId = '{client}'"))#
+					where = or_(where, text(f"og.objectId = '{client}'"))
 				else:
 					where = text(f"og.objectId = '{client}'")
-			query = select(text("""
+			query = (
+				select(
+					text(
+						"""
 				og.groupId AS group_id,
 				og.groupId AS parent_Id,
 				og.objectId AS object_id
-			"""))\
-			.select_from(text("`OBJECT_TO_GROUP` AS og"))\
-			.where(where)
+			"""
+					)
+				)
+				.select_from(text("`OBJECT_TO_GROUP` AS og"))
+				.where(where)
+			)
 
 			result = session.execute(query)
 			result = result.fetchall()
@@ -259,15 +298,22 @@ def get_host_groups(selectedDepots: List[str] = Depends(parse_depot_list), paren
 
 def find_parent(group):
 	with mysql.session() as session:
-		query = select(text("""
+		query = (
+			select(
+				text(
+					"""
 			g.parentGroupId AS parent_id,
 			g.groupId AS group_id
-		"""))\
-		.select_from(text("`GROUP` AS g"))\
-		.where(text(f"g.groupId = '{group}'")) # pylint: disable=redefined-outer-name
+		"""
+				)
+			)
+			.select_from(text("`GROUP` AS g"))
+			.where(text(f"g.groupId = '{group}'"))
+		)  # pylint: disable=redefined-outer-name
 		result = session.execute(query)
 		parent_id = result.fetchone()["parent_id"]
 		return parent_id
+
 
 def read_groups(raw_groups, root_group, selectedClients):
 	if not isinstance(selectedClients, list):
@@ -279,7 +325,7 @@ def read_groups(raw_groups, root_group, selectedClients):
 				"id": row["group_id"],
 				"type": "HostGroup",
 				"text": row["group_id"],
-				"parent": row["parent_id"] or root_group["id"]
+				"parent": row["parent_id"] or root_group["id"],
 			}
 		if row["object_id"]:
 			if row["object_id"] in selectedClients:
@@ -292,13 +338,13 @@ def read_groups(raw_groups, root_group, selectedClients):
 						"id": row["object_id"],
 						"type": "ObjectToGroup",
 						"text": row["object_id"],
-						"parent": row["parent_id"] or root_group["id"]
+						"parent": row["parent_id"] or root_group["id"],
 					}
 			else:
 				all_groups[row["group_id"]]["children"][row["object_id"]] = {
 					"id": row["object_id"],
 					"type": "ObjectToGroup",
 					"text": row["object_id"],
-					"parent": row["group_id"]
+					"parent": row["group_id"],
 				}
 	return all_groups
