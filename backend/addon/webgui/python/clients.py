@@ -140,7 +140,13 @@ def clients(
 						WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
 					),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1)
-				) AS depotId
+				) AS depotId,
+				IF(
+					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) <> '[""]',
+					TRUE,
+					FALSE
+				) AS uefi,
+				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) AS uefi_value
 			"""
 				)
 			)
@@ -157,6 +163,8 @@ def clients(
 			hd.ipAddress,
 			hd.description,
 			hd.notes,
+			hd.uefi,
+			hd.uefi_value,
 			(
 				SELECT
 					COUNT(*)
