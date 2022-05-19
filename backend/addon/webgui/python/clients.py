@@ -210,7 +210,15 @@ def clients(
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]
-		return {"data": [dict(row) for row in result if row is not None], "total": total}
+
+		data = []
+		for row in result:
+			if row is not None:
+				client = dict(row)
+				client["uefi"] =  bool(client["uefi"])
+				data.append(client)
+
+		return {"data": data, "total": total}
 
 
 
