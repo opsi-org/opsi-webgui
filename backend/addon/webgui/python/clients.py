@@ -334,7 +334,12 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 				h.created AS created,
 				h.lastSeen AS lastSeen,
 				h.opsiHostKey AS opsiHostKey,
-				h.oneTimePassword AS oneTimePassword
+				h.oneTimePassword AS oneTimePassword,
+				IF(
+					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) <> '[""]',
+					TRUE,
+					FALSE
+				) AS uefi
 			"""
 					)
 				)
@@ -349,6 +354,7 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 				for key in data.keys():
 					if isinstance(data.get(key), (date, datetime)):
 						data[key] = data.get(key).strftime("%Y-%m-%d %H:%M:%S")
+				data["uefi"] = bool(data["uefi"])
 				return {"data": data}
 			logger.error("Client with id '%s' not found.", clientid)
 			raise OpsiApiException(

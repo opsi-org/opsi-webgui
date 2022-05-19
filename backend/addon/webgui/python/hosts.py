@@ -85,10 +85,11 @@ def get_host_data(
 			h.lastSeen AS lastSeen,
 			h.opsiHostKey AS opsiHostKey,
 			h.oneTimePassword AS oneTimePassword,
-			(	SELECT cs.values
-				FROM CONFIG_STATE AS cs
-				WHERE cs.objectId=h.hostId AND cs.configId=\"clientconfig.dhcpd.filename\"
-			) as uefi
+			IF(
+				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) <> '[""]',
+				TRUE,
+				FALSE
+			) AS uefi
 		"""
 				)
 			)
@@ -106,15 +107,11 @@ def get_host_data(
 			if row is not None:
 				row_dict = dict(row)
 				for key in row_dict.keys():
-					if key == "uefi":
-						if row_dict[key] and row_dict[key] == '["linux/pxelinux.cfg/elilo.efi"]':
-							row_dict[key] = True
-						else:
-							row_dict[key] = False
+
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
 						row_dict[key] = row_dict.get(key).isoformat()
+				row_dict["uefi"] = bool(row_dict["uefi"])
 				host_data.append(row_dict)
-
 		return {"data": host_data}
 
 
