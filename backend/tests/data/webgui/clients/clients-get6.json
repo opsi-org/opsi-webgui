@@ -3,6 +3,7 @@
     "type": "OpsiClient",
     "description": "description client1",
     "notes": "notes client1",
+    "uefi": false,
     "hardwareAddress": "af:fe:af:fe:af:f1",
     "ipAddress": null,
     "inventoryNumber": "1",
