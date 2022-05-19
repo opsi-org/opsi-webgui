@@ -58,6 +58,14 @@
           readonly
         />
       </template>
+      <template #cell(uefi)="row">
+        <label for="uefi" class="sr-only">  {{ row.field.label }} </label>
+        <b-form-checkbox
+          id="uefi"
+          :value="row.value"
+          switch
+        />
+      </template>
     </TableTDefault>
   </div>
 </template>
@@ -91,7 +99,8 @@ export default class THostAttributes extends Vue {
       { label: this.$t('table.fields.created'), key: 'created' },
       { label: this.$t('table.fields.lastSeen'), key: 'lastSeen' },
       { label: this.$t('table.fields.hostKey'), key: 'opsiHostKey' },
-      { label: this.$t('table.fields.otp'), key: 'oneTimePassword' }
+      { label: this.$t('table.fields.otp'), key: 'oneTimePassword' },
+      { label: this.$t('table.fields.uefi'), key: 'uefi' }
     ]
   }
 
