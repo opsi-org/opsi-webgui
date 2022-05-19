@@ -165,7 +165,7 @@ def clients(
 				JOIN
 					PRODUCT_ON_CLIENT AS poc ON
 						pod.productId = poc.productId AND
-						(pod.productVersion != poc.productVersion OR pod.packageVersion != poc.packageVersion)
+						CONCAT(poc.productVersion, '-', poc.packageVersion) != CONCAT(pod.productVersion, '-', pod.packageVersion)
 				WHERE
 					poc.clientId = hd.clientId AND
 					pod.depotId = hd.depotId
