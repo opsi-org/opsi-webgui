@@ -86,7 +86,7 @@ def get_host_data(
 			h.opsiHostKey AS opsiHostKey,
 			h.oneTimePassword AS oneTimePassword,
 			IF(
-				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) <> '[""]',
+				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") <> '[""]',
 				TRUE,
 				FALSE
 			) AS uefi

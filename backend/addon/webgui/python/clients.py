@@ -142,11 +142,11 @@ def clients(
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1)
 				) AS depotId,
 				IF(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) <> '[""]',
+					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") <> '[""]',
 					TRUE,
 					FALSE
 				) AS uefi,
-				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) AS uefi_value
+				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") AS uefi_value
 			"""
 				)
 			)
@@ -336,7 +336,7 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 				h.opsiHostKey AS opsiHostKey,
 				h.oneTimePassword AS oneTimePassword,
 				IF(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId) <> '[""]',
+					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") <> '[""]',
 					TRUE,
 					FALSE
 				) AS uefi
