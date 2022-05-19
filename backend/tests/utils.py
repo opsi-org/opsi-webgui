@@ -211,10 +211,10 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 
 	cursor.execute(
 		"INSERT INTO CONFIG_STATE (configId, objectId, CONFIG_STATE.values) VALUES "
-		'("clientconfig.dhcpd.filename"", "pytest-client-1.uib.local", NULL),'
-		'("clientconfig.dhcpd.filename"", "pytest-client-2.uib.local", NULL),'
-		'("clientconfig.dhcpd.filename"", "pytest-client-3.uib.local",	NULL),'
-		'("clientconfig.dhcpd.filename"", "pytest-client-4.uib.local", NULL);'
+		'("clientconfig.dhcpd.filename", "pytest-client-1.uib.local", NULL),'
+		'("clientconfig.dhcpd.filename", "pytest-client-2.uib.local", NULL),'
+		'("clientconfig.dhcpd.filename", "pytest-client-3.uib.local",	NULL),'
+		'("clientconfig.dhcpd.filename", "pytest-client-4.uib.local", NULL);'
 	)
 
 	cursor.close()
