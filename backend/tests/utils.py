@@ -8,16 +8,16 @@
 admininterface tests
 """
 
-import sys
-import socket
 import json
+import socket
+import sys
 from datetime import datetime, timedelta
-import pytest
-import aioredis
-import requests
-import MySQLdb
-import urllib3
 
+import aioredis
+import MySQLdb
+import pytest
+import requests
+import urllib3
 from OPSI.Backend.BackendManager import BackendManager
 
 ADMIN_USER = "adminuser"
@@ -33,8 +33,11 @@ def disable_request_warning():
 
 @pytest.fixture
 def config(monkeypatch):
-	monkeypatch.setattr(sys, 'argv', ["opsiconfd"])
-	from opsiconfd.config import config # pylint: disable=import-outside-toplevel, redefined-outer-name
+	monkeypatch.setattr(sys, "argv", ["opsiconfd"])
+	from opsiconfd.config import (
+		config,  # pylint: disable=import-outside-toplevel, redefined-outer-name
+	)
+
 	return config
 
 
@@ -51,7 +54,7 @@ async def clean_redis(config):  # pylint: disable=redefined-outer-name
 		"opsiconfd:stats:rpcs",
 		"opsiconfd:stats:num_rpcs",
 		"opsiconfd:stats:rpc",
-		"opsiconfd:jsonrpccache:*:products"
+		"opsiconfd:jsonrpccache:*:products",
 	):
 		async for key in redis_client.scan_iter(f"{redis_key}:*"):
 			await redis_client.delete(key)
@@ -60,19 +63,20 @@ async def clean_redis(config):  # pylint: disable=redefined-outer-name
 
 
 def create_depot_rpc(opsi_url: str, host_id: str, host_key: str = None):
-	params= [
+	params = [
 		host_id,
 		host_key,
 		"file:///var/lib/opsi/depot",
 		"smb://172.17.0.101/opsi_depot",
 		None,
 		"file:///var/lib/opsi/repository",
-		"webdavs://172.17.0.101:4447/repository"
+		"webdavs://172.17.0.101:4447/repository",
 	]
 	rpc_request_data = json.dumps({"id": 1, "method": "host_createOpsiDepotserver", "params": params})
 	res = requests.post(f"{opsi_url}/rpc", auth=(ADMIN_USER, ADMIN_PASS), data=rpc_request_data, verify=False)
 	res.raise_for_status()
 	return res.json()
+
 
 @pytest.fixture
 def database_connection():
@@ -91,12 +95,13 @@ def database_connection():
 	yield mysql
 	mysql.close()
 
+
 @pytest.fixture
 def backend():
 	return BackendManager(
-		dispatchConfigFile="tests/opsi-config/backendManager/dispatch.conf",
-		backendConfigDir="tests/opsi-config/backends"
+		dispatchConfigFile="tests/opsi-config/backendManager/dispatch.conf", backendConfigDir="tests/opsi-config/backends"
 	)
+
 
 @pytest.fixture(autouse=True)
 def create_check_data(config, database_connection):  # pylint: disable=redefined-outer-name
@@ -106,43 +111,45 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 	now = datetime.now()
 
 	cursor = mysql.cursor()
-	cursor.execute((
-		'DELETE FROM PRODUCT_ON_DEPOT;'
-		'DELETE FROM PRODUCT_ON_CLIENT;'
-		'DELETE FROM PRODUCT_PROPERTY_VALUE;'
-		'DELETE FROM PRODUCT_PROPERTY;'
-		'DELETE FROM PRODUCT_DEPENDENCY;'
-		'DELETE FROM OBJECT_TO_GROUP;'
-		'DELETE FROM PRODUCT;'
-		'DELETE FROM HOST WHERE type != "OpsiConfigserver";'
-		'DELETE FROM `GROUP`;'
-		'DELETE FROM CONFIG_STATE WHERE objectId like "pytest%";'
-	))
+	cursor.execute(
+		(
+			"DELETE FROM PRODUCT_ON_DEPOT;"
+			"DELETE FROM PRODUCT_ON_CLIENT;"
+			"DELETE FROM PRODUCT_PROPERTY_VALUE;"
+			"DELETE FROM PRODUCT_PROPERTY;"
+			"DELETE FROM PRODUCT_DEPENDENCY;"
+			"DELETE FROM OBJECT_TO_GROUP;"
+			"DELETE FROM PRODUCT;"
+			'DELETE FROM HOST WHERE type != "OpsiConfigserver";'
+			"DELETE FROM `GROUP`;"
+			'DELETE FROM CONFIG_STATE WHERE objectId like "pytest%";'
+		)
+	)
 
 	# Product
 	for i in range(5):
 		cursor.execute(
-			f'INSERT INTO HOST (hostId, `type`, created, lastSeen, hardwareAddress, `description`, notes, inventoryNumber) '
+			f"INSERT INTO HOST (hostId, `type`, created, lastSeen, hardwareAddress, `description`, notes, inventoryNumber) "
 			f'VALUES ("pytest-client-{i}.uib.local", "OpsiClient", "{now}", "{now}", "af:fe:af:fe:af:f{i}", "description client{i}", "notes client{i}", "{i}");'
 		)
 		cursor.execute(
-			'INSERT INTO PRODUCT (productId, productVersion, packageVersion, type,  name, priority, setupScript, uninstallScript) VALUES '
+			"INSERT INTO PRODUCT (productId, productVersion, packageVersion, type,  name, priority, setupScript, uninstallScript) VALUES "
 			f'("pytest-prod-{i}", "1.0", "1", "LocalbootProduct", "Pytest dummy PRODUCT {i}", 60+{i}, "setup.opsiscript", "uninstall.opsiscript");'
 		)
 		cursor.execute(
-			f'INSERT INTO PRODUCT_ON_DEPOT (productId, productVersion, packageVersion, depotId, productType) VALUES '
+			f"INSERT INTO PRODUCT_ON_DEPOT (productId, productVersion, packageVersion, depotId, productType) VALUES "
 			f'("pytest-prod-{i}", "1.0", "1", "{socket.getfqdn()}", "LocalbootProduct");'
 		)
 
 	cursor.execute(
-		'INSERT INTO PRODUCT (productId, productVersion, packageVersion, type,  name, priority) VALUES  '
+		"INSERT INTO PRODUCT (productId, productVersion, packageVersion, type,  name, priority) VALUES  "
 		'("pytest-prod-1", "2.0", "1", "LocalbootProduct", "Pytest dummy PRODUCT 1 version 2", 60),'
 		'("pytest-prod-4", "2.0", "1", "LocalbootProduct", "Pytest dummy PRODUCT 4 version 2", 60);'
 	)
 
 	# Host
 	cursor.execute(
-		'INSERT INTO HOST (hostId, type, created, lastSeen) VALUES '
+		"INSERT INTO HOST (hostId, type, created, lastSeen) VALUES "
 		f'("pytest-lost-client.uib.local", "OpsiClient", "{now}", "{now-timedelta(days=MONITORING_CHECK_DAYS)}"),'
 		f'("pytest-lost-client-fp.uib.local", "OpsiClient", "{now}", "{now-timedelta(days=MONITORING_CHECK_DAYS)}"),'
 		f'("pytest-lost-client-fp2.uib.local", "OpsiClient", "{now}", "{now-timedelta(days=MONITORING_CHECK_DAYS)}");'
@@ -153,9 +160,9 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 
 	# Product on client
 	cursor.execute(
-		'INSERT INTO PRODUCT_ON_CLIENT '
-		'(productId, clientId, productType, installationStatus, actionRequest, actionResult, '
-		' productVersion, packageVersion, modificationTime) VALUES '
+		"INSERT INTO PRODUCT_ON_CLIENT "
+		"(productId, clientId, productType, installationStatus, actionRequest, actionResult, "
+		" productVersion, packageVersion, modificationTime) VALUES "
 		f'("pytest-prod-1", "pytest-client-1.uib.local", "LocalbootProduct", "not_installed", "setup", "none", "1.0", 1, "{now}"),'
 		f'("pytest-prod-2", "pytest-client-2.uib.local", "LocalbootProduct", "unknown", "none", "failed", "1.0", 1, "{now}"),'
 		f'("pytest-prod-3", "pytest-client-3.uib.local", "LocalbootProduct", "installed", "none", "none", "1.0", 1, "{now}"),'
@@ -167,10 +174,9 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 		f'("pytest-prod-4", "pytest-client-4.uib.local", "LocalbootProduct", "not_installed", "setup", "none", "1.0", 1, "{now}");'
 	)
 
-
 	# Product on depot
 	cursor.execute(
-		'INSERT INTO PRODUCT_ON_DEPOT (productId, productVersion, packageVersion, depotId, productType) VALUES '
+		"INSERT INTO PRODUCT_ON_DEPOT (productId, productVersion, packageVersion, depotId, productType) VALUES "
 		'("pytest-prod-1", "1.0", "1", "pytest-test-depot.uib.gmbh", "LocalbootProduct"),'
 		'("pytest-prod-2", "1.0", "1", "pytest-test-depot.uib.gmbh", "LocalbootProduct"),'
 		'("pytest-prod-1", "2.0", "1", "pytest-test-depot2.uib.gmbh", "LocalbootProduct"),'
@@ -183,12 +189,10 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 
 	# Product Group
 	cursor.execute(
-		'INSERT INTO `GROUP` (type, groupId) VALUES '
-		'("ProductGroup", "pytest-group-1"),'
-		'("ProductGroup", "pytest-group-2");'
+		"INSERT INTO `GROUP` (type, groupId) VALUES " '("ProductGroup", "pytest-group-1"),' '("ProductGroup", "pytest-group-2");'
 	)
 	cursor.execute(
-		'INSERT INTO OBJECT_TO_GROUP (groupType, groupId, objectId) VALUES '
+		"INSERT INTO OBJECT_TO_GROUP (groupType, groupId, objectId) VALUES "
 		'("ProductGroup", "pytest-group-1", "pytest-prod-0"),'
 		'("ProductGroup", "pytest-group-1", "pytest-prod-1"),'
 		'("ProductGroup", "pytest-group-1", "pytest-prod-2"),'
@@ -198,11 +202,19 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 
 	# Clients to Depots
 	cursor.execute(
-		'INSERT INTO CONFIG_STATE (configId, objectId, CONFIG_STATE.values) VALUES '
+		"INSERT INTO CONFIG_STATE (configId, objectId, CONFIG_STATE.values) VALUES "
 		'("clientconfig.depot.id", "pytest-client-1.uib.local", \'["pytest-test-depot.uib.gmbh"]\'),'
 		'("clientconfig.depot.id", "pytest-client-2.uib.local", \'["pytest-test-depot.uib.gmbh"]\'),'
 		'("clientconfig.depot.id", "pytest-client-3.uib.local",	\'["pytest-test-depot2.uib.gmbh"]\'),'
 		'("clientconfig.depot.id", "pytest-client-4.uib.local", \'["pytest-test-depot2.uib.gmbh"]\');'
+	)
+
+	cursor.execute(
+		"INSERT INTO CONFIG_STATE (configId, objectId, CONFIG_STATE.values) VALUES "
+		'("clientconfig.dhcpd.filename"", "pytest-client-1.uib.local", NULL),'
+		'("clientconfig.dhcpd.filename"", "pytest-client-2.uib.local", NULL),'
+		'("clientconfig.dhcpd.filename"", "pytest-client-3.uib.local",	NULL),'
+		'("clientconfig.dhcpd.filename"", "pytest-client-4.uib.local", NULL);'
 	)
 
 	cursor.close()
@@ -222,14 +234,14 @@ def create_check_data(config, database_connection):  # pylint: disable=redefined
 	# 	)
 	# )
 	cursor.execute(
-		'DELETE FROM PRODUCT_ON_DEPOT;'
-		'DELETE FROM PRODUCT_ON_CLIENT;'
-		'DELETE FROM PRODUCT_PROPERTY_VALUE;'
-		'DELETE FROM PRODUCT_PROPERTY;'
-		'DELETE FROM PRODUCT_DEPENDENCY;'
-		'DELETE FROM OBJECT_TO_GROUP;'
-		'DELETE FROM PRODUCT;'
+		"DELETE FROM PRODUCT_ON_DEPOT;"
+		"DELETE FROM PRODUCT_ON_CLIENT;"
+		"DELETE FROM PRODUCT_PROPERTY_VALUE;"
+		"DELETE FROM PRODUCT_PROPERTY;"
+		"DELETE FROM PRODUCT_DEPENDENCY;"
+		"DELETE FROM OBJECT_TO_GROUP;"
+		"DELETE FROM PRODUCT;"
 		'DELETE FROM HOST WHERE type!="OpsiConfigserver";'
-		'DELETE FROM `GROUP`;'
-		'DELETE FROM CONFIG_STATE;'
+		"DELETE FROM `GROUP`;"
+		"DELETE FROM CONFIG_STATE;"
 	)

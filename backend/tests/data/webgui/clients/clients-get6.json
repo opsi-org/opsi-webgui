@@ -4,7 +4,6 @@
     "description": "description client1",
     "notes": "notes client1",
     "uefi": false,
-    "uefi_value": null,
     "hardwareAddress": "af:fe:af:fe:af:f1",
     "ipAddress": null,
     "inventoryNumber": "1",
