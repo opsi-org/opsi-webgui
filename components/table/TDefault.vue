@@ -104,7 +104,8 @@ export default class BVTable extends Vue {
 }
 
 .productproperties.table-responsive {
-  min-height: 100vh;
+  /* min-height: 100vh; */
+  height: 62vh !important;
   overflow-y: auto;
 }
 </style>
