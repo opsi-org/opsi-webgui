@@ -270,7 +270,7 @@ def products(
 			(
 				SELECT IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%unknown%',
 					2,
-					IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%installed%',
+					IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%,installed%' OR GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE 'installed%',
 						1,
 						0
 					)
