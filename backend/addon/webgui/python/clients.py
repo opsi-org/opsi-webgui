@@ -12,7 +12,7 @@ from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
 from typing import Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Body, Depends, Request, status
 from OPSI.Object import OpsiClient
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends
@@ -25,7 +25,7 @@ from opsiconfd.rest import (
 	rest_api,
 )
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, delete, select, text
+from sqlalchemy import alias, and_, column, delete, select, text, update
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import table
@@ -472,3 +472,62 @@ def delete_client(request: Request, clientid: str):
 			raise OpsiApiException(
 				message="Could not delete client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 			) from err
+
+
+@client_router.post("/api/opsidata/clients/{clientid}/uefi")
+@rest_api
+@read_only_check
+def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
+	"""
+	Set uefi config of client
+	"""
+
+	if uefi:
+		config_value = '[\"linux/pxelinux.cfg/shimx64.efi.signed\"]'
+	else:
+		config_value = '[\"\"]'
+
+	with mysql.session() as session:
+
+		query = (
+			select(
+				text("""
+				cs.objectId AS objectId,
+				cs.configId AS configId
+			""")
+			)
+			.select_from(text("`CONFIG_STATE` AS cs"))
+			.where(text(f"cs.objectId = '{clientid}' and cs.configId = 'clientconfig.dhcpd.filename'"))
+		)  # pylint: disable=redefined-outer-name
+
+		result = session.execute(query)
+		result = result.fetchone()
+
+		values = {
+			"configId": "clientconfig.dhcpd.filename",
+			"objectId": clientid,
+			"values": config_value
+		}
+
+		if result:
+			stmt = (
+				update(table("CONFIG_STATE", *[column(name) for name in values.keys()]))
+				.where(text(f"configId = 'clientconfig.dhcpd.filename' AND objectId = '{clientid}'"))
+				.values(values=config_value)
+			)
+			session.execute(stmt)
+
+		else:
+			stmt = (
+				insert(
+					table(
+						"CONFIG_STATE", *[column(name) for name in values.keys()]
+					)  # pylint: disable=consider-iterating-dictionary
+				)
+				.values(**values)
+				.on_duplicate_key_update(configId="clientconfig.dhcpd.filename", objectId=clientid)
+			)
+			print(stmt)
+			session.execute(stmt)
+
+	return {"http_status": 200, "data": values}

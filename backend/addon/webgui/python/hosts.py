@@ -195,7 +195,6 @@ def get_host_groups(
 				)
 				.where(and_(where_hosts, where_depots)),
 			)
-			logger.devel(query)
 			result = session.execute(query, params)
 			result = result.fetchall()
 
