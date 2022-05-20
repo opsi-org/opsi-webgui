@@ -267,6 +267,17 @@ def products(
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 				ORDER BY poc.clientId
 			) AS installationStatusDetails,
+			(
+				SELECT IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%unknown%',
+					1,
+					IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%,installed%' OR GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE 'installed%',
+						0,
+						2
+					)
+				)
+				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+				ORDER BY poc.clientId
+			) AS installationStatusErrorLevel,
 			(	SELECT
 					IF(
 						LENGTH(GROUP_CONCAT(DISTINCT poc.installationStatus SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.installationStatus SEPARATOR ','), ',', '')) > 0,
@@ -306,6 +317,17 @@ def products(
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 				ORDER BY poc.clientId
 			) AS actionResultDetails,
+			(
+				SELECT IF(GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') LIKE '%failed%',
+					1,
+					IF(GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') LIKE '%successful%',
+						0,
+						2
+					)
+				)
+				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+				ORDER BY poc.clientId
+			) AS actionResultErrorLevel,
 			(	SELECT
 					IF(
 						LENGTH(GROUP_CONCAT(DISTINCT poc.actionResult SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.actionResult SEPARATOR ','), ',', '')) > 0,
@@ -412,9 +434,15 @@ def products(
 				]:
 					if product.get(value):
 						product[value] = product.get(value).split(",")
-
+				# if "failed" in product.get("installationStatusDetails", []) or product.get("installationStatus") == "failed":
+				# 	product["installationStatusErrorLevel"] = 2
+				# elif "unknown " in product.get("installationStatusDetails", []) or product.get("installationStatus") == "unknown ":
+				# 	product["installationStatusErrorLevel"] = 1
+				# else:
+				# 	product["installationStatusErrorLevel"] = 0
 			product["depot_version_diff"] = bool(product.get("depot_version_diff", False))
 			product["client_version_outdated"] = bool(product.get("client_version_outdated", False))
+
 			products.append(product)
 
 		products_on_depots = alias(

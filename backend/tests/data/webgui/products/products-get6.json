@@ -8,9 +8,11 @@
             "pytest-client-1.uib.local"
         ],
         "installationStatus": "not_installed",
+        "installationStatusErrorLevel": 2,
         "actionRequest": "setup",
         "actionProgress": null,
         "actionResult": "none",
+        "actionResultErrorLevel": 2,
         "clientVersions": [
             "1.0-1"
         ],

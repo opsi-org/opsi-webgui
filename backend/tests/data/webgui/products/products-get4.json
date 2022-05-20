@@ -8,9 +8,11 @@
         ],
         "selectedClients": null,
         "installationStatus": "not_installed",
+        "installationStatusErrorLevel": 2,
         "actionRequest": "none",
         "actionProgress": null,
         "actionResult": "none",
+        "actionResultErrorLevel": 2,
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -46,9 +48,11 @@
         "productType": "LocalbootProduct",
         "depot_version_diff": false,
         "installationStatus": "not_installed",
+        "installationStatusErrorLevel": 2,
         "actionRequest": "none",
         "actionProgress": null,
         "actionResult": "none",
+        "actionResultErrorLevel": 2,
         "selected": 0
     }
 ]
