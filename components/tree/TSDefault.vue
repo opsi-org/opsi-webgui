@@ -342,7 +342,7 @@ export default class TSDefault extends Vue {
       // console.log(this.id + ' TSDefault selectDefault not multi')
       this.selectionWrapper.length = 0
     }
-    console.log(this.options, ' includes ', s)
+    // console.log(this.options, ' includes ', s)
     if (this.selectionWrapper.includes(this.$t('values.mixed')) && s.text !== this.$t('values.mixed')) {
       this.selectionWrapper = [s.text]
     } else {

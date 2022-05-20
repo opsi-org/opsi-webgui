@@ -93,9 +93,9 @@ export default class TProductPropertyValue extends Vue {
   }
 
   initSelection () {
-    console.log('init selection with changes', this.selectedValues)
+    // console.log('init selection with changes', this.selectedValues)
     const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
-    console.log('init selection with changes', originalValue)
+    // console.log('init selection with changes', originalValue)
     if (this.selectionClients.length > 0) {
       this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionClients, 'clientId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionClients, 'clientId')
@@ -103,13 +103,13 @@ export default class TProductPropertyValue extends Vue {
       this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionDepots, 'depotId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionDepots, 'depotId')
     }
-    console.log('init selection with changes selectedValues', this.selectedValues)
+    // console.log('init selection with changes selectedValues', this.selectedValues)
   }
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
   @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
-    console.log('-------------ProductPropertyValue changeValue ', this.selectedValues)
+    // console.log('-------------ProductPropertyValue changeValue ', this.selectedValues)
     // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
     //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     // }
@@ -161,7 +161,7 @@ export default class TProductPropertyValue extends Vue {
       return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
     }
     const depotValues = Object.values(this.rowItem.depots) || []
-    console.log(JSON.stringify(depotValues), depotValues.length, depotValues.every(v => v === depotValues[0]))
+    // console.log(JSON.stringify(depotValues), depotValues.length, depotValues.every(v => v === depotValues[0]))
     if ((depotValues.length > 0) && depotValues.every(v => arrayEqual(v, depotValues[0]))) {
       return depotValues[0]
     } else if (depotValues.length > 0 && depotValues.some(v => !arrayEqual(v, depotValues[0]))) {
@@ -192,9 +192,9 @@ export default class TProductPropertyValue extends Vue {
   }
 
   selectionChanged (values: Array<string|boolean>, reset: boolean = false) {
-    console.log('selectionChanged PPValue ', values, reset)
+    // console.log('selectionChanged PPValue ', values, reset)
     if (reset !== true) {
-      console.log('not reseting - overwrite PPValue ', values, reset)
+      // console.log('not reseting - overwrite PPValue ', values, reset)
       this.selectedValues = JSON.parse(JSON.stringify(values))
       this.selectedValuesChanged()
       this.initSelection()
@@ -233,7 +233,7 @@ export default class TProductPropertyValue extends Vue {
   }
 
   getValuesWithChanges (originalValue:Array<any>, selectionHosts: Array<string>, key: string) {
-    console.log('update selectionValues with changes')
+    // console.log('update selectionValues with changes')
     let newValue
     let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
     changesList = changesList.filter(e => e.user === this.username)
@@ -261,11 +261,11 @@ export default class TProductPropertyValue extends Vue {
     }
     if (newValue) {
       this.isOrigin = false
-      console.log('update selectionValues with changes - return newValue', newValue)
+      // console.log('update selectionValues with changes - return newValue', newValue)
       return newValue
     }
     this.isOrigin = true
-    console.log('update selectionValues with changes - return original', originalValue)
+    // console.log('update selectionValues with changes - return original', originalValue)
     return originalValue
   }
 }

@@ -154,14 +154,14 @@ export default class TProductProperties extends Vue {
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    console.log('quicksave? ', this.quicksave)
+    // console.log('quicksave? ', this.quicksave)
     if (!this.quicksave) {
       if (this.selectionClients.length > 0) {
         this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
       } else {
         this.handleTrackingChanges(this.selectionDepots, 'depotId', propertyId, values, orgValues)
       }
-      console.log('handleChange changes ', this.changesProducts)
+      // console.log('handleChange changes ', this.changesProducts)
       return
     }
     if (!arrayEqual(values, orgValues)) {
@@ -191,7 +191,7 @@ export default class TProductProperties extends Vue {
         this.delWithIndexChangesProducts(objIndex)
       }
       if (!arrayEqual(values, orgValues)) {
-        console.log('changeobject', changeObject)
+        // console.log('changeobject', changeObject)
         this.pushToChangesProducts(changeObject)
       }
     }
