@@ -269,10 +269,10 @@ def products(
 			) AS installationStatusDetails,
 			(
 				SELECT IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%unknown%',
-					2,
+					1,
 					IF(GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE '%,installed%' OR GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') LIKE 'installed%',
-						1,
-						0
+						0,
+						2
 					)
 				)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
@@ -319,10 +319,10 @@ def products(
 			) AS actionResultDetails,
 			(
 				SELECT IF(GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') LIKE '%failed%',
-					2,
+					1,
 					IF(GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') LIKE '%successful%',
-						1,
-						0
+						0,
+						2
 					)
 				)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients

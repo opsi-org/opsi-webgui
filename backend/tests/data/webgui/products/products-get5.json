@@ -11,11 +11,11 @@
             "pytest-client-1.uib.local"
         ],
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "setup",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "clientVersions": [
             "1.0-1"
         ],
@@ -43,11 +43,11 @@
         ],
         "selectedClients": null,
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "none",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "clientVersions": null,
         "client_version_outdated": false,
         "actions": [
@@ -86,11 +86,11 @@
         "productType": "LocalbootProduct",
         "depot_version_diff": false,
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "none",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "selected": 0
     }
 ]

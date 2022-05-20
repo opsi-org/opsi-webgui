@@ -20,11 +20,11 @@
         "productType": "LocalbootProduct",
         "depot_version_diff": false,
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "none",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "selected": 0
     },
     {
@@ -51,11 +51,11 @@
         "productType": "LocalbootProduct",
         "depot_version_diff": false,
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "setup",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "client_version_outdated": false,
         "selected": 0
     },
@@ -80,11 +80,11 @@
         "productType": "LocalbootProduct",
         "depot_version_diff": false,
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "none",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "selected": 0
     },
     {
@@ -108,11 +108,11 @@
         "productType": "LocalbootProduct",
         "depot_version_diff": false,
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "none",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "selected": 0
     },
     {
@@ -146,11 +146,11 @@
         "productType": "LocalbootProduct",
         "depot_version_diff": false,
         "installationStatus": "not_installed",
-        "installationStatusErrorLevel": 0,
+        "installationStatusErrorLevel": 2,
         "actionRequest": "mixed",
         "actionProgress": null,
         "actionResult": "none",
-        "actionResultErrorLevel": 0,
+        "actionResultErrorLevel": 2,
         "client_version_outdated": false,
         "selected": 0
     }
