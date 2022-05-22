@@ -127,7 +127,7 @@ export default class VProducts extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionProgress') : false
     },
     actionRequest: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', sortable: true, _fixed: false,
+      label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionRequest') : false
     },
     rowactions: { // eslint-disable-next-line object-property-newline
@@ -183,16 +183,24 @@ export default class VProducts extends Vue {
   updateColumnVisibility () {
     const b = (this.selectionClients.length > 0)
     this.headerData.selectedClients.disabled = b
-    this.headerData.installationStatus._fixed = b
     this.headerData.installationStatus.visible = b
     this.headerData.installationStatus.disabled = b
-    this.headerData.actionResult._fixed = b
     this.headerData.actionResult.visible = b
     this.headerData.actionResult.disabled = b
-    this.headerData.actionRequest._fixed = b
     this.headerData.actionRequest.visible = b
     this.headerData.actionRequest.disabled = b
     this.headerData.actionProgress.disabled = b
+
+    // store as new column visibility as cookie
+    const visibleItems = {}
+    Object.values(this.headerData).filter(k => !k._isMajor).forEach((h) => {
+      if (h._majorKey) {
+        visibleItems[this.headerData[h._majorKey].key] = h.visible || false
+      } else {
+        visibleItems[h.key] = h.visible || false
+      }
+    })
+    Cookie.set('column_' + this.id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
   }
 
   async fetchProducts (thiss) {
@@ -218,20 +226,21 @@ export default class VProducts extends Vue {
       const params = { ...thiss.tableData }
       params.selectedDepots = JSON.stringify(thiss.selectionDepots)
       params.selectedClients = JSON.stringify(thiss.selectionClients)
-      if (params.sortBy === 'installationStatus') { params.sortBy = '["installationStatus", "installationStatusErrorLevel"]' }
-      else if (params.sortBy === 'actionResult') { params.sortBy = '["actionResult", "actionResultErrorLevel"]' }
-      else if (params.sortBy === 'depotVersions') { params.sortBy = 'depot_version_diff' }
-      else if (params.sortBy === 'clientVersions') { params.sortBy = 'client_version_outdated' }
-      else if (params.sortBy === 'desc') { params.sortBy = 'description' }
-      else if (params.sortBy === '') { params.sortBy = 'productId' }
-      else if (params.sortBy === 'version') {
+      if (params.sortBy === 'installationStatus') {
+        params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
+      } else if (params.sortBy === 'actionResult') {
+        params.sortBy = '["actionResult", "actionResultErrorLevel"]'
+      } else if (params.sortBy === 'depotVersions') {
+        params.sortBy = 'depot_version_diff'
+      } else if (params.sortBy === 'clientVersions') {
+        params.sortBy = 'client_version_outdated'
+      } else if (params.sortBy === 'desc') {
+        params.sortBy = 'description'
+      } else if (params.sortBy === '') {
+        params.sortBy = 'productId'
+      } else if (params.sortBy === 'version') {
         params.sortBy = '["client_version_outdated", "depot_version_diff" ]'
-        // if (params.sortDesc) {
-          // params.sortBy = '["depot_version_diff", "client_version_outdated" ]'
-        // } else {
-        // }
-      }
-      else if (params.sortBy === 'selected') {
+      } else if (params.sortBy === 'selected') {
         params.sortDesc = true
         params.selected = JSON.stringify(thiss.selectionProducts)
       }

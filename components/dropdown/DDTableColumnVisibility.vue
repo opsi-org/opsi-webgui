@@ -10,6 +10,7 @@
     alt="Show column"
     class="DDTableColumnVisibility fixed_column_selection noborder"
     :title="$t('table.showCol')"
+    @show="init"
   >
     <template #button-content>
       <IconITableColumn />
@@ -80,7 +81,8 @@ export default class DDTableColumnVisibility extends BDropdown {
     return this.multi || (this.$mq === 'mobile' || this.twoColumnLayoutCollapsed[this.viewId])
   }
 
-  created () {
+  created () { this.init() }
+  init () {
     if (Cookie.get('column_' + this.viewId)) {
       this.columnVisibilityList = JSON.parse(Cookie.get('column_' + this.viewId) as unknown as any)
     } else {
