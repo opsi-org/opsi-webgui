@@ -9,7 +9,7 @@ interface IColumnLayoutCollaped {
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
   _language: string = Cookie.get('Language') as string || 'en'
-  _quicksave: boolean = Cookie.get('Quicksave') as string === 'true' || false
+  _quicksave: boolean = Cookie.get('Quicksave') as string === 'true' || true
   colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' }
   _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
   _expiresInterval!: NodeJS.Timeout|undefined
