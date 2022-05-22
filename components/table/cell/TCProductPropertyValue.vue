@@ -59,6 +59,7 @@ import { IProperty } from '../../../.utils/types/ttable'
 import { IObjectString2Boolean, IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
 import { Constants } from '../../../mixins/uib-mixins'
+const settings = namespace('settings')
 const selections = namespace('selections')
 const changes = namespace('changes')
 const config = namespace('config-app')
@@ -78,6 +79,7 @@ export default class TProductPropertyValue extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @changes.Getter public changesProducts!: Array<any>
   @changes.Mutation public deleteFromChangesWhere!: (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) => void
+  @settings.Getter public quicksave!: boolean
 
   showValue : boolean = false
   changedValue: Array<string>|undefined
@@ -114,6 +116,7 @@ export default class TProductPropertyValue extends Vue {
     //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     // }
     this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
+    if (this.quicksave) { this.initSelection() }
     this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
     // console.log('-------------ProductPropertyValue selectedValues ', this.selectedValues)
     // console.log('-------------ProductPropertyValue selectedValuesOrigin ', this.selectedValuesOriginal)
