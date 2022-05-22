@@ -218,12 +218,20 @@ export default class VProducts extends Vue {
       const params = { ...thiss.tableData }
       params.selectedDepots = JSON.stringify(thiss.selectionDepots)
       params.selectedClients = JSON.stringify(thiss.selectionClients)
-      if (params.sortBy === 'depotVersions') { params.sortBy = 'depot_version_diff' }
-      if (params.sortBy === 'clientVersions') { params.sortBy = 'client_version_outdated' }
-      if (params.sortBy === 'version') { params.sortBy = '[client_version_outdated, depot_version_diff ]' }
-      if (params.sortBy === 'desc') { params.sortBy = 'description' }
-      if (params.sortBy === '') { params.sortBy = 'productId' }
-      if (params.sortBy === 'selected') {
+      if (params.sortBy === 'installationStatus') { params.sortBy = '["installationStatus", "installationStatusErrorLevel"]' }
+      else if (params.sortBy === 'actionResult') { params.sortBy = '["actionResult", "actionResultErrorLevel"]' }
+      else if (params.sortBy === 'depotVersions') { params.sortBy = 'depot_version_diff' }
+      else if (params.sortBy === 'clientVersions') { params.sortBy = 'client_version_outdated' }
+      else if (params.sortBy === 'desc') { params.sortBy = 'description' }
+      else if (params.sortBy === '') { params.sortBy = 'productId' }
+      else if (params.sortBy === 'version') {
+        if (params.sortDesc) {
+          params.sortBy = '["client_version_outdated", "depot_version_diff" ]'
+        } else {
+          params.sortBy = '["depot_version_diff", "client_version_outdated" ]'
+        }
+      }
+      else if (params.sortBy === 'selected') {
         params.sortDesc = true
         params.selected = JSON.stringify(thiss.selectionProducts)
       }
