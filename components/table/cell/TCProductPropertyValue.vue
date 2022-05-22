@@ -23,7 +23,7 @@
         type="propertyvalues"
         :disabled="(config)? config.read_only : false"
         :text="undefined"
-        :show-selection-count="selectedValues.length>1"
+        :show-selection-count="selectedValues.length>1 || !isOrigin"
         :limit-visible-selection="1"
         :multi="rowItem.multiValue"
         :editable="rowItem.editable"
@@ -115,6 +115,9 @@ export default class TProductPropertyValue extends Vue {
     // }
     this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
+    // console.log('-------------ProductPropertyValue selectedValues ', this.selectedValues)
+    // console.log('-------------ProductPropertyValue selectedValuesOrigin ', this.selectedValuesOriginal)
+    // console.log('-------------ProductPropertyValue isOrigin ', this.isOrigin)
   }
 
   @Watch('rowItem.clients', { deep: true }) rowItemClientsChanged () { this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal)) }
@@ -265,7 +268,14 @@ export default class TProductPropertyValue extends Vue {
       return newValue
     }
     this.isOrigin = true
+    if (this.selectedValues && Object.values(this.selectedValues).length >= 0) {
+      this.isOrigin = arrayEqual(Object.values(this.selectedValues || {}), originalValue)
+    }
     // console.log('update selectionValues with changes - return original', originalValue)
+    // console.log('----- selectedValues', Object.values(this.selectedValues || {}))
+    // console.log('----- originalValue', originalValue)
+    // console.log('----- newValue', newValue)
+    // console.log('----- selectedValuesOriginal', this.selectedValuesOriginal)
     return originalValue
   }
 }

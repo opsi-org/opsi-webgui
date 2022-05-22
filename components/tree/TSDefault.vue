@@ -3,10 +3,10 @@
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
-      v-else-if="showSelectionCount===true"
+      v-else-if="multi && showSelectionCount===true"
       :id="id"
       :type="type"
-      :selections="selectionDefault"
+      :selections="(type==='propertyvalues')?selectionWrapper:selectionDefault"
     />
     <TreeTSDefaultWithAdding
       :id="`id-select-${id}`"
@@ -24,7 +24,7 @@
       :options="options"
       :open-on-focus="false"
       :branch-nodes-first="true"
-      :max-height="400"
+      :max-height="300"
       :always-open="false"
       :disabled="disabled"
 
@@ -98,13 +98,14 @@
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+// import { arrayEqual } from '../../.utils/utils/scompares'
 
 const cache = namespace('data-cache')
 
 interface Group {
   id: string
   text: string
-  isBranch?: boolean
+  // isBranch?: boolean
   type: string
   isDisabled?: boolean
   isNew?: boolean
@@ -185,8 +186,7 @@ export default class TSDefault extends Vue {
 
   get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }
   set selection (s) { this.model[(this.nested) ? 'nested' : 'default'] = s }
-  // can be overwritten by children
-  set selectionWrapper (s) { (Array.isArray(s)) ? this.selection = s : this.selection = [s] }
+  set selectionWrapper (s) { (Array.isArray(s)) ? this.selection = s : this.selection = [s] } // can be overwritten by children
   get selectionWrapper () { return this.selection }
   get placeholderWrapper () {
     if (this.multi && !this.text) { return '' }
@@ -198,7 +198,7 @@ export default class TSDefault extends Vue {
   treeselectSearchQueryChanged (filled) { this.treeselectSearchQueryFilled = filled }
 
   syncWrapper () {
-    // console.log(this.id + ' TSDefault syncWrapper')
+    // console.log(this.id + ' TSDefault syncWrapper', this.syncFunction)
     if (this.syncFunction) { // e.g. from TSDefaultGroups
       this.syncFunction(this.selection, this.options)
     }
@@ -226,37 +226,45 @@ export default class TSDefault extends Vue {
     this.$fetchState.pending = false
   }
 
-  updateLocalFromParent (updateOptions = true, updateSelections = true) {
+  updateLocalFromParent () {
     // console.log(this.id + ' TSDefault updateLocalFromParent')
-    if (updateOptions) {
-      if (this.isList === false) {
-        this.options = [...this.data]
-        return
-      }
+    if (this.isList === false) { // already correct format
+      this.options = [...this.data]
+      console.log(this.id + ' TSDefault updateLocalFromParent no list')
+      return
+    }
 
-      // build treestructure from list
-      this.options.length = 0
-      this.data.forEach((element) => { this.options.push({ id: element, text: element, type: 'ObjectToGroup' }) })
-      if (this.nested) { return }
+    // build treestructure from list
+    this.options.length = 0
+    this.data.forEach((element) => { this.options.push({ id: element, text: element, type: 'ObjectToGroup' }) })
+    // console.log(this.id + ' TSDefault updateLocalFromParent nested ', this.nested)
+    if (this.nested) { return }
 
-      // const resultObjects = []
-      // for (const sitem in this.selectionDefault) {
-      //   filterObject(this.options, sitem, 'id', resultObjects)
-      // }
+    // const resultObjects = []
+    // for (const sitem in this.selectionDefault) {
+    //   filterObject(this.options, sitem, 'id', resultObjects)
+    // }
 
-      // if its not nested: add selection to options if not already inside (e.g. newValue)
-      const optionIds = this.options.map((e:any) => e.id)
-      for (const i in this.selectionDefault) {
-        const s = this.selectionDefault[i]
-        if (!optionIds.includes(s)) {
-          const elem = { id: s, text: s, type: 'ObjectToGroup', isNew: true }
-          this.options.push(elem)
-        }
+    // if its not nested: add selection to options if not already inside (e.g. newValue)
+    const optionIds = this.options.map((e:any) => e.id)
+    for (const i in this.selectionDefault) {
+      const s = this.selectionDefault[i]
+      if (!optionIds.includes(s)) {
+        const elem = { id: s, text: s, type: 'ObjectToGroup', isNew: true }
+        this.options.push(elem)
       }
     }
-    if (updateSelections && !this.nested) { // not TSDefaultGroups
-      // console.log(this.id, ' updateLocal ', this.selection)
-      this.selection = [...this.selectionDefault]
+    if (!this.nested) { // not TSDefaultGroups // e.g. productproperty-value
+      // console.log(this.id, ' updateLocal selection', this.selection)
+      // console.log(this.id, ' updateLocal selectionDefault', this.selectionDefault)
+      // console.log(this.id, ' updateLocal selection', arrayEqual(this.selection, this.selectionDefault) || (this.selection && this.selection.length === 0))
+      // this.selectDefault(this.selection)
+      // if (arrayEqual(this.selection, this.selectionDefault) || (this.selection && this.selection.length === 0)) {
+      if (this.isOrigin) {
+        this.selection = [...this.selectionDefault]
+      } else {
+        this.selection = [...this.selection]
+      }
     }
   }
 
@@ -266,7 +274,7 @@ export default class TSDefault extends Vue {
       type: node.type,
       isNew: node.isNew || false,
       hasAnySelection: node.hasAnySelection || false,
-      isBranch: node.type === 'HostGroup' || node.type === 'ProductGroup' || node.isBranch || false,
+      // isBranch: node.type === 'HostGroup' || node.type === 'ProductGroup' || node.isBranch || false,
       isDisabled: (node.isDisabled === true) || (node.id === this.$t('values.mixed')) || false,
       // isDefaultExpanded: node.hasAnySelection || false,
       label: node.text ? node.text.replace(/_+$/, '') : node.id,
