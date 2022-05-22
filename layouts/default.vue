@@ -9,6 +9,7 @@
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
+      <AlertAAlert ref="alertConfigurationError" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
       <h5 class="text-capitalize">
         <BarBBreadcrumbRow v-if="$mq !== 'mobile'" />
@@ -96,7 +97,12 @@ export default class LayoutDefault extends Vue {
     try {
       this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
     } catch (error) {
-      // this.setConfig({"user":"adminuser","configuration":{"read_only":false,"depot_access":false,"group_access":false,"client_creation":true}}.configuration)
+      this.activeTabSet = -3
+      const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+      const ref = (this.$refs.alertConfigurationError as any)
+      ref.alert(this.$t('message.error.fetch') as string + 'Configuration', 'danger', detailedError)
+      // this.setConfig({'user':'adminuser','configuration': {'read_only':false } } ) //,"depot_access":false,"group_access":false,"client_creation":true}}.configuration)
+      this.setConfig({ read_only: true })
     }
   }
 }
