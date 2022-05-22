@@ -31,11 +31,7 @@
       :cache-options="false"
       :normalizer="normalizer"
       :load-options="loadOptionsChildren"
-      :no-results-text="
-        textNoResult
-          ? textNoResult
-          : $t(editable? 'treeselect.noResultTextEditable': 'treeselect.noresult')
-      "
+      :no-results-text="textNoResult? textNoResult : $t('treeselect.noresult')"
       :limit="limitVisibleSelection"
       :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('treeselect.limitText', { count })"
 
@@ -70,6 +66,12 @@
           class="BTN-before-list"
           :action="resetSelected"
         />
+        <b-button
+          v-if="editable && treeselectSearchQueryFilled"
+          variant="outline-primary"
+          class="BTN-before-list"
+          @click="triggerSelection()"
+        > {{ $t('button.tsdefault.add') }} </b-button>
       </div>
       <div
         slot="option-label"
@@ -157,7 +159,7 @@ export default class TSDefault extends Vue {
   @Prop({}) deselectFunction?: Function
   @Prop({}) syncFunction?: Function
 
-  searchText: string = ''
+  // searchText: string = ''
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched
@@ -202,6 +204,10 @@ export default class TSDefault extends Vue {
     if (this.syncFunction) { // e.g. from TSDefaultGroups
       this.syncFunction(this.selection, this.options)
     }
+  }
+
+  triggerSelection () {
+    this.$refs[`id-select-${this.id}`].select()
   }
 
   selectWrapper (s:any) {
