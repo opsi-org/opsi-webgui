@@ -110,14 +110,14 @@ export default class TProductPropertyValue extends Vue {
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
-  @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
+  @Watch('selectedValues', { deep: true }) async selectedValuesChanged () {
     // console.log('-------------ProductPropertyValue changeValue ', this.selectedValues)
     // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
     //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     // }
-    this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
+    await this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     if (this.quicksave) { this.initSelection() }
-    this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
+    // this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
     // console.log('-------------ProductPropertyValue selectedValues ', this.selectedValues)
     // console.log('-------------ProductPropertyValue selectedValuesOrigin ', this.selectedValuesOriginal)
     // console.log('-------------ProductPropertyValue isOrigin ', this.isOrigin)
