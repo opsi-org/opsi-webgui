@@ -70,8 +70,12 @@
           v-if="editable && treeselectSearchQueryFilled"
           variant="outline-primary"
           class="BTN-before-list"
+          :title="$t('button.tsdefault.add.tooltip')"
           @click="triggerSelection()"
-        > {{ $t('button.tsdefault.add') }} </b-button>
+        >
+          <b-icon :icon="iconnames.add" />
+          {{ $t('button.tsdefault.add') }}
+        </b-button>
       </div>
       <div
         slot="option-label"
