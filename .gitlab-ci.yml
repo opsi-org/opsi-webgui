@@ -223,7 +223,9 @@ test:test-unit:
     - bug/cicd-build
   artifacts:
     reports:
-      cobertura: opsiweb/coverage/clover.xmlci
+      coverage_report:
+        coverage_format: cobertura
+        path: opsiweb/coverage/clover.xmlci
 
 test:test-e2e:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
