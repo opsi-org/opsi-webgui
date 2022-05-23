@@ -19,7 +19,13 @@
       hide-footer
       no-fade
     >
-      {{ selections }}
+      <b-form-textarea
+        rows="2"
+        max-rows="30"
+        no-resize
+        plaintext
+        :value="selections.join('\n')"
+      />
     </b-modal>
   </div>
 </template>
