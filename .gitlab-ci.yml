@@ -172,8 +172,10 @@ init:dry:
     - *define_globals
     - npm-uib i
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
+    - ls -lah
     - mv opsiweb/package.json opsiweb/package_dev.json
     - mv opsiweb/node_modules opsiweb/node_modules_dev
+    - ls -lah
   artifacts:
     paths:
       - opsiweb/package_dev.json
