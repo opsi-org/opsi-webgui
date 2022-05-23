@@ -129,6 +129,15 @@
         "singleInstance": true,
         "command": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.integration.js test:all:components /", // This is executed in the terminal.
       },
+      { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.integration.js ) //
+        // may not work if currently in develop
+        "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
+        "name": "$(testing-run-all-icon) build prod",
+        "tooltip": "Build productive",
+        "color": "white",
+        "singleInstance": true,
+        "command": "bash /workspace/opsiweb/scripts/build_production_local.sh", // This is executed in the terminal.
+      },
     ]
   },
 

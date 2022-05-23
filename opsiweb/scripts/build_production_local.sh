@@ -39,9 +39,17 @@ cp -r /workspace/opsiweb/dist/* /workspace/backend/addon/webgui/data/app/
 mkdir -p webgui
 cp -r /workspace/backend/addon/webgui/* webgui/
 
+chown 1000:1000 -R webgui
+apt install -y zip
+zip -r opsi-webgui.zip webgui
+chown 1000:1000 opsi-webgui.zip
+
+
 rm -rf /var/lib/opsiconfd/addons/webgui
+rm -rf /workspace/opsiweb/dist
+
 mv -f webgui/ /var/lib/opsiconfd/addons/.
 
 
-
+git restore /workspace/backend/addon/webgui/data/app/README.md
 cd -
