@@ -30,6 +30,7 @@
       </b-navbar-nav>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto float-right">
+          <b-button @click="event_ondemand">ondemand (Experimental!)</b-button>
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang :navbar="true" />
           <!-- TODO: remove for production start -->
@@ -48,6 +49,7 @@ import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
 import { Constants } from '../../mixins/uib-mixins'
 const config = namespace('config-app')
+const selections = namespace('selections')
 
 @Component({ mixins: [Constants] })
 export default class BTop extends Vue {
@@ -59,9 +61,20 @@ export default class BTop extends Vue {
 
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
 
+  @selections.Getter public selectionClients!: string
   @config.Getter public config!: IObjectString2Boolean
   get username () {
     return localStorage.getItem('username')
+  }
+
+  async event_ondemand () {
+    if (this.selectionClients.length > 0) {
+      const params = { method: 'hostControlSafe_fireEvent', params: 'on_demand', selected_clients: JSON.stringify(this.selectionClients) }
+      await this.$axios.$post('/api/command/opsiclientd_rpc', params)
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('No clients selected !')
+    }
   }
 
   getTitleUppercase () {
