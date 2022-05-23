@@ -40,7 +40,6 @@ from .utils import (
 	mysql,
 	parse_client_list,
 	parse_depot_list,
-	parse_param_list,
 	parse_selected_list,
 	read_only_check,
 	read_only_user,
@@ -533,15 +532,22 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
 	return {"http_status": 200, "data": values}
 
 
+class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
+	client_ids: List[str]
+	method: str
+	params: Optional[List[Any]]
+
 @client_router.post("/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]])
 @rest_api
-def opsiclientd_rpc(
-	method: str,
-	params: list = Depends(parse_param_list),
-	selected_clients: List[str] = Depends(parse_client_list)
-):
+def opsiclientd_rpc(request: Request, data: OpsiclientdRPC):  # pylint: disable=unused-argument
 	"""
 	Run RPC on opsiclientd
 	"""
-	result = get_client_backend().hostControl_opsiclientdRpc(method=method, params=params, hostIds=selected_clients)  # pylint: disable=no-member
+	try:
+		result = get_client_backend().hostControl_opsiclientdRpc(method=data.method, params=data.params or [], hostIds=data.client_ids)  # pylint: disable=no-member
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Failed to execute opsiclientd rpc: %s", err)
+		raise OpsiApiException(
+			message="Failed to execute opsiclientd rpc.", http_status=status.HTTP_400_BAD_REQUEST, error=err
+		) from err
 	return {"http_status": status.HTTP_200_OK, "data": result}
