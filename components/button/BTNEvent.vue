@@ -24,7 +24,7 @@ export default class BTNEvent extends Vue {
 
   @selections.Getter public selectionClients!: string
 
-  @Prop({ default: 'ondemand' }) event?: string
+  @Prop({ default: 'ondemand' }) event!: string
 
   events: any = {
     ondemand: {
@@ -36,27 +36,28 @@ export default class BTNEvent extends Vue {
         params: ['on_demand'],
         client_ids: this.selectionClients
       },
-      responseVisualization: this.showResult_ondemand
+      responseVisualization: this.showResultOndemand
 
     }
   }
 
   async callEvent () {
-    if (this.events[this.event] === undefined) {
-      console.error(`event ${this.event} not found. ${this.events[this.event]}`)
+    if (!this.event || this.events[this.event] === undefined) {
+      console.error(`event ${this.event} not found in ${Object.keys(this.events)}`)
       return
     }
     this.isLoading = true
+    const eventData = this.events[this.event]
     const ref = (this.$root.$children[1].$refs.ondemandMessage as any) || (this.$root.$children[2].$refs.ondemandMessage as any)
     // const ref = this.$refs.ondemandMessage as any
 
     // hostControl_showPopup
 
     // const params = { method: 'fireEvent', params: ['on_demand'], client_ids: this.selectionClients }
-    if (this.event === 'ondemand') { this.events[this.event].params.client_ids = this.selectionClients }
-    await this.$axios.$post('/api/command/opsiclientd_rpc', this.events[this.event].params)
+    if (this.event === 'ondemand') { eventData.params.client_ids = this.selectionClients }
+    await this.$axios.$post('/api/command/opsiclientd_rpc', eventData.params)
       .then((response) => {
-        this.events[this.event].responseVisualization(ref, response)
+        eventData.responseVisualization(ref, response)
         this.isLoading = false
       }).catch((error) => {
       // eslint-disable-next-line no-console
@@ -67,7 +68,7 @@ export default class BTNEvent extends Vue {
       })
   }
 
-  showResult_ondemand (ref:any, response:any) {
+  showResultOndemand (ref:any, response:any) {
     ref.set('object', response)
     ref.alert(this.$t('message.info.event') as string + ' "' + this.event + '"', 'info')
   }
