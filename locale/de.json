@@ -16,6 +16,7 @@
   "message.error.login": "Fehler bei der Anmeldung",
   "message.error.opsiconfd": "Etwas lief schief. Ist opsiconfd zu erreichen?",
   "message.error.createClient": "Client-Erstellung fehlgeschlagen.",
+  "message.error.uefi": "Fehler beim Festlegen von UEFI.",
   "message.error.deleteClient": "Löschen des Clients fehlgeschlagen.",
   "message.error.fetch": "Fehler beim Abrufen: ",
   "message.error.fetch.productProperty": "Fehler beim Abrufen: ProduktProperties",

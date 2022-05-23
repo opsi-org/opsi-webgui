@@ -16,6 +16,7 @@
   "message.error.login": "Login Failed",
   "message.error.opsiconfd": "Something went wrong. Is opsiconfd available?",
   "message.error.createClient": "Failed to create client.",
+  "message.error.uefi": "Failed to set UEFI.",
   "message.error.deleteClient": "Failed to delete client.",
   "message.error.fetch": "Failed to fetch: ",
   "message.error.fetch.productProperty": "Failed to fetch: ProductProperties",

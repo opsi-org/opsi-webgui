@@ -62,8 +62,8 @@
         <label for="uefi" class="sr-only">  {{ row.field.label }} </label>
         <b-form-checkbox
           id="uefi"
-          :value="row.value"
-          switch
+          v-model="row.value"
+          disabled
         />
       </template>
     </TableTDefault>
