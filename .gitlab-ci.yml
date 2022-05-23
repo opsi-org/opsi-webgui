@@ -157,10 +157,12 @@ stages:
 .rename_npm_artifacts_prod: &rename_npm_artifacts_prod |
   cp -rf opsiweb/node_modules_prod/ opsiweb/node_modules
   cp -rf opsiweb/package_prod.json opsiweb/package.json
+  cp -rf opsiweb/package-lock_prod.json opsiweb/package-lock.json
 
 .rename_npm_artifacts_dev: &rename_npm_artifacts_dev |
   cp -rf opsiweb/node_modules_dev/ opsiweb/node_modules
   cp -rf opsiweb/package_dev.json opsiweb/package.json
+  cp -rf opsiweb/package-lock_dev.json opsiweb/package-lock.json
 #########################################################################
 ######################################################################### init
 #########################################################################
@@ -174,10 +176,12 @@ init:dry:
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
     - ls -lah
     - mv package.json package_dev.json
+    - mv package-lock.json package-lock_dev.json
     - mv node_modules node_modules_dev
     - ls -lah
   artifacts:
     paths:
+      - opsiweb/package-lock_dev.json
       - opsiweb/package_dev.json
       - opsiweb/node_modules_dev/
       - opsiweb/uib-components/
@@ -196,9 +200,11 @@ init:dry:production:
     - npm-uib --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
     - mv package.json package_prod.json
+    - mv package-lock.json package-lock_prod.json
     - mv node_modules node_modules_prod
   artifacts:
     paths:
+      - opsiweb/package-lock_prod.json
       - opsiweb/node_modules_prod/
       - opsiweb/package_prod.json
       - opsiweb/uib-components/
@@ -219,7 +225,6 @@ test:lint:
     - *rename_npm_artifacts_dev
     - cd opsiweb
     - ls -lah .
-    - ls -lah node_modules/
     - npm --version
     - *define_globals
     - npm run lint
