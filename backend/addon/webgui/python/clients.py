@@ -527,7 +527,6 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
 				.values(**values)
 				.on_duplicate_key_update(configId="clientconfig.dhcpd.filename", objectId=clientid)
 			)
-			print(stmt)
 			session.execute(stmt)
 
 	return {"http_status": 200, "data": values}
