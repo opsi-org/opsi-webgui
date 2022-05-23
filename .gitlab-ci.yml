@@ -154,6 +154,13 @@ stages:
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
 
+.rename_npm_artifacts_prod: &rename_npm_artifacts_prod |
+  - cp -rf opsiweb/node_modules_prod/ opsiweb/node_modules
+  - cp -rf opsiweb/package_prod.json opsiweb/package.json
+
+.rename_npm_artifacts_dev: &rename_npm_artifacts_dev |
+  - cp -rf opsiweb/node_modules_dev/ opsiweb/node_modules
+  - cp -rf opsiweb/package_dev.json opsiweb/package.json
 #########################################################################
 ######################################################################### init
 #########################################################################
@@ -165,10 +172,12 @@ init:dry:
     - *define_globals
     - npm-uib i
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
+    - mv opsiweb/package.json opsiweb/package_dev.json
+    - mv opsiweb/node_modules opsiweb/node_modules_dev
   artifacts:
     paths:
-      - opsiweb/package.json
-      - opsiweb/node_modules/
+      - opsiweb/package_dev.json
+      - opsiweb/node_modules_dev/
       - opsiweb/uib-components/
     expire_in: 1 day
 
@@ -184,10 +193,12 @@ init:dry:production:
     - *define_globals
     - npm-uib --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
+    - mv opsiweb/package.json opsiweb/package_prod.json
+    - mv opsiweb/node_modules opsiweb/node_modules_prod
   artifacts:
     paths:
-      - opsiweb/package.json
-      - opsiweb/node_modules/
+      - opsiweb/node_modules_prod/
+      - opsiweb/package_prod.json
       - opsiweb/uib-components/
     expire_in: 1 day
 #
@@ -203,6 +214,7 @@ test:lint:
   dependencies:
     - init:dry
   script:
+    - *rename_npm_artifacts_dev
     - cd opsiweb
     - ls -lah .
     - ls -lah node_modules/
@@ -215,6 +227,7 @@ test:test-unit:
   dependencies:
     - init:dry
   script:
+    - *rename_npm_artifacts_dev
     - cd opsiweb
     - *define_globals
     - npm run test:unit
@@ -233,6 +246,7 @@ test:test-e2e:
   dependencies:
     - init:dry
   script:
+    - *rename_npm_artifacts_dev
     - cd opsiweb
     - ls -lah uib-components
     - *define_globals
@@ -269,6 +283,7 @@ test:test-components:changes:
     - tags # cause in tags we test all browsers (and all files)
     - develop # cause in develop we test all files
   script:
+    - *rename_npm_artifacts_dev
     - cd opsiweb
     - *define_globals
     # get changed files (in comparison to develop branch)
@@ -310,6 +325,7 @@ test:test-components:
   only:
     - develop # cause in develop we test all files, but only chromium browser
   script:
+    - *rename_npm_artifacts_dev
     - cd opsiweb
     - *define_globals
     - npm-uib i -D @playwright/test
@@ -408,6 +424,7 @@ build:static:app:
     - test:lint
     #- test:jtest
   script:
+    - *rename_npm_artifacts_prod
     - cd opsiweb
     - *define_globals
     - npm-uib run generate
@@ -427,6 +444,7 @@ build:addon:
     - init:dry:production # doesnt download artifacts from static-app
     - build:static:app
   script:
+    - *rename_npm_artifacts_prod
     - *install_tools
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
