@@ -1,10 +1,10 @@
 <template>
   <b-button
-    v-if="!isLoading"
     v-b-tooltip.hover
     :title="tooltip? tooltip : ''"
     :variant="tooltip? 'outline-primary border-0' : 'outline-dark'"
     class="float-right"
+    :disabled="isLoading"
     @click="refetch"
   >
     <b-icon v-if="tooltip" :icon="iconnames.refresh" />
