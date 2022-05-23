@@ -46,7 +46,10 @@ chown 1000:1000 opsi-webgui.zip
 
 
 rm -rf /var/lib/opsiconfd/addons/webgui
+rm -rf /workspace/opsiweb/dist
+
 mv -f webgui/ /var/lib/opsiconfd/addons/.
 
 
+git restore /workspace/backend/addon/webgui/data/app/README.md
 cd -
