@@ -1,5 +1,6 @@
 {
   "message.loading": "Loading",
+  "message.info.event": "Information to the event: ",
   "message.success.title": "SUCCESS",
   "message.success.createClient": "{client} has been added succesfully.",
   "message.success.deleteClient": "{client} has been deleted successfully.",
@@ -19,6 +20,7 @@
   "message.error.uefi": "Failed to set UEFI.",
   "message.error.deleteClient": "Failed to delete client.",
   "message.error.fetch": "Failed to fetch: ",
+  "message.error.event": "Fehler beim Event: ",
   "message.error.fetch.productProperty": "Failed to fetch: ProductProperties",
   "message.error.fetch.productDependency": "Failed to fetch: ProductDependencies",
   "message.session.title": "Session Timeoout",

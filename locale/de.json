@@ -1,5 +1,6 @@
 {
   "message.loading": "Wird geladen",
+  "message.info.event": "Information zum Event: ",
   "message.success.title": "ERFOLGREICH",
   "message.success.createClient": "{client} wurde erfolgreich hinzugefügt.",
   "message.success.deleteClient": "{client} wurde erfolgreich gelöscht.",
@@ -19,6 +20,7 @@
   "message.error.uefi": "Fehler beim Festlegen von UEFI.",
   "message.error.deleteClient": "Löschen des Clients fehlgeschlagen.",
   "message.error.fetch": "Fehler beim Abrufen: ",
+  "message.error.event": "Fehler beim Event: ",
   "message.error.fetch.productProperty": "Fehler beim Abrufen: ProduktProperties",
   "message.error.fetch.productDependency": "Fehler beim Abrufen: Produkt-Abhängigkeiten",
   "message.session.expired": "Sitzung abgelaufen.",
