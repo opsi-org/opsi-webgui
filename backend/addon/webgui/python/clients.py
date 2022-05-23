@@ -10,12 +10,12 @@ webgui client methods
 
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from OPSI.Object import OpsiClient
 from opsiconfd.application.utils import get_configserver_id
-from opsiconfd.backend import execute_on_secondary_backends
+from opsiconfd.backend import execute_on_secondary_backends, get_client_backend
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -40,6 +40,7 @@ from .utils import (
 	mysql,
 	parse_client_list,
 	parse_depot_list,
+	parse_param_list,
 	parse_selected_list,
 	read_only_check,
 	read_only_user,
@@ -527,7 +528,20 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
 				.values(**values)
 				.on_duplicate_key_update(configId="clientconfig.dhcpd.filename", objectId=clientid)
 			)
-			print(stmt)
 			session.execute(stmt)
 
 	return {"http_status": 200, "data": values}
+
+
+@client_router.post("/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]])
+@rest_api
+def opsiclientd_rpc(
+	method: str,
+	params: list = Depends(parse_param_list),
+	selected_clients: List[str] = Depends(parse_client_list)
+):
+	"""
+	Run RPC on opsiclientd
+	"""
+	result = get_client_backend().hostControl_opsiclientdRpc(method=method, params=params, hostIds=selected_clients)  # pylint: disable=no-member
+	return {"http_status": status.HTTP_200_OK, "data": result}

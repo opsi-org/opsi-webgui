@@ -118,9 +118,6 @@ class Webgui(Addon):
 		if status_code == status.HTTP_401_UNAUTHORIZED:
 			message = "Not logged in"
 
-		if connection.scope.get("session"):
-			headers = connection.scope["session"].get_headers()
-
 		if status_code == status.HTTP_500_INTERNAL_SERVER_ERROR:
 			logger.error(err, exc_info=True)
 
