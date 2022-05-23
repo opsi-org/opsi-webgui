@@ -211,8 +211,9 @@ export default class TSDefault extends Vue {
   }
 
   triggerSelection () {
-    if (this.$refs[`id-select-${this.id}`]) {
-      this.$refs[`id-select-${this.id}`].select()
+    const treeselectComponent = this.$refs[`id-select-${this.id}`] as any
+    if (treeselectComponent) {
+      treeselectComponent?.select()
     } else {
       // eslint-disable-next-line no-console
       console.error('cannot find select element. to trigger select-function (Please try again using Enter-key)')

@@ -173,7 +173,7 @@ export default class VClientsAddNew extends Vue {
       .then(() => {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
-        if (uefi) {
+        if (this.uefi) {
           this.setUEFI()
         }
         // this.$nuxt.refresh()
