@@ -48,6 +48,15 @@
               <b-icon :icon="iconnames. productsFailedActionResult" />
             </div>
           </template>
+          <template #head(installationStatus_unknown)>
+            <div :title="$t('table.fields.installationStatusUnknown')">
+              <b-icon :icon="iconnames.product" />
+              <b-icon :icon="iconnames. productInstallationStatusUnknown" />
+            </div>
+          </template>
+          <template #cell(uefi)="row">
+            <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
+          </template>
           <template #cell(rowactions)="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
@@ -169,6 +178,10 @@ export default class VClients extends Vue {
       label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('macAddress') : false
     },
+    uefi: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.uefi') as string, key: 'uefi', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('uefi') : false
+    },
     _majorStats: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false
     },
@@ -179,6 +192,10 @@ export default class VClients extends Vue {
     actionResult_failed: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult_failed') : true
+    },
+    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.installationStatus_unknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,

@@ -95,6 +95,7 @@
   "table.fields.actionRequest": "Request",
   "table.fields.versionOutdated": "Outdated Products",
   "table.fields.actionResultFailed": "Failed Products",
+  "table.fields.installationStatusUnknown": "Producte with unknown installationsstatus",
   "table.fields.rowactions": "Actions",
   "table.fields.productId": "Product Id",
   "table.fields.required": "required",
