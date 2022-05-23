@@ -1,6 +1,6 @@
 {
   "name": "webgui",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "private": true,
   "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui",
   "license": "MIT",
