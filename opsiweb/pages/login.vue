@@ -8,6 +8,7 @@
       <h1 class="d-inline-block text-light">
         {{ getTitleUppercase() }}
       </h1>
+      <!-- <AlertAAlertLocal show> Wird in diesem Moment überarbeitet! Bitte habt Geduld :)</AlertAAlertLocal> -->
       <FormFLogin />
     </b-card>
   </div>
