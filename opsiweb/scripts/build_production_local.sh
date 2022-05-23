@@ -7,28 +7,10 @@
 # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
 cd /workspace/opsiweb/
-if [ -f "/workspace/opsiweb/package.json" ];
-then
-    npm-uib run generate
-else
-    npm run generate
-fi
+npm-uib run generate
 
 mkdir -p webgui
-
-# # copy python files
-# cp -r /workspace/backend/addon/webgui/* webgui/.
-
-# # copy ui files
-# mkdir -p webgui/data
-# mkdir -p webgui/data/app
-# cp -r /workspace/opsiweb/dist/* webgui/data/app/
-
-# # remove addon folder if already exists
-# rm -rf /var/lib/opsiconfd/addons/webgui
-
-# # move new created webgui folder to system
-# mv -f webgui/ /var/lib/opsiconfd/addons/.
+rm -rf opsi-webgui.zip
 
 
 mkdir -p /workspace/backend/addon/webgui/data
