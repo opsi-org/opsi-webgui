@@ -130,7 +130,9 @@ test:unit:
   coverage: /All files\s*\|\s*([\d\.]+)/
   artifacts:
     reports:
-      cobertura: coverage/clover.xmlci
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/clover.xmlci
   # tags:
   #   - test-anna
 
