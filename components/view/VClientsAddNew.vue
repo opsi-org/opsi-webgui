@@ -50,6 +50,12 @@
           <b-form-textarea id="notes" v-model="newClient.notes" rows="2" no-resize />
         </template>
       </GridGFormItem>
+      <GridGFormItem :label=" $t('table.fields.uefi')">
+        <template #value>
+          <label for="uefi" class="sr-only"> {{ $t('table.fields.uefi') }} </label>
+          <b-form-checkbox id="uefi" v-model="uefi" />
+        </template>
+      </GridGFormItem>
     </div>
     <DivDComponentGroup class="float-right">
       <b-button variant="primary" @click="resetNewClientForm()">
@@ -101,6 +107,8 @@ export default class VClientsAddNew extends Vue {
     notes: ''
   }
 
+  uefi: boolean = false
+
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
 
@@ -143,6 +151,15 @@ export default class VClientsAddNew extends Vue {
       })
   }
 
+  async setUEFI () {
+    await this.$axios.$post(`api/opsidata/clients/${this.newClient.hostId}/uefi`)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
+      })
+  }
+
   async createOpsiClient () {
     this.isLoading = true
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
@@ -156,7 +173,10 @@ export default class VClientsAddNew extends Vue {
       .then(() => {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
-        this.$nuxt.refresh()
+        if (uefi) {
+          this.setUEFI()
+        }
+        // this.$nuxt.refresh()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
