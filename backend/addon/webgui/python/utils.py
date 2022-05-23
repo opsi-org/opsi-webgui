@@ -66,6 +66,10 @@ def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]:  #
 	return parse_list(selected)
 
 
+def parse_param_list(params: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
+	return parse_list(params)
+
+
 def get_username():
 	client_session = contextvar_client_session.get()
 	if not client_session:
