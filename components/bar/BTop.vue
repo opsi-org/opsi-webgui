@@ -30,9 +30,7 @@
       </b-navbar-nav>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto float-right">
-          {{ isLoading_ondemand }}
-          <IconILoading v-if="isLoading_ondemand" />
-          <b-button v-else @click="event_ondemand" :title="'try ondemand for selected Clients (runs in background - way dont run at all)'"> async-ondemand (Experimental!)</b-button>
+          <ButtonBTNEvent event="ondemand" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang :navbar="true" />
           <!-- TODO: remove for production start -->
@@ -51,7 +49,6 @@ import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
 import { Constants } from '../../mixins/uib-mixins'
 const config = namespace('config-app')
-const selections = namespace('selections')
 
 @Component({ mixins: [Constants] })
 export default class BTop extends Vue {
@@ -61,37 +58,11 @@ export default class BTop extends Vue {
   $config:any
   iconnames:any
 
-  isLoading_ondemand:any
-
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
 
-  @selections.Getter public selectionClients!: string
   @config.Getter public config!: IObjectString2Boolean
   get username () {
     return localStorage.getItem('username')
-  }
-
-  async event_ondemand () {
-    this.isLoading_ondemand = true
-    const ref = (this.$root.$children[1].$refs.ondemandMessage as any) || (this.$root.$children[2].$refs.ondemandMessage as any)
-
-    // if (this.selectionClients.length <= 0) {
-    //   ref.alert(this.$t('message.error.event') as string + ' "on_demand"', 'danger', 'Validation Error: no clients ')
-    //   return
-    // }
-
-    const params = { method: 'fireEvent', params: ['on_demand'], client_ids: this.selectionClients }
-    await this.$axios.$post('/api/command/opsiclientd_rpc', params)
-      .then((response) => {
-        ref.alert(this.$t('message.info.event') as string + ' "on_demand"', 'info', JSON.stringify(response))
-        this.isLoading_ondemand = false
-      }).catch((error) => {
-      // eslint-disable-next-line no-console
-        console.error(JSON.stringify(error))
-        const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.event') as string + ' "on_demand"', 'danger', detailedError || '')
-        this.isLoading_ondemand = false
-      })
   }
 
   getTitleUppercase () {
