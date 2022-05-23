@@ -97,7 +97,6 @@ export default class LayoutDefault extends Vue {
     try {
       this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
     } catch (error) {
-      this.activeTabSet = -3
       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.alertConfigurationError as any)
       ref.alert(this.$t('message.error.fetch') as string + 'Configuration', 'danger', detailedError)

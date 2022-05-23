@@ -211,7 +211,12 @@ export default class TSDefault extends Vue {
   }
 
   triggerSelection () {
-    this.$refs[`id-select-${this.id}`].select()
+    if (this.$refs[`id-select-${this.id}`]) {
+      this.$refs[`id-select-${this.id}`].select()
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('cannot find select element. to trigger select-function (Please try again using Enter-key)')
+    }
   }
 
   selectWrapper (s:any) {
