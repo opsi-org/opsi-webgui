@@ -55,7 +55,7 @@ export default class TChanges extends Vue {
   $mq: any
   $nuxt: any
 
-  @Prop({ default: localStorage.getItem('username') }) username!: string
+  // @Prop({ default: localStorage.getItem('username') }) username!: string
   filter: string = ''
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
@@ -65,6 +65,10 @@ export default class TChanges extends Vue {
   @Watch('changesProducts', { deep: true }) changesProductsChanged () {
     const tableitems = this.changesProducts.filter(o => o.user === this.username)
     this.groupedById = this.groupArrayOfObjects(tableitems, 'productId')
+  }
+
+  get username () {
+    return localStorage.getItem('username')
   }
 
   beforeMount () {
