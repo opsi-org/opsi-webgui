@@ -10,7 +10,7 @@ webgui client methods
 
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from OPSI.Object import OpsiClient
@@ -533,7 +533,7 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
 	return {"http_status": 200, "data": values}
 
 
-@client_router.post("/api/command/opsiclientd_rpc", response_model=Dict[str, str])
+@client_router.post("/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]])
 @rest_api
 def opsiclientd_rpc(
 	method: str,
