@@ -155,12 +155,12 @@ stages:
   echo "$testfilesUnique"
 
 .rename_npm_artifacts_prod: &rename_npm_artifacts_prod |
-  - cp -rf opsiweb/node_modules_prod/ opsiweb/node_modules
-  - cp -rf opsiweb/package_prod.json opsiweb/package.json
+  cp -rf opsiweb/node_modules_prod/ opsiweb/node_modules
+  cp -rf opsiweb/package_prod.json opsiweb/package.json
 
 .rename_npm_artifacts_dev: &rename_npm_artifacts_dev |
-  - cp -rf opsiweb/node_modules_dev/ opsiweb/node_modules
-  - cp -rf opsiweb/package_dev.json opsiweb/package.json
+  cp -rf opsiweb/node_modules_dev/ opsiweb/node_modules
+  cp -rf opsiweb/package_dev.json opsiweb/package.json
 #########################################################################
 ######################################################################### init
 #########################################################################
