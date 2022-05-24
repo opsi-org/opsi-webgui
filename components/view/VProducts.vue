@@ -206,12 +206,13 @@ export default class VProducts extends Vue {
   async fetchProducts (thiss) {
     thiss.isLoading = true
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
-      await thiss.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${thiss.selectionClients}]`)
+      await thiss.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${thiss.selectionClients}]`)
         .then((response) => {
           thiss.fetchedDataClients2Depots = response
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
+          // throw new Error(error)
           // const ref = (this.$refs.productsViewAlert as any)
           // ref.alert('Failed to fetch: ClientsToDepots', 'danger', error)
           // thiss.error = thiss.$t('message.error.defaulttext') as string
@@ -251,7 +252,7 @@ export default class VProducts extends Vue {
           thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
           thiss.items = response.data || []
           // eslint-disable-next-line no-console
-          console.log('products response', JSON.stringify(response))
+          // console.log('products response', JSON.stringify(response))
         }).catch((error) => {
           // eslint-disable-next-line no-console
           console.error(error)

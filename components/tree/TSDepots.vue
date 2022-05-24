@@ -36,7 +36,7 @@ export default class TSDepots extends Vue {
     if (this.selectionClients.length <= 0) {
       this.fetchedDataClients2Depots = {}
     } else {
-      await this.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${this.selectionClients}]`)
+      await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
           // console.log('fetchedDataClients2Depots', this.fetchedDataClients2Depots)

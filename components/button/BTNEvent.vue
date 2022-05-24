@@ -25,6 +25,7 @@ export default class BTNEvent extends Vue {
   @selections.Getter public selectionClients!: string
 
   @Prop({ default: 'ondemand' }) event!: string
+  @Prop({ default: undefined }) data?: any
 
   events: any = {
     ondemand: {
@@ -37,12 +38,24 @@ export default class BTNEvent extends Vue {
         client_ids: this.selectionClients
       },
       responseVisualization: this.showResultOndemand
-
+    },
+    reboot: {
+      // event: 'on_demand',
+      tooltip: 'button.event.reboot.tooltip',
+      // title: 'button.event.reboot',
+      icon: 'reload',
+      params: {
+        method: 'showPopup',
+        params: ['Hallo - Nachricht ist von Anna. Bitte schreiben wenn jemand es sieht :D', 'clientId.domain'],
+        // client_ids: this.selectionClients
+      },
+      responseVisualization: this.showResultOndemand
     }
   }
 
   async callEvent () {
     if (!this.event || this.events[this.event] === undefined) {
+      // eslint-disable-next-line no-console
       console.error(`event ${this.event} not found in ${Object.keys(this.events)}`)
       return
     }
@@ -55,6 +68,10 @@ export default class BTNEvent extends Vue {
 
     // const params = { method: 'fireEvent', params: ['on_demand'], client_ids: this.selectionClients }
     if (this.event === 'ondemand') { eventData.params.client_ids = this.selectionClients }
+    if (this.event === 'reboot') {
+      eventData.params.client_ids = [this.data || '']
+      eventData.params.params[1] = this.data || ''
+    }
     await this.$axios.$post('/api/command/opsiclientd_rpc', eventData.params)
       .then((response) => {
         eventData.responseVisualization(ref, response)
