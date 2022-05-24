@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VModules">
+  <div data-testid="VModules" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="modulesAlert" />
     <GridGFormItem v-if="!errorText" :label="$t('form.modules.available')">
       <template #value>

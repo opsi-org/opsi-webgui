@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VClientsLog">
+  <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="logErrorAlert">
       <b-button
         v-if="!isLoading"

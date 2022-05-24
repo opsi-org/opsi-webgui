@@ -219,6 +219,10 @@ button {
 button:not(:disabled) {
   cursor: pointer;
 }
+[type="help"]:not(:disabled),
+button:not(:disabled) {
+  cursor: help;
+}
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
 [type="submit"]::-moz-focus-inner,
@@ -2701,9 +2705,10 @@ input[type="submit"].btn-block {
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {
-  color: #6c757d;
+  /* color: #6c757d; */
   pointer-events: none;
   background-color: transparent;
+  color: var(--log-muted);
 }
 .dropdown-menu.show {
   display: block;

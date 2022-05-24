@@ -253,3 +253,9 @@ body {
   cursor: default; */
   cursor: not-allowed;
 }
+.loadingCursor {
+  cursor: wait;
+}
+.helpCursor {
+  cursor: help;
+}

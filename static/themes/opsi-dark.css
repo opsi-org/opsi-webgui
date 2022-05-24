@@ -1,6 +1,6 @@
 :root {
   --log-secondary: #dce4ef;
-  --log-muted: #ffffffb4;
+  --log-muted: #e7e4e4b4;
   --color:#ffffffb4;
   --background:#40464e;
   --border: var(--background);
@@ -219,6 +219,10 @@ button {
 [type="submit"]:not(:disabled),
 button:not(:disabled) {
   cursor: pointer;
+}
+[type="help"]:not(:disabled),
+button:not(:disabled) {
+  cursor: help;
 }
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
@@ -2676,7 +2680,8 @@ input[type="submit"].btn-block {
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {
-  color: #dcdfe7;
+  /* color: #dcdfe7; */
+  color: var(--log-muted);
   pointer-events: none;
   background-color: transparent;
 }
