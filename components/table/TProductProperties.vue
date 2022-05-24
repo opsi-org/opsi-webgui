@@ -129,7 +129,7 @@ export default class TProductProperties extends Vue {
           this.fetchedDataClients2Depots = response
           // this.setSession()
         }).catch((error) => {
-          this.errorText = (this as any).$t('message.error.defaulttext')
+          // this.errorText = (this as any).$t('message.error.defaulttext')
           throw new Error(error)
         })
     }

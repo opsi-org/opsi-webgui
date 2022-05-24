@@ -210,8 +210,9 @@ export default class VProducts extends Vue {
         .then((response) => {
           thiss.fetchedDataClients2Depots = response
         }).catch((error) => {
+          throw new Error(error)
         // eslint-disable-next-line no-console
-          console.error(error)
+          // console.error(error)
           // const ref = (this.$refs.productsViewAlert as any)
           // ref.alert('Failed to fetch: ClientsToDepots', 'danger', error)
           // thiss.error = thiss.$t('message.error.defaulttext') as string
