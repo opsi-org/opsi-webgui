@@ -206,7 +206,7 @@ export default class VProducts extends Vue {
   async fetchProducts (thiss) {
     thiss.isLoading = true
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
-      await thiss.$axios.$get(`/api/opsidata/clients/depots?selectedClients=[${thiss.selectionClients}]`)
+      await thiss.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${thiss.selectionClients}]`)
         .then((response) => {
           thiss.fetchedDataClients2Depots = response
         }).catch((error) => {
