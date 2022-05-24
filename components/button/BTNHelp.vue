@@ -3,6 +3,7 @@
     :id="id"
     data-testid="ButtonBTNHelp"
     size="sm"
+    type="help"
     class="border-0"
     variant="outline-primary"
   >

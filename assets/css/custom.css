@@ -256,3 +256,6 @@ body {
 .loadingCursor {
   cursor: wait;
 }
+.helpCursor {
+  cursor: help;
+}

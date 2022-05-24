@@ -220,6 +220,10 @@ button {
 button:not(:disabled) {
   cursor: pointer;
 }
+[type="help"]:not(:disabled),
+button:not(:disabled) {
+  cursor: help;
+}
 [type="button"]::-moz-focus-inner,
 [type="reset"]::-moz-focus-inner,
 [type="submit"]::-moz-focus-inner,
