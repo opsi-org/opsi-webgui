@@ -286,6 +286,7 @@ export default class VClients extends Vue {
   }
 
   async deleteOpsiClient (ident:string) {
+    this.isLoading = true
     const id = ident
     await this.$axios.$delete('/api/opsidata/clients/' + id)
       .then(() => {
@@ -297,6 +298,7 @@ export default class VClients extends Vue {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
       })
+    this.isLoading = false
   }
 }
 </script>

@@ -223,9 +223,6 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
-.loadingCursor {
-  cursor: wait;
-}
 .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;

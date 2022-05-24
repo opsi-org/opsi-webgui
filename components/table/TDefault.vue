@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TDefault" class="TDefault" :class="{ mobile: $mq=='mobile' }">
+  <div data-testid="TDefault" class="TDefault" :class="{ mobile: $mq=='mobile', loadingCursor: isLoading }">
     <p v-if="error" />
     <b-table
       v-else
