@@ -1,11 +1,14 @@
 <template>
+  <!-- variant="primary" -->
   <b-button
-    variant="primary"
     :pressed="isLoading"
     :disabled="isLoading"
     :title="$t(events[event].tooltip)"
+    :variant="$t(events[event].variant)"
     @click="callEvent"
   >
+  <!-- {{iconnames}} -->
+    <b-icon v-if="events[event].icon" :icon="events[event].icon" />
     {{ (!isLoading) ? $t(events[event].title) : '' }}
     <IconILoading v-if="isLoading" :small="true" />
   </b-button>
@@ -27,29 +30,45 @@ export default class BTNEvent extends Vue {
   @Prop({ default: 'ondemand' }) event!: string
   @Prop({ default: undefined }) data?: any
 
-  events: any = {
-    ondemand: {
-      // event: 'on_demand',
-      tooltip: 'button.event.ondemand.tooltip',
-      title: 'button.event.ondemand',
-      params: {
-        method: 'fireEvent',
-        params: ['on_demand'],
-        client_ids: this.selectionClients
+  get events () {
+    return {
+      showpopup: {
+        tooltip: 'button.event.showpopup.tooltip',
+        // title: 'button.event.showpopup',
+        icon: this.iconnames.message,
+        variant: 'outline-primary',
+        params: {
+          method: 'showPopup',
+          params: ['Hallo - Nachricht ist von Anna. Bitte schreiben wenn jemand es sieht :D']
+          // client_ids: this.selectionClients
+        },
+        responseVisualization: this.showResultOndemand
       },
-      responseVisualization: this.showResultOndemand
-    },
-    reboot: {
-      // event: 'on_demand',
-      tooltip: 'button.event.reboot.tooltip',
-      // title: 'button.event.reboot',
-      icon: 'reload',
-      params: {
-        method: 'showPopup',
-        params: ['Hallo - Nachricht ist von Anna. Bitte schreiben wenn jemand es sieht :D', 'clientId.domain'],
-        // client_ids: this.selectionClients
+      ondemand: {
+        tooltip: 'button.event.ondemand.tooltip',
+        title: 'button.event.ondemand',
+        variant: 'primary',
+        icon: this.iconnames.ondemand,
+        params: {
+          method: 'fireEvent',
+          params: ['on_demand'],
+          client_ids: this.selectionClients
+        },
+        responseVisualization: this.showResultOndemand
       },
-      responseVisualization: this.showResultOndemand
+      reboot: {
+        // event: 'on_demand',
+        tooltip: 'button.event.showpopup.tooltip',
+        // title: 'button.event.showpopup',
+        icon: this.iconnames.reboot,
+        variant: 'outline-primary',
+        params: {
+          method: 'reboot',
+          params: [],
+          client_ids: this.selectionClients
+        },
+        responseVisualization: this.showResultOndemand
+      }
     }
   }
 
@@ -68,10 +87,12 @@ export default class BTNEvent extends Vue {
 
     // const params = { method: 'fireEvent', params: ['on_demand'], client_ids: this.selectionClients }
     if (this.event === 'ondemand') { eventData.params.client_ids = this.selectionClients }
-    if (this.event === 'reboot') {
-      eventData.params.client_ids = [this.data || '']
-      eventData.params.params[1] = this.data || ''
-    }
+    if (this.event === 'reboot') { eventData.params.client_ids = [this.data] }
+    if (this.event === 'showpopup') { eventData.params.client_ids = [this.data] }
+    // if (this.event === 'showpopup') {
+    //   eventData.params.client_ids = [this.data || '']
+    //   eventData.params.params[1] = this.data || ''
+    // }
     await this.$axios.$post('/api/command/opsiclientd_rpc', eventData.params)
       .then((response) => {
         eventData.responseVisualization(ref, response)
