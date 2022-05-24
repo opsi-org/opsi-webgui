@@ -46,7 +46,7 @@ export default class BTNEvent extends Vue {
       icon: 'reload',
       params: {
         method: 'showPopup',
-        params: ['Hallo - Nachricht ist von Anna. Bitte schreiben wenn jemand es sieht :D', 'clientId.domain'],
+        params: ['Hallo - Nachricht ist von Anna. Bitte schreiben wenn jemand es sieht :D', 'clientId.domain']
         // client_ids: this.selectionClients
       },
       responseVisualization: this.showResultOndemand
