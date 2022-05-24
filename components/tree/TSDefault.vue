@@ -246,7 +246,7 @@ export default class TSDefault extends Vue {
     // console.log(this.id + ' TSDefault updateLocalFromParent')
     if (this.isList === false) { // already correct format
       this.options = [...this.data]
-      console.log(this.id + ' TSDefault updateLocalFromParent no list')
+      // console.log(this.id + ' TSDefault updateLocalFromParent no list')
       return
     }
 
