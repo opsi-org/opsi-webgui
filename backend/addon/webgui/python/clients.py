@@ -222,7 +222,7 @@ def clients(
 
 
 
-@client_router.get("/api/opsidata/clients/depots", response_model=Dict[str, str])
+@client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
 @rest_api
 def depots_of_clients(
 	selectedClients: List[str] = Depends(parse_client_list),
