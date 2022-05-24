@@ -2701,9 +2701,10 @@ input[type="submit"].btn-block {
 }
 .dropdown-item.disabled,
 .dropdown-item:disabled {
-  color: #6c757d;
+  /* color: #6c757d; */
   pointer-events: none;
   background-color: transparent;
+  color: var(--log-muted);
 }
 .dropdown-menu.show {
   display: block;
