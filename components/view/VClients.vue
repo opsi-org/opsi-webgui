@@ -58,50 +58,67 @@
             <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
           </template>
           <template #cell(rowactions)="row">
-            <ButtonBTNRowLinkTo
-              :title="$t('title.config')"
-              :icon="iconnames.settingsobject"
-              to="/clients/config"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-            <ButtonBTNRowLinkTo
-              :title="$t('title.log')"
-              :icon="iconnames.log"
-              to="/clients/log"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-            <b-button
-              v-b-tooltip.focus
-              variant="outline-primary"
-              size="sm"
-              class="border-0"
-              :disabled="(config)?config.read_only:false"
-              :title="row.detailsShowing ? $t('label.cancel') : $t('label.delete')"
-              @click="row.toggleDetails"
-            >
-              <b-icon :icon="row.detailsShowing ? iconnames.x : iconnames.delete" />
-              <span class="sr-only">{{ row.detailsShowing ? $t('label.cancel') : $t('label.delete') }}</span>
-            </b-button>
-            <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
-            <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
+            <b-button-group>
+              <ButtonBTNRowLinkTo
+                :title="$t('title.config')"
+                :icon="iconnames.settingsobject"
+                to="/clients/config"
+                :ident="row.item.ident"
+                :pressed="isRouteActive"
+                :click="routeRedirectWith"
+              />
+              <ButtonBTNRowLinkTo
+                :title="$t('title.log')"
+                :icon="iconnames.log"
+                to="/clients/log"
+                :ident="row.item.ident"
+                :pressed="isRouteActive"
+                :click="routeRedirectWith"
+              />
+              <b-dropdown variant="outline-primary border-0" class="moreActions" no-caret>
+                <template #button-content>
+                  <b-icon :icon="iconnames.menu" />
+                </template>
+                <b-dropdown-item>
+                  <!-- v-b-tooltip.focus -->
+                  <!-- :title="$t('label.delete')" -->
+                  <b-button
+                    variant="outline-primary"
+                    size="sm"
+                    class="w-100 h-100 text-left border-0"
+                    :disabled="(config)?config.read_only:false"
+                    @click="row.toggleDetails"
+                  >
+                    <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
+                    <!-- <b-icon :icon="row.detailsShowing ? iconnames.x : iconnames.delete" /> -->
+                    <!-- <span class="sr-only">{{ row.detailsShowing ? $t('label.cancel') : $t('label.delete') }}</span> -->
+                  </b-button>
+                </b-dropdown-item>
+                <b-dropdown-item>
+                  <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
+                  <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
+                </b-dropdown-item>
+              </b-dropdown>
+            </b-button-group>
           </template>
           <template #row-details="row">
             <b-card>
               <AlertAAlert ref="deleteClientAlert" />
               {{ $t('message.confirm.deleteClient', { client: row.item.ident }) }}
-              <b-button
-                class="float-right"
-                variant="danger"
-                size="sm"
-                :disabled="(config)?config.read_only:false"
-                @click="deleteOpsiClient(row.item.ident)"
-              >
-                <b-icon :icon="iconnames.delete" /> {{ $t('label.delete') }}
-              </b-button>
+              <DivDComponentGroup class="float-right">
+                <b-button variant="outline-primary" class="mr-2" size="sm" @click="row.toggleDetails">
+                  {{ $t('label.cancel') }}
+                </b-button>
+                <b-button
+                  class="float-right"
+                  variant="danger"
+                  size="sm"
+                  :disabled="(config)?config.read_only:false"
+                  @click="deleteOpsiClient(row.item.ident)"
+                >
+                  <b-icon :icon="iconnames.delete" /> {{ $t('label.delete') }}
+                </b-button>
+              </DivDComponentGroup>
             </b-card>
           </template>
           <template
@@ -306,7 +323,7 @@ export default class VClients extends Vue {
 </script>
 
 <style>
-.actions_dropdown .btn-outline-primary{
-  border: 0;
+.moreActions.dropdown {
+  max-width:35px !important;
 }
 </style>

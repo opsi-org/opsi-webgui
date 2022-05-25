@@ -5,7 +5,7 @@
       :disabled="isLoading"
       :title="$t(events[event].tooltip)"
       :variant="events[event].variant"
-      class="w-100 h-100 text-left"
+      class="w-100 h-100 text-left border-0"
       :size="size"
       @click="show=true"
     >
@@ -28,7 +28,7 @@
         <b-list-group-item v-for="c in selection" :key="c" class="modal-client-p">
           {{ c }}
           <b-button
-            class="border-0 float-right"
+            class="border-0border-0 float-right"
             variant="outline-primary"
             :title="$t('button.delete')"
             size="sm"
