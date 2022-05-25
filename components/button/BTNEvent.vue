@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div style="display: inline-block;">
     <b-button
       :pressed="isLoading"
       :disabled="isLoading"
       :title="$t(events[event].tooltip)"
       :variant="events[event].variant"
-      class="w-100 h-100 text-left"
+      class="border-0"
+      :class="{ 'w-100 h-100 text-left': event=='ondemand'}"
       :size="size"
       @click="show=true"
     >
