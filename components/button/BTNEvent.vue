@@ -6,7 +6,7 @@
       :title="$t(events[event].tooltip)"
       :variant="events[event].variant"
       class="border-0"
-      :class="{ 'w-100 h-100 text-left': event=='ondemand'}"
+      :class="{ 'w-100 h-100 text-left': true}"
       :size="size"
       @click="show=true"
     >

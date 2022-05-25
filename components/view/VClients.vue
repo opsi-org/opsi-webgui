@@ -75,29 +75,26 @@
                 :pressed="isRouteActive"
                 :click="routeRedirectWith"
               />
-              <b-dropdown variant="outline-primary border-0" class="moreActions" no-caret>
+              <b-dropdown
+                variant="outline-primary border-0"
+                class="moreActions"
+                :title="$t('button.tablerow.moreoptions')"
+                no-caret
+              >
                 <template #button-content>
                   <b-icon :icon="iconnames.menu" />
                 </template>
-                <b-dropdown-item>
-                  <!-- v-b-tooltip.focus -->
-                  <!-- :title="$t('label.delete')" -->
-                  <b-button
-                    variant="outline-primary"
-                    size="sm"
-                    class="w-100 h-100 text-left border-0"
-                    :disabled="(config)?config.read_only:false"
-                    @click="row.toggleDetails"
-                  >
-                    <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
-                    <!-- <b-icon :icon="row.detailsShowing ? iconnames.x : iconnames.delete" /> -->
-                    <!-- <span class="sr-only">{{ row.detailsShowing ? $t('label.cancel') : $t('label.delete') }}</span> -->
-                  </b-button>
-                </b-dropdown-item>
-                <b-dropdown-item>
-                  <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
-                  <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
-                </b-dropdown-item>
+                <b-button
+                  variant="outline-primary"
+                  size="sm"
+                  class="w-100 h-100 text-left border-0"
+                  :disabled="(config)?config.read_only:false"
+                  @click="row.toggleDetails"
+                >
+                  <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
+                </b-button>
+                <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
+                <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
               </b-dropdown>
             </b-button-group>
           </template>
