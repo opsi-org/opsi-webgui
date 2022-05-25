@@ -30,7 +30,7 @@
       </b-navbar-nav>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto float-right">
-          <ButtonBTNEvent event="ondemand" />
+          <ButtonBTNEvent event="ondemand" size="md"/>
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang :navbar="true" />
           <!-- TODO: remove for production start -->

@@ -4,13 +4,15 @@
     :pressed="isLoading"
     :disabled="isLoading"
     :title="$t(events[event].tooltip)"
-    :variant="$t(events[event].variant)"
+    :variant="events[event].variant"
+    class="border-0"
+    :size="size"
     @click="callEvent"
   >
-  <!-- {{iconnames}} -->
     <b-icon v-if="events[event].icon" :icon="events[event].icon" />
     {{ (!isLoading) ? $t(events[event].title) : '' }}
     <IconILoading v-if="isLoading" :small="true" />
+    {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }}
   </b-button>
 </template>
 
@@ -28,6 +30,7 @@ export default class BTNEvent extends Vue {
   @selections.Getter public selectionClients!: string
 
   @Prop({ default: 'ondemand' }) event!: string
+  @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
 
   get events () {
@@ -46,7 +49,7 @@ export default class BTNEvent extends Vue {
       },
       ondemand: {
         tooltip: 'button.event.ondemand.tooltip',
-        title: 'button.event.ondemand',
+        // title: 'button.event.ondemand',
         variant: 'primary',
         icon: this.iconnames.ondemand,
         params: {
@@ -58,8 +61,8 @@ export default class BTNEvent extends Vue {
       },
       reboot: {
         // event: 'on_demand',
-        tooltip: 'button.event.showpopup.tooltip',
-        // title: 'button.event.showpopup',
+        tooltip: 'button.event.reboot.tooltip',
+        // title: 'button.event.reboot',
         icon: this.iconnames.reboot,
         variant: 'outline-primary',
         params: {
@@ -107,7 +110,16 @@ export default class BTNEvent extends Vue {
   }
 
   showResultOndemand (ref:any, response:any) {
-    ref.set('object', response)
+    const data:any = {}
+    for (const k in response) {
+      if (response[k].error) {
+        data[k] = { error: 'Error' }
+      } else {
+        data[k] = { result: 'Success' }
+      }
+    }
+    console.error('Response: ', data)
+    ref.set('object', data)
     ref.alert(this.$t('message.info.event') as string + ' "' + this.event + '"', 'info')
   }
 }

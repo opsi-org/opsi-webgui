@@ -134,6 +134,8 @@
   "button.close": "Close",
   "button.event.ondemand": "ondemand",
   "button.event.ondemand.tooltip": "ondemand for selected clients",
+  "button.event.reboot.tooltip": "Reboot",
+  "button.event.showpopup.tooltip": "Send Message",
   "button.show.products": "Show Productlist",
   "button.sort.tablecolumns": "Sort table by",
   "button.sort.tablecolumns.sortDirection": "Sort descending",
