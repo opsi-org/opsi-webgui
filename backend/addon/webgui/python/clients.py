@@ -141,12 +141,17 @@ def clients(
 					),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1)
 				) AS depotId,
-				IF(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") <> '[""]',
-					TRUE,
-					FALSE
-				) AS uefi,
-				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") AS uefi_value
+				RIGHT(
+					COALESCE(
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
+					),
+					3
+				) = "efi" AS uefi,
+				COALESCE(
+					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
+					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
+				) AS uefi_value
 			"""
 				)
 			)
@@ -215,7 +220,7 @@ def clients(
 		for row in result:
 			if row is not None:
 				client = dict(row)
-				client["uefi"] =  bool(client["uefi"])
+				client["uefi"] = bool(client["uefi"])
 				data.append(client)
 
 		return {"data": data, "total": total}
