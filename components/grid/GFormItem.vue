@@ -1,6 +1,6 @@
 <template>
-  <b-row data-testid="GFormItem" class="mb-4">
-    <b-col cols="2" class="text-sm-right">
+  <b-row data-testid="GFormItem" class="mb-3">
+    <b-col sm="2" class="text-sm-right">
       <slot name="label" />
       {{ label }}
     </b-col>
