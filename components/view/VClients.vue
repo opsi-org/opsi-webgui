@@ -86,8 +86,8 @@
               <b-icon :icon="row.detailsShowing ? iconnames.x : iconnames.delete" />
               <span class="sr-only">{{ row.detailsShowing ? $t('label.cancel') : $t('label.delete') }}</span>
             </b-button>
-            <!-- <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
-            <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
+            <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
+            <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
           </template>
           <template #row-details="row">
             <b-card>

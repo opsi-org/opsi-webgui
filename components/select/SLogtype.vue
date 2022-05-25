@@ -24,7 +24,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class SLogtype extends Vue {
   logTypes: Array<string> = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
-  type: string = 'opsiconfd'
+  type: string = 'instlog'
 }
 </script>
 
