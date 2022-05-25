@@ -54,9 +54,3 @@ export default class PSupport extends Vue {
   }
 }
 </script>
-
-<style >
-/* .support {
-  padding: 0px;
-} */
-</style>
