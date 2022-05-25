@@ -52,6 +52,9 @@ export default class BarBTableFooter extends Vue {
   background-repeat: none !important;
   border: none !important;
 }
+.BTableFooter .navbar-nav {
+  flex-direction: row;
+}
 .BTableFooter .b-pagination li span,
 .BTableFooter .b-pagination li button {
   padding: 8px 12px;
