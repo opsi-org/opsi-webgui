@@ -280,7 +280,7 @@ def products(
 			) AS installationStatusErrorLevel,
 			(	SELECT
 					IF(
-						LENGTH(GROUP_CONCAT(DISTINCT poc.installationStatus SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.installationStatus SEPARATOR ','), ',', '')) > 0,
+						COUNT(DISTINCT IFNULL(poc.installationStatus, "not_installed")) > 1,
 						"mixed",
 						IFNULL(poc.installationStatus, "not_installed")
 					)
@@ -293,7 +293,7 @@ def products(
 			) AS actionRequestDetails,
 			(	SELECT
 					IF(
-						LENGTH(GROUP_CONCAT(DISTINCT poc.actionRequest SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.actionRequest SEPARATOR ','), ',', '')) > 0,
+						COUNT(DISTINCT IFNULL(poc.actionRequest, "none")) > 1,
 						"mixed",
 						IFNULL(poc.actionRequest, "none")
 					)
@@ -306,9 +306,9 @@ def products(
 			) AS actionProgressDetails,
 			(	SELECT
 					IF(
-						LENGTH(GROUP_CONCAT(DISTINCT poc.actionProgress SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.actionProgress SEPARATOR ','), ',', '')) > 0,
+						COUNT(DISTINCT IFNULL(poc.actionProgress, "")) > 1,
 						"mixed",
-						poc.actionProgress
+						IFNULL(poc.actionProgress, "")
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 			) AS actionProgress,
@@ -330,7 +330,7 @@ def products(
 			) AS actionResultErrorLevel,
 			(	SELECT
 					IF(
-						LENGTH(GROUP_CONCAT(DISTINCT poc.actionResult SEPARATOR ',')) - LENGTH(REPLACE(GROUP_CONCAT(DISTINCT poc.actionResult SEPARATOR ','), ',', '')) > 0,
+						COUNT(DISTINCT IFNULL(poc.actionResult, "")) > 1,
 						"mixed",
 						IFNULL(poc.actionResult, "none")
 					)
