@@ -31,7 +31,8 @@
       </b-navbar-nav>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto float-right">
-          <ButtonBTNEvent event="ondemand" size="md"/>
+          <ButtonBTNEvent event="ondemand" size="md" />
+          <div class="vertical-line"></div>
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang :navbar="true" />
           <!-- TODO: remove for production start -->
@@ -110,6 +111,12 @@ export default class BTop extends Vue {
   overflow: auto;
   background-color: var(--primary) !important;
   border-bottom: 3px solid var(--primary) !important;
+}
+.desktop #nav-collapse .vertical-line {
+  min-height: 100%;
+  min-width: 2px;
+  content: "";
+  border: 1px solid var(--primary-dark);
 }
 .mobile #nav-collapse,
 .mobile #nav-collapse .navbar-nav {

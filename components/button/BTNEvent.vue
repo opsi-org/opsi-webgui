@@ -2,16 +2,17 @@
   <div>
     <b-button
       :pressed="isLoading"
-      :disabled="isLoading"
+      :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :title="$t(events[event].tooltip)"
       :variant="events[event].variant"
-      class="w-100 h-100 text-left border-0"
+      class="border-0"
+      :class="{ 'w-100 h-100 text-left': true}"
       :size="size"
       @click="show=true"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      {{ (event=='ondemand' && $mq=='mobile')? $t(events[event].titlemodal) : '' }}
+      {{ ($mq==='mobile' || event=='reboot')? $t(events[event].titlemodal) : '' }}
       <IconILoading v-if="isLoading" :small="true" />
       <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
@@ -21,8 +22,6 @@
       :title="$t(events[event].titlemodal)"
       size="sm"
     >
-      <!-- @ok="callEvent" -->
-
       <b-list-group v-if="event=='ondemand'" flush>
         <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->
         <b-list-group-item v-for="c in selection" :key="c" class="modal-client-p">
