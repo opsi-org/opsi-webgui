@@ -1,9 +1,10 @@
 <template>
-  <div>
+  <div
+    :title="$t(events[event].tooltip)"
+  >
     <b-button
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
-      :title="$t(events[event].tooltip)"
       :variant="events[event].variant"
       class="border-0"
       :class="{ 'w-100 h-100 text-left': true}"
