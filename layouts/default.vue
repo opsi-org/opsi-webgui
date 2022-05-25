@@ -12,9 +12,9 @@
       <AlertAAlert ref="alertConfigurationError" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
       <AlertAAlert ref="ondemandMessage" /> <!-- referenced in BTop, any changes should be checked with expiring-session-behaviour-->
-      <h5 class="text-capitalize">
+      <!-- <h5 class="text-capitalize">
         <BarBBreadcrumbRow v-if="$mq !== 'mobile'" />
-      </h5>
+      </h5> -->
       <Nuxt />
     </div>
   </div>
@@ -127,8 +127,9 @@ export default class LayoutDefault extends Vue {
 }
 .main_content{
   position:absolute;
-  margin-top: var(--margin-top-maincontent);
+  margin-top: calc(var(--margin-top-maincontent) + 15px);
   margin-left: var(--margin-left-maincontent);
+
   /* overflow: hidden; */
   overflow-x: auto;
   overflow-y: hidden;

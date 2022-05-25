@@ -1,5 +1,7 @@
 <template>
-  <b-breadcrumb v-if="crumbs.length > 0" data-testid="BarBBreadcrumb" class="View-Breadcrumb" :items="crumbs" />
+  <h5 class="text-capitalize">
+    <b-breadcrumb v-if="crumbs.length > 0" data-testid="BarBBreadcrumb" class="View-Breadcrumb" :items="crumbs" />
+  </h5>
 </template>
 
 <script lang="ts">
@@ -44,5 +46,18 @@ export default class BBreadcrumbRow extends Vue {
 <style>
 a.nuxt-link-active {
   font-weight: normal !important;
+  /* color: inherit !important; */
+  color: var(--light) !important;
+  text-decoration: underline;
+}
+.View-Breadcrumb .breadcrumb-item.active {
+  color: var(--light) !important;
+}
+.View-Breadcrumb {
+  /* color: var(--light) !important; */
+  padding: 0px !important;
+  margin: 0px !important;
+  margin-top: 10px !important;
+  margin-left: 10px !important;
 }
 </style>

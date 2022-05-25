@@ -280,7 +280,8 @@ export default class TInfiniteScroll extends Vue {
   font-size: small;
 }
 .mobile .table-responsive { min-height: 50vh;  height: 60vh;}
-.desktop .table-responsive { max-height: 65vh; }
+.desktop :not(.tab-pane) .table-responsive { max-height: 75vh; }
+.desktop .tab-pane .table-responsive { max-height: 70vh; }
 
 .b-table-sticky-header thead > tr:last-child{
   background-color: var(--background, white);

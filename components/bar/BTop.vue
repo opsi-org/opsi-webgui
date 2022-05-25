@@ -19,6 +19,7 @@
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
+      <BarBBreadcrumbRow v-if="$mq !== 'mobile'" />
 
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
 
