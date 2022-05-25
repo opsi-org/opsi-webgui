@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="support">
     <b-row>
       <b-col v-for="item in supportItems" :key="item.title">
         <CardCSupport :item="item" />
@@ -8,13 +8,23 @@
     <b-row>
       <b-col>
         <b-card>
-          <iframe
+          <!-- aspect="16by9" -->
+          <b-embed
+            type="iframe"
+            title="OPSI Docs"
+            :src="`https://docs.opsi.org/opsi-docs-de/4.2/index.html`"
+            width="100%"
+            height="100%"
+            frameborder="0"
+            allowfullscreen
+          />
+          <!-- <iframe
             title="OPSI Docs"
             :src="`https://docs.opsi.org/opsi-docs-de/4.2/index.html`"
             width="100%"
             height="600"
             frameborder="0"
-          />
+          /> -->
         </b-card>
       </b-col>
     </b-row>
@@ -44,3 +54,9 @@ export default class PSupport extends Vue {
   }
 }
 </script>
+
+<style >
+/* .support {
+  padding: 0px;
+} */
+</style>
