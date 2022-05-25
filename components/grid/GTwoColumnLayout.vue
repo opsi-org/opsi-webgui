@@ -6,7 +6,15 @@
       variant="outline-primary"
       :pressed.sync="expandClients"
     >
-      <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '': '>>' }}</b></small>
+      <small>
+        <b v-if="expandClients">
+          {{ $t('label.layout.hide-clients') }}
+        </b>
+        <b v-else>
+          {{ $t('label.layout.show-clients') }}
+        </b>
+      </small>
+      <!-- <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '': '>>' }}</b></small> -->
     </b-button>
     <b-col
       id="parentcol"
@@ -60,5 +68,8 @@ export default class GTwoColumnLayout extends Vue {
 .clients_button{
   max-width:60px;
   max-height:800px;
+  margin-right:3px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 </style>

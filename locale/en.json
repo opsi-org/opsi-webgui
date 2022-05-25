@@ -109,6 +109,8 @@
   "table.fields.unknown": "unknown",
   "table.details.productproperty.defaults":"Product Default",
   "table.details.productproperty.server":"Server Default",
+  "label.layout.show-clients": ">> Clients",
+  "label.layout.hide-clients": "<< Clients",
   "label.learnmore": "Show details",
   "label.delete": "Delete",
   "label.cancel": "Cancel",
