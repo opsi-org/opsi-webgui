@@ -29,7 +29,7 @@
         <b-list-group-item v-for="c in selection" :key="c" class="modal-client-p">
           {{ c }}
           <b-button
-            class="border-0 float-right"
+            class="border-0border-0 float-right"
             variant="outline-primary"
             :title="$t('button.delete')"
             size="sm"

@@ -303,7 +303,7 @@ export default class TProductPropertyValue extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.btn-group, .btn-group-vertical {
+/* .btn-group, .btn-group-vertical {
   display: grid !important;
-}
+} */
 </style>
