@@ -1,19 +1,59 @@
 <template>
-  <!-- variant="primary" -->
-  <b-button
-    :pressed="isLoading"
-    :disabled="isLoading"
-    :title="$t(events[event].tooltip)"
-    :variant="events[event].variant"
-    class="border-0"
-    :size="size"
-    @click="callEvent"
-  >
-    <b-icon v-if="events[event].icon" :icon="events[event].icon" />
-    {{ (!isLoading) ? $t(events[event].title) : '' }}
-    <IconILoading v-if="isLoading" :small="true" />
-    {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }}
-  </b-button>
+  <div>
+      <!-- v-b-modal="'modal-' + event" -->
+    <b-button
+      :pressed="isLoading"
+      :disabled="isLoading"
+      :title="$t(events[event].tooltip)"
+      :variant="events[event].variant"
+      class="border-0"
+      :size="size"
+      @click="show=true"
+    >
+      <b-icon v-if="events[event].icon" :icon="events[event].icon" />
+      {{ (!isLoading) ? $t(events[event].title) : '' }}
+      <IconILoading v-if="isLoading" :small="true" />
+      <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
+    </b-button>
+
+    <b-modal
+      v-model="show"
+      :title="$t(events[event].titlemodal)"
+      size="sm"
+    >
+      <!-- @ok="callEvent" -->
+      <div v-if="event=='ondemand'">
+        <p v-for="c in selectionClients" :key="c" class="modal-client-p">
+          {{ c }}
+        </p>
+      </div>
+      <div v-else class="modal-client-p">
+        {{ data }}
+      </div>
+
+      <template #modal-footer>
+        <p class="float-left">
+          {{ $t('button.event.modal.footer', { event }) }}
+        </p>
+        <b-button
+          variant="primary"
+          size="sm"
+          class="float-right"
+          @click="show=false"
+        >
+          {{ $t('button.close') }}
+        </b-button>
+        <b-button
+          variant="success"
+          size="sm"
+          class="float-right"
+          @click="callEvent(); show=false"
+        >
+          {{ $t('button.confirm') }}
+        </b-button>
+      </template>
+    </b-modal>
+  </div>
 </template>
 
 <script lang="ts">
@@ -26,6 +66,7 @@ export default class BTNEvent extends Vue {
   iconnames:any
 
   isLoading:any = false
+  show:boolean = false
 
   @selections.Getter public selectionClients!: string
 
@@ -37,7 +78,7 @@ export default class BTNEvent extends Vue {
     return {
       showpopup: {
         tooltip: 'button.event.showpopup.tooltip',
-        // title: 'button.event.showpopup',
+        titlemodal: 'button.event.showpopup',
         icon: this.iconnames.message,
         variant: 'outline-primary',
         params: {
@@ -49,7 +90,7 @@ export default class BTNEvent extends Vue {
       },
       ondemand: {
         tooltip: 'button.event.ondemand.tooltip',
-        // title: 'button.event.ondemand',
+        titlemodal: 'button.event.ondemand',
         variant: 'primary',
         icon: this.iconnames.ondemand,
         params: {
@@ -62,7 +103,7 @@ export default class BTNEvent extends Vue {
       reboot: {
         // event: 'on_demand',
         tooltip: 'button.event.reboot.tooltip',
-        // title: 'button.event.reboot',
+        titlemodal: 'button.event.reboot',
         icon: this.iconnames.reboot,
         variant: 'outline-primary',
         params: {
@@ -124,3 +165,8 @@ export default class BTNEvent extends Vue {
   }
 }
 </script>
+<style>
+.modal-client-p {
+  margin-bottom: 0px;
+}
+</style>
