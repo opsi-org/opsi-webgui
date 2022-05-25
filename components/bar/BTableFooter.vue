@@ -41,7 +41,7 @@ export default class BarBTableFooter extends Vue {
 
 <style>
 .BTableFooter .navbar {
-  position: absolute;
+  /* position: absolute; */
   bottom: 0px;
   right: 0;
   left: 0;
