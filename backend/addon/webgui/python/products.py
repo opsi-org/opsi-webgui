@@ -254,8 +254,9 @@ def products(
 				text(
 					"""
 			pod.productId AS productId,
-			p.name AS name,
-			p.description AS description,
+			pr.name AS name,
+			pr.priority AS priority,
+			pr.description AS description,
 			GROUP_CONCAT(pod.depotId SEPARATOR ',') AS selectedDepots,
 			(
 				SELECT GROUP_CONCAT(poc.clientId SEPARATOR ',')
@@ -336,6 +337,14 @@ def products(
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 			) AS actionResult,
+			(	SELECT
+					IF(
+						COUNT(DISTINCT IFNULL(poc.modificationTime, "")) > 1,
+						"mixed",
+						IFNULL(poc.modificationTime, "")
+					)
+				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
+			) AS modificationTime,
 			(
 				SELECT GROUP_CONCAT(CONCAT(poc.productVersion,'-',poc.packageVersion) SEPARATOR ',')
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
@@ -388,12 +397,12 @@ def products(
 			.where(where)
 			.group_by(text("pod.productId"))
 			.join(
-				text("PRODUCT AS p"),
+				text("PRODUCT AS pr"),
 				text(
 					"""
-				p.productId=pod.productId
-					AND p.productVersion=pod.productVersion
-					AND p.packageVersion=pod.packageVersion
+				pr.productId=pod.productId
+					AND pr.productVersion=pod.productVersion
+					AND pr.packageVersion=pod.packageVersion
 			"""
 				),
 			)
