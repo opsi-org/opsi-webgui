@@ -131,9 +131,10 @@ def clients(
 				h.hostId AS clientId,
 				h.hostId AS ident,
 				h.hardwareAddress AS macAddress,
-				h.ipAddress as ipAddress,
-				h.description,
-				h.notes,
+				h.ipAddress AS  ipAddress,
+				h.description AS description,
+				h.notes AS notes,
+				h.lastSeen AS lastSeen,
 				COALESCE(
 					(
 						SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) FROM CONFIG_STATE AS cs
@@ -144,7 +145,8 @@ def clients(
 				RIGHT(
 					COALESCE(
 						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
-						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault),
+						"   "
 					),
 					3
 				) = "efi" AS uefi,
@@ -168,6 +170,7 @@ def clients(
 			hd.ipAddress,
 			hd.description,
 			hd.notes,
+			DATE_FORMAT(hd.lastSeen, '%Y-%m-%dT%TZ') AS lastSeen,
 			hd.uefi,
 			hd.uefi_value,
 			(

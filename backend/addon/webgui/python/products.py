@@ -337,14 +337,14 @@ def products(
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
 			) AS actionResult,
-			(	SELECT
+			DATE_FORMAT((	SELECT
 					IF(
 						COUNT(DISTINCT IFNULL(poc.modificationTime, "")) > 1,
 						"mixed",
 						IFNULL(poc.modificationTime, "")
 					)
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
-			) AS modificationTime,
+			), '%Y-%m-%dT%TZ') AS modificationTime,
 			(
 				SELECT GROUP_CONCAT(CONCAT(poc.productVersion,'-',poc.packageVersion) SEPARATOR ',')
 				FROM PRODUCT_ON_CLIENT AS poc WHERE poc.productId=pod.productId AND poc.clientId IN :clients
