@@ -21,6 +21,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component export class Constants extends Vue {
   // iconnames: any = _icons
   iconnames: any = {
+    language: 'translate',
     depot: 'server',
     client: 'laptop',
     // product: 'grid',

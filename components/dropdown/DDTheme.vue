@@ -4,8 +4,9 @@
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"
-      class="px-2 text-left"
+      class="px-2 text-left btn btn-primary btn-md"
       :text="theme.title"
+      :title="$t('button.theme.tooltip')"
       alt="select theme"
       :dropup="dropup"
     >
@@ -98,5 +99,8 @@ export default class DDTheme extends Vue {
 <style>
 .settingstheme {
   width: var(--component-width) !important;
+}
+#theme .dropdown-toggle::after{
+  display:none;
 }
 </style>

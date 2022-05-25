@@ -6,10 +6,15 @@
       data-testid="DropdownDDLang"
       :text="$i18n.locale"
       alt="select theme"
-      class="px-2"
+      :title="$t('button.lang.tooltip')"
+      class="px-2 btn btn-primary btn-md w-100 text-left"
       variant="primary"
       :dropup="dropup"
     >
+      <template #button-content="">
+        <b-icon :icon="iconnames.language" />
+        {{ ($mq!=='desktop')? '   ' + language :'' }}
+      </template>
       <b-dropdown-item
         v-for="(lang, i) in languages"
         :key="i"
@@ -24,9 +29,13 @@
 
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
 
-@Component export default class DDLang extends Vue {
+@Component({ mixins: [Constants] })
+export default class DDLang extends Vue {
+  iconnames:any
+
   @Prop({ default: false }) dropup!: boolean
 
   languages: Array<string> = []
@@ -55,3 +64,10 @@ const settings = namespace('settings')
   }
 }
 </script>
+
+<style>
+
+#language .dropdown-toggle::after{
+  display:none;
+}
+</style>

@@ -3,11 +3,12 @@
     v-bind="$props"
     data-testid="ButtonBTNLogout"
     class="text-left"
+    :title="$t('button.logout.tooltip')"
     variant="primary"
     @click="doLogout"
   >
     <b-icon :icon="iconnames.logout" />
-    {{ $t('button.logout') }}
+    {{ ($mq!=='desktop')? $t('button.logout'):'' }}
   </b-button>
 </template>
 

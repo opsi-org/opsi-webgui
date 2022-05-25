@@ -1,17 +1,17 @@
 <template>
   <div>
-      <!-- v-b-modal="'modal-' + event" -->
     <b-button
       :pressed="isLoading"
       :disabled="isLoading"
       :title="$t(events[event].tooltip)"
       :variant="events[event].variant"
-      class="border-0"
+      class="w-100 h-100 text-left"
       :size="size"
       @click="show=true"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
+      {{ (event=='ondemand' && $mq=='mobile')? $t(events[event].titlemodal) : ''}}
       <IconILoading v-if="isLoading" :small="true" />
       <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
