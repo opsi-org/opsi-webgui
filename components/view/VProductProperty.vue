@@ -18,19 +18,20 @@
         tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
         tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
         {{ $fetchState.error }} -->
-      <p v-if="$fetchState.pending">
-        <IconILoading v-if="isLoading" />
-      </p>
-      <div v-else-if="$fetchState.error || activeTabSet < -1">
+      <div v-if="!$fetchState.pending && ($fetchState.error || activeTabSet < -1)">
         <p>
           {{ errorText.properties }}
           {{ (errorText.dependencies && errorText.properties)? '\n':'' }}
           {{ errorText.dependencies }}
         </p>
       </div>
+
+      <p v-if="$fetchState.pending">
+        <IconILoading v-if="isLoading" />
+      </p>
       <b-tab
         ref="VProductProperties_TabProperties"
-        :title="$t('title.properties') + ((tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'')"
+        :title="$t('title.properties') + ((!isLoading && tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'')"
         :disabled="tabPropertiesDisabled"
       >
         <br>
@@ -44,7 +45,7 @@
       </b-tab>
       <b-tab
         ref="VProductProperties_TabDependencies"
-        :title="$t('title.dependencies') + ((tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'')"
+        :title="$t('title.dependencies') + ((!isLoading && tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'')"
         :disabled="tabDependenciesDisabled"
         :active="activeTab===1"
       >

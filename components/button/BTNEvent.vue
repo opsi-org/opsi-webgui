@@ -11,7 +11,7 @@
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      {{ (event=='ondemand' && $mq=='mobile')? $t(events[event].titlemodal) : ''}}
+      {{ (event=='ondemand' && $mq=='mobile')? $t(events[event].titlemodal) : '' }}
       <IconILoading v-if="isLoading" :small="true" />
       <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
