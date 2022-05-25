@@ -130,7 +130,8 @@ export default class LayoutDefault extends Vue {
   position:absolute;
   margin-top: var(--margin-top-maincontent);
   margin-left: var(--margin-left-maincontent);
-  overflow: hidden;
+  /* overflow: hidden; */
+  overflow: auto;
   width: calc(100% - 2 * var(--margin-left-maincontent));
   height: calc(100% - var(--margin-top-maincontent));
 }
