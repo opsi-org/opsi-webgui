@@ -13,11 +13,12 @@
           <b-icon :icon="iconnames.menuOpen" />
         </b-button>
       </b-navbar-nav>
-      <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
-        <IconIOpsiLogo :light="true" class="mt-2" height="20" />
-        <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
+      <b-navbar-brand class="d-inline-flex">
+        <IconIOpsiLogo :light="true" class="mt-2" height="20" to="/addons/webgui/app/clients/" />
+        <span class="ml-1 topbar_title" to="/addons/webgui/app/clients/"> {{ getTitleUppercase() }} </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
+        <BarBBreadcrumbRow v-if="$mq !== 'mobile'" />
       </b-navbar-brand>
 
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
