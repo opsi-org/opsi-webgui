@@ -112,7 +112,7 @@ export default class LayoutDefault extends Vue {
 <style>
 .topbar_content {
   /* z-index: 2000; */
-  z-index: 1;
+  z-index: 1000;
 }
 
 .topbar_content,
