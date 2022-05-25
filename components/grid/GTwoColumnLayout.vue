@@ -1,5 +1,5 @@
 <template>
-  <b-row data-testid="GTwoColumnLayout">
+  <b-row data-testid="GTwoColumnLayout" class="GTwoColumnLayout">
     <b-button
       v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
       class="clients_button"
@@ -46,6 +46,16 @@ export default class GTwoColumnLayout extends Vue {
 </script>
 
 <style>
+.GTwoColumnLayout.row {
+  margin-right: 0px;
+  margin-left: 0px;
+  height: inherit
+}
+.GTwoColumnLayout.row > .col{
+  padding-right: 0px;
+  padding-left: 0px;
+
+}
 .clients_button{
   max-width:60px;
   max-height:800px;

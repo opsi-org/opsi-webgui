@@ -7,6 +7,7 @@
       v-else
       :id="id"
       :ref="id"
+      v-b-scrollspy
       :stacked="$mq=='mobile'"
       :primary-key="id"
       class="TInfiniteScroll"
@@ -236,7 +237,7 @@ export default class TInfiniteScroll extends Vue {
   margin-top: 5px;
 }
 .TInfiniteScrollWrapper {
-  padding-bottom: 50px;
+  /* padding-bottom: 50px; */
 }
 .TInfiniteScroll .clearselection-btn {
   padding: 0px !important;
@@ -278,9 +279,9 @@ export default class TInfiniteScroll extends Vue {
   color: var(--color, #6c757d);
   font-size: small;
 }
-.table-responsive {
-  max-height: 66vh ;
-}
+.mobile .table-responsive { min-height: 50vh;  height: 60vh;}
+.desktop .table-responsive { max-height: 65vh; }
+
 .b-table-sticky-header thead > tr:last-child{
   background-color: var(--background, white);
 }

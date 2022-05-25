@@ -130,13 +130,14 @@ export default class LayoutDefault extends Vue {
   margin-top: var(--margin-top-maincontent);
   margin-left: var(--margin-left-maincontent);
   /* overflow: hidden; */
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   width: calc(100% - 2 * var(--margin-left-maincontent));
-  height: calc(100% - var(--margin-top-maincontent));
+  /* height: calc(100% - var(--margin-top-maincontent) + 100px); */
 }
 
 :not(.mobile).sidebar_collapsed .main_content{
-  margin-left: var(--margin-left-maincontent-if-sidebar-collpased);
+  margin-left: calc(var(--margin-left-maincontent-if-sidebar-collpased));
   width: calc(100% - var(--margin-left-maincontent-if-sidebar-collpased) - var(--margin-left-maincontent));
 }
 :not(.mobile).sidebar_expanded .main_content{
