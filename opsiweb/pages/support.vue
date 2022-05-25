@@ -6,8 +6,8 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col>
-        <b-card>
+      <!-- <b-col> -->
+        <b-card class="card-doku">
           <!-- aspect="16by9" -->
           <b-embed
             type="iframe"
@@ -26,7 +26,7 @@
             frameborder="0"
           /> -->
         </b-card>
-      </b-col>
+      <!-- </b-col> -->
     </b-row>
   </div>
 </template>
@@ -54,3 +54,13 @@ export default class PSupport extends Vue {
   }
 }
 </script>
+<style>
+.support {
+  width: calc(100% - 15px);
+}
+/* .support .card-doku, */
+/* .support .card-doku .card-body {
+  padding-left: 0px;
+  padding-right: 0px;
+} */
+</style>
