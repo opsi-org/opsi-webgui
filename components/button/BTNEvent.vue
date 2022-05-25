@@ -22,11 +22,23 @@
       size="sm"
     >
       <!-- @ok="callEvent" -->
-      <div v-if="event=='ondemand'">
-        <p v-for="c in selectionClients" :key="c" class="modal-client-p">
+
+      <b-list-group v-if="event=='ondemand'" flush>
+        <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->
+        <b-list-group-item v-for="c in selection" :key="c" class="modal-client-p">
           {{ c }}
-        </p>
-      </div>
+          <b-button
+            class="border-0 float-right"
+            variant="outline-primary"
+            :title="$t('button.delete')"
+            size="sm"
+            @click="selectionClientsDelete.push(c)"
+          >
+            <span class="sr-only">{{ $t('button.reset') }}</span>
+            <b-icon :icon="iconnames.x" />
+          </b-button>
+        </b-list-group-item>
+      </b-list-group>
       <div v-else class="modal-client-p">
         {{ data }}
       </div>
@@ -67,8 +79,9 @@ export default class BTNEvent extends Vue {
 
   isLoading:any = false
   show:boolean = false
+  selectionClientsDelete: Array = []
 
-  @selections.Getter public selectionClients!: string
+  @selections.Getter public selectionClients!: Array
 
   @Prop({ default: 'ondemand' }) event!: string
   @Prop({ default: 'sm' }) size!: string
@@ -116,6 +129,10 @@ export default class BTNEvent extends Vue {
     }
   }
 
+  get selection () {
+    return this.selectionClients.filter(c => !this.selectionClientsDelete.includes(c))
+  }
+
   async callEvent () {
     if (!this.event || this.events[this.event] === undefined) {
       // eslint-disable-next-line no-console
@@ -130,13 +147,16 @@ export default class BTNEvent extends Vue {
     // hostControl_showPopup
 
     // const params = { method: 'fireEvent', params: ['on_demand'], client_ids: this.selectionClients }
-    if (this.event === 'ondemand') { eventData.params.client_ids = this.selectionClients }
+    if (this.event === 'ondemand') {
+      eventData.params.client_ids = this.selection
+    }
     if (this.event === 'reboot') { eventData.params.client_ids = [this.data] }
     if (this.event === 'showpopup') { eventData.params.client_ids = [this.data] }
     // if (this.event === 'showpopup') {
     //   eventData.params.client_ids = [this.data || '']
     //   eventData.params.params[1] = this.data || ''
     // }
+
     await this.$axios.$post('/api/command/opsiclientd_rpc', eventData.params)
       .then((response) => {
         eventData.responseVisualization(ref, response)
@@ -167,6 +187,9 @@ export default class BTNEvent extends Vue {
 </script>
 <style>
 .modal-client-p {
-  margin-bottom: 0px;
+  margin: 0px !important;
+  padding: 0px !important;
+  border: 0px !important;
+  min-width: 100%;
 }
 </style>
