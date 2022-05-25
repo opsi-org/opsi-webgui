@@ -79,9 +79,9 @@ export default class BTNEvent extends Vue {
 
   isLoading:any = false
   show:boolean = false
-  selectionClientsDelete: Array = []
+  selectionClientsDelete: Array<string> = []
 
-  @selections.Getter public selectionClients!: Array
+  @selections.Getter public selectionClients!: Array<string>
 
   @Prop({ default: 'ondemand' }) event!: string
   @Prop({ default: 'sm' }) size!: string
