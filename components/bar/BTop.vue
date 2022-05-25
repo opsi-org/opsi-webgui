@@ -8,13 +8,13 @@
       type="dark"
     >
       <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button variant="primary" :pressed.sync="attributes.visible">
+        <b-button variant="primary" size="sm" class="mt-2" :pressed.sync="attributes.visible">
           <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
           <b-icon :icon="iconnames.menuOpen" />
         </b-button>
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
-        <IconIOpsiLogo :light="true" height="25" />
+        <IconIOpsiLogo :light="true" class="mt-2" height="20" />
         <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />

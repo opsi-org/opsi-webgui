@@ -67,6 +67,7 @@ export default class DDTableSorting extends BDropdown {
   display: unset !important;
 }
 .DropdownDDTableSorting .dropdown-menu {
+  max-width: 220px !important;
   height: max-content !important;
   z-index: 3 !important;
   /* position: sticky; */
@@ -74,6 +75,7 @@ export default class DDTableSorting extends BDropdown {
 .DropdownDDTableSorting .dropdown-menu .dropdown-item {
   cursor: pointer;
   display: flex !important;
+  flex-wrap: wrap;
 }
 .DropdownDDTableSorting a.selected {
   background-color: var(--primary);

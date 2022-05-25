@@ -2,7 +2,7 @@
   <div data-testid="MTrackChanges">
     <b-button
       v-if="!quicksave && changesProducts.filter((o) => o.user === username).length!==0"
-      class="px-2"
+      class="mt-1"
       variant="transparent"
       @click="$bvModal.show('trackChangesModal')"
     >
@@ -12,7 +12,6 @@
         v-b-tooltip.hover
         :title="$t('button.track.changes')"
         variant="warning"
-        font-scale="2"
         :icon="iconnames.save"
       />
     </b-button>

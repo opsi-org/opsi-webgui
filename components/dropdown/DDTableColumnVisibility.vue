@@ -181,9 +181,9 @@ export default class DDTableColumnVisibility extends BDropdown {
 }
 .DDTableColumnVisibility .dropdown-menu {
   overflow: visible !important;
-  /* height: max-content !important; */
-  max-height: 300px !important;
-  min-width: 300px !important;
+  height: max-content !important;
+  /* max-height: 300px !important; */
+  min-width: 250px !important;
   max-width: 350px !important;
   z-index: 30 !important;
   /* position: sticky !important; */
