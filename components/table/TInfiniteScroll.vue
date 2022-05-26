@@ -46,7 +46,7 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #head(selected)>
-        <div style="min-width: 60px;">
+        <div style="min-width: 20px;">
           <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
           <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
         </div>
