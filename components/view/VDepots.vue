@@ -122,7 +122,8 @@ export default class VDepots extends Vue {
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
+      class: 'col-rowactions'
     }
   }
 

@@ -76,8 +76,8 @@
                 :click="routeRedirectWith"
               />
               <b-dropdown
-                variant="outline-primary border-0"
                 class="moreActions"
+                variant="outline-primary border-0"
                 :title="$t('button.tablerow.moreoptions')"
                 no-caret
               >
@@ -215,7 +215,8 @@ export default class VClients extends Vue {
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
+      class: 'col-rowactions'
     }
   }
 
@@ -262,6 +263,7 @@ export default class VClients extends Vue {
     if (params.sortBy === 'selected') {
       // params.sortBy = 'selected'
       params.sortDesc = true
+      // params.sortBy = '["selected", "clientId"]'
       params.selected = JSON.stringify(this.selectionClients)
     }
     await this.$axios.get('/api/opsidata/clients', { params })
@@ -321,6 +323,11 @@ export default class VClients extends Vue {
 
 <style>
 .moreActions.dropdown {
-  max-width:35px !important;
+  max-width:30px !important;
+}
+.moreActions > .btn {
+  width:33px !important;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 </style>

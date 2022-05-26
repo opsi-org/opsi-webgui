@@ -131,8 +131,9 @@ export default class VProducts extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionRequest') : false
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true, class: '',
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
+      class: 'col-rowactions'
     }
   }
 
@@ -244,6 +245,7 @@ export default class VProducts extends Vue {
       } else if (params.sortBy === 'selected') {
         params.sortDesc = true
         params.selected = JSON.stringify(thiss.selectionProducts)
+        // params.sortBy = '["selected", "productId"]'
       }
       await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
@@ -294,4 +296,5 @@ export default class VProducts extends Vue {
   font-weight: bold;
   color: green;
 }
+
 </style>

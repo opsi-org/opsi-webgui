@@ -46,14 +46,15 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #head(selected)>
-        <div style="min-width: 20px;">
-          <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
-          <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
-        </div>
+        <small v-if="rowident !== 'productId'"> <b> {{ selection.length }}/{{ totalItems|| 0 }} </b> </small>
+        <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
       </template>
       <template #head(rowactions)>
-        <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
-        <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
+        <b-button-group>
+          <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" variant="outline-primary" />
+          <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
+          <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" variant="outline-primary" />
+        </b-button-group>
       </template>
       <template #cell(selected)="row">
         <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" />
@@ -286,4 +287,16 @@ export default class TInfiniteScroll extends Vue {
 .b-table-sticky-header thead > tr:last-child{
   background-color: var(--background, white);
 }
+
+th > .btn-group  .btn-outline-primary,
+th > .btn-group  .btn-outline-primary:hover,
+td > .btn-group  .btn-outline-primary,
+td > .btn-group  .btn-outline-primary:hover {
+  border: unset !important; /* removes border artifacts in rowactions buttons*/
+  border-color: unset !important; /* removes border artifacts in rowactions buttons*/
+}
+thead .col-rowactions {
+  padding-left: 12px !important;
+}
+
 </style>
