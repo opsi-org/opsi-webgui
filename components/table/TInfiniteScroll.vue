@@ -61,19 +61,6 @@
         <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'">
           <slot name="rowactions" v-bind="row" />
         </b-button-group>
-        <b-button-group v-else>
-          <b-dropdown
-            class="moreActions"
-            variant="outline-primary border-0"
-            :title="$t('button.tablerow.moreoptions')"
-            no-caret
-          >
-            <template #button-content>
-              <b-icon :icon="iconnames.menu" />
-            </template>
-            <slot name="rowactions" v-bind="row" />
-          </b-dropdown>
-        </b-button-group>
       </template>
       <template #cell(selected)="row">
         <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" class="selectionitem selected" />

@@ -76,7 +76,6 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-              <!-- v-if="$mq!='mobile' " -->
             <b-dropdown
               class="moreActions"
               variant="outline-primary border-0"
@@ -98,17 +97,6 @@
               <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
               <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
             </b-dropdown>
-            <!-- <b-button
-              v-if="$mq=='mobile'"
-              variant="outline-primary"
-              size="sm"
-              class="w-100 h-100 text-left border-0"
-              :disabled="(config)?config.read_only:false"
-              @click="row.toggleDetails"
-            >
-              <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
-            </b-button>
-            <ButtonBTNEvent v-if="$mq=='mobile'" event="reboot" :data="row.item.clientId" /> -->
           </template>
           <template #row-details="row">
             <b-card>
@@ -229,8 +217,7 @@ export default class VClients extends Vue {
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
-      class: 'col-rowactions',
-      mergeOnMobile: false
+      class: 'col-rowactions'
     }
   }
 
