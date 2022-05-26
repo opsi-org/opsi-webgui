@@ -1,19 +1,19 @@
 <template>
   <b-badge v-if="text=='mixed'" :variant="variant">
-    <span class="h5"> &#8800; </span>
+    <span class="h6"> &#8800; </span>
   </b-badge>
   <b-badge v-else-if="text=='successful'" variant="success">
-    <span class="h5"> <b-icon :icon="iconnames.productActionResultSuccessful" alt="successful" /> </span>
+    <span class="h6"> <b-icon :icon="iconnames.productActionResultSuccessful" alt="successful" /> </span>
   </b-badge>
   <b-badge v-else-if="text=='failed'" variant="danger">
-    <span class="h5"> <b-icon :icon="iconnames.productActionResultFailed" alt="failed" /> </span>
+    <span class="h6"> <b-icon :icon="iconnames.productActionResultFailed" alt="failed" /> </span>
   </b-badge>
   <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">
-    <span class="h5"> {{ ($mq=='mobile')? '-':'' }} </span>
+    <span class="h6"> {{ ($mq=='mobile')? '-':'' }} </span>
   </b-badge>
   <b-badge v-else-if="$mq!='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent" />
   <b-badge v-else>
-    <span class="h5"> {{ text }} </span>
+    <span class="h6"> {{ text }} </span>
   </b-badge>
 </template>
 

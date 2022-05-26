@@ -4,22 +4,22 @@
       v-bind="$props"
       :variant="variant"
     >
-      <span v-if="content=='depot-unequal'" class="badgecontent">
+      <span v-if="content=='depot-unequal'" class="h6">
         {{ '&ne;' }} <b-icon :icon="iconnames.depot" />
       </span>
-      <span v-else-if="content=='depot-wo-prod'" class="badgecontent">
+      <span v-else-if="content=='depot-wo-prod'" class="h6">
         * <b-icon :icon="iconnames.depot" />
       </span>
-      <span v-else-if="content=='client-outdated'" class="badgecontent">
+      <span v-else-if="content=='client-outdated'" class="h6">
         {{ '&ne;' }} <b-icon :icon="iconnames.client" />
       </span>
-      <span v-else-if="content=='ppv-client-different'" class="badgecontent">
+      <span v-else-if="content=='ppv-client-different'" class="h6">
         {{ '&ne;' }} <b-icon :icon="iconnames.client" />
       </span>
-      <span v-else-if="content=='ppid-not-exists-on-depot'" class="badgecontent">
+      <span v-else-if="content=='ppid-not-exists-on-depot'" class="h6">
         {{ '&ne;' }} <b-icon :icon="iconnames.depot" />
       </span>
-      <span v-else class="badgecontent">{{ content==='unequal'? '&ne;':content }} </span>
+      <span v-else class="h6">{{ content==='unequal'? '&ne;':content }} </span>
     </b-badge>
   </div>
 </template>
@@ -35,9 +35,3 @@ export default class IDetails extends Vue {
   @Prop({ default: 'warning' }) variant?: string
 }
 </script>
-
-<style>
-/* .badgecontent{
-  color: var(--dark);
-} */
-</style>
