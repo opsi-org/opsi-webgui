@@ -57,46 +57,58 @@
           <template #cell(uefi)="row">
             <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
           </template>
-          <template #cell(rowactions)="row">
-            <b-button-group>
-              <ButtonBTNRowLinkTo
-                :title="$t('title.config')"
-                :icon="iconnames.settingsobject"
-                to="/clients/config"
-                :ident="row.item.ident"
-                :pressed="isRouteActive"
-                :click="routeRedirectWith"
-              />
-              <ButtonBTNRowLinkTo
-                :title="$t('title.log')"
-                :icon="iconnames.log"
-                to="/clients/log"
-                :ident="row.item.ident"
-                :pressed="isRouteActive"
-                :click="routeRedirectWith"
-              />
-              <b-dropdown
-                class="moreActions"
-                variant="outline-primary border-0"
-                :title="$t('button.tablerow.moreoptions')"
-                no-caret
+          <template #rowactions="row">
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
+              :icon="iconnames.settingsobject"
+              to="/clients/config"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.log')"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log'):''"
+              :icon="iconnames.log"
+              to="/clients/log"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+              <!-- v-if="$mq!='mobile' " -->
+            <b-dropdown
+              class="moreActions"
+              variant="outline-primary border-0"
+              :title="$t('button.tablerow.moreoptions')"
+              no-caret
+            >
+              <template #button-content>
+                <b-icon :icon="iconnames.menu" />
+              </template>
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                class="w-100 h-100 text-left border-0"
+                :disabled="(config)?config.read_only:false"
+                @click="row.toggleDetails"
               >
-                <template #button-content>
-                  <b-icon :icon="iconnames.menu" />
-                </template>
-                <b-button
-                  variant="outline-primary"
-                  size="sm"
-                  class="w-100 h-100 text-left border-0"
-                  :disabled="(config)?config.read_only:false"
-                  @click="row.toggleDetails"
-                >
-                  <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
-                </b-button>
-                <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
-                <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
-              </b-dropdown>
-            </b-button-group>
+                <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
+              </b-button>
+              <ButtonBTNEvent event="reboot" :data="row.item.clientId" />
+              <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
+            </b-dropdown>
+            <!-- <b-button
+              v-if="$mq=='mobile'"
+              variant="outline-primary"
+              size="sm"
+              class="w-100 h-100 text-left border-0"
+              :disabled="(config)?config.read_only:false"
+              @click="row.toggleDetails"
+            >
+              <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
+            </b-button>
+            <ButtonBTNEvent v-if="$mq=='mobile'" event="reboot" :data="row.item.clientId" /> -->
           </template>
           <template #row-details="row">
             <b-card>
@@ -176,7 +188,8 @@ export default class VClients extends Vue {
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true,
+      class: 'mobileVisibleOnlySelection'
     },
     clientId: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.id') as string, key: 'clientId', _fixed: true, sortable: true,
@@ -216,7 +229,8 @@ export default class VClients extends Vue {
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
-      class: 'col-rowactions'
+      class: 'col-rowactions',
+      mergeOnMobile: false
     }
   }
 
@@ -322,12 +336,4 @@ export default class VClients extends Vue {
 </script>
 
 <style>
-.moreActions.dropdown {
-  max-width:30px !important;
-}
-.moreActions > .btn {
-  width:33px !important;
-  padding-left: 0px;
-  padding-right: 0px;
-}
 </style>

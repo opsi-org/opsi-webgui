@@ -411,7 +411,11 @@ export default class TSDefault extends Vue {
 </script>
 
 <style>
-
+.TSDefault-wrapper {
+  line-height: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}
 /* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container {

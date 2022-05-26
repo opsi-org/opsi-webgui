@@ -17,8 +17,8 @@
       <DivDCountdowntimer :small="!attributes.expanded" />
       <b-button
         v-if="$mq === 'desktop'"
-        variant="primary"
         v-b-tooltip.hover
+        variant="primary"
         data-testid="BarBSideBtnExpand"
         :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
         :pressed.sync="attributes.expanded"
@@ -78,6 +78,11 @@ export default class BSide extends Vue {
   width: var(--width-sidebar-expanded);
   height: 100% !important;
 }
+.mobile #sidemenu {
+  top: calc(var(--height-navbar) - 0px) !important;
+  width: 50%;
+  height: 100% !important;
+}
 .sidemenu_small > #sidemenu {
   width: var(--width-sidebar-collapsed);
 }
@@ -95,5 +100,9 @@ export default class BSide extends Vue {
   width: 100%;
   text-align: right;
   z-index: 100;
+}
+.sidebar_content .b-sidebar-backdrop{
+  width: 100% !important;
+  height: 100% !important;
 }
 </style>

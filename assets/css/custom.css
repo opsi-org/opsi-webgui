@@ -36,7 +36,7 @@
 
   --component-height: 40px;
   --component-width: 200px;
-  
+
   --max-height-window:500px;
   --height-navbar: 56px;
 
@@ -53,6 +53,18 @@
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important; /* remove "Noto Color Emoji" */
+}
+body .mobile {
+  /* font-size: 0.7rem !important;
+  font-weight: 300 !important;
+  line-height: 1.2 !important; */
+  zoom: 0.8;
+}
+
+.form-control, .btn, .dropdown-item, .dropdown-menu, .form-control-plaintext, .custom-select {
+  /* line-height: inherit !important; */
+  font-size: inherit !important;
+  font-weight: inherit !important;
 }
 .tooltip {
   font-family: inherit !important;
@@ -219,7 +231,7 @@ body {
   background: var(--success) !important;
 }
 .text-danger {
-  background: var(--danger) !important; 
+  background: var(--danger) !important;
   color: #fff !important;
 }
 .text-warning {
@@ -234,7 +246,7 @@ body {
   color: var(--light) !important;
 }
 .text-dark {
-  background: var(--dark) !important; 
+  background: var(--dark) !important;
   color: #fff !important;
 }
 .text-white {

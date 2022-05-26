@@ -46,9 +46,10 @@
             </b>
             {{ (row.item.depotId!=opsiconfigserver) ? row.item.depotId:'' }}
           </template>
-          <template #cell(rowactions)="row">
+          <template #rowactions="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
               :icon="iconnames.settingsobject"
               to="/depots/config"
               :ident="row.item.ident"

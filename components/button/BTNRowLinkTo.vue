@@ -2,7 +2,7 @@
   <b-button
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
-    :class="classes"
+    :class="{ ...classes, 'w-100 h-100 text-left': true}"
     :title="title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
@@ -12,7 +12,10 @@
     <!-- v-bind="$props" -->
     <!-- title="config"
     @click="routeRedirectWith('/depots/config', row.item.ident)" -->
-    <b-icon v-if="icon" :icon="icon" /> {{ label }}
+    <b-icon v-if="icon" :icon="icon" />
+    <!-- {{ ($mq=='mobile' && title)? title: '' }} -->
+    {{ label }}
+
   </b-button>
 </template>
 

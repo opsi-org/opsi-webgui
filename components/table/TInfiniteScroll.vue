@@ -10,6 +10,7 @@
       v-b-scrollspy
       :stacked="$mq=='mobile'"
       :primary-key="id"
+      borderless
       class="TInfiniteScroll"
       :class="{ firstpage: isFirstPage,
                 lastpage: isLastPage }"
@@ -56,9 +57,27 @@
           <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" variant="outline-primary" />
         </b-button-group>
       </template>
+      <template #cell(rowactions)="row">
+        <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'">
+          <slot name="rowactions" v-bind="row" />
+        </b-button-group>
+        <b-button-group v-else>
+          <b-dropdown
+            class="moreActions"
+            variant="outline-primary border-0"
+            :title="$t('button.tablerow.moreoptions')"
+            no-caret
+          >
+            <template #button-content>
+              <b-icon :icon="iconnames.menu" />
+            </template>
+            <slot name="rowactions" v-bind="row" />
+          </b-dropdown>
+        </b-button-group>
+      </template>
       <template #cell(selected)="row">
-        <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" />
-        <b-icon v-else-if="$mq=='mobile'" :icon="iconnames.tablerowNotSelected" />
+        <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" class="selectionitem selected" />
+        <b-icon v-else-if="$mq=='mobile'" :icon="iconnames.tablerowNotSelected" class="selectionitem not-selected" />
         {{ fixRow(row) }}
       </template>
       <template
@@ -112,7 +131,16 @@ export default class TInfiniteScroll extends Vue {
   @Watch('items', { deep: false }) pageChanged () { this.scrollTop() }
 
   async fetch () { await this.fetchitems() }
-  mounted () { this.addScrollEvent() }
+
+  // @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
+  mounted () {
+    // if (this.$mq === 'mobile') {
+    //   this.headerData.selected._fixed = false
+    //   this.headerData.selected.visible = false
+    // }
+    this.addScrollEvent()
+  }
+
   beforeDestroy () {
     window.removeEventListener('scroll', this.onScroll)
   }
@@ -234,6 +262,10 @@ export default class TInfiniteScroll extends Vue {
   padding-bottom: 70px;
   min-height: 350px;
 }
+.TInfiniteScroll .table td,
+.TInfiniteScroll .table th {
+    border-top: 0px solid #000;
+}
 .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
 }
@@ -254,6 +286,9 @@ export default class TInfiniteScroll extends Vue {
   > tr
   > th:not(.v-th) {
   top: 32px;
+}
+.TInfiniteScroll.b-table-sticky-header thead th {
+  /* border: -1px solid green !important; */
 }
 .TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
 .TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 200px !important;}
@@ -280,7 +315,7 @@ export default class TInfiniteScroll extends Vue {
   color: var(--color, #6c757d);
   font-size: small;
 }
-.mobile .table-responsive { min-height: 50vh;  height: 60vh;}
+.mobile .table-responsive { min-height: 90vh;  height: 90vh;}
 .desktop :not(.tab-pane) .table-responsive { max-height: 75vh; }
 .desktop .tab-pane .table-responsive { max-height: 70vh; }
 
@@ -288,10 +323,10 @@ export default class TInfiniteScroll extends Vue {
   background-color: var(--background, white);
 }
 
-th > .btn-group  .btn-outline-primary,
-th > .btn-group  .btn-outline-primary:hover,
-td > .btn-group  .btn-outline-primary,
-td > .btn-group  .btn-outline-primary:hover {
+th .btn-group .btn-outline-primary,
+th .btn-group .btn-outline-primary:hover,
+td .btn-group .btn-outline-primary,
+td .btn-group .btn-outline-primary:hover {
   border: unset !important; /* removes border artifacts in rowactions buttons*/
   border-color: unset !important; /* removes border artifacts in rowactions buttons*/
 }
@@ -299,4 +334,18 @@ thead .col-rowactions {
   padding-left: 12px !important;
 }
 
+.btn-group .moreActions.dropdown {
+  max-width:30px !important;
+}
+.btn-group .moreActions > .btn {
+  width:33px !important;
+  padding: 0px;
+}
+.mobile .mobileVisibleOnlySelection {
+  display: none !important;
+}
+.mobile .table.b-table.b-table-stacked > tbody > tr {
+  /* border-top-width: 3px !important; */
+  border-top: 3px solid var(--dark) !important;
+}
 </style>

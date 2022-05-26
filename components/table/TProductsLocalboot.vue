@@ -91,9 +91,10 @@
           :depot-version-diff="row.item.depot_version_diff"
         />
       </template>
-      <template #cell(rowactions)="row">
+      <template #rowactions="row">
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
+          :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
           :icon="iconnames.settingsobject"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
