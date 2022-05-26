@@ -210,7 +210,7 @@ export default class VClients extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult_failed') : true
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.installationStatus_unknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true,
+      label: this.$t('table.fields.installationStatusUnknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     rowactions: { // eslint-disable-next-line object-property-newline

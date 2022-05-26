@@ -8,7 +8,7 @@
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
     <b-tabs class="config_horizontaltabs">
-      <b-tab title="Host Attributes" active>
+      <b-tab :title="$t('title.hostattr')" active>
         <DivDScrollResult>
           <LazyTableTHostAttributes v-if="id" :id="id" />
         </DivDScrollResult>

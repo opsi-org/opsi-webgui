@@ -110,14 +110,14 @@ export default class VProducts extends Vue {
       label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('name') : false
     },
-    selectedDepots: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', disabled: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedDepots') : false
-    },
-    selectedClients: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', disabled: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedClients') : false
-    },
+    // selectedDepots: { // eslint-disable-next-line object-property-newline
+    //   label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', disabled: true,
+    //   visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedDepots') : false
+    // },
+    // selectedClients: { // eslint-disable-next-line object-property-newline
+    //   label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', disabled: true,
+    //   visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedClients') : false
+    // },
     version: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : false
@@ -182,7 +182,7 @@ export default class VProducts extends Vue {
 
   updateColumnVisibility () {
     const b = (this.selectionClients.length > 0)
-    this.headerData.selectedClients.disabled = b
+    // this.headerData.selectedClients.disabled = b
     this.headerData.installationStatus.visible = b
     this.headerData.installationStatus.disabled = b
     this.headerData.actionResult.visible = b
