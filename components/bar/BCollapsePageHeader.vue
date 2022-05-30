@@ -1,6 +1,6 @@
 <template>
   <b-navbar class="BCollapsePageHeader_Navbar" :class="{collapseable: collapseable}" data-testid="BarBCollapsePageHeader" :variant="variant">
-    <div class="BCollapsePageHeader_Navbar_toggler" @click="toggleCollapse">
+    <div class="BCollapsePageHeader_Navbar_toggler col" @click="toggleCollapse">
       <span v-if="collapseable">
         <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
         <b-icon v-else :icon="iconnames.arrowDoubleRight" />
@@ -24,7 +24,7 @@
         <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
       </div>
     </div>
-    <b-navbar-nav class="ml-auto title-right-buttons">
+    <b-navbar-nav class="sm-auto title-right-buttons">
       <ModalMSelectionsAll />
       <ButtonBTNRowLinkTo
         v-if="enableShowProducts"
@@ -145,7 +145,7 @@ export default class BTooltipCollapseRow extends Vue {
 }
 .BCollapsePageHeader_Navbar > .container > .row{
   margin-right: 0px !important;
-    margin-left: 0px !important;
+  margin-left: 0px !important;
 }
 .BCollapsePageHeader_Navbar .title-right-buttons > *{
   margin-left: 5px;
@@ -184,7 +184,9 @@ export default class BTooltipCollapseRow extends Vue {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  width: calc(100% - 88px);
+  /* min-width: calc(100% - 160px);
+  width: 100%;
+  max-width: 100%; */
   cursor: pointer;
 }
 .BarBTooltipCollapseRow {
