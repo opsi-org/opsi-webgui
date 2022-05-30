@@ -24,7 +24,19 @@
         <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
       </div>
     </div>
-    <b-navbar-nav class="ml-auto">
+    <b-navbar-nav class="ml-auto title-right-buttons">
+      <ModalMSelectionsAll />
+      <ButtonBTNRowLinkTo
+        v-if="enableShowProducts"
+        :title="$t('button.show.products')"
+        :label="$t('title.products')"
+        classes=""
+        :icon="iconnames.product"
+        to="/clients/products"
+        ident="dummy"
+        :pressed="isRouteActive"
+        :click="routeRedirectWith"
+      />
       <b-button v-if="redirectOnCloseTo" class="closebtn border-0" variant="outline-primary" :to="redirectOnCloseTo">
         <span class="sr-only">{{ $t('button.close') }}</span>
         <b-icon :icon="iconnames.x" />
@@ -54,18 +66,6 @@
               <!-- <b-col v-if="multiselectToggler != undefined" cols="*">
                   <CheckboxCBMultiselection :multiselect.sync="multiselectToggler" />
                 </b-col> -->
-              <b-col v-if="enableShowProducts" cols="*">
-                <ButtonBTNRowLinkTo
-                  :title="$t('button.show.products')"
-                  :label="$t('title.products')"
-                  classes=""
-                  :icon="iconnames.product"
-                  to="/clients/products"
-                  ident="dummy"
-                  :pressed="isRouteActive"
-                  :click="routeRedirectWith"
-                />
-              </b-col>
             </slot>
           </b-col>
         </slot>
@@ -137,6 +137,19 @@ export default class BTooltipCollapseRow extends Vue {
 /* .BCollapsePageHeader_Navbar.collapseable {
   cursor: pointer;
 } */
+.BCollapsePageHeader_Navbar > .container {
+  /* padding-left: 0px !important; */
+  padding-right: 0px !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+.BCollapsePageHeader_Navbar > .container > .row{
+  margin-right: 0px !important;
+    margin-left: 0px !important;
+}
+.BCollapsePageHeader_Navbar .title-right-buttons > *{
+  margin-left: 5px;
+}
 .BCollapsePageHeader_Navbar.navbar {
   z-index: inherit !important;
   background-image: none !important;
@@ -171,7 +184,7 @@ export default class BTooltipCollapseRow extends Vue {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  width: calc(100% - 48px);
+  width: calc(100% - 88px);
   cursor: pointer;
 }
 .BarBTooltipCollapseRow {

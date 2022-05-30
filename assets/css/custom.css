@@ -61,6 +61,17 @@ body .mobile .main_content {
   zoom: 0.8;
 }
 
+.modal-dialog,
+.modal {
+  height: 100% !important;
+  max-height: 100% !important;
+  display: inherit !important;
+}
+.modal-dialog {
+  top: 0px !important;
+  height: 90% !important;
+}
+
 .form-control, .btn, .dropdown-item, .dropdown-menu, .form-control-plaintext, .custom-select {
   /* line-height: inherit !important; */
   font-size: inherit !important;

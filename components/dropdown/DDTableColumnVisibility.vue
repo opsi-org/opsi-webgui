@@ -8,7 +8,8 @@
     variant="outline-primary"
     size="sm"
     alt="Show column"
-    class="DDTableColumnVisibility fixed_column_selection noborder"
+    class="DDTableColumnVisibility fixed_column_selection noborder w-100 h-100 text-left"
+    :toggle-class="{ 'w-100 h-100 text-left': true}"
     :title="$t('table.showCol')"
     @show="init"
   >
@@ -176,7 +177,8 @@ export default class DDTableColumnVisibility extends BDropdown {
 <style>
 .DDTableColumnVisibility {
   max-width: fit-content !important;
-  max-height: fit-content !important;
+  /* max-height: inherit !important; */
+  max-height: var(--component-height) !important;
   z-index: 30 !important;
 }
 .DDTableColumnVisibility .dropdown-menu {

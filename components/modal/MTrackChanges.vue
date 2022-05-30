@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="MTrackChanges">
+  <div data-testid="MTrackChanges" class="MTrackChanges">
     <b-button
       v-if="!quicksave && changesProducts.filter((o) => o.user === username).length!==0"
       class="mt-1"
@@ -136,10 +136,10 @@ export default class MTrackChanges extends Vue {
 </script>
 
 <style>
-.modal-header .close {
+.MTrackChanges .modal-header .close {
   color: var(--color, var(--primary, black));
 }
-.modal-dialog {
+.MTrackChanges .modal-dialog {
   left: 0% !important;
   top:10% !important;
 }

@@ -60,6 +60,7 @@
   "title.dependenciesEmpty": "(keine)",
   "title.propertiesEmpty": "(keine)",
   "title.propertyvalues": "Property-Werte",
+  "title.selectedElements": "Ausgewählte Elemente",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",

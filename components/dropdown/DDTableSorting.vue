@@ -8,7 +8,8 @@
     variant="outline-primary"
     size="sm"
     alt="Show column"
-    class="DropdownDDTableSorting fixed_column_selection noborder"
+    class="DropdownDDTableSorting fixed_column_selection noborder w-100 text-left"
+    :toggle-class="{ 'DropdownDDTableSortingBtn w-100 text-left': true}"
     :title="$t('button.sort.tablecolumns')"
   >
     <!-- dropleft -->
@@ -63,8 +64,13 @@ export default class DDTableSorting extends BDropdown {
 <style>
 .DropdownDDTableSorting {
   max-width: fit-content !important;
-  max-height: fit-content !important;
+  /* max-height: inherit !important; */
+  max-height: var(--component-height) !important;
   display: unset !important;
+}
+.DropdownDDTableSortingBtn {
+  height: 100%;
+  max-height: var(--component-height) !important;
 }
 .DropdownDDTableSorting .dropdown-menu {
   min-width: 220px !important;
