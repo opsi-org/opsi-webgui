@@ -80,7 +80,7 @@ export default class BSide extends Vue {
 }
 .mobile #sidemenu {
   top: calc(var(--height-navbar) - 0px) !important;
-  width: 50%;
+  width: 70%;
   height: 100% !important;
 }
 .sidemenu_small > #sidemenu {

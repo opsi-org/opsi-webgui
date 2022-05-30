@@ -8,7 +8,10 @@
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
       class="border-0"
-      :class="{ 'w-100 h-100 text-left': true}"
+      :class="{
+        'w-100 h-100 text-left': true,
+        'pl-3': event=='ondemand' && $mq=='mobile'
+      }"
       :size="size"
       @click="show=true"
     >

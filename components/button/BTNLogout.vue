@@ -3,6 +3,7 @@
     v-bind="$props"
     data-testid="ButtonBTNLogout"
     class="text-left"
+    :class="{ 'pl-3': $mq=='mobile' }"
     :title="$t('button.logout.tooltip')"
     variant="primary"
     @click="doLogout"

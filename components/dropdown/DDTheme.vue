@@ -5,7 +5,7 @@
       v-if="navbar"
       id="theme"
       class="px-2 text-left btn btn-primary btn-md"
-      :class="{ 'w-100': $mq=='mobile'}"
+      :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
       :text="theme.title"
       :title="$t('button.theme.tooltip')"
       alt="select theme"

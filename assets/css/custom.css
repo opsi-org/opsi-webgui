@@ -60,6 +60,10 @@ body .mobile .main_content {
   line-height: 1.2 !important; */
   zoom: 0.8;
 }
+body .mobile #sidemenu,
+body .mobile .topbar_content .navbar-brand {
+  zoom: 1;
+}
 
 .modal-dialog,
 .modal {

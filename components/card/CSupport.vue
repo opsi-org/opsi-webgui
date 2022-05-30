@@ -2,7 +2,7 @@
   <div data-testid="CardCSupport">
     <b-card :title="$t(item.title)">
       <b-row>
-        <b-col md="8">
+        <b-col v-if="$mq!='mobile'" md="8">
           <span class="carddescription"> {{ $t(item.description) }} </span>
         </b-col>
         <b-col md="4">

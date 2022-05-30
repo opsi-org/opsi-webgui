@@ -7,10 +7,10 @@
       fixed="top"
       type="dark"
     >
-      <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button variant="primary" size="sm" class="mt-2" :pressed.sync="attributes.visible">
+      <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
+        <b-button variant="primary" size="sm" class="h-100" :pressed.sync="attributes.visible">
           <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
-          <b-icon :icon="iconnames.menuOpen" />
+          <b-icon font-scale="1.5" :icon="iconnames.menuOpen" />
         </b-button>
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
@@ -23,22 +23,31 @@
 
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
 
-      <b-navbar-nav v-if="$mq === 'mobile'">
-        <b-button v-b-toggle.nav-collapse variant="primary">
+      <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
+        <b-button variant="primary" class="h-100" :pressed.sync="rightmenuVisible">
           <span class="sr-only">{{ $t('menu.open-topmenu.sr-only') }}</span>
-          <b-icon :icon="iconnames.menu" font-scale="1.1" />
+          <b-icon :icon="iconnames.menu" font-scale="1.4" />
         </b-button>
       </b-navbar-nav>
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav class="ml-auto float-right">
-          <ButtonBTNEvent event="ondemand" size="md" />
-          <!-- <div class="vertical-line" /> -->
-          <ModalMTrackChanges v-if="$mq != 'mobile'" />
-          <DropdownDDLang :navbar="true" />
-          <!-- TODO: remove for production start -->
-          <DropdownDDTheme :navbar="true" />
-          <!-- TODO: remove for production end -->
-          <ButtonBTNLogout :navbar="true" />
+
+      <b-collapse
+        id="nav-collapse"
+        v-model="rightmenuVisible"
+        is-nav
+        :class="{ 'pt-2 pb-2': $mq=='mobile' }"
+      >
+        <div
+          v-if="rightmenuVisible"
+          class="b-sidebar-backdrop bg-dark"
+          @click="rightmenuVisible = false"
+        />
+        <b-navbar-nav class="pt-0 ml-auto float-right">
+          <ButtonBTNEvent event="ondemand" size="md" class="n-right-item" />
+          <div v-if="$mq!=='mobile'" class="vertical-line n-right-item" />
+          <ModalMTrackChanges v-if="$mq != 'mobile'" class="n-right-item" />
+          <DropdownDDLang :navbar="true" class="n-right-item" />
+          <DropdownDDTheme :navbar="true" class="n-right-item" />
+          <ButtonBTNLogout :navbar="true" class="n-right-item" />
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -59,6 +68,8 @@ export default class BTop extends Vue {
   $t:any
   $config:any
   iconnames:any
+
+  rightmenuVisible:boolean = false
 
   @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
 
@@ -82,6 +93,12 @@ export default class BTop extends Vue {
   padding: 0em !important;
   padding-left: 20px !important;
   padding-right: 0px !important;
+}
+.mobile .topbar {
+  padding-left: 0px !important;
+}
+.mobile .topbar .navbar-brand{
+  margin: auto;
 }
 
 .topbar::before {
@@ -118,11 +135,12 @@ export default class BTop extends Vue {
   content: "";
   border: 1px solid var(--primary-dark);
 }
+
 .mobile #nav-collapse,
 .mobile #nav-collapse .navbar-nav {
   top:0px !important;
   width: 100% !important;
-  padding: 0px !important;
+  padding: 0px;
   margin: 0px !important;
   border-left: 0px !important;
   border-right: 0px !important;

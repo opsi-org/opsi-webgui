@@ -8,6 +8,7 @@
       alt="select theme"
       :title="$t('button.lang.tooltip')"
       class="px-2 btn btn-primary btn-md w-100 text-left"
+      :class="{'pt-0 pb-0 pl-3': $mq=='mobile'}"
       variant="primary"
       :dropup="dropup"
     >
