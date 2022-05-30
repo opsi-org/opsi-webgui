@@ -57,6 +57,7 @@
               <b-col v-if="enableShowProducts" cols="*">
                 <ButtonBTNRowLinkTo
                   :title="$t('button.show.products')"
+                  :label="$t('title.products')"
                   classes=""
                   :icon="iconnames.product"
                   to="/clients/products"

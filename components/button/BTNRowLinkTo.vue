@@ -14,8 +14,9 @@
     @click="routeRedirectWith('/depots/config', row.item.ident)" -->
     <b-icon v-if="icon" :icon="icon" />
     <!-- {{ ($mq=='mobile' && title)? title: '' }} -->
-    {{ label }}
-
+    <template v-if="label && $mq!=='mobile'">
+      {{ label }}
+    </template>
   </b-button>
 </template>
 
@@ -31,7 +32,7 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) to!: string
   @Prop({ }) sortby!: string
   @Prop({ }) ident!: string
-  @Prop({ }) label!: string
+  @Prop({ }) label?: string
   @Prop({ default: 'title' }) title!: string
   @Prop({ default: '' }) icon!: string
   @Prop({ default: 'outline-primary' }) variant!: string
