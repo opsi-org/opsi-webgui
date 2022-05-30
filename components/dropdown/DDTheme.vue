@@ -12,7 +12,7 @@
       :dropup="dropup"
     >
       <template #button-content="">
-        <b-icon v-if="theme.icon" :icon="theme.icon" />
+        <b-icon v-if="themeicon" :icon="themeicon" />
         {{ ($mq=='mobile') ? theme.title :'' }}
       </template>
       <b-dropdown-item
@@ -34,7 +34,7 @@
       :dropup="dropup"
     >
       <template #button-content="">
-        <b-icon v-if="theme.icon" :icon="theme.icon" />
+        <b-icon v-if="themeicon" :icon="themeicon" />
         {{ theme.title }}
       </template>
       <b-dropdown-item
@@ -72,6 +72,13 @@ export default class DDTheme extends Vue {
 
   set theme (val: ITheme) {
     this.setColorTheme(val)
+  }
+
+  get themeicon () {
+    if (this.theme.title === 'light') {
+      return this.themes[0].icon
+    }
+    return this.themes[1].icon
   }
 
   get themes () {
