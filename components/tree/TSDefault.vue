@@ -468,8 +468,8 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper{
   /* border: 1px solid var(--primary); */
   border-radius: 5px;
-  min-width: 200px !important;
-  max-width: 200px !important;
+  min-width: var(--component-width) !important;
+  max-width: var(--component-width) !important;
   flex-flow: inherit !important;
   padding-left: 10px;
   padding-right: 15px;
