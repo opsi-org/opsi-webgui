@@ -5,28 +5,19 @@
         <CardCSupport :item="item" />
       </b-col>
     </b-row>
-    <b-row>
-      <!-- <b-col> -->
-        <b-card class="card-doku">
-          <!-- aspect="16by9" -->
-          <b-embed
-            type="iframe"
-            title="OPSI Docs"
-            :src="`https://docs.opsi.org/opsi-docs-de/4.2/index.html`"
-            width="100%"
-            height="100%"
-            frameborder="0"
-            allowfullscreen
-          />
-          <!-- <iframe
-            title="OPSI Docs"
-            :src="`https://docs.opsi.org/opsi-docs-de/4.2/index.html`"
-            width="100%"
-            height="600"
-            frameborder="0"
-          /> -->
-        </b-card>
-      <!-- </b-col> -->
+    <b-row class="opsi-doc">
+      <b-card class="card-doku">
+        <b-embed
+          type="iframe"
+          class="opsidoc-frame"
+          title="OPSI Docs"
+          :src="`https://docs.opsi.org/opsi-docs-de/4.2/index.html`"
+          width="100%"
+          height="100%"
+          frameborder="0"
+          allowfullscreen
+        />
+      </b-card>
     </b-row>
   </div>
 </template>
@@ -57,6 +48,12 @@ export default class PSupport extends Vue {
 <style>
 .support {
   width: calc(100% - 15px);
+}
+.support .embed-responsive,
+.support iframe.opsidoc-frame {
+  min-height: 700px;
+  /* min-height: 100%; */
+  max-height: 100%;
 }
 /* .support .card-doku, */
 /* .support .card-doku .card-body {
