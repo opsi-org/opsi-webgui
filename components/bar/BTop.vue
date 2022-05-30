@@ -36,7 +36,7 @@
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang :navbar="true" />
           <!-- TODO: remove for production start -->
-          <DropdownDDTheme v-if="$mq!='mobile'" :navbar="true" />
+          <DropdownDDTheme :navbar="true" />
           <!-- TODO: remove for production end -->
           <ButtonBTNLogout :navbar="true" />
         </b-navbar-nav>
