@@ -55,9 +55,6 @@
           </b-col>
           <b-col class="nav-child nav-child-right" cols="*">
             <slot name="nav-child-right">
-              <!-- <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                <InputIFilter class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
-              </b-col> -->
               <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
                 <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
               </b-col>
