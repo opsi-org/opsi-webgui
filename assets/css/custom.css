@@ -61,7 +61,7 @@ body .mobile .main_content {
   zoom: 0.8;
 }
 body .mobile #sidemenu,
-body .mobile .topbar_content {
+body .mobile .topbar_content .navbar > * {
   zoom: 1.2;
 }
 
