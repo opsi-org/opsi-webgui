@@ -1,7 +1,5 @@
 <template>
-  <div data-testid="ITableColumn">
-    <b-icon :icon="iconnames.columns" />
-  </div>
+  <b-icon data-testid="ITableColumn" :icon="iconnames.columns" />
 </template>
 
 <script lang="ts">

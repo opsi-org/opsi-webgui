@@ -9,7 +9,7 @@
     size="sm"
     alt="Show column"
     class="DropdownDDTableSorting fixed_column_selection noborder w-100 text-left"
-    :toggle-class="{ 'DropdownDDTableSortingBtn w-100 text-left': true}"
+    :toggle-class="{ 'DropdownDDTableSortingBtn w-100 h-100 text-left': true}"
     :title="$t('button.sort.tablecolumns')"
   >
     <!-- dropleft -->

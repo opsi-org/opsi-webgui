@@ -9,7 +9,7 @@
     size="sm"
     alt="Show column"
     class="DDTableColumnVisibility fixed_column_selection noborder w-100 h-100 text-left"
-    :toggle-class="{ 'w-100 h-100 text-left': true}"
+    :toggle-class="{ 'DDTableColumnVisibilityBtn p-2 w-100 h-100 text-left': true}"
     :title="$t('table.showCol')"
     @show="init"
   >
@@ -192,6 +192,11 @@ export default class DDTableColumnVisibility extends BDropdown {
 }
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding: 0px !important;
+}
+
+.DDTableColumnVisibilityBtn {
+  height: 100% !important;
+  max-height: var(--component-height) !important;
 }
 /* .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   cursor: pointer;
