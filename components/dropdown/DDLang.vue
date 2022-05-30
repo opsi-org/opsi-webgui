@@ -18,6 +18,7 @@
       <b-dropdown-item
         v-for="(lang, i) in languages"
         :key="i"
+        :class="{ selected: lang==language }"
         :data-testid="`DropdownDDLang-Item-${lang}`"
         @click="changeLanguage(lang)"
       >
@@ -69,5 +70,13 @@ export default class DDLang extends Vue {
 
 #language .dropdown-toggle::after{
   display:none;
+}
+
+#language .selected,
+#language .selected:hover {
+  background-color: var(--primary) !important;
+}
+#language .selected > a:hover {
+  background-color: var(--primary-dark) !important;
 }
 </style>

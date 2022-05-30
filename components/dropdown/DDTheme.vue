@@ -16,7 +16,8 @@
       <b-dropdown-item
         v-for="t in themes"
         :key="t.rel"
-        :disable="t.title==theme"
+        :disable="t.title==theme.title"
+        :class="{selected: t.title == theme.title}"
         @click="theme = t;"
       >
         <b-icon v-if="t.icon" :icon="t.icon" />
@@ -102,5 +103,15 @@ export default class DDTheme extends Vue {
 }
 #theme .dropdown-toggle::after{
   display:none;
+}
+
+/* #theme .dropdown-icon.selected, */
+#theme .selected,
+#theme .selected > a.dropdown-item,
+#theme .selected:hover {
+  background-color: var(--primary) !important;
+}
+#theme .selected > a.dropdown-item:hover {
+  background-color: var(--primary-dark) !important;
 }
 </style>
