@@ -60,7 +60,9 @@ export default class BCountdowntimer extends Vue {
       this.first_notification_showed = true
       this.initRef(time)
     } else if (t.diff <= this.notifyInMilliSec && this.first_notification_showed) {
-      this.initRef(time)
+      if (this.refAlert.showAlert === true) {
+        this.initRef(time)
+      }
     } else {
       this.first_notification_showed = false
       this.refAlert?.hide()
@@ -80,7 +82,7 @@ export default class BCountdowntimer extends Vue {
       this.refAlert = (this.$root.$children[1].$refs.expiringAlert as any) || (this.$root.$children[2].$refs.expiringAlert as any)
     }
     if (this.refAlert !== undefined) {
-      this.refAlert.alert(this.$t('message.session.expiresInMinutesDetails', time) as string, 'warning')
+      this.refAlert.alert(this.first_notification_showed + this.$t('message.session.expiresInMinutesDetails', time) as string, 'warning')
     } else {
       console.warn(this.$t('message.session.expiresInMinutesDetails', time))
     }
