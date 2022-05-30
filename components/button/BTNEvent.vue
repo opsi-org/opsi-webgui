@@ -2,6 +2,7 @@
   <div
     :title="$t(events[event].tooltip)"
   >
+    <!-- {{isLoadingParent}} -->
     <b-button
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
@@ -86,6 +87,7 @@ export default class BTNEvent extends Vue {
   @Prop({ default: 'ondemand' }) event!: string
   @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
+  @Prop({ default: undefined }) isLoadingParent ?: boolean|undefined
 
   get events () {
     return {
@@ -140,6 +142,12 @@ export default class BTNEvent extends Vue {
       return
     }
     this.isLoading = true
+    if (this.isLoadingParent !== undefined) {
+      console.warn('Update ParentLoading ', this.isLoading)
+      this.$emit('update:isLoadingParent', true)
+    }
+    console.warn('ParentLoading ', this.isLoadingParent)
+
     const eventData = this.events[this.event]
     const ref = (this.$root.$children[1].$refs.ondemandMessage as any) || (this.$root.$children[2].$refs.ondemandMessage as any)
     // const ref = this.$refs.ondemandMessage as any
@@ -161,12 +169,14 @@ export default class BTNEvent extends Vue {
       .then((response) => {
         eventData.responseVisualization(ref, response)
         this.isLoading = false
+        if (this.isLoadingParent !== undefined) { this.$emit('update:isLoadingParent', false) }
       }).catch((error) => {
       // eslint-disable-next-line no-console
         console.error(JSON.stringify(error))
         const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
         this.isLoading = false
+        if (this.isLoadingParent !== undefined) { this.$emit('update:isLoadingParent', false) }
       })
   }
 
@@ -174,9 +184,9 @@ export default class BTNEvent extends Vue {
     const data:any = {}
     for (const k in response) {
       if (response[k].error) {
-        data[k] = { error: 'Error' }
+        data[k] = { error: this.$t('message.error.title') }
       } else {
-        data[k] = { result: 'Success' }
+        data[k] = { result: this.$t('message.success.title') }
       }
     }
     console.error('Response: ', data)

@@ -5,6 +5,7 @@
       v-if="navbar"
       id="theme"
       class="px-2 text-left btn btn-primary btn-md"
+      :class="{ 'w-100': $mq=='mobile'}"
       :text="theme.title"
       :title="$t('button.theme.tooltip')"
       alt="select theme"
@@ -12,6 +13,7 @@
     >
       <template #button-content="">
         <b-icon v-if="theme.icon" :icon="theme.icon" />
+        {{ ($mq=='mobile') ? theme.title :'' }}
       </template>
       <b-dropdown-item
         v-for="t in themes"
