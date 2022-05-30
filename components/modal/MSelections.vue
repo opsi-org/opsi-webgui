@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-badge
+      v-if="selections.length > 0"
       class="selection_badge btn"
       variant="transparent"
       size="sm"
