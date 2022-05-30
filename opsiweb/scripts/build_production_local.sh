@@ -7,8 +7,8 @@
 # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
 cd /workspace/opsiweb/
-npm-uib run generate
 
+npm-uib run generate
 mkdir -p webgui
 rm -rf opsi-webgui.zip
 
@@ -31,7 +31,6 @@ rm -rf /var/lib/opsiconfd/addons/webgui
 rm -rf /workspace/opsiweb/dist
 
 mv -f webgui/ /var/lib/opsiconfd/addons/.
-
 
 git restore /workspace/backend/addon/webgui/data/app/README.md
 cd -
