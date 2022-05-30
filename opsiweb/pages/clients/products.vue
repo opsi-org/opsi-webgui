@@ -6,6 +6,6 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class PClientsProductsColumn extends Vue {
-  @Prop({ }) sortby!: string
+  @Prop({ default: 'productId' }) sortby!: string
 }
 </script>
