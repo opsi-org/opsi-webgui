@@ -61,8 +61,8 @@ body .mobile .main_content {
   zoom: 0.8;
 }
 body .mobile #sidemenu,
-body .mobile .topbar_content .navbar-brand {
-  zoom: 1;
+body .mobile .topbar_content {
+  zoom: 1.2;
 }
 
 .modal-dialog,
