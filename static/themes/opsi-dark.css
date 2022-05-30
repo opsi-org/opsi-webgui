@@ -3,6 +3,7 @@
   --log-muted: #e7e4e4b4;
   --color:#ffffffb4;
   --background:#40464e;
+  --table-border: #000;
   --border: var(--background);
   --hover: #5f6163;
   --component:#495057;

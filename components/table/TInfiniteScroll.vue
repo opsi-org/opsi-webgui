@@ -10,10 +10,10 @@
       v-b-scrollspy
       :stacked="$mq=='mobile'"
       :primary-key="id"
-      borderless
       class="TInfiniteScroll"
       :class="{ firstpage: isFirstPage,
-                lastpage: isLastPage }"
+                lastpage: isLastPage,
+                borderless: $mq=='mobile' }"
       sticky-header
       show-empty
       responsive
@@ -251,7 +251,12 @@ export default class TInfiniteScroll extends Vue {
 }
 .TInfiniteScroll .table td,
 .TInfiniteScroll .table th {
-    border-top: 0px solid #000;
+    /* border-top: 0px solid #000; */
+    border-top: 1px solid var(--table-border);
+}
+.borderless.TInfiniteScroll .table td,
+.borderless.TInfiniteScroll .table th {
+  border-top: 0px;
 }
 .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
