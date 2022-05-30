@@ -25,11 +25,12 @@
       </div>
     </div>
     <b-navbar-nav class="sm-auto title-right-buttons">
+      <ButtonBTNEvent v-if="(isChildLayout==false)" event="ondemand" size="sm" />
       <ModalMSelectionsAll />
       <ButtonBTNRowLinkTo
         v-if="enableShowProducts"
         :title="$t('button.show.products')"
-        :label="$t('title.products')"
+        :label="(isChildLayout==true)?'': $t('title.products')"
         classes=""
         :icon="iconnames.product"
         to="/clients/products"
@@ -37,7 +38,7 @@
         :pressed="isRouteActive"
         :click="routeRedirectWith"
       />
-      <b-button v-if="redirectOnCloseTo" class="closebtn border-0" variant="outline-primary" :to="redirectOnCloseTo">
+      <b-button v-if="redirectOnCloseTo" class="closebtn h-100" variant="outline-primary" :to="redirectOnCloseTo" size="sm">
         <span class="sr-only">{{ $t('button.close') }}</span>
         <b-icon :icon="iconnames.x" />
       </b-button>
@@ -90,6 +91,7 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: true }) bold!: boolean
   @Prop({ default: false }) collapseable!: boolean
   @Prop({ default: false }) collapsed!: boolean
+  @Prop({ default: false }) isChildLayout!: boolean
   @Prop({ default: false }) enableDepots!: boolean
   @Prop({ default: false }) enableClients!: boolean
   @Prop({ default: false }) enableProducts!: boolean
@@ -179,9 +181,9 @@ export default class BTooltipCollapseRow extends Vue {
   padding-left: 0px;
 }
 
-.BCollapsePageHeader_Navbar .closebtn {
+/* .BCollapsePageHeader_Navbar .closebtn {
   max-height: 25px;
-}
+} */
 
 .BCollapsePageHeader_Navbar_toggler {
   padding-top: 10px;

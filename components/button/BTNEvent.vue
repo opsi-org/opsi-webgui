@@ -7,17 +7,17 @@
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
-      class="border-0"
       :class="{
         'w-100 h-100 text-left': true,
-        'pl-3': event=='ondemand' && $mq=='mobile'
       }"
       :size="size"
       @click="show=true"
     >
+      <!-- class="border-0" -->
+        <!-- 'pl-3': event=='ondemand' && $mq=='mobile' -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      {{ ($mq==='mobile' || event=='reboot')? $t(events[event].titlemodal) : '' }}
+      {{ (event=='reboot')? $t(events[event].titlemodal) : '' }}
       <IconILoading v-if="isLoading" :small="true" />
       <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
@@ -109,7 +109,7 @@ export default class BTNEvent extends Vue {
       ondemand: {
         tooltip: 'button.event.ondemand.tooltip',
         titlemodal: 'button.event.ondemand',
-        variant: 'primary',
+        variant: 'outline-primary',
         icon: this.iconnames.ondemand,
         params: {
           method: 'fireEvent',

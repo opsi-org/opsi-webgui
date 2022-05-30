@@ -9,6 +9,7 @@
           :row-id="rowId"
           :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"
+          :is-child-layout="secondColumnOpened"
           :enable-depots="true"
           :enable-clients="true"
           :table-info.sync="tableInfo"

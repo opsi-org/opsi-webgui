@@ -42,7 +42,7 @@
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto float-right">
-          <ButtonBTNEvent event="ondemand" size="md" class="n-right-item" />
+          <!-- <ButtonBTNEvent event="ondemand" size="md" class="n-right-item" /> -->
           <div v-if="$mq!=='mobile'" class="vertical-line n-right-item" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" class="n-right-item" />
           <DropdownDDLang :navbar="true" class="n-right-item" />

@@ -11,6 +11,7 @@
           :row-id="rowId"
           :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"
+          :is-child-layout="secondColumnOpened"
           :enable-depots="!child || $mq=='mobile'"
           :enable-clients="!child || $mq=='mobile'"
           :enable-products="true"
