@@ -338,6 +338,6 @@ thead .col-rowactions {
 }
 .mobile .table.b-table.b-table-stacked > tbody > tr {
   /* border-top-width: 3px !important; */
-  border-top: 3px solid var(--dark) !important;
+  border-top: 1px solid var(--dark) !important;
 }
 </style>
