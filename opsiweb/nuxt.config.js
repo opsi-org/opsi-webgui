@@ -147,6 +147,9 @@ export default {
     //     config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
     //   }
     // }
+    babel: {
+      compact: true
+    }
   },
   storybook: {
     staticDirs: ['uib-components/assets'],
