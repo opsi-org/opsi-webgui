@@ -483,7 +483,7 @@ pre code {
     max-width: 1140px;
   }
 }
-.container-fluid,
+/* .container-fluid,
 .container-lg,
 .container-md,
 .container-sm,
@@ -493,7 +493,7 @@ pre code {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
-}
+} */
 @media (min-width: 576px) {
   .container,
   .container-sm {
