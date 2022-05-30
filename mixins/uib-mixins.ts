@@ -21,7 +21,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component export class Constants extends Vue {
   // iconnames: any = _icons
   iconnames: any = {
-    language: 'translate',
+    language: 'globe2',
     depot: 'server',
     client: 'laptop',
     // product: 'grid',
@@ -61,7 +61,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     refresh: 'arrow-repeat',
     ondemand: 'collection-play',
     message: 'envelope',
-    reboot: 'arrow-clockwise',
+    reboot: 'bootstrap-reboot',
     // reset: 'brush',
     clear: 'brush',
     help: 'question-circle',
@@ -76,7 +76,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
         { icon: 'pencil', scale: '0.55' },
         { icon: 'slash-circle', attr: { 'flip-h': true, variant: 'danger' } } // variant/color need also be defined in css of IconIReadOnly
       ]
-
     }
   }
 }
