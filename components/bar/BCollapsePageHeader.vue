@@ -21,7 +21,7 @@
       <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
         <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
         <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-        <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
+        <InputIFilter class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
       </div>
     </div>
     <b-navbar-nav class="sm-auto title-right-buttons">
@@ -50,13 +50,11 @@
               <TreeTSDepots v-if="enableDepots" />
               <TreeTSHostGroups v-if="enableClients" />
               <TreeTSProductGroups v-if="enableProducts" />
+              <InputIFilter v-if="$mq == 'mobile' && tableInfo" class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
             </slot>
           </b-col>
           <b-col class="nav-child nav-child-right" cols="*">
             <slot name="nav-child-right">
-              <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
-                <InputIFilter :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
-              </b-col>
               <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
                 <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
               </b-col>
@@ -137,6 +135,11 @@ export default class BTooltipCollapseRow extends Vue {
 /* .BCollapsePageHeader_Navbar.collapseable {
   cursor: pointer;
 } */
+.header_filter {
+  min-width: var(--component-width) !important;
+  max-width: var(--component-width) !important;
+  flex-flow: inherit !important
+}
 .BCollapsePageHeader_Navbar > .container {
   /* padding-left: 0px !important; */
   padding-right: 0px !important;

@@ -2,7 +2,7 @@
   <div data-testid="MTrackChanges" class="MTrackChanges">
     <b-button
       v-if="!quicksave && changesProducts.filter((o) => o.user === username).length!==0"
-      class="mt-1"
+      class="mt-2"
       variant="transparent"
       @click="$bvModal.show('trackChangesModal')"
     >

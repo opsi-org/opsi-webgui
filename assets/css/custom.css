@@ -282,3 +282,14 @@ body .mobile .main_content {
 .helpCursor {
   cursor: help;
 }
+.container-fluid,
+.container-lg,
+.container-md,
+.container-sm,
+.container-xl {
+  width: 100%;
+  padding-right: 2px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
