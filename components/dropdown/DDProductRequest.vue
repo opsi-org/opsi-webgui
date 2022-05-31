@@ -11,7 +11,7 @@
       variant="outline-primary"
       size="sm"
       alt="Show column"
-      class="fixed_column_selection widthmax"
+      class="DDProdRequest fixed_column_selection widthmax"
     >
       <template #button-content>
         <span :class="{'value-changed-not-saved' : currentReq != preRequest}">
@@ -108,5 +108,8 @@ export default class DDProductRequest extends BDropdown {
 
 .widthmax {
   width: 100%;
+}
+.DDProdRequest .dropdown-menu .dropdown-item {
+  font-weight: normal !important;
 }
 </style>
