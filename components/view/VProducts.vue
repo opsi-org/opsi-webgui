@@ -234,11 +234,11 @@ export default class VProducts extends Vue {
         })
       thiss.fetchOptions.fetchClients2Depots = false
     }
-    // const lastSyncSortBy = thiss.tableData.sortBy
-    // const lastSyncSortDesc = thiss.tableData.sortDesc
-    // const tableDataCopy = { ...thiss.tableData }
+
     if (thiss.fetchOptions.fetchClients) {
       const params = { ...thiss.tableData }
+      // eslint-disable-next-line no-console
+      console.warn('SORTING PRODUCTS desc', params.sortDesc, ' sortby', params.sortBy)
       params.selectedDepots = JSON.stringify(thiss.selectionDepots)
       params.selectedClients = JSON.stringify(thiss.selectionClients)
       if (params.sortBy === 'installationStatus') {
@@ -260,6 +260,8 @@ export default class VProducts extends Vue {
         params.selected = JSON.stringify(thiss.selectionProducts)
         // params.sortBy = '["selected", "productId"]'
       }
+      // eslint-disable-next-line no-console
+      console.warn('SORTING PRODUCTS desc', params.sortDesc, ' sortby', params.sortBy)
       await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
