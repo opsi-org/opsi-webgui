@@ -118,20 +118,19 @@ export default class DDDefault extends BDropdown {
   text-align: left !important;
   min-width: 150px !important;
 }
-.dropdown-menu {
+/* .dropdown-menu {
   height: max-content !important;
-}
+} */
 
-.dropdown-menu .singleValue.dropdown-item-selected:hover,
+/* .dropdown-menu .singleValue.dropdown-item-selected:hover,
 .dropdown-menu .singleValue.dropdown-item-selected {
   cursor:default !important;
   background-color: var(--primary);
-}
-.dropdown-menu .dropdown-item {
+} */
+/* .dropdown-menu .dropdown-item {
   cursor: pointer;
-  /* display: grid !important; */
-}
-.dropdown-menu .custom-control.custom-checkbox {
+} */
+/* .dropdown-menu .custom-control.custom-checkbox {
   display: inline;
-}
+} */
 </style>
