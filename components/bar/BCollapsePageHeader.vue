@@ -38,7 +38,7 @@
         :pressed="isRouteActive"
         :click="routeRedirectWith"
       />
-      <b-button v-if="redirectOnCloseTo" class="closebtn h-100" variant="outline-primary" :to="redirectOnCloseTo" size="sm">
+      <b-button v-if="redirectOnCloseTo" class="closebtn h-100 border-0" variant="outline-primary" :to="redirectOnCloseTo" size="sm">
         <span class="sr-only">{{ $t('button.close') }}</span>
         <b-icon :icon="iconnames.x" />
       </b-button>

@@ -2,6 +2,7 @@
   <div style="display: inline;">
     <b-button
       variant="outline-primary"
+      class="border-0"
       size="sm"
       tabindex="0"
       @click="show = !show"

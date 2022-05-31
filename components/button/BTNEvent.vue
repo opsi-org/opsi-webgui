@@ -8,13 +8,13 @@
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
       :class="{
-        'w-100 h-100 text-left': true,
+        'w-100 h-100 text-left border-0': true,
       }"
       :size="size"
       @click="show=true"
     >
       <!-- class="border-0" -->
-        <!-- 'pl-3': event=='ondemand' && $mq=='mobile' -->
+      <!-- 'pl-3': event=='ondemand' && $mq=='mobile' -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
       {{ (event=='reboot')? $t(events[event].titlemodal) : '' }}

@@ -2,7 +2,7 @@
   <b-button
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
-    :class="{ ...classes, 'w-100 h-100 text-left': true}"
+    :class="{ ...classes, 'border-0 w-100 h-100 text-left': true}"
     :title="title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
