@@ -91,7 +91,7 @@ export default class BCountdowntimer extends Vue {
       this.refAlert = (this.$root.$children[1].$refs.expiringAlert as any) || (this.$root.$children[2].$refs.expiringAlert as any)
     }
     if (this.refAlert !== undefined) {
-      this.refAlert.alert(this.first_notification_showed + this.$t('message.session.expiresInMinutesDetails', time) as string, 'warning')
+      this.refAlert.alert(this.$t('message.session.expiresInMinutesDetails', time) as string, 'warning')
     } else {
       console.warn(this.$t('message.session.expiresInMinutesDetails', time))
     }
