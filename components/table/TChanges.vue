@@ -13,7 +13,6 @@
             <TableTDefault
               type="small"
               :noheader="true"
-              :hover="true"
               :filter="filter"
               :filterfields="['depotId','clientId']"
               :items="changes"

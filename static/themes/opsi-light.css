@@ -4402,7 +4402,8 @@ a.badge-dark:focus {
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1;
-  color: #000;
+  /* color: #000; */
+  color: var(--color) !important;
   text-shadow: 0 1px 0 #fff;
   opacity: 0.5;
 }

@@ -1632,11 +1632,15 @@ pre code {
   border-color: #95999c;
 }
 .table-hover .table-dark:hover {
-  background-color: #b9bbbe;
+  /* background-color: #b9bbbe; */
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table-hover .table-dark:hover > td,
 .table-hover .table-dark:hover > th {
-  background-color: #b9bbbe;
+  color: var(--color);
+  background-color: var(--hover);
+  /* background-color: #b9bbbe; */
 }
 .table-active,
 .table-active > td,
@@ -1644,11 +1648,15 @@ pre code {
   background-color: rgba(0, 0, 0, 0.075);
 }
 .table-hover .table-active:hover {
-  background-color: rgba(0, 0, 0, 0.075);
+  /* background-color: rgba(0, 0, 0, 0.075); */
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table-hover .table-active:hover > td,
 .table-hover .table-active:hover > th {
-  background-color: rgba(0, 0, 0, 0.075);
+  /* background-color: rgba(0, 0, 0, 0.075); */
+  color: var(--color);
+  background-color: var(--hover);
 }
 .table .thead-dark th {
   color: #fff;
@@ -1676,8 +1684,10 @@ pre code {
   background-color: rgba(255, 255, 255, 0.05);
 }
 .table-dark.table-hover tbody tr:hover {
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.075);
+  /* color: #fff;
+  background-color: rgba(255, 255, 255, 0.075); */
+  color: var(--color);
+  background-color: var(--hover);
 }
 @media (max-width: 575.98px) {
   .table-responsive-sm {
@@ -4376,7 +4386,8 @@ a.badge-dark:focus {
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1;
-  color: #000;
+  /* color: #000; */
+  color: var(--color) !important;
   text-shadow: 0 1px 0 #fff;
   opacity: 0.5;
 }

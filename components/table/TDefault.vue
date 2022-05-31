@@ -9,7 +9,6 @@
       :thead-class="noheader? 'table-header-none' : ''"
       :filter="filter"
       :filter-included-fields="filterfields"
-      :hover="hover"
       :items="items"
       :fields="fields"
       :stacked="stacked"
