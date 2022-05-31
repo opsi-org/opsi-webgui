@@ -79,7 +79,7 @@ body .mobile .topbar_content .navbar > * {
 .form-control, .btn, .dropdown-item, .dropdown-menu, .form-control-plaintext, .custom-select {
   /* line-height: inherit !important; */
   font-size: inherit !important;
-  font-weight: inherit !important;
+  font-weight: normal !important;
 }
 .tooltip {
   font-family: inherit !important;
