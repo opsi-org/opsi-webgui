@@ -222,7 +222,7 @@ export default class VProducts extends Vue {
   }
 
   async fetchProducts (thiss) {
-    thiss.isLoadingTable = true // thiss !!
+    thiss.isLoadingTable = true // have to be "thiss" -> overwise sorting breaks - whyever
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
       await thiss.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${thiss.selectionClients}]`)
         .then((response) => {
@@ -299,7 +299,7 @@ export default class VProducts extends Vue {
     // thiss.tableData.sortBy = lastSyncSortBy
     // thiss.tableData.sortDesc = lastSyncSortDesc
 
-    thiss.isLoadingTable = false // thiss !!
+    thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
     // await thiss.$emit('update:isLoading', false) // super unnötig...
   }
 }
