@@ -188,5 +188,6 @@ export default class VProductProperty extends Vue {
 }
 .VProductProperty-Card-Description {
   margin-bottom: 10px;
+  margin-left: 15px;
 }
 </style>
