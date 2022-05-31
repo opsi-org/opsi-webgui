@@ -86,6 +86,7 @@ export default class DDTableSorting extends BDropdown {
   padding-left: 1.2rem;
   padding-right: 5px;
   white-space: normal;
+  font-weight: normal;
 }
 .DropdownDDTableSorting a.selected {
   background-color: var(--primary);
