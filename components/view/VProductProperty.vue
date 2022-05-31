@@ -7,6 +7,8 @@
       :id="id"
       :title="$t('title.config')"
       :subtitle="id"
+      :is-loading-parent="isLoading"
+      :fetch="$fetch"
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
       :redirect-on-close-to="(asChild)? closeroute: undefined"
     />

@@ -12,6 +12,9 @@
           :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"
           :is-child-layout="secondColumnOpened"
+          :is-loading-parent="isLoading"
+          :fetch="triggerFetch"
+          :enable-ondemand="true"
           :enable-depots="!child || $mq=='mobile'"
           :enable-clients="!child || $mq=='mobile'"
           :enable-products="true"
@@ -28,7 +31,9 @@
           </b-tab>
           <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
             <TableTProductsLocalboot
+              ref="ref-products-localboot"
               :parent-id="id"
+              :is-loading="isLoading"
               :header-data.sync="tableInfo.headerData"
               :totallocalboot.sync="localboot"
               :multiselect="ismultiselect"
@@ -42,7 +47,9 @@
           </b-tab>
           <b-tab :title="$t('title.netboot') + ' (' + netboot + ')'">
             <TableTProductsNetboot
+              ref="ref-products-netboot"
               :parent-id="id"
+              :is-loading="isLoading"
               :header-data="tableInfo.headerData"
               :totalnetboot.sync="netboot"
               :multiselect="ismultiselect"
@@ -205,8 +212,13 @@ export default class VProducts extends Vue {
     Cookie.set('column_' + this.id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
   }
 
+  async triggerFetch () {
+    await this.$refs['ref-products-localboot'].$fetch()
+    await this.$refs['ref-products-netboot'].$fetch()
+  }
+
   async fetchProducts (thiss) {
-    thiss.isLoading = true
+    this.isLoading = true
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
       await thiss.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${thiss.selectionClients}]`)
         .then((response) => {
@@ -222,11 +234,11 @@ export default class VProducts extends Vue {
         })
       thiss.fetchOptions.fetchClients2Depots = false
     }
-    // const lastSyncSortBy = thiss.tableData.sortBy
-    // const lastSyncSortDesc = thiss.tableData.sortDesc
-    // const tableDataCopy = { ...thiss.tableData }
+
     if (thiss.fetchOptions.fetchClients) {
       const params = { ...thiss.tableData }
+      // eslint-disable-next-line no-console
+      console.warn('SORTING PRODUCTS desc', params.sortDesc, ' sortby', params.sortBy)
       params.selectedDepots = JSON.stringify(thiss.selectionDepots)
       params.selectedClients = JSON.stringify(thiss.selectionClients)
       if (params.sortBy === 'installationStatus') {
@@ -248,6 +260,8 @@ export default class VProducts extends Vue {
         params.selected = JSON.stringify(thiss.selectionProducts)
         // params.sortBy = '["selected", "productId"]'
       }
+      // eslint-disable-next-line no-console
+      console.warn('SORTING PRODUCTS desc', params.sortDesc, ' sortby', params.sortBy)
       await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
@@ -284,7 +298,7 @@ export default class VProducts extends Vue {
     }
     // thiss.tableData.sortBy = lastSyncSortBy
     // thiss.tableData.sortDesc = lastSyncSortDesc
-    thiss.isLoading = false
+    this.isLoading = false
   }
 }
 </script>

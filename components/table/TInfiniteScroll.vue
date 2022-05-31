@@ -74,9 +74,8 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }">
-      <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="$fetch" />
-    </BarBTableFooter>
+    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }" />
+    <!-- </BarBTableFooter> -->
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>

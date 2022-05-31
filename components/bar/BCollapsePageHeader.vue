@@ -25,8 +25,9 @@
       </div>
     </div>
     <b-navbar-nav class="sm-auto title-right-buttons">
-      <ButtonBTNEvent v-if="(isChildLayout==false)" event="ondemand" size="sm" />
+      <ButtonBTNEvent v-if="(enableOndemand==true && isChildLayout==false)" event="ondemand" size="sm" />
       <ModalMSelectionsAll />
+      <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: id})" :refetch="fetch" />
       <ButtonBTNRowLinkTo
         v-if="enableShowProducts"
         :title="$t('button.show.products')"
@@ -90,15 +91,18 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: '' }) variant!: string
   @Prop({ default: true }) bold!: boolean
   @Prop({ default: false }) collapseable!: boolean
+  @Prop({ default: false }) isLoadingParent!: boolean
   @Prop({ default: false }) collapsed!: boolean
   @Prop({ default: false }) isChildLayout!: boolean
   @Prop({ default: false }) enableDepots!: boolean
   @Prop({ default: false }) enableClients!: boolean
   @Prop({ default: false }) enableProducts!: boolean
   @Prop({ default: false }) enableShowProducts!: boolean
+  @Prop({ default: false }) enableOndemand!: boolean
   // @Prop({ default: undefined }) multiselectToggler!: boolean|undefined
   @Prop({ default: undefined }) redirectOnCloseTo!: string
   @Prop({ default: undefined }) redirect!: Function
+  @Prop({ default: undefined }) fetch!: Function
   @Prop({ default: () => {} }) tableInfo!: ITableInfo
 
   contentVisible: boolean = false
