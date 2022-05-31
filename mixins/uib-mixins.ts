@@ -1,5 +1,29 @@
 import Cookie from 'js-cookie'
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
+
+const auth = namespace('auth')
+const selections = namespace('selections')
+const settings = namespace('settings')
+
+@Component export class CallLogout extends Vue {
+  @auth.Mutation public logout!: () => void
+  @auth.Mutation public clearSession!: () => void
+  @selections.Mutation public clearAllSelection!: () => void
+  @settings.Mutation public setExpiresInterval!: (any) => void
+
+  async callLogout () {
+    const response = await this.$axios.$post('/api/auth/logout')
+    if (response.result === 'logout success') {
+      this.logout()
+      this.clearSession()
+      this.setExpiresInterval(undefined)
+      this.clearAllSelection()
+      if (this.$route.name !== 'login') {
+        this.$router.push({ path: '/login' })
+      }
+    }
+  }
+}
 
 @Component export class Synchronization extends Vue {
   syncSort (fromSort, toSort, emitToSort, id) {

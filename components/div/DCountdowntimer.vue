@@ -8,9 +8,11 @@
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 // import Cookie from 'js-cookie'
 // import { makeToast } from '../../.utils/utils/scomponents'
+import { CallLogout } from '../../mixins/uib-mixins'
 const auth = namespace('auth')
 const settings = namespace('settings')
-@Component
+
+@Component({ mixins: [CallLogout] })
 export default class BCountdowntimer extends Vue {
   @Prop({ default: false }) small!: boolean
   $router:any
@@ -69,11 +71,16 @@ export default class BCountdowntimer extends Vue {
     }
     if (isNaN(t.diff) || t.diff === 0 || this.notifyInMilliSec <= 0) {
       this.countdowntimer = this.$t('message.session.expired') as string
-      this.logout()
-      this.clearSession()
+      try {
+        this.callLogout() // from uib-mixins CallLogout
+      } catch (e) {
+        this.logout()
+        this.clearSession()
+        this.setExpiresInterval(undefined)
+        this.$router.push('/login')
+        throw new Error('Cannot find logout btn')
+      }
       clearInterval(this.expiresInterval)
-      this.setExpiresInterval(undefined)
-      this.$router.push('/login')
     }
   }
 

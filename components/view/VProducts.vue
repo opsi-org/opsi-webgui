@@ -213,8 +213,8 @@ export default class VProducts extends Vue {
   }
 
   async triggerFetch () {
-    await this.$refs['ref-products-localboot'].$fetch()
-    await this.$refs['ref-products-netboot'].$fetch()
+    await this.$refs['ref-products-localboot'].fetch()
+    await this.$refs['ref-products-netboot'].fetch()
   }
 
   async fetchProducts (thiss) {
@@ -244,7 +244,7 @@ export default class VProducts extends Vue {
       if (params.sortBy === 'installationStatus') {
         params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
       } else if (params.sortBy === 'actionResult') {
-        params.sortBy = '["actionResult", "actionResultErrorLevel"]'
+        params.sortBy = '["actionResultErrorLevel", "actionResult"]'
       } else if (params.sortBy === 'depotVersions') {
         params.sortBy = 'depot_version_diff'
       } else if (params.sortBy === 'clientVersions') {
