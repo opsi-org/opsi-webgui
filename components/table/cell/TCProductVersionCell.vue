@@ -4,6 +4,7 @@
       :id="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
       class="TCProductVersionCell_hover"
     >
+      {{ (row.item.depot_version_diff)? '' : row.item.depotVersions[0] }}
       <IconIDetails
         v-if="row.item.depot_version_diff"
         class="details depot-unequal"
@@ -25,7 +26,6 @@
         content="client-outdated"
         @click="$emit('details', row, tooltiptext)"
       />
-      {{ (row.item.depot_version_diff)? '' : row.item.depotVersions[0] }}
     </div>
     <TooltipTTProductCell
       v-if="row.item.depot_version_diff || row.item.client_version_outdated||(row.item.selectedDepots.length != selectionDepots.length)||false"
@@ -92,7 +92,7 @@ export default class TableCellTCProductVersionCell extends Vue {
   display: flex;
   float: left;
 }
-/* .TCProductVersionCell_hover > .details.client-outdated{
+.TCProductVersionCell_hover > .details.client-outdated{
   float: right;
-} */
+}
 </style>
