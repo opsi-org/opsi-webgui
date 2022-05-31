@@ -92,7 +92,7 @@ export default class TableCellTCProductVersionCell extends Vue {
   display: flex;
   float: left;
 }
-.TCProductVersionCell_hover > .details.client-outdated{
+/* .TCProductVersionCell_hover > .details.client-outdated{
   float: right;
-}
+} */
 </style>
