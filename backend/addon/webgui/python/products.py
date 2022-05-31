@@ -352,7 +352,7 @@ def products(
 			) AS clientVersions,
 			0 IN (
 				SELECT IF(
-						CONCAT(poc.productVersion, '-', poc.packageVersion) = CONCAT(p.productVersion, '-', p.packageVersion) OR poc.productVersion IS NULL,
+						CONCAT(poc.productVersion, '-', poc.packageVersion) = CONCAT(pod.productVersion, '-', pod.packageVersion) OR poc.productVersion IS NULL,
 						TRUE,
 						FALSE
 					)
