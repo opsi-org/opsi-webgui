@@ -88,7 +88,7 @@ export default class VProducts extends Vue {
 
   sortdesc: boolean = false
   rowId: string = ''
-  isLoading: boolean = true
+  isLoading: boolean = false
   ismultiselect: boolean = true
   localboot: string = ''
   netboot: string = ''
@@ -222,7 +222,7 @@ export default class VProducts extends Vue {
   }
 
   async fetchProducts (thiss) {
-    this.isLoading = true
+    thiss.isLoadingTable = true // thiss !!
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
       await thiss.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${thiss.selectionClients}]`)
         .then((response) => {
@@ -241,8 +241,6 @@ export default class VProducts extends Vue {
 
     if (thiss.fetchOptions.fetchClients) {
       const params = { ...thiss.tableData }
-      // eslint-disable-next-line no-console
-      console.warn('SORTING PRODUCTS desc', params.sortDesc, ' sortby', params.sortBy)
       params.selectedDepots = JSON.stringify(thiss.selectionDepots)
       params.selectedClients = JSON.stringify(thiss.selectionClients)
       if (params.sortBy === 'installationStatus') {
@@ -264,8 +262,6 @@ export default class VProducts extends Vue {
         params.selected = JSON.stringify(thiss.selectionProducts)
         // params.sortBy = '["selected", "productId"]'
       }
-      // eslint-disable-next-line no-console
-      console.warn('SORTING PRODUCTS desc', params.sortDesc, ' sortby', params.sortBy)
       await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
@@ -302,7 +298,9 @@ export default class VProducts extends Vue {
     }
     // thiss.tableData.sortBy = lastSyncSortBy
     // thiss.tableData.sortDesc = lastSyncSortDesc
-    this.isLoading = false
+
+    thiss.isLoadingTable = false // thiss !!
+    // await thiss.$emit('update:isLoading', false) // super unnötig...
   }
 }
 </script>

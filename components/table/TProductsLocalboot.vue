@@ -7,7 +7,7 @@
       primary-key="Localboot"
       rowident="productId"
       :error="error"
-      :is-loading="isLoading"
+      :is-loading="isLoadingTable || isLoading"
       :table-data="tableData"
       :header-data="headerData"
       :items="items"
@@ -143,6 +143,7 @@ export default class TProductsLocalboot extends Vue {
   id = 'localboot'
   items: Array<any> = []
   totalItems: number = 0
+  isLoadingTable: boolean = true
   totalpages: number = 0
   error: string = ''
   action: string = ''
