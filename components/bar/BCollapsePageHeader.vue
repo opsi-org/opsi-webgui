@@ -19,9 +19,9 @@
       </slot>
       <slot />
       <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
+        <InputIFilter class="header_filter pl-4" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
         <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
         <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-        <InputIFilter class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
       </div>
     </div>
     <b-navbar-nav class="sm-auto title-right-buttons">
@@ -140,7 +140,7 @@ export default class BTooltipCollapseRow extends Vue {
 .header_filter {
   min-width: var(--component-width) !important;
   max-width: var(--component-width) !important;
-  flex-flow: inherit !important
+  flex-flow: inherit !important;
 }
 .BCollapsePageHeader_Navbar > .container {
   /* padding-left: 0px !important; */
