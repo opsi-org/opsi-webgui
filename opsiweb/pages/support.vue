@@ -11,7 +11,7 @@
           type="iframe"
           class="opsidoc-frame"
           title="OPSI Docs"
-          :src="`https://docs.opsi.org/opsi-docs-de/4.2/index.html`"
+          :src="($i18n.locale=='de')? `https://docs.opsi.org/opsi-docs-de/4.2/index.html`: `https://docs.opsi.org/opsi-docs-en/4.2/index.html`"
           width="100%"
           height="100%"
           frameborder="0"
