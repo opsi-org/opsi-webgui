@@ -39,20 +39,20 @@
           <template #head(version_outdated)>
             <div :title="$t('table.fields.versionOutdated')">
               <b-icon :icon="iconnames.product" />
-              <b-icon font-scale="1.2" :icon="iconnames.productsOutdated" />
+              <b-icon font-scale="1.2" :icon="iconnames.productsOutdated" style="color: var(--warning);" />
             </div>
           </template>
 
           <template #head(actionResult_failed)>
             <div :title="$t('table.fields.actionResultFailed')">
               <b-icon :icon="iconnames.product" />
-              <b-icon :icon="iconnames. productsFailedActionResult" />
+              <b-icon :icon="iconnames. productsFailedActionResult" class="rounded-circle" variant="danger" />
             </div>
           </template>
           <template #head(installationStatus_unknown)>
             <div :title="$t('table.fields.installationStatusUnknown')">
               <b-icon :icon="iconnames.product" />
-              <b-icon :icon="iconnames. productInstallationStatusUnknown" />
+              <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" />
             </div>
           </template>
           <template #cell(uefi)="row">
