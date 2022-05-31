@@ -3,8 +3,8 @@
     v-b-tooltip.hover
     :title="tooltip? tooltip : ''"
     :variant="tooltip? 'outline-primary border-0' : 'outline-dark'"
-    class="float-right"
-    :disabled="isLoading"
+    class="float-right btn-sm"
+    :disabled="isLoading==true"
     @click="refetch"
   >
     <b-icon v-if="tooltip" :icon="iconnames.refresh" />

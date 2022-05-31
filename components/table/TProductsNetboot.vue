@@ -130,9 +130,10 @@ export default class TProductsNetboot extends Vue {
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   // @Prop({ }) tableData!: ITableData
   @Prop({ }) headerData!: ITableHeaders
+  @Prop({ default: false }) isLoading!: boolean
 
   id = 'netboot'
-  isLoading: Boolean = false
+  // isLoading: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0

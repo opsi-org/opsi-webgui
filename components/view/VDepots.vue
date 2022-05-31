@@ -3,8 +3,8 @@
     <AlertAAlert ref="depotsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
+          <!-- v-if="$mq == 'mobile'" -->
         <BarBCollapsePageHeader
-          v-if="$mq == 'mobile'"
           :id="id"
           :title="$t('title.depots')"
           :row-id="rowId"
@@ -13,6 +13,8 @@
           :enable-depots="false"
           :enable-clients="false"
           :enable-products="false"
+          :is-loading-parent="isLoading"
+          :fetch="$fetch"
           :enable-show-products="false"
           :enable-show-changes="false"
           :table-info.sync="tableInfo"
