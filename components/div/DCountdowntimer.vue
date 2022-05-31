@@ -14,6 +14,8 @@ const settings = namespace('settings')
 
 @Component({ mixins: [CallLogout] })
 export default class BCountdowntimer extends Vue {
+  callLogout: any // from CallLogout
+
   @Prop({ default: false }) small!: boolean
   $router:any
   $mq:any

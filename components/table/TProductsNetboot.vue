@@ -194,9 +194,8 @@ export default class TProductsNetboot extends Vue {
     await this.$fetch()
   }
 
-  async fetch () {
-    await this.$emit('fetch-products', this)
-  }
+  async fetch () { await this.$emit('fetch-products', this) }
+  async fetchWrapper () { await this.$emit('fetch-products', this) }
 
   async save (change : object) {
     // const t:any = this

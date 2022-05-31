@@ -213,8 +213,12 @@ export default class VProducts extends Vue {
   }
 
   async triggerFetch () {
-    await this.$refs['ref-products-localboot'].fetch()
-    await this.$refs['ref-products-netboot'].fetch()
+    if (this.$refs['ref-products-localboot']) {
+      await (this.$refs['ref-products-localboot'] as any).fetchWrapper()
+    }
+    if (this.$refs['ref-products-netboot']) {
+      await (this.$refs['ref-products-netboot'] as any).fetchWrapper()
+    }
   }
 
   async fetchProducts (thiss) {
