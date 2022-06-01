@@ -450,13 +450,13 @@ build:addon:
       - webgui
     expire_in: 3 day
 
-publish:obs_int:
+publish:obs_ext:
   stage: publish
   dependencies:
     - build:static:app
   script:
     - *install_tools
-    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+    - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
   only:
     - tags
     - bug/cicd-build
@@ -479,6 +479,19 @@ publish:binary-index:
     - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64'
   only:
     - develop
+
+
+#publish:obs_int:
+#  stage: publish
+#  dependencies:
+#    - build:static:app
+#  script:
+#    - *install_tools
+#    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+#  only:
+#    - tags
+#    - bug/cicd-build
+
 
 # publish:obs_ext:
 #   stage: publish
