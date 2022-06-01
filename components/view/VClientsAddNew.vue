@@ -191,5 +191,6 @@ export default class VClientsAddNew extends Vue {
 .VClientsAddNew {
   display: flow-root;
   overflow-x: hidden;
+  padding-left: 10px;
 }
 </style>
