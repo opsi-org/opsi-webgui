@@ -110,13 +110,21 @@ export default class VProducts extends Vue {
       label: this.$t('table.fields.productId') as string, key: 'productId', _fixed: true, sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('productId') : true
     },
+    name: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('name') : false
+    },
     desc: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.description') as string, key: 'desc', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('desc') : false
     },
-    name: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('name') : false
+    modificationTime: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.modificationTime') as string, key: 'modificationTime', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('modificationTime') : false
+    },
+    priority: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.priority') as string, key: 'priority', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('priority') : false
     },
     // selectedDepots: { // eslint-disable-next-line object-property-newline
     //   label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', disabled: true,

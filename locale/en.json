@@ -87,6 +87,8 @@
   "table.fields.otp": "One Time Password",
   "table.fields.uefi": "UEFI",
   "table.fields.notes": "Notes",
+  "table.fields.modificationTime": "Modified",
+  "table.fields.priority": "Priority",
   "table.fields.stats": "Statistics",
   "table.fields.version": "(Server) Version",
   "table.fields.instStatus": "Installation status",

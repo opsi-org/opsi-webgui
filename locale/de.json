@@ -90,6 +90,8 @@
   "table.fields.stats": "Statistiken",
   "table.fields.version": "(Server) Version",
   "table.fields.instStatus": "Installationsstatus",
+  "table.fields.modificationTime": "Modifiziert",
+  "table.fields.priority": "Priorität",
   "table.fields.actionResult": "Action Result",
   "table.fields.actionProgress":"Action Progress",
   "table.fields.clientsIds": "Clients mit Produkt",

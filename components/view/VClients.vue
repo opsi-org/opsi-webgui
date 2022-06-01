@@ -202,6 +202,10 @@ export default class VClients extends Vue {
       label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('macAddress') : false
     },
+    lastSeen: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.lastSeen') as string, key: 'lastSeen', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('lastSeen') : false
+    },
     uefi: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.uefi') as string, key: 'uefi', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('uefi') : false
