@@ -18,7 +18,8 @@
     "libtest:delete-empty-results": "find test-results -empty -delete"
   },
   "eslintConfig": {
-    "extends": ".config/.eslintrc.js"
+    "extends": [".config/.eslintrc.js", "plugin:vuejs-accessibility/recommended"],
+    "plugins": ["vuejs-accessibility"]
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
