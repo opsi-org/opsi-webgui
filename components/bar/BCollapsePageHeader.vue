@@ -1,6 +1,12 @@
 <template>
   <b-navbar class="BCollapsePageHeader_Navbar" :class="{collapseable: collapseable}" data-testid="BarBCollapsePageHeader" :variant="variant">
-    <div class="BCollapsePageHeader_Navbar_toggler col" @keydown="toggleCollapse" @click="toggleCollapse">
+    <div
+      class="BCollapsePageHeader_Navbar_toggler col"
+      role="button"
+      tabindex="0"
+      @keydown="toggleCollapse"
+      @click="toggleCollapse"
+    >
       <span v-if="collapseable">
         <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
         <b-icon v-else :icon="iconnames.arrowDoubleRight" />
