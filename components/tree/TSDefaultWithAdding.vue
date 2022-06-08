@@ -59,7 +59,7 @@ export default {
       }
 
       if (value && value !== '') {
-        if (this.overridesCheckValueInNodes(value)) {
+        if (this.overridesCheckValueInNodes(value) || (!this.editable && node.id.includes(value))) {
           // If there is a value, we just fallback to the default function
           this.resetSearchQuery()
           return Treeselect.mixins[0].methods.select.call(this, node)
