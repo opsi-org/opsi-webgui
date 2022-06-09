@@ -1,8 +1,8 @@
 <template>
   <div>
-    <label for="language" class="sr-only"> Language </label>
     <b-nav-item-dropdown
       id="language"
+      aria-label="Language"
       data-testid="DropdownDDLang"
       :text="$i18n.locale"
       alt="select theme"
