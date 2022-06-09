@@ -1,9 +1,9 @@
 <template>
   <div data-testid="DropdownDDTheme">
-    <label for="theme" class="sr-only"> {{ $t('form.theme') }} </label>
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"
+      :aria-label="$t('form.theme')"
       class="px-2 text-left btn btn-primary btn-md"
       :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
       :text="theme.title"

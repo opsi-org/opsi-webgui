@@ -19,6 +19,7 @@
     <li>
       <a
         class="dropdown-item"
+        @keydown.prevent="changeSortDirection()"
         @click.prevent="changeSortDirection()"
       >
         <b-form-checkbox
@@ -35,6 +36,7 @@
           'selected':sortBy==header.key,
         }"
         variant="primary"
+        @keydown="changeSortBy(header.key)"
         @click="changeSortBy(header.key)"
       >
         {{ header.label }}

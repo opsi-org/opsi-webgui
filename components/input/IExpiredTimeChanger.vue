@@ -1,9 +1,10 @@
 <template>
   <span variant="primary">
-    <label for="expiredAfterMinutesChanger"> {{ $t('input.expiredTimeChanger', {min: expiresInMin}) }} </label>
+    <!-- <label for="expiredAfterMinutesChanger"> {{ $t('input.expiredTimeChanger', {min: expiresInMin}) }} </label> -->
     <b-form-input
       id="expiredAfterMinutesChanger"
       v-model="expiresInMin"
+      :label="$t('input.expiredTimeChanger', {min: expiresInMin})"
       type="range"
       min="1"
       :max="60"

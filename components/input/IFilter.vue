@@ -1,17 +1,16 @@
 <template>
   <div>
-    <label for="filter" class="sr-only"> {{ $t('table.filter', {el: additionalTitle}) }} </label>
     <b-form-input
       id="filter"
       v-bind="$props"
       ref="IFilter"
       v-model="data.filterQuery"
+      :aria-label="$t('table.filter', {el: additionalTitle})"
       data-testid="IFilter"
-      aria-label="Filter"
       class="filter"
       :placeholder="$t('table.filter', {el: additionalTitle})"
     />
-      <!-- @change="changeModel" -->
+    <!-- @change="changeModel" -->
   </div>
 </template>
 
