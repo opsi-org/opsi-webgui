@@ -38,7 +38,10 @@
       >
         <div
           v-if="rightmenuVisible"
+          role="button"
+          tabindex="0"
           class="b-sidebar-backdrop bg-dark"
+          @keydown="rightmenuVisible = false"
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto float-right">
