@@ -29,6 +29,7 @@
           :data-testid="`DropdownDDDefault-Item-${o}`"
           class="dropdown-item"
           :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
+          @keydown="(!selections.includes(0))?selections = [o]:()=>{}"
           @click="(!selections.includes(0))?selections = [o]:()=>{}"
         >
           {{ o }}
@@ -45,6 +46,7 @@
           :data-testid="`DropdownDDDefault-Item-${o}`"
           class="dropdown-item"
           :class="{'dropdown-item-selected': selections.includes(o), multiValue: multiple, singleValue: !multiple}"
+          @keydown="(!selections.includes(0))? toggleSelection(o):()=>{}"
           @click="(!selections.includes(0))? toggleSelection(o):()=>{}"
         >
           <b-form-checkbox
