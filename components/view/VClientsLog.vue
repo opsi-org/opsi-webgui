@@ -21,12 +21,12 @@
           id="filter"
           v-model.trim="filterQuery"
           class="ml-1 filter_logs"
+          aria-label="Filter Logs"
           placeholder="Filter Logs"
           @keyup="filterLog"
         />
       </template>
     </BarBPageHeader>
-    <label for="filter" class="sr-only"> Filter Logs </label>
     <IconILoading v-if="isLoading" />
     <p v-else-if="errorText" />
 

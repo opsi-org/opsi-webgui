@@ -24,11 +24,10 @@
         {{ data.label }}
       </template>
       <template #cell()="row">
-        <label :for="row.field.label" class="sr-only">  {{ row.field.label }} </label>
         <b-form-input
           :id="row.field.label"
           v-model="row.value"
-          :aria-label="row.value"
+          :aria-label="row.field.label"
           type="text"
           size="sm"
           readonly

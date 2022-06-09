@@ -1,9 +1,9 @@
 <template>
   <div>
-    <label for="logtype" class="sr-only"> {{ $t('form.logtype') }} </label>
     <b-form-select
       id="logtype"
       v-model="type"
+      :aria-label="$t('form.logtype')"
       class="logtype"
       data-testid="SLogtype"
       :options="logTypes"

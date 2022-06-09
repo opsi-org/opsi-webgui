@@ -18,16 +18,21 @@
             <b-icon v-if="showValue" :icon="iconnames.valueShow" />
             <b-icon v-else :icon="iconnames.valueHide" />
           </b-button>
-          <label for="opsiHostKey" class="sr-only">  {{ row.field.label }} </label>
-          <b-form-input id="opsiHostKey" v-model="row.item.opsiHostKey" :class="{'d-none' : !showValue}" size="sm" readonly />
+          <b-form-input
+            id="opsiHostKey"
+            v-model="row.item.opsiHostKey"
+            :aria-label="row.field.label"
+            :class="{'d-none' : !showValue}"
+            size="sm"
+            readonly
+          />
         </b-input-group>
       </template>
       <template #cell(notes)="row">
-        <label for="notes" class="sr-only">  {{ row.field.label }} </label>
         <b-form-textarea
           id="notes"
           v-model="row.item.notes"
-          :aria-label="row.item.notes"
+          :aria-label="row.field.label"
           class="forminput"
           size="sm"
           rows="2"
@@ -37,32 +42,30 @@
         />
       </template>
       <template #cell(created)="row">
-        <label for="created" class="sr-only">  {{ row.field.label }} </label>
         <b-form-input
           id="created"
           :value="date(row.value)"
-          :aria-label="date(row.value)"
+          :aria-label="row.field.label"
           class="forminput"
           size="sm"
           readonly
         />
       </template>
       <template #cell(lastSeen)="row">
-        <label for="lastSeen" class="sr-only">  {{ row.field.label }} </label>
         <b-form-input
           id="lastSeen"
           :value="date(row.value)"
-          :aria-label="date(row.value)"
+          :aria-label="row.field.label"
           class="forminput"
           size="sm"
           readonly
         />
       </template>
       <template #cell(uefi)="row">
-        <label for="uefi" class="sr-only">  {{ row.field.label }} </label>
         <b-form-checkbox
           id="uefi"
           v-model="row.value"
+          :aria-label="row.field.label"
           disabled
         />
       </template>

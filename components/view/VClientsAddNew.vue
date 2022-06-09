@@ -6,12 +6,17 @@
       <br>
       <GridGFormItem :label=" $t('table.fields.id')" value-more="true">
         <template #value>
-          <label for="clientname" class="sr-only"> clientName </label>
-          <b-form-input id="clientname" v-model="clientName" type="text" :state="checkValid" required />
+          <b-form-input
+            id="clientname"
+            v-model="clientName"
+            aria-label="clientName"
+            type="text"
+            :state="checkValid"
+            required
+          />
         </template>
         <template #valueMore>
-          <label for="domainName" class="sr-only"> domainName </label>
-          <b-form-input id="domainName" v-model="domainName" type="text" required />
+          <b-form-input id="domainName" v-model="domainName" aria-label="domainName" type="text" required />
         </template>
       </GridGFormItem>
       <b-row class="mt-5 mb-4">
@@ -19,26 +24,22 @@
       </b-row>
       <GridGFormItem :label=" $t('table.fields.description')">
         <template #value>
-          <label for="description" class="sr-only"> {{ $t('table.fields.description') }} </label>
-          <b-form-input id="description" v-model="newClient.description" type="text" />
+          <b-form-input id="description" v-model="newClient.description" :aria-label="$t('table.fields.description')" type="text" />
         </template>
       </GridGFormItem>
       <GridGFormItem :label=" $t('table.fields.inventNum')">
         <template #value>
-          <label for="inventNum" class="sr-only"> {{ $t('table.fields.inventNum') }} </label>
-          <b-form-input id="inventNum" v-model="newClient.inventoryNumber" type="text" />
+          <b-form-input id="inventNum" v-model="newClient.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
         </template>
       </GridGFormItem>
       <GridGFormItem :label=" $t('table.fields.hwAddr')">
         <template #value>
-          <label for="hwAddr" class="sr-only"> {{ $t('table.fields.hwAddr') }} </label>
-          <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" type="text" />
+          <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" :aria-label="$t('table.fields.hwAddr')" type="text" />
         </template>
       </GridGFormItem>
       <GridGFormItem :label=" $t('table.fields.ip')">
         <template #value>
-          <label for="ip" class="sr-only"> {{ $t('table.fields.ip') }} </label>
-          <b-form-input id="ip" v-model="newClient.ipAddress" type="text" />
+          <b-form-input id="ip" v-model="newClient.ipAddress" :aria-label="$t('table.fields.ip')" type="text" />
         </template>
       </GridGFormItem>
       <b-row class="mt-5 mb-4">
@@ -46,14 +47,12 @@
       </b-row>
       <GridGFormItem :label=" $t('table.fields.notes')">
         <template #value>
-          <label for="notes" class="sr-only"> {{ $t('table.fields.notes') }} </label>
-          <b-form-textarea id="notes" v-model="newClient.notes" rows="2" no-resize />
+          <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
         </template>
       </GridGFormItem>
       <GridGFormItem :label=" $t('table.fields.uefi')">
         <template #value>
-          <label for="uefi" class="sr-only"> {{ $t('table.fields.uefi') }} </label>
-          <b-form-checkbox id="uefi" v-model="uefi" />
+          <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
     </div>
