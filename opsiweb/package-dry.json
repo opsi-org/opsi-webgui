@@ -55,7 +55,8 @@
       "vscode:test:all:components": "playwright"
   },
   "eslintConfig": {
-    "extends": ".config/.eslintrc.js"
+    "extends": [".config/.eslintrc.js", "plugin:vuejs-accessibility/recommended"],
+    "plugins": ["vuejs-accessibility"]
   },
   "dry": {
     "extends": "uib-components/package.json",
