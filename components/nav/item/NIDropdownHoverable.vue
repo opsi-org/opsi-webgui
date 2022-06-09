@@ -1,5 +1,5 @@
 <template>
-  <div @mouseover="onMouseOver" @mouseleave="onMouseLeave">
+  <div @mouseover="onMouseOver" @focusin="onMouseOver" @mouseleave="onMouseLeave" @focusout="onMouseLeave">
     <b-nav-item-dropdown
       ref="dropdown"
       class="sidemenu_dropdown"
@@ -16,7 +16,7 @@
         {{ $t(title) }}
       </b-dropdown-item>
       <b-dropdown-divider />
-        <!-- class="d-inline-block" -->
+      <!-- class="d-inline-block" -->
       <span
         v-for="sub in submenu"
         :key="sub.title"
