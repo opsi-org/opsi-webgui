@@ -718,7 +718,7 @@ def product_properties(
 				pp.description AS description,
 				pp.multiValue as multiValue,
 				pp.editable AS editable,
-				GROUP_CONCAT(ppv.value SEPARATOR ',') AS `values`,
+				GROUP_CONCAT(ppv.value SEPARATOR '\t') AS `values`,
 				(SELECT GROUP_CONCAT(`value` SEPARATOR ',') FROM PRODUCT_PROPERTY_VALUE WHERE propertyId = pp.propertyId AND productId = pp.productId AND productVersion = pp.productVersion AND packageVersion = pp.packageVersion AND (isDefault = 1 OR ppv.isDefault is NULL)) AS `defaultDetails`,
 				GROUP_CONCAT(pod.depotId SEPARATOR ',') AS depots
 			"""
