@@ -13,6 +13,7 @@ export default {
     'trigger.searchQuery' () {
       if (this.searchable) {
         this.$emit('search-not-empty', this.trigger.searchQuery.length > 0)
+        if (this.trigger.searchQuery.length > 0) { this.highlightFirstOption() }
       }
     }
   },
@@ -59,12 +60,14 @@ export default {
       }
 
       if (value && value !== '') {
-        if (this.overridesCheckValueInNodes(value)) {
-          // If there is a value, we just fallback to the default function
+        if (this.overridesCheckValueInNodes(value) || (node && node.isMatched)) {
+          // If there is a value, we just fallback to the default function (select or desect the first entry in result list)
           this.resetSearchQuery()
           return Treeselect.mixins[0].methods.select.call(this, node)
         }
       }
+
+      // if there is no result for search query try to add (if not editable)
 
       if (!this.editable) { return }
       /**
