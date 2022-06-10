@@ -17,6 +17,7 @@ from opsiconfd.application.utils import get_configserver_id, parse_list
 from opsiconfd.backend import get_mysql as backend_get_mysql
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
+from orjson import loads  # pylint: disable=no-name-in-module
 from sqlalchemy import select, text
 
 
@@ -309,3 +310,20 @@ def check_client_creation_rights(func):
 				)
 		return func(*args, **kwargs)
 	return check_user
+
+
+def bool_product_property(value):
+	if value:
+		if value.lower() == "[true]" or str(value) == "1" or value.lower() == "true":
+			return True
+	return False
+
+
+def unicode_product_property(value, delimiter=";"):
+	if value and isinstance(value, str):
+		if value.startswith('["'):
+			return loads(value)  # pylint: disable=no-member
+		if value == "[]":
+			return [""]
+		return value.replace('\\"', '"').split(delimiter)
+	return [""]

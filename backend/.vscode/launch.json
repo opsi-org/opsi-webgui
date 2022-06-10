@@ -8,9 +8,9 @@
 			"module": "opsiconfd",
 			"args": [
 				"--workers=1",
-				"--log-level=5",
-				"--log-level-stderr=5",
 				"--log-mode=redis",
+				"--log-level-stderr=5",
+				"--addon-dirs=/workspace/addon",
 				"--static-dir=${workspaceFolder}/opsiconfd/opsiconfd_data/static"
 			],
 			"sudo": true,
