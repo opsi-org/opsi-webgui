@@ -15,11 +15,7 @@ from typing import Dict, List, Optional
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from opsicommon.objects import ProductOnClient
-from opsiconfd.application.utils import (
-	bool_product_property,
-	get_configserver_id,
-	unicode_product_property,
-)
+from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -36,6 +32,7 @@ from sqlalchemy.sql.expression import table, update
 
 from .depots import get_depots
 from .utils import (
+	bool_product_property,
 	filter_depot_access,
 	get_allowd_product_groups,
 	get_allowed_objects,
@@ -49,6 +46,7 @@ from .utils import (
 	parse_selected_list,
 	product_group_access_configured,
 	read_only_check,
+	unicode_product_property,
 	user_register,
 )
 
@@ -718,7 +716,7 @@ def product_properties(
 				pp.description AS description,
 				pp.multiValue as multiValue,
 				pp.editable AS editable,
-				GROUP_CONCAT(ppv.value SEPARATOR '\t') AS `values`,
+				GROUP_CONCAT(ppv.value SEPARATOR ';') AS `values`,
 				(SELECT GROUP_CONCAT(`value` SEPARATOR ',') FROM PRODUCT_PROPERTY_VALUE WHERE propertyId = pp.propertyId AND productId = pp.productId AND productVersion = pp.productVersion AND packageVersion = pp.packageVersion AND (isDefault = 1 OR ppv.isDefault is NULL)) AS `defaultDetails`,
 				GROUP_CONCAT(pod.depotId SEPARATOR ',') AS depots
 			"""
