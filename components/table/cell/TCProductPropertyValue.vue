@@ -18,7 +18,7 @@
         <!-- TODO -->
       </b-form-checkbox>
       <TreeTSDefault
-        v-else-if="rowItem.type=='UnicodeProductProperty'"
+        v-else
         :id="'PropertyValue-' + rowItem.propertyId"
         type="propertyvalues"
         :disabled="(config)? config.read_only : false"
