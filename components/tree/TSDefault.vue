@@ -458,6 +458,8 @@ export default class TSDefault extends Vue {
 
 .TSDefault-wrapper .vue-treeselect__menu {
   border: 1px solid var(--primary) !important;
+  /* z-index: 99 !important;
+  display: block; */
   /* border-radius: 5px; */
 }
 
@@ -494,6 +496,7 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__label-container {
   margin-left: 10px;
+  width: calc(100% - 10px);
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
   max-height: max-content !important;
@@ -540,8 +543,9 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__menu {
   min-width: 380px !important;
-  margin-left: -52px;
+  margin-left: -102px;
   margin-top: 8px;
+  overflow: auto;
 }
 
 .TSDefault-wrapper .treeselect .vue-treeselect__input-container {

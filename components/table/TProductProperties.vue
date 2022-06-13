@@ -214,6 +214,11 @@ export default class TProductProperties extends Vue {
   padding-left: 0px;
   padding-right: 0px;
 }
+.TProductProperties,
+.TProductProperties .TDefault,
+.TProductProperties .TDefault .productproperties {
+  overflow: visible;
+}
 /* .mobile.TProductProperties  {
   border: 1px solid green;
   height: 100%;
