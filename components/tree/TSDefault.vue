@@ -20,6 +20,8 @@
       :editable="editable"
       :loading-text="$t('message.loading')"
       :clearable="clearable"
+      :deleteRemoves="false"
+      :backspaceRemoves="false"
       :multiple="multi"
       :options="options"
       :open-on-focus="false"
