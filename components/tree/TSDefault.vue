@@ -27,7 +27,7 @@
       :open-on-focus="false"
       :branch-nodes-first="true"
       :max-height="300"
-      :always-open="false"
+      :always-open="(id=='PropertyValue-method')"
       :disabled="disabled"
 
       :cache-options="false"
@@ -444,6 +444,10 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
   color: var(--color);
   background-color: var(--hover);
+}
+
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight.vue-treeselect__option--selected {
+  color: var(--primary);
 }
 
 .TSDefault-wrapper .hasSelection {
