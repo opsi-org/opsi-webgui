@@ -595,6 +595,9 @@ export default class TSDefault extends Vue {
   color: var(--light);
   background-color: var(--primary);
 }
+.TSDefault-wrapper .vue-treeselect--single .vue-treeselect__label-container svg {
+  display: none;
+}
 
 .TSDefault-wrapper .vue-treeselect--single .vue-treeselect__option--highlight .hasSelection{
   /* color: var(--light) !important; */

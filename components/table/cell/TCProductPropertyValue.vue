@@ -18,7 +18,7 @@
         <!-- TODO -->
       </b-form-checkbox>
       <TreeTSDefault
-        v-else-if="rowItem.type=='UnicodeProductProperty'"
+        v-else
         :id="'PropertyValue-' + rowItem.propertyId"
         type="propertyvalues"
         :disabled="(config)? config.read_only : false"
@@ -180,13 +180,13 @@ export default class TProductPropertyValue extends Vue {
   }
 
   get showTooltip () {
-    if (this.rowItem.type === 'UnicodeProductProperty') {
-      return this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)
-    }
     if (this.rowItem.type === 'BoolProductProperty') {
       return this.visibleValueBoolIndeterminate
     }
-    return true
+    // if (this.rowItem.type === 'UnicodeProductProperty') {
+    return this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)
+    // }
+    // return true
   }
 
   uniques (arr:Array<any>) { return [...new Set(arr)] }
