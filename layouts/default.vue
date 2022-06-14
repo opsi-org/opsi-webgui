@@ -136,6 +136,9 @@ export default class LayoutDefault extends Vue {
   width: calc(100% - 2 * var(--margin-left-maincontent));
   /* height: calc(100% - var(--margin-top-maincontent) + 100px); */
 }
+.main_content > .container-fluid{
+  min-height: 350px;
+}
 
 :not(.mobile).sidebar_collapsed .main_content{
   margin-left: calc(var(--margin-left-maincontent-if-sidebar-collpased));

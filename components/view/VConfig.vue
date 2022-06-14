@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VConfig">
+  <div data-testid="VConfig" class="VConfig">
     <BarBPageHeader v-if="asChild" :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #left>
@@ -32,4 +32,8 @@ export default class VClientConfig extends Vue {
 .config_horizontaltabs .nav-item{
   min-width: 10%;
 }
+/* .VConfig,
+.VConfig > .navbar {
+  overflow: visible;
+} */
 </style>

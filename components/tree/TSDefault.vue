@@ -20,12 +20,14 @@
       :editable="editable"
       :loading-text="$t('message.loading')"
       :clearable="clearable"
+      :deleteRemoves="false"
+      :backspaceRemoves="false"
       :multiple="multi"
       :options="options"
       :open-on-focus="false"
       :branch-nodes-first="true"
       :max-height="300"
-      :always-open="false"
+      :always-open="(id=='PropertyValue-method')"
       :disabled="disabled"
 
       :cache-options="false"
@@ -444,6 +446,10 @@ export default class TSDefault extends Vue {
   background-color: var(--hover);
 }
 
+.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight.vue-treeselect__option--selected {
+  color: var(--primary);
+}
+
 .TSDefault-wrapper .hasSelection {
   color: var(--light);
   background-color: var(--primary);
@@ -456,6 +462,8 @@ export default class TSDefault extends Vue {
 
 .TSDefault-wrapper .vue-treeselect__menu {
   border: 1px solid var(--primary) !important;
+  /* z-index: 99 !important;
+  display: block; */
   /* border-radius: 5px; */
 }
 
@@ -492,6 +500,7 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__label-container {
   margin-left: 10px;
+  width: calc(100% - 10px);
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
   max-height: max-content !important;
@@ -538,8 +547,9 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__menu {
   min-width: 380px !important;
-  margin-left: -52px;
+  margin-left: -102px;
   margin-top: 8px;
+  overflow: auto;
 }
 
 .TSDefault-wrapper .treeselect .vue-treeselect__input-container {
