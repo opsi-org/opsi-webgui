@@ -13,7 +13,8 @@
       class="TInfiniteScroll"
       :class="{ firstpage: isFirstPage,
                 lastpage: isLastPage,
-                borderless: $mq=='mobile' }"
+                mobileview: $mq=='mobile',
+                singleRowTable: items.length <8 && items.length > 0}"
       sticky-header
       show-empty
       responsive
@@ -91,6 +92,7 @@ export default class TInfiniteScroll extends Vue {
   iconnames: any
   $axios: any
   $mq: any
+  scrolltop: number = 190
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
@@ -151,7 +153,7 @@ export default class TInfiniteScroll extends Vue {
     if (this.isFirstPage) {
       this.tableScrollBody.scrollTop = 0
     } else {
-      this.tableScrollBody.scrollTop = 190
+      this.tableScrollBody.scrollTop = this.scrolltop
     }
   }
 
@@ -180,7 +182,7 @@ export default class TInfiniteScroll extends Vue {
       event.target.scrollTop === 0) {
       await this.previousPage()
     } else if (event.target && // On Scroll Down
-      event.target.scrollTop + event.target.clientHeight >=
+      event.target.scrollTop + event.target.clientHeight + this.scrolltop >=
           event.target.scrollHeight
     ) {
       await this.nextPage()
@@ -239,6 +241,25 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
+.TInfiniteScroll.b-table-sticky-header {
+  max-height: 70vh;
+}
+.singleRowTable.b-table-sticky-header {
+  max-height: 15vh;
+}
+.mobileview.table-responsive {
+  max-height: 70vh;
+}
+.singleRowTable.mobileview.table-responsive {
+  max-height: 17vh;
+}
+
+/* .mobile .table-responsive { min-height: 90vh;  height: 90vh;}
+.singleRowTable .mobile .table-responsive { min-height: 12vh;  height: 12vh;} */
+/* .mobile .table-responsive { min-height: 90vh;  height: 90vh;}
+.desktop :not(.tab-pane) .table-responsive { max-height: 75vh; }
+.desktop .tab-pane .table-responsive { max-height: 70vh; } */
+
 .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;
@@ -246,15 +267,15 @@ export default class TInfiniteScroll extends Vue {
 }
 .TInfiniteScroll{
   padding-bottom: 70px;
-  min-height: 350px;
+  /* min-height: 350px; */
 }
 .TInfiniteScroll .table td,
 .TInfiniteScroll .table th {
     /* border-top: 0px solid #000; */
     border-top: 1px solid var(--table-border);
 }
-.borderless.TInfiniteScroll .table td,
-.borderless.TInfiniteScroll .table th {
+.mobileview.TInfiniteScroll .table td,
+.mobileview.TInfiniteScroll .table th {
   border-top: 0px;
 }
 .TInfiniteScroll thead > tr > th{
@@ -306,9 +327,6 @@ export default class TInfiniteScroll extends Vue {
   color: var(--color, #6c757d);
   font-size: small;
 }
-.mobile .table-responsive { min-height: 90vh;  height: 90vh;}
-.desktop :not(.tab-pane) .table-responsive { max-height: 75vh; }
-.desktop .tab-pane .table-responsive { max-height: 70vh; }
 
 .b-table-sticky-header thead > tr:last-child{
   background-color: var(--background, white);
@@ -336,7 +354,6 @@ thead .col-rowactions {
   display: none !important;
 }
 .mobile .table.b-table.b-table-stacked > tbody > tr {
-  /* border-top-width: 3px !important; */
   border-top: 1px solid var(--dark) !important;
 }
 </style>
