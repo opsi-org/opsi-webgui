@@ -92,6 +92,7 @@ export default class TInfiniteScroll extends Vue {
   iconnames: any
   $axios: any
   $mq: any
+  scrolltop: number = 190
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
@@ -152,7 +153,7 @@ export default class TInfiniteScroll extends Vue {
     if (this.isFirstPage) {
       this.tableScrollBody.scrollTop = 0
     } else {
-      this.tableScrollBody.scrollTop = 190
+      this.tableScrollBody.scrollTop = this.scrolltop
     }
   }
 
@@ -181,9 +182,12 @@ export default class TInfiniteScroll extends Vue {
       event.target.scrollTop === 0) {
       await this.previousPage()
     } else if (event.target && // On Scroll Down
-      event.target.scrollTop + event.target.clientHeight >=
+      event.target.scrollTop + event.target.clientHeight + this.scrolltop >=
           event.target.scrollHeight
     ) {
+      console.error('scrollTop', event.target.scrollTop)
+      console.error('clientHeight', event.target.clientHeight)
+      console.error('scrollHeight', event.target.scrollHeight)
       await this.nextPage()
     }
   }
