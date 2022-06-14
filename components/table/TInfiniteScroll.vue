@@ -185,9 +185,6 @@ export default class TInfiniteScroll extends Vue {
       event.target.scrollTop + event.target.clientHeight + this.scrolltop >=
           event.target.scrollHeight
     ) {
-      console.error('scrollTop', event.target.scrollTop)
-      console.error('clientHeight', event.target.clientHeight)
-      console.error('scrollHeight', event.target.scrollHeight)
       await this.nextPage()
     }
   }
