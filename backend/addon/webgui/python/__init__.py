@@ -31,7 +31,8 @@ from .products import product_router
 from .utils import mysql
 from .webgui import webgui_router
 
-SESSION_LIFETIME = 60*30
+SESSION_LIFETIME = 60 * 30
+
 
 class Webgui(Addon):
 	id = ADDON_ID
@@ -43,9 +44,11 @@ class Webgui(Addon):
 		if not mysql:
 			logger.warning("No mysql backend found! Webgui only works with mysql backend.")
 			error_router = APIRouter()
+
 			@error_router.get(f"{self.router_prefix}/app")
 			def webgui_error():
 				return PlainTextResponse("No mysql backend found! Webgui only works with mysql backend.", status_code=501)
+
 			app.include_router(error_router)
 			return
 
@@ -55,12 +58,7 @@ class Webgui(Addon):
 		app.include_router(client_router, prefix=self.router_prefix)
 		app.include_router(depot_router, prefix=self.router_prefix)
 
-		app.mount(
-			path=f"{self.router_prefix}/app",
-			app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True),
-			name="app"
-		)
-
+		app.mount(path=f"{self.router_prefix}/app", app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True), name="app")
 
 	def on_load(self, app: FastAPI) -> None:  # pylint: disable=no-self-use
 		"""Called after loading the addon"""
@@ -70,21 +68,21 @@ class Webgui(Addon):
 		"""Called before unloading the addon"""
 		remove_route_path(app, self.router_prefix)
 
-
-	async def handle_request(self, connection: HTTPConnection, receive: Receive, send: Send) -> bool:  # pylint: disable=no-self-use,unused-argument
+	async def handle_request(
+		self, connection: HTTPConnection, receive: Receive, send: Send
+	) -> bool:  # pylint: disable=no-self-use,unused-argument
 		"""Called on every request where the path matches the addons router prefix.
 		Return true to skip further request processing."""
 		connection.scope["required_access_role"] = ACCESS_ROLE_AUTHENTICATED
 		if (
-			(connection.scope["path"].startswith(f"{self.router_prefix}/api/auth") or
-			connection.scope["path"].startswith(f"{self.router_prefix}/api/opsidata") or
-			connection.scope["path"].startswith(f"{self.router_prefix}/api/user/configuration")) and
-			connection.base_url.hostname in ("127.0.0.1", "::1", "0.0.0.0", "localhost")
-		):
+			connection.scope["path"].startswith(f"{self.router_prefix}/api/auth")
+			or connection.scope["path"].startswith(f"{self.router_prefix}/api/opsidata")
+			or connection.scope["path"].startswith(f"{self.router_prefix}/api/user/configuration")
+		) and connection.base_url.hostname in ("127.0.0.1", "::1", "0.0.0.0", "localhost"):
 			if connection.scope.get("method") == "OPTIONS":
 				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
-		if (connection.scope["path"].rstrip("/") == self.router_prefix
-			or connection.scope["path"].startswith((f"{self.router_prefix}/app",f"{self.router_prefix}/api/user/opsiserver"))
+		if connection.scope["path"].rstrip("/") == self.router_prefix or connection.scope["path"].startswith(
+			(f"{self.router_prefix}/app", f"{self.router_prefix}/api/user/opsiserver")
 		):
 			connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
 		elif connection.scope["path"] == f"{self.router_prefix}/api/auth/login":
@@ -95,14 +93,13 @@ class Webgui(Addon):
 					await authenticate(connection, receive)
 					connection.scope["session"].max_age = SESSION_LIFETIME
 				except Exception as err:
-					raise HTTPException(
-						status_code=status.HTTP_403_FORBIDDEN,
-						detail=str(err)
-					) from err
+					raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
 
 		return False
 
-	async def handle_request_exception(self, err: Exception, connection: HTTPConnection, receive: Receive, send: Send) -> bool:  # pylint: disable=no-self-use,unused-argument
+	async def handle_request_exception(
+		self, err: Exception, connection: HTTPConnection, receive: Receive, send: Send
+	) -> bool:  # pylint: disable=no-self-use,unused-argument
 		"""Called on every request exception where the path matches the addons router prefix.
 		Return true to skip further request processing."""
 		message = str(err)
@@ -122,13 +119,7 @@ class Webgui(Addon):
 			logger.error(err, exc_info=True)
 
 		response = JSONResponse(
-			content={
-				"http_status": status_code,
-				"error": str(err),
-				"message": message
-			},
-			status_code=status_code,
-			headers=headers
+			content={"http_status": status_code, "error": str(err), "message": message}, status_code=status_code, headers=headers
 		)
 		await response(connection.scope, receive, send)
 		return True
@@ -143,8 +134,8 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	form = await req.form()
 	username = form.get("username")
 	password = form.get("password")
-
 	auth_type = None
+
 	def sync_auth(username, password, auth_type):
 		get_client_backend().backendAccessControl.authenticate(username, password, auth_type=auth_type)
 
