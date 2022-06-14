@@ -225,8 +225,10 @@ def products(
 	params["product_type"] = type
 	if selectedClients == [] or selectedClients is None:
 		params["clients"] = [""]
+		params["client_count"] = 0
 	else:
 		params["clients"] = selectedClients
+		params["client_count"] = len(selectedClients)
 	if selectedDepots == None:
 		params["depots"] = get_depots(username)
 	else:
@@ -279,7 +281,7 @@ def products(
 			) AS installationStatusErrorLevel,
 			(	SELECT
 					IF(
-						COUNT(DISTINCT IFNULL(poc.installationStatus, "not_installed")) > 1,
+						COUNT(DISTINCT IFNULL(poc.installationStatus, "not_installed")) > 1 OR (:client_count > 1 AND GROUP_CONCAT(IFNULL(poc.installationStatus, "not_installed") SEPARATOR ',') IN ("installed")),
 						"mixed",
 						IFNULL(poc.installationStatus, "not_installed")
 					)
@@ -329,7 +331,7 @@ def products(
 			) AS actionResultErrorLevel,
 			(	SELECT
 					IF(
-						COUNT(DISTINCT IFNULL(poc.actionResult, "")) > 1,
+						COUNT(DISTINCT IFNULL(poc.actionResult, "none")) > 1 OR (:client_count > 1 AND GROUP_CONCAT(IFNULL(poc.actionResult, "none") SEPARATOR ',') IN ("failed","successful")),
 						"mixed",
 						IFNULL(poc.actionResult, "none")
 					)
@@ -423,8 +425,8 @@ def products(
 		for row in result:
 			if row is not None:
 				product = dict(row)
-
 				for value in ["installationStatus", "actionRequest", "actionProgress", "actionResult"]:
+
 					if product[value] != "mixed":
 						del product[f"{value}Details"]
 
