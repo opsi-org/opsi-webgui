@@ -40,7 +40,6 @@ echo ""
 
 # Find all changed files for this commit
 # Compute the diff only once to save a small amount of time.
-CHANGED_FILES=$(git diff --name-only --cached --diff-filter=ACMR | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
 get_pattern_files() { # Get only changed files that match our file suffix pattern
     pattern=$(echo "$*" | sed "s/ /\$\\\|/g")
     filelist=$(echo "$CHANGED_FILES" | { grep "$pattern$" || true; })
@@ -49,14 +48,16 @@ get_pattern_files() { # Get only changed files that match our file suffix patter
     for val in $basenames; do
         files+="$filestart$val$fileending"
     done
-
-
     testfilesUnique=$(echo $files | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )
     echo $testfilesUnique
 }
 
 case $do_any in
-    [Yy]* ) cd /workspace/opsiweb
+    [Yy]* )
+            echo "try get changed files"
+            CHANGED_FILES=$(git diff --name-only --cached --diff-filter=ACMR | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
+            echo "got changed files $CHANGED_FILES"
+            cd /workspace/opsiweb
             npm-uib run createpackagejson
             cd -
             ;;
@@ -101,6 +102,7 @@ case $doit_PW in
         ;;
     * ) echo "------------------- Skip playwright";;
 esac
+echo "done"
 echo ""
 
 # get stashed things back
