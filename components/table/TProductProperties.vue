@@ -136,7 +136,8 @@ export default class TProductProperties extends Vue {
   }
 
   async saveProdProp (change: object) {
-    const t:any = this
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const t: any = this
     this.isLoading = true
     await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, change)
       .then((response) => {

@@ -69,7 +69,7 @@ export default class TSDefaultGroups extends TSDefault {
     if (thiss.isGroup(s)) {
       // console.log(this.id + ' TSDefaultGroups selectGroup isBranch ... load children and select')
       if (s.children == null) {
-        await thiss.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => {} })
+        await thiss.loadOptionsChildren({ action: 'LOAD_CHILDREN_OPTIONS', parentNode: s, callback: () => { return {} } })
       }
       if (groupSelectionDeep && s.children != null) {
         // console.log(this.id, 'TSDefaultGroups selectGroup s.children ', s.children)

@@ -109,7 +109,7 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: undefined }) redirectOnCloseTo!: string
   @Prop({ default: undefined }) redirect!: Function
   @Prop({ default: undefined }) fetch!: Function
-  @Prop({ default: () => {} }) tableInfo!: ITableInfo
+  @Prop({ default: () => { return {} } }) tableInfo!: ITableInfo
 
   contentVisible: boolean = false
 

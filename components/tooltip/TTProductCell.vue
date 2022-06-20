@@ -27,7 +27,7 @@ export default class TTProductCell extends Vue {
   @Prop({ default: 'version' }) type!: string
   @Prop({ default: true }) dark!: boolean
   @Prop({ default: false }) depotVersionDiff?: boolean
-  @Prop({ default: () => {} }) changes?: object
+  @Prop({ default: () => { return {} } }) changes?: object
   @Prop({ default: 'warning' }) variant!: string
   // @Prop({ }) detailsDepots!: IObjectString2String
 }

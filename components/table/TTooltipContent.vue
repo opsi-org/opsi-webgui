@@ -76,7 +76,7 @@ export default class TTProductCell extends Vue {
   @Prop({ default: 'danger' }) variant!: string
   @Prop({ default: false }) dark!: boolean
   @Prop({ }) details!: IObjectString2String
-  @Prop({ default: () => {} }) changes?: object
+  @Prop({ default: () => { return {} } }) changes?: object
   // @Prop({ }) detailsDepots!: IObjectString2String
   // @Prop({ }) rowitem?: ITableRowItemProducts
   // @Prop({ }) row:Object,

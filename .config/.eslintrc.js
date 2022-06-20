@@ -30,7 +30,7 @@ module.exports = {
       rules: {
         // maybe enable later:
         '@typescript-eslint/no-non-null-assertion': 'off',
-        '@typescript-eslint/consistent-type-imports': 'error',
+        // '@typescript-eslint/consistent-type-imports': 'error',
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-inferrable-types': 'off',
         '@typescript-eslint/ban-types': 'off'

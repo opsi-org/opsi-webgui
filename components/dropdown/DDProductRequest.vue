@@ -49,7 +49,7 @@ export default class DDProductRequest extends BDropdown {
   @Prop({ }) rowitem!: ITableRowItemProducts|undefined
   @Prop({ default: () => { return '---' } }) request!: string
   @Prop({ default: () => { return ['---', 'none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
-  @Prop({ default: () => { return () => {} } }) save!: Function
+  @Prop({ default: () => { return () => { return {} } } }) save!: Function
 
   preRequest: string = this.request
   currentReq: string = this.request
@@ -80,16 +80,16 @@ export default class DDProductRequest extends BDropdown {
     return this.currentReq
   }
 
+  set visibleRequest (val: string) {
+    this.currentReq = val
+  }
+
   get options () {
     const options = this.requestoptions
     if (this.currentReq === 'mixed' && !options.includes('mixed')) {
       options.push('mixed')
     }
     return options
-  }
-
-  set visibleRequest (val: string) {
-    this.currentReq = val
   }
 
   get allRequests () {
