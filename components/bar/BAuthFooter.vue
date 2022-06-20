@@ -9,7 +9,7 @@
     >
       <b-container fluid>
         <b-navbar-nav small>
-          <b-nav-text>{{$t('uib')}}</b-nav-text>
+          <b-nav-text>{{ $t('uib') }}</b-nav-text>
         </b-navbar-nav>
         <b-navbar-nav align="center" small class="ml-auto">
           <DropdownDDLang :dropup="true" />
