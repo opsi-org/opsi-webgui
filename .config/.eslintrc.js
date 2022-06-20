@@ -19,7 +19,13 @@ module.exports = {
     "vuejs-accessibility"
   ],
   overrides: [
-    { files: ["*.json", "*.jsonc", "*.json5"], extends: ["plugin:@intlify/vue-i18n/recommended"] },
+    { files: ["*.json", "*.jsonc", "*.json5"],
+      extends: ["plugin:@intlify/vue-i18n/recommended"],
+      rules: {
+        // maybe enable later:
+        'no-tabs': 'off',
+      }
+    },
     { files: ['*.ts', '*.vue'],
       // extends: [ 'plugin:@typescript-eslint/recommended-requiring-type-checking'],
       extends: [ 'plugin:@typescript-eslint/recommended'],
