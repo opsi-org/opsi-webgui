@@ -39,7 +39,9 @@
     "javascript",
     "typescript",
     "vue",
-    "html"
+    "html",
+    "json",
+    "jsonc"
   ],
   // // We use Volar instead of Vetur because it's faster, cleaner, and simpler
   "volar.icon.finder": true,
@@ -65,6 +67,11 @@
       "match": "\\.vue$",
       "runIn": "terminal",
       "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
+    },
+    {
+      "match": "\\.(jsonc|json)$",
+      "runIn": "terminal",
+      "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .json lint-script '**/'"
     },
     {
       "match": "\\.test.unit.js$",

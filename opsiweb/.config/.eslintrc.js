@@ -1,27 +1,41 @@
 module.exports = {
   root: true,
-  env: {
-    browser: true,
-    node: true
-  },
+  env: { browser: true, node: true },
   // parserOptions: {
-  //   parser: '@typescript-eslint/parser'
-  //   //   parser: 'babel-eslint',
+  //   // parser: '@typescript-eslint/parser'
+  //   parser: '@babel/eslint-parser',
+  //   // parser: 'babel-eslint',
   //   //   sourceType: 'module'
+  //   sourceType: 'module'
   // },
   extends: [
     '@nuxtjs',
     '@nuxtjs/eslint-config-typescript',
-    'plugin:nuxt/recommended'
+    'eslint:recommended',
+    'plugin:nuxt/recommended',
+    'plugin:@intlify/vue-i18n/recommended',
+    'plugin:jsonc/recommended-with-jsonc',
+    'plugin:vuejs-accessibility/recommended'
   ],
-  // extends: [
-  //   '@nuxtjs/eslint-config-typescript',
-  //   'plugin:nuxt/recommended'
-  // ],
   plugins: [
-    // 'vue/attribute-hyphenation': 'off'
-    // 'no-unused-vars': 'off',
+    'vue',
+    'vuejs-accessibility'
   ],
-  // add your custom rules here
-  rules: {}
+  rules: { },
+  settings: {
+    'vue-i18n': {
+      localeDir: '../uib-components/locale/*.{json}',
+      // localeDir: [
+      //   {
+      //     pattern: '../uib-components/locale/*.json',
+      //     localeKey: 'file'
+      //   }
+      //   // {
+      //   //   pattern: '../locale/*.json',
+      //   //   localeKey: 'file'
+      //   // },
+      // ],
+      messageSyntaxVersion: '^8.27.1'
+    }
+  }
 }

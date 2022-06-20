@@ -30,9 +30,9 @@
       "story-components": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook  uib-components/ --ci --quiet --port 3003 -s ./uib-components/static",
       "story2": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect storybook --port 3003 -s ./uib-components/static",
     "//lint": "commands for linting",
-      "lint-script": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ./.gitignore ",
-      "lint-ui": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ./.gitignore  ./",
-      "lint-lib": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path uib-components/.gitignore  uib-components/",
+      "lint-script": "eslint --quiet --ext \"ts,js,vue,json\" --ignore-path .eslintignore ",
+      "lint-ui": "eslint --quiet --ext \"ts,js,vue,json\" --ignore-path .eslintignore ./",
+      "lint-lib": "eslint --quiet --ext \"ts,js,vue,json\" --ignore-path .eslintignore  uib-components/",
       "lint:all": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-lib",
       "lint": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui",
     "//test": "commands for testing unit/playwright",
@@ -55,8 +55,7 @@
       "vscode:test:all:components": "playwright"
   },
   "eslintConfig": {
-    "extends": [".config/.eslintrc.js", "plugin:vuejs-accessibility/recommended"],
-    "plugins": ["vuejs-accessibility"]
+    "extends": [".config/.eslintrc.js"]
   },
   "dry": {
     "extends": "uib-components/package.json",

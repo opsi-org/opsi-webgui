@@ -92,6 +92,7 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     ['@nuxtjs/i18n', {
+      // vueI18nLoader: false,
       locale: 'en',
       vueI18n: {
         fallbackLocale: 'en',

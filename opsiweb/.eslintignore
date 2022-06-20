@@ -1,2 +1,6 @@
 dist/*
-package-dry.json
+./package-dry.json
+./locale/*.json
+.vscode/*.json
+**/*/tsconfig.json
+vuex-persist.js
