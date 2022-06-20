@@ -1,7 +1,7 @@
 <template>
   <b-button
     v-b-tooltip.hover
-    aria-label="clearSelection"
+    :aria-label="$t('table.selection.clear')"
     :title="label? '' : $t('table.selection.clear')"
     variant="outline-primary"
     class="ml-0 border-0"

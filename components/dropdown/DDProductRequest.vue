@@ -15,7 +15,7 @@
     >
       <template #button-content>
         <span :class="{'value-changed-not-saved' : currentReq != preRequest}">
-          {{ visibleRequest }} {{ (currentReq != preRequest)? '*' : '' }}
+          {{ visibleRequest }} {{ (currentReq != preRequest)? $t('notOrigin') : '' }}
         </span>
       </template>
       <b-dropdown-item

@@ -120,11 +120,11 @@ interface Group {
   hasAnySelection?: boolean
   children?: null | Array<any>
 }
-// interface StoreSelection {
-//   selection: Array<string>
-//   pushSelection: Function
-//   delSelection: Function
-// }
+interface StoreSelection {
+  selection: Array<string>
+  pushSelection: Function
+  delSelection: Function
+}
 
 @Component({ mixins: [Constants] })
 // export default class TSDefault extends mixins(Constants) {
@@ -158,7 +158,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: true }) isList!: boolean
   @Prop({ default: false }) nested!: boolean
   @Prop({ default: false }) disableRootObjects!: boolean
-  // @Prop({ default: () => { return } }) store!: StoreSelection
+  @Prop({ default: () => { return {} } }) store!: StoreSelection
   @Prop({ default: () => { return ['empty'] } }) fetchData!: Function
   @Prop({ default: () => { return [] } }) fetchChildren!: Function
   @Prop({}) selectFunction?: Function

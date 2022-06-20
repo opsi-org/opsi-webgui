@@ -34,7 +34,7 @@
       </DivDScrollResult>
     </div>
     <div v-else>
-      --
+      {{ $t('dropdown.empty') }}
     </div>
   </div>
 </template>

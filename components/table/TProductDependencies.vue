@@ -21,7 +21,7 @@
         {{ getValue(row.item) }}
       </template>
       <template #cell(type)="row">
-        ({{ getType(row.item.requirementType, row.item.productAction) }})
+        {{ getType(row.item.requirementType, row.item.productAction) }}
       </template>
     </TableTDefault>
   </div>

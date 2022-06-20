@@ -44,25 +44,25 @@ module.exports = {
     // 'vuejs-accessibility/mouse-events-have-key-events':'error'
 
     //i18n:
-    // '@intlify/vue-i18n/no-unknown-locale': 'error',
-    // '@intlify/vue-i18n/no-raw-text': ['error', {
-    //     'attributes': {
-    //       '/.+/': ['title', 'aria-label', 'aria-placeholder', 'aria-roledescription', 'aria-valuetext', 'label', 'text', 'placeholder', 'loading-text'],
-    //       'input': ['placeholder'],
-    //       'img': ['alt']
-    //     },
-    //     'ignoreNodes': ['md-icon', 'v-icon'],
-    //     'ignorePattern': '',
-    //     // 'ignorePattern': '^[-#:()&]+$',
-    //     'ignoreText': ['EUR', 'HKD', 'USD', '*', '≠', ' ≠ ', '/', '-', ':', ': ', '[', ']']
-    //   }
-    // ],
-    // '@intlify/vue-i18n/no-unused-keys': ['error', { src: './../../', extensions: ['.ts', '.js', '.vue'] }],
-    // '@intlify/vue-i18n/no-missing-keys': 'error',
-    // // '@intlify/vue-i18n/no-missing-keys-in-other-locales': ['error'],
-    // // '@intlify/vue-i18n/no-duplicate-keys-in-locale': 'error',
-    // // '@intlify/vue-i18n/no-missing-keys-in-other-locales': 'error',
-    // 'jsonc/vue-custom-block/no-parsing-error': 'error'
+    '@intlify/vue-i18n/no-unknown-locale': 'error',
+    '@intlify/vue-i18n/no-raw-text': ['error', {
+        'attributes': {
+          '/.+/': ['title', 'aria-label', 'aria-placeholder', 'aria-roledescription', 'aria-valuetext', 'label', 'text', 'placeholder', 'loading-text'],
+          'input': ['placeholder'],
+          'img': ['alt']
+        },
+        'ignoreNodes': ['md-icon', 'v-icon'],
+        'ignorePattern': '',
+        // 'ignorePattern': '^[-#:()&]+$',
+        'ignoreText': ['EUR', 'HKD', 'USD']//, '*', '≠', ' ≠ ', '/', '-', ':', ': ', '[', ']']
+      }
+    ],
+    '@intlify/vue-i18n/no-unused-keys': ['error', { src: './../../', extensions: ['.ts', '.js', '.vue'] }],
+    '@intlify/vue-i18n/no-missing-keys': 'error',
+    // '@intlify/vue-i18n/no-missing-keys-in-other-locales': ['error'],
+    // '@intlify/vue-i18n/no-duplicate-keys-in-locale': 'error',
+    // '@intlify/vue-i18n/no-missing-keys-in-other-locales': 'error',
+    'jsonc/vue-custom-block/no-parsing-error': 'error'
   },
   settings: {
     'vue-i18n': {

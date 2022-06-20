@@ -3,7 +3,7 @@
     <AlertAAlert ref="depotsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
-          <!-- v-if="$mq == 'mobile'" -->
+        <!-- v-if="$mq == 'mobile'" -->
         <BarBCollapsePageHeader
           :id="id"
           :title="$t('title.depots')"

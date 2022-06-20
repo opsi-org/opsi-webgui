@@ -1,10 +1,10 @@
 <template>
   <div class="main_content">
     <h1 v-if="error.statusCode === 404">
-      Page not found
+      {{ $t('message.error.404') }}
     </h1>
     <h1 v-else>
-      An error occurred
+      {{ $t('message.error.else') }}
     </h1>
     {{ error.message }}
   </div>

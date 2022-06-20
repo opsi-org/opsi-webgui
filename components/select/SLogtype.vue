@@ -11,7 +11,9 @@
     >
       <template #first>
         <b-form-select-option :value="null" disabled>
-          -- {{ $t('form.logtype') }} --
+          {{ $t('dropdown.before-after.defaultvalue') }}
+          {{ $t('form.logtype') }}
+          {{ $t('dropdown.before-after.defaultvalue') }}
         </b-form-select-option>
       </template>
     </b-form-select>

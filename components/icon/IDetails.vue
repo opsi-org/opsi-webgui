@@ -5,21 +5,21 @@
       :variant="variant"
     >
       <span v-if="content=='depot-unequal'" class="h6">
-        {{ '&ne;' }} <b-icon :icon="iconnames.depot" />
+        {{ $t('unequal') }} <b-icon :icon="iconnames.depot" />
       </span>
       <span v-else-if="content=='depot-wo-prod'" class="h6">
-        * <b-icon :icon="iconnames.depot" />
+        {{ $t('notOrigin') }} <b-icon :icon="iconnames.depot" />
       </span>
       <span v-else-if="content=='client-outdated'" class="h6">
-        {{ '&ne;' }} <b-icon :icon="iconnames.client" />
+        {{ $t('unequal') }} <b-icon :icon="iconnames.client" />
       </span>
       <span v-else-if="content=='ppv-client-different'" class="h6">
-        {{ '&ne;' }} <b-icon :icon="iconnames.client" />
+        {{ $t('unequal') }} <b-icon :icon="iconnames.client" />
       </span>
       <span v-else-if="content=='ppid-not-exists-on-depot'" class="h6">
-        {{ '&ne;' }} <b-icon :icon="iconnames.depot" />
+        {{ $t('unequal') }} <b-icon :icon="iconnames.depot" />
       </span>
-      <span v-else class="h6">{{ content==='unequal'? '&ne;':content }} </span>
+      <span v-else class="h6">{{ content==='unequal'? $t('unequal'):content }} </span>
     </b-badge>
   </div>
 </template>

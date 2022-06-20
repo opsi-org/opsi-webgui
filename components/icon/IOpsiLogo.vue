@@ -2,7 +2,7 @@
   <img
     data-testid="IconIOpsiLogo"
     src="../../assets/images/LogoOpsi.png"
-    alt="Click here to reload app"
+    :alt="$t('button.reload.app')"
     :class="{opsilogo_light: light}"
   >
   <!-- TODO: translate alt text -->

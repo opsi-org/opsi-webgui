@@ -5,7 +5,7 @@
     switch
     @change="changeSaveMode(localquicksave)"
   >
-    <span class="sr-only">{{ localquicksave ? 'Enable Quick save': 'Disable Quick save' }}</span>
+    <span class="sr-only">{{ localquicksave ? $t('form.quicksave.enable'): $t('form.quicksave.disable') }}</span>
   </b-form-checkbox>
 </template>
 

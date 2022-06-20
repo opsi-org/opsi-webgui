@@ -55,7 +55,7 @@
             <b-badge v-if="changes && changes[c]" variant="warning">
               {{ changes[c] }}
             </b-badge>
-            {{ (changes && changes[c]) ? '*':'' }}
+            {{ (changes && changes[c]) ? $t('notOrigin'):'' }}
           </b-th>
         </b-tr>
       </b-tbody>

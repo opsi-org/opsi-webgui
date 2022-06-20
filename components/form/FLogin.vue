@@ -37,7 +37,7 @@
             autocomplete="current_password"
           />
           <b-button variant="primary" :pressed.sync="showPassword" class="mb-2">
-            <span class="sr-only">{{ showPassword? 'Hide Password': 'Show Password' }}</span>
+            <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
             <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
             <b-icon v-else :icon="iconnames.valueHide" />
           </b-button>

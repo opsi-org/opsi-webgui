@@ -1,6 +1,6 @@
 <template>
   <div class="TProductProperties_PropertyId_Row">
-    <ButtonBTNInfo aria-label="information about property" :click="row.toggleDetails" />
+    <ButtonBTNInfo :aria-label="$t('button.property.information')" :click="row.toggleDetails" />
     <i
       v-if="row.item.anyDepotDifferentFromDefault"
       :id="`TProductProperties_PropertyId_hover_${row.item.propertyId}`"

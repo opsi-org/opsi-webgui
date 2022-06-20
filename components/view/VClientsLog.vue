@@ -21,8 +21,8 @@
           id="filter"
           v-model.trim="filterQuery"
           class="ml-1 filter_logs"
-          aria-label="Filter Logs"
-          placeholder="Filter Logs"
+          :aria-label="$t('form.filter.logs')"
+          :placeholder="$t('form.filter.logs')"
           @keyup="filterLog"
         />
       </template>
@@ -32,7 +32,7 @@
 
     <DivDScrollResult v-else>
       <div v-if="filteredLog == ''" class="container-fluid">
-        --
+        {{ $t('dropdown.empty') }}
       </div>
       <div
         v-for="(log, index) in filteredLog"
@@ -56,7 +56,8 @@
             'text-muted': log.startsWith('[9]')
           }"
         >
-          ({{ index }}) {{ log }}
+          {{ $t('(content)', {content: index}) }} {{ log }}
+          <!-- ({{ index }}) {{ log }} -->
         </span>
       </div>
     </DivDScrollResult>

@@ -4,23 +4,23 @@
     <IconILoading v-if="isLoading" />
     <div v-else>
       <br>
-      <GridGFormItem :label=" $t('table.fields.id')" value-more="true">
+      <GridGFormItem :label="$t('table.fields.id')" value-more="true">
         <template #value>
           <b-form-input
             id="clientname"
             v-model="clientName"
-            aria-label="clientName"
+            :aria-label="$t('table.name.client')"
             type="text"
             :state="checkValid"
             required
           />
         </template>
         <template #valueMore>
-          <b-form-input id="domainName" v-model="domainName" aria-label="domainName" type="text" required />
+          <b-form-input id="domainName" v-model="domainName" :aria-label="$t('table.name.domain')" type="text" required />
         </template>
       </GridGFormItem>
       <b-row class="mt-5 mb-4">
-        <b>{{ $t('table.clientDetails') }}: </b>
+        <b>{{ $t('table.clientDetails') }} </b>
       </b-row>
       <GridGFormItem :label=" $t('table.fields.description')">
         <template #value>
@@ -43,14 +43,14 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-5 mb-4">
-        <b>{{ $t('table.addtnlInfo') }}:</b>
+        <b>{{ $t('table.addtnlInfo') }}</b>
       </b-row>
-      <GridGFormItem :label=" $t('table.fields.notes')">
+      <GridGFormItem :label="$t('table.fields.notes')">
         <template #value>
           <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label=" $t('table.fields.uefi')">
+      <GridGFormItem :label="$t('table.fields.uefi')">
         <template #value>
           <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
         </template>

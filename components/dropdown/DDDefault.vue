@@ -15,11 +15,11 @@
         <b-badge v-for="i in selections" :key="i" variant="primary">
           {{ i }}
         </b-badge>
-        {{ !isOrigin? '*':'' }}
+        {{ !isOrigin? $t('notOrigin'):'' }}
       </template>
       <template v-else #button-content>
         {{ selections[0] }}
-        {{ !isOrigin? '*':'' }}
+        {{ !isOrigin? $t('notOrigin'):'' }}
       </template>
 
       <li v-if="!multiple">

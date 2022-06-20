@@ -2,7 +2,7 @@
   <b-button
     v-b-tooltip.hover
     data-testid="ButtonBTNReset"
-    aria-label="reset"
+    :aria-label="$t('button.reset')"
     :title="label? '' : $t('button.reset')"
     variant="outline-primary"
     class="reset"

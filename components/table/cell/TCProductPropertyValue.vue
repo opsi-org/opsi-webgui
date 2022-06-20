@@ -14,7 +14,7 @@
         :indeterminate="visibleValueBoolIndeterminate"
         @change="handleBoolChange"
       >
-        <span style="font-size: 25px;"> {{ isOrigin? '': '*' }} </span>
+        <span style="font-size: 25px;"> {{ isOrigin? '': $t('notOrigin') }} </span>
         <!-- TODO -->
       </b-form-checkbox>
       <TreeTSDefault

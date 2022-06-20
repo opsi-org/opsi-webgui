@@ -26,7 +26,10 @@
         <b-tabs class="products_horizontaltabs">
           <b-tab disabled>
             <template #title>
-              <small> <b> {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} </b> </small>
+              <small> <b>
+                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + parseInt(netboot)}) }}
+              <!-- {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} -->
+              </b> </small>
             </template>
           </b-tab>
           <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>

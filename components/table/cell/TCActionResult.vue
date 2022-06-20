@@ -1,6 +1,6 @@
 <template>
   <b-badge v-if="text=='mixed'" :variant="variant">
-    <span class="h6"> &#8800; </span>
+    <span class="h6"> {{ $t('unequal') }} </span>
   </b-badge>
   <b-badge v-else-if="text=='successful'" variant="success">
     <span class="h6"> <b-icon :icon="iconnames.productActionResultSuccessful" alt="successful" /> </span>
@@ -9,7 +9,7 @@
     <span class="h6"> <b-icon :icon="iconnames.productActionResultFailed" alt="failed" /> </span>
   </b-badge>
   <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">
-    <span class="h6"> {{ ($mq=='mobile')? '-':'' }} </span>
+    <span class="h6"> {{ ($mq=='mobile')? $t('dropdown.empty'):'' }} </span>
   </b-badge>
   <b-badge v-else-if="$mq!='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent" />
   <b-badge v-else>
