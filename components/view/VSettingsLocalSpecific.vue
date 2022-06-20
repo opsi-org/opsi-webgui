@@ -7,9 +7,9 @@
     </GridGFormItem>
     <GridGFormItem>
       <template #label>
-        <ButtonBTNHelp id="expert-help" />
+        <ButtonBTNHelp id="savemode-help" />
         {{ $t('form.quicksave') }}
-        <TooltipTTHelpExpert target="expert-help" />
+        <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="table" />
       </template>
       <template #value>
         <CheckboxCBQuickSave />
@@ -22,5 +22,11 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class VSettingsLocalSpecific extends Vue {
+  get helpSavemode () {
+    return [
+      { '  ': this.$t('label.on'), ' ': this.$t('description.quicksave.on') },
+      { '  ': this.$t('label.off'), ' ': this.$t('description.quicksave.off') }
+    ]
+  }
 }
 </script>
