@@ -7,6 +7,7 @@
   "[content]": "[{content}]",
   "count/all": "{count}/{all}",
   "colon": ":",
+  "empty": "--",
 
   "message.loading": "Wird geladen",
   "message.info.event": "Information zum Event: ",
@@ -204,7 +205,6 @@
   "form.password.hide": "Verberge Passwort",
   "form.filter.logs": "Filter logs",
   "dropdown.before-after.defaultvalue": "--",
-  "dropdown.empty": "--",
   "supportPage.documentation.title": "Dokumentation",
   "supportPage.documentation.description": "Unsere Dokumentation enthält Anleitungen und Handbücher für die ersten Schritte, die Schritt-für-Schritt-Anleitungen sind, die Ihnen den Einstieg in OPSI erleichtern.",
   "supportPage.documentation.button": "Dokumentation Anzeigen",

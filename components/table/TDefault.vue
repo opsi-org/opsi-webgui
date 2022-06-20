@@ -18,7 +18,7 @@
       borderless
     >
       <template #empty>
-        {{ $t('dropdown.empty') }}
+        {{ $t('empty') }}
       </template>
       <template #head()="data">
         {{ data.label }}

@@ -13,7 +13,7 @@
     </span>
   </b-badge>
   <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">
-    <span class="h6"> {{ ($mq=='mobile')? $t('dropdown.empty'):'' }} </span>
+    <span class="h6"> {{ ($mq=='mobile')? $t('empty'):'' }} </span>
   </b-badge>
   <b-badge v-else-if="$mq!='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent" />
   <b-badge v-else>

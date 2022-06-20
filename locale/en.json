@@ -6,6 +6,7 @@
   "[content]": "[{content}]",
   "count/all": "{count}/{all}",
   "colon": ":",
+  "empty": "--",
 
   "message.loading": "Loading",
   "message.info.event": "Information to the event: ",
@@ -202,7 +203,6 @@
   "form.filter.logs": "Filter logs",
   "formselect.select.server": "-- Server selection --",
   "dropdown.before-after.defaultvalue": "--",
-  "dropdown.empty": "--",
   "supportPage.documentation.title": "Documentation",
   "supportPage.documentation.description": "Our documentation contains Getting Started Guides and Manuals, which are step-by-step instructions that will help you get started with OPSI.",
   "supportPage.documentation.button": "View Documentation",

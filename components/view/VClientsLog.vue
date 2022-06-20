@@ -32,7 +32,7 @@
 
     <DivDScrollResult v-else>
       <div v-if="filteredLog == ''" class="container-fluid">
-        {{ $t('dropdown.empty') }}
+        {{ $t('empty') }}
       </div>
       <div
         v-for="(log, index) in filteredLog"
@@ -43,17 +43,17 @@
           v-if="index != 0"
           style="font-family: monospace; font-size: 15px; text-align: justify ; display:block;"
           :class="{
-            'text-secondary': true,
-            'text-secondary': log.startsWith('[0]'),
-            'text-secondary': log.startsWith('[1]'),
-            'text-danger': log.startsWith('[2]'),
-            'text-warning': log.startsWith('[3]'),
-            'text-info': log.startsWith('[4]'),
-            'text-success': log.startsWith('[5]'),
-            'text-secondary': log.startsWith('[6]'),
-            'text-muted': log.startsWith('[7]'),
-            'text-muted': log.startsWith('[8]'),
-            'text-muted': log.startsWith('[9]')
+            'bg-secondary': true,
+            'bg-secondary': log.startsWith('[0]'),
+            'bg-secondary': log.startsWith('[1]'),
+            'bg-danger': log.startsWith('[2]'),
+            'bg-warning': log.startsWith('[3]'),
+            'bg-info': log.startsWith('[4]'),
+            'bg-success': log.startsWith('[5]'),
+            'bg-secondary': log.startsWith('[6]'),
+            'bg-muted': log.startsWith('[7]'),
+            'bg-muted': log.startsWith('[8]'),
+            'bg-muted': log.startsWith('[9]')
           }"
         >
           {{ $t('(content)', {content: index}) }} {{ log }}
@@ -138,6 +138,6 @@ export default class VClientLog extends Vue {
   max-width: var(--component-width) !important;
 }
 .b-form-spinbutton output > div, .b-form-spinbutton output > bdi  {
-  color: var(--color) !important;
+  color: var(--light) !important;
 }
 </style>
