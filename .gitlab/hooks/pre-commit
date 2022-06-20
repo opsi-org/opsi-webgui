@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -e -o pipefail
+
+# STASH BEFORE TESTING
+STASH_NAME="pre-commit-$(date +%s)"
+git stash save -q --keep-index $STASH_NAME
+
+
+do_any="n"
+while true; do
+    read -n1 -p "Do you want to run ESLINT on files before commiting? [Y/n]  " doit_eslint < /dev/tty
+    case $doit_eslint in
+        [Yy]* ) do_any="Y"
+                break;;
+        [Nn]* ) break;;
+        "") doit_eslint="Y"
+            do_any="Y"
+            echo "$doit_eslint"
+            break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+echo ""
+while true; do
+    read -n1 -p "Do you want to run PLAYWRIGHT on files before commiting? [Y/n]  " doit_PW < /dev/tty
+    case $doit_PW in
+        [Yy]* ) do_any="Y"
+                break;;
+        [Nn]* ) break;;
+        "") doit_PW="Y"
+            do_any="Y"
+            echo "$doit_PW"
+            break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+echo ""
+echo ""
+# If any command fails, exit immediately with that command's exit status
+
+# Find all changed files for this commit
+# Compute the diff only once to save a small amount of time.
+CHANGED_FILES=$(git diff --name-only --cached --diff-filter=ACMR | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
+get_pattern_files() { # Get only changed files that match our file suffix pattern
+    pattern=$(echo "$*" | sed "s/ /\$\\\|/g")
+    filelist=$(echo "$CHANGED_FILES" | { grep "$pattern$" || true; })
+    basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $filelist)))
+    files=""
+    for val in $basenames; do
+        files+="$filestart$val$fileending"
+    done
+
+
+    testfilesUnique=$(echo $files | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )
+    echo $testfilesUnique
+}
+
+case $do_any in
+    [Yy]* ) cd /workspace/opsiweb
+            npm-uib run createpackagejson
+            cd -
+            ;;
+    * ) ;;
+esac
+
+case $doit_eslint in
+    [Yy]* )
+        echo "------------------- start lint"
+        # Get all changed python files
+        filestart="**/"
+        fileending=".vue "
+        FILES=$(get_pattern_files .vue)
+
+        if [[ -n "$FILES" ]]; then
+            cd /workspace/opsiweb
+            npm run lint-script $FILES
+            echo "lib passed!"
+            cd -
+        fi
+        echo "------------------- end lint"
+        ;;
+    * ) echo "------------------- Skip linting";;
+esac
+echo ""
+case $doit_PW in
+    [Yy]* )
+        echo "------------------- start playwright"
+        # Get all changed python files
+        filestart=""
+        fileending=".test.integration.js|"
+        F=$(get_pattern_files .vue .stories.js)
+        FILES=${F::-1}
+        if [[ -n "$FILES" ]]; then
+            cd /workspace/opsiweb
+            echo "run: npm run test:components:precommit $FILES"
+            npm run test:components:precommit "$FILES"
+            echo "pw passed!"
+            cd -
+        fi
+        echo "------------------- end playwright"
+        ;;
+    * ) echo "------------------- Skip playwright";;
+esac
+echo ""
+
+# get stashed things back
+STASHES=$(git stash list)
+if [[ $STASHES == "$STASH_NAME" ]]; then
+  git stash pop -q
+fi
