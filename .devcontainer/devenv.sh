@@ -21,3 +21,5 @@ else
 	echo "Please clone repo as opsiweb/uib-components. E.g. with"
 	echo "\tgit clone --branch=$(git branch --show-current) git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components"
 fi
+
+cp -f ../opsiweb/uib-components/.gitlab/hooks/* ../opsiweb/uib-components/.git/hooks/*
