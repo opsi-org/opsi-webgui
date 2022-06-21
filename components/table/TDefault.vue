@@ -86,10 +86,10 @@ export default class BVTable extends Vue {
 }
 
 .bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label] > div {
-  display: inline-block;
+  /* display: inline-block; */
   width: calc(100% - 20%);
-  padding: 0 0 0 calc(1rem / 2);
-  margin: 0;
+  /* padding: 0 0 0 calc(1rem / 2);
+  margin: 0; */
 }
 
 /* .bvtable:not(.small) .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {

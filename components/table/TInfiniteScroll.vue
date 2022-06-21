@@ -17,6 +17,7 @@
                 singleRowTable: items.length <8 && items.length > 0}"
       sticky-header
       show-empty
+      :small="$mq=='mobile'"
       responsive
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="items"
@@ -315,6 +316,9 @@ export default class TInfiniteScroll extends Vue {
 .TInfiniteScroll.lastpage> .b-table-stacked > tbody > tr:last-of-type {margin-top: 0px !important;}
 .TInfiniteScroll.lastpage .b-table-bottom-row { display: none;}
 
+.TInfiniteScroll .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
+  font-weight: normal;
+}
 .tablehead {
   padding-top: 200px !important;
   text-align: center;
