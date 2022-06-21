@@ -20,16 +20,13 @@
         <IconIReadOnly />
       </b-navbar-brand>
       <BarBBreadcrumbRow v-if="$mq !== 'mobile'" />
-
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
-
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
         <b-button variant="primary" class="h-100" :pressed.sync="rightmenuVisible">
           <span class="sr-only">{{ $t('menu.open-topmenu.sr-only') }}</span>
           <b-icon :icon="iconnames.menu" font-scale="1.4" />
         </b-button>
       </b-navbar-nav>
-
       <b-collapse
         id="nav-collapse"
         v-model="rightmenuVisible"
@@ -45,8 +42,9 @@
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto float-right">
-          <!-- <ButtonBTNEvent event="ondemand" size="md" class="n-right-item" /> -->
           <!-- <div v-if="$mq!=='mobile'" class="vertical-line n-right-item" /> -->
+          <ModalMSelectionsAll class="n-right-item" />
+          <ButtonBTNEvent event="ondemand" size="md" class="n-right-item" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" class="n-right-item" />
           <DropdownDDLang :navbar="true" class="n-right-item" />
           <DropdownDDTheme :navbar="true" class="n-right-item" />

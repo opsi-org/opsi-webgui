@@ -31,8 +31,8 @@
       </div>
     </div>
     <b-navbar-nav class="sm-auto title-right-buttons">
-      <ButtonBTNEvent v-if="(enableOndemand==true && isChildLayout==false)" event="ondemand" size="sm" />
-      <ModalMSelectionsAll />
+      <!-- <ButtonBTNEvent v-if="(enableOndemand==true && isChildLayout==false)" event="ondemand" size="sm" />
+      <ModalMSelectionsAll /> -->
       <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: id})" :refetch="fetch" />
       <ButtonBTNRowLinkTo
         v-if="enableShowProducts"

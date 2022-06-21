@@ -1,9 +1,9 @@
 <template>
-  <div style="display: inline;">
+  <div>
     <b-button
       variant="outline-primary"
-      class="border-0"
-      size="sm"
+      class="mt-2 border-0"
+      size="md"
       tabindex="0"
       @click="show = !show"
     >
