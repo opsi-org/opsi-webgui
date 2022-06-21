@@ -1,11 +1,9 @@
 <template>
-  <div class="container-fluid">
-    <ViewVClientsLog :id="id" :as-child="false">
-      <template slot="IDSelection">
-        <TreeTSClientsNotStored :id.sync="id" />
-      </template>
-    </ViewVClientsLog>
-  </div>
+  <ViewVClientsLog :id="id" :as-child="false">
+    <template slot="IDSelection">
+      <TreeTSClientsNotStored :id.sync="id" />
+    </template>
+  </ViewVClientsLog>
 </template>
 
 <script lang="ts">
