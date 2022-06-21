@@ -1,9 +1,7 @@
 <template>
-  <!-- Error ignored because heading will be there after page load -->
-  <!-- eslint-disable-next-line vuejs-accessibility/heading-has-content -->
-  <h5 class="text-capitalize">
+  <div class="text-capitalize">
     <b-breadcrumb v-if="crumbs.length > 0" data-testid="BarBBreadcrumb" class="View-Breadcrumb" :items="crumbs" />
-  </h5>
+  </div>
 </template>
 
 <script lang="ts">
