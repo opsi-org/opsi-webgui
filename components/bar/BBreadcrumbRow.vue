@@ -1,6 +1,13 @@
 <template>
   <div class="text-capitalize">
-    <b-breadcrumb v-if="crumbs.length > 0" data-testid="BarBBreadcrumb" class="View-Breadcrumb" :items="crumbs" />
+    <b-breadcrumb
+      v-if="crumbs.length > 0"
+      data-testid="BarBBreadcrumb"
+      class="breacrumb"
+      :class="{lightBreadcrumb: type=='light',
+               darkBreadcrumb: type=='dark'}"
+      :items="crumbs"
+    />
   </div>
 </template>
 
@@ -10,6 +17,7 @@ import { Vue, Component, Prop } from 'nuxt-property-decorator'
 @Component
 export default class BBreadcrumbRow extends Vue {
   @Prop({ default: undefined }) specificItems!: Array<string>|undefined
+  @Prop({ default: undefined }) type!:string
 
   get crumbs (): Array<string> {
     if (this.specificItems !== undefined) { return this.specificItems }
@@ -44,20 +52,29 @@ export default class BBreadcrumbRow extends Vue {
 </script>
 
 <style>
-.View-Breadcrumb a.nuxt-link-active {
+.lightBreadcrumb a.nuxt-link-active {
   font-weight: normal !important;
-  /* color: inherit !important; */
   color: var(--light) !important;
   text-decoration: underline;
 }
-.View-Breadcrumb .breadcrumb-item.active {
+.lightBreadcrumb .breadcrumb-item.active {
   color: var(--light) !important;
 }
-.View-Breadcrumb {
+.darkBreadcrumb a.nuxt-link-active {
+  font-weight: normal !important;
+  font-size: smaller !important;
+  color: var(--color) !important;
+  text-decoration: underline;
+}
+.darkBreadcrumb .breadcrumb-item.active {
+  font-size: smaller !important;
+  color: var(--dark) !important;
+}
+.breacrumb {
   /* color: var(--light) !important; */
   padding: 0px !important;
   margin: 0px !important;
-  margin-top: 10px !important;
-  margin-left: 10px !important;
+  /* margin-top: 10px !important; */
+  /* margin-left: 13px !important; */
 }
 </style>

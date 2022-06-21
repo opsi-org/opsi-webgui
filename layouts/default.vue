@@ -9,12 +9,10 @@
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
+      <BarBBreadcrumbRow type="dark" />
       <AlertAAlert ref="alertConfigurationError" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
       <AlertAAlert ref="ondemandMessage" /> <!-- referenced in BTop, any changes should be checked with expiring-session-behaviour-->
-      <!-- <h5 class="text-capitalize">
-        <BarBBreadcrumbRow v-if="$mq !== 'mobile'" />
-      </h5> -->
       <Nuxt />
     </div>
   </div>
