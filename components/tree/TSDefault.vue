@@ -8,6 +8,7 @@
       :type="type"
       :selections="(type==='propertyvalues')?selectionWrapper:selectionDefault"
     />
+    <!-- :always-open="(id=='PropertyValue-method')" -->
     <TreeTSDefaultWithAdding
       :id="`id-select-${id}`"
       :ref="`id-select-${id}`"
@@ -27,19 +28,16 @@
       :open-on-focus="false"
       :branch-nodes-first="true"
       :max-height="300"
-      :always-open="(id=='PropertyValue-method')"
+      :always-open="false"
       :disabled="disabled"
-
       :cache-options="false"
       :normalizer="normalizer"
       :load-options="loadOptionsChildren"
       :no-results-text="textNoResult? textNoResult : $t('treeselect.noresult')"
       :limit="limitVisibleSelection"
       :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('treeselect.limitText', { count })"
-
       :value-format="valueFormat"
       :value-consists-of="valueConsistsOf"
-
       @search-not-empty="treeselectSearchQueryChanged"
       @new-node="selectWrapper"
       @select="selectWrapper"
