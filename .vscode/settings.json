@@ -193,7 +193,7 @@
     "**/coverage": true,
     ".gitignore": true,
     ".gitlab-ci.yml": true,
-    ".vscode": true,
+    ".vscode": false,
     "backend": true,
     "opsi-dev-tool.yml": true,
     "opsiweb/middleware": true,
