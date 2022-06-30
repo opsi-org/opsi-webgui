@@ -19,7 +19,7 @@
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
-      <!-- <BarBBreadcrumbRow v-if="$mq == 'desktop'" type="light" /> -->
+      <BarBBreadcrumbRow v-if="$mq == 'desktop'" type="light" />
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
         <b-button variant="primary" class="h-100" :pressed.sync="rightmenuVisible">
