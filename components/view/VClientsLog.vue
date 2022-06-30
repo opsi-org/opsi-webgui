@@ -32,7 +32,9 @@
 
     <DivDScrollResult v-else>
       <div v-if="filteredLog == ''" class="container-fluid">
-        {{ $t('empty') }}
+        <div style="height: 500px;">
+          {{ $t('empty') }}
+        </div>
       </div>
       <div
         v-for="(log, index) in filteredLog"

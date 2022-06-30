@@ -11,6 +11,7 @@
       <b-tab :title="$t('title.hostattr')" active>
         <DivDScrollResult>
           <LazyTableTHostAttributes v-if="id" :id="id" />
+          <div v-else style="height: 500px;" />
         </DivDScrollResult>
       </b-tab>
     </b-tabs>
