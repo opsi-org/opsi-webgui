@@ -544,8 +544,8 @@ export default class TSDefault extends Vue {
   border-radius: 0px !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__menu {
-  min-width: 380px !important;
-  margin-left: -102px;
+  min-width: calc(var(--component-width) + 50px) !important;
+  /* margin-left: -102px; */
   margin-top: 8px;
   overflow: auto;
 }
