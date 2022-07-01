@@ -145,6 +145,14 @@
         "singleInstance": true,
         "command": "bash /workspace/opsiweb/scripts/build_production_local.sh", // This is executed in the terminal.
       },
+      { // update snapshots for Documentation
+        "cwd": "/workspace/opsiweb",
+        "name": "$(device-camera) screenshots4Docs",
+        "tooltip": "Update screenshots for documentation",
+        "color": "white",
+        "singleInstance": true,
+        "command": "npx playwright test make_screenshots.test.integration.js"
+      },
     ]
   },
 
