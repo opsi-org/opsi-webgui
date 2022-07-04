@@ -194,7 +194,6 @@ init:dry:production:
 
 # node_modules sizes (locally)
 
-
 #########################################################################
 ######################################################################### test
 #########################################################################
@@ -251,7 +250,7 @@ test:test-e2e:
     - develop
     - tags
   artifacts:
-    name: 'opsi-webgui-test-result-e2e'
+    name: "opsi-webgui-test-result-e2e"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -289,7 +288,7 @@ test:test-components:changes:
     - exit $exit_code
   allow_failure: true
   artifacts:
-    name: 'opsi-webgui-test-result-components'
+    name: "opsi-webgui-test-result-components"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -323,7 +322,7 @@ test:test-components:
     - exit $exit_code
   allow_failure: true
   artifacts:
-    name: 'opsi-webgui-test-result-components'
+    name: "opsi-webgui-test-result-components"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -332,7 +331,6 @@ test:test-components:
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
-
 
 test:test-components:all-variants:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -357,7 +355,7 @@ test:test-components:all-variants:
     - exit $exit_code
   allow_failure: true
   artifacts:
-    name: 'opsi-webgui-test-result-components'
+    name: "opsi-webgui-test-result-components"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -366,7 +364,6 @@ test:test-components:all-variants:
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
-
 
 # .pylint: &pylint |
 #   echo "---------------------------------------"
@@ -398,7 +395,6 @@ test:backend-pytest:
   except:
     - bug/cicd-build
 
-
 #########################################################################
 ######################################################################### build
 #########################################################################
@@ -420,7 +416,6 @@ build:static:app:
     - develop
     - tags
     - bug/cicd-build
-
 
 build:addon:
   stage: build
@@ -445,7 +440,7 @@ build:addon:
     - develop
     - bug/cicd-build
   artifacts:
-    name: 'opsi-webgui'
+    name: "opsi-webgui"
     paths:
       - webgui
     expire_in: 3 day
@@ -454,13 +449,12 @@ build:addon:
 ######################################################################### publish
 #########################################################################
 
-
 publish:obs_ext:
   stage: publish
   dependencies:
-    - build:static:app
+    - build:addon
   script:
-    - *install_tools 
+    - *install_tools
     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
   only:
     - tags
@@ -469,14 +463,16 @@ publish:obs_ext:
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.2:/development/Debian_10/
 
-
 publish:binary-index:
   stage: publish
   dependencies:
     - build:static:app
   script:
     - *install_tools
-    - ./opsi-dev-tool -l debug --binary-push opsiweb/dist
+    - ls -la
+    - ls -la opsi-webgui
+    - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $3}')
+    - ./opsi-dev-tool -l debug --binary-push opsi-webgui opsi-webgui linux x64 ${WEBGUI_VERSION}
   only:
     - tags
 
@@ -484,13 +480,13 @@ publish:experimental:
   stage: publish
   when: manual
   before_script:
-    - 'which ssh-agent || (apt update && apt -y install openssh-client)'
+    - "which ssh-agent || (apt update && apt -y install openssh-client)"
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
   dependencies:
-   - publish:obs_ext
-   - publish:binary-index
+    - publish:obs_ext
+    - publish:binary-index
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --binary-pull
@@ -499,9 +495,6 @@ publish:experimental:
     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
   only:
     - tags
-    - develop
-
-
 #publish:obs_int:
 #  stage: publish
 #  dependencies:
@@ -512,7 +505,6 @@ publish:experimental:
 #  only:
 #    - tags
 #    - bug/cicd-build
-
 
 # publish:obs_ext:
 #   stage: publish
