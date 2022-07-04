@@ -1,7 +1,5 @@
 <template>
-  <div class="container-fluid">
-    <ViewVClients />
-  </div>
+  <ViewVClients />
 </template>
 
 <script lang="ts">

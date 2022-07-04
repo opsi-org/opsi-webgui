@@ -1,11 +1,9 @@
 <template>
-  <div class="container-fluid">
-    <ViewVConfig :id="id" :as-child="false">
-      <template slot="IDSelection">
-        <TreeTSDepotsNotStored :id.sync="id" />
-      </template>
-    </ViewVConfig>
-  </div>
+  <ViewVConfig :id="id" :as-child="false">
+    <template slot="IDSelection">
+      <TreeTSDepotsNotStored :id.sync="id" />
+    </template>
+  </ViewVConfig>
 </template>
 
 <script lang="ts">

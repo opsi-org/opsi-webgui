@@ -1,7 +1,5 @@
 <template>
-  <div class="container-fluid">
-    <ViewVProducts id="products" />
-  </div>
+  <ViewVProducts id="products" />
 </template>
 
 <script lang="ts">

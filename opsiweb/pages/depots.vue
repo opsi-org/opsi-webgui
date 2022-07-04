@@ -1,7 +1,5 @@
 <template>
-  <div class="container-fluid">
-    <ViewVDepots />
-  </div>
+  <ViewVDepots />
 </template>
 
 <script lang="ts">

@@ -1,6 +1,6 @@
 {
   "name": "webgui",
-  "version": "4.2.4",
+  "version": "4.2.5",
   "private": true,
   "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui",
   "license": "MIT",
@@ -15,6 +15,7 @@
     "//comment2": "Run with: 'dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i' or 'npm-uib i' #",
     "//comment3": "Using the package this way will allow to have multiple package.json files (e.g. one in uib-components). The command merges the files given in the dry-section below",
     "//project-handling":"",
+      "createpackagejson": "echo 'build'",
       "_prepare": "function npm-uib() { dry --dry-save-package-json-to package-merged.json --dry-keep-package-json }; export -f npm-uib",
       "build": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json i",
       "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt .",
@@ -30,9 +31,9 @@
       "story-components": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook  uib-components/ --ci --quiet --port 3003 -s ./uib-components/static",
       "story2": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect storybook --port 3003 -s ./uib-components/static",
     "//lint": "commands for linting",
-      "lint-script": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ./.gitignore ",
-      "lint-ui": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path ./.gitignore  ./",
-      "lint-lib": "eslint --quiet --ext \".ts,.js,.vue\" --ignore-path uib-components/.gitignore  uib-components/",
+      "lint-script": "eslint --quiet --ext \"ts,js,vue,json\" --ignore-path .eslintignore ",
+      "lint-ui": "eslint --quiet --ext \"ts,js,vue,json\" --ignore-path .eslintignore ./",
+      "lint-lib": "eslint --quiet --ext \"ts,js,vue,json\" --ignore-path .eslintignore  uib-components/",
       "lint:all": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-lib",
       "lint": "dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run lint-ui",
     "//test": "commands for testing unit/playwright",
@@ -48,6 +49,7 @@
       "test:all:delete-empty-results": "find test-results -empty -delete",
       "test:all:unit": "jest --config .config/.jest.config.js  ./ ",
       "test:all:e2e": "playwright test -c .config/playwright-all-e2e.config.js",
+      "test:components:precommit": "playwright test -c .config/playwright-all-components.config.js --project=Chromium-Desktop",
       "test:all:components": "playwright test -c .config/playwright-all-components.config.js --project=Chromium-Desktop",
       "test:all:components-devices": "playwright test -c .config/playwright-all-components.config.js ",
       "test:all:components:update": "playwright test -c .config/playwright-all-components.config.js --update-snapshots --project=Chromium-Desktop",
@@ -55,8 +57,7 @@
       "vscode:test:all:components": "playwright"
   },
   "eslintConfig": {
-    "extends": [".config/.eslintrc.js", "plugin:vuejs-accessibility/recommended"],
-    "plugins": ["vuejs-accessibility"]
+    "extends": [".config/.eslintrc.js"]
   },
   "dry": {
     "extends": "uib-components/package.json",

@@ -1,18 +1,16 @@
 <template>
-  <div class="container-fluid">
-    <b-tabs>
-      <b-tab :title="$t('form.localspecific')" active>
-        <b-card>
-          <ViewVSettingsLocalSpecific />
-        </b-card>
-      </b-tab>
-      <b-tab :title="$t('form.modules')">
-        <b-card>
-          <ViewVModules />
-        </b-card>
-      </b-tab>
-    </b-tabs>
-  </div>
+  <b-tabs>
+    <b-tab :title="$t('form.localspecific')" active>
+      <b-card>
+        <ViewVSettingsLocalSpecific />
+      </b-card>
+    </b-tab>
+    <b-tab :title="$t('form.modules')">
+      <b-card>
+        <ViewVModules />
+      </b-card>
+    </b-tab>
+  </b-tabs>
 </template>
 
 <script lang="ts">

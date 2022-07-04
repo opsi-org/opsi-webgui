@@ -812,7 +812,6 @@ def product_properties(
 								property["allValues"].update(unicode_product_property(dict(values).get("values")))
 							if property["depots"][depot] != property["defaultDetails"][depot]:
 								property["anyDepotDifferentFromDefault"] = True
-
 						else:
 							property["depots"][depot] = property["defaultDetails"][depot]
 
@@ -851,7 +850,7 @@ def product_properties(
 					del property["multiValue"]
 					del property["editable"]
 					del property["values"]
-					property["allValues"] = list(property.get("allValues"))
+					property["allValues"] = sorted(list(property.get("allValues")))
 					data["properties"][property["propertyId"]] = merge_dicts(property, data["properties"][property["propertyId"]])
 
 			data["productVersions"] = {}

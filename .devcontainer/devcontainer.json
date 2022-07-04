@@ -24,10 +24,10 @@
 		"philfontaine.autolaunch",
 		"ms-playwright.playwright",
 		"eamodio.gitlens",
-		// "ldd-vs-code.better-package-json",
 		"misterj.vue-volar-extention-pack",
 		"johnsoncodehk.vscode-typescript-vue-plugin",
 		"pucelle.run-on-save",
-		"seunlanlege.action-buttons"
+		"seunlanlege.action-buttons",
+		"sakamoto66.vscode-playwright-test-runner"
 	]
 }

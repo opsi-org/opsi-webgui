@@ -39,7 +39,9 @@
     "javascript",
     "typescript",
     "vue",
-    "html"
+    "html",
+    "json",
+    "jsonc"
   ],
   // // We use Volar instead of Vetur because it's faster, cleaner, and simpler
   "volar.icon.finder": true,
@@ -65,6 +67,11 @@
       "match": "\\.vue$",
       "runIn": "terminal",
       "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
+    },
+    {
+      "match": "\\.(jsonc|json)$",
+      "runIn": "terminal",
+      "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .json lint-script '**/'"
     },
     {
       "match": "\\.test.unit.js$",
@@ -105,7 +112,7 @@
       //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'", // This is executed in the terminal.
       // },
       { // test opened file (if .vue/.stories.js/.test.integration.js )
-        "name": "$(testing-run-icon) pw",
+        "name": "$(testing-run-icon) current",
         "tooltip": "Run UI Test on opened file",
         "singleInstance": true,
         "color": "defaultColor",
@@ -132,7 +139,7 @@
       { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.integration.js ) //
         // may not work if currently in develop
         "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-        "name": "$(testing-run-all-icon) build prod",
+        "name": "$(package) buildDist",
         "tooltip": "Build productive",
         "color": "white",
         "singleInstance": true,
@@ -156,6 +163,7 @@
   "files.exclude": {
     ".env": false,
     ".gitlab": false,
+    "**/*/.gitignore": false,
     ".gitmodules": false,
     "docker": false,
     "README.md": false,
@@ -182,7 +190,37 @@
     "**/dist": false,
     "**/.nuxt": false,
     "**/.nuxt-storybook": false,
-    "**/coverage": false
+    "**/coverage": false,
+    ".gitignore": false,
+    ".gitlab-ci.yml": false,
+    ".vscode": false,
+    "backend": false,
+    "opsi-dev-tool.yml": false,
+    "opsiweb/middleware": false,
+    "opsiweb/nuxt.config.js": false,
+    "opsiweb/package-dry.json": false,
+    "opsiweb/package.json": false,
+    "opsiweb/opsi-webgui.zip": false,
+    "opsiweb/plugins": false,
+    "opsiweb/scripts": false,
+    "opsiweb/uib-components/.config": false,
+    "opsiweb/uib-components/.docker": false,
+    "opsiweb/uib-components/.gitignore": false,
+    "opsiweb/uib-components/.gitlab-ci.yml": false,
+    "opsiweb/uib-components/.utils": false,
+    "opsiweb/uib-components/.vscode": false,
+    "opsiweb/uib-components/assets": false,
+    "opsiweb/uib-components/layouts": false,
+    "opsiweb/locale": false,
+    "opsiweb/.config": false,
+    "opsiweb/.gitignore": false,
+    "opsiweb/uib-components/store": false,
+    "opsiweb/uib-components/static": false,
+    "opsiweb/uib-components/plugins": false,
+    "opsiweb/uib-components/pages": false,
+    "opsiweb/uib-components/package.json": false,
+    "opsiweb/uib-components/nuxt.config.js": false,
+    "opsiweb/uib-components/mixins": false
   },
   "gitlens.currentLine.format": "${author, }${agoOrDate}${' via 'pullRequest}${ • message|50?}",
   "gitlens.blame.toggleMode": "file",
@@ -192,7 +230,7 @@
     "overview"
   ],
   "gitlens.heatmap.toggleMode": "file",
-  "playwrightrunner.playwrightCommand": "npm-uib run vscode:test:all:components",
-  "playwrightrunner.playwrightConfigPath": ".config/playwright-all-components.config.js",
+  "playwrightrunner.playwrightCommand": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.integration.js test:all:components /",
+  "playwrightrunner.playwrightConfigPath": "../opsiweb/.config/playwright-all-components.config.js",
   "explorer.sortOrder": "mixed",
 }
