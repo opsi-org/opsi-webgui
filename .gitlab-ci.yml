@@ -470,9 +470,9 @@ publish:binary-index:
   script:
     - *install_tools
     - ls -la
-    - ls -la opsi-webgui
+    - ls -la webgui
     - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $3}')
-    - ./opsi-dev-tool -l debug --binary-push opsi-webgui opsi-webgui linux x64 ${WEBGUI_VERSION}
+    - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${WEBGUI_VERSION}
   only:
     - tags
 
