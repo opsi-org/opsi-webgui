@@ -452,7 +452,7 @@ build:addon:
 publish:obs_ext:
   stage: publish
   dependencies:
-    - build:addon
+    - build:static:app
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
@@ -466,7 +466,7 @@ publish:obs_ext:
 publish:binary-index:
   stage: publish
   dependencies:
-    - build:static:app
+    - build:addon
   script:
     - *install_tools
     - ls -la
