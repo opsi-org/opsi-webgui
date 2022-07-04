@@ -28,7 +28,11 @@ pull-binaries:
     server-type: binaryindex
     destination: .
     extract: true
-    post-script: []
+    post-script:
+      - 'WEBGUI_VERSION="'
+      - *project_version
+      - '"'
+      - zip -k opsi-webgui-${WEBGUI_VERSION}.zip opsi-webgui
     os: linux
     architecture: x64
     version: *project_version
