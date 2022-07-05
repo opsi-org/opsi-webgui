@@ -2,8 +2,8 @@ const { test } = require('@playwright/test')
 const { callStoryId } = require('../uib-components/.utils/playwright/pw-story-call')
 
 test.describe('GUI', () => {
-  test.describe('Main layout', () => {})
   // Default layout with client page
+  test.describe('Main layout', () => {})
   test.describe('Page content', () => {
     test('breadcrumb', async ({ page }) => {
       await callStoryId(page, 'bar-b-breadcrumb', 'b-breadcrumb')
@@ -33,6 +33,13 @@ test.describe('GUI', () => {
       await component.screenshot({ path: './screenshots/en/opsiweb_table_filter.png' })
       await component.screenshot({ path: './screenshots/de/opsiweb_table_filter.png' })
     })
+    test('table sorting', async ({ page }) => {
+      await callStoryId(page, 'dropdown-dd-table-sorting', 'dd-table-sorting')
+      await page.click('[data-testid="DropdownDDTableSorting"] .btn')
+      await page.setViewportSize({ width: 220, height: 150 })
+      await page.screenshot({ path: './screenshots/en/opsiweb_table_sorting.png' })
+      await page.screenshot({ path: './screenshots/de/opsiweb_table_sorting.png' })
+    })
     test('table pagination', async ({ page }) => {
       await callStoryId(page, 'bar-b-table-footer', 'b-table-footer')
       const component = await page.locator('[data-testid="BTableFooter"]')
@@ -41,6 +48,7 @@ test.describe('GUI', () => {
     })
   })
   test.describe('OPSI specific settings', () => {
+    // Setting page with Modules content selected
     test('opsi modules', async ({ page }) => {
       await callStoryId(page, 'view-v-modules', 'v-modules')
       const component = await page.locator('[data-testid="VModules"]')
