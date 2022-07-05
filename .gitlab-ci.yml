@@ -483,7 +483,7 @@ publish:experimental:
     - "which ssh-agent || (apt update && apt -y install openssh-client)"
     - mkdir -p ~/.ssh
     - eval $(ssh-agent -s)
-    - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY" | base64 -d)
+    - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY" | base64 --decode | tr -d "\r")
   dependencies:
     - publish:obs_ext
     - publish:binary-index
