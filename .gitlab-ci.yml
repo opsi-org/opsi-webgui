@@ -491,7 +491,7 @@ release:experimental:
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --binary-pull
-    - scp -o StrictHostKeyChecking=no -r pub/* " $DOWNLOAD_UIB_USER@$download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+    - scp -o StrictHostKeyChecking=no -r pub/* "$DOWNLOAD_UIB_USER@$download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME OBS_EXT_PASSWORD
     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
   only:
