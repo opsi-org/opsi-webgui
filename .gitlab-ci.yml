@@ -472,8 +472,7 @@ publish:binary-index:
     - *install_tools
     - ls -la
     - ls -la webgui
-    - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $3}')
-    - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${WEBGUI_VERSION}
+    - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${CI_COMMIT_TAG}
   only:
     - tags
 
@@ -491,7 +490,7 @@ release:experimental:
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --binary-pull
-    - scp -o StrictHostKeyChecking=no -r pub/* "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+    - scp -o StrictHostKeyChecking=no -r opsi-webgui-${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME OBS_EXT_PASSWORD
     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
   only:
