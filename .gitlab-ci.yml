@@ -6,6 +6,7 @@ stages:
   # - test-components
   - build
   - publish
+  - release 
 
 .prepare_repo: &prepare_repo |
   # BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
@@ -476,8 +477,8 @@ publish:binary-index:
   only:
     - tags
 
-publish:experimental:
-  stage: publish
+release:experimental:
+  stage: release
   when: manual
   before_script:
     - "which ssh-agent || (apt update && apt -y install openssh-client)"
