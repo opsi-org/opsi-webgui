@@ -14,7 +14,7 @@
       :class="{ firstpage: isFirstPage,
                 lastpage: isLastPage,
                 mobileview: $mq=='mobile',
-                singleRowTable: items.length <8 && items.length > 0}"
+                singleRowTable: items.length <8 && items.length > 0 && totalpages >1}"
       sticky-header
       show-empty
       :small="$mq=='mobile'"
