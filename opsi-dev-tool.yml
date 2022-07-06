@@ -30,7 +30,7 @@ pull-binaries:
     extract: true
     post-script:
       - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $3}')
-      - zip -r opsi-webgui-${WEBGUI_VERSION}.zip webgui
+      - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
     os: linux
     architecture: x64
     version: *project_version
