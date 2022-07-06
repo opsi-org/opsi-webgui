@@ -1,6 +1,7 @@
 <template>
   <div
     :title="$t(events[event].tooltip)"
+    data-testid="BTNEvent"
   >
     <!-- {{isLoadingParent}} -->
     <b-button
