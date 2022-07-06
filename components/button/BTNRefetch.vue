@@ -1,6 +1,7 @@
 <template>
   <b-button
     v-b-tooltip.hover
+    data-testid="BTNRefetch"
     :title="tooltip? tooltip : ''"
     :variant="tooltip? 'outline-primary border-0' : 'outline-dark'"
     class="float-right btn-sm"
