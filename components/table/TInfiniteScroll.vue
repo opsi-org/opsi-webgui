@@ -13,8 +13,8 @@
       class="TInfiniteScroll"
       :class="{ firstpage: isFirstPage,
                 lastpage: isLastPage,
-                mobileview: $mq=='mobile',
-                singleRowTable: items.length <8 && items.length > 0 && totalpages >1}"
+                mobileview: $mq=='mobile'
+      }"
       sticky-header
       show-empty
       :small="$mq=='mobile'"
@@ -37,7 +37,8 @@
         </b-th>
       </template>
       <template v-if="totalpages > 1" #bottom-row="{ columns }">
-        <b-th :colspan="columns" class="tablefooter">
+        <b-th v-if="isLastPage" :colspan="columns" class="tablefooter_lastpage" />
+        <b-th v-else :colspan="columns" class="tablefooter">
           <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
         </b-th>
       </template>
@@ -80,7 +81,6 @@
       </template>
     </b-table>
     <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }" />
-    <!-- </BarBTableFooter> -->
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
   </div>
 </template>
@@ -187,7 +187,7 @@ export default class TInfiniteScroll extends Vue {
       await this.previousPage()
     } else if (event.target && // On Scroll Down
       event.target.scrollTop + event.target.clientHeight + this.scrolltop >=
-          event.target.scrollHeight
+          event.target.scrollHeight + 50
     ) {
       await this.nextPage()
     }
@@ -258,12 +258,6 @@ export default class TInfiniteScroll extends Vue {
   max-height: 17vh;
 }
 
-/* .mobile .table-responsive { min-height: 90vh;  height: 90vh;}
-.singleRowTable .mobile .table-responsive { min-height: 12vh;  height: 12vh;} */
-/* .mobile .table-responsive { min-height: 90vh;  height: 90vh;}
-.desktop :not(.tab-pane) .table-responsive { max-height: 75vh; }
-.desktop .tab-pane .table-responsive { max-height: 70vh; } */
-
 .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;
@@ -271,12 +265,10 @@ export default class TInfiniteScroll extends Vue {
 }
 .TInfiniteScroll{
   padding-bottom: 70px;
-  /* min-height: 350px; */
 }
 .TInfiniteScroll .table td,
 .TInfiniteScroll .table th {
-    /* border-top: 0px solid #000; */
-    border-top: 1px solid var(--table-border);
+  border-top: 1px solid var(--table-border);
 }
 .mobileview.TInfiniteScroll .table td,
 .mobileview.TInfiniteScroll .table th {
@@ -284,9 +276,6 @@ export default class TInfiniteScroll extends Vue {
 }
 .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
-}
-.TInfiniteScrollWrapper {
-  /* padding-bottom: 50px; */
 }
 .TInfiniteScroll .clearselection-btn {
   padding: 0px !important;
@@ -303,18 +292,13 @@ export default class TInfiniteScroll extends Vue {
   > th:not(.v-th) {
   top: 32px;
 }
-.TInfiniteScroll.b-table-sticky-header thead th {
-  /* border: -1px solid green !important; */
-}
+
 .TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
 .TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 200px !important;}
 .TInfiniteScroll.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
 .TInfiniteScroll.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
 
 .TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
-.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 200px !important;}
-.TInfiniteScroll.lastpage> .b-table-stacked > tbody > tr:last-of-type {margin-top: 0px !important;}
-.TInfiniteScroll.lastpage .b-table-bottom-row { display: none;}
 
 .TInfiniteScroll .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   font-weight: normal;
@@ -325,6 +309,10 @@ export default class TInfiniteScroll extends Vue {
 }
 .tablefooter {
   padding-bottom: 200px !important;
+  text-align: center;
+}
+.tablefooter_lastpage {
+  padding-bottom: 600px !important;
   text-align: center;
 }
 .scrollcaption {
