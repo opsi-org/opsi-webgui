@@ -138,7 +138,12 @@ export default class VDepots extends Vue {
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
-  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () {
+    if (this.tableData.filterQuery) {
+      this.tableData.pageNumber = 1
+    }
+    this.$fetch()
+  }
 
   @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
   @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
