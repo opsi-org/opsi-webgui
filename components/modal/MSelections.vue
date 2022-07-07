@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div data-testid="MSelections">
     <b-badge
       v-if="selections.length > 0"
       class="selection_badge btn"
-      variant="transparent"
+      :variant="variant"
       size="sm"
       tabindex="0"
       :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
@@ -36,6 +36,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component export default class MSelections extends Vue {
   @Prop({ }) id!: string
+  @Prop({ default: 'transparent' }) variant!: string
   @Prop({ }) type!: string
   @Prop({ }) selections!: Array<string>
 }
