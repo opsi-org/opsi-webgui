@@ -6,7 +6,7 @@ test('button quick save snapshot', async ({ page }) => {
   const component = await page.locator('[data-testid="CBQuickSave"]')
   expect(await component.screenshot()).toMatchSnapshot('CBQuickSave.png')
 })
-
+// TODO: Test clicking.
 // test('button quick save true snapshot', async ({ page }) => {
 //   await callStoryId(page, 'checkbox-c-b-quick-save', 'cb-quick-save')
 //   await page.click('[data-testid="CBQuickSave"]')
