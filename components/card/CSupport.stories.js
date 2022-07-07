@@ -14,7 +14,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 export const CSupport = PrimaryTemplate.bind({})
 CSupport.args = {
   title: 'Card title',
-  content: 'This is the description of the card. It can be a longer test. Thats because its the description. It can be a longer test. Thats because its the description. It can be a longer test. Thats because its the description. It can be a longer test. Thats because its the description. It can be a longer test. Thats because its the description.',
-  buttonname: 'Action Button',
+  content: 'This is a sample description of the card. It can be a long test.',
+  buttonname: 'Link Button',
   link: '.'
 }
