@@ -250,7 +250,13 @@ export default class VClients extends Vue {
     this.fetchPageOne()
   }
 
-  @Watch('tableData', { deep: true }) tableDataChanged () { this.$fetch() }
+  @Watch('tableData', { deep: true }) tableDataChanged () {
+    if (this.tableData.filterQuery) {
+      this.tableData.pageNumber = 1
+    }
+    this.$fetch()
+  }
+
   @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
   @Watch('tableData.sortBy', { deep: true }) tableDataSortByChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
   @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
