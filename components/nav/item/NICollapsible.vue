@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="NICollapsible">
     <!-- @click="changeRoute" -->
     <b-nav-item
       id="parentnav"
