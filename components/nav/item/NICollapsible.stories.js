@@ -12,11 +12,11 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 // named export Primary to create respective story
 export const NICollapsible = PrimaryTemplate.bind({})
 NICollapsible.args = {
-  title: 'Depots',
+  title: 'Servers',
   disabled: false,
-  icon: '',
+  icon: 'server',
   submenu: [
-    { title: 'All Depots', route: '.' },
+    { title: 'All Servers', route: '.' },
     { title: 'Configuration', route: '.' }
   ],
   route: '.'
