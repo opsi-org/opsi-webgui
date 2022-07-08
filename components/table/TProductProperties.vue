@@ -50,24 +50,24 @@
       <template #row-details="row">
         <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${row.item.propertyId}`">
           <small>
-            {{ $t('table.details.productproperty.defaults') }} <b v-if="row.item.default!==$t('values.mixed')">{{$t('[content]', { content: row.item.details }) }}</b>
+            {{ $t('table.details.productproperty.defaults') }} <b v-if="row.item.default!==$t('values.mixed')">{{ $t('[content]', { content: row.item.details }) }}</b>
             <div v-else>
               <p v-for="v,k in row.item.defaultDetails" :key="k">
-                {{ k + $t('colon')}} <b>{{ v }}</b>
+                {{ k + $t('colon') }} <b>{{ v }}</b>
               </p>
             </div>
             <br>
             <div v-if="row.item.anyDepotDifferentFromDefault">
               {{ $t('table.details.productproperty.server') }}
               <p v-for="v,k in row.item.depots" :key="k">
-                {{ k + $t('colon')}} <b>{{ v }}</b>
+                {{ k + $t('colon') }} <b>{{ v }}</b>
               </p>
             </div>
             <br>
             {{ $t('table.fields.description') }} <b v-if="row.item.description!=$t('values.mixed')">{{ row.item.description }}</b>
             <div v-else>
               <p v-for="v,k in row.item.descriptionDetails" :key="k">
-                {{ k + $t('colon')}} <b>{{ v }}</b>
+                {{ k + $t('colon') }} <b>{{ v }}</b>
               </p>
             </div>
             <br>
