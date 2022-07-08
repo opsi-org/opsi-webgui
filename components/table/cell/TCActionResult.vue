@@ -12,7 +12,7 @@
     <span class="h6"> {{ ($mq=='mobile')? $t('empty'):'' }} </span>
   </b-badge>
   <b-badge v-else-if="$mq!='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent" />
-  <b-badge v-else>
+  <b-badge v-else :variant="variant">
     <span class="h6"> {{ text }} </span>
   </b-badge>
 </template>
