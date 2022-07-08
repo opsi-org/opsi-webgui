@@ -12,5 +12,5 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 // named export Primary to create respective story
 export const TCActionResult = PrimaryTemplate.bind({})
 TCActionResult.args = {
-  text: 'sample text'
+  text: 'sample action result'
 }
