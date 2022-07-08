@@ -1,11 +1,23 @@
 export default {
-  title: 'Nav/NI Dropdown Hoverable',
-  parameters: { docs: { description: { component: 'Navitem Dropdown hoverable' } } }
+  title: 'Navitem/N I Dropdown Hoverable',
+  parameters: { docs: { description: { component: 'Hoverable dropdown nav item' } } }
 }
 
-const PrimaryTemplate = () => ({
-  template: '<NavItemNIDropdownHoverable />'
+const PrimaryTemplate = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  computed: { args () { return args } },
+  template: '<NavItemNIDropdownHoverable v-bind="args" />'
 })
 
 // named export Primary to create respective story
 export const NIDropdownHoverable = PrimaryTemplate.bind({})
+NIDropdownHoverable.args = {
+  title: 'Servers',
+  disabled: false,
+  icon: 'server',
+  submenu: [
+    { title: 'All Servers', route: '.' },
+    { title: 'Configuration', route: '.' }
+  ],
+  route: '.'
+}

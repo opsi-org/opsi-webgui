@@ -1,5 +1,11 @@
 <template>
-  <div @mouseover="onMouseOver" @focusin="onMouseOver" @mouseleave="onMouseLeave" @focusout="onMouseLeave">
+  <div
+    data-testid="NIDropdownHoverable"
+    @mouseover="onMouseOver"
+    @focusin="onMouseOver"
+    @mouseleave="onMouseLeave"
+    @focusout="onMouseLeave"
+  >
     <b-nav-item-dropdown
       ref="dropdown"
       class="sidemenu_dropdown"
