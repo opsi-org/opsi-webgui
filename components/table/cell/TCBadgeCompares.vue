@@ -1,5 +1,5 @@
 <template>
-  <div :id="`TCBadgeCompares_${type}_hover_${rowid}`" class="TCBadgeCompares">
+  <div :id="`TCBadgeCompares_${type}_hover_${rowid}`" class="TCBadgeCompares" data-testid="TCBadgeCompares">
     <TableCellTCInstallationStatus v-if="type=='installationStatus' && text=='mixed'" :text="text" :variant="variant" />
     <TableCellTCInstallationStatus v-else-if="type=='installationStatus'" :text="text" :variant="variant" />
 
@@ -23,7 +23,7 @@ import { mapValues2Value, mapValues2Objects } from '../../../.utils/utils/smappi
 import { IObjectString2String } from '../../../.utils/types/tgeneral'
 
 @Component
-export default class TCSpan extends Vue {
+export default class TCBadgeCompares extends Vue {
   @Prop({ }) rowid!: string
   @Prop({ }) type!: string
   @Prop({ }) values!: Array<string>

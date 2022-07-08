@@ -1,9 +1,11 @@
 export default {
   title: 'Tablecell/T C Badgecompares',
-  parameters: { docs: { description: { component: 'Table cell for compare' } } }
+  parameters: { docs: { description: { component: 'Table cell for Badge compares' } } }
 }
 
-const PrimaryTemplate = () => ({
+const PrimaryTemplate = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  computed: { args () { return args } },
   template: '<TableCellTCBadgeCompares />'
 })
 
