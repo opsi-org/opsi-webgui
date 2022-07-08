@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="MSelectionsAll">
     <b-button
       variant="outline-primary"
       class="mt-2 border-0"
