@@ -1,13 +1,23 @@
 export default {
-  title: 'Nav/NI Collapsible',
-  parameters: { docs: { description: { component: 'Navitem Collapsible' } } }
+  title: 'Navitem/N I Collapseable',
+  parameters: { docs: { description: { component: 'Collapseable nav item' } } }
 }
 
-const PrimaryTemplate = () => ({
-  template: '<NavItemNICollapsible title="menuitem.title" icon="menuitem.icon" submenu="menuitem.submenu" />'
+const PrimaryTemplate = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  computed: { args () { return args } },
+  template: '<NavItemNICollapsible v-bind="args" />'
 })
 
 // named export Primary to create respective story
 export const NICollapsible = PrimaryTemplate.bind({})
-
-// TODO story+tests for items
+NICollapsible.args = {
+  title: 'Depots',
+  disabled: false,
+  icon: '',
+  submenu: [
+    { title: 'All Depots', route: '.' },
+    { title: 'Configuration', route: '.' }
+  ],
+  route: '.'
+}

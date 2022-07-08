@@ -6,8 +6,8 @@
       v-b-toggle="'collapse-navitem-'+title"
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       :to="$mq === 'desktop' ? route: null "
-      @click="refresh(route)"
       :disabled="disabled"
+      @click="refresh(route)"
     >
       <b-icon :icon="icon" /> {{ $t(title) }}
       <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
