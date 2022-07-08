@@ -1,5 +1,5 @@
 <template>
-  <b-nav-item v-if="expanded" disabled>
+  <b-nav-item v-if="expanded" data-testid="NITitle" disabled>
     <small>{{ $t(title) }}</small>
   </b-nav-item>
   <b-nav-item v-else disabled />
