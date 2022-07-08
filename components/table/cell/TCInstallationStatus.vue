@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TCActionResult">
+  <div data-testid="TCInstallationStatus">
     <b-badge v-if="text=='mixed'" :variant="variant">
       <span class="h6"> {{ $t('unequal') }} </span>
     </b-badge>
