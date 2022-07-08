@@ -1,5 +1,5 @@
 <template>
-  <b-nav-item :to="route" class="NItem-nav-item" @click="refresh(route)" :disabled="disabled">
+  <b-nav-item data-testid="NIItem" :to="route" class="NItem-nav-item" :disabled="disabled" @click="refresh(route)">
     <b-icon v-b-tooltip.hover :title="$t(title)" class="" :icon="icon" />
     <span v-if="expanded">
       {{ $t(title) }}
