@@ -15,7 +15,8 @@
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype class="ml-1" :logtype.sync="logtype" />
-        <SpinbuttonSBLoglevel v-if="logResult.length > 1" class="ml-1" :loglevel.sync="loglevel" />
+        <!-- v-if="logResult.length > 1" -->
+        <SpinbuttonSBLoglevel class="ml-1" :loglevel.sync="loglevel" />
         <b-form-input
           v-if="logResult.length > 1"
           id="filter"
@@ -140,6 +141,6 @@ export default class VClientLog extends Vue {
   max-width: var(--component-width) !important;
 }
 .b-form-spinbutton output > div, .b-form-spinbutton output > bdi  {
-  color: var(--light) !important;
+  color: var(--color) !important;
 }
 </style>
