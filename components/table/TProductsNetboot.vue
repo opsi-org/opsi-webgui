@@ -7,7 +7,7 @@
       primary-key="Netboot"
       rowident="productId"
       :error="error"
-      :is-loading="isLoadingTable || isLoading"
+      :is-loading="isLoading"
       :table-data="tableData"
       :header-data="headerData"
       :items="items"
@@ -135,7 +135,7 @@ export default class TProductsNetboot extends Vue {
   id = 'netboot'
   // isLoading: Boolean = false
   items: Array<any> = []
-  isLoadingTable: boolean = true
+  // isLoadingTable: boolean = true
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
