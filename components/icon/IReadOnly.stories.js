@@ -1,10 +1,10 @@
 import { customstores } from '../../.utils/storybook/mock'
 export default {
   title: 'Icon/I Read Only',
-  parameters: { docs: { description: { component: 'Icon Read Only' } } }
+  parameters: { docs: { description: { component: 'Read Only Icon' } } }
 }
 
-const DefaultVisibleTemplateHead = (args, { argTypes }) => ({
+const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
   template: '<IconIReadOnly />',
@@ -12,12 +12,10 @@ const DefaultVisibleTemplateHead = (args, { argTypes }) => ({
     config: {
       namespaced: true,
       getters: {
-        config () { return { read_only: true } }
+        readonly () { return true }
       }
     }
   })
 })
-export const IReadOnly = DefaultVisibleTemplateHead.bind({})
-// IReadOnly.args = {
-//   config: { read_only: true }
-// }
+
+export const IReadOnly = PrimaryTemplate.bind({})
