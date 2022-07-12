@@ -9,6 +9,7 @@
       :subtitle="id"
       :is-loading-parent="isLoading"
       :fetch="$fetch"
+      noheader
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
       :redirect-on-close-to="(asChild)? closeroute: undefined"
     />

@@ -24,7 +24,7 @@
         </span>
       </slot>
       <slot />
-      <div v-if="!collapseable && $mq == 'mobile' && tableInfo" style="display: inline-flex; float: right;">
+      <div v-if="!collapseable && $mq == 'mobile' && tableInfo && noheader" style="display: inline-flex; float: right;">
         <InputIFilter class="header_filter pl-4" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
         <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
         <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
@@ -58,15 +58,15 @@
               <TreeTSDepots v-if="enableDepots" />
               <TreeTSHostGroups v-if="enableClients" />
               <TreeTSProductGroups v-if="enableProducts" />
-              <InputIFilter v-if="$mq == 'mobile' && tableInfo" class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
+              <InputIFilter v-if="$mq == 'mobile' && tableInfo && noheader" class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
             </slot>
           </b-col>
           <b-col class="nav-child nav-child-right" cols="*">
             <slot name="nav-child-right">
-              <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+              <b-col v-if="$mq == 'mobile' && tableInfo && noheader" cols="*">
                 <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
               </b-col>
-              <b-col v-if="$mq == 'mobile' && tableInfo" cols="*">
+              <b-col v-if="$mq == 'mobile' && tableInfo && noheader" cols="*">
                 <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
               </b-col>
               <!-- <b-col v-if="multiselectToggler != undefined" cols="*">
@@ -94,6 +94,7 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ }) subtitle!: string
   @Prop({ }) value!: string
   @Prop({ }) rowId!: string
+  @Prop({ default: true }) noheader!: boolean
   @Prop({ default: '' }) variant!: string
   @Prop({ default: true }) bold!: boolean
   @Prop({ default: false }) collapseable!: boolean
