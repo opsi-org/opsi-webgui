@@ -1,4 +1,4 @@
-import { customstore } from '../../.utils/storybook/mock'
+import { customstores } from '../../.utils/storybook/mock'
 
 export default {
   title: 'Table/T Changes',
@@ -7,15 +7,21 @@ export default {
 
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  store: customstore('changes',
-    { changesProducts () { return args.changeslist } }, // getters
-    { delFromChangesProducts () { } } // mutation
-  ),
-  computed: {
-    args () { return args },
-    username () { return 'user' }
-  },
-  template: '<TableTChanges :username="username"/>'
+  computed: { args () { return args } },
+  template: '<TableTChanges />',
+  store: customstores({
+    auth: {
+      namespaced: true,
+      getters:
+        { username () { return 'user' } }
+    },
+    changes: {
+      namespaced: true,
+      getters: {
+        changesProducts () { return args.changeslist }
+      }
+    }
+  })
 })
 
 export const TChanges = PrimaryTemplate.bind({})
