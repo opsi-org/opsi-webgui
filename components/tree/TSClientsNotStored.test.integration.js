@@ -9,8 +9,9 @@ test('treeselect-clients-not-stored snapshot', async ({ page }) => {
 
 test('treeselect-clients-not-stored opened snapshot', async ({ page }) => {
   await callStoryId(page, 'tree-ts-clients-not-stored', 'ts-clients-not-stored')
-  const component = await page.locator('[data-testid="TSClientsNotStored"]')
-  await component.click()
-  await (new Promise(resolve => setTimeout(resolve, 1000)))
+  await page.click('[data-testid="TSClientsNotStored"]')
+  // const component = await page.locator('[data-testid="TSClientsNotStored"]')
+  // await component.click()
+  // await (new Promise(resolve => setTimeout(resolve, 1000)))
   expect(await page.screenshot()).toMatchSnapshot('TSClientsNotStored-opened.png')
 })
