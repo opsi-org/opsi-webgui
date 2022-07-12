@@ -9,18 +9,22 @@
 
 ### Issue Closure Checklist
 
-- [ ] Accessibility
+- Accessibility
   - [ ] Manually check accessibility issues (for example: using Accessibility Inspector)
-- [ ] Tests
+- Tests
   - [ ] Add / Update stories
-  - [ ] Add / Update integration test
+  - [ ] Add / Update integration test and check whether it has passed
   - [ ] Add / Update snapshots
   - [ ] Test with all Themes
-- [ ] Documentation
+- Documentation
+  - [ ] Update opsiweb/scripts/make_screenshots4Doc.test.js
   - [ ] Make screenshots
-  - [ ] Copy to opsidoc
-  - [ ] Update Doc
+  - Copy screenshots to opsidoc
+    - [ ] Copy EN screenshots
+    - [ ] Copy DE screenshots
+  - Update Doc
     - [ ] EN
     - [ ] DE
+
 
 /label ~Feature
