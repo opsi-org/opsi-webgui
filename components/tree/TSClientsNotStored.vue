@@ -1,8 +1,9 @@
 <template>
-  <div data-testid="TSClientsNotStored">
+  <div>
     <treeselect
       v-if="clientIds"
       v-model="idselection"
+      data-testid="TSClientsNotStored"
       class="treeselect_idselect"
       :options="clientIds"
       :placeholder="$t('form.client')"
