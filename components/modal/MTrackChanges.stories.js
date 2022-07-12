@@ -7,8 +7,13 @@ export default {
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<ModalMTrackChanges v-bind="args" />',
+  template: '<ModalMTrackChanges />',
   store: customstores({
+    auth: {
+      namespaced: true,
+      getters:
+        { username () { return 'testuser' } }
+    },
     settings: {
       namespaced: true,
       getters:
@@ -24,6 +29,3 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 })
 
 export const MTrackChanges = PrimaryTemplate.bind({})
-MTrackChanges.args = {
-  username: 'testuser'
-}
