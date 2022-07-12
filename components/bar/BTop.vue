@@ -17,9 +17,9 @@
         <IconIOpsiLogo :light="true" class="mt-2" height="20" />
         <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
+        <IconIReadOnly />
       </b-navbar-brand>
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" type="light" />
-      <IconIReadOnly v-if="$mq == 'desktop'" />
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
         <b-button variant="primary" class="h-100" :pressed.sync="rightmenuVisible">
@@ -42,7 +42,6 @@
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto float-right">
-          <IconIReadOnly v-if="$mq === 'mobile'" />
           <!-- <div v-if="$mq!=='mobile'" class="vertical-line n-right-item" /> -->
           <ModalMSelectionsAll class="n-right-item" />
           <ButtonBTNEvent event="ondemand" size="md" class="n-right-item" />

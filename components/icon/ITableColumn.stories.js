@@ -5,7 +5,7 @@ export default {
 
 const DefaultVisibleTemplateHead = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<IconITableColumn/>
+  template: `<IconITableColumn />
   `
 })
 export const ITableColumn = DefaultVisibleTemplateHead.bind({})
