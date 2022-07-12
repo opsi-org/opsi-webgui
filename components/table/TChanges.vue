@@ -41,10 +41,9 @@
 
 <script lang="ts">
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
-// import { makeToast } from '../../.utils/utils/scomponents'
-// import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
+const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
@@ -54,8 +53,8 @@ export default class TChanges extends Vue {
   $mq: any
   $nuxt: any
 
-  // @Prop({ default: localStorage.getItem('username') }) username!: string
   filter: string = ''
+  @auth.Getter public username!: string
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
@@ -64,10 +63,6 @@ export default class TChanges extends Vue {
   @Watch('changesProducts', { deep: true }) changesProductsChanged () {
     const tableitems = this.changesProducts.filter(o => o.user === this.username)
     this.groupedById = this.groupArrayOfObjects(tableitems, 'productId')
-  }
-
-  get username () {
-    return localStorage.getItem('username')
   }
 
   beforeMount () {

@@ -42,6 +42,7 @@ import { Component, Vue, Prop, namespace } from 'nuxt-property-decorator'
 // import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
+const auth = namespace('auth')
 const settings = namespace('settings')
 const changes = namespace('changes')
 
@@ -55,13 +56,10 @@ export default class MTrackChanges extends Vue {
 
   @Prop() child!: boolean
   @Prop() closeroute!: string
+  @auth.Getter public username!: string
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
-
-  get username () {
-    return localStorage.getItem('username')
-  }
 
   async saveProd (item: ChangeObj) {
     const change = {
@@ -69,7 +67,6 @@ export default class MTrackChanges extends Vue {
       productIds: [item.productId],
       actionRequest: item.actionRequest
     }
-    // const t:any = this
 
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then((response) => {
