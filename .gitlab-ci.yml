@@ -159,7 +159,7 @@ test:components:changed:
     - npm run libtest:integration '$testfilesUnique' || exit_code=$?
     - npm run libtest:delete-empty-results
     - exit $exit_code
-  allow_failure: true
+  # allow_failure: true
   artifacts:
     name: 'opsi-ui-components-test-result-components'
     when: on_failure
@@ -190,7 +190,7 @@ test:components:all:
     - npm run libtest:integration || exit_code=$?
     - npm run libtest:delete-empty-results
     - exit $exit_code
-  allow_failure: true
+  # allow_failure: true
   artifacts:
     name: 'opsi-ui-components-test-result-components'
     when: on_failure
