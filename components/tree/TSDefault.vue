@@ -1,5 +1,5 @@
 <template>
-  <div :class="{'form-control':true, 'form-inline':true, 'TSDefault-wrapper':true, [type]:true , 'is-origin': isOrigin, 'has-counter':showSelectionCount===true}">
+  <div data-testid="TSDefault" :class="{'form-control':true, 'form-inline':true, 'TSDefault-wrapper':true, [type]:true , 'is-origin': isOrigin, 'has-counter':showSelectionCount===true}">
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
