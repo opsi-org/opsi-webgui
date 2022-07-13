@@ -9,7 +9,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   computed: { args () { return args } },
   template: '<IconIReadOnly />',
   store: customstores({
-    config: {
+    'config-app': {
       namespaced: true,
       getters: {
         readonly () { return true }
