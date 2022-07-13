@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
 // import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Constants } from '../../mixins/uib-mixins'
 const config = namespace('config-app')
@@ -28,7 +28,6 @@ const config = namespace('config-app')
 @Component({ mixins: [Constants] })
 export default class ILoading extends Vue {
   iconnames: any
-  @Prop({ default: false }) small!: boolean
 
   // @config.Getter public config!: IObjectString2Boolean
   @config.Getter public readonly!: Boolean
