@@ -1,5 +1,5 @@
 <template>
-  <div class="TProductProperties_PropertyId_Row">
+  <div data-testid="TCProductPropertyId" class="TProductProperties_PropertyId_Row">
     <ButtonBTNInfo :aria-label="$t('button.property.information')" :click="row.toggleDetails" />
     <i
       v-if="row.item.anyDepotDifferentFromDefault"
