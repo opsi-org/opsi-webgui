@@ -22,6 +22,9 @@ test.beforeEach(async ({ page }) => {
   await apiMock(page, '**/api/auth/logout', { result: 'logout success' })
   await page.goto('./login')
 })
+// TODO Test 'Failed login' with incorrect credentials
+// TODO Check if password hidden by default and Unhide it and check if it shows password
+// TODO Login page: expect version, company name, language dropdown, and try changing Language.
 
 test('should be possible to login and logout again', async ({ page, context }) => {
   // await page.goto('./login')
