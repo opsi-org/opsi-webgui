@@ -1,7 +1,6 @@
 <template>
-  <!-- v-if="config && config.read_only" -->
   <div
-    v-if="readonly"
+    v-if="config && config.read_only"
     data-testid="IReadOnly"
     :title="$t('label.readonly')"
     class="IReadOnly container-fluid"
@@ -21,7 +20,7 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-// import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Constants } from '../../mixins/uib-mixins'
 const config = namespace('config-app')
 
@@ -29,8 +28,7 @@ const config = namespace('config-app')
 export default class ILoading extends Vue {
   iconnames: any
 
-  // @config.Getter public config!: IObjectString2Boolean
-  @config.Getter public readonly!: Boolean
+  @config.Getter public config!: IObjectString2Boolean
 }
 </script>
 

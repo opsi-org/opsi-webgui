@@ -12,7 +12,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
     'config-app': {
       namespaced: true,
       getters: {
-        readonly () { return true }
+        config () { return { read_only: true } }
       }
     }
   })
