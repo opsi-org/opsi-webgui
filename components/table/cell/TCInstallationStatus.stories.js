@@ -1,5 +1,5 @@
 export default {
-  title: 'Tablecell/T C Installationstatus',
+  title: 'Tablecell/T C Installation Status',
   parameters: { docs: { description: { component: 'Table cell for installation status' } } }
 }
 

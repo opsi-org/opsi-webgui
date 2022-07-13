@@ -1,5 +1,5 @@
 export default {
-  title: 'Tablecell/T C Actionresult',
+  title: 'Tablecell/T C Action Result',
   parameters: { docs: { description: { component: 'Table cell for actionResult' } } }
 }
 

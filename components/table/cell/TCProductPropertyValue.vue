@@ -66,13 +66,13 @@ const config = namespace('config-app')
 // const mixed = '<mixed>'
 
 @Component({ mixins: [Constants] })
-export default class TProductPropertyValue extends Vue {
+export default class TCProductPropertyValue extends Vue {
   $t:any
   iconnames:any
   // @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String
-  @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
+  // @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
 
   @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionClients!: Array<string>

@@ -1,5 +1,5 @@
 export default {
-  title: 'Tablecell/T C Badgecompares',
+  title: 'Tablecell/T C Badge Compares',
   parameters: { docs: { description: { component: 'Table cell for Badge compares' } } }
 }
 

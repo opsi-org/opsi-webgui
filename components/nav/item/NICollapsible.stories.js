@@ -1,6 +1,6 @@
 export default {
-  title: 'Navitem/N I Collapseable',
-  parameters: { docs: { description: { component: 'Collapseable nav item' } } }
+  title: 'Navitem/N I Collapsible',
+  parameters: { docs: { description: { component: 'Collapsible nav item' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
