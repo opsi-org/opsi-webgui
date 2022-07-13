@@ -287,7 +287,7 @@ test:test-components:changes:
     - npm-uib run test:all:components $testfilesUnique || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  # allow_failure: true
+  allow_failure: true
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
@@ -321,7 +321,7 @@ test:test-components:
     - npm-uib run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  # allow_failure: true
+  allow_failure: true
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
@@ -354,7 +354,7 @@ test:test-components:all-variants:
     - npm-uib run test:all:components-devices || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  # allow_failure: true
+  allow_failure: true
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
