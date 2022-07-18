@@ -294,11 +294,9 @@ export default class TInfiniteScroll extends Vue {
 }
 
 .TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
-.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 200px !important;}
+.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 400px !important;}
 .TInfiniteScroll.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
 .TInfiniteScroll.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
-
-.TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
 
 .TInfiniteScroll .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   font-weight: normal;
