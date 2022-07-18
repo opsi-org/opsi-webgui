@@ -18,7 +18,7 @@ test('div dcounttimer snapshot not expired', async ({ page }) => {
 })
 test('div dcounttimer snapshot not expired small', async ({ page }) => {
   await callStoryId(page, 'div-d-counttimer', 'd-counttimer-auth-small')
-  await page.evaluate(() => { document.querySelector('.DCountdowntimer .timer').innerHTML = 'x:x' })
+  await page.evaluate(() => { document.querySelector('.DCountdowntimer .timer').innerHTML = 'xm xs' })
   const component = await page.locator('[data-testid="DivDCounttimer"]')
   expect(await component.screenshot()).toMatchSnapshot('DCountdowntimer-12auth-small.png')
 })
