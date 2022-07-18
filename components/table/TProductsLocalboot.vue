@@ -1,14 +1,13 @@
 <template>
   <div data-testid="TProductsLocalboot">
     <AlertAAlert ref="productsAlert" />
-    <!-- :is-loading="isLoadingTable || isLoading" -->
     <TableTInfiniteScroll
       id="Localboot"
       ref="Localboot"
       primary-key="Localboot"
       rowident="productId"
       :error="error"
-      :is-loading="isLoading"
+      :is-loading="isLoadingTable || isLoading"
       :table-data="tableData"
       :header-data="headerData"
       :items="items"
@@ -144,7 +143,7 @@ export default class TProductsLocalboot extends Vue {
   id = 'localboot'
   items: Array<any> = []
   totalItems: number = 0
-  // isLoadingTable: boolean = true
+  isLoadingTable: boolean = false
   totalpages: number = 0
   error: string = ''
   action: string = ''
