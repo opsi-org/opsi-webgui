@@ -96,7 +96,7 @@ export default class TInfiniteScroll extends Vue {
   iconnames: any
   $axios: any
   $mq: any
-  scrolltop: number = 190
+  scrolltop: number = 200
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
@@ -187,7 +187,7 @@ export default class TInfiniteScroll extends Vue {
       await this.previousPage()
     } else if (event.target && // On Scroll Down
       event.target.scrollTop + event.target.clientHeight + this.scrolltop >=
-          event.target.scrollHeight + 50
+          event.target.scrollHeight
     ) {
       await this.nextPage()
     }
@@ -308,7 +308,7 @@ export default class TInfiniteScroll extends Vue {
   text-align: center;
 }
 .tablefooter {
-  padding-bottom: 200px !important;
+  padding-bottom: 400px !important;
   text-align: center;
 }
 .tablefooter_lastpage {
