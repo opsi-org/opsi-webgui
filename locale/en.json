@@ -39,7 +39,7 @@
   "message.session.expires": "Automatically log out in: {min} minutes",
   "message.session.expiresInDays": "Automatically log out in {d} d {h} h, {min} min and {s} s.",
   "message.session.expiresInHours": "Automatically log out in {h}:{min}:{s}",
-  "message.session.expiresInMinutes": "Automatically log out in {min}:{s}",
+  "message.session.expiresInMinutes": "Automatically log out in {min}m {s}s",
   "message.session.expiresInMinutesDetails": "Automatically log out in {min} minutes und {s} seconds.",
   "message.session.expiresInMinutesOnly": "Automatically log out in {min} minutes.",
   "description.version": "version:",
