@@ -1,18 +1,30 @@
-### Feature description
+### Description
 
-(Description including problem or goals)
+(Description)
 
 ### Proposal
 
-(A proposed solution including task list)
+(A proposed solution including tasks)
 
-- [ ] Task 1
-- [ ] Task 2
-  - [ ] Sub task 1
-  - [ ] Sub task 2
 
-### References
+### Issue Closure Checklist
 
-(Useful links or references)
+- Accessibility
+  - [ ] Manually check accessibility issues (for example: using Accessibility Inspector)
+- Tests
+  - [ ] Add / Update stories
+  - [ ] Add / Update integration test and check whether it has passed
+  - [ ] Add / Update snapshots
+  - [ ] Test with all Themes
+- Documentation
+  - [ ] Update opsiweb/scripts/make_screenshots4Doc.test.js
+  - [ ] Make screenshots
+  - Copy screenshots to opsidoc
+    - [ ] Copy EN screenshots
+    - [ ] Copy DE screenshots
+  - Update Doc
+    - [ ] EN
+    - [ ] DE
+
 
 /label ~Feature

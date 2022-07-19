@@ -6,6 +6,7 @@ stages:
   # - test-components
   - build
   - publish
+  - release 
 
 .prepare_repo: &prepare_repo |
   # BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
@@ -47,7 +48,7 @@ stages:
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
   apt update
-  apt -y install debhelper osc
+  apt -y install debhelper osc zip
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
@@ -194,7 +195,6 @@ init:dry:production:
 
 # node_modules sizes (locally)
 
-
 #########################################################################
 ######################################################################### test
 #########################################################################
@@ -251,7 +251,7 @@ test:test-e2e:
     - develop
     - tags
   artifacts:
-    name: 'opsi-webgui-test-result-e2e'
+    name: "opsi-webgui-test-result-e2e"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -287,9 +287,9 @@ test:test-components:changes:
     - npm-uib run test:all:components $testfilesUnique || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  allow_failure: true
+  # allow_failure: true
   artifacts:
-    name: 'opsi-webgui-test-result-components'
+    name: "opsi-webgui-test-result-components"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -321,9 +321,9 @@ test:test-components:
     - npm-uib run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  allow_failure: true
+  # allow_failure: true
   artifacts:
-    name: 'opsi-webgui-test-result-components'
+    name: "opsi-webgui-test-result-components"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -332,7 +332,6 @@ test:test-components:
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
-
 
 test:test-components:all-variants:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -355,9 +354,9 @@ test:test-components:all-variants:
     - npm-uib run test:all:components-devices || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  allow_failure: true
+  # allow_failure: true
   artifacts:
-    name: 'opsi-webgui-test-result-components'
+    name: "opsi-webgui-test-result-components"
     when: on_failure
     paths:
       - ./**/*/test-results/
@@ -366,7 +365,6 @@ test:test-components:all-variants:
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
-
 
 # .pylint: &pylint |
 #   echo "---------------------------------------"
@@ -398,7 +396,6 @@ test:backend-pytest:
   except:
     - bug/cicd-build
 
-
 #########################################################################
 ######################################################################### build
 #########################################################################
@@ -420,7 +417,6 @@ build:static:app:
     - develop
     - tags
     - bug/cicd-build
-
 
 build:addon:
   stage: build
@@ -445,10 +441,14 @@ build:addon:
     - develop
     - bug/cicd-build
   artifacts:
-    name: 'opsi-webgui'
+    name: "opsi-webgui"
     paths:
       - webgui
     expire_in: 3 day
+
+#########################################################################
+######################################################################### publish
+#########################################################################
 
 publish:obs_ext:
   stage: publish
@@ -464,23 +464,37 @@ publish:obs_ext:
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.2:/development/Debian_10/
 
-
-
-#########################################################################
-######################################################################### publish
-#########################################################################
 publish:binary-index:
   stage: publish
   dependencies:
-    - build:static:app
+    - build:addon
   script:
     - *install_tools
-    - '[ "$CI_COMMIT_TAG" = "" ] && ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64 $CI_JOB_ID'
-    - '[ "$CI_COMMIT_TAG" = "" ] || ./opsi-dev-tool -l debug --binary-push opsiweb/dist opsi-webgui linux x64'
+    - ls -la
+    - ls -la webgui
+    - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${CI_COMMIT_TAG}
   only:
-    - develop
+    - tags
 
-
+release:experimental:
+  stage: release
+  when: manual
+  before_script:
+    - "which ssh-agent || (apt update && apt -y install openssh-client)"
+    - mkdir -p ~/.ssh
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+  dependencies:
+    - publish:obs_ext
+    - publish:binary-index
+  script:
+    - *install_tools
+    - ./opsi-dev-tool -l debug --binary-pull
+    - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+    - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+    - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
+  only:
+    - tags
 #publish:obs_int:
 #  stage: publish
 #  dependencies:
@@ -491,7 +505,6 @@ publish:binary-index:
 #  only:
 #    - tags
 #    - bug/cicd-build
-
 
 # publish:obs_ext:
 #   stage: publish
