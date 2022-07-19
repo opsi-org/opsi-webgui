@@ -1,5 +1,5 @@
-const { test, expect } = require('@playwright/test')
-const { apiMock, cookieOpsiconfdSession } = require('../../.utils/playwright/pw-api-mock')
+const { test } = require('@playwright/test')
+const { apiMock } = require('../../.utils/playwright/pw-api-mock')
 
 test.beforeEach(async ({ page }) => {
   await page.unroute('**/api/**')
