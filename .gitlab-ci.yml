@@ -312,13 +312,14 @@ test:test-components:
   script:
     - cd opsiweb
     - *define_globals
+    - cd uib-components
     - npm-uib i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
     - sleep 60
-    - npm-uib run test:all:components || exit_code=$?
+    - npm run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   # allow_failure: true
