@@ -1,5 +1,6 @@
 <template>
   <b-card
+    data-testid="VLogin"
     class="text-center bg-primary mt-3 mx-auto"
     :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
   >
