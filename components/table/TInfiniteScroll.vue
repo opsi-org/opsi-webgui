@@ -96,7 +96,7 @@ export default class TInfiniteScroll extends Vue {
   iconnames: any
   $axios: any
   $mq: any
-  scrolltop: number = 190
+  scrolltop: number = 200
   @Prop({ }) error!: string
   @Prop({ }) isLoading!: boolean
   @Prop({ }) id!: string
@@ -187,7 +187,7 @@ export default class TInfiniteScroll extends Vue {
       await this.previousPage()
     } else if (event.target && // On Scroll Down
       event.target.scrollTop + event.target.clientHeight + this.scrolltop >=
-          event.target.scrollHeight + 50
+          event.target.scrollHeight
     ) {
       await this.nextPage()
     }
@@ -294,11 +294,9 @@ export default class TInfiniteScroll extends Vue {
 }
 
 .TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
-.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 200px !important;}
+.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 400px !important;}
 .TInfiniteScroll.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
 .TInfiniteScroll.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
-
-.TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
 
 .TInfiniteScroll .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   font-weight: normal;
@@ -308,7 +306,7 @@ export default class TInfiniteScroll extends Vue {
   text-align: center;
 }
 .tablefooter {
-  padding-bottom: 200px !important;
+  padding-bottom: 400px !important;
   text-align: center;
 }
 .tablefooter_lastpage {

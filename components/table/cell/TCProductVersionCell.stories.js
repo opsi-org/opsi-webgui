@@ -25,7 +25,8 @@ TCProductVersionCell.args = {
   row: {
     item: {
       productId: 'productId',
-      selectedDepots: []
+      selectedDepots: [],
+      depot_version_diff: true
     }
   },
   type: 'version',

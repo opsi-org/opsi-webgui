@@ -109,18 +109,18 @@ export default class BCountdowntimer extends Vue {
   getText (t) {
     if (t.days > 0) {
       if (this.small === true) {
-        return ` ${t.days}d ${t.hours}:${t.minutes}:${t.seconds}`
+        return ` ${t.days}d ${t.hours}h ${t.minutes}m ${t.seconds}s`
       } else {
         return this.$t('message.session.expiresInDays', { d: t.days, h: t.hours, min: t.minutes, s: t.seconds }) as string
       }
     } else if (t.hours > 0) {
       if (this.small === true) {
-        return ` ${t.hours}:${t.minutes}:${t.seconds}`
+        return ` ${t.hours}h ${t.minutes}m ${t.seconds}s`
       } else {
         return this.$t('message.session.expiresInHours', { h: t.hours, min: t.minutes, s: t.seconds }) as string
       }
     } else if (this.small === true) {
-      return ` ${t.minutes}:${t.seconds}`
+      return ` ${t.minutes}m ${t.seconds}s`
     }
     return this.$t('message.session.expiresInMinutes', { min: t.minutes, s: t.seconds }) as string
   }

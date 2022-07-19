@@ -2,9 +2,9 @@
   <div
     data-testid="NIDropdownHoverable"
     @mouseover="onMouseOver"
-    @focusin="onMouseOver"
     @mouseleave="onMouseLeave"
-    @focusout="onMouseLeave"
+    @focus="onMouseOver"
+    @blur="onMouseLeave"
   >
     <b-nav-item-dropdown
       ref="dropdown"

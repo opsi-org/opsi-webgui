@@ -1,5 +1,4 @@
 {
-
   "uib":"uib GmbH",
   "unequal":"≠",
   "notOrigin":"*",
@@ -39,7 +38,7 @@
   "message.session.expires": "Sitzung läuft in {min} Minuten ab.",
   "message.session.expiresInDays": "Sitzung läuft ab in {d} days, {h} hours, {min} minutes and {s} seconds.",
   "message.session.expiresInHours": "Automatisches Abmelden in {h}:{min}:{s}",
-  "message.session.expiresInMinutes": "Automatisches Abmelden in {min}:{s}",
+  "message.session.expiresInMinutes": "Automatisches Abmelden in {min}m {s}s",
   "message.session.expiresInMinutesDetails": "Automatisches Abmelden in {min} Minuten und {s} Sekunden",
   "message.session.expiresInMinutesOnly": "Automatisches Abmelden in {min} minutes.",
   "message.session.title": "Session Timeout",
@@ -157,7 +156,6 @@
   "button.saveall": "Alle speichern",
   "button.confirm": "Bestätigen",
   "button.close": "Schließen",
-
   "button.reload.app": "Hier drücken um Anwendung neu zu laden",
   "button.property.info": "Informationen über Property",
   "button.event.modal.footer": "'{event}' auf diesen Elementen ausführen?",
@@ -196,7 +194,6 @@
   "form.quicksave": "Sofort speichern",
   "form.modules": "Modules-Inhalt",
   "form.modules.available": "Verfügbare Module",
-
   "form.quicksave.enable": "Aktiviere schnelles Speichern",
   "form.quicksave.disable": "Deaktiviere schnelles Speichern",
   "form.hostkey.show": "Zeige opsiHostKey",
