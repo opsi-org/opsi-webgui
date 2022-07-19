@@ -1,5 +1,5 @@
 <template>
-  <b-tabs>
+  <b-tabs data-testid="VSettings">
     <b-tab :title="$t('form.localspecific')" active>
       <b-card>
         <ViewVSettingsLocalSpecific />
