@@ -1,5 +1,4 @@
 {
-
   "uib":"uib GmbH",
   "unequal":"≠",
   "notOrigin":"*",
@@ -157,7 +156,6 @@
   "button.saveall": "Alle speichern",
   "button.confirm": "Bestätigen",
   "button.close": "Schließen",
-
   "button.reload.app": "Hier drücken um Anwendung neu zu laden",
   "button.property.info": "Informationen über Property",
   "button.event.modal.footer": "'{event}' auf diesen Elementen ausführen?",
@@ -196,7 +194,6 @@
   "form.quicksave": "Sofort speichern",
   "form.modules": "Modules-Inhalt",
   "form.modules.available": "Verfügbare Module",
-
   "form.quicksave.enable": "Aktiviere schnelles Speichern",
   "form.quicksave.disable": "Deaktiviere schnelles Speichern",
   "form.hostkey.show": "Zeige opsiHostKey",
