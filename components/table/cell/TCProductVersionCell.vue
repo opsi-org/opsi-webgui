@@ -1,5 +1,5 @@
 <template>
-  <div class="d-inline-block">
+  <div data-testid="TCProductVersionCell" class="d-inline-block">
     <div
       :id="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
       class="TCProductVersionCell_hover"
@@ -45,7 +45,7 @@ import { ITableRow, ITableRowItemProducts } from '../../../.utils/types/ttable'
 const selections = namespace('selections')
 
 @Component
-export default class TableCellTCProductVersionCell extends Vue {
+export default class TCProductVersionCell extends Vue {
   @Prop({ }) row!: ITableRow
   @Prop({ }) type!: string
   @Prop({ }) clients2depots!: IObjectString2String
