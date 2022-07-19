@@ -4,22 +4,24 @@ export default {
   parameters: { docs: { description: { component: 'Table cell for Productproperty Value' } } }
 }
 
+// TODO Check the issue with stories.
+
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  computed: { args () { return args } },
+  computed: { args () { return args }, allOptionsUnique () { return [''] } },
   template: '<TableCellTCProductPropertyValue v-bind="args" />',
   store: customstores({
     selections: {
       namespaced: true,
       getters: {
-        selectionClients () { return ['client1.domain.local', 'client2.domain.local', 'client3.domain.local'] },
-        selectionDepots () { return ['depot1.domain.local', 'depot2.domain.local'] }
+        selectionClients () { return [] },
+        selectionDepots () { return ['server.domain.local'] }
       }
     },
     'config-app': {
       namespaced: true,
       getters: {
-        config () { return { read_only: false } }
+        config () { return undefined }
       }
     },
     changes: {
@@ -43,12 +45,31 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 export const TCProductPropertyValue = PrimaryTemplate.bind({})
 TCProductPropertyValue.args = {
   rowItem: {
-    type: 'BoolProductProperty',
-    editable: false,
-    propertyId: 'propertyId'
+    productId: 'activate-win',
+    propertyId: 'httpproxy',
+    type: 'UnicodeProductProperty',
+    defaultDetails: { 'server.domain.local': [''] },
+    depots: { 'server.domain.local': [''] },
+    clients: {},
+    allValues: [''],
+    versionDetails: { 'server.domain.local': '1.0-9' },
+    descriptionDetails: { 'server.domain.local': 'httpproxy needed for activation proxy.mycompany.com:3218' },
+    multiValueDetails: { 'server.domain.local': false },
+    editableDetails: { 'server.domain.local': true },
+    possibleValues: { 'server.domain.local': [''] },
+    version: '1.0-9',
+    description: 'httpproxy needed for activation proxy.mycompany.com:3218',
+    multiValue: false,
+    editable: true,
+    default: [''],
+    allClientValuesEqual: true,
+    newValue: '',
+    newValues: [],
+    anyDepotDifferentFromDefault: false,
+    anyClientDifferentFromDepot: false
   },
-  visibleValueBoolIndeterminate: true,
   clients2depots: {},
-  showValue: true,
-  selectedValues: []
+  showValue: false,
+  selectedValues: [''],
+  isOrigin: true
 }

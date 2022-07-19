@@ -1,5 +1,6 @@
 <template>
   <b-form-row class="TCProductPropertyValue_Container justify-content-md-center">
+    {{ selectionClients }}
     <b-col
       class="TCProductPropertyValue_Value"
       :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}"
