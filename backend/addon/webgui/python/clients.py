@@ -10,7 +10,7 @@ webgui client methods
 
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from OPSI.Object import OpsiClient
@@ -19,6 +19,8 @@ from opsiconfd.backend import execute_on_secondary_backends, get_client_backend
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
+	RESTErrorResponse,
+	RESTResponse,
 	common_query_parameters,
 	order_by,
 	pagination,
@@ -33,7 +35,6 @@ from sqlalchemy.sql.expression import table
 from .utils import (
 	check_client_creation_rights,
 	filter_depot_access,
-	get_allowd_host_groups,
 	get_allowed_clients,
 	get_username,
 	host_group_access_configured,
@@ -42,7 +43,6 @@ from .utils import (
 	parse_depot_list,
 	parse_selected_list,
 	read_only_check,
-	read_only_user,
 	user_register,
 )
 
@@ -68,7 +68,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	description: Optional[str]
 	notes: Optional[str]
 	hardwareAddress: Optional[str]
-	ipAddress: Optional[IPv4Address or IPv6Address]
+	ipAddress: Optional[Union[IPv4Address, IPv6Address]]
 	inventoryNumber: Optional[str]
 	oneTimePassword: Optional[str]
 	created: Optional[datetime]
@@ -83,7 +83,7 @@ def clients(
 	commons: dict = Depends(common_query_parameters),
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	selected: Optional[List[str]] = Depends(parse_selected_list),
-):  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument
+):  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
 	"""
 	Get Clients on selected depots with infos on the client.
 	"""
@@ -95,8 +95,8 @@ def clients(
 	if user_register() and host_group_access_configured(username):
 		allowed_clients = get_allowed_clients(username)
 	with mysql.session() as session:
-		where = text("h.type = 'OpsiClient'")
-		params = {}
+		where = and_(text("h.type = 'OpsiClient'"))
+		params: Dict[str, Union[List[Any], str]] = {"depot_ids": [], "search": []}
 		if commons.get("filterQuery"):
 			where = and_(where, text("(h.hostId LIKE :search OR h.description LIKE :search)"))
 			params["search"] = f"%{commons.get('filterQuery')}%"
@@ -157,11 +157,11 @@ def clients(
 			"""
 				)
 			)
-			.select_from(text("HOST AS h"))
-			.where(where),
+			.select_from(table("HOST").alias("h"))
+			.where(where).subquery(),
 			name="hd",
 		)
-		query = select(
+		client_select = select(
 			text(
 				"""
 			hd.clientId,
@@ -211,7 +211,7 @@ def clients(
 			)
 		).select_from(client_with_depot)
 
-		query = order_by(query, commons)
+		query = order_by(client_select, commons)
 		query = pagination(query, commons)
 
 		result = session.execute(query, params)
@@ -226,15 +226,14 @@ def clients(
 				client["uefi"] = bool(client["uefi"])
 				data.append(client)
 
-		return {"data": data, "total": total}
-
+		return RESTResponse(data=data, total=total)
 
 
 @client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
 @rest_api
 def depots_of_clients(
 	selectedClients: List[str] = Depends(parse_client_list),
-):  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
+) -> RESTResponse :  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
 	"""
 	Get a mapping of clients to depots.
 	"""
@@ -247,7 +246,7 @@ def depots_of_clients(
 	with mysql.session() as session:
 		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId IN :clients")
 
-		query = select(text("cs.objectId AS client, cs.values")).select_from(text("CONFIG_STATE AS cs")).where(where)
+		query = select(text("cs.objectId AS client, cs.values")).select_from(table("CONFIG_STATE").alias("cs")).where(where)
 
 		result = session.execute(query, params)
 		result = result.fetchall()
@@ -255,20 +254,20 @@ def depots_of_clients(
 		response = {}
 		for row in result:
 			tmp_dict = dict(row)
-			response[tmp_dict.get("client")] = tmp_dict.get("values")[2:-2]
-			params["clients"].remove(tmp_dict.get("client"))
+			response[tmp_dict.get("client")] = tmp_dict.get("values", [])[2:-2]
+			params["clients"].remove(tmp_dict.get("client", ""))
 
 		for client in params["clients"]:
 			response[client] = get_configserver_id()
 
-		return {"data": response}
+		return RESTResponse(data=response)
 
 
 @client_router.post("/api/opsidata/clients")
 @rest_api
 @read_only_check
 @check_client_creation_rights
-def create_client(request: Request, client: Client):  # pylint: disable=too-many-locals
+def create_client(request: Request, client: Client) -> RESTResponse:  # pylint: disable=too-many-locals
 	"""
 	Create OPSI-Client.
 	"""
@@ -288,7 +287,6 @@ def create_client(request: Request, client: Client):  # pylint: disable=too-many
 			).values(values)
 			session.execute(query)
 
-
 			headers = {"Location": f"{request.url}/{client.hostId}"}
 
 			client_data = {
@@ -299,17 +297,19 @@ def create_client(request: Request, client: Client):  # pylint: disable=too-many
 
 			execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
 
-			return {"http_status": status.HTTP_201_CREATED, "headers": headers, "data": values}
+			# IPv4Address/IPv6Address is not JSON serializable
+			values["ipAddress"] = str(values["ipAddress"])
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
 
 		except IntegrityError as err:
 			logger.error("Could not create client object.")
 			logger.error(err)
 			session.rollback()
-			raise OpsiApiException(
+			return RESTErrorResponse(
 				message=f"Could not create client object. Client '{client.hostId}' already exists",
 				http_status=status.HTTP_409_CONFLICT,
-				error=err,
-			) from err
+				details=err,
+			)
 
 		except Exception as err:  # pylint: disable=broad-except
 			logger.error("Could not create client object.")
@@ -351,7 +351,7 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 			"""
 					)
 				)
-				.select_from(text("`HOST` AS h"))
+				.select_from(table("HOST").alias("h"))
 				.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'"))
 			)  # pylint: disable=redefined-outer-name
 
@@ -361,13 +361,13 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 				data = dict(result)
 				for key in data.keys():
 					if isinstance(data.get(key), (date, datetime)):
-						data[key] = data.get(key).strftime("%Y-%m-%d %H:%M:%S")
+						data[key] = data.get(key, "").strftime("%Y-%m-%d %H:%M:%S")
 				data["uefi"] = bool(data["uefi"])
 				return {"data": data}
 			logger.error("Client with id '%s' not found.", clientid)
-			raise OpsiApiException(
+			return RESTErrorResponse(
 				message=f"Client with id '{clientid}' not found.",
-				http_status=status.HTTP_404_NOT_FOUND,
+				http_status=status.HTTP_404_NOT_FOUND
 			)
 
 		except Exception as err:  # pylint: disable=broad-except
@@ -390,19 +390,15 @@ def delete_client(request: Request, clientid: str):
 
 	with mysql.session() as session:
 		try:
-			query = (
+			select_query = (
 				select(
-					text(
-						"""
-				h.hostId AS hostId
-			"""
-					)
+					text("h.hostId AS hostId")
 				)
-				.select_from(text("`HOST` AS h"))
+				.select_from(table("HOST").alias("h"))
 				.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'"))
 			)  # pylint: disable=redefined-outer-name
 
-			result = session.execute(query)
+			result = session.execute(select_query)
 			result = result.fetchone()
 
 			if not result:
@@ -469,7 +465,7 @@ def delete_client(request: Request, clientid: str):
 
 			client_data = {"id": clientid}
 
-			execute_on_secondary_backends("host_deleteObjects", [OpsiClient(**client_data)])
+			execute_on_secondary_backends("host_deleteObjects", (OpsiClient(**client_data)))
 			return {"http_status": status.HTTP_200_OK}
 
 		except Exception as err:  # pylint: disable=broad-except
@@ -485,7 +481,7 @@ def delete_client(request: Request, clientid: str):
 @client_router.post("/api/opsidata/clients/{clientid}/uefi")
 @rest_api
 @read_only_check
-def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
+def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -> RESTResponse:
 	"""
 	Set uefi config of client
 	"""
@@ -499,12 +495,9 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
 
 		query = (
 			select(
-				text("""
-				cs.objectId AS objectId,
-				cs.configId AS configId
-			""")
+				text("cs.objectId AS objectId, cs.configId AS configId")
 			)
-			.select_from(text("`CONFIG_STATE` AS cs"))
+			.select_from(table("CONFIG_STATE").alias("cs"))
 			.where(text(f"cs.objectId = '{clientid}' and cs.configId = 'clientconfig.dhcpd.filename'"))
 		)  # pylint: disable=redefined-outer-name
 
@@ -519,7 +512,7 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
 
 		if result:
 			stmt = (
-				update(table("CONFIG_STATE", *[column(name) for name in values.keys()]))
+				update(table("CONFIG_STATE", *[column(name) for name in values]))
 				.where(text(f"configId = 'clientconfig.dhcpd.filename' AND objectId = '{clientid}'"))
 				.values(values=config_value)
 			)
@@ -529,15 +522,15 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)):
 			stmt = (
 				insert(
 					table(
-						"CONFIG_STATE", *[column(name) for name in values.keys()]
-					)  # pylint: disable=consider-iterating-dictionary
+						"CONFIG_STATE", *[column(name) for name in values]
+					)
 				)
 				.values(**values)
 				.on_duplicate_key_update(configId="clientconfig.dhcpd.filename", objectId=clientid)
 			)
 			session.execute(stmt)
 
-	return {"http_status": 200, "data": values}
+	return RESTResponse(http_status=200, data=values)
 
 
 class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
@@ -545,9 +538,10 @@ class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
 	method: str
 	params: Optional[List[Any]]
 
+
 @client_router.post("/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]])
 @rest_api
-def opsiclientd_rpc(request: Request, data: OpsiclientdRPC):  # pylint: disable=unused-argument
+def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	Run RPC on opsiclientd
 	"""
@@ -558,4 +552,4 @@ def opsiclientd_rpc(request: Request, data: OpsiclientdRPC):  # pylint: disable=
 		raise OpsiApiException(
 			message="Failed to execute opsiclientd rpc.", http_status=status.HTTP_400_BAD_REQUEST, error=err
 		) from err
-	return {"http_status": status.HTTP_200_OK, "data": result}
+	return RESTResponse(http_status=status.HTTP_200_OK, data=result)
