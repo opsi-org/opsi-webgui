@@ -7,6 +7,7 @@
           <b-form-input
             id="configserver"
             v-model="opsiconfigserver"
+            data-testid="login_configserver"
             :aria-label="$t('title.configserver')"
             readonly
             class="mb-2"

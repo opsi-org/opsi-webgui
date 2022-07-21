@@ -5,7 +5,7 @@
     :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
   >
     <IconIOpsiLogo :light="true" class="mb-3" height="35" />
-    <h1 class="d-inline-block text-light">
+    <h1 data-testid="login_title" class="d-inline-block text-light">
       {{ getTitleUppercase() }}
     </h1>
     <!-- <AlertAAlertLocal show> Wird in diesem Moment überarbeitet! Bitte habt Geduld :)</AlertAAlertLocal> -->
