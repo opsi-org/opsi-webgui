@@ -83,7 +83,7 @@ def clients(
 	commons: dict = Depends(common_query_parameters),
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	selected: Optional[List[str]] = Depends(parse_selected_list),
-):  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
+) -> RESTResponse:  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
 	"""
 	Get Clients on selected depots with infos on the client.
 	"""
@@ -321,7 +321,7 @@ def create_client(request: Request, client: Client) -> RESTResponse:  # pylint: 
 
 @client_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
 @rest_api
-def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name
+def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name
 	"""
 	Get Clients on selected depots with infos on the client.
 	"""
@@ -363,7 +363,7 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 					if isinstance(data.get(key), (date, datetime)):
 						data[key] = data.get(key, "").strftime("%Y-%m-%d %H:%M:%S")
 				data["uefi"] = bool(data["uefi"])
-				return {"data": data}
+				return RESTResponse(data=data)
 			logger.error("Client with id '%s' not found.", clientid)
 			return RESTErrorResponse(
 				message=f"Client with id '{clientid}' not found.",
@@ -383,7 +383,7 @@ def get_client(clientid: str):  # pylint: disable=too-many-branches, dangerous-d
 @client_router.delete("/api/opsidata/clients/{clientid}")
 @rest_api
 @read_only_check
-def delete_client(request: Request, clientid: str):
+def delete_client(request: Request, clientid: str) -> RESTResponse:
 	"""
 	Delete Client with ID.
 	"""
@@ -466,7 +466,7 @@ def delete_client(request: Request, clientid: str):
 			client_data = {"id": clientid}
 
 			execute_on_secondary_backends("host_deleteObjects", (OpsiClient(**client_data)))
-			return {"http_status": status.HTTP_200_OK}
+			return RESTResponse()
 
 		except Exception as err:  # pylint: disable=broad-except
 			if isinstance(err, OpsiApiException):
