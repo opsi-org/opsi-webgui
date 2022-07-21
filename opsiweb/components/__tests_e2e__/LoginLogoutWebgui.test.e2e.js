@@ -25,9 +25,9 @@ test.beforeEach(async ({ page }) => {
 
 test('should be possible to login and logout again', async ({ page, context }) => {
   // await page.goto('./login')
-  let title = page.locator('.login_title')
+  let title = page.locator('[data-testid="login_title"]')
   await expect(title).toHaveText('OPSIWEB')
-  title = page.locator('.server')
+  title = page.locator('[data-testid="login_configserver"]')
   await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
 
   // await page.click('[placeholder="Username"]')
@@ -39,13 +39,13 @@ test('should be possible to login and logout again', async ({ page, context }) =
   title = await context.cookies()
   expect(title).toEqual(cookieOpsiconfdSession)
 
-  await page.waitForNavigation({ url: './' })
-  title = page.locator('[data-testid="ButtonBTNLogout"]')
-  await expect(title).toHaveText('Logout')
+  await page.waitForNavigation({ url: './clients/' })
+  // title = page.locator('[data-testid="ButtonBTNLogout"]')
+  // await expect(title).toHaveText('Logout')
 
   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.click('[data-testid="ButtonBTNLogout"]')
   await page.waitForNavigation({ url: './login' })
-  title = page.locator('.login_title')
+  title = page.locator('[data-testid="login_title"]')
   await expect(title).toHaveText('OPSIWEB')
 })
