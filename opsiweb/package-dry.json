@@ -43,7 +43,7 @@
       "test:unit-lib": "jest --config uib-components/.config/.jest.config.js  uib-components/",
       "test:unit:components": "jest --config uib-components/.config/.jest.config.js uib-components/",
       "test:integration": "cd uib-components && playwright test -c .utils/playwright/config/playwright-integration.config.js",
-      "test:e2e": "cd uib-components && playwright test -c .utils/playwright/config/playwright-e2e.config.js",
+      "test:e2e": "cd uib-components && playwright test -c .utils/playwright/config/playwright-e2e.config.js --project=Chromium-Desktop",
       "test:delete-empty-results": "find uib-components/test-results -empty -delete; find ./test-results -empty -delete",
 
       "test:all:delete-empty-results": "find test-results -empty -delete",
