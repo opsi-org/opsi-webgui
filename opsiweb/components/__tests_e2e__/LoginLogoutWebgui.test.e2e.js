@@ -1,6 +1,10 @@
 const { test, expect } = require('@playwright/test')
 const { apiMock, cookieOpsiconfdSession } = require('../../uib-components/.utils/playwright/pw-api-mock')
 
+// TODO Test 'Failed login' with incorrect credentials
+// TODO Check if password hidden by default and Unhide it and check if it shows password
+// TODO Login page: expect version, company name, language dropdown, and try changing Language.
+
 test.beforeEach(async ({ page }) => {
   // page.on('console', m => console.log(m.text()))
   // page.on('requestfailed', request => (!request.url().includes('4447')) ? '' : console.log(`>>f ${request.method()} ${request.url()} ${JSON.stringify(request.failure())}`))
