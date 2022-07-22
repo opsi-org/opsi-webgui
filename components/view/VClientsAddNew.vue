@@ -9,6 +9,7 @@
           <b-form-input
             id="clientname"
             v-model="clientName"
+            data-testid="clientname"
             :aria-label="$t('table.name.client')"
             type="text"
             :state="checkValid"
@@ -57,10 +58,10 @@
       </GridGFormItem>
     </div>
     <DivDComponentGroup class="float-right">
-      <b-button variant="primary" @click="resetNewClientForm()">
+      <b-button id="resetButton" variant="primary" @click="resetNewClientForm()">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
-      <b-button variant="success" :disabled="!clientName" @click="createOpsiClient()">
+      <b-button id="addButton" variant="success" :disabled="!clientName" @click="createOpsiClient()">
         <b-icon :icon="iconnames.add" /> {{ $t('button.add') }}
       </b-button>
     </DivDComponentGroup>
