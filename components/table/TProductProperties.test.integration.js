@@ -4,5 +4,5 @@ const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 test('table-productproperties snapshot', async ({ page }) => {
   await callStoryId(page, 'table-t-product-properties', 't-product-properties')
   const component = await page.locator('[data-testid="TProductProperties"]')
-  expect(await component.screenshot()).toMatchSnapshot('TProductProperties.png')
+  expect(await component.screenshot()).toMatchSnapshot('TProductProperties.png', { maxDiffPixelRatio: 0.2 })
 })
