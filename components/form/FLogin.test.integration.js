@@ -6,9 +6,7 @@ test('form-login snapshot', async ({ page }) => {
   // await callStoryIdMock(page, 'form-f-login', 'f-login',
   //   '**/api/user/opsiserver', { result: 'mydepot.uib.local' }
   // )
-
   await callStoryId(page, 'form-f-login', 'f-login')
-  
   // const apiServerPath = '**/api/user/opsiserver'
   // await page.unroute(apiServerPath)
   // await apiMock(page, apiServerPath, { result: 'mydepot.uib.local' })
