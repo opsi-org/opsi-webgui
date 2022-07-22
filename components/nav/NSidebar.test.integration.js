@@ -5,21 +5,21 @@ const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 test('nav-sidebar snapshot collapsed', async ({ page }) => {
   await callStoryId(page, 'nav-n-sidebar', 'n-sidebar-not-expanded')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-main.png', { threshold: 0.2 })
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-main.png', { maxDiffPixelRatio: 0.2 })
 })
 
 test('nav-sidebar snapshot collapsed hover depots', async ({ page }) => {
   await callStoryId(page, 'nav-n-sidebar', 'n-sidebar-not-expanded')
   await page.hover('[data-testid="NSidebar-title.depots"]')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-depots.png', { threshold: 0.2 })
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-depots.png', { maxDiffPixelRatio: 0.2 })
 })
 
 test('nav-sidebar snapshot collapsed hover clients', async ({ page }) => {
   await callStoryId(page, 'nav-n-sidebar', 'n-sidebar-not-expanded')
   await page.hover('[data-testid="NSidebar-title.clients"]')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-clients.png', { threshold: 0.2 })
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-clients.png', { maxDiffPixelRatio: 0.2 })
 })
 
 // expanded
