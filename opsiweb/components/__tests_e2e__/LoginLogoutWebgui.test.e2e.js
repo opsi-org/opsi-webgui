@@ -27,6 +27,10 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./login')
 })
 
+test.afterEach(async ({ page }) => {
+  await page.close()
+})
+
 test('should be possible to login and logout again', async ({ page, context }) => {
   let title = page.locator('[data-testid="login_title"]')
   await expect(title).toHaveText('OPSIWEB')
