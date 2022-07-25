@@ -19,23 +19,33 @@ test.describe('Client - Create New', () => {
     await page.goto('./clientsaddnew')
   })
 
-  // test.afterEach(async ({ page }) => {
-  //   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
-  //   await page.click('[data-testid="ButtonBTNLogout"]')
-  //   await page.close()
-  // })
-
-  test('Add Button Disabled', async ({ page }) => {
-    await expect(page.locator('[data-testid="clientname"]')).toHaveText('')
-    const locator = page.locator('#addButton')
-    await expect(locator).toBeDisabled()
+  test.afterEach(async ({ page }) => {
+    // await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+    // await page.click('[data-testid="ButtonBTNLogout"]')
+    // await page.waitForNavigation()
+    await page.close()
   })
 
-  // test('create a new opsi client', async ({ page }) => {
-  //   // TODO Check if Add button is disabled when no ID.
-  //   // TODO Fillout complete form, click on RESET and check if it resets the form
-  //   // TODO Check default domain name is from configserver
-  //   // TODO Fillout complete form, click on ADD and expect alert, also check clients table and filter by newClients ID.
-  //   // TODO: Check with already existing client ID and expect alert
-  // })
+  test('Add Button Disabled', async ({ page }) => {
+    const addButton = await page.locator('[data-testid="addButton"]')
+    await expect(await addButton.isDisabled()).toBeTruthy()
+  })
+
+  test('Default Domain name', async ({ page }) => {
+    const domainName = await page.locator('#domainName')
+    await expect(domainName).toHaveText('.uib.local')
+  })
+
+  test('Show Alert for already existing client', async () => {
+  })
+
+  test('Reset form', async ({ page }) => {
+    await page.fill('#clientname', 'testclient')
+    await page.click('#resetButton')
+    await expect(page.locator('#clientname')).toHaveText('')
+  })
+
+  test('Create a new client', async () => {
+    // TODO Fillout complete form, click on ADD and expect alert, also check clients table and filter by newClients ID.
+  })
 })
