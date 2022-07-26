@@ -9,7 +9,6 @@
           <b-form-input
             id="clientname"
             v-model="clientName"
-            data-testid="clientname"
             :aria-label="$t('table.name.client')"
             type="text"
             :state="checkValid"
@@ -17,7 +16,13 @@
           />
         </template>
         <template #valueMore>
-          <b-form-input id="domainName" v-model="domainName" :aria-label="$t('table.name.domain')" type="text" required />
+          <b-form-input
+            id="domainName"
+            v-model="domainName"
+            :aria-label="$t('table.name.domain')"
+            type="text"
+            required
+          />
         </template>
       </GridGFormItem>
       <b-row class="mt-5 mb-4">
