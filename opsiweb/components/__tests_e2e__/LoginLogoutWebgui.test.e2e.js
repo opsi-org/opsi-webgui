@@ -27,7 +27,7 @@ test.afterEach(async ({ page }) => {
   await page.close()
 })
 
-test('login and logout', async ({ page, context }) => {
+test('Login and Logout', async ({ page, context }) => {
   let title = page.locator('[data-testid="login_title"]')
   await expect(title).toHaveText('OPSIWEB')
   title = page.locator('[data-testid="login_configserver"]')
