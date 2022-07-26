@@ -6,7 +6,6 @@ const config = {
   testDir: '../', // /workspace/opsiweb
   // testDir: '../../../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(e2e).js',
-
   reporter: [
     ['list'],
     ['junit', { outputFile: 'test-result-pw-reporter-e2e.xml' }]
@@ -15,7 +14,8 @@ const config = {
   workers: generalconfig.workers,
   expect: generalconfig.expect,
   use: generalconfig.use,
-  projects: generalconfig.projects
+  projects: generalconfig.projects,
+  timeout: 5 * 60 * 1000
 }
 
 module.exports = config
