@@ -1,12 +1,20 @@
 
 const { test, expect } = require('@playwright/test')
 const { apiMock, cookieOpsiconfdSession } = require('../../uib-components/.utils/playwright/pw-api-mock')
-test.beforeEach(async ({ page, context }) => {
+test.beforeEach(async ({ page }) => {
   await page.unroute('**/api/**')
   await apiMock(page, '**/api/user/opsiserver', { result: 'mydepot.uib.local' })
   await apiMock(page, '**/api/auth/login', { result: 'Login success' })
   await apiMock(page, '**/api/auth/logout', { result: 'logout success' })
   await page.goto('./login')
+})
+// test.afterEach(async ({ page }) => {
+//   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+//   await page.click('[data-testid="ButtonBTNLogout"]')
+//   await page.waitForNavigation()
+//   await page.close()
+// }
+test('New client creation', async ({ page, context }) => {
   const title = page.locator('[data-testid="login_title"]')
   await expect(title).toHaveText('OPSIWEB')
   const configserver = page.locator('[data-testid="login_configserver"]')
@@ -20,21 +28,17 @@ test.beforeEach(async ({ page, context }) => {
   expect(session).toEqual(cookieOpsiconfdSession)
   await page.waitForNavigation({ url: './clients/' })
   await expect(page).toHaveURL('/addons/webgui/app/clients/')
-})
-// test.afterEach(async ({ page }) => {
-//   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
-//   await page.click('[data-testid="ButtonBTNLogout"]')
-//   await page.waitForNavigation()
-//   await page.close()
-// }
-test('New client creation', async ({ page }) => {
-  const submenu = page.locator('[data-testid="NICollapsible-submenu-title.addNew"]')
-  await expect(submenu).toHaveText('Creation')
+  await page.click('[data-testid="NSidebar-title.clients"]')
+
+  // page.setDefaultTimeout(55555)
+
   await page.click('[data-testid="NICollapsible-submenu-title.addNew"]')
-  // await page.goto('./clientsaddnew')
-  await expect(page).toHaveURL('/addons/webgui/app/clientsaddnew')
+  // await page.waitForNavigation({ url: './clientsaddnew' })
+  // page.setDefaultTimeout(55555)
+  // await expect(page).toHaveURL('/addons/webgui/app/clientsaddnew')
+
   const breadcrumb = page.locator('[data-testid="BarBBreadcrumb"]')
-  await expect(breadcrumb).toHaveText('Client Creation')
+  await expect(breadcrumb).toHaveText('Client creation')
   const domainName = page.locator('#domainName')
   await expect(domainName).toHaveText('.uib.local')
   const addButton = page.locator('#addButton')
