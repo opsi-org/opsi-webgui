@@ -27,7 +27,7 @@ test.describe('Client - Create New', () => {
   })
 
   test('Add Button Disabled', async ({ page }) => {
-    const addButton = await page.locator('[data-testid="addButton"]')
+    const addButton = await page.locator('#addButton')
     await expect(await addButton.isDisabled()).toBeTruthy()
   })
 
