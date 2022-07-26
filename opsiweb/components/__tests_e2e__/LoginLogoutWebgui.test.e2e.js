@@ -1,10 +1,6 @@
 const { test, expect } = require('@playwright/test')
 const { apiMock, cookieOpsiconfdSession } = require('../../uib-components/.utils/playwright/pw-api-mock')
 
-// TODO Test 'Failed login' with incorrect credentials
-// TODO Check if password hidden by default and Unhide it and check if it shows password
-// TODO Login page: expect version, company name, language dropdown, and try changing Language.
-
 test.beforeEach(async ({ page }) => {
   // page.on('console', m => console.log(m.text()))
   // page.on('requestfailed', request => (!request.url().includes('4447')) ? '' : console.log(`>>f ${request.method()} ${request.url()} ${JSON.stringify(request.failure())}`))
@@ -27,11 +23,11 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./login')
 })
 
-// test.afterEach(async ({ page }) => {
-//   await page.close()
-// })
+test.afterEach(async ({ page }) => {
+  await page.close()
+})
 
-test('should be possible to login and logout again', async ({ page, context }) => {
+test('login and logout', async ({ page, context }) => {
   let title = page.locator('[data-testid="login_title"]')
   await expect(title).toHaveText('OPSIWEB')
   title = page.locator('[data-testid="login_configserver"]')
@@ -50,4 +46,7 @@ test('should be possible to login and logout again', async ({ page, context }) =
   await page.waitForNavigation()
   page.setDefaultTimeout(55555)
   await expect(page).toHaveURL('/addons/webgui/app/login')
+  // TODO Test 'Failed login' with incorrect credentials
+  // TODO Check if password hidden by default and Unhide it and check if it shows password
+  // TODO Login page: expect version, company name, language dropdown, and try changing Language.
 })
