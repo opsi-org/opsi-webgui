@@ -19,14 +19,15 @@ test.describe('Client - Create New', () => {
     await page.goto('./clientsaddnew')
   })
 
-  test.afterEach(async ({ page }) => {
-    // await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
-    // await page.click('[data-testid="ButtonBTNLogout"]')
-    // await page.waitForNavigation()
-    await page.close()
-  })
+  // test.afterEach(async ({ page }) => {
+  //   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+  //   await page.click('[data-testid="ButtonBTNLogout"]')
+  //   await page.waitForNavigation()
+  //   await page.close()
+  // })
 
   test('Add Button Disabled', async ({ page }) => {
+    // test.setTimeout(0)
     const addButton = await page.locator('#addButton')
     await expect(await addButton.isDisabled()).toBeTruthy()
   })
@@ -40,7 +41,7 @@ test.describe('Client - Create New', () => {
   })
 
   test('Reset form', async ({ page }) => {
-    await page.fill('#clientname', 'testclient')
+    await page.type('#clientname', 'testclient')
     await page.click('#resetButton')
     await expect(page.locator('#clientname')).toHaveText('')
   })
