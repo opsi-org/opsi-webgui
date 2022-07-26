@@ -7,7 +7,6 @@
         <template v-if="menuitem.submenu">
           <NavItemNICollapsible
             v-if="expanded"
-            :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
             :disabled="menuitem.disabled"
             :icon="menuitem.icon"
