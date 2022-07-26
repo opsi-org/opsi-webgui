@@ -7,7 +7,9 @@ module.exports.use = {
   viewport: { width: 1280, height: 720 },
   headless: true,
   ignoreHTTPSErrors: true,
-  screenshot: 'only-on-failure'
+  screenshot: 'only-on-failure',
+  actionTimeout: 10 * 1000,
+  navigationTimeout: 30 * 1000
   // video: 'on-first-retry'
 }
 
@@ -22,7 +24,10 @@ module.exports.projects = [
 
 module.exports.testIgnore = '@/**/*.test.unit.js'
 module.exports.workers = 4 // cause for me locally it exists 8 cpu cores (recommendation is to use the half of it)
-module.exports.expect = { toMatchSnapshot: { threshold: 0.2 } }
+module.exports.expect = { 
+  toMatchSnapshot: { threshold: 0.2 },
+  timeout: 10 * 1000
+}
 // quiet: true,
 // reporter: 'line',
 // reporter: 'jest-silent-reporter',
