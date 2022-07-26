@@ -1,9 +1,9 @@
 <template>
   <div data-testid="NICollapsible">
-    <!-- @click="changeRoute" -->
     <b-nav-item
       id="parentnav"
       v-b-toggle="'collapse-navitem-'+title"
+      :data-testid="'NSidebar-'+title"
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       :to="$mq === 'desktop' ? route: null "
       :disabled="disabled"
@@ -17,12 +17,13 @@
         <b-nav-item
           v-for="sub in submenu"
           :key="sub.title"
+          :data-testid="'NICollapsible-submenu-'+sub.title"
           :disabled="sub.disabled"
           :class="{checkactive: $route.path.includes(sub.route)}"
           :to="sub.route"
           @click="refresh(sub.route)"
         >
-          <span class="submenu" :data-testid="'NICollapsible-submenu-'+sub.title">
+          <span class="submenu">
             {{ $t(sub.title) }}
           </span>
         </b-nav-item>
