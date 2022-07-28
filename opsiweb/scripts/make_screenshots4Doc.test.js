@@ -8,6 +8,7 @@ test.describe('GUI', () => {
     test('breadcrumb', async ({ page }) => {
       await callStoryId(page, 'bar-b-breadcrumb', 'b-breadcrumb')
       const component = await page.locator('[data-testid="BarBBreadcrumb"]')
+      await component.evaluate(() => { document.querySelector('.breadcrumb').innerHTML = 'Server / Configuration' })
       await component.screenshot({ path: './screenshots/en/opsiweb_breadcrumb.png' })
       await component.evaluate(() => { document.querySelector('.breadcrumb').innerHTML = 'Server / Konfiguration' })
       await component.screenshot({ path: './screenshots/de/opsiweb_breadcrumb.png' })
