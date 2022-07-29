@@ -37,8 +37,11 @@ test.describe('GUI', () => {
     test('table sorting', async ({ page }) => {
       await callStoryId(page, 'dropdown-dd-table-sorting', 'dd-table-sorting')
       await page.click('[data-testid="DropdownDDTableSorting"] .btn')
-      await page.setViewportSize({ width: 220, height: 150 })
+      await page.setViewportSize({ width: 220, height: 310 })
+      const component = await page.locator('[data-testid="DropdownDDTableSorting"]')
+      await component.evaluate(() => { document.querySelector('.sortDirection').innerHTML = 'Sort descending' })
       await page.screenshot({ path: './screenshots/en/opsiweb_table_sorting.png' })
+      await component.evaluate(() => { document.querySelector('.sortDirection').innerHTML = 'Absteigende Sortierung' })
       await page.screenshot({ path: './screenshots/de/opsiweb_table_sorting.png' })
     })
     test('table pagination', async ({ page }) => {
