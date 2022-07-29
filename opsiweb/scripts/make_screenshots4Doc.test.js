@@ -2,7 +2,7 @@ const { test } = require('@playwright/test')
 const { callStoryId } = require('../uib-components/.utils/playwright/pw-story-call')
 
 test.describe('GUI', () => {
-  // Default layout with client page
+  // TODO: Default layout with client page
   test.describe('Main layout', () => {})
   test.describe('Page content', () => {
     test('breadcrumb', async ({ page }) => {
@@ -49,11 +49,13 @@ test.describe('GUI', () => {
     })
   })
   test.describe('OPSI specific settings', () => {
-    // Setting page with Modules content selected
+    // TODO: Settings page with Modules content selected
     test('opsi modules', async ({ page }) => {
       await callStoryId(page, 'view-v-modules', 'v-modules')
       const component = await page.locator('[data-testid="VModules"]')
+      await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Available modules' })
       await component.screenshot({ path: './screenshots/en/opsiweb_opsiModules.png' })
+      await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Verfügbare Module' })
       await component.screenshot({ path: './screenshots/de/opsiweb_opsiModules.png' })
     })
   })
