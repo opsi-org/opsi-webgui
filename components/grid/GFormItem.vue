@@ -1,6 +1,6 @@
 <template>
   <b-row data-testid="GFormItem" class="mb-3">
-    <b-col sm="2" class="text-sm-right">
+    <b-col sm="2" class="text-sm-right" :class="labelId">
       <slot name="label" />
       {{ label }}
     </b-col>
@@ -18,6 +18,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class GFormItem extends Vue {
   @Prop({ }) label?: string
+  @Prop({ }) labelId?: string
   @Prop({ }) valueMore?: boolean
 }
 </script>

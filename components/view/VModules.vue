@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VModules" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="modulesAlert" />
-    <GridGFormItem v-if="!errorText" :label="$t('form.modules.available')">
+    <GridGFormItem v-if="!errorText" label-id="modules" :label="$t('form.modules.available')">
       <template #value>
         <b-form-textarea
           id="modules-list"
