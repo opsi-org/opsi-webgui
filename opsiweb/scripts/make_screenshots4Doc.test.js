@@ -26,15 +26,15 @@ test.describe('GUI', () => {
       await component.screenshot({ path: './screenshots/de/opsiweb_header.png' })
     })
   })
-  test.describe('Table features', () => {
-    test('table filter', async ({ page }) => {
+  test.describe('Table', () => {
+    test('filter', async ({ page }) => {
       await callStoryId(page, 'input-i-filter', 'i-filter')
       const component = await page.locator('[data-testid="IFilter"]')
       await component.type('Filter ID')
       await component.screenshot({ path: './screenshots/en/opsiweb_table_filter.png' })
       await component.screenshot({ path: './screenshots/de/opsiweb_table_filter.png' })
     })
-    test('table sorting', async ({ page }) => {
+    test('sorting', async ({ page }) => {
       await callStoryId(page, 'dropdown-dd-table-sorting', 'dd-table-sorting')
       await page.click('[data-testid="DropdownDDTableSorting"] .btn')
       await page.setViewportSize({ width: 220, height: 310 })
@@ -44,46 +44,46 @@ test.describe('GUI', () => {
       await component.evaluate(() => { document.querySelector('.sortDirection').innerHTML = 'Absteigende Sortierung' })
       await page.screenshot({ path: './screenshots/de/opsiweb_table_sorting.png' })
     })
-    test('table pagination', async ({ page }) => {
+    test('column selection', async ({ page }) => {
+      await callStoryId(page, 'dropdown-dd-table-column-visibility', 'dd-table-column-visibility')
+      await page.click('[data-testid="DropdownDDTableColumnVisibility"] .btn')
+      await page.setViewportSize({ width: 220, height: 210 })
+      await page.screenshot({ path: './screenshots/en/opsiweb_table_columnselection.png' })
+      await page.screenshot({ path: './screenshots/de/opsiweb_table_columnselection.png' })
+    })
+    test('pagination', async ({ page }) => {
       await callStoryId(page, 'bar-b-table-footer', 'b-table-footer')
       const component = await page.locator('[data-testid="BTableFooter"]')
       await component.screenshot({ path: './screenshots/en/opsiweb_table_pagination.png' })
       await component.screenshot({ path: './screenshots/de/opsiweb_table_pagination.png' })
     })
   })
-  test.describe('OPSI specific settings', () => {
-    // TODO: Settings page with Modules content selected
-    test('opsi modules', async ({ page }) => {
-      await callStoryId(page, 'view-v-modules', 'v-modules')
-      const component = await page.locator('[data-testid="VModules"]')
-      await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Available modules' })
-      await component.screenshot({ path: './screenshots/en/opsiweb_opsiModules.png' })
-      await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Verfügbare Module' })
-      await component.screenshot({ path: './screenshots/de/opsiweb_opsiModules.png' })
-    })
+})
+test.describe('OPSI specific settings', () => {
+  // TODO: Settings page with Modules content selected
+  test('opsi modules', async ({ page }) => {
+    await callStoryId(page, 'view-v-modules', 'v-modules')
+    const component = await page.locator('[data-testid="VModules"]')
+    await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Available modules' })
+    await component.screenshot({ path: './screenshots/en/opsiweb_opsiModules.png' })
+    await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Verfügbare Module' })
+    await component.screenshot({ path: './screenshots/de/opsiweb_opsiModules.png' })
   })
-  test.describe('GUI settings', () => {
-    // test('language selection from login page footer', async ({ page }) => {
-    //   await callStoryId(page, 'bar-b-auth-footer', 'b-auth-footer')
-    //   const component = await page.locator('[data-testid="BarBAuthFooter"]')
-    //   await component.evaluate(() => { document.querySelector('.BAuthFooter-version').innerHTML = 'x.x.x' })
-    //   await component.screenshot({ path: './screenshots/en/opsiweb_login_language.png' })
-    //   await component.screenshot({ path: './screenshots/de/opsiweb_login_language.png' })
-    // })
-    test('language', async ({ page }) => {
-      await callStoryId(page, 'dropdown-dd-lang', 'dd-lang')
-      const component = await page.locator('[data-testid="DropdownDDLang"]')
-      await component.click()
-      await page.setViewportSize({ width: 220, height: 150 })
-      await page.screenshot({ path: './screenshots/en/opsiweb_language.png' })
-      await page.screenshot({ path: './screenshots/de/opsiweb_language.png' })
-    })
-    test('theme', async ({ page }) => {
-      await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
-      await page.click('[data-testid="DropdownDDTheme"] .btn')
-      await page.setViewportSize({ width: 220, height: 150 })
-      await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
-      await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
-    })
+})
+test.describe('GUI settings', () => {
+  test('language', async ({ page }) => {
+    await callStoryId(page, 'dropdown-dd-lang', 'dd-lang')
+    const component = await page.locator('[data-testid="DropdownDDLang"]')
+    await component.click()
+    await page.setViewportSize({ width: 220, height: 150 })
+    await page.screenshot({ path: './screenshots/en/opsiweb_language.png' })
+    await page.screenshot({ path: './screenshots/de/opsiweb_language.png' })
+  })
+  test('theme', async ({ page }) => {
+    await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
+    await page.click('[data-testid="DropdownDDTheme"] .btn')
+    await page.setViewportSize({ width: 220, height: 150 })
+    await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
+    await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
   })
 })
