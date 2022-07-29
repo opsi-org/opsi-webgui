@@ -1,9 +1,9 @@
 <template>
   <div>
+    <!-- :text="$i18n.locale" -->
     <b-nav-item-dropdown
       id="language"
       data-testid="DropdownDDLang"
-      :text="$i18n.locale"
       alt="select theme"
       :aria-label="$t('button.lang.tooltip')"
       :title="$t('button.lang.tooltip')"
@@ -12,9 +12,9 @@
       variant="primary"
       :dropup="dropup"
     >
+      <!--  ($mq!=='desktop')? '   ' + language :'' -->
       <template #button-content="">
-        <b-icon :icon="iconnames.language" />
-        {{ ($mq!=='desktop')? '   ' + language :'' }}
+        <span style="color:white; text-transform:uppercase;"> <b-icon :icon="iconnames.language" /> {{ language }} </span>
       </template>
       <b-dropdown-item
         v-for="(lang, i) in languages"
@@ -23,7 +23,7 @@
         :data-testid="`DropdownDDLang-Item-${lang}`"
         @click="changeLanguage(lang)"
       >
-        {{ lang }}
+        <span style="text-transform:uppercase;"> {{ lang }} </span>
       </b-dropdown-item>
     </b-nav-item-dropdown>
   </div>
