@@ -17,10 +17,10 @@ DDTableColumnVisibility.args = {
   sortBy: 'c',
   headers: {
     sel: { label: '', key: 'sel', visible: true, _fixed: true },
-    a: { label: 'A', key: 'a', visible: true, sortable: false },
-    b: { label: 'B', key: 'b', visible: false, sortable: false },
-    c: { key: 'c', label: 'C', visible: false, _fixed: false },
-    _M: { label: 'M', key: '_M', _isMajor: true, visible: false },
+    desc: { label: 'Description', key: 'desc', visible: true, sortable: false },
+    ip: { label: 'IP', key: 'ip', visible: false, sortable: false },
+    mac: { key: 'mac', label: 'MAC', visible: false, _fixed: false },
+    _M: { label: 'Last Seen', key: '_M', _isMajor: true, visible: false },
     m1: { label: 'm1', key: 'm1', _majorKey: '_M', visible: true, sortable: true },
     m2: { label: 'm2', key: 'm2', _majorKey: '_M', visible: true, sortable: true },
     z: { key: 'z', label: 'Z', visible: true, _fixed: true }
