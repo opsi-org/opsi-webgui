@@ -39,6 +39,7 @@
         :title="$t('button.show.products')"
         :label="(isChildLayout==true)?'': $t('title.products')"
         classes=""
+        class="tableheader_products"
         :icon="iconnames.product"
         to="/clients/products"
         ident="dummy"
@@ -57,7 +58,7 @@
             <slot name="nav-child-left">
               <TreeTSDepots v-if="enableDepots" class="tableheader_depots" />
               <TreeTSHostGroups v-if="enableClients" class="tableheader_hostgroup" />
-              <TreeTSProductGroups v-if="enableProducts" class="tableheader_products" />
+              <TreeTSProductGroups v-if="enableProducts" />
               <InputIFilter v-if="$mq == 'mobile' && tableInfo && noheader" class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
             </slot>
           </b-col>

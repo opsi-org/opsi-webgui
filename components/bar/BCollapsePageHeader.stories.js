@@ -25,7 +25,7 @@ BCollapsePageHeader.args = {
   collapseable: true,
   enableDepots: true,
   enableClients: true,
-  enableProducts: true,
+  enableProducts: false,
   enableShowProducts: true,
   tableInfo: {},
   redirectOnCloseTo: undefined,
