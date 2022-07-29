@@ -26,7 +26,7 @@
           :checked="sortDesc"
         />
         <!-- :name="'hi'" -->
-        {{ $t('button.sort.tablecolumns.sortDirection') }}
+        <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
       </a>
       <a
         v-for="header in Object.values(headerData).filter(h=>h.sortable)"
