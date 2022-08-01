@@ -59,6 +59,21 @@ test.describe('GUI', () => {
     })
   })
 })
+test.describe('How to', () => {
+  test('Login', async ({ page }) => {
+    await callStoryId(page, 'form-f-login', 'f-login')
+    const component = await page.locator('[data-testid="FLogin"]')
+    await component.evaluate(() => { document.querySelector('.projectTitle').innerHTML = 'OPSIWEB' })
+    await component.evaluate(() => { document.querySelector('.username').innerHTML = 'Username' })
+    await component.evaluate(() => { document.querySelector('.password').innerHTML = 'Password' })
+    await component.evaluate(() => { document.querySelector('.login').innerHTML = 'Login' })
+    await component.screenshot({ path: './screenshots/en/opsiweb_login.png' })
+    await component.evaluate(() => { document.querySelector('.username').innerHTML = 'Benutzername' })
+    await component.evaluate(() => { document.querySelector('.password').innerHTML = 'Passwort' })
+    await component.evaluate(() => { document.querySelector('.login').innerHTML = 'Anmeldung' })
+    await component.screenshot({ path: './screenshots/de/opsiweb_login.png' })
+  })
+})
 test.describe('OPSI specific settings', () => {
   // TODO: Settings page with Modules content selected
   test('opsi modules', async ({ page }) => {
