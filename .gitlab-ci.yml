@@ -265,15 +265,12 @@ test:test-components:changes:
   stage: test
   dependencies:
     - init:dry
-  # except:
-  #   - tags # cause in tags we test all browsers (and all files)
-  #   - develop # cause in develop we test all files
-  rules:
-  - if: '$CI_COMMIT_REF_NAME != "develop" && !$CI_COMMIT_TAG'
-  - changes:
-      - opsiweb/pages/*
-      - opsiweb/components/*
-      - opsiweb/uib-components/*
+  except:
+    - tags # cause in tags we test all browsers (and all files)
+    - develop # cause in develop we test all files
+    - changes:
+      - opsiweb/scripts/*
+      - opsiweb/screenshots/*
   script:
     - cd opsiweb
     - *define_globals
