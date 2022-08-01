@@ -268,9 +268,6 @@ test:test-components:changes:
   except:
     - tags # cause in tags we test all browsers (and all files)
     - develop # cause in develop we test all files
-    - changes:
-      - opsiweb/scripts/*
-      - opsiweb/screenshots/*
   script:
     - cd opsiweb
     - *define_globals
