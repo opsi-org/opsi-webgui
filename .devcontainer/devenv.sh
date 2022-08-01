@@ -8,6 +8,9 @@ if [ -z ${USER+x} ]; then
 else
 	echo DEV_USER=$USER >> .env
 fi
+echo OPSILICSRV_TOKEN=$(OPSILICSRV_TOKEN)  >> .env
+
+
 
 if [ -d .devcontainer ]; then # current dir: /workspace
 	git clone git@gitlab.uib.gmbh:uib/opsiweb-ui-components.git opsiweb/uib-components
