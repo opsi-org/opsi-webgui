@@ -1,5 +1,13 @@
 <template>
-  <div data-testid="FLogin">
+  <b-card
+    data-testid="FLogin"
+    class="text-center bg-primary mt-3 mx-auto"
+    :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
+  >
+    <IconIOpsiLogo :light="true" class="mb-3" height="35" />
+    <h1 data-testid="login_title" class="d-inline-block text-light projectTitle">
+      {{ getTitleUppercase() }}
+    </h1>
     <AlertAAlert ref="loginAlert" />
     <div @keyup.enter="doLogin">
       <b-form>
@@ -22,7 +30,7 @@
             :aria-label="$t('form.username')"
             :placeholder="$t('form.username')"
             :state="validUsername"
-            class="mb-2"
+            class="mb-2 username"
             autocomplete="current_username"
           />
         </b-input-group>
@@ -34,7 +42,7 @@
             :placeholder="$t('form.password')"
             :state="validPassword"
             :type="showPassword? 'text': 'password'"
-            class="mb-2"
+            class="mb-2 password"
             autocomplete="current_password"
           />
           <b-button variant="primary" :pressed.sync="showPassword" class="mb-2">
@@ -43,7 +51,7 @@
             <b-icon v-else :icon="iconnames.valueHide" />
           </b-button>
         </b-input-group>
-        <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light" block @click="doLogin">
+        <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login" block @click="doLogin">
           <!-- Quickly change expired time curently only for testing purposes  -->
           <!-- <b-input-group>
             <InputIExpiredTimeChanger />
@@ -54,7 +62,7 @@
         <IconILoading v-if="isLoading" />
       </b-form>
     </div>
-  </div>
+  </b-card>
 </template>
 
 <script lang="ts">
@@ -100,6 +108,10 @@ export default class FLogin extends Vue {
         const ref = (this.$refs.loginAlert as any)
         ref.alert(errorMsg, 'danger', detailedError as string)
       })
+  }
+
+  getTitleUppercase () {
+    return (this.$t('title.project') as string).toUpperCase()
   }
 
   get validUsername () {
