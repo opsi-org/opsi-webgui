@@ -87,9 +87,8 @@
               no-caret
             >
               <template #button-content>
-                <!-- {{isLoadingEventReboot}} -->
-                <IconILoading v-if="isLoadingEventReboot" />
-                <b-icon c-else :icon="iconnames.menu" />
+                <IconILoading v-if="clientsLoading.includes(row.item.clientId)" :small="true" />
+                <b-icon v-else :icon="iconnames.menu" />
               </template>
               <b-button
                 variant="outline-primary"
@@ -100,7 +99,11 @@
               >
                 <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
               </b-button>
-              <ButtonBTNEvent event="reboot" :data="row.item.clientId" :is-loading-parent="isLoadingEventReboot" />
+              <ButtonBTNEvent
+                event="reboot"
+                :data="row.item.clientId"
+                :update-loading="loading => clientsLoading = loading"
+              />
               <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
             </b-dropdown>
           </template>
@@ -164,7 +167,8 @@ export default class VClients extends Vue {
   id: string = 'Clients'
   rowId: string = ''
   isLoading: Boolean = false
-  isLoadingEventReboot: Boolean = false
+  // isLoadingEventReboot: Boolean = false
+  clientsLoading: Array<string> = []
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
