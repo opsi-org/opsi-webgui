@@ -8,7 +8,7 @@
     <GridGFormItem>
       <template #label>
         <ButtonBTNHelp id="savemode-help" />
-        {{ $t('form.quicksave') }}
+        <span class="quicksave">{{ $t('form.quicksave') }}</span>
         <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="table" />
       </template>
       <template #value>
