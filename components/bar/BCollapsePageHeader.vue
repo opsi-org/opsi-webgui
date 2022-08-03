@@ -58,7 +58,7 @@
             <slot name="nav-child-left">
               <TreeTSDepots v-if="enableDepots" class="tableheader_depots" />
               <TreeTSHostGroups v-if="enableClients" class="tableheader_hostgroup" />
-              <TreeTSProductGroups v-if="enableProducts" />
+              <TreeTSProductGroups v-if="enableProducts" class="tableheader_productgroup" />
               <InputIFilter v-if="$mq == 'mobile' && tableInfo && noheader" class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
             </slot>
           </b-col>

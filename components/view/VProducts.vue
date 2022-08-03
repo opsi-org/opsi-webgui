@@ -26,13 +26,16 @@
         <b-tabs class="products_horizontaltabs">
           <b-tab disabled>
             <template #title>
-              <small> <b>
+              <small> <b class="count">
                 {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + parseInt(netboot)}) }}
               <!-- {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} -->
               </b> </small>
             </template>
           </b-tab>
-          <b-tab :title="$t('title.localboot') + ' (' + localboot + ')'" active>
+          <b-tab active>
+            <template #title>
+              <span class="localboot"> {{ $t('title.localboot') + ' (' + localboot + ')' }} </span>
+            </template>
             <TableTProductsLocalboot
               ref="ref-products-localboot"
               :parent-id="id"
@@ -48,7 +51,10 @@
               @fetch-products="fetchProducts"
             />
           </b-tab>
-          <b-tab :title="$t('title.netboot') + ' (' + netboot + ')'">
+          <b-tab>
+            <template #title>
+              <span class="netboot"> {{ $t('title.netboot') + ' (' + netboot + ')' }} </span>
+            </template>
             <TableTProductsNetboot
               ref="ref-products-netboot"
               :parent-id="id"
