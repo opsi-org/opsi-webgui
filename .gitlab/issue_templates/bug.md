@@ -21,7 +21,7 @@
 ### Issue Closure Checklist
 
 - Accessibility
-  - [ ] Manually check accessibility issues (for example: using Accessibility Inspector)
+  - [ ] Manually check accessibility issues with all Themes (for example: using Accessibility Inspector)
 - Testing
   - [ ] Add / Update stories
   - [ ] Add / Update integration test and check whether it has passed
