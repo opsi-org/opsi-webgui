@@ -1,6 +1,3 @@
-import { mock } from '../../.utils/storybook/mock'
-
-mock.onGet('/api/user/opsiserver').reply(200, '<config-server-domain>')
 export default {
   title: 'View/V Clients Add New',
   parameters: { docs: { description: { component: 'New opsi client creation view' } } }
