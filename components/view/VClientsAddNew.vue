@@ -4,7 +4,10 @@
     <IconILoading v-if="isLoading" />
     <div v-else>
       <br>
-      <GridGFormItem :label="$t('table.fields.id')" value-more="true">
+      <GridGFormItem value-more="true">
+        <template #label>
+          <span class="id">{{ $t('table.fields.id') }}</span>
+        </template>
         <template #value>
           <b-form-input
             id="clientname"
@@ -19,6 +22,7 @@
           <b-form-input
             id="domainName"
             v-model="domainName"
+            class="domainName"
             :aria-label="$t('table.name.domain')"
             type="text"
             required
@@ -26,47 +30,65 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-5 mb-4">
-        <b>{{ $t('table.clientDetails') }} </b>
+        <b class="clientDetails">{{ $t('table.clientDetails') }} </b>
       </b-row>
-      <GridGFormItem :label=" $t('table.fields.description')">
+      <GridGFormItem>
+        <template #label>
+          <span class="description">{{ $t('table.fields.description') }}</span>
+        </template>
         <template #value>
           <b-form-input id="description" v-model="newClient.description" :aria-label="$t('table.fields.description')" type="text" />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label=" $t('table.fields.inventNum')">
+      <GridGFormItem>
+        <template #label>
+          <span class="inventNum">{{ $t('table.fields.inventNum') }}</span>
+        </template>
         <template #value>
           <b-form-input id="inventNum" v-model="newClient.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label=" $t('table.fields.hwAddr')">
+      <GridGFormItem>
+        <template #label>
+          <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
+        </template>
         <template #value>
           <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" :aria-label="$t('table.fields.hwAddr')" type="text" />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label=" $t('table.fields.ip')">
+      <GridGFormItem>
+        <template #label>
+          <span class="ip">{{ $t('table.fields.ip') }}</span>
+        </template>
         <template #value>
           <b-form-input id="ip" v-model="newClient.ipAddress" :aria-label="$t('table.fields.ip')" type="text" />
         </template>
       </GridGFormItem>
       <b-row class="mt-5 mb-4">
-        <b>{{ $t('table.addtnlInfo') }}</b>
+        <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b>
       </b-row>
-      <GridGFormItem :label="$t('table.fields.notes')">
+      <GridGFormItem>
+        <template #label>
+          <span class="notes">{{ $t('table.fields.notes') }}</span>
+        </template>
         <template #value>
           <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label="$t('table.fields.uefi')">
+      <GridGFormItem>
+        <template #label>
+          <span class="uefi">{{ $t('table.fields.uefi') }}</span>
+        </template>
         <template #value>
           <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
     </div>
     <DivDComponentGroup class="float-right">
-      <b-button id="resetButton" variant="primary" @click="resetNewClientForm()">
+      <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
-      <b-button id="addButton" variant="success" :disabled="!clientName" @click="createOpsiClient()">
+      <b-button id="addButton" class="addButton" variant="success" :disabled="!clientName" @click="createOpsiClient()">
         <b-icon :icon="iconnames.add" /> {{ $t('button.add') }}
       </b-button>
     </DivDComponentGroup>
