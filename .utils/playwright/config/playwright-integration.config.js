@@ -15,7 +15,8 @@ const config = {
   workers: generalconfig.workers,
   expect: generalconfig.expect,
   use: generalconfig.use,
-  projects: generalconfig.projects
+  projects: generalconfig.projects,
+  timeout: 5 * 60 * 1000
 }
 
 module.exports = config
