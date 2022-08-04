@@ -133,17 +133,39 @@ module.exports.data = {
   },
   logs:{
     clients: {
-      result: ["",
-        "[0] [2021-08-23 13:28:07.151] [] ",
-        "[1] [2021-08-23 13:28:07.151] [] --",
-        "[2] [2021-08-23 13:28:07.151] [productId] next row",
-        "[3] [2021-08-23 13:28:07.151] [productId] next row",
-        "[4] [2021-08-23 13:28:07.151] [productId] next row",
-        "[6] [2021-08-23 13:28:07.151] [productId] next row",
-        "[7] [2021-08-23 13:28:07.151] [productId] next row",
-        "[8] [2021-08-23 13:28:07.151] [productId] next row",
-        "[9] [2021-08-23 13:28:07.151] [productId] next row",
-      ]}
+      result: [
+        "[1] [2022-05-24 12:54:10.925] [] -- ",
+        "[1] [2022-05-24 12:54:10.925] [] -- ",
+        "[1] [2022-05-24 12:54:10.925] [] script 1.12.5.0 started at >>",
+        "[7] [2022-05-24 12:56:58.877] [productId] Starting with script... ",
+        "[3] [2022-05-24 12:58:08.162] [productId] Error: 1 not fully installed or removed.",
+        "[3] [2022-05-24 12:58:08.162] [productId] Error: After this operation, 0 B of additional disk space will be used.",
+        "[3] [2022-05-24 12:58:08.167] [productId] Error: failed to install dependent packages",
+        "[5] [2022-05-24 12:58:08.168] [productId] message failed to install dependent packages",
+        "[2] [2022-05-24 12:58:08.173] [productId] Error level set to fatal",
+        "[6] [2022-05-24 12:58:08.173] [productId] Process aborted ",
+        "[1] [2022-05-24 12:58:08.174] [productId] ___________________",
+        "[1] [2022-05-24 12:58:08.174] [productId] script finished: failed",
+        "[1] [2022-05-24 12:58:08.175] [productId] 46 errors",
+        "[1] [2022-05-24 12:58:08.175] [productId] 0 warnings",
+        "[1] [2022-05-24 12:58:08.175] [productId]",
+        "[1] [2022-05-24 12:58:08.175] [productId] handled product: productId Version: 1.1.0.23-1",
+        "[1] [2022-05-24 12:58:08.175] [productId]",
+        "[5] [2022-05-24 12:58:08.175] [productId] We do not look for a update script, because the setup script is failed",
+        "[5] [2022-05-24 12:58:08.412] [] -------- submitted part of log file ends here, see the rest of log file on client ---------- "
+      ]
+    }
+      // result: ["",
+      //   "[0] [2021-08-23 13:28:07.151] [] ",
+      //   "[1] [2021-08-23 13:28:07.151] [] --",
+      //   "[2] [2021-08-23 13:28:07.151] [productId] next row",
+      //   "[3] [2021-08-23 13:28:07.151] [productId] next row",
+      //   "[4] [2021-08-23 13:28:07.151] [productId] next row",
+      //   "[6] [2021-08-23 13:28:07.151] [productId] next row",
+      //   "[7] [2021-08-23 13:28:07.151] [productId] next row",
+      //   "[8] [2021-08-23 13:28:07.151] [productId] next row",
+      //   "[9] [2021-08-23 13:28:07.151] [productId] next row",
+      // ]}
   },
   config:{
     client:[{"hostId":"client1.domain.local","type":"OpsiClient","description":"A test client","notes":"Ubuntu 20.04","hardwareAddress":"af:fe:af:fe:af:fe","ipAddress":"192.0.2.1","inventoryNumber":"","created":"2021-01-10T14:59:44","lastSeen":"2022-04-21T13:24:26","opsiHostKey":"abcdef","oneTimePassword":null,"uefi":false}]
