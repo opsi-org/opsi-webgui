@@ -8,7 +8,10 @@
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
     <b-tabs class="config_horizontaltabs">
-      <b-tab :title="$t('title.hostattr')" active>
+      <b-tab active>
+        <template #title>
+          <span class="hostattr"> {{ $t('title.hostattr') }} </span>
+        </template>
         <DivDScrollResult>
           <LazyTableTHostAttributes v-if="id" :id="id" />
           <div v-else style="height: 500px;" />

@@ -92,18 +92,18 @@ export default class THostAttributes extends Vue {
 
   get fields () {
     return [
-      { label: this.$t('table.fields.id'), key: 'hostId' },
-      { label: this.$t('table.fields.type'), key: 'type' },
-      { label: this.$t('table.fields.description'), key: 'description' },
-      { label: this.$t('table.fields.notes'), key: 'notes' },
-      { label: this.$t('table.fields.hwAddr'), key: 'hardwareAddress' },
-      { label: this.$t('table.fields.ip'), key: 'ipAddress' },
-      { label: this.$t('table.fields.inventNum'), key: 'inventoryNumber' },
-      { label: this.$t('table.fields.created'), key: 'created' },
-      { label: this.$t('table.fields.lastSeen'), key: 'lastSeen' },
-      { label: this.$t('table.fields.hostKey'), key: 'opsiHostKey' },
-      { label: this.$t('table.fields.otp'), key: 'oneTimePassword' },
-      { label: this.$t('table.fields.uefi'), key: 'uefi' }
+      { label: this.$t('table.fields.id'), key: 'hostId', tdClass: 'hostId' },
+      { label: this.$t('table.fields.type'), key: 'type', tdClass: 'type' },
+      { label: this.$t('table.fields.description'), key: 'description', tdClass: 'description' },
+      { label: this.$t('table.fields.notes'), key: 'notes', tdClass: 'notes' },
+      { label: this.$t('table.fields.hwAddr'), key: 'hardwareAddress', tdClass: 'hwAddr' },
+      { label: this.$t('table.fields.ip'), key: 'ipAddress', tdClass: 'ip' },
+      { label: this.$t('table.fields.inventNum'), key: 'inventoryNumber', tdClass: 'inventNum' },
+      { label: this.$t('table.fields.created'), key: 'created', tdClass: 'created' },
+      { label: this.$t('table.fields.lastSeen'), key: 'lastSeen', tdClass: 'lastSeen' },
+      { label: this.$t('table.fields.hostKey'), key: 'opsiHostKey', tdClass: 'hostKey' },
+      { label: this.$t('table.fields.otp'), key: 'oneTimePassword', tdClass: 'otp' },
+      { label: this.$t('table.fields.uefi'), key: 'uefi', tdClass: 'uefi' }
     ]
   }
 
