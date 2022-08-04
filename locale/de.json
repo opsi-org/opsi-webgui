@@ -200,7 +200,7 @@
   "form.hostkey.hide": "Verberge opsiHostKey",
   "form.password.show": "Zeige Passwort",
   "form.password.hide": "Verberge Passwort",
-  "form.filter.logs": "Filter logs",
+  "form.filter.logs": "Logs filtern",
   "dropdown.before-after.defaultvalue": "--",
   "supportPage.documentation.title": "Dokumentation",
   "supportPage.documentation.description": "Unsere Dokumentation enthält Anleitungen und Handbücher für die ersten Schritte, die Schritt-für-Schritt-Anleitungen sind, die Ihnen den Einstieg in OPSI erleichtern.",
