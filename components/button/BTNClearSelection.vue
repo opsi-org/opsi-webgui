@@ -11,7 +11,7 @@
   >
     <span class="sr-only">{{ $t('table.selection.clear') }}</span>
     <b-icon :icon="iconnames.clear" />
-    <span v-if="showLabel">{{ label? label: $t('table.selection.clear') }} </span>
+    <span v-if="showLabel" class="clearButton">{{ label? label: $t('table.selection.clear') }} </span>
   </b-button>
 </template>
 
