@@ -67,12 +67,12 @@ module.exports.data = {
   groups:{
     products: {
       groups:{
-        aha:{ id:'aha', type:'ProductGroup', text:'aha', parent:'root', children: {
-          hwaudit:{ id:'hwaudit;aha', type:'ObjectToGroup', text:'hwaudit', parent:'aha'}
+        group1:{ id:'group1', type:'ProductGroup', text:'group1', parent:'root', children: {
+          product1:{ id:'product1;group1', type:'ObjectToGroup', text:'product1', parent:'group1'}
         }},
-        audit:{ id:'audit', type:'ProductGroup', text:'audit', parent:'root', children: {
-          hwaudit:{ id:'hwaudit;audit', type:'ObjectToGroup', text:'hwaudit', parent:'audit'},
-          swaudit:{ id:'swaudit;audit', type:'ObjectToGroup', text:'swaudit', parent:'audit'}
+        group2:{ id:'group2', type:'ProductGroup', text:'group2', parent:'root', children: {
+          product1:{ id:'product1;group2', type:'ObjectToGroup', text:'product1', parent:'group2'},
+          product2:{ id:'product2;group2', type:'ObjectToGroup', text:'product2', parent:'group2'}
         }}
       }
     },
