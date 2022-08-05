@@ -5,7 +5,7 @@
         <DropdownDDTheme />
       </template>
     </GridGFormItem>
-    <GridGFormItem>
+    <GridGFormItem data-testid="quicksave">
       <template #label>
         <ButtonBTNHelp id="savemode-help" />
         <span class="quicksave">{{ $t('form.quicksave') }}</span>
