@@ -19,7 +19,7 @@
           :enable-show-products="true"
           :redirect="routeRedirectWith"
         />
-        <TableTInfiniteScroll
+        <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -29,12 +29,13 @@
           :table-data="tableData"
           :header-data="headerData"
           :items="items"
+          :cache_pages="cache_pages"
           :total-items="totalItems"
           :totalpages="totalpages"
           ismultiselect="true"
           :selection="selectionClients"
           :setselection="setSelectionClients"
-          :fetchitems="$fetch"
+          :fetchitems="_fetch"
         >
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
@@ -133,7 +134,7 @@
           >
             <slot :name="slotName" v-bind="slotScope" />
           </template>
-        </TableTInfiniteScroll>
+        </TableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -148,6 +149,7 @@ import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import QueueNested from '../../.utils/utils/QueueNested'
 const selections = namespace('selections')
 const config = namespace('config-app')
 interface DeleteClient {
@@ -163,6 +165,7 @@ export default class VClients extends Vue {
   $mq: any
   $fetch:any
   $nuxt:any
+  $router:any
 
   id: string = 'Clients'
   rowId: string = ''
@@ -243,6 +246,9 @@ export default class VClients extends Vue {
     filterQuery: this.tableData.filterQuery
   }
 
+  cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
+  cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
+
   @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
@@ -254,11 +260,11 @@ export default class VClients extends Vue {
     this.fetchPageOne()
   }
 
-  @Watch('tableData', { deep: true }) tableDataChanged () {
+  @Watch('tableData', { deep: true }) async tableDataChanged () {
     if (this.tableData.filterQuery) {
       this.tableData.pageNumber = 1
     }
-    this.$fetch()
+    await this.$fetch()
   }
 
   @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
@@ -277,25 +283,37 @@ export default class VClients extends Vue {
   }
 
   async fetch () {
+    const items = await this._fetch()
+
+    Vue.nextTick(() => {
+      if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
+        this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
+      } else {
+        this.cache_pages.setAuto(this.tableData.pageNumber, items) // try to append (start or beginning depend on pageNumber)
+      }
+      this.cache_pages.setTotalPages(this.totalpages)
+    })
+  }
+
+  async _fetch () {
     this.isLoading = true
     const params = { ...this.tableData }
     params.selectedDepots = JSON.stringify(this.selectionDepots)
     params.selectedClients = JSON.stringify(this.selectionClients)
     if (params.sortBy === '') { params.sortBy = 'clientId' }
     if (params.sortBy === 'selected') {
-      // params.sortBy = 'selected'
       params.sortDesc = true
-      // params.sortBy = '["selected", "clientId"]'
       params.selected = JSON.stringify(this.selectionClients)
     }
-    await this.$axios.get('/api/opsidata/clients', { params })
+    return await this.$axios.get('/api/opsidata/clients', { params })
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
+        this.isLoading = false
         if (response.data === null) {
-          this.items = []
+          return []
         } else {
-          this.items = response.data
+          return response.data
         }
         // this.items = this.items.concat(response.data)
       }).catch((error) => {
@@ -304,8 +322,9 @@ export default class VClients extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Clients', 'danger', detailedError)
         this.error = this.$t('message.error.defaulttext') as string
         this.error += JSON.stringify(error.message)
+        this.isLoading = false
+        return []
       })
-    this.isLoading = false
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
