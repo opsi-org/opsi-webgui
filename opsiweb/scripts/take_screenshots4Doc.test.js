@@ -1,64 +1,8 @@
-const { test } = require('@playwright/test')
+const { test, expect } = require('@playwright/test')
 const { callStoryId } = require('../uib-components/.utils/playwright/pw-story-call')
 
-test.describe('GUI', () => {
-  // TODO: Default layout with client page
-  test.describe('Main layout', () => {})
-  // test.describe('Page content', () => {
-  //   test('breadcrumb', async ({ page }) => {
-  //     await callStoryId(page, 'bar-b-breadcrumb', 'b-breadcrumb')
-  //     const component = await page.locator('[data-testid="BarBBreadcrumb"]')
-  //     await component.evaluate(() => { document.querySelector('.breadcrumb').innerHTML = 'Server / Configuration' })
-  //     await component.screenshot({ path: './screenshots/en/opsiweb_breadcrumb.png' })
-  //     await component.evaluate(() => { document.querySelector('.breadcrumb').innerHTML = 'Server / Konfiguration' })
-  //     await component.screenshot({ path: './screenshots/de/opsiweb_breadcrumb.png' })
-  //   })
-  //   test('header', async ({ page }) => {
-  //     await callStoryId(page, 'bar-b-collapse-page-header', 'b-collapse-page-header')
-  //     const component = await page.locator('[data-testid="BarBCollapsePageHeader"]')
-  //     await component.evaluate(() => { document.querySelector('.nav-title').innerHTML = 'Clients' })
-  //     await component.evaluate(() => { document.querySelector('.tableheader_depots').innerHTML = 'Server' })
-  //     await component.evaluate(() => { document.querySelector('.tableheader_hostgroup').innerHTML = 'Hostgroups' })
-  //     await component.evaluate(() => { document.querySelector('.tableheader_products').innerHTML = 'Products' })
-  //     await component.screenshot({ path: './screenshots/en/opsiweb_header.png' })
-  //     await component.evaluate(() => { document.querySelector('.tableheader_hostgroup').innerHTML = 'Hostgruppen' })
-  //     await component.evaluate(() => { document.querySelector('.tableheader_products').innerHTML = 'Produkte' })
-  //     await component.screenshot({ path: './screenshots/de/opsiweb_header.png' })
-  //   })
-  // })
-  // test.describe('Table', () => {
-  //   test('filter', async ({ page }) => {
-  //     await callStoryId(page, 'input-i-filter', 'i-filter')
-  //     const component = await page.locator('[data-testid="IFilter"]')
-  //     await component.type('Filter ID')
-  //     await component.screenshot({ path: './screenshots/en/opsiweb_table_filter.png' })
-  //     await component.screenshot({ path: './screenshots/de/opsiweb_table_filter.png' })
-  //   })
-  //   test('sorting', async ({ page }) => {
-  //     await callStoryId(page, 'dropdown-dd-table-sorting', 'dd-table-sorting')
-  //     await page.click('[data-testid="DropdownDDTableSorting"] .btn')
-  //     await page.setViewportSize({ width: 220, height: 310 })
-  //     const component = await page.locator('[data-testid="DropdownDDTableSorting"]')
-  //     await component.evaluate(() => { document.querySelector('.sortDirection').innerHTML = 'Sort descending' })
-  //     await page.screenshot({ path: './screenshots/en/opsiweb_table_sorting.png' })
-  //     await component.evaluate(() => { document.querySelector('.sortDirection').innerHTML = 'Absteigende Sortierung' })
-  //     await page.screenshot({ path: './screenshots/de/opsiweb_table_sorting.png' })
-  //   })
-  //   test('column selection', async ({ page }) => {
-  //     await callStoryId(page, 'dropdown-dd-table-column-visibility', 'dd-table-column-visibility')
-  //     await page.click('[data-testid="DropdownDDTableColumnVisibility"] .btn')
-  //     await page.setViewportSize({ width: 220, height: 210 })
-  //     await page.screenshot({ path: './screenshots/en/opsiweb_table_columnselection.png' })
-  //     await page.screenshot({ path: './screenshots/de/opsiweb_table_columnselection.png' })
-  //   })
-  //   test('pagination', async ({ page }) => {
-  //     await callStoryId(page, 'bar-b-table-footer', 'b-table-footer')
-  //     const component = await page.locator('[data-testid="BTableFooter"]')
-  //     await component.screenshot({ path: './screenshots/en/opsiweb_table_pagination.png' })
-  //     await component.screenshot({ path: './screenshots/de/opsiweb_table_pagination.png' })
-  //   })
-  // })
-})
+// TODO: Default layout with client page
+// test.describe('Main layout', () => {})
 // test.describe('Quick Start', () => {
 //   test('Login', async ({ page }) => {
 //     await callStoryId(page, 'form-f-login', 'f-login')
@@ -193,16 +137,17 @@ test.describe('Manage', () => {
   // })
   // test('Client deletion', async () => {})
   // test('Client reboot', async () => {})
-  test('Client logs', async ({ page }) => {
-    await callStoryId(page, 'view-v-clients-log', 'v-clients-log')
-    const component = await page.locator('[data-testid="VClientsLog"]')
-    await component.evaluate(() => { document.querySelector('.filter_logs').placeholder = 'Filter logs' })
-    await page.setViewportSize({ width: 1280, height: 500 })
-    await page.screenshot({ path: './screenshots/en/opsiweb_clientlogs.png' })
-    await component.evaluate(() => { document.querySelector('.filter_logs').placeholder = 'Logs filtern' })
-    await page.screenshot({ path: './screenshots/de/opsiweb_clientlogs.png' })
-  })
+  // test('Client logs', async ({ page }) => {
+  //   await callStoryId(page, 'view-v-clients-log', 'v-clients-log')
+  //   const component = await page.locator('[data-testid="VClientsLog"]')
+  //   await component.evaluate(() => { document.querySelector('.filter_logs').placeholder = 'Filter logs' })
+  //   await page.setViewportSize({ width: 1280, height: 500 })
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_clientlogs.png' })
+  //   await component.evaluate(() => { document.querySelector('.filter_logs').placeholder = 'Logs filtern' })
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_clientlogs.png' })
+  // })
   // test('Properties and Dependencies', async () => {})
+
   // test('Quick Save', async ({ page }) => {
   //   await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
   //   const component = await page.locator('[data-testid="VSettingsLocalSpecific"]')
@@ -212,8 +157,24 @@ test.describe('Manage', () => {
   //   await component.evaluate(() => { document.querySelector('.quicksave').innerHTML = 'Sofort speichern' })
   //   await component.screenshot({ path: './screenshots/de/opsiweb_quicksave.png' })
   // })
-  // test('Push installations', async () => {})
-  // test('Selections', async () => {})
+
+  // test('Push installations', async ({ page }) => {
+  //   await callStoryId(page, 'button-btn-event', 'btn-event')
+  //   await page.click('[data-testid="BTNEvent"] .btn')
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_pushinstallations.png' })
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_pushinstallations.png' })
+  // })
+  test('Selections', async ({ page }) => {
+    await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
+    await page.click('[data-testid="MSelectionsAll"] .btn')
+    await page.setViewportSize({ width: 700, height: 400 })
+    await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Selected elements' })
+    await page.evaluate(() => { document.querySelector('.depots').innerHTML = 'Servers' })
+    await page.evaluate(() => { document.querySelector('.clients').innerHTML = 'Clients' })
+    await page.screenshot({ path: './screenshots/en/opsiweb_selections.png' })
+    await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Ausgewählte Elemente' })
+    await page.screenshot({ path: './screenshots/de/opsiweb_selections.png' })
+  })
 })
 // test.describe('OPSI specific Settings', () => {
 //   // TODO: Settings page with Modules content selected
@@ -242,5 +203,62 @@ test.describe('Manage', () => {
 //     await page.setViewportSize({ width: 220, height: 150 })
 //     await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
 //     await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
+//   })
+// })
+
+// test.describe('GUI', () => {
+//   test.describe('Page content', () => {
+//     test('breadcrumb', async ({ page }) => {
+//       await callStoryId(page, 'bar-b-breadcrumb', 'b-breadcrumb')
+//       const component = await page.locator('[data-testid="BarBBreadcrumb"]')
+//       await component.evaluate(() => { document.querySelector('.breadcrumb').innerHTML = 'Server / Configuration' })
+//       await component.screenshot({ path: './screenshots/en/opsiweb_breadcrumb.png' })
+//       await component.evaluate(() => { document.querySelector('.breadcrumb').innerHTML = 'Server / Konfiguration' })
+//       await component.screenshot({ path: './screenshots/de/opsiweb_breadcrumb.png' })
+//     })
+//     test('header', async ({ page }) => {
+//       await callStoryId(page, 'bar-b-collapse-page-header', 'b-collapse-page-header')
+//       const component = await page.locator('[data-testid="BarBCollapsePageHeader"]')
+//       await component.evaluate(() => { document.querySelector('.nav-title').innerHTML = 'Clients' })
+//       await component.evaluate(() => { document.querySelector('.tableheader_depots').innerHTML = 'Server' })
+//       await component.evaluate(() => { document.querySelector('.tableheader_hostgroup').innerHTML = 'Hostgroups' })
+//       await component.evaluate(() => { document.querySelector('.tableheader_products').innerHTML = 'Products' })
+//       await component.screenshot({ path: './screenshots/en/opsiweb_header.png' })
+//       await component.evaluate(() => { document.querySelector('.tableheader_hostgroup').innerHTML = 'Hostgruppen' })
+//       await component.evaluate(() => { document.querySelector('.tableheader_products').innerHTML = 'Produkte' })
+//       await component.screenshot({ path: './screenshots/de/opsiweb_header.png' })
+//     })
+//   })
+//   test.describe('Table', () => {
+//     test('filter', async ({ page }) => {
+//       await callStoryId(page, 'input-i-filter', 'i-filter')
+//       const component = await page.locator('[data-testid="IFilter"]')
+//       await component.type('Filter ID')
+//       await component.screenshot({ path: './screenshots/en/opsiweb_table_filter.png' })
+//       await component.screenshot({ path: './screenshots/de/opsiweb_table_filter.png' })
+//     })
+//     test('sorting', async ({ page }) => {
+//       await callStoryId(page, 'dropdown-dd-table-sorting', 'dd-table-sorting')
+//       await page.click('[data-testid="DropdownDDTableSorting"] .btn')
+//       await page.setViewportSize({ width: 220, height: 310 })
+//       const component = await page.locator('[data-testid="DropdownDDTableSorting"]')
+//       await component.evaluate(() => { document.querySelector('.sortDirection').innerHTML = 'Sort descending' })
+//       await page.screenshot({ path: './screenshots/en/opsiweb_table_sorting.png' })
+//       await component.evaluate(() => { document.querySelector('.sortDirection').innerHTML = 'Absteigende Sortierung' })
+//       await page.screenshot({ path: './screenshots/de/opsiweb_table_sorting.png' })
+//     })
+//     test('column selection', async ({ page }) => {
+//       await callStoryId(page, 'dropdown-dd-table-column-visibility', 'dd-table-column-visibility')
+//       await page.click('[data-testid="DropdownDDTableColumnVisibility"] .btn')
+//       await page.setViewportSize({ width: 220, height: 210 })
+//       await page.screenshot({ path: './screenshots/en/opsiweb_table_columnselection.png' })
+//       await page.screenshot({ path: './screenshots/de/opsiweb_table_columnselection.png' })
+//     })
+//     test('pagination', async ({ page }) => {
+//       await callStoryId(page, 'bar-b-table-footer', 'b-table-footer')
+//       const component = await page.locator('[data-testid="BTableFooter"]')
+//       await component.screenshot({ path: './screenshots/en/opsiweb_table_pagination.png' })
+//       await component.screenshot({ path: './screenshots/de/opsiweb_table_pagination.png' })
+//     })
 //   })
 // })
