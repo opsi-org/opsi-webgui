@@ -135,22 +135,29 @@ test.describe('Manage', () => {
   //   await component.evaluate(() => { document.querySelector('.otp').setAttribute('data-label', 'Einmalpasswort OTP') })
   //   await component.screenshot({ path: './screenshots/de/opsiweb_hostattributes.png' })
   // })
-  test('Client deletion', async ({ page }) => {
-    await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
-    await page.click('[data-testid="MDeleteClient"] .btn')
-    await page.setViewportSize({ width: 750, height: 200 })
-    await page.evaluate(() => { document.querySelector('.clientdeletion').innerHTML = 'Delete' })
-    await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Delete Client' })
-    await page.evaluate(() => { document.querySelector('.confirm').innerHTML = 'Are you sure you want to delete the client client1.domain.local ?' })
-    await page.evaluate(() => { document.querySelector('.deletion').innerHTML = 'Delete' })
-    await page.screenshot({ path: './screenshots/en/opsiweb_clientdeletion.png' })
-    await page.evaluate(() => { document.querySelector('.clientdeletion').innerHTML = 'Löschen' })
-    await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Client löschen' })
-    await page.evaluate(() => { document.querySelector('.confirm').innerHTML = 'Möchten Sie den Client client1.domain.local wirklich löschen? ' })
-    await page.evaluate(() => { document.querySelector('.deletion').innerHTML = 'Löschen' })
-    await page.screenshot({ path: './screenshots/de/opsiweb_clientdeletion.png' })
-  })
-  // test('Client reboot', async () => {})
+  // test('Client deletion', async ({ page }) => {
+  //   await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
+  //   await page.click('[data-testid="MDeleteClient"] .btn')
+  //   await page.setViewportSize({ width: 750, height: 200 })
+  //   await page.evaluate(() => { document.querySelector('.clientdeletion').innerHTML = 'Delete' })
+  //   await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Delete Client' })
+  //   await page.evaluate(() => { document.querySelector('.confirm').innerHTML = 'Are you sure you want to delete the client client1.domain.local ?' })
+  //   await page.evaluate(() => { document.querySelector('.deletion').innerHTML = 'Delete' })
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_clientdeletion.png' })
+  //   await page.evaluate(() => { document.querySelector('.clientdeletion').innerHTML = 'Löschen' })
+  //   await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Client löschen' })
+  //   await page.evaluate(() => { document.querySelector('.confirm').innerHTML = 'Möchten Sie den Client client1.domain.local wirklich löschen? ' })
+  //   await page.evaluate(() => { document.querySelector('.deletion').innerHTML = 'Löschen' })
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_clientdeletion.png' })
+  // })
+  // test('Client reboot', async ({ page }) => {
+  // TODO:
+  //   await callStoryId(page, 'button-btn-event', 'btn-event')
+  //   await page.click('[data-testid="BTNEvent"] .btn')
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_pushinstallations.png' })
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_pushinstallations.png' })
+  // })
+  // })
   // test('Client logs', async ({ page }) => {
   //   await callStoryId(page, 'view-v-clients-log', 'v-clients-log')
   //   const component = await page.locator('[data-testid="VClientsLog"]')
@@ -162,16 +169,14 @@ test.describe('Manage', () => {
   // })
   // test('Properties and Dependencies', async () => {})
 
-  // test('Quick Save', async ({ page }) => {
-  // TODO:
-  //   await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
-  //   const component = await page.locator('[data-testid="VSettingsLocalSpecific"]')
-  //   await page.setViewportSize({ width: 420, height: 100 })
-  //   await component.evaluate(() => { document.querySelector('.quicksave').innerHTML = 'Quick save' })
-  //   await component.screenshot({ path: './screenshots/en/opsiweb_quicksave.png' })
-  //   await component.evaluate(() => { document.querySelector('.quicksave').innerHTML = 'Sofort speichern' })
-  //   await component.screenshot({ path: './screenshots/de/opsiweb_quicksave.png' })
-  // })
+  test('Quick Save', async ({ page }) => {
+    await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
+    const component = await page.locator('[data-testid="quicksave"]')
+    await component.evaluate(() => { document.querySelector('.quicksave').innerHTML = 'Quick save' })
+    await component.screenshot({ path: './screenshots/en/opsiweb_quicksave.png' })
+    await component.evaluate(() => { document.querySelector('.quicksave').innerHTML = 'Sofort speichern' })
+    await component.screenshot({ path: './screenshots/de/opsiweb_quicksave.png' })
+  })
 
   // test('Push installations', async ({ page }) => {
   // TODO:
@@ -212,14 +217,14 @@ test.describe('Manage', () => {
 //     await page.screenshot({ path: './screenshots/en/opsiweb_language.png' })
 //     await page.screenshot({ path: './screenshots/de/opsiweb_language.png' })
 //   })
-//   test('Theme', async ({ page }) => {
-// TODO: Main layout in dark theme
-//     await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
-//     await page.click('[data-testid="DropdownDDTheme"] .btn')
-//     await page.setViewportSize({ width: 220, height: 150 })
-//     await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
-//     await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
-//   })
+// test('Theme', async ({ page }) => {
+// // TODO: Main layout in dark theme
+//   await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
+//   await page.click('[data-testid="DropdownDDTheme"] .btn')
+//   await page.setViewportSize({ width: 220, height: 150 })
+//   await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
+//   await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
+// })
 // })
 
 // test.describe('GUI', () => {
