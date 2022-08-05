@@ -22,7 +22,7 @@
           :redirect-on-close-to="undefined"
           :redirect="undefined"
         />
-        <TableTInfiniteScroll
+        <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -31,13 +31,14 @@
           :is-loading="isLoading"
           :table-data="tableData"
           :header-data="headerData"
-          :items="items"
+          :cache_pages="cache_pages"
           :total-items="totalItems"
           :totalpages="totalpages"
           :ismultiselect="true"
           :selection="selectionDepots"
           :setselection="setSelectionDepots"
-          :fetchitems="$fetch"
+          :fetchitems="_fetch"
+          :items="items"
         >
           <template #head(depotId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
@@ -59,7 +60,7 @@
               :click="routeRedirectWith"
             />
           </template>
-        </TableTInfiniteScroll>
+        </TableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -73,6 +74,7 @@ import Cookie from 'js-cookie'
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import QueueNested from '../../.utils/utils/QueueNested'
 import { IObjectString2String } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
@@ -84,6 +86,9 @@ export default class VDepots extends Vue {
   $axios: any
   $fetch: any
   $mq: any
+  $t: any
+  $route: any
+  $router: any
 
   id: string = 'Depots'
   rowId: string = ''
@@ -94,9 +99,12 @@ export default class VDepots extends Vue {
   error: string = ''
   fetchedDataClients2Depots: IObjectString2String = {}
 
+  cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
+  cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
+
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 15,
+    perPage: 9,
     sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'depotId',
     sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
     filterQuery: ''
@@ -138,11 +146,11 @@ export default class VDepots extends Vue {
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
-  @Watch('tableData', { deep: true }) tableDataChanged () {
+  @Watch('tableData', { deep: true }) async tableDataChanged () {
     if (this.tableData.filterQuery) {
       this.tableData.pageNumber = 1
     }
-    this.$fetch()
+    await this.$fetch()
   }
 
   @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.tableInfo, false, this.id) }
@@ -181,6 +189,24 @@ export default class VDepots extends Vue {
   }
 
   async fetch () {
+    console.log('fetch')
+    const items = await this._fetch()
+
+    console.log('items', items)
+    await Vue.nextTick(() => {
+      if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
+        console.log('set')
+        this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
+      } else {
+        console.log('setAuto')
+        this.cache_pages.setAuto(this.tableData.pageNumber, items) // try to append (start or beginning depend on pageNumber)
+      }
+      this.cache_pages.setTotalPages(this.totalpages)
+    })
+    console.debug('elements', this.cache_pages.elements)
+  }
+
+  async _fetch () {
     this.isLoading = true
 
     const params = { ...this.tableData }
@@ -191,23 +217,26 @@ export default class VDepots extends Vue {
       // params.sortBy = 'selected'
       params.selected = JSON.stringify(this.selectionDepots)
     }
-    await this.$axios.get('/api/opsidata/depots', { params })
+    return await this.$axios.get('/api/opsidata/depots', { params })
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
         if (response.data === null) {
-          this.items = []
+          // this.items = []
+          this.isLoading = false
+          return []
         } else {
-          this.items = response.data
+          // this.items = response.data
+          this.isLoading = false
+          return response.data
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.depotsViewAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Depots', 'danger', detailedError)
         this.error = this.$t('message.error.defaulttext') as string
+        this.isLoading = false
       })
-
-    this.isLoading = false
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
