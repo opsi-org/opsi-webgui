@@ -23,7 +23,7 @@
       no-fade
     >
       <div v-if="showDepots">
-        <h6>
+        <h6 class="depots">
           {{ $t('title.depots') }}
         </h6>
         <b-form-textarea
@@ -36,7 +36,7 @@
         <br>
       </div>
       <div v-if="showClients">
-        <h6>
+        <h6 class="clients">
           {{ $t('title.clients') }}
         </h6>
         <b-form-textarea
