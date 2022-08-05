@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="DropdownDDTheme">
+  <div data-testid="DDClientActions">
     <b-dropdown
       class="moreActions"
       variant="outline-primary border-0"
@@ -26,7 +26,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
-export default class DDTheme extends Vue {
+export default class DDClientActions extends Vue {
   iconnames: any
   @Prop({}) clientId!: string
   clientsLoading: Array<string> = []
