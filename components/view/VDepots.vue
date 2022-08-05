@@ -104,7 +104,7 @@ export default class VDepots extends Vue {
 
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 9,
+    perPage: 15,
     sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'depotId',
     sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
     filterQuery: ''
