@@ -7,7 +7,7 @@
       :disabled="(config)?config.read_only:false"
       @click="show = !show"
     >
-      <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
+      <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>
 
     <b-modal
@@ -20,7 +20,7 @@
       no-fade
     >
       <AlertAAlert ref="deleteClientAlert" />
-      {{ $t('message.confirm.deleteClient', { client: clientId }) }}
+      <span class="confirm"> {{ $t('message.confirm.deleteClient', { client: clientId }) }} </span>
       <DivDComponentGroup class="float-right">
         <b-button
           class="float-right"
@@ -29,7 +29,7 @@
           :disabled="(config)?config.read_only:false"
           @click="deleteOpsiClient(clientId)"
         >
-          <b-icon :icon="iconnames.delete" /> {{ $t('label.delete') }}
+          <b-icon :icon="iconnames.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
         </b-button>
       </DivDComponentGroup>
     </b-modal>
