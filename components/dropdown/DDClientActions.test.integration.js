@@ -6,5 +6,5 @@ test('dropdown client actions snapshot', async ({ page }) => {
   // await page.click('[data-testid="DDClientActions"]')
   await page.click('[data-testid="DDClientActions"] .btn')
   await page.setViewportSize({ width: 250, height: 180 })
-  expect(await page.screenshot()).toMatchSnapshot('DDClientActions.png')
+  expect(await page.screenshot()).toMatchSnapshot('DDClientActions.png', { maxDiffPixelRatio: 0.2 })
 })
