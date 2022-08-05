@@ -80,52 +80,7 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <b-dropdown
-              class="moreActions"
-              variant="outline-primary border-0"
-              :title="$t('button.tablerow.moreoptions')"
-              no-caret
-            >
-              <template #button-content>
-                <IconILoading v-if="clientsLoading.includes(row.item.clientId)" :small="true" />
-                <b-icon v-else :icon="iconnames.menu" />
-              </template>
-              <b-button
-                variant="outline-primary"
-                size="sm"
-                class="w-100 h-100 text-left border-0"
-                :disabled="(config)?config.read_only:false"
-                @click="row.toggleDetails"
-              >
-                <b-icon :icon="iconnames.delete" />  {{ $t('label.delete') }}
-              </b-button>
-              <ButtonBTNEvent
-                event="reboot"
-                :data="row.item.clientId"
-                :update-loading="loading => clientsLoading = loading"
-              />
-              <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
-            </b-dropdown>
-          </template>
-          <template #row-details="row">
-            <b-card>
-              <AlertAAlert ref="deleteClientAlert" />
-              {{ $t('message.confirm.deleteClient', { client: row.item.ident }) }}
-              <DivDComponentGroup class="float-right">
-                <b-button variant="outline-primary" class="mr-2" size="sm" @click="row.toggleDetails">
-                  {{ $t('label.cancel') }}
-                </b-button>
-                <b-button
-                  class="float-right"
-                  variant="danger"
-                  size="sm"
-                  :disabled="(config)?config.read_only:false"
-                  @click="deleteOpsiClient(row.item.ident)"
-                >
-                  <b-icon :icon="iconnames.delete" /> {{ $t('label.delete') }}
-                </b-button>
-              </DivDComponentGroup>
-            </b-card>
+            <DropdownDDClientActions :client-id="row.item.clientId" />
           </template>
           <template
             v-for="slotName in Object.keys($scopedSlots)"
@@ -145,11 +100,9 @@
 <script lang="ts">
 import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
-import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
-const config = namespace('config-app')
 interface DeleteClient {
   clientid: string
 }
@@ -168,7 +121,6 @@ export default class VClients extends Vue {
   rowId: string = ''
   isLoading: Boolean = false
   // isLoadingEventReboot: Boolean = false
-  clientsLoading: Array<string> = []
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
@@ -243,11 +195,9 @@ export default class VClients extends Vue {
     filterQuery: this.tableData.filterQuery
   }
 
-  @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
-  @selections.Mutation public delFromSelectionClients!: (s: string) => void
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.setSelectionClients([])
@@ -323,22 +273,6 @@ export default class VClients extends Vue {
 
   routeToChild (id: string) {
     this.routeRedirectWith('/clients/config', id)
-  }
-
-  async deleteOpsiClient (ident:string) {
-    this.isLoading = true
-    const id = ident
-    await this.$axios.$delete('/api/opsidata/clients/' + id)
-      .then(() => {
-        const ref = (this.$refs.deleteClientAlert as any)
-        ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
-        this.delFromSelectionClients(id)
-      }).catch((error) => {
-        const ref = (this.$refs.deleteClientAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
-      })
-    this.isLoading = false
   }
 }
 </script>
