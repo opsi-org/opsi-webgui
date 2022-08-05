@@ -392,6 +392,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   background-color: inherit;
 }
 .TInfiniteScrollSmooth{
+  /* why? padding? */
   /* padding-bottom: 70px; */
 }
 .TInfiniteScrollSmooth .table td,

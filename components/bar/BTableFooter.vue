@@ -43,15 +43,12 @@ export default class BarBTableFooter extends Vue {
 
   colorizePageNumbers () {
     const elPagination = document.querySelectorAll('.pagination.b-pagination .my-page-item')
-    console.log('elPagination', elPagination)
     elPagination.forEach((el) => {
       const btn = el.children[0] as HTMLElement
 
       if (btn.textContent === this.pagination.cache_pages.first_page_number.toString() ||
           btn.textContent === this.pagination.cache_pages.last_page_number.toString()) {
         btn.classList.add('paginationCurrent')
-        // btn.style.backgroundColor = '#00ff00 !important'
-        console.log('set color for ', btn.textContent, btn)
       } else {
         btn.classList.remove('paginationCurrent')
       }

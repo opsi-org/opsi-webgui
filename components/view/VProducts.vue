@@ -273,12 +273,16 @@ export default class VProducts extends Vue {
         params.selected = JSON.stringify(thiss.selectionProducts)
         // params.sortBy = '["selected", "productId"]'
       }
-      await thiss.$axios.get('/api/opsidata/products', { params })
+      const myitems = await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
           thiss.$emit('update:total' + thiss.id, thiss.totalItems)
           thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
           thiss.items = response.data || []
+          thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
+          const items = response.data || []
+          console.log('fetchProducts items', items)
+          return items
           // eslint-disable-next-line no-console
           // console.log('products response', JSON.stringify(response))
         }).catch((error) => {
@@ -289,7 +293,12 @@ export default class VProducts extends Vue {
           const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
           const ref = (this.$refs.productsViewAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
+          thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
         })
+
+      console.log('myitems ', myitems)
+      thiss.setItemsCache(myitems)
+      return myitems
       // try {
       //   const params = thiss.tableData
       //   const response = (await thiss.$axios.get('/api/opsidata/products', { params }))
@@ -310,7 +319,6 @@ export default class VProducts extends Vue {
     // thiss.tableData.sortBy = lastSyncSortBy
     // thiss.tableData.sortDesc = lastSyncSortDesc
 
-    thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
     // await thiss.$emit('update:isLoading', false) // super unnötig...
   }
 }
