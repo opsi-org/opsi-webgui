@@ -72,6 +72,7 @@
   "title.propertiesEmpty": "(keine)",
   "title.propertyvalues": "Property-Werte",
   "title.selectedElements": "Ausgewählte Elemente",
+  "title.deleteClient": "Client löschen",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
