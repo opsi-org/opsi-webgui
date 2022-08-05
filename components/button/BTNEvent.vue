@@ -26,6 +26,7 @@
       v-model="show"
       :title="$t(events[event].titlemodal)"
       size="sm"
+      no-fade
     >
       <b-list-group v-if="event=='ondemand'" flush>
         <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->
