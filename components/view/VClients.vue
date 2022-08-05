@@ -80,24 +80,7 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <b-dropdown
-              class="moreActions"
-              variant="outline-primary border-0"
-              :title="$t('button.tablerow.moreoptions')"
-              no-caret
-            >
-              <template #button-content>
-                <IconILoading v-if="clientsLoading.includes(row.item.clientId)" :small="true" />
-                <b-icon v-else :icon="iconnames.menu" />
-              </template>
-              <ModalMDeleteClient :client-id="row.item.clientId" />
-              <ButtonBTNEvent
-                event="reboot"
-                :data="row.item.clientId"
-                :update-loading="loading => clientsLoading = loading"
-              />
-              <!-- <ButtonBTNEvent event="showpopup" :data="row.item.clientId" /> -->
-            </b-dropdown>
+            <DropdownDDClientActions :client-id="row.item.clientId" />
           </template>
           <template
             v-for="slotName in Object.keys($scopedSlots)"
@@ -138,7 +121,6 @@ export default class VClients extends Vue {
   rowId: string = ''
   isLoading: Boolean = false
   // isLoadingEventReboot: Boolean = false
-  clientsLoading: Array<string> = []
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
