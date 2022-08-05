@@ -82,7 +82,7 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }" />
+    <BarBTableFooter :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
     <br>
   </div>

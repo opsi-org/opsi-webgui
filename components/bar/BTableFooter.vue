@@ -21,6 +21,7 @@
             :total-rows="pagination.totalRows"
             :per-page="pagination.tableData.perPage"
             last-number
+            page-class="my-page-item"
           />
           <slot />
         </b-navbar-nav>
@@ -30,16 +31,42 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 
 @Component
 export default class BarBTableFooter extends Vue {
   $mq: any
   @Prop({ default: () => { return () => { /* default */ } } }) pagination!: any
+  // @Watch('pagination.tableData.pageNumber') pageChanged () { this.colorizePageNumbers() }
+  @Watch('pagination.cache_pages.first_page_number') firstPageChanged () { this.colorizePageNumbers() }
+  @Watch('pagination.cache_pages.last_page_number') lastPageChanged () { this.colorizePageNumbers() }
+
+  colorizePageNumbers () {
+    const elPagination = document.querySelectorAll('.pagination.b-pagination .my-page-item')
+    console.log('elPagination', elPagination)
+    elPagination.forEach((el) => {
+      const btn = el.children[0] as HTMLElement
+
+      if (btn.textContent === this.pagination.cache_pages.first_page_number.toString() ||
+          btn.textContent === this.pagination.cache_pages.last_page_number.toString()) {
+        btn.classList.add('paginationCurrent')
+        // btn.style.backgroundColor = '#00ff00 !important'
+        console.log('set color for ', btn.textContent, btn)
+      } else {
+        btn.classList.remove('paginationCurrent')
+      }
+    })
+  }
 }
 </script>
 
 <style>
+.BTableFooter .paginationCurrent {
+  background-color: var(--primary) !important;
+  border: 1px solid var(--primary) !important;
+  color: var(--light) !important;
+}
+
 .BTableFooter .navbar {
   /* position: absolute; */
   bottom: 0px;
