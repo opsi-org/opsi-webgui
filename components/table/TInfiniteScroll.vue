@@ -245,46 +245,46 @@ export default class TInfiniteScroll extends Vue {
 </script>
 
 <style>
-.TInfiniteScroll.b-table-sticky-header {
+.TInfiniteScrollWrapper .TInfiniteScroll.b-table-sticky-header {
   max-height: 70vh;
 }
-.singleRowTable.b-table-sticky-header {
+.TInfiniteScrollWrapper .singleRowTable.b-table-sticky-header {
   max-height: 15vh;
 }
-.mobileview.table-responsive {
+.TInfiniteScrollWrapper .mobileview.table-responsive {
   max-height: 70vh;
 }
-.singleRowTable.mobileview.table-responsive {
+.TInfiniteScrollWrapper .singleRowTable.mobileview.table-responsive {
   max-height: 17vh;
 }
 
-.table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
+.TInfiniteScrollWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;
   background-color: inherit;
 }
-.TInfiniteScroll{
+.TInfiniteScrollWrapper .TInfiniteScroll{
   padding-bottom: 70px;
 }
-.TInfiniteScroll .table td,
-.TInfiniteScroll .table th {
+.TInfiniteScrollWrapper .TInfiniteScroll .table td,
+.TInfiniteScrollWrapper .TInfiniteScroll .table th {
   border-top: 1px solid var(--table-border);
 }
-.mobileview.TInfiniteScroll .table td,
-.mobileview.TInfiniteScroll .table th {
+.TInfiniteScrollWrapper .mobileview.TInfiniteScroll .table td,
+.TInfiniteScrollWrapper .mobileview.TInfiniteScroll .table th {
   border-top: 0px;
 }
-.TInfiniteScroll thead > tr > th{
+.TInfiniteScrollWrapper .TInfiniteScroll thead > tr > th{
   margin-top: 5px;
 }
-.TInfiniteScroll .clearselection-btn {
+.TInfiniteScrollWrapper .TInfiniteScroll .clearselection-btn {
   padding: 0px !important;
 }
-.TInfiniteScroll .table thead th,
-.TInfiniteScroll .table thead td {
+.TInfiniteScrollWrapper .TInfiniteScroll .table thead th,
+.TInfiniteScrollWrapper .TInfiniteScroll .table thead td {
   padding: 0.40rem;
 }
-.data-transfer-status-table
+.TInfiniteScrollWrapper .data-transfer-status-table
   .b-table-sticky-header
   > .table.b-table
   > thead
@@ -293,27 +293,27 @@ export default class TInfiniteScroll extends Vue {
   top: 32px;
 }
 
-.TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
-.TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 400px !important;}
-.TInfiniteScroll.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
-.TInfiniteScroll.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
+.TInfiniteScrollWrapper .TInfiniteScroll> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
+.TInfiniteScrollWrapper .TInfiniteScroll> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 400px !important;}
+.TInfiniteScrollWrapper .TInfiniteScroll.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
+.TInfiniteScrollWrapper .TInfiniteScroll.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
 
-.TInfiniteScroll .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
+.TInfiniteScrollWrapper .TInfiniteScroll .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   font-weight: normal;
 }
-.tablehead {
+.TInfiniteScrollWrapper .tablehead {
   padding-top: 200px !important;
   text-align: center;
 }
-.tablefooter {
+.TInfiniteScrollWrapper .tablefooter {
   padding-bottom: 400px !important;
   text-align: center;
 }
-.tablefooter_lastpage {
+.TInfiniteScrollWrapper .tablefooter_lastpage {
   padding-bottom: 600px !important;
   text-align: center;
 }
-.scrollcaption {
+.TInfiniteScrollWrapper .scrollcaption {
   text-align: center;
   height: 200px;
   margin-top: 200px;
@@ -321,32 +321,32 @@ export default class TInfiniteScroll extends Vue {
   font-size: small;
 }
 
-.b-table-sticky-header thead > tr:last-child{
+.TInfiniteScrollWrapper .b-table-sticky-header thead > tr:last-child{
   background-color: var(--background, white);
 }
 
-th .btn-group .btn-outline-primary,
-th .btn-group .btn-outline-primary:hover,
-td .btn-group .btn-outline-primary,
-td .btn-group .btn-outline-primary:hover {
+.TInfiniteScrollWrapper th .btn-group .btn-outline-primary,
+.TInfiniteScrollWrapper th .btn-group .btn-outline-primary:hover,
+.TInfiniteScrollWrapper td .btn-group .btn-outline-primary,
+.TInfiniteScrollWrapper td .btn-group .btn-outline-primary:hover {
   border: unset !important; /* removes border artifacts in rowactions buttons*/
   border-color: unset !important; /* removes border artifacts in rowactions buttons*/
 }
-thead .col-rowactions {
+.TInfiniteScrollWrapper thead .col-rowactions {
   padding-left: 12px !important;
 }
 
-.btn-group .moreActions.dropdown {
+.TInfiniteScrollWrapper .btn-group .moreActions.dropdown {
   max-width:30px !important;
 }
-.btn-group .moreActions > .btn {
+.TInfiniteScrollWrapper .btn-group .moreActions > .btn {
   width:33px !important;
   padding: 0px;
 }
-.mobile .mobileVisibleOnlySelection {
+.mobile .TInfiniteScrollWrapper .mobileVisibleOnlySelection {
   display: none !important;
 }
-.mobile .table.b-table.b-table-stacked > tbody > tr {
+.mobile .TInfiniteScrollWrapper .table.b-table.b-table-stacked > tbody > tr {
   border-top: 1px solid var(--dark) !important;
 }
 </style>

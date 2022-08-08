@@ -279,12 +279,16 @@ export default class VProducts extends Vue {
         params.selected = JSON.stringify(thiss.selectionProducts)
         // params.sortBy = '["selected", "productId"]'
       }
-      await thiss.$axios.get('/api/opsidata/products', { params })
+      const myitems = await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
           thiss.$emit('update:total' + thiss.id, thiss.totalItems)
           thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
           thiss.items = response.data || []
+          thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
+          const items = response.data || []
+          console.log('fetchProducts items', items)
+          return items
           // eslint-disable-next-line no-console
           // console.log('products response', JSON.stringify(response))
         }).catch((error) => {
@@ -295,29 +299,13 @@ export default class VProducts extends Vue {
           const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
           const ref = (this.$refs.productsViewAlert as any)
           ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
+          thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
         })
-      // try {
-      //   const params = thiss.tableData
-      //   const response = (await thiss.$axios.get('/api/opsidata/products', { params }))
-      //   thiss.totalItems = response.headers['x-total-count'] || 0
 
-      //   thiss.$emit('update:total' + thiss.id, thiss.totalItems)
-      //   thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
-      //   thiss.items = response.data || []
-      // } catch (error) {
-      //   thiss.error = thiss.$t('message.errortext') as string
-      //   thiss.error += (error as IObjectString2Any).message
-      //   const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
-      //   const ref = (this.$refs.productsViewAlert as any)
-      //   ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
-      //   // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
-      // }
+      console.log('myitems ', myitems)
+      thiss.setItemsCache(myitems)
+      return myitems
     }
-    // thiss.tableData.sortBy = lastSyncSortBy
-    // thiss.tableData.sortDesc = lastSyncSortDesc
-
-    thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
-    // await thiss.$emit('update:isLoading', false) // super unnötig...
   }
 }
 </script>

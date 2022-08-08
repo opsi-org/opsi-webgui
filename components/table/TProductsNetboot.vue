@@ -1,7 +1,7 @@
 <template>
   <div data-testid="TProductsNetboot">
     <AlertAAlert ref="productsAlert" />
-    <TableTInfiniteScroll
+    <TableTInfiniteScrollSmooth
       id="Netboot"
       ref="Netboot"
       primary-key="Netboot"
@@ -10,7 +10,7 @@
       :is-loading="isLoadingTable || isLoading"
       :table-data="tableData"
       :header-data="headerData"
-      :items="items"
+      :cache_pages="cache_pages"
       :total-items="totalItems"
       :totalpages="totalpages"
       :ismultiselect="multiselect"
@@ -93,7 +93,7 @@
           :click-parent="routeRedirectToParent"
         />
       </template>
-    </TableTInfiniteScroll>
+    </TableTInfiniteScrollSmooth>
   </div>
 </template>
 
@@ -104,6 +104,8 @@ import { IObjectString2ObjectString2String, IObjectString2String } from '../../.
 import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import QueueNested from '../../.utils/utils/QueueNested'
+
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -120,6 +122,8 @@ export default class TProductsNetboot extends Vue {
   $nuxt: any
   $fetch: any
   $mq: any
+  $t: any
+  $route: any
 
   @Prop() parentId!: string
   @Prop() rowId!: string
@@ -143,6 +147,9 @@ export default class TProductsNetboot extends Vue {
   // fetchedData: Array<ITableRowItemProducts> = []
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
+
+  cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
+  cache_pages: QueueNested = new QueueNested(this.cache_pages_no, 'NetbootQueue')
   tableData: ITableData = {
     type: 'NetbootProduct',
     pageNumber: 1,
@@ -174,11 +181,11 @@ export default class TProductsNetboot extends Vue {
     this.fetchPageOne()
   }
 
-  @Watch('tableData', { deep: true }) tableDataChanged () {
+  @Watch('tableData', { deep: true }) async tableDataChanged () {
     if (this.tableData.filterQuery) {
       this.tableData.pageNumber = 1
     }
-    this.$fetch()
+    await this.$fetch()
   }
 
   @Watch('tableData.sortDesc', { deep: true }) tableDataSortDescChanged () { this.syncSort(this.tableData, this.sort, true, this.parentId) }
@@ -202,8 +209,19 @@ export default class TProductsNetboot extends Vue {
     await this.$fetch()
   }
 
-  async fetch () { await this.$emit('fetch-products', this) }
-  async fetchWrapper () { await this.$emit('fetch-products', this) }
+  async fetchWrapper () { await this.$fetch() }
+  async fetch () { await this.$emit('fetch-products', this) } // will trigger -> this.setItemsCache(items)
+
+  setItemsCache (items) {
+    Vue.nextTick(() => {
+      if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
+        this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
+      } else {
+        this.cache_pages.setAuto(this.tableData.pageNumber, items) // try to append (start or beginning depend on pageNumber)
+      }
+      this.cache_pages.setTotalPages(this.totalpages)
+    })
+  }
 
   async save (change : object) {
     // const t:any = this
