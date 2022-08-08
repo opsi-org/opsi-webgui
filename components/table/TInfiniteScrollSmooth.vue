@@ -424,21 +424,34 @@ export default class TInfiniteScrollSmooth extends Vue {
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.isLoading> tbody {display: none} /** no margin for first page in mobile view */
 
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 800px !important;}
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:last-of-type {
+  margin-bottom: 300px !important;
+  border: 1px solid red;
+  }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
 
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   font-weight: normal;
 }
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth:not(.firstpage) .tablehead {
+
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth:not(.mobileview):not(.firstpage) .tablehead {
   padding-top: 200px !important;
   text-align: center;
 }
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth:not(.lastpage) .tablefooter {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth:not(.mobileview):not(.lastpage) .tablefooter {
   padding-bottom: 400px !important;
+  border: 1px solid green;
   text-align: center;
 }
+/* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.mobileview:not(.firstpage) .tablehead {
+  padding-top: 100px !important;
+  text-align: center;
+}
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.mobileview:not(.lastpage) .tablefooter {
+  padding-bottom: 100px !important;
+  text-align: center;
+} */
 /* .tablefooter_lastpage { display: none; } */
 /* .TInfiniteScrollSmooth:not(.lastpage)  */
 .TInfiniteScrollSmoothWrapper .tablefooter_lastpage {
