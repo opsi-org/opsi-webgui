@@ -117,7 +117,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   isScrolling = false
   scroll_sleep_ms: number = 5
   elementBeforeFetch:any
-  scrollPositions = { topPageNext: 0, topPagePrev: 0, withTopSpace: false }
+  scrollPositions = { offsetBottom: 0, topPagePrev: 0, withTopSpace: false }
   scrollDownOffset: number = 50 // how sensitive the scroll is to fetch a new page (start and end of table)
   animationColor = 'var(--primary)' // to see the last element before fetch
   bgOriginal:string = '' // to restore the original background color of the table row
@@ -184,8 +184,9 @@ export default class TInfiniteScrollSmooth extends Vue {
     this.elementBeforeFetch = await this.getRowForAnimation(this.cache_pages.scrollDirection, true) // default
 
     // get scroll position to jump there again after fetching
+    this.scrollPositions.withTopSpace = this.cache_pages.first_page_number > 1
     if (this.cache_pages.length === 1) {
-      this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
+      // this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
       this.scrollPositions.topPagePrev = this.tableScrollBody.offsetTop
     }
     await this.animateColor(this.elementBeforeFetch, this.animationColor, false, true, true)
@@ -214,9 +215,10 @@ export default class TInfiniteScrollSmooth extends Vue {
     this.cache_pages.scrollDirection = 'down'
     this.elementBeforeFetch = this.getRowForAnimation(this.cache_pages.scrollDirection, true) // default
     // get scroll position to jump there again after fetching
+    this.scrollPositions.withTopSpace = this.cache_pages.first_page_number > 1
     if (this.cache_pages.length === 1) {
-      this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
-      this.scrollPositions.topPageNext = this.tableScrollBody.scrollTop
+      // this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
+      this.scrollPositions.offsetBottom = this.tableScrollBody.scrollTop
     }
     await this.animateColor(this.elementBeforeFetch, this.animationColor, false, true, true)
 
@@ -294,7 +296,7 @@ export default class TInfiniteScrollSmooth extends Vue {
       this.tableScrollBody.scrollBy({ top: -1 * scrollto })
     }
     if (direction === 'down') {
-      let scrollto = this.scrollPositions.topPageNext
+      let scrollto = this.scrollPositions.offsetBottom
       if (!this.scrollPositions.withTopSpace) {
         scrollto += toprowHeight
       }
