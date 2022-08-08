@@ -107,6 +107,11 @@ test.describe('Manage', () => {
     await component.evaluate(() => { document.querySelector('.clearButton').innerHTML = 'Markierungen entfernen' })
     await page.screenshot({ path: './screenshots/de/opsiweb_productgroups.png' })
   })
+  // test('Host Configuaration', async ({ page }) => {
+  //  TODO
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_hostconfig.png' })
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_hostconfig.png' })
+  // })
   test('Host Attributes', async ({ page }) => {
     await callStoryId(page, 'view-v-config', 'v-config')
     const component = await page.locator('[data-testid="VConfig"]')
@@ -135,6 +140,11 @@ test.describe('Manage', () => {
     await component.evaluate(() => { document.querySelector('.otp').setAttribute('data-label', 'Einmalpasswort OTP') })
     await component.screenshot({ path: './screenshots/de/opsiweb_hostattributes.png' })
   })
+  // test('Client Actions', async ({ page }) => {
+  //  TODO
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_clientactions.png' })
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_clientactions.png' })
+  // })
   test('Client deletion', async ({ page }) => {
     await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
     await page.click('[data-testid="MDeleteClient"] .btn')
