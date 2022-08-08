@@ -173,7 +173,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   async previousPage () {
     if (this.isLoading || this.isScrolling) { return }
     this.isScrolling = true // cause isLoading is not enough
-    console.log('previousPage')
     this.$emit('update:isLoading', true)
     if (this.tableData.pageNumber <= 1) {
       this.isScrolling = false
@@ -205,7 +204,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   async nextPage () {
     if (this.isLoading || this.isScrolling) { return }
     this.isScrolling = true
-    console.log('nextPage')
     this.$emit('update:isLoading', true)
     if (this.tableData.pageNumber >= this.totalpages) {
       this.$emit('update:isLoading', false)
@@ -393,10 +391,10 @@ export default class TInfiniteScrollSmooth extends Vue {
   color: inherit;
   background-color: inherit;
 }
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth{
+/* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth{ */
   /* why? padding? */
   /* padding-bottom: 70px; */
-}
+/* } */
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table th {
   border-top: 1px solid var(--table-border);
