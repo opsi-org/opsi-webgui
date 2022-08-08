@@ -299,27 +299,7 @@ export default class VProducts extends Vue {
       console.log('myitems ', myitems)
       thiss.setItemsCache(myitems)
       return myitems
-      // try {
-      //   const params = thiss.tableData
-      //   const response = (await thiss.$axios.get('/api/opsidata/products', { params }))
-      //   thiss.totalItems = response.headers['x-total-count'] || 0
-
-      //   thiss.$emit('update:total' + thiss.id, thiss.totalItems)
-      //   thiss.totalpages = Math.ceil(thiss.totalItems / thiss.tableData.perPage)
-      //   thiss.items = response.data || []
-      // } catch (error) {
-      //   thiss.error = thiss.$t('message.errortext') as string
-      //   thiss.error += (error as IObjectString2Any).message
-      //   const detailedError = (error.message) ? error.message : '' + ' ' + (error.details) ? error.details : ''
-      //   const ref = (this.$refs.productsViewAlert as any)
-      //   ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
-      //   // TODO: Error for: {"type":"LocalbootProduct","pageNumber":5,"perPage":5,"sortBy":"productId","sortDesc":false,"filterQuery":"","selectedDepots":["bonifax.uib.local","bonidepot.uib.local"],"selectedClients":["anna-tp-t14.uib.local","akunde1.uib.local"]} (important: pagenumber, perpage, clients bzw product zB 7zip)
-      // }
     }
-    // thiss.tableData.sortBy = lastSyncSortBy
-    // thiss.tableData.sortDesc = lastSyncSortDesc
-
-    // await thiss.$emit('update:isLoading', false) // super unnötig...
   }
 }
 </script>

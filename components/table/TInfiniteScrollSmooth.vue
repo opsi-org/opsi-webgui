@@ -94,7 +94,7 @@ import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.uti
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Constants } from '../../mixins/uib-mixins'
 const cache = namespace('data-cache')
-
+//  TODO Fix Scrolling for Netboot
 @Component({ mixins: [Constants] })
 export default class TInfiniteScrollSmooth extends Vue {
   iconnames: any
@@ -110,7 +110,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   @Prop({ }) tableData!: ITableData
   @Prop({ }) cache_pages!: QueueNested
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
-  @Prop({ default: () => { return () => { /* default */ } } }) fetchitems!: Function
+  @Prop({ default: () => { return () => { /* default */ } } }) fetchitems!: Function // TODO remove fetchitems
   @Prop({ default: () => { return () => { /* default */ } } }) setselection!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) routechild!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeaders
@@ -277,7 +277,9 @@ export default class TInfiniteScrollSmooth extends Vue {
 
   scrollToElement (el, direction = 'none') {
     if (!this.tableScrollBody || !el) { return }
-    const toprowHeight = document.querySelector('.b-table-top-row')?.getBoundingClientRect()?.height || 0 // space for scrolling up
+    // const toprowHeight = document.querySelector('.b-table-top-row')?.getBoundingClientRect()?.height || 0 // space for scrolling up
+    const elToprowHeight = document.querySelector('#TInfiniteScrollSmoothWrapper_' + this.id + ' .b-table-top-row') // space for scrolling up
+    const toprowHeight = elToprowHeight?.getBoundingClientRect()?.height || 0 // space for scrolling up
     if (this.cache_pages.max_elements === 1 || direction === null || direction === undefined || direction === 'none') {
       // direction = none if trigger e.g. by paginationbar buttons (jumps directly to a specific page)
       if (this.tableData.pageNumber === 1) {
@@ -373,47 +375,47 @@ export default class TInfiniteScrollSmooth extends Vue {
 .TInfiniteScrollSmoothWrapper{
   max-height: max-content;
 }
-.TInfiniteScrollSmooth.b-table-sticky-header {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
   max-height: 70vh;
 }
-.singleRowTable.b-table-sticky-header {
+.TInfiniteScrollSmoothWrapper .singleRowTable.b-table-sticky-header {
   max-height: 15vh;
 }
-.mobileview.table-responsive {
+.TInfiniteScrollSmoothWrapper .mobileview.table-responsive {
   max-height: 70vh;
 }
-.singleRowTable.mobileview.table-responsive {
+.TInfiniteScrollSmoothWrapper .singleRowTable.mobileview.table-responsive {
   max-height: 17vh;
 }
 
-.table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
+.TInfiniteScrollSmoothWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;
   background-color: inherit;
 }
-.TInfiniteScrollSmooth{
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth{
   /* why? padding? */
   /* padding-bottom: 70px; */
 }
-.TInfiniteScrollSmooth .table td,
-.TInfiniteScrollSmooth .table th {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table td,
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table th {
   border-top: 1px solid var(--table-border);
 }
-.mobileview.TInfiniteScrollSmooth .table td,
-.mobileview.TInfiniteScrollSmooth .table th {
+.TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table td,
+.TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table th {
   border-top: 0px;
 }
-.TInfiniteScrollSmooth thead > tr > th{
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth thead > tr > th{
   margin-top: 5px;
 }
-.TInfiniteScrollSmooth .clearselection-btn {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .clearselection-btn {
   padding: 0px !important;
 }
-.TInfiniteScrollSmooth .table thead th,
-.TInfiniteScrollSmooth .table thead td {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table thead th,
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table thead td {
   padding: 0.40rem;
 }
-.data-transfer-status-table
+.TInfiniteScrollSmoothWrapper .data-transfer-status-table
   .b-table-sticky-header
   > .table.b-table
   > thead
@@ -421,31 +423,31 @@ export default class TInfiniteScrollSmooth extends Vue {
   > th:not(.v-th) {
   top: 32px;
 }
-.TInfiniteScrollSmooth.isLoading> tbody {display: none} /** no margin for first page in mobile view */
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.isLoading> tbody {display: none} /** no margin for first page in mobile view */
 
-.TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
-.TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 800px !important;}
-.TInfiniteScrollSmooth.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
-.TInfiniteScrollSmooth.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 800px !important;}
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
 
-.TInfiniteScrollSmooth .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
   font-weight: normal;
 }
-.TInfiniteScrollSmooth:not(.firstpage) .tablehead {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth:not(.firstpage) .tablehead {
   padding-top: 200px !important;
   text-align: center;
 }
-.TInfiniteScrollSmooth:not(.lastpage) .tablefooter {
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth:not(.lastpage) .tablefooter {
   padding-bottom: 400px !important;
   text-align: center;
 }
 /* .tablefooter_lastpage { display: none; } */
 /* .TInfiniteScrollSmooth:not(.lastpage)  */
-.tablefooter_lastpage {
+.TInfiniteScrollSmoothWrapper .tablefooter_lastpage {
   padding-bottom: 600px !important;
   text-align: center;
 }
-.scrollcaption {
+.TInfiniteScrollSmoothWrapper .scrollcaption {
   text-align: center;
   height: 200px;
   margin-top: 200px;
@@ -453,32 +455,32 @@ export default class TInfiniteScrollSmooth extends Vue {
   font-size: small;
 }
 
-.b-table-sticky-header thead > tr:last-child{
+.TInfiniteScrollSmoothWrapper .b-table-sticky-header thead > tr:last-child{
   background-color: var(--background, white);
 }
 
-th .btn-group .btn-outline-primary,
-th .btn-group .btn-outline-primary:hover,
-td .btn-group .btn-outline-primary,
-td .btn-group .btn-outline-primary:hover {
+.TInfiniteScrollSmoothWrapper th .btn-group .btn-outline-primary,
+.TInfiniteScrollSmoothWrapper th .btn-group .btn-outline-primary:hover,
+.TInfiniteScrollSmoothWrapper td .btn-group .btn-outline-primary,
+.TInfiniteScrollSmoothWrapper td .btn-group .btn-outline-primary:hover {
   border: unset !important; /* removes border artifacts in rowactions buttons*/
   border-color: unset !important; /* removes border artifacts in rowactions buttons*/
 }
-thead .col-rowactions {
+.TInfiniteScrollSmoothWrapper thead .col-rowactions {
   padding-left: 12px !important;
 }
 
-.btn-group .moreActions.dropdown {
+.TInfiniteScrollSmoothWrapper .btn-group .moreActions.dropdown {
   max-width:30px !important;
 }
-.btn-group .moreActions > .btn {
+.TInfiniteScrollSmoothWrapper .btn-group .moreActions > .btn {
   width:33px !important;
   padding: 0px;
 }
-.mobile .mobileVisibleOnlySelection {
+.mobile .TInfiniteScrollSmoothWrapper .mobileVisibleOnlySelection {
   display: none !important;
 }
-.mobile .table.b-table.b-table-stacked > tbody > tr {
+.mobile .TInfiniteScrollSmoothWrapper .table.b-table.b-table-stacked > tbody > tr {
   border-top: 1px solid var(--dark) !important;
 }
 </style>
