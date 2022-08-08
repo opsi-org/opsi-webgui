@@ -148,7 +148,10 @@ export default class VClients extends Vue {
       class: 'mobileVisibleOnlySelection'
     },
     clientId: { // eslint-disaconfigble-next-line object-property-newline
-      label: this.$t('table.fields.id') as string, key: 'clientId', _fixed: true, sortable: true,
+      label: this.$t('table.fields.id') as string,
+      key: 'clientId',
+      _fixed: true,
+      sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('clientId') : true
     },
     description: { // eslint-disable-next-line object-property-newline
