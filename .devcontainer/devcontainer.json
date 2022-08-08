@@ -28,6 +28,8 @@
 		"johnsoncodehk.vscode-typescript-vue-plugin",
 		"pucelle.run-on-save",
 		"seunlanlege.action-buttons",
-		"sakamoto66.vscode-playwright-test-runner"
+		"sakamoto66.vscode-playwright-test-runner",
+		"shardulm94.trailing-spaces",
+		"octref.vetur"
 	]
 }
