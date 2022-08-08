@@ -74,6 +74,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
       thiss.totalItems = args.items.length
       thiss.totalpages = (args.items.length / args.tableData.perPage)
       thiss.items = args.items
+      thiss.setItemsCache(args.items)
     }
   },
   // template: '<div> {{args}} <TableTProductsLocalboot  v-bind="args" /></div>'

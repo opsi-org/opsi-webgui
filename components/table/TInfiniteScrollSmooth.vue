@@ -424,10 +424,7 @@ export default class TInfiniteScrollSmooth extends Vue {
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.isLoading> tbody {display: none} /** no margin for first page in mobile view */
 
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:first-of-type {margin-top: 200px !important;}
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:last-of-type {
-  margin-bottom: 300px !important;
-  border: 1px solid red;
-  }
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth> .b-table-stacked > tbody > tr:last-of-type {margin-bottom: 300px !important;}
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.firstpage> .b-table-stacked > tbody > tr:first-of-type {margin-top: 0px !important;} /** no margin for first page in mobile view */
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.firstpage .b-table-top-row {display: none;} /** no top-row if first page in desktop view */
 
@@ -441,7 +438,6 @@ export default class TInfiniteScrollSmooth extends Vue {
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth:not(.mobileview):not(.lastpage) .tablefooter {
   padding-bottom: 400px !important;
-  border: 1px solid green;
   text-align: center;
 }
 /* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.mobileview:not(.firstpage) .tablehead {
