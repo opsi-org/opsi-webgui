@@ -122,6 +122,8 @@ export default class TProductsNetboot extends Vue {
   $nuxt: any
   $fetch: any
   $mq: any
+  $t: any
+  $route: any
 
   @Prop() parentId!: string
   @Prop() rowId!: string
@@ -211,8 +213,6 @@ export default class TProductsNetboot extends Vue {
   async fetch () { await this.$emit('fetch-products', this) } // will trigger -> this.setItemsCache(items)
 
   setItemsCache (items) {
-    console.log('set items cache', items, 'scrollDirection', this.cache_pages.scrollDirection)
-
     Vue.nextTick(() => {
       if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
         this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page

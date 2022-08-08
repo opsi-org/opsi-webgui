@@ -130,7 +130,9 @@ export default class TProductsLocalboot extends Vue {
   $axios: any
   $nuxt: any
   $mq: any
+  $t: any
   $fetch: any
+  $route: any
 
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -215,8 +217,6 @@ export default class TProductsLocalboot extends Vue {
   }
 
   setItemsCache (items) {
-    console.log('set items cache', items, 'scrollDirection', this.cache_pages.scrollDirection)
-
     Vue.nextTick(() => {
       if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
         this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
