@@ -205,32 +205,32 @@ test.describe('Manage', () => {
 })
 test.describe('OPSI specific Settings', () => {
 //   // TODO: Settings page with Modules content selected
-  test('OPSI Modules', async ({ page }) => {
-    await callStoryId(page, 'view-v-modules', 'v-modules')
-    const component = await page.locator('[data-testid="VModules"]')
-    await page.evaluate((val) => { document.querySelector('.modules').innerHTML = val }, en['form.modules.available'])
-    await component.screenshot({ path: './screenshots/en/opsiweb_opsimodules.png' })
-    await page.evaluate((val) => { document.querySelector('.modules').innerHTML = val }, de['form.modules.available'])
-    await component.screenshot({ path: './screenshots/de/opsiweb_opsimodules.png' })
-  })
+  // test('OPSI Modules', async ({ page }) => {
+  //   await callStoryId(page, 'view-v-modules', 'v-modules')
+  //   const component = await page.locator('[data-testid="VModules"]')
+  //   await page.evaluate((val) => { document.querySelector('.modules').innerHTML = val }, en['form.modules.available'])
+  //   await component.screenshot({ path: './screenshots/en/opsiweb_opsimodules.png' })
+  //   await page.evaluate((val) => { document.querySelector('.modules').innerHTML = val }, de['form.modules.available'])
+  //   await component.screenshot({ path: './screenshots/de/opsiweb_opsimodules.png' })
+  // })
 })
 test.describe('GUI Settings', () => {
-//   test('Language', async ({ page }) => {
-//     await callStoryId(page, 'dropdown-dd-lang', 'dd-lang')
-//     const component = await page.locator('[data-testid="DropdownDDLang"]')
-//     await component.click()
-//     await page.setViewportSize({ width: 220, height: 150 })
-//     await page.screenshot({ path: './screenshots/en/opsiweb_language.png' })
-//     await page.screenshot({ path: './screenshots/de/opsiweb_language.png' })
-//   })
-//   test('Theme', async ({ page }) => {
-//     // TODO: Main layout in dark theme
-//     await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
-//     await page.click('[data-testid="DropdownDDTheme"] .btn')
-//     await page.setViewportSize({ width: 220, height: 150 })
-//     await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
-//     await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
-//   })
+  test('Language', async ({ page }) => {
+    await callStoryId(page, 'dropdown-dd-lang', 'dd-lang')
+    const component = await page.locator('[data-testid="DropdownDDLang"]')
+    await component.click()
+    await page.setViewportSize({ width: 220, height: 150 })
+    await page.screenshot({ path: './screenshots/en/opsiweb_language.png' })
+    await page.screenshot({ path: './screenshots/de/opsiweb_language.png' })
+  })
+  test('Theme', async ({ page }) => {
+    // TODO: Main layout in dark theme
+    await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
+    await page.click('[data-testid="DropdownDDTheme"] .btn')
+    await page.setViewportSize({ width: 220, height: 150 })
+    await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
+    await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
+  })
 })
 
 // test.describe('GUI', () => {
