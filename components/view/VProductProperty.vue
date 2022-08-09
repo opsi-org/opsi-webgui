@@ -34,9 +34,11 @@
       </p>
       <b-tab
         ref="VProductProperties_TabProperties"
-        :title="$t('title.properties') + ((!isLoading && tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'')"
         :disabled="tabPropertiesDisabled"
       >
+        <template #title>
+          <span class="property"> {{ $t('title.properties') + ((!isLoading && tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'') }} </span>
+        </template>
         <br>
         <LazyTableTProductProperties
           v-if="id"
@@ -48,10 +50,12 @@
       </b-tab>
       <b-tab
         ref="VProductProperties_TabDependencies"
-        :title="$t('title.dependencies') + ((!isLoading && tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'')"
         :disabled="tabDependenciesDisabled"
         :active="activeTab===1"
       >
+        <template #title>
+          <span class="dependency"> {{ $t('title.dependencies') + ((!isLoading && tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'') }} </span>
+        </template>
         <br>
         <LazyTableTProductDependencies
           v-if="id"
