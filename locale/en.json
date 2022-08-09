@@ -166,6 +166,7 @@
   "button.event.reboot.tooltip": "Reboot client",
   "button.event.showpopup": "Notify",
   "button.event.showpopup.tooltip": "Send message",
+  "button.event.showpopup.message": "Enter message here",
   "button.show.products": "Show products",
   "button.sort.tablecolumns": "Sort table by",
   "button.sort.tablecolumns.sortDirection": "Sort descending",

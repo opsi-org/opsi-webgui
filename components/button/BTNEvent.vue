@@ -17,7 +17,7 @@
       <!-- 'pl-3': event=='ondemand' && $mq=='mobile' -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      {{ (event=='reboot')? $t(events[event].titlemodal) : '' }}
+      {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }}
       <IconILoading v-if="isLoading" :small="true" />
       <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
@@ -44,6 +44,10 @@
           </b-button>
         </b-list-group-item>
       </b-list-group>
+      <b-list-group v-else-if="event=='showpopup'" flush>
+        <b-form-textarea v-model="eventdata.popup.msg" />
+        {{ data }}
+      </b-list-group>
       <div v-else class="modal-client-p">
         {{ data }}
       </div>
@@ -63,6 +67,7 @@
         <b-button
           variant="success"
           size="sm"
+          :disabled="selection.length <= 0"
           class="float-right"
           @click="callEvent(); show=false"
         >
@@ -80,11 +85,14 @@ const selections = namespace('selections')
 
 @Component({ mixins: [Constants] })
 export default class BTNEvent extends Vue {
+  $axios: any
   iconnames:any
 
   isLoading:any = false
   show:boolean = false
   selectionClientsDelete: Array<string> = []
+
+  eventdata: any = { popup: { msg: this.$t('button.event.showpopup.message') as string } }
 
   @selections.Getter public selectionClients!: Array<string>
 
@@ -101,9 +109,10 @@ export default class BTNEvent extends Vue {
         titlemodal: 'button.event.showpopup',
         icon: this.iconnames.message,
         variant: 'outline-primary',
+
         params: {
           method: 'showPopup',
-          params: ['Hallo - Nachricht ist von Anna. Bitte schreiben wenn jemand es sieht :D']
+          params: ['Dummy text']
           // client_ids: this.selectionClients
         },
         responseVisualization: this.showResultOndemand
@@ -147,32 +156,23 @@ export default class BTNEvent extends Vue {
       return
     }
     this.isLoading = true
-    // console.warn('ParentLoading2 ', this.isLoadingParent)
-
-    const eventData = this.events[this.event]
+    const data = this.events[this.event]
     const ref = (this.$root.$children[1].$refs.ondemandMessage as any) || (this.$root.$children[2].$refs.ondemandMessage as any)
-    // const ref = this.$refs.ondemandMessage as any
 
-    // hostControl_showPopup
-
-    // const params = { method: 'fireEvent', params: ['on_demand'], client_ids: this.selectionClients }
-    if (this.event === 'ondemand') {
-      eventData.params.client_ids = this.selection
+    if (this.event === 'ondemand') { data.params.client_ids = this.selection }
+    if (this.event === 'reboot') { data.params.client_ids = [this.data] }
+    if (this.event === 'showpopup') {
+      data.params.client_ids = this.selection
+      data.params.params = [this.eventdata.popup.msg]
     }
-    if (this.event === 'reboot') { eventData.params.client_ids = [this.data] }
-    if (this.event === 'showpopup') { eventData.params.client_ids = [this.data] }
 
     if (this.updateLoading !== undefined) {
-      this.updateLoading(eventData.params.client_ids)
+      this.updateLoading(data.params.client_ids)
     }
-    // if (this.event === 'showpopup') {
-    //   eventData.params.client_ids = [this.data || '']
-    //   eventData.params.params[1] = this.data || ''
-    // }
 
-    await this.$axios.$post('/api/command/opsiclientd_rpc', eventData.params)
+    await this.$axios.$post('/api/command/opsiclientd_rpc', data.params)
       .then((response) => {
-        eventData.responseVisualization(ref, response)
+        data.responseVisualization(ref, response)
         this.isLoading = false
         if (this.updateLoading !== undefined) { this.updateLoading([]) }
       }).catch((error) => {

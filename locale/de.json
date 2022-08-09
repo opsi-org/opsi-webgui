@@ -165,6 +165,7 @@
   "button.event.reboot.tooltip": "Client neustarten",
   "button.event.showpopup": "Benachrichtigen",
   "button.event.showpopup.tooltip": "Sende Nachricht",
+  "button.event.showpopup.message": "Hier Nachricht eingeben",
   "button.event.ondemand.tooltip": "ondemand für ausgewählte Clients",
   "button.show.products": "Öffne Produkte",
   "button.change.usermode": "Wechsle Nutzermodus zu '{mode}'",

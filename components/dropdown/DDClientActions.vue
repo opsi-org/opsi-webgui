@@ -16,7 +16,11 @@
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
       />
-      <!-- <ButtonBTNEvent event="showpopup" :data="clientId" /> -->
+      <ButtonBTNEvent
+        event="showpopup"
+        :data="clientId"
+        :update-loading="loading => clientsLoading = loading"
+      />
     </b-dropdown>
   </div>
 </template>

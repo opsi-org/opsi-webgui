@@ -4,10 +4,31 @@ export default {
   parameters: { docs: { description: { component: 'Button Event' } } }
 }
 
-const PrimaryTemplate = (_args, { argTypes }) => ({
+const PrimaryTemplateOnDemandDefault = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: '<ButtonBTNEvent />'
 })
 
-// named export Primary to create respective story
-export const BTNEvent = PrimaryTemplate.bind({})
+const PrimaryTemplateReboot = (_args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  template: `<ButtonBTNEvent
+    event="reboot"
+    :data="'clientId.domain'"
+    />
+  `
+  // :update-loading="loading => clientsLoading = loading"
+})
+
+const PrimaryTemplateNotify = (_args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  template: `<ButtonBTNEvent
+    event="showpopup"
+    :data="'clientId.domain'"
+    />
+  `
+  // :update-loading="loading => clientsLoading = loading"
+})
+
+export const BTNEventOnDemandDefault = PrimaryTemplateOnDemandDefault.bind({})
+export const BTNEventReboot = PrimaryTemplateReboot.bind({})
+export const BTNEventNotify = PrimaryTemplateNotify.bind({})
