@@ -181,10 +181,10 @@ export default class TProductsNetboot extends Vue {
     this.fetchPageOne()
   }
 
+  @Watch('tableData.filterQuery', { deep: true }) async tdFilterQueryChanged () {
+    this.tableData.pageNumber = 1
+  }
   @Watch('tableData', { deep: true }) async tableDataChanged () {
-    if (this.tableData.filterQuery) {
-      this.tableData.pageNumber = 1
-    }
     await this.$fetch()
   }
 

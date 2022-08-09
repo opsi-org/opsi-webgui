@@ -146,10 +146,10 @@ export default class VDepots extends Vue {
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
+  @Watch('tableData.filterQuery', { deep: true }) async tdFilterQueryChanged () {
+    this.tableData.pageNumber = 1
+  }
   @Watch('tableData', { deep: true }) async tableDataChanged () {
-    if (this.tableData.filterQuery) {
-      this.tableData.pageNumber = 1
-    }
     await this.$fetch()
   }
 
