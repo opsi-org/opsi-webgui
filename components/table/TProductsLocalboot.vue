@@ -189,6 +189,7 @@ export default class TProductsLocalboot extends Vue {
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
     this.tableData.pageNumber = 1
   }
+
   @Watch('tableData', { deep: true }) async tableDataChanged () {
     await this.$fetch()
   }
