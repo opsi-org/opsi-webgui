@@ -1,12 +1,12 @@
-<custom-block-licence>
+<template>
+<!-- <custom-block-licence>
   -*- coding: utf-8 -*-
 
   opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
   Copyright (c) uib GmbH <info@uib.de>
   All rights reserved.
   License: AGPL-3.0
-</custom-block-licence>
-<template>
+</custom-block-licence> -->
   <b-alert
     v-model="showAlert"
     data-testid="AAlert"
