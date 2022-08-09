@@ -17,7 +17,7 @@
       <!-- 'pl-3': event=='ondemand' && $mq=='mobile' -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }}
+      <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
       <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
@@ -53,22 +53,22 @@
       </div>
 
       <template #modal-footer>
-        <p class="float-left">
+        <p class="float-left footer">
           {{ $t('button.event.modal.footer', { event }) }}
         </p>
-        <b-button
+        <!-- <b-button
           variant="primary"
           size="sm"
           class="float-right"
           @click="show=false"
         >
           {{ $t('button.close') }}
-        </b-button>
+        </b-button> -->
         <b-button
           variant="success"
           size="sm"
           :disabled="selection.length <= 0"
-          class="float-right"
+          class="float-right confirm"
           @click="callEvent(); show=false"
         >
           {{ $t('button.confirm') }}
