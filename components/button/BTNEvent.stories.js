@@ -6,7 +6,7 @@ export default {
 
 const PrimaryTemplateOnDemandDefault = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<ButtonBTNEvent />'
+  template: '<ButtonBTNEvent v-bind="args" />'
 })
 
 const PrimaryTemplateReboot = (_args, { argTypes }) => ({
@@ -30,5 +30,9 @@ const PrimaryTemplateNotify = (_args, { argTypes }) => ({
 })
 
 export const BTNEventOnDemandDefault = PrimaryTemplateOnDemandDefault.bind({})
+BTNEventOnDemandDefault.args = {
+  selection: ['client1.domain.local', 'client2.domain.local', 'client3.domain.local'],
+  isLoading: false
+}
 export const BTNEventReboot = PrimaryTemplateReboot.bind({})
 export const BTNEventNotify = PrimaryTemplateNotify.bind({})
