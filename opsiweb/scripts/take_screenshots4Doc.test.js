@@ -176,14 +176,14 @@ test.describe('Manage', () => {
   //   await page.screenshot({ path: './screenshots/de/opsiweb_clientlogs.png' })
   // })
   // test('Properties and Dependencies', async () => {})
-  test('Quick Save', async ({ page }) => {
-    await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
-    const component = await page.locator('[data-testid="quicksave"]')
-    await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
-    await component.screenshot({ path: './screenshots/en/opsiweb_quicksave.png' })
-    await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
-    await component.screenshot({ path: './screenshots/de/opsiweb_quicksave.png' })
-  })
+  // test('Quick Save', async ({ page }) => {
+  //   await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
+  //   const component = await page.locator('[data-testid="quicksave"]')
+  //   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
+  //   await component.screenshot({ path: './screenshots/en/opsiweb_quicksave.png' })
+  //   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
+  //   await component.screenshot({ path: './screenshots/de/opsiweb_quicksave.png' })
+  // })
   // test('Push installations', async ({ page }) => {
   // TODO:
   //   await callStoryId(page, 'button-btn-event', 'btn-event')
@@ -191,17 +191,17 @@ test.describe('Manage', () => {
   //   await page.screenshot({ path: './screenshots/en/opsiweb_pushinstallations.png' })
   //   await page.screenshot({ path: './screenshots/de/opsiweb_pushinstallations.png' })
   // })
-  // test('Selections', async ({ page }) => {
-  //   await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
-  //   await page.click('[data-testid="MSelectionsAll"] .btn')
-  //   await page.setViewportSize({ width: 750, height: 400 })
-  //   await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Selected elements' })
-  //   await page.evaluate(() => { document.querySelector('.depots').innerHTML = 'Servers' })
-  //   await page.evaluate(() => { document.querySelector('.clients').innerHTML = 'Clients' })
-  //   await page.screenshot({ path: './screenshots/en/opsiweb_selections.png' })
-  //   await page.evaluate(() => { document.querySelector('.modal-title').innerHTML = 'Ausgewählte Elemente' })
-  //   await page.screenshot({ path: './screenshots/de/opsiweb_selections.png' })
-  // })
+  test('Selections', async ({ page }) => {
+    await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
+    await page.click('[data-testid="MSelectionsAll"] .btn')
+    await page.setViewportSize({ width: 750, height: 400 })
+    await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['title.selectedElements'])
+    await page.evaluate((val) => { document.querySelector('.depots').innerHTML = val }, en['title.depots'])
+    await page.evaluate((val) => { document.querySelector('.clients').innerHTML = val }, en['title.clients'])
+    await page.screenshot({ path: './screenshots/en/opsiweb_selections.png' })
+    await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, de['title.selectedElements'])
+    await page.screenshot({ path: './screenshots/de/opsiweb_selections.png' })
+  })
 })
 // test.describe('OPSI specific Settings', () => {
 //   // TODO: Settings page with Modules content selected
