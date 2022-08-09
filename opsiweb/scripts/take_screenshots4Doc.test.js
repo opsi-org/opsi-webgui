@@ -191,30 +191,30 @@ test.describe('Manage', () => {
   //   await page.screenshot({ path: './screenshots/en/opsiweb_pushinstallations.png' })
   //   await page.screenshot({ path: './screenshots/de/opsiweb_pushinstallations.png' })
   // })
-  test('Selections', async ({ page }) => {
-    await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
-    await page.click('[data-testid="MSelectionsAll"] .btn')
-    await page.setViewportSize({ width: 750, height: 400 })
-    await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['title.selectedElements'])
-    await page.evaluate((val) => { document.querySelector('.depots').innerHTML = val }, en['title.depots'])
-    await page.evaluate((val) => { document.querySelector('.clients').innerHTML = val }, en['title.clients'])
-    await page.screenshot({ path: './screenshots/en/opsiweb_selections.png' })
-    await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, de['title.selectedElements'])
-    await page.screenshot({ path: './screenshots/de/opsiweb_selections.png' })
+  // test('Selections', async ({ page }) => {
+  //   await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
+  //   await page.click('[data-testid="MSelectionsAll"] .btn')
+  //   await page.setViewportSize({ width: 750, height: 400 })
+  //   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['title.selectedElements'])
+  //   await page.evaluate((val) => { document.querySelector('.depots').innerHTML = val }, en['title.depots'])
+  //   await page.evaluate((val) => { document.querySelector('.clients').innerHTML = val }, en['title.clients'])
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_selections.png' })
+  //   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, de['title.selectedElements'])
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_selections.png' })
+  // })
+})
+test.describe('OPSI specific Settings', () => {
+//   // TODO: Settings page with Modules content selected
+  test('OPSI Modules', async ({ page }) => {
+    await callStoryId(page, 'view-v-modules', 'v-modules')
+    const component = await page.locator('[data-testid="VModules"]')
+    await page.evaluate((val) => { document.querySelector('.modules').innerHTML = val }, en['form.modules.available'])
+    await component.screenshot({ path: './screenshots/en/opsiweb_opsimodules.png' })
+    await page.evaluate((val) => { document.querySelector('.modules').innerHTML = val }, de['form.modules.available'])
+    await component.screenshot({ path: './screenshots/de/opsiweb_opsimodules.png' })
   })
 })
-// test.describe('OPSI specific Settings', () => {
-//   // TODO: Settings page with Modules content selected
-//   test('OPSI Modules', async ({ page }) => {
-//     await callStoryId(page, 'view-v-modules', 'v-modules')
-//     const component = await page.locator('[data-testid="VModules"]')
-//     await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Available modules' })
-//     await component.screenshot({ path: './screenshots/en/opsiweb_opsiModules.png' })
-//     await component.evaluate(() => { document.querySelector('.modules').innerHTML = 'Verfügbare Module' })
-//     await component.screenshot({ path: './screenshots/de/opsiweb_opsiModules.png' })
-//   })
-// })
-// test.describe('GUI Settings', () => {
+test.describe('GUI Settings', () => {
 //   test('Language', async ({ page }) => {
 //     await callStoryId(page, 'dropdown-dd-lang', 'dd-lang')
 //     const component = await page.locator('[data-testid="DropdownDDLang"]')
@@ -231,7 +231,7 @@ test.describe('Manage', () => {
 //     await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
 //     await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
 //   })
-// })
+})
 
 // test.describe('GUI', () => {
 //   test.describe('Page content', () => {
