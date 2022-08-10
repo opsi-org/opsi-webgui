@@ -6,7 +6,7 @@ export default {
 const DefaultVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<DropdownDDClientActions v-bind="args" />'
+  template: '<b-badge variant="transparent"><DropdownDDClientActions v-bind="args" /></b-badge>'
 })
 
 export const DDClientActions = DefaultVisibleTemplate.bind({})
