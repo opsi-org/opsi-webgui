@@ -12,7 +12,7 @@ const PrimaryTemplateOnDemandDefault = (_args, { argTypes }) => ({
     selections: {
       namespaced: true,
       getters: {
-        selectionClients () { return ['client1.domain.local', 'client2.domain.local', 'client3.domain.local'] },
+        selectionClients () { return ['client1.domain.local', 'client2.domain.local', 'client3.domain.local'] }
       }
     }
   })
