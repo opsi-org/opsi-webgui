@@ -230,15 +230,29 @@ test.describe('Manage', () => {
   //   await page.evaluate((val) => { document.querySelector('.tdtype').innerHTML = val }, de['table.fields.pre-required'])
   //   await component.screenshot({ path: './screenshots/de/opsiweb_productdependencies.png' })
   // })
-  // test('Quick Save', async ({ page }) => {
-  // TODO quicksave small view
-  //   await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
-  //   const component = await page.locator('[data-testid="quicksave"]')
-  //   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
-  //   await component.screenshot({ path: './screenshots/en/opsiweb_quicksave.png' })
-  //   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
-  //   await component.screenshot({ path: './screenshots/de/opsiweb_quicksave.png' })
-  // })
+  test('Quick Save', async ({ page }) => {
+    await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
+    await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
+    await page.screenshot({
+      path: './screenshots/en/opsiweb_quicksave.png',
+      clip: {
+        x: 5,
+        y: 55,
+        width: 330,
+        height: 60
+      }
+    })
+    await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
+    await page.screenshot({
+      path: './screenshots/de/opsiweb_quicksave.png',
+      clip: {
+        x: 5,
+        y: 55,
+        width: 330,
+        height: 60
+      }
+    })
+  })
   // test('Push installations', async ({ page }) => {
   // // TODO: on demand with popup
   //   await callStoryId(page, 'button-btn-event', 'btn-event-on-demand-default')
@@ -277,7 +291,7 @@ test.describe('Manage', () => {
 //     await component.screenshot({ path: './screenshots/de/opsiweb_opsimodules.png' })
 //   })
 // })
-test.describe('GUI Settings', () => {
+// test.describe('GUI Settings', () => {
 //   test('Language', async ({ page }) => {
 //     await callStoryId(page, 'dropdown-dd-lang', 'dd-lang')
 //     const component = await page.locator('[data-testid="DropdownDDLang"]')
@@ -292,15 +306,15 @@ test.describe('GUI Settings', () => {
 //     await page.screenshot({ path: './screenshots/de/opsiweb_mainlayout_dark.png' })
 //   })
 // })
-  test('Theme', async ({ page }) => {
-    await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
-    await page.click('[data-testid="DropdownDDTheme"] .btn')
-    await (new Promise(resolve => setTimeout(resolve, 1000)))
-    await page.setViewportSize({ width: 220, height: 150 })
-    await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
-    await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
-  })
-})
+// test('Theme', async ({ page }) => {
+//   await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
+//   await page.click('[data-testid="DropdownDDTheme"] .btn')
+//   await (new Promise(resolve => setTimeout(resolve, 1000)))
+//   await page.setViewportSize({ width: 220, height: 150 })
+//   await page.screenshot({ path: './screenshots/en/opsiweb_theme.png' })
+//   await page.screenshot({ path: './screenshots/de/opsiweb_theme.png' })
+// })
+// })
 
 // test.describe('GUI', () => {
 //   test.describe('Page content', () => {
