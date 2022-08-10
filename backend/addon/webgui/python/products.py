@@ -10,11 +10,16 @@ webgui product methods
 
 import json
 from functools import lru_cache
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from opsicommon.objects import ProductOnClient
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import alias, and_, column, select, text
+from sqlalchemy.dialects.mysql import insert
+from sqlalchemy.sql.expression import table, update
+
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends
 from opsiconfd.logging import logger
@@ -25,17 +30,12 @@ from opsiconfd.rest import (
 	pagination,
 	rest_api,
 )
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, select, text
-from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.sql.expression import table, update
 
 from .depots import get_depots
 from .utils import (
 	bool_product_property,
 	filter_depot_access,
 	get_allowd_product_groups,
-	get_allowed_objects,
 	get_allowed_products,
 	get_depot_of_client,
 	get_username,
@@ -54,7 +54,7 @@ product_router = APIRouter()
 
 
 @lru_cache(maxsize=1000)
-def depot_get_product_version(depot, product):
+def depot_get_product_version(depot: str, product: str) -> Union[str, None]:
 	version = None
 	params = {}
 	with mysql.session() as session:
@@ -64,8 +64,8 @@ def depot_get_product_version(depot, product):
 		where = text("pod.depotId = :depot AND pod.productId = :product")
 
 		query = (
-			select(text("CONCAT(pod.productVersion,'-',pod.packageVersion) AS version"))
-			.select_from(text("PRODUCT_ON_DEPOT AS pod"))
+			select(text("CONCAT(pod.productVersion,'-',pod.packageVersion) AS version"))  # type: ignore[arg-type]
+			.select_from(table("PRODUCT_ON_DEPOT").alias("pod"))
 			.where(where)
 		)
 
@@ -78,7 +78,7 @@ def depot_get_product_version(depot, product):
 		return version
 
 
-def get_product_description(product, product_version, package_version):
+def get_product_description(product: str, product_version: str, package_version: str) -> Union[str,None]:
 	description = None
 	params = {}
 	with mysql.session() as session:
@@ -88,7 +88,7 @@ def get_product_description(product, product_version, package_version):
 		params["package_version"] = package_version
 		where = text("p.productId = :product AND p.productVersion = :product_version AND p.packageVersion = :package_version")
 
-		query = select(text("description")).select_from(text("PRODUCT AS p")).where(where)
+		query = select(text("description")).select_from(table("PRODUCT").alias("p")).where(where)
 
 		result = session.execute(query, params)
 		result = result.fetchone()
@@ -115,7 +115,7 @@ def get_product_type(product_id, product_version, package_version):
 		return res[0]
 
 
-def get_product_actions(product, version, package_version):
+def get_product_actions(product: str, version: str, package_version: str) -> List[str]:
 
 	params = {}
 	params["product"] = product

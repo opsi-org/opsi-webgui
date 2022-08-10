@@ -13,7 +13,13 @@ from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
-from OPSI.Object import OpsiClient
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import alias, and_, column, delete, select, text, update
+from sqlalchemy.dialects.mysql import insert
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.sql.expression import table
+
+from OPSI.Object import OpsiClient  # type: ignore
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends, get_client_backend
 from opsiconfd.logging import logger
@@ -26,11 +32,6 @@ from opsiconfd.rest import (
 	pagination,
 	rest_api,
 )
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, delete, select, text, update
-from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql.expression import table
 
 from .utils import (
 	check_client_creation_rights,
@@ -78,17 +79,17 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 @client_router.get("/api/opsidata/clients", response_model=List[ClientList])
 @rest_api
 @filter_depot_access
-def clients(
+def clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	selected: Optional[List[str]] = Depends(parse_selected_list),
-) -> RESTResponse:  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
+) -> RESTResponse:
 	"""
 	Get Clients on selected depots with infos on the client.
 	"""
 	if selectedDepots == []:
-		return {"data": [], "total": 0}
+		return RESTResponse(data=[], total=0)
 
 	username = get_username()
 	allowed_clients = None
@@ -125,8 +126,8 @@ def clients(
 			params["selected"] = [""]
 
 		client_with_depot = alias(
-			select(
-				text(
+			select(  # type: ignore
+				text(  # type: ignore
 					"""
 				h.hostId AS clientId,
 				h.hostId AS ident,
@@ -162,7 +163,7 @@ def clients(
 			name="hd",
 		)
 		client_select = select(
-			text(
+			text(  # type: ignore
 				"""
 			hd.clientId,
 			hd.ident,
@@ -211,13 +212,13 @@ def clients(
 			)
 		).select_from(client_with_depot)
 
-		query = order_by(client_select, commons)
+		query = order_by(client_select, commons)  # type: ignore
 		query = pagination(query, commons)
 
 		result = session.execute(query, params)
 		result = result.fetchall()
 
-		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]
+		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
 
 		data = []
 		for row in result:
@@ -231,9 +232,9 @@ def clients(
 
 @client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
 @rest_api
-def depots_of_clients(
+def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
 	selectedClients: List[str] = Depends(parse_client_list),
-) -> RESTResponse :  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
+) -> RESTResponse :
 	"""
 	Get a mapping of clients to depots.
 	"""
@@ -246,7 +247,7 @@ def depots_of_clients(
 	with mysql.session() as session:
 		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId IN :clients")
 
-		query = select(text("cs.objectId AS client, cs.values")).select_from(table("CONFIG_STATE").alias("cs")).where(where)
+		query = select(text("cs.objectId AS client, cs.values")).select_from(table("CONFIG_STATE").alias("cs")).where(where)  # type: ignore
 
 		result = session.execute(query, params)
 		result = result.fetchall()
@@ -330,7 +331,7 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
 		try:
 			query = (
 				select(
-					text(
+					text(  # type: ignore
 						"""
 				h.hostId AS hostId,
 				h.type AS type,
@@ -383,7 +384,7 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
 @client_router.delete("/api/opsidata/clients/{clientid}")
 @rest_api
 @read_only_check
-def delete_client(request: Request, clientid: str) -> RESTResponse:
+def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	Delete Client with ID.
 	"""
@@ -392,7 +393,7 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:
 		try:
 			select_query = (
 				select(
-					text("h.hostId AS hostId")
+					text("h.hostId AS hostId")  # type: ignore
 				)
 				.select_from(table("HOST").alias("h"))
 				.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'"))
@@ -465,7 +466,7 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:
 
 			client_data = {"id": clientid}
 
-			execute_on_secondary_backends("host_deleteObjects", (OpsiClient(**client_data)))
+			execute_on_secondary_backends("host_deleteObjects", tuple([OpsiClient(**client_data)]))
 			return RESTResponse()
 
 		except Exception as err:  # pylint: disable=broad-except
@@ -481,7 +482,7 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:
 @client_router.post("/api/opsidata/clients/{clientid}/uefi")
 @rest_api
 @read_only_check
-def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -> RESTResponse:
+def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	Set uefi config of client
 	"""
@@ -495,7 +496,7 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -
 
 		query = (
 			select(
-				text("cs.objectId AS objectId, cs.configId AS configId")
+				text("cs.objectId AS objectId, cs.configId AS configId")  # type: ignore
 			)
 			.select_from(table("CONFIG_STATE").alias("cs"))
 			.where(text(f"cs.objectId = '{clientid}' and cs.configId = 'clientconfig.dhcpd.filename'"))

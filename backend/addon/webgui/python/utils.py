@@ -12,13 +12,14 @@ from operator import and_
 from typing import List, Optional
 
 from fastapi import Query, status
+from orjson import loads  # pylint: disable=no-name-in-module
+from sqlalchemy import select, text
+
 from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import get_configserver_id, parse_list
 from opsiconfd.backend import get_mysql as backend_get_mysql
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
-from orjson import loads  # pylint: disable=no-name-in-module
-from sqlalchemy import select, text
 
 
 def get_mysql():
@@ -67,14 +68,14 @@ def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]:  #
 	return parse_list(selected)
 
 
-def get_username():
+def get_username() -> str:
 	client_session = contextvar_client_session.get()
 	if not client_session:
 		raise RuntimeError("Session invalid")
 	return client_session.user_store.username
 
 
-def get_allowed_objects():
+def get_allowed_objects() -> dict:
 	allowed = {"product_groups": ..., "host_groups": ...}
 	# privileges = get_user_privileges()
 	# if True in privileges.get("product.groupaccess.configured", [False]):
@@ -87,7 +88,7 @@ def get_allowed_objects():
 	return allowed
 
 
-def build_tree(group, groups, allowed, processed=None, default_expanded=None):
+def build_tree(group: dict, groups: List[dict], allowed: List[str], processed: List[str] = None, default_expanded: bool = None) -> dict:
 	if not processed:
 		processed = []
 	processed.append(group["id"])
