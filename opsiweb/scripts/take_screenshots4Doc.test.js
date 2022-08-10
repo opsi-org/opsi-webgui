@@ -107,12 +107,12 @@ test.describe('Manage', () => {
   //   await page.evaluate((val) => { document.querySelector('.clearButton').innerHTML = val }, de['table.selection.clear'])
   //   await page.screenshot({ path: './screenshots/de/opsiweb_productgroups.png' })
   // })
-  test('Button Config', async ({ page }) => {
-    await callStoryId(page, 'button-btn-row-link-to', 'btn-row-link-to')
-    const component = await page.locator('[data-testid="ButtonBTNRowLinkTo"]')
-    await component.screenshot({ path: './screenshots/en/opsiweb_buttonconfig.png' })
-    await component.screenshot({ path: './screenshots/de/opsiweb_buttonconfig.png' })
-  })
+  // test('Button Config', async ({ page }) => {
+  //   await callStoryId(page, 'button-btn-row-link-to', 'btn-row-link-to')
+  //   const component = await page.locator('[data-testid="ButtonBTNRowLinkTo"]')
+  //   await component.screenshot({ path: './screenshots/en/opsiweb_buttonconfig.png' })
+  //   await component.screenshot({ path: './screenshots/de/opsiweb_buttonconfig.png' })
+  // })
   // test('Host Attributes', async ({ page }) => {
   //   await callStoryId(page, 'view-v-config', 'v-config')
   //   const component = await page.locator('[data-testid="VConfig"]')
@@ -141,11 +141,12 @@ test.describe('Manage', () => {
   //   await page.evaluate((val) => { document.querySelector('.otp').setAttribute('data-label', val) }, de['table.fields.otp'])
   //   await component.screenshot({ path: './screenshots/de/opsiweb_hostattributes.png' })
   // })
-  // test('Button Client Actions', async ({ page }) => {
-  //  TODO
-  //   await page.screenshot({ path: './screenshots/en/opsiweb_clientactions.png' })
-  //   await page.screenshot({ path: './screenshots/de/opsiweb_clientactions.png' })
-  // })
+  test('Button Client Actions', async ({ page }) => {
+    await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
+    const component = await page.locator('[data-testid="DDClientActions"]')
+    await component.screenshot({ path: './screenshots/en/opsiweb_buttonclientactions.png' })
+    await component.screenshot({ path: './screenshots/de/opsiweb_buttonclientactions.png' })
+  })
   // test('Client deletion', async ({ page }) => {
   //   await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
   //   await page.click('[data-testid="MDeleteClient"] .btn')
