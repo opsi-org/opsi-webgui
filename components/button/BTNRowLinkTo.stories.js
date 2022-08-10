@@ -4,7 +4,7 @@ export default {
   parameters: { docs: { description: { component: 'Button/BTNRowLinkTo description' } } }
 }
 
-const PrimaryTemplate = (_args, { argTypes }) => ({
+const PrimaryTemplateConfig = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: `<b-badge variant="transparent"><ButtonBTNRowLinkTo
     title="title"
@@ -16,4 +16,17 @@ const PrimaryTemplate = (_args, { argTypes }) => ({
   /></b-badge>`
 })
 
-export const BTNRowLinkTo = PrimaryTemplate.bind({})
+const PrimaryTemplateLog = (_args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  template: `<b-badge variant="transparent"><ButtonBTNRowLinkTo
+    title="title"
+    icon="file-earmark-text"
+    to="#"
+    :ident="'ident'"
+    :pressed="() => {}"
+    :click-parent="() => {}"
+  /></b-badge>`
+})
+
+export const BTNRowLinkToConfig = PrimaryTemplateConfig.bind({})
+export const BTNRowLinkToLog = PrimaryTemplateLog.bind({})
