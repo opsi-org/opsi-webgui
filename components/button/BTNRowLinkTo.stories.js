@@ -6,14 +6,14 @@ export default {
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: ` <ButtonBTNRowLinkTo
+  template: `<b-badge variant="transparent"><ButtonBTNRowLinkTo
     title="title"
     icon="gear"
     to="#"
     :ident="'ident'"
     :pressed="() => {}"
     :click-parent="() => {}"
-  />`
+  /></b-badge>`
 })
 
 export const BTNRowLinkTo = PrimaryTemplate.bind({})
