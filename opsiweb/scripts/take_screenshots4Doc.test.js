@@ -3,8 +3,13 @@ const { callStoryId } = require('../uib-components/.utils/playwright/pw-story-ca
 const en = require('../uib-components/locale/en.json')
 const de = require('../uib-components/locale/de.json')
 
-// TODO: Default layout with client page
 // test.describe('Main layout', () => {})
+//   test('Theme Main Layout in Light Theme', async ({ page }) => {
+//     // TODO: Main layout in light theme
+//     await page.screenshot({ path: './screenshots/en/opsiweb_mainlayout_light.png' })
+//     await page.screenshot({ path: './screenshots/de/opsiweb_mainlayout_light.png' })
+//   })
+// })
 // test.describe('Quick Start', () => {
 //   test('Login', async ({ page }) => {
 //     await callStoryId(page, 'form-f-login', 'f-login')
@@ -141,12 +146,12 @@ test.describe('Manage', () => {
   //   await page.evaluate((val) => { document.querySelector('.otp').setAttribute('data-label', val) }, de['table.fields.otp'])
   //   await component.screenshot({ path: './screenshots/de/opsiweb_hostattributes.png' })
   // })
-  test('Button Client Actions', async ({ page }) => {
-    await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
-    const component = await page.locator('[data-testid="DDClientActions"]')
-    await component.screenshot({ path: './screenshots/en/opsiweb_buttonclientactions.png' })
-    await component.screenshot({ path: './screenshots/de/opsiweb_buttonclientactions.png' })
-  })
+  // test('Button Client Actions', async ({ page }) => {
+  //   await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
+  //   const component = await page.locator('[data-testid="DDClientActions"]')
+  //   await component.screenshot({ path: './screenshots/en/opsiweb_buttonclientactions.png' })
+  //   await component.screenshot({ path: './screenshots/de/opsiweb_buttonclientactions.png' })
+  // })
   // test('Client deletion', async ({ page }) => {
   //   await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
   //   await page.click('[data-testid="MDeleteClient"] .btn')
@@ -179,8 +184,8 @@ test.describe('Manage', () => {
   // })
   // test('Button Client Log', async ({ page }) => {
   //   //  TODO Log Button
-  //   await page.screenshot({ path: './screenshots/en/opsiweb_clientlogbutton.png' })
-  //   await page.screenshot({ path: './screenshots/de/opsiweb_clientlogbutton.png' })
+  //   await page.screenshot({ path: './screenshots/en/opsiweb_buttonclientlog.png' })
+  //   await page.screenshot({ path: './screenshots/de/opsiweb_buttonclientlog.png' })
   // })
   // test('Client logs', async ({ page }) => {
   //   await callStoryId(page, 'view-v-clients-log', 'v-clients-log')
@@ -204,20 +209,27 @@ test.describe('Manage', () => {
   //   await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, de['title.dependencies'])
   //   await component.screenshot({ path: './screenshots/de/opsiweb_productproperties.png' })
   // })
-  // test('Product Dependencies', async ({ page }) => {
-  //   // TODO
-  //   await callStoryId(page, 'view-v-product-property', 'v-product-property')
-  //   const component = await page.locator('[data-testid="VProductProperty"]')
-  //   await page.setViewportSize({ width: 1280, height: 300 })
-  //   await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, en['title.config'])
-  //   await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, en['title.properties'])
-  //   await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, en['title.dependencies'])
-  //   await component.screenshot({ path: './screenshots/en/opsiweb_productproperties.png' })
-  //   await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, de['title.config'])
-  //   await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, de['title.properties'])
-  //   await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, de['title.dependencies'])
-  //   await component.screenshot({ path: './screenshots/de/opsiweb_productproperties.png' })
-  // })
+  test('Product Dependencies', async ({ page }) => {
+    await callStoryId(page, 'view-v-product-property', 'v-product-property')
+    await page.click('.nav-tabs .nav-link:not(.active)')
+    await (new Promise(resolve => setTimeout(resolve, 1000)))
+    const component = await page.locator('[data-testid="VProductProperty"]')
+    await page.setViewportSize({ width: 1280, height: 350 })
+    await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, en['title.config'])
+    await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, en['title.properties'])
+    await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, en['title.dependencies'])
+    await page.evaluate((val) => { document.querySelector('.required').innerHTML = val }, en['table.fields.required'])
+    await page.evaluate((val) => { document.querySelector('.type').innerHTML = val }, en['table.fields.requiredType'])
+    await page.evaluate((val) => { document.querySelector('.tdtype').innerHTML = val }, en['table.fields.pre-required'])
+    await component.screenshot({ path: './screenshots/en/opsiweb_productdependencies.png' })
+    await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, de['title.config'])
+    await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, de['title.properties'])
+    await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, de['title.dependencies'])
+    await page.evaluate((val) => { document.querySelector('.required').innerHTML = val }, de['table.fields.required'])
+    await page.evaluate((val) => { document.querySelector('.type').innerHTML = val }, de['table.fields.requiredType'])
+    await page.evaluate((val) => { document.querySelector('.tdtype').innerHTML = val }, de['table.fields.pre-required'])
+    await component.screenshot({ path: './screenshots/de/opsiweb_productdependencies.png' })
+  })
   // test('Quick Save', async ({ page }) => {
   //   await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
   //   const component = await page.locator('[data-testid="quicksave"]')
@@ -268,8 +280,13 @@ test.describe('Manage', () => {
 //     await page.screenshot({ path: './screenshots/en/opsiweb_language.png' })
 //     await page.screenshot({ path: './screenshots/de/opsiweb_language.png' })
 //   })
-//   test('Theme', async ({ page }) => {
+//   test('Theme Main Layout in Dark Theme', async ({ page }) => {
 //     // TODO: Main layout in dark theme
+//     await page.screenshot({ path: './screenshots/en/opsiweb_mainlayout_dark.png' })
+//     await page.screenshot({ path: './screenshots/de/opsiweb_mainlayout_dark.png' })
+//   })
+// })
+//   test('Theme', async ({ page }) => {
 //     await callStoryId(page, 'dropdown-dd-theme', 'dd-theme')
 //     await page.click('[data-testid="DropdownDDTheme"] .btn')
 //     await page.setViewportSize({ width: 220, height: 150 })
