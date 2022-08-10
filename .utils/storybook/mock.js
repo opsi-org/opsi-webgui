@@ -49,20 +49,20 @@ module.exports.data = {
   depotIds: ['<config-server-id>', 'depot1.uib.local', 'depot2.uib.local', 'depot3.uib.local'],
   clientIds: ['client1.uib.local', 'client2.uib.local', 'client3.uib.local', 'client4.uib.local', 'client5.uib.local'],
   clients: [
-    { clientId: 'client1.uib.local', ident: 'client1.uib.local', macAddress: 'af:fe:af:fe:af:f1', description: '', notes: '', version_outdated: 0, installationStatus_unknown: 0, installationStatus_installed: 0, actionResult_failed: 0, actionResult_successful: 0, selected: 0 },
-    { clientId: 'client2.uib.local', ident: 'client2.uib.local', macAddress: 'af:fe:af:fe:af:f2', description: '', notes: '', version_outdated: 2, installationStatus_unknown: 2, installationStatus_installed: 2, actionResult_failed: 2, actionResult_successful: 2, selected: 0 },
-    { clientId: 'client3.uib.local', ident: 'client3.uib.local', macAddress: 'af:fe:af:fe:af:f3', description: '', notes: '', version_outdated: 3, installationStatus_unknown: 3, installationStatus_installed: 3, actionResult_failed: 3, actionResult_successful: 3, selected: 0 },
-    { clientId: 'client4.uib.local', ident: 'client4.uib.local', macAddress: 'af:fe:af:fe:af:f4', description: '', notes: '', version_outdated: 4, installationStatus_unknown: 4, installationStatus_installed: 4, actionResult_failed: 4, actionResult_successful: 4, selected: 0 },
-    { clientId: 'client5.uib.local', ident: 'client5.uib.local', macAddress: 'af:fe:af:fe:af:f5', description: '', notes: '', version_outdated: 5, installationStatus_unknown: 5, installationStatus_installed: 5, actionResult_failed: 5, actionResult_successful: 5, selected: 0 }
+    { clientId: 'client1.domain.local', ident: 'client1.domain.local', macAddress: 'af:fe:af:fe:af:f1', description: '', notes: '', version_outdated: 0, installationStatus_unknown: 0, installationStatus_installed: 0, actionResult_failed: 0, actionResult_successful: 0, selected: 0 },
+    { clientId: 'client2.domain.local', ident: 'client2.domain.local', macAddress: 'af:fe:af:fe:af:f2', description: '', notes: '', version_outdated: 2, installationStatus_unknown: 2, installationStatus_installed: 2, actionResult_failed: 2, actionResult_successful: 2, selected: 0 },
+    { clientId: 'client3.domain.local', ident: 'client3.domain.local', macAddress: 'af:fe:af:fe:af:f3', description: '', notes: '', version_outdated: 3, installationStatus_unknown: 3, installationStatus_installed: 3, actionResult_failed: 3, actionResult_successful: 3, selected: 0 },
+    { clientId: 'client4.domain.local', ident: 'client4.domain.local', macAddress: 'af:fe:af:fe:af:f4', description: '', notes: '', version_outdated: 4, installationStatus_unknown: 4, installationStatus_installed: 4, actionResult_failed: 4, actionResult_successful: 4, selected: 0 },
+    { clientId: 'client5.domain.local', ident: 'client5.domain.local', macAddress: 'af:fe:af:fe:af:f5', description: '', notes: '', version_outdated: 5, installationStatus_unknown: 5, installationStatus_installed: 5, actionResult_failed: 5, actionResult_successful: 5, selected: 0 }
   ],
   depots: [
     { depotId: '<config-server-id>', ident: '<config-server-id>', type: 'Configserver', ip: '', description: '' },
-    { depotId: 'depot1.uib.local', ident: 'depot1.uib.local', type: 'Depotserver', ip: '', description: '' },
-    { depotId: 'depot2.uib.local', ident: 'depot2.uib.local', type: 'Depotserver', ip: '', description: '' },
-    { depotId: 'depot3.uib.local', ident: 'depot3.uib.local', type: 'Depotserver', ip: '', description: '' },
-    { depotId: 'depot4.uib.local', ident: 'depot4.uib.local', type: 'Depotserver', ip: '', description: '' },
-    { depotId: 'depot5.uib.local', ident: 'depot5.uib.local', type: 'Depotserver', ip: '', description: '' },
-    { depotId: 'depot6.uib.local', ident: 'depot6.uib.local', type: 'Depotserver', ip: '', description: '' }
+    { depotId: 'depot1.domain.local', ident: 'depot1.domain.local', type: 'Depotserver', ip: '', description: '' },
+    { depotId: 'depot2.domain.local', ident: 'depot2.domain.local', type: 'Depotserver', ip: '', description: '' },
+    { depotId: 'depot3.domain.local', ident: 'depot3.domain.local', type: 'Depotserver', ip: '', description: '' },
+    { depotId: 'depot4.domain.local', ident: 'depot4.domain.local', type: 'Depotserver', ip: '', description: '' },
+    { depotId: 'depot5.domain.local', ident: 'depot5.domain.local', type: 'Depotserver', ip: '', description: '' },
+    { depotId: 'depot6.domain.local', ident: 'depot6.domain.local', type: 'Depotserver', ip: '', description: '' }
   ],
   groups:{
     products: {
