@@ -3,6 +3,8 @@ const { callStoryId } = require('../uib-components/.utils/playwright/pw-story-ca
 const en = require('../uib-components/locale/en.json')
 const de = require('../uib-components/locale/de.json')
 
+test.describe.configure({ mode: 'parallel' })
+
 test.describe('Main layout', () => {
 //   test('Main Layout in Light Theme', async ({ page }) => {
 //     // TODO: Main layout in light theme
