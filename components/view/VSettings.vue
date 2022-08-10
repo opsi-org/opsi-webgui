@@ -1,11 +1,17 @@
 <template>
   <b-tabs data-testid="VSettings">
-    <b-tab :title="$t('form.localspecific')" active>
+    <b-tab active>
+      <template #title>
+        <span class="localspecific"> {{ $t('form.localspecific') }} </span>
+      </template>
       <b-card>
         <ViewVSettingsLocalSpecific />
       </b-card>
     </b-tab>
-    <b-tab :title="$t('form.modules')">
+    <b-tab>
+      <template #title>
+        <span class="opsispecific"> {{ $t('form.modules') }} </span>
+      </template>
       <b-card>
         <ViewVModules />
       </b-card>
