@@ -1,4 +1,5 @@
 // import { argTypeVariants } from '../../.utils/types/ttestconsts'
+import { customstores } from '../../.utils/storybook/mock'
 export default {
   title: 'Button/BTN Event',
   parameters: { docs: { description: { component: 'Button Event' } } }
@@ -6,7 +7,15 @@ export default {
 
 const PrimaryTemplateOnDemandDefault = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<b-badge variant="transparent"><ButtonBTNEvent v-bind="args" /></b-badge>'
+  template: '<b-badge variant="transparent"><ButtonBTNEvent v-bind="args" /></b-badge>',
+  store: customstores({
+    selections: {
+      namespaced: true,
+      getters: {
+        selectionClients () { return ['client1.domain.local', 'client2.domain.local', 'client3.domain.local'] },
+      }
+    }
+  })
 })
 
 const PrimaryTemplateReboot = (_args, { argTypes }) => ({
@@ -31,7 +40,6 @@ const PrimaryTemplateNotify = (_args, { argTypes }) => ({
 
 export const BTNEventOnDemandDefault = PrimaryTemplateOnDemandDefault.bind({})
 BTNEventOnDemandDefault.args = {
-  selection: ['client1.domain.local', 'client2.domain.local', 'client3.domain.local'],
   isLoading: false
 }
 export const BTNEventReboot = PrimaryTemplateReboot.bind({})
