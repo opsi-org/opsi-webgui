@@ -6,25 +6,25 @@ export default {
 
 const PrimaryTemplateOnDemandDefault = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<ButtonBTNEvent v-bind="args" />'
+  template: '<b-badge variant="transparent"><ButtonBTNEvent v-bind="args" /></b-badge>'
 })
 
 const PrimaryTemplateReboot = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<ButtonBTNEvent
+  template: `<b-badge variant="transparent"><ButtonBTNEvent
     event="reboot"
     :data="'clientId.domain'"
-    />
+    /></b-badge>
   `
   // :update-loading="loading => clientsLoading = loading"
 })
 
 const PrimaryTemplateNotify = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<ButtonBTNEvent
+  template: `<b-badge variant="transparent"><ButtonBTNEvent
     event="showpopup"
     :data="'clientId.domain'"
-    />
+    /></b-badge>
   `
   // :update-loading="loading => clientsLoading = loading"
 })
