@@ -52,7 +52,7 @@
         <small> <b>{{ data.label }} </b> </small>
       </template>
       <template #head(selected)>
-        <small v-if="rowident !== 'productId'"> <b>
+        <small v-if="rowident !== 'productId'"> <b class="count">
           {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
           <!-- {{ selection.length }}/{{ totalItems|| 0 }}  -->
         </b> </small>
