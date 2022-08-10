@@ -2,7 +2,7 @@ import { mock } from '../../.utils/storybook/mock'
 
 const pid = 'dummy-product-id'
 const dependencies = {
-  dependencies: [{ productId: 'productId1', productAction: 'setup', version: '4.1.1.14-3', requiredProductId: 'l-system-update', requiredVersion: null, requiredAction: 'setup', requiredInstallationStatus: null, requirementType: 'before' }],
+  dependencies: [{ productId: 'productId1', productAction: 'setup', version: '4.1.1.14-3', requiredProductId: 'dependent-product-id', requiredVersion: null, requiredAction: 'setup', requiredInstallationStatus: null, requirementType: 'before' }],
   productVersions: { clientId1: '4.1.1.14-3' },
   productDescriptionDetails: { clientId1: 'Installs opsi-server packages, configures and create adminuser' },
   productDescription: 'Installs opsi-server packages, configures and create adminuser'
