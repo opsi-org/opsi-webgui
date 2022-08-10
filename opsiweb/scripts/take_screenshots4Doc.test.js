@@ -195,20 +195,23 @@ test.describe('Manage', () => {
   //   await page.evaluate((val) => { document.querySelector('.filter_logs').placeholder = val }, de['form.filter.logs'])
   //   await page.screenshot({ path: './screenshots/de/opsiweb_clientlogs.png' })
   // })
-  // test('Product Properties', async ({ page }) => {
-  //   // TODO product properties
-  //   await callStoryId(page, 'view-v-product-property', 'v-product-property')
-  //   const component = await page.locator('[data-testid="VProductProperty"]')
-  //   await page.setViewportSize({ width: 1280, height: 300 })
-  //   await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, en['title.config'])
-  //   await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, en['title.properties'])
-  //   await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, en['title.dependencies'])
-  //   await component.screenshot({ path: './screenshots/en/opsiweb_productproperties.png' })
-  //   await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, de['title.config'])
-  //   await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, de['title.properties'])
-  //   await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, de['title.dependencies'])
-  //   await component.screenshot({ path: './screenshots/de/opsiweb_productproperties.png' })
-  // })
+  test('Product Properties', async ({ page }) => {
+    await callStoryId(page, 'view-v-product-property', 'v-product-property')
+    const component = await page.locator('[data-testid="VProductProperty"]')
+    await page.setViewportSize({ width: 1280, height: 300 })
+    await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, en['title.config'])
+    await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, en['title.properties'])
+    await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, en['title.dependencies'])
+    await page.evaluate((val) => { document.querySelector('.noClientsSelectedShowDepot').innerHTML = val }, en['message.warning.noClientsSelectedShowDepot'])
+    await page.evaluate((val) => { document.querySelector('.notOnEachDepot').innerHTML = val }, en['message.warning.notOnEachDepot'])
+    await component.screenshot({ path: './screenshots/en/opsiweb_productproperties.png' })
+    await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, de['title.config'])
+    await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, de['title.properties'])
+    await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, de['title.dependencies'])
+    await page.evaluate((val) => { document.querySelector('.noClientsSelectedShowDepot').innerHTML = val }, de['message.warning.noClientsSelectedShowDepot'])
+    await page.evaluate((val) => { document.querySelector('.notOnEachDepot').innerHTML = val }, de['message.warning.notOnEachDepot'])
+    await component.screenshot({ path: './screenshots/de/opsiweb_productproperties.png' })
+  })
   // test('Product Dependencies', async ({ page }) => {
   //   await callStoryId(page, 'view-v-product-property', 'v-product-property')
   //   await page.click('.nav-tabs .nav-link:not(.active)')
@@ -230,29 +233,29 @@ test.describe('Manage', () => {
   //   await page.evaluate((val) => { document.querySelector('.tdtype').innerHTML = val }, de['table.fields.pre-required'])
   //   await component.screenshot({ path: './screenshots/de/opsiweb_productdependencies.png' })
   // })
-  test('Quick Save', async ({ page }) => {
-    await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
-    await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
-    await page.screenshot({
-      path: './screenshots/en/opsiweb_quicksave.png',
-      clip: {
-        x: 5,
-        y: 55,
-        width: 330,
-        height: 60
-      }
-    })
-    await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
-    await page.screenshot({
-      path: './screenshots/de/opsiweb_quicksave.png',
-      clip: {
-        x: 5,
-        y: 55,
-        width: 330,
-        height: 60
-      }
-    })
-  })
+  // test('Quick Save', async ({ page }) => {
+  //   await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
+  //   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
+  //   await page.screenshot({
+  //     path: './screenshots/en/opsiweb_quicksave.png',
+  //     clip: {
+  //       x: 5,
+  //       y: 55,
+  //       width: 330,
+  //       height: 60
+  //     }
+  //   })
+  //   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
+  //   await page.screenshot({
+  //     path: './screenshots/de/opsiweb_quicksave.png',
+  //     clip: {
+  //       x: 5,
+  //       y: 55,
+  //       width: 330,
+  //       height: 60
+  //     }
+  //   })
+  // })
   // test('Push installations', async ({ page }) => {
   // // TODO: on demand with popup
   //   await callStoryId(page, 'button-btn-event', 'btn-event-on-demand-default')
