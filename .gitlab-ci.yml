@@ -241,7 +241,7 @@ test:test-e2e:
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:e2e || exit_code=$?
+    - npm-uib run test:all:e2e || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -268,6 +268,11 @@ test:test-components:changes:
   except:
     - tags # cause in tags we test all browsers (and all files)
     - develop # cause in develop we test all files
+  only:
+    changes:
+      - opsiweb/pages/*
+      - opsiweb/components/*
+      - opsiweb/uib-components/*
   script:
     - cd opsiweb
     - *define_globals
