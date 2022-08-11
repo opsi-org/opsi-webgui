@@ -7,10 +7,10 @@
 """
 webgui utils
 """
-from ctypes import Union
+
 from functools import wraps
 from operator import and_
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from fastapi import Query, status
 from orjson import loads  # pylint: disable=no-name-in-module
@@ -84,13 +84,13 @@ def get_allowed_objects() -> dict:
 	# 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
 	username = get_username()
 	if product_group_access_configured(username):
-		allowed["product_groups"] = get_allowd_product_groups(username)
+		allowed["product_groups"] = get_allowd_product_groups(username)  # type: ignore[assignment]
 	if host_group_access_configured(username):
-		allowed["host_groups"] = get_allowd_host_groups(username)
+		allowed["host_groups"] = get_allowd_host_groups(username)  # type: ignore[assignment]
 	return allowed
 
 
-def build_tree(group: dict, groups: List[dict], allowed: List[str], processed: List[str] = None, default_expanded: bool = None) -> dict:
+def build_tree(group: dict, groups: List[dict], allowed: List[str], processed: List[str] = None, default_expanded: bool = None) -> dict:  # pylint: disable=too-many-branches
 	if not processed:
 		processed = []
 	processed.append(group["id"])
@@ -267,9 +267,9 @@ def get_allowed_products(user: str) -> list:
 	return allowed_products
 
 
-def read_only_check(func):
+def read_only_check(func: Callable) -> Callable:
 	@wraps(func)
-	def check_user(*args, **kwargs):
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
 			if read_only_user(username):
@@ -281,9 +281,9 @@ def read_only_check(func):
 	return check_user
 
 
-def filter_depot_access(func):
+def filter_depot_access(func: Callable) -> Callable:
 	@wraps(func)
-	def check_user(*args, **kwargs):
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		logger.debug("%s - check user", func)
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
@@ -301,9 +301,9 @@ def filter_depot_access(func):
 	return check_user
 
 
-def check_client_creation_rights(func):
+def check_client_creation_rights(func: Callable) -> Callable:
 	@wraps(func)
-	def check_user(*args, **kwargs):
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
 			if not client_creation_allowed(username):
