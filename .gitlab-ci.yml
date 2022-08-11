@@ -331,7 +331,7 @@ test:test-components:
     name: "opsi-webgui-test-result-components"
     when: on_failure
     paths:
-      - ./**/*/test-results/ 
+      - ./**/*/test-results/
       - opsiweb/.storybook.log
       - opsiweb/.dev.log
     reports:
