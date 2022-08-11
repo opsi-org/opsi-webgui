@@ -8,7 +8,8 @@ if [ -z ${USER+x} ]; then
 else
 	echo DEV_USER=$USER >> .env
 fi
-echo OPSILICSRV_TOKEN=$(OPSILICSRV_TOKEN)  >> .env
+echo "token: $OPSILICSRV_TOKEN"
+echo "OPSILICSRV_TOKEN=$OPSILICSRV_TOKEN"  >> .env
 
 
 
