@@ -10,32 +10,34 @@ webgui product methods
 
 import json
 from functools import lru_cache
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
 from opsicommon.objects import ProductOnClient
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import alias, and_, column, select, text
+from sqlalchemy.dialects.mysql import insert
+from sqlalchemy.sql.expression import table, update
+
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
+	RESTErrorResponse,
+	RESTResponse,
 	common_query_parameters,
 	order_by,
 	pagination,
 	rest_api,
 )
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, select, text
-from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.sql.expression import table, update
 
 from .depots import get_depots
 from .utils import (
 	bool_product_property,
 	filter_depot_access,
 	get_allowd_product_groups,
-	get_allowed_objects,
 	get_allowed_products,
 	get_depot_of_client,
 	get_username,
@@ -54,7 +56,7 @@ product_router = APIRouter()
 
 
 @lru_cache(maxsize=1000)
-def depot_get_product_version(depot, product):
+def depot_get_product_version(depot: str, product: str) -> Union[str, None]:
 	version = None
 	params = {}
 	with mysql.session() as session:
@@ -64,8 +66,8 @@ def depot_get_product_version(depot, product):
 		where = text("pod.depotId = :depot AND pod.productId = :product")
 
 		query = (
-			select(text("CONCAT(pod.productVersion,'-',pod.packageVersion) AS version"))
-			.select_from(text("PRODUCT_ON_DEPOT AS pod"))
+			select(text("CONCAT(pod.productVersion,'-',pod.packageVersion) AS version"))  # type: ignore[arg-type]
+			.select_from(table("PRODUCT_ON_DEPOT").alias("pod"))
 			.where(where)
 		)
 
@@ -78,7 +80,7 @@ def depot_get_product_version(depot, product):
 		return version
 
 
-def get_product_description(product, product_version, package_version):
+def get_product_description(product: str, product_version: str, package_version: str) -> Union[str, None]:
 	description = None
 	params = {}
 	with mysql.session() as session:
@@ -88,7 +90,7 @@ def get_product_description(product, product_version, package_version):
 		params["package_version"] = package_version
 		where = text("p.productId = :product AND p.productVersion = :product_version AND p.packageVersion = :package_version")
 
-		query = select(text("description")).select_from(text("PRODUCT AS p")).where(where)
+		query = select(text("description")).select_from(table("PRODUCT").alias("p")).where(where)
 
 		result = session.execute(query, params)
 		result = result.fetchone()
@@ -100,7 +102,7 @@ def get_product_description(product, product_version, package_version):
 
 
 @lru_cache(maxsize=1000)
-def get_product_type(product_id, product_version, package_version):
+def get_product_type(product_id: str, product_version: str, package_version: str) -> Union[str, None]:
 	with mysql.session() as session:
 		query = (
 			select(text("type"))
@@ -115,7 +117,7 @@ def get_product_type(product_id, product_version, package_version):
 		return res[0]
 
 
-def get_product_actions(product, version, package_version):
+def get_product_actions(product: str, version: str, package_version: str) -> List[str]:
 
 	params = {}
 	params["product"] = product
@@ -149,11 +151,11 @@ def get_product_actions(product, version, package_version):
 		result = result.fetchone()
 
 		if result:
-			actions = dict(result).get("actions").split(",")
+			actions = dict(result).get("actions", "").split(",")
 		return actions
 
 
-def is_product_on_depot(product, version, package_version, depot):
+def is_product_on_depot(product: str, version: str, package_version: str, depot: str) -> bool:
 
 	params = {}
 	params["product"] = product
@@ -206,22 +208,22 @@ class Product(BaseModel):  # pylint: disable=too-few-public-methods
 @product_router.get("/api/opsidata/products", response_model=List[Product])
 @rest_api
 @filter_depot_access
-def products(
+def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument, too-many-arguments
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
 	type: str = "LocalbootProduct",
 	selectedClients: List[str] = Depends(parse_client_list),
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	selected: Optional[List[str]] = Depends(parse_selected_list),
-):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument
+) -> RESTResponse:
 	"""
 	Get products from selected depots and clients.
 	"""
 
 	if selectedDepots == []:
-		return {"data": [], "total": 0}
+		return RESTResponse(data=[], total=0)
 	username = get_username()
-	params = {}
+	params = {"clients": [""], "client_count": 0, "depots": [""], "product_type": str}
 	params["product_type"] = type
 	if selectedClients == [] or selectedClients is None:
 		params["clients"] = [""]
@@ -229,7 +231,7 @@ def products(
 	else:
 		params["clients"] = selectedClients
 		params["client_count"] = len(selectedClients)
-	if selectedDepots == None:
+	if selectedDepots is None:
 		params["depots"] = get_depots(username)
 	else:
 		params["depots"] = selectedDepots
@@ -442,7 +444,7 @@ def products(
 					"clientVersions",
 				]:
 					if product.get(value):
-						product[value] = product.get(value).split(",")
+						product[value] = product.get(value, "").split(",")
 				# if "failed" in product.get("installationStatusDetails", []) or product.get("installationStatus") == "failed":
 				# 	product["installationStatusErrorLevel"] = 2
 				# elif "unknown " in product.get("installationStatusDetails", []) or product.get("installationStatus") == "unknown ":
@@ -459,7 +461,7 @@ def products(
 		)
 		total = session.execute(select(text("COUNT(*)")).select_from(products_on_depots), params).fetchone()[0]
 
-		return {"data": products, "total": total}
+		return RESTResponse(data=products, total=total)
 
 
 class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
@@ -474,14 +476,14 @@ class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
 @product_router.post("/api/opsidata/clients/products")
 @rest_api
 @read_only_check
-def save_poduct_on_client(request: Request, data: PocItem):  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
+def save_poduct_on_client(request: Request, data: PocItem) -> RESTResponse:  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
 	"""
 	Save a Product On Client object.
 	"""
 	http_status = status.HTTP_200_OK
-	result_data = {}
-	depot_product_version = {}
-	product_actions = {}
+	result_data: dict = {}
+	depot_product_version: dict = {}
+	product_actions: dict = {}
 
 	get_product_type.cache_clear()
 	depot_get_product_version.cache_clear()
@@ -565,23 +567,21 @@ def save_poduct_on_client(request: Request, data: PocItem):  # pylint: disable=t
 					raise err
 				logger.error("Could not create ProductOnClient: %s", err)
 				session.rollback()
-				raise OpsiApiException(
-					message="Could not create ProductOnClient.", http_status=status.HTTP_400_BAD_REQUEST, error=err
-				) from err
+				return RESTErrorResponse(message="Could not create ProductOnClient.", http_status=status.HTTP_400_BAD_REQUEST, details=err)
 
-	return {"http_status": http_status, "data": result_data}
+	return RESTResponse(http_status=http_status, data=result_data)
 
 
 @product_router.get("/api/opsidata/products/groups")
 @rest_api
-def get_product_groups():  # pylint: disable=too-many-locals
+def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
 	"""
 	Get all product groups as a tree of groups.
 	"""
 
 	allowed = get_allowd_product_groups(get_username())
 
-	params = {}
+	params: dict = {}
 	where = text("g.`type` = 'ProductGroup'")
 
 	with mysql.session() as session:
@@ -635,11 +635,11 @@ def get_product_groups():  # pylint: disable=too-many-locals
 						"parent": row["group_id"],
 					}
 
-		return {"data": {"groups": all_groups}}
+		return RESTResponse(data={"groups": all_groups})
 
 
 @product_router.get("/api/opsidata/producticons")
-async def product_icons():
+async def product_icons() -> JSONResponse:
 	return JSONResponse({"result": {"opsi-client-agent": "assets/images/product_icons/opsi-logo.png"}})
 
 
@@ -652,7 +652,7 @@ class Property(BaseModel):  # pylint: disable=too-few-public-methods
 	allValues: Optional[List[str]] = ["value1"]
 	possibleValues: Optional[List[str]] = ["value1"]
 	editable: Optional[bool] = True
-	editableDetails: Optional[dict] = True
+	editableDetails: Optional[dict] = {}
 	multiValue: Optional[bool]
 	multiValueDetails: Optional[dict]
 	description: Optional[str]
@@ -664,25 +664,25 @@ class Property(BaseModel):  # pylint: disable=too-few-public-methods
 	anyDepotDifferentFromDefault: Optional[bool] = False
 	anyClientDifferentFromDepot: Optional[bool] = False
 	newValue: Optional[str] = ""
-	newValues: Optional[str] = [""]
+	newValues: Optional[List[str]] = [""]
 
 
 @product_router.get("/api/opsidata/products/{productId}/properties", response_model=Dict[str, Property])
 @rest_api
-def product_properties(
+def product_properties(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name
 	productId: str, selectedClients: List[str] = Depends(parse_client_list), selectedDepots: List[str] = Depends(parse_depot_list)
-):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name
+) -> RESTResponse:
 	"""
 	Get products propertiers.
 	"""
 
-	data = {}
-	params = {}
+	data: dict = {}
+	params: dict = {}
 	data["properties"] = {}
 	params["productId"] = productId
 	params["depots"] = []
 	where = text("pp.productId = :productId")
-	clients_on_depot = {}
+	clients_on_depot: dict = {}
 
 	depot_get_product_version.cache_clear()
 
@@ -756,7 +756,7 @@ def product_properties(
 
 			for row in result:
 				if row is not None:
-					property = dict(row)
+					property = dict(row)  # pylint: disable=redefined-builtin
 					if not data["properties"].get(property["propertyId"]):
 						data["properties"][property["propertyId"]] = {}
 					_depots = list(set(property["depots"].split(",")))
@@ -778,8 +778,8 @@ def product_properties(
 
 						if property["type"] == "BoolProductProperty":
 							property["allValues"].update([bool_product_property(value) for value in property["values"].split(",")])
-							if type(property["defaultDetails"]) is dict:
-								property["defaultDetails"][depot] = [bool_product_property(property.get("defaultDetails",{}).get(depot))]
+							if isinstance(property["defaultDetails"], dict):
+								property["defaultDetails"][depot] = [bool_product_property(property.get("defaultDetails", {}).get(depot))]
 
 							else:
 								property["defaultDetails"][depot] = [bool_product_property(property["defaultDetails"])]
@@ -805,11 +805,11 @@ def product_properties(
 
 						if values is not None:
 							if property["type"] == "BoolProductProperty":
-								property["depots"][depot] = [bool_product_property(dict(values).get("values"))]
-								property["allValues"].update([bool_product_property(dict(values).get("values"))])
+								property["depots"][depot] = [bool_product_property(dict(values).get("values", ""))]
+								property["allValues"].update([bool_product_property(dict(values).get("values", ""))])
 							else:
-								property["depots"][depot] = unicode_product_property(dict(values).get("values"))
-								property["allValues"].update(unicode_product_property(dict(values).get("values")))
+								property["depots"][depot] = unicode_product_property(dict(values).get("values", ""))
+								property["allValues"].update(unicode_product_property(dict(values).get("values", "")))
 							if property["depots"][depot] != property["defaultDetails"][depot]:
 								property["anyDepotDifferentFromDefault"] = True
 						else:
@@ -817,7 +817,7 @@ def product_properties(
 
 						# if not clients_on_depot.get(depot):
 						# 	continue
-						for client in clients_on_depot.get(depot):
+						for client in clients_on_depot.get(depot, []):
 							query = (
 								select(
 									text(
@@ -834,11 +834,11 @@ def product_properties(
 
 							if values is not None:
 								if property["type"] == "BoolProductProperty":
-									property["clients"][client] = [bool_product_property(dict(values).get("values"))]
-									property["allValues"].update([bool_product_property(dict(values).get("values"))])
+									property["clients"][client] = [bool_product_property(dict(values).get("values", ""))]
+									property["allValues"].update([bool_product_property(dict(values).get("values", ""))])
 								else:
-									property["clients"][client] = unicode_product_property(dict(values).get("values"))
-									property["allValues"].update(unicode_product_property(dict(values).get("values")))
+									property["clients"][client] = unicode_product_property(dict(values).get("values", ""))
+									property["allValues"].update(unicode_product_property(dict(values).get("values", "")))
 								if property["clients"][client] != property["depots"][depot]:
 									property["anyClientDifferentFromDepot"] = True
 							elif property["depots"][depot] is not None:
@@ -850,7 +850,7 @@ def product_properties(
 					del property["multiValue"]
 					del property["editable"]
 					del property["values"]
-					property["allValues"] = sorted(list(property.get("allValues")))
+					property["allValues"] = sorted(list(property.get("allValues", [])))
 					data["properties"][property["propertyId"]] = merge_dicts(property, data["properties"][property["propertyId"]])
 
 			data["productVersions"] = {}
@@ -871,11 +871,11 @@ def product_properties(
 			else:
 				data["productDescription"] = "mixed"
 
-			for id in data["properties"]:
-				property = data["properties"][id]
+			for pp_id in data["properties"]:
+				property = data["properties"][pp_id]
 
 				for key in ("version", "description", "multiValue", "editable", "default"):
-					values = property.get(f"{key}Details").values()
+					values = property.get(f"{key}Details", {}).values()
 					first_value = list(values)[0]
 					if all(value == first_value for value in values):
 						property[key] = first_value
@@ -897,7 +897,7 @@ def product_properties(
 				if not property.get("anyClientDifferentFromDepot"):
 					property["anyClientDifferentFromDepot"] = False
 
-			return {"data": data}
+			return RESTResponse(data=data)
 
 		except Exception as err:  # pylint: disable=broad-except
 			if isinstance(err, OpsiApiException):
@@ -910,7 +910,7 @@ def product_properties(
 
 
 @lru_cache(maxsize=1000)
-def get_product_properties(product, version):
+def get_product_properties(product: str, version: str) -> List:
 
 	product_version, package_version = version.split("-", 1)
 	with mysql.session() as session:
@@ -929,7 +929,7 @@ def get_product_properties(product, version):
 	return properties
 
 
-def get_product_product_property_state(object_id, product_id, property_id):
+def get_product_product_property_state(object_id: str, product_id: str, property_id: str) -> Union[str, None]:
 
 	with mysql.session() as session:
 		query = (
@@ -963,10 +963,10 @@ class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
 @product_router.post("/api/opsidata/products/{productId}/properties")
 @rest_api
 @read_only_check
-def save_poduct_property(
+def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request,
 	productId: str, data: ProductProperty
-):  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches
+) -> RESTResponse:
 	"""
 	Save Product Properties.
 	"""
@@ -974,9 +974,9 @@ def save_poduct_property(
 	get_product_properties.cache_clear()
 	depot_get_product_version.cache_clear()
 
-	result_data = {}
-	depot_product_version = {}
-	objects = []
+	result_data: dict = {}
+	depot_product_version: dict = {}
+	objects: List = []
 	if data.clientIds and data.depotIds:
 		raise OpsiApiException(
 			message="Clients and depots set. Only one is allowed.",
@@ -1060,7 +1060,7 @@ def save_poduct_property(
 						error=err,
 					) from err
 
-	return {"http_status": status.HTTP_200_OK, "data": result_data}
+	return RESTResponse(http_status=status.HTTP_200_OK, data=result_data)
 
 
 class Dependency(BaseModel):  # pylint: disable=too-few-public-methods
@@ -1082,17 +1082,17 @@ class ProductDependenciesResponse(BaseModel):  # pylint: disable=too-few-public-
 
 @product_router.get("/api/opsidata/products/{productId}/dependencies", response_model=ProductDependenciesResponse)
 @rest_api
-def product_dependencies(
+def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name
 	productId: str,
 	selectedClients: List[str] = Depends(parse_client_list),
-):  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name
+) -> RESTResponse:
 	"""
 	Get products dependencies.
 	"""
 
 	status_code = status.HTTP_200_OK
-	data = {}
-	params = {}
+	data: dict = {}
+	params: dict = {"depots": []}
 	data["dependencies"] = []
 	params["productId"] = productId
 	where = text("pd.productId = :productId")
@@ -1172,4 +1172,4 @@ def product_dependencies(
 				message="Could not get dependencies.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 			) from err
 
-	return {"http_status": status_code, "data": data}
+	return RESTResponse(http_status=status_code, data=data)

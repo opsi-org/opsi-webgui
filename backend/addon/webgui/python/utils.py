@@ -7,21 +7,24 @@
 """
 webgui utils
 """
+
 from functools import wraps
 from operator import and_
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from fastapi import Query, status
+from orjson import loads  # pylint: disable=no-name-in-module
+from sqlalchemy import select, text
+
+from OPSI.Backend.MySQL import MySQL
 from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import get_configserver_id, parse_list
 from opsiconfd.backend import get_mysql as backend_get_mysql
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
-from orjson import loads  # pylint: disable=no-name-in-module
-from sqlalchemy import select, text
 
 
-def get_mysql():
+def get_mysql() -> MySQL:
 	try:
 		return backend_get_mysql()
 	except RuntimeError:
@@ -31,7 +34,7 @@ def get_mysql():
 mysql = get_mysql()
 
 
-def get_depot_of_client(client):
+def get_depot_of_client(client: str) -> str:
 	params = {}
 	with mysql.session() as session:
 		params["client"] = client
@@ -45,7 +48,7 @@ def get_depot_of_client(client):
 		result = result.fetchone()
 
 		if result:
-			depot = dict(result).get("values")[2:-2]
+			depot = dict(result).get("values", "")[2:-2]
 		else:
 			depot = get_configserver_id()
 		return depot
@@ -67,27 +70,27 @@ def parse_selected_list(selected: List[str] = Query(None)) -> Optional[List]:  #
 	return parse_list(selected)
 
 
-def get_username():
+def get_username() -> str:
 	client_session = contextvar_client_session.get()
 	if not client_session:
 		raise RuntimeError("Session invalid")
 	return client_session.user_store.username
 
 
-def get_allowed_objects():
+def get_allowed_objects() -> dict:
 	allowed = {"product_groups": ..., "host_groups": ...}
 	# privileges = get_user_privileges()
 	# if True in privileges.get("product.groupaccess.configured", [False]):
 	# 	allowed["product_groups"] = privileges.get("product.groupaccess.productgroups", [])
 	username = get_username()
 	if product_group_access_configured(username):
-		allowed["product_groups"] = get_allowd_product_groups(username)
+		allowed["product_groups"] = get_allowd_product_groups(username)  # type: ignore[assignment]
 	if host_group_access_configured(username):
-		allowed["host_groups"] = get_allowd_host_groups(username)
+		allowed["host_groups"] = get_allowd_host_groups(username)  # type: ignore[assignment]
 	return allowed
 
 
-def build_tree(group, groups, allowed, processed=None, default_expanded=None):
+def build_tree(group: dict, groups: List[dict], allowed: List[str], processed: List[str] = None, default_expanded: bool = None) -> dict:  # pylint: disable=too-many-branches
 	if not processed:
 		processed = []
 	processed.append(group["id"])
@@ -127,7 +130,7 @@ def build_tree(group, groups, allowed, processed=None, default_expanded=None):
 	return group
 
 
-def merge_dicts(dict_a: dict, dict_b: dict, path=None) -> dict:
+def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict:
 	if dict_a is None or dict_b is None:
 		raise ValueError("Merge_dicts: At least one of the dicts (a and b) is not set.")
 	if path is None:
@@ -264,9 +267,9 @@ def get_allowed_products(user: str) -> list:
 	return allowed_products
 
 
-def read_only_check(func):
+def read_only_check(func: Callable) -> Callable:
 	@wraps(func)
-	def check_user(*args, **kwargs):
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
 			if read_only_user(username):
@@ -278,9 +281,9 @@ def read_only_check(func):
 	return check_user
 
 
-def filter_depot_access(func):
+def filter_depot_access(func: Callable) -> Callable:
 	@wraps(func)
-	def check_user(*args, **kwargs):
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		logger.debug("%s - check user", func)
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
@@ -298,9 +301,9 @@ def filter_depot_access(func):
 	return check_user
 
 
-def check_client_creation_rights(func):
+def check_client_creation_rights(func: Callable) -> Callable:
 	@wraps(func)
-	def check_user(*args, **kwargs):
+	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
 			if not client_creation_allowed(username):
@@ -312,14 +315,14 @@ def check_client_creation_rights(func):
 	return check_user
 
 
-def bool_product_property(value):
+def bool_product_property(value: str) -> bool:
 	if value:
 		if value.lower() == "[true]" or str(value) == "1" or value.lower() == "true":
 			return True
 	return False
 
 
-def unicode_product_property(value, delimiter=";"):
+def unicode_product_property(value: str, delimiter: str = ";") -> List[str]:
 	if value and isinstance(value, str):
 		if value.startswith('["'):
 			return loads(value)  # pylint: disable=no-member

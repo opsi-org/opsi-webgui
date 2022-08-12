@@ -12,14 +12,17 @@ import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends
-from opsiconfd.application.utils import get_configserver_id
-
-# from opsiconfd.logging import logger
-from opsiconfd.backend import get_mysql
-from opsiconfd.logging import logger
-from opsiconfd.rest import common_query_parameters, order_by, pagination, rest_api
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, or_, select, text, union
+from sqlalchemy import and_, or_, select, table, text, union
+
+from opsiconfd.application.utils import get_configserver_id
+from opsiconfd.rest import (
+	RESTResponse,
+	common_query_parameters,
+	order_by,
+	pagination,
+	rest_api,
+)
 
 from .utils import (
 	build_tree,
@@ -52,27 +55,27 @@ class Host(BaseModel):  # pylint: disable=too-few-public-methods
 def get_host_data(
 	commons: dict = Depends(common_query_parameters),
 	hosts: List[str] = Depends(parse_hosts_list),
-	type: Optional[str] = None,
-):  # pylint: disable=redefined-builtin
+	host_type: Optional[str] = None,
+) -> RESTResponse:  # pylint: disable=redefined-builtin
 	"""
 	Get host data.
 	"""
-	params = {}
+	params = {"hosts": [], "search": "", "type": ""}
 	where = text("")
 	if commons.get("filterQuery"):
 		params["search"] = f"%{commons.get('filterQuery')}%"
 		where = text("h.hostId LIKE :search OR h.description LIKE :search")
 	if hosts:
 		params["hosts"] = hosts
-		where = and_(text("h.hostId in :hosts"))
-	if type:
-		params["type"] = type
-		where = and_(where, text("h.type = :type"))
+		where = and_(text("h.hostId in :hosts"))  # type: ignore
+	if host_type:
+		params["type"] = host_type
+		where = and_(where, text("h.type = :type"))  # type: ignore
 
 	with mysql.session() as session:
 		query = (
 			select(
-				text(
+				text(  # type: ignore
 					"""
 			h.hostId AS hostId,
 			h.type AS type,
@@ -93,12 +96,12 @@ def get_host_data(
 		"""
 				)
 			)
-			.select_from(text("`HOST` AS h"))
+			.select_from(table("HOST").alias("h"))
 			.where(where)
 		)  # pylint: disable=redefined-outer-name
 
-		query = order_by(query, commons)
-		query = pagination(query, commons)
+		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
+		query = pagination(query, commons)  # type: ignore[assignment,arg-type]
 
 		result = session.execute(query, params)
 		result = result.fetchall()
@@ -109,26 +112,26 @@ def get_host_data(
 				for key in row_dict.keys():
 
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
-						row_dict[key] = row_dict.get(key).isoformat()
+						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
 				row_dict["uefi"] = bool(row_dict["uefi"])
 				host_data.append(row_dict)
-		return {"data": host_data}
+		return RESTResponse(data=host_data)
 
 
 @host_router.get("/api/opsidata/hosts/groups")
 @rest_api
-def get_host_groups(
+def get_host_groups(  # pylint: disable=invalid-name
 	selectedDepots: List[str] = Depends(parse_depot_list),
-	parentGroup: Optional[str] = [],
+	parentGroup: Optional[str] = None,
 	selectedClients: List[str] = Depends(parse_client_list),
-):  # pylint: disable=too-many-locals, too-many-branches, invalid-name, dangerous-default-value
+) -> RESTResponse:
 	"""
 	Get host groups as tree.
 	If a parent group (parentGroup) is given only child groups will be returned.
 	"""
 	allowed = get_allowed_objects()
 
-	params = {}
+	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
 		params["depots"] = [get_configserver_id()]
 	else:
@@ -137,35 +140,37 @@ def get_host_groups(
 	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
 
 	where = text("g.`type` = 'HostGroup'")
-
+	where_depots = text("")
 	if parentGroup:
 		if parentGroup == "groups":
-			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))
+			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))  # type: ignore
 			where_hosts = text("og.groupId IS NULL")
 		elif parentGroup == "root":
-			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))
+			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))  # type: ignore
 			where_hosts = text("og.groupId IS NULL")
 			root_group = {"id": None, "type": "HostGroup", "text": None, "parent": None}
 		else:
 			params["parent"] = parentGroup
-			where = and_(where, text("g.parentGroupId = :parent"))
-			where_hosts = text("og.groupId = :parent")
+			where = and_(where, text("g.parentGroupId = :parent"))  # type: ignore
+			where_hosts = text("og.groupId = :parent")  # type: ignore
 			root_group = {"id": parentGroup, "type": "HostGroup", "text": parentGroup, "parent": None}
+	else:
+		parentGroup = ""
 
 	for idx, depot in enumerate(params["depots"]):
 		if idx > 0:
-			where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))  #
+			where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))  # type: ignore[assignment]
 		else:
 			where_depots = text(f"cs.values LIKE '%{depot}%'")
 		if depot == get_configserver_id():
-			where_depots = or_(where_depots, text(f"cs.values IS NULL"))
+			where_depots = or_(where_depots, text("cs.values IS NULL"))  # type: ignore[assignment]
 
 	with mysql.session() as session:
 
 		if parentGroup and parentGroup != "root":
 			query = union(
 				select(
-					text(
+					text(  # type: ignore[arg-type]
 						"""
 				g.parentGroupId AS parent_id,
 				g.groupId AS group_id,
@@ -173,10 +178,10 @@ def get_host_groups(
 			"""
 					)
 				)
-				.select_from(text("`GROUP` AS g"))
+				.select_from(table("GROUP").alias("g"))
 				.where(where),
-				select(
-					text(
+				select(  # type: ignore[attr-defined]
+					text(  # type: ignore[arg-type]
 						"""
 				og.groupId AS group_id,
 				og.groupId AS parent_Id,
@@ -184,9 +189,9 @@ def get_host_groups(
 			"""
 					)
 				)
-				.select_from(text("OBJECT_TO_GROUP AS og"))
+				.select_from(table("OBJECT_TO_GROUP").alias("og"))
 				.join(
-					text("CONFIG_STATE AS cs"),
+					text("CONFIG_STATE AS cs"),  # type: ignore[arg-type]
 					and_(
 						text("og.objectId = cs.objectId"),
 						text("cs.configId = 'clientconfig.depot.id'"),
@@ -220,8 +225,8 @@ def get_host_groups(
 				all_groups["clientlist"]["hasAnySelection"] = True
 		else:
 			query = (
-				select(
-					text(
+				select(  # type: ignore[arg-type,attr-defined]
+					text(  # type: ignore[arg-type]
 						"""
 				g.parentGroupId AS parent_id,
 				g.groupId AS group_id,
@@ -230,10 +235,10 @@ def get_host_groups(
 			"""
 					)
 				)
-				.select_from(text("`GROUP` AS g"))
-				.join(text("OBJECT_TO_GROUP AS og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
+				.select_from(table("GROUP").alias("g"))
+				.join(table("OBJECT_TO_GROUP").alias("og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
 				.join(
-					text("CONFIG_STATE AS cs"),
+					table("CONFIG_STATE").alias("cs"),
 					and_(
 						text("og.objectId = cs.objectId"),
 						or_(text("cs.configId = 'clientconfig.depot.id'"), text("cs.values IS NULL")),
@@ -252,12 +257,12 @@ def get_host_groups(
 			params = {}
 			for idx, client in enumerate(selectedClients):
 				if idx > 0:
-					where = or_(where, text(f"og.objectId = '{client}'"))
+					where = or_(where, text(f"og.objectId = '{client}'"))  # type: ignore[assignment]
 				else:
 					where = text(f"og.objectId = '{client}'")
 			query = (
-				select(
-					text(
+				select(  # type: ignore[assignment]
+					text(  # type: ignore[arg-type]
 						"""
 				og.groupId AS group_id,
 				og.groupId AS parent_Id,
@@ -265,7 +270,7 @@ def get_host_groups(
 			"""
 					)
 				)
-				.select_from(text("`OBJECT_TO_GROUP` AS og"))
+				.select_from(table("OBJECT_TO_GROUP").alias("og"))
 				.where(where)
 			)
 
@@ -277,33 +282,33 @@ def get_host_groups(
 				groups_to_mark.append(row["group_id"])
 
 			for parent_group in groups_to_mark:
-				while parent_group not in all_groups.keys() and parent_group is not None:
+				while parent_group not in all_groups and parent_group is not None:
 					parent_group = find_parent(parent_group)
 				if parent_group:
 					all_groups[parent_group]["hasAnySelection"] = True
-				elif "groups" in all_groups.keys():
+				elif "groups" in all_groups:
 					all_groups["groups"]["hasAnySelection"] = True
 			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"], default_expanded=True)
 		else:
 			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
 
 		if parentGroup == "root":
-			return {"data": {"groups": host_groups.get("children")}}
-		return {"data": {"groups": host_groups}}
+			return RESTResponse(data={"groups": host_groups.get("children")})
+		return RESTResponse(data={"groups": host_groups})
 
 
-def find_parent(group):
+def find_parent(group: str) -> str:
 	with mysql.session() as session:
 		query = (
 			select(
-				text(
+				text(  # type: ignore[arg-type]
 					"""
 			g.parentGroupId AS parent_id,
 			g.groupId AS group_id
 		"""
 				)
 			)
-			.select_from(text("`GROUP` AS g"))
+			.select_from(table("GROUP").alias("g"))
 			.where(text(f"g.groupId = '{group}'"))
 		)  # pylint: disable=redefined-outer-name
 		result = session.execute(query)
@@ -311,7 +316,7 @@ def find_parent(group):
 		return parent_id
 
 
-def read_groups(raw_groups, root_group, selectedClients):
+def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> dict:  # pylint: disable=invalid-name
 	if not isinstance(selectedClients, list):
 		selectedClients = []
 	all_groups = {}
@@ -326,7 +331,7 @@ def read_groups(raw_groups, root_group, selectedClients):
 		if row["object_id"]:
 			if row["object_id"] in selectedClients:
 				all_groups[row["group_id"]]["hasAnySelection"] = True
-			if not "children" in all_groups[row["group_id"]]:
+			if "children" not in all_groups[row["group_id"]]:
 				all_groups[row["group_id"]]["children"] = {}
 			if row.group_id == row.parent_id:
 				if not row["object_id"] in all_groups:
