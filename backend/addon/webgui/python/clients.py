@@ -111,7 +111,7 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 						SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) FROM CONFIG_STATE AS cs
 						WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
 					),
-					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1)
+					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1 LIMIT 1)
 				) IN :depot_ids
 				"""
 				),
@@ -141,7 +141,7 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 						SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) FROM CONFIG_STATE AS cs
 						WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
 					),
-					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1)
+					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1 LIMIT 1)
 				) AS depotId,
 				RIGHT(
 					COALESCE(

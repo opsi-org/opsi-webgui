@@ -457,7 +457,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 			products.append(product)
 
 		products_on_depots = alias(
-			select(text("*")).select_from(text("PRODUCT_ON_DEPOT AS pod")).where(where).group_by(text("pod.productId"))
+			select(text("*")).select_from(text("PRODUCT_ON_DEPOT AS pod")).where(where).group_by(text("pod.productId")).subquery()
 		)
 		total = session.execute(select(text("COUNT(*)")).select_from(products_on_depots), params).fetchone()[0]
 
