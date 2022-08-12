@@ -320,6 +320,69 @@ def create_client(request: Request, client: Client) -> RESTResponse:  # pylint: 
 			) from err
 
 
+@client_router.put("/api/opsidata/clients/{clientid}")
+@rest_api
+@read_only_check
+@check_client_creation_rights
+def update_client(request: Request, clientid: str, client: Client) -> RESTResponse:  # pylint: disable=too-many-locals
+	"""
+	Create OPSI-Client.
+	"""
+
+	logger.devel(clientid)
+	logger.devel(client)
+
+	values = vars(client)
+	values["type"] = "OpsiClient"
+	values = {k: v for k, v in values.items() if v is not None}
+
+	logger.devel(values)
+
+	with mysql.session() as session:
+		try:
+			query = update(
+				table(
+					"HOST", column("type"), *[column(key) for key in vars(client).keys()]  # pylint: disable=consider-iterating-dictionary
+				)
+			).where(
+				text(f"hostId='{clientid}'")
+			).values(values)
+			logger.devel(query)
+			session.execute(query)
+
+			headers = {"Location": f"{request.url}/{client.hostId}"}
+
+			if values.get("ipAddress") or values.get("hardwareAddress"):
+				client_data = {
+					"id": values.get("hostId"),
+					"hardwareAddress": values.get("hardwareAddress"),
+					"ipAddress": values.get("ipAddress")
+				}
+
+				execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
+
+				# IPv4Address/IPv6Address is not JSON serializable
+				values["ipAddress"] = str(values["ipAddress"])
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+
+		except IntegrityError as err:
+			logger.error("Could not update client object.")
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not update client object. Client '{client.hostId}' already exists",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not update client object.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not update client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
 @client_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
 @rest_api
 def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name
