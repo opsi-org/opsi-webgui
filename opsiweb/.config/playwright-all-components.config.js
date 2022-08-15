@@ -4,7 +4,7 @@ const generalconfig = require('../uib-components/.utils/playwright/config/playwr
 // /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
   // testDir: '../../../../', // /workspace/opsiweb
-  timeout: 1000 * 15, // 1ms * x sec
+  // timeout: 1000 * 15, // 1ms * x sec
   testDir: '../', // /workspace/opsiweb/uib-components
   testMatch: '*.test.*(int|integration|component|comp).js',
   fullyParallel: true,
@@ -16,7 +16,8 @@ const config = {
   workers: generalconfig.workers,
   expect: generalconfig.expect,
   use: generalconfig.use,
-  projects: generalconfig.projects
+  projects: generalconfig.projects,
+  timeout: 5 * 60 * 1000
 }
 
 module.exports = config
