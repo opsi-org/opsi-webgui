@@ -312,8 +312,8 @@ test:test-components:
   except:
     - bug/cicd-build
     - tags # cause in tags we test all browsers
-  # only:
-  #   - develop # cause in develop we test all files, but only chromium browser
+  only:
+    - develop # cause in develop we test all files, but only chromium browser
   script:
     - cd opsiweb
     - *define_globals
