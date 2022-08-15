@@ -273,7 +273,7 @@ export default class VProducts extends Vue {
       } else if (params.sortBy === '') {
         params.sortBy = 'productId'
       } else if (params.sortBy === 'version') {
-        params.sortBy = '["client_version_outdated", "depot_version_diff" ]'
+        params.sortBy = '["client_version_outdated", "depot_version_diff", "not_on_all_depots" ]'
       } else if (params.sortBy === 'selected') {
         params.sortDesc = true
         params.selected = JSON.stringify(thiss.selectionProducts)
