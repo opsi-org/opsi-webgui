@@ -311,6 +311,7 @@ test:test-components:
     - init:dry
   except:
     - bug/cicd-build
+    - fix/playwrightConfig
     - tags # cause in tags we test all browsers
   only:
     - develop # cause in develop we test all files, but only chromium browser
@@ -326,7 +327,7 @@ test:test-components:
     - npm-uib run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  allow_failure: true
+  # allow_failure: true
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
