@@ -194,6 +194,7 @@ class Product(BaseModel):  # pylint: disable=too-few-public-methods
 	selectedDepots: List[str]
 	depotVersions: List[str]
 	depot_version_diff: bool
+	not_on_all_depots: bool
 	selctedClients: List[str]
 	clientVersions: List[str]
 	client_version_outdated: bool
@@ -240,6 +241,9 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 	else:
 		params["selected"] = [""]
 	allowed_products = None
+
+	params["num_depots"] = len(selectedDepots)
+
 	if user_register() and product_group_access_configured(username):
 		allowed_products = get_allowed_products(username)
 
@@ -385,6 +389,12 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 				TRUE,
 				FALSE
 			) AS depot_version_diff,
+			IF(
+				COUNT(DISTINCT pod.depotId) < :num_depots,
+				TRUE,
+				FALSE
+			) AS not_on_all_depots,
+			COUNT(DISTINCT pod.depotId) AS numDepots,
 			GROUP_CONCAT(CONCAT(pod.productVersion,'-',pod.packageVersion) SEPARATOR ',') AS depotVersions,
 			pod.productType AS productType,
 			IF(
@@ -453,6 +463,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 				# 	product["installationStatusErrorLevel"] = 0
 			product["depot_version_diff"] = bool(product.get("depot_version_diff", False))
 			product["client_version_outdated"] = bool(product.get("client_version_outdated", False))
+			product["not_on_all_depots"] = bool(product.get("not_on_all_depots", False))
 
 			products.append(product)
 
