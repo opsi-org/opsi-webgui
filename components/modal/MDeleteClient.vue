@@ -3,6 +3,7 @@
     <b-button
       variant="outline-primary"
       size="sm"
+      :title="$t('label.delete')"
       class="w-100 h-100 text-left border-0"
       :disabled="(config)?config.read_only:false"
       @click="show = !show"
