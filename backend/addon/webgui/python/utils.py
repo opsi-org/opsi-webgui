@@ -315,7 +315,7 @@ def check_client_creation_rights(func: Callable) -> Callable:
 	return check_user
 
 
-def bool_product_property(value: str) -> bool:
+def bool_value(value: str) -> bool:
 	if value:
 		if value.lower() == "[true]" or str(value) == "1" or value.lower() == "true":
 			return True

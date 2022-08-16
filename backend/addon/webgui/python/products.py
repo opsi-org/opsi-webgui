@@ -35,7 +35,7 @@ from opsiconfd.rest import (
 
 from .depots import get_depots
 from .utils import (
-	bool_product_property,
+	bool_value,
 	filter_depot_access,
 	get_allowd_product_groups,
 	get_allowed_products,
@@ -788,13 +788,13 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 						property["editableDetails"][depot] = bool(property["editable"])
 
 						if property["type"] == "BoolProductProperty":
-							property["allValues"].update([bool_product_property(value) for value in property["values"].split(",")])
+							property["allValues"].update([bool_value(value) for value in property["values"].split(",")])
 							if isinstance(property["defaultDetails"], dict):
-								property["defaultDetails"][depot] = [bool_product_property(property.get("defaultDetails", {}).get(depot))]
+								property["defaultDetails"][depot] = [bool_value(property.get("defaultDetails", {}).get(depot))]
 
 							else:
-								property["defaultDetails"][depot] = [bool_product_property(property["defaultDetails"])]
-							property["possibleValues"][depot] = [bool_product_property(value) for value in property["values"].split(",")]
+								property["defaultDetails"][depot] = [bool_value(property["defaultDetails"])]
+							property["possibleValues"][depot] = [bool_value(value) for value in property["values"].split(",")]
 						else:
 							property["allValues"].update(unicode_product_property(property["values"]))
 							property["defaultDetails"][depot] = unicode_product_property(property["defaultDetails"])
@@ -816,8 +816,8 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 
 						if values is not None:
 							if property["type"] == "BoolProductProperty":
-								property["depots"][depot] = [bool_product_property(dict(values).get("values", ""))]
-								property["allValues"].update([bool_product_property(dict(values).get("values", ""))])
+								property["depots"][depot] = [bool_value(dict(values).get("values", ""))]
+								property["allValues"].update([bool_value(dict(values).get("values", ""))])
 							else:
 								property["depots"][depot] = unicode_product_property(dict(values).get("values", ""))
 								property["allValues"].update(unicode_product_property(dict(values).get("values", "")))
@@ -845,8 +845,8 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 
 							if values is not None:
 								if property["type"] == "BoolProductProperty":
-									property["clients"][client] = [bool_product_property(dict(values).get("values", ""))]
-									property["allValues"].update([bool_product_property(dict(values).get("values", ""))])
+									property["clients"][client] = [bool_value(dict(values).get("values", ""))]
+									property["allValues"].update([bool_value(dict(values).get("values", ""))])
 								else:
 									property["clients"][client] = unicode_product_property(dict(values).get("values", ""))
 									property["allValues"].update(unicode_product_property(dict(values).get("values", "")))
