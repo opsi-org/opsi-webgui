@@ -23,7 +23,7 @@ from .utils import bool_value, mysql
 conifg_router = APIRouter()
 
 
-@conifg_router.get("/api/opsidata/config")
+@conifg_router.get("/api/opsidata/config/server")
 @rest_api
 def get_server_config(
 	commons: dict = Depends(common_query_parameters),
@@ -85,7 +85,7 @@ def get_server_config(
 		return RESTResponse(data=config_data)
 
 
-@conifg_router.get("/api/opsidata/config/{object_id}")
+@conifg_router.get("/api/opsidata/config/clients/{object_id}")
 @rest_api
 def get_client_config(
 	object_id: str,
