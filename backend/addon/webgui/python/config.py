@@ -115,8 +115,13 @@ def get_client_config(
 			)
 			.select_from(table("CONFIG").alias("c"))
 			.join(text("CONFIG_VALUE AS cv"), text("c.configId=cv.configId"))  # type: ignore[arg-type]
-			.join(text("CONFIG_STATE AS cs"), and_(text("c.configId=cs.configId")), isouter=True)
-			.where(and_(text("cv.isDefault=1"), text(f"cs.objectId='{object_id}' OR cs.objectId IS NULL")))
+			.join(
+				text("CONFIG_STATE AS cs"),
+				and_(text("c.configId=cs.configId"), text((f"cs.objectId IS NULL OR cs.objectId='{object_id}'"))),
+				isouter=True,
+			)
+			.where(text("cv.isDefault=1"))
+			.group_by(text("c.configId, cs.objectId"))
 		)  # pylint: disable=redefined-outer-name
 
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
@@ -126,14 +131,14 @@ def get_client_config(
 		result = result.fetchall()
 		config_data: dict = {"general": [], "clientconfig": [], "opsi-script": [], "opsiclientd": [], "software-on-demand": []}
 		server_configs = ["user", "configed"]
+		count = 0
+		my_list = []
 		for row in result:
 			if row is not None:
 				row_dict = dict(row)
 				id_prefix = row_dict.get("configId", "").split(".")[0]
-				if id_prefix == "software-on-demand":
-					logger.devel("software-on-demand")
-				# if id_prefix in server_configs:
-				# 	continue
+				if id_prefix in server_configs:
+					continue
 				if id_prefix not in config_data:
 					id_prefix = "general"
 				if row_dict.get("type") == "BoolConfig":
@@ -144,6 +149,9 @@ def get_client_config(
 					row_dict["possibleValues"] = row_dict.get("possibleValues", "").split(",")
 				row_dict["multiValue"] = bool(row_dict.get("multiValue", ""))
 				row_dict["editable"] = bool(row_dict.get("editable", ""))
-
+				count = count + 1
+				my_list.append(row_dict.get("configId", ""))
 				config_data[id_prefix].append(row_dict)
+
+		logger.devel(count)
 		return RESTResponse(data=config_data)
