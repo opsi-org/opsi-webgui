@@ -21,6 +21,7 @@ package-dry.json
 opsi.bak
 opsiweb/test-result-pw-reporter-components.xml
 opsiweb/test-result-pw-reporter-e2e.xml
+opsiweb/screenshots4Docs/test-result-pw-reporter-screenshot.xml
 .devcontainer/*modules*
 package-lock.json
 
