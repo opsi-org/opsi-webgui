@@ -86,7 +86,8 @@ export default {
   },
   watchers: {
     webpack: {
-      poll: true
+      aggregateTimeout: 300,
+      poll: 1000
     }
   },
   // Modules: https://go.nuxtjs.dev/config-modules
