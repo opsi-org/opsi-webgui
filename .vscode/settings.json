@@ -151,7 +151,7 @@
         "tooltip": "Take screenshots for documentation",
         "color": "white",
         "singleInstance": true,
-        "command": "npx playwright test take_screenshots/"
+        "command": "npx playwright test -c playwright-screenshots.config.js take_screenshots/"
       },
     ]
   },
