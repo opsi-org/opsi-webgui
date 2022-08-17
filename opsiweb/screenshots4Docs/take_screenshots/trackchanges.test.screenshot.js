@@ -1,0 +1,13 @@
+const { test } = require('@playwright/test')
+const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
+const en = require('../../uib-components/locale/en.json')
+const de = require('../../uib-components/locale/de.json')
+test('Track changes', async ({ page }) => {
+  await callStoryId(page, 'modal-m-track-changes', 'm-track-changes')
+  await page.click('[data-testid="MTrackChanges"] .btn')
+  await page.setViewportSize({ width: 750, height: 400 })
+  await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['button.track.changes'])
+  await page.screenshot({ path: './screenshots/en/opsiweb_trackchanges.png' })
+  await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, de['button.track.changes'])
+  await page.screenshot({ path: './screenshots/de/opsiweb_trackchanges.png' })
+})
