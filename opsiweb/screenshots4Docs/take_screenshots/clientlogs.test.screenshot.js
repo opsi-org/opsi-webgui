@@ -5,7 +5,6 @@ const de = require('../../uib-components/locale/de.json')
 test('Client logs', async ({ page }) => {
   await callStoryId(page, 'view-v-clients-log', 'v-clients-log')
   await page.evaluate((val) => { document.querySelector('.filter_logs').placeholder = val }, en['form.filter.logs'])
-  await page.setViewportSize({ width: 1280, height: 480 })
   await page.screenshot({ path: './screenshots/en/opsiweb_clientlogs.png' })
   await page.evaluate((val) => { document.querySelector('.filter_logs').placeholder = val }, de['form.filter.logs'])
   await page.screenshot({ path: './screenshots/de/opsiweb_clientlogs.png' })
