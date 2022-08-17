@@ -14,7 +14,7 @@ const config = {
   },
   use: {
     baseURL: 'https://localhost:8888/addons/webgui/app/',
-    viewport: { width: 800, height: 500 },
+    viewport: { width: 900, height: 500 },
     headless: true,
     ignoreHTTPSErrors: true,
     screenshot: 'only-on-failure',
