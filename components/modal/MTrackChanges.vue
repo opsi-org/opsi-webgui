@@ -3,17 +3,15 @@
     <b-button
       v-if="!quicksave && changesProducts.filter((o) => o.user === username).length!==0"
       class="mt-2"
-      variant="transparent"
+      variant="primary"
       @click="$bvModal.show('trackChangesModal')"
     >
-      <span v-if="$mq!='mobile'" class="text-warning"> {{ $t('button.track.changes') }} </span>
       <b-icon
-        v-if="$mq === 'mobile'"
         v-b-tooltip.hover
         :title="$t('button.track.changes')"
-        variant="warning"
-        :icon="iconnames.save"
+        :icon="iconnames.trackchanges"
       />
+      <span v-if="$mq!='mobile'" class="btnlabel"> {{ $t('button.track.changes') }} </span>
     </b-button>
     <b-modal
       id="trackChangesModal"
@@ -29,7 +27,7 @@
         <ButtonBTNClearChanges hide="trackChangesModal" />
         <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
           <b-icon :icon="iconnames.save" />
-          {{ $t('button.saveall') }}
+          <span class="saveall">{{ $t('button.saveall') }}</span>
         </b-button>
       </DivDComponentGroup>
     </b-modal>

@@ -7,7 +7,7 @@ export default {
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<ModalMTrackChanges />',
+  template: '<b-badge variant="primary"><ModalMTrackChanges /></b-badge>',
   store: customstores({
     auth: {
       namespaced: true,
