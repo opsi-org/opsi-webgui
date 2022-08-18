@@ -48,7 +48,7 @@ from .utils import (
 	parse_selected_list,
 	product_group_access_configured,
 	read_only_check,
-	unicode_product_property,
+	unicode_value,
 	user_register,
 )
 
@@ -796,9 +796,9 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 								property["defaultDetails"][depot] = [bool_value(property["defaultDetails"])]
 							property["possibleValues"][depot] = [bool_value(value) for value in property["values"].split(",")]
 						else:
-							property["allValues"].update(unicode_product_property(property["values"]))
-							property["defaultDetails"][depot] = unicode_product_property(property["defaultDetails"])
-							property["possibleValues"][depot] = unicode_product_property(property["values"])
+							property["allValues"].update(unicode_value(property["values"]))
+							property["defaultDetails"][depot] = unicode_value(property["defaultDetails"])
+							property["possibleValues"][depot] = unicode_value(property["values"])
 
 						query = (
 							select(
@@ -819,8 +819,8 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 								property["depots"][depot] = [bool_value(dict(values).get("values", ""))]
 								property["allValues"].update([bool_value(dict(values).get("values", ""))])
 							else:
-								property["depots"][depot] = unicode_product_property(dict(values).get("values", ""))
-								property["allValues"].update(unicode_product_property(dict(values).get("values", "")))
+								property["depots"][depot] = unicode_value(dict(values).get("values", ""))
+								property["allValues"].update(unicode_value(dict(values).get("values", "")))
 							if property["depots"][depot] != property["defaultDetails"][depot]:
 								property["anyDepotDifferentFromDefault"] = True
 						else:
@@ -848,8 +848,8 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 									property["clients"][client] = [bool_value(dict(values).get("values", ""))]
 									property["allValues"].update([bool_value(dict(values).get("values", ""))])
 								else:
-									property["clients"][client] = unicode_product_property(dict(values).get("values", ""))
-									property["allValues"].update(unicode_product_property(dict(values).get("values", "")))
+									property["clients"][client] = unicode_value(dict(values).get("values", ""))
+									property["allValues"].update(unicode_value(dict(values).get("values", "")))
 								if property["clients"][client] != property["depots"][depot]:
 									property["anyClientDifferentFromDepot"] = True
 							elif property["depots"][depot] is not None:
