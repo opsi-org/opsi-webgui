@@ -22,7 +22,13 @@ const PrimaryTemplate = (args, { argTypes }) => ({
     changes: {
       namespaced: true,
       getters: {
-        changesProducts () { return [{ user: 'testuser', clientId: 'client1.domain.local', productId: 'opsi-client-agent', actionRequest: 'setup' }] }
+        changesProducts () {
+          return [
+            { user: 'testuser', clientId: 'client1.domain.local', productId: 'productId', actionRequest: 'setup' },
+            { user: 'testuser', clientId: 'client2.domain.local', productId: 'productId', actionRequest: 'setup' },
+            { user: 'testuser', clientId: 'client3.domain.local', productId: 'productId', actionRequest: 'setup' }
+          ]
+        }
       }
     }
   })
