@@ -63,6 +63,7 @@ const settings = namespace('settings')
     delete: 'trash',
     loading: 'three-dots',
     save: 'check2',
+    trackchanges: 'card-checklist',
     sort: 'sort-up',
     sortDesc: 'sort-down',
     arrowDoubleDown: 'chevron-double-down',
