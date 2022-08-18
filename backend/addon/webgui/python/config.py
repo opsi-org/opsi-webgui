@@ -234,7 +234,11 @@ def get_client_configs(
 				config["multiValue"] = bool(config.get("multiValue", ""))
 				config["editable"] = bool(config.get("editable", ""))
 
-				tmp_value = config.get("value", "")
+				if config.get("value", "") == "mixed":
+					config["allClientValuesEqual"] = False
+				else:
+					config["allClientValuesEqual"] = True
+
 				if config.get("type", "") == "BoolConfig":
 					config["value"] = bool_value(config.get("value", ""))
 					config["possibleValues"] = [bool_value(value) for value in config.get("value", "")]
@@ -257,22 +261,24 @@ def get_client_configs(
 				config["possibleValues"] = list(dict.fromkeys(p_values))
 				logger.devel(config.get("possibleValues", []))
 
-				if tmp_value == "mixed":
-					config["value"] = "mixed"
+				if not config.get("allClientValuesEqual") or config.get("value", "") != config.get("defaultValue", ""):
+					config["anyClientDiffrentFromDefault"] = True
+				else:
+					config["anyClientDiffrentFromDefault"] = False
 
 				logger.devel("2: %s", config)
-				logger.devel(config.get("value", ""))
-				logger.devel(config.get("defaultValue", ""))
-				logger.devel(config.get("value", "") == "mixed" or config.get("value", "") != config.get("defaultValue", ""))
+				# logger.devel(config.get("value", ""))
+				# logger.devel(config.get("defaultValue", ""))
+				# logger.devel(config.get("value", "") == "mixed" or config.get("value", "") != config.get("defaultValue", ""))
+				config["clients"] = {}
 				if (
 					config.get("clientsWithDiff", "")
-					and config.get("value", "") == "mixed"
+					and not config.get("allClientValuesEqual", False)
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
 					logger.devel("mixed")
-
 					clients = config.get("clientsWithDiff", "").split(";")
-					config["clients"] = {}
+
 					for idx, client in enumerate(clients):
 						config["clients"][client] = {}
 						if config.get("type") == "BoolConfig":
