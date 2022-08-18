@@ -6,10 +6,10 @@ export default {
 const DefaultVisibleTemplateHead = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: `<DropdownDDProductRequest
+  template: `<b-badge variant="transparent"><DropdownDDProductRequest
   :action.sync="args.action"
   :save="() => {}"
-  />
+  /></b-badge>
   `
 })
 export const DDProductRequestHead = DefaultVisibleTemplateHead.bind({})
