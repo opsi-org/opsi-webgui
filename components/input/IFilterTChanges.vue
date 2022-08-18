@@ -3,6 +3,7 @@
     <b-form-input
       id="filterchanges"
       v-model="filter"
+      class="filterchanges"
       :aria-label="$t('table.filterBy.DepotsClients')"
       type="search"
       :placeholder="$t('table.filterBy.DepotsClients')"
