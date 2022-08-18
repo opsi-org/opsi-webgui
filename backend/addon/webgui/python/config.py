@@ -207,7 +207,7 @@ def get_client_configs(
 				text(("c.configId=cs.configId AND cs.objectId IN :clients OR cs.objectId IS NULL")),
 				isouter=True,
 			)
-			.where(text("c.configId='opsi-linux-bootimage.append'"))
+			# .where(text("c.configId='opsi-linux-bootimage.append'"))
 			.group_by(text("c.configId"))
 		)  # pylint: disable=redefined-outer-name
 
@@ -241,7 +241,7 @@ def get_client_configs(
 
 				if config.get("type", "") == "BoolConfig":
 					config["value"] = bool_value(config.get("value", ""))
-					config["possibleValues"] = [bool_value(value) for value in config.get("value", "")]
+					config["possibleValues"] = [True, False]
 					config["defaultValue"] = bool_value(config.get("defaultValue", ""))
 					config["clientValues"] = [bool_value(value) for value in config.get("clientValues", "").split(";")]
 				else:
@@ -252,14 +252,15 @@ def get_client_configs(
 						unicode_config(value, multi_value=config.get("multiValue", False))
 						for value in config.get("clientValues", "").split(";")
 					]
-				logger.devel(config.get("possibleValues", []))
-				logger.devel("CLIENT VALUES: %s", config.get("clientValues", []))
+					logger.devel(config.get("possibleValues", []))
+					logger.devel("CLIENT VALUES: %s", config.get("clientValues", []))
 
-				p_values = config.get("possibleValues", [])
-				for values in config.get("clientValues", []):
-					p_values.extend(values)
-				config["possibleValues"] = list(dict.fromkeys(p_values))
-				logger.devel(config.get("possibleValues", []))
+					p_values = config.get("possibleValues", [])
+
+					for values in config.get("clientValues", []):
+						p_values.extend(values)
+					config["possibleValues"] = list(dict.fromkeys(p_values))
+					logger.devel(config.get("possibleValues", []))
 
 				if not config.get("allClientValuesEqual") or config.get("value", "") != config.get("defaultValue", ""):
 					config["anyClientDiffrentFromDefault"] = True
@@ -288,6 +289,7 @@ def get_client_configs(
 
 				del config["clientValues"]
 				del config["clientsWithDiff"]
+				del config["value"]
 				for client in selectedClients:
 					if client not in config.get("clients", []):
 						config["clients"][client] = config.get("defaultValue", "")
