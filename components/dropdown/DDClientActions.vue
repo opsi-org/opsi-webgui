@@ -5,6 +5,7 @@
       variant="outline-primary border-0"
       :title="$t('button.tablerow.moreoptions')"
       no-caret
+      :refetch="fetch"
     >
       <template #button-content>
         <IconILoading v-if="clientsLoading.includes(clientId)" :small="true" />
@@ -33,6 +34,7 @@ import { Constants } from '../../mixins/uib-mixins'
 export default class DDClientActions extends Vue {
   iconnames: any
   @Prop({}) clientId!: string
+  @Prop({ default: undefined }) fetch!: Function
   clientsLoading: Array<string> = []
 }
 </script>

@@ -12,6 +12,7 @@
     </b-button>
 
     <b-modal
+      id="modalDeleteClient"
       v-model="show"
       :title="$t('title.deleteClient')"
       centered
@@ -48,7 +49,9 @@ const selections = namespace('selections')
 export default class MDeleteClient extends Vue {
   show:boolean = false
   $axios: any
+  $t: any
   @Prop({ default: true }) clientId!: string
+  @Prop({ default: () => { return () => { /* default */ } } }) refetch!: Function
 
   @config.Getter public config!: IObjectString2Boolean
   @selections.Mutation public delFromSelectionClients!: (s: string) => void
@@ -60,6 +63,9 @@ export default class MDeleteClient extends Vue {
         const ref = (this.$refs.deleteClientAlert as any)
         ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
         this.delFromSelectionClients(id)
+        this.refetch()
+        this.$bvModal.hide('modalDeleteClient')
+        // this.$root.$emit('bv::fetch::table', 'Clients')
       }).catch((error) => {
         const ref = (this.$refs.deleteClientAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')

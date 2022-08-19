@@ -81,7 +81,7 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <DropdownDDClientActions :client-id="row.item.clientId" />
+            <DropdownDDClientActions :client-id="row.item.clientId" :fetch="$fetch" />
           </template>
           <template
             v-for="slotName in Object.keys($scopedSlots)"
