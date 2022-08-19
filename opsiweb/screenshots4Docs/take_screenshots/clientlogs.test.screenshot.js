@@ -1,0 +1,12 @@
+const { test } = require('@playwright/test')
+const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
+const en = require('../../uib-components/locale/en.json')
+const de = require('../../uib-components/locale/de.json')
+test('Client logs', async ({ page }) => {
+  await callStoryId(page, 'view-v-clients-log', 'v-clients-log')
+  await page.setViewportSize({ width: 900, height: 550 })
+  await page.evaluate((val) => { document.querySelector('.filter_logs').placeholder = val }, en['form.filter.logs'])
+  await page.screenshot({ path: './screenshots/en/opsiweb_clientlogs.png' })
+  await page.evaluate((val) => { document.querySelector('.filter_logs').placeholder = val }, de['form.filter.logs'])
+  await page.screenshot({ path: './screenshots/de/opsiweb_clientlogs.png' })
+})

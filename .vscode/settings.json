@@ -145,6 +145,14 @@
         "singleInstance": true,
         "command": "bash /workspace/opsiweb/scripts/build_production_local.sh", // This is executed in the terminal.
       },
+      { // take screenshots for Documentation
+        "cwd": "/workspace/opsiweb/screenshots4Docs",
+        "name": "$(device-camera) screenshots4Docs",
+        "tooltip": "Take screenshots for documentation",
+        "color": "white",
+        "singleInstance": true,
+        "command": "npx playwright test -c playwright-screenshots.config.js take_screenshots/"
+      },
     ]
   },
 

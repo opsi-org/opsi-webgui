@@ -1,0 +1,18 @@
+const { test } = require('@playwright/test')
+const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
+const en = require('../../uib-components/locale/en.json')
+const de = require('../../uib-components/locale/de.json')
+
+test('Login', async ({ page }) => {
+  await callStoryId(page, 'form-f-login', 'f-login')
+  const component = await page.locator('[data-testid="FLogin"]')
+  await component.evaluate(() => { document.querySelector('.projectTitle').innerHTML = 'OPSIWEB' })
+  await page.evaluate((val) => { document.querySelector('.username').placeholder = val }, en['form.username'])
+  await page.evaluate((val) => { document.querySelector('.password').placeholder = val }, en['form.password'])
+  await page.evaluate((val) => { document.querySelector('.login').innerHTML = val }, en['button.login'])
+  await component.screenshot({ path: './screenshots/en/opsiweb_login.png' })
+  await page.evaluate((val) => { document.querySelector('.username').placeholder = val }, de['form.username'])
+  await page.evaluate((val) => { document.querySelector('.password').placeholder = val }, de['form.password'])
+  await page.evaluate((val) => { document.querySelector('.login').innerHTML = val }, de['button.login'])
+  await component.screenshot({ path: './screenshots/de/opsiweb_login.png' })
+})
