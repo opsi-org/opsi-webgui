@@ -315,7 +315,7 @@ def check_client_creation_rights(func: Callable) -> Callable:
 	return check_user
 
 
-def bool_value(value: Union[str,bool]) -> bool:
+def bool_value(value: Union[str, bool]) -> bool:
 	if isinstance(value, bool):
 		return value
 	if value:
@@ -324,7 +324,9 @@ def bool_value(value: Union[str,bool]) -> bool:
 	return False
 
 
-def unicode_value(value: str, delimiter: str = ";") -> List[str]:
+def unicode_value(value: Union[str, List[str]], delimiter: str = ";") -> List[str]:
+	if value and isinstance(value, list):
+		return value
 	if value and isinstance(value, str):
 		if value.startswith('["'):
 			return loads(value)  # pylint: disable=no-member

@@ -33,6 +33,11 @@ def get_server_config(
 	"""
 
 	params: dict = {}
+	where = text("cv.isDefault=1")
+	if commons.get("filterQuery"):
+		where = and_(where, text("(c.configId LIKE :search)"))
+		params["search"] = f"%{commons['filterQuery']}%"
+
 	with mysql.session() as session:
 		query = (
 			select(
@@ -50,12 +55,13 @@ def get_server_config(
 			)
 			.select_from(table("CONFIG_VALUE").alias("cv"))
 			.join(text("CONFIG AS c"), text("cv.configId=c.configId"))  # type: ignore[arg-type]
-			.where(text("cv.isDefault=1"))
+			.where(where)
+			.group_by(text("c.configId"))
 		)  # pylint: disable=redefined-outer-name
 
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
 		# query = pagination(query, commons)  # type: ignore[assignment,arg-type]
-		logger.devel(query)
+
 		result = session.execute(query, params)
 		result = result.fetchall()
 		config_data: dict = {
@@ -82,8 +88,7 @@ def get_server_config(
 					row_dict["possibleValues"] = [bool_value(value) for value in row_dict.get("possibleValues", "").split(",")]
 				else:
 					row_dict["possibleValues"] = row_dict.get("possibleValues", "").split(",")
-				logger.devel(row_dict.get("editable"))
-				logger.devel(row_dict.get("editable", False))
+
 				if row_dict.get("editable", False):
 					row_dict["newValue"] = ""
 					row_dict["newValues"] = []
@@ -190,7 +195,7 @@ def get_client_configs(
 			IF(
 				COUNT(DISTINCT cs.values) > 1,
 				"mixed",
-				IF(cs.values IS NOT NULL, cs.values, cv.value)
+				IF(cs.values IS NOT NULL, GROUP_CONCAT(DISTINCT cs.values SEPARATOR ';'), GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';'))
 			) AS value,
 			GROUP_CONCAT(DISTINCT IF(cs.values IS NOT NULL, cs.values, cv.value) SEPARATOR ';') AS clientValues,
 			GROUP_CONCAT(DISTINCT cv.value SEPARATOR ';') AS possibleValues,
@@ -207,7 +212,8 @@ def get_client_configs(
 				text(("c.configId=cs.configId AND cs.objectId IN :clients OR cs.objectId IS NULL")),
 				isouter=True,
 			)
-			# .where(text("c.configId='opsi-linux-bootimage.append'"))
+			.where(text("c.configId='opsi-linux-bootimage.append'"))
+			# .where(text("c.configId='testentry2'"))
 			.group_by(text("c.configId"))
 		)  # pylint: disable=redefined-outer-name
 
@@ -234,47 +240,63 @@ def get_client_configs(
 				config["multiValue"] = bool(config.get("multiValue", ""))
 				config["editable"] = bool(config.get("editable", ""))
 
-				if config.get("value", "") == "mixed":
-					config["allClientValuesEqual"] = False
-				else:
-					config["allClientValuesEqual"] = True
-
 				if config.get("type", "") == "BoolConfig":
 					config["value"] = bool_value(config.get("value", ""))
 					config["possibleValues"] = [True, False]
 					config["defaultValue"] = bool_value(config.get("defaultValue", ""))
 					config["clientValues"] = [bool_value(value) for value in config.get("clientValues", "").split(";")]
 				else:
-					config["value"] = unicode_config(config.get("value", ""), multi_value=config.get("multiValue", False))
-					config["possibleValues"] = [unicode_config(value) for value in config.get("possibleValues", "").split(";")]
-					config["defaultValue"] = unicode_config(config.get("defaultValue", ""), multi_value=config.get("multiValue", False))
-					config["clientValues"] = [
-						unicode_config(value, multi_value=config.get("multiValue", False))
-						for value in config.get("clientValues", "").split(";")
-					]
+					logger.devel(config.get("clientValues", ""))
+					# logger.devel(unicode_value(config.get("clientValues", "")))
+
+					config["value"] = unicode_value(config.get("value", ""))
+					config["possibleValues"] = unicode_value(config.get("possibleValues", ""))
+					config["defaultValue"] = unicode_value(config.get("defaultValue", ""))
+					if ";" in config.get("clientValues", ""):
+						logger.devel(unicode_value(config.get("clientValues", "").split(";")))
+						config["clientValues"] = [unicode_value(value) for value in config.get("clientValues", "").split(";")]
+					else:
+						logger.devel(unicode_value(config.get("clientValues", "")))
+						config["clientValues"] = unicode_value(config.get("clientValues", ""))
+
 					logger.devel(config.get("possibleValues", []))
 					logger.devel("CLIENT VALUES: %s", config.get("clientValues", []))
+					logger.devel("CLIENT VALUES: %s", type(config.get("clientValues", [])))
+
+					if config.get("value", "") == "mixed" or config.get("value", "") != config.get("defaultValue", ""):
+						config["allClientValuesEqual"] = False
+					else:
+						config["allClientValuesEqual"] = True
 
 					p_values = config.get("possibleValues", [])
 
 					for values in config.get("clientValues", []):
-						p_values.extend(values)
+						if isinstance(values, list):
+							p_values.extend(values)
+						else:
+							p_values.append(values)
+
 					config["possibleValues"] = list(dict.fromkeys(p_values))
 					logger.devel(config.get("possibleValues", []))
+
+				logger.devel("2: %s", config)
+				logger.devel(config.get("value", ""))
+				logger.devel(config.get("clientValues", ""))
+				logger.devel(config.get("defaultValue", ""))
+				logger.devel(config.get("clientsWithDiff", ""))
 
 				if not config.get("allClientValuesEqual") or config.get("value", "") != config.get("defaultValue", ""):
 					config["anyClientDiffrentFromDefault"] = True
 				else:
 					config["anyClientDiffrentFromDefault"] = False
 
-				logger.devel("2: %s", config)
-				# logger.devel(config.get("value", ""))
-				# logger.devel(config.get("defaultValue", ""))
+				# logger.devel(config.get("clientsWithDiff", "").split(";"))
+				# logger.devel(len(config.get("clientsWithDiff", "").split(";")))
 				# logger.devel(config.get("value", "") == "mixed" or config.get("value", "") != config.get("defaultValue", ""))
 				config["clients"] = {}
 				if (
 					config.get("clientsWithDiff", "")
-					and not config.get("allClientValuesEqual", False)
+					and (not config.get("allClientValuesEqual", False) or len(config.get("clientsWithDiff", "").split(";")) == 1)
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
 					logger.devel("mixed")
