@@ -5,13 +5,12 @@
       variant="outline-primary border-0"
       :title="$t('button.tablerow.moreoptions')"
       no-caret
-      :refetch="fetch"
     >
       <template #button-content>
         <IconILoading v-if="clientsLoading.includes(clientId)" :small="true" />
         <b-icon v-else :icon="iconnames.menu" />
       </template>
-      <ModalMDeleteClient :client-id="clientId" />
+      <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
       <ButtonBTNEvent
         event="reboot"
         :data="clientId"
