@@ -10,7 +10,7 @@
         <IconILoading v-if="clientsLoading.includes(clientId)" :small="true" />
         <b-icon v-else :icon="iconnames.menu" />
       </template>
-      <ModalMDeleteClient :client-id="clientId" />
+      <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
       <ButtonBTNEvent
         event="reboot"
         :data="clientId"
@@ -33,6 +33,7 @@ import { Constants } from '../../mixins/uib-mixins'
 export default class DDClientActions extends Vue {
   iconnames: any
   @Prop({}) clientId!: string
+  @Prop({ default: undefined }) fetch!: Function
   clientsLoading: Array<string> = []
 }
 </script>
