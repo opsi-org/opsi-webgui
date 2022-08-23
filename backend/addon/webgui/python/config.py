@@ -10,6 +10,7 @@ webgui config methods
 
 
 import json
+from distutils.command.config import config
 from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
@@ -396,6 +397,82 @@ class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
 	configs: List[Config]
 
 
+@conifg_router.post("/api/opsidata/config/server")
+@rest_api
+@read_only_check
+def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, data: List[Config]
+) -> RESTResponse:
+	"""
+	save config value
+	"""
+	logger.devel(data)
+
+	for config in data:
+		logger.devel(config)
+
+		with mysql.session() as session:
+			values = {"configId": config.configId, "value": config.value, "isDefault": True}
+			stmt = (
+				update(
+					table(
+						"CONFIG_VALUE", column("isDefault")
+					)  # pylint: disable=consider-iterating-dictionary
+				)
+				.where(text(f"configId = '{config.configId}' AND isDefault = 1"))
+				.values(**{"isDefault": False})
+			)
+			session.execute(stmt)
+			if isinstance(config.value, list):
+				for value in config.value:
+					values = {"configId": config.configId, "value": value, "isDefault": True}
+					if get_config_value(config.configId, value):
+						stmt = (
+							update(
+								table(
+									"CONFIG_VALUE", *[column(name) for name in values.keys()]
+								)  # pylint: disable=consider-iterating-dictionary
+							)
+							.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
+							.values(**values)
+						)
+					else:
+						stmt = (
+							insert(
+								table(
+									"CONFIG_VALUE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+								)
+							)
+							.values(**values)
+							.on_duplicate_key_update(**values)
+						)
+			else:
+				value = config.value
+				values = {"configId": config.configId, "value": value, "isDefault": True}
+				if get_config_value(config.configId, value):
+					stmt = (
+						update(
+							table(
+								"CONFIG_VALUE", *[column(name) for name in values.keys()]
+							)  # pylint: disable=consider-iterating-dictionary
+						)
+						.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
+						.values(**values)
+					)
+				else:
+					stmt = (
+						insert(
+							table(
+								"CONFIG_VALUE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+							)
+						)
+						.values(**values)
+						.on_duplicate_key_update(**values)
+					)
+			session.execute(stmt)
+
+	return RESTResponse(http_status=status.HTTP_200_OK, data=data[0].configId)
+
 @conifg_router.post("/api/opsidata/config/clients")
 @rest_api
 @read_only_check
@@ -423,7 +500,6 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 			with mysql.session() as session:
 				if get_config_state(client, config.configId):
-					logger.devel("Update!!!")
 					stmt = (
 						update(
 							table(
@@ -434,7 +510,6 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 						.values(**values)
 					)
 				else:
-					logger.devel("Insert!!!")
 					stmt = (
 						insert(
 							table(
@@ -471,3 +546,29 @@ def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
 		if not res:
 			return None
 		return res[0]
+
+
+def get_config_value(config_id: str, value: Union[str, List[str], bool]) -> List:
+
+	with mysql.session() as session:
+		query = (
+			select(
+				text(
+					"""
+			cv.configId AS configId,
+			cv.`value` AS `value`,
+			cv.isDefault AS is_default
+		"""
+				)
+			)
+			.select_from(text("CONFIG_VALUE AS cv"))
+			.where(text("cv.configId = :config_id AND cv.`value` = :value"))
+		)
+
+		result = session.execute(query, {"config_id": config_id, "value": value})
+		result = result.fetchall()
+		config_values = []
+		for row in result:
+			if row is not None:
+				config_values.append(dict(row))
+		return config_values
