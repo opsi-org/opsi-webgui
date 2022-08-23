@@ -9,6 +9,7 @@ webgui config methods
 """
 
 
+import json
 from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
@@ -411,7 +412,14 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 		for config in data.configs:
 			logger.devel(config)
 
-			values = {"objectId": client, "configId": config.configId, "values": config.value}
+			if isinstance(config.value, bool):
+				cs_values = f"[{config.value}]".lower()
+			elif isinstance(config.value, list):
+				cs_values = json.dumps(config.value)
+			else:
+				cs_values = f'["{config.value}"]'
+
+			values = {"objectId": client, "configId": config.configId, "values": cs_values}
 
 			with mysql.session() as session:
 				if get_config_state(client, config.configId):
