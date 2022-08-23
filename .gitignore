@@ -4,8 +4,7 @@
 .env
 *backup*
 backend/opsibackup
-backend/addon/webgui
-backend/addon/webgui/data/app/README.md
+backend/addon/webgui/data
 .nuxt/
 .nuxt-storybook/
 *node_modules*
