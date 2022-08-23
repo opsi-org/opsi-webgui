@@ -396,14 +396,14 @@ class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
 	configs: List[Config]
 
 
-@conifg_router.post("/api/opsidata/config/server")
+@conifg_router.post("/api/opsidata/config/clients")
 @rest_api
 @read_only_check
 def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, data: ConfigStates
 ) -> RESTResponse:
 	"""
-	Save Config State
+	Save config State
 	"""
 
 	logger.devel(data.clientIds)
