@@ -9,16 +9,24 @@ webgui config methods
 """
 
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, or_, select, table, text, union
+from sqlalchemy import and_, column, or_, select, table, text, update
+from sqlalchemy.dialects.mysql import insert
 
 from opsiconfd.logging import logger
 from opsiconfd.rest import RESTResponse, common_query_parameters, order_by, rest_api
 
-from .utils import bool_value, mysql, parse_client_list, unicode_config, unicode_value
+from .utils import (
+	bool_value,
+	mysql,
+	parse_client_list,
+	read_only_check,
+	unicode_config,
+	unicode_value,
+)
 
 conifg_router = APIRouter()
 
@@ -195,9 +203,9 @@ def get_client_configs(
 			IF(
 				COUNT(DISTINCT cs.values) > 1,
 				"mixed",
-				IF(cs.values IS NOT NULL, GROUP_CONCAT(DISTINCT cs.values SEPARATOR ';'), GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';'))
+				IF(cs.values IS NOT NULL, cs.values, GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';'))
 			) AS value,
-			GROUP_CONCAT(DISTINCT IF(cs.values IS NOT NULL, cs.values, cv.value) SEPARATOR ';') AS clientValues,
+			GROUP_CONCAT(IF(cs.values IS NOT NULL, cs.values, cv.value) SEPARATOR ';') AS clientValues,
 			GROUP_CONCAT(DISTINCT cv.value SEPARATOR ';') AS possibleValues,
 			c.multiValue AS multiValue,
 			c.editable AS editable,
@@ -255,6 +263,9 @@ def get_client_configs(
 					if ";" in config.get("clientValues", ""):
 						logger.devel(unicode_value(config.get("clientValues", "").split(";")))
 						config["clientValues"] = [unicode_value(value) for value in config.get("clientValues", "").split(";")]
+					elif config.get("multiValue", False):
+						logger.devel(unicode_value(config.get("clientValues", "")))
+						config["clientValues"] = [unicode_value(config.get("clientValues", ""))]
 					else:
 						logger.devel(unicode_value(config.get("clientValues", "")))
 						config["clientValues"] = unicode_value(config.get("clientValues", ""))
@@ -262,8 +273,18 @@ def get_client_configs(
 					logger.devel(config.get("possibleValues", []))
 					logger.devel("CLIENT VALUES: %s", config.get("clientValues", []))
 					logger.devel("CLIENT VALUES: %s", type(config.get("clientValues", [])))
+					logger.devel(config.get("value", []))
 
-					if config.get("value", "") == "mixed" or config.get("value", "") != config.get("defaultValue", ""):
+					logger.devel(config.get("clientValues", []) == config.get("values", []))
+
+					if (
+						(
+							len(config.get("clientsWithDiff", "").split(";")) != len(selectedClients)
+							and config.get("value", "") != config.get("defaultValue", "")
+						)
+						or config.get("value", "") == "mixed"
+						or config.get("clientValues", []) == config.get("values", [])
+					):
 						config["allClientValuesEqual"] = False
 					else:
 						config["allClientValuesEqual"] = True
@@ -299,17 +320,19 @@ def get_client_configs(
 					and (not config.get("allClientValuesEqual", False) or len(config.get("clientsWithDiff", "").split(";")) == 1)
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
-					logger.devel("mixed")
+					# logger.devel("mixed")
 					clients = config.get("clientsWithDiff", "").split(";")
 
 					for idx, client in enumerate(clients):
-						config["clients"][client] = {}
+						config["clients"][client] = {}  #
+						if config.get("allClientValuesEqual", False):
+							idx = 0
 						if config.get("type") == "BoolConfig":
 							config["clients"][client] = config.get("clientValues", [])[idx]
 						else:
 							config["clients"][client] = config.get("clientValues", [])[idx]
 
-				del config["clientValues"]
+				# del config["clientValues"]
 				del config["clientsWithDiff"]
 				del config["value"]
 				for client in selectedClients:
@@ -359,3 +382,84 @@ def get_client_configs(
 
 		logger.devel(count)
 		return RESTResponse(data=configs)
+
+
+class Config(BaseModel):
+	configId: str
+	description: Optional[str]
+	value: Optional[Union[str, List[str], bool]]
+
+
+class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
+	clientIds: Optional[List[str]] = []
+	configs: List[Config]
+
+
+@conifg_router.post("/api/opsidata/config/server")
+@rest_api
+@read_only_check
+def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, data: ConfigStates
+) -> RESTResponse:
+	"""
+	Save Config State
+	"""
+
+	logger.devel(data.clientIds)
+	logger.devel(data.configs)
+	for client in data.clientIds:
+		for config in data.configs:
+			logger.devel(config)
+
+			values = {"objectId": client, "configId": config.configId, "values": config.value}
+
+			with mysql.session() as session:
+				if get_config_state(client, config.configId):
+					logger.devel("Update!!!")
+					stmt = (
+						update(
+							table(
+								"CONFIG_STATE", *[column(name) for name in values.keys()]
+							)  # pylint: disable=consider-iterating-dictionary
+						)
+						.where(text(f"objectId = '{client}' AND configId = '{ config.configId}'"))
+						.values(**values)
+					)
+				else:
+					logger.devel("Insert!!!")
+					stmt = (
+						insert(
+							table(
+								"CONFIG_STATE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+							)
+						)
+						.values(**values)
+						.on_duplicate_key_update(**values)
+					)
+				session.execute(stmt)
+
+	return RESTResponse(http_status=status.HTTP_200_OK, data=data.configs[0].configId)
+
+
+def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
+
+	with mysql.session() as session:
+		query = (
+			select(
+				text(
+					"""
+			cs.objectId AS objectId,
+			cs.configId AS configId,
+			cs.`values` AS `values`
+		"""
+				)
+			)
+			.select_from(text("CONFIG_STATE AS cs"))
+			.where(text("configId = :config_id AND objectId = :object_id"))
+		)
+
+		result = session.execute(query, {"config_id": config_id, "object_id": object_id})
+		res = result.fetchone()
+		if not res:
+			return None
+		return res[0]
