@@ -169,8 +169,8 @@ export default class THostAttributes extends Vue {
     } else { return value }
   }
 
-  async updateAttributes () {
+  // async updateAttributes () {
 
-  }
+  // }
 }
 </script>
