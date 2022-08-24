@@ -3,73 +3,124 @@
     <AlertAAlert ref="hostAttrErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <TableTDefault
-      data-testid="THostAttributes"
-      :stacked="true"
-      :is-loading="isLoading"
-      :error="errorText"
-      :items="Object.values(result)"
-      :fields="fields"
-    >
-      <template #cell(opsiHostKey)="row">
+    <GridGFormItem>
+      <template #label>
+        <span class="id">{{ $t('table.fields.id') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="id" v-model="hostAttr.hostId" :aria-label="$t('table.fields.id')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="type">{{ $t('table.fields.type') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="type" :value="hostAttr.type" :aria-label="$t('table.fields.type')" readonly />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="description">{{ $t('table.fields.description') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="description" v-model="hostAttr.description" :aria-label="$t('table.fields.description')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="notes">{{ $t('table.fields.notes') }}</span>
+      </template>
+      <template #value>
+        <b-form-textarea
+          id="notes"
+          v-model="hostAttr.notes"
+          :aria-label="$t('table.fields.notes')"
+          rows="3"
+          max-rows="3"
+          no-resize
+        />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="hwAddr" v-model="hostAttr.hardwareAddress" :aria-label="$t('table.fields.hwAddr')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="ip">{{ $t('table.fields.ip') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="ip" v-model="hostAttr.ipAddress" :aria-label="$t('table.fields.ip')" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="inventNum">{{ $t('table.fields.inventNum') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="inventNum" v-model="hostAttr.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="created">{{ $t('table.fields.created') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="created" :value="date(hostAttr.created)" :aria-label="$t('table.fields.created')" readonly />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="lastSeen">{{ $t('table.fields.lastSeen') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="lastSeen" :value="date(hostAttr.lastSeen)" :aria-label="$t('table.fields.lastSeen')" readonly />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="hostKey">{{ $t('table.fields.hostKey') }}</span>
+      </template>
+      <template #value>
         <b-input-group>
           <b-button :pressed.sync="showValue" size="sm" class="border-0" variant="outline-primary">
             <span class="sr-only">{{ showValue? $t('form.hostkey.hide'): $t('form.hostkey.show') }}</span>
             <b-icon v-if="showValue" :icon="iconnames.valueShow" />
             <b-icon v-else :icon="iconnames.valueHide" />
           </b-button>
-          <b-form-input
-            id="opsiHostKey"
-            v-model="row.item.opsiHostKey"
-            :aria-label="row.field.label"
-            :class="{'d-none' : !showValue}"
-            size="sm"
-            readonly
-          />
+          <b-form-input id="hostKey" v-model="hostAttr.opsiHostKey" :aria-label="$t('table.fields.hostKey')" :class="{'d-none' : !showValue}" type="text" />
         </b-input-group>
       </template>
-      <template #cell(notes)="row">
-        <b-form-textarea
-          id="notes"
-          v-model="row.item.notes"
-          :aria-label="row.field.label"
-          class="forminput"
-          size="sm"
-          rows="2"
-          max-rows="3"
-          no-resize
-          readonly
-        />
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="otp">{{ $t('table.fields.otp') }}</span>
       </template>
-      <template #cell(created)="row">
-        <b-form-input
-          id="created"
-          :value="date(row.value)"
-          :aria-label="row.field.label"
-          class="forminput"
-          size="sm"
-          readonly
-        />
+      <template #value>
+        <b-form-input id="otp" v-model="hostAttr.oneTimePassword" :aria-label="$t('table.fields.otp')" type="text" />
       </template>
-      <template #cell(lastSeen)="row">
-        <b-form-input
-          id="lastSeen"
-          :value="date(row.value)"
-          :aria-label="row.field.label"
-          class="forminput"
-          size="sm"
-          readonly
-        />
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="uefi">{{ $t('table.fields.uefi') }}</span>
       </template>
-      <template #cell(uefi)="row">
-        <b-form-checkbox
-          id="uefi"
-          v-model="row.value"
-          :aria-label="row.field.label"
-          disabled
-        />
+      <template #value>
+        <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
       </template>
-    </TableTDefault>
+    </GridGFormItem>
+    <LazyDivDComponentGroup v-if="hostAttr" class="float-right">
+      <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
+        <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
+      </b-button>
+      <b-button id="updateButton" class="updateButton" variant="success" :disabled="!clientName" @click="updateAttributes()">
+        <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
+      </b-button>
+    </LazyDivDComponentGroup>
   </div>
 </template>
 
@@ -86,26 +137,9 @@ export default class THostAttributes extends Vue {
 
   @Prop({ }) id!: string
   showValue : boolean = false
-  result:Object = {}
+  hostAttr:Object = {}
   isLoading: boolean = false
   errorText: string = ''
-
-  get fields () {
-    return [
-      { label: this.$t('table.fields.id'), key: 'hostId', tdClass: 'hostId' },
-      { label: this.$t('table.fields.type'), key: 'type', tdClass: 'type' },
-      { label: this.$t('table.fields.description'), key: 'description', tdClass: 'description' },
-      { label: this.$t('table.fields.notes'), key: 'notes', tdClass: 'notes' },
-      { label: this.$t('table.fields.hwAddr'), key: 'hardwareAddress', tdClass: 'hwAddr' },
-      { label: this.$t('table.fields.ip'), key: 'ipAddress', tdClass: 'ip' },
-      { label: this.$t('table.fields.inventNum'), key: 'inventoryNumber', tdClass: 'inventNum' },
-      { label: this.$t('table.fields.created'), key: 'created', tdClass: 'created' },
-      { label: this.$t('table.fields.lastSeen'), key: 'lastSeen', tdClass: 'lastSeen' },
-      { label: this.$t('table.fields.hostKey'), key: 'opsiHostKey', tdClass: 'hostKey' },
-      { label: this.$t('table.fields.otp'), key: 'oneTimePassword', tdClass: 'otp' },
-      { label: this.$t('table.fields.uefi'), key: 'uefi', tdClass: 'uefi' }
-    ]
-  }
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
@@ -118,7 +152,7 @@ export default class THostAttributes extends Vue {
       this.isLoading = true
       await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
         .then((response) => {
-          this.result = response
+          this.hostAttr = response[0]
         }).catch((error) => {
           const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
           const ref = (this.$refs.hostAttrErrorAlert as any)
