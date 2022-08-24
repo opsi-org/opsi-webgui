@@ -22,7 +22,8 @@ describe('BSide', () => {
       propsData: {
         attributes: {
           expanded: true,
-          visible: true
+          visible: true,
+          alwaysVisible: true
         }
       }
     })
