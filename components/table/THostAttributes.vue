@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="THostAttributes">
     <AlertAAlert ref="hostAttrErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
@@ -117,7 +117,7 @@
       <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
-      <b-button id="updateButton" class="updateButton" variant="success" :disabled="!clientName" @click="updateAttributes()">
+      <b-button id="updateButton" class="updateButton" variant="success" @click="updateAttributes()">
         <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
       </b-button>
     </LazyDivDComponentGroup>
@@ -167,6 +167,10 @@ export default class THostAttributes extends Vue {
     if (value !== '') {
       return new Date(value).toString()
     } else { return value }
+  }
+
+  async updateAttributes () {
+
   }
 }
 </script>
