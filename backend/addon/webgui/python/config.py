@@ -214,7 +214,7 @@ def get_client_configs(
 				text(("c.configId=cs.configId AND cs.objectId IN :clients OR cs.objectId IS NULL")),
 				isouter=True,
 			)
-			.where(text("c.configId='opsi-linux-bootimage.append'"))
+			# .where(text("c.configId='opsi-linux-bootimage.append'"))
 			# .where(text("c.configId='testentry2'"))
 			.group_by(text("c.configId"))
 		)  # pylint: disable=redefined-outer-name
@@ -241,6 +241,7 @@ def get_client_configs(
 
 				config["multiValue"] = bool(config.get("multiValue", ""))
 				config["editable"] = bool(config.get("editable", ""))
+				config["clientsWithDiff"] = ""
 
 				if config.get("type", "") == "BoolConfig":
 					config["value"] = bool_value(config.get("value", ""))
@@ -326,7 +327,7 @@ def get_client_configs(
 						else:
 							config["clients"][client] = config.get("clientValues", [])[idx]
 
-				# del config["clientValues"]
+				del config["clientValues"]
 				del config["clientsWithDiff"]
 				del config["value"]
 				for client in selectedClients:
