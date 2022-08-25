@@ -105,7 +105,7 @@
         <b-form-input id="otp" v-model="hostAttr.oneTimePassword" :aria-label="$t('table.fields.otp')" type="text" />
       </template>
     </GridGFormItem>
-    <GridGFormItem>
+    <GridGFormItem v-if="hostAttr.type == 'OpsiClient'">
       <template #label>
         <span class="uefi">{{ $t('table.fields.uefi') }}</span>
       </template>
