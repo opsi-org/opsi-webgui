@@ -129,6 +129,7 @@ test:unit:
     - ls -lah node_modules
     - npm run libtest:unit
   coverage: /All files\s*\|\s*([\d\.]+)/
+  allow_failure: true
   artifacts:
     reports:
       coverage_report:

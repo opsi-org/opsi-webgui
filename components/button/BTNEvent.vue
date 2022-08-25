@@ -45,7 +45,7 @@
         </b-list-group-item>
       </b-list-group>
       <b-list-group v-else-if="event=='showpopup'" flush>
-        <b-form-textarea v-model="eventdata.popup.msg" />
+        <b-form-textarea v-model="eventdata.popup.msg" class="textarea" />
         {{ data }}
       </b-list-group>
       <div v-else class="modal-client-p">

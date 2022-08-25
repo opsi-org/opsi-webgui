@@ -18,15 +18,15 @@ const hostconfig = [{
 mock.onGet(`/api/opsidata/hosts?hosts=${cid}`).reply(200, hostconfig)
 
 export default {
-  title: 'Table/T Host Attributes',
-  parameters: { docs: { description: { component: 'Table for HostAttributes' } } }
+  title: 'Form/F Host Attributes',
+  parameters: { docs: { description: { component: 'Form for HostAttributes' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<TableTHostAttributes id="${cid}"/>`
+  template: `<FormFHostAttributes id="${cid}"/>`
   // template: '<TableTHostAttributes :id="$props.id"/>'
 })
 
-export const THostAttributes = PrimaryTemplate.bind({})
-THostAttributes.args = { id: cid }
+export const FHostAttributes = PrimaryTemplate.bind({})
+FHostAttributes.args = { id: cid }

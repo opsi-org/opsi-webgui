@@ -13,8 +13,8 @@
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
         </template>
         <DivDScrollResult>
-          <LazyTableTHostAttributes v-if="id" :id="id" />
-          <div v-else style="height: 500px;" />
+          <LazyFormFHostAttributes v-if="id" :id="id" />
+          <div v-else style="height: 70vh;" />
         </DivDScrollResult>
       </b-tab>
     </b-tabs>
