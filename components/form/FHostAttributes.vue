@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="THostAttributes">
+  <div data-testid="FHostAttributes">
     <AlertAAlert ref="hostAttrErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
@@ -129,7 +129,7 @@ import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
-export default class THostAttributes extends Vue {
+export default class FHostAttributes extends Vue {
   iconnames: any
   $axios: any
   $t: any
