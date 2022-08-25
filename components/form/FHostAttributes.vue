@@ -3,6 +3,7 @@
     <AlertAAlert ref="hostAttrErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
+    <AlertAAlert ref="hostAttrUpdateAlert" />
     <GridGFormItem>
       <template #label>
         <span class="id">{{ $t('table.fields.id') }}</span>
@@ -137,7 +138,7 @@ export default class FHostAttributes extends Vue {
 
   @Prop({ }) id!: string
   showValue : boolean = false
-  hostAttr:Object = {}
+  hostAttr:any = {}
   isLoading: boolean = false
   errorText: string = ''
 
@@ -169,8 +170,48 @@ export default class FHostAttributes extends Vue {
     } else { return value }
   }
 
-  // async updateAttributes () {
+  async setUEFI () {
+    await this.$axios.$post(`api/opsidata/clients/${this.hostAttr.hostId}/uefi`)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.hostAttrUpdateAlert as any)
+        ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
+      })
+  }
 
-  // }
+  async updateClientAttributes () {
+    this.isLoading = true
+    const attr = this.hostAttr
+    delete attr.type
+    delete attr.created
+    delete attr.lastSeen
+    delete attr.uefi
+    await this.$axios.$put(`/api/opsidata/clients/${this.hostAttr.hostId}`, attr)
+      .then(() => {
+        const ref = (this.$refs.hostAttrUpdateAlert as any)
+        ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
+        if (this.hostAttr.uefi) {
+          this.setUEFI()
+        }
+        this.$fetch()
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.hostAttrUpdateAlert as any)
+        ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
+      })
+    this.isLoading = false
+  }
+
+  updateServerAttributes () {
+    return ''
+  }
+
+  async updateAttributes () {
+    if (this.hostAttr.type === 'OpsiClient') {
+      await this.updateClientAttributes()
+    } else {
+      await this.updateServerAttributes()
+    }
+  }
 }
 </script>
