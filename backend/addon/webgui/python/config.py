@@ -10,7 +10,6 @@ webgui config methods
 
 
 import json
-from distutils.command.config import config
 from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
@@ -21,14 +20,7 @@ from sqlalchemy.dialects.mysql import insert
 from opsiconfd.logging import logger
 from opsiconfd.rest import RESTResponse, common_query_parameters, order_by, rest_api
 
-from .utils import (
-	bool_value,
-	mysql,
-	parse_client_list,
-	read_only_check,
-	unicode_config,
-	unicode_value,
-)
+from .utils import bool_value, mysql, parse_client_list, read_only_check, unicode_value
 
 conifg_router = APIRouter()
 
