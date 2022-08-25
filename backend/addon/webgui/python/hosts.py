@@ -16,6 +16,7 @@ from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, or_, select, table, text, union
 
 from opsiconfd.application.utils import get_configserver_id
+from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	RESTResponse,
 	common_query_parameters,
@@ -349,3 +350,130 @@ def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> di
 					"parent": row["group_id"],
 				}
 	return all_groups
+
+
+# "description": "text1",
+# "notes": "abc",
+# "id": "bonifax.uib.local",
+# "hardwareAddress": "7a:1c:65:aa:98:ea",
+# "ipAddress": "192.168.1.14",
+# "inventoryNumber": "123456",
+# "opsiHostKey": "432721195f1ab54a990ab4148bda53ff",
+# "depotLocalUrl": "file:///var/lib/opsi/depot",
+# "depotRemoteUrl": "smb://192.168.1.14/opsi_depot",
+# "depotWebdavUrl": "webdavs://bonifax.uib.local:4447/depot",
+# "repositoryLocalUrl": "file:///var/lib/opsi/repository",
+# "repositoryRemoteUrl": "webdavs://bonifax.uib.local:4447/repository",
+# "networkAddress": "192.168.1.0/24",
+# "maxBandwidth": 0,
+# "isMasterDepot": true,
+# "masterDepotId": null,
+# "workbenchLocalUrl": "file:///var/lib/opsi/workbench/",
+# "workbenchRemoteUrl": "smb://192.168.1.14/opsi_workbench",
+# "type": "OpsiConfigserver",
+# "ident": "bonifax.uib.local"
+
+
+class Server(BaseModel):
+	id: str
+	description: Optional[str]
+	notes: Optional[str]
+	hardwareAddress: Optional[str]
+	ipAddress: Optional[str]
+	inventoryNumber: Optional[str]
+	opsiHostKey: Optional[str]
+	depotLocalUrl: Optional[str]
+	depotRemoteUrl: Optional[str]
+	depotWebdavUrl: Optional[str]
+	repositoryLocalUrl: Optional[str]
+	repositoryRemoteUrl: Optional[str]
+	workbenchLocalUrl: Optional[str]
+	workbenchRemoteUrl: Optional[str]
+	networkAddress: Optional[str]
+	maxBandwidth: Optional[str]
+	isMasterDepot: Optional[str]
+	masterDepotId: Optional[str]
+	type: Optional[str]
+
+
+@host_router.get("/api/opsidata/servers", response_model=List[Host])
+@rest_api
+def get_server_data(
+	commons: dict = Depends(common_query_parameters),
+	servers: List[str] = Depends(parse_hosts_list),
+) -> RESTResponse:  # pylint: disable=redefined-builtin
+	"""
+	Get server data.
+	"""
+	params = {"servers": [], "search": ""}
+	where = text("")
+	if commons.get("filterQuery"):
+		params["search"] = f"%{commons.get('filterQuery')}%"
+		where = text("h.hostId LIKE :search OR h.description LIKE :search")
+	if servers:
+		params["servers"] = servers
+		where = and_(text("h.hostId in :servers"))  # type: ignore
+
+	with mysql.session() as session:
+		query = (
+			select(
+				text(  # type: ignore
+					"""
+			h.hostId AS hostId,
+			h.type AS type,
+			h.description AS description,
+			h.notes AS notes,
+			h.hardwareAddress AS hardwareAddress,
+			h.ipAddress AS ipAddress,
+			h.inventoryNumber AS inventoryNumber,
+			h.created AS created,
+			h.lastSeen AS lastSeen,
+			h.opsiHostKey AS opsiHostKey,
+			h.oneTimePassword AS oneTimePassword,
+			h.depotLocalUrl AS depotLocalUrl,
+			h.depotRemoteUrl AS depotRemoteUrl,
+			h.depotWebdavUrl AS depotWebdavUrl,
+			h.repositoryLocalUrl AS repositoryLocalUrl,
+			h.repositoryRemoteUrl AS repositoryRemoteUrl,
+			h.workbenchLocalUrl AS workbenchLocalUrl,
+			h.workbenchRemoteUrl AS workbenchRemoteUrl,
+			h.networkAddress AS networkAddress,
+			h.maxBandwidth AS maxBandwidth,
+			h.isMasterDepot AS isMasterDepot,
+			h.masterDepotId AS masterDepotId
+
+		"""
+				)
+			)
+			.select_from(table("HOST").alias("h"))
+			.where(and_(where, text("h.type IN ('OpsiDepotserver','OpsiConfigserver') ")))
+		)  # pylint: disable=redefined-outer-name
+
+		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
+		query = pagination(query, commons)  # type: ignore[assignment,arg-type]
+		logger.devel(query)
+		result = session.execute(query, params)
+		result = result.fetchall()
+		host_data = []
+		for row in result:
+			logger.devel(row)
+			if row is not None:
+				row_dict = dict(row)
+				for key in row_dict.keys():
+
+					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
+						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
+
+				host_data.append(row_dict)
+		return RESTResponse(data=host_data)
+
+
+# @host_router.put("/api/opsidata/servers/{server_id}")
+# @rest_api
+# @read_only_check
+# def update_client(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
+# 	"""
+# 	Update OPSI-Server (Config and Depot).
+# 	"""
+
+# 	return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
