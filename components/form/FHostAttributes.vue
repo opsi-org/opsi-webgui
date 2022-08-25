@@ -9,7 +9,7 @@
         <span class="id">{{ $t('table.fields.id') }}</span>
       </template>
       <template #value>
-        <b-form-input id="id" v-model="hostAttr.hostId" :aria-label="$t('table.fields.id')" type="text" />
+        <b-form-input id="id" v-model="hostAttr.hostId" :aria-label="$t('table.fields.id')" readonly />
       </template>
     </GridGFormItem>
     <GridGFormItem>
