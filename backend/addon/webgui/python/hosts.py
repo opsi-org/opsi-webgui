@@ -9,15 +9,19 @@ webgui host methods
 """
 
 import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, or_, select, table, text, union
+from sqlalchemy import and_, column, or_, select, table, text, union, update
+from sqlalchemy.exc import IntegrityError
 
+from OPSI.Exceptions import BackendBadValueError
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
+	OpsiApiException,
+	RESTErrorResponse,
 	RESTResponse,
 	common_query_parameters,
 	order_by,
@@ -26,12 +30,14 @@ from opsiconfd.rest import (
 )
 
 from .utils import (
+	backend,
 	build_tree,
 	get_allowed_objects,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
 	parse_hosts_list,
+	read_only_check,
 )
 
 host_router = APIRouter()
@@ -375,7 +381,7 @@ def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> di
 
 
 class Server(BaseModel):
-	id: str
+	hostId: str
 	description: Optional[str]
 	notes: Optional[str]
 	hardwareAddress: Optional[str]
@@ -468,12 +474,68 @@ def get_server_data(
 		return RESTResponse(data=host_data)
 
 
-# @host_router.put("/api/opsidata/servers/{server_id}")
-# @rest_api
-# @read_only_check
-# def update_client(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
-# 	"""
-# 	Update OPSI-Server (Config and Depot).
-# 	"""
+@host_router.put("/api/opsidata/servers/{server_id}")
+@rest_api
+@read_only_check
+def update_client(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
+	"""
+	Update OPSI-Server (Config and Depot).
+	"""
 
-# 	return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+	values = vars(server)
+	# values["type"] = ("Opsidepotserver", "OpsiConfigserver")
+	values = {k: v for k, v in values.items() if v is not None}
+
+	with mysql.session() as session:
+
+		try:
+			host_check_duplicates(server, session)
+			query = (
+				update(
+					table(
+						"HOST",
+						*[column(key) for key in vars(server).keys()],  # pylint: disable=consider-iterating-dictionary
+					)
+				)
+				.where(text(f"hostId='{server_id}'"))
+				.values(values)
+			)
+			session.execute(query)
+
+			headers = {"Location": f"{request.url}/{server.hostId}"}
+
+			if values.get("ipAddress"):
+				values["ipAddress"] = str(values["ipAddress"])
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+
+		except IntegrityError as err:
+			logger.error("Could not update client object.")
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not update client '{server.hostId}' object.",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not update client object.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not update client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
+# TODO merege with client check duplicates
+def host_check_duplicates(host: Host, session: Any) -> None:
+	if backend.unique_hardware_addresses and host.hardwareAddress and not host.hardwareAddress.startswith("00:00:00"):
+		select_query = (
+			select(text("h.hostId AS hostId"))  # type: ignore
+			.select_from(table("HOST").alias("h"))
+			.where(text(f"h.hostId != '{host.hostId}' AND hardwareAddress = '{host.hardwareAddress}'"))
+		)  # pylint: disable=redefined-outer-name
+
+		result = session.execute(select_query)
+		result = result.fetchone()
+		if result:
+			raise BackendBadValueError(f"Hardware address {host.hardwareAddress!r} is already used by host {result}")
