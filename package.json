@@ -11,9 +11,9 @@
     "libstory": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt storybook --ci --quiet --port 3003 -s ./static",
     "liblint": "eslint --quiet --ext \"ts,js,vue,json\" --ignore-path .gitignore .",
     "liblint2": "eslint .",
-    "libtest": "jest && playwright test test/e2e test/integration",
+    "libtest": "jest && playwright test test/e2e test/component",
     "libtest:unit": "jest --config .config/.jest.config.js .",
-    "libtest:integration": "playwright test -c .utils/playwright/config/playwright-integration.config.js  --project=Chromium-Desktop",
+    "libtest:component": "playwright test -c .utils/playwright/config/playwright-component.config.js  --project=Chromium-Desktop",
     "libtest:e2e": "playwright test -c .utils/playwright/config/playwright-e2e.config.js --project=Chromium-Desktop",
     "libtest:delete-empty-results": "find test-results -empty -delete"
   },
