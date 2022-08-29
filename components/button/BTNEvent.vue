@@ -80,10 +80,10 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import * as mixin from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [mixin.Constants] })
 export default class BTNEvent extends Vue {
   $axios: any
   iconnames:any

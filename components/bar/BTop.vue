@@ -59,10 +59,10 @@
 import { Component, namespace, Vue, Prop } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
-import { Constants } from '../../mixins/uib-mixins'
+import * as mixin from '../../mixins/uib-mixins'
 const config = namespace('config-app')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [mixin.Constants] })
 export default class BTop extends Vue {
   $nuxt: any
   $mq:any

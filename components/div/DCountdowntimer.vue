@@ -8,11 +8,11 @@
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 // import Cookie from 'js-cookie'
 // import { makeToast } from '../../.utils/utils/scomponents'
-import { CallLogout } from '../../mixins/uib-mixins'
+import * as mixin from '../../mixins/uib-mixins'
 const auth = namespace('auth')
 const settings = namespace('settings')
 
-@Component({ mixins: [CallLogout] })
+@Component({ mixins: [mixin.CallLogout] })
 export default class BCountdowntimer extends Vue {
   callLogout: any // from CallLogout
 

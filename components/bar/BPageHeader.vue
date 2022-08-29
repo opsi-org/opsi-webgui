@@ -24,9 +24,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import * as mixin from '../../mixins/uib-mixins'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [mixin.Constants] })
 export default class BPageHeader extends Vue {
   iconnames:any
   @Prop({ default: 'transparent' }) variant!: string

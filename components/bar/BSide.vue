@@ -35,9 +35,9 @@
 import Cookie from 'js-cookie'
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
-import { Constants } from '../../mixins/uib-mixins'
+import * as mixin from '../../mixins/uib-mixins'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [mixin.Constants] })
 export default class BSide extends Vue {
   $mq:any
   iconnames:any
