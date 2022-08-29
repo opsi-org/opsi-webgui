@@ -102,6 +102,7 @@ export default class BCountdowntimer extends Vue {
     if (this.refAlert !== undefined) {
       this.refAlert.alert(this.$t('message.session.expiresInMinutesDetails', time) as string, 'warning')
     } else {
+      // eslint-disable-next-line no-console
       console.warn(this.$t('message.session.expiresInMinutesDetails', time))
     }
   }

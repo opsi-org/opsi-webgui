@@ -87,6 +87,7 @@ const selections = namespace('selections')
 export default class BTNEvent extends Vue {
   $axios: any
   iconnames:any
+  $t:any
 
   isLoading:any = false
   show:boolean = false
@@ -195,6 +196,7 @@ export default class BTNEvent extends Vue {
         data[k] = { result: this.$t('message.success.title') }
       }
     }
+    // eslint-disable-next-line no-console
     console.error('Response: ', data)
     ref.set('object', data)
     ref.alert(this.$t('message.info.event') as string + ' "' + this.event + '"', 'info')

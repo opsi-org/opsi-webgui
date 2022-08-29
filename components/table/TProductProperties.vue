@@ -97,6 +97,7 @@ export default class TProductProperties extends Vue {
   $axios: any
   $nuxt: any
   $mq: any
+  $t:any
 
   @Prop({ }) id!: string
   @Prop({ default: '' }) errorText!: string
