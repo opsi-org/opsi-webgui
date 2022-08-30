@@ -28,7 +28,7 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     // 'components/**/*.spec.js',
-    'test/integration/',
+    'test/component/',
     'test/e2e/'
   ],
   coveragePathIgnorePatterns: [
