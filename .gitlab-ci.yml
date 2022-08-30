@@ -202,7 +202,7 @@ test:components:all:
     expire_in: 2 day
   # tags:
   #   - test-anna
-# test:test-e2e:
+# test:test-usecase:
 #   stage: test
 #   cache:
 #     <<: *dependencies_cache_develop  # inherit all global cache settings
@@ -213,10 +213,10 @@ test:components:all:
 #     - PORT=8888 nohup npm run libdev &
 #     - sleep 20
 #     - echo $PLAYWRIGHT_BROWSERS_PATH
-#     - npm run libtest:e2e
+#     - npm run libtest:usecase
 #   allow_failure: true
 #   artifacts:
-#     name: 'opsi-webgui-test-result-e2e'
+#     name: 'opsi-webgui-test-result-usecase'
 #     when: on_failure
 #     paths:
 #       - test-results/
