@@ -52,6 +52,7 @@ export default class TChanges extends Vue {
   $axios: any
   $mq: any
   $nuxt: any
+  $t:any
 
   filter: string = ''
   @auth.Getter public username!: string

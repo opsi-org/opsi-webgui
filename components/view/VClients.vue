@@ -121,6 +121,7 @@ export default class VClients extends Vue {
   $fetch:any
   $nuxt:any
   $router:any
+  $route: any
 
   id: string = 'Clients'
   rowId: string = ''
