@@ -49,6 +49,7 @@ export default class MTrackChanges extends Vue {
   iconnames: any
   $nuxt: any
   $axios: any
+  $t:any
   changelist: Array<ChangeObj> = []
   error: string = ''
 

@@ -5,11 +5,11 @@ const generalconfig = require('./playwright-config')
 const config = {
   // testDir: '../../../../', // /workspace/opsiweb
   testDir: '../../../', // /workspace/opsiweb/uib-components
-  testMatch: '*.test.*(int|integration).js',
+  testMatch: '*.test.component.js',
   fullyParallel: true,
   reporter: [
     ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-integration.xml' }]
+    ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }]
   ],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
