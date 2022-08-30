@@ -13,10 +13,10 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import * as mixin from '../../mixins/uib-mixins'
+import { Constants } from '../../mixins/uib-mixins'
 const changes = namespace('changes')
 
-@Component({ mixins: [mixin.Constants] })
+@Component({ mixins: [Constants] })
 export default class BTNDeleteObj extends Vue {
   iconnames: any
   @Prop({ }) item!: object

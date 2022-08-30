@@ -17,9 +17,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 // import Settings from '~/store/settings'
-import * as mixin from '../../mixins/uib-mixins'
+import { Constants, CallLogout } from '../../mixins/uib-mixins'
 
-@Component({ mixins: [mixin.Constants, mixin.CallLogout] })
+@Component({ mixins: [Constants, CallLogout] })
 export default class BTNLogout extends Vue {
   callLogout: any // from CallLogout
   iconnames: any // from Constants

@@ -14,9 +14,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import * as mixin from '../../mixins/uib-mixins'
+import { Constants } from '../../mixins/uib-mixins'
 
-@Component({ mixins: [mixin.Constants] })
+@Component({ mixins: [Constants] })
 export default class BTNHelpTooltip extends Vue {
   iconnames: any
   @Prop({ }) id!: string

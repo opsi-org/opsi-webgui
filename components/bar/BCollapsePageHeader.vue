@@ -83,10 +83,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
-import * as mixin from '../../mixins/uib-mixins'
+import { Constants } from '../../mixins/uib-mixins'
 import { ITableInfo } from '../../.utils/types/ttable'
 
-@Component({ mixins: [mixin.Constants] })
+@Component({ mixins: [Constants] })
 export default class BTooltipCollapseRow extends Vue {
   $mq: any
   iconnames: any
