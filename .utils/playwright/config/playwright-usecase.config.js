@@ -5,11 +5,11 @@ const generalconfig = require('./playwright-config')
 const config = {
   // testDir: '../../../../', // /workspace/opsiweb
   testDir: '../../../', // /workspace/opsiweb/uib-components
-  testMatch: '*.test.*(e2e).js',
+  testMatch: '*.test.*(usecase).js',
 
   reporter: [
     ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-e2e.xml' }]
+    ['junit', { outputFile: 'test-result-pw-reporter-usecase.xml' }]
   ],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,
