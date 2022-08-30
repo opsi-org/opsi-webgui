@@ -247,6 +247,7 @@ test:test-usecase:
   allow_failure: true
   except:
     - bug/cicd-build
+    - test/usecase
   only:
     - develop
     - tags
