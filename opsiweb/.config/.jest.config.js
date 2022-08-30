@@ -29,7 +29,7 @@ module.exports = {
   testPathIgnorePatterns: [
     // 'components/**/*.spec.js',
     'test/component/',
-    'test/e2e/'
+    'tests/usecase/'
   ],
   coveragePathIgnorePatterns: [
     'node_modules/',

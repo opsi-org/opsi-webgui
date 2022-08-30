@@ -227,7 +227,7 @@ test:test-unit:
         coverage_format: cobertura
         path: opsiweb/coverage/clover.xmlci
 
-test:test-e2e:
+test:test-usecase:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
@@ -241,7 +241,7 @@ test:test-e2e:
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:all:e2e || exit_code=$?
+    - npm-uib run test:all:usecase || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -251,13 +251,13 @@ test:test-e2e:
     - develop
     - tags
   artifacts:
-    name: "opsi-webgui-test-result-e2e"
+    name: "opsi-webgui-test-result-usecase"
     when: on_failure
     paths:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-e2e.xml
+      junit: opsiweb/test-result-pw-reporter-usecase.xml
     expire_in: 2 day
 
 test:test-components:changes:

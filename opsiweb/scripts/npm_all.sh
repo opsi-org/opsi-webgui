@@ -10,8 +10,8 @@ echo ".................check test:unit..............."
 npx jest --reporters jest-silent-reporter --ci --silent
 echo ".................check test:component........"
 npx playwright test test/component --quiet
-echo ".................check test:e2e................"
-npx playwright test test/e2e --quiet
+echo ".................check test:usecase................"
+npx playwright test test/usecase --quiet
 echo "\n\n\n"
 echo "###############################################"
 echo "################ TEST ALL END #################"

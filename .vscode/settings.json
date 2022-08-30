@@ -55,7 +55,7 @@
     // "volar.preview.backgroundColor": "#ccc",
     "playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
     "playwright.configs": [
-        "/workspace/opsiweb/.config/playwright-all-e2e.config.js",
+        "/workspace/opsiweb/.config/playwright-all-usecases.config.js",
         "/workspace/opsiweb/.config/playwright-all-components.config.js"
     ],
     "runOnSave.statusMessageTimeout": 5000,
