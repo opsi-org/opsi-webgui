@@ -260,49 +260,49 @@ test:test-usecase:
       junit: opsiweb/test-result-pw-reporter-usecase.xml
     expire_in: 2 day
 
-test:test-components:changes:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
-  dependencies:
-    - init:dry
-  except:
-    - tags # cause in tags we test all browsers (and all files)
-    - develop # cause in develop we test all files
-  only:
-    changes:
-      - opsiweb/pages/*
-      - opsiweb/components/*
-      - opsiweb/uib-components/*
-  script:
-    - cd opsiweb
-    - *define_globals
-    # get changed files (in comparison to develop branch)
-    - cd uib-components
-    - *get_changed_files
-    - cd ..
-    - echo "$testfilesUnique"
-    # install and start services
-    - npm-uib i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
-    - sleep 120
-    # run tests
-    - npm-uib run test:all:components $testfilesUnique || exit_code=$?
-    - npm run test:all:delete-empty-results
-    - exit $exit_code
-  # allow_failure: true
-  artifacts:
-    name: "opsi-webgui-test-result-components"
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - opsiweb/.storybook.log
-      - opsiweb/.dev.log
-    reports:
-      junit: ./opsiweb/test-result-pw-reporter-components.xml
-    expire_in: 2 day
+# test:test-components:changes:
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: test
+#   dependencies:
+#     - init:dry
+#   except:
+#     - tags # cause in tags we test all browsers (and all files)
+#     - develop # cause in develop we test all files
+#   only:
+#     changes:
+#       - opsiweb/pages/*
+#       - opsiweb/components/*
+#       - opsiweb/uib-components/*
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     # get changed files (in comparison to develop branch)
+#     - cd uib-components
+#     - *get_changed_files
+#     - cd ..
+#     - echo "$testfilesUnique"
+#     # install and start services
+#     - npm-uib i -D @playwright/test
+#     - npx playwright install
+#     - npx playwright install-deps
+#     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+#     - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+#     - sleep 120
+#     # run tests
+#     - npm-uib run test:all:components $testfilesUnique || exit_code=$?
+#     - npm run test:all:delete-empty-results
+#     - exit $exit_code
+#   # allow_failure: true
+#   artifacts:
+#     name: "opsi-webgui-test-result-components"
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - opsiweb/.storybook.log
+#       - opsiweb/.dev.log
+#     reports:
+#       junit: ./opsiweb/test-result-pw-reporter-components.xml
+#     expire_in: 2 day
 
 test:test-components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
