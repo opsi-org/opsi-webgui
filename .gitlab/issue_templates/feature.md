@@ -13,7 +13,7 @@
   - [ ] Manually check accessibility issues with all Themes (for example: using Accessibility Inspector)
 - Testing
   - [ ] Add / Update stories
-  - [ ] Add / Update integration test and check whether it has passed
+  - [ ] Add / Update component test and check whether it has passed
   - [ ] Add / Update snapshots
   - [ ] Test with all Themes
 - Linting

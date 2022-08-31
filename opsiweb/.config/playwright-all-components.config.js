@@ -6,11 +6,11 @@ const config = {
   // testDir: '../../../../', // /workspace/opsiweb
   // timeout: 1000 * 15, // 1ms * x sec
   testDir: '../', // /workspace/opsiweb/uib-components
-  testMatch: '*.test.*(int|integration|component|comp).js',
+  testMatch: '*.test.component.js',
   fullyParallel: true,
   reporter: [
     ['list'],
-    ['junit', { outputFile: 'test-result-pw-reporter-components.xml' }]
+    ['junit', { outputFile: 'test-result-pw-reporter-component.xml' }]
   ],
   testIgnore: generalconfig.testIgnore,
   workers: generalconfig.workers,

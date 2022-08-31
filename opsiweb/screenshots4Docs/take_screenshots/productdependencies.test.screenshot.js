@@ -8,7 +8,7 @@ test('Product Dependencies', async ({ page }) => {
   await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   const component = await page.locator('[data-testid="VProductProperty"]')
-  await page.setViewportSize({ width: 1280, height: 350 })
+  await page.setViewportSize({ width: 900, height: 550 })
   await page.evaluate((val) => { document.querySelector('.nav-title').innerHTML = val }, en['title.config'])
   await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, en['title.properties'])
   await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, en['title.dependencies'])
