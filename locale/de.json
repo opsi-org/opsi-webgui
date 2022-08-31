@@ -75,6 +75,7 @@
   "title.propertyvalues": "Property-Werte",
   "title.selectedElements": "Ausgewählte Elemente",
   "title.deleteClient": "Client löschen",
+  "title.whatsnew":"Was gibt's Neues",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",

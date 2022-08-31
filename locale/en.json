@@ -75,6 +75,7 @@
   "title.propertiesEmpty": "(empty)",
   "title.selectedElements": "Selected elements",
   "title.deleteClient": "Delete Client",
+  "title.whatsnew":"What's new",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
