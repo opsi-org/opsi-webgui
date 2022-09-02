@@ -57,14 +57,12 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
-      <template v-if="selectionClients.length>0" #head(actionRequest)>
+      <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
-          v-if="selectionClients.length>0 && selectionProducts.length>0"
           :action.sync="action"
           :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
-        <div v-else />
       </template>
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
