@@ -122,9 +122,10 @@ export default class TProductsNetboot extends Vue {
   $mq: any
   $t: any
   $route: any
+  $router:any
 
   @Prop() parentId!: string
-  @Prop() rowId!: string
+  @Prop() rowident!: string
   @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
   @Prop({ default: true }) multiselect!: boolean
@@ -304,11 +305,16 @@ export default class TProductsNetboot extends Vue {
   }
 
   routeRedirectToParent (to: string, rowIdent: string) {
-    this.routeRedirectWith(to, rowIdent)
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.routeRedirectWith(to, rowIdent)
+    }
   }
 
   isRouteActive (to: string, rowIdent: string) {
-    return this.$route.path.includes(to) && this.rowId === rowIdent
+    return this.$route.path.includes(to) && this.rowident === rowIdent
   }
 
   get secondColumnOpened () {
