@@ -34,7 +34,7 @@
 
   --text-small-size: 10px;
 
-  --component-height: 40px;
+  --component-height: 35px;
   --component-width: 200px;
 
   --max-height-window:500px;
@@ -48,7 +48,7 @@
   --margin-left-maincontent-if-sidebar-collpased:70px;
   --margin-left-maincontent-if-sidebar-expanded:205px;
   --color-hover: 155, 155, 155, .1;
-  --min-height-button: 31px;
+  --min-height-button: 35px;
   --min-line-height: 12px;
 }
 body {
