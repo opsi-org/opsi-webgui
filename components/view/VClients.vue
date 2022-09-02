@@ -286,8 +286,13 @@ export default class VClients extends Vue {
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
-    this.rowId = rowIdent
-    this.$router.push(to)
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.rowId = rowIdent
+      this.$router.push(to)
+    }
   }
 
   isRouteActive (to: string, rowIdent: string) {
