@@ -147,9 +147,9 @@ stages:
   fi
 
 .get_changed_files: &get_changed_files |
-  changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
+  changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
-  basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
+  basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
   echo "$basenames"
   testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
   # todo checking if each file in testfilesUnique exists
@@ -227,7 +227,7 @@ test:test-unit:
         coverage_format: cobertura
         path: opsiweb/coverage/clover.xmlci
 
-test:test-e2e:
+test:test-usecase:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
@@ -241,7 +241,7 @@ test:test-e2e:
     - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:all:e2e || exit_code=$?
+    - npm-uib run test:all:usecase || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -251,13 +251,13 @@ test:test-e2e:
     - develop
     - tags
   artifacts:
-    name: "opsi-webgui-test-result-e2e"
+    name: "opsi-webgui-test-result-usecase"
     when: on_failure
     paths:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-e2e.xml
+      junit: opsiweb/test-result-pw-reporter-usecase.xml
     expire_in: 2 day
 
 test:test-components:changes:
