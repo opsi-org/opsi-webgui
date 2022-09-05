@@ -114,6 +114,8 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: () => { return {} } }) tableInfo!: ITableInfo
 
   contentVisible: boolean = false
+  $router: any
+  $route: any
 
   @Watch('collapsed', { deep: true }) multiselectTogglerChanged () {
     this.contentVisible = !this.collapsed
@@ -130,13 +132,18 @@ export default class BTooltipCollapseRow extends Vue {
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
-    this.contentVisible = false
-    if (this.redirect) {
-      this.redirect(to, rowIdent)
-      return
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.contentVisible = false
+      if (this.redirect) {
+        this.redirect(to, rowIdent)
+        return
+      }
+      this.rowId = rowIdent
+      this.$router.push(to)
     }
-    this.rowId = rowIdent
-    this.$router.push(to)
   }
 
   isRouteActive (to: string, rowIdent: string) {

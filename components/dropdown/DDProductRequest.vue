@@ -48,7 +48,7 @@ const config = namespace('config-app')
 export default class DDProductRequest extends BDropdown {
   @Prop({ }) rowitem!: ITableRowItemProducts|undefined
   @Prop({ default: () => { return '---' } }) request!: string
-  @Prop({ default: () => { return ['---', 'none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
+  @Prop({ default: () => { return ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
   @Prop({ default: () => { return () => { return {} } } }) save!: Function
 
   preRequest: string = this.request

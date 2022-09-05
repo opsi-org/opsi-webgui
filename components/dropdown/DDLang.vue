@@ -37,6 +37,7 @@ const settings = namespace('settings')
 @Component({ mixins: [Constants] })
 export default class DDLang extends Vue {
   iconnames:any
+  $i18n:any
 
   @Prop({ default: false }) dropup!: boolean
 

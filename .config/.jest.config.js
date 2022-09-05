@@ -28,8 +28,8 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     // 'components/**/*.spec.js',
-    'test/integration/',
-    'test/e2e/'
+    'test/component/',
+    'test/usecase/'
   ],
   coveragePathIgnorePatterns: [
     '../node_modules/',

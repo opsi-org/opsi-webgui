@@ -66,14 +66,12 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
-      <template v-if="selectionClients.length>0" #head(actionRequest)>
-        <!-- v-if="selectionClients.length>0 && selectionProducts.length>0" -->
+      <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
           :action.sync="action"
           :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
-        <!-- <div v-else /> -->
       </template>
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
@@ -133,6 +131,7 @@ export default class TProductsLocalboot extends Vue {
   $t: any
   $fetch: any
   $route: any
+  $router: any
 
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -311,7 +310,12 @@ export default class TProductsLocalboot extends Vue {
   }
 
   routeRedirectToParent (to: string, rowIdent: string) {
-    this.routeRedirectWith(to, rowIdent)
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.routeRedirectWith(to, rowIdent)
+    }
   }
 
   isRouteActive (to: string, rowIdent: string) {

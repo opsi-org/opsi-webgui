@@ -92,6 +92,7 @@ export default class VProductProperty extends Vue {
   $fetch: any
   $mq: any
   $t: any
+  $router: any
 
   @Prop({ }) id!: string
   @Prop({ default: false }) 'asChild'!: string

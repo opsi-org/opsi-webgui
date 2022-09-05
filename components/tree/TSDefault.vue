@@ -132,6 +132,7 @@ export default class TSDefault extends Vue {
   $axios: any
   $fetch: any
   $fetchState: any
+  $t:any
 
   @Prop({}) selectionDefault!: Array<string>
   @Prop({}) type!: string
