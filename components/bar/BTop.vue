@@ -15,7 +15,10 @@
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
         <IconIOpsiLogo :light="true" class="mt-2" height="20" />
-        <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
+        <span class="ml-1 topbar_title">
+          <!-- {{ getTitleUppercase() }} -->
+          {{ $t('title.project') }}
+        </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
@@ -79,9 +82,9 @@ export default class BTop extends Vue {
     return localStorage.getItem('username')
   }
 
-  getTitleUppercase () {
-    return (this.$t('title.project') as string).toUpperCase()
-  }
+  // getTitleUppercase () {
+  //   return (this.$t('title.project') as string).toUpperCase()
+  // }
 }
 </script>
 

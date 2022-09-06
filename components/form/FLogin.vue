@@ -5,9 +5,10 @@
     :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
   >
     <IconIOpsiLogo :light="true" class="mb-3" height="35" />
-    <h1 data-testid="login_title" class="d-inline-block text-light projectTitle">
-      {{ getTitleUppercase() }}
-    </h1>
+    <h2 data-testid="login_title" class="d-inline-block text-light projectTitle">
+      <!-- {{ getTitleUppercase() }} -->
+      {{ $t('title.project') }}
+    </h2>
     <AlertAAlert ref="loginAlert" />
     <div @keyup.enter="doLogin">
       <b-form>
@@ -110,9 +111,9 @@ export default class FLogin extends Vue {
       })
   }
 
-  getTitleUppercase () {
-    return (this.$t('title.project') as string).toUpperCase()
-  }
+  // getTitleUppercase () {
+  //   return (this.$t('title.project') as string).toUpperCase()
+  // }
 
   get validUsername () {
     if (this.form.username !== '') { return null }
