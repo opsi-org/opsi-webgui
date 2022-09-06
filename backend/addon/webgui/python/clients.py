@@ -155,7 +155,7 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 					3
 				) = "efi" AS uefi,
 				COALESCE(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
+					(SELECT cs.values FROM CONFIG_STATE AS cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
 				) AS uefi_value
 			"""
