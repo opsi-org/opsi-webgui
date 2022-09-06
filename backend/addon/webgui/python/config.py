@@ -476,12 +476,14 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 			except Exception as err:  # pylint: disable=broad-except
 				logger.error("Could not save config: %s", err)
 				session.rollback()
-				errors.append({"id": config.configId, "error": err})
+				errors.append({"id": config.configId, "error": str(err)})
 	if errors:
 		message = "Failed to save: "
+		ids = []
 		for config in errors:
 			message += config.get("id") + "\n"
-		return RESTErrorResponse(message=message, http_status=status.HTTP_400_BAD_REQUEST)
+			ids.append(config.get("id"))
+		return RESTErrorResponse(message=message, http_status=status.HTTP_400_BAD_REQUEST, details=errors)
 
 	return RESTResponse(http_status=status.HTTP_200_OK, data=data[0].configId)
 
