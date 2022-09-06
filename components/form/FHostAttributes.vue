@@ -123,6 +123,78 @@
           <b-form-input id="depotLocalUrl" v-model="hostAttr.depotLocalUrl" :aria-label="$t('table.fields.depotLocalUrl')" type="text" />
         </template>
       </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="depotWebdavUrl">{{ $t('table.fields.depotWebdavUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="depotWebdavUrl" v-model="hostAttr.depotWebdavUrl" :aria-label="$t('table.fields.depotWebdavUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="repositoryLocalUrl">{{ $t('table.fields.repositoryLocalUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="repositoryLocalUrl" v-model="hostAttr.repositoryLocalUrl" :aria-label="$t('table.fields.repositoryLocalUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="repositoryRemoteUrl">{{ $t('table.fields.repositoryRemoteUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="repositoryRemoteUrl" v-model="hostAttr.repositoryRemoteUrl" :aria-label="$t('table.fields.repositoryRemoteUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="workbenchLocalUrl">{{ $t('table.fields.workbenchLocalUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="workbenchLocalUrl" v-model="hostAttr.workbenchLocalUrl" :aria-label="$t('table.fields.workbenchLocalUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="workbenchRemoteUrl">{{ $t('table.fields.workbenchRemoteUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="workbenchRemoteUrl" v-model="hostAttr.workbenchRemoteUrl" :aria-label="$t('table.fields.workbenchRemoteUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="networkAddress">{{ $t('table.fields.networkAddress') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="networkAddress" v-model="hostAttr.networkAddress" :aria-label="$t('table.fields.networkAddress')" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="maxBandwidth">{{ $t('table.fields.maxBandwidth') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="maxBandwidth" v-model="hostAttr.maxBandwidth" :aria-label="$t('table.fields.maxBandwidth')" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="isMasterDepot">{{ $t('table.fields.isMasterDepot') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="masterDepotId">{{ $t('table.fields.masterDepotId') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="masterDepotId" v-model="hostAttr.masterDepotId" :aria-label="$t('table.fields.masterDepotId')" type="text" />
+        </template>
+      </GridGFormItem>
     </template>
     <LazyDivDComponentGroup v-if="hostAttr" class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
