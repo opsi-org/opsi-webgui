@@ -48,8 +48,8 @@ def get_server_config(
 			cv.configId AS configId,
 			c.description AS description,
 			c.type AS type,
-			(SELECT GROUP_CONCAT(CONFIG_VALUE.value  SEPARATOR ',') FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
-			(SELECT GROUP_CONCAT(`value`  SEPARATOR ',') FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
+			(SELECT GROUP_CONCAT(CONFIG_VALUE.value  SEPARATOR '|') FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
+			(SELECT GROUP_CONCAT(`value`  SEPARATOR '|') FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
 			c.multiValue AS multiValue,
 			c.editable AS editable
 		"""
@@ -84,12 +84,12 @@ def get_server_config(
 				if id_prefix not in config_data:
 					id_prefix = "general"
 				if row_dict.get("multiValue"):
-					row_dict["value"] = row_dict.get("value", "").split(",")
+					row_dict["value"] = row_dict.get("value", "").split("|")
 				if row_dict.get("type") == "BoolConfig":
 					row_dict["value"] = bool_value(row_dict.get("value", ""))
-					row_dict["possibleValues"] = [bool_value(value) for value in row_dict.get("possibleValues", "").split(",")]
+					row_dict["possibleValues"] = [bool_value(value) for value in row_dict.get("possibleValues", "").split("|")]
 				else:
-					row_dict["possibleValues"] = row_dict.get("possibleValues", "").split(",")
+					row_dict["possibleValues"] = row_dict.get("possibleValues", "").split("|")
 
 				if row_dict.get("editable", False):
 					row_dict["newValue"] = ""
@@ -393,7 +393,7 @@ class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
 @conifg_router.post("/api/opsidata/config/server")
 @rest_api
 @read_only_check
-def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
+def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
 	request: Request, data: List[Config]
 ) -> RESTResponse:
 	"""
