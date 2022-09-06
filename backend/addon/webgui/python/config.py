@@ -10,6 +10,8 @@ webgui config methods
 
 
 import json
+from numbers import Integral
+from sqlite3 import IntegrityError
 from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
@@ -18,7 +20,13 @@ from sqlalchemy import and_, column, or_, select, table, text, update
 from sqlalchemy.dialects.mysql import insert
 
 from opsiconfd.logging import logger
-from opsiconfd.rest import RESTResponse, common_query_parameters, order_by, rest_api
+from opsiconfd.rest import (
+	RESTErrorResponse,
+	RESTResponse,
+	common_query_parameters,
+	order_by,
+	rest_api,
+)
 
 from .utils import bool_value, mysql, parse_client_list, read_only_check, unicode_value
 
@@ -400,24 +408,48 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	save config value
 	"""
 	logger.devel(data)
-
+	errors = []
 	for config in data:
 		logger.devel(config)
 
 		with mysql.session() as session:
-			values = {"configId": config.configId, "value": config.value, "isDefault": True}
-			stmt = (
-				update(
-					table(
-						"CONFIG_VALUE", column("isDefault")
-					)  # pylint: disable=consider-iterating-dictionary
+			try:
+				values = {"configId": config.configId, "value": config.value, "isDefault": True}
+				stmt = (
+					update(
+						table(
+							"CONFIG_VALUE", column("isDefault")
+						)  # pylint: disable=consider-iterating-dictionary
+					)
+					.where(text(f"configId = '{config.configId}' AND isDefault = 1"))
+					.values(**{"isDefault": False})
 				)
-				.where(text(f"configId = '{config.configId}' AND isDefault = 1"))
-				.values(**{"isDefault": False})
-			)
-			session.execute(stmt)
-			if isinstance(config.value, list):
-				for value in config.value:
+				session.execute(stmt)
+				if isinstance(config.value, list):
+					for value in config.value:
+						values = {"configId": config.configId, "value": value, "isDefault": True}
+						if get_config_value(config.configId, value):
+							stmt = (
+								update(
+									table(
+										"CONFIG_VALUE", *[column(name) for name in values.keys()]
+									)  # pylint: disable=consider-iterating-dictionary
+								)
+								.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
+								.values(**values)
+							)
+						else:
+							stmt = (
+								insert(
+									table(
+										"CONFIG_VALUE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+									)
+								)
+								.values(**values)
+								.on_duplicate_key_update(**values)
+							)
+				else:
+					value = config.value
 					values = {"configId": config.configId, "value": value, "isDefault": True}
 					if get_config_value(config.configId, value):
 						stmt = (
@@ -439,30 +471,17 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							.values(**values)
 							.on_duplicate_key_update(**values)
 						)
-			else:
-				value = config.value
-				values = {"configId": config.configId, "value": value, "isDefault": True}
-				if get_config_value(config.configId, value):
-					stmt = (
-						update(
-							table(
-								"CONFIG_VALUE", *[column(name) for name in values.keys()]
-							)  # pylint: disable=consider-iterating-dictionary
-						)
-						.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
-						.values(**values)
-					)
-				else:
-					stmt = (
-						insert(
-							table(
-								"CONFIG_VALUE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
-							)
-						)
-						.values(**values)
-						.on_duplicate_key_update(**values)
-					)
-			session.execute(stmt)
+				session.execute(stmt)
+				logger.debug("Config %s saved.", config.configId)
+			except Exception as err:  # pylint: disable=broad-except
+				logger.error("Could not save config: %s", err)
+				session.rollback()
+				errors.append({"id": config.configId, "error": err})
+	if errors:
+		message = "Failed to save: "
+		for config in errors:
+			message += config.get("id") + "\n"
+		return RESTErrorResponse(message=message, http_status=status.HTTP_400_BAD_REQUEST)
 
 	return RESTResponse(http_status=status.HTTP_200_OK, data=data[0].configId)
 
