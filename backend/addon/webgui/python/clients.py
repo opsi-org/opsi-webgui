@@ -146,14 +146,14 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 					),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1 LIMIT 1)
 				) AS depotId,
-				RIGHT(
-					COALESCE(
-						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
-						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault),
-						"   "
-					),
-					3
-				) = "efi" AS uefi,
+				IF(
+					(COALESCE(
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+					) LIKE '%efi%',
+					TRUE,
+					FALSE
+				) AS uefi,
 				COALESCE(
 					(SELECT cs.values FROM CONFIG_STATE AS cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
@@ -410,7 +410,10 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
 				h.opsiHostKey AS opsiHostKey,
 				h.oneTimePassword AS oneTimePassword,
 				IF(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") <> '[""]',
+					(COALESCE(
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+					) LIKE '%efi%',
 					TRUE,
 					FALSE
 				) AS uefi

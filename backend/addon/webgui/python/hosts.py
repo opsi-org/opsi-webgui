@@ -72,6 +72,12 @@ def get_host_data(
 		params["type"] = host_type
 		where = and_(where, text("h.type = :type"))  # type: ignore
 
+	# IF ( "efi" IN
+	# 				,
+	# 				TRUE,
+	# 				FALSE
+	# 			) AS uefi
+
 	with mysql.session() as session:
 		query = (
 			select(
@@ -88,14 +94,15 @@ def get_host_data(
 			h.lastSeen AS lastSeen,
 			h.opsiHostKey AS opsiHostKey,
 			h.oneTimePassword AS oneTimePassword,
-			RIGHT(
-				COALESCE(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
-					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault),
-					"   "
-				),
-				3
-			) = "efi" AS uefi
+			IF(
+					(COALESCE(
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+					) LIKE '%efi%',
+					TRUE,
+					FALSE
+				) AS uefi
+
 		"""
 				)
 			)
