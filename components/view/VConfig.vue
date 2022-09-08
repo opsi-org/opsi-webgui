@@ -13,7 +13,7 @@
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
         </template>
         <DivDScrollResult>
-          <LazyFormFHostAttributes v-if="id" :id="id" />
+          <LazyFormFHostAttributes v-if="id" :id="id" :type="type" />
           <div v-else style="height: 70vh;" />
         </DivDScrollResult>
       </b-tab>
@@ -24,8 +24,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
-export default class VClientConfig extends Vue {
+export default class VConfig extends Vue {
   @Prop({ }) id!: string
+  @Prop({ }) type!: string
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string
 
