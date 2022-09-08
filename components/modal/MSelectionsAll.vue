@@ -5,6 +5,7 @@
       class="mt-2 border-0"
       size="md"
       tabindex="0"
+      :title="$t('title.selectedElements')"
       @click="show = !show"
     >
       <!-- class="h-100" -->
