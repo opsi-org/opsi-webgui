@@ -196,7 +196,7 @@
         </template>
       </GridGFormItem>
     </template>
-    <LazyDivDComponentGroup v-if="hostAttr" class="float-right">
+    <LazyDivDComponentGroup v-if="hostAttr && hostAttr.type !== 'OpsiDepotserver'" class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
@@ -309,8 +309,23 @@ export default class FHostAttributes extends Vue {
     this.isLoading = false
   }
 
-  updateServerAttributes () {
-    return ''
+  async updateServerAttributes () {
+    this.isLoading = true
+    const attr = this.hostAttr
+    delete attr.type
+    delete attr.created
+    delete attr.lastSeen
+    await this.$axios.$put(`/api/opsidata/servers/${this.hostAttr.hostId}`, attr)
+      .then(() => {
+        const ref = (this.$refs.hostAttrUpdateAlert as any)
+        ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
+        this.$fetch()
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.hostAttrUpdateAlert as any)
+        ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
+      })
+    this.isLoading = false
   }
 
   async updateAttributes () {
