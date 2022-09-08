@@ -1,5 +1,5 @@
 <template>
-  <ViewVConfig :id="id" :as-child="asChild" closeroute="/clients/" />
+  <ViewVConfig :id="id" :as-child="asChild" closeroute="/clients/" type="clients" />
 </template>
 
 <script lang="ts">
