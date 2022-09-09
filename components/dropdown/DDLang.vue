@@ -7,8 +7,8 @@
       alt="select theme"
       :aria-label="$t('button.lang.tooltip')"
       :title="$t('button.lang.tooltip')"
-      class="px-2 btn btn-primary btn-md w-100 text-left"
-      :class="{'pt-0 pb-0 pl-3': $mq=='mobile'}"
+      class="px-2 btn btn-primary text-left"
+      :class="{'pt-0 pb-0 pl-3 w-100': $mq=='mobile'}"
       variant="primary"
       :dropup="dropup"
     >
@@ -73,12 +73,12 @@ export default class DDLang extends Vue {
 #language .dropdown-toggle::after{
   display:none;
 }
-
 #language .selected,
+#language .selected > a.dropdown-item,
 #language .selected:hover {
   background-color: var(--primary) !important;
 }
-#language .selected > a:hover {
+#language .selected > a.dropdown-item:hover {
   background-color: var(--primary-dark) !important;
 }
 </style>
