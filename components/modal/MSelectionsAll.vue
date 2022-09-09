@@ -1,8 +1,9 @@
 <template>
   <div data-testid="MSelectionsAll">
     <b-button
-      variant="outline-primary"
-      class="mt-2 border-0"
+      variant="primary"
+      class="mt-2 border-0 text-left"
+      :class="{ 'pl-3': $mq=='mobile' }"
       size="md"
       tabindex="0"
       :title="$t('title.selectedElements')"
