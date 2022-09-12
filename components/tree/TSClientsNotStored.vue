@@ -72,7 +72,7 @@ export default class TSClientsNotStored extends Vue {
   background-color: var(--hover);
 }
 .treeselect_idselect.vue-treeselect--single .vue-treeselect__option--selected{
-  color: black;
+  color: var(--light);
   background-color: var(--primary);
 }
 </style>

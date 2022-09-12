@@ -6,6 +6,7 @@
       class="treeselect_idselect"
       :options="depotIds"
       :placeholder="$t('form.depot')"
+      :always-open="true"
       @input="$emit('update:id', idselection)"
     />
   </div>
@@ -65,7 +66,7 @@ export default class TSDepotsNotStored extends Vue {
   background-color: var(--hover);
 }
 .treeselect_idselect.vue-treeselect--single .vue-treeselect__option--selected{
-  color: black;
+  color: var(--light);
   background-color: var(--primary);
 }
 </style>
