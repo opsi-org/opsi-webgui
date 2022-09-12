@@ -3,7 +3,6 @@
     <AlertAAlert ref="hostAttrErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <AlertAAlert ref="hostAttrUpdateAlert" />
     <GridGFormItem>
       <template #label>
         <span class="id">{{ $t('table.fields.id') }}</span>
@@ -196,6 +195,7 @@
         </template>
       </GridGFormItem>
     </template>
+    <AlertAAlert ref="hostAttrUpdateAlert" />
     <LazyDivDComponentGroup v-if="hostAttr && hostAttr.type !== 'OpsiDepotserver'" class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
