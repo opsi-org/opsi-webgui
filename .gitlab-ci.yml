@@ -311,7 +311,7 @@ test:test-components:
     - init:dry
   except:
     - bug/cicd-build
-    - tags # cause in tags we test all browsers
+    # - tags # cause in tags we test all browsers
   only:
     - develop # cause in develop we test all files, but only chromium browser
   script:
@@ -338,38 +338,38 @@ test:test-components:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
 
-test:test-components:all-variants:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
-  dependencies:
-    - init:dry
-  except:
-    - bug/cicd-build
-  only:
-    - tags # cause in tags we test each file and browser
-  script:
-    - cd opsiweb
-    - *define_globals
-    - npm-uib i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log & # npm-cause package.json already created through npm-uib command in this task
-    - PORT=3003 nohup npm run story > .storybook.log & # npm-cause package.json already created through npm-uib command in this task
-    - sleep 60
-    - npm-uib run test:all:components-devices || exit_code=$?
-    - npm run test:all:delete-empty-results
-    - exit $exit_code
-  # allow_failure: true
-  artifacts:
-    name: "opsi-webgui-test-result-components"
-    when: on_failure
-    paths:
-      - ./**/*/test-results/
-      - opsiweb/.storybook.log
-      - opsiweb/.dev.log
-    reports:
-      junit: ./opsiweb/test-result-pw-reporter-components.xml
-    expire_in: 2 day
+# test:test-components:all-variants:
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: test
+#   dependencies:
+#     - init:dry
+#   except:
+#     - bug/cicd-build
+#   only:
+#     - tags # cause in tags we test each file and browser
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     - npm-uib i -D @playwright/test
+#     - npx playwright install
+#     - npx playwright install-deps
+#     - PORT=3003 nohup npm run dev > .dev.log & # npm-cause package.json already created through npm-uib command in this task
+#     - PORT=3003 nohup npm run story > .storybook.log & # npm-cause package.json already created through npm-uib command in this task
+#     - sleep 60
+#     - npm-uib run test:all:components-devices || exit_code=$?
+#     - npm run test:all:delete-empty-results
+#     - exit $exit_code
+#   # allow_failure: true
+#   artifacts:
+#     name: "opsi-webgui-test-result-components"
+#     when: on_failure
+#     paths:
+#       - ./**/*/test-results/
+#       - opsiweb/.storybook.log
+#       - opsiweb/.dev.log
+#     reports:
+#       junit: ./opsiweb/test-result-pw-reporter-components.xml
+#     expire_in: 2 day
 
 # .pylint: &pylint |
 #   echo "---------------------------------------"
