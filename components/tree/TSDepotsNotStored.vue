@@ -6,7 +6,7 @@
       class="treeselect_idselect"
       :options="depotIds"
       :placeholder="$t('form.depot')"
-      :always-open="true"
+      :always-open="false"
       @input="$emit('update:id', idselection)"
     />
   </div>
