@@ -118,6 +118,7 @@ export default class DDTheme extends Vue {
 #theme .selected,
 #theme .selected > a.dropdown-item,
 #theme .selected:hover {
+  color: var(--light) !important;
   background-color: var(--primary) !important;
 }
 #theme .selected > a.dropdown-item:hover {

@@ -76,6 +76,7 @@ export default class DDLang extends Vue {
 #language .selected,
 #language .selected > a.dropdown-item,
 #language .selected:hover {
+  color: var(--light) !important;
   background-color: var(--primary) !important;
 }
 #language .selected > a.dropdown-item:hover {
