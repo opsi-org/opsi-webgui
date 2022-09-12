@@ -147,8 +147,7 @@ def get_client_config(
 		)  # pylint: disable=redefined-outer-name
 
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
-		# query = pagination(query, commons)  # type: ignore[assignment,arg-type]
-		logger.devel(query)
+
 		result = session.execute(query, params)
 		result = result.fetchall()
 		config_data: dict = {"general": [], "clientconfig": [], "opsi-script": [], "opsiclientd": [], "software-on-demand": []}
@@ -178,7 +177,6 @@ def get_client_config(
 					row_dict["newValues"] = []
 				config_data[id_prefix].append(row_dict)
 
-		logger.devel(count)
 		return RESTResponse(data=config_data)
 
 
@@ -229,13 +227,11 @@ def get_client_configs(
 				isouter=True,
 			)
 			.where(where)
-			# .where(text("c.configId='testentry2'"))
 			.group_by(text("c.configId"))
 		)  # pylint: disable=redefined-outer-name
-		# GROUP_CONCAT(IF(cs.values IS NOT NULL, cs.values, cv.value) SEPARATOR ';') AS clientValues,
+
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
-		# query = pagination(query, commons)  # type: ignore[assignment,arg-type]
-		logger.devel(query)
+
 		result = session.execute(query, params)
 		result = result.fetchall()
 		configs: dict = {"general": [], "clientconfig": [], "opsi-script": [], "opsiclientd": [], "software-on-demand": []}
@@ -245,7 +241,6 @@ def get_client_configs(
 		for row in result:
 			if row is not None:
 				config = dict(row)
-				logger.devel("1: %s", config)
 
 				id_prefix = config.get("configId", "").split(".")[0]
 				if id_prefix in server_configs:
@@ -255,10 +250,7 @@ def get_client_configs(
 
 				config["multiValue"] = bool(config.get("multiValue", ""))
 				config["editable"] = bool(config.get("editable", ""))
-				# config["clientsWithDiff"] = ""
-				logger.devel("########")
-				logger.devel(config.get("clientValues", ""))
-				logger.devel("########")
+
 				if not config.get("clientValues"):
 					config["clientValues"] = ""
 				if not config.get("clientsWithDiff"):
@@ -270,41 +262,15 @@ def get_client_configs(
 					config["defaultValue"] = bool_value(config.get("defaultValue", ""))
 					config["clientValues"] = [bool_value(value) for value in config.get("clientValues", "").split(";")]
 				else:
-					logger.devel(config.get("clientValues", ""))
-					# logger.devel(unicode_value(config.get("clientValues", "")))
-
 					config["value"] = unicode_value(config.get("value", ""))
 					config["possibleValues"] = unicode_value(config.get("possibleValues", ""))
 					config["defaultValue"] = unicode_value(config.get("defaultValue", ""))
 					if ";" in config.get("clientValues", ""):
-						logger.devel(unicode_value(config.get("clientValues", "").split(";")))
 						config["clientValues"] = [unicode_value(value) for value in config.get("clientValues", "").split(";")]
 					elif config.get("multiValue", False):
-						logger.devel(unicode_value(config.get("clientValues", "")))
 						config["clientValues"] = [unicode_value(config.get("clientValues", ""))]
 					else:
-						logger.devel(unicode_value(config.get("clientValues", "")))
 						config["clientValues"] = unicode_value(config.get("clientValues", ""))
-
-					logger.devel(config.get("possibleValues", []))
-					logger.devel("CLIENT VALUES: %s", config.get("clientValues", []))
-					logger.devel("CLIENT VALUES: %s", type(config.get("clientValues", [])))
-					logger.devel(config.get("value", []))
-
-					logger.devel(config.get("clientValues", []) == config.get("values", []))
-
-					# if (
-					# 	(
-					# 		len(config.get("clientsWithDiff", "").split(";")) != len(selectedClients)
-					# 		and config.get("value", "") != config.get("defaultValue", "")
-					# 	)
-					# 	or config.get("value", "") == "mixed"
-					# 	or config.get("clientValues", []) == config.get("values", [])
-					# ):
-					# 	config["allClientValuesEqual"] = False
-					# else:
-					# 	config["allClientValuesEqual"] = True
-
 					p_values = config.get("possibleValues", [])
 
 					for values in config.get("clientValues", []):
@@ -314,7 +280,6 @@ def get_client_configs(
 							p_values.append(values)
 
 					config["possibleValues"] = list(dict.fromkeys(p_values))
-					logger.devel(config.get("possibleValues", []))
 
 				if (
 					(
@@ -329,37 +294,26 @@ def get_client_configs(
 				else:
 					config["allClientValuesEqual"] = True
 
-				logger.devel("2: %s", config)
-				logger.devel(config.get("value", ""))
-				logger.devel(config.get("clientValues", ""))
-				logger.devel(config.get("defaultValue", ""))
-				logger.devel(config.get("clientsWithDiff", ""))
-
 				if not config.get("allClientValuesEqual") or config.get("value", "") != config.get("defaultValue", ""):
 					config["anyClientDiffrentFromDefault"] = True
 				else:
 					config["anyClientDiffrentFromDefault"] = False
 
-				# logger.devel(config.get("clientsWithDiff", "").split(";"))
-				# logger.devel(len(config.get("clientsWithDiff", "").split(";")))
-				# logger.devel(config.get("value", "") == "mixed" or config.get("value", "") != config.get("defaultValue", ""))
 				config["clients"] = {}
 				if (
 					config.get("clientsWithDiff", "")
 					and (not config.get("allClientValuesEqual", False) or len(config.get("clientsWithDiff", "").split(";")) == len(selectedClients))  # len 1
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
-					# logger.devel("mixed")
+
 					clients = config.get("clientsWithDiff", "").split(";")
 
 					for idx, client in enumerate(clients):
 						config["clients"][client] = {}
-						# if config.get("allClientValuesEqual", False):
-						# 	idx = 0
 						config["clients"][client] = config.get("clientValues", [])[idx]
 
-				# del config["clientValues"]
-				# del config["clientsWithDiff"]
+				del config["clientValues"]
+				del config["clientsWithDiff"]
 				del config["value"]
 				for client in selectedClients:
 					if client not in config.get("clients", []):
@@ -370,43 +324,8 @@ def get_client_configs(
 					config["newValues"] = []
 
 				count = count + 1
-				logger.devel("3: %s", config)
 				configs[id_prefix].append(config)
 
-				# config["multiValue"] = bool(config.get("multiValue", ""))
-				# config["editable"] = bool(config.get("editable", ""))
-				# id_prefix = config.get("configId", "").split(".")[0]
-				# if id_prefix in server_configs:
-				# 	continue
-				# if id_prefix not in configs:
-				# 	id_prefix = "general"
-				# if config.get("type") == "BoolConfig":
-				# 	config["value"] = bool_value(config.get("value", ""))
-				# 	config["defaultValue"] = bool_value(config.get("defaultValue", ""))
-				# 	config["possibleValues"] = [bool_value(value) for value in config.get("possibleValues", "").split(";")]
-
-				# else:
-				# 	config["value"] = unicode_config(config.get("value", ""), config["multiValue"])
-				# 	config["defaultValue"] = unicode_config(config.get("defaultValue", ""), config["multiValue"])
-				# 	config["possibleValues"] = [unicode_value(value) for value in config.get("possibleValues", "").split(";")]
-				# logger.devel(config)
-				# if config.get("clients") and config.get("value") == "mixed" and config.get("defaultValue") != config.get("valueDetails"):
-				# 	config["clients"] = config.get("clients", "").split(";")
-
-				# 	config["values"] = {}
-				# 	for idx, client in enumerate(config.get("clients", [])):  #
-
-				# 		if config.get("type") == "BoolConfig":
-				# 			config["values"][client] = bool_value(config.get("valueDetails", "").split(";")[idx])
-				# 		else:
-				# 			config["values"][client] = unicode_config(config.get("valueDetails", "").split(";")[idx], config["multiValue"])
-				# else:
-				# 	del config["valueDetails"]
-				# count = count + 1
-				# logger.devel(config)
-				# configs[id_prefix].append(config)
-
-		logger.devel(count)
 		return RESTResponse(data=configs)
 
 
@@ -430,10 +349,8 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	"""
 	save config value
 	"""
-	logger.devel(data)
 	errors = []
 	for config in data:
-		logger.devel(config)
 
 		with mysql.session() as session:
 			try:
@@ -520,11 +437,8 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 	Save config State
 	"""
 
-	logger.devel(data.clientIds)
-	logger.devel(data.configs)
 	for client in data.clientIds:
 		for config in data.configs:
-			logger.devel(config)
 
 			if isinstance(config.value, bool):
 				cs_values = f"[{config.value}]".lower()
