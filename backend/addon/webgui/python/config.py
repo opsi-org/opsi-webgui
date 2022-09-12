@@ -192,7 +192,12 @@ def get_client_configs(
 	Get client config data.
 	"""
 
+	where = text("")
 	params: dict = {"clients": selectedClients, "num_clients": len(selectedClients)}
+	if commons.get("filterQuery"):
+		where = text("(c.configId LIKE :search)")
+		params["search"] = f"%{commons['filterQuery']}%"
+
 	with mysql.session() as session:
 		query = (
 			select(
@@ -207,7 +212,8 @@ def get_client_configs(
 				"mixed",
 				IF(cs.values IS NOT NULL, cs.values, GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';'))
 			) AS value,
-			GROUP_CONCAT(IF(cs.values IS NOT NULL, cs.values, cv.value) SEPARATOR ';') AS clientValues,
+			GROUP_CONCAT(DISTINCT cs.values SEPARATOR ';') AS clientValuesOld,
+			(SELECT GROUP_CONCAT(cs.values SEPARATOR ';') FROM CONFIG_STATE AS cs WHERE cs.configId=c.configId AND cs.objectId IN :clients GROUP BY cs.configId) AS clientValues,
 			GROUP_CONCAT(DISTINCT cv.value SEPARATOR ';') AS possibleValues,
 			c.multiValue AS multiValue,
 			c.editable AS editable,
@@ -222,11 +228,11 @@ def get_client_configs(
 				text(("c.configId=cs.configId AND cs.objectId IN :clients OR cs.objectId IS NULL")),
 				isouter=True,
 			)
-			# .where(text("c.configId='opsi-linux-bootimage.append'"))
+			.where(where)
 			# .where(text("c.configId='testentry2'"))
 			.group_by(text("c.configId"))
 		)  # pylint: disable=redefined-outer-name
-
+		# GROUP_CONCAT(IF(cs.values IS NOT NULL, cs.values, cv.value) SEPARATOR ';') AS clientValues,
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
 		# query = pagination(query, commons)  # type: ignore[assignment,arg-type]
 		logger.devel(query)
@@ -249,7 +255,14 @@ def get_client_configs(
 
 				config["multiValue"] = bool(config.get("multiValue", ""))
 				config["editable"] = bool(config.get("editable", ""))
-				config["clientsWithDiff"] = ""
+				# config["clientsWithDiff"] = ""
+				logger.devel("########")
+				logger.devel(config.get("clientValues", ""))
+				logger.devel("########")
+				if not config.get("clientValues"):
+					config["clientValues"] = ""
+				if not config.get("clientsWithDiff"):
+					config["clientsWithDiff"] = ""
 
 				if config.get("type", "") == "BoolConfig":
 					config["value"] = bool_value(config.get("value", ""))
@@ -280,17 +293,17 @@ def get_client_configs(
 
 					logger.devel(config.get("clientValues", []) == config.get("values", []))
 
-					if (
-						(
-							len(config.get("clientsWithDiff", "").split(";")) != len(selectedClients)
-							and config.get("value", "") != config.get("defaultValue", "")
-						)
-						or config.get("value", "") == "mixed"
-						or config.get("clientValues", []) == config.get("values", [])
-					):
-						config["allClientValuesEqual"] = False
-					else:
-						config["allClientValuesEqual"] = True
+					# if (
+					# 	(
+					# 		len(config.get("clientsWithDiff", "").split(";")) != len(selectedClients)
+					# 		and config.get("value", "") != config.get("defaultValue", "")
+					# 	)
+					# 	or config.get("value", "") == "mixed"
+					# 	or config.get("clientValues", []) == config.get("values", [])
+					# ):
+					# 	config["allClientValuesEqual"] = False
+					# else:
+					# 	config["allClientValuesEqual"] = True
 
 					p_values = config.get("possibleValues", [])
 
@@ -302,6 +315,19 @@ def get_client_configs(
 
 					config["possibleValues"] = list(dict.fromkeys(p_values))
 					logger.devel(config.get("possibleValues", []))
+
+				if (
+					(
+						len(config.get("clientsWithDiff", "").split(";")) != len(selectedClients)
+						and config.get("value", "") != config.get("defaultValue", "")
+					)
+					or config.get("value", "") == "mixed"
+					or config.get("clientValues", []) == config.get("values", [])
+					or config.get("clientValues", [])[0] == config.get("defaultValue", [])
+				):
+					config["allClientValuesEqual"] = False
+				else:
+					config["allClientValuesEqual"] = True
 
 				logger.devel("2: %s", config)
 				logger.devel(config.get("value", ""))
@@ -320,23 +346,20 @@ def get_client_configs(
 				config["clients"] = {}
 				if (
 					config.get("clientsWithDiff", "")
-					and (not config.get("allClientValuesEqual", False) or len(config.get("clientsWithDiff", "").split(";")) == 1)
+					and (not config.get("allClientValuesEqual", False) or len(config.get("clientsWithDiff", "").split(";")) == len(selectedClients))  # len 1
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
 					# logger.devel("mixed")
 					clients = config.get("clientsWithDiff", "").split(";")
 
 					for idx, client in enumerate(clients):
-						config["clients"][client] = {}  #
-						if config.get("allClientValuesEqual", False):
-							idx = 0
-						if config.get("type") == "BoolConfig":
-							config["clients"][client] = config.get("clientValues", [])[idx]
-						else:
-							config["clients"][client] = config.get("clientValues", [])[idx]
+						config["clients"][client] = {}
+						# if config.get("allClientValuesEqual", False):
+						# 	idx = 0
+						config["clients"][client] = config.get("clientValues", [])[idx]
 
-				del config["clientValues"]
-				del config["clientsWithDiff"]
+				# del config["clientValues"]
+				# del config["clientsWithDiff"]
 				del config["value"]
 				for client in selectedClients:
 					if client not in config.get("clients", []):
