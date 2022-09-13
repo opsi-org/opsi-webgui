@@ -20,6 +20,6 @@ module.exports.callStoryIdMock = async (page, fullId, id, path, result) => {
   await apiMock(page, path, result)
 }
 // module.exports.callStoryId = (page, fullId, id) => this.callStory(page, `iframe.html?id=${fullId}--${id}&args=&viewMode=story'`)
-module.exports.callStoryId = (page, fullId, id) => page.goto(`http://localhost:3003/iframe.html?viewMode=story&id=${fullId}--${id}&args=`)
+module.exports.callStoryId = async (page, fullId, id) => await page.goto(`http://localhost:3003/iframe.html?viewMode=story&id=${fullId}--${id}&args=`, {waitUntil: "networkidle2"})
 // module.exports.callStory = (page, path) => page.goto(`http://localhost:3003/${path}`)
 module.exports.callStory = (page, path) => page.goto(`http://localhost:3003/?path=${path}`)
