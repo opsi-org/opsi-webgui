@@ -55,7 +55,7 @@
     // "volar.preview.backgroundColor": "#ccc",
     "playwright.cliPath": "/workspace/opsiweb/node_modules/@playwright/test/lib/cli.js",
     "playwright.configs": [
-        "/workspace/opsiweb/.config/playwright-all-e2e.config.js",
+        "/workspace/opsiweb/.config/playwright-all-usecases.config.js",
         "/workspace/opsiweb/.config/playwright-all-components.config.js"
     ],
     "runOnSave.statusMessageTimeout": 5000,
@@ -82,7 +82,7 @@
         //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
         // },
         // {
-        //   "match": "\\.test.integration.js$",
+        //   "match": "\\.test.component.js$",
         //   "runIn": "terminal",
         //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
         // },
@@ -101,7 +101,7 @@
                 "singleInstance": true,
                 "command": "npm run clean && npm-uib i"
             },
-            // { // test opened file (if .vue/.stories.js/.test.integration.js )
+            // { // test opened file (if .vue/.stories.js/.test.component.js )
             //   "name": "$(testing-run-icon) lint",
             //   "tooltip": "Run Lint on opened file",
             //   "singleInstance": true,
@@ -109,32 +109,32 @@
             //   "cwd": "/workspace/opsiweb", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
             //   "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'", // This is executed in the terminal.
             // },
-            { // test opened file (if .vue/.stories.js/.test.integration.js )
+            { // test opened file (if .vue/.stories.js/.test.component.js )
                 "name": "$(testing-run-icon) current",
                 "tooltip": "Run UI Test on opened file",
                 "singleInstance": true,
                 "color": "defaultColor",
                 "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-                "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.integration.js test:all:components-devices /" // This is executed in the terminal.
+                "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.component.js test:all:components-devices /" // This is executed in the terminal.
             },
-            { // update snapshots for opened file (if .vue/.stories.js/.test.integration.js )
+            { // update snapshots for opened file (if .vue/.stories.js/.test.component.js )
                 "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
                 "name": "$(device-camera) current",
                 "tooltip": "Update UI Snapshot",
                 "color": "white",
                 "singleInstance": true,
-                "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.integration.js test:all:components-devices:update /" // This is executed in the terminal.
+                "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.component.js test:all:components-devices:update /" // This is executed in the terminal.
             },
-            { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.integration.js ) //
+            { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.component.js ) //
                 // may not work if currently in develop
                 "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
                 "name": "$(testing-run-all-icon) changed",
                 "tooltip": "Run test for changed files",
                 "color": "white",
                 "singleInstance": true,
-                "command": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.integration.js test:all:components /" // This is executed in the terminal.
+                "command": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.component.js test:all:components /" // This is executed in the terminal.
             },
-            { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.integration.js ) //
+            { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.component.js ) //
                 // may not work if currently in develop
                 "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
                 "name": "$(package) buildDist",
@@ -149,7 +149,7 @@
                 "tooltip": "Take screenshots for documentation",
                 "color": "white",
                 "singleInstance": true,
-                "command": "npx playwright test take_screenshots/"
+                "command": "npx playwright test -c playwright-screenshots.config.js take_screenshots/"
             }
         ]
     },
@@ -252,7 +252,7 @@
         "overview"
     ],
     "gitlens.heatmap.toggleMode": "file",
-    "playwrightrunner.playwrightCommand": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.integration.js test:all:components /",
+    "playwrightrunner.playwrightCommand": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.component.js test:all:components /",
     "playwrightrunner.playwrightConfigPath": "../opsiweb/.config/playwright-all-components.config.js",
     "explorer.sortOrder": "mixed"
 }
