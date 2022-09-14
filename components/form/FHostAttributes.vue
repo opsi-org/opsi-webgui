@@ -272,35 +272,13 @@ export default class FHostAttributes extends Vue {
       })
   }
 
-  async updateClientAttributes () {
+  async update (attr, endPoint) {
     this.isLoading = true
-    const attr = this.hostAttr
-    delete attr.type
-    delete attr.created
-    delete attr.lastSeen
-    delete attr.uefi
-    await this.$axios.$put(`/api/opsidata/clients/${this.hostAttr.hostId}`, attr)
+    await this.$axios.$put(endPoint, attr)
       .then(() => {
-        const ref = (this.$refs.hostAttrUpdateAlert as any)
-        ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
-        this.setUEFI()
-        this.$fetch()
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.hostAttrUpdateAlert as any)
-        ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
-      })
-    this.isLoading = false
-  }
-
-  async updateServerAttributes () {
-    this.isLoading = true
-    const attr = this.hostAttr
-    delete attr.type
-    delete attr.created
-    delete attr.lastSeen
-    await this.$axios.$put(`/api/opsidata/servers/${this.hostAttr.hostId}`, attr)
-      .then(() => {
+        // if (this.type === 'clients') {
+        //   this.setUEFI()
+        // }
         const ref = (this.$refs.hostAttrUpdateAlert as any)
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
         this.$fetch()
@@ -313,11 +291,21 @@ export default class FHostAttributes extends Vue {
   }
 
   async updateAttributes () {
-    if (this.hostAttr.type === 'OpsiClient') {
-      await this.updateClientAttributes()
-    } else {
-      await this.updateServerAttributes()
+    let endPoint: any = ''
+    const attr = this.hostAttr
+    delete attr.type
+    delete attr.created
+    delete attr.lastSeen
+    if (this.type === 'clients') {
+      this.setUEFI()
     }
+    if (this.hostAttr.type === 'OpsiClient') {
+      delete attr.uefi
+      endPoint = `/api/opsidata/clients/${this.hostAttr.hostId}`
+    } else {
+      endPoint = `/api/opsidata/servers/${this.hostAttr.hostId}`
+    }
+    await this.update(attr, endPoint)
   }
 }
 </script>
