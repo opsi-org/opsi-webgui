@@ -11,13 +11,17 @@
           type="small"
           :filter="filter"
           :filterfields="['configId']"
-          :fields="['configId', 'description', 'value']"
+          :fields="['configId', 'value']"
           :items="v"
         >
           <!-- :noheader="true" -->
           <!-- :fields="['configId', 'description', 'value']" -->
           <template #cell()="row">
             {{ row.value }}
+          </template>
+          <template #cell(configId)="row">
+            <span :id="'configId'+row.value">{{ row.value }}</span>
+            <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
           </template>
         </TableTDefault>
       </b-collapse>
