@@ -1,6 +1,14 @@
 <template>
   <div data-testid="THostParam">
     <InputIFilterTChanges :filter.sync="filterLocal" />
+    <!-- <template v-if="id">
+      <span v-for="v,k in hostparams" :key="k">
+        <b-button class="text-left font-weight-bold" block v-b-toggle="'collapse-'+k" variant="transparent">{{k}}</b-button>
+        <b-collapse :id="'collapse-'+k" accordion="hostparam">
+          <b-table-lite :fields="['configId', 'description', 'value']" :items="v"></b-table-lite>
+        </b-collapse>
+      </span>
+    </template> -->
     <span v-for="v,k in hostparams" :key="k">
       <b-button class="text-left font-weight-bold" block v-b-toggle="'collapse-'+k" variant="transparent">{{k}}</b-button>
       <b-collapse :id="'collapse-'+k" accordion="hostparam">
