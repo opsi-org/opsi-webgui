@@ -231,43 +231,29 @@ export default class FHostAttributes extends Vue {
     this.$fetch()
   }
 
-  async fetchClient () {
-    if (this.id) {
-      this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
-        .then((response) => {
-          this.hostAttr = response[0]
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrErrorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
-          this.errorText = this.$t('message.error.defaulttext') as string
-        })
-      this.isLoading = false
-    }
-  }
-
-  async fetchServer () {
-    if (this.id) {
-      this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/servers?servers=[${this.id}]`)
-        .then((response) => {
-          this.hostAttr = response[0]
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrErrorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
-          this.errorText = this.$t('message.error.defaulttext') as string
-        })
-      this.isLoading = false
-    }
+  async fetchAttributes (endPoint) {
+    this.isLoading = true
+    await this.$axios.$get(endPoint)
+      .then((response) => {
+        this.hostAttr = response[0]
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.hostAttrErrorAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
+        this.errorText = this.$t('message.error.defaulttext') as string
+      })
+    this.isLoading = false
   }
 
   async fetch () {
-    if (this.type === 'clients') {
-      await this.fetchClient()
-    } else {
-      await this.fetchServer()
+    if (this.id) {
+      let endPoint: any = ''
+      if (this.type === 'clients') {
+        endPoint = `/api/opsidata/hosts?hosts=${this.id}`
+      } else {
+        endPoint = `/api/opsidata/servers?servers=[${this.id}]`
+      }
+      await this.fetchAttributes(endPoint)
     }
   }
 
