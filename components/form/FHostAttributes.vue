@@ -283,9 +283,7 @@ export default class FHostAttributes extends Vue {
       .then(() => {
         const ref = (this.$refs.hostAttrUpdateAlert as any)
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
-        if (this.hostAttr.uefi) {
-          this.setUEFI()
-        }
+        this.setUEFI()
         this.$fetch()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
