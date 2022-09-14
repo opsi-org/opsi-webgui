@@ -2,7 +2,7 @@
 #!/bin/bash
 # $1: filename                      e.g. BAuthFooter.stories.js
 # $2: filename-full-extension       e.g. .stories.js
-# $3: test-full-extension           e.g. .test.integration.js
+# $3: test-full-extension           e.g. .test.component.js
 # $4: playwright-config-path(rel)   e.g. .config/playwright-all-components.js
 file=$1
 # file_ext=$2
@@ -35,13 +35,13 @@ fi
 if [[ ${file} == "all-changed" ]]; then
     echo "- try to get changed filenames "
     cd /workspace/opsiweb/uib-components
-    changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.integration.js|test.unit.js|.vue' | grep -v 'test.integration.js-snapshot')
+    changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
     # echo "$changedFiles"
-    basenames=$(basename -s .stories.js $(basename -s .test.integration.js $(basename -s .vue -a $changedFiles)))
+    basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
     # Iterate the string variable using for loop
     basenamesWithSlash=""
     for val in $basenames; do
-        basenamesWithSlash+="${file_prepattern_new}$val.test.integration.js "
+        basenamesWithSlash+="${file_prepattern_new}$val.test.component.js "
     done
     # echo "$basenamesWithSlash"
     testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )

@@ -16,9 +16,10 @@ from fastapi import Query, status
 from orjson import loads  # pylint: disable=no-name-in-module
 from sqlalchemy import select, text
 
-from OPSI.Backend.MySQL import MySQL
+from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import get_configserver_id, parse_list
+from opsiconfd.backend import get_backend
 from opsiconfd.backend import get_mysql as backend_get_mysql
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
@@ -30,6 +31,21 @@ def get_mysql() -> MySQL:
 	except RuntimeError:
 		return None
 
+
+def get_mysql_backend() -> MySQLBackend:
+	backend = get_backend()  # pylint: disable=redefined-outer-name
+	while getattr(backend, "_backend", None):
+		backend = backend._backend  # pylint: disable=protected-access
+		if backend.__class__.__name__ == "BackendDispatcher":
+			try:
+				return backend._backends["mysql"]["instance"]  # pylint: disable=protected-access
+			except KeyError:
+				# No mysql backend
+				pass
+	raise RuntimeError("MySQL backend not active")
+
+
+backend = get_mysql_backend()
 
 mysql = get_mysql()
 

@@ -5,7 +5,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PProductsConfigColumn extends Vue {
+export default class PProductsConfigAsColumn extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: false }) asChild!: string
 }

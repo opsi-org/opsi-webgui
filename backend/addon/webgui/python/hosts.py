@@ -9,14 +9,19 @@ webgui host methods
 """
 
 import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, or_, select, table, text, union
+from sqlalchemy import and_, column, or_, select, table, text, union, update
+from sqlalchemy.exc import IntegrityError
 
+from OPSI.Exceptions import BackendBadValueError
 from opsiconfd.application.utils import get_configserver_id
+from opsiconfd.logging import logger
 from opsiconfd.rest import (
+	OpsiApiException,
+	RESTErrorResponse,
 	RESTResponse,
 	common_query_parameters,
 	order_by,
@@ -25,12 +30,14 @@ from opsiconfd.rest import (
 )
 
 from .utils import (
+	backend,
 	build_tree,
 	get_allowed_objects,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
 	parse_hosts_list,
+	read_only_check,
 )
 
 host_router = APIRouter()
@@ -72,6 +79,12 @@ def get_host_data(
 		params["type"] = host_type
 		where = and_(where, text("h.type = :type"))  # type: ignore
 
+	# IF ( "efi" IN
+	# 				,
+	# 				TRUE,
+	# 				FALSE
+	# 			) AS uefi
+
 	with mysql.session() as session:
 		query = (
 			select(
@@ -89,10 +102,14 @@ def get_host_data(
 			h.opsiHostKey AS opsiHostKey,
 			h.oneTimePassword AS oneTimePassword,
 			IF(
-				(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") <> '[""]',
-				TRUE,
-				FALSE
-			) AS uefi
+					(COALESCE(
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+					) LIKE '%efi%',
+					TRUE,
+					FALSE
+				) AS uefi
+
 		"""
 				)
 			)
@@ -349,3 +366,186 @@ def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> di
 					"parent": row["group_id"],
 				}
 	return all_groups
+
+
+# "description": "text1",
+# "notes": "abc",
+# "id": "bonifax.uib.local",
+# "hardwareAddress": "7a:1c:65:aa:98:ea",
+# "ipAddress": "192.168.1.14",
+# "inventoryNumber": "123456",
+# "opsiHostKey": "432721195f1ab54a990ab4148bda53ff",
+# "depotLocalUrl": "file:///var/lib/opsi/depot",
+# "depotRemoteUrl": "smb://192.168.1.14/opsi_depot",
+# "depotWebdavUrl": "webdavs://bonifax.uib.local:4447/depot",
+# "repositoryLocalUrl": "file:///var/lib/opsi/repository",
+# "repositoryRemoteUrl": "webdavs://bonifax.uib.local:4447/repository",
+# "networkAddress": "192.168.1.0/24",
+# "maxBandwidth": 0,
+# "isMasterDepot": true,
+# "masterDepotId": null,
+# "workbenchLocalUrl": "file:///var/lib/opsi/workbench/",
+# "workbenchRemoteUrl": "smb://192.168.1.14/opsi_workbench",
+# "type": "OpsiConfigserver",
+# "ident": "bonifax.uib.local"
+
+
+class Server(BaseModel):
+	hostId: str
+	description: Optional[str]
+	notes: Optional[str]
+	hardwareAddress: Optional[str]
+	ipAddress: Optional[str]
+	inventoryNumber: Optional[str]
+	opsiHostKey: Optional[str]
+	depotLocalUrl: Optional[str]
+	depotRemoteUrl: Optional[str]
+	depotWebdavUrl: Optional[str]
+	repositoryLocalUrl: Optional[str]
+	repositoryRemoteUrl: Optional[str]
+	workbenchLocalUrl: Optional[str]
+	workbenchRemoteUrl: Optional[str]
+	networkAddress: Optional[str]
+	maxBandwidth: Optional[str]
+	isMasterDepot: Optional[str]
+	masterDepotId: Optional[str]
+	type: Optional[str]
+
+
+@host_router.get("/api/opsidata/servers", response_model=List[Host])
+@rest_api
+def get_server_data(
+	commons: dict = Depends(common_query_parameters),
+	servers: List[str] = Depends(parse_hosts_list),
+) -> RESTResponse:  # pylint: disable=redefined-builtin
+	"""
+	Get server data.
+	"""
+	params = {"servers": [], "search": ""}
+	where = text("")
+	if commons.get("filterQuery"):
+		params["search"] = f"%{commons.get('filterQuery')}%"
+		where = text("h.hostId LIKE :search OR h.description LIKE :search")
+	if servers:
+		params["servers"] = servers
+		where = and_(text("h.hostId in :servers"))  # type: ignore
+
+	with mysql.session() as session:
+		query = (
+			select(
+				text(  # type: ignore
+					"""
+			h.hostId AS hostId,
+			h.type AS type,
+			h.description AS description,
+			h.notes AS notes,
+			h.hardwareAddress AS hardwareAddress,
+			h.ipAddress AS ipAddress,
+			h.inventoryNumber AS inventoryNumber,
+			h.created AS created,
+			h.lastSeen AS lastSeen,
+			h.opsiHostKey AS opsiHostKey,
+			h.oneTimePassword AS oneTimePassword,
+			h.depotLocalUrl AS depotLocalUrl,
+			h.depotRemoteUrl AS depotRemoteUrl,
+			h.depotWebdavUrl AS depotWebdavUrl,
+			h.repositoryLocalUrl AS repositoryLocalUrl,
+			h.repositoryRemoteUrl AS repositoryRemoteUrl,
+			h.workbenchLocalUrl AS workbenchLocalUrl,
+			h.workbenchRemoteUrl AS workbenchRemoteUrl,
+			h.networkAddress AS networkAddress,
+			h.maxBandwidth AS maxBandwidth,
+			h.isMasterDepot AS isMasterDepot,
+			h.masterDepotId AS masterDepotId
+
+		"""
+				)
+			)
+			.select_from(table("HOST").alias("h"))
+			.where(and_(where, text("h.type IN ('OpsiDepotserver','OpsiConfigserver') ")))
+		)  # pylint: disable=redefined-outer-name
+
+		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
+		query = pagination(query, commons)  # type: ignore[assignment,arg-type]
+		logger.devel(query)
+		result = session.execute(query, params)
+		result = result.fetchall()
+		host_data = []
+		for row in result:
+			logger.devel(row)
+			if row is not None:
+				row_dict = dict(row)
+				for key in row_dict.keys():
+
+					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
+						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
+
+				host_data.append(row_dict)
+		return RESTResponse(data=host_data)
+
+
+@host_router.put("/api/opsidata/servers/{server_id}")
+@rest_api
+@read_only_check
+def update_client(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
+	"""
+	Update OPSI-Server (Config and Depot).
+	"""
+
+	values = vars(server)
+	# values["type"] = ("Opsidepotserver", "OpsiConfigserver")
+	values = {k: v for k, v in values.items() if v is not None}
+
+	with mysql.session() as session:
+
+		try:
+			host_check_duplicates(server, session)
+			query = (
+				update(
+					table(
+						"HOST",
+						*[column(key) for key in vars(server).keys()],  # pylint: disable=consider-iterating-dictionary
+					)
+				)
+				.where(text(f"hostId='{server_id}'"))
+				.values(values)
+			)
+			session.execute(query)
+
+			headers = {"Location": f"{request.url}/{server.hostId}"}
+
+			if values.get("ipAddress"):
+				values["ipAddress"] = str(values["ipAddress"])
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+
+		except IntegrityError as err:
+			logger.error("Could not update client object.")
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not update client '{server.hostId}' object.",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not update client object.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not update client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
+# TODO merege with client check duplicates
+def host_check_duplicates(host: Host, session: Any) -> None:
+	if backend.unique_hardware_addresses and host.hardwareAddress and not host.hardwareAddress.startswith("00:00:00"):
+		select_query = (
+			select(text("h.hostId AS hostId"))  # type: ignore
+			.select_from(table("HOST").alias("h"))
+			.where(text(f"h.hostId != '{host.hostId}' AND hardwareAddress = '{host.hardwareAddress}'"))
+		)  # pylint: disable=redefined-outer-name
+
+		result = session.execute(select_query)
+		result = result.fetchone()
+		if result:
+			raise BackendBadValueError(f"Hardware address {host.hardwareAddress!r} is already used by host {result}")

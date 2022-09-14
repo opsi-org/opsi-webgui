@@ -13,13 +13,14 @@ from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 from sqlalchemy import alias, and_, column, delete, select, text, update
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import table
 
-from OPSI.Object import OpsiClient  # type: ignore
+from OPSI.Exceptions import BackendBadValueError
+from OPSI.Object import Host, OpsiClient  # type: ignore
 from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends, get_client_backend
 from opsiconfd.logging import logger
@@ -34,6 +35,7 @@ from opsiconfd.rest import (
 )
 
 from .utils import (
+	backend,
 	check_client_creation_rights,
 	filter_depot_access,
 	get_allowed_clients,
@@ -65,6 +67,7 @@ class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 
 class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
+	type: str = Field("OpsiClient", const=True)
 	opsiHostKey: Optional[str]
 	description: Optional[str]
 	notes: Optional[str]
@@ -143,16 +146,16 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 					),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1 LIMIT 1)
 				) AS depotId,
-				RIGHT(
-					COALESCE(
-						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
-						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault),
-						"   "
-					),
-					3
-				) = "efi" AS uefi,
+				IF(
+					(COALESCE(
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+					) LIKE '%efi%',
+					TRUE,
+					FALSE
+				) AS uefi,
 				COALESCE(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
+					(SELECT cs.values FROM CONFIG_STATE AS cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename"),
 					(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault)
 				) AS uefi_value
 			"""
@@ -281,6 +284,7 @@ def create_client(request: Request, client: Client) -> RESTResponse:  # pylint: 
 
 	with mysql.session() as session:
 		try:
+			host_check_duplicates(client, session)
 			query = insert(
 				table(
 					"HOST", column("type"), *[column(key) for key in vars(client).keys()]  # pylint: disable=consider-iterating-dictionary
@@ -320,6 +324,67 @@ def create_client(request: Request, client: Client) -> RESTResponse:  # pylint: 
 			) from err
 
 
+@client_router.put("/api/opsidata/clients/{client_id}")
+@rest_api
+@read_only_check
+def update_client(request: Request, client_id: str, client: Client) -> RESTResponse:  # pylint: disable=too-many-locals
+	"""
+	Update OPSI-Client.
+	"""
+
+	values = vars(client)
+	values["type"] = "OpsiClient"
+	values = {k: v for k, v in values.items() if v is not None}
+
+	with mysql.session() as session:
+
+		try:
+			host_check_duplicates(client, session)
+			query = update(
+				table(
+					"HOST", column("type"), *[column(key) for key in vars(client).keys()]  # pylint: disable=consider-iterating-dictionary
+				)
+			).where(
+				text(f"hostId='{client_id}'")
+			).values(values)
+			session.execute(query)
+
+			headers = {"Location": f"{request.url}/{client.hostId}"}
+
+			if values.get("ipAddress") or values.get("hardwareAddress"):
+				client_data = {
+					"id": values.get("hostId"),
+					"hardwareAddress": values.get("hardwareAddress"),
+				}
+
+				execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
+			if values.get("ipAddress"):
+				client_data = {
+					"id": values.get("hostId"),
+					"ipAddress": values.get("ipAddress")
+				}
+				# IPv4Address/IPv6Address is not JSON serializable
+				values["ipAddress"] = str(values["ipAddress"])
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+
+		except IntegrityError as err:
+			logger.error("Could not update client object.")
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not update client '{client.hostId}' object.",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not update client object.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not update client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
 @client_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
 @rest_api
 def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name
@@ -345,7 +410,10 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
 				h.opsiHostKey AS opsiHostKey,
 				h.oneTimePassword AS oneTimePassword,
 				IF(
-					(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = "clientconfig.dhcpd.filename") <> '[""]',
+					(COALESCE(
+						(SELECT cs.values FROM CONFIG_STATE as cs WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.dhcpd.filename'),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.dhcpd.filename' AND cv.isDefault))
+					) LIKE '%efi%',
 					TRUE,
 					FALSE
 				) AS uefi
@@ -554,3 +622,19 @@ def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # 
 			message="Failed to execute opsiclientd rpc.", http_status=status.HTTP_400_BAD_REQUEST, error=err
 		) from err
 	return RESTResponse(http_status=status.HTTP_200_OK, data=result)
+
+
+def host_check_duplicates(client: Client, session: Any) -> None:
+	if backend.unique_hardware_addresses and client.hardwareAddress and not client.hardwareAddress.startswith("00:00:00"):
+		select_query = (
+			select(
+				text("h.hostId AS hostId")  # type: ignore
+			)
+			.select_from(table("HOST").alias("h"))
+			.where(text(f"h.hostId != '{client.hostId}' AND hardwareAddress = '{client.hardwareAddress}'"))
+		)  # pylint: disable=redefined-outer-name
+
+		result = session.execute(select_query)
+		result = result.fetchone()
+		if result:
+			raise BackendBadValueError(f"Hardware address {client.hardwareAddress!r} is already used by host {result}")
