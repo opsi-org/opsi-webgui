@@ -9,19 +9,30 @@
       <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
         <TableTDefault
           type="small"
+          :noheader="true"
           :filter="filter"
-          :filterfields="['configId']"
           :fields="['configId', 'value']"
+          :filterfields="['configId']"
           :items="v"
         >
-          <!-- :noheader="true" -->
-          <!-- :fields="['configId', 'description', 'value']" -->
           <template #cell()="row">
             {{ row.value }}
           </template>
           <template #cell(configId)="row">
             <span :id="'configId'+row.value">{{ row.value }}</span>
             <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
+          </template>
+          <template #cell(value)="row">
+            {{ row.item }}
+            <template v-if="row.item.type === 'BoolConfig'">
+              <b-form-checkbox
+                v-model="boolconfig"
+                :value="row.item.defaultValue"
+              />
+            </template>
+            <template v-else>
+              {{ }}
+            </template>
           </template>
         </TableTDefault>
       </b-collapse>
