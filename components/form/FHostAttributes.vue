@@ -105,7 +105,7 @@
         <b-form-input id="otp" v-model="hostAttr.oneTimePassword" :aria-label="$t('table.fields.otp')" type="text" />
       </template>
     </GridGFormItem>
-    <GridGFormItem v-if="hostAttr.type == 'OpsiClient'">
+    <GridGFormItem v-if="type == 'clients'">
       <template #label>
         <span class="uefi">{{ $t('table.fields.uefi') }}</span>
       </template>
@@ -113,7 +113,7 @@
         <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
       </template>
     </GridGFormItem>
-    <template v-if="hostAttr.type !== 'OpsiClient'">
+    <template v-if="type !== 'clients'">
       <GridGFormItem>
         <template #label>
           <span class="depotLocalUrl">{{ $t('table.fields.depotLocalUrl') }}</span>
