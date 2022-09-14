@@ -1,29 +1,21 @@
 <template>
   <div data-testid="THostParam">
-    <InputIFilterTChanges :filter.sync="filterLocal" />
-    <!-- <template v-if="id">
-      <span v-for="v,k in hostparams" :key="k">
-        <b-button class="text-left font-weight-bold" block v-b-toggle="'collapse-'+k" variant="transparent">{{k}}</b-button>
-        <b-collapse :id="'collapse-'+k" accordion="hostparam">
-          <b-table-lite :fields="['configId', 'description', 'value']" :items="v"></b-table-lite>
-        </b-collapse>
-      </span>
-    </template> -->
-    <span v-for="v,k in hostparams" :key="k">
-      <b-button class="text-left font-weight-bold" block v-b-toggle="'collapse-'+k" variant="transparent">{{k}}</b-button>
-      <b-collapse :id="'collapse-'+k" accordion="hostparam">
-        <!-- <b-card>
-          <p class="card-text">{{v}}</p>
-          <b-table-lite :fields="['configId', 'description', 'value']" :items="v"></b-table-lite>
-        </b-card> -->
+    <AlertAAlert ref="hostParamErrorAlert">
+      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+    </AlertAAlert>
+    <InputIFilterTChanges :filter.sync="filter" />
+    <span v-for="v,k in hostParam" :key="k">
+      <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold" block variant="transparent">{{ k }}</b-button>
+      <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
         <TableTDefault
           type="small"
-          :noheader="true"
-          :filter="filterLocal"
+          :filter="filter"
           :filterfields="['configId']"
-          :items="v"
           :fields="['configId', 'description', 'value']"
+          :items="v"
         >
+          <!-- :noheader="true" -->
+          <!-- :fields="['configId', 'description', 'value']" -->
           <template #cell()="row">
             {{ row.value }}
           </template>
@@ -46,6 +38,7 @@ export default class THostParam extends Vue {
 
   @Prop({ }) id!: string
   @Prop({ }) type!: string
+  filter: string = ''
   showValue : boolean = false
   hostParam:any = {}
   isLoading: boolean = false
@@ -57,43 +50,29 @@ export default class THostParam extends Vue {
     this.$fetch()
   }
 
-  async fetchClientParameters () {
-    if (this.id) {
-      this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
-        .then((response) => {
-          this.hostParam = response[0]
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrErrorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
-          this.errorText = this.$t('message.error.defaulttext') as string
-        })
-      this.isLoading = false
-    }
-  }
-
-  async fetchServerParameters () {
-    if (this.id) {
-      this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/servers?servers=[${this.id}]`)
-        .then((response) => {
-          this.hostParam = response[0]
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrErrorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
-          this.errorText = this.$t('message.error.defaulttext') as string
-        })
-      this.isLoading = false
-    }
+  async fetchHostParameters (endpoint) {
+    this.isLoading = true
+    await this.$axios.$get(endpoint)
+      .then((response) => {
+        this.hostParam = response
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.hostParamErrorAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'Host Parameters', 'danger', detailedError)
+        this.errorText = this.$t('message.error.defaulttext') as string
+      })
+    this.isLoading = false
   }
 
   async fetch () {
-    if (this.type === 'clients') {
-      await this.fetchClientParameters()
-    } else {
-      await this.fetchServerParameters()
+    if (this.id) {
+      let endpoint: any = ''
+      if (this.type === 'clients') {
+        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+      } else {
+        endpoint = '/api/opsidata/config/server'
+      }
+      await this.fetchHostParameters(endpoint)
     }
   }
 }
