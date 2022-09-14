@@ -105,7 +105,7 @@
         <b-form-input id="otp" v-model="hostAttr.oneTimePassword" :aria-label="$t('table.fields.otp')" type="text" />
       </template>
     </GridGFormItem>
-    <GridGFormItem v-if="hostAttr.type == 'OpsiClient'">
+    <GridGFormItem v-if="type == 'clients'">
       <template #label>
         <span class="uefi">{{ $t('table.fields.uefi') }}</span>
       </template>
@@ -113,7 +113,7 @@
         <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
       </template>
     </GridGFormItem>
-    <template v-if="hostAttr.type !== 'OpsiClient'">
+    <template v-if="type !== 'clients'">
       <GridGFormItem>
         <template #label>
           <span class="depotLocalUrl">{{ $t('table.fields.depotLocalUrl') }}</span>
@@ -231,43 +231,29 @@ export default class FHostAttributes extends Vue {
     this.$fetch()
   }
 
-  async fetchClient () {
-    if (this.id) {
-      this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
-        .then((response) => {
-          this.hostAttr = response[0]
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrErrorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
-          this.errorText = this.$t('message.error.defaulttext') as string
-        })
-      this.isLoading = false
-    }
-  }
-
-  async fetchServer () {
-    if (this.id) {
-      this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/servers?servers=[${this.id}]`)
-        .then((response) => {
-          this.hostAttr = response[0]
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrErrorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
-          this.errorText = this.$t('message.error.defaulttext') as string
-        })
-      this.isLoading = false
-    }
+  async fetchAttributes (endPoint) {
+    this.isLoading = true
+    await this.$axios.$get(endPoint)
+      .then((response) => {
+        this.hostAttr = response[0]
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.hostAttrErrorAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
+        this.errorText = this.$t('message.error.defaulttext') as string
+      })
+    this.isLoading = false
   }
 
   async fetch () {
-    if (this.type === 'clients') {
-      await this.fetchClient()
-    } else {
-      await this.fetchServer()
+    if (this.id) {
+      let endPoint: any = ''
+      if (this.type === 'clients') {
+        endPoint = `/api/opsidata/hosts?hosts=${this.id}`
+      } else {
+        endPoint = `/api/opsidata/servers?servers=[${this.id}]`
+      }
+      await this.fetchAttributes(endPoint)
     }
   }
 
@@ -286,37 +272,13 @@ export default class FHostAttributes extends Vue {
       })
   }
 
-  async updateClientAttributes () {
+  async update (attr, endPoint) {
     this.isLoading = true
-    const attr = this.hostAttr
-    delete attr.type
-    delete attr.created
-    delete attr.lastSeen
-    delete attr.uefi
-    await this.$axios.$put(`/api/opsidata/clients/${this.hostAttr.hostId}`, attr)
+    await this.$axios.$put(endPoint, attr)
       .then(() => {
-        const ref = (this.$refs.hostAttrUpdateAlert as any)
-        ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
-        if (this.hostAttr.uefi) {
-          this.setUEFI()
-        }
-        this.$fetch()
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.hostAttrUpdateAlert as any)
-        ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
-      })
-    this.isLoading = false
-  }
-
-  async updateServerAttributes () {
-    this.isLoading = true
-    const attr = this.hostAttr
-    delete attr.type
-    delete attr.created
-    delete attr.lastSeen
-    await this.$axios.$put(`/api/opsidata/servers/${this.hostAttr.hostId}`, attr)
-      .then(() => {
+        // if (this.type === 'clients') {
+        //   this.setUEFI()
+        // }
         const ref = (this.$refs.hostAttrUpdateAlert as any)
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
         this.$fetch()
@@ -329,11 +291,21 @@ export default class FHostAttributes extends Vue {
   }
 
   async updateAttributes () {
-    if (this.hostAttr.type === 'OpsiClient') {
-      await this.updateClientAttributes()
-    } else {
-      await this.updateServerAttributes()
+    let endPoint: any = ''
+    const attr = this.hostAttr
+    delete attr.type
+    delete attr.created
+    delete attr.lastSeen
+    if (this.type === 'clients') {
+      this.setUEFI()
     }
+    if (this.hostAttr.type === 'OpsiClient') {
+      delete attr.uefi
+      endPoint = `/api/opsidata/clients/${this.hostAttr.hostId}`
+    } else {
+      endPoint = `/api/opsidata/servers/${this.hostAttr.hostId}`
+    }
+    await this.update(attr, endPoint)
   }
 }
 </script>
