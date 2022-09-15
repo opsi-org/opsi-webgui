@@ -455,13 +455,6 @@ export default class TSDefault extends Vue {
   background-color: var(--primary);
 }
 
-.TSDefault-wrapper .vue-treeselect__menu {
-  border: 1px solid var(--primary) !important;
-  /* z-index: 99 !important;
-  display: block; */
-  /* border-radius: 5px; */
-}
-
 .form-inline{
   flex-flow: nowrap;
 }
