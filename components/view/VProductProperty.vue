@@ -40,13 +40,15 @@
           <span class="property"> {{ $t('title.properties') + ((!isLoading && tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'') }} </span>
         </template>
         <br>
-        <LazyTableTProductProperties
-          v-if="id"
-          :id="id"
-          :properties="fetchedData.properties"
-          :error-text="errorText.properties"
-          @refetch="fetchProperties"
-        />
+        <DivDScrollResult>
+          <LazyTableTProductProperties
+            v-if="id"
+            :id="id"
+            :properties="fetchedData.properties"
+            :error-text="errorText.properties"
+            @refetch="fetchProperties"
+          />
+        </DivDScrollResult>
       </b-tab>
       <b-tab
         ref="VProductProperties_TabDependencies"
@@ -57,12 +59,14 @@
           <span class="dependency"> {{ $t('title.dependencies') + ((!isLoading && tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'') }} </span>
         </template>
         <br>
-        <LazyTableTProductDependencies
-          v-if="id"
-          :id="id"
-          :dependencies="fetchedData.dependencies"
-          :error-text="errorText.properties"
-        />
+        <DivDScrollResult>
+          <LazyTableTProductDependencies
+            v-if="id"
+            :id="id"
+            :dependencies="fetchedData.dependencies"
+            :error-text="errorText.properties"
+          />
+        </DivDScrollResult>
       </b-tab>
     </b-tabs>
   </div>
