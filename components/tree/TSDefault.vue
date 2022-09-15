@@ -445,10 +445,6 @@ export default class TSDefault extends Vue {
   background-color: var(--hover);
 }
 
-.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight.vue-treeselect__option--selected {
-  color: var(--primary);
-}
-
 .TSDefault-wrapper .hasSelection {
   color: var(--light);
   background-color: var(--primary);
