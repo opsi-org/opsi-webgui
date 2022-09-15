@@ -11,7 +11,7 @@
           type="small"
           :noheader="true"
           :filter="filter"
-          :fields="['configId', 'value']"
+          :fields="['configId', 'action']"
           :filterfields="['configId']"
           :items="v"
         >
@@ -22,7 +22,7 @@
             <span :id="'configId'+row.value">{{ row.value }}</span>
             <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
           </template>
-          <template #cell(value)="row">
+          <template #cell(action)="row">
             {{ row.item }}
             <template v-if="row.item.type === 'BoolConfig'">
               <b-form-checkbox
