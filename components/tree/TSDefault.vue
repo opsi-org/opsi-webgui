@@ -69,7 +69,7 @@
         <b-button
           v-if="editable && treeselectSearchQueryFilled"
           variant="outline-primary"
-          class="BTN-before-list"
+          class="BTN-before-list border-0"
           :title="$t('button.tsdefault.add.tooltip')"
           @click="triggerSelection()"
         >
@@ -445,10 +445,6 @@ export default class TSDefault extends Vue {
   background-color: var(--hover);
 }
 
-.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight.vue-treeselect__option--selected {
-  color: var(--primary);
-}
-
 .TSDefault-wrapper .hasSelection {
   color: var(--light);
   background-color: var(--primary);
@@ -457,13 +453,6 @@ export default class TSDefault extends Vue {
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
   color: var(--light)!important;
   background-color: var(--primary);
-}
-
-.TSDefault-wrapper .vue-treeselect__menu {
-  border: 1px solid var(--primary) !important;
-  /* z-index: 99 !important;
-  display: block; */
-  /* border-radius: 5px; */
 }
 
 .form-inline{
