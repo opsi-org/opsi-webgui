@@ -69,7 +69,7 @@
         <b-button
           v-if="editable && treeselectSearchQueryFilled"
           variant="outline-primary"
-          class="BTN-before-list"
+          class="BTN-before-list border-0"
           :title="$t('button.tsdefault.add.tooltip')"
           @click="triggerSelection()"
         >
