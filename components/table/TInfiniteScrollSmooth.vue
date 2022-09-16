@@ -119,7 +119,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   elementBeforeFetch:any
   scrollPositions = { offsetBottom: 0, topPagePrev: 0, withTopSpace: false }
   scrollDownOffset: number = 50 // how sensitive the scroll is to fetch a new page (start and end of table)
-  animationColor = 'var(--primary)' // to see the last element before fetch
+  animationColor = 'var(--hover)' // to see the last element before fetch
   bgOriginal:string = '' // to restore the original background color of the table row
 
   @cache.Getter public opsiconfigserver!: string
@@ -252,7 +252,7 @@ export default class TInfiniteScrollSmooth extends Vue {
     return document.getElementById(`${this.id}__row_${rowid}`)
   }
 
-  async animateColor (el, bgcolor = 'var(--primary)', animation = true, cleanupAttributes = true, storeBGColor = false) {
+  async animateColor (el, bgcolor = 'var(--hover)', animation = true, cleanupAttributes = true, storeBGColor = false) {
     // change bg of given element/row
     if (!el) { return }
     if (storeBGColor === true) {
