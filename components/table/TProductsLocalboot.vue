@@ -1,7 +1,8 @@
 <template>
   <div data-testid="TProductsLocalboot">
     <AlertAAlert ref="productsAlert" />
-    <TableTInfiniteScrollSmooth
+    <LazyTableTInfiniteScrollSmooth
+      v-if="cache_pages"
       id="Localboot"
       ref="Localboot"
       primary-key="Localboot"
@@ -100,7 +101,7 @@
           :click-parent="routeRedirectToParent"
         />
       </template>
-    </TableTInfiniteScrollSmooth>
+    </LazyTableTInfiniteScrollSmooth>
   </div>
 </template>
 

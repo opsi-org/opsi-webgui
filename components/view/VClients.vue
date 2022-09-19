@@ -19,7 +19,8 @@
           :enable-show-products="true"
           :redirect="routeRedirectWith"
         />
-        <TableTInfiniteScrollSmooth
+        <LazyTableTInfiniteScrollSmooth
+          v-if="items"
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -89,7 +90,7 @@
           >
             <slot :name="slotName" v-bind="slotScope" />
           </template>
-        </TableTInfiniteScrollSmooth>
+        </LazyTableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />

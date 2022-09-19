@@ -10,7 +10,8 @@
             <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
           </b-button>
           <b-collapse :id="k" :visible="filter === '' ? false : true">
-            <TableTDefault
+            <LazyTableTDefault
+              v-if="changes"
               type="small"
               :noheader="true"
               :filter="filter"
@@ -28,7 +29,7 @@
                   <b-icon :icon="iconnames.save" />
                 </b-button>
               </template>
-            </TableTDefault>
+            </LazyTableTDefault>
           </b-collapse>
         </div>
       </DivDScrollResult>

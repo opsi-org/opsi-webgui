@@ -9,7 +9,8 @@
       :selections="(type==='propertyvalues')?selectionWrapper:selectionDefault"
     />
     <!-- :always-open="(id=='PropertyValue-method')" -->
-    <TreeTSDefaultWithAdding
+    <LazyTreeTSDefaultWithAdding
+      v-if="options"
       :id="`id-select-${id}`"
       :ref="`id-select-${id}`"
       v-model="selectionWrapper"
@@ -97,7 +98,7 @@
           </template>
         </div>
       </div>
-    </TreeTSDefaultWithAdding>
+    </LazyTreeTSDefaultWithAdding>
   </div>
 </template>
 

@@ -1,6 +1,7 @@
 <template>
   <div data-testid="TProductDependencies">
-    <TableTDefault
+    <LazyTableTDefault
+      v-if="Object.values(dependencies.dependencies)"
       :is-loading="isLoading"
       :items="Object.values(dependencies.dependencies)"
       :fields="fields"
@@ -23,7 +24,7 @@
       <template #cell(type)="row">
         {{ getType(row.item.requirementType, row.item.productAction) }}
       </template>
-    </TableTDefault>
+    </LazyTableTDefault>
   </div>
 </template>
 
