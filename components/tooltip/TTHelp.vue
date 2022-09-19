@@ -1,11 +1,7 @@
 <template>
   <div data-testid="TTHelp">
     <b-tooltip :target="id">
-      <TableTDefaultLite
-        v-if="type === 'table'"
-        id="TTHelpTable"
-        :items="tooltipContent"
-      />
+      <b-table-lite v-if="type === 'table'" id="TTHelpTable" thead-class="table-header-none" borderless :items="tooltipContent" />
     </b-tooltip>
   </div>
 </template>
