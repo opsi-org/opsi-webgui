@@ -65,10 +65,6 @@ export default class THostParam extends Vue {
     this.$fetch()
   }
 
-  get value () {
-
-  }
-
   async fetchHostParameters (endpoint) {
     this.isLoading = true
     await this.$axios.$get(endpoint)
