@@ -25,13 +25,14 @@
           <template #cell(action)="row">
             <!-- {{ row.item }} -->
             <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
-            <template v-else>
+            <SelectSUnicodeParam v-else :type="type" :row="row.item" />
+            <!-- <template v-else>
               <template v-if="row.item.editable">
                 <b-form-input v-model="newVal" :placeholder="$t('Type new value and press ENTER')" />
               </template>
               <b-form-select v-if="type === 'clients'" v-model="row.item.defaultValue" :multiple="row.item.multiValue" :options="row.item.possibleValues" />
               <b-form-select v-else v-model="row.item.value" :multiple="row.item.multiValue" :options="row.item.possibleValues" />
-            </template>
+            </template> -->
           </template>
         </LazyTableTDefault>
       </b-collapse>
