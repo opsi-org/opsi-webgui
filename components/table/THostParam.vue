@@ -7,8 +7,8 @@
     <span v-for="v,k in hostParam" :key="k">
       <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold" block variant="transparent">{{ k }}</b-button>
       <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
-        <TableTDefault
-          type="small"
+        <LazyTableTDefault
+          v-if="v"
           :noheader="true"
           :filter="filter"
           :fields="['configId', 'action']"
@@ -24,10 +24,7 @@
           </template>
           <template #cell(action)="row">
             <!-- {{ row.item }} -->
-            <template v-if="row.item.type === 'BoolConfig'">
-              <b-form-checkbox v-if="type === 'clients'" v-model="row.item.defaultValue" />
-              <b-form-checkbox v-else v-model="row.item.value" />
-            </template>
+            <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
             <template v-else>
               <template v-if="row.item.editable">
                 <b-form-input v-model="newVal" :placeholder="$t('Type new value and press ENTER')" />
@@ -36,7 +33,7 @@
               <b-form-select v-else v-model="row.item.value" :multiple="row.item.multiValue" :options="row.item.possibleValues" />
             </template>
           </template>
-        </TableTDefault>
+        </LazyTableTDefault>
       </b-collapse>
     </span>
   </div>
@@ -60,11 +57,16 @@ export default class THostParam extends Vue {
   hostParam:any = {}
   isLoading: boolean = false
   errorText: string = ''
+  newVal: any
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
   beforeMount () {
     this.$fetch()
+  }
+
+  get value () {
+
   }
 
   async fetchHostParameters (endpoint) {
