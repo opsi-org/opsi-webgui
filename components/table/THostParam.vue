@@ -3,11 +3,22 @@
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <InputIFilterTChanges :filter.sync="filter" />
+    <!-- <InputIFilterTChanges :filter.sync="filter" /> -->
     <span v-for="v,k in hostParam" :key="k">
       <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold" block variant="transparent">{{ k }}</b-button>
       <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
-        <LazyTableTDefault
+        <span v-for="item in v" :key="item.configId">
+          <b-row class="mb-3">
+            <b-col>
+              {{ item.configId }}
+            </b-col>
+            <b-col>
+              <CheckboxCBBoolParam v-if="item.type === 'BoolConfig'" :type="type" :row="item" />
+              <SelectSUnicodeParam v-else :type="type" :row="item" />
+            </b-col>
+          </b-row>
+        </span>
+        <!-- <LazyTableTDefault
           v-if="v"
           :noheader="true"
           :filter="filter"
@@ -23,18 +34,10 @@
             <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
           </template>
           <template #cell(action)="row">
-            <!-- {{ row.item }} -->
             <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
             <SelectSUnicodeParam v-else :type="type" :row="row.item" />
-            <!-- <template v-else>
-              <template v-if="row.item.editable">
-                <b-form-input v-model="newVal" :placeholder="$t('Type new value and press ENTER')" />
-              </template>
-              <b-form-select v-if="type === 'clients'" v-model="row.item.defaultValue" :multiple="row.item.multiValue" :options="row.item.possibleValues" />
-              <b-form-select v-else v-model="row.item.value" :multiple="row.item.multiValue" :options="row.item.possibleValues" />
-            </template> -->
           </template>
-        </LazyTableTDefault>
+        </LazyTableTDefault> -->
       </b-collapse>
     </span>
   </div>
