@@ -3,7 +3,6 @@
     v-model="localboolval"
     data-testid="CBBoolParam"
     class="CBBoolParam"
-    @change="$emit('update:boolval', localboolval)"
   />
 </template>
 
@@ -14,7 +13,13 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 export default class CBBoolParam extends Vue {
   @Prop() row!: any
   @Prop() type!: String
-  get localboolval () {
+  localboolval:boolean = false
+
+  beforeMount () {
+    this.localboolval = this.getlocalvalue()
+  }
+
+  getlocalvalue () {
     if (this.type === 'clients') {
       if (this.row.clients) {
         return Object.values(this.row.clients)[0]
