@@ -13,7 +13,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class SUnicodeParam extends Vue {
+export default class TSUnicodeParam extends Vue {
   @Prop() row!: any
   @Prop() type!: String
   hide: boolean = true

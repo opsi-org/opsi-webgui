@@ -14,7 +14,7 @@
             </b-col>
             <b-col>
               <CheckboxCBBoolParam v-if="item.type === 'BoolConfig'" :type="type" :row="item" />
-              <SelectSUnicodeParam v-else :type="type" :row="item" />
+              <TreeTSUnicodeParam v-else :type="type" :row="item" />
             </b-col>
           </b-row>
         </span>
