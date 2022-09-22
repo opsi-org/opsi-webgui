@@ -1,5 +1,6 @@
 <template>
   <div :id="'TInfiniteScrollSmoothWrapper_' + id" data-testid="TInfiniteScrollSmooth" class="TInfiniteScrollSmoothWrapper" :class="{loadingCursor: isLoading}">
+    hi <ContextmenuCMViewTable />
     <p v-if="error">
       {{ error }}
     </p>
@@ -116,11 +117,12 @@ export default class TInfiniteScrollSmooth extends Vue {
   @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeaders
   isScrolling = false
   scroll_sleep_ms: number = 5
-  elementBeforeFetch:any
-  scrollPositions = { offsetBottom: 0, topPagePrev: 0, withTopSpace: false }
+  elementBeforeFetch:any = undefined
   scrollDownOffset: number = 50 // how sensitive the scroll is to fetch a new page (start and end of table)
   animationColor = 'var(--hover)' // to see the last element before fetch
   bgOriginal:string = '' // to restore the original background color of the table row
+  scrollPositions = { offsetBottom: 0, topPagePrev: 0, withTopSpace: false }
+
 
   @cache.Getter public opsiconfigserver!: string
 
