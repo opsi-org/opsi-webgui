@@ -3,6 +3,7 @@
     v-model="localboolval"
     data-testid="CBBoolParam"
     class="CBBoolParam"
+    @change="updateBoolConfig"
   />
 </template>
 
@@ -29,6 +30,11 @@ export default class CBBoolParam extends Vue {
     } else {
       return this.row.value
     }
+  }
+
+  updateBoolConfig () {
+    const newConfig = { configId: this.row.configId, value: this.localboolval }
+    this.$emit('update:boolconfig', newConfig)
   }
 }
 </script>
