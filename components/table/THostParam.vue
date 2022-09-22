@@ -30,7 +30,7 @@
             type="productproperties"
           >
             <template #cell()="row">
-            {{ row.value }}
+              {{ row.value }}
             </template>
             <template #cell(configId)="row">
               <span :id="'configId'+row.value">{{ row.value }}</span>
@@ -44,6 +44,11 @@
         </b-collapse>
       </span>
     </DivDScrollResult>
+    <DivDComponentGroup class="float-right">
+      <b-button id="addButton" class="addButton" variant="success" @click="saveHostParam()">
+        <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
+      </b-button>
+    </DivDComponentGroup>
   </div>
 </template>
 
