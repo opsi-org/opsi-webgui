@@ -20,7 +20,7 @@ export default class TSUnicodeParam extends Vue {
   options: Array<object> = []
   localval:any
 
-  beforeMount() {
+  beforeMount () {
     const possiblevalues: any = []
     for (const val in this.row.possibleValues) {
       const v = this.row.possibleValues[val]
@@ -46,12 +46,16 @@ export default class TSUnicodeParam extends Vue {
       return this.row.value
     }
   }
-  addNewValue(newval:any) {
-    // console.error('new value', newval)
-    if(this.row.editable){
+
+  addNewValue (newval:any) {
+    if (this.row.editable) {
       const value = newval.text
       this.options = [...this.options, { id: value, label: value }]
-      this.localval.push(value)
+      if (this.row.multiValue) {
+        this.localval.push(value)
+      } else {
+        this.localval = value
+      }
     }
   }
 }
