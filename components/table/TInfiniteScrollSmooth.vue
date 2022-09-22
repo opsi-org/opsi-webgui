@@ -190,7 +190,7 @@ export default class TInfiniteScrollSmooth extends Vue {
       // this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
       this.scrollPositions.topPagePrev = this.tableScrollBody.offsetTop
     }
-    if (! this.isFirstPage) {
+    if (!this.isFirstPage) {
       await this.animateColor(this.elementBeforeFetch, this.animationColor, false, true, true)
     }
 
