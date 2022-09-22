@@ -1,7 +1,8 @@
 <template>
   <div data-testid="TProductsNetboot">
     <AlertAAlert ref="productsAlert" />
-    <TableTInfiniteScrollSmooth
+    <LazyTableTInfiniteScrollSmooth
+      v-if="cache_pages"
       id="Netboot"
       ref="Netboot"
       primary-key="Netboot"
@@ -91,7 +92,7 @@
           :click-parent="routeRedirectToParent"
         />
       </template>
-    </TableTInfiniteScrollSmooth>
+    </LazyTableTInfiniteScrollSmooth>
   </div>
 </template>
 

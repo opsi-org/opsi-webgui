@@ -22,6 +22,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class VSettingsLocalSpecific extends Vue {
+  $t: any
   get helpSavemode () {
     return [
       { '  ': this.$t('label.on'), ' ': this.$t('description.quicksave.on') },

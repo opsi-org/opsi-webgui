@@ -22,7 +22,8 @@
           :redirect-on-close-to="undefined"
           :redirect="undefined"
         />
-        <TableTInfiniteScrollSmooth
+        <LazyTableTInfiniteScrollSmooth
+          v-if="items"
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -60,7 +61,7 @@
               :click="routeRedirectWith"
             />
           </template>
-        </TableTInfiniteScrollSmooth>
+        </LazyTableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />

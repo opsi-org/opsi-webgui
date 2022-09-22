@@ -25,7 +25,8 @@
     <p v-if="errorText">
       {{ errorText }}
     </p>
-    <TableTDefault
+    <LazyTableTDefault
+      v-if="Object.values(properties.properties)"
       :is-loading="isLoading"
       :error="errorText"
       :items="Object.values(properties.properties)"
@@ -76,7 +77,7 @@
           <br>
         </b-container>
       </template>
-    </TableTDefault>
+    </LazyTableTDefault>
   </div>
 </template>
 
