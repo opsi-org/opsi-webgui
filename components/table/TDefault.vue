@@ -12,6 +12,7 @@
       :items="items"
       :fields="fields"
       :stacked="stacked"
+      :fixed="fixed"
       small
       show-empty
       responsive
@@ -52,6 +53,7 @@ export default class BVTable extends Vue {
   @Prop({ }) type?: string
   @Prop({ }) isLoading?: boolean
   @Prop({ }) stacked?: boolean
+  @Prop({ }) fixed?: boolean
   @Prop({ }) hover?: boolean
   @Prop({ }) noheader?: boolean
   @Prop({ }) filter?: string
@@ -103,7 +105,7 @@ export default class BVTable extends Vue {
 
 .productproperties.table-responsive {
   /* min-height: 100vh; */
-  height: 62vh !important;
+  /* height: 62vh !important; */
   overflow-y: auto;
 }
 </style>
