@@ -218,6 +218,10 @@ export default class VClients extends Vue {
     this.fetchPageOne()
   }
 
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+    this.tableData.sortBy = 'selected'
+  }
+
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
     this.tableData.pageNumber = 1
   }
