@@ -5,7 +5,7 @@
       <template #parent>
         <BarBCollapsePageHeader
           :id="id"
-          :title="$t('title.clients')"
+          :title="$t('title.clients')+ ' (' + totalItems + ')'"
           :row-id="rowId"
           :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"

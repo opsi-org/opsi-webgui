@@ -6,7 +6,7 @@
         <!-- v-if="$mq == 'mobile'" -->
         <BarBCollapsePageHeader
           :id="id"
-          :title="$t('title.depots') || 'Servers'"
+          :title="$t('title.depots') + ' (' + totalItems + ')' || 'Servers' + ' (' + totalItems + ')'"
           :row-id="rowId"
           :collapsed="$mq=='mobile'"
           :collapseable="false"
