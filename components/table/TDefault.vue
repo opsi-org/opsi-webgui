@@ -19,7 +19,10 @@
       borderless
     >
       <template #empty>
-        {{ $t('empty') }}
+        {{ $t('--') }}
+      </template>
+      <template #emptyfiltered>
+        {{ $t('') }}
       </template>
       <template #head()="data">
         {{ data.label }}
