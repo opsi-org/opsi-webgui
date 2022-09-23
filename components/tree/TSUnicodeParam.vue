@@ -4,8 +4,8 @@
     :multiple="row.multiValue"
     :editable="row.editable"
     :options="options"
+    :no-results-text="row.editable? $t('No results found... Press enter to add') : $t('No results found.')"
     @new-node="addNewValue"
-    :no-results-text="row.editable? 'No results found... Press enter to add' : 'No results found'"
   />
 </template>
 
