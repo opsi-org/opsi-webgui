@@ -8,14 +8,14 @@
       tabindex="-1"
       class="dropdown-menu show"
       :style=" { top:top, left:left }"
+      @blur="closeMenu"
     >
-      <!-- @blur="closeMenu" -->
       <slot name="contextcontent" />
       <li v-if="Object.keys($scopedSlots).includes('contextcontent') && Object.keys($scopedSlots).includes('contextcontentbottom')" class="li-delimiter" />
       <slot name="contextcontentbottom" :itemkey="primaryKey? item[primaryKey]:item" />
     </ul>
   </div>
-  <div v-else id="demo">
+  <div v-else id="demo" @blur="closeMenu">
     <ul
       v-if="viewMenu"
       id="right-click-menu"
@@ -32,20 +32,12 @@
         <li class="li-delimiter" />
         <slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" />
       </div>
-      <!-- <slot name="contextcontent" /> -->
-      <!-- <b-dropdown-divider v-if="Object.keys($scopedSlots).includes('contextcontent')" /> -->
-      <!-- <li v-if="Object.keys($scopedSlots).includes('contextcontent') && Object.keys($scopedSlots).includes('contextcontentbottom')" class="li-delimiter" /> -->
-      <!-- default if not client table -->
-      <!-- <slot v-if="contextClienttable === false" name="content">
-        <li>Clicked on item {{ primaryKey? item[primaryKey]:item }}</li>
-      </slot> -->
-      <!-- <slot name="contextcontentbottom" :itemkey="primaryKey? item[primaryKey]:item" /> -->
     </ul>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants] })
