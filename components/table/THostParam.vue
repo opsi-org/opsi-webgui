@@ -9,15 +9,15 @@
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold" block variant="transparent">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
           <!-- <span v-for="item in v" :key="item.configId">
-            <b-row class="mb-3">
-              <b-col class="text-sm-right">
+            <GridGFormItem>
+              <template #label>
                 {{ item.configId }}
-              </b-col>
-              <b-col>
+              </template>
+              <template #value>
                 <CheckboxCBBoolParam v-if="item.type === 'BoolConfig'" :type="type" :row="item" />
                 <TreeTSUnicodeParam v-else :type="type" :row="item" />
-              </b-col>
-            </b-row>
+              </template>
+            </GridGFormItem>
           </span> -->
           <LazyTableTDefault
             v-if="v"
@@ -33,7 +33,7 @@
               {{ row.value }}
             </template>
             <template #cell(configId)="row">
-              <span :id="'configId'+row.value">{{ row.value }}</span>
+              <p :id="'configId'+row.value" class="text-sm-right text-break">{{ row.value }}</p>
               <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
             </template>
             <template #cell(action)="row">
