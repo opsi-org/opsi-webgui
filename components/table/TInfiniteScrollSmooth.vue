@@ -1,6 +1,15 @@
 <template>
   <div :id="'TInfiniteScrollSmoothWrapper_' + id" data-testid="TInfiniteScrollSmooth" class="TInfiniteScrollSmoothWrapper" :class="{loadingCursor: isLoading}">
-    hi <ContextmenuCMViewTable />
+    <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
+      <template
+        v-for="slotName in Object.keys($scopedSlots).filter(
+          k => k.startsWith('contextcontent'))"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
+    </ContextmenuCMViewTable>
+
     <p v-if="error">
       {{ error }}
     </p>
@@ -32,6 +41,7 @@
       :sort-by.sync="tableData.sortBy"
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
+      @row-contextmenu="contextOpen"
     >
       <!-- :per-page="tableData.perPage" -->
       <template v-if="totalpages > 1" #top-row="{ columns }">
@@ -367,6 +377,12 @@ export default class TInfiniteScrollSmooth extends Vue {
         this.setselection([ident])
       }
     }
+  }
+
+  contextOpen (item, index, evt) {
+    evt.preventDefault()
+    console.log('right clicked row ' + index + ' item ' + JSON.stringify(item), evt.type)
+    this.$refs.contextmenu.openMenu(evt, item)
   }
 
   clearSelected () {

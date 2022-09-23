@@ -1,61 +1,87 @@
 <template>
-  <div id="demo" v-on:click.right="openMenu">
-    HELLO
-    <h1 class="center">
-      Right click anywhere to bring up a menu.
-    </h1>
-    <ul id="right-click-menu" tabindex="-1" ref="right" v-if="viewMenu" v-on:blur="closeMenu"  :style=" { top:top, left:left }">
-        <li>First list item</li>
-        <li>Second list item</li>
+  <div v-if="withButton !== false" id="demo" @click.right="openMenu" @keydown="openMenu">
+    <slot name="item" />
+    <ul
+      v-if="viewMenu"
+      id="right-click-menu"
+      ref="right"
+      tabindex="-1"
+      class="dropdown-menu show"
+      :style=" { top:top, left:left }"
+    >
+      <!-- @blur="closeMenu" -->
+      <slot name="contextcontent" />
+      <li v-if="Object.keys($scopedSlots).includes('contextcontent') && Object.keys($scopedSlots).includes('contextcontentbottom')" class="li-delimiter" />
+      <slot name="contextcontentbottom" :itemkey="primaryKey? item[primaryKey]:item" />
     </ul>
-</div>
+  </div>
+  <div v-else id="demo">
+    <ul
+      v-if="viewMenu"
+      id="right-click-menu"
+      ref="right"
+      class="dropdown-menu show"
+      tabindex="-1"
+      :style=" { top:top, left:left }"
+    >
+      <!-- @blur="closeMenu" -->
+      <div
+        v-for="slotName in Object.keys($scopedSlots)"
+        :key="slotName"
+      >
+        <li class="li-delimiter" />
+        <slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" />
+      </div>
+      <!-- <slot name="contextcontent" /> -->
+      <!-- <b-dropdown-divider v-if="Object.keys($scopedSlots).includes('contextcontent')" /> -->
+      <!-- <li v-if="Object.keys($scopedSlots).includes('contextcontent') && Object.keys($scopedSlots).includes('contextcontentbottom')" class="li-delimiter" /> -->
+      <!-- default if not client table -->
+      <!-- <slot v-if="contextClienttable === false" name="content">
+        <li>Clicked on item {{ primaryKey? item[primaryKey]:item }}</li>
+      </slot> -->
+      <!-- <slot name="contextcontentbottom" :itemkey="primaryKey? item[primaryKey]:item" /> -->
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
-  import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
-  import { Constants } from '../../mixins/uib-mixins'
+import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
 
-  @Component({ mixins: [Constants] })
-  export default class CMViewTable extends Vue {
-    $$:any
-    @Prop({ default: 'key'}) item!: string
+@Component({ mixins: [Constants] })
+export default class CMViewTable extends Vue {
+  slotScope:any
+  //   @Prop({ default: 'key' }) item!: string
+  @Prop({ default: undefined }) primaryKey!: string
+  @Prop({ default: false }) contextClienttable!: boolean
+  @Prop({ default: false }) withButton!: boolean
 
+  viewMenu: boolean = false
+  top: string = '0px'
+  left: string = '0px'
+  item: any = { item: '<not found>' }
 
-    viewMenu: boolean = false
-    top: string = '0px'
-    left: string ='0px'
+  setMenu (top, left) {
+    this.top = (top - 50) + 'px'
+    this.left = (left - 70) + 'px'
+  }
 
-    setMenu (top, left) {
-      // let largestHeight = window.innerHeight - this.$$.right.offsetHeight - 25;
-      // let largestWidth = window.innerWidth - this.$$.right.offsetWidth - 25;
-      let largestHeight = window.innerHeight -  (this.$refs.right as any)?.offsetHeight - 50 ;
-      let largestWidth = window.innerWidth - (this.$refs.right as any)?.offsetWidth - 50;
-      var _top = top;
+  closeMenu () {
+    this.viewMenu = false
+  }
 
-      var _left = left;
-      // if (top > largestHeight) _top = largestHeight;
-      // if (left > largestWidth) _left = largestWidth;
+  openMenu (e, item) {
+    this.viewMenu = true
+    this.item = item
+    Vue.nextTick(function () {
+      // this.$$.right.focus();
+      (this.$refs.right as any)?.focus()
 
-      this.top = _top + 'px';
-      this.left = _left + 'px';
-    }
-
-      closeMenu() {
-          this.viewMenu = false;
-      }
-
-      openMenu(e) {
-          this.viewMenu = true;
-
-          Vue.nextTick(function() {
-              // this.$$.right.focus();
-              (this.$refs.right as any)?.focus();
-
-              this.setMenu(e.y, e.x)
-          }.bind(this));
-          e.preventDefault();
-      }
-};
+      this.setMenu(e.y, e.x)
+    }.bind(this))
+    e.preventDefault()
+  }
+}
 </script>
 
 <style lang="css" scoped>
@@ -63,10 +89,15 @@
 #demo {
     width: 100%;
     height: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    /* background-color: inherit !important; */
 }
 
 #right-click-menu{
-    background: #FAFAFA;
+    /* color: var(--light) !important; */
+    /* background-color: inherit !important; */
+    /* background: #FAFAFA; */
     border: 1px solid #BDBDBD;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
     display: block;
@@ -74,23 +105,28 @@
     margin: 0;
     padding: 0;
     position: absolute;
-    width: 250px;
+    min-width: 250px;
     z-index: 999999;
 }
-
-#right-click-menu li {
+#right-click-menu li.li-delimiter {
     border-bottom: 1px solid #E0E0E0;
+    border-color: var(--light);
+}
+#right-click-menu li.li-delimiter:first {
+    border-bottom: unset;
+}
+#right-click-menu li:not(.li-delimiter) {
+    /* border-bottom: 1px solid #E0E0E0; */
     margin: 0;
     padding: 5px 35px;
 }
 
-#right-click-menu li:last-child {
+#right-click-menu li:not(.li-delimiter):last-child {
     border-bottom: none;
 }
 
-#right-click-menu li:hover {
+#right-click-menu li:not(.li-delimiter):hover {
     background: #1E88E5;
     color: #FAFAFA;
 }
-
 </style>

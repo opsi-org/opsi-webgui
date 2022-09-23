@@ -5,16 +5,21 @@
     no-caret
     right
     lazy
-    variant="outline-primary"
+    :toggle-tag="incontextmenu !== false ? 'li': 'button'"
+    :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
     size="sm"
     alt="Show column"
     class="DropdownDDTableSorting fixed_column_selection noborder w-100 text-left"
-    :toggle-class="{ 'DropdownDDTableSortingBtn w-100 h-100 text-left': true}"
+    :class="{ 'absolutright': (incontextmenu !== false) }"
+    :toggle-class="{
+      'DropdownDDTableSortingBtn w-100 h-100 text-left': true,
+      'dropdown-item': (incontextmenu !== false) }"
     :title="$t('button.sort.tablecolumns')"
   >
     <!-- dropleft -->
     <template #button-content>
       <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
+      {{ incontextmenu !== false ? 'Sorting >': ''}}
     </template>
     <li>
       <a
@@ -32,9 +37,7 @@
         v-for="header in Object.values(headerData).filter(h=>h.sortable)"
         :key="header.key"
         class="dropdown-item"
-        :class="{
-          'selected':sortBy==header.key,
-        }"
+        :class="{'selected': (sortBy==header.key)}"
         variant="primary"
         @keydown="changeSortBy(header.key)"
         @click="changeSortBy(header.key)"
@@ -57,6 +60,7 @@ export default class DDTableSorting extends BDropdown {
   iconnames: any
   @Prop({ default: '' }) sortBy!: string
   @Prop({ default: false }) sortDesc!: boolean
+  @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeader
 
   changeSortDirection () { this.$emit('update:sortDesc', (!this.sortDesc)) }
@@ -70,6 +74,10 @@ export default class DDTableSorting extends BDropdown {
   max-height: var(--component-height) !important;
   display: unset !important;
 }
+.DropdownDDTableSorting.absolutright {
+  min-width: 100% !important;
+  width: 100% !important;
+}
 .DropdownDDTableSortingBtn {
   height: 100%;
   max-height: var(--component-height) !important;
@@ -78,7 +86,8 @@ export default class DDTableSorting extends BDropdown {
   min-width: 220px !important;
   max-width: 250px !important;
   height: max-content !important;
-  z-index: 3 !important;
+  z-index: 300 !important;
+  /* left: 200px !important; */
   /* position: sticky; */
 }
 .DropdownDDTableSorting .dropdown-menu .dropdown-item {
@@ -89,6 +98,14 @@ export default class DDTableSorting extends BDropdown {
   padding-right: 5px;
   white-space: normal;
   font-weight: normal !important;
+}
+.DropdownDDTableSorting.absolutright > li {
+  border: unset !important;
+  /* color: var(--light) !important; */
+}
+.DropdownDDTableSorting.absolutright > li:hover {
+  border: unset !important;
+  /* color: var(--light) !important; */
 }
 .DropdownDDTableSorting a.selected {
   color: var(--light) !important;

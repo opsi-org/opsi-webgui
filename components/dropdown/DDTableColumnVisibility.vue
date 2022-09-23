@@ -5,16 +5,21 @@
     no-caret
     lazy
     right
-    variant="outline-primary"
+    :toggle-tag="incontextmenu !== false ? 'li': 'button'"
+    :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
     size="sm"
     alt="Show column"
-    class="DDTableColumnVisibility fixed_column_selection noborder w-100 h-100 text-left"
-    :toggle-class="{ 'DDTableColumnVisibilityBtn p-2 w-100 h-100 text-left': true}"
+    class="DDTableColumnVisibility fixed_column_selection noborder w-100 text-left"
+    :class="{ 'absolutright': (incontextmenu !== false) }"
+    :toggle-class="{
+      'DDTableColumnVisibilityBtn w-100 h-100 text-left': true,
+      'dropdown-item': (incontextmenu !== false) }"
     :title="$t('table.showCol')"
     @show="init"
   >
     <template #button-content>
       <IconITableColumn />
+      {{ incontextmenu !== false ? 'Columns >': ''}}
     </template>
     <template v-if="!multiCondition">
       <b-dropdown-form
@@ -69,6 +74,7 @@ export default class DDTableColumnVisibility extends BDropdown {
   @Prop({ default: 'table' }) tableId!: string
   @Prop({ }) sortBy!: string
   @Prop({ default: undefined }) multi!: boolean|undefined
+  @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   $mq:any
   viewId = ((this.tableId === 'Localboot') || (this.tableId === 'Netboot')) ? 'products' : this.tableId
@@ -181,22 +187,37 @@ export default class DDTableColumnVisibility extends BDropdown {
   max-height: var(--component-height) !important;
   z-index: 30 !important;
 }
+.DDTableColumnVisibility.absolutright {
+  min-width: 100% !important;
+  width: 100% !important;
+}
 .DDTableColumnVisibility .dropdown-menu {
   overflow: visible !important;
   height: max-content !important;
   /* max-height: 300px !important; */
   min-width: 250px !important;
   max-width: 350px !important;
-  z-index: 30 !important;
+  z-index: 300 !important;
   /* position: sticky !important; */
 }
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding: 0px !important;
+  cursor: pointer;
 }
 
 .DDTableColumnVisibilityBtn {
   height: 100% !important;
   max-height: var(--component-height) !important;
+}
+
+.DDTableColumnVisibility.absolutright > li {
+  border: unset !important;
+  /* color: var(--light) !important; */
+  min-width: 100% !important;
+}
+.DDTableColumnVisibility.absolutright > li:hover {
+  border: unset !important;
+  /* color: var(--light) !important; */
 }
 /* .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   cursor: pointer;

@@ -4,6 +4,7 @@
     data-testid="BTNEvent"
   >
     <b-button
+      v-if="incontextmenu == false"
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
@@ -13,14 +14,27 @@
       :size="size"
       @click="show=true"
     >
-      <!-- class="border-0" -->
-      <!-- 'pl-3': event=='ondemand' && $mq=='mobile' -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
       <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
-      <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
+    <li
+      v-else
+      :pressed="isLoading"
+      :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
+      :variant="events[event].variant"
+      :class="{
+        'w-100 h-100 text-left border-0': true,
+      }"
+      :size="size"
+      @click="show=true"
+    >
+      <b-icon v-if="events[event].icon" :icon="events[event].icon" />
+      {{ (!isLoading) ? $t(events[event].title) : '' }}
+      <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) + ' ' + data : '' }} </span>
+      <IconILoading v-if="isLoading" :small="true" />
+    </li>
 
     <b-modal
       v-model="show"
@@ -98,6 +112,7 @@ export default class BTNEvent extends Vue {
   @selections.Getter public selectionClients!: Array<string>
 
   @Prop({ default: 'ondemand' }) event!: string
+  @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
   @Prop({ default: undefined }) isLoadingParent ?: boolean|undefined

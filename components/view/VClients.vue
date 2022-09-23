@@ -38,6 +38,35 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
+          <template #contextcontent>
+            <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" :incontextmenu="true" />
+            <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
+          </template>
+          <template #contextcontentbottom="data">
+            <DropdownDDClientActions :client-id="data.itemkey" :fetch="$fetch" :incontextmenu="true" />
+          </template>
+          <template #contextcontentmiddle="{itemkey}">
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              :label="$t('title.config')"
+              :icon="iconnames.settingsobject"
+              to="/clients/config"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.log')"
+              :label="$t('title.log')"
+              :icon="iconnames.log"
+              to="/clients/log"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
+          </template>
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
@@ -62,6 +91,12 @@
           </template>
           <template #cell(uefi)="row">
             <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
+          </template>
+          <template #cell(clientId)="row">
+            {{ row.item.clientId }}
+          </template>
+          <template #cell(description)="row">
+            {{ row.item.description }}
           </template>
           <template #rowactions="row">
             <ButtonBTNRowLinkTo
@@ -192,7 +227,7 @@ export default class VClients extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false, visible: this.$mq === 'mobile',
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
       class: 'col-rowactions'
     }

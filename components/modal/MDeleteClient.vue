@@ -1,6 +1,7 @@
 <template>
   <div data-testid="MDeleteClient">
     <b-button
+      v-if="incontextmenu == false"
       variant="outline-primary"
       size="sm"
       :title="$t('label.delete')"
@@ -10,6 +11,17 @@
     >
       <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>
+    <div
+      v-else
+      variant="outline-primary"
+      size="sm"
+      :title="$t('label.delete')"
+      class="w-100 h-100 text-left border-0"
+      :disabled="(config)?config.read_only:false"
+      @click="show = !show"
+    >
+      <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') + ' ' + clientId }} </span>
+    </div>
 
     <b-modal
       id="modalDeleteClient"
@@ -51,6 +63,7 @@ export default class MDeleteClient extends Vue {
   $axios: any
   $t: any
   $router: any
+  @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: true }) clientId!: string
   @Prop({ default: () => { return () => { /* default */ } } }) refetch!: Function
 
