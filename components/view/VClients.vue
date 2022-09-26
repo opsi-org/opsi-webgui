@@ -5,7 +5,7 @@
       <template #parent>
         <BarBCollapsePageHeader
           :id="id"
-          :title="$t('title.clients')"
+          :title="$t('title.clients')+ ' (' + totalItems + ')'"
           :row-id="rowId"
           :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"
@@ -216,6 +216,10 @@ export default class VClients extends Vue {
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.setSelectionClients([])
     this.fetchPageOne()
+  }
+
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+    this.tableData.sortBy = 'selected'
   }
 
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
