@@ -38,10 +38,6 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
-          <template #contextcontent>
-            <DropdownDDTableSorting onhover :table-id="id" v-bind.sync="tableInfo" :incontextmenu="true" />
-            <DropdownDDTableColumnVisibility onhover :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
-          </template>
           <template #contextcontentbottom="data">
             <DropdownDDClientActions :client-id="data.itemkey" :fetch="$fetch" :incontextmenu="true" />
           </template>
@@ -66,6 +62,10 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
+          </template>
+          <template #contextcontent>
+            <DropdownDDTableSorting onhover :table-id="id" v-bind.sync="tableInfo" :incontextmenu="true" />
+            <DropdownDDTableColumnVisibility onhover :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
           </template>
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />

@@ -1,38 +1,39 @@
 <template>
-  <div v-if="withButton !== false" id="demo" @click.right="openMenu" @keydown="openMenu">
-    <slot name="item" />
-    <ul
-      v-if="viewMenu"
-      id="right-click-menu"
-      ref="right"
-      tabindex="-1"
-      class="dropdown-menu show"
-      :style=" { top:top, left:left }"
-      @blur="closeMenu"
-    >
-      <slot name="contextcontent" />
-      <li v-if="Object.keys($scopedSlots).includes('contextcontent') && Object.keys($scopedSlots).includes('contextcontentbottom')" class="li-delimiter" />
-      <slot name="contextcontentbottom" :itemkey="primaryKey? item[primaryKey]:item" />
-    </ul>
-  </div>
-  <div v-else id="demo" @blur="closeMenu">
-    <ul
-      v-if="viewMenu"
-      id="right-click-menu"
-      ref="right"
-      class="dropdown-menu show"
-      tabindex="-1"
-      :style=" { top:top, left:left }"
-    >
-      <!-- @blur="closeMenu" -->
-      <div
-        v-for="slotName in Object.keys($scopedSlots)"
-        :key="slotName"
+  <div>
+    <div v-if="viewMenu" class="right-click-backdrop bg-dark" @click="closeMenu" @keypress="closeMenu" @click.right="reopenMenu" />
+    <div v-if="withButton !== false" id="demo" @click.right="openMenu" @keydown="openMenu">
+      <slot name="item" />
+      <ul
+        v-if="viewMenu"
+        id="right-click-menu"
+        ref="right"
+        tabindex="-1"
+        class="dropdown-menu show"
+        :style=" { top:top, left:left }"
       >
-        <li class="li-delimiter" />
-        <slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" />
-      </div>
-    </ul>
+        <slot name="contextcontent" />
+        <li v-if="Object.keys($scopedSlots).includes('contextcontent') && Object.keys($scopedSlots).includes('contextcontentbottom')" class="li-delimiter" />
+        <slot name="contextcontentbottom" :itemkey="primaryKey? item[primaryKey]:item" />
+      </ul>
+    </div>
+    <div v-else id="demo">
+      <ul
+        v-if="viewMenu"
+        id="right-click-menu"
+        ref="right"
+        class="dropdown-menu show"
+        tabindex="-1"
+        :style=" { top:top, left:left }"
+      >
+        <div
+          v-for="slotName in Object.keys($scopedSlots)"
+          :key="slotName"
+        >
+          <li class="li-delimiter" />
+          <slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" />
+        </div>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -60,6 +61,11 @@ export default class CMViewTable extends Vue {
 
   closeMenu () {
     this.viewMenu = false
+  }
+
+  reopenMenu (e, item) {
+    this.closeMenu()
+    this.openMenu(e, item)
   }
 
   openMenu (e, item) {
@@ -97,8 +103,12 @@ export default class CMViewTable extends Vue {
     margin: 0;
     padding: 0;
     position: absolute;
+    /* display: flex; */
     min-width: 250px;
     z-index: 999999;
+    opacity: 1 !important;
+
+
 }
 #right-click-menu li.li-delimiter {
     border-bottom: 1px solid #E0E0E0;
@@ -120,5 +130,15 @@ export default class CMViewTable extends Vue {
 #right-click-menu li:not(.li-delimiter):hover {
     background: #1E88E5;
     color: #FAFAFA;
+}
+.right-click-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  min-height: 100%;
+  opacity: 0.5;
 }
 </style>
