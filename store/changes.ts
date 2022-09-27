@@ -22,7 +22,7 @@ export default class Changes extends VuexModule {
     this._changesProducts.splice(this._changesProducts.indexOf(obj), 1)
   }
 
-  @VuexMutation public deleteFromChangesWhere (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) {
+  @VuexMutation public deleteFromProdChangesWhere (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) {
     let removeItems = this._changesProducts.filter(item => item.user === localStorage.getItem('username'))
     // filter by hosts
     removeItems = removeItems.filter(item => hostKV[1].includes(item[hostKV[0]]))
@@ -35,7 +35,7 @@ export default class Changes extends VuexModule {
     removeItems.forEach(f => this._changesProducts.splice(this._changesProducts.findIndex(item => item === f), 1))
   }
 
-  @VuexMutation public deleteAllChanges () {
+  @VuexMutation public deleteAllProductChanges () {
     // this._changesProducts.splice(0, this._changesProducts.length)
     const removeItems = this._changesProducts.filter(item => item.user === localStorage.getItem('username'))
     removeItems.forEach(f => this._changesProducts.splice(this._changesProducts.findIndex(item => item.user === f.user), 1))

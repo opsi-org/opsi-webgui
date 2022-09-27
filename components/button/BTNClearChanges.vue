@@ -17,10 +17,10 @@ export default class BTNClearChanges extends Vue {
   @Prop({ }) hide!: string
 
   @changes.Getter public changesProducts!: Array<object>
-  @changes.Mutation public deleteAllChanges!: () => void
+  @changes.Mutation public deleteAllProductChanges!: () => void
 
   deleteAll () {
-    this.deleteAllChanges()
+    this.deleteAllProductChanges()
     if (this.hide) { this.$bvModal.hide(this.hide) }
     this.$nuxt.refresh()
   }
