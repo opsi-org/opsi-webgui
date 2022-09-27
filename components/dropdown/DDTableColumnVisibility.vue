@@ -67,8 +67,8 @@
     ref="dropdown"
     v-bind="$props"
     data-testid="DropdownDDTableColumnVisibility"
+    dropright
     lazy
-    right
     :no-caret="incontextmenu == false"
     :toggle-tag="incontextmenu !== false ? 'li': 'button'"
     :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
@@ -273,7 +273,7 @@ export default class DDTableColumnVisibility extends BDropdown {
   overflow: visible !important;
   height: max-content !important;
   /* max-height: 300px !important; */
-  min-width: 250px !important;
+  min-width: 280px !important;
   max-width: 350px !important;
   z-index: 300 !important;
   /* position: sticky !important; */
@@ -281,7 +281,17 @@ export default class DDTableColumnVisibility extends BDropdown {
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding: 0px !important;
   cursor: pointer;
+
 }
+
+/*
+.DDTableColumnVisibility .dropdown-menu .dropdown-item {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+*/
 
 .DDTableColumnVisibilityBtn {
   height: 100% !important;

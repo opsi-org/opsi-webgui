@@ -30,6 +30,7 @@
       show-empty
       :small="$mq=='mobile'"
       responsive
+      hover
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="cache_pages.flat()"
       selectable

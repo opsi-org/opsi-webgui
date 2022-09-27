@@ -20,7 +20,7 @@
       :disabled="(config)?config.read_only:false"
       @click="show = !show"
     >
-      <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') + ' ' + clientId }} </span>
+      <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </div>
 
     <b-modal

@@ -32,7 +32,7 @@
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) + ' ' + data : '' }} </span>
+      <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </li>
 
@@ -81,7 +81,7 @@
         <b-button
           variant="success"
           size="sm"
-          :disabled="selection.length <= 0"
+          :disabled="data.length <= 0"
           class="float-right confirm"
           @click="callEvent(); show=false"
         >

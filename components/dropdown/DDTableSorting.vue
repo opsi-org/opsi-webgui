@@ -4,7 +4,6 @@
       ref="dropdown"
       v-bind="$props"
       data-testid="DropdownDDTableSorting"
-      right
       lazy
       :no-caret="incontextmenu == false"
       :toggle-tag="incontextmenu !== false ? 'li': 'button'"
@@ -35,17 +34,23 @@
           <!-- :name="'hi'" -->
           <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
         </a>
-        <a
-          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
-          :key="header.key"
-          class="dropdown-item"
+      </li>
+      <li class="li-delimiter" />
+      <li
+        v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+        :key="header.key"
           :class="{'selected': (sortBy==header.key)}"
           variant="primary"
           @keydown="changeSortBy(header.key)"
           @click="changeSortBy(header.key)"
+      >
+          <!-- class="dropdown-item" -->
+        <a
+          class="bg-secondary"
         >
           {{ header.label }}
         </a>
+        {{(sortBy==header.key)}}
       </li>
     </b-dropdown>
   </div>
@@ -53,7 +58,7 @@
     v-else
     v-bind="$props"
     data-testid="DropdownDDTableSorting"
-    right
+    dropright
     lazy
     :no-caret="incontextmenu == false"
     :toggle-tag="incontextmenu !== false ? 'li': 'button'"
@@ -72,30 +77,33 @@
       <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
       {{ incontextmenu !== false ? 'Sorting': ''}}
     </template>
-    <li>
-      <a
-        class="dropdown-item"
-        @keydown.prevent="changeSortDirection()"
-        @click.prevent="changeSortDirection()"
-      >
-        <b-form-checkbox
-          :checked="sortDesc"
-        />
-        <!-- :name="'hi'" -->
-        <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
-      </a>
-      <a
-        v-for="header in Object.values(headerData).filter(h=>h.sortable)"
-        :key="header.key"
-        class="dropdown-item"
-        :class="{'selected': (sortBy==header.key)}"
-        variant="primary"
-        @keydown="changeSortBy(header.key)"
-        @click="changeSortBy(header.key)"
-      >
-        {{ header.label }}
-      </a>
-    </li>
+
+    <template>
+          <!-- class="dropdown-item" -->
+      <b-dropdown-form
+          @keydown.prevent="changeSortDirection()"
+          @click.prevent="changeSortDirection()"
+        >
+          <b-form-checkbox
+            :checked="sortDesc"
+          />
+          <!-- :name="'hi'" -->
+          <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
+      </b-dropdown-form>
+      <li class="li-delimiter" />
+          <!-- class="dropdown-item" -->
+      <b-dropdown-form
+          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+          :key="header.key"
+          :class="{'selected': (sortBy==header.key)}"
+          variant="primary"
+          @keydown="changeSortBy(header.key)"
+          @click="changeSortBy(header.key)"
+          class="dropdown-item"
+        >
+          {{ header.label }}
+      </b-dropdown-form>
+    </template>
   </b-dropdown>
 </template>
 
@@ -152,21 +160,33 @@ export default class DDTableSorting extends BDropdown {
   margin-top: 10px;
 }
 .DropdownDDTableSorting .dropdown-menu {
-  min-width: 220px !important;
-  max-width: 250px !important;
+  min-width: 280px !important;
+  max-width: 350px !important;
   height: max-content !important;
   z-index: 300 !important;
-  /* left: 200px !important; */
-  /* position: sticky; */
+  /* left: 25px !important; */
 }
 .DropdownDDTableSorting .dropdown-menu .dropdown-item {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+.DropdownDDTableSorting .dropdown-menu .dropdown-item:hover {
+  /* background-color: var(--light); */
+  /* background-color: initial; */
+  /* display: block !important; */
+  display: inline-flex !important;
+}
+.DropdownDDTableSorting .dropdown-menu li {
   cursor: pointer;
-  display: flex !important;
-  /* flex-wrap: wrap; */
-  padding-left: 1.2rem;
+  padding-left: 5px;
   padding-right: 5px;
   white-space: normal;
-  font-weight: normal !important;
+  font-weight: 300 !important;
+}
+.DropdownDDTableSorting .dropdown-menu li .b-dropdown-form .custom-control {
+  display: inline-block;
 }
 .DropdownDDTableSorting.absolutright > li {
   border: unset !important;
@@ -176,9 +196,9 @@ export default class DDTableSorting extends BDropdown {
   border: unset !important;
   /* color: var(--light) !important; */
 }
-.DropdownDDTableSorting a.selected {
+.DropdownDDTableSorting  .dropdown-menu li.selected {
   color: var(--light) !important;
-  background-color: var(--primary);
+  background-color: var(--primary) !important;
 }
 .DropdownDDTableSorting .noborder .btn-outline-primary{
   border: 0;

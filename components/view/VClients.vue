@@ -38,10 +38,10 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
-          <template #contextcontentbottom="data">
+          <template #contextcontent1="data">
             <DropdownDDClientActions :client-id="data.itemkey" :fetch="$fetch" :incontextmenu="true" />
           </template>
-          <template #contextcontentmiddle="{itemkey}">
+          <template #contextcontent2="{itemkey}">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               :label="$t('title.config')"
@@ -63,9 +63,21 @@
               :click="routeRedirectWith"
             />
           </template>
-          <template #contextcontent>
-            <DropdownDDTableSorting onhover :table-id="id" v-bind.sync="tableInfo" :incontextmenu="true" />
-            <DropdownDDTableColumnVisibility onhover :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
+          <template #contextcontent-keepOpenOnClick>
+              <!-- onhover -->
+            <DropdownDDTableSorting
+              :table-id="id"
+              :incontextmenu="true"
+              v-bind.sync="tableInfo"
+            />
+            <DropdownDDTableColumnVisibility
+              :table-id="id"
+              :headers.sync="tableInfo.headerData"
+              :sort-by="tableInfo.sortBy"
+              :multi="true"
+              :incontextmenu="true"
+            />
+              <!-- onhover -->
           </template>
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
@@ -106,6 +118,7 @@
               to="/clients/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
+              :style="($route.path.includes('config')) ? 'background-color: var(--primary)': ''"
               :click="routeRedirectWith"
             />
             <ButtonBTNRowLinkTo
@@ -113,6 +126,7 @@
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log'):''"
               :icon="iconnames.log"
               to="/clients/log"
+              :style="($route.path.includes('log')) ? 'background-color: var(--primary)': ''"
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
