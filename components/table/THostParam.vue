@@ -5,13 +5,12 @@
     </AlertAAlert>
     <AlertAAlert ref="configViewAlert" />
     <IconILoading v-if="isLoading" />
-    <template v-else>
-      <InputIFilterTChanges :filter.sync="filter" />
-      <DivDScrollResult>
-        <span v-for="v,k in hostParam" :key="k">
-          <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
-          <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
-            <!-- <span v-for="item in v" :key="item.configId">
+    <InputIFilterTChanges :filter.sync="filter" />
+    <DivDScrollResult>
+      <span v-for="v,k in hostParam" :key="k">
+        <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
+        <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
+          <!-- <span v-for="item in v" :key="item.configId">
             <GridGFormItem>
               <template #label>
                 {{ item.configId }}
@@ -22,33 +21,32 @@
               </template>
             </GridGFormItem>
           </span> -->
-            <LazyTableTDefault
-              v-if="v"
-              :noheader="true"
-              :fixed="true"
-              :filter="filter"
-              :fields="['configId', 'action']"
-              :filterfields="['configId']"
-              :items="v"
-              type="productproperties"
-            >
-              <template #cell()="row">
-                {{ row.value }}
-              </template>
-              <template #cell(configId)="row">
-                <p :id="'configId'+row.value" class="text-sm-right text-break">{{ row.value }}</p>
-                <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
-              </template>
-              <template #cell(action)="row">
-                <TableCellTCHostParam :configtype="row.item.type" :type="type" :row="row.item" @change="handleSelection" />
+          <LazyTableTDefault
+            v-if="v"
+            :noheader="true"
+            :fixed="true"
+            :filter="filter"
+            :fields="['configId', 'action']"
+            :filterfields="['configId']"
+            :items="v"
+            type="productproperties"
+          >
+            <template #cell()="row">
+              {{ row.value }}
+            </template>
+            <template #cell(configId)="row">
+              <p :id="'configId'+row.value" class="text-sm-right text-break">{{ row.value }}</p>
+              <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
+            </template>
+            <template #cell(action)="row">
+              <TableCellTCHostParam :configtype="row.item.type" :type="type" :row="row.item" @change="handleSelection" />
               <!-- <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
               <TreeTSUnicodeParam v-else :type="type" :row="row.item" /> -->
-              </template>
-            </LazyTableTDefault>
-          </b-collapse>
-        </span>
-      </DivDScrollResult>
-    </template>
+            </template>
+          </LazyTableTDefault>
+        </b-collapse>
+      </span>
+    </DivDScrollResult>
   </div>
 </template>
 
@@ -113,20 +111,20 @@ export default class THostParam extends Vue {
 
   async saveParameters (url: string, request: any) {
     this.isLoading = true
+    const ref = (this.$refs.configViewAlert as any)
     await this.$axios.$post(url, request)
       .then(() => {
-        const ref = (this.$refs.configViewAlert as any)
         ref.alert(this.$t('message.success.updateConfig.save') as string + ' Config', 'success')
         // this.$fetch()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.configViewAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + ' Config', 'danger', detailedError)
       })
     this.isLoading = false
   }
 
   async handleSelection (change: any) {
+    console.log('CHANGE', change)
     if (this.quicksave) {
       let url: string = ''
       let request: any = []
