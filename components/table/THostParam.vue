@@ -37,8 +37,9 @@
               <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
             </template>
             <template #cell(action)="row">
-              <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
-              <TreeTSUnicodeParam v-else :type="type" :row="row.item" />
+              <TableCellTCUnicodeParam :configtype="row.item.type" :type="type" :row="row.item" />
+              <!-- <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
+              <TreeTSUnicodeParam v-else :type="type" :row="row.item" /> -->
             </template>
           </LazyTableTDefault>
         </b-collapse>

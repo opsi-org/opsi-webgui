@@ -1,21 +1,29 @@
 <template>
-  <TreeTSDefaultWithAdding
-    v-model="localval"
-    :multiple="row.multiValue"
-    :editable="row.editable"
-    :options="options"
-    :no-results-text="row.editable? $t('No results found... Press enter to add') : $t('No results found.')"
-    @new-node="addNewValue"
-  />
+  <div>
+    <b-form-checkbox
+      v-if="configtype === 'BoolConfig'"
+      v-model="localval"
+    />
+    <TreeTSDefaultWithAdding
+      v-else
+      v-model="localval"
+      :multiple="row.multiValue"
+      :editable="row.editable"
+      :options="options"
+      :no-results-text="row.editable? $t('No results found... Press enter to add') : $t('No results found.')"
+      @new-node="addNewValue"
+    />
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class TSUnicodeParam extends Vue {
+export default class TCUnicodeParam extends Vue {
   @Prop() row!: any
   @Prop() type!: String
+  @Prop() configtype!: String
   hide: boolean = true
   options: Array<object> = []
   localval:any
