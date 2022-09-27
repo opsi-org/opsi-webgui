@@ -37,7 +37,7 @@
               <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
             </template>
             <template #cell(action)="row">
-              <TableCellTCUnicodeParam :configtype="row.item.type" :type="type" :row="row.item" />
+              <TableCellTCHostParam :configtype="row.item.type" :type="type" :row="row.item" @change="handleChange" />
               <!-- <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
               <TreeTSUnicodeParam v-else :type="type" :row="row.item" /> -->
             </template>

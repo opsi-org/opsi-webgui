@@ -20,7 +20,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class TCUnicodeParam extends Vue {
+export default class TCHostParam extends Vue {
   @Prop() row!: any
   @Prop() type!: String
   @Prop() configtype!: String
