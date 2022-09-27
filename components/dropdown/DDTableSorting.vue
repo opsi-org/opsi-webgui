@@ -75,7 +75,7 @@
     <!-- dropleft -->
     <template #button-content>
       <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
-      {{ incontextmenu !== false ? 'Sorting': ''}}
+      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.sort.tablecolumns.title') }}</small>
     </template>
 
     <template>
@@ -88,7 +88,7 @@
             :checked="sortDesc"
           />
           <!-- :name="'hi'" -->
-          <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
+          <small class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </small>
       </b-dropdown-form>
       <li class="li-delimiter" />
           <!-- class="dropdown-item" -->
@@ -101,7 +101,7 @@
           @click="changeSortBy(header.key)"
           class="dropdown-item"
         >
-          {{ header.label }}
+          <small>{{ header.label }}</small>
       </b-dropdown-form>
     </template>
   </b-dropdown>
@@ -160,17 +160,18 @@ export default class DDTableSorting extends BDropdown {
   margin-top: 10px;
 }
 .DropdownDDTableSorting .dropdown-menu {
-  min-width: 280px !important;
+  min-width: 220px !important;
   max-width: 350px !important;
   height: max-content !important;
   z-index: 300 !important;
   /* left: 25px !important; */
 }
 .DropdownDDTableSorting .dropdown-menu .dropdown-item {
-  padding-top: 2px !important;
+  /* padding-top: 2px !important;
   padding-bottom: 2px !important;
   padding-left: 2px !important;
-  padding-right: 2px !important;
+  padding-right: 2px !important; */
+  /* margin: 0px !important; */
 }
 .DropdownDDTableSorting .dropdown-menu .dropdown-item:hover {
   /* background-color: var(--light); */
@@ -185,8 +186,15 @@ export default class DDTableSorting extends BDropdown {
   white-space: normal;
   font-weight: 300 !important;
 }
+.DropdownDDTableSorting .dropdown-menu li .b-dropdown-form {
+  margin: 0px !important;
+  padding: 0px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
 .DropdownDDTableSorting .dropdown-menu li .b-dropdown-form .custom-control {
   display: inline-block;
+  padding-bottom: 5px !important;
 }
 .DropdownDDTableSorting.absolutright > li {
   border: unset !important;

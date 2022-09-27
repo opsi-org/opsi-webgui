@@ -52,9 +52,10 @@
   --min-line-height: 12px;
 }
 
-li.li-delimiter {
-  border-bottom: 1px solid var(--primary);
-  border-color: inherit;
+.li-delimiter {
+  border-top: 1px solid var(--log-muted);
+  color: var(--log-muted);
+  /* border-color: inherit; */
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important; /* remove "Noto Color Emoji" */

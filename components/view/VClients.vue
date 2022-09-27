@@ -38,10 +38,11 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
-          <template #contextcontent1="data">
+          <template #contextcontent-1="data">
+            <!-- slot name for context menus start with contextcontent (rest doesnt matter) -->
             <DropdownDDClientActions :client-id="data.itemkey" :fetch="$fetch" :incontextmenu="true" />
           </template>
-          <template #contextcontent2="{itemkey}">
+          <template #contextcontent-2="{itemkey}">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               :label="$t('title.config')"
@@ -63,7 +64,7 @@
               :click="routeRedirectWith"
             />
           </template>
-          <template #contextcontent-keepOpenOnClick>
+          <template #contextcontent-general-1>
               <!-- onhover -->
             <DropdownDDTableSorting
               :table-id="id"

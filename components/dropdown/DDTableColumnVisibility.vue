@@ -84,7 +84,7 @@
   >
     <template #button-content>
       <IconITableColumn />
-      {{ incontextmenu !== false ? 'Columns': ''}}
+      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('table.showCol') }}</small>
     </template>
     <template v-if="!multiCondition">
       <b-dropdown-form
@@ -99,7 +99,7 @@
         @click.prevent="setColumnVisibilityModel(header.key)"
       >
         <!-- :disabled="columnVisibilityStates[header.key]" -->
-        {{ header.label }}
+        <small>{{ header.label }}</small>
       </b-dropdown-form>
     </template>
     <template v-else>
@@ -119,7 +119,7 @@
             :value="header.key"
             :class="{'selected':columnVisibilityStates[header.key]}"
           />
-          {{ header.label }}
+          <small>{{ header.label }}</small>
         </b-input-group>
       </b-dropdown-form>
     </template>
@@ -273,8 +273,8 @@ export default class DDTableColumnVisibility extends BDropdown {
   overflow: visible !important;
   height: max-content !important;
   /* max-height: 300px !important; */
-  min-width: 280px !important;
-  max-width: 350px !important;
+  min-width: 200px !important;
+  max-width: 250px !important;
   z-index: 300 !important;
   /* position: sticky !important; */
 }
@@ -284,6 +284,12 @@ export default class DDTableColumnVisibility extends BDropdown {
 
 }
 
+.DDTableColumnVisibility .dropdown-menu li .b-dropdown-form {
+  margin: 0px !important;
+  padding: 0px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
 /*
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding-top: 2px !important;

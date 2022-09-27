@@ -17,24 +17,32 @@
       </ul>
     </div>
     <div v-else id="demo">
-      <!-- <b-dropdown-group :header="'Actions for "' + itemkey + '"'" /> -->
       <ul
         v-if="viewMenu"
         id="right-click-menu"
         ref="right"
+        size="sm"
         class="dropdown-menu show"
         tabindex="-1"
         :style=" { top:top, left:left }"
       >
-        <!-- @blur="closeMenu" -->
-        <header> Actions for "{{ itemkey }}": </header>
+        <header class="li-delimiter"> {{ $t('table.contextmenu.header-specific', {id: itemkey})}} </header>
         <div
-          v-for="slotName in Object.keys($scopedSlots)"
+          v-for="slotName in Object.keys($scopedSlots).filter(x => !x.includes('general'))"
           :key="slotName"
+          :class="'specific contextmenu-part contextmenu-'+slotName"
         >
-          <!-- @click="closeBesides(slotName)" -->
+          <small><slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" /></small>
           <li class="li-delimiter" />
+        </div>
+        <header class="li-delimiter"> {{ $t('table.contextmenu.header-general', {id: itemkey})}} </header>
+        <div
+          v-for="slotName in Object.keys($scopedSlots).filter(x => x.includes('general'))"
+          :key="slotName"
+          :class="'general contextmenu-part contextmenu-'+slotName"
+        >
           <slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" />
+          <li class="li-delimiter" />
         </div>
       </ul>
     </div>
@@ -42,6 +50,10 @@
 </template>
 
 <script lang="ts">
+  /**
+   * slot name for context menus start with contextcontent
+   * (rest doesnt matter)
+   */
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 
@@ -63,7 +75,7 @@ export default class CMViewTable extends Vue {
   }
 
   created () {
-    // workaround to init the column visibility (inits column visibility component)
+    // workaround to init the column visibility(inits column visibility component)
     this.viewMenu = true
     setTimeout(() => { this.viewMenu = false }, 100)
   }
@@ -75,12 +87,6 @@ export default class CMViewTable extends Vue {
 
   closeMenu () {
     this.viewMenu = false
-  }
-
-  closeBesides (name) {
-    if (!name.includes('keepOpenOnClick')) {
-      this.closeMenu()
-    }
   }
 
   reopenMenu (e, item) {
@@ -104,7 +110,7 @@ export default class CMViewTable extends Vue {
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="css">
 
 #demo {
     width: 100%;
@@ -125,21 +131,37 @@ export default class CMViewTable extends Vue {
     min-width: 250px;
     z-index: 200;
 }
-#right-click-menu li.li-delimiter:first {
-    border-bottom: unset;
+
+/* #right-click-menu li, */
+#right-click-menu small > div > li.dropdown-item .dropdown-item,
+#right-click-menu li.btn-foo {
+  /* padding: 0px !important; */
+  margin: 0px !important;
+  padding: 0px !important;
+  /* text-align: inherit; */
+  /* margin-left: 0px !important; */
+  /* padding: 0rem 1.5rem !important; */
+}
+#right-click-menu li.li-delimiter:first,
+  #right-click-menu .contextmenu-part > .li-delimiter:last-of-type {
+    border: unset;
+    color: transparent;
 }
 #right-click-menu li:not(.li-delimiter) {
     margin: 0;
-    padding: 5px 35px;
+    /* padding: 5px 35px; */
 }
 
-#right-click-menu li:not(.li-delimiter):last-child {
-    border-bottom: none;
-}
-
-#right-click-menu li:not(.li-delimiter):hover {
-    background: #1E88E5;
-    /* color: #FAFAFA; */
+/* #right-click-menu li:not(.li-delimiter):hover {
+  background: #1E88E5;
+} */
+  /* color: #FAFAFA; */
+#right-click-menu header {
+  /* color: var(--darkgray) !important; */
+  color: var(--log-muted);
+  pointer-events: none;
+  background-color: transparent;
+  font-size: small;
 }
 .right-click-backdrop {
   position: fixed;

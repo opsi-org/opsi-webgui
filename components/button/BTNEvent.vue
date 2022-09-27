@@ -24,12 +24,13 @@
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
-      :class="{
-        'w-100 h-100 text-left border-0': true,
-      }"
       :size="size"
       @click="show=true"
     >
+      <!-- class="dropdown-item" -->
+      <!-- :class="{
+        'w-100 h-100 text-left border-1': true,
+      }" -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
       <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
