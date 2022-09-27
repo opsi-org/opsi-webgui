@@ -3,12 +3,15 @@
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <InputIFilterTChanges :filter.sync="filter" />
-    <DivDScrollResult>
-      <span v-for="v,k in hostParam" :key="k">
-        <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
-        <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
-          <!-- <span v-for="item in v" :key="item.configId">
+    <AlertAAlert ref="configViewAlert" />
+    <IconILoading v-if="isLoading" />
+    <template v-else>
+      <InputIFilterTChanges :filter.sync="filter" />
+      <DivDScrollResult>
+        <span v-for="v,k in hostParam" :key="k">
+          <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
+          <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
+            <!-- <span v-for="item in v" :key="item.configId">
             <GridGFormItem>
               <template #label>
                 {{ item.configId }}
@@ -19,43 +22,40 @@
               </template>
             </GridGFormItem>
           </span> -->
-          <LazyTableTDefault
-            v-if="v"
-            :noheader="true"
-            :fixed="true"
-            :filter="filter"
-            :fields="['configId', 'action']"
-            :filterfields="['configId']"
-            :items="v"
-            type="productproperties"
-          >
-            <template #cell()="row">
-              {{ row.value }}
-            </template>
-            <template #cell(configId)="row">
-              <p :id="'configId'+row.value" class="text-sm-right text-break">{{ row.value }}</p>
-              <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
-            </template>
-            <template #cell(action)="row">
-              <TableCellTCHostParam :configtype="row.item.type" :type="type" :row="row.item" @change="handleChange" />
+            <LazyTableTDefault
+              v-if="v"
+              :noheader="true"
+              :fixed="true"
+              :filter="filter"
+              :fields="['configId', 'action']"
+              :filterfields="['configId']"
+              :items="v"
+              type="productproperties"
+            >
+              <template #cell()="row">
+                {{ row.value }}
+              </template>
+              <template #cell(configId)="row">
+                <p :id="'configId'+row.value" class="text-sm-right text-break">{{ row.value }}</p>
+                <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
+              </template>
+              <template #cell(action)="row">
+                <TableCellTCHostParam :configtype="row.item.type" :type="type" :row="row.item" @change="handleSelection" />
               <!-- <CheckboxCBBoolParam v-if="row.item.type === 'BoolConfig'" :type="type" :row="row.item" />
               <TreeTSUnicodeParam v-else :type="type" :row="row.item" /> -->
-            </template>
-          </LazyTableTDefault>
-        </b-collapse>
-      </span>
-    </DivDScrollResult>
-    <DivDComponentGroup class="float-right">
-      <b-button id="addButton" class="addButton" variant="success" @click="saveHostParam()">
-        <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
-      </b-button>
-    </DivDComponentGroup>
+              </template>
+            </LazyTableTDefault>
+          </b-collapse>
+        </span>
+      </DivDScrollResult>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+const settings = namespace('settings')
 
 @Component({ mixins: [Constants] })
 export default class THostParam extends Vue {
@@ -72,6 +72,8 @@ export default class THostParam extends Vue {
   isLoading: boolean = false
   errorText: string = ''
   newVal: any
+
+  @settings.Getter public quicksave!: boolean
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
@@ -102,6 +104,45 @@ export default class THostParam extends Vue {
         endpoint = '/api/opsidata/config/server'
       }
       await this.fetchHostParameters(endpoint)
+    }
+  }
+
+  trackHostParameters () {
+    return null
+  }
+
+  async saveParameters (url: string, request: any) {
+    this.isLoading = true
+    await this.$axios.$post(url, request)
+      .then(() => {
+        const ref = (this.$refs.configViewAlert as any)
+        ref.alert(this.$t('message.success.updateConfig.save') as string + ' Config', 'success')
+        // this.$fetch()
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.configViewAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + ' Config', 'danger', detailedError)
+      })
+    this.isLoading = false
+  }
+
+  async handleSelection (change: any) {
+    if (this.quicksave) {
+      let url: string = ''
+      let request: any = []
+      if (this.type === 'clients') {
+        url = '/api/opsidata/config/clients'
+        request = {
+          clientIds: [this.id],
+          configs: [change]
+        }
+      } else {
+        url = '/api/opsidata/config/server'
+        request = [change]
+      }
+      await this.saveParameters(url, request)
+    } else {
+      this.trackHostParameters()
     }
   }
 }

@@ -3,6 +3,7 @@
     <b-form-checkbox
       v-if="configtype === 'BoolConfig'"
       v-model="localval"
+      @change="selectValue"
     />
     <TreeTSDefaultWithAdding
       v-else
@@ -12,6 +13,7 @@
       :options="options"
       :no-results-text="row.editable? $t('No results found... Press enter to add') : $t('No results found.')"
       @new-node="addNewValue"
+      @input="selectValue"
     />
   </div>
 </template>
@@ -65,6 +67,11 @@ export default class TCHostParam extends Vue {
         this.localval = value
       }
     }
+  }
+
+  async selectValue () {
+    const change = { configId: this.row.configId, value: this.localval }
+    await this.$emit('change', change)
   }
 }
 </script>
