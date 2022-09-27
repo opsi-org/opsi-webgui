@@ -5,6 +5,7 @@ import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 @Module({ name: 'changes', stateFactory: true, namespaced: true })
 export default class Changes extends VuexModule {
   _changesProducts: Array<any> = []
+  _changesHostParam: Array<any> = []
 
   get changesProducts (): Array<any> {
     return this._changesProducts
@@ -39,5 +40,27 @@ export default class Changes extends VuexModule {
     // this._changesProducts.splice(0, this._changesProducts.length)
     const removeItems = this._changesProducts.filter(item => item.user === localStorage.getItem('username'))
     removeItems.forEach(f => this._changesProducts.splice(this._changesProducts.findIndex(item => item.user === f.user), 1))
+  }
+
+  get changesHostParam (): Array<any> {
+    return this._changesHostParam
+  }
+
+  @VuexMutation public pushToChangesHostParam (obj: object) {
+    this._changesHostParam.push(obj)
+  }
+
+  @VuexMutation public delWithIndexChangesHostParam (index: number) {
+    this._changesHostParam.splice(index, 1)
+  }
+
+  @VuexMutation public delFromChangesHostParam (obj: object) {
+    this._changesHostParam.splice(this._changesHostParam.indexOf(obj), 1)
+  }
+
+  @VuexMutation public deleteAllChangesHostParam () {
+    // this._changesProducts.splice(0, this._changesProducts.length)
+    const removeItems = this._changesHostParam.filter(item => item.user === localStorage.getItem('username'))
+    removeItems.forEach(f => this._changesHostParam.splice(this._changesHostParam.findIndex(item => item.user === f.user), 1))
   }
 }
