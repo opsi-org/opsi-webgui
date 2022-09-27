@@ -10,6 +10,8 @@
       v-model="localval"
       :multiple="row.multiValue"
       :editable="row.editable"
+      :limit="1"
+      :clearable="false"
       :options="options"
       :no-results-text="row.editable? $t('No results found... Press enter to add') : $t('No results found.')"
       @new-node="addNewValue"
