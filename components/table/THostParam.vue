@@ -30,6 +30,7 @@
 import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
+const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
 export default class THostParam extends Vue {
@@ -48,6 +49,7 @@ export default class THostParam extends Vue {
   newVal: any
 
   @settings.Getter public quicksave!: boolean
+  @changes.Mutation public pushToChangesHostParam!: (o: object) => void
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
@@ -81,8 +83,14 @@ export default class THostParam extends Vue {
     }
   }
 
-  trackHostParameters () {
-    return null
+  trackHostParameters (change) {
+    const changeObject: Object = {
+      user: localStorage.getItem('username'),
+      clientIds: [this.id],
+      type: this.type,
+      configs: [change]
+    }
+    this.pushToChangesHostParam(changeObject)
   }
 
   async saveParameters (url: string, request: any) {
@@ -116,7 +124,7 @@ export default class THostParam extends Vue {
       }
       await this.saveParameters(url, request)
     } else {
-      this.trackHostParameters()
+      this.trackHostParameters(change)
     }
   }
 }
