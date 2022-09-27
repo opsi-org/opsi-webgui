@@ -20,27 +20,6 @@
               </template>
             </GridGFormItem>
           </span>
-          <!-- <LazyTableTDefault
-            v-if="v"
-            :noheader="true"
-            :fixed="true"
-            :filter="filter"
-            :fields="['configId', 'action']"
-            :filterfields="['configId']"
-            :items="v"
-            type="productproperties"
-          >
-            <template #cell()="row">
-              {{ row.value }}
-            </template>
-            <template #cell(configId)="row">
-              <p :id="'configId'+row.value" class="text-sm-right text-break">{{ row.value }}</p>
-              <b-tooltip :target="'configId'+row.value">{{ row.item.description }}</b-tooltip>
-            </template>
-            <template #cell(action)="row">
-              <TableCellTCHostParam :configtype="row.item.type" :type="type" :row="row.item" @change="handleSelection" />
-            </template>
-          </LazyTableTDefault> -->
         </b-collapse>
       </span>
     </DivDScrollResult>
