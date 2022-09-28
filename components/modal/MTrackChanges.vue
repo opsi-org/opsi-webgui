@@ -1,7 +1,7 @@
 <template>
   <div data-testid="MTrackChanges" class="MTrackChanges">
     <b-button
-      v-if="!quicksave && changesProducts.filter((o) => o.user === username).length!==0"
+      v-if="!quicksave && (changesProducts.filter((o) => o.user === username).length!==0 || changesHostParam.filter((o) => o.user === username).length!==0)"
       class="mt-2"
       variant="primary"
       @click="$bvModal.show('trackChangesModal')"
@@ -21,23 +21,29 @@
       hide-footer
       no-fade
     >
-      <AlertAAlert ref="trackChangesAlert" />
-      <TableTChanges />
-      <DivDComponentGroup v-if="changesProducts.filter(o => o.user === username).length !== 0" class="float-right">
-        <ButtonBTNClearChanges hide="trackChangesModal" />
-        <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
-          <b-icon :icon="iconnames.save" />
-          <span class="saveall">{{ $t('button.saveall') }}</span>
-        </b-button>
-      </DivDComponentGroup>
+      <b-tabs>
+        <b-tab v-if="changesHostParam.filter((o) => o.user === username).length!==0" :title="$t('Host Parameters')" active>
+          <FormFHostParamChanges :changes="changesHostParam" />
+          <!-- {{ changesHostParam }} -->
+        </b-tab>
+        <b-tab v-if="changesProducts.filter(o => o.user === username).length !== 0" :title="$t('Product Actions and Properties')">
+          <AlertAAlert ref="trackChangesAlert" />
+          <TableTChanges />
+          <DivDComponentGroup v-if="changesProducts.filter(o => o.user === username).length !== 0" class="float-right">
+            <ButtonBTNClearChanges hide="trackChangesModal" />
+            <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
+              <b-icon :icon="iconnames.save" />
+              <span class="saveall">{{ $t('button.saveall') }}</span>
+            </b-button>
+          </DivDComponentGroup>
+        </b-tab>
+      </b-tabs>
     </b-modal>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, namespace } from 'nuxt-property-decorator'
-// import { makeToast } from '../../.utils/utils/scomponents'
-// import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
 const auth = namespace('auth')
@@ -58,6 +64,7 @@ export default class MTrackChanges extends Vue {
   @auth.Getter public username!: string
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
+    @changes.Getter public changesHostParam!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   async saveProd (item: ChangeObj) {
@@ -71,12 +78,10 @@ export default class MTrackChanges extends Vue {
       .then((response) => {
         // eslint-disable-next-line no-console
         console.log(response)
-        // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         this.error = detailedError
-        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
   }
 
