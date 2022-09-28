@@ -86,9 +86,10 @@ export default class THostParam extends Vue {
   trackHostParameters (change) {
     const changeObject: Object = {
       user: localStorage.getItem('username'),
-      clientIds: [this.id],
+      hostId: this.id,
       type: this.type,
-      configs: [change]
+      configId: change.configId,
+      value: change.value
     }
     this.pushToChangesHostParam(changeObject)
   }
