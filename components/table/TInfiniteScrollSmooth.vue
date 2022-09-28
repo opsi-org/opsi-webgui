@@ -1,14 +1,5 @@
 <template>
   <div :id="'TInfiniteScrollSmoothWrapper_' + id" data-testid="TInfiniteScrollSmooth" class="TInfiniteScrollSmoothWrapper" :class="{loadingCursor: isLoading}">
-    <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
-      <template
-        v-for="slotName in contextSlots"
-        #[slotName]="slotScope"
-      >
-        <slot :name="slotName" v-bind="slotScope" />
-      </template>
-    </ContextmenuCMViewTable>
-
     <p v-if="error">
       {{ error }}
     </p>
@@ -41,8 +32,9 @@
       :sort-by.sync="tableData.sortBy"
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
-      @row-contextmenu="(contextSlots.length > 0) ? contextOpen : undefined"
+      @row-contextmenu="contextOpen"
     >
+      <!-- @row-contextmenu="(contextSlots.length > 0) ? contextOpen : undefined" -->
       <!-- :per-page="tableData.perPage" -->
       <template v-if="totalpages > 1" #top-row="{ columns }">
         <b-th :colspan="columns" class="tablehead">
@@ -71,6 +63,7 @@
       </template>
       <template #head(rowactions)>
         <b-button-group>
+          <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" />
           <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" variant="outline-primary" />
           <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
           <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" variant="outline-primary" />
@@ -96,6 +89,14 @@
     <BarBTableFooter :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
     <br>
+    <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
+      <template
+        v-for="slotName in contextSlots"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
+    </ContextmenuCMViewTable>
   </div>
 </template>
 

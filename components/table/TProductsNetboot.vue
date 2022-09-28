@@ -10,7 +10,7 @@
       :error="error"
       :is-loading="isLoadingTable || isLoading"
       :table-data="tableData"
-      :header-data="headerData"
+      :header-data="tableInfo.headerData"
       :cache_pages="cache_pages"
       :total-items="totalItems"
       :totalpages="totalpages"
@@ -20,6 +20,39 @@
       :routechild="routeToChild"
       :fetchitems="$fetch"
     >
+      <template #contextcontent-specific-1="{itemkey}">
+        <ButtonBTNRowLinkTo
+          :label="$t('title.config')"
+          :incontextmenu="true"
+          :title="$t('title.config')"
+          :icon="iconnames.settingsobject"
+          :to="child ? '/clients/products/config' : '/products/config'"
+          :ident="itemkey"
+          :pressed="isRouteActive"
+          :click-parent="routeRedirectToParent"
+        />
+      </template>
+      <template #contextcontent-general-1>
+        <DropdownDDTableSorting
+          :table-id="id"
+          :incontextmenu="true"
+          v-bind.sync="tableInfo"
+        />
+        <DropdownDDTableColumnVisibility
+          :table-id="id"
+          :headers.sync="tableInfo.headerData"
+          :sort-by="tableInfo.sortBy"
+          :multi="true"
+          :incontextmenu="true"
+        />
+        <ButtonBTNRefetch
+          :is-loading="isLoadingTable || isLoading"
+          :tooltip="$t('button.refresh', {id: id})"
+          :label="$t('button.refresh', {id: ''})"
+          incontextmenu
+          :refetch="$fetch"
+        />
+      </template>
       <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
       </template>
@@ -84,7 +117,7 @@
       <template #rowactions="row">
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
-          :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
+          :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
           :icon="iconnames.settingsobject"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
@@ -100,7 +133,7 @@
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 // import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
-import { ITableData, ITableHeaders, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
+import { ITableData, ITableHeaders, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 import QueueNested from '../../.utils/utils/QueueNested'
@@ -133,7 +166,7 @@ export default class TProductsNetboot extends Vue {
   @Prop() child!: boolean
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   // @Prop({ }) tableData!: ITableData
-  @Prop({ }) headerData!: ITableHeaders
+  @Prop({ }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoading!: boolean
 
   id = 'netboot'

@@ -65,7 +65,6 @@
             />
           </template>
           <template #contextcontent-general-1>
-              <!-- onhover -->
             <DropdownDDTableSorting
               :table-id="id"
               :incontextmenu="true"
@@ -78,7 +77,13 @@
               :multi="true"
               :incontextmenu="true"
             />
-              <!-- onhover -->
+            <ButtonBTNRefetch
+              :is-loading="isLoading"
+              :tooltip="$t('button.refresh', {id: id})"
+              :label="$t('button.refresh', {id: ''})"
+              incontextmenu
+              :refetch="_fetch"
+            />
           </template>
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />

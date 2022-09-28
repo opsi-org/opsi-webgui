@@ -1,7 +1,7 @@
 <template>
-  <div v-if="Object.keys($scopedSlots).length > 0">
+  <div v-if="Object.keys($scopedSlots).length > 0" >
     <div v-if="viewMenu" class="right-click-backdrop bg-dark" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
-    <div v-if="withButton !== false" id="demo" @click.right="openMenu" @keydown="openMenu">
+    <div v-if="withButton !== false" id="contextmenu-content" @click.right="openMenu" @keydown="openMenu">
       <slot name="item" />
       <ul
         v-if="viewMenu"
@@ -16,7 +16,7 @@
         <slot name="contextcontentbottom" :itemkey="itemkey" />
       </ul>
     </div>
-    <div v-else id="demo">
+    <div v-else id="contextmenu-content">
       <ul
         v-if="viewMenu"
         id="right-click-menu"
@@ -30,7 +30,7 @@
         <div
           v-for="slotName in Object.keys($scopedSlots).filter(x => !x.includes('general'))"
           :key="slotName"
-          :class="'specific contextmenu-part contextmenu-'+slotName"
+          :class="'specific contextmenu-part contextmenu-'+slotName.replace('contextmenu', '')"
         >
           <small><slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" /></small>
           <li class="li-delimiter" />
@@ -39,7 +39,7 @@
         <div
           v-for="slotName in Object.keys($scopedSlots).filter(x => x.includes('general'))"
           :key="slotName"
-          :class="'general contextmenu-part contextmenu-'+slotName"
+          :class="'general contextmenu-part contextmenu-'+slotName.replace('contextmenu', '')"
         >
           <slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" />
           <li class="li-delimiter" />
@@ -81,7 +81,14 @@ export default class CMViewTable extends Vue {
   }
 
   setMenu (top, left) {
-    this.top = (top - 50) + 'px'
+    const t = (top - 50)
+    const menuheight = (this.$refs.right as any)?.offsetHeight
+    if (t + menuheight > window.innerHeight) {
+      // fix position if outside visible height
+      this.top = (window.innerHeight - menuheight - 10) + 'px'
+    } else {
+      this.top = t + 'px'
+    }
     this.left = (left - 70) + 'px'
   }
 
@@ -99,7 +106,6 @@ export default class CMViewTable extends Vue {
     this.item = item
     if (e) {
       Vue.nextTick(function () {
-        // this.$$.right.focus();
         (this.$refs.right as any)?.focus()
 
         this.setMenu(e.y, e.x)
@@ -112,12 +118,11 @@ export default class CMViewTable extends Vue {
 
 <style lang="css">
 
-#demo {
+#contextmenu-content {
     width: 100%;
     height: 100%;
     min-width: 100%;
     min-height: 100%;
-    /* background-color: inherit !important; */
 }
 
 #right-click-menu{
@@ -127,20 +132,14 @@ export default class CMViewTable extends Vue {
     list-style: none;
     margin: 0;
     padding: 0;
-    position: absolute;
+    position: fixed;
     min-width: 250px;
     z-index: 200;
 }
 
-/* #right-click-menu li, */
-#right-click-menu small > div > li.dropdown-item .dropdown-item,
-#right-click-menu li.btn-foo {
-  /* padding: 0px !important; */
+#right-click-menu small > div > li.dropdown-item .dropdown-item {
   margin: 0px !important;
   padding: 0px !important;
-  /* text-align: inherit; */
-  /* margin-left: 0px !important; */
-  /* padding: 0rem 1.5rem !important; */
 }
 #right-click-menu li.li-delimiter:first,
   #right-click-menu .contextmenu-part > .li-delimiter:last-of-type {
@@ -149,15 +148,9 @@ export default class CMViewTable extends Vue {
 }
 #right-click-menu li:not(.li-delimiter) {
     margin: 0;
-    /* padding: 5px 35px; */
 }
 
-/* #right-click-menu li:not(.li-delimiter):hover {
-  background: #1E88E5;
-} */
-  /* color: #FAFAFA; */
 #right-click-menu header {
-  /* color: var(--darkgray) !important; */
   color: var(--log-muted);
   pointer-events: none;
   background-color: transparent;
