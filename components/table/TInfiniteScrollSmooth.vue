@@ -2,8 +2,7 @@
   <div :id="'TInfiniteScrollSmoothWrapper_' + id" data-testid="TInfiniteScrollSmooth" class="TInfiniteScrollSmoothWrapper" :class="{loadingCursor: isLoading}">
     <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
       <template
-        v-for="slotName in Object.keys($scopedSlots).filter(
-          k => k.startsWith('contextcontent'))"
+        v-for="slotName in contextSlots"
         #[slotName]="slotScope"
       >
         <slot :name="slotName" v-bind="slotScope" />
@@ -42,7 +41,7 @@
       :sort-by.sync="tableData.sortBy"
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
-      @row-contextmenu="contextOpen"
+      @row-contextmenu="(contextSlots.length > 0) ? contextOpen : undefined"
     >
       <!-- :per-page="tableData.perPage" -->
       <template v-if="totalpages > 1" #top-row="{ columns }">
@@ -143,6 +142,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   get isLastPage () {
     return (this.tableData.pageNumber === this.totalpages || this.cache_pages.first_page_number === this.totalpages || this.cache_pages.last_page_number >= this.totalpages)
   }
+  get contextSlots () { return Object.keys(this.$scopedSlots).filter(k => k.startsWith('contextcontent')) }
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.addScrollEvent() }
   @Watch('cache_pages.elements', { deep: false }) async pageChanged () {

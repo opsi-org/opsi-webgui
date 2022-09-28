@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="Object.keys($scopedSlots).length > 0">
     <div v-if="viewMenu" class="right-click-backdrop bg-dark" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
     <div v-if="withButton !== false" id="demo" @click.right="openMenu" @keydown="openMenu">
       <slot name="item" />
