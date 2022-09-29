@@ -3,11 +3,13 @@
     <b-form-checkbox
       v-if="configtype === 'BoolConfig'"
       v-model="localval"
+      data-testid="GCHostParamBool"
       @change="selectValue"
     />
     <TreeTSDefaultWithAdding
       v-else
       v-model="localval"
+      data-testid="GCHostParamUnicode"
       class="treeselect_hostparam"
       :multiple="row.multiValue"
       :editable="row.editable"
@@ -26,7 +28,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
-export default class TCHostParam extends Vue {
+export default class GCHostParamVal extends Vue {
   @Prop() row!: any
   @Prop() type!: String
   @Prop() configtype!: String
