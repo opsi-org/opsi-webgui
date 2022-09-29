@@ -1,5 +1,5 @@
 <template>
-  <ViewVConfig :id="id" :as-child="false">
+  <ViewVConfig :id="id" :as-child="false" type="clients">
     <template slot="IDSelection">
       <TreeTSClientsNotStored :id.sync="id" />
     </template>
