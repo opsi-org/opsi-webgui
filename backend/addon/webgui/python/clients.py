@@ -305,7 +305,8 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 
 			execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
 
-			set_depot(client.hostId, depot)
+			if depot:
+				set_depot(client.hostId, depot)
 
 			# IPv4Address/IPv6Address is not JSON serializable
 			values["ipAddress"] = str(values["ipAddress"])

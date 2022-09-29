@@ -314,6 +314,24 @@ def get_host_groups(  # pylint: disable=invalid-name
 		return RESTResponse(data={"groups": host_groups})
 
 
+@host_router.get("/api/opsidata/hosts/groups/id")
+@rest_api
+def get_host_group_ids() -> RESTResponse:
+	"""
+	Get ids of all host groups
+	"""
+	groups = []
+	with mysql.session() as session:
+		query = select(text("g.groupId AS group_id")).select_from(table("GROUP").alias("g"))  # type: ignore[arg-type,attr-defined]
+		result = session.execute(query)
+		result = result.fetchall()
+
+		for row in result:
+			if row:
+				groups.append(dict(row).get("group_id"))
+	return RESTResponse(data=groups)
+
+
 def find_parent(group: str) -> str:
 	with mysql.session() as session:
 		query = (
