@@ -22,7 +22,7 @@
     >
       <b-tabs>
         <b-tab v-if="changesHostParam.filter((o) => o.user === username).length!==0" :title="$t('Host Parameters')" active>
-          <FormFHostParamChanges />
+          <GridGChangesHostParam />
           <!-- {{ changesHostParam }} -->
         </b-tab>
         <b-tab v-if="changesProducts.filter(o => o.user === username).length !== 0" :title="$t('Product Actions and Properties')">

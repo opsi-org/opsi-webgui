@@ -37,7 +37,7 @@ const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
-export default class FHostParamChanges extends Vue {
+export default class GChangesHostParam extends Vue {
   // @Prop({ }) changes!: any
   filter: string = ''
   $axios: any
