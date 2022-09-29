@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="THostParam">
+  <div data-testid="GHostParam">
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
