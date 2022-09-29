@@ -22,7 +22,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class CChangeLogs extends Vue {
   $t: any
   $axios: any
-  changelogs: any
+  changelogs: any = ''
   isLoading: boolean = false
   errorText: string = ''
 
@@ -30,7 +30,7 @@ export default class CChangeLogs extends Vue {
     this.isLoading = true
     await this.$axios.$get('/api/test/md')
       .then((response) => {
-        this.changelogs = response.result
+        this.changelogs = response
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.changelogsAlert as any)
