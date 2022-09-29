@@ -388,6 +388,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 								.values(**values)
 								.on_duplicate_key_update(**values)
 							)
+						session.execute(stmt)
 				else:
 					value = config.value
 					values = {"configId": config.configId, "value": value, "isDefault": True}
@@ -411,7 +412,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							.values(**values)
 							.on_duplicate_key_update(**values)
 						)
-				session.execute(stmt)
+					session.execute(stmt)
 				logger.debug("Config %s saved.", config.configId)
 			except Exception as err:  # pylint: disable=broad-except
 				logger.error("Could not save config: %s", err)
