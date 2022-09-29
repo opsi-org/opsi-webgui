@@ -350,7 +350,9 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	save config value
 	"""
 	errors = []
+	ids = []
 	for config in data:
+		ids.append(config.configId)
 
 		with mysql.session() as session:
 			try:
@@ -426,7 +428,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 			ids.append(config.get("id"))
 		return RESTErrorResponse(message=message, http_status=status.HTTP_400_BAD_REQUEST, details=errors)
 
-	return RESTResponse(http_status=status.HTTP_200_OK, data=data[0].configId)
+	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Values for {','.join(ids)} changed.")
 
 @conifg_router.post("/api/opsidata/config/clients")
 @rest_api
