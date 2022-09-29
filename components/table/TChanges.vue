@@ -2,7 +2,7 @@
   <div>
     <AlertAAlert ref="changesAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
-      <InputIFilterTChanges :filter.sync="filter" />
+      <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
       <DivDScrollResult>
         <div v-for="changes, k in groupedById" :key="changes.productId">
           <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" variant="outline-primary">

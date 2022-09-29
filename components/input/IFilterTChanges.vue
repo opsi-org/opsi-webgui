@@ -4,19 +4,20 @@
       id="filterchanges"
       v-model="filter"
       class="filterchanges"
-      :aria-label="$t('table.filterBy.DepotsClients')"
+      :aria-label="placeholder"
       type="search"
-      :placeholder="$t('table.filterBy.DepotsClients')"
+      :placeholder="placeholder"
       @input="$emit('update:filter', filter)"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class IFilterTChanges extends Vue {
+  @Prop({ }) placeholder!: string
   filter: string = ''
 }
 </script>

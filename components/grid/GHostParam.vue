@@ -5,7 +5,7 @@
     </AlertAAlert>
     <AlertAAlert ref="configViewAlert" />
     <IconILoading v-if="isLoading" />
-    <InputIFilterTChanges v-if="hostParam" :filter.sync="filter" />
+    <InputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
     <DivDScrollResult>
       <span v-for="v,k in hostParam" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>

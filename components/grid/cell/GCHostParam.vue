@@ -12,9 +12,10 @@
       :multiple="row.multiValue"
       :editable="row.editable"
       :limit="1"
+      :limit-text="(count) => $t('treeselect.limitText', { count })"
       :clearable="false"
       :options="options"
-      :no-results-text="row.editable? $t('No results found... Press enter to add') : $t('No results found.')"
+      :no-results-text="row.editable? $t('treeselect.editable') : $t('treeselect.noresult')"
       @new-node="addNewValue"
       @input="selectValue"
     />
