@@ -1,5 +1,6 @@
 <template>
-  <TreeTSDefault
+  <LazyTreeTSDefault
+    v-if="fetchDepotData"
     id="Depots"
     type="depots"
     data-testid="TSDepots"

@@ -1,7 +1,8 @@
 <template>
   <div data-testid="TProductsNetboot">
     <AlertAAlert ref="productsAlert" />
-    <TableTInfiniteScrollSmooth
+    <LazyTableTInfiniteScrollSmooth
+      v-if="cache_pages"
       id="Netboot"
       ref="Netboot"
       primary-key="Netboot"
@@ -57,14 +58,12 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
-      <template v-if="selectionClients.length>0" #head(actionRequest)>
+      <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
-          v-if="selectionClients.length>0 && selectionProducts.length>0"
           :action.sync="action"
           :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
-        <div v-else />
       </template>
       <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
@@ -93,7 +92,7 @@
           :click-parent="routeRedirectToParent"
         />
       </template>
-    </TableTInfiniteScrollSmooth>
+    </LazyTableTInfiniteScrollSmooth>
   </div>
 </template>
 
@@ -124,9 +123,10 @@ export default class TProductsNetboot extends Vue {
   $mq: any
   $t: any
   $route: any
+  $router:any
 
   @Prop() parentId!: string
-  @Prop() rowId!: string
+  @Prop() rowident!: string
   @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
   @Prop({ default: true }) multiselect!: boolean
@@ -306,11 +306,16 @@ export default class TProductsNetboot extends Vue {
   }
 
   routeRedirectToParent (to: string, rowIdent: string) {
-    this.routeRedirectWith(to, rowIdent)
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.routeRedirectWith(to, rowIdent)
+    }
   }
 
   isRouteActive (to: string, rowIdent: string) {
-    return this.$route.path.includes(to) && this.rowId === rowIdent
+    return this.$route.path.includes(to) && this.rowident === rowIdent
   }
 
   get secondColumnOpened () {

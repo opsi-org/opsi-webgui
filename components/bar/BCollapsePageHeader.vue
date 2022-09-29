@@ -46,7 +46,7 @@
         :pressed="isRouteActive"
         :click="routeRedirectWith"
       />
-      <b-button v-if="redirectOnCloseTo" class="closebtn h-100 border-0" variant="outline-primary" :to="redirectOnCloseTo" size="sm">
+      <b-button v-if="redirectOnCloseTo" class="closebtn h-100 border-0" variant="outline-primary" :to="redirectOnCloseTo">
         <span class="sr-only">{{ $t('button.close') }}</span>
         <b-icon :icon="iconnames.x" />
       </b-button>
@@ -132,13 +132,18 @@ export default class BTooltipCollapseRow extends Vue {
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
-    this.contentVisible = false
-    if (this.redirect) {
-      this.redirect(to, rowIdent)
-      return
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.contentVisible = false
+      if (this.redirect) {
+        this.redirect(to, rowIdent)
+        return
+      }
+      this.rowId = rowIdent
+      this.$router.push(to)
     }
-    this.rowId = rowIdent
-    this.$router.push(to)
   }
 
   isRouteActive (to: string, rowIdent: string) {

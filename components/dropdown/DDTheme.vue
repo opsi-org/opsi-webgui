@@ -4,7 +4,7 @@
       v-if="navbar"
       id="theme"
       :aria-label="$t('form.theme')"
-      class="px-2 text-left btn btn-primary btn-md"
+      class="px-2 text-left btn btn-primary"
       :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
       :text="theme.title"
       :title="$t('button.theme.tooltip')"
@@ -118,6 +118,7 @@ export default class DDTheme extends Vue {
 #theme .selected,
 #theme .selected > a.dropdown-item,
 #theme .selected:hover {
+  color: var(--light) !important;
   background-color: var(--primary) !important;
 }
 #theme .selected > a.dropdown-item:hover {

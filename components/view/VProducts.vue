@@ -88,6 +88,8 @@ const selections = namespace('selections')
 @Component
 export default class VProducts extends Vue {
   $mq: any
+  $route:any
+  $router:any
   @Prop() child!: boolean
   @Prop({}) id!: string
   @Prop({}) sortby!: string

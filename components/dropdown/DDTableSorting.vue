@@ -91,6 +91,7 @@ export default class DDTableSorting extends BDropdown {
   font-weight: normal !important;
 }
 .DropdownDDTableSorting a.selected {
+  color: var(--light) !important;
   background-color: var(--primary);
 }
 .DropdownDDTableSorting .noborder .btn-outline-primary{

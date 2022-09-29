@@ -3,7 +3,6 @@
     <AlertAAlert ref="hostAttrErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <AlertAAlert ref="hostAttrUpdateAlert" />
     <GridGFormItem>
       <template #label>
         <span class="id">{{ $t('table.fields.id') }}</span>
@@ -106,7 +105,7 @@
         <b-form-input id="otp" v-model="hostAttr.oneTimePassword" :aria-label="$t('table.fields.otp')" type="text" />
       </template>
     </GridGFormItem>
-    <GridGFormItem v-if="hostAttr.type == 'OpsiClient'">
+    <GridGFormItem v-if="type == 'clients'">
       <template #label>
         <span class="uefi">{{ $t('table.fields.uefi') }}</span>
       </template>
@@ -114,7 +113,90 @@
         <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
       </template>
     </GridGFormItem>
-    <LazyDivDComponentGroup v-if="hostAttr" class="float-right">
+    <template v-if="type !== 'clients'">
+      <GridGFormItem>
+        <template #label>
+          <span class="depotLocalUrl">{{ $t('table.fields.depotLocalUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="depotLocalUrl" v-model="hostAttr.depotLocalUrl" :aria-label="$t('table.fields.depotLocalUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="depotWebdavUrl">{{ $t('table.fields.depotWebdavUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="depotWebdavUrl" v-model="hostAttr.depotWebdavUrl" :aria-label="$t('table.fields.depotWebdavUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="repositoryLocalUrl">{{ $t('table.fields.repositoryLocalUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="repositoryLocalUrl" v-model="hostAttr.repositoryLocalUrl" :aria-label="$t('table.fields.repositoryLocalUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="repositoryRemoteUrl">{{ $t('table.fields.repositoryRemoteUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="repositoryRemoteUrl" v-model="hostAttr.repositoryRemoteUrl" :aria-label="$t('table.fields.repositoryRemoteUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="workbenchLocalUrl">{{ $t('table.fields.workbenchLocalUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="workbenchLocalUrl" v-model="hostAttr.workbenchLocalUrl" :aria-label="$t('table.fields.workbenchLocalUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="workbenchRemoteUrl">{{ $t('table.fields.workbenchRemoteUrl') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="workbenchRemoteUrl" v-model="hostAttr.workbenchRemoteUrl" :aria-label="$t('table.fields.workbenchRemoteUrl')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="networkAddress">{{ $t('table.fields.networkAddress') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="networkAddress" v-model="hostAttr.networkAddress" :aria-label="$t('table.fields.networkAddress')" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="maxBandwidth">{{ $t('table.fields.maxBandwidth') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="maxBandwidth" v-model="hostAttr.maxBandwidth" :aria-label="$t('table.fields.maxBandwidth')" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="isMasterDepot">{{ $t('table.fields.isMasterDepot') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="masterDepotId">{{ $t('table.fields.masterDepotId') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="masterDepotId" v-model="hostAttr.masterDepotId" :aria-label="$t('table.fields.masterDepotId')" type="text" />
+        </template>
+      </GridGFormItem>
+    </template>
+    <AlertAAlert ref="hostAttrUpdateAlert" />
+    <LazyDivDComponentGroup v-if="hostAttr && hostAttr.type !== 'OpsiDepotserver'" class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
@@ -137,6 +219,7 @@ export default class FHostAttributes extends Vue {
   $fetch: any
 
   @Prop({ }) id!: string
+  @Prop({ }) type!: string
   showValue : boolean = false
   hostAttr:any = {}
   isLoading: boolean = false
@@ -148,19 +231,29 @@ export default class FHostAttributes extends Vue {
     this.$fetch()
   }
 
+  async fetchAttributes (endPoint) {
+    this.isLoading = true
+    await this.$axios.$get(endPoint)
+      .then((response) => {
+        this.hostAttr = response[0]
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.hostAttrErrorAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
+        this.errorText = this.$t('message.error.defaulttext') as string
+      })
+    this.isLoading = false
+  }
+
   async fetch () {
     if (this.id) {
-      this.isLoading = true
-      await this.$axios.$get(`/api/opsidata/hosts?hosts=${this.id}`)
-        .then((response) => {
-          this.hostAttr = response[0]
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-          const ref = (this.$refs.hostAttrErrorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Hosts', 'danger', detailedError)
-          this.errorText = this.$t('message.error.defaulttext') as string
-        })
-      this.isLoading = false
+      let endPoint: any = ''
+      if (this.type === 'clients') {
+        endPoint = `/api/opsidata/hosts?hosts=${this.id}`
+      } else {
+        endPoint = `/api/opsidata/servers?servers=[${this.id}]`
+      }
+      await this.fetchAttributes(endPoint)
     }
   }
 
@@ -179,20 +272,15 @@ export default class FHostAttributes extends Vue {
       })
   }
 
-  async updateClientAttributes () {
+  async update (attr, endPoint) {
     this.isLoading = true
-    const attr = this.hostAttr
-    delete attr.type
-    delete attr.created
-    delete attr.lastSeen
-    delete attr.uefi
-    await this.$axios.$put(`/api/opsidata/clients/${this.hostAttr.hostId}`, attr)
+    await this.$axios.$put(endPoint, attr)
       .then(() => {
+        // if (this.type === 'clients') {
+        //   this.setUEFI()
+        // }
         const ref = (this.$refs.hostAttrUpdateAlert as any)
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
-        if (this.hostAttr.uefi) {
-          this.setUEFI()
-        }
         this.$fetch()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
@@ -202,16 +290,22 @@ export default class FHostAttributes extends Vue {
     this.isLoading = false
   }
 
-  updateServerAttributes () {
-    return ''
-  }
-
   async updateAttributes () {
-    if (this.hostAttr.type === 'OpsiClient') {
-      await this.updateClientAttributes()
-    } else {
-      await this.updateServerAttributes()
+    let endPoint: any = ''
+    const attr = this.hostAttr
+    delete attr.type
+    delete attr.created
+    delete attr.lastSeen
+    if (this.type === 'clients') {
+      this.setUEFI()
     }
+    if (this.hostAttr.type === 'OpsiClient') {
+      delete attr.uefi
+      endPoint = `/api/opsidata/clients/${this.hostAttr.hostId}`
+    } else {
+      endPoint = `/api/opsidata/servers/${this.hostAttr.hostId}`
+    }
+    await this.update(attr, endPoint)
   }
 }
 </script>

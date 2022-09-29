@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VModules" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="modulesAlert" />
-    <GridGFormItem v-if="!errorText" label-id="modules" :label="$t('form.modules.available')">
+    <LazyGridGFormItem v-if="!errorText" label-id="modules" :label="$t('form.modules.available')">
       <template #value>
         <b-form-textarea
           id="modules-list"
@@ -13,7 +13,7 @@
           :value="Object.values(modules).join('\n')"
         />
       </template>
-    </GridGFormItem>
+    </LazyGridGFormItem>
   </div>
 </template>
 

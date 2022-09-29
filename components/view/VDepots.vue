@@ -6,7 +6,7 @@
         <!-- v-if="$mq == 'mobile'" -->
         <BarBCollapsePageHeader
           :id="id"
-          :title="$t('title.depots') || 'Servers'"
+          :title="$t('title.depots') + ' (' + totalItems + ')' || 'Servers' + ' (' + totalItems + ')'"
           :row-id="rowId"
           :collapsed="$mq=='mobile'"
           :collapseable="false"
@@ -22,7 +22,8 @@
           :redirect-on-close-to="undefined"
           :redirect="undefined"
         />
-        <TableTInfiniteScrollSmooth
+        <LazyTableTInfiniteScrollSmooth
+          v-if="items"
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -60,7 +61,7 @@
               :click="routeRedirectWith"
             />
           </template>
-        </TableTInfiniteScrollSmooth>
+        </LazyTableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -241,8 +242,13 @@ export default class VDepots extends Vue {
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
-    this.rowId = rowIdent
-    this.$router.push(to)
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.rowId = rowIdent
+      this.$router.push(to)
+    }
   }
 
   isRouteActive (to: string, rowIdent: string) {

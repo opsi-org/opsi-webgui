@@ -5,7 +5,7 @@
       <template #parent>
         <BarBCollapsePageHeader
           :id="id"
-          :title="$t('title.clients')"
+          :title="$t('title.clients')+ ' (' + totalItems + ')'"
           :row-id="rowId"
           :collapsed="$mq=='mobile' || secondColumnOpened"
           :collapseable="true"
@@ -19,7 +19,8 @@
           :enable-show-products="true"
           :redirect="routeRedirectWith"
         />
-        <TableTInfiniteScrollSmooth
+        <LazyTableTInfiniteScrollSmooth
+          v-if="items"
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -89,7 +90,7 @@
           >
             <slot :name="slotName" v-bind="slotScope" />
           </template>
-        </TableTInfiniteScrollSmooth>
+        </LazyTableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -164,7 +165,7 @@ export default class VClients extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ipAddress') : false
     },
     macAddress: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.hwAddr') as string, key: 'macAddress', sortable: true,
+      label: this.$t('table.fields.mac') as string, key: 'macAddress', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('macAddress') : false
     },
     lastSeen: { // eslint-disable-next-line object-property-newline
@@ -215,6 +216,10 @@ export default class VClients extends Vue {
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.setSelectionClients([])
     this.fetchPageOne()
+  }
+
+  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+    this.tableData.sortBy = 'selected'
   }
 
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
@@ -286,8 +291,13 @@ export default class VClients extends Vue {
   }
 
   routeRedirectWith (to: string, rowIdent: string) {
-    this.rowId = rowIdent
-    this.$router.push(to)
+    if (this.isRouteActive(to, rowIdent)) {
+      const parent = to.substring(0, to.lastIndexOf('/'))
+      this.$router.push(parent)
+    } else {
+      this.rowId = rowIdent
+      this.$router.push(to)
+    }
   }
 
   isRouteActive (to: string, rowIdent: string) {

@@ -15,7 +15,10 @@
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
         <IconIOpsiLogo :light="true" class="mt-2" height="20" />
-        <span class="ml-1 topbar_title"> {{ getTitleUppercase() }} </span>
+        <span class="ml-1 topbar_title">
+          <!-- {{ getTitleUppercase() }} -->
+          {{ $t('title.project') }}
+        </span>
         <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
@@ -43,12 +46,12 @@
         />
         <b-navbar-nav class="pt-0 ml-auto float-right">
           <!-- <div v-if="$mq!=='mobile'" class="vertical-line n-right-item" /> -->
-          <ModalMSelectionsAll class="n-right-item" />
-          <ButtonBTNEvent event="ondemand" size="md" class="n-right-item" />
-          <ModalMTrackChanges v-if="$mq != 'mobile'" class="n-right-item" />
-          <DropdownDDLang :navbar="true" class="n-right-item" />
-          <DropdownDDTheme :navbar="true" class="n-right-item" />
-          <ButtonBTNLogout :navbar="true" class="n-right-item" />
+          <ModalMSelectionsAll :navbar="true" />
+          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" />
+          <ModalMTrackChanges v-if="$mq != 'mobile'" />
+          <DropdownDDLang :navbar="true" />
+          <DropdownDDTheme :navbar="true" />
+          <ButtonBTNLogout :navbar="true" />
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -79,9 +82,9 @@ export default class BTop extends Vue {
     return localStorage.getItem('username')
   }
 
-  getTitleUppercase () {
-    return (this.$t('title.project') as string).toUpperCase()
-  }
+  // getTitleUppercase () {
+  //   return (this.$t('title.project') as string).toUpperCase()
+  // }
 }
 </script>
 
