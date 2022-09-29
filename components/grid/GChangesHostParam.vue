@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="GChangesHostParam">
     <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :placeholder="$t('table.filterBy.ConfigHost')" :filter.sync="filter" />
     <AlertAAlert ref="configViewAlert" />
     <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
@@ -26,7 +26,6 @@
         <span class="saveall">{{ $t('button.saveall') }}</span>
       </b-button>
     </DivDComponentGroup>
-    <!-- {{ changelist }} -->
   </div>
 </template>
 
