@@ -76,7 +76,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	notes: Optional[str]
 	hardwareAddress: Optional[str]
 	ipAddress: Optional[Union[IPv4Address, IPv6Address]]
-	inventoryNumber: Optional[str]
+	inventoryNumber: Optional[str] = ""
 	oneTimePassword: Optional[str]
 	created: Optional[datetime]
 	lastSeen: Optional[datetime]
@@ -274,7 +274,7 @@ def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, 
 @rest_api
 @read_only_check
 @check_client_creation_rights
-def create_client(request: Request, client: Client) -> RESTResponse:  # pylint: disable=too-many-locals
+def create_client(request: Request, client: Client, depot: str = Body(default="")) -> RESTResponse:  # pylint: disable=too-many-locals
 	"""
 	Create OPSI-Client.
 	"""
@@ -304,6 +304,9 @@ def create_client(request: Request, client: Client) -> RESTResponse:  # pylint: 
 			}
 
 			execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
+
+			if depot:
+				set_depot(client.hostId, depot)
 
 			# IPv4Address/IPv6Address is not JSON serializable
 			values["ipAddress"] = str(values["ipAddress"])
@@ -647,7 +650,8 @@ class ClientDeployData(BaseModel):
 	clients: List[str]
 	username: str
 	password: str
-	type: str = Optional[Field("windows", regex="^(windows)$|^(linux)$|^(macos)$")]
+	type: str = Field("windows", regex="^(windows)$|^(linux)$|^(macos)$")
+
 
 @client_router.post("/api/opsidata/clients/deploy")
 @rest_api
@@ -685,3 +689,74 @@ async def deploy_client_agent(clientDeployData: ClientDeployData) -> RESTRespons
 			Could not find opsi-deploy-client-agent script.
 		"""
 	)
+
+
+def set_depot(client: str, depot: str) -> None:
+	"""
+	Set depot of client.
+	"""
+
+	values = {"objectId": client, "configId": "clientconfig.depot.id", "values": f'["{depot}"]'}
+
+	with mysql.session() as session:
+		stmt = (
+			insert(
+				table(
+					"CONFIG_STATE", *[column(name) for name in values.keys()]
+				)  # pylint: disable=consider-iterating-dictionary
+			)
+			.values(**values)
+			.on_duplicate_key_update(**values)
+		)
+		session.execute(stmt, values)
+
+
+@client_router.post("/api/opsidata/clients/{clientid}/groups")
+@rest_api
+@read_only_check
+def add_client_to_groups(request: Request, clientid: str, groups: List[str] = Body()) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Add client to a list of groups.
+	"""
+
+	if not groups:
+		logger.error("No group given.")
+		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No group given.")
+
+	with mysql.session() as session:
+		try:
+			for group in groups:
+				values = {"groupType": "HostGroup", "objectId": clientid, "groupId": group}
+
+				with mysql.session() as session:
+					stmt = (
+						insert(
+							table(
+								"OBJECT_TO_GROUP", *[column(name) for name in values.keys()]
+							)  # pylint: disable=consider-iterating-dictionary
+						)
+						.values(**values)
+						.on_duplicate_key_update(**values)
+					)
+					session.execute(stmt, values)
+		except IntegrityError as err:
+			logger.error("Could not add client %s to groups: %s.", clientid, groups)
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not add client %s to groups: %s.", clientid, groups)
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
+				http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+				error=err
+			) from err
+
+	return RESTResponse(http_status=200, data=f"Client '{clientid}' is now a member of: {', '.join(groups)}.")
