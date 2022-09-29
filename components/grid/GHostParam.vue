@@ -49,7 +49,9 @@ export default class GHostParam extends Vue {
   newVal: any
 
   @settings.Getter public quicksave!: boolean
+  @changes.Getter public changesHostParam!: Array<any>
   @changes.Mutation public pushToChangesHostParam!: (o: object) => void
+  @changes.Mutation public delWithIndexChangesHostParam!: (i:number) => void
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
@@ -90,6 +92,10 @@ export default class GHostParam extends Vue {
       type: this.type,
       configId: change.configId,
       value: change.value
+    }
+    const objIndex = this.changesHostParam.findIndex(item => item.hostId === this.id && item.configId === change.configId)
+    if (objIndex > -1) {
+      this.delWithIndexChangesHostParam(objIndex)
     }
     this.pushToChangesHostParam(changeObject)
   }
