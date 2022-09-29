@@ -1,8 +1,8 @@
 <template>
   <div>
-    <InputIFilterTChanges v-if="changes" :filter.sync="filter" />
+    <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :filter.sync="filter" />
     <AlertAAlert ref="configViewAlert" />
-    <span v-for="item in changes" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
+    <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
       <GridGFormItem value-more="true">
         <template #label>
           <span :class="{'font-weight-bold': item.type=='depots'}"> {{ item.hostId }} </span>
@@ -26,56 +26,58 @@
         <span class="saveall">{{ $t('button.saveall') }}</span>
       </b-button>
     </DivDComponentGroup>
-    <!-- {{ changes }} -->
+    <!-- {{ changelist }} -->
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
 export default class FHostParamChanges extends Vue {
-  @Prop({ }) changes!: any
+  // @Prop({ }) changes!: any
   filter: string = ''
   $axios: any
   $t: any
   $nuxt: any
-  @changes.Mutation public delFromChangesHostParam!: () => void
+  @auth.Getter public username!: string
+  @changes.Getter public changesHostParam!: Array<any>
+  @changes.Mutation public delFromChangesHostParam!: (s: object) => void
 
-  async saveParameters (url: string, request: any, change:any) {
+  async saveParameters (url: string, request: any, item:any) {
     const ref = (this.$refs.configViewAlert as any)
     await this.$axios.$post(url, request)
       .then(() => {
-        // ref.alert(this.$t('message.success.updateConfig.save') as string + ' Config', 'success')
-        // this.$nuxt.refresh()
-        this.delFromChangesHostParam(change)
+        this.delFromChangesHostParam(item)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.fetch') as string + ' Config', 'danger', detailedError)
       })
   }
 
-  async saveHostParam (change: any) {
+  async saveHostParam (item: any) {
     let url: string = ''
     let request: any = []
-    if (change.type === 'clients') {
+    if (item.type === 'clients') {
       url = '/api/opsidata/config/clients'
       request = {
-        clientIds: [change.hostId],
-        configs: [{ configId: change.configId, value: change.value }]
+        clientIds: [item.hostId],
+        configs: [{ configId: item.configId, value: item.value }]
       }
     } else {
       url = '/api/opsidata/config/server'
-      request = [{ configId: change.configId, value: change.value }]
+      request = [{ configId: item.configId, value: item.value }]
     }
-    await this.saveParameters(url, request, change)
+    await this.saveParameters(url, request, item)
   }
 
   async saveAllHostParam () {
-    for (const count in this.changes) {
-      const item = this.changes[count]
+    const changelist = this.changesHostParam.filter(o => o.user === this.username)
+    for (const count in changelist) {
+      const item = changelist[count]
       await this.saveHostParam(item)
     }
   }
