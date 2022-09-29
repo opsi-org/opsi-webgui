@@ -30,7 +30,7 @@
           <AlertAAlert ref="trackChangesAlert" />
           <TableTChanges />
           <DivDComponentGroup v-if="changesProducts.filter(o => o.user === username).length !== 0" class="float-right">
-            <ButtonBTNClearChanges hide="trackChangesModal" />
+            <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
             <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
               <b-icon :icon="iconnames.save" />
               <span class="saveall">{{ $t('button.saveall') }}</span>
