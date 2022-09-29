@@ -15,7 +15,6 @@
     </b-button>
     <b-modal
       id="trackChangesModal"
-      data-testid="MTrackChanges"
       size="xl"
       :title="$t('button.track.changes')"
       hide-footer
@@ -64,7 +63,7 @@ export default class MTrackChanges extends Vue {
   @auth.Getter public username!: string
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
-    @changes.Getter public changesHostParam!: Array<ChangeObj>
+  @changes.Getter public changesHostParam!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
   async saveProd (item: ChangeObj) {
