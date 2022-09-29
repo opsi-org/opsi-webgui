@@ -8,6 +8,8 @@
 webgui client methods
 """
 
+import os
+import subprocess
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Optional, Union
@@ -18,6 +20,7 @@ from sqlalchemy import alias, and_, column, delete, select, text, update
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.sql.expression import table
+from starlette.concurrency import run_in_threadpool
 
 from OPSI.Exceptions import BackendBadValueError
 from OPSI.Object import Host, OpsiClient  # type: ignore
@@ -638,3 +641,47 @@ def host_check_duplicates(client: Client, session: Any) -> None:
 		result = result.fetchone()
 		if result:
 			raise BackendBadValueError(f"Hardware address {client.hardwareAddress!r} is already used by host {result}")
+
+
+class ClientDeployData(BaseModel):
+	clients: List[str]
+	username: str
+	password: str
+	type: str = Optional[Field("windows", regex="^(windows)$|^(linux)$|^(macos)$")]
+
+@client_router.post("/api/opsidata/clients/deploy")
+@rest_api
+async def deploy_client_agent(clientDeployData: ClientDeployData) -> RESTResponse:  # pylint: disable=invalid-name
+	logger.devel(clientDeployData)
+
+	deploy_script = "/var/lib/opsi/depot/opsi-client-agent/opsi-deploy-client-agent"
+	if clientDeployData.type == "linux":
+		deploy_script = "/var/lib/opsi/depot/opsi-linux-client-agent/opsi-deploy-client-agent"
+	if clientDeployData.type == "macos":
+		deploy_script = "/var/lib/opsi/depot/opsi-mac-client-agent/opsi-deploy-client-agent"
+
+	logger.devel(clientDeployData.clients)
+
+	if os.path.isfile(deploy_script):
+		logger.notice("Running opsi-deploy-client-agent script...")
+		result = await run_in_threadpool(  # type: ignore[call-arg]
+			subprocess.run,
+			[deploy_script, "--username", clientDeployData.username, "--password", clientDeployData.password, *clientDeployData.clients],
+			capture_output=True
+		)
+
+		logger.notice(result.returncode)
+		logger.notice(result)
+		if result.returncode == 1:
+			return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message=f"{result.returncode}{result.stderr} - {result.stdout}")
+		return RESTResponse(http_status=status.HTTP_200_OK, data=result.stdout)
+
+	logger.warning("It looks like the client agent (%s) is not installed.", clientDeployData.type)
+	logger.warning("Could not find opsi-deploy-client-agent script.")
+	return RESTErrorResponse(
+		http_status=status.HTTP_400_BAD_REQUEST,
+		message=f"""
+			It looks like the client agent ({clientDeployData.type}) is not installed.\n
+			Could not find opsi-deploy-client-agent script.
+		"""
+	)
