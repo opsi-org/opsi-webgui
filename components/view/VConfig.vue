@@ -22,7 +22,7 @@
           <span class="hostparam"> {{ $t('title.hostparam') }} </span>
         </template>
         <DivDScrollResult>
-          <LazyTableTHostParam v-if="id" :id="id" :type="type" />
+          <LazyGridGHostParam v-if="id" :id="id" :type="type" />
           <div v-else style="height: 70vh;" />
         </DivDScrollResult>
       </b-tab>

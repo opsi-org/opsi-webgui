@@ -16,7 +16,7 @@
                 {{ item.configId }}
               </template>
               <template #value>
-                <TableCellTCHostParam :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
+                <GridCellGCHostParam :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
               </template>
             </GridGFormItem>
           </span>
@@ -33,7 +33,7 @@ const settings = namespace('settings')
 const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
-export default class THostParam extends Vue {
+export default class GHostParam extends Vue {
   iconnames: any
   $axios: any
   $t: any
