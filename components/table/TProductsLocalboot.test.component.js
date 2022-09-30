@@ -15,7 +15,7 @@ test('table-productsnetboot like localboot snapshot', async ({ page }) => {
   const component = await page.locator('[data-testid="TProductsNetboot"]')
   await page.locator('tbody > tr[aria-rowindex="1"]').click()
   await page.locator('tbody > tr[aria-rowindex="2"]').click()
-  expect(await component.screenshot()).toMatchSnapshot('TProductsLocalboot.png')
+  expect(await component.screenshot()).toMatchSnapshot('TProductsLocalboot-table.png')
 })
 
 test('table-productslocalboot snapshot multi-select', async ({ page }) => {
@@ -24,5 +24,12 @@ test('table-productslocalboot snapshot multi-select', async ({ page }) => {
   await page.locator('tbody > tr[aria-rowindex="1"]').click()
   await page.locator('tbody > tr[aria-rowindex="2"]').click()
   // both rows should be selected
-  expect(await component.screenshot()).toMatchSnapshot('TProductsLocalboot.png')
+  expect(await component.screenshot()).toMatchSnapshot('TProductsLocalboot-table.png')
+})
+test('table-productslocalboot snapshot contextmenu', async ({ page }) => {
+  await callStoryId(page, 'table-t-products-localboot', 't-products-localboot')
+  const component = await page.locator('[data-testid="TProductsLocalboot"]')
+  await page.locator('tbody > tr[aria-rowindex="1"]').click({ button: 'right' })
+  // both rows should be selected
+  expect(await component.screenshot()).toMatchSnapshot('TProductsLocalboot-contextmenu.png')
 })

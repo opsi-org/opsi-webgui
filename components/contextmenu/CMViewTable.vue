@@ -86,6 +86,9 @@ export default class CMViewTable extends Vue {
     if (t + menuheight > window.innerHeight) {
       // fix position if outside visible height
       this.top = (window.innerHeight - menuheight - 10) + 'px'
+    } else if (t < 0) {
+      // fix position if outside visible height
+      this.top = '0px'
     } else {
       this.top = t + 'px'
     }

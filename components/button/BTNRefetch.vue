@@ -33,7 +33,7 @@ export default class BTNRefetch extends Vue {
   iconnames:any
   @Prop({ default: true }) isLoading?: boolean
   @Prop({ default: '' }) tooltip?: string
-  @Prop({ default: '' }) label?: string
+  @Prop({ default: undefined }) label?: string
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) refetch!: Function
 }

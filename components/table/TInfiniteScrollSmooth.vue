@@ -63,7 +63,7 @@
       </template>
       <template #head(rowactions)>
         <b-button-group>
-          <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" />
+          <!-- <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" /> -->
           <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" variant="outline-primary" />
           <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
           <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" variant="outline-primary" />

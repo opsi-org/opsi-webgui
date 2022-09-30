@@ -86,7 +86,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
     :sortBy="args.sortBy"
     :parentId="args.parentId"
     :sort="args.sort"
-    :header-data="args.headerData"
+    :table-info="args.tableInfo"
     :filter-query="args.filterQuery"
     @fetch-products="fetchProducts"
   />
@@ -102,7 +102,12 @@ TProductsLocalboot.args = {
   routeRedirectWith: () => {},
   child: false,
   sort: { sortBy: 'productId', sortDesc: false },
-  headerData: data.headerDataProducts,
   items: data.products,
-  tableData: data.tableDataMoreElements
+  tableData: data.tableDataMoreElements,
+  tableInfo: {
+    sortBy: 'productId',
+    sortDesc: false,
+    filterQuery: '',
+    headerData: data.headerDataProducts
+  }
 }

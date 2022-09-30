@@ -6,7 +6,7 @@ test('table-productsnetboot snapshot', async ({ page }) => {
   const component = await page.locator('[data-testid="TProductsNetboot"]')
   await page.locator('tbody > tr[aria-rowindex="1"]').click()
   await page.locator('tbody > tr[aria-rowindex="2"]').click()
-  expect(await component.screenshot()).toMatchSnapshot('TProductsNetboot.png')
+  expect(await component.screenshot()).toMatchSnapshot('TProductsNetboot-table.png')
 })
 
 test('table-productsnetboot like localboot snapshot', async ({ page }) => {
@@ -14,5 +14,5 @@ test('table-productsnetboot like localboot snapshot', async ({ page }) => {
   const component = await page.locator('[data-testid="TProductsLocalboot"]')
   await page.locator('tbody > tr[aria-rowindex="1"]').click()
   await page.locator('tbody > tr[aria-rowindex="2"]').click()
-  expect(await component.screenshot()).toMatchSnapshot('TProductsNetboot.png') // netboot should look like localboot
+  expect(await component.screenshot()).toMatchSnapshot('TProductsNetboot-table.png') // netboot should look like localboot
 })
