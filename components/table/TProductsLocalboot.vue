@@ -20,7 +20,6 @@
       :routechild="routeToChild"
       :fetchitems="$fetch"
     >
-
       <template #contextcontent-specific-1="{itemkey}">
         <ButtonBTNRowLinkTo
           :label="$t('title.config')"
@@ -34,6 +33,16 @@
         />
       </template>
       <template #contextcontent-general-1>
+        <small style="font-size: 85% !important;">
+          <ButtonBTNEvent
+            event="ondemand"
+            classes="dropdown-item border-0"
+            :update-loading="loading => clientsLoading = loading"
+            with-text
+          />
+        </small>
+      </template>
+      <template #contextcontent-general-2>
         <DropdownDDTableSorting
           :table-id="id"
           :incontextmenu="true"

@@ -50,10 +50,10 @@
 </template>
 
 <script lang="ts">
-  /**
-   * slot name for context menus start with contextcontent
-   * (rest doesnt matter)
-   */
+/**
+ * slot name for context menus start with contextcontent
+ * (rest doesnt matter)
+ */
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 
@@ -143,6 +143,9 @@ export default class CMViewTable extends Vue {
     z-index: 200;
 }
 
+/* #right-click-menu small > li.dropdown-item .btn-outline-primary {
+  color:blue;
+} */
 #right-click-menu small > div > li.dropdown-item .dropdown-item {
   margin: 0px !important;
   padding: 0px !important;

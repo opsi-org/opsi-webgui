@@ -10,13 +10,14 @@
       :variant="events[event].variant"
       :class="{
         'w-100 h-100 text-left border-0': true,
+        [classes]: true
       }"
       :size="size"
       @click="show=true"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <span class="eventlabel"> {{ (withText !== false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </b-button>
     <li
@@ -25,15 +26,13 @@
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
       :size="size"
+      :class="classes"
       @click="show=true"
+
     >
-      <!-- class="dropdown-item" -->
-      <!-- :class="{
-        'w-100 h-100 text-left border-1': true,
-      }" -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (incontextmenu!==false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <span class="eventlabel"> {{ (withText !== false ||incontextmenu!==false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </li>
 
@@ -113,7 +112,9 @@ export default class BTNEvent extends Vue {
   @selections.Getter public selectionClients!: Array<string>
 
   @Prop({ default: 'ondemand' }) event!: string
+  @Prop({ default: '' }) classes!: string
   @Prop({ default: false }) incontextmenu!: boolean
+  @Prop({ default: false }) withText!: boolean
   @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
   @Prop({ default: undefined }) isLoadingParent ?: boolean|undefined
