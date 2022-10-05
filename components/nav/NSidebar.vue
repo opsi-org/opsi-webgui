@@ -98,7 +98,7 @@ export default class NSidebar extends Vue {
             icon: this.iconnames.client,
             submenu: [
               { title: 'title.allClients', route: '/clients/' },
-              { title: 'title.addNew', route: '/clientsaddnew', disabled: (this.config) ? !this.config?.client_creation : false },
+              { title: 'title.addNew', route: '/clientscreation', disabled: (this.config) ? !this.config?.client_creation : false },
               { title: 'title.config', route: '/clientsconfig' },
               { title: 'title.log', route: '/clientslog' }
             ]

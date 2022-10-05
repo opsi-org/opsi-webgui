@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VClientsAddNew" class="VClientsAddNew">
+  <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
     <IconILoading v-if="isLoading" />
     <div v-else>
@@ -112,7 +112,7 @@ interface NewClient {
 }
 
 @Component({ mixins: [Constants] })
-export default class VClientsAddNew extends Vue {
+export default class VClientCreation extends Vue {
   iconnames: any
   $axios: any
   $nuxt: any
@@ -215,7 +215,7 @@ export default class VClientsAddNew extends Vue {
 </script>
 
 <style>
-.VClientsAddNew {
+.VClientCreation {
   display: flow-root;
   overflow-x: hidden;
   padding-left: 10px;
