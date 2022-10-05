@@ -29,17 +29,9 @@
           />
         </template>
       </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="depot">{{ $t('table.fields.depot') }}</span>
-        </template>
-        <template #value>
-          <TreeTSDepotsNotStored :id.sync="depotId" />
-          <!-- <b-form-input id="depot" v-model="depot" :aria-label="$t('table.fields.depot')" type="text" /> -->
-        </template>
-      </GridGFormItem>
-      <b-row class="mt-5 mb-4">
-        <b class="clientDetails">{{ $t('table.clientDetails') }} </b>
+      <b-row class="mt-4 mb-2">
+        <!-- <b class="clientDetails">{{ $t('table.clientDetails') }} </b> -->
+        <b class="basics">{{ $t('Basics') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -73,9 +65,6 @@
           <b-form-input id="ip" v-model="newClient.ipAddress" :aria-label="$t('table.fields.ip')" type="text" />
         </template>
       </GridGFormItem>
-      <b-row class="mt-5 mb-4">
-        <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b>
-      </b-row>
       <GridGFormItem>
         <template #label>
           <span class="notes">{{ $t('table.fields.notes') }}</span>
@@ -84,6 +73,10 @@
           <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
         </template>
       </GridGFormItem>
+      <b-row class="mt-4 mb-2">
+        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
+        <b class="settings">{{ $t('Settings') }} </b>
+      </b-row>
       <GridGFormItem>
         <template #label>
           <span class="uefi">{{ $t('table.fields.uefi') }}</span>
@@ -92,13 +85,54 @@
           <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
+      <b-row class="mt-4 mb-2">
+        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
+        <b class="basics">{{ $t('Assignments') }} </b>
+      </b-row>
+      <GridGFormItem>
+        <template #label>
+          <span class="depot">{{ $t('table.fields.depot') }}</span>
+        </template>
+        <template #value>
+          <TreeTSDepotsNotStored :id.sync="depotId" />
+          <!-- <b-form-input id="depot" v-model="depot" :aria-label="$t('table.fields.depot')" type="text" /> -->
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="group">{{ $t('table.fields.group') }}</span>
+        </template>
+        <template #value>
+          <b-form-textarea id="group" v-model="group" :aria-label="$t('table.fields.group')" rows="2" no-resize />
+        </template>
+      </GridGFormItem>
+      <b-row class="mt-4 mb-2">
+        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
+        <b class="setup">{{ $t('Initial Setup') }} </b>
+      </b-row>
+      <GridGFormItem>
+        <template #label>
+          <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
+        </template>
+        <template #value>
+          <b-form-textarea id="netbootproduct" v-model="netbootproduct" :aria-label="$t('table.fields.netbootproduct')" rows="2" no-resize />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
+        </template>
+        <template #value>
+          <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize />
+        </template>
+      </GridGFormItem>
     </div>
     <DivDComponentGroup class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
       <b-button id="addButton" class="addButton" variant="success" :disabled="!clientName" @click="createOpsiClient()">
-        <b-icon :icon="iconnames.add" /> {{ $t('button.add') }}
+        <b-icon :icon="iconnames.add" /> {{ $t('button.create') }}
       </b-button>
     </DivDComponentGroup>
   </div>
@@ -135,6 +169,7 @@ export default class VClientCreation extends Vue {
   domain: string = ''
   clientName: string = ''
   depotId: string = ''
+  netbootproduct: string = ''
   newClient: NewClient = {
     hostId: '',
     description: '',

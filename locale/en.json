@@ -164,7 +164,7 @@
   "button.refresh": "Refresh {id}",
   "button.reset": "Reset",
   "button.resetAll": "Reset all",
-  "button.add": "Add",
+  "button.create": "Create",
   "button.delete": "Delete",
   "button.deleteall": "Delete all",
   "button.save": "Save",

@@ -164,7 +164,7 @@
   "button.refresh": "{id} aktualisieren",
   "button.reset": "Zurücksetzen",
   "button.resetAll": "Alle zurücksetzen",
-  "button.add": "Hinzufügen",
+  "button.create": "Hinzufügen",
   "button.delete": "Entfernen",
   "button.deleteall": "Alle entfernen",
   "button.save": "Speichern",
