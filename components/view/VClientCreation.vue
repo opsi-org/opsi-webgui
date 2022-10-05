@@ -29,6 +29,15 @@
           />
         </template>
       </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="depot">{{ $t('table.fields.depot') }}</span>
+        </template>
+        <template #value>
+          <TreeTSDepotsNotStored :id.sync="depotId" />
+          <!-- <b-form-input id="depot" v-model="depot" :aria-label="$t('table.fields.depot')" type="text" /> -->
+        </template>
+      </GridGFormItem>
       <b-row class="mt-5 mb-4">
         <b class="clientDetails">{{ $t('table.clientDetails') }} </b>
       </b-row>
@@ -125,6 +134,7 @@ export default class VClientCreation extends Vue {
   isLoading: boolean = false
   domain: string = ''
   clientName: string = ''
+  depotId: string = ''
   newClient: NewClient = {
     hostId: '',
     description: '',
@@ -196,7 +206,10 @@ export default class VClientCreation extends Vue {
       ref.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
       return
     }
-    await this.$axios.$post('/api/opsidata/clients', this.newClient)
+    const request = {
+      client: this.newClient, depot: this.depotId
+    }
+    await this.$axios.$post('/api/opsidata/clients', request)
       .then(() => {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
