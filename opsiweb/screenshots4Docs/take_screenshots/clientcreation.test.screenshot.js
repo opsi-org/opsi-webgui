@@ -4,8 +4,8 @@ const en = require('../../uib-components/locale/en.json')
 const de = require('../../uib-components/locale/de.json')
 
 test('Client creation', async ({ page }) => {
-  await callStoryId(page, 'view-v-clients-add-new', 'v-clients-add-new')
-  const component = await page.locator('[data-testid="VClientsAddNew"]')
+  await callStoryId(page, 'view-v-client-creation', 'v-client-creation')
+  const component = await page.locator('[data-testid="VClientCreation"]')
   await page.evaluate((val) => { document.querySelector('.id').innerHTML = val }, en['table.fields.id'])
   await component.evaluate(() => { document.querySelector('.domainName').placeholder = '.domain.local' })
   await page.evaluate((val) => { document.querySelector('.clientDetails').innerHTML = val }, en['table.clientDetails'])
