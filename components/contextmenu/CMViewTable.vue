@@ -1,5 +1,5 @@
 <template>
-  <div v-if="Object.keys($scopedSlots).length > 0" >
+  <div v-if="Object.keys($scopedSlots).length > 0" data-testid="CMViewTable">
     <div v-if="viewMenu" class="right-click-backdrop bg-dark" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
     <div v-if="withButton !== false" id="contextmenu-content" @click.right="openMenu" @keydown="openMenu">
       <slot name="item" />
@@ -41,7 +41,7 @@
           :key="slotName"
           :class="'general contextmenu-part contextmenu-'+slotName.replace('contextmenu', '')"
         >
-          <slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" />
+          <small><slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" /></small>
           <li class="li-delimiter" />
         </div>
       </ul>
@@ -107,6 +107,7 @@ export default class CMViewTable extends Vue {
   openMenu (e, item) {
     this.viewMenu = true
     this.item = item
+    console.log(item, e)
     if (e) {
       Vue.nextTick(function () {
         (this.$refs.right as any)?.focus()
@@ -114,6 +115,8 @@ export default class CMViewTable extends Vue {
         this.setMenu(e.y, e.x)
       }.bind(this))
       e.preventDefault()
+    } else {
+      this.setMenu(0, 0)
     }
   }
 }

@@ -41,6 +41,12 @@
           <template #contextcontent-1="data">
             <!-- slot name for context menus start with contextcontent (rest doesnt matter) -->
             <DropdownDDClientActions :client-id="data.itemkey" :fetch="$fetch" :incontextmenu="true" />
+            <!-- <ButtonBTNEvent
+              :navbar="true"
+              event="ondemand"
+              size="md"
+
+            /> -->
           </template>
           <template #contextcontent-2="{itemkey}">
             <ButtonBTNRowLinkTo

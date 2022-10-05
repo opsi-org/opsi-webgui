@@ -14,6 +14,11 @@
       </template>
       <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
       <ButtonBTNEvent
+        event="ondemand"
+        :data="clientId"
+        :update-loading="loading => clientsLoading = loading"
+      />
+      <ButtonBTNEvent
         event="reboot"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
@@ -26,6 +31,14 @@
     </b-dropdown>
   </div>
   <div v-else>
+    <li class="dropdown-item">
+      <ButtonBTNEvent
+        event="ondemand"
+        :data="clientId"
+        :incontextmenu="incontextmenu"
+        :update-loading="loading => clientsLoading = loading"
+      />
+    </li>
     <li class="dropdown-item">
       <ButtonBTNEvent
         event="showpopup"
