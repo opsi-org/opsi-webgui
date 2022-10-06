@@ -327,7 +327,6 @@ def get_host_groups(  # pylint: disable=invalid-name
 			host_groups["children"] = {**not_assigned, **host_groups["children"]}
 
 		if parentGroup == "not_assigned":
-			# host_groups["not_assigned"] = {"id": "not_assigned", "type": "HostGroup", "text": "not_assigned", "parent": None}
 			clients = group_get_all_clients("clientdirectory", selectedDepots)
 			host_groups["children"] = {}
 			for client in clients:
