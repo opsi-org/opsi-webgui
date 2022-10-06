@@ -3,7 +3,8 @@
     <treeselect
       v-if="depotIds"
       v-model="idselection"
-      class="treeselect_idselect"
+      :class="cssclass"
+      class="treeselect_depotselect"
       :options="depotIds"
       :placeholder="$t('form.depot')"
       :always-open="false"
@@ -13,12 +14,13 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 const selections = namespace('selections')
 
 @Component
 export default class TSDepotsNotStored extends Vue {
   $axios: any
+  @Prop({ }) cssclass!: string
 
   depotIds: Array<object> = []
   idselection: string = ''
@@ -43,29 +45,29 @@ export default class TSDepotsNotStored extends Vue {
 </script>
 
 <style>
-.treeselect_idselect{
+.treeselect_depotselect_short{
   max-width: var(--component-width) !important;
 }
-.treeselect_idselect .vue-treeselect__control {
+.treeselect_depotselect .vue-treeselect__control {
   background-color: var(--component, var(--background, black));
   color: var(--color, var(--light, white));
   border:1px solid var(--border, #ced4da );
 }
-.treeselect_idselect .vue-treeselect__menu {
+.treeselect_depotselect .vue-treeselect__menu {
   background-color: var(--component, var(--background, black));
   color: var(--color, var(--light, white));
 }
-.treeselect_idselect .vue-treeselect__single-value {
+.treeselect_depotselect .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
 }
-.treeselect_idselect .vue-treeselect__input {
+.treeselect_depotselect .vue-treeselect__input {
   color: var(--color) !important;
 }
-.treeselect_idselect .vue-treeselect__menu .vue-treeselect__option--highlight {
+.treeselect_depotselect .vue-treeselect__menu .vue-treeselect__option--highlight {
   color: var(--color);
   background-color: var(--hover);
 }
-.treeselect_idselect.vue-treeselect--single .vue-treeselect__option--selected{
+.treeselect_depotselect.vue-treeselect--single .vue-treeselect__option--selected{
   color: var(--light);
   background-color: var(--primary);
 }

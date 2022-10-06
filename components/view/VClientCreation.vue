@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VClientsAddNew" class="VClientsAddNew">
+  <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
     <IconILoading v-if="isLoading" />
     <div v-else>
@@ -29,8 +29,9 @@
           />
         </template>
       </GridGFormItem>
-      <b-row class="mt-5 mb-4">
-        <b class="clientDetails">{{ $t('table.clientDetails') }} </b>
+      <b-row class="mt-4 mb-2">
+        <!-- <b class="clientDetails">{{ $t('table.clientDetails') }} </b> -->
+        <b class="basics">{{ $t('Basics') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -64,9 +65,6 @@
           <b-form-input id="ip" v-model="newClient.ipAddress" :aria-label="$t('table.fields.ip')" type="text" />
         </template>
       </GridGFormItem>
-      <b-row class="mt-5 mb-4">
-        <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b>
-      </b-row>
       <GridGFormItem>
         <template #label>
           <span class="notes">{{ $t('table.fields.notes') }}</span>
@@ -75,6 +73,10 @@
           <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
         </template>
       </GridGFormItem>
+      <b-row class="mt-4 mb-2">
+        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
+        <b class="settings">{{ $t('Settings') }} </b>
+      </b-row>
       <GridGFormItem>
         <template #label>
           <span class="uefi">{{ $t('table.fields.uefi') }}</span>
@@ -83,13 +85,51 @@
           <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
+      <b-row class="mt-4 mb-2">
+        <b class="basics">{{ $t('Assignments') }} </b>
+      </b-row>
+      <GridGFormItem>
+        <template #label>
+          <span class="depot">{{ $t('table.fields.depot') }}</span>
+        </template>
+        <template #value>
+          <TreeTSDepotsNotStored :id.sync="depotId" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="group">{{ $t('table.fields.group') }}</span>
+        </template>
+        <template #value>
+          <TreeTSGroupInitSelection :id.sync="group" />
+        </template>
+      </GridGFormItem>
+      <!-- <b-row class="mt-4 mb-2">
+        <b class="setup">{{ $t('Initial Setup') }} </b>
+      </b-row>
+      <GridGFormItem>
+        <template #label>
+          <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
+        </template>
+        <template #value>
+          <b-form-textarea id="netbootproduct" v-model="netbootproduct" :aria-label="$t('table.fields.netbootproduct')" rows="2" no-resize />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
+        </template>
+        <template #value>
+          <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize />
+        </template>
+      </GridGFormItem> -->
     </div>
     <DivDComponentGroup class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
       <b-button id="addButton" class="addButton" variant="success" :disabled="!clientName" @click="createOpsiClient()">
-        <b-icon :icon="iconnames.add" /> {{ $t('button.add') }}
+        <b-icon :icon="iconnames.add" /> {{ $t('button.create') }}
       </b-button>
     </DivDComponentGroup>
   </div>
@@ -112,7 +152,7 @@ interface NewClient {
 }
 
 @Component({ mixins: [Constants] })
-export default class VClientsAddNew extends Vue {
+export default class VClientCreation extends Vue {
   iconnames: any
   $axios: any
   $nuxt: any
@@ -125,6 +165,9 @@ export default class VClientsAddNew extends Vue {
   isLoading: boolean = false
   domain: string = ''
   clientName: string = ''
+  depotId: string = ''
+  netbootproduct: string = ''
+  group: any = null
   newClient: NewClient = {
     hostId: '',
     description: '',
@@ -187,6 +230,15 @@ export default class VClientsAddNew extends Vue {
       })
   }
 
+  async assignToGroup () {
+    await this.$axios.$post(`api/opsidata/clients/${this.newClient.hostId}/groups`, this.group)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert(this.$t('message.error.assignGroup') as string, 'danger', detailedError)
+      })
+  }
+
   async createOpsiClient () {
     this.isLoading = true
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
@@ -196,12 +248,18 @@ export default class VClientsAddNew extends Vue {
       ref.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
       return
     }
-    await this.$axios.$post('/api/opsidata/clients', this.newClient)
+    const request = {
+      client: this.newClient, depot: this.depotId
+    }
+    await this.$axios.$post('/api/opsidata/clients', request)
       .then(() => {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         if (this.uefi) {
           this.setUEFI()
+        }
+        if (this.group) {
+          this.assignToGroup()
         }
         // this.$nuxt.refresh()
       }).catch((error) => {
@@ -215,7 +273,7 @@ export default class VClientsAddNew extends Vue {
 </script>
 
 <style>
-.VClientsAddNew {
+.VClientCreation {
   display: flow-root;
   overflow-x: hidden;
   padding-left: 10px;

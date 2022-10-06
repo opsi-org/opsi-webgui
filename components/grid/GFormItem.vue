@@ -1,5 +1,5 @@
 <template>
-  <b-row data-testid="GFormItem" class="mb-3">
+  <b-row data-testid="GFormItem" class="mb-2">
     <b-col sm="2" class="text-sm-right" :class="labelId">
       <slot name="label" />
       {{ label }}
