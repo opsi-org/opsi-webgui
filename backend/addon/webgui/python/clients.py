@@ -714,7 +714,7 @@ def set_depot(client: str, depot: str) -> None:
 @client_router.post("/api/opsidata/clients/{clientid}/groups")
 @rest_api
 @read_only_check
-def add_client_to_groups(request: Request, clientid: str, groups: List[str] = Body()) -> RESTResponse:  # pylint: disable=unused-argument
+def add_client_to_groups(request: Request, clientid: str, groups: List[str] = Body(default=None)) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	Add client to a list of groups.
 	"""

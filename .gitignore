@@ -11,7 +11,7 @@ backend/addon/webgui/data
 # opsiweb/.nuxt/
 # opsiweb/.nuxt-storybook/
 opsiweb/test/README.md
-# opsiweb/test-results/
+opsiweb/test-results/
 opsiweb/uib-components/
 opsiweb/package.json
 opsiweb/opsi-webgui.zip
