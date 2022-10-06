@@ -9,8 +9,8 @@
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
       :class="{
-        'w-100 h-100 text-left border-0': true,
-        [classes]: true
+        [classes]: true,
+        'w-100 h-100 text-left border-0 x': true
       }"
       :size="size"
       @click="show=true"
@@ -26,9 +26,12 @@
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
       :size="size"
-      :class="classes"
+      :class="{
+        'y': true,
+        [classes]: true
+      }"
       @click="show=true"
-
+      @keypress.enter="show=true"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
@@ -100,8 +103,8 @@ const selections = namespace('selections')
 @Component({ mixins: [Constants] })
 export default class BTNEvent extends Vue {
   $axios: any
-  iconnames:any
-  $t:any
+  iconnames: any
+  $t: any
 
   isLoading:any = false
   show:boolean = false
@@ -229,5 +232,8 @@ export default class BTNEvent extends Vue {
   padding: 0px !important;
   border: 0px !important;
   min-width: 100%;
+}
+.smaller-text-size > .eventlabel{
+  font-size: 85% !important;
 }
 </style>

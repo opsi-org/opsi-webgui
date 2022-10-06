@@ -33,14 +33,12 @@
         />
       </template>
       <template #contextcontent-general-1>
-        <small style="font-size: 85% !important;">
-          <ButtonBTNEvent
-            event="ondemand"
-            classes="dropdown-item border-0"
-            :update-loading="loading => clientsLoading = loading"
-            with-text
-          />
-        </small>
+        <ButtonBTNEvent
+          event="ondemand"
+          classes="dropdown-item border-0 smaller-text-size"
+          :update-loading="loading => clientsLoading = loading"
+          with-text
+        />
       </template>
       <template #contextcontent-general-2>
         <DropdownDDTableSorting
