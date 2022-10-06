@@ -86,7 +86,6 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
         <b class="basics">{{ $t('Assignments') }} </b>
       </b-row>
       <GridGFormItem>
@@ -105,8 +104,7 @@
           <TreeTSGroupInitSelection :id.sync="group" />
         </template>
       </GridGFormItem>
-      <b-row class="mt-4 mb-2">
-        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
+      <!-- <b-row class="mt-4 mb-2">
         <b class="setup">{{ $t('Initial Setup') }} </b>
       </b-row>
       <GridGFormItem>
@@ -124,7 +122,7 @@
         <template #value>
           <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize />
         </template>
-      </GridGFormItem>
+      </GridGFormItem> -->
     </div>
     <DivDComponentGroup class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
