@@ -95,7 +95,6 @@
         </template>
         <template #value>
           <TreeTSDepotsNotStored :id.sync="depotId" />
-          <!-- <b-form-input id="depot" v-model="depot" :aria-label="$t('table.fields.depot')" type="text" /> -->
         </template>
       </GridGFormItem>
       <GridGFormItem>
@@ -103,7 +102,7 @@
           <span class="group">{{ $t('table.fields.group') }}</span>
         </template>
         <template #value>
-          <b-form-textarea id="group" v-model="group" :aria-label="$t('table.fields.group')" rows="2" no-resize />
+          <TreeTSGroupInitSelection :id.sync="group" />
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
@@ -170,6 +169,7 @@ export default class VClientCreation extends Vue {
   clientName: string = ''
   depotId: string = ''
   netbootproduct: string = ''
+  group: any = null
   newClient: NewClient = {
     hostId: '',
     description: '',
@@ -232,6 +232,15 @@ export default class VClientCreation extends Vue {
       })
   }
 
+  async assignToGroup () {
+    await this.$axios.$post(`api/opsidata/clients/${this.newClient.hostId}/groups`, this.group)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert(this.$t('message.error.assignGroup') as string, 'danger', detailedError)
+      })
+  }
+
   async createOpsiClient () {
     this.isLoading = true
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
@@ -250,6 +259,9 @@ export default class VClientCreation extends Vue {
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         if (this.uefi) {
           this.setUEFI()
+        }
+        if (this.group) {
+          this.assignToGroup()
         }
         // this.$nuxt.refresh()
       }).catch((error) => {
