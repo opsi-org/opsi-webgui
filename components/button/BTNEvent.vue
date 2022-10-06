@@ -10,7 +10,7 @@
       :variant="events[event].variant"
       :class="{
         [classes]: true,
-        'w-100 h-100 text-left border-0 x': true
+        'w-100 h-100 text-left border-0': true
       }"
       :size="size"
       @click="show=true"
@@ -27,7 +27,6 @@
       :variant="events[event].variant"
       :size="size"
       :class="{
-        'y': true,
         [classes]: true
       }"
       @click="show=true"
