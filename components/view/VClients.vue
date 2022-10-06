@@ -38,17 +38,8 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
-          <template #contextcontent-1="data">
-            <!-- slot name for context menus start with contextcontent (rest doesnt matter) -->
-            <DropdownDDClientActions :client-id="data.itemkey" :fetch="$fetch" :incontextmenu="true" />
-            <!-- <ButtonBTNEvent
-              :navbar="true"
-              event="ondemand"
-              size="md"
-
-            /> -->
-          </template>
-          <template #contextcontent-2="{itemkey}">
+          <template #contextcontent-1="{itemkey}">
+            <DropdownDDClientActions :client-id="itemkey" :fetch="$fetch" :incontextmenu="true" />
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               :label="$t('title.config')"
@@ -253,8 +244,8 @@ export default class VClients extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false, visible: this.$mq === 'mobile',
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
   }

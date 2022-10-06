@@ -1,12 +1,14 @@
 <template>
-  <div data-testid="DDClientActions"
-      v-if="incontextmenu === false"
+  <div
+    v-if="incontextmenu === false"
+    data-testid="DDClientActions"
   >
     <b-dropdown
-      class="moreActions"
       variant="outline-primary border-0"
-      :title="$t('button.tablerow.moreoptions')"
+      class="moreActions"
       no-caret
+      :class="{incontextmenu: (incontextmenu != false)}"
+      :title="$t('button.tablerow.moreoptions')"
     >
       <template #button-content>
         <IconILoading v-if="clientsLoading.includes(clientId)" :small="true" />
@@ -30,39 +32,62 @@
       />
     </b-dropdown>
   </div>
-  <div v-else>
-    <li class="dropdown-item">
+  <b-dropdown
+    v-else
+    v-bind="$props"
+    data-testid="DDClientActions"
+    dropright
+    lazy
+    :no-caret="incontextmenu == false"
+    :toggle-tag="incontextmenu !== false ? 'li': 'button'"
+    :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
+    size="sm"
+    alt="Show column"
+    class="fixed_column_selection noborder w-100 text-left"
+    :class="{ 'absolutright': (incontextmenu !== false) }"
+    :toggle-class="{
+      'DDClientActionsBtn w-100 h-100 text-left': true,
+      'dropdown-item': (incontextmenu !== false) }"
+    :title="$t('button.item-actions.title')"
+  >
+
+    <template #button-content>
+      <b-icon :icon="iconnames.menu" />
+      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.item-actions') }}</small>
+    </template>
+    <small class="dropdown-item">
       <ButtonBTNEvent
         event="ondemand"
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
       />
-    </li>
-    <li class="dropdown-item">
+    </small>
+    <small class="dropdown-item">
       <ButtonBTNEvent
         event="showpopup"
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
       />
-    </li>
-    <li class="dropdown-item">
+    </small>
+    <small class="dropdown-item">
       <ButtonBTNEvent
         event="reboot"
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
       />
-    </li>
-    <li class="dropdown-item">
+    </small>
+    <small class="dropdown-item">
       <ModalMDeleteClient
+        style="padding-left: 0px;"
         :client-id="clientId"
         :refetch="fetch"
         :incontextmenu="incontextmenu"
       />
-    </li>
-  </div>
+    </small>
+  </b-dropdown>
 </template>
 
 <script lang="ts">
@@ -78,3 +103,9 @@ export default class DDClientActions extends Vue {
   clientsLoading: Array<string> = []
 }
 </script>
+<style>
+.incontextmenu > .DDClientActionsBtn::after {
+  float: right;
+  margin-top: 10px;
+}
+</style>
