@@ -314,16 +314,23 @@ def get_host_groups(  # pylint: disable=invalid-name
 		else:
 			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
 
-		clients = group_get_all_clients("clientdirectory", selectedDepots)
 		if parentGroup == "clientdirectory":
-			host_groups["not_assigned"] = {
-				"id": "not_assigned",
-				"type": "HostGroup",
-				"text": "not_assigned",
-				"parent": None,
+			not_assigned = {
+				"not_assigned": {
+					"id": "not_assigned",
+					"type": "HostGroup",
+					"text": "not_assigned",
+					"parent": None,
+					"children": None,
+				}
 			}
+			host_groups["children"] = {**not_assigned, **host_groups["children"]}
+
+		if parentGroup == "not_assigned":
+			clients = group_get_all_clients("clientdirectory", selectedDepots)
+			host_groups["children"] = {}
 			for client in clients:
-				host_groups["not_assigned"][client] = {
+				host_groups["children"][client] = {
 					"id": f"{client};not_assigned",
 					"type": "ObjectToGroup",
 					"text": client,
