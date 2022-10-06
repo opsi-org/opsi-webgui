@@ -1,10 +1,8 @@
 <template>
-  <b-row data-testid="GFormItem" class="mb-3">
-    <b-col sm="5" class="text-sm-right" :class="labelId">
-      <div class="text-break">
-        <slot name="label" />
-        {{ label }}
-      </div>
+  <b-row data-testid="GFormItem" class="mb-2">
+    <b-col sm="2" class="text-sm-right" :class="labelId">
+      <slot name="label" />
+      {{ label }}
     </b-col>
     <b-col>
       <slot name="value" />
