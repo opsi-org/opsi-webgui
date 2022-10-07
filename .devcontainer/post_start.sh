@@ -18,11 +18,11 @@ if [ -n "${OPSILICSRV_TOKEN}" ]; then
     sudo wget --header="Authorization: Bearer ${OPSILICSRV_TOKEN}" "https://opsi-license-server.uib.gmbh/api/v1/licenses/test?usage=opsiweb-dev-container" -O /etc/opsi/licenses/test.opsilic || true
 fi
 
-# echo 'Setup /etc/hosts' 1>&2
-# echo "127.0.0.1       $OPSI_HOSTNAME $(hostname) mysql redis grafana localhost" > /tmp/hosts
-# grep -v "127.0.0.1" /etc/hosts | grep -v $OPSI_HOSTNAME >> /tmp/hosts
-# cp /tmp/hosts /etc/hosts
-# rm /tmp/hosts
+echo 'Setup /etc/hosts' 1>&2
+echo "127.0.0.1       $OPSI_HOSTNAME $(hostname) mysql redis grafana localhost" > /tmp/hosts
+grep -v "127.0.0.1" /etc/hosts | grep -v $OPSI_HOSTNAME >> /tmp/hosts
+cp /tmp/hosts /etc/hosts
+rm /tmp/hosts
 
 # Setup redis server
 service redis-server restart

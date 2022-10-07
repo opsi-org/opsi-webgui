@@ -85,7 +85,12 @@ export default {
     middleware: ['authenticated'],
     base: '/addons/webgui/app/'
   },
-
+  watchers: {
+    webpack: {
+      aggregateTimeout: 300,
+      poll: 1000
+    }
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
