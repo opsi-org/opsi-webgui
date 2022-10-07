@@ -3,16 +3,19 @@ title: What's new
 ---
 
 ## 4.2.16
-### Features
+### Features:
 - Added Update Client Feature
 
-### Improvements
+### Improvements:
 - Improved accessibility
 
+### Bugfixes:
+- Fixed some css bugs
+
 ## 4.2.15
-### Features
+### Features:
 - Added Infinite scroll table feature
 
 ## 4.2.14
-### Improvements
+### Improvements:
 - Fixed minor bugs
