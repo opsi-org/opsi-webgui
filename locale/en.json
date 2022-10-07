@@ -77,11 +77,8 @@
   "title.propertiesEmpty": "(empty)",
   "title.selectedElements": "Selected elements",
   "title.deleteClient": "Delete Client",
-<<<<<<< HEAD
   "title.whatsnew":"What's new",
-=======
   "title.hostparam": "Host Parameters",
->>>>>>> develop
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
