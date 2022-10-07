@@ -1,11 +1,11 @@
 export default {
-  title: 'View/V Clients Add New',
+  title: 'View/V Client Creation',
   parameters: { docs: { description: { component: 'New opsi client creation view' } } }
 }
 
 const PrimaryTemplate = () => ({
-  template: '<ViewVClientsAddNew />'
+  template: '<ViewVClientCreation />'
 })
 
 // named export Primary to create respective story
-export const VClientsAddNew = PrimaryTemplate.bind({})
+export const VClientCreation = PrimaryTemplate.bind({})

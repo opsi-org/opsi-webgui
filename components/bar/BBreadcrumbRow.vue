@@ -34,7 +34,7 @@ export default class BBreadcrumbRow extends Vue {
         case 'depotsconfig': obj.text = this.$t('title.depotsconfig') as string; break
         case 'clientsconfig': obj.text = this.$t('title.clientsconfig') as string; break
         case 'clientslog': obj.text = this.$t('title.clientslog') as string; break
-        case 'clientsaddnew': obj.text = this.$t('title.addNewClient') as string; break
+        case 'clientscreation': obj.text = this.$t('title.addNewClient') as string; break
         case 'products': obj.text = this.$t('title.products') as string; break
         case 'settings': obj.text = this.$t('title.settings') as string; break
         case '': break

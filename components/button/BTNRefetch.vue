@@ -5,7 +5,7 @@
     data-testid="BTNRefetch"
     :title="tooltip? tooltip : ''"
     :variant="(tooltip || incontextmenu !== false )? 'outline-primary border-0' : 'outline-dark'"
-    class="btn-sm"
+    class="BTNRefetch btn-sm"
     :class="{
       'dropdown-item': incontextmenu !== false,
       'float-right': incontextmenu === false
@@ -38,3 +38,11 @@ export default class BTNRefetch extends Vue {
   @Prop({ default: () => { return () => { /* default */ } } }) refetch!: Function
 }
 </script>
+
+<style>
+.BTNRefetch,
+.BTNRefetch > svg,
+.BTNRefetch > div {
+  display: inline-block !important;
+}
+</style>

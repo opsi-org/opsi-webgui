@@ -2,10 +2,11 @@
   <div
     v-if="incontextmenu === false"
     data-testid="DDClientActions"
+    :class="{incontextmenu: (incontextmenu != false)}"
   >
     <b-dropdown
       variant="outline-primary border-0"
-      class="moreActions"
+      class="DDClientActionsBtn moreActions"
       no-caret
       :class="{incontextmenu: (incontextmenu != false)}"
       :title="$t('button.tablerow.moreoptions')"
@@ -43,11 +44,11 @@
     :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
     size="sm"
     alt="Show column"
-    class="fixed_column_selection noborder w-100 text-left"
+    class="DDClientActionsBtn fixed_column_selection noborder w-100 text-left"
     :class="{ 'absolutright': (incontextmenu !== false) }"
     :toggle-class="{
-      'DDClientActionsBtn w-100 h-100 text-left': true,
-      'dropdown-item': (incontextmenu !== false) }"
+      'w-100 h-100 text-left': true,
+      'dropdown-item incontextmenu ': (incontextmenu !== false) }"
     :title="$t('button.item-actions.title')"
   >
 
@@ -104,8 +105,8 @@ export default class DDClientActions extends Vue {
 }
 </script>
 <style>
-.incontextmenu > .DDClientActionsBtn::after {
-  float: right;
+.DDClientActionsBtn .incontextmenu::after {
+  float: right !important;
   margin-top: 10px;
 }
 </style>

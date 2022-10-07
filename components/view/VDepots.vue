@@ -6,7 +6,7 @@
         <!-- v-if="$mq == 'mobile'" -->
         <BarBCollapsePageHeader
           :id="id"
-          :title="$t('title.depots') || 'Servers'"
+          :title="$t('title.depots') + ' (' + totalItems + ')' || 'Servers' + ' (' + totalItems + ')'"
           :row-id="rowId"
           :collapsed="$mq=='mobile'"
           :collapseable="false"
@@ -41,19 +41,19 @@
           :fetchitems="_fetch"
           :items="items"
         >
-        <template #contextcontent-specific-1="{itemkey}">
-          <ButtonBTNRowLinkTo
-            :title="$t('title.config')"
-            :label="$t('title.config')"
-            :icon="iconnames.settingsobject"
-            to="/depots/config"
-            :ident="itemkey"
-            :pressed="isRouteActive"
-            :incontextmenu="true"
-            :click="routeRedirectWith"
-          />
-        </template>
-        <template #contextcontent-general-1>
+          <template #contextcontent-specific-1="{itemkey}">
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              :label="$t('title.config')"
+              :icon="iconnames.settingsobject"
+              to="/depots/config"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
+          </template>
+          <template #contextcontent-general-1>
             <DropdownDDTableSorting
               :table-id="id"
               :incontextmenu="true"
@@ -223,21 +223,16 @@ export default class VDepots extends Vue {
   }
 
   async fetch () {
-    console.log('fetch')
     const items = await this._fetch()
 
-    console.log('items', items)
     await Vue.nextTick(() => {
       if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
-        console.log('set')
         this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
       } else {
-        console.log('setAuto')
         this.cache_pages.setAuto(this.tableData.pageNumber, items) // try to append (start or beginning depend on pageNumber)
       }
       this.cache_pages.setTotalPages(this.totalpages)
     })
-    console.debug('elements', this.cache_pages.elements)
   }
 
   async _fetch () {
