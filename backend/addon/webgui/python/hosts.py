@@ -18,6 +18,7 @@ from sqlalchemy.exc import IntegrityError
 
 from OPSI.Exceptions import BackendBadValueError
 from opsiconfd.application.utils import get_configserver_id
+from opsiconfd.backend import get_client_backend
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -32,12 +33,16 @@ from opsiconfd.rest import (
 from .utils import (
 	backend,
 	build_tree,
+	get_allowed_clients,
 	get_allowed_objects,
+	get_username,
+	host_group_access_configured,
 	mysql,
 	parse_client_list,
 	parse_depot_list,
 	parse_hosts_list,
 	read_only_check,
+	user_register,
 )
 
 host_router = APIRouter()
@@ -309,9 +314,111 @@ def get_host_groups(  # pylint: disable=invalid-name
 		else:
 			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
 
+		if parentGroup == "clientdirectory":
+			not_assigned = {
+				"not_assigned": {
+					"id": "not_assigned",
+					"type": "HostGroup",
+					"text": "not_assigned",
+					"parent": None,
+					"children": None,
+				}
+			}
+			host_groups["children"] = {**not_assigned, **host_groups["children"]}
+
+		if parentGroup == "not_assigned":
+			clients = group_get_all_clients("clientdirectory", selectedDepots)
+			host_groups["children"] = {}
+			for client in clients:
+				host_groups["children"][client] = {
+					"id": f"{client};not_assigned",
+					"type": "ObjectToGroup",
+					"text": client,
+					"parent": "not_assigned",
+					"allowed": True,
+				}
+
 		if parentGroup == "root":
 			return RESTResponse(data={"groups": host_groups.get("children")})
 		return RESTResponse(data={"groups": host_groups})
+
+
+def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:
+	clients = set()
+	all_clients = set()
+	groups = {group}
+
+	with mysql.session() as session:
+
+		while groups:
+			for group in groups.copy():
+				groups.remove(group)
+				query = select(text("g.groupId AS group_id, g.type AS group_type")).select_from(table("GROUP").alias("g")).where(text(f"g.parentGroupId='{group}'"))  # type: ignore[arg-type,attr-defined]
+				result = session.execute(query)
+				result = result.fetchall()
+
+				for row in result:
+					if row:
+						groups.add(dict(row).get("group_id"))
+				query = select(text("objectId")).select_from(table("OBJECT_TO_GROUP")).where(text(f"groupId='{group}'"))
+				result2 = session.execute(query)
+				result2 = result2.fetchall()
+				for row in result2:
+					if row:
+						clients.add(dict(row).get("objectId"))
+
+		username = get_username()
+		allowed_clients = None
+		if user_register() and host_group_access_configured(username):
+			allowed_clients = get_allowed_clients(username)
+		where = and_(text("h.type = 'OpsiClient'"))
+		params = {"depot_ids": []}
+		if allowed_clients:
+			params["allowed_clients"] = allowed_clients
+			where = and_(where, text("(h.hostId in :allowed_clients)"))
+		if depots:
+			where = and_(
+				where,
+				text(
+					"""
+					COALESCE(
+						(
+							SELECT TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) FROM CONFIG_STATE AS cs
+							WHERE cs.objectId = h.hostId AND cs.configId = 'clientconfig.depot.id'
+						),
+						(SELECT cv.value FROM CONFIG_VALUE AS cv WHERE cv.configId = 'clientconfig.depot.id' AND cv.isDefault = 1 LIMIT 1)
+					) IN :depot_ids
+					"""
+				),
+			)
+			params["depot_ids"] = depots
+		query = select(text("h.hostId AS clientId")).select_from(table("HOST").alias("h")).where(where)
+
+		result = session.execute(query, params)
+		result = result.fetchall()
+		for row in result:
+			if row:
+				all_clients.add(dict(row).get("clientId"))
+
+	return list(all_clients - clients)
+
+
+@host_router.get("/api/opsidata/hosts/groups/id")
+@rest_api
+def get_host_group_ids() -> RESTResponse:
+	"""
+	Get ids of all host groups
+	"""
+	groups = []
+	with mysql.session() as session:
+		query = select(text("g.groupId AS group_id")).select_from(table("GROUP").alias("g"))  # type: ignore[arg-type,attr-defined]
+		result = session.execute(query)
+		result = result.fetchall()
+
+		for row in result:
+			if row:
+				groups.append(dict(row).get("group_id"))
+	return RESTResponse(data=groups)
 
 
 def find_parent(group: str) -> str:
@@ -467,12 +574,10 @@ def get_server_data(
 
 		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
 		query = pagination(query, commons)  # type: ignore[assignment,arg-type]
-		logger.devel(query)
 		result = session.execute(query, params)
 		result = result.fetchall()
 		host_data = []
 		for row in result:
-			logger.devel(row)
 			if row is not None:
 				row_dict = dict(row)
 				for key in row_dict.keys():
