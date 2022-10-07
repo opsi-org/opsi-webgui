@@ -8,6 +8,7 @@
       class="w-100 h-100 text-left border-0"
       :disabled="(config)?config.read_only:false"
       @click="show = !show"
+      @keypress.enter="show = !show"
     >
       <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>

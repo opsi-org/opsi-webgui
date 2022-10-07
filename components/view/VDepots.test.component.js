@@ -7,7 +7,6 @@ test('view-depots snapshot', async ({ page }) => {
   expect(await component.screenshot()).toMatchSnapshot('VDepots-table.png')
 })
 
-
 test('view-depots snapshot contextmenu', async ({ page }) => {
   await callStoryId(page, 'view-v-depots', 'v-depots')
   let component = await page.locator('[data-testid="VDepots"]')

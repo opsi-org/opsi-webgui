@@ -26,6 +26,7 @@ test('table-productslocalboot snapshot multi-select', async ({ page }) => {
   // both rows should be selected
   expect(await component.screenshot()).toMatchSnapshot('TProductsLocalboot-table.png')
 })
+
 test('table-productslocalboot snapshot contextmenu', async ({ page }) => {
   await callStoryId(page, 'table-t-products-localboot', 't-products-localboot')
   let component = await page.locator('[data-testid="TProductsLocalboot"]')
@@ -34,7 +35,6 @@ test('table-productslocalboot snapshot contextmenu', async ({ page }) => {
   // both rows should be selected
   expect(await component.screenshot()).toMatchSnapshot('TProductsLocalboot-contextmenu.png')
 })
-
 
 test('table-productsnetboot snapshot contextmenu like localboot', async ({ page }) => {
   await callStoryId(page, 'table-t-products-netboot', 't-products-netboot')

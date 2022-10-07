@@ -8,7 +8,7 @@ const DefaultVisibleTemplate = (args, { argTypes }) => ({
   computed: { args () { return args } },
   mounted () {
     setTimeout(() => {
-      this.$refs.cmviewtable.openMenu({ x: 100, y: 50, preventDefault: () => {}}, this.args.clientId)
+      this.$refs.cmviewtable.openMenu({ x: 100, y: 50, preventDefault: () => {} }, this.args.clientId)
     }, 200)
   },
   // mounted () { this.$refs.cmviewtable.openMenu(undefined, this.args.clientId) },

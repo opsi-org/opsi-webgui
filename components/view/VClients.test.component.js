@@ -8,7 +8,6 @@ test('view-clients snapshot', async ({ page }) => {
   expect(await component.screenshot()).toMatchSnapshot('VClients-main.png')
 })
 
-
 test('view-clients snapshot contextmenu', async ({ page }) => {
   await callStoryId(page, 'view-v-clients', 'v-clients')
   let component = await page.locator('[data-testid="VClients"]')

@@ -116,7 +116,6 @@ export default class DDTableSorting extends BDropdown {
   changeSortDirection () { this.$emit('update:sortDesc', (!this.sortDesc)) }
   changeSortBy (key:string) { this.$emit('update:sortBy', key) }
 
-
   onOver () {
     if (this.$refs.dropdown) {
       this.$refs.dropdown.visible = true
