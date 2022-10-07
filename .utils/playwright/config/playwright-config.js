@@ -9,7 +9,7 @@ module.exports.use = {
   ignoreHTTPSErrors: true,
   screenshot: 'only-on-failure',
   actionTimeout: 10 * 1000,
-  navigationTimeout: 30 * 1000
+  navigationTimeout: 40 * 1000
   // video: 'on-first-retry'
 }
 

@@ -28,6 +28,13 @@ const PrimaryTemplate = (args, { argTypes }) => ({
             { user: 'testuser', clientId: 'client2.domain.local', productId: 'productId', actionRequest: 'setup' },
             { user: 'testuser', clientId: 'client3.domain.local', productId: 'productId', actionRequest: 'setup' }
           ]
+        },
+        changesHostParam () {
+          return [
+            { user: 'testuser', hostId: 'client1.domain.local', type: 'clients', configId: 'configId1', value: 'true' },
+            { user: 'testuser', hostId: 'client2.domain.local', type: 'clients', configId: 'configId2', value: 'value1' },
+            { user: 'testuser', hostId: 'depot1.domain.local', type: 'depots', configId: 'configId3', value: ['value1', 'value2'] }
+          ]
         }
       }
     }

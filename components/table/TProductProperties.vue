@@ -31,6 +31,7 @@
       :error="errorText"
       :items="Object.values(properties.properties)"
       :fields="fields"
+      :fixed="true"
       type="productproperties"
     >
       <template #empty>

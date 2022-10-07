@@ -3305,7 +3305,7 @@ input[type="submit"].btn-block {
 .custom-control {
   position: relative;
   display: block;
-  min-height: 1.5rem;
+  min-height: 1.9rem;
   padding-left: 1.5rem;
 }
 .custom-control-inline {
