@@ -30,7 +30,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
         changesProducts () { return args.changeslist }
       },
       mutations: {
-        deleteFromChangesWhere () { return null }
+        deleteFromProdChangesWhere () { return null }
       }
     },
     settings: {
