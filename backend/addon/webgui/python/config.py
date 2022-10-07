@@ -447,10 +447,11 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 			changes.append(f"{client}: {config.configId}")
 			if isinstance(config.value, list):
 				cs_values = json.dumps(config.value)
-			elif isinstance(config.value, str):
-				cs_values = f'["{config.value}"]'
-			else:
+			elif isinstance(config.value, str) and config.value.lower() in ("true", "false"):
 				cs_values = f"[{config.value}]".lower()
+			else:
+				cs_values = f'["{config.value}"]'
+
 
 			values = {"objectId": client, "configId": config.configId, "values": cs_values}
 
