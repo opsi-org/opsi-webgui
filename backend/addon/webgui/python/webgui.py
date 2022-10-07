@@ -184,9 +184,9 @@ async def home():
 		return JSONResponse({"groups": {"productgroups": product_groups, "clientdirectory": host_groups}})
 
 
-@webgui_router.get("/api/test/md")
+@webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
 	path = config.addon_dirs[0]
-	with open(f"{path}/test.md", "r", encoding="utf-8") as test_file:
-		text = test_file.read()
+	with open(f"{path}/changelogs.md", "r", encoding="utf-8") as changelogs_file:
+		text = changelogs_file.read()
 	return PlainTextResponse(text)
