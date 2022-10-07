@@ -26,7 +26,9 @@
         tabindex="-1"
         :style=" { top:top, left:left }"
       >
-        <header class="li-delimiter"> {{ $t('table.contextmenu.header-specific', {id: itemkey})}} </header>
+        <header class="li-delimiter">
+          {{ $t('table.contextmenu.header-specific', {id: itemkey}) }}
+        </header>
         <div
           v-for="slotName in Object.keys($scopedSlots).filter(x => !x.includes('general'))"
           :key="slotName"
@@ -35,7 +37,9 @@
           <small><slot :name="slotName" :itemkey="primaryKey? item[primaryKey]:item" /></small>
           <li class="li-delimiter" />
         </div>
-        <header class="li-delimiter"> {{ $t('table.contextmenu.header-general', {id: itemkey})}} </header>
+        <header class="li-delimiter">
+          {{ $t('table.contextmenu.header-general', {id: itemkey}) }}
+        </header>
         <div
           v-for="slotName in Object.keys($scopedSlots).filter(x => x.includes('general'))"
           :key="slotName"
@@ -107,7 +111,6 @@ export default class CMViewTable extends Vue {
   openMenu (e, item) {
     this.viewMenu = true
     this.item = item
-    console.log(item, e)
     if (e) {
       Vue.nextTick(function () {
         (this.$refs.right as any)?.focus()

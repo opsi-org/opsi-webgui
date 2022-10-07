@@ -20,7 +20,7 @@
       <!-- dropleft -->
       <template #button-content>
         <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
-        {{ incontextmenu !== false ? 'Sorting': ''}}
+        {{ incontextmenu !== false ? $t('button.sort.tablecolumns.title'): '' }}
       </template>
       <li>
         <a
@@ -31,7 +31,6 @@
           <b-form-checkbox
             :checked="sortDesc"
           />
-          <!-- :name="'hi'" -->
           <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
         </a>
       </li>
@@ -39,18 +38,15 @@
       <li
         v-for="header in Object.values(headerData).filter(h=>h.sortable)"
         :key="header.key"
-          :class="{'selected': (sortBy==header.key)}"
-          variant="primary"
-          @keydown="changeSortBy(header.key)"
-          @click="changeSortBy(header.key)"
+        :class="{'selected': (sortBy==header.key)}"
+        variant="primary"
+        @keydown="changeSortBy(header.key)"
+        @click="changeSortBy(header.key)"
       >
-          <!-- class="dropdown-item" -->
-        <a
-          class="bg-secondary"
-        >
+        <a class="bg-secondary">
           {{ header.label }}
         </a>
-        {{(sortBy==header.key)}}
+        {{ (sortBy==header.key) }}
       </li>
     </b-dropdown>
   </div>
@@ -77,33 +73,27 @@
       <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
       <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.sort.tablecolumns.title') }}</small>
     </template>
-
-    <template>
-          <!-- class="dropdown-item" -->
-      <b-dropdown-form
-          @keydown.prevent="changeSortDirection()"
-          @click.prevent="changeSortDirection()"
-        >
-          <b-form-checkbox
-            :checked="sortDesc"
-          />
-          <!-- :name="'hi'" -->
-          <small class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </small>
-      </b-dropdown-form>
-      <li class="li-delimiter" />
-          <!-- class="dropdown-item" -->
-      <b-dropdown-form
-          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
-          :key="header.key"
-          :class="{'selected': (sortBy==header.key)}"
-          variant="primary"
-          @keydown="changeSortBy(header.key)"
-          @click="changeSortBy(header.key)"
-          class="dropdown-item"
-        >
-          <small>{{ header.label }}</small>
-      </b-dropdown-form>
-    </template>
+    <b-dropdown-form
+      @keydown.prevent="changeSortDirection()"
+      @click.prevent="changeSortDirection()"
+    >
+      <b-form-checkbox
+        :checked="sortDesc"
+      />
+      <small class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </small>
+    </b-dropdown-form>
+    <li class="li-delimiter" />
+    <b-dropdown-form
+      v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+      :key="header.key"
+      :class="{'selected': (sortBy==header.key)}"
+      class="dropdown-item"
+      variant="primary"
+      @keydown="changeSortBy(header.key)"
+      @click="changeSortBy(header.key)"
+    >
+      <small>{{ header.label }}</small>
+    </b-dropdown-form>
   </b-dropdown>
 </template>
 

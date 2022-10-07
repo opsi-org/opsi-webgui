@@ -21,7 +21,7 @@
     >
       <template #button-content>
         <IconITableColumn />
-        {{ incontextmenu !== false ? 'Columns': ''}}
+        {{ incontextmenu !== false ? $t('button.showCol'): '' }}
       </template>
       <template v-if="!multiCondition">
         <b-dropdown-form
@@ -84,7 +84,7 @@
   >
     <template #button-content>
       <IconITableColumn />
-      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('table.showCol') }}</small>
+      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.showCol') }}</small>
     </template>
     <template v-if="!multiCondition">
       <b-dropdown-form

@@ -134,16 +134,15 @@ export default class TInfiniteScrollSmooth extends Vue {
   bgOriginal:string = '' // to restore the original background color of the table row
   scrollPositions = { offsetBottom: 0, topPagePrev: 0, withTopSpace: false }
 
-
   @cache.Getter public opsiconfigserver!: string
 
+  get contextSlots () { return Object.keys(this.$scopedSlots).filter(k => k.startsWith('contextcontent')) }
   get selectmode () { return (this.ismultiselect) ? 'range' : 'single' }
   get tableScrollBody () { return (this.$refs[this.id] as any)?.$el }
   get isFirstPage () { return this.totalpages > 0 && (this.tableData.pageNumber === 1 || this.cache_pages.first_page_number === 1) }
   get isLastPage () {
     return (this.tableData.pageNumber === this.totalpages || this.cache_pages.first_page_number === this.totalpages || this.cache_pages.last_page_number >= this.totalpages)
   }
-  get contextSlots () { return Object.keys(this.$scopedSlots).filter(k => k.startsWith('contextcontent')) }
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.addScrollEvent() }
   @Watch('cache_pages.elements', { deep: false }) async pageChanged () {
@@ -157,7 +156,6 @@ export default class TInfiniteScrollSmooth extends Vue {
       this.cache_pages.scrollDirection = 'none'
     })
     const x = this.getRowForAnimation(lastScrollDirection, false)
-    console.log('watch: animate row ', x)
     if (x) {
       x.style.border = '1px solid ' + this.animationColor
       await this.animateColor(x, this.animationColor, true, true, false)
@@ -204,7 +202,7 @@ export default class TInfiniteScrollSmooth extends Vue {
       // this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
       this.scrollPositions.topPagePrev = this.tableScrollBody.offsetTop
     }
-    if (! this.isFirstPage) {
+    if (!this.isFirstPage) {
       await this.animateColor(this.elementBeforeFetch, this.animationColor, false, true, true)
     }
 
@@ -237,7 +235,6 @@ export default class TInfiniteScrollSmooth extends Vue {
       // this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
       this.scrollPositions.offsetBottom = this.tableScrollBody.scrollTop
     }
-    console.log('nextpage: animate row ', this.elementBeforeFetch)
     await this.animateColor(this.elementBeforeFetch, this.animationColor, false, true, true)
 
     // get next page (actually triggered by updating tableData pageNumber)
@@ -271,7 +268,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   }
 
   async animateColor (el, bgcolor = 'var(--hover)', animation = true, cleanupAttributes = true, storeBGColor = false) {
-    console.log('animateColor el ', el)
     // change bg of given element/row
     if (!el) { return }
     if (storeBGColor === true) {
@@ -381,10 +377,11 @@ export default class TInfiniteScrollSmooth extends Vue {
     }
   }
 
-  contextOpen (item, index, evt) {
+  contextOpen (item, _, evt) {
     evt.preventDefault()
-    console.log('right clicked row ' + index + ' item ' + JSON.stringify(item), evt.type)
-    this.$refs.contextmenu.openMenu(evt, item)
+    if (this.$refs.contextmenu) {
+      (this.$refs.contextmenu as any).openMenu(evt, item)
+    }
   }
 
   clearSelected () {
