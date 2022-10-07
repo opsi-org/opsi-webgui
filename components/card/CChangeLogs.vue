@@ -34,7 +34,9 @@ export default class CChangeLogs extends Vue {
     this.isLoading = true
     await this.$axios.$get('/api/opsidata/changelogs')
       .then((response) => {
-        this.changelogs = response
+        this.changelogs = response.split(/\r?\n/)
+        // console.log(response)
+        // console.log(typeof (response))
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.changelogsAlert as any)
