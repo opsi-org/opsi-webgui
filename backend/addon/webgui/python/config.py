@@ -414,6 +414,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							.values(**values)
 							.on_duplicate_key_update(**values)
 						)
+					logger.devel(stmt)
 					session.execute(stmt)
 				logger.debug("Config %s saved.", config.configId)
 			except Exception as err:  # pylint: disable=broad-except
@@ -439,16 +440,17 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 	"""
 	Save config State
 	"""
+	changes = []
 
 	for client in data.clientIds:
 		for config in data.configs:
-
-			if isinstance(config.value, bool):
-				cs_values = f"[{config.value}]".lower()
-			elif isinstance(config.value, list):
+			changes.append(f"{client}: {config.configId}")
+			if isinstance(config.value, list):
 				cs_values = json.dumps(config.value)
-			else:
+			elif isinstance(config.value, str):
 				cs_values = f'["{config.value}"]'
+			else:
+				cs_values = f"[{config.value}]".lower()
 
 			values = {"objectId": client, "configId": config.configId, "values": cs_values}
 
@@ -460,7 +462,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 								"CONFIG_STATE", *[column(name) for name in values.keys()]
 							)  # pylint: disable=consider-iterating-dictionary
 						)
-						.where(text(f"objectId = '{client}' AND configId = '{ config.configId}'"))
+						.where(text(f"objectId = '{client}' AND configId = '{config.configId}'"))
 						.values(**values)
 					)
 				else:
@@ -475,7 +477,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 					)
 				session.execute(stmt)
 
-	return RESTResponse(http_status=status.HTTP_200_OK, data=data.configs[0].configId)
+	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Changed the following config states: {', '.join(changes)}")
 
 
 def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
