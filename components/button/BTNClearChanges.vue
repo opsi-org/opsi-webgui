@@ -14,14 +14,21 @@ const changes = namespace('changes')
 export default class BTNClearChanges extends Vue {
   $nuxt: any
   iconnames: any
-  @Prop({ }) hide!: string
+  @Prop({ }) from!: string
+  // @Prop({ }) hide!: string
 
-  @changes.Getter public changesProducts!: Array<object>
-  @changes.Mutation public deleteAllChanges!: () => void
+  // @changes.Getter public changesProducts!: Array<object>
+  @changes.Mutation public deleteAllProductChanges!: () => void
+  @changes.Mutation public deleteAllChangesHostParam!: () => void
 
   deleteAll () {
-    this.deleteAllChanges()
-    if (this.hide) { this.$bvModal.hide(this.hide) }
+    if (this.from === 'products') {
+      this.deleteAllProductChanges()
+    }
+    if (this.from === 'hostparam') {
+      this.deleteAllChangesHostParam()
+    }
+    // if (this.hide) { this.$bvModal.hide(this.hide) }
     this.$nuxt.refresh()
   }
 }

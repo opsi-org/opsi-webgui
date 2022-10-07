@@ -25,10 +25,14 @@ export default class BTNDeleteObj extends Vue {
 
   // @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
+  @changes.Mutation public delFromChangesHostParam!: (s: object) => void
 
   deleteChanges () {
     if (this.from === 'products') {
       this.delFromChangesProducts(this.item)
+    }
+    if (this.from === 'hostparam') {
+      this.delFromChangesHostParam(this.item)
     }
     // if (this.changesProducts.length === 0) {
     //   this.$bvModal.hide(this.hide)

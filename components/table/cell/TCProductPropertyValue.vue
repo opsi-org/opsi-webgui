@@ -78,7 +78,7 @@ export default class TCProductPropertyValue extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @changes.Getter public changesProducts!: Array<any>
-  @changes.Mutation public deleteFromChangesWhere!: (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) => void
+  @changes.Mutation public deleteFromProdChangesWhere!: (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) => void
   @settings.Getter public quicksave!: boolean
 
   showValue : boolean = false
@@ -209,7 +209,7 @@ export default class TCProductPropertyValue extends Vue {
 
     const hostKey = (this.selectionClients.length > 0) ? 'clientId' : 'depotId'
     const hostValues = (this.selectionClients.length > 0) ? this.selectionClients : this.selectionDepots
-    this.deleteFromChangesWhere(
+    this.deleteFromProdChangesWhere(
       [hostKey, hostValues],
       ['productId', this.rowItem.productId],
       ['property', this.rowItem.propertyId]

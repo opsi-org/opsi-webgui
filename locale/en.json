@@ -77,11 +77,17 @@
   "title.propertiesEmpty": "(empty)",
   "title.selectedElements": "Selected elements",
   "title.deleteClient": "Delete Client",
+<<<<<<< HEAD
   "title.whatsnew":"What's new",
+=======
+  "title.hostparam": "Host Parameters",
+>>>>>>> develop
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
-  "table.filterBy.DepotsClients": "Filter by Server-Id or Client-Id",
+  "table.filterBy.ConfigHost": "Filter by Config ID or Host ID",
+  "table.filterBy.Config": "Filter by Config ID",
+  "table.filterBy.DepotsClients": "Filter by Server ID or Client ID",
   "table.showCol": "Show Columns",
   "table.clientDetails": "Client Details:",
   "table.addtnlInfo": "Additional Information:",
@@ -200,7 +206,8 @@
   "treeselect.assigntoGroups": "Assign to groups",
   "treeselect.hostGroups": "Hostgroups",
   "treeselect.prodGroups": "Productgroups",
-  "treeselect.noresult": "No such item found",
+  "treeselect.noresult": "No results found",
+  "treeselect.editable": "No results found... Press Enter to add.",
   "treeselect.noResultTextEditable": "Not such item found",
   "treeselect.search": "Search",
   "treeselect.searchOrAdd": "Search or add item",
