@@ -8,9 +8,12 @@
         {{ $t('title.whatsnew') }}
       </h5>
       <AlertAAlert ref="changelogsAlert" />
-      <b-card-text>
+
+      <!-- <nuxt-content :document="{ body: changelogs.excerpt }" /> -->
+      <!-- <nuxt-content :document="changelogs" /> -->
+      <p>
         {{ changelogs }}
-      </b-card-text>
+      </p>
     </b-card>
   </div>
 </template>
@@ -25,10 +28,11 @@ export default class CChangeLogs extends Vue {
   changelogs: any = ''
   isLoading: boolean = false
   errorText: string = ''
+  $mq: any
 
   async fetch () {
     this.isLoading = true
-    await this.$axios.$get('/api/test/md')
+    await this.$axios.$get('/api/opsidata/changelogs')
       .then((response) => {
         this.changelogs = response
       }).catch((error) => {
