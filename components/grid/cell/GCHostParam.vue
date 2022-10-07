@@ -50,11 +50,7 @@ export default class GCHostParamVal extends Vue {
     if (this.type === 'clients') {
       if (this.row.clients) {
         const val: any = Object.values(this.row.clients)[0]
-        if (this.row.multiValue) {
-          return val
-        } else {
-          return val[0]
-        }
+        return val
       } else {
         return this.row.defaultValue
       }
