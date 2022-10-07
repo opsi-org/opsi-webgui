@@ -14,16 +14,18 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.requests import HTTPConnection
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.concurrency import run_in_threadpool
+from starlette.types import Receive, Send
+
 from OPSI.Exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
 from opsiconfd.backend import get_client_backend
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
 from opsiconfd.utils import remove_route_path
-from starlette.concurrency import run_in_threadpool
-from starlette.types import Receive, Send
 
 from .clients import client_router
+from .config import conifg_router
 from .const import ADDON_ID, ADDON_NAME, ADDON_VERSION
 from .depots import depot_router
 from .hosts import host_router
@@ -57,6 +59,7 @@ class Webgui(Addon):
 		app.include_router(host_router, prefix=self.router_prefix)
 		app.include_router(client_router, prefix=self.router_prefix)
 		app.include_router(depot_router, prefix=self.router_prefix)
+		app.include_router(conifg_router, prefix=self.router_prefix)
 
 		app.mount(path=f"{self.router_prefix}/app", app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True), name="app")
 
