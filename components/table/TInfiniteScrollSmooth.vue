@@ -20,6 +20,7 @@
       show-empty
       :small="$mq=='mobile'"
       responsive
+      hover
       :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
       :items="cache_pages.flat()"
       selectable
@@ -31,7 +32,9 @@
       :sort-by.sync="tableData.sortBy"
       :sort-desc.sync="tableData.sortDesc"
       @row-clicked="onRowClicked"
+      @row-contextmenu="contextOpen"
     >
+      <!-- @row-contextmenu="(contextSlots.length > 0) ? contextOpen : undefined" -->
       <!-- :per-page="tableData.perPage" -->
       <template v-if="totalpages > 1" #top-row="{ columns }">
         <b-th :colspan="columns" class="tablehead">
@@ -60,6 +63,7 @@
       </template>
       <template #head(rowactions)>
         <b-button-group>
+          <!-- <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" /> -->
           <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" variant="outline-primary" />
           <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
           <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" variant="outline-primary" />
@@ -85,6 +89,14 @@
     <BarBTableFooter :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
     <br>
+    <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
+      <template
+        v-for="slotName in contextSlots"
+        #[slotName]="slotScope"
+      >
+        <slot :name="slotName" v-bind="slotScope" />
+      </template>
+    </ContextmenuCMViewTable>
   </div>
 </template>
 
@@ -116,14 +128,15 @@ export default class TInfiniteScrollSmooth extends Vue {
   @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeaders
   isScrolling = false
   scroll_sleep_ms: number = 5
-  elementBeforeFetch:any
-  scrollPositions = { offsetBottom: 0, topPagePrev: 0, withTopSpace: false }
+  elementBeforeFetch:any = undefined
   scrollDownOffset: number = 50 // how sensitive the scroll is to fetch a new page (start and end of table)
   animationColor = 'var(--hover)' // to see the last element before fetch
   bgOriginal:string = '' // to restore the original background color of the table row
+  scrollPositions = { offsetBottom: 0, topPagePrev: 0, withTopSpace: false }
 
   @cache.Getter public opsiconfigserver!: string
 
+  get contextSlots () { return Object.keys(this.$scopedSlots).filter(k => k.startsWith('contextcontent')) }
   get selectmode () { return (this.ismultiselect) ? 'range' : 'single' }
   get tableScrollBody () { return (this.$refs[this.id] as any)?.$el }
   get isFirstPage () { return this.totalpages > 0 && (this.tableData.pageNumber === 1 || this.cache_pages.first_page_number === 1) }
@@ -143,7 +156,6 @@ export default class TInfiniteScrollSmooth extends Vue {
       this.cache_pages.scrollDirection = 'none'
     })
     const x = this.getRowForAnimation(lastScrollDirection, false)
-    console.log('watch: animate row ', x)
     if (x) {
       x.style.border = '1px solid ' + this.animationColor
       await this.animateColor(x, this.animationColor, true, true, false)
@@ -223,7 +235,6 @@ export default class TInfiniteScrollSmooth extends Vue {
       // this.scrollPositions.withTopSpace = this.tableData.pageNumber > 1
       this.scrollPositions.offsetBottom = this.tableScrollBody.scrollTop
     }
-    console.log('nextpage: animate row ', this.elementBeforeFetch)
     await this.animateColor(this.elementBeforeFetch, this.animationColor, false, true, true)
 
     // get next page (actually triggered by updating tableData pageNumber)
@@ -257,7 +268,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   }
 
   async animateColor (el, bgcolor = 'var(--hover)', animation = true, cleanupAttributes = true, storeBGColor = false) {
-    console.log('animateColor el ', el)
     // change bg of given element/row
     if (!el) { return }
     if (storeBGColor === true) {
@@ -364,6 +374,13 @@ export default class TInfiniteScrollSmooth extends Vue {
       } else {
         this.setselection([ident])
       }
+    }
+  }
+
+  contextOpen (item, _, evt) {
+    evt.preventDefault()
+    if (this.$refs.contextmenu) {
+      (this.$refs.contextmenu as any).openMenu(evt, item)
     }
   }
 

@@ -40,7 +40,7 @@
               ref="ref-products-localboot"
               :parent-id="id"
               :is-loading="isLoading"
-              :header-data.sync="tableInfo.headerData"
+              :table-info.sync="tableInfo"
               :totallocalboot.sync="localboot"
               :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
@@ -59,7 +59,7 @@
               ref="ref-products-netboot"
               :parent-id="id"
               :is-loading="isLoading"
-              :header-data="tableInfo.headerData"
+              :table-info="tableInfo"
               :totalnetboot.sync="netboot"
               :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
@@ -147,7 +147,7 @@ export default class VProducts extends Vue {
     // },
     version: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : false
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : true
     },
     actionProgress: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', sortable: true,
@@ -158,8 +158,8 @@ export default class VProducts extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionRequest') : false
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
   }

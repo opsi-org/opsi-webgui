@@ -1,20 +1,90 @@
 <template>
+  <div v-if="onhover!==false" @mouseover="onOver" @mouseleave="onLeave" @focusin="onOver" @focusout="onLeave">
+    <b-dropdown
+      ref="dropdown"
+      v-bind="$props"
+      data-testid="DropdownDDTableColumnVisibility"
+      lazy
+      right
+      :no-caret="incontextmenu == false"
+      :toggle-tag="incontextmenu !== false ? 'li': 'button'"
+      :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
+      size="sm"
+      alt="Show column"
+      class="DDTableColumnVisibility fixed_column_selection noborder w-100 text-left"
+      :class="{ 'absolutright': (incontextmenu !== false) }"
+      :toggle-class="{
+        'DDTableColumnVisibilityBtn w-100 h-100 text-left': true,
+        'dropdown-item': (incontextmenu !== false) }"
+      :title="$t('table.showCol')"
+      @show="init"
+    >
+      <template #button-content>
+        <IconITableColumn />
+        {{ incontextmenu !== false ? $t('button.showCol'): '' }}
+      </template>
+      <template v-if="!multiCondition">
+        <b-dropdown-form
+          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
+          :key="header.key"
+          class="dropdown-item"
+          :class="{
+            'selected':columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key),
+            disabled: header.disabled!=undefined&&header.disabled,
+          }"
+          variant="primary"
+          @click.prevent="setColumnVisibilityModel(header.key)"
+        >
+          <!-- :disabled="columnVisibilityStates[header.key]" -->
+          {{ header.label }}
+        </b-dropdown-form>
+      </template>
+      <template v-else>
+        <!-- id="selectableColumns-group"
+        name="selectableColumns" -->
+        <b-dropdown-form
+          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
+          :key="header.key"
+          class="dropdown-item"
+          :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
+          @click.prevent="handleItem(header.key)"
+        >
+          <b-input-group>
+            <b-form-checkbox
+              v-model="columnVisibilityList"
+              :name="header.label"
+              :value="header.key"
+              :class="{'selected':columnVisibilityStates[header.key]}"
+            />
+            {{ header.label }}
+          </b-input-group>
+        </b-dropdown-form>
+      </template>
+    </b-dropdown>
+  </div>
   <b-dropdown
+    v-else
+    ref="dropdown"
     v-bind="$props"
     data-testid="DropdownDDTableColumnVisibility"
-    no-caret
+    dropright
     lazy
-    right
-    variant="outline-primary"
+    :no-caret="incontextmenu == false"
+    :toggle-tag="incontextmenu !== false ? 'li': 'button'"
+    :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
     size="sm"
     alt="Show column"
-    class="DDTableColumnVisibility fixed_column_selection noborder w-100 h-100 text-left"
-    :toggle-class="{ 'DDTableColumnVisibilityBtn p-2 w-100 h-100 text-left': true}"
+    class="DDTableColumnVisibility fixed_column_selection noborder w-100 text-left"
+    :class="{ 'absolutright': (incontextmenu !== false) }"
+    :toggle-class="{
+      'DDTableColumnVisibilityBtn w-100 h-100 text-left': true,
+      'dropdown-item': (incontextmenu !== false) }"
     :title="$t('table.showCol')"
     @show="init"
   >
     <template #button-content>
       <IconITableColumn />
+      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.showCol') }}</small>
     </template>
     <template v-if="!multiCondition">
       <b-dropdown-form
@@ -29,7 +99,7 @@
         @click.prevent="setColumnVisibilityModel(header.key)"
       >
         <!-- :disabled="columnVisibilityStates[header.key]" -->
-        {{ header.label }}
+        <small>{{ header.label }}</small>
       </b-dropdown-form>
     </template>
     <template v-else>
@@ -49,7 +119,7 @@
             :value="header.key"
             :class="{'selected':columnVisibilityStates[header.key]}"
           />
-          {{ header.label }}
+          <small>{{ header.label }}</small>
         </b-input-group>
       </b-dropdown-form>
     </template>
@@ -69,6 +139,8 @@ export default class DDTableColumnVisibility extends BDropdown {
   @Prop({ default: 'table' }) tableId!: string
   @Prop({ }) sortBy!: string
   @Prop({ default: undefined }) multi!: boolean|undefined
+  @Prop({ default: false }) onhover!: boolean
+  @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   $mq:any
   viewId = ((this.tableId === 'Localboot') || (this.tableId === 'Netboot')) ? 'products' : this.tableId
@@ -172,6 +244,18 @@ export default class DDTableColumnVisibility extends BDropdown {
     // triggerupdate
     this.$emit('update:headers', this.headers)
   }
+
+  onOver () {
+    if (this.$refs.dropdown) {
+      this.$refs.dropdown.visible = true
+    }
+  }
+
+  onLeave () {
+    if (this.$refs.dropdown) {
+      this.$refs.dropdown.visible = false
+    }
+  }
 }
 </script>
 <style>
@@ -181,22 +265,58 @@ export default class DDTableColumnVisibility extends BDropdown {
   max-height: var(--component-height) !important;
   z-index: 30 !important;
 }
+.DDTableColumnVisibility.absolutright {
+  min-width: 100% !important;
+  width: 100% !important;
+}
 .DDTableColumnVisibility .dropdown-menu {
   overflow: visible !important;
   height: max-content !important;
   /* max-height: 300px !important; */
-  min-width: 250px !important;
-  max-width: 350px !important;
-  z-index: 30 !important;
+  min-width: 200px !important;
+  max-width: 250px !important;
+  z-index: 300 !important;
   /* position: sticky !important; */
 }
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding: 0px !important;
+  cursor: pointer;
+
 }
+
+.DDTableColumnVisibility .dropdown-menu li .b-dropdown-form {
+  margin: 0px !important;
+  padding: 0px !important;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+}
+/*
+.DDTableColumnVisibility .dropdown-menu .dropdown-item {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+*/
 
 .DDTableColumnVisibilityBtn {
   height: 100% !important;
   max-height: var(--component-height) !important;
+}
+
+.DDTableColumnVisibilityBtn::after {
+  float: right;
+  margin-top: 10px;
+}
+
+.DDTableColumnVisibility.absolutright > li {
+  border: unset !important;
+  /* color: var(--light) !important; */
+  min-width: 100% !important;
+}
+.DDTableColumnVisibility.absolutright > li:hover {
+  border: unset !important;
+  /* color: var(--light) !important; */
 }
 /* .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   cursor: pointer;

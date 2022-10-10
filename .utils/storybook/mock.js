@@ -115,7 +115,7 @@ module.exports.data = {
     // actionProgress: { label: 'actionProgress', key: 'actionProgress', visible: true, sortable: true, _fixed: true },
     // installationStatus: { label: 'installationStatus', key: 'installationStatus', visible: true, sortable: true, _fixed: true },
     // version: { label: 'version', key: 'version', visible: true, sortable: true, _fixed: true },
-    rowactions: { key: 'rowactions', label: 'actions', visible: true, _fixed: true }
+    rowactions: { key: 'rowactions', label: 'actions', visible: false, _fixed: false }
   },
   tableData: {
     pageNumber: 1,

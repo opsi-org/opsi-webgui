@@ -2,7 +2,7 @@
   <b-button
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
-    :class="{ ...classes, 'border-0 w-100 h-100 text-left': true}"
+    :class="{ ...classes, 'ButtonBTNRowLinkToBtn border-0 w-100 h-100 text-left': true, 'dropdown-item': incontextmenu !== false}"
     :title="title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
@@ -14,8 +14,8 @@
     @click="routeRedirectWith('/depots/config', row.item.ident)" -->
     <b-icon v-if="icon" :icon="icon" />
     <!-- {{ ($mq=='mobile' && title)? title: '' }} -->
-    <template v-if="label && $mq!=='mobile'">
-      {{ label }}
+    <template v-if="label && ($mq!=='mobile' || incontextmenu !== false)">
+      <small style="font-size: 85%;">{{ label }}</small>
     </template>
   </b-button>
 </template>
@@ -33,6 +33,7 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ }) sortby!: string
   @Prop({ }) ident!: string
   @Prop({ }) label?: string
+  @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: 'title' }) title!: string
   @Prop({ default: '' }) icon!: string
   @Prop({ default: 'outline-primary' }) variant!: string
@@ -52,4 +53,7 @@ export default class BTNRowLinkTo extends Vue {
 </script>
 
 <style>
+.ButtonBTNRowLinkToBtn.dropdown-item {
+  /* color: var(--light) !important; */
+}
 </style>

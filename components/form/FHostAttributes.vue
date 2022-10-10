@@ -1,6 +1,6 @@
 <template>
-  <div data-testid="FHostAttributes">
-    <AlertAAlert ref="hostAttrErrorAlert">
+  <div data-testid="FHostAttributes" class="FHostAttributes">
+    <AlertAAlert ref="hostAttrErrorAlert" class="FHostAttributesAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
     <GridGFormItem>

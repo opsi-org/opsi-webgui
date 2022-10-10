@@ -41,6 +41,38 @@
           :fetchitems="_fetch"
           :items="items"
         >
+          <template #contextcontent-specific-1="{itemkey}">
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              :label="$t('title.config')"
+              :icon="iconnames.settingsobject"
+              to="/depots/config"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
+          </template>
+          <template #contextcontent-general-1>
+            <DropdownDDTableSorting
+              :table-id="id"
+              :incontextmenu="true"
+              v-bind.sync="tableInfo"
+            />
+            <DropdownDDTableColumnVisibility
+              :table-id="id"
+              :headers.sync="tableInfo.headerData"
+              :sort-by="tableInfo.sortBy"
+              :multi="true"
+              :incontextmenu="true"
+            />
+            <ButtonBTNRefetch
+              :is-loading="isLoading"
+              :tooltip="$t('button.refresh', {id: id})"
+              :label="$t('button.refresh', {id: ''})"
+              incontextmenu
+              :refetch="_fetch" />
+          </template>
           <template #head(depotId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
@@ -126,15 +158,15 @@ export default class VDepots extends Vue {
     },
     type: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.type') as string, key: 'type', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('type') : false
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('type') : true
     },
     ip: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.ip') as string, key: 'ip', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ip') : false
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
   }
@@ -191,21 +223,16 @@ export default class VDepots extends Vue {
   }
 
   async fetch () {
-    console.log('fetch')
     const items = await this._fetch()
 
-    console.log('items', items)
     await Vue.nextTick(() => {
       if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
-        console.log('set')
         this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
       } else {
-        console.log('setAuto')
         this.cache_pages.setAuto(this.tableData.pageNumber, items) // try to append (start or beginning depend on pageNumber)
       }
       this.cache_pages.setTotalPages(this.totalpages)
     })
-    console.debug('elements', this.cache_pages.elements)
   }
 
   async _fetch () {

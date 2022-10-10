@@ -4,23 +4,39 @@
     data-testid="BTNEvent"
   >
     <b-button
+      v-if="incontextmenu == false"
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
       :class="{
-        'w-100 h-100 text-left border-0': true,
+        [classes]: true,
+        'w-100 h-100 text-left border-0': true
       }"
       :size="size"
       @click="show=true"
     >
-      <!-- class="border-0" -->
-      <!-- 'pl-3': event=='ondemand' && $mq=='mobile' -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <span class="eventlabel"> {{ (withText !== false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
-      <!-- {{ (event!='ondemand' || selectionClients.length<=0)?'': selectionClients.length + ' clients' }} -->
     </b-button>
+    <li
+      v-else
+      :pressed="isLoading"
+      :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
+      :variant="events[event].variant"
+      :size="size"
+      :class="{
+        [classes]: true
+      }"
+      @click="show=true"
+      @keypress.enter="show=true"
+    >
+      <b-icon v-if="events[event].icon" :icon="events[event].icon" />
+      {{ (!isLoading) ? $t(events[event].title) : '' }}
+      <span class="eventlabel"> {{ (withText !== false ||incontextmenu!==false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <IconILoading v-if="isLoading" :small="true" />
+    </li>
 
     <b-modal
       v-model="show"
@@ -64,10 +80,10 @@
         >
           {{ $t('button.close') }}
         </b-button> -->
+          <!-- :disabled="data.length <= 0" -->
         <b-button
           variant="success"
           size="sm"
-          :disabled="selection.length <= 0"
           class="float-right confirm"
           @click="callEvent(); show=false"
         >
@@ -86,8 +102,8 @@ const selections = namespace('selections')
 @Component({ mixins: [Constants] })
 export default class BTNEvent extends Vue {
   $axios: any
-  iconnames:any
-  $t:any
+  iconnames: any
+  $t: any
 
   isLoading:any = false
   show:boolean = false
@@ -98,6 +114,9 @@ export default class BTNEvent extends Vue {
   @selections.Getter public selectionClients!: Array<string>
 
   @Prop({ default: 'ondemand' }) event!: string
+  @Prop({ default: '' }) classes!: string
+  @Prop({ default: false }) incontextmenu!: boolean
+  @Prop({ default: false }) withText!: boolean
   @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
   @Prop({ default: undefined }) isLoadingParent ?: boolean|undefined
@@ -147,6 +166,9 @@ export default class BTNEvent extends Vue {
   }
 
   get selection () {
+    if (this.data) {
+      return [this.data]
+    }
     return this.selectionClients.filter(c => !this.selectionClientsDelete.includes(c))
   }
 
@@ -209,5 +231,8 @@ export default class BTNEvent extends Vue {
   padding: 0px !important;
   border: 0px !important;
   min-width: 100%;
+}
+.smaller-text-size > .eventlabel{
+  font-size: 85% !important;
 }
 </style>

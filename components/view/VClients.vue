@@ -38,6 +38,50 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
+          <template #contextcontent-1="{itemkey}">
+            <DropdownDDClientActions :client-id="itemkey" :fetch="$fetch" :incontextmenu="true" />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.config')"
+              :label="$t('title.config')"
+              :icon="iconnames.settingsobject"
+              to="/clients/config"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.log')"
+              :label="$t('title.log')"
+              :icon="iconnames.log"
+              to="/clients/log"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
+          </template>
+          <template #contextcontent-general-1>
+            <DropdownDDTableSorting
+              :table-id="id"
+              :incontextmenu="true"
+              v-bind.sync="tableInfo"
+            />
+            <DropdownDDTableColumnVisibility
+              :table-id="id"
+              :headers.sync="tableInfo.headerData"
+              :sort-by="tableInfo.sortBy"
+              :multi="true"
+              :incontextmenu="true"
+            />
+            <ButtonBTNRefetch
+              :is-loading="isLoading"
+              :tooltip="$t('button.refresh', {id: id})"
+              :label="$t('button.refresh', {id: ''})"
+              incontextmenu
+              :refetch="_fetch"
+            />
+          </template>
           <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
           </template>
@@ -63,6 +107,12 @@
           <template #cell(uefi)="row">
             <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
           </template>
+          <template #cell(clientId)="row">
+            {{ row.item.clientId }}
+          </template>
+          <template #cell(description)="row">
+            {{ row.item.description }}
+          </template>
           <template #rowactions="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
@@ -71,6 +121,7 @@
               to="/clients/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
+              :style="($route.path.includes('config')) ? 'background-color: var(--primary)': ''"
               :click="routeRedirectWith"
             />
             <ButtonBTNRowLinkTo
@@ -78,6 +129,7 @@
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log'):''"
               :icon="iconnames.log"
               to="/clients/log"
+              :style="($route.path.includes('log')) ? 'background-color: var(--primary)': ''"
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
@@ -192,8 +244,8 @@ export default class VClients extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : true,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
   }
