@@ -85,7 +85,7 @@ class Webgui(Addon):
 			if connection.scope.get("method") == "OPTIONS":
 				connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
 		if connection.scope["path"].rstrip("/") == self.router_prefix or connection.scope["path"].startswith(
-			(f"{self.router_prefix}/app", f"{self.router_prefix}/api/user/opsiserver")
+			(f"{self.router_prefix}/app", f"{self.router_prefix}/api/user/opsiserver", f"{self.router_prefix}/api/opsidata/changelogs")
 		):
 			connection.scope["required_access_role"] = ACCESS_ROLE_PUBLIC
 		elif connection.scope["path"] == f"{self.router_prefix}/api/auth/login":
