@@ -1,19 +1,20 @@
 <template>
   <div data-testid="CChangeLogs" :class="{loadingCursor: isLoading}">
     <b-card
-      class="text-center bg-primary mt-3 mx-auto"
+      class="bg-primary text-light mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
-      <h5 class="text-light">
+      <h5 class="text-center text-light">
         {{ $t('title.whatsnew') }}
       </h5>
       <AlertAAlert ref="changelogsAlert" />
-
-      <!-- <nuxt-content :document="{ body: changelogs.excerpt }" /> -->
-      <!-- <nuxt-content :document="changelogs" /> -->
-      <p>
-        {{ changelogs }}
-      </p>
+      <div
+        v-for="(log, index) in changelogs"
+        :key="index"
+      >
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <p v-html="parseMd(log)" />
+      </div>
     </b-card>
   </div>
 </template>
@@ -35,8 +36,6 @@ export default class CChangeLogs extends Vue {
     await this.$axios.$get('/api/opsidata/changelogs')
       .then((response) => {
         this.changelogs = response.split(/\r?\n/)
-        // console.log(response)
-        // console.log(typeof (response))
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.changelogsAlert as any)
@@ -45,7 +44,20 @@ export default class CChangeLogs extends Vue {
       })
     this.isLoading = false
   }
+
+  parseMd (md) {
+    // heading
+    md = md.replace(/[#]{6}(.+)/g, '<h6>$1</h6>')
+    md = md.replace(/[#]{5}(.+)/g, '<h5>$1</h5>')
+    md = md.replace(/[#]{4}(.+)/g, '<h4>$1</h4>')
+    md = md.replace(/[#]{3}(.+)/g, '<h3>$1</h3>')
+    md = md.replace(/[#]{2}(.+)/g, '<h2>$1</h2>')
+    md = md.replace(/[#]{1}(.+)/g, '<h1>$1</h1>')
+    // list
+    md = md.replace(/^\s*\n\*/gm, '<ul>\n*')
+    md = md.replace(/^(\*.+)\s*\n([^*])/gm, '$1\n</ul>\n\n$2')
+    md = md.replace(/^\*(.+)/gm, '<li>$1</li>')
+    return md
+  }
 }
-</script>
-<style>
-</style>
+</script
