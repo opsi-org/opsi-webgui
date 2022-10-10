@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VLogin">
     <FormFLogin />
-    <CardCChangeLogs />
+    <CardCWhatsNew />
   </div>
 </template>
 
