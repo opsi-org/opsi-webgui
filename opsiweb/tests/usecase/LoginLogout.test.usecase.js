@@ -29,7 +29,7 @@ test.afterEach(async ({ page }) => {
 
 test('Login and Logout', async ({ page, context }) => {
   let title = page.locator('[data-testid="login_title"]')
-  await expect(title).toHaveText('OPSIWEB')
+  await expect(title).toHaveText('opsi-webgui')
   title = page.locator('[data-testid="login_configserver"]')
   await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
   await page.type('[placeholder="Username"]', 'adminuser')
