@@ -2,7 +2,7 @@
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
     <IconILoading v-if="isLoading" />
-    <div v-else>
+    <template v-else>
       <br>
       <GridGFormItem value-more="true">
         <template #label>
@@ -123,7 +123,7 @@
           <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize />
         </template>
       </GridGFormItem> -->
-    </div>
+    </template>
     <DivDComponentGroup class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
@@ -274,8 +274,9 @@ export default class VClientCreation extends Vue {
 
 <style>
 .VClientCreation {
-  display: flow-root;
+  /* display: flow-root; */
   overflow-x: hidden;
   padding-left: 10px;
+  height: 100vh !important;
 }
 </style>
