@@ -23,14 +23,15 @@ test.beforeEach(async ({ page }) => {
   await page.goto('./login')
 })
 
-test('should be possible to login and logout again', async ({ page, context }) => {
-  // await page.goto('./login')
-  let title = page.locator('.login_title')
-  await expect(title).toHaveText('opsi-webgui')
-  title = page.locator('.server')
-  await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
+test.afterEach(async ({ page }) => {
+  await page.close()
+})
 
-  // await page.click('[placeholder="Username"]')
+test('Login and Logout', async ({ page, context }) => {
+  let title = page.locator('[data-testid="login_title"]')
+  await expect(title).toHaveText('OPSIWEB')
+  title = page.locator('[data-testid="login_configserver"]')
+  await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
   await page.type('[placeholder="Username"]', 'adminuser')
   await page.press('[placeholder="Username"]', 'Tab')
   await page.type('[placeholder="Password"]', 'adminuser')
@@ -38,14 +39,14 @@ test('should be possible to login and logout again', async ({ page, context }) =
   await context.addCookies(cookieOpsiconfdSession)
   title = await context.cookies()
   expect(title).toEqual(cookieOpsiconfdSession)
-
-  await page.waitForNavigation({ url: './' })
-  title = page.locator('[data-testid="ButtonBTNLogout"]')
-  await expect(title).toHaveText('Logout')
-
+  await page.waitForNavigation({ url: './clients/' })
   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.click('[data-testid="ButtonBTNLogout"]')
-  await page.waitForNavigation({ url: './login' })
-  title = page.locator('.login_title')
-  await expect(title).toHaveText('opsi-webgui')
+  // await page.waitForNavigation({ url: './login' })
+  await page.waitForNavigation()
+  page.setDefaultTimeout(55555)
+  await expect(page).toHaveURL('/addons/webgui/app/login')
+  // TODO Test 'Failed login' with incorrect credentials
+  // TODO Check if password hidden by default and Unhide it and check if it shows password
+  // TODO Login page: expect version, company name, language dropdown, and try changing Language.
 })
