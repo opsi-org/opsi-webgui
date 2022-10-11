@@ -98,7 +98,6 @@ export default class MDeployClientAgent extends Vue {
   $router: any
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: true }) clientId!: string
-  @Prop({ default: () => { return () => { /* default */ } } }) refetch!: Function
 
   form: FormClientAgent = { clients: [this.clientId], username: '', password: '', type: 'windows' }
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
