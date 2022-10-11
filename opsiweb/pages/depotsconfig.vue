@@ -1,7 +1,7 @@
 <template>
-  <ViewVConfig :id="id" :as-child="false">
+  <ViewVConfig :id="id" :as-child="false" :type="type">
     <template slot="IDSelection">
-      <TreeTSDepotsNotStored :id.sync="id" />
+      <TreeTSDepotsNotStored :id.sync="id" cssclass="treeselect_depotselect_short" />
     </template>
   </ViewVConfig>
 </template>
@@ -11,5 +11,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class PDepotsConfig extends Vue {
   id: string = ''
+  type: string = 'depots'
 }
 </script>

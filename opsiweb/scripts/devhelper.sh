@@ -26,8 +26,8 @@ if [[ ${file} == "all" ]]; then
     echo ""
     echo "run: npm-uib run $npm_command "
     npm run $npm_command
-
-    if [[ ${npm_command} == "test:all:components*" ]]; then
+    if [[ ${npm_command} == "test:all:components" ]]; then
+        echo "run clean tests"
         npm run test:all:delete-empty-results
     fi;
     exit 0

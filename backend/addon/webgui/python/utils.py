@@ -10,7 +10,7 @@ webgui utils
 
 from functools import wraps
 from operator import and_
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
 from orjson import loads  # pylint: disable=no-name-in-module
@@ -331,14 +331,18 @@ def check_client_creation_rights(func: Callable) -> Callable:
 	return check_user
 
 
-def bool_product_property(value: str) -> bool:
+def bool_value(value: Union[str, bool]) -> bool:
+	if isinstance(value, bool):
+		return value
 	if value:
 		if value.lower() == "[true]" or str(value) == "1" or value.lower() == "true":
 			return True
 	return False
 
 
-def unicode_product_property(value: str, delimiter: str = ";") -> List[str]:
+def unicode_value(value: Union[str, List[str]], delimiter: str = ";") -> List[str]:
+	if value and isinstance(value, list):
+		return value
 	if value and isinstance(value, str):
 		if value.startswith('["'):
 			return loads(value)  # pylint: disable=no-member
@@ -346,3 +350,15 @@ def unicode_product_property(value: str, delimiter: str = ";") -> List[str]:
 			return [""]
 		return value.replace('\\"', '"').split(delimiter)
 	return [""]
+
+
+def unicode_config(value: str, multi_value: bool = False, delimiter: str = ";") -> Union[str, List[str]]:
+	if multi_value:
+		return unicode_value(value, delimiter)
+	if value and isinstance(value, str):
+		if value.startswith('["'):
+			return loads(value)[0]  # pylint: disable=no-member
+		if value == "[]":
+			return ""
+		return value
+	return ""

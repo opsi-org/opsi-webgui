@@ -134,8 +134,15 @@
                 "singleInstance": true,
                 "command": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.component.js test:all:components /" // This is executed in the terminal.
             },
-            { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.component.js ) //
-                // may not work if currently in develop
+            { // run tests for all files
+                "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
+                "name": "$(testing-run-all-icon) all",
+                "tooltip": "Run test for all files",
+                "color": "white",
+                "singleInstance": true,
+                "command": "bash /workspace/opsiweb/scripts/devhelper.sh all .test.component.js test:all:components /" // This is executed in the terminal.
+            },
+            { // build dist directory (used in production)
                 "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
                 "name": "$(package) buildDist",
                 "tooltip": "Build productive",

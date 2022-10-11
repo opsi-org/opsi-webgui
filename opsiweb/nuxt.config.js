@@ -32,7 +32,7 @@ export default {
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'opsiweb',
+    title: 'opsi-webgui',
     htmlAttrs: {
       lang: 'en'
     },
@@ -41,6 +41,7 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' }
     ],
+    noscript: [{ innerHTML: 'opsi-webgui requires JavaScript. Please enable it in your browser.' }],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
@@ -84,7 +85,12 @@ export default {
     middleware: ['authenticated'],
     base: '/addons/webgui/app/'
   },
-
+  watchers: {
+    webpack: {
+      aggregateTimeout: 300,
+      poll: 1000
+    }
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
