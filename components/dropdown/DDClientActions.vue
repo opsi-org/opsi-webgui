@@ -16,6 +16,7 @@
         <b-icon v-else :icon="iconnames.menu" />
       </template>
       <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
+      <ModalMDeployClientAgent :client-id="clientId" />
       <ButtonBTNEvent
         event="ondemand"
         :data="clientId"
@@ -85,6 +86,13 @@
         style="padding-left: 0px;"
         :client-id="clientId"
         :refetch="fetch"
+        :incontextmenu="incontextmenu"
+      />
+    </small>
+    <small class="dropdown-item">
+      <ModalMDeployClientAgent
+        style="padding-left: 0px;"
+        :client-id="clientId"
         :incontextmenu="incontextmenu"
       />
     </small>
