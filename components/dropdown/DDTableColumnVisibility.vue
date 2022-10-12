@@ -247,13 +247,13 @@ export default class DDTableColumnVisibility extends BDropdown {
 
   onOver () {
     if (this.$refs.dropdown) {
-      this.$refs.dropdown.visible = true
+      (this.$refs.dropdown as any).visible = true
     }
   }
 
   onLeave () {
     if (this.$refs.dropdown) {
-      this.$refs.dropdown.visible = false
+      (this.$refs.dropdown as any).visible = false
     }
   }
 }
