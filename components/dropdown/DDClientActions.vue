@@ -26,11 +26,13 @@
         event="reboot"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
       <ButtonBTNEvent
         event="showpopup"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </b-dropdown>
   </div>
@@ -68,6 +70,7 @@
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </small>
     <small class="dropdown-item">
@@ -76,6 +79,7 @@
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </small>
     <small class="dropdown-item">
@@ -84,6 +88,7 @@
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </small>
     <small class="dropdown-item">

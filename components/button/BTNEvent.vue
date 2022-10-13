@@ -1,6 +1,6 @@
 <template>
   <div
-    :title="$t(events[event].tooltip)"
+    :title="withText == false ? $t(events[event].tooltip) : ''"
     data-testid="BTNEvent"
   >
     <b-button
