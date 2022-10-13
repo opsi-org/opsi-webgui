@@ -298,6 +298,9 @@ export default class VClientCreation extends Vue {
         if (this.group) {
           this.assignToGroup()
         }
+        if (this.deployclientagent) {
+          this.deployClientAgent()
+        }
         // this.$nuxt.refresh()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
