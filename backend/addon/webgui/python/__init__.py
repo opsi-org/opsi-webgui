@@ -31,7 +31,7 @@ from .depots import depot_router
 from .hosts import host_router
 from .products import product_router
 from .utils import mysql
-from .webgui import webgui_router
+from .webgui import set_data_path_var, webgui_router
 
 SESSION_LIFETIME = 60 * 30
 
@@ -62,6 +62,7 @@ class Webgui(Addon):
 		app.include_router(conifg_router, prefix=self.router_prefix)
 
 		app.mount(path=f"{self.router_prefix}/app", app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True), name="app")
+		set_data_path_var(self.data_path)
 
 	def on_load(self, app: FastAPI) -> None:  # pylint: disable=no-self-use
 		"""Called after loading the addon"""

@@ -33,6 +33,7 @@ from .utils import (
 	user_register,
 )
 
+DATA_PATH = "/var/lib/opsiconfd/addons/webgui/data"
 webgui_router = APIRouter()
 
 
@@ -186,7 +187,12 @@ async def home():
 
 @webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-	path = config.addon_dirs[0]
-	with open(f"{path}/changelogs.md", "r", encoding="utf-8") as changelogs_file:
+
+	with open(os.path.join(DATA_PATH, "changelog", "changelog.md"), "r", encoding="utf-8") as changelogs_file:
 		text = changelogs_file.read()
 	return PlainTextResponse(text)
+
+
+def set_data_path_var(path: str) -> None:
+	global DATA_PATH  # pylint: disable=global-statement
+	DATA_PATH = path
