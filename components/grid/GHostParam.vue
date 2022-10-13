@@ -11,7 +11,7 @@
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
           <span v-for="item in v" :key="item.configId" :class="{ 'd-none': !item.configId.includes(filter) }">
-            <GridGFormItem>
+            <GridGFormItem variant="longlabel">
               <template #label>
                 {{ item.configId }}
               </template>
