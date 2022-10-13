@@ -20,6 +20,7 @@
         event="ondemand"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
       <ButtonBTNEvent
         event="reboot"
@@ -49,11 +50,10 @@
     :toggle-class="{
       'w-100 h-100 text-left': true,
       'dropdown-item incontextmenu ': (incontextmenu !== false) }"
-    :title="$t('button.item-actions.title')"
   >
     <template #button-content>
       <b-icon :icon="iconnames.menu" />
-      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.item-actions') }}</small>
+      <small v-if="incontextmenu !== false" :title="$t('button.item-actions.title')" style="font-size: 85%;">{{ $t('button.item-actions') }}</small>
     </template>
     <small class="dropdown-item">
       <ModalMDeployClientAgent
