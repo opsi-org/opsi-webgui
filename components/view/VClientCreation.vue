@@ -104,25 +104,33 @@
           <TreeTSGroupInitSelection :id.sync="group" />
         </template>
       </GridGFormItem>
-      <!-- <b-row class="mt-4 mb-2">
+      <b-row class="mt-4 mb-2">
         <b class="setup">{{ $t('Initial Setup') }} </b>
       </b-row>
-      <GridGFormItem>
+      <!-- <GridGFormItem>
         <template #label>
           <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
         </template>
         <template #value>
           <b-form-textarea id="netbootproduct" v-model="netbootproduct" :aria-label="$t('table.fields.netbootproduct')" rows="2" no-resize />
         </template>
-      </GridGFormItem>
+      </GridGFormItem> -->
       <GridGFormItem>
         <template #label>
           <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
         </template>
         <template #value>
-          <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize />
+          <!-- <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize /> -->
+          <b-form inline>
+            <b-form-checkbox v-model="showInlineForm" />
+            <div :class="{'d-none' : !showInlineForm}">
+              <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" required />
+              <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" required />
+              <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
+            </div>
+          </b-form>
         </template>
-      </GridGFormItem> -->
+      </GridGFormItem>
     </template>
     <DivDComponentGroup class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
@@ -151,6 +159,13 @@ interface NewClient {
   notes: string
 }
 
+interface FormClientAgent {
+    clients: Array<string>,
+    username: string,
+    password: string,
+    type: string
+}
+
 @Component({ mixins: [Constants] })
 export default class VClientCreation extends Vue {
   iconnames: any
@@ -177,7 +192,12 @@ export default class VClientCreation extends Vue {
     notes: ''
   }
 
+  form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
+
+  clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
+
   uefi: boolean = false
+  showInlineForm: boolean = false
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
