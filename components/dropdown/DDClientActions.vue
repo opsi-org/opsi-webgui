@@ -9,28 +9,30 @@
       class="DDClientActionsBtn moreActions"
       no-caret
       :class="{incontextmenu: (incontextmenu != false)}"
-      :title="$t('button.tablerow.moreoptions')"
     >
       <template #button-content>
         <IconILoading v-if="clientsLoading.includes(clientId)" :small="true" />
-        <b-icon v-else :icon="iconnames.menu" />
+        <b-icon v-else :icon="iconnames.menu" :title="$t('button.tablerow.moreoptions')" />
       </template>
-      <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
       <ModalMDeployClientAgent :client-id="clientId" />
+      <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
       <ButtonBTNEvent
         event="ondemand"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
       <ButtonBTNEvent
         event="reboot"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
       <ButtonBTNEvent
         event="showpopup"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </b-dropdown>
   </div>
@@ -50,19 +52,25 @@
     :toggle-class="{
       'w-100 h-100 text-left': true,
       'dropdown-item incontextmenu ': (incontextmenu !== false) }"
-    :title="$t('button.item-actions.title')"
   >
-
     <template #button-content>
       <b-icon :icon="iconnames.menu" />
-      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.item-actions') }}</small>
+      <small v-if="incontextmenu !== false" :title="$t('button.item-actions.title')" style="font-size: 85%;">{{ $t('button.item-actions') }}</small>
     </template>
+    <small class="dropdown-item">
+      <ModalMDeployClientAgent
+        style="padding-left: 0px;"
+        :client-id="clientId"
+        :incontextmenu="incontextmenu"
+      />
+    </small>
     <small class="dropdown-item">
       <ButtonBTNEvent
         event="ondemand"
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </small>
     <small class="dropdown-item">
@@ -71,6 +79,7 @@
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </small>
     <small class="dropdown-item">
@@ -79,6 +88,7 @@
         :data="clientId"
         :incontextmenu="incontextmenu"
         :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
       />
     </small>
     <small class="dropdown-item">
@@ -86,13 +96,6 @@
         style="padding-left: 0px;"
         :client-id="clientId"
         :refetch="fetch"
-        :incontextmenu="incontextmenu"
-      />
-    </small>
-    <small class="dropdown-item">
-      <ModalMDeployClientAgent
-        style="padding-left: 0px;"
-        :client-id="clientId"
         :incontextmenu="incontextmenu"
       />
     </small>
