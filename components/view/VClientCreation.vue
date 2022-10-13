@@ -120,10 +120,9 @@
           <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
         </template>
         <template #value>
-          <!-- <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize /> -->
           <b-form inline>
-            <b-form-checkbox v-model="showInlineForm" />
-            <div :class="{'d-none' : !showInlineForm}">
+            <b-form-checkbox v-model="deployClientAgent" />
+            <div :class="{'d-none' : !deployClientAgent}">
               <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" required />
               <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" required />
               <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
@@ -197,7 +196,7 @@ export default class VClientCreation extends Vue {
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
 
   uefi: boolean = false
-  showInlineForm: boolean = false
+  deployClientAgent: boolean = false
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
