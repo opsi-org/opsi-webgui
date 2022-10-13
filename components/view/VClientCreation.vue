@@ -121,8 +121,8 @@
         </template>
         <template #value>
           <b-form inline>
-            <b-form-checkbox v-model="deployClientAgent" />
-            <div :class="{'d-none' : !deployClientAgent}">
+            <b-form-checkbox v-model="deployclientagent" />
+            <div :class="{'d-none' : !deployclientagent}">
               <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" required />
               <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" required />
               <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
@@ -196,7 +196,8 @@ export default class VClientCreation extends Vue {
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
 
   uefi: boolean = false
-  deployClientAgent: boolean = false
+
+  deployclientagent: boolean = false
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
@@ -237,6 +238,23 @@ export default class VClientCreation extends Vue {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
+      })
+  }
+
+  async deployClientAgent () {
+    this.form.clients = [this.newClient.hostId]
+    if (!this.form.username || !this.form.password || !this.form.clients) {
+      return
+    }
+    await this.$axios.$post('/api/opsidata/clients/deploy', this.form)
+      .then(() => {
+        const ref = (this.$refs.clientagentAlert as any)
+        ref.alert(this.$t('message.success.clientagent', { client: this.newClient.hostId }) as string, 'success')
+        this.$bvModal.hide('modalDeployClientAgent')
+      }).catch((error) => {
+        const ref = (this.$refs.clientagentAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
       })
   }
 
