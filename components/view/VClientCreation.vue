@@ -124,8 +124,8 @@
           <b-form inline>
             <b-form-checkbox v-model="deployclientagent" />
             <div :class="{'d-none' : !deployclientagent}">
-              <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" required />
-              <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" required />
+              <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" :state="formvalidation" required />
+              <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" :state="formvalidation" required />
               <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
             </div>
           </b-form>
@@ -214,6 +214,14 @@ export default class VClientCreation extends Vue {
 
   set domainName (val: string) {
     this.domain = val
+  }
+
+  get formvalidation () {
+    if (this.form.username && this.form.password) {
+      return true
+    } else {
+      return false
+    }
   }
 
   beforeMount () {
