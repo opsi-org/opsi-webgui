@@ -10,7 +10,6 @@
             <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
           </b-button>
           <b-collapse :id="k" :visible="filter === '' ? false : true">
-            <!-- !item.depotId.includes(filter) &&  -->
             <span v-for="item, index in changes" :key="index" :class="{ 'd-none': item.clientId && !item.clientId.includes(filter) || item.depotId && !item.depotId.includes(filter)}">
               <GridGFormItem value-more="true">
                 <template #label>
