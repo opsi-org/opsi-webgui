@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VModules" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="modulesAlert" />
-    <LazyGridGFormItem v-if="!errorText" label-id="modules" :label="$t('form.modules.available')">
+    <LazyGridGFormItem v-if="!errorText" :label="$t('form.modules.available')">
       <template #value>
         <b-form-textarea
           id="modules-list"
@@ -42,8 +42,3 @@ export default class VModules extends Vue {
   }
 }
 </script>
-<style>
-.VModules.mobile .col{
-  display: contents;
-}
-</style>
