@@ -1,5 +1,6 @@
 <template>
-  <ViewVLogin />
+  <!-- <ViewVLogin /> -->
+  <FormFLogin />
 </template>
 <script lang="ts">
 import { Vue, Component } from 'nuxt-property-decorator'
