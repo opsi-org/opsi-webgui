@@ -1,6 +1,7 @@
 <template>
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
+    <AlertAAlert ref="clientagentAlert" />
     <IconILoading v-if="isLoading" />
     <template v-else>
       <br>
