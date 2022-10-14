@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="GChangesProducts">
     <AlertAAlert ref="changesAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
       <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
@@ -45,7 +45,7 @@ const auth = namespace('auth')
 const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
-export default class TChanges extends Vue {
+export default class GChangesProducts extends Vue {
   iconnames: any
   $axios: any
   $mq: any

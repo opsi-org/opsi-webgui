@@ -24,8 +24,8 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   })
 })
 
-export const TChanges = PrimaryTemplate.bind({})
-TChanges.args = {
+export const GChangesProducts = PrimaryTemplate.bind({})
+GChangesProducts.args = {
   changeslist: [
     {
       user: 'user1',
