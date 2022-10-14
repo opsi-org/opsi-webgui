@@ -94,6 +94,7 @@ export default class MDeployClientAgent extends Vue {
   $axios: any
   $t: any
   $router: any
+  iconnames: any
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: true }) clientId!: string
 
