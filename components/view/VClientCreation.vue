@@ -1,6 +1,7 @@
 <template>
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
+    <AlertAAlert ref="clientagentAlert" />
     <IconILoading v-if="isLoading" />
     <template v-else>
       <br>
@@ -104,25 +105,32 @@
           <TreeTSGroupInitSelection :id.sync="group" />
         </template>
       </GridGFormItem>
-      <!-- <b-row class="mt-4 mb-2">
+      <b-row class="mt-4 mb-2">
         <b class="setup">{{ $t('Initial Setup') }} </b>
       </b-row>
-      <GridGFormItem>
+      <!-- <GridGFormItem>
         <template #label>
           <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
         </template>
         <template #value>
           <b-form-textarea id="netbootproduct" v-model="netbootproduct" :aria-label="$t('table.fields.netbootproduct')" rows="2" no-resize />
         </template>
-      </GridGFormItem>
+      </GridGFormItem> -->
       <GridGFormItem>
         <template #label>
           <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
         </template>
         <template #value>
-          <b-form-textarea id="clientagent" v-model="clientagent" :aria-label="$t('table.fields.clientagent')" rows="2" no-resize />
+          <b-form inline>
+            <b-form-checkbox v-model="deployclientagent" />
+            <div :class="{'d-none' : !deployclientagent}">
+              <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" :state="formvalidation" required />
+              <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" :state="formvalidation" required />
+              <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
+            </div>
+          </b-form>
         </template>
-      </GridGFormItem> -->
+      </GridGFormItem>
     </template>
     <DivDComponentGroup class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
@@ -151,6 +159,13 @@ interface NewClient {
   notes: string
 }
 
+interface FormClientAgent {
+    clients: Array<string>,
+    username: string,
+    password: string,
+    type: string
+}
+
 @Component({ mixins: [Constants] })
 export default class VClientCreation extends Vue {
   iconnames: any
@@ -177,7 +192,13 @@ export default class VClientCreation extends Vue {
     notes: ''
   }
 
+  form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
+
+  clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
+
   uefi: boolean = false
+
+  deployclientagent: boolean = false
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
@@ -193,6 +214,14 @@ export default class VClientCreation extends Vue {
 
   set domainName (val: string) {
     this.domain = val
+  }
+
+  get formvalidation () {
+    if (this.form.username && this.form.password) {
+      return true
+    } else {
+      return false
+    }
   }
 
   beforeMount () {
@@ -218,6 +247,23 @@ export default class VClientCreation extends Vue {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
+      })
+  }
+
+  async deployClientAgent () {
+    this.form.clients = [this.newClient.hostId]
+    if (!this.form.username || !this.form.password || !this.form.clients) {
+      return
+    }
+    await this.$axios.$post('/api/opsidata/clients/deploy', this.form)
+      .then(() => {
+        const ref = (this.$refs.clientagentAlert as any)
+        ref.alert(this.$t('message.success.clientagent', { client: this.newClient.hostId }) as string, 'success')
+        this.$bvModal.hide('modalDeployClientAgent')
+      }).catch((error) => {
+        const ref = (this.$refs.clientagentAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
       })
   }
 
@@ -260,6 +306,9 @@ export default class VClientCreation extends Vue {
         }
         if (this.group) {
           this.assignToGroup()
+        }
+        if (this.deployclientagent) {
+          this.deployClientAgent()
         }
         // this.$nuxt.refresh()
       }).catch((error) => {
