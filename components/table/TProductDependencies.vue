@@ -1,6 +1,19 @@
 <template>
   <div data-testid="TProductDependencies">
-    <LazyTableTDefault
+    <span v-for="item, index in dependencies.dependencies" :key="index">
+      <GridGFormItem value-more="true">
+        <template #label>
+          <span class="font-weight-bold"> {{ item.requiredProductId }} </span> <span v-if="item.requiredVersion"> {{ item.requiredVersion }}</span>
+        </template>
+        <template #value>
+          {{ getValue(item) }}
+        </template>
+        <template #valueMore>
+          {{ getType(item.requirementType, item.productAction) }}
+        </template>
+      </GridGFormItem>
+    </span>
+    <!-- <LazyTableTDefault
       v-if="Object.values(dependencies.dependencies)"
       :is-loading="isLoading"
       :items="Object.values(dependencies.dependencies)"
@@ -24,7 +37,7 @@
       <template #cell(type)="row">
         {{ getType(row.item.requirementType, row.item.productAction) }}
       </template>
-    </LazyTableTDefault>
+    </LazyTableTDefault> -->
   </div>
 </template>
 
@@ -65,7 +78,7 @@ export default class TProductProperties extends Vue {
     return isAction + value + isStatus
   }
 
-  getType (type:string, productAction:string) {
+  getType (type:string|null, productAction:string|null) {
     return this.types2text[`${type}-${productAction}`] || this.$t('table.fields.unknown') as string
   }
 }
