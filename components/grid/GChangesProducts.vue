@@ -10,26 +10,24 @@
             <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
           </b-button>
           <b-collapse :id="k" :visible="filter === '' ? false : true">
-            <LazyTableTDefault
-              v-if="changes"
-              type="small"
-              :noheader="true"
-              :filter="filter"
-              :filterfields="['depotId','clientId']"
-              :items="changes"
-              :fields="['depotId', 'clientId', 'actionRequest', 'property', 'propertyValue', '_action']"
-            >
-              <template #cell()="row">
-                {{ row.value }}
-              </template>
-              <template #cell(_action)="row">
-                <ButtonBTNDeleteObj :item="row.item" from="products" />
-                <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(row.item)">
-                  <span class="sr-only">{{ $t('button.save') }}</span>
-                  <b-icon :icon="iconnames.save" />
-                </b-button>
-              </template>
-            </LazyTableTDefault>
+            <!-- !item.depotId.includes(filter) &&  -->
+            <span v-for="item, index in changes" :key="index" :class="{ 'd-none': item.clientId && !item.clientId.includes(filter) || item.depotId && !item.depotId.includes(filter)}">
+              <GridGFormItem value-more="true">
+                <template #label>
+                  {{ item.depotId || item.clientId }}
+                </template>
+                <template #value>
+                  {{ item.actionRequest || ($t('{ ') + item.property + $t(' : ') + item.propertyValue + $t(' }') ) }}
+                </template>
+                <template #valueMore>
+                  <ButtonBTNDeleteObj :item="item" from="products" />
+                  <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(item)">
+                    <span class="sr-only">{{ $t('button.save') }}</span>
+                    <b-icon :icon="iconnames.save" />
+                  </b-button>
+                </template>
+              </GridGFormItem>
+            </span>
           </b-collapse>
         </div>
       </DivDScrollResult>
