@@ -277,11 +277,8 @@ def get_host_groups(  # pylint: disable=invalid-name
 
 		if selectedClients:
 			params = {}
-			for idx, client in enumerate(selectedClients):
-				if idx > 0:
-					where = or_(where, text(f"og.objectId = '{client}'"))  # type: ignore[assignment]
-				else:
-					where = text(f"og.objectId = '{client}'")
+			where = text("og.objectId in :clients")
+			params = {"clients": selectedClients}
 			query = (
 				select(  # type: ignore[assignment]
 					text(  # type: ignore[arg-type]
@@ -296,7 +293,7 @@ def get_host_groups(  # pylint: disable=invalid-name
 				.where(where)
 			)
 
-			result = session.execute(query)
+			result = session.execute(query, params)
 			result = result.fetchall()
 
 			groups_to_mark = []
