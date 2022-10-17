@@ -29,9 +29,10 @@
       :class="{
         [classes]: true
       }"
-      @click="show=true"
+      @click="openDialog() "
       @keypress.enter="show=true"
     >
+      <!-- show=true" -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
       <span class="eventlabel"> {{ (withText !== false ||incontextmenu!==false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
@@ -72,15 +73,6 @@
         <p class="float-left footer">
           {{ $t('button.event.modal.footer', { event }) }}
         </p>
-        <!-- <b-button
-          variant="primary"
-          size="sm"
-          class="float-right"
-          @click="show=false"
-        >
-          {{ $t('button.close') }}
-        </b-button> -->
-          <!-- :disabled="data.length <= 0" -->
         <b-button
           variant="success"
           size="sm"
@@ -170,6 +162,10 @@ export default class BTNEvent extends Vue {
       return [this.data]
     }
     return this.selectionClients.filter(c => !this.selectionClientsDelete.includes(c))
+  }
+
+  openDialog () {
+    this.show = true;
   }
 
   async callEvent () {

@@ -1,11 +1,11 @@
 <template>
-  <div v-if="onhover!==false" @mouseover="onOver" @mouseleave="onLeave" @focusin="onOver" @focusout="onLeave">
+  <div v-if="onhover!==false" @mouseover="onOver($refs.dropdown)" @mouseleave="onLeave($refs.dropdown)" @focusin="onOver($refs.dropdown)" @focusout="onLeave($refs.dropdown)">
     <b-dropdown
       ref="dropdown"
       v-bind="$props"
       data-testid="DropdownDDTableColumnVisibility"
       lazy
-      right
+      dropright
       :no-caret="incontextmenu == false"
       :toggle-tag="incontextmenu !== false ? 'li': 'button'"
       :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
@@ -56,7 +56,7 @@
               :value="header.key"
               :class="{'selected':columnVisibilityStates[header.key]}"
             />
-            {{ header.label }}
+            <small>{{ header.label }}</small>
           </b-input-group>
         </b-dropdown-form>
       </template>
@@ -132,17 +132,20 @@ import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '../../.utils/types/ttable'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { HoverDropdown } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
 
-@Component
+@Component({ mixins: [HoverDropdown] })
 export default class DDTableColumnVisibility extends BDropdown {
+  $mq:any
+  onOver:any
+  onLeave:any
   @Prop({ default: 'table' }) tableId!: string
   @Prop({ }) sortBy!: string
   @Prop({ default: undefined }) multi!: boolean|undefined
   @Prop({ default: false }) onhover!: boolean
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
-  $mq:any
   viewId = ((this.tableId === 'Localboot') || (this.tableId === 'Netboot')) ? 'products' : this.tableId
 
   @settings.Getter public twoColumnLayoutCollapsed!: IObjectString2Boolean
@@ -243,18 +246,6 @@ export default class DDTableColumnVisibility extends BDropdown {
     })
     // triggerupdate
     this.$emit('update:headers', this.headers)
-  }
-
-  onOver () {
-    if (this.$refs.dropdown) {
-      (this.$refs.dropdown as any).visible = true
-    }
-  }
-
-  onLeave () {
-    if (this.$refs.dropdown) {
-      (this.$refs.dropdown as any).visible = false
-    }
   }
 }
 </script>

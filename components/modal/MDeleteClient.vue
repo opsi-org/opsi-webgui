@@ -58,6 +58,7 @@ const selections = namespace('selections')
 
 @Component({ mixins: [Constants] })
 export default class MDeleteClient extends Vue {
+  iconnames: any
   show:boolean = false
   $axios: any
   $t: any

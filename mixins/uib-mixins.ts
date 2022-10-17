@@ -25,6 +25,20 @@ const settings = namespace('settings')
   }
 }
 
+
+@Component export class HoverDropdown extends Vue {
+  onOver(ref) {
+    if (ref) {
+      ref.visible = true;
+    }
+  }
+  onLeave(ref) {
+    if (ref) {
+      ref.visible = false;
+    }
+  }
+}
+
 @Component export class Synchronization extends Vue {
   syncSort (fromSort, toSort, emitToSort, id) {
     if (fromSort.filterQuery && toSort.filterQuery !== fromSort.filterQuery) {

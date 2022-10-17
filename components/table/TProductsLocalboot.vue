@@ -45,6 +45,7 @@
           :table-id="id"
           :incontextmenu="true"
           v-bind.sync="tableInfo"
+          onhover
         />
         <DropdownDDTableColumnVisibility
           :table-id="id"
@@ -52,6 +53,7 @@
           :sort-by="tableInfo.sortBy"
           :multi="true"
           :incontextmenu="true"
+          onhover
         />
         <ButtonBTNRefetch
           :is-loading="isLoadingTable || isLoading"
