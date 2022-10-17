@@ -25,7 +25,7 @@
     <b-modal
       id="modalDeployClientAgent"
       v-model="show"
-      :title="$t('title.clientagent')"
+      :title="$t('label.clientagent')"
       centered
       scrollable
       hide-footer

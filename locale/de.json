@@ -39,7 +39,7 @@
   "message.error.event": "Fehler beim Event: ",
   "message.error.fetch.productProperty": "Fehler beim Abrufen: Produkt-Properties",
   "message.error.fetch.productDependency": "Fehler beim Abrufen: Produkt-Abhängigkeiten",
-  "message.error.unsavedChanges": "You have unsaved changes. Save or discard them to enable this checkbox.",
+  "message.error.unsavedChanges": "Ungespeicherte Änderungen gefunden. Bitte speichern oder verwerfen.",
   "message.session.expired": "Sitzung abgelaufen.",
   "message.session.expires": "Sitzung läuft in {min} Minuten ab.",
   "message.session.expiresInDays": "Sitzung läuft ab in {d} days, {h} hours, {min} minutes and {s} seconds.",
