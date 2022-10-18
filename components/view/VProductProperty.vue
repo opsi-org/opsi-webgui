@@ -41,13 +41,19 @@
         </template>
         <br>
         <DivDScrollResult>
-          <LazyTableTProductProperties
-            v-if="id"
+          <GridGProductProperties
             :id="id"
             :properties="fetchedData.properties"
             :error-text="errorText.properties"
             @refetch="fetchProperties"
           />
+          <!-- <LazyTableTProductProperties
+            v-if="id"
+            :id="id"
+            :properties="fetchedData.properties"
+            :error-text="errorText.properties"
+            @refetch="fetchProperties"
+          /> -->
         </DivDScrollResult>
       </b-tab>
       <b-tab

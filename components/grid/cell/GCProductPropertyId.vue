@@ -1,0 +1,60 @@
+<template>
+  <div data-testid="TCProductPropertyId" class="TProductProperties_PropertyId_Row">
+    <i
+      v-if="row.anyDepotDifferentFromDefault"
+      :id="`TProductProperties_PropertyId_hover_${row.propertyId}`"
+    >
+      <b v-if="row.anyClientDifferentFromDepot">{{ row.propertyId }}</b>
+      {{ (row.anyClientDifferentFromDepot)? '': row.propertyId }}
+    </i>
+    <p
+      v-else
+      :id="`TProductProperties_PropertyId_hover_${row.propertyId}`"
+      class="TProductProperties_Property_p"
+    >
+      <b v-if="row.anyClientDifferentFromDepot">{{ row.propertyId }}</b>
+      {{ (row.anyClientDifferentFromDepot)? '': row.propertyId }}
+    </p>
+    <IconIDetails
+      v-if="Object.values(productVersions).filter(n => n).length == selectionDepots.length && Object.keys(row.depots).length!=selectionDepots.length"
+      :id="`btn_tt_${row.propertyId}`"
+      :title="$t('label.ppId-onlyOnDepots', {depots: Object.keys(row.depots) })"
+      content="ppid-not-exists-on-depot"
+    />
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { IObjectString2StringOrUndefined } from '../../../.utils/types/tgeneral'
+// import { ITableRowProperty } from '../../../.utils/types/ttable'
+const selections = namespace('selections')
+
+@Component
+export default class TCProductPropertyId extends Vue {
+  // @Prop({ }) row!: ITableRowProperty
+  @Prop({ }) row!: any
+  @Prop({ }) productVersions!: IObjectString2StringOrUndefined
+
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Getter public selectionClients!: Array<string>
+}
+</script>
+
+<style>
+.TProductProperties_Property_p {
+  margin-block-end: 0px;
+}
+/* .mobile .TProductProperties_PropertyId_Row {
+  width: max-content;
+  max-width: 300px;
+  word-break: break-all;
+  display: flex;
+}
+.TProductProperties_PropertyId_Row {
+  width: max-content;
+  max-width: 200px;
+  word-break: break-all;
+  display: flex;
+} */
+</style>

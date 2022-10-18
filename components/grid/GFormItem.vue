@@ -23,6 +23,3 @@ export default class GFormItem extends Vue {
   @Prop({ }) valueMore?: boolean
 }
 </script>
-
-<style>
-</style>
