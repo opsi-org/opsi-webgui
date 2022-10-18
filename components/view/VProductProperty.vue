@@ -61,12 +61,6 @@
         <br>
         <DivDScrollResult>
           <GridGProductDependencies :id="id" :dependencies="fetchedData.dependencies" />
-          <!-- <LazyTableTProductDependencies
-            v-if="id"
-            :id="id"
-            :dependencies="fetchedData.dependencies"
-            :error-text="errorText.properties"
-          /> -->
         </DivDScrollResult>
       </b-tab>
     </b-tabs>
