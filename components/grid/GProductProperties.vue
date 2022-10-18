@@ -26,11 +26,12 @@
       {{ errorText }}
     </p>
     <span v-for="item, index in properties.properties" :key="index">
-      <GridGFormItem variant="longlabel">
+      <GridGFormItem>
         <template #label>
-          <span :id="`property_${item.propertyId}`">
+          <div class="d-inline-flex">
             <GridCellGCProductPropertyId :row="item" :product-versions="properties.productVersions" />
-          </span>
+            <b-icon :id="`property_${item.propertyId}`" class="mt-1 ml-1" :icon="iconnames.info" />
+          </div>
           <b-tooltip :target="`property_${item.propertyId}`" triggers="hover">
             <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${item.propertyId}`" class="text-left">
               <small>

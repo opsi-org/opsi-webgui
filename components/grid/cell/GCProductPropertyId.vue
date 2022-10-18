@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TCProductPropertyId" class="TProductProperties_PropertyId_Row">
+  <div data-testid="TCProductPropertyId">
     <i
       v-if="row.anyDepotDifferentFromDefault"
       :id="`TProductProperties_PropertyId_hover_${row.propertyId}`"
@@ -7,14 +7,14 @@
       <b v-if="row.anyClientDifferentFromDepot">{{ row.propertyId }}</b>
       {{ (row.anyClientDifferentFromDepot)? '': row.propertyId }}
     </i>
-    <p
+    <div
       v-else
       :id="`TProductProperties_PropertyId_hover_${row.propertyId}`"
       class="TProductProperties_Property_p"
     >
       <b v-if="row.anyClientDifferentFromDepot">{{ row.propertyId }}</b>
       {{ (row.anyClientDifferentFromDepot)? '': row.propertyId }}
-    </p>
+    </div>
     <IconIDetails
       v-if="Object.values(productVersions).filter(n => n).length == selectionDepots.length && Object.keys(row.depots).length!=selectionDepots.length"
       :id="`btn_tt_${row.propertyId}`"
