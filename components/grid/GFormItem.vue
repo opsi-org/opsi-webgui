@@ -4,10 +4,10 @@
       <slot name="label" />
       {{ label }}
     </b-col>
-    <b-col>
+    <b-col class="text-sm-left">
       <slot name="value" />
     </b-col>
-    <b-col v-if="valueMore">
+    <b-col v-if="valueMore" class="text-sm-left">
       <slot name="valueMore" />
     </b-col>
   </b-row>
