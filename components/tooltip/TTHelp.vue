@@ -30,8 +30,3 @@ export default class TTHelp extends Vue {
   @Prop({ }) type!: string
 }
 </script>
-<style>
-#TTHelpTable {
-  max-width: 500px !important;
-}
-</style>
