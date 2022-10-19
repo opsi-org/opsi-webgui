@@ -1,6 +1,6 @@
 export default {
-  title: 'Table/T Product Dependencies',
-  parameters: { docs: { description: { component: 'Table for Product Dependencies' } } }
+  title: 'Grid/G Product Dependencies',
+  parameters: { docs: { description: { component: 'Grid for Product Dependencies' } } }
 }
 
 const dependencies = {
@@ -13,14 +13,14 @@ const dependencies = {
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: `<TableTProductDependencies :id="args.id" :dependencies="args.deps"/>
+  template: `<GridGProductDependencies :id="args.id" :dependencies="args.deps"/>
   `
 })
 
 // named export Primary to create respective story
-export const TProductDependencies = PrimaryTemplate.bind({})
+export const GProductDependencies = PrimaryTemplate.bind({})
 
-TProductDependencies.args = {
+GProductDependencies.args = {
   id: 'id',
   deps: dependencies
 }

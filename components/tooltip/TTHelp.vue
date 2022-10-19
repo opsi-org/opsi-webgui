@@ -1,7 +1,21 @@
 <template>
   <div data-testid="TTHelp">
     <b-tooltip :target="id">
-      <b-table-lite v-if="type === 'table'" id="TTHelpTable" thead-class="table-header-none" borderless :items="tooltipContent" />
+      <template v-if="type === 'grid'">
+        <span v-for="item, index in tooltipContent" :key="index">
+          <GridGFormItem classgrid="text-sm-left">
+            <template #label>
+              {{ item.label }}
+            </template>
+            <template #value>
+              {{ item.description }}
+            </template>
+          </GridGFormItem>
+        </span>
+      </template>
+      <template v-else>
+        {{ tooltipContent }}
+      </template>
     </b-tooltip>
   </div>
 </template>
@@ -16,8 +30,3 @@ export default class TTHelp extends Vue {
   @Prop({ }) type!: string
 }
 </script>
-<style>
-#TTHelpTable {
-  max-width: 500px !important;
-}
-</style>
