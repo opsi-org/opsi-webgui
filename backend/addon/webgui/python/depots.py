@@ -10,12 +10,14 @@ webgui depot methods
 
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, or_, select, table, text
+from sqlalchemy import and_, or_, select, table, text
 
 from opsiconfd.application.utils import get_configserver_id
+from opsiconfd.logging import logger
 from opsiconfd.rest import (
+	RESTErrorResponse,
 	RESTResponse,
 	common_query_parameters,
 	order_by,
@@ -192,3 +194,46 @@ def clients_on_depots(
 			if row is not None and dict(row).get("client"):
 				clients.append(dict(row).get("client"))
 		return RESTResponse(data=clients)
+
+
+@depot_router.get("/api/opsidata/depots/products", response_model=List[str])
+@rest_api
+@filter_depot_access
+def products_on_depots(
+	request: Request,
+	selectedDepots: List[str] = Depends(parse_depot_list),  # pylint: disable=invalid-name
+	productType: str = "NetbootProduct",  # pylint: disable=invalid-name
+) -> RESTResponse:
+	"""
+	Get all product ids on selected depots.
+	"""
+
+	if selectedDepots == []:
+		return RESTResponse(data=[])
+
+	if productType not in ("NetbootProduct", "LocalbootProduct"):
+		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="Product type not recognised.")
+
+	params = {"ptype": productType}
+	if selectedDepots is None:
+		username = request.scope.get("session").user_store.username
+		params["depots"] = get_depots(username)
+	else:
+		params["depots"] = selectedDepots  # type: ignore
+
+	with mysql.session() as session:
+		where = text("pod.productType = :ptype and pod.depotId in :depots")
+
+		# where = and_(where, where_depots)  # type: ignore
+		query = select(text("pod.productId AS product")).select_from(table("PRODUCT_ON_DEPOT").alias("pod")).where(where)  # type: ignore
+		logger.devel(params)
+		logger.devel(query)
+		result = session.execute(query, params)
+		result = result.fetchall()
+
+		products = []  # pylint: disable=redefined-outer-name
+
+		for row in result:
+			if row is not None and dict(row).get("product"):
+				products.append(dict(row).get("product"))
+		return RESTResponse(data=products)
