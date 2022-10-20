@@ -276,9 +276,6 @@ export default class FHostAttributes extends Vue {
     this.isLoading = true
     await this.$axios.$put(endPoint, attr)
       .then(() => {
-        // if (this.type === 'clients') {
-        //   this.setUEFI()
-        // }
         const ref = (this.$refs.hostAttrUpdateAlert as any)
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
         this.$fetch()
