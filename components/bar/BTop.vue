@@ -14,12 +14,12 @@
         </b-button>
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
-        <IconIOpsiLogo :light="true" class="mt-2" height="20" />
+        <IconIOpsiLogo v-once :light="true" class="mt-2" height="20" />
         <span class="ml-1 topbar_title">
           <!-- {{ getTitleUppercase() }} -->
           {{ $t('title.project') }}
         </span>
-        <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
+        <span v-once class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" type="light" />
@@ -49,9 +49,9 @@
           <ModalMSelectionsAll :navbar="true" />
           <ButtonBTNEvent :navbar="true" event="ondemand" size="md" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
-          <DropdownDDLang :navbar="true" />
-          <DropdownDDTheme :navbar="true" />
-          <ButtonBTNLogout :navbar="true" />
+          <DropdownDDLang v-once :navbar="true" />
+          <DropdownDDTheme v-once :navbar="true" />
+          <ButtonBTNLogout v-once :navbar="true" />
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>

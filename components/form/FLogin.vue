@@ -4,8 +4,8 @@
     class="text-center bg-primary mt-3 mx-auto"
     :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
   >
-    <IconIOpsiLogo :light="true" class="mb-3" height="35" />
-    <h2 data-testid="login_title" class="d-inline-block text-light projectTitle">
+    <IconIOpsiLogo v-once :light="true" class="mb-3" height="35" />
+    <h2 v-once data-testid="login_title" class="d-inline-block text-light projectTitle">
       <!-- {{ getTitleUppercase() }} -->
       {{ $t('title.project') }}
     </h2>
@@ -86,6 +86,7 @@ export default class FLogin extends Vue {
   $route:any
   $axios:any
   $t: any
+  $mq: any
 
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
