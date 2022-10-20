@@ -1,7 +1,7 @@
 import { customstores } from '../../../.utils/storybook/mock'
 export default {
-  title: 'Tablecell/T C Product Property Value',
-  parameters: { docs: { description: { component: 'Table cell for Productproperty Value' } } }
+  title: 'Gridcell/G C Product Property Value',
+  parameters: { docs: { description: { component: 'Grid cell for Productproperty Value' } } }
 }
 
 // TODO Check the issue with stories.
@@ -9,7 +9,7 @@ export default {
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args }, allOptionsUnique () { return [''] } },
-  template: '<TableCellTCProductPropertyValue v-bind="args" />',
+  template: '<GridCellGCProductPropertyValue v-bind="args" />',
   store: customstores({
     selections: {
       namespaced: true,
@@ -42,8 +42,8 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   })
 })
 
-export const TCProductPropertyValue = PrimaryTemplate.bind({})
-TCProductPropertyValue.args = {
+export const GCProductPropertyValue = PrimaryTemplate.bind({})
+GCProductPropertyValue.args = {
   rowItem: {
     productId: 'activate-win',
     propertyId: 'httpproxy',

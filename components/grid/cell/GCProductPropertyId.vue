@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TCProductPropertyId">
+  <div data-testid="GCProductPropertyId">
     <i
       v-if="row.anyDepotDifferentFromDefault"
       :id="`TProductProperties_PropertyId_hover_${row.propertyId}`"
@@ -31,7 +31,7 @@ import { IObjectString2StringOrUndefined } from '../../../.utils/types/tgeneral'
 const selections = namespace('selections')
 
 @Component
-export default class TCProductPropertyId extends Vue {
+export default class GCProductPropertyId extends Vue {
   // @Prop({ }) row!: ITableRowProperty
   @Prop({ }) row!: any
   @Prop({ }) productVersions!: IObjectString2StringOrUndefined
