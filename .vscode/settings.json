@@ -61,21 +61,21 @@
     "runOnSave.statusMessageTimeout": 5000,
     "runOnSave.commands": [
         // { "match": ".*", "isAsync": true, "cmd": "echo 'I run for all files.'" },
-        {
-            "match": "\\.vue$",
-            "runIn": "terminal",
-            "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
-        },
-        {
-            "match": "\\.(jsonc|json)$",
-            "runIn": "terminal",
-            "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .json lint-script '**/'"
-        },
-        {
-            "match": "\\.test.unit.js$",
-            "runIn": "terminal",
-            "command": "cd /workspace/opsiweb/ && npm run test:unit:current '${fileBasename}' && cd -"
-        }
+        // {
+        //     "match": "\\.vue$",
+        //     "runIn": "terminal",
+        //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .vue lint-script '**/'"
+        // },
+        // {
+        //     "match": "\\.(jsonc|json)$",
+        //     "runIn": "terminal",
+        //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .json lint-script '**/'"
+        // },
+        // {
+        //     "match": "\\.test.unit.js$",
+        //     "runIn": "terminal",
+        //     "command": "cd /workspace/opsiweb/ && npm run test:unit:current '${fileBasename}' && cd -"
+        // }
         // {
         //   "match": "\\.stories.js$",
         //   "runIn": "terminal",
