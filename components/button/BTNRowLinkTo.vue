@@ -33,6 +33,7 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ default: '' }) icon!: string
   @Prop({ default: 'outline-primary' }) variant!: string
   @Prop({ default: 'border-0' }) classes!: string
+  $mq: any
 
   action () {
     if (this.click !== undefined) {

@@ -10,7 +10,6 @@
     @click="action"
   >
     <span class="sr-only">{{ $t('button.reset') }}</span>
-    <!-- class="icon-primary" -->
     <b-icon :icon="iconnames.reset" /> <span>{{ label? '' : $t('button.reset') }} </span>
   </b-button>
 </template>
@@ -26,19 +25,3 @@ export default class BTNReset extends Vue {
   @Prop({ default: () => { return () => { /* default */ } } }) action!: Function
 }
 </script>
-<style>
-/* .reset {
-  color: var(--dark) !important;
-  border: none !important
-}
-.reset .icon-primary{
-  color: var(--primary) !important;
-}
-.reset:hover .icon-primary{
-  color: var(--light) !important;
-}
-.reset:hover {
-  background: var(--primary) !important;
-  color: var(--light) !important;
-} */
-</style>

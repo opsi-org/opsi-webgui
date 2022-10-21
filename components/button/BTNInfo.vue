@@ -1,6 +1,4 @@
 <template>
-  <!-- variant="transparent"
-    class="border-primary" -->
   <b-button
     v-bind="$attrs"
     data-testid="ButtonBTNInfo"
