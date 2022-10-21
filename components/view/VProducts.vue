@@ -289,10 +289,7 @@ export default class VProducts extends Vue {
           thiss.items = response.data || []
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
           const items = response.data || []
-          console.log('fetchProducts items', items)
           return items
-          // eslint-disable-next-line no-console
-          // console.log('products response', JSON.stringify(response))
         }).catch((error) => {
           // eslint-disable-next-line no-console
           console.error(error)
@@ -303,8 +300,6 @@ export default class VProducts extends Vue {
           ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
         })
-
-      console.log('myitems ', myitems)
       thiss.setItemsCache(myitems)
       return myitems
     }

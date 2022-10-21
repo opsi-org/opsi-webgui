@@ -73,9 +73,7 @@ export default class MTrackChanges extends Vue {
     }
 
     await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response)
+      .then(() => {
         this.delFromChangesProducts(item)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
@@ -100,9 +98,7 @@ export default class MTrackChanges extends Vue {
       }
     }
     await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, change)
-      .then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response)
+      .then(() => {
         // makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {

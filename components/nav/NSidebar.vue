@@ -60,10 +60,6 @@ export default class NSidebar extends Vue {
   $nuxt: any
   iconnames: any // from mixin
   @Prop({ }) expanded!: boolean
-
-  // created () {
-  //   console.log('constants: ', this.iconnames)
-  // }
   @config.Getter public config!: IObjectString2Boolean
 
   refresh (route) {

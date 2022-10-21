@@ -9,11 +9,7 @@
     :aria-label="title"
     @click="action"
   >
-    <!-- v-bind="$props" -->
-    <!-- title="config"
-    @click="routeRedirectWith('/depots/config', row.item.ident)" -->
     <b-icon v-if="icon" :icon="icon" />
-    <!-- {{ ($mq=='mobile' && title)? title: '' }} -->
     <template v-if="label && ($mq!=='mobile' || incontextmenu !== false)">
       <small style="font-size: 85%;">{{ label }}</small>
     </template>
@@ -22,7 +18,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-// import { BButton } from 'bootstrap-vue' // extending from this, causes _vm not defined
 
 @Component
 export default class BTNRowLinkTo extends Vue {
@@ -51,9 +46,3 @@ export default class BTNRowLinkTo extends Vue {
   }
 }
 </script>
-
-<style>
-.ButtonBTNRowLinkToBtn.dropdown-item {
-  /* color: var(--light) !important; */
-}
-</style>

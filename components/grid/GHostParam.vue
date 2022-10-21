@@ -115,7 +115,6 @@ export default class GHostParam extends Vue {
   }
 
   async handleSelection (change: any) {
-    // console.log('CHANGE', change)
     if (this.quicksave) {
       let url: string = ''
       let request: any = []
