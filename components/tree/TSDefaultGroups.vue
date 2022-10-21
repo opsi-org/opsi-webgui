@@ -99,5 +99,3 @@ export default class TSDefaultGroups extends TSDefault {
 }
 </script>
 
-<style>
-</style>

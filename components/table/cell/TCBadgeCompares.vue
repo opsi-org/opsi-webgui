@@ -35,7 +35,6 @@ export default class TCBadgeCompares extends Vue {
   }
 
   get variant () {
-    // if (this.values.some(v => v === 'failed' || v === 'unknown')) {
     if (this.values.includes('failed')) {
       return 'danger'
     }

@@ -165,7 +165,6 @@ export default class TSDefault extends Vue {
   @Prop({}) deselectFunction?: Function
   @Prop({}) syncFunction?: Function
 
-  // searchText: string = ''
   model: object = { default: [], nested: [] }
   options: Array<Group> = []
   data!: Array<any> // to be fetched

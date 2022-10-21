@@ -164,17 +164,13 @@ export default class TCProductPropertyValue extends Vue {
     if (this.rowItem.type === 'BoolProductProperty') {
       return this.visibleValueBoolIndeterminate
     }
-    // if (this.rowItem.type === 'UnicodeProductProperty') {
     return this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)
-    // }
-    // return true
   }
 
   uniques (arr:Array<any>) { return [...new Set(arr)] }
 
   handleBoolChange () {
     this.selectedValues = JSON.parse(JSON.stringify([!this.selectedValues[0]]))
-    // this.selectedValues = [!this.selectedValues[0]]
     this.selectedValuesChanged()
   }
 
@@ -277,7 +273,4 @@ export default class TCProductPropertyValue extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
 }
-/* .btn-group, .btn-group-vertical {
-  display: grid !important;
-} */
 </style>

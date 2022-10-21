@@ -48,7 +48,7 @@
           :table-id="id"
           :incontextmenu="true"
           v-bind.sync="tableInfo"
-              onhover
+          onhover
         />
         <DropdownDDTableColumnVisibility
           :table-id="id"
@@ -144,9 +144,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
-// import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
-import { ITableData, ITableHeaders, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
+import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 import QueueNested from '../../.utils/utils/QueueNested'
@@ -178,19 +177,16 @@ export default class TProductsNetboot extends Vue {
   @Prop({ default: true }) multiselect!: boolean
   @Prop() child!: boolean
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
-  // @Prop({ }) tableData!: ITableData
   @Prop({ }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoading!: boolean
 
   id = 'netboot'
-  // isLoading: Boolean = false
   items: Array<any> = []
   isLoadingTable: boolean = false
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
   action: string = ''
-  // fetchedData: Array<ITableRowItemProducts> = []
   fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
 
@@ -271,18 +267,15 @@ export default class TProductsNetboot extends Vue {
   }
 
   async save (change : object) {
-    // const t:any = this
     this.isLoading = true
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then(() => {
         const ref = (this.$refs.productsAlert as any)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
-        // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
       }).catch((error) => {
         const ref = (this.$refs.productsAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.title'), 'danger', detailedError)
-        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
       })
     this.isLoading = false
   }

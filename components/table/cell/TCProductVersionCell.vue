@@ -82,10 +82,8 @@ export default class TCProductVersionCell extends Vue {
   color:red
 }
 .TCProductVersionCell_hover {
-  /* border: 1px solid green; */
   width: auto;
   height: auto;
-  /* display: block; */
   display: flow-root;
 }
 .TCProductVersionCell_hover > .details{
