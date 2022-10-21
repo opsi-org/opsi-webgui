@@ -1,6 +1,7 @@
 {
   "env": {
     "test": {
+      "plugins": ["transform-remove-console"],
       "presets": [
         [
           "@babel/preset-env",
@@ -11,6 +12,9 @@
           }
         ]
       ]
+    },
+    "production": {
+      "plugins": ["transform-remove-console"]
     }
   }
 }
