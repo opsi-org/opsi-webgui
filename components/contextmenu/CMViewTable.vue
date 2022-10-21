@@ -80,8 +80,8 @@ export default class CMViewTable extends Vue {
 
   created () {
     // workaround to init the column visibility(inits column visibility component)
-    this.viewMenu = true
-    setTimeout(() => { this.viewMenu = false }, 100)
+    // this.viewMenu = true
+    // setTimeout(() => { this.viewMenu = false }, 1)
   }
 
   setMenu (top, left) {
