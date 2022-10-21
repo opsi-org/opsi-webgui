@@ -418,7 +418,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   max-height: 17vh;
 }
 
-
 .TInfiniteScrollSmoothWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;
