@@ -2,6 +2,7 @@
   <div
     v-if="incontextmenu === false"
     data-testid="DDClientActions"
+    class="DDClientActions"
     :class="{incontextmenu: (incontextmenu != false)}"
     @mouseover="onOver($refs.dropdown)"
     @mouseleave="onLeave($refs.dropdown)"
@@ -135,7 +136,7 @@ export default class DDClientActions extends Vue {
 </script>
 <style>
 .DDClientActions .dropdown-menu {
-  min-width: 400px !important;
+  min-width: 200px;
 }
 .DDClientActionsBtn .incontextmenu::after {
   float: right !important;
