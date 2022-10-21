@@ -404,7 +404,6 @@ export default class TInfiniteScrollSmooth extends Vue {
 <style>
 .TInfiniteScrollSmoothWrapper{
   max-height: max-content;
-  overflow: visible;
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
   max-height: 70vh;
@@ -419,27 +418,16 @@ export default class TInfiniteScrollSmooth extends Vue {
   max-height: 17vh;
 }
 
-/* .TInfiniteScrollSmoothWrapper.empty {
-  max-width: 200px !important;
-
-} */
 
 .TInfiniteScrollSmoothWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;
   background-color: inherit;
 }
-/* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth{ */
-  /* why? padding? */
-  /* padding-bottom: 70px; */
-/* } */
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth {
-  overflow: visible;
-}
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table th {
   border-top: 1px solid var(--table-border);
-  overflow: visible;
+  /* overflow: visible; */
 }
 .TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table th {

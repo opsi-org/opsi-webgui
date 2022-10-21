@@ -63,7 +63,7 @@ export default class GTwoColumnLayout extends Vue {
   margin-right: 15px;
   padding-right: 0px;
   padding-left: 0px;
-  overflow: visible;
+  /* overflow: visible; */
 }
 .clients_button{
   max-width:60px;
