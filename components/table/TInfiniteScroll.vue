@@ -52,7 +52,6 @@
       <template #head(selected)>
         <small v-if="rowident !== 'productId'"> <b class="count">
           {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
-          <!-- {{ selection.length }}/{{ totalItems|| 0 }}  -->
         </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
       </template>
@@ -124,12 +123,7 @@ export default class TInfiniteScroll extends Vue {
 
   async fetch () { await this.fetchitems() }
 
-  // @Watch('tableInfo', { deep: true }) sortPropChanged () { this.syncSort(this.tableInfo, this.tableData, false, this.id) }
   mounted () {
-    // if (this.$mq === 'mobile') {
-    //   this.headerData.selected._fixed = false
-    //   this.headerData.selected.visible = false
-    // }
     this.addScrollEvent()
   }
 
@@ -259,7 +253,6 @@ export default class TInfiniteScroll extends Vue {
 }
 
 .TInfiniteScrollWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
-  /* each header cell */
   color: inherit;
   background-color: inherit;
 }

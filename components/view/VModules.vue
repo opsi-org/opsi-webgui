@@ -22,7 +22,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class VModules extends Vue {
   $axios: any
-
+  $t:any
   isLoading: boolean = false
   modules: object = {}
   errorText: string = ''

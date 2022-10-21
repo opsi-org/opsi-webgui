@@ -367,6 +367,3 @@ export default class VClients extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

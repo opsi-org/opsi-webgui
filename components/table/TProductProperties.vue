@@ -139,33 +139,24 @@ export default class TProductProperties extends Vue {
   }
 
   async saveProdProp (change: object) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const t: any = this
     this.isLoading = true
     await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, change)
-      .then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response)
-        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
-        // this.$nuxt.refresh()
+      .then(() => {
+        makeToast(this, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.$emit('refetch', true)
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
-        // eslint-disable-next-line no-console
-        console.error(error)
+        makeToast(this, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
       })
     this.isLoading = false
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
-    // console.log('quicksave? ', this.quicksave)
     if (!this.quicksave) {
       if (this.selectionClients.length > 0) {
         this.handleTrackingChanges(this.selectionClients, 'clientId', propertyId, values, orgValues)
       } else {
         this.handleTrackingChanges(this.selectionDepots, 'depotId', propertyId, values, orgValues)
       }
-      // console.log('handleChange changes ', this.changesProducts)
       return
     }
     if (!arrayEqual(values, orgValues)) {
@@ -195,7 +186,6 @@ export default class TProductProperties extends Vue {
         this.delWithIndexChangesProducts(objIndex)
       }
       if (!arrayEqual(values, orgValues)) {
-        // console.log('changeobject', changeObject)
         this.pushToChangesProducts(changeObject)
       }
     }
@@ -223,13 +213,6 @@ export default class TProductProperties extends Vue {
 .TProductProperties .TDefault .productproperties {
   overflow: visible;
 }
-/* .mobile.TProductProperties  {
-  border: 1px solid green;
-  height: 100%;
-}
-.mobile.TProductProperties .row td:first  {
-  border: 1px solid #000;
-} */
 
 .TProductProperties_PropertyId_Row > * {
   display: inline-block;

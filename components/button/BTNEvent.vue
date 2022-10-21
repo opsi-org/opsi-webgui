@@ -38,11 +38,10 @@
       <IconILoading v-if="isLoading" :small="true" />
     </li>
 
-      <!-- v-model="show" -->
     <b-modal
+      :id="'event-modal-' + event + '-' + data"
       :title="$t(events[event].titlemodal)"
       size="sm"
-      :id="'event-modal-' + event + '-' + data"
     >
       <b-list-group v-if="event=='ondemand'" flush>
         <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->
@@ -86,7 +85,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 
@@ -124,7 +123,6 @@ export default class BTNEvent extends Vue {
         params: {
           method: 'showPopup',
           params: ['Dummy text']
-          // client_ids: this.selectionClients
         },
         responseVisualization: this.showResultOndemand
       },
@@ -141,7 +139,6 @@ export default class BTNEvent extends Vue {
         responseVisualization: this.showResultOndemand
       },
       reboot: {
-        // event: 'on_demand',
         tooltip: 'button.event.reboot.tooltip',
         titlemodal: 'button.event.reboot',
         icon: this.iconnames.reboot,
@@ -190,8 +187,6 @@ export default class BTNEvent extends Vue {
         this.isLoading = false
         if (this.updateLoading !== undefined) { this.updateLoading([]) }
       }).catch((error) => {
-      // eslint-disable-next-line no-console
-        console.error(JSON.stringify(error))
         const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
         this.isLoading = false

@@ -213,12 +213,8 @@ export default class VDepots extends Vue {
       await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
-          // this.setSession()
         }).catch((error) => {
           this.fetchedDataClients2Depots = {}
-          // const ref = (this.$refs.depotsViewAlert as any)
-          // ref.alert('Failed to fetch: ClientsToDepots', 'danger', error)
-          // this.errorText = (this as any).$t('message.errortext')
           throw new Error(error)
         })
     }
@@ -245,7 +241,6 @@ export default class VDepots extends Vue {
     if (params.sortBy === '') { params.sortBy = 'depotId' }
     if (params.sortBy === 'selected') {
       params.sortDesc = true
-      // params.sortBy = 'selected'
       params.selected = JSON.stringify(this.selectionDepots)
     }
     return await this.$axios.get('/api/opsidata/depots', { params })
@@ -253,11 +248,9 @@ export default class VDepots extends Vue {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
         if (response.data === null) {
-          // this.items = []
           this.isLoading = false
           return []
         } else {
-          // this.items = response.data
           this.isLoading = false
           return response.data
         }

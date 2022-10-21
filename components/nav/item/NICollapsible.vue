@@ -41,16 +41,12 @@ export default class NICollapsible extends Vue {
   $route: any
   $nuxt: any
   iconnames: any
+  $mq:any
   @Prop({ }) title!: string
   @Prop({ default: false }) disabled!: boolean
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>
-  // changeRoute () {
-  //   if ((this as any).$mq === 'desktop') {
-  //     this.$router.push({ path: this.route })
-  //   }
-  // }
 
   refresh (route) {
     if (this.$route.path.includes(route)) {

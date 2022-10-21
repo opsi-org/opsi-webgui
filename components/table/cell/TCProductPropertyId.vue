@@ -5,7 +5,6 @@
       v-if="row.item.anyDepotDifferentFromDefault"
       :id="`TProductProperties_PropertyId_hover_${row.item.propertyId}`"
     >
-      <!-- (depotValue/s different from default!) -->
       <b v-if="row.item.anyClientDifferentFromDepot">{{ row.item.propertyId }}</b>
       {{ (row.item.anyClientDifferentFromDepot)? '': row.item.propertyId }}
     </i>

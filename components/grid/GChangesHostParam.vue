@@ -37,11 +37,11 @@ const changes = namespace('changes')
 
 @Component({ mixins: [Constants] })
 export default class GChangesHostParam extends Vue {
-  // @Prop({ }) changes!: any
   filter: string = ''
   $axios: any
   $t: any
   $nuxt: any
+  iconnames:any
   @auth.Getter public username!: string
   @changes.Getter public changesHostParam!: Array<any>
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void

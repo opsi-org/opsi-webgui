@@ -20,7 +20,8 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class CSupport extends Vue {
-  @Prop({ }) item!: object
+  @Prop({ }) item!: any
+  $mq: any
 }
 </script>
 <style>

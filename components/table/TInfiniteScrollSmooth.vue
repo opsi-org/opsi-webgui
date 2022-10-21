@@ -42,8 +42,6 @@
       @row-clicked="onRowClicked"
       @row-contextmenu="contextOpen"
     >
-      <!-- @row-contextmenu="(contextSlots.length > 0) ? contextOpen : undefined" -->
-      <!-- :per-page="tableData.perPage" -->
       <template v-if="totalpages > 1" #top-row="{ columns }">
         <b-th :colspan="columns" class="tablehead">
           <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
@@ -65,15 +63,12 @@
       <template #head(selected)>
         <small v-if="rowident !== 'productId'"> <b class="count">
           {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
-          <!-- {{ selection.length }}/{{ totalItems|| 0 }}  -->
         </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
       </template>
       <template #head(rowactions)>
         <b-button-group>
-          <!-- <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" /> -->
           <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" variant="outline-primary" />
-          <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
           <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" variant="outline-primary" />
         </b-button-group>
       </template>
@@ -404,7 +399,6 @@ export default class TInfiniteScrollSmooth extends Vue {
 <style>
 .TInfiniteScrollSmoothWrapper{
   max-height: max-content;
-  overflow: visible;
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
   max-height: 70vh;
@@ -419,27 +413,13 @@ export default class TInfiniteScrollSmooth extends Vue {
   max-height: 17vh;
 }
 
-/* .TInfiniteScrollSmoothWrapper.empty {
-  max-width: 200px !important;
-
-} */
-
 .TInfiniteScrollSmoothWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
-  /* each header cell */
   color: inherit;
   background-color: inherit;
-}
-/* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth{ */
-  /* why? padding? */
-  /* padding-bottom: 70px; */
-/* } */
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth {
-  overflow: visible;
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table th {
   border-top: 1px solid var(--table-border);
-  overflow: visible;
 }
 .TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table th {
@@ -482,16 +462,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   padding-bottom: 400px !important;
   text-align: center;
 }
-/* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.mobileview:not(.firstpage) .tablehead {
-  padding-top: 100px !important;
-  text-align: center;
-}
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.mobileview:not(.lastpage) .tablefooter {
-  padding-bottom: 100px !important;
-  text-align: center;
-} */
-/* .tablefooter_lastpage { display: none; } */
-/* .TInfiniteScrollSmooth:not(.lastpage)  */
 .TInfiniteScrollSmoothWrapper .tablefooter_lastpage {
   padding-bottom: 600px !important;
   text-align: center;

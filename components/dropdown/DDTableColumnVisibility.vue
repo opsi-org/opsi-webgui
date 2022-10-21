@@ -35,13 +35,10 @@
           variant="primary"
           @click.prevent="setColumnVisibilityModel(header.key)"
         >
-          <!-- :disabled="columnVisibilityStates[header.key]" -->
           {{ header.label }}
         </b-dropdown-form>
       </template>
       <template v-else>
-        <!-- id="selectableColumns-group"
-        name="selectableColumns" -->
         <b-dropdown-form
           v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
           :key="header.key"
@@ -98,13 +95,10 @@
         variant="primary"
         @click.prevent="setColumnVisibilityModel(header.key)"
       >
-        <!-- :disabled="columnVisibilityStates[header.key]" -->
         <small>{{ header.label }}</small>
       </b-dropdown-form>
     </template>
     <template v-else>
-      <!-- id="selectableColumns-group"
-      name="selectableColumns" -->
       <b-dropdown-form
         v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
         :key="header.key"
@@ -252,7 +246,6 @@ export default class DDTableColumnVisibility extends BDropdown {
 <style>
 .DDTableColumnVisibility {
   max-width: fit-content !important;
-  /* max-height: inherit !important; */
   max-height: var(--component-height) !important;
   z-index: 30 !important;
 }
@@ -263,65 +256,34 @@ export default class DDTableColumnVisibility extends BDropdown {
 .DDTableColumnVisibility .dropdown-menu {
   overflow: visible !important;
   height: max-content !important;
-  /* max-height: 300px !important; */
   min-width: 200px !important;
   max-width: 250px !important;
   z-index: 300 !important;
-  /* position: sticky !important; */
 }
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding: 0px !important;
   cursor: pointer;
 
 }
-
 .DDTableColumnVisibility .dropdown-menu li .b-dropdown-form {
   margin: 0px !important;
   padding: 0px !important;
   padding-left: 15px !important;
   padding-right: 15px !important;
 }
-/*
-.DDTableColumnVisibility .dropdown-menu .dropdown-item {
-  padding-top: 2px !important;
-  padding-bottom: 2px !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important;
-}
-*/
-
 .DDTableColumnVisibilityBtn {
   height: 100% !important;
   max-height: var(--component-height) !important;
 }
-
 .DDTableColumnVisibilityBtn::after {
   float: right;
   margin-top: 10px;
 }
-
 .DDTableColumnVisibility.absolutright > li {
   border: unset !important;
-  /* color: var(--light) !important; */
   min-width: 100% !important;
 }
 .DDTableColumnVisibility.absolutright > li:hover {
   border: unset !important;
-  /* color: var(--light) !important; */
 }
-/* .DDTableColumnVisibility .dropdown-menu .dropdown-item {
-  cursor: pointer;
-  display: flex !important;
-} */
-/* .DDTableColumnVisibility a.selected.disabled {
-  background-color: var(--primary);
-  color:var(--light);
-}
-.DDTableColumnVisibility a.selected {
-  background-color: var(--primary);
-} */
-/* .DDTableColumnVisibility .noborder .btn-outline-primary{
-  border: 0;
-  box-shadow: none;
-} */
 </style>
