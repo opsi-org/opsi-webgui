@@ -5,6 +5,8 @@
     :class="{incontextmenu: (incontextmenu != false)}"
     @mouseover="onOver($refs.dropdown)"
     @mouseleave="onLeave($refs.dropdown)"
+    @focusin="onOver($refs.dropdown)"
+    @focusout="onLeave($refs.dropdown)"
   >
     <b-dropdown
       ref="dropdown"
@@ -43,8 +45,9 @@
     v-else
     @mouseover="onOver($refs.dropdown)"
     @mouseleave="onLeave($refs.dropdown)"
+    @focusin="onOver($refs.dropdown)"
+    @focusout="onLeave($refs.dropdown)"
   >
-
     <b-dropdown
       v-bind="$props"
       ref="dropdown"
