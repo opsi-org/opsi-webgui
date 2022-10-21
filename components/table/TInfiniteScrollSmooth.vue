@@ -1,5 +1,13 @@
 <template>
-  <div :id="'TInfiniteScrollSmoothWrapper_' + id" data-testid="TInfiniteScrollSmooth" class="TInfiniteScrollSmoothWrapper" :class="{loadingCursor: isLoading}">
+  <div
+    :id="'TInfiniteScrollSmoothWrapper_' + id"
+    data-testid="TInfiniteScrollSmooth"
+    class="TInfiniteScrollSmoothWrapper"
+    :class="{
+      loadingCursor: isLoading,
+      empty: cache_pages.flat().length <= 0
+    }"
+  >
     <p v-if="error">
       {{ error }}
     </p>
@@ -14,7 +22,7 @@
       :class="{ firstpage: isFirstPage,
                 lastpage: isLastPage,
                 mobileview: $mq=='mobile',
-                isLoading: isLoading
+                isLoading: isLoading,
       }"
       sticky-header
       show-empty
@@ -396,6 +404,7 @@ export default class TInfiniteScrollSmooth extends Vue {
 <style>
 .TInfiniteScrollSmoothWrapper{
   max-height: max-content;
+  overflow: visible;
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
   max-height: 70vh;
@@ -410,6 +419,11 @@ export default class TInfiniteScrollSmooth extends Vue {
   max-height: 17vh;
 }
 
+/* .TInfiniteScrollSmoothWrapper.empty {
+  max-width: 200px !important;
+
+} */
+
 .TInfiniteScrollSmoothWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
   /* each header cell */
   color: inherit;
@@ -419,9 +433,13 @@ export default class TInfiniteScrollSmooth extends Vue {
   /* why? padding? */
   /* padding-bottom: 70px; */
 /* } */
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth {
+  overflow: visible;
+}
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table th {
   border-top: 1px solid var(--table-border);
+  overflow: visible;
 }
 .TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .mobileview.TInfiniteScrollSmooth .table th {
