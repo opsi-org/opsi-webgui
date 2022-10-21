@@ -6,7 +6,7 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="(config)?config.read_only:false"
-      @click="show = !show"
+      @click="$bvModal.show('event-modal-delete-' + clientId)"
     >
       <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>
@@ -16,15 +16,14 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="(config)?config.read_only:false"
-      @click="show = !show"
-      @keypress.enter="show = !show"
+      @click="$bvModal.show('event-modal-delete-' + clientId)"
+      @keypress.enter="$bvModal.show('event-modal-delete-' + clientId)"
     >
       <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </div>
 
     <b-modal
-      id="modalDeleteClient"
-      v-model="show"
+      :id="'event-modal-delete-' + clientId"
       :title="$t('title.deleteClient')"
       centered
       scrollable
@@ -77,7 +76,7 @@ export default class MDeleteClient extends Vue {
         const ref = (this.$refs.deleteClientAlert as any)
         ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
         this.delFromSelectionClients(id)
-        this.$bvModal.hide('modalDeleteClient')
+        this.$bvModal.hide('event-modal-delete-' + this.clientId)
         this.refetch()
       }).catch((error) => {
         const ref = (this.$refs.deleteClientAlert as any)

@@ -29,21 +29,20 @@
       :class="{
         [classes]: true
       }"
-      @click="openDialog() "
+      @click="$bvModal.show('event-modal-' + event + '-' + data)"
       @keypress.enter="show=true"
     >
-      <!-- show=true" -->
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (withText !== false ||incontextmenu!==false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <span class="eventlabel"> {{ (withText !== false || incontextmenu !== false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </li>
 
+      <!-- v-model="show" -->
     <b-modal
-      v-model="show"
       :title="$t(events[event].titlemodal)"
       size="sm"
-      no-fade
+      :id="'event-modal-' + event + '-' + data"
     >
       <b-list-group v-if="event=='ondemand'" flush>
         <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->
@@ -87,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 
@@ -162,10 +161,6 @@ export default class BTNEvent extends Vue {
       return [this.data]
     }
     return this.selectionClients.filter(c => !this.selectionClientsDelete.includes(c))
-  }
-
-  openDialog () {
-    this.show = true;
   }
 
   async callEvent () {

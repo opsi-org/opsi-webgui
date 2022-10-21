@@ -57,13 +57,13 @@ export default class GTwoColumnLayout extends Vue {
 .GTwoColumnLayout.row {
   margin-right: 0px;
   margin-left: 0px;
-  height: inherit
+  height: inherit;
 }
 .GTwoColumnLayout.row > .col{
   margin-right: 15px;
   padding-right: 0px;
   padding-left: 0px;
-
+  overflow: visible;
 }
 .clients_button{
   max-width:60px;

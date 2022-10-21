@@ -130,9 +130,10 @@ export default class LayoutDefault extends Vue {
 
   /* overflow: hidden; */
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   width: calc(100% - 2 * var(--margin-left-maincontent));
-  /* height: calc(100% - var(--margin-top-maincontent) + 100px); */
+  min-height: -webkit-fill-available;
+  /* height: calc(100% - var(--margin-top-maincontent) ); */
 }
 .main_content > .container-fluid{
   min-height: 350px;

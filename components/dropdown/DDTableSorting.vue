@@ -57,7 +57,7 @@
     v-else
     v-bind="$props"
     data-testid="DropdownDDTableSorting"
-    dropright
+    :dropright="incontextmenu !== false"
     lazy
     :no-caret="incontextmenu == false"
     :toggle-tag="incontextmenu !== false ? 'li': 'button'"
@@ -142,7 +142,7 @@ export default class DDTableSorting extends BDropdown {
   margin-top: 10px;
 }
 .DropdownDDTableSorting ul li.dropdown-item  {
-  display: inline-flex !important;
+  /* display: inline-flex !important; */
 }
 .DropdownDDTableSorting li.dropdown-item small {
   padding-left: 5px;
@@ -152,7 +152,8 @@ export default class DDTableSorting extends BDropdown {
   min-width: 220px !important;
   max-width: 350px !important;
   height: max-content !important;
-  z-index: 300 !important;
+  z-index: 3000 !important;
+  overflow: auto;
   /* left: 25px !important; */
 }
 /* .DropdownDDTableSorting .dropdown-menu .dropdown-item.sortDirectionWrapper, */
@@ -176,6 +177,7 @@ export default class DDTableSorting extends BDropdown {
   padding-right: 5px;
   white-space: normal;
   font-weight: 300 !important;
+  overflow: auto !important;
 }
 .DropdownDDTableSorting .dropdown-menu li .b-dropdown-form {
   margin: 0px !important;
