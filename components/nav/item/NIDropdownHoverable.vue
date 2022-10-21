@@ -22,7 +22,6 @@
         {{ $t(title) }}
       </b-dropdown-item>
       <b-dropdown-divider />
-      <!-- class="d-inline-block" -->
       <span
         v-for="sub in submenu"
         :key="sub.title"

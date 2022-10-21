@@ -14,7 +14,6 @@
           {{ $t('label.layout.show-clients') }}
         </b>
       </small>
-      <!-- <small><b>{{ expandClients? 'Hide': 'Show' }} Clients {{ expandClients? '': '>>' }}</b></small> -->
     </b-button>
     <b-col
       id="parentcol"
@@ -63,7 +62,6 @@ export default class GTwoColumnLayout extends Vue {
   margin-right: 15px;
   padding-right: 0px;
   padding-left: 0px;
-  /* overflow: visible; */
 }
 .clients_button{
   max-width:60px;

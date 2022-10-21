@@ -135,8 +135,3 @@ export default class GHostParam extends Vue {
   }
 }
 </script>
-<style>
-.noheader{
-  display: none;
-}
-</style>

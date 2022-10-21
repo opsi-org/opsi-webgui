@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- :text="$i18n.locale" -->
     <b-nav-item-dropdown
       id="language"
       data-testid="DropdownDDLang"
@@ -12,8 +11,7 @@
       variant="primary"
       :dropup="dropup"
     >
-      <!--  ($mq!=='desktop')? '   ' + language :'' -->
-      <template #button-content="">
+      <template #button-content>
         <span style="color:white; text-transform:uppercase;"> <b-icon :icon="iconnames.language" /> {{ language }} </span>
       </template>
       <b-dropdown-item
@@ -38,6 +36,7 @@ const settings = namespace('settings')
 export default class DDLang extends Vue {
   iconnames:any
   $i18n:any
+  $mq:any
 
   @Prop({ default: false }) dropup!: boolean
 
@@ -53,12 +52,7 @@ export default class DDLang extends Vue {
   }
 
   mounted () {
-    // if (!this.$i18n) {
-    //   this.$i18n = { messages:['en'], locale:'en' }
-    // }
     this.languages = Object.keys(this.$i18n.messages)
-    // require.context('~/locale/', true, /\.json$/) as IObjectString2Any
-    // langPaths.keys().forEach((key: string) => (this.languages.push((key as string).replace('./', '').replace('.json', ''))))
   }
 
   changeLanguage (lang : string) {

@@ -54,6 +54,7 @@ export default class MTrackChanges extends Vue {
   $nuxt: any
   $axios: any
   $t:any
+  $mq:any
   changelist: Array<ChangeObj> = []
   error: string = ''
 
@@ -82,7 +83,6 @@ export default class MTrackChanges extends Vue {
   }
 
   async saveProdProp (item: ChangeObj) {
-    // const t:any = this
     const propObj: any = {}
     propObj[item.property] = item.propertyValue
     let change = {}
@@ -99,12 +99,10 @@ export default class MTrackChanges extends Vue {
     }
     await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, change)
       .then(() => {
-        // makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.delFromChangesProducts(item)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         this.error = detailedError
-        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
       })
   }
 

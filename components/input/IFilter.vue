@@ -10,7 +10,6 @@
       class="filter"
       :placeholder="$t('table.filter', {el: additionalTitle})"
     />
-    <!-- @change="changeModel" -->
   </div>
 </template>
 
@@ -26,8 +25,6 @@ export default class IFilter extends BFormInput {
   @Prop({}) data!: ITableData|ITableInfo
   @Prop({ default: '' }) additionalTitle!: string
 
-  // changeModel (data) { this.$emit('update:data', data) }
-
   mounted () {
     if (this.IFilter) {
       this.IFilter.focus()
@@ -38,7 +35,6 @@ export default class IFilter extends BFormInput {
 
 <style>
 .filter {
-  /* width: 90%; */
   max-width: 250px !important;
 }
 </style>

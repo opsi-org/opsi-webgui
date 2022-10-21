@@ -6,15 +6,13 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-// import Cookie from 'js-cookie'
-// import { makeToast } from '../../.utils/utils/scomponents'
 import { CallLogout } from '../../mixins/uib-mixins'
 const auth = namespace('auth')
 const settings = namespace('settings')
 
 @Component({ mixins: [CallLogout] })
 export default class BCountdowntimer extends Vue {
-  callLogout: any // from CallLogout
+  callLogout: any
 
   @Prop({ default: false }) small!: boolean
   $router:any
@@ -59,7 +57,6 @@ export default class BCountdowntimer extends Vue {
   calcTimeout () {
     const t = this.getRemainingTime()
     this.countdowntimer = this.getText(t)
-    // console.debug('time remaining: ', t.diff, ' notify if <', this.notifyInMilliSec, '-> ', (t.diff <= this.notifyInMilliSec))
     const time = { min: t.minutes, s: t.seconds }
     if (t.diff <= this.notifyInMilliSec && !this.first_notification_showed) {
       this.first_notification_showed = true
@@ -75,7 +72,7 @@ export default class BCountdowntimer extends Vue {
     if (isNaN(t.diff) || t.diff === 0 || this.notifyInMilliSec <= 0) {
       this.countdowntimer = this.$t('message.session.expired') as string
       try {
-        this.callLogout() // from uib-mixins CallLogout
+        this.callLogout()
       } catch (e) {
         this.logout()
         this.clearSession()
@@ -127,7 +124,6 @@ export default class BCountdowntimer extends Vue {
   }
 
   getRemainingTime () {
-    // const endtime = Cookie.get('opsiweb-session')
     const endtime = this.sessionEndTime
     if (!endtime) { this.setSession() }
     const diff = Date.parse(endtime as unknown as string) - Date.parse(new Date() as unknown as string)
