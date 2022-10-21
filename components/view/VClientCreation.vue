@@ -31,8 +31,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <!-- <b class="clientDetails">{{ $t('table.clientDetails') }} </b> -->
-        <b class="basics">{{ $t('Basics') }} </b>
+        <b class="basics">{{ $t('title.basics') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -75,8 +74,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
-        <b class="settings">{{ $t('Settings') }} </b>
+        <b class="settings">{{ $t('title.settings') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -87,7 +85,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <b class="basics">{{ $t('Assignments') }} </b>
+        <b class="assignments">{{ $t('title.assignments') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -106,7 +104,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <b class="setup">{{ $t('Initial Setup') }} </b>
+        <b class="initsetup">{{ $t('title.initsetup') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
