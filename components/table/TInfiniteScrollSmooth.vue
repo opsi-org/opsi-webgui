@@ -401,7 +401,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   max-height: max-content;
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth {
-  min-height: 50% !important;
+  min-height: 450px !important;
   /* overflow: inherit !important; */
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
