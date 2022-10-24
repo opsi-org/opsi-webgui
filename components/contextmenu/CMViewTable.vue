@@ -1,6 +1,6 @@
 <template>
   <div v-if="Object.keys($scopedSlots).length > 0" data-testid="CMViewTable">
-    <div v-if="viewMenu" class="right-click-backdrop bg-dark" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
+    <div v-if="viewMenu" class="right-click-backdrop bg-primary" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
     <div v-if="withButton !== false" id="contextmenu-content" @click.right="openMenu" @keydown="openMenu">
       <slot name="item" />
       <ul
