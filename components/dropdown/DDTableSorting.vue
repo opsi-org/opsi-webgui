@@ -29,7 +29,7 @@
             @keydown.prevent="changeSortDirection()"
             @click.prevent="changeSortDirection()"
           >
-            <b-form-checkbox :checked="sortDesc"/>
+            <b-form-checkbox :checked="sortDesc" />
             <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
           </a>
         </li>
@@ -56,7 +56,8 @@
     v-else
     v-bind="$props"
     data-testid="DropdownDDTableSorting"
-    :dropright="incontextmenu !== false"
+    :dropright="$mq=='desktop' || incontextmenu !== false"
+    :dropleft="$mq!='desktop' && incontextmenu === false"
     lazy
     :no-caret="incontextmenu == false"
     :toggle-tag="incontextmenu !== false ? 'li': 'button'"
