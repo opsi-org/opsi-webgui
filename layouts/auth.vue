@@ -1,7 +1,7 @@
 <template>
   <div>
     <Nuxt />
-    <BarBAuthFooter class="footer_content" />
+    <BarBAuthFooter v-once class="footer_content" />
   </div>
 </template>
 

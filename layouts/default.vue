@@ -7,7 +7,7 @@
       sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile'}"
   >
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
-    <BarBSide class="sidebar_content" :attributes="sidebarAttr" />
+    <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
       <AlertAAlert ref="alertConfigurationError" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
