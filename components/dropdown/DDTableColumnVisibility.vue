@@ -42,7 +42,26 @@
       <template v-else>
         <!-- id="selectableColumns-group"
         name="selectableColumns" -->
-        <b-dropdown-form
+
+        <li
+          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
+          :key="header.key"
+          class="dropdown-item"
+          :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
+        >
+          <a
+            class=""
+            @keydown.prevent="handleItem(header.key)"
+            @click.prevent="handleItem(header.key)"
+          >
+            <b-form-checkbox
+              :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
+              :class="{'selected':columnVisibilityStates[header.key]}"
+            />
+            <small>{{ header.label }}</small>
+          </a>
+        </li>
+        <!-- <b-dropdown-form
           v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
           :key="header.key"
           class="dropdown-item"
@@ -56,9 +75,9 @@
               :value="header.key"
               :class="{'selected':columnVisibilityStates[header.key]}"
             />
-            <small>{{ header.label }}</small>
+           B <small>{{ header.label }}</small>
           </b-input-group>
-        </b-dropdown-form>
+        </b-dropdown-form> -->
       </template>
     </b-dropdown>
   </div>
@@ -67,7 +86,8 @@
     ref="dropdown"
     v-bind="$props"
     data-testid="DropdownDDTableColumnVisibility"
-    dropright
+    :dropright="$mq=='desktop' || incontextmenu !== false"
+    :dropleft="$mq!=='desktop' && incontextmenu === false"
     lazy
     :no-caret="incontextmenu == false"
     :toggle-tag="incontextmenu !== false ? 'li': 'button'"
@@ -272,7 +292,10 @@ export default class DDTableColumnVisibility extends BDropdown {
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding: 0px !important;
   cursor: pointer;
-
+}
+.DDTableColumnVisibility .dropdown-menu .custom-checkbox{
+  display: inline;
+  margin-left: 15px;
 }
 
 .DDTableColumnVisibility .dropdown-menu li .b-dropdown-form {

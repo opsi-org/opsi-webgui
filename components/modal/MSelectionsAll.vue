@@ -9,8 +9,6 @@
       :title="$t('title.selectedElements')"
       @click="show = !show"
     >
-      <!-- class="h-100" -->
-      <!-- {{ selection.length }} -->
       <b-icon :icon="iconnames.info" />
     </b-button>
 
@@ -77,8 +75,8 @@ export default class MSelectionsAll extends Vue {
   @Prop({ default: true }) showDepots!: string
   @Prop({ default: true }) showClients!: string
   @Prop({ default: false }) showProducts!: string
-  // @Prop({ }) type!: string
-  // @Prop({ }) selections!: Array<string>
+  iconnames:any
+  $mq:any
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>

@@ -32,9 +32,6 @@ export default class AAlertLocal extends BAlert {
   @Prop({ default: 'warning' }) alertVariant!: string
 
   mounted () {
-    // if (this.show && this.ref) {
-    //   const ref = (this.$refs[this.ref + '-intern'] as any)
-    // }
     this.alert(this.alertMessage, this.alertVariant, this.moreDetails)
   }
 
@@ -42,7 +39,6 @@ export default class AAlertLocal extends BAlert {
     this.alertMessage = message
     this.alertVariant = variant
     this.moreDetails = details
-    // this.showAlert = true
   }
 }
 </script>

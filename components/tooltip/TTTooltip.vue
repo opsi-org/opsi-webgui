@@ -25,6 +25,3 @@ export default class TTTooltip extends Vue {
    @Prop({ }) classes!: string
 }
 </script>
-<style>
-
-</style>

@@ -31,8 +31,6 @@
       </div>
     </div>
     <b-navbar-nav class="sm-auto title-right-buttons">
-      <!-- <ButtonBTNEvent v-if="(enableOndemand==true && isChildLayout==false)" event="ondemand" size="sm" />
-      <ModalMSelectionsAll /> -->
       <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: id})" :refetch="fetch" />
       <ButtonBTNRowLinkTo
         v-if="enableShowProducts"
@@ -70,9 +68,6 @@
               <b-col v-if="$mq == 'mobile' && tableInfo && noheader" cols="*">
                 <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
               </b-col>
-              <!-- <b-col v-if="multiselectToggler != undefined" cols="*">
-                  <CheckboxCBMultiselection :multiselect.sync="multiselectToggler" />
-                </b-col> -->
             </slot>
           </b-col>
         </slot>
@@ -107,7 +102,6 @@ export default class BTooltipCollapseRow extends Vue {
   @Prop({ default: false }) enableProducts!: boolean
   @Prop({ default: false }) enableShowProducts!: boolean
   @Prop({ default: false }) enableOndemand!: boolean
-  // @Prop({ default: undefined }) multiselectToggler!: boolean|undefined
   @Prop({ default: undefined }) redirectOnCloseTo!: string
   @Prop({ default: undefined }) redirect!: Function
   @Prop({ default: undefined }) fetch!: Function
@@ -153,16 +147,12 @@ export default class BTooltipCollapseRow extends Vue {
 </script>
 
 <style>
-/* .BCollapsePageHeader_Navbar.collapseable {
-  cursor: pointer;
-} */
 .header_filter {
   min-width: var(--component-width) !important;
   max-width: var(--component-width) !important;
   flex-flow: inherit !important;
 }
 .BCollapsePageHeader_Navbar > .container {
-  /* padding-left: 0px !important; */
   padding-right: 0px !important;
   margin-left: 0px !important;
   margin-right: 0px !important;
@@ -199,18 +189,10 @@ export default class BTooltipCollapseRow extends Vue {
 .BarBTooltipCollapseRow .nav-link {
   padding-left: 0px;
 }
-
-/* .BCollapsePageHeader_Navbar .closebtn {
-  max-height: 25px;
-} */
-
 .BCollapsePageHeader_Navbar_toggler {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  /* min-width: calc(100% - 160px);
-  width: 100%;
-  max-width: 100%; */
   cursor: pointer;
 }
 .BarBTooltipCollapseRow {
@@ -223,9 +205,6 @@ export default class BTooltipCollapseRow extends Vue {
   width: 100%;
   min-width: 100% !important;
   max-width: 100% !important;
-  /* margin-left: 20px !important;
-  margin-right: 20px !important; */
-  /* cursor: default; */
 }
 .BCollapsePageHeader_Navbar .nav-child-right {
   padding: 0px !important;

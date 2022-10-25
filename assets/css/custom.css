@@ -55,15 +55,11 @@
 .li-delimiter {
   border-top: 1px solid var(--log-muted);
   color: var(--log-muted);
-  /* border-color: inherit; */
 }
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important; /* remove "Noto Color Emoji" */
 }
 body .mobile .main_content {
-  /* font-size: 0.7rem !important;
-  font-weight: 300 !important;
-  line-height: 1.2 !important; */
   zoom: 0.8;
 }
 body .mobile #sidemenu,
@@ -82,10 +78,6 @@ body .mobile .topbar_content .navbar > * {
   height: 90% !important;
 }
 
-/* .form-control, .btn, .dropdown-item, .dropdown-menu, .form-control-plaintext, .custom-select {
-  font-size: inherit !important;
-  font-weight: normal !important;
-} */
 .tooltip {
   font-family: inherit !important;
 }
@@ -112,9 +104,6 @@ body .mobile .topbar_content .navbar > * {
 .table > :not(caption) > * > * {
   border-bottom-width: 0px;
 }
-/* .badge-warning{
-  color: var(--light) !important;
-} */
 .value-changed-not-saved {
   color: var(--orange) !important;
 }
@@ -134,7 +123,6 @@ body .mobile .topbar_content .navbar > * {
 .sidebar_content .navbar-nav .nav-link {
   color: inherit !important;
   background-image: none !important;
-  /* background-repeat: no-repeat !important; */
 }
 .footer_content .btn, .footer_content .dropdown-toggle,
 .topbar_content .btn, .topbar_content .dropdown-toggle,
@@ -275,14 +263,8 @@ body .mobile .topbar_content .navbar > * {
 .text-muted {
   color: var(--log-muted, gray) !important;
 }
-/* .disabled {
-  cursor: not-allowed;
-  color: var(--log-muted, gray) !important;
-} */
 .nav-link.disabled {
   color: var(--log-muted, gray) !important;
-  /* pointer-events: none;
-  cursor: default; */
   cursor: not-allowed;
 }
 .loadingCursor {

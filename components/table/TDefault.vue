@@ -63,6 +63,7 @@ export default class BVTable extends Vue {
   @Prop({ }) filterfields?: Array<string>
   @Prop({ }) items!: Array<object>
   @Prop({ }) fields!: Array<object>
+  $mq:any
 }
 </script>
 
@@ -91,24 +92,15 @@ export default class BVTable extends Vue {
 }
 
 .bvtable .table.b-table.b-table-stacked > tbody > tr > [data-label] > div {
-  /* display: inline-block; */
   width: calc(100% - 20%);
-  /* padding: 0 0 0 calc(1rem / 2);
-  margin: 0; */
 }
 
-/* .bvtable:not(.small) .table.b-table.b-table-stacked > tbody > tr > [data-label]::before {
-  width: 35%;
-  font-weight: normal;
-} */
 .small.table-responsive {
   max-height: 200px;
   overflow-y: auto;
 }
 
 .productproperties.table-responsive {
-  /* min-height: 100vh; */
-  /* height: 62vh !important; */
   overflow-y: auto;
 }
 </style>

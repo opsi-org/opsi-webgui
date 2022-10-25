@@ -25,16 +25,16 @@ const settings = namespace('settings')
   }
 }
 
-
 @Component export class HoverDropdown extends Vue {
-  onOver(ref) {
+  onOver (ref) {
     if (ref) {
-      ref.visible = true;
+      ref.visible = true
     }
   }
-  onLeave(ref) {
+
+  onLeave (ref) {
     if (ref) {
-      ref.visible = false;
+      ref.visible = false
     }
   }
 }

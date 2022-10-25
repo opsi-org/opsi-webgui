@@ -2,9 +2,12 @@
   <div
     v-if="incontextmenu === false"
     data-testid="DDClientActions"
+    class="DDClientActions"
     :class="{incontextmenu: (incontextmenu != false)}"
     @mouseover="onOver($refs.dropdown)"
     @mouseleave="onLeave($refs.dropdown)"
+    @focusin="onOver($refs.dropdown)"
+    @focusout="onLeave($refs.dropdown)"
   >
     <b-dropdown
       ref="dropdown"
@@ -17,10 +20,15 @@
         <IconILoading v-if="clientsLoading.includes(clientId)" :small="true" />
         <b-icon v-else :icon="iconnames.menu" :title="$t('button.tablerow.moreoptions')" />
       </template>
-      <ModalMDeployClientAgent :client-id="clientId" />
-      <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
       <ButtonBTNEvent
         event="ondemand"
+        :data="clientId"
+        :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
+      />
+
+      <ButtonBTNEvent
+        event="showpopup"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
         :with-text="true"
@@ -31,20 +39,18 @@
         :update-loading="loading => clientsLoading = loading"
         :with-text="true"
       />
-      <ButtonBTNEvent
-        event="showpopup"
-        :data="clientId"
-        :update-loading="loading => clientsLoading = loading"
-        :with-text="true"
-      />
+
+      <ModalMDeployClientAgent :client-id="clientId" />
+      <ModalMDeleteClient :client-id="clientId" :refetch="fetch" />
     </b-dropdown>
   </div>
   <div
     v-else
     @mouseover="onOver($refs.dropdown)"
     @mouseleave="onLeave($refs.dropdown)"
+    @focusin="onOver($refs.dropdown)"
+    @focusout="onLeave($refs.dropdown)"
   >
-
     <b-dropdown
       v-bind="$props"
       ref="dropdown"
@@ -66,13 +72,6 @@
         <b-icon :icon="iconnames.menu" />
         <small v-if="incontextmenu !== false" :title="$t('button.item-actions.title')" style="font-size: 85%;">{{ $t('button.item-actions') }}</small>
       </template>
-      <small class="dropdown-item">
-        <ModalMDeployClientAgent
-          style="padding-left: 0px;"
-          :client-id="clientId"
-          :incontextmenu="incontextmenu"
-        />
-      </small>
       <small class="dropdown-item">
         <ButtonBTNEvent
           event="ondemand"
@@ -98,6 +97,14 @@
           :incontextmenu="incontextmenu"
           :update-loading="loading => clientsLoading = loading"
           :with-text="true"
+        />
+      </small>
+
+      <small class="dropdown-item">
+        <ModalMDeployClientAgent
+          style="padding-left: 0px;"
+          :client-id="clientId"
+          :incontextmenu="incontextmenu"
         />
       </small>
       <small class="dropdown-item">
@@ -128,6 +135,9 @@ export default class DDClientActions extends Vue {
 }
 </script>
 <style>
+.DDClientActions .dropdown-menu {
+  min-width: 200px;
+}
 .DDClientActionsBtn .incontextmenu::after {
   float: right !important;
   margin-top: 10px;

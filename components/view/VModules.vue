@@ -1,7 +1,10 @@
 <template>
   <div data-testid="VModules" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="modulesAlert" />
-    <LazyGridGFormItem v-if="!errorText" :label="$t('form.modules.available')">
+    <LazyGridGFormItem v-if="!errorText" v-once label-id="modules">
+      <template #label>
+        <span class="modules">{{ $t('form.modules.available') }}</span>
+      </template>
       <template #value>
         <b-form-textarea
           id="modules-list"
@@ -22,7 +25,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class VModules extends Vue {
   $axios: any
-
+  $t:any
   isLoading: boolean = false
   modules: object = {}
   errorText: string = ''

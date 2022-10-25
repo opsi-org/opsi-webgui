@@ -18,6 +18,8 @@ import { Vue, Component, Prop } from 'nuxt-property-decorator'
 export default class BBreadcrumbRow extends Vue {
   @Prop({ default: undefined }) specificItems!: Array<string>|undefined
   @Prop({ default: undefined }) type!:string
+  $t: any
+  $route: any
 
   get crumbs (): Array<string> {
     if (this.specificItems !== undefined) { return this.specificItems }
@@ -71,10 +73,7 @@ export default class BBreadcrumbRow extends Vue {
   color: var(--dark) !important;
 }
 .breacrumb {
-  /* color: var(--light) !important; */
   padding: 0px !important;
   margin: 0px !important;
-  /* margin-top: 10px !important; */
-  /* margin-left: 13px !important; */
 }
 </style>
