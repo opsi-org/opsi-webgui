@@ -89,7 +89,7 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <BarBTableFooter :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
+    <BarBTableFooter v-if="cache_pages.flat().length>0" :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
     <br>
     <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
@@ -399,6 +399,10 @@ export default class TInfiniteScrollSmooth extends Vue {
 <style>
 .TInfiniteScrollSmoothWrapper{
   max-height: max-content;
+}
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth {
+  min-height: 450px !important;
+  /* overflow: inherit !important; */
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
   max-height: 70vh;
