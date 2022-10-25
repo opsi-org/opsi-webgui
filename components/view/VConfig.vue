@@ -48,8 +48,4 @@ export default class VConfig extends Vue {
 .config_horizontaltabs .nav-item{
   min-width: 10%;
 }
-/* .VConfig,
-.VConfig > .navbar {
-  overflow: visible;
-} */
 </style>

@@ -30,10 +30,8 @@ export default class LError extends Vue {
   }
 
   @settings.Getter public colortheme!: ITheme
-  // @settings.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
-  @Watch('$mq'/* , { deep: true } */)
-  mqChanged () { this.updateSidebarAttr() }
+  @Watch('$mq'/* , { deep: true } */) mqChanged () { this.updateSidebarAttr() }
 
   updateSidebarAttr () {
     if ((this as any).$mq === 'mobile') {

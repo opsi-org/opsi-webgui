@@ -6,7 +6,7 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="(config)?config.read_only:false"
-      @click="show = !show"
+      @click="$bvModal.show('event-modal-deployCA-' + clientId)"
     >
       <b-icon :icon="iconnames.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </b-button>
@@ -16,15 +16,14 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="(config)?config.read_only:false"
-      @click="show = !show"
-      @keypress.enter="show = !show"
+      @click="$bvModal.show('event-modal-deployCA-' + clientId)"
+      @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId)"
     >
       <b-icon :icon="iconnames.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </div>
 
     <b-modal
-      id="modalDeployClientAgent"
-      v-model="show"
+      :id="'event-modal-deployCA-' + clientId"
       :title="$t('label.clientagent')"
       centered
       scrollable
@@ -36,28 +35,13 @@
       <b-form>
         {{ $t('Client ID:   ') }} {{ clientId }}
         <b-form-group :label="$t('form.username')" label-for="username">
-          <b-form-input
-            id="username"
-            v-model="form.username"
-            :placeholder="$t('form.username')"
-            required
-          />
+          <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" required />
         </b-form-group>
         <b-form-group :label="$t('form.password')" label-for="password">
-          <b-form-input
-            id="password"
-            v-model="form.password"
-            :placeholder="$t('form.password')"
-            required
-          />
+          <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" required />
         </b-form-group>
         <b-form-group :label="$t('table.fields.type')" label-for="type">
-          <b-form-select
-            id="type"
-            v-model="form.type"
-            :options="clientagenttypes"
-            required
-          />
+          <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
         </b-form-group>
         <DivDComponentGroup class="float-right">
           <b-button
@@ -111,7 +95,7 @@ export default class MDeployClientAgent extends Vue {
       .then(() => {
         const ref = (this.$refs.clientagentAlert as any)
         ref.alert(this.$t('message.success.clientagent', { client: this.clientId }) as string, 'success')
-        this.$bvModal.hide('modalDeployClientAgent')
+        this.$bvModal.hide('event-modal-deployCA-' + this.clientId)
       }).catch((error) => {
         const ref = (this.$refs.clientagentAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')

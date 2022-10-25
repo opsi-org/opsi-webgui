@@ -53,11 +53,6 @@
           </b-button>
         </b-input-group>
         <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login" block @click="doLogin">
-          <!-- Quickly change expired time curently only for testing purposes  -->
-          <!-- <b-input-group>
-            <InputIExpiredTimeChanger />
-          </b-input-group> -->
-          <!-- <b-button data-testid="btn-login" class="login_input_field_btn" variant="primary" block @click="doLogin"> -->
           {{ $t('button.login') }}
         </b-button>
         <IconILoading v-if="isLoading" />
@@ -69,8 +64,6 @@
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
-// import { makeToast } from '../../.utils/utils/scomponents'
-// 'uib-components/.utils/utils/scomponents'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
@@ -86,7 +79,7 @@ export default class FLogin extends Vue {
   $route:any
   $axios:any
   $t: any
-  $mq: any
+  $mq:any
 
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
@@ -111,10 +104,6 @@ export default class FLogin extends Vue {
         ref.alert(errorMsg, 'danger', detailedError as string)
       })
   }
-
-  // getTitleUppercase () {
-  //   return (this.$t('title.project') as string).toUpperCase()
-  // }
 
   get validUsername () {
     if (this.form.username !== '') { return null }

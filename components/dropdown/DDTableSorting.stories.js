@@ -6,7 +6,7 @@ export default {
 const DefaultVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<b-badge variant="light"><DropdownDDTableSorting :table-id="args.id" v-bind.sync="args.tableInfo" /></b-badge>'
+  template: '<b-badge variant="light"><DropdownDDTableSorting :table-id="args.id" v-bind.sync="args.tableInfo" incontentmenu /></b-badge>'
 })
 
 export const DDTableSorting = DefaultVisibleTemplate.bind({})
