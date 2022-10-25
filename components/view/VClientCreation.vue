@@ -2,6 +2,7 @@
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
+    <AlertAAlert ref="uefiAlert" />
     <IconILoading v-if="isLoading" />
     <template v-else>
       <br>
@@ -31,7 +32,6 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <!-- <b class="clientDetails">{{ $t('table.clientDetails') }} </b> -->
         <b class="basics">{{ $t('Basics') }} </b>
       </b-row>
       <GridGFormItem>
@@ -75,7 +75,6 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
         <b class="settings">{{ $t('Settings') }} </b>
       </b-row>
       <GridGFormItem>
@@ -146,6 +145,7 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+import { SetUEFI } from '../../mixins/save'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
@@ -166,7 +166,7 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, SetUEFI] })
 export default class VClientCreation extends Vue {
   iconnames: any
   $axios: any
@@ -174,7 +174,7 @@ export default class VClientCreation extends Vue {
   $fetch: any
   $mq: any
   $t: any
-
+  setUEFI:any
   clientIds: Array<string> = []
   result: string = ''
   isLoading: boolean = false
@@ -193,11 +193,8 @@ export default class VClientCreation extends Vue {
   }
 
   form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
-
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
-
   uefi: boolean = false
-
   deployclientagent: boolean = false
 
   @cache.Getter public opsiconfigserver!: string
@@ -235,11 +232,9 @@ export default class VClientCreation extends Vue {
 
   get checkValid () {
     return this.clientName.length > 0 && !this.clientIds.includes(this.clientName + this.domainName)
-    // return this.clientName.length > 0  && isNaN(this.clientName[0] as any) && !this.clientIds.includes(this.clientName + this.domainName)
   }
 
   async fetch () {
-    // this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
     await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.clientIds = response.sort()
@@ -264,15 +259,6 @@ export default class VClientCreation extends Vue {
         const ref = (this.$refs.clientagentAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
-      })
-  }
-
-  async setUEFI () {
-    await this.$axios.$post(`api/opsidata/clients/${this.newClient.hostId}/uefi`)
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
       })
   }
 
@@ -302,7 +288,7 @@ export default class VClientCreation extends Vue {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         if (this.uefi) {
-          this.setUEFI()
+          this.setUEFI(this.newClient.hostId)
         }
         if (this.group) {
           this.assignToGroup()
@@ -310,7 +296,6 @@ export default class VClientCreation extends Vue {
         if (this.deployclientagent) {
           this.deployClientAgent()
         }
-        // this.$nuxt.refresh()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
@@ -323,7 +308,6 @@ export default class VClientCreation extends Vue {
 
 <style>
 .VClientCreation {
-  /* display: flow-root; */
   overflow-x: hidden;
   padding-left: 10px;
   height: 100vh !important;
