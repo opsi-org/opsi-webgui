@@ -29,6 +29,20 @@ const changes = namespace('changes')
   }
 }
 
+@Component export class SaveProductActionRequest extends Vue {
+  async saveProdActionRequest (change : object) {
+    await this.$axios.$post('/api/opsidata/clients/products', change)
+      .then(() => {
+        const ref = (this.$refs.productsAlert as any)
+        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+      }).catch((error) => {
+        const ref = (this.$refs.productsAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+      })
+  }
+}
+
 @Component export class SaveProductProperties extends Vue {
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
   async saveProdProperties (id: string, change: object, deleteitem:any) {

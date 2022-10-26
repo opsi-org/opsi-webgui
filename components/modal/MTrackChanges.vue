@@ -74,30 +74,6 @@ export default class MTrackChanges extends Vue {
   //     })
   // }
 
-  // async saveProdProp (item: ChangeObj) {
-  //   const propObj: any = {}
-  //   propObj[item.property] = item.propertyValue
-  //   let change = {}
-  //   if (item.clientId !== '') {
-  //     change = {
-  //       clientIds: [item.clientId],
-  //       properties: propObj
-  //     }
-  //   } else {
-  //     change = {
-  //       depotIds: [item.depotId],
-  //       properties: propObj
-  //     }
-  //   }
-  //   await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, change)
-  //     .then(() => {
-  //       this.delFromChangesProducts(item)
-  //     }).catch((error) => {
-  //       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-  //       this.error = detailedError
-  //     })
-  // }
-
   // async saveAll () {
   //   this.changelist = this.changesProducts.filter(o => o.user === this.username)
   //   for (const p in this.changelist) {
