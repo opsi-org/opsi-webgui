@@ -24,7 +24,27 @@ const changes = namespace('changes')
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.fetch') as string + ' Config', 'danger', detailedError)
+        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+      })
+  }
+}
+
+@Component export class SaveProductProperties extends Vue {
+  @changes.Mutation public delFromChangesProducts!: (s: object) => void
+  async saveProdProperties (id: string, change: object, deleteitem:any) {
+    const ref = (this.$refs.saveProduct as any)
+    await this.$axios.$post(`/api/opsidata/products/${id}/properties`, change)
+      .then(() => {
+        if (deleteitem) {
+          this.delFromChangesProducts(deleteitem)
+          this.$nuxt.refresh()
+        } else {
+          ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+          this.$emit('refetch', true)
+        }
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
       })
   }
 }

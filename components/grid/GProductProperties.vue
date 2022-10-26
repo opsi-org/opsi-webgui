@@ -1,5 +1,6 @@
 <template>
   <div data-testid="GProductProperties">
+    <AlertAAlert ref="saveProduct" />
     <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlertLocal show variant="warning" class="noClientsSelectedShowDepot">
         <small>{{ $t('message.warning.noClientsSelectedShowDepot') }}</small>
@@ -78,24 +79,27 @@ import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IProp, IProperty } from '../../.utils/types/ttable'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { arrayEqual } from '../../.utils/utils/scompares'
-import { makeToast } from '../../.utils/utils/scomponents'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
+import { SaveProductProperties } from '../../mixins/save'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, SaveProductProperties] })
 export default class GProductProperties extends Vue {
+  @Prop({ }) id!: string
+  @Prop({ default: '' }) errorText!: string
+  @Prop({ }) properties!: IProp
+  saveProdProperties:any
   iconnames: any
   $axios: any
   $nuxt: any
   $mq: any
   $t:any
-
-  @Prop({ }) id!: string
-  @Prop({ default: '' }) errorText!: string
-  @Prop({ }) properties!: IProp
+  result:Object = {}
+  isLoading: boolean = false
+  fetchedDataClients2Depots: object = {}
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
@@ -103,17 +107,6 @@ export default class GProductProperties extends Vue {
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public quicksave!: boolean
-
-  result:Object = {}
-  isLoading: boolean = false
-  fetchedDataClients2Depots: object = {}
-
-  get fields () {
-    return [
-      { label: 'pId', key: 'propertyId', thStyle: { display: 'none' } },
-      { label: 'pValue', key: 'value', thStyle: { display: 'none' } }
-    ]
-  }
 
   async beforeMount () {
     if (this.selectionClients.length > 0) {
@@ -125,20 +118,6 @@ export default class GProductProperties extends Vue {
           throw new Error(error)
         })
     }
-  }
-
-  async saveProdProp (change: object) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const t: any = this
-    this.isLoading = true
-    await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, change)
-      .then(() => {
-        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
-        this.$emit('refetch', true)
-      }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
-      })
-    this.isLoading = false
   }
 
   async handleChange (propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean> /* , type:'UnicodeProductProperty'|'BoolProductProperty' */) {
@@ -159,7 +138,7 @@ export default class GProductProperties extends Vue {
       } else {
         data.depotIds = this.selectionDepots
       }
-      await this.saveProdProp(data)
+      await this.saveProdProperties(this.id, data, null)
     }
   }
 
