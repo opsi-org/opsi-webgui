@@ -1,13 +1,13 @@
 import { customstores } from '../../../.utils/storybook/mock'
 export default {
-  title: 'Tablecell/T C Product Property Id',
-  parameters: { docs: { description: { component: 'Table cell for Productproperty Id' } } }
+  title: 'Gridcell/G C Product Property Id',
+  parameters: { docs: { description: { component: 'Grid cell for Productproperty Id' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<TableCellTCProductPropertyId v-bind="args" />',
+  template: '<GridCellGCProductPropertyId v-bind="args" />',
   store: customstores({
     selections: {
       namespaced: true,
@@ -20,13 +20,11 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 })
 
 // named export Primary to create respective story
-export const TCProductPropertyId = PrimaryTemplate.bind({})
-TCProductPropertyId.args = {
+export const GCProductPropertyId = PrimaryTemplate.bind({})
+GCProductPropertyId.args = {
   row: {
-    item: {
-      propertyId: 'propertyID',
-      depots: ''
-    }
+    propertyId: 'propertyID',
+    depots: ''
   },
   productVersions: {}
 }

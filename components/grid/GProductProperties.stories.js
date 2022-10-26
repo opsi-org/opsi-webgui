@@ -1,6 +1,6 @@
 export default {
-  title: 'Table/T Product Properties',
-  parameters: { docs: { description: { component: 'Table for ProductProperties' } } }
+  title: 'Grid/G Product Properties',
+  parameters: { docs: { description: { component: 'Grid for ProductProperties' } } }
 }
 
 const properties = {
@@ -20,8 +20,8 @@ const properties = {
     },
     clientsDifferent: { productId: 'productId1', propertyId: 'clientsDifferent', type: 'UnicodeProductProperty', defaultDetails: { clientId1: [''] }, depots: { depot1: ['file', 'mysql'] }, clients: { 'agorumcore-tst.uib.local': ['file', 'mysql'], 'akunde1.uib.local': ['file'] }, allValues: ['file', 'mysql'], versionDetails: { clientId1: '4.1.1.14-3' }, descriptionDetails: { clientId1: 'Which backend should be installed ? (mysql needs valid activation file' }, multiValueDetails: { clientId1: true }, editableDetails: { clientId1: false }, possibleValues: { clientId1: ['file', 'mysql'] }, anyDepotDifferentFromDefault: true, version: '4.1.1.14-3', description: 'different values on selected vlients', multiValue: true, editable: false, default: [''], allClientValuesEqual: false, anyClientDifferentFromDepot: true },
 
-    very_long_property_id_and_longer_and_longer_and_longer: {
-      productId: 'productId1', propertyId: 'very_long_property_id_and_longer_and_longer_and_longer', type: 'UnicodeProductProperty', defaultDetails: { clientId1: [''] }, depots: { depot1: [] }, clients: { 'agorumcore-tst.uib.local': [''], 'akunde1.uib.local': [''] }, allValues: ['file', 'mysql'], versionDetails: { clientId1: '4.1.1.14-3' }, descriptionDetails: { clientId1: 'Which backend should be installed ? (mysql needs valid activation file' }, multiValueDetails: { clientId1: false }, editableDetails: { clientId1: false }, possibleValues: { clientId1: ['file', 'mysql'] }, anyDepotDifferentFromDefault: false, version: '4.1.1.14-3', description: 'default values and equal on clients/depots', multiValue: false, editable: false, default: [''], allClientValuesEqual: true, anyClientDifferentFromDepot: false
+    very_long_property_id_that_should_wrap_to_next_line: {
+      productId: 'productId1', propertyId: 'very_long_property_id_that_should_wrap_to_next_line', type: 'UnicodeProductProperty', defaultDetails: { clientId1: [''] }, depots: { depot1: [] }, clients: { 'agorumcore-tst.uib.local': [''], 'akunde1.uib.local': [''] }, allValues: ['file', 'mysql'], versionDetails: { clientId1: '4.1.1.14-3' }, descriptionDetails: { clientId1: 'Which backend should be installed ? (mysql needs valid activation file' }, multiValueDetails: { clientId1: false }, editableDetails: { clientId1: false }, possibleValues: { clientId1: ['file', 'mysql'] }, anyDepotDifferentFromDefault: false, version: '4.1.1.14-3', description: 'default values and equal on clients/depots', multiValue: false, editable: false, default: [''], allClientValuesEqual: true, anyClientDifferentFromDepot: false
     }
   },
   productVersions: { clientId1: '4.1.1.14-3' },
@@ -32,14 +32,14 @@ const properties = {
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: `<TableTProductProperties :id="args.id" :properties="args.props" :errorText="args.errorText"/>
+  template: `<GridGProductProperties :id="args.id" :properties="args.props" :errorText="args.errorText"/>
   `
 })
 
 // named export Primary to create respective story
-export const TProductProperties = PrimaryTemplate.bind({})
+export const GProductProperties = PrimaryTemplate.bind({})
 
-TProductProperties.args = {
+GProductProperties.args = {
   id: 'id',
   props: properties,
   errorText: ''
