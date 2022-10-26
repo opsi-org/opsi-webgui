@@ -11,14 +11,16 @@ const changes = namespace('changes')
       })
   }
 }
-@Component export class SaveHostParameters extends Vue {
+@Component export class SaveParameters extends Vue {
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
-  async saveParameters (url: string, request: any, item:any, tracking:boolean) {
-    const ref = (this.$refs.configViewAlert as any)
+  async saveParameters (url: string, request: any, deleteitem:any) {
+    const ref = (this.$refs.saveParam as any)
     await this.$axios.$post(url, request)
       .then(() => {
-        if (tracking) {
-          this.delFromChangesHostParam(item)
+        if (deleteitem) {
+          this.delFromChangesHostParam(deleteitem)
+        } else {
+          ref.alert(this.$t('message.success.trackChanges.save'), 'success')
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')

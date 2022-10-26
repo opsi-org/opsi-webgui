@@ -3,7 +3,7 @@
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <AlertAAlert ref="configViewAlert" />
+    <AlertAAlert ref="saveParam" />
     <IconILoading v-if="isLoading" />
     <InputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
     <DivDScrollResult>
@@ -29,16 +29,12 @@
 <script lang="ts">
 import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+import { SaveParameters } from '../../mixins/save'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, SaveParameters] })
 export default class GHostParam extends Vue {
-  iconnames: any
-  $axios: any
-  $t: any
-  $fetch: any
-
   @Prop({ }) id!: string
   @Prop({ }) type!: string
   filter: string = ''
@@ -47,6 +43,11 @@ export default class GHostParam extends Vue {
   isLoading: boolean = false
   errorText: string = ''
   newVal: any
+  saveParameters:any
+  iconnames: any
+  $axios: any
+  $t: any
+  $fetch: any
 
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesHostParam!: Array<any>
@@ -100,20 +101,6 @@ export default class GHostParam extends Vue {
     this.pushToChangesHostParam(changeObject)
   }
 
-  async saveParameters (url: string, request: any) {
-    this.isLoading = true
-    const ref = (this.$refs.configViewAlert as any)
-    await this.$axios.$post(url, request)
-      .then(() => {
-        ref.alert(this.$t('message.success.updateConfig.save') as string + ' Config', 'success')
-        // this.$fetch()
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.fetch') as string + ' Config', 'danger', detailedError)
-      })
-    this.isLoading = false
-  }
-
   async handleSelection (change: any) {
     if (this.quicksave) {
       let url: string = ''
@@ -128,7 +115,7 @@ export default class GHostParam extends Vue {
         url = '/api/opsidata/config/server'
         request = [change]
       }
-      await this.saveParameters(url, request)
+      await this.saveParameters(url, request, null)
     } else {
       this.trackHostParameters(change)
     }
