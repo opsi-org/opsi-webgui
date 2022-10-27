@@ -121,8 +121,8 @@
         </template>
         <template #value>
           <b-form inline>
-            <b-form-checkbox v-model="deployclientagent" />
-            <div :class="{'d-none' : !deployclientagent}">
+            <b-form-checkbox v-model="clientagent" />
+            <div :class="{'d-none' : !clientagent}">
               <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" :state="formvalidation" required />
               <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" :state="formvalidation" required />
               <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
@@ -145,7 +145,7 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
-import { SetUEFI } from '../../mixins/save'
+import { SetUEFI, DeployClientAgent } from '../../mixins/save'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
@@ -166,7 +166,7 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Constants, SetUEFI] })
+@Component({ mixins: [Constants, SetUEFI, DeployClientAgent] })
 export default class VClientCreation extends Vue {
   iconnames: any
   $axios: any
@@ -175,6 +175,7 @@ export default class VClientCreation extends Vue {
   $mq: any
   $t: any
   setUEFI:any
+  deployClientAgent:any
   clientIds: Array<string> = []
   result: string = ''
   isLoading: boolean = false
@@ -195,7 +196,7 @@ export default class VClientCreation extends Vue {
   form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
   uefi: boolean = false
-  deployclientagent: boolean = false
+  clientagent: boolean = false
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
@@ -245,21 +246,13 @@ export default class VClientCreation extends Vue {
       })
   }
 
-  async deployClientAgent () {
+  async deployclientagent () {
     this.form.clients = [this.newClient.hostId]
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
-    await this.$axios.$post('/api/opsidata/clients/deploy', this.form)
-      .then(() => {
-        const ref = (this.$refs.clientagentAlert as any)
-        ref.alert(this.$t('message.success.clientagent', { client: this.newClient.hostId }) as string, 'success')
-        this.$bvModal.hide('modalDeployClientAgent')
-      }).catch((error) => {
-        const ref = (this.$refs.clientagentAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
-      })
+    const hidemodal = false
+    await this.deployClientAgent(this.form, hidemodal)
   }
 
   async assignToGroup () {
@@ -293,8 +286,8 @@ export default class VClientCreation extends Vue {
         if (this.group) {
           this.assignToGroup()
         }
-        if (this.deployclientagent) {
-          this.deployClientAgent()
+        if (this.clientagent) {
+          this.deployclientagent()
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')

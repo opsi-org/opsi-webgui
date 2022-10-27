@@ -11,6 +11,21 @@ const changes = namespace('changes')
       })
   }
 }
+@Component export class DeployClientAgent extends Vue {
+  async deployClientAgent (data: any, hidemodal:boolean) {
+    const ref = (this.$refs.clientagentAlert as any)
+    await this.$axios.$post('/api/opsidata/clients/deploy', data)
+      .then(() => {
+        ref.alert(this.$t('message.success.clientagent', { client: data.clientId[0] }) as string, 'success')
+        if (hidemodal) {
+          this.$bvModal.hide('event-modal-deployCA-' + data.clientId[0])
+        }
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
+      })
+  }
+}
 @Component export class SaveParameters extends Vue {
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
   async saveParameters (url: string, request: any, deleteitem:any) {
