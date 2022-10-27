@@ -33,7 +33,7 @@
       :items="cache_pages.flat()"
       selectable
       selected-variant=""
-      :select-mode="selectmode"
+      select-mode="range"
       sort-icon-left
       :per-page="tableData.perPage*cache_pages.max_elements"
       :no-local-sorting="true"
@@ -121,7 +121,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   @Prop({ }) rowident!: string
   @Prop({ }) totalpages!: number
   @Prop({ }) totalItems!: number
-  @Prop({ }) ismultiselect!: boolean
   @Prop({ }) tableData!: ITableData
   @Prop({ }) cache_pages!: QueueNested
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
@@ -140,7 +139,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   @cache.Getter public opsiconfigserver!: string
 
   get contextSlots () { return Object.keys(this.$scopedSlots).filter(k => k.startsWith('contextcontent')) }
-  get selectmode () { return (this.ismultiselect) ? 'range' : 'single' }
   get tableScrollBody () { return (this.$refs[this.id] as any)?.$el }
   get isFirstPage () { return this.totalpages > 0 && (this.tableData.pageNumber === 1 || this.cache_pages.first_page_number === 1) }
   get isLastPage () {
@@ -360,24 +358,12 @@ export default class TInfiniteScrollSmooth extends Vue {
   onRowClicked (item:ITableDataItem) {
     const ident = item[this.rowident]
     const selectionCopy:Array<string> = [...this.selection]
-    if (this.ismultiselect) {
-      if (selectionCopy.includes(ident)) {
-        selectionCopy.splice(selectionCopy.indexOf(ident), 1)
-      } else {
-        selectionCopy.push(ident)
-      }
-      this.setselection(selectionCopy)
+    if (selectionCopy.includes(ident)) {
+      selectionCopy.splice(selectionCopy.indexOf(ident), 1)
+    } else {
+      selectionCopy.push(ident)
     }
-    if (!this.ismultiselect) {
-      if (this.rowident === 'productId') {
-        this.routechild(ident)
-        this.setselection([ident])
-      } else if (selectionCopy.includes(ident)) {
-        this.setselection([])
-      } else {
-        this.setselection([ident])
-      }
-    }
+    this.setselection(selectionCopy)
   }
 
   contextOpen (item, _, evt) {

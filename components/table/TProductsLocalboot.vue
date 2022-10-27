@@ -14,7 +14,6 @@
       :cache_pages="cache_pages"
       :total-items="totalItems"
       :totalpages="totalpages"
-      :ismultiselect="multiselect"
       :selection="selectionProducts"
       :setselection="setSelectionProducts"
       :routechild="routeToChild"
@@ -181,7 +180,6 @@ export default class TProductsLocalboot extends Vue {
   @Prop() rowident!: string
   @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
-  @Prop({ default: true }) multiselect!: boolean
   @Prop() child!: boolean
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) tableInfo!: ITableInfo

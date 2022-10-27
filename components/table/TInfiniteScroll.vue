@@ -23,7 +23,6 @@
       :items="items"
       selectable
       selected-variant=""
-      :select-mode="selectmode"
       sort-icon-left
       :per-page="tableData.perPage"
       :no-local-sorting="true"
@@ -102,7 +101,6 @@ export default class TInfiniteScroll extends Vue {
   @Prop({ }) rowident!: string
   @Prop({ }) totalpages!: number
   @Prop({ }) totalItems!: number
-  @Prop({ }) ismultiselect!: boolean
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
   @Prop({ default: () => { return () => { /* default */ } } }) fetchitems!: Function
   @Prop({ default: () => { return () => { /* default */ } } }) setselection!: Function
@@ -116,7 +114,6 @@ export default class TInfiniteScroll extends Vue {
   get tableScrollBody () { return (this.$refs[this.id] as any)?.$el }
   get isFirstPage () { return this.totalpages > 0 && this.tableData.pageNumber === 1 }
   get isLastPage () { return this.tableData.pageNumber === this.totalpages }
-  get selectmode () { return (this.ismultiselect) ? 'range' : 'single' }
 
   @Watch('tableData', { deep: true }) tableDataChanged () { this.addScrollEvent() }
   @Watch('items', { deep: false }) pageChanged () { this.scrollTop() }
@@ -209,24 +206,12 @@ export default class TInfiniteScroll extends Vue {
   onRowClicked (item:ITableDataItem) {
     const ident = item[this.rowident]
     const selectionCopy:Array<string> = [...this.selection]
-    if (this.ismultiselect) {
-      if (selectionCopy.includes(ident)) {
-        selectionCopy.splice(selectionCopy.indexOf(ident), 1)
-      } else {
-        selectionCopy.push(ident)
-      }
-      this.setselection(selectionCopy)
+    if (selectionCopy.includes(ident)) {
+      selectionCopy.splice(selectionCopy.indexOf(ident), 1)
+    } else {
+      selectionCopy.push(ident)
     }
-    if (!this.ismultiselect) {
-      if (this.rowident === 'productId') {
-        this.routechild(ident)
-        this.setselection([ident])
-      } else if (selectionCopy.includes(ident)) {
-        this.setselection([])
-      } else {
-        this.setselection([ident])
-      }
-    }
+    this.setselection(selectionCopy)
   }
 
   clearSelected () {
