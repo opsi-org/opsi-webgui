@@ -56,43 +56,6 @@ export default class MTrackChanges extends Vue {
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Getter public changesHostParam!: Array<ChangeObj>
-  @changes.Mutation public delFromChangesProducts!: (s: object) => void
-
-  // async saveProd (item: ChangeObj) {
-  //   const change = {
-  //     clientIds: [item.clientId],
-  //     productIds: [item.productId],
-  //     actionRequest: item.actionRequest
-  //   }
-
-  //   await this.$axios.$post('/api/opsidata/clients/products', change)
-  //     .then(() => {
-  //       this.delFromChangesProducts(item)
-  //     }).catch((error) => {
-  //       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-  //       this.error = detailedError
-  //     })
-  // }
-
-  // async saveAll () {
-  //   this.changelist = this.changesProducts.filter(o => o.user === this.username)
-  //   for (const p in this.changelist) {
-  //     const change = this.changelist[p]
-  //     if (change.actionRequest) {
-  //       await this.saveProd(change)
-  //     } else if (change.property) {
-  //       await this.saveProdProp(change)
-  //     }
-  //   }
-  //   if (this.error) {
-  //     const ref = (this.$refs.trackChangesAlert as any)
-  //     ref.alert(this.$t('message.error.title'), 'danger', this.error)
-  //   } else {
-  //     const ref = (this.$refs.trackChangesAlert as any)
-  //     ref.alert(this.$t('message.success.trackChanges.saveAll'), 'success')
-  //     this.$nuxt.refresh()
-  //   }
-  // }
 }
 </script>
 

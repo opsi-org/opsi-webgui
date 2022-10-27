@@ -1,6 +1,6 @@
 <template>
   <div data-testid="GChangesProducts">
-    <AlertAAlert ref="changesAlert" />
+    <AlertAAlert ref="productsAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
       <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
       <DivDScrollResult>
@@ -48,11 +48,11 @@
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
-import { SaveProductProperties } from '../../mixins/save'
+import { SaveProductActionRequest, SaveProductProperties } from '../../mixins/save'
 const auth = namespace('auth')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants, SaveProductProperties] })
+@Component({ mixins: [Constants, SaveProductActionRequest, SaveProductProperties] })
 export default class GChangesProducts extends Vue {
   iconnames: any
   $axios: any
@@ -60,6 +60,7 @@ export default class GChangesProducts extends Vue {
   $nuxt: any
   $t:any
   saveProdProperties:any
+  saveProdActionRequest:any
   filter: string = ''
   groupedById: Array<any> = []
   @auth.Getter public username!: string
@@ -83,29 +84,15 @@ export default class GChangesProducts extends Vue {
     }, {})
   }
 
-  async saveProd (item: ChangeObj) {
-    const change = {
-      clientIds: [item.clientId],
-      productIds: [item.productId],
-      actionRequest: item.actionRequest
-    }
-    await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then(() => {
-        const ref = (this.$refs.changesAlert as any)
-        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
-        this.$nuxt.refresh()
-        this.delFromChangesProducts(item)
-      }).catch((error) => {
-        const ref = (this.$refs.changesAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
-      })
-  }
-
   async save (rowItem: ChangeObj) {
     const change = rowItem
     if (change.actionRequest) {
-      this.saveProd(change)
+      const data = {
+        clientIds: [change.clientId],
+        productIds: [change.productId],
+        actionRequest: change.actionRequest
+      }
+      await this.saveProdActionRequest(data, change)
     } else if (change.property) {
       const propObj: any = {}
       propObj[change.property] = change.propertyValue

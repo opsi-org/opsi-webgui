@@ -294,7 +294,7 @@ export default class TProductsNetboot extends Vue {
         }
       }
     } else if (orgActionReq !== newrequest) {
-      await this.saveProdActionRequest(data)
+      await this.saveProdActionRequest(data, null)
       this.fetchOptions.fetchClients = true
       this.$fetch()
     }
@@ -323,7 +323,7 @@ export default class TProductsNetboot extends Vue {
         }
       }
     } else {
-      await this.saveProdActionRequest(data)
+      await this.saveProdActionRequest(data, null)
       this.$fetch()
     }
   }
