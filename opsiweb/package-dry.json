@@ -25,7 +25,7 @@
       "buildclean-lib": "cd uib-components && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run buildclean",
       "prod": "nuxt generate ./ && dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run start",
       "start": "nuxt start -p 4445 ./ ",
-      "generate": "nuxt generate ./ ",
+      "generate": "NODE_OPTIONS=--openssl-legacy-provider nuxt generate ./ ",
     "//storybook":"commands for storybook",
       "story": "rm -rf uib-components/node_modules; PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook . --ci --quiet --port 3003 -s ./uib-components/static",
       "story-components": "PORT=3003 NODE_ENV=development NODE_OPTIONS=--inspect nuxt-storybook  uib-components/ --ci --quiet --port 3003 -s ./uib-components/static",
