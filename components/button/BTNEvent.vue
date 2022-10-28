@@ -13,7 +13,7 @@
         'w-100 h-100 text-left border-0': true
       }"
       :size="size"
-      @click="show=true"
+      @click="$bvModal.show('event-modal-' + event + '-' + data)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
@@ -30,7 +30,7 @@
         [classes]: true
       }"
       @click="$bvModal.show('event-modal-' + event + '-' + data)"
-      @keypress.enter="show=true"
+      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}

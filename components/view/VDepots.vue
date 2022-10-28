@@ -18,7 +18,6 @@
           :enable-show-products="false"
           :enable-show-changes="false"
           :table-info.sync="tableInfo"
-          :multiselect-toggler="false"
           :redirect-on-close-to="undefined"
           :redirect="undefined"
         />
@@ -35,7 +34,6 @@
           :cache_pages="cache_pages"
           :total-items="totalItems"
           :totalpages="totalpages"
-          :ismultiselect="true"
           :selection="selectionDepots"
           :setselection="setSelectionDepots"
           :fetchitems="_fetch"

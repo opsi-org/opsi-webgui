@@ -33,7 +33,6 @@
           :cache_pages="cache_pages"
           :total-items="totalItems"
           :totalpages="totalpages"
-          ismultiselect="true"
           :selection="selectionClients"
           :setselection="setSelectionClients"
           :fetchitems="_fetch"

@@ -111,7 +111,7 @@ export default class BTooltipCollapseRow extends Vue {
   $router: any
   $route: any
 
-  @Watch('collapsed', { deep: true }) multiselectTogglerChanged () {
+  @Watch('collapsed', { deep: true }) collapseTogglerChanged () {
     this.contentVisible = !this.collapsed
   }
 
