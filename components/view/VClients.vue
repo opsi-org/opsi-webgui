@@ -33,7 +33,6 @@
           :cache_pages="cache_pages"
           :total-items="totalItems"
           :totalpages="totalpages"
-          ismultiselect="true"
           :selection="selectionClients"
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
@@ -65,6 +64,7 @@
             <DropdownDDTableSorting
               :table-id="id"
               :incontextmenu="true"
+              onhover
               v-bind.sync="tableInfo"
             />
             <DropdownDDTableColumnVisibility
@@ -73,6 +73,7 @@
               :sort-by="tableInfo.sortBy"
               :multi="true"
               :incontextmenu="true"
+              onhover
             />
             <ButtonBTNRefetch
               :is-loading="isLoading"
@@ -365,6 +366,3 @@ export default class VClients extends Vue {
   }
 }
 </script>
-
-<style>
-</style>

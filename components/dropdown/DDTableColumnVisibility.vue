@@ -1,11 +1,11 @@
 <template>
-  <div v-if="onhover!==false" @mouseover="onOver" @mouseleave="onLeave" @focusin="onOver" @focusout="onLeave">
+  <div v-if="onhover!==false" @mouseover="onOver($refs.dropdown)" @mouseleave="onLeave($refs.dropdown)" @focusin="onOver($refs.dropdown)" @focusout="onLeave($refs.dropdown)">
     <b-dropdown
       ref="dropdown"
       v-bind="$props"
       data-testid="DropdownDDTableColumnVisibility"
       lazy
-      right
+      dropright
       :no-caret="incontextmenu == false"
       :toggle-tag="incontextmenu !== false ? 'li': 'button'"
       :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
@@ -42,7 +42,26 @@
       <template v-else>
         <!-- id="selectableColumns-group"
         name="selectableColumns" -->
-        <b-dropdown-form
+
+        <li
+          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
+          :key="header.key"
+          class="dropdown-item"
+          :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
+        >
+          <a
+            class=""
+            @keydown.prevent="handleItem(header.key)"
+            @click.prevent="handleItem(header.key)"
+          >
+            <b-form-checkbox
+              :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
+              :class="{'selected':columnVisibilityStates[header.key]}"
+            />
+            <small>{{ header.label }}</small>
+          </a>
+        </li>
+        <!-- <b-dropdown-form
           v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
           :key="header.key"
           class="dropdown-item"
@@ -56,9 +75,9 @@
               :value="header.key"
               :class="{'selected':columnVisibilityStates[header.key]}"
             />
-            {{ header.label }}
+           B <small>{{ header.label }}</small>
           </b-input-group>
-        </b-dropdown-form>
+        </b-dropdown-form> -->
       </template>
     </b-dropdown>
   </div>
@@ -67,7 +86,8 @@
     ref="dropdown"
     v-bind="$props"
     data-testid="DropdownDDTableColumnVisibility"
-    dropright
+    :dropright="$mq=='desktop' || incontextmenu !== false"
+    :dropleft="$mq!=='desktop' && incontextmenu === false"
     lazy
     :no-caret="incontextmenu == false"
     :toggle-tag="incontextmenu !== false ? 'li': 'button'"
@@ -132,17 +152,20 @@ import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '../../.utils/types/ttable'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { HoverDropdown } from '../../mixins/uib-mixins'
 const settings = namespace('settings')
 
-@Component
+@Component({ mixins: [HoverDropdown] })
 export default class DDTableColumnVisibility extends BDropdown {
+  $mq:any
+  onOver:any
+  onLeave:any
   @Prop({ default: 'table' }) tableId!: string
   @Prop({ }) sortBy!: string
   @Prop({ default: undefined }) multi!: boolean|undefined
   @Prop({ default: false }) onhover!: boolean
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
-  $mq:any
   viewId = ((this.tableId === 'Localboot') || (this.tableId === 'Netboot')) ? 'products' : this.tableId
 
   @settings.Getter public twoColumnLayoutCollapsed!: IObjectString2Boolean
@@ -244,18 +267,6 @@ export default class DDTableColumnVisibility extends BDropdown {
     // triggerupdate
     this.$emit('update:headers', this.headers)
   }
-
-  onOver () {
-    if (this.$refs.dropdown) {
-      (this.$refs.dropdown as any).visible = true
-    }
-  }
-
-  onLeave () {
-    if (this.$refs.dropdown) {
-      (this.$refs.dropdown as any).visible = false
-    }
-  }
 }
 </script>
 <style>
@@ -281,7 +292,10 @@ export default class DDTableColumnVisibility extends BDropdown {
 .DDTableColumnVisibility .dropdown-menu .dropdown-item {
   padding: 0px !important;
   cursor: pointer;
-
+}
+.DDTableColumnVisibility .dropdown-menu .custom-checkbox{
+  display: inline;
+  margin-left: 15px;
 }
 
 .DDTableColumnVisibility .dropdown-menu li .b-dropdown-form {

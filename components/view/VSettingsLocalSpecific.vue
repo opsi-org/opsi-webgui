@@ -1,11 +1,14 @@
 <template>
   <div data-testid="VSettingsLocalSpecific" :class="'VSettingsLocalSpecific '+ $mq">
-    <GridGFormItem :label="$t('form.theme')">
+    <GridGFormItem v-once>
+      <template #label>
+        <span class="theme">{{ $t('form.theme') }}</span>
+      </template>
       <template #value>
         <DropdownDDTheme />
       </template>
     </GridGFormItem>
-    <GridGFormItem data-testid="quicksave">
+    <GridGFormItem v-once data-testid="quicksave">
       <template #label>
         <ButtonBTNHelp id="savemode-help" />
         <span class="quicksave">{{ $t('form.quicksave') }}</span>

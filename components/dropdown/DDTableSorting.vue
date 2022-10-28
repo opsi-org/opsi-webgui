@@ -1,9 +1,10 @@
 <template>
-  <div v-if="onhover!==false" @mouseover="onOver" @mouseleave="onLeave" @focusin="onOver" @focusout="onLeave">
+  <div v-if="onhover!==false" @mouseover="onOver($refs.dropdown)" @mouseleave="onLeave($refs.dropdown)" @focusin="onOver($refs.dropdown)" @focusout="onLeave($refs.dropdown)">
     <b-dropdown
       ref="dropdown"
       v-bind="$props"
       data-testid="DropdownDDTableSorting"
+      dropright
       lazy
       :no-caret="incontextmenu == false"
       :toggle-tag="incontextmenu !== false ? 'li': 'button'"
@@ -17,36 +18,37 @@
         'dropdown-item': (incontextmenu !== false) }"
       :title="$t('button.sort.tablecolumns')"
     >
-      <!-- dropleft -->
       <template #button-content>
         <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
         {{ incontextmenu !== false ? $t('button.sort.tablecolumns.title'): '' }}
       </template>
-      <li>
-        <a
-          class="dropdown-item"
-          @keydown.prevent="changeSortDirection()"
-          @click.prevent="changeSortDirection()"
-        >
-          <b-form-checkbox
-            :checked="sortDesc"
-          />
-          <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
-        </a>
-      </li>
+      <small>
+        <li class="dropdown-item">
+          <a
+            class="sortDirectionWrapper"
+            @keydown.prevent="changeSortDirection()"
+            @click.prevent="changeSortDirection()"
+          >
+            <b-form-checkbox :checked="sortDesc" />
+            <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
+          </a>
+        </li>
+      </small>
       <li class="li-delimiter" />
       <li
         v-for="header in Object.values(headerData).filter(h=>h.sortable)"
         :key="header.key"
+        class="dropdown-item"
         :class="{'selected': (sortBy==header.key)}"
         variant="primary"
         @keydown="changeSortBy(header.key)"
         @click="changeSortBy(header.key)"
       >
-        <a class="bg-secondary">
-          {{ header.label }}
-        </a>
-        {{ (sortBy==header.key) }}
+        <small>
+          <a>
+            {{ header.label }}
+          </a>
+        </small>
       </li>
     </b-dropdown>
   </div>
@@ -54,7 +56,8 @@
     v-else
     v-bind="$props"
     data-testid="DropdownDDTableSorting"
-    dropright
+    :dropright="$mq=='desktop' || incontextmenu !== false"
+    :dropleft="$mq!='desktop' && incontextmenu === false"
     lazy
     :no-caret="incontextmenu == false"
     :toggle-tag="incontextmenu !== false ? 'li': 'button'"
@@ -68,7 +71,6 @@
       'dropdown-item': (incontextmenu !== false) }"
     :title="$t('button.sort.tablecolumns')"
   >
-    <!-- dropleft -->
     <template #button-content>
       <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
       <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.sort.tablecolumns.title') }}</small>
@@ -101,12 +103,14 @@
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeader } from '../../.utils/types/ttable'
-import { Constants } from '../../mixins/uib-mixins'
+import { Constants, HoverDropdown } from '../../mixins/uib-mixins'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, HoverDropdown] })
 export default class DDTableSorting extends BDropdown {
   $mq:any
   iconnames: any
+  onOver:any
+  onLeave:any
   @Prop({ default: '' }) sortBy!: string
   @Prop({ default: false }) sortDesc!: boolean
   @Prop({ default: false }) incontextmenu!: boolean
@@ -115,24 +119,11 @@ export default class DDTableSorting extends BDropdown {
 
   changeSortDirection () { this.$emit('update:sortDesc', (!this.sortDesc)) }
   changeSortBy (key:string) { this.$emit('update:sortBy', key) }
-
-  onOver () {
-    if (this.$refs.dropdown) {
-      (this.$refs.dropdown as any).visible = true
-    }
-  }
-
-  onLeave () {
-    if (this.$refs.dropdown) {
-      (this.$refs.dropdown as any).visible = false
-    }
-  }
 }
 </script>
 <style>
 .DropdownDDTableSorting {
   max-width: fit-content !important;
-  /* max-height: inherit !important; */
   max-height: var(--component-height) !important;
   display: unset !important;
 }
@@ -148,24 +139,21 @@ export default class DDTableSorting extends BDropdown {
   float: right;
   margin-top: 10px;
 }
+.DropdownDDTableSorting li.dropdown-item small {
+  padding-left: 5px;
+  padding-right: 5px;
+}
 .DropdownDDTableSorting .dropdown-menu {
   min-width: 220px !important;
   max-width: 350px !important;
   height: max-content !important;
-  z-index: 300 !important;
-  /* left: 25px !important; */
+  z-index: 3000 !important;
+  overflow: auto;
 }
-.DropdownDDTableSorting .dropdown-menu .dropdown-item {
-  /* padding-top: 2px !important;
-  padding-bottom: 2px !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important; */
-  /* margin: 0px !important; */
+.DropdownDDTableSorting .dropdown-menu .sortDirectionWrapper > div {
+  display: inline-block !important;
 }
 .DropdownDDTableSorting .dropdown-menu .dropdown-item:hover {
-  /* background-color: var(--light); */
-  /* background-color: initial; */
-  /* display: block !important; */
   display: inline-flex !important;
 }
 .DropdownDDTableSorting .dropdown-menu li {
@@ -174,6 +162,7 @@ export default class DDTableSorting extends BDropdown {
   padding-right: 5px;
   white-space: normal;
   font-weight: 300 !important;
+  overflow: auto !important;
 }
 .DropdownDDTableSorting .dropdown-menu li .b-dropdown-form {
   margin: 0px !important;
@@ -187,11 +176,9 @@ export default class DDTableSorting extends BDropdown {
 }
 .DropdownDDTableSorting.absolutright > li {
   border: unset !important;
-  /* color: var(--light) !important; */
 }
 .DropdownDDTableSorting.absolutright > li:hover {
   border: unset !important;
-  /* color: var(--light) !important; */
 }
 .DropdownDDTableSorting  .dropdown-menu li.selected {
   color: var(--light) !important;

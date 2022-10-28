@@ -40,7 +40,6 @@ export default class TSDepots extends Vue {
       await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
-          // console.log('fetchedDataClients2Depots', this.fetchedDataClients2Depots)
         }).catch((error) => {
           this.fetchedDataClients2Depots = {}
           throw new Error(error)
@@ -52,7 +51,6 @@ export default class TSDepots extends Vue {
     const selectedClientsOnDepots = Object.fromEntries(Object.entries(this.fetchedDataClients2Depots).filter(
       ([_, value]) => this.selectionDepots.includes(value)
     ))
-    // console.log('client2depot', selectedClientsOnDepots)
     this.setSelectionClients(Object.keys(selectedClientsOnDepots))
   }
 

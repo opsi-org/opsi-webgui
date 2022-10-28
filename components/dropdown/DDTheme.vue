@@ -11,7 +11,7 @@
       alt="select theme"
       :dropup="dropup"
     >
-      <template #button-content="">
+      <template #button-content>
         <b-icon v-if="themeicon" :icon="themeicon" />
         {{ ($mq=='mobile') ? theme.title :'' }}
       </template>
@@ -33,7 +33,7 @@
       variant="outline-primary"
       :dropup="dropup"
     >
-      <template #button-content="">
+      <template #button-content>
         <b-icon v-if="themeicon" :icon="themeicon" />
         {{ theme.title }}
       </template>
@@ -59,9 +59,10 @@ const settings = namespace('settings')
 
 @Component({ mixins: [Constants] })
 export default class DDTheme extends Vue {
-  iconnames: any
   @Prop({ default: false }) dropup!: boolean
   @Prop({ default: false }) navbar!: boolean
+  iconnames: any
+  $mq:any
   t: string = ''
 
   @settings.Getter public colortheme!: ITheme
@@ -114,7 +115,6 @@ export default class DDTheme extends Vue {
   display:none;
 }
 
-/* #theme .dropdown-icon.selected, */
 #theme .selected,
 #theme .selected > a.dropdown-item,
 #theme .selected:hover {

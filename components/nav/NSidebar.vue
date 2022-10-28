@@ -2,7 +2,6 @@
   <b-nav vertical tabs class="sidemenu_nav" :class="{expanded:expanded}" data-testid="NSidebar">
     <span v-for="catogery in navItems" :key="catogery.title">
       <br>
-      <!-- <NavItemNITitle :expanded="expanded" :title="catogery.title" /> -->
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
           <NavItemNICollapsible
@@ -60,10 +59,6 @@ export default class NSidebar extends Vue {
   $nuxt: any
   iconnames: any // from mixin
   @Prop({ }) expanded!: boolean
-
-  // created () {
-  //   console.log('constants: ', this.iconnames)
-  // }
   @config.Getter public config!: IObjectString2Boolean
 
   refresh (route) {
@@ -120,18 +115,6 @@ export default class NSidebar extends Vue {
 </script>
 
 <style>
-/* .a {
-  color: white !important;
-  background-color: var(--primary);
-} */
-/* .sidemenu_nav a.nuxt-link-active {
-  color:var(--light);
-  background-color: var(--primary);
-} */
-/* .sidemenu_nav a.nuxt-link-exact-active {
-  color:var(--light);
-  background-color: var(--primary);
-} */
 .sidemenu_nav a.nuxt-link-active,
 .sidemenu_nav a.nuxt-link-exact-active,
 .sidemenu_nav .checkactive.nav-item {
@@ -139,20 +122,6 @@ export default class NSidebar extends Vue {
   background-color: var(--primary);
   filter: saturate(.4) brightness(1) !important;
 }
-/* .sidemenu_nav:not(.expanded) a.nuxt-link-active,
-.sidemenu_nav:not(.expanded) a.nuxt-link-exact-active,
-.sidemenu_nav:not(.expanded) .checkactive.nav-item {
-  color:var(--light);
-  background-color: var(--primary);
-  filter: saturate(.4) brightness(1) !important;
-}
-.sidemenu_nav.expanded a.nuxt-link-active,
-.sidemenu_nav.expanded a.nuxt-link-exact-active,
-.sidemenu_nav.expanded .checkactive.nav-item {
-  color: var(--light) !important;
-  background-color: var(--primary);
-  filter: saturate(.4) brightness(1) !important;
-} */
 .navbar-light .navbar-nav .nav .nav-item{
   color: inherit !important;
   font-weight: normal !important;

@@ -14,12 +14,11 @@
         </b-button>
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
-        <IconIOpsiLogo :light="true" class="mt-2" height="20" />
+        <IconIOpsiLogo v-once :light="true" class="mt-2" height="20" />
         <span class="ml-1 topbar_title">
-          <!-- {{ getTitleUppercase() }} -->
           {{ $t('title.project') }}
         </span>
-        <span class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
+        <span v-once class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" type="light" />
@@ -45,13 +44,12 @@
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto float-right">
-          <!-- <div v-if="$mq!=='mobile'" class="vertical-line n-right-item" /> -->
           <ModalMSelectionsAll :navbar="true" />
           <ButtonBTNEvent :navbar="true" event="ondemand" size="md" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
-          <DropdownDDLang :navbar="true" />
-          <DropdownDDTheme :navbar="true" />
-          <ButtonBTNLogout :navbar="true" />
+          <DropdownDDLang v-once :navbar="true" />
+          <DropdownDDTheme v-once :navbar="true" />
+          <ButtonBTNLogout v-once :navbar="true" />
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -81,27 +79,18 @@ export default class BTop extends Vue {
   get username () {
     return localStorage.getItem('username')
   }
-
-  // getTitleUppercase () {
-  //   return (this.$t('title.project') as string).toUpperCase()
-  // }
 }
 </script>
 
 <style>
 .topbar{
   background: var(--primary) !important;
-  /* position: fixed; */
   height: var(--height-navbar) !important;
   margin-bottom: 0px !important;
   padding: 0em !important;
   padding-left: 20px !important;
   padding-right: 0px !important;
 }
-/* .topbar.navbar {
-  display: flex;
-  flex-wrap: nowrap;
-} */
 .mobile .topbar {
   padding-left: 0px !important;
 }

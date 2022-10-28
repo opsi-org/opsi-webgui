@@ -1,5 +1,13 @@
 <template>
-  <div :id="'TInfiniteScrollSmoothWrapper_' + id" data-testid="TInfiniteScrollSmooth" class="TInfiniteScrollSmoothWrapper" :class="{loadingCursor: isLoading}">
+  <div
+    :id="'TInfiniteScrollSmoothWrapper_' + id"
+    data-testid="TInfiniteScrollSmooth"
+    class="TInfiniteScrollSmoothWrapper"
+    :class="{
+      loadingCursor: isLoading,
+      empty: cache_pages.flat().length <= 0
+    }"
+  >
     <p v-if="error">
       {{ error }}
     </p>
@@ -14,7 +22,7 @@
       :class="{ firstpage: isFirstPage,
                 lastpage: isLastPage,
                 mobileview: $mq=='mobile',
-                isLoading: isLoading
+                isLoading: isLoading,
       }"
       sticky-header
       show-empty
@@ -25,7 +33,7 @@
       :items="cache_pages.flat()"
       selectable
       selected-variant=""
-      :select-mode="selectmode"
+      select-mode="range"
       sort-icon-left
       :per-page="tableData.perPage*cache_pages.max_elements"
       :no-local-sorting="true"
@@ -34,8 +42,6 @@
       @row-clicked="onRowClicked"
       @row-contextmenu="contextOpen"
     >
-      <!-- @row-contextmenu="(contextSlots.length > 0) ? contextOpen : undefined" -->
-      <!-- :per-page="tableData.perPage" -->
       <template v-if="totalpages > 1" #top-row="{ columns }">
         <b-th :colspan="columns" class="tablehead">
           <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
@@ -57,15 +63,12 @@
       <template #head(selected)>
         <small v-if="rowident !== 'productId'"> <b class="count">
           {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
-          <!-- {{ selection.length }}/{{ totalItems|| 0 }}  -->
         </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
       </template>
       <template #head(rowactions)>
         <b-button-group>
-          <!-- <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" /> -->
           <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" variant="outline-primary" />
-          <!-- <DropdownDDTableColumnVisibility :table-id="id" :headers="headerData" /> -->
           <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" variant="outline-primary" />
         </b-button-group>
       </template>
@@ -86,7 +89,7 @@
         <slot :name="slotName" v-bind="slotScope" />
       </template>
     </b-table>
-    <BarBTableFooter :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
+    <BarBTableFooter v-if="cache_pages.flat().length>0" :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
     <b-overlay :show="isLoading" no-wrap opacity="0.5" />
     <br>
     <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
@@ -118,7 +121,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   @Prop({ }) rowident!: string
   @Prop({ }) totalpages!: number
   @Prop({ }) totalItems!: number
-  @Prop({ }) ismultiselect!: boolean
   @Prop({ }) tableData!: ITableData
   @Prop({ }) cache_pages!: QueueNested
   @Prop({ default: () => { return [] } }) readonly selection!: Array<string>
@@ -137,7 +139,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   @cache.Getter public opsiconfigserver!: string
 
   get contextSlots () { return Object.keys(this.$scopedSlots).filter(k => k.startsWith('contextcontent')) }
-  get selectmode () { return (this.ismultiselect) ? 'range' : 'single' }
   get tableScrollBody () { return (this.$refs[this.id] as any)?.$el }
   get isFirstPage () { return this.totalpages > 0 && (this.tableData.pageNumber === 1 || this.cache_pages.first_page_number === 1) }
   get isLastPage () {
@@ -357,24 +358,12 @@ export default class TInfiniteScrollSmooth extends Vue {
   onRowClicked (item:ITableDataItem) {
     const ident = item[this.rowident]
     const selectionCopy:Array<string> = [...this.selection]
-    if (this.ismultiselect) {
-      if (selectionCopy.includes(ident)) {
-        selectionCopy.splice(selectionCopy.indexOf(ident), 1)
-      } else {
-        selectionCopy.push(ident)
-      }
-      this.setselection(selectionCopy)
+    if (selectionCopy.includes(ident)) {
+      selectionCopy.splice(selectionCopy.indexOf(ident), 1)
+    } else {
+      selectionCopy.push(ident)
     }
-    if (!this.ismultiselect) {
-      if (this.rowident === 'productId') {
-        this.routechild(ident)
-        this.setselection([ident])
-      } else if (selectionCopy.includes(ident)) {
-        this.setselection([])
-      } else {
-        this.setselection([ident])
-      }
-    }
+    this.setselection(selectionCopy)
   }
 
   contextOpen (item, _, evt) {
@@ -397,6 +386,10 @@ export default class TInfiniteScrollSmooth extends Vue {
 .TInfiniteScrollSmoothWrapper{
   max-height: max-content;
 }
+.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth {
+  min-height: 450px !important;
+  /* overflow: inherit !important; */
+}
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
   max-height: 70vh;
 }
@@ -411,14 +404,9 @@ export default class TInfiniteScrollSmooth extends Vue {
 }
 
 .TInfiniteScrollSmoothWrapper .table.b-table > thead > tr > .table-b-table-default, .table.b-table > tbody > tr > .table-b-table-default, .table.b-table > tfoot > tr > .table-b-table-default {
-  /* each header cell */
   color: inherit;
   background-color: inherit;
 }
-/* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth{ */
-  /* why? padding? */
-  /* padding-bottom: 70px; */
-/* } */
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table td,
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth .table th {
   border-top: 1px solid var(--table-border);
@@ -464,16 +452,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   padding-bottom: 400px !important;
   text-align: center;
 }
-/* .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.mobileview:not(.firstpage) .tablehead {
-  padding-top: 100px !important;
-  text-align: center;
-}
-.TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.mobileview:not(.lastpage) .tablefooter {
-  padding-bottom: 100px !important;
-  text-align: center;
-} */
-/* .tablefooter_lastpage { display: none; } */
-/* .TInfiniteScrollSmooth:not(.lastpage)  */
 .TInfiniteScrollSmoothWrapper .tablefooter_lastpage {
   padding-bottom: 600px !important;
   text-align: center;

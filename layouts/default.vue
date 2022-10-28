@@ -7,9 +7,8 @@
       sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile'}"
   >
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
-    <BarBSide class="sidebar_content" :attributes="sidebarAttr" />
+    <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
-      <!-- <BarBBreadcrumbRow type="dark" /> -->
       <AlertAAlert ref="alertConfigurationError" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
       <AlertAAlert ref="ondemandMessage" /> <!-- referenced in BTop, any changes should be checked with expiring-session-behaviour-->
@@ -19,7 +18,6 @@
 </template>
 
 <script lang="ts">
-// import Cookie from 'js-cookie'
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
@@ -47,7 +45,6 @@ export default class LayoutDefault extends Vue {
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
-  // sidebarAttr: SideBarAttr = { visible: this.$mq !== 'mobile', expanded: this.$mq !== 'mobile' }
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
     await this.checkServer()
@@ -61,12 +58,6 @@ export default class LayoutDefault extends Vue {
     window.onbeforeunload = this.confirmToSaveChanges
     await this.checkServer()
     await this.checkConfig()
-    // if (Cookie.get('menu_attributes_desktop')) {
-    //   this.sidebarAttr = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any)
-    // } else {
-    //   // this.sidebarAttr = { visible: true, expanded: true }
-    // }
-    // this.updateSidebarAttr()
   }
 
   confirmToSaveChanges () {
@@ -99,7 +90,6 @@ export default class LayoutDefault extends Vue {
       const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.alertConfigurationError as any)
       ref.alert(this.$t('message.error.fetch') as string + 'Configuration', 'danger', detailedError || '')
-      // this.setConfig({'user':'adminuser','configuration': {'read_only':false } } ) //,"depot_access":false,"group_access":false,"client_creation":true}}.configuration)
       this.setConfig({ read_only: true })
     }
   }
@@ -108,7 +98,6 @@ export default class LayoutDefault extends Vue {
 
 <style>
 .topbar_content {
-  /* z-index: 2000; */
   z-index: 1000;
 }
 
@@ -119,7 +108,6 @@ export default class LayoutDefault extends Vue {
 }
 
 .topbar_content {
-  /* position: absolute !important; */
   width: 100% !important;
   max-height: 100px;
 }
@@ -127,12 +115,10 @@ export default class LayoutDefault extends Vue {
   position:absolute;
   margin-top: var(--margin-top-maincontent);
   margin-left: var(--margin-left-maincontent);
-
-  /* overflow: hidden; */
   overflow-x: auto;
   overflow-y: hidden;
   width: calc(100% - 2 * var(--margin-left-maincontent));
-  /* height: calc(100% - var(--margin-top-maincontent) + 100px); */
+  min-height: -webkit-fill-available;
 }
 .main_content > .container-fluid{
   min-height: 350px;

@@ -128,15 +128,13 @@ export default class GProductProperties extends Vue {
   }
 
   async saveProdProp (change: object) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const t: any = this
     this.isLoading = true
     await this.$axios.$post(`/api/opsidata/products/${this.id}/properties`, change)
       .then(() => {
-        makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
+        makeToast(this, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
         this.$emit('refetch', true)
       }).catch((error) => {
-        makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
+        makeToast(this, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
       })
     this.isLoading = false
   }

@@ -84,9 +84,7 @@ export default class GChangesProducts extends Vue {
     }
     // const t:any = this
     await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response)
+      .then(() => {
         const ref = (this.$refs.changesAlert as any)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
         this.$nuxt.refresh()
@@ -117,9 +115,7 @@ export default class GChangesProducts extends Vue {
       }
     }
     await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, change)
-      .then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response)
+      .then(() => {
         const ref = (this.$refs.changesAlert as any)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
         this.$nuxt.refresh()

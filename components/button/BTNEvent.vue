@@ -13,7 +13,7 @@
         'w-100 h-100 text-left border-0': true
       }"
       :size="size"
-      @click="show=true"
+      @click="$bvModal.show('event-modal-' + event + '-' + data)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
@@ -29,20 +29,19 @@
       :class="{
         [classes]: true
       }"
-      @click="show=true"
-      @keypress.enter="show=true"
+      @click="$bvModal.show('event-modal-' + event + '-' + data)"
+      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (withText !== false ||incontextmenu!==false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <span class="eventlabel"> {{ (withText !== false || incontextmenu !== false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </li>
 
     <b-modal
-      v-model="show"
+      :id="'event-modal-' + event + '-' + data"
       :title="$t(events[event].titlemodal)"
       size="sm"
-      no-fade
     >
       <b-list-group v-if="event=='ondemand'" flush>
         <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->
@@ -72,15 +71,6 @@
         <p class="float-left footer">
           {{ $t('button.event.modal.footer', { event }) }}
         </p>
-        <!-- <b-button
-          variant="primary"
-          size="sm"
-          class="float-right"
-          @click="show=false"
-        >
-          {{ $t('button.close') }}
-        </b-button> -->
-          <!-- :disabled="data.length <= 0" -->
         <b-button
           variant="success"
           size="sm"
@@ -133,7 +123,6 @@ export default class BTNEvent extends Vue {
         params: {
           method: 'showPopup',
           params: ['Dummy text']
-          // client_ids: this.selectionClients
         },
         responseVisualization: this.showResultOndemand
       },
@@ -150,7 +139,6 @@ export default class BTNEvent extends Vue {
         responseVisualization: this.showResultOndemand
       },
       reboot: {
-        // event: 'on_demand',
         tooltip: 'button.event.reboot.tooltip',
         titlemodal: 'button.event.reboot',
         icon: this.iconnames.reboot,
@@ -199,8 +187,6 @@ export default class BTNEvent extends Vue {
         this.isLoading = false
         if (this.updateLoading !== undefined) { this.updateLoading([]) }
       }).catch((error) => {
-      // eslint-disable-next-line no-console
-        console.error(JSON.stringify(error))
         const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
         this.isLoading = false

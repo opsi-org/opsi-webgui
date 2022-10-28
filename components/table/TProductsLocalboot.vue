@@ -14,7 +14,6 @@
       :cache_pages="cache_pages"
       :total-items="totalItems"
       :totalpages="totalpages"
-      :ismultiselect="multiselect"
       :selection="selectionProducts"
       :setselection="setSelectionProducts"
       :routechild="routeToChild"
@@ -45,6 +44,7 @@
           :table-id="id"
           :incontextmenu="true"
           v-bind.sync="tableInfo"
+          onhover
         />
         <DropdownDDTableColumnVisibility
           :table-id="id"
@@ -52,6 +52,7 @@
           :sort-by="tableInfo.sortBy"
           :multi="true"
           :incontextmenu="true"
+          onhover
         />
         <ButtonBTNRefetch
           :is-loading="isLoadingTable || isLoading"
@@ -179,7 +180,6 @@ export default class TProductsLocalboot extends Vue {
   @Prop() rowident!: string
   @Prop() filterQuery!: string
   @Prop() routeRedirectWith!: Function
-  @Prop({ default: true }) multiselect!: boolean
   @Prop() child!: boolean
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) tableInfo!: ITableInfo
@@ -273,9 +273,7 @@ export default class TProductsLocalboot extends Vue {
     // const t:any = this
     this.isLoading = true
     await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response)
+      .then(() => {
         const ref = (this.$refs.productsAlert as any)
         ref.alert(this.$t('message.success.trackChanges.save'), 'success')
         // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
