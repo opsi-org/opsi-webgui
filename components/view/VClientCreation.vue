@@ -31,8 +31,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <!-- <b class="clientDetails">{{ $t('table.clientDetails') }} </b> -->
-        <b class="basics">{{ $t('Basics') }} </b>
+        <b class="basics">{{ $t('title.basics') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -75,8 +74,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <!-- <b class="addtnlInfo">{{ $t('table.addtnlInfo') }}</b> -->
-        <b class="settings">{{ $t('Settings') }} </b>
+        <b class="settings">{{ $t('title.settings') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -87,7 +85,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <b class="basics">{{ $t('Assignments') }} </b>
+        <b class="assignments">{{ $t('title.assignments') }} </b>
       </b-row>
       <GridGFormItem>
         <template #label>
@@ -106,16 +104,16 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <b class="setup">{{ $t('Initial Setup') }} </b>
+        <b class="initsetup">{{ $t('title.initsetup') }} </b>
       </b-row>
-      <!-- <GridGFormItem>
+      <GridGFormItem>
         <template #label>
           <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
         </template>
         <template #value>
-          <b-form-textarea id="netbootproduct" v-model="netbootproduct" :aria-label="$t('table.fields.netbootproduct')" rows="2" no-resize />
+          <b-form-select id="netbootproduct" v-model="netbootproduct" :options="netbootproductslist" />
         </template>
-      </GridGFormItem> -->
+      </GridGFormItem>
       <GridGFormItem>
         <template #label>
           <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
@@ -174,14 +172,12 @@ export default class VClientCreation extends Vue {
   $fetch: any
   $mq: any
   $t: any
-
   clientIds: Array<string> = []
   result: string = ''
   isLoading: boolean = false
   domain: string = ''
   clientName: string = ''
   depotId: string = ''
-  netbootproduct: string = ''
   group: any = null
   newClient: NewClient = {
     hostId: '',
@@ -193,12 +189,11 @@ export default class VClientCreation extends Vue {
   }
 
   form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
-
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
-
   uefi: boolean = false
-
   deployclientagent: boolean = false
+  netbootproduct: string = ''
+  netbootproductslist: Array<string> = []
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
@@ -235,11 +230,9 @@ export default class VClientCreation extends Vue {
 
   get checkValid () {
     return this.clientName.length > 0 && !this.clientIds.includes(this.clientName + this.domainName)
-    // return this.clientName.length > 0  && isNaN(this.clientName[0] as any) && !this.clientIds.includes(this.clientName + this.domainName)
   }
 
   async fetch () {
-    // this.clientIds = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
     await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.clientIds = response.sort()
@@ -247,6 +240,19 @@ export default class VClientCreation extends Vue {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
+      })
+    this.fetchNetbootProducts()
+  }
+
+  async fetchNetbootProducts () {
+    const depot = this.depotId || this.selectionDepots[0]
+    await this.$axios.$get(`/api/opsidata/depots/products?selectedDepots=[${depot}]`)
+      .then((response) => {
+        this.netbootproductslist = response
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'NetbootProducts', 'danger', detailedError)
       })
   }
 
@@ -285,6 +291,21 @@ export default class VClientCreation extends Vue {
       })
   }
 
+  async setupNetbootProduct () {
+    const change = {
+      clientIds: [this.newClient.hostId],
+      productIds: [this.netbootproduct],
+      actionRequest: 'setup'
+    }
+
+    await this.$axios.$post('/api/opsidata/clients/products', change)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.newClientAlert as any)
+        ref.alert(this.$t('message.error.setupNetboot') as string, 'danger', detailedError)
+      })
+  }
+
   async createOpsiClient () {
     this.isLoading = true
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
@@ -310,7 +331,9 @@ export default class VClientCreation extends Vue {
         if (this.deployclientagent) {
           this.deployClientAgent()
         }
-        // this.$nuxt.refresh()
+        if (this.netbootproduct) {
+          this.setupNetbootProduct()
+        }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.newClientAlert as any)
@@ -323,7 +346,6 @@ export default class VClientCreation extends Vue {
 
 <style>
 .VClientCreation {
-  /* display: flow-root; */
   overflow-x: hidden;
   padding-left: 10px;
   height: 100vh !important;
