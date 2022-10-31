@@ -202,6 +202,8 @@ export default class VClientCreation extends Vue {
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
 
+  @Watch('depotId', { deep: true }) depotIdChanged () { this.fetchNetbootProducts() }
+
   get domainName () {
     if (this.opsiconfigserver) {
       this.result = this.opsiconfigserver
