@@ -7,7 +7,7 @@
       </template>
     </BarBPageHeader>
     <IconILoading v-if="isLoading" />
-    <b-tabs class="config_horizontaltabs">
+    <b-tabs class="config_horizontaltabs" lazy>
       <b-tab active>
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
