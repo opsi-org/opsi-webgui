@@ -1,10 +1,10 @@
 <template>
   <div data-testid="GHostParam">
+    <b-overlay :show="isLoading" no-wrap opacity="0.5" />
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
     <AlertAAlert ref="saveParam" />
-    <IconILoading v-if="isLoading" />
     <InputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
     <DivDScrollResult>
       <span v-for="v,k in hostParam" :key="k">

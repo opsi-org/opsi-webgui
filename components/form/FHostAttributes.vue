@@ -1,5 +1,6 @@
 <template>
   <div data-testid="FHostAttributes" class="FHostAttributes">
+    <b-overlay :show="isLoading" no-wrap opacity="0.5" />
     <AlertAAlert ref="hostAttrErrorAlert" class="FHostAttributesAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
