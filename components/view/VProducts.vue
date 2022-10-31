@@ -3,8 +3,6 @@
     <AlertAAlert ref="productsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <!-- TODO: Test multiselect=true, if its fine, remove table select mode settings-->
-        <!-- :multiselect-toggler.sync="ismultiselect" -->
         <BarBCollapsePageHeader
           :id="id"
           :title="$t('title.products')"
@@ -41,7 +39,6 @@
               :is-loading="isLoading"
               :table-info.sync="tableInfo"
               :totallocalboot.sync="localboot"
-              :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
               :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
@@ -60,7 +57,6 @@
               :is-loading="isLoading"
               :table-info="tableInfo"
               :totalnetboot.sync="netboot"
-              :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
               :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
@@ -100,7 +96,6 @@ export default class VProducts extends Vue {
   sortdesc: boolean = false
   rowId: string = ''
   isLoading: boolean = false
-  ismultiselect: boolean = true
   localboot: string = ''
   netboot: string = ''
 

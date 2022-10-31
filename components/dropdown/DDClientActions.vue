@@ -4,11 +4,11 @@
     data-testid="DDClientActions"
     class="DDClientActions"
     :class="{incontextmenu: (incontextmenu != false)}"
-    @mouseover="onOver($refs.dropdown)"
+  >
+    <!-- @mouseover="onOver($refs.dropdown)"
     @mouseleave="onLeave($refs.dropdown)"
     @focusin="onOver($refs.dropdown)"
-    @focusout="onLeave($refs.dropdown)"
-  >
+    @focusout="onLeave($refs.dropdown)" -->
     <b-dropdown
       ref="dropdown"
       variant="outline-primary border-0"

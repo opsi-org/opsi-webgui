@@ -1,13 +1,13 @@
 <template>
-  <b-form-row class="TCProductPropertyValue_Container justify-content-md-center">
+  <b-form-row class="GCProductPropertyValue_Container justify-content-md-center">
     <b-col
-      class="TCProductPropertyValue_Value"
+      class="GCProductPropertyValue_Value"
       :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}"
       @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${selectedValues}`: () => {} } "
     >
       <b-form-checkbox
         v-if="rowItem.type=='BoolProductProperty'"
-        :class="{'TCProductPropertyValue_ValueBool':true,'value-changed-not-saved': !isOrigin }"
+        :class="{'GCProductPropertyValue_ValueBool':true,'value-changed-not-saved': !isOrigin }"
         :checked="selectedValues[0]"
         :disabled="(config)? config.read_only : false"
         :aria-label="rowItem.propertyId + (selectedValues[0]?'checked':'unchecked')"
@@ -34,13 +34,13 @@
         @change="selectionChanged"
       />
     </b-col>
-    <b-col v-if="rowItem.propertyId.includes('password')" class="TCProductPropertyValue_ShowBtn" cols="*">
+    <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn" cols="*">
       <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
         <b-icon v-if="showValue" :icon="iconnames.valueShow" />
         <b-icon v-else :icon="iconnames.valueHide" />
       </b-button>
     </b-col>
-    <b-col v-if="showTooltip" class="TCProductPropertyValue_MixedTT" cols="*">
+    <b-col v-if="showTooltip" class="GCProductPropertyValue_MixedTT" cols="*">
       <IconIDetails :id="`DDProductProperty_value_hover_${rowItem.propertyId}`" class="right" content="ppv-client-different" />
       <TooltipTTProductCell
         v-if="showTooltip"
@@ -66,7 +66,7 @@ const config = namespace('config-app')
 // const mixed = '<mixed>'
 
 @Component({ mixins: [Constants] })
-export default class TCProductPropertyValue extends Vue {
+export default class GCProductPropertyValue extends Vue {
   $t:any
   iconnames:any
   // @Prop() type!: 'unicode'|'bool'|'functional'
@@ -290,16 +290,16 @@ export default class TCProductPropertyValue extends Vue {
   max-width: -moz-available;          /* For Mozzila */
   max-width: -webkit-fill-available;  /* For Chrome */
 }
-.TCProductPropertyValue_ValueBool {
+.GCProductPropertyValue_ValueBool {
   display:inline-block !important;
 }
-.TCProductPropertyValue_Value .dropdown > .dropdown-menu,
-.TCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {
+.GCProductPropertyValue_Value .dropdown > .dropdown-menu,
+.GCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.TCProductPropertyValue_Value .dropdown button {
+.GCProductPropertyValue_Value .dropdown button {
   text-overflow: ellipsis;
   overflow: hidden;
 }
