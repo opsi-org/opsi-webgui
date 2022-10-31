@@ -26,7 +26,7 @@
         </b-tab>
         <b-tab v-if="changesProducts.filter(o => o.user === username).length !== 0" :title="$t('Product Actions and Properties')">
           <AlertAAlert ref="trackChangesAlert" />
-          <TableTChanges />
+          <GridGChangesProducts />
           <DivDComponentGroup v-if="changesProducts.filter(o => o.user === username).length !== 0" class="float-right">
             <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
             <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">

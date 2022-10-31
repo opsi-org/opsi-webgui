@@ -45,8 +45,3 @@ export default class VModules extends Vue {
   }
 }
 </script>
-<style>
-.VModules.mobile .col{
-  display: contents;
-}
-</style>

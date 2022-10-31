@@ -1,13 +1,13 @@
 <template>
   <b-row data-testid="GFormItem" class="mb-2">
-    <b-col :sm="variant === 'longlabel' ? 5 : 3" class="text-sm-right text-break" :class="labelId">
+    <b-col :sm="variant === 'longlabel' ? 5 : 3" class="text-break" :class="classgrid">
       <slot name="label" />
       {{ label }}
     </b-col>
-    <b-col>
+    <b-col class="text-sm-left">
       <slot name="value" />
     </b-col>
-    <b-col v-if="valueMore">
+    <b-col v-if="valueMore" class="text-sm-left">
       <slot name="valueMore" />
     </b-col>
   </b-row>
@@ -19,7 +19,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 export default class GFormItem extends Vue {
   @Prop({ }) label?: string
   @Prop({ default: 'shortlabel' }) variant!: string
-  @Prop({ }) labelId?: string
+  @Prop({ default: 'text-sm-right' }) classgrid?: string
   @Prop({ }) valueMore?: boolean
 }
 </script>

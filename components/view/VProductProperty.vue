@@ -17,10 +17,6 @@
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
     <b-tabs v-if="id" v-model="activeTab" class="horizontaltab" lazy>
-      <!-- activeTab {{ activeTab }}, manual {{ activeTabSet }} <br>
-        tabPropertiesActive {{ tabPropertiesActive }} disabled {{ tabPropertiesDisabled }}<br>
-        tabDependenciesActive {{ tabDependenciesActive }} disabled {{ tabDependenciesDisabled }} <br>
-        {{ $fetchState.error }} -->
       <div v-if="!$fetchState.pending && ($fetchState.error || activeTabSet < -1)">
         <p>
           {{ errorText.properties }}
@@ -41,8 +37,7 @@
         </template>
         <br>
         <DivDScrollResult>
-          <LazyTableTProductProperties
-            v-if="id"
+          <GridGProductProperties
             :id="id"
             :properties="fetchedData.properties"
             :error-text="errorText.properties"
@@ -60,12 +55,7 @@
         </template>
         <br>
         <DivDScrollResult>
-          <LazyTableTProductDependencies
-            v-if="id"
-            :id="id"
-            :dependencies="fetchedData.dependencies"
-            :error-text="errorText.properties"
-          />
+          <GridGProductDependencies :id="id" :dependencies="fetchedData.dependencies" />
         </DivDScrollResult>
       </b-tab>
     </b-tabs>
@@ -117,7 +107,6 @@ export default class VProductProperty extends Vue {
   get tabDependenciesActive () { return this.tabPropertiesDisabled && !this.tabDependenciesDisabled }
   get activeTab () { return (this.activeTabSet >= 0) ? this.activeTabSet : (this.tabPropertiesActive) ? 0 : (this.tabDependenciesActive) ? 1 : 0 }
   set activeTab (val:number) { this.activeTabSet = val }
-  // @auth.Mutation public setSession!: () => void
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -161,14 +150,12 @@ export default class VProductProperty extends Vue {
         if (refetch) {
           this.fetchedData.properties = { ...this.fetchedData.properties }
         }
-        // this.setSession()
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.error.fetch.productProperty')
         this.activeTabSet = -3
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.productPropViewAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Properties', 'danger', detailedError)
-        // throw new Error(error)
       })
   }
 
@@ -179,14 +166,12 @@ export default class VProductProperty extends Vue {
         this.fetchedData.dependencies.productDescriptionDetails = response.productDescriptionDetails // { 'bonifax.uib.local': 'string' }
         this.fetchedData.dependencies.productVersions = response.productVersions // { 'bonifax.uib.local': '1.0' }
         this.fetchedData.dependencies.productDescription = response.productDescription
-        // this.setSession()
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.error.fetch.productDependency')
         this.activeTabSet = -3
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.productPropViewAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Dependencies', 'danger', detailedError)
-        // throw new Error(error)
       })
   }
 }
