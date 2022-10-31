@@ -63,13 +63,16 @@ const settings = namespace('settings')
 const selections = namespace('selections')
 const changes = namespace('changes')
 const config = namespace('config-app')
+// const mixed = '<mixed>'
 
 @Component({ mixins: [Constants] })
 export default class GCProductPropertyValue extends Vue {
   $t:any
   iconnames:any
+  // @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String
+  // @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
 
   @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionClients!: Array<string>
@@ -82,6 +85,7 @@ export default class GCProductPropertyValue extends Vue {
   changedValue: Array<string>|undefined
   selectedValues!: Array<string|boolean>
   tooltipChanges!: object
+  // selectedValuesOriginal!: Array<string|boolean>
   isOrigin: boolean = true
   visibleValueBool!: boolean
   visibleValueBoolIndeterminate!: boolean
@@ -91,7 +95,9 @@ export default class GCProductPropertyValue extends Vue {
   }
 
   initSelection () {
+    // console.log('init selection with changes', this.selectedValues)
     const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
+    // console.log('init selection with changes', originalValue)
     if (this.selectionClients.length > 0) {
       this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionClients, 'clientId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionClients, 'clientId')
@@ -99,13 +105,22 @@ export default class GCProductPropertyValue extends Vue {
       this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionDepots, 'depotId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionDepots, 'depotId')
     }
+    // console.log('init selection with changes selectedValues', this.selectedValues)
   }
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
   @Watch('selectedValues', { deep: true }) async selectedValuesChanged () {
+    // console.log('-------------ProductPropertyValue changeValue ', this.selectedValues)
+    // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
+    //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
+    // }
     await this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     if (this.quicksave) { this.initSelection() }
+    // this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
+    // console.log('-------------ProductPropertyValue selectedValues ', this.selectedValues)
+    // console.log('-------------ProductPropertyValue selectedValuesOrigin ', this.selectedValuesOriginal)
+    // console.log('-------------ProductPropertyValue isOrigin ', this.isOrigin)
   }
 
   @Watch('rowItem.clients', { deep: true }) rowItemClientsChanged () { this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal)) }
@@ -131,6 +146,10 @@ export default class GCProductPropertyValue extends Vue {
       options.push(this.$t('values.mixed') as string)
     }
     return options.filter(val => val !== null && val !== undefined)
+    // if (options.includes(null) && options.includes('')) {
+    //   options.splice(options.indexOf(''), 1)
+    // }
+    // return options
   }
 
   get selectedValuesOriginal () {
@@ -148,7 +167,7 @@ export default class GCProductPropertyValue extends Vue {
       return [this.$t('values.mixed') as string] // for boolean egal, cause indeterminate=true
     }
     const depotValues = Object.values(this.rowItem.depots) || []
-
+    // console.log(JSON.stringify(depotValues), depotValues.length, depotValues.every(v => v === depotValues[0]))
     if ((depotValues.length > 0) && depotValues.every(v => arrayEqual(v, depotValues[0]))) {
       return depotValues[0]
     } else if (depotValues.length > 0 && depotValues.some(v => !arrayEqual(v, depotValues[0]))) {
@@ -164,18 +183,24 @@ export default class GCProductPropertyValue extends Vue {
     if (this.rowItem.type === 'BoolProductProperty') {
       return this.visibleValueBoolIndeterminate
     }
+    // if (this.rowItem.type === 'UnicodeProductProperty') {
     return this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)
+    // }
+    // return true
   }
 
   uniques (arr:Array<any>) { return [...new Set(arr)] }
 
   handleBoolChange () {
     this.selectedValues = JSON.parse(JSON.stringify([!this.selectedValues[0]]))
+    // this.selectedValues = [!this.selectedValues[0]]
     this.selectedValuesChanged()
   }
 
   selectionChanged (values: Array<string|boolean>, reset: boolean = false) {
+    // console.log('selectionChanged PPValue ', values, reset)
     if (reset !== true) {
+      // console.log('not reseting - overwrite PPValue ', values, reset)
       this.selectedValues = JSON.parse(JSON.stringify(values))
       this.selectedValuesChanged()
       this.initSelection()
@@ -214,6 +239,7 @@ export default class GCProductPropertyValue extends Vue {
   }
 
   getValuesWithChanges (originalValue:Array<any>, selectionHosts: Array<string>, key: string) {
+    // console.log('update selectionValues with changes')
     let newValue
     let changesList = this.changesProducts.filter(e => e.property === this.rowItem.propertyId)
     changesList = changesList.filter(e => e.user === this.username)
@@ -241,14 +267,18 @@ export default class GCProductPropertyValue extends Vue {
     }
     if (newValue) {
       this.isOrigin = false
-
+      // console.log('update selectionValues with changes - return newValue', newValue)
       return newValue
     }
     this.isOrigin = true
     if (this.selectedValues && Object.values(this.selectedValues).length >= 0) {
       this.isOrigin = arrayEqual(Object.values(this.selectedValues || {}), originalValue)
     }
-
+    // console.log('update selectionValues with changes - return original', originalValue)
+    // console.log('----- selectedValues', Object.values(this.selectedValues || {}))
+    // console.log('----- originalValue', originalValue)
+    // console.log('----- newValue', newValue)
+    // console.log('----- selectedValuesOriginal', this.selectedValuesOriginal)
     return originalValue
   }
 }
@@ -273,4 +303,7 @@ export default class GCProductPropertyValue extends Vue {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+/* .btn-group, .btn-group-vertical {
+  display: grid !important;
+} */
 </style>

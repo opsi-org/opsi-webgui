@@ -3,6 +3,7 @@
     <AlertAAlert ref="hostAttrErrorAlert" class="FHostAttributesAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
+    <AlertAAlert ref="uefiAlert" />
     <GridGFormItem>
       <template #label>
         <span class="id">{{ $t('table.fields.id') }}</span>
@@ -210,20 +211,21 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+import { SetUEFI } from '../../mixins/save'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, SetUEFI] })
 export default class FHostAttributes extends Vue {
-  iconnames: any
-  $axios: any
-  $t: any
-  $fetch: any
-
   @Prop({ }) id!: string
   @Prop({ }) type!: string
   showValue : boolean = false
   hostAttr:any = {}
   isLoading: boolean = false
   errorText: string = ''
+  setUEFI: any
+  iconnames: any
+  $axios: any
+  $t: any
+  $fetch: any
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
@@ -263,15 +265,6 @@ export default class FHostAttributes extends Vue {
     } else { return value }
   }
 
-  async setUEFI () {
-    await this.$axios.$post(`api/opsidata/clients/${this.hostAttr.hostId}/uefi`)
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.hostAttrUpdateAlert as any)
-        ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
-      })
-  }
-
   async update (attr, endPoint) {
     this.isLoading = true
     await this.$axios.$put(endPoint, attr)
@@ -294,7 +287,7 @@ export default class FHostAttributes extends Vue {
     delete attr.created
     delete attr.lastSeen
     if (this.type === 'clients') {
-      this.setUEFI()
+      this.setUEFI(this.hostAttr.hostId)
     }
     if (this.hostAttr.type === 'OpsiClient') {
       delete attr.uefi

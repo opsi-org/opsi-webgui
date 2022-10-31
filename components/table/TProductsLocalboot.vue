@@ -154,6 +154,7 @@ import { IObjectString2ObjectString2String, IObjectString2String } from '../../.
 import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import { SaveProductActionRequest } from '../../mixins/save'
 import QueueNested from '../../.utils/utils/QueueNested'
 
 const selections = namespace('selections')
@@ -164,8 +165,16 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [Constants, Synchronization] })
+@Component({ mixins: [Constants, Synchronization, SaveProductActionRequest] })
 export default class TProductsLocalboot extends Vue {
+  @Prop() parentId!: string
+  @Prop() rowident!: string
+  @Prop() filterQuery!: string
+  @Prop() routeRedirectWith!: Function
+  @Prop() child!: boolean
+  @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
+  @Prop({ }) tableInfo!: ITableInfo
+  @Prop({ default: false }) isLoading!: boolean
   iconnames: any
   syncSort: any
   $axios: any
@@ -175,16 +184,7 @@ export default class TProductsLocalboot extends Vue {
   $fetch: any
   $route: any
   $router: any
-
-  @Prop() parentId!: string
-  @Prop() rowident!: string
-  @Prop() filterQuery!: string
-  @Prop() routeRedirectWith!: Function
-  @Prop() child!: boolean
-  @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
-  @Prop({ }) tableInfo!: ITableInfo
-  @Prop({ default: false }) isLoading!: boolean
-
+  saveProdActionRequest:any
   id = 'localboot'
   items: Array<any> = []
   totalItems: number = 0
@@ -269,23 +269,6 @@ export default class TProductsLocalboot extends Vue {
     })
   }
 
-  async save (change: object) {
-    // const t:any = this
-    this.isLoading = true
-    await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then(() => {
-        const ref = (this.$refs.productsAlert as any)
-        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
-        // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
-      }).catch((error) => {
-        const ref = (this.$refs.productsAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
-        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
-      })
-    this.isLoading = false
-  }
-
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
     let orgActionReq = rowitem.actionRequest
@@ -314,7 +297,7 @@ export default class TProductsLocalboot extends Vue {
         }
       }
     } else if (orgActionReq !== newrequest) {
-      await this.save(data)
+      await this.saveProdActionRequest(data, null)
       this.fetchOptions.fetchClients = true
       this.$fetch()
     }
@@ -344,7 +327,7 @@ export default class TProductsLocalboot extends Vue {
         }
       }
     } else {
-      await this.save(data)
+      await this.saveProdActionRequest(data, null)
       this.$fetch()
     }
   }

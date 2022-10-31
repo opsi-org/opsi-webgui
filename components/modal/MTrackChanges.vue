@@ -25,15 +25,7 @@
           <GridGChangesHostParam />
         </b-tab>
         <b-tab v-if="changesProducts.filter(o => o.user === username).length !== 0" :title="$t('Product Actions and Properties')">
-          <AlertAAlert ref="trackChangesAlert" />
           <GridGChangesProducts />
-          <DivDComponentGroup v-if="changesProducts.filter(o => o.user === username).length !== 0" class="float-right">
-            <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
-            <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
-              <b-icon :icon="iconnames.save" />
-              <span class="saveall">{{ $t('button.saveall') }}</span>
-            </b-button>
-          </DivDComponentGroup>
         </b-tab>
       </b-tabs>
     </b-modal>
@@ -64,67 +56,6 @@ export default class MTrackChanges extends Vue {
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Getter public changesHostParam!: Array<ChangeObj>
-  @changes.Mutation public delFromChangesProducts!: (s: object) => void
-
-  async saveProd (item: ChangeObj) {
-    const change = {
-      clientIds: [item.clientId],
-      productIds: [item.productId],
-      actionRequest: item.actionRequest
-    }
-
-    await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then(() => {
-        this.delFromChangesProducts(item)
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        this.error = detailedError
-      })
-  }
-
-  async saveProdProp (item: ChangeObj) {
-    const propObj: any = {}
-    propObj[item.property] = item.propertyValue
-    let change = {}
-    if (item.clientId !== '') {
-      change = {
-        clientIds: [item.clientId],
-        properties: propObj
-      }
-    } else {
-      change = {
-        depotIds: [item.depotId],
-        properties: propObj
-      }
-    }
-    await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, change)
-      .then(() => {
-        this.delFromChangesProducts(item)
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        this.error = detailedError
-      })
-  }
-
-  async saveAll () {
-    this.changelist = this.changesProducts.filter(o => o.user === this.username)
-    for (const p in this.changelist) {
-      const change = this.changelist[p]
-      if (change.actionRequest) {
-        await this.saveProd(change)
-      } else if (change.property) {
-        await this.saveProdProp(change)
-      }
-    }
-    if (this.error) {
-      const ref = (this.$refs.trackChangesAlert as any)
-      ref.alert(this.$t('message.error.title'), 'danger', this.error)
-    } else {
-      const ref = (this.$refs.trackChangesAlert as any)
-      ref.alert(this.$t('message.success.trackChanges.saveAll'), 'success')
-      this.$nuxt.refresh()
-    }
-  }
 }
 </script>
 

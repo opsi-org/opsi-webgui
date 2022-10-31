@@ -2,6 +2,8 @@
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
+    <AlertAAlert ref="uefiAlert" />
+    <AlertAAlert ref="productsAlert" />
     <IconILoading v-if="isLoading" />
     <template v-else>
       <br>
@@ -120,8 +122,8 @@
         </template>
         <template #value>
           <b-form inline>
-            <b-form-checkbox v-model="deployclientagent" />
-            <div :class="{'d-none' : !deployclientagent}">
+            <b-form-checkbox v-model="clientagent" />
+            <div :class="{'d-none' : !clientagent}">
               <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" :state="formvalidation" required />
               <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" :state="formvalidation" required />
               <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
@@ -142,8 +144,9 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+import { SetUEFI, DeployClientAgent, SaveProductActionRequest } from '../../mixins/save'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
@@ -164,7 +167,7 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
 export default class VClientCreation extends Vue {
   iconnames: any
   $axios: any
@@ -172,6 +175,9 @@ export default class VClientCreation extends Vue {
   $fetch: any
   $mq: any
   $t: any
+  setUEFI:any
+  deployClientAgent:any
+  saveProdActionRequest:any
   clientIds: Array<string> = []
   result: string = ''
   isLoading: boolean = false
@@ -191,12 +197,14 @@ export default class VClientCreation extends Vue {
   form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
   uefi: boolean = false
-  deployclientagent: boolean = false
+  clientagent: boolean = false
   netbootproduct: string = ''
   netbootproductslist: Array<string> = []
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
+
+  @Watch('depotId', { deep: true }) depotIdChanged () { this.fetchNetbootProducts() }
 
   get domainName () {
     if (this.opsiconfigserver) {
@@ -245,7 +253,7 @@ export default class VClientCreation extends Vue {
   }
 
   async fetchNetbootProducts () {
-    const depot = this.depotId || this.selectionDepots[0]
+    const depot = this.depotId
     await this.$axios.$get(`/api/opsidata/depots/products?selectedDepots=[${depot}]`)
       .then((response) => {
         this.netbootproductslist = response
@@ -256,30 +264,13 @@ export default class VClientCreation extends Vue {
       })
   }
 
-  async deployClientAgent () {
+  async deployclientagent () {
     this.form.clients = [this.newClient.hostId]
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
-    await this.$axios.$post('/api/opsidata/clients/deploy', this.form)
-      .then(() => {
-        const ref = (this.$refs.clientagentAlert as any)
-        ref.alert(this.$t('message.success.clientagent', { client: this.newClient.hostId }) as string, 'success')
-        this.$bvModal.hide('modalDeployClientAgent')
-      }).catch((error) => {
-        const ref = (this.$refs.clientagentAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
-      })
-  }
-
-  async setUEFI () {
-    await this.$axios.$post(`api/opsidata/clients/${this.newClient.hostId}/uefi`)
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
-      })
+    const hidemodal = false
+    await this.deployClientAgent(this.form, hidemodal)
   }
 
   async assignToGroup () {
@@ -297,13 +288,7 @@ export default class VClientCreation extends Vue {
       productIds: [this.netbootproduct],
       actionRequest: 'setup'
     }
-
-    await this.$axios.$post('/api/opsidata/clients/products', change)
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.setupNetboot') as string, 'danger', detailedError)
-      })
+    await this.saveProdActionRequest(change, null)
   }
 
   async createOpsiClient () {
@@ -323,13 +308,13 @@ export default class VClientCreation extends Vue {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         if (this.uefi) {
-          this.setUEFI()
+          this.setUEFI(this.newClient.hostId)
         }
         if (this.group) {
           this.assignToGroup()
         }
-        if (this.deployclientagent) {
-          this.deployClientAgent()
+        if (this.clientagent) {
+          this.deployclientagent()
         }
         if (this.netbootproduct) {
           this.setupNetbootProduct()

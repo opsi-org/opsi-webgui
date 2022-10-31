@@ -49,7 +49,7 @@
             variant="success"
             size="sm"
             :disabled="(config)?config.read_only:false"
-            @click="deployClientAgent()"
+            @click="deployclientagent()"
           >
             <b-icon :icon="iconnames.product" />  <span class="deploy"> {{ $t('label.clientagent') }} </span>
           </b-button>
@@ -63,6 +63,7 @@
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Constants } from '../../mixins/uib-mixins'
+import { DeployClientAgent } from '../../mixins/save'
 const config = namespace('config-app')
 
 interface FormClientAgent {
@@ -72,35 +73,27 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, DeployClientAgent] })
 export default class MDeployClientAgent extends Vue {
+  @Prop({ default: false }) incontextmenu!: boolean
+  @Prop({ default: true }) clientId!: string
   show:boolean = false
   $axios: any
   $t: any
   $router: any
   iconnames: any
-  @Prop({ default: false }) incontextmenu!: boolean
-  @Prop({ default: true }) clientId!: string
-
+  deployClientAgent:any
   form: FormClientAgent = { clients: [this.clientId], username: '', password: '', type: 'windows' }
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
 
   @config.Getter public config!: IObjectString2Boolean
 
-  async deployClientAgent () {
+  async deployclientagent () {
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
-    await this.$axios.$post('/api/opsidata/clients/deploy', this.form)
-      .then(() => {
-        const ref = (this.$refs.clientagentAlert as any)
-        ref.alert(this.$t('message.success.clientagent', { client: this.clientId }) as string, 'success')
-        this.$bvModal.hide('event-modal-deployCA-' + this.clientId)
-      }).catch((error) => {
-        const ref = (this.$refs.clientagentAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
-      })
+    const hidemodal = true
+    await this.deployClientAgent(this.form, hidemodal)
   }
 }
 </script>

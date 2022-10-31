@@ -1,6 +1,6 @@
 <template>
   <div data-testid="GChangesProducts">
-    <AlertAAlert ref="changesAlert" />
+    <AlertAAlert ref="productsAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
       <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
       <DivDScrollResult>
@@ -30,6 +30,13 @@
           </b-collapse>
         </div>
       </DivDScrollResult>
+      <DivDComponentGroup class="float-right">
+        <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
+        <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
+          <b-icon :icon="iconnames.save" />
+          <span class="saveall">{{ $t('button.saveall') }}</span>
+        </b-button>
+      </DivDComponentGroup>
     </div>
     <div v-else>
       {{ $t('empty') }}
@@ -41,23 +48,24 @@
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Constants } from '../../mixins/uib-mixins'
+import { SaveProductActionRequest, SaveProductProperties } from '../../mixins/save'
 const auth = namespace('auth')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, SaveProductActionRequest, SaveProductProperties] })
 export default class GChangesProducts extends Vue {
   iconnames: any
   $axios: any
   $mq: any
   $nuxt: any
   $t:any
-
+  saveProdProperties:any
+  saveProdActionRequest:any
   filter: string = ''
+  groupedById: Array<any> = []
   @auth.Getter public username!: string
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
-
-  groupedById: Array<any> = []
 
   @Watch('changesProducts', { deep: true }) changesProductsChanged () {
     const tableitems = this.changesProducts.filter(o => o.user === this.username)
@@ -76,65 +84,39 @@ export default class GChangesProducts extends Vue {
     }, {})
   }
 
-  async saveProd (item: ChangeObj) {
-    const change = {
-      clientIds: [item.clientId],
-      productIds: [item.productId],
-      actionRequest: item.actionRequest
-    }
-    // const t:any = this
-    await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then(() => {
-        const ref = (this.$refs.changesAlert as any)
-        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
-        this.$nuxt.refresh()
-        // makeToast(t, 'Action request ' + JSON.stringify(change) + ' saved successfully', this.$t('message.success.title') as string, 'success')
-        this.delFromChangesProducts(item)
-      }).catch((error) => {
-        const ref = (this.$refs.changesAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
-        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger')
-      })
-  }
-
-  async saveProdProp (item: ChangeObj) {
-    // const t:any = this
-    const propObj: any = {}
-    propObj[item.property] = item.propertyValue
-    let change = {}
-    if (item.clientId !== '') {
-      change = {
-        clientIds: [item.clientId],
-        properties: propObj
-      }
-    } else {
-      change = {
-        depotIds: [item.depotId],
-        properties: propObj
-      }
-    }
-    await this.$axios.$post(`/api/opsidata/products/${item.productId}/properties`, change)
-      .then(() => {
-        const ref = (this.$refs.changesAlert as any)
-        ref.alert(this.$t('message.success.trackChanges.save'), 'success')
-        this.$nuxt.refresh()
-        // makeToast(t, 'Product Property ' + JSON.stringify(change) + ' saved succefully', this.$t('message.success.title') as string, 'success')
-        this.delFromChangesProducts(item)
-      }).catch((error) => {
-        const ref = (this.$refs.changesAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
-        // makeToast(t, (error as IObjectString2Any).message, this.$t('message.error.title') as string, 'danger', 8000)
-      })
-  }
-
-  save (rowItem: ChangeObj) {
+  async save (rowItem: ChangeObj) {
     const change = rowItem
     if (change.actionRequest) {
-      this.saveProd(change)
+      const data = {
+        clientIds: [change.clientId],
+        productIds: [change.productId],
+        actionRequest: change.actionRequest
+      }
+      await this.saveProdActionRequest(data, change)
     } else if (change.property) {
-      this.saveProdProp(change)
+      const propObj: any = {}
+      propObj[change.property] = change.propertyValue
+      let propertychanges = {}
+      if (change.clientId !== '') {
+        propertychanges = {
+          clientIds: [change.clientId],
+          properties: propObj
+        }
+      } else {
+        propertychanges = {
+          depotIds: [change.depotId],
+          properties: propObj
+        }
+      }
+      await this.saveProdProperties(change.productId, propertychanges, change)
+    }
+  }
+
+  async saveAll () {
+    const changelist = this.changesProducts.filter(o => o.user === this.username)
+    for (const p in changelist) {
+      const change = changelist[p]
+      await this.save(change)
     }
   }
 }
