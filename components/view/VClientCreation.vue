@@ -3,6 +3,7 @@
     <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="uefiAlert" />
+    <AlertAAlert ref="productsAlert" />
     <IconILoading v-if="isLoading" />
     <template v-else>
       <br>
@@ -145,7 +146,7 @@
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
-import { SetUEFI, DeployClientAgent } from '../../mixins/save'
+import { SetUEFI, DeployClientAgent, SaveProductActionRequest } from '../../mixins/save'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
@@ -166,7 +167,7 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Constants, SetUEFI, DeployClientAgent] })
+@Component({ mixins: [Constants, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
 export default class VClientCreation extends Vue {
   iconnames: any
   $axios: any
@@ -176,6 +177,7 @@ export default class VClientCreation extends Vue {
   $t: any
   setUEFI:any
   deployClientAgent:any
+  saveProdActionRequest:any
   clientIds: Array<string> = []
   result: string = ''
   isLoading: boolean = false
@@ -286,13 +288,7 @@ export default class VClientCreation extends Vue {
       productIds: [this.netbootproduct],
       actionRequest: 'setup'
     }
-
-    await this.$axios.$post('/api/opsidata/clients/products', change)
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.setupNetboot') as string, 'danger', detailedError)
-      })
+    await this.saveProdActionRequest(change, null)
   }
 
   async createOpsiClient () {

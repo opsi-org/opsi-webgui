@@ -54,7 +54,7 @@ const changes = namespace('changes')
           this.delFromChangesProducts(deleteitem)
           this.$nuxt.refresh()
         } else {
-          ref.alert(this.$t('message.success.trackChanges.save'), 'success')
+          ref.alert(this.$t('message.success.save.prodActionRequest'), 'success')
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')

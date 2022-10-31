@@ -14,6 +14,7 @@
   "message.success.createClient": "{client} has been added succesfully.",
   "message.success.updateHostAttr": "Host attributes of {client} has been saved succesfully.",
   "message.success.deleteClient": "{client} has been deleted successfully.",
+  "message.success.save.prodActionRequest": "Product action request has been saved.",
   "message.success.trackChanges.save": "Saved.",
   "message.success.trackChanges.saveAll": "Changes saved.",
   "message.success.clientagent": "OPSI Client Agent on {client} has been deployed successfully.",
