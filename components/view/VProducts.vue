@@ -21,7 +21,7 @@
           :redirect-on-close-to="(child)? '/clients/': undefined"
           :redirect="routeRedirectWith"
         />
-        <b-tabs class="products_horizontaltabs">
+        <b-tabs class="products_horizontaltabs" lazy>
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
