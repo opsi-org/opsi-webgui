@@ -1,5 +1,6 @@
 <template>
-  <div data-testid="CChangeLogs" :class="{loadingCursor: isLoading}">
+  <div v-if="!changelogs.includes('')" data-testid="CChangeLogs" :class="{loadingCursor: isLoading}">
+    <OverlayOLoading :is-loading="isLoading" />
     <b-card
       class="bg-primary text-light mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
