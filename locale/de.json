@@ -215,7 +215,7 @@
   "button.tryAgain": "Nochmal versuchen",
   "input.expiredTimeChanger": "Abmelden nach {min} Minuten ohne Aktivität.",
   "treeselect.assigntoGroups": "Assign to groups",
-  "treeselect.hostGroups": "Hostgruppen",
+  "treeselect.clientGroups": "Clientgruppen",
   "treeselect.prodGroups": "Produktgruppen",
   "treeselect.noresult": "Kein Eintrag gefunden",
   "treeselect.editable": "Kein Eintrag gefunden... Zum Hinzufügen Enter drücken.",

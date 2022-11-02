@@ -4,7 +4,7 @@
     type="clients"
     data-testid="TSHostGroups"
     :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
-    :text="$t('treeselect.hostGroups')"
+    :text="$t('treeselect.clientGroups')"
     :text-no-result="$t('treeselect.noresult')"
     :validate="() => true"
     :validate-description="''"
