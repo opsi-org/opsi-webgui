@@ -116,8 +116,8 @@ export default class VProductProperty extends Vue {
   @Watch('selectionDepots') selectionDepotsChanged () { this.$fetch() }
   @Watch('tabPropertyActive') tabPropertyActiveChanged () { this.activeTab = -1 }
   @Watch('tabDependenciesActive') tabDependenciesActiveChanged () { this.activeTab = -1 }
-
   @Watch('id', { deep: true }) productIdChanged () { this.$fetch() }
+
   mounted () {
     if (!this.id) {
       this.$router.back()

@@ -108,7 +108,7 @@ export default class GProductProperties extends Vue {
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public quicksave!: boolean
 
-  async beforeMount () {
+  async fetch () {
     if (this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {

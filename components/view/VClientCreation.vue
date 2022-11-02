@@ -225,15 +225,6 @@ export default class VClientCreation extends Vue {
     }
   }
 
-  beforeMount () {
-    this.$fetch()
-  }
-
-  resetNewClientForm () {
-    this.clientName = ''
-    this.newClient = {} as NewClient
-  }
-
   get checkValid () {
     return this.clientName.length > 0 && !this.clientIds.includes(this.clientName + this.domainName)
   }
@@ -323,6 +314,11 @@ export default class VClientCreation extends Vue {
         ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
       })
     this.isLoading = false
+  }
+
+  resetNewClientForm () {
+    this.clientName = ''
+    this.newClient = {} as NewClient
   }
 }
 </script>

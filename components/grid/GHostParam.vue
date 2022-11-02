@@ -56,8 +56,16 @@ export default class GHostParam extends Vue {
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  beforeMount () {
-    this.$fetch()
+  async fetch () {
+    if (this.id) {
+      let endpoint: any = ''
+      if (this.type === 'clients') {
+        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+      } else {
+        endpoint = '/api/opsidata/config/server'
+      }
+      await this.fetchHostParameters(endpoint)
+    }
   }
 
   async fetchHostParameters (endpoint) {
@@ -72,18 +80,6 @@ export default class GHostParam extends Vue {
         this.errorText = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false
-  }
-
-  async fetch () {
-    if (this.id) {
-      let endpoint: any = ''
-      if (this.type === 'clients') {
-        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
-      } else {
-        endpoint = '/api/opsidata/config/server'
-      }
-      await this.fetchHostParameters(endpoint)
-    }
   }
 
   trackHostParameters (change) {
