@@ -230,6 +230,11 @@ export default class VClientCreation extends Vue {
   }
 
   async fetch () {
+    await this.fetchClients()
+    await this.fetchNetbootProducts()
+  }
+
+  async fetchClients () {
     await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.clientIds = response.sort()
@@ -238,7 +243,6 @@ export default class VClientCreation extends Vue {
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
       })
-    this.fetchNetbootProducts()
   }
 
   async fetchNetbootProducts () {
