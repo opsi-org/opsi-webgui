@@ -11,19 +11,15 @@
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
         </template>
-        <DivDScrollResult>
-          <LazyFormFHostAttributes v-if="id" :id="id" :type="type" />
-          <div v-else style="height: 70vh;" />
-        </DivDScrollResult>
+        <LazyFormFHostAttributes v-if="id" :id="id" :type="type" />
+        <div v-else style="height: 70vh;" />
       </b-tab>
       <b-tab v-if="type == 'clients' || id == opsiconfigserver">
         <template #title>
           <span class="hostparam"> {{ $t('title.hostparam') }} </span>
         </template>
-        <DivDScrollResult>
-          <LazyGridGHostParam v-if="id" :id="id" :type="type" />
-          <div v-else style="height: 70vh;" />
-        </DivDScrollResult>
+        <LazyGridGHostParam v-if="id" :id="id" :type="type" />
+        <div v-else style="height: 70vh;" />
       </b-tab>
     </b-tabs>
   </div>

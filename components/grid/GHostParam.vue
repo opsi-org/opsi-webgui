@@ -5,8 +5,8 @@
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
     <AlertAAlert ref="saveParam" />
-    <InputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
-    <DivDScrollResult>
+    <LazyInputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
+    <LazyDivDScrollResult v-if="hostParam">
       <span v-for="v,k in hostParam" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
@@ -22,7 +22,7 @@
           </span>
         </b-collapse>
       </span>
-    </DivDScrollResult>
+    </LazyDivDScrollResult>
   </div>
 </template>
 
