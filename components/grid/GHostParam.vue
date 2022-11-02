@@ -1,10 +1,10 @@
 <template>
   <div data-testid="GHostParam">
+    <OverlayOLoading :is-loading="isLoading" />
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
     <AlertAAlert ref="saveParam" />
-    <IconILoading v-if="isLoading" />
     <InputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
     <DivDScrollResult>
       <span v-for="v,k in hostParam" :key="k">
@@ -56,8 +56,16 @@ export default class GHostParam extends Vue {
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  beforeMount () {
-    this.$fetch()
+  async fetch () {
+    if (this.id) {
+      let endpoint: any = ''
+      if (this.type === 'clients') {
+        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+      } else {
+        endpoint = '/api/opsidata/config/server'
+      }
+      await this.fetchHostParameters(endpoint)
+    }
   }
 
   async fetchHostParameters (endpoint) {
@@ -72,18 +80,6 @@ export default class GHostParam extends Vue {
         this.errorText = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false
-  }
-
-  async fetch () {
-    if (this.id) {
-      let endpoint: any = ''
-      if (this.type === 'clients') {
-        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
-      } else {
-        endpoint = '/api/opsidata/config/server'
-      }
-      await this.fetchHostParameters(endpoint)
-    }
   }
 
   trackHostParameters (change) {
@@ -103,6 +99,7 @@ export default class GHostParam extends Vue {
 
   async handleSelection (change: any) {
     if (this.quicksave) {
+      this.isLoading = true
       let url: string = ''
       let request: any = []
       if (this.type === 'clients') {
@@ -116,6 +113,7 @@ export default class GHostParam extends Vue {
         request = [change]
       }
       await this.saveParameters(url, request, null)
+      this.isLoading = false
     } else {
       this.trackHostParameters(change)
     }

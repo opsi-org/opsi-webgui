@@ -1,5 +1,6 @@
 <template>
   <div data-testid="GProductProperties">
+    <OverlayOLoading :is-loading="isLoading" />
     <AlertAAlert ref="productsAlert" />
     <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlertLocal show variant="warning" class="noClientsSelectedShowDepot">
@@ -108,13 +109,13 @@ export default class GProductProperties extends Vue {
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public quicksave!: boolean
 
-  async beforeMount () {
+  async fetch () {
     if (this.selectionClients.length > 0) {
       await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
         .then((response) => {
           this.fetchedDataClients2Depots = response
         }).catch((error) => {
-          // this.errorText = (this as any).$t('message.error.defaulttext')
+          this.errorText = (this as any).$t('message.error.defaulttext')
           throw new Error(error)
         })
     }
@@ -129,6 +130,7 @@ export default class GProductProperties extends Vue {
       }
       return
     }
+    this.isLoading = true
     if (!arrayEqual(values, orgValues)) {
       const propObj: any = {}
       propObj[propertyId] = values
@@ -140,6 +142,7 @@ export default class GProductProperties extends Vue {
       }
       await this.saveProdProperties(this.id, data, null)
     }
+    this.isLoading = false
   }
 
   handleTrackingChanges (hosts:Array<string>, key:string, propertyId:string, values: Array<string|boolean>, orgValues: Array<string|boolean>) {

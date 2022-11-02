@@ -1,5 +1,6 @@
 <template>
   <div data-testid="FHostAttributes" class="FHostAttributes">
+    <OverlayOLoading :is-loading="isLoading" />
     <AlertAAlert ref="hostAttrErrorAlert" class="FHostAttributesAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
@@ -229,8 +230,16 @@ export default class FHostAttributes extends Vue {
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  beforeMount () {
-    this.$fetch()
+  async fetch () {
+    if (this.id) {
+      let endPoint: any = ''
+      if (this.type === 'clients') {
+        endPoint = `/api/opsidata/hosts?hosts=${this.id}`
+      } else {
+        endPoint = `/api/opsidata/servers?servers=[${this.id}]`
+      }
+      await this.fetchAttributes(endPoint)
+    }
   }
 
   async fetchAttributes (endPoint) {
@@ -245,18 +254,6 @@ export default class FHostAttributes extends Vue {
         this.errorText = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false
-  }
-
-  async fetch () {
-    if (this.id) {
-      let endPoint: any = ''
-      if (this.type === 'clients') {
-        endPoint = `/api/opsidata/hosts?hosts=${this.id}`
-      } else {
-        endPoint = `/api/opsidata/servers?servers=[${this.id}]`
-      }
-      await this.fetchAttributes(endPoint)
-    }
   }
 
   date (value:any) {

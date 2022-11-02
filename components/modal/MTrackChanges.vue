@@ -20,7 +20,7 @@
       hide-footer
       no-fade
     >
-      <b-tabs>
+      <b-tabs lazy>
         <b-tab v-if="changesHostParam.filter((o) => o.user === username).length!==0" :title="$t('Host Parameters')" active>
           <GridGChangesHostParam />
         </b-tab>

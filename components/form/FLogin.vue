@@ -1,64 +1,65 @@
 <template>
-  <b-card
-    data-testid="FLogin"
-    class="text-center bg-primary mt-3 mx-auto"
-    :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
-  >
-    <IconIOpsiLogo v-once :light="true" class="mb-3" height="35" />
-    <h2 v-once data-testid="login_title" class="d-inline-block text-light projectTitle">
-      <!-- {{ getTitleUppercase() }} -->
-      {{ $t('title.project') }}
-    </h2>
-    <AlertAAlert ref="loginAlert" />
-    <div @keyup.enter="doLogin">
-      <b-form>
-        <b-input-group>
-          <b-form-input
-            id="configserver"
-            v-model="opsiconfigserver"
-            data-testid="login_configserver"
-            :aria-label="$t('title.configserver')"
-            readonly
-            class="mb-2"
-            :placeholder="opsiconfigserver"
-          />
-        </b-input-group>
+  <div>
+    <OverlayOLoading :is-loading="isLoading" />
+    <b-card
+      data-testid="FLogin"
+      class="text-center bg-primary mt-3 mx-auto"
+      :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
+    >
+      <IconIOpsiLogo v-once :light="true" class="mb-3" height="35" />
+      <h2 v-once data-testid="login_title" class="d-inline-block text-light projectTitle">
+        {{ $t('title.project') }}
+      </h2>
+      <AlertAAlert ref="loginAlert" />
+      <div @keyup.enter="doLogin">
+        <b-form>
+          <b-input-group>
+            <b-form-input
+              id="configserver"
+              v-model="opsiconfigserver"
+              data-testid="login_configserver"
+              :aria-label="$t('title.configserver')"
+              readonly
+              class="mb-2"
+              :placeholder="opsiconfigserver"
+            />
+          </b-input-group>
 
-        <b-input-group>
-          <b-form-input
-            id="username"
-            v-model="form.username"
-            :aria-label="$t('form.username')"
-            :placeholder="$t('form.username')"
-            :state="validUsername"
-            class="mb-2 username"
-            autocomplete="current_username"
-          />
-        </b-input-group>
-        <b-input-group>
-          <b-form-input
-            id="password"
-            v-model="form.password"
-            :aria-label="$t('form.password')"
-            :placeholder="$t('form.password')"
-            :state="validPassword"
-            :type="showPassword? 'text': 'password'"
-            class="mb-2 password"
-            autocomplete="current_password"
-          />
-          <b-button variant="primary" :pressed.sync="showPassword" class="mb-2">
-            <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
-            <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
-            <b-icon v-else :icon="iconnames.valueHide" />
+          <b-input-group>
+            <b-form-input
+              id="username"
+              v-model="form.username"
+              :aria-label="$t('form.username')"
+              :placeholder="$t('form.username')"
+              :state="validUsername"
+              class="mb-2 username"
+              autocomplete="current_username"
+            />
+          </b-input-group>
+          <b-input-group>
+            <b-form-input
+              id="password"
+              v-model="form.password"
+              :aria-label="$t('form.password')"
+              :placeholder="$t('form.password')"
+              :state="validPassword"
+              :type="showPassword? 'text': 'password'"
+              class="mb-2 password"
+              autocomplete="current_password"
+            />
+            <b-button variant="primary" :pressed.sync="showPassword" class="mb-2">
+              <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
+              <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
+              <b-icon v-else :icon="iconnames.valueHide" />
+            </b-button>
+          </b-input-group>
+          <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login" block @click="doLogin">
+            {{ $t('button.login') }}
           </b-button>
-        </b-input-group>
-        <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login" block @click="doLogin">
-          {{ $t('button.login') }}
-        </b-button>
-        <IconILoading v-if="isLoading" />
-      </b-form>
-    </div>
-  </b-card>
+        </b-form>
+      </div>
+    </b-card>
+  </div>
 </template>
 
 <script lang="ts">

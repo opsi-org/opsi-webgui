@@ -90,7 +90,7 @@
       </template>
     </b-table>
     <BarBTableFooter v-if="cache_pages.flat().length>0" :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
-    <b-overlay :show="isLoading" no-wrap opacity="0.5" />
+    <OverlayOLoading :is-loading="isLoading" />
     <br>
     <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
       <template

@@ -20,11 +20,11 @@ import { Constants, CallLogout } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants, CallLogout] })
 export default class BTNLogout extends Vue {
+  @Prop({ default: false }) abortClick!: boolean
   callLogout: any
   iconnames: any
   $axios:any
   $mq: any
-  @Prop({ default: false }) abortClick!: boolean
 
   async doLogout () {
     if (this.abortClick) { return }

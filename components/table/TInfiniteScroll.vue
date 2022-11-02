@@ -79,7 +79,7 @@
       </template>
     </b-table>
     <BarBTableFooter :pagination="{ tableData: tableData, totalRows:totalItems, totalpages:totalpages }" />
-    <b-overlay :show="isLoading" no-wrap opacity="0.5" />
+    <OverlayOLoading :is-loading="isLoading" />
   </div>
 </template>
 
