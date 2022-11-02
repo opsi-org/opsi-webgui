@@ -99,6 +99,7 @@ export default class GHostParam extends Vue {
 
   async handleSelection (change: any) {
     if (this.quicksave) {
+      this.isLoading = true
       let url: string = ''
       let request: any = []
       if (this.type === 'clients') {
@@ -112,6 +113,7 @@ export default class GHostParam extends Vue {
         request = [change]
       }
       await this.saveParameters(url, request, null)
+      this.isLoading = false
     } else {
       this.trackHostParameters(change)
     }

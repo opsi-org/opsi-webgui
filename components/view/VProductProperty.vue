@@ -26,7 +26,7 @@
       </div>
 
       <p v-if="$fetchState.pending">
-        <IconILoading v-if="isLoading" />
+        <OverlayOLoading :is-loading="isLoading" />
       </p>
       <b-tab
         ref="VProductProperties_TabProperties"

@@ -1,6 +1,7 @@
 <template>
   <div data-testid="VModules" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="modulesAlert" />
+    <OverlayOLoading :is-loading="isLoading" />
     <LazyGridGFormItem v-if="!errorText" v-once label-id="modules">
       <template #label>
         <span class="modules">{{ $t('form.modules.available') }}</span>
