@@ -1,6 +1,6 @@
 <template>
   <div data-testid="GHostParam">
-    <b-overlay :show="isLoading" no-wrap opacity="0.5" />
+    <OverlayOLoading :is-loading="isLoading" />
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
