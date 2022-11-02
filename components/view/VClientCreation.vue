@@ -4,134 +4,132 @@
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="uefiAlert" />
     <AlertAAlert ref="productsAlert" />
-    <IconILoading v-if="isLoading" />
-    <template v-else>
-      <br>
-      <GridGFormItem value-more="true">
-        <template #label>
-          <span class="id">{{ $t('table.fields.id') }}</span>
-        </template>
-        <template #value>
-          <b-form-input
-            id="clientname"
-            v-model="clientName"
-            :aria-label="$t('table.name.client')"
-            type="text"
-            :state="checkValid"
-            required
-          />
-        </template>
-        <template #valueMore>
-          <b-form-input
-            id="domainName"
-            v-model="domainName"
-            class="domainName"
-            :aria-label="$t('table.name.domain')"
-            type="text"
-            required
-          />
-        </template>
-      </GridGFormItem>
-      <b-row class="mt-4 mb-2">
-        <b class="basics">{{ $t('title.basics') }} </b>
-      </b-row>
-      <GridGFormItem>
-        <template #label>
-          <span class="description">{{ $t('table.fields.description') }}</span>
-        </template>
-        <template #value>
-          <b-form-input id="description" v-model="newClient.description" :aria-label="$t('table.fields.description')" type="text" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="inventNum">{{ $t('table.fields.inventNum') }}</span>
-        </template>
-        <template #value>
-          <b-form-input id="inventNum" v-model="newClient.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
-        </template>
-        <template #value>
-          <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" :aria-label="$t('table.fields.hwAddr')" type="text" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="ip">{{ $t('table.fields.ip') }}</span>
-        </template>
-        <template #value>
-          <b-form-input id="ip" v-model="newClient.ipAddress" :aria-label="$t('table.fields.ip')" type="text" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="notes">{{ $t('table.fields.notes') }}</span>
-        </template>
-        <template #value>
-          <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
-        </template>
-      </GridGFormItem>
-      <b-row class="mt-4 mb-2">
-        <b class="settings">{{ $t('title.settings') }} </b>
-      </b-row>
-      <GridGFormItem>
-        <template #label>
-          <span class="uefi">{{ $t('table.fields.uefi') }}</span>
-        </template>
-        <template #value>
-          <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
-        </template>
-      </GridGFormItem>
-      <b-row class="mt-4 mb-2">
-        <b class="assignments">{{ $t('title.assignments') }} </b>
-      </b-row>
-      <GridGFormItem>
-        <template #label>
-          <span class="depot">{{ $t('table.fields.depot') }}</span>
-        </template>
-        <template #value>
-          <TreeTSDepotsNotStored :id.sync="depotId" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="group">{{ $t('table.fields.group') }}</span>
-        </template>
-        <template #value>
-          <TreeTSGroupInitSelection :id.sync="group" />
-        </template>
-      </GridGFormItem>
-      <b-row class="mt-4 mb-2">
-        <b class="initsetup">{{ $t('title.initsetup') }} </b>
-      </b-row>
-      <GridGFormItem>
-        <template #label>
-          <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
-        </template>
-        <template #value>
-          <b-form-select id="netbootproduct" v-model="netbootproduct" :options="netbootproductslist" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
-        </template>
-        <template #value>
-          <b-form inline>
-            <b-form-checkbox v-model="clientagent" />
-            <div :class="{'d-none' : !clientagent}">
-              <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" :state="formvalidation" required />
-              <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" :state="formvalidation" required />
-              <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
-            </div>
-          </b-form>
-        </template>
-      </GridGFormItem>
-    </template>
+    <OverlayOLoading :is-loading="isLoading" />
+    <br>
+    <GridGFormItem value-more="true">
+      <template #label>
+        <span class="id">{{ $t('table.fields.id') }}</span>
+      </template>
+      <template #value>
+        <b-form-input
+          id="clientname"
+          v-model="clientName"
+          :aria-label="$t('table.name.client')"
+          type="text"
+          :state="checkValid"
+          required
+        />
+      </template>
+      <template #valueMore>
+        <b-form-input
+          id="domainName"
+          v-model="domainName"
+          class="domainName"
+          :aria-label="$t('table.name.domain')"
+          type="text"
+          required
+        />
+      </template>
+    </GridGFormItem>
+    <b-row class="mt-4 mb-2">
+      <b class="basics">{{ $t('title.basics') }} </b>
+    </b-row>
+    <GridGFormItem>
+      <template #label>
+        <span class="description">{{ $t('table.fields.description') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="description" v-model="newClient.description" :aria-label="$t('table.fields.description')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="inventNum">{{ $t('table.fields.inventNum') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="inventNum" v-model="newClient.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" :aria-label="$t('table.fields.hwAddr')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="ip">{{ $t('table.fields.ip') }}</span>
+      </template>
+      <template #value>
+        <b-form-input id="ip" v-model="newClient.ipAddress" :aria-label="$t('table.fields.ip')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="notes">{{ $t('table.fields.notes') }}</span>
+      </template>
+      <template #value>
+        <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
+      </template>
+    </GridGFormItem>
+    <b-row class="mt-4 mb-2">
+      <b class="settings">{{ $t('title.settings') }} </b>
+    </b-row>
+    <GridGFormItem>
+      <template #label>
+        <span class="uefi">{{ $t('table.fields.uefi') }}</span>
+      </template>
+      <template #value>
+        <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
+      </template>
+    </GridGFormItem>
+    <b-row class="mt-4 mb-2">
+      <b class="assignments">{{ $t('title.assignments') }} </b>
+    </b-row>
+    <GridGFormItem>
+      <template #label>
+        <span class="depot">{{ $t('table.fields.depot') }}</span>
+      </template>
+      <template #value>
+        <TreeTSDepotsNotStored :id.sync="depotId" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="group">{{ $t('table.fields.group') }}</span>
+      </template>
+      <template #value>
+        <TreeTSGroupInitSelection :id.sync="group" />
+      </template>
+    </GridGFormItem>
+    <b-row class="mt-4 mb-2">
+      <b class="initsetup">{{ $t('title.initsetup') }} </b>
+    </b-row>
+    <GridGFormItem>
+      <template #label>
+        <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
+      </template>
+      <template #value>
+        <b-form-select id="netbootproduct" v-model="netbootproduct" :options="netbootproductslist" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #label>
+        <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
+      </template>
+      <template #value>
+        <b-form inline>
+          <b-form-checkbox v-model="clientagent" />
+          <div :class="{'d-none' : !clientagent}">
+            <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" :state="formvalidation" required />
+            <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" :state="formvalidation" required />
+            <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
+          </div>
+        </b-form>
+      </template>
+    </GridGFormItem>
     <DivDComponentGroup class="float-right">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}

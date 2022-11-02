@@ -28,9 +28,8 @@
         />
       </template>
     </BarBPageHeader>
-    <IconILoading v-if="isLoading" />
-    <p v-else-if="errorText" />
-
+    <OverlayOLoading :is-loading="isLoading" />
+    <p v-if="errorText" />
     <DivDScrollResult v-else>
       <div v-if="filteredLog == ''" class="container-fluid">
         <div style="height: 500px;">

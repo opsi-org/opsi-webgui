@@ -6,7 +6,6 @@
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
-    <IconILoading v-if="isLoading" />
     <b-tabs class="config_horizontaltabs" lazy>
       <b-tab active>
         <template #title>
@@ -40,8 +39,6 @@ export default class VConfig extends Vue {
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string
   @cache.Getter public opsiconfigserver!: string
-
-  isLoading: boolean = false
 }
 </script>
 <style>
