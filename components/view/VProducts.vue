@@ -3,8 +3,6 @@
     <AlertAAlert ref="productsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <!-- TODO: Test multiselect=true, if its fine, remove table select mode settings-->
-        <!-- :multiselect-toggler.sync="ismultiselect" -->
         <BarBCollapsePageHeader
           :id="id"
           :title="$t('title.products')"
@@ -23,12 +21,11 @@
           :redirect-on-close-to="(child)? '/clients/': undefined"
           :redirect="routeRedirectWith"
         />
-        <b-tabs class="products_horizontaltabs">
+        <b-tabs class="products_horizontaltabs" lazy>
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
                 {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + parseInt(netboot)}) }}
-              <!-- {{ selectionProducts.length }}/{{ parseInt(localboot) + parseInt(netboot) }} -->
               </b> </small>
             </template>
           </b-tab>
@@ -42,7 +39,6 @@
               :is-loading="isLoading"
               :table-info.sync="tableInfo"
               :totallocalboot.sync="localboot"
-              :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
               :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
@@ -61,7 +57,6 @@
               :is-loading="isLoading"
               :table-info="tableInfo"
               :totalnetboot.sync="netboot"
-              :multiselect="ismultiselect"
               :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
               :filter-query="tableInfo.filterQuery"
               :rowident="rowId"
@@ -90,6 +85,7 @@ export default class VProducts extends Vue {
   $mq: any
   $route:any
   $router:any
+  $t:any
   @Prop() child!: boolean
   @Prop({}) id!: string
   @Prop({}) sortby!: string
@@ -100,7 +96,6 @@ export default class VProducts extends Vue {
   sortdesc: boolean = false
   rowId: string = ''
   isLoading: boolean = false
-  ismultiselect: boolean = true
   localboot: string = ''
   netboot: string = ''
 
@@ -171,12 +166,6 @@ export default class VProducts extends Vue {
     headerData: this.headerData
   }
 
-  // created () {
-  //   if (Cookie.get('multiselect_products')) {
-  //     this.ismultiselect = JSON.parse(Cookie.get('multiselect_products') as unknown as any)
-  //   }
-  // }
-
   mounted () {
     if (this.secondColumnOpened && !this.child) {
       this.$router.push('/products/')
@@ -190,14 +179,6 @@ export default class VProducts extends Vue {
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
     this.updateColumnVisibility()
   }
-  // @Watch('tableInfo.sortBy', { deep: true }) selectionClientsChanged () {
-  //   this.updateColumnVisibility()
-  // }
-
-  // @Watch('ismultiselect', { deep: true }) multiselectChanged () {
-  //   Cookie.set('multiselect_products', JSON.stringify(this.ismultiselect), { expires: 365 })
-  //   this.setSelectionProducts([])
-  // }
 
   get secondColumnOpened () {
     return this.$route.path.includes('config') || this.$route.path.includes('log')
@@ -249,11 +230,6 @@ export default class VProducts extends Vue {
         }).catch((error) => {
         // eslint-disable-next-line no-console
           console.error(error)
-          // throw new Error(error)
-          // const ref = (this.$refs.productsViewAlert as any)
-          // ref.alert('Failed to fetch: ClientsToDepots', 'danger', error)
-          // thiss.error = thiss.$t('message.error.defaulttext') as string
-          // thiss.error += error
         })
       thiss.fetchOptions.fetchClients2Depots = false
     }
@@ -289,10 +265,7 @@ export default class VProducts extends Vue {
           thiss.items = response.data || []
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
           const items = response.data || []
-          console.log('fetchProducts items', items)
           return items
-          // eslint-disable-next-line no-console
-          // console.log('products response', JSON.stringify(response))
         }).catch((error) => {
           // eslint-disable-next-line no-console
           console.error(error)
@@ -303,8 +276,6 @@ export default class VProducts extends Vue {
           ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
         })
-
-      console.log('myitems ', myitems)
       thiss.setItemsCache(myitems)
       return myitems
     }

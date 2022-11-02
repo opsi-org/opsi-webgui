@@ -7,12 +7,6 @@
       :class="{footer: $mq === 'desktop', footer_wrap: $mq === 'mobile'}"
     >
       <b-container fluid>
-        <b-navbar-nav small>
-          <!-- left -->
-        </b-navbar-nav>
-        <b-navbar-nav align="center" small class="ml-auto">
-          <!-- center -->
-        </b-navbar-nav>
         <b-navbar-nav class="ml-auto" small>
           <!-- right -->
           <b-pagination
@@ -65,7 +59,6 @@ export default class BarBTableFooter extends Vue {
 }
 
 .BTableFooter .navbar {
-  /* position: absolute; */
   bottom: 0px;
   right: 0;
   left: 0;

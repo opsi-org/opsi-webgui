@@ -20,10 +20,8 @@ const changes = namespace('changes')
 export default class BTNDeleteObj extends Vue {
   iconnames: any
   @Prop({ }) item!: object
-  // @Prop({ }) hide!: string
   @Prop({ }) from!: string
 
-  // @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
 
@@ -34,10 +32,6 @@ export default class BTNDeleteObj extends Vue {
     if (this.from === 'hostparam') {
       this.delFromChangesHostParam(this.item)
     }
-    // if (this.changesProducts.length === 0) {
-    //   this.$bvModal.hide(this.hide)
-    //   this.$nuxt.refresh()
-    // }
   }
 }
 </script>

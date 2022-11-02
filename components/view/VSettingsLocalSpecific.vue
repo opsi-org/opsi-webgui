@@ -1,15 +1,18 @@
 <template>
   <div data-testid="VSettingsLocalSpecific" :class="'VSettingsLocalSpecific '+ $mq">
-    <GridGFormItem :label="$t('form.theme')">
+    <GridGFormItem v-once>
+      <template #label>
+        <span class="theme">{{ $t('form.theme') }}</span>
+      </template>
       <template #value>
         <DropdownDDTheme />
       </template>
     </GridGFormItem>
-    <GridGFormItem data-testid="quicksave">
+    <GridGFormItem v-once data-testid="quicksave">
       <template #label>
         <ButtonBTNHelp id="savemode-help" />
         <span class="quicksave">{{ $t('form.quicksave') }}</span>
-        <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="table" />
+        <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="grid" />
       </template>
       <template #value>
         <CheckboxCBQuickSave />
@@ -25,8 +28,8 @@ export default class VSettingsLocalSpecific extends Vue {
   $t: any
   get helpSavemode () {
     return [
-      { '  ': this.$t('label.on'), ' ': this.$t('description.quicksave.on') },
-      { '  ': this.$t('label.off'), ' ': this.$t('description.quicksave.off') }
+      { label: this.$t('label.on'), description: this.$t('description.quicksave.on') },
+      { label: this.$t('label.off'), description: this.$t('description.quicksave.off') }
     ]
   }
 }

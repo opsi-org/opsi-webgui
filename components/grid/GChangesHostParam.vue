@@ -1,7 +1,7 @@
 <template>
   <div data-testid="GChangesHostParam">
     <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :placeholder="$t('table.filterBy.ConfigHost')" :filter.sync="filter" />
-    <AlertAAlert ref="configViewAlert" />
+    <AlertAAlert ref="saveParam" />
     <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
       <GridGFormItem value-more="true">
         <template #label>
@@ -32,30 +32,21 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+import { SaveParameters } from '../../mixins/save'
 const auth = namespace('auth')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Constants, SaveParameters] })
 export default class GChangesHostParam extends Vue {
-  // @Prop({ }) changes!: any
   filter: string = ''
   $axios: any
   $t: any
   $nuxt: any
+  iconnames:any
+  saveParameters:any
   @auth.Getter public username!: string
   @changes.Getter public changesHostParam!: Array<any>
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
-
-  async saveParameters (url: string, request: any, item:any) {
-    const ref = (this.$refs.configViewAlert as any)
-    await this.$axios.$post(url, request)
-      .then(() => {
-        this.delFromChangesHostParam(item)
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.fetch') as string + ' Config', 'danger', detailedError)
-      })
-  }
 
   async saveHostParam (item: any) {
     let url: string = ''

@@ -1,5 +1,4 @@
 <template>
-
   <b-button
     v-b-tooltip.hover
     data-testid="BTNRefetch"
@@ -20,7 +19,6 @@
     <div v-else-if="!tooltip">
       {{ $t('button.tryAgain') }}
     </div>
-
   </b-button>
 </template>
 

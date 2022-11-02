@@ -1,5 +1,5 @@
 <template>
-<!-- <custom-block-licence>
+  <!-- <custom-block-licence>
   -*- coding: utf-8 -*-
 
   opsi-webgui is part of the desktop management solution opsi http://www.opsi.org
@@ -26,7 +26,7 @@
 
     <b-list-group v-if="type=='object' && data" flush class="list-data-object">
       <b-list-group-item v-for="(v, k) in data" :key="k" :variant="(v.error)? 'danger': 'success'">
-        <b>{{ k + $t('colon')}}</b> {{ v.error || v.result }}
+        <b>{{ k + $t('colon') }}</b> {{ v.error || v.result }}
       </b-list-group-item>
     </b-list-group>
   </b-alert>
@@ -73,6 +73,5 @@ export default class AAlert extends BAlert {
 .alertbar .list-data-object .list-group-item {
   padding-top: 0px;
   padding-bottom: 0px;
-  /* padding: 0px; */
 }
 </style>

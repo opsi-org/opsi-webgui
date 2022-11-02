@@ -15,9 +15,7 @@ export default class BTNClearChanges extends Vue {
   $nuxt: any
   iconnames: any
   @Prop({ }) from!: string
-  // @Prop({ }) hide!: string
 
-  // @changes.Getter public changesProducts!: Array<object>
   @changes.Mutation public deleteAllProductChanges!: () => void
   @changes.Mutation public deleteAllChangesHostParam!: () => void
 
@@ -28,7 +26,6 @@ export default class BTNClearChanges extends Vue {
     if (this.from === 'hostparam') {
       this.deleteAllChangesHostParam()
     }
-    // if (this.hide) { this.$bvModal.hide(this.hide) }
     this.$nuxt.refresh()
   }
 }

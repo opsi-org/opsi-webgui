@@ -2,7 +2,7 @@
   <div data-testid="VSupport" class="support">
     <b-row>
       <b-col v-for="item in supportItems" :key="item.title">
-        <CardCSupport :item="item" />
+        <CardCSupport v-once :item="item" />
       </b-col>
     </b-row>
     <b-embed

@@ -81,7 +81,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: `<TableTProductsLocalboot
     :rowident="args.rowident"
     :routeRedirectWith="args.routeRedirectWith"
-    :multiselect="args.multiselect"
     :child="args.child"
     :sortBy="args.sortBy"
     :parentId="args.parentId"

@@ -6,25 +6,20 @@
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
-    <IconILoading v-if="isLoading" />
-    <b-tabs class="config_horizontaltabs">
+    <b-tabs class="config_horizontaltabs" lazy>
       <b-tab active>
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
         </template>
-        <DivDScrollResult>
-          <LazyFormFHostAttributes v-if="id" :id="id" :type="type" />
-          <div v-else style="height: 70vh;" />
-        </DivDScrollResult>
+        <LazyFormFHostAttributes v-if="id" :id="id" :type="type" />
+        <div v-else style="height: 70vh;" />
       </b-tab>
       <b-tab v-if="type == 'clients' || id == opsiconfigserver">
         <template #title>
           <span class="hostparam"> {{ $t('title.hostparam') }} </span>
         </template>
-        <DivDScrollResult>
-          <LazyGridGHostParam v-if="id" :id="id" :type="type" />
-          <div v-else style="height: 70vh;" />
-        </DivDScrollResult>
+        <LazyGridGHostParam v-if="id" :id="id" :type="type" />
+        <div v-else style="height: 70vh;" />
       </b-tab>
     </b-tabs>
   </div>
@@ -40,16 +35,10 @@ export default class VConfig extends Vue {
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string
   @cache.Getter public opsiconfigserver!: string
-
-  isLoading: boolean = false
 }
 </script>
 <style>
 .config_horizontaltabs .nav-item{
   min-width: 10%;
 }
-/* .VConfig,
-.VConfig > .navbar {
-  overflow: visible;
-} */
 </style>
