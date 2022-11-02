@@ -23,7 +23,8 @@ import { Component, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class VSupport extends Vue {
-  get supportItems (): Array<object> {
+  $i18n: any
+  get supportItems (): Array<any> {
     return [
       {
         title: 'supportPage.forum.title',
