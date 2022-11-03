@@ -1,6 +1,5 @@
 <template>
   <div data-testid="VClientCreation" class="VClientCreation">
-    <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="uefiAlert" />
     <OverlayOLoading :is-loading="isLoading" />
@@ -280,15 +279,16 @@ export default class VClientCreation extends Vue {
       productIds: [this.netbootproduct],
       actionRequest: 'setup'
     }
-    await this.saveProdActionRequest(change, null)
+    const successalert = false
+    await this.saveProdActionRequest(change, null, successalert)
   }
 
   async createOpsiClient () {
     this.isLoading = true
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      const ref = (this.$refs.newClientAlert as any)
       ref.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
       return
     }
@@ -297,7 +297,6 @@ export default class VClientCreation extends Vue {
     }
     await this.$axios.$post('/api/opsidata/clients', request)
       .then(() => {
-        const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         if (this.uefi) {
           this.setUEFI(this.newClient.hostId)
@@ -313,7 +312,6 @@ export default class VClientCreation extends Vue {
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
       })
     this.isLoading = false

@@ -91,7 +91,8 @@ export default class GChangesProducts extends Vue {
         productIds: [change.productId],
         actionRequest: change.actionRequest
       }
-      await this.saveProdActionRequest(data, change)
+      const successalert = false
+      await this.saveProdActionRequest(data, change, successalert)
     } else if (change.property) {
       const propObj: any = {}
       propObj[change.property] = change.propertyValue
