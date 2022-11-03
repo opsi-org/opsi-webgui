@@ -8,7 +8,6 @@
       <h5 class="text-center text-color">
         {{ $t('title.whatsnew') }}
       </h5>
-      <AlertAAlert ref="changelogsAlert" />
       <div
         v-for="(log, index) in changelogs"
         :key="index"
@@ -28,19 +27,17 @@ export default class CChangeLogs extends Vue {
   $axios: any
   changelogs: any = ''
   isLoading: boolean = false
-  errorText: string = ''
   $mq: any
 
   async fetch () {
     this.isLoading = true
+    const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
     await this.$axios.$get('/api/opsidata/changelogs')
       .then((response) => {
         this.changelogs = response.split(/\r?\n/)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.changelogsAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Changelogs', 'danger', detailedError)
-        this.errorText = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false
   }

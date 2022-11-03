@@ -1,5 +1,6 @@
 <template>
   <div>
+    <AlertAAlert ref="authAlert" />
     <Nuxt />
     <BarBAuthFooter v-once class="footer_content" />
   </div>
