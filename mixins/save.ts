@@ -29,7 +29,7 @@ const changes = namespace('changes')
 @Component export class SaveParameters extends Vue {
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
   async saveParameters (url: string, request: any, deleteitem:any) {
-    const ref = (this.$refs.saveParam as any)
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post(url, request)
       .then(() => {
         if (deleteitem) {
@@ -46,14 +46,15 @@ const changes = namespace('changes')
 
 @Component export class SaveProductActionRequest extends Vue {
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
-  async saveProdActionRequest (change : object, deleteitem:any) {
-    const ref = (this.$refs.productsAlert as any)
+  async saveProdActionRequest (change : object, deleteitem:any, successalert:boolean) {
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post('/api/opsidata/clients/products', change)
       .then(() => {
         if (deleteitem) {
           this.delFromChangesProducts(deleteitem)
           this.$nuxt.refresh()
-        } else {
+        }
+        if (successalert) {
           ref.alert(this.$t('message.success.save.prodActionRequest'), 'success')
         }
       }).catch((error) => {
@@ -66,7 +67,7 @@ const changes = namespace('changes')
 @Component export class SaveProductProperties extends Vue {
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
   async saveProdProperties (id: string, change: object, deleteitem:any) {
-    const ref = (this.$refs.productsAlert as any)
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post(`/api/opsidata/products/${id}/properties`, change)
       .then(() => {
         if (deleteitem) {

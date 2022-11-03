@@ -198,7 +198,6 @@
           </template>
         </GridGFormItem>
       </template>
-      <AlertAAlert ref="hostAttrUpdateAlert" />
       <LazyDivDComponentGroup v-if="hostAttr.type !== 'OpsiDepotserver'" class="float-right">
         <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
           <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
@@ -266,14 +265,13 @@ export default class FHostAttributes extends Vue {
 
   async update (attr, endPoint) {
     this.isLoading = true
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$put(endPoint, attr)
       .then(() => {
-        const ref = (this.$refs.hostAttrUpdateAlert as any)
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
         this.$fetch()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.hostAttrUpdateAlert as any)
         ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
       })
     this.isLoading = false

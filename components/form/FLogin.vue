@@ -10,7 +10,6 @@
       <h2 v-once data-testid="login_title" class="d-inline-block text-light projectTitle">
         {{ $t('title.project') }}
       </h2>
-      <AlertAAlert ref="loginAlert" />
       <div @keyup.enter="doLogin">
         <b-form>
           <b-input-group>
@@ -100,9 +99,9 @@ export default class FLogin extends Vue {
       .then((response) => {
         this.setOpsiconfigserver(response.result)
       }).catch((error) => {
+        const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
         const errorMsg = this.$t('message.error.opsiconfd') as string
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.loginAlert as any)
         ref.alert(errorMsg, 'danger', detailedError as string)
       })
   }
@@ -148,8 +147,8 @@ export default class FLogin extends Vue {
         this.logout()
         this.clearSession()
         this.isLoading = false
+        const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.loginAlert as any)
         ref.alert(this.$t('message.error.login') as string, 'danger', detailedError)
       })
   }

@@ -1,6 +1,5 @@
 <template>
   <div data-testid="GChangesProducts">
-    <AlertAAlert ref="productsAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
       <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
       <DivDScrollResult>
@@ -92,7 +91,8 @@ export default class GChangesProducts extends Vue {
         productIds: [change.productId],
         actionRequest: change.actionRequest
       }
-      await this.saveProdActionRequest(data, change)
+      const successalert = false
+      await this.saveProdActionRequest(data, change, successalert)
     } else if (change.property) {
       const propObj: any = {}
       propObj[change.property] = change.propertyValue

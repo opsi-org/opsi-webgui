@@ -1,7 +1,6 @@
 <template>
   <div data-testid="GProductProperties">
     <OverlayOLoading :is-loading="isLoading" />
-    <AlertAAlert ref="productsAlert" />
     <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlertLocal show variant="warning" class="noClientsSelectedShowDepot">
         <small>{{ $t('message.warning.noClientsSelectedShowDepot') }}</small>

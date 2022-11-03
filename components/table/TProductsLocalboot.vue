@@ -1,6 +1,5 @@
 <template>
   <div data-testid="TProductsLocalboot">
-    <AlertAAlert ref="productsAlert" />
     <LazyTableTInfiniteScrollSmooth
       v-if="cache_pages"
       id="Localboot"
@@ -297,7 +296,8 @@ export default class TProductsLocalboot extends Vue {
         }
       }
     } else if (orgActionReq !== newrequest) {
-      await this.saveProdActionRequest(data, null)
+      const successalert = true
+      await this.saveProdActionRequest(data, null, successalert)
       this.fetchOptions.fetchClients = true
       this.$fetch()
     }
@@ -327,7 +327,8 @@ export default class TProductsLocalboot extends Vue {
         }
       }
     } else {
-      await this.saveProdActionRequest(data, null)
+      const successalert = true
+      await this.saveProdActionRequest(data, null, successalert)
       this.$fetch()
     }
   }

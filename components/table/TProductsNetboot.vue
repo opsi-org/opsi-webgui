@@ -1,6 +1,5 @@
 <template>
   <div data-testid="TProductsNetboot">
-    <AlertAAlert ref="productsAlert" />
     <LazyTableTInfiniteScrollSmooth
       v-if="cache_pages"
       id="Netboot"
@@ -292,7 +291,8 @@ export default class TProductsNetboot extends Vue {
         }
       }
     } else if (orgActionReq !== newrequest) {
-      await this.saveProdActionRequest(data, null)
+      const successalert = true
+      await this.saveProdActionRequest(data, null, successalert)
       this.fetchOptions.fetchClients = true
       this.$fetch()
     }
@@ -321,7 +321,8 @@ export default class TProductsNetboot extends Vue {
         }
       }
     } else {
-      await this.saveProdActionRequest(data, null)
+      const successalert = true
+      await this.saveProdActionRequest(data, null, successalert)
       this.$fetch()
     }
   }
