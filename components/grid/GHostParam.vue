@@ -4,7 +4,6 @@
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <AlertAAlert ref="saveParam" />
     <LazyInputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
     <LazyDivDScrollResult v-if="hostParam">
       <span v-for="v,k in hostParam" :key="k">

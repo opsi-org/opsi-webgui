@@ -1,7 +1,6 @@
 <template>
   <div data-testid="GChangesHostParam">
     <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :placeholder="$t('table.filterBy.ConfigHost')" :filter.sync="filter" />
-    <AlertAAlert ref="saveParam" />
     <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
       <GridGFormItem value-more="true">
         <template #label>

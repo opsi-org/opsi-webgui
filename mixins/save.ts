@@ -29,7 +29,7 @@ const changes = namespace('changes')
 @Component export class SaveParameters extends Vue {
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
   async saveParameters (url: string, request: any, deleteitem:any) {
-    const ref = (this.$refs.saveParam as any)
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post(url, request)
       .then(() => {
         if (deleteitem) {
@@ -67,7 +67,7 @@ const changes = namespace('changes')
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
   async saveProdProperties (id: string, change: object, deleteitem:any) {
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-    await this.$axios.$post(`/api/opsidata/products/${id}/propertie`, change)
+    await this.$axios.$post(`/api/opsidata/products/${id}/properties`, change)
       .then(() => {
         if (deleteitem) {
           this.delFromChangesProducts(deleteitem)
