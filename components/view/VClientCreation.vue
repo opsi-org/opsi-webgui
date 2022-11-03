@@ -1,5 +1,6 @@
 <template>
   <div data-testid="VClientCreation" class="VClientCreation">
+    <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="uefiAlert" />
     <OverlayOLoading :is-loading="isLoading" />
