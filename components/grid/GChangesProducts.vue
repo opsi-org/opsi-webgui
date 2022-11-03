@@ -1,6 +1,5 @@
 <template>
   <div data-testid="GChangesProducts">
-    <AlertAAlert ref="productsAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
       <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
       <DivDScrollResult>

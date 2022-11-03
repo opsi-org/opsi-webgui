@@ -1,6 +1,5 @@
 <template>
   <div data-testid="TProductsLocalboot">
-    <AlertAAlert ref="productsAlert" />
     <LazyTableTInfiniteScrollSmooth
       v-if="cache_pages"
       id="Localboot"

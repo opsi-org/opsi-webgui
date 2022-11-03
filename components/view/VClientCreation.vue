@@ -3,7 +3,6 @@
     <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="uefiAlert" />
-    <AlertAAlert ref="productsAlert" />
     <OverlayOLoading :is-loading="isLoading" />
     <br>
     <GridGFormItem value-more="true">
