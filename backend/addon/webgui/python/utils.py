@@ -74,6 +74,10 @@ def parse_hosts_list(hosts: List[str] = Query(None)) -> Optional[List]:
 	return parse_list(hosts)
 
 
+def parse_server_list(servers: List[str] = Query(None)) -> Optional[List]:
+	return parse_list(servers)
+
+
 def parse_depot_list(selectedDepots: List[str] = Query(None)) -> Optional[List]:  # pylint: disable=invalid-name
 	return parse_list(selectedDepots)
 

@@ -41,6 +41,7 @@ from .utils import (
 	parse_client_list,
 	parse_depot_list,
 	parse_hosts_list,
+	parse_server_list,
 	read_only_check,
 	user_register,
 )
@@ -520,7 +521,7 @@ class Server(BaseModel):
 @rest_api
 def get_server_data(
 	commons: dict = Depends(common_query_parameters),
-	servers: List[str] = Depends(parse_hosts_list),
+	servers: List[str] = Depends(parse_server_list),
 ) -> RESTResponse:  # pylint: disable=redefined-builtin
 	"""
 	Get server data.
