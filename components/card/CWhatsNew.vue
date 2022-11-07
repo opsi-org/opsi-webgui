@@ -2,8 +2,8 @@
   <div v-if="!changelogs.includes('')" data-testid="CChangeLogs" :class="{loadingCursor: isLoading}">
     <OverlayOLoading :is-loading="isLoading" />
     <b-card
-      class="background text-color mt-3 mx-auto"
-      :style="$mq === 'mobile'? 'width:100%;' : 'max-width:500px;' "
+      class="bg-primary text-light mt-3 mx-auto"
+      :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
       <h5 class="text-center text-color">
         {{ $t('title.whatsnew') }}
