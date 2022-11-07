@@ -1,7 +1,10 @@
 <template>
   <div data-testid="VSupport" class="support">
     <b-row>
-      <b-col v-for="item in supportItems" :key="item.title">
+      <b-col sm="4">
+        <CardCWhatsNew :support-page="true" />
+      </b-col>
+      <b-col v-for="item in supportItems" :key="item.title" sm="4">
         <CardCSupport v-once :item="item" />
       </b-col>
     </b-row>
