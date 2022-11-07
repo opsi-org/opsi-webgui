@@ -6,7 +6,7 @@ export default {
 const BoolConfig = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<GridCellGCHostParam v-bind="args" />'
+  template: '<GridCellGCHostParamValue v-bind="args" />'
 })
 
 export const GCHostParamValueBool = BoolConfig.bind({})
@@ -27,7 +27,7 @@ GCHostParamValueBool.args = {
 const UnicodeConfig = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<GridCellGCHostParam v-bind="args" />'
+  template: '<GridCellGCHostParamValue v-bind="args" />'
 })
 
 export const GCHostParamValueUnicode = UnicodeConfig.bind({})

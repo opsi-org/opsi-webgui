@@ -15,7 +15,7 @@
                 {{ item.configId }}
               </template>
               <template #value>
-                <GridCellGCHostParam :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
+                <GridCellGCHostParamValue :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
               </template>
             </GridGFormItem>
           </span>
