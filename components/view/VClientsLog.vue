@@ -54,17 +54,6 @@
           {{ $t('(content)', {content: index}) }} {{ log }}
         </span>
       </div>
-      <!-- 'bg-secondary': true,
-            'bg-secondary': log.startsWith('[0]'),
-            'bg-secondary': log.startsWith('[1]'),
-            'bg-danger': log.startsWith('[2]'),
-            'bg-warning': log.startsWith('[3]'),
-            'bg-info': log.startsWith('[4]'),
-            'bg-success': log.startsWith('[5]'),
-            'bg-secondary': log.startsWith('[6]'),
-            'bg-muted': log.startsWith('[7]'),
-            'bg-muted': log.startsWith('[8]'),
-            'bg-muted': log.startsWith('[9]') -->
     </DivDScrollResult>
   </div>
 </template>
