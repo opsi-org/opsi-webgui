@@ -15,7 +15,6 @@
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype class="ml-1" :logtype.sync="logtype" />
-        <!-- v-if="logResult.length > 1" -->
         <SpinbuttonSBLoglevel class="ml-1" :loglevel.sync="loglevel" />
         <b-form-input
           v-if="logResult.length > 1"
@@ -31,7 +30,7 @@
     <OverlayOLoading :is-loading="isLoading" />
     <p v-if="errorText" />
     <DivDScrollResult v-else :key="logResult">
-      <div v-if="filteredLog == ''" class="container-fluid">
+      <div v-if="filteredLog.includes('')" class="container-fluid">
         <div style="height: 500px;">
           {{ $t('empty') }}
         </div>
@@ -45,21 +44,15 @@
           v-if="index != 0"
           style="font-family: monospace; font-size: 15px; text-align: justify ; display:block;"
           :class="{
-            'bg-secondary': true,
-            'bg-secondary': log.startsWith('[0]'),
-            'bg-secondary': log.startsWith('[1]'),
+            'bg-secondary': true || log.startsWith('[0]') || log.startsWith('[1]') || log.startsWith('[6]'),
             'bg-danger': log.startsWith('[2]'),
             'bg-warning': log.startsWith('[3]'),
             'bg-info': log.startsWith('[4]'),
             'bg-success': log.startsWith('[5]'),
-            'bg-secondary': log.startsWith('[6]'),
-            'bg-muted': log.startsWith('[7]'),
-            'bg-muted': log.startsWith('[8]'),
-            'bg-muted': log.startsWith('[9]')
+            'bg-muted': log.startsWith('[7]') || log.startsWith('[8]') || log.startsWith('[9]')
           }"
         >
           {{ $t('(content)', {content: index}) }} {{ log }}
-          <!-- ({{ index }}) {{ log }} -->
         </span>
       </div>
     </DivDScrollResult>
