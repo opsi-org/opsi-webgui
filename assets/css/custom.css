@@ -226,7 +226,10 @@ body .mobile .topbar_content .navbar > * {
 .bg-secondary {
   background-color: var(--secondary) !important;
 }
-
+.bg-normal {
+  color:var(--color) !important;
+  background: var(--background) !important;
+}
 .text-primary {
   color:#ffffff !important;
   background: var(--primary) !important;
