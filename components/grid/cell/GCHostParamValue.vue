@@ -4,7 +4,7 @@
       v-if="configtype === 'BoolConfig'"
       v-model="localval"
       data-testid="GCHostParamBool"
-      @change="selectValue"
+      @input="selectValue"
     />
     <TreeTSDefaultWithAdding
       v-else
