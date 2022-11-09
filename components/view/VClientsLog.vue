@@ -31,9 +31,7 @@
     <p v-if="errorText" />
     <DivDScrollResult v-else :key="logResult">
       <div v-if="filteredLog.includes('')" class="container-fluid">
-        <div style="height: 500px;">
-          {{ $t('empty') }}
-        </div>
+        {{ $t('empty') }}
       </div>
       <div
         v-for="(log, index) in filteredLog"
