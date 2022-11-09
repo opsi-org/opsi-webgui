@@ -29,8 +29,8 @@
     </BarBPageHeader>
     <OverlayOLoading :is-loading="isLoading" />
     <p v-if="errorText" />
-    <DivDScrollResult v-else :key="logResult">
-      <div v-if="filteredLog.includes('')" class="container-fluid">
+    <DivDScrollResult v-if="logResult" :key="logResult">
+      <div v-if="filteredLog.includes('')">
         {{ $t('empty') }}
       </div>
       <div

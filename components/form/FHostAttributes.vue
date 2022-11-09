@@ -207,6 +207,9 @@
         </b-button>
       </LazyDivDComponentGroup>
     </LazyDivDScrollResult>
+    <DivDScrollResult v-else>
+      {{ $t('empty') }}
+    </DivDScrollResult>
   </div>
 </template>
 

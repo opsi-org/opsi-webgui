@@ -22,6 +22,9 @@
         </b-collapse>
       </span>
     </LazyDivDScrollResult>
+    <DivDScrollResult v-else>
+      {{ $t('empty') }}
+    </DivDScrollResult>
   </div>
 </template>
 
