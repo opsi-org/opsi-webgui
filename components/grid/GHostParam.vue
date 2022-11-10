@@ -4,12 +4,12 @@
     <AlertAAlert ref="hostParamErrorAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <LazyInputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
-    <LazyDivDScrollResult v-if="hostParam" :key="hostParam">
-      <span v-for="v,k in hostParam" :key="k">
+    <LazyInputIFilterTChanges v-if="hostParam.value" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
+    <LazyDivDScrollResult v-if="hostParam.value" :key="hostParam.id">
+      <span v-for="v,k in hostParam.value" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
-          <span v-for="item in v" :key="item" :class="{ 'd-none': !item.configId.includes(filter) }">
+          <span v-for="item,index in v" :key="index" :class="{ 'd-none': !item.configId.includes(filter) }">
             <GridGFormItem variant="longlabel">
               <template #label>
                 {{ item.configId }}
@@ -74,7 +74,7 @@ export default class GHostParam extends Vue {
     this.isLoading = true
     await this.$axios.$get(endpoint)
       .then((response) => {
-        this.hostParam = response
+        this.hostParam = { id: this.id, value: response }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.hostParamErrorAlert as any)

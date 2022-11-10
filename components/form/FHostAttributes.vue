@@ -5,7 +5,7 @@
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
     <AlertAAlert ref="uefiAlert" />
-    <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr">
+    <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr.hostId">
       <GridGFormItem>
         <template #label>
           <span class="id">{{ $t('table.fields.id') }}</span>
