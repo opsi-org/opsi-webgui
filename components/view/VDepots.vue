@@ -71,7 +71,8 @@
               :tooltip="$t('button.refresh', {id: id})"
               :label="$t('button.refresh', {id: ''})"
               incontextmenu
-              :refetch="_fetch" />
+              :refetch="_fetch"
+            />
           </template>
           <template #head(depotId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
