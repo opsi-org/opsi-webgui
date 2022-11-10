@@ -245,7 +245,7 @@ export default class VClients extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
