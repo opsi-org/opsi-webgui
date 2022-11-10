@@ -122,7 +122,6 @@
               to="/clients/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
-              :style="($route.path.includes('config')) ? 'background-color: var(--primary)': ''"
               :click="routeRedirectWith"
             />
             <ButtonBTNRowLinkTo
@@ -130,7 +129,6 @@
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log'):''"
               :icon="iconnames.log"
               to="/clients/log"
-              :style="($route.path.includes('log')) ? 'background-color: var(--primary)': ''"
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
