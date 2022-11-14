@@ -3,7 +3,28 @@
     <AlertAAlert ref="clientsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
-        <BarBCollapsePageHeader
+        <BarBPageHeader
+          :title="$t('title.clients') + ' (' + totalItems + ')'"
+          :tableid="id"
+          :table-info.sync="tableInfo"
+          :is-loading-parent="isLoading"
+          :fetch="$fetch"
+          navbartype="collapse"
+        >
+          <template #right>
+            <ButtonBTNRowLinkTo
+              :title="$t('button.show.products')"
+              :label="secondColumnOpened?'': $t('title.products')"
+              :icon="iconnames.product"
+              to="/clients/products"
+              ident="dummy"
+              class="tableheader_products"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+          </template>
+        </BarBPageHeader>
+        <!-- <BarBCollapsePageHeader
           :id="id"
           :title="$t('title.clients')+ ' (' + totalItems + ')'"
           :row-id="rowId"
@@ -18,7 +39,7 @@
           :table-info.sync="tableInfo"
           :enable-show-products="true"
           :redirect="routeRedirectWith"
-        />
+        /> -->
         <LazyTableTInfiniteScrollSmooth
           v-if="items"
           :id="id"
