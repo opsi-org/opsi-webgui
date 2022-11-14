@@ -19,7 +19,7 @@
         </b-badge>
       </b-th>
     </b-nav-item>
-    <b-collapse :id="'collapse-navitem-'+title" accordion="tooltipCollapseAccordion" :visible="collapsed">
+    <b-collapse :id="'collapse-navitem-'+title" accordion="tooltipCollapseAccordion" :visible="collapsed" class="BarBTooltipCollapse">
       <slot name="nav-child" />
     </b-collapse>
   </div>
@@ -54,7 +54,7 @@ export default class BTooltipCollapseRow extends Vue {
 .navbar {
   z-index: inherit !important;
 }
-.collapse{
+.BarBTooltipCollapse .collapse{
   padding-left: 20px;
 }
 </style>
