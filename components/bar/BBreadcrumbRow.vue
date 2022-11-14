@@ -10,16 +10,16 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'nuxt-property-decorator'
+import { Vue, Prop, Component } from 'nuxt-property-decorator'
 
 @Component
 export default class BBreadcrumbRow extends Vue {
-  // @Prop({ default: undefined }) specificItems!: Array<string>|undefined
+  @Prop({ default: undefined }) specificItems!: Array<string>|undefined
   $t: any
   $route: any
 
   get crumbs (): Array<string> {
-    // if (this.specificItems !== undefined) { return this.specificItems }
+    if (this.specificItems !== undefined) { return this.specificItems }
     const pathArray : Array<string> = this.$route.path.split('/')
     pathArray.shift()
     const items:any = []
