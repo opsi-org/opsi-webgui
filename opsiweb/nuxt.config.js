@@ -11,14 +11,15 @@ import deui from './locale/de.json'
 
 const de = { ...delib, ...deui } // merge language files from components and local one
 const en = { ...enlib, ...enui } // have to be nested to avoid overwriting sections
-
+const env = {
+  APIPATH: '/addons/webgui'
+}
 export default {
+  env: {
+    APIPATH: '/addons/webgui'
+  },
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
-  // https://nuxtjs.org/guide/runtime-config
-  publicRuntimeConfig: {
-    packageVersion: pkg.version
-  },
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
   // mode: 'spa',
@@ -122,30 +123,16 @@ export default {
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    // browserBaseURL: "/",
-    // baseURL: process.env.API_URL,
-    // baseURL: process.env.BASE_URL,
+    baseURL: (process.env.NODE_ENV === 'production') ? env.APIPATH : 'http://localhost:4447' + env.APIPATH, // fallback baseurl
     https: true,
-    port: 4447,
-    prefix: '/addons/webgui',
     progress: false
-    // progress: true,
-    // baseURL: '/'
-    // host: '/',
-    // headers: {
-    //   common: {
-    //     // 'Accept': 'application/json, text/plain, */*',
-    //     'Cache-Control': 'no-cache'
-    //   },
-    // }
-    // // |--> default is 'true', but otherwise it is not a "simple request"
-    // // and causes a CORS preflight error on firefox and safari-based browser
-    // // alternative would be using proxy, but is not supported in static applications
-
-    // withCredentials: true, // is set through '~/plugins/axios.js'
-    // //    see: https://github.com/nuxt-community/axios-module/issues/168
   },
-
+  // https://nuxtjs.org/guide/runtime-config
+  publicRuntimeConfig: {
+    packageVersion: pkg.version
+  },
+  privateRuntimeConfig: {
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     // publicPath: '/webgui/app/'
