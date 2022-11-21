@@ -20,6 +20,7 @@
           :data-testid="'NICollapsible-submenu-'+sub.title"
           :disabled="sub.disabled"
           :class="{checkactive: $route.path.includes(sub.route)}"
+          class="pl-3"
           :to="sub.route"
           @click="refresh(sub.route)"
         >
