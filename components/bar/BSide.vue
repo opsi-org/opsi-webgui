@@ -93,8 +93,8 @@ export default class BSide extends Vue {
   height: auto;
   display: inline;
   float: right;
-  margin-right: 2px;
-  margin-bottom: 0px;
+  /* margin-right: 2px;
+  margin-bottom: 0px; */
 }
 #sidemenu .b-sidebar-footer .btn {
   width: 100%;

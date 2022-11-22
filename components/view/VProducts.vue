@@ -10,6 +10,8 @@
           :is-loading-parent="isLoading"
           :fetch="$fetch"
           navbartype="collapse"
+          :childopened="secondColumnOpened"
+          :closeroute="(child)? '/clients/': null"
         />
         <!-- <BarBCollapsePageHeader
           :id="id"

@@ -10,6 +10,7 @@
           :is-loading-parent="isLoading"
           :fetch="$fetch"
           navbartype="collapse"
+          :childopened="secondColumnOpened"
         >
           <template #right>
             <ButtonBTNRowLinkTo

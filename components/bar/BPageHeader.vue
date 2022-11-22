@@ -20,7 +20,7 @@
         </b-button>
       </b-navbar-nav>
     </b-navbar>
-    <b-collapse v-if="navbartype == 'collapse' || $mq == 'mobile'" :id="'collapse' + tableid" :visible="navbartype == 'expand'">
+    <b-collapse v-if="navbartype == 'collapse' || $mq == 'mobile'" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
       <b-navbar class="pageheader_navbar mb-1">
         <template v-if="navbartype == 'collapse'">
           <TreeTSDepots v-if="tableid !== 'Depots'" class="tableheader_depots" />
@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 import { ITableInfo } from '../../.utils/types/ttable'
 
@@ -53,9 +53,11 @@ export default class BPageHeader extends Vue {
   @Prop({ default: () => { return {} } }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoadingParent!: boolean
   @Prop({ default: undefined }) fetch!: Function
+  @Prop({ default: false }) childopened!: boolean
   iconnames:any
   $mq: any
   expanded: boolean = true
+  @Watch('childopened', {}) childOpened () { this.expanded = !this.expanded }
 }
 </script>
 
