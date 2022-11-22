@@ -1,22 +1,18 @@
 <template>
   <div>
-    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0">
+    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
-        <template v-if="navbartype == 'collapse'">
-          <b-icon v-if="expanded" :icon="iconnames.arrowDoubleDown" />
-          <b-icon v-else :icon="iconnames.arrowDoubleRight" />
-        </template>
+        <b-icon v-if="navbartype == 'collapse'" :icon="expanded ? iconnames.arrowDoubleDown : iconnames.arrowDoubleRight" />
         <b v-if="title">{{ title }}</b>
-        <span v-if="subtitle" class="font-italic ml-1">
-          {{ subtitle }}
-        </span>
-        <slot name="left" />
+        <span v-if="subtitle" class="font-italic ml-1"> {{ subtitle }} </span>
       </div>
+      <b-navbar-nav class="flex-wrap">
+        <slot name="left" />
+      </b-navbar-nav>
       <b-navbar-nav class="ml-auto">
         <slot name="right" />
         <b-button v-if="closeroute" class="border-0" variant="outline-primary" :to="closeroute">
-          <span class="sr-only">{{ $t('button.close') }}</span>
-          <b-icon :icon="iconnames.x" />
+          <span class="sr-only">{{ $t('button.close') }}</span> <b-icon :icon="iconnames.x" />
         </b-button>
       </b-navbar-nav>
     </b-navbar>
@@ -62,6 +58,3 @@ export default class BPageHeader extends Vue {
   @Watch('childopened', {}) childOpened () { this.expanded = !this.childopened }
 }
 </script>
-
-<style>
-</style>

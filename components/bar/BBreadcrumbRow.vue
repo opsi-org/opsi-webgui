@@ -54,6 +54,7 @@ export default class BBreadcrumbRow extends Vue {
 .lightBreadcrumb a.nuxt-link-active {
   font-weight: normal !important;
   color: var(--light) !important;
+  text-decoration: underline;
 }
 .lightBreadcrumb .breadcrumb-item.active {
   color: var(--light) !important;
