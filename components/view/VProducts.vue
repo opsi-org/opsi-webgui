@@ -297,9 +297,4 @@ export default class VProducts extends Vue {
 .products_horizontaltabs .nav-item{
   min-width: min-content;
 }
-.changeslink.btn-link {
-  font-weight: bold;
-  color: green;
-}
-
 </style>

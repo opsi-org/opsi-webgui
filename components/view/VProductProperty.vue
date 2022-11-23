@@ -13,10 +13,10 @@
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
       :redirect-on-close-to="(asChild)? closeroute: undefined"
     />
-    <div class="VProductProperty-Card-Description">
+    <div class="ml-3 mb-2">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
-    <b-tabs v-if="id" v-model="activeTab" class="horizontaltab" lazy>
+    <b-tabs v-if="id" v-model="activeTab" lazy>
       <div v-if="!$fetchState.pending && ($fetchState.error || activeTabSet < -1)">
         <p>
           {{ errorText.properties }}
@@ -176,13 +176,3 @@ export default class VProductProperty extends Vue {
   }
 }
 </script>
-
-<style>
-.horizontaltab .nav-item{
-  min-width: 20%;
-}
-.VProductProperty-Card-Description {
-  margin-bottom: 10px;
-  margin-left: 15px;
-}
-</style>
