@@ -97,15 +97,12 @@ export default class BTop extends Vue {
 .mobile .topbar .navbar-brand{
   margin: auto;
 }
-
 .topbar::before {
   content: unset !important;
 }
-
 .topbar::after {
   content: unset !important;
 }
-
 .topbar_brand{
   max-height: var(--height-navbar) !important;
   display: inline-flex !important;
@@ -116,7 +113,6 @@ export default class BTop extends Vue {
   margin-left: -3px;
   margin-top: 7px;
 }
-
 .topbar_version{
   font-size: var(--text-small-size)!important;
 }
@@ -132,7 +128,6 @@ export default class BTop extends Vue {
   content: "";
   border: 1px solid var(--primary-dark);
 }
-
 .mobile #nav-collapse,
 .mobile #nav-collapse .navbar-nav {
   top:0px !important;

@@ -44,13 +44,6 @@ export default class BTooltipCollapseRow extends Vue {
 .BarBTooltipCollapseRow {
   list-style: none !important;
 }
-.pageheader{
-  height: var(--height-navbar) !important;
-}
-.pageheader_wrap {
-  display: inline-flex;
-  flex-wrap: wrap;
-}
 .navbar {
   z-index: inherit !important;
 }
