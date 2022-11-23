@@ -2,9 +2,9 @@
   <div>
     <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
-        <b-icon v-if="navbartype == 'collapse'" class="pageheader" :icon="expanded ? iconnames.arrowDoubleDown : iconnames.arrowDoubleRight" />
-        <span v-if="title" class="pageheader font-weight-bold">{{ title }}</span>
-        <span v-if="subtitle" class="pageheader font-italic ml-1"> {{ subtitle }} </span>
+        <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? iconnames.arrowDoubleDown : iconnames.arrowDoubleRight" />
+        <span v-if="title" class="labelcolor font-weight-bold">{{ title }}</span>
+        <span v-if="subtitle" class="labelcolor font-italic ml-1"> {{ subtitle }} </span>
       </div>
       <b-navbar-nav class="flex-wrap">
         <slot name="left" />
@@ -58,8 +58,3 @@ export default class BPageHeader extends Vue {
   @Watch('childopened', {}) childOpened () { this.expanded = !this.childopened }
 }
 </script>
-<style>
-.pageheader {
-  color: var(--color) !important;
-}
-</style>

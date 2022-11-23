@@ -314,3 +314,7 @@ body .mobile .topbar_content .navbar > * {
   color: var(--light);
   background-color: var(--primary);
 }
+
+.labelcolor {
+  color: var(--color) !important;
+}
