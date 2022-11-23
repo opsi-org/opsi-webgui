@@ -4,7 +4,7 @@
       v-if="depotIds"
       v-model="idselection"
       :class="cssclass"
-      class="treeselect_depotselect"
+      class="treeselect_notstored"
       :options="depotIds"
       :placeholder="$t('form.depot')"
       :always-open="false"
@@ -43,32 +43,3 @@ export default class TSDepotsNotStored extends Vue {
   }
 }
 </script>
-
-<style>
-.treeselect_depotselect_short{
-  max-width: var(--component-width) !important;
-}
-.treeselect_depotselect .vue-treeselect__control {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
-  border:1px solid var(--border, #ced4da );
-}
-.treeselect_depotselect .vue-treeselect__menu {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
-}
-.treeselect_depotselect .vue-treeselect__single-value {
-  color: var(--color, var(--light, white));
-}
-.treeselect_depotselect .vue-treeselect__input {
-  color: var(--color) !important;
-}
-.treeselect_depotselect .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--color);
-  background-color: var(--hover);
-}
-.treeselect_depotselect.vue-treeselect--single .vue-treeselect__option--selected{
-  color: var(--light);
-  background-color: var(--primary);
-}
-</style>

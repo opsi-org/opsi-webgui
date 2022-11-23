@@ -35,6 +35,6 @@ export default class IFilter extends BFormInput {
 
 <style>
 .filter {
-  max-width: 250px !important;
+  max-width: var(--component-width) !important;
 }
 </style>

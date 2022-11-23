@@ -35,7 +35,7 @@
   --text-small-size: 10px;
 
   --component-height: 35px;
-  --component-width: 200px;
+  --component-width: 250px;
 
   --max-height-window:500px;
   --height-navbar: 56px;
@@ -286,4 +286,31 @@ body .mobile .topbar_content .navbar > * {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
+}
+
+.treeselect_short{
+  max-width: var(--component-width) !important;
+}
+.treeselect_notstored .vue-treeselect__control {
+  background-color: var(--component, var(--background, black));
+  color: var(--color, var(--light, white));
+  border:1px solid var(--border, #ced4da );
+}
+.treeselect_notstored .vue-treeselect__menu {
+  background-color: var(--component, var(--background, black));
+  color: var(--color, var(--light, white));
+}
+.treeselect_notstored .vue-treeselect__single-value {
+  color: var(--color, var(--light, white));
+}
+.treeselect_notstored .vue-treeselect__input {
+  color: var(--color) !important;
+}
+.treeselect_notstored .vue-treeselect__menu .vue-treeselect__option--highlight {
+  color: var(--color);
+  background-color: var(--hover);
+}
+.treeselect_notstored.vue-treeselect--single .vue-treeselect__option--selected{
+  color: var(--light);
+  background-color: var(--primary);
 }
