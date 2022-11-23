@@ -47,4 +47,3 @@ export default class TSClientsNotStored extends Vue {
   }
 }
 </script>
-
