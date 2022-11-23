@@ -1,7 +1,7 @@
 <template>
   <ViewVConfig :id="id" :as-child="false" :type="type">
     <template slot="IDSelection">
-      <TreeTSDepotsNotStored :id.sync="id" cssclass="treeselect_depotselect_short" />
+      <TreeTSDepotsNotStored :id.sync="id" cssclass="treeselect_short" />
     </template>
   </ViewVConfig>
 </template>
