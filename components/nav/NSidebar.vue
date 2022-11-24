@@ -139,7 +139,6 @@ export default class NSidebar extends Vue {
   height: 100%;
   overflow-x: visible;
 }
-
 .sidebar_collapsed .sidemenu_nav .nav-item{
   margin-right: 0px !important;
 }

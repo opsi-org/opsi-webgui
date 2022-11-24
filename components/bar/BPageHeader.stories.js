@@ -21,7 +21,6 @@ BPageHeader.args = {
   variant: 'transparent',
   title: 'Title',
   collapsed: false,
-  bold: false,
   slotleft: 'Left',
   slotright: 'Right',
   navbartype: 'collapse'

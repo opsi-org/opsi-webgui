@@ -285,13 +285,13 @@ export default class GCProductPropertyValue extends Vue {
 </script>
 
 <style>
-.dropdown {
-  max-width: -moz-available;
-  max-width: -moz-available;          /* For Mozzila */
-  max-width: -webkit-fill-available;  /* For Chrome */
-}
 .GCProductPropertyValue_ValueBool {
   display:inline-block !important;
+}
+/* .dropdown {
+  max-width: -moz-available;
+  max-width: -moz-available;          For Mozzila
+  max-width: -webkit-fill-available;  For Chrome
 }
 .GCProductPropertyValue_Value .dropdown > .dropdown-menu,
 .GCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {
@@ -302,8 +302,5 @@ export default class GCProductPropertyValue extends Vue {
 .GCProductPropertyValue_Value .dropdown button {
   text-overflow: ellipsis;
   overflow: hidden;
-}
-/* .btn-group, .btn-group-vertical {
-  display: grid !important;
 } */
 </style>

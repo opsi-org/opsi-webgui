@@ -4,7 +4,14 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
         <!-- v-if="$mq == 'mobile'" -->
-        <BarBCollapsePageHeader
+        <BarBPageHeader
+          :title="$t('title.depots') + ' (' + totalItems + ')'"
+          :tableid="id"
+          :table-info.sync="tableInfo"
+          :is-loading-parent="isLoading"
+          :fetch="$fetch"
+        />
+        <!-- <BarBCollapsePageHeader
           :id="id"
           :title="$t('title.depots') + ' (' + totalItems + ')' || 'Servers' + ' (' + totalItems + ')'"
           :row-id="rowId"
@@ -20,7 +27,7 @@
           :table-info.sync="tableInfo"
           :redirect-on-close-to="undefined"
           :redirect="undefined"
-        />
+        /> -->
         <LazyTableTInfiniteScrollSmooth
           v-if="items"
           :id="id"

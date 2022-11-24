@@ -10,7 +10,7 @@
       v-else
       v-model="localval"
       data-testid="GCHostParamUnicode"
-      class="treeselect_hostparam"
+      class="treeselect_notstored"
       :multiple="row.multiValue"
       :editable="row.editable"
       :limit="1"
@@ -77,29 +77,3 @@ export default class GCHostParamVal extends Vue {
   }
 }
 </script>
-
-<style>
-.treeselect_hostparam .vue-treeselect__control {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
-  border:1px solid var(--border, #ced4da );
-}
-.treeselect_hostparam .vue-treeselect__menu {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
-}
-.treeselect_hostparam .vue-treeselect__single-value {
-  color: var(--color, var(--light, white));
-}
-.treeselect_hostparam .vue-treeselect__input {
-  color: var(--color) !important;
-}
-.treeselect_hostparam .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--color);
-  background-color: var(--hover);
-}
-.treeselect_hostparam.vue-treeselect--single .vue-treeselect__option--selected{
-  color: var(--light);
-  background-color: var(--primary);
-}
-</style>

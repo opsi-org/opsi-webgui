@@ -4,7 +4,7 @@
       v-if="clientIds"
       v-model="idselection"
       data-testid="TSClientsNotStored"
-      class="treeselect_idselect"
+      class="treeselect_notstored treeselect_short"
       :options="clientIds"
       :placeholder="$t('form.client')"
       @input="$emit('update:id', idselection)"
@@ -47,32 +47,3 @@ export default class TSClientsNotStored extends Vue {
   }
 }
 </script>
-
-<style>
-.treeselect_idselect{
-  max-width: var(--component-width) !important;
-}
-.treeselect_idselect .vue-treeselect__control {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
-  border:1px solid var(--border, #ced4da );
-}
-.treeselect_idselect .vue-treeselect__menu {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
-}
-.treeselect_idselect .vue-treeselect__single-value {
-  color: var(--color, var(--light, white));
-}
-.treeselect_idselect .vue-treeselect__input {
-  color: var(--color) !important;
-}
-.treeselect_idselect .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--color);
-  background-color: var(--hover);
-}
-.treeselect_idselect.vue-treeselect--single .vue-treeselect__option--selected{
-  color: var(--light);
-  background-color: var(--primary);
-}
-</style>

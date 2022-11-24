@@ -3,21 +3,18 @@
     <b-breadcrumb
       v-if="crumbs.length > 0"
       data-testid="BarBBreadcrumb"
-      class="breacrumb"
-      :class="{lightBreadcrumb: type=='light',
-               darkBreadcrumb: type=='dark'}"
+      class="p-0 m-0 lightBreadcrumb"
       :items="crumbs"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'nuxt-property-decorator'
+import { Vue, Prop, Component } from 'nuxt-property-decorator'
 
 @Component
 export default class BBreadcrumbRow extends Vue {
   @Prop({ default: undefined }) specificItems!: Array<string>|undefined
-  @Prop({ default: undefined }) type!:string
   $t: any
   $route: any
 
@@ -61,19 +58,5 @@ export default class BBreadcrumbRow extends Vue {
 }
 .lightBreadcrumb .breadcrumb-item.active {
   color: var(--light) !important;
-}
-.darkBreadcrumb a.nuxt-link-active {
-  font-weight: normal !important;
-  font-size: smaller !important;
-  color: var(--color) !important;
-  text-decoration: underline;
-}
-.darkBreadcrumb .breadcrumb-item.active {
-  font-size: smaller !important;
-  color: var(--dark) !important;
-}
-.breacrumb {
-  padding: 0px !important;
-  margin: 0px !important;
 }
 </style>

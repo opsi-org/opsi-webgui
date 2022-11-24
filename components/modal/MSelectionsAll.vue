@@ -83,19 +83,3 @@ export default class MSelectionsAll extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
 }
 </script>
-<style>
-.selection_badge {
-  margin-top: var(--min-line-height);
-  line-height: 1.5 !important;
-  width: 20px !important;
-  max-width: 20px !important;
-  height: 20px !important;
-  max-height: 20px !important;
-  min-height: 20px !important;
-  border: unset !important;
-  padding: 0px !important;
-  font-size: small !important;
-  background-color: inherit !important;
-  color: inherit !important;
-}
-</style>

@@ -329,6 +329,5 @@ export default class VClientCreation extends Vue {
 .VClientCreation {
   overflow-x: hidden;
   padding-left: 10px;
-  height: 100vh !important;
 }
 </style>

@@ -3,7 +3,17 @@
     <AlertAAlert ref="productsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <BarBCollapsePageHeader
+        <BarBPageHeader
+          :title="$t('title.products')"
+          :tableid="id"
+          :table-info.sync="tableInfo"
+          :is-loading-parent="isLoading"
+          :fetch="$fetch"
+          navbartype="collapse"
+          :childopened="secondColumnOpened"
+          :closeroute="(child)? '/clients/': null"
+        />
+        <!-- <BarBCollapsePageHeader
           :id="id"
           :title="$t('title.products')"
           :row-id="rowId"
@@ -20,7 +30,7 @@
           :table-info="tableInfo"
           :redirect-on-close-to="(child)? '/clients/': undefined"
           :redirect="routeRedirectWith"
-        />
+        /> -->
         <b-tabs class="products_horizontaltabs" lazy>
           <b-tab disabled>
             <template #title>
@@ -287,9 +297,4 @@ export default class VProducts extends Vue {
 .products_horizontaltabs .nav-item{
   min-width: min-content;
 }
-.changeslink.btn-link {
-  font-weight: bold;
-  color: green;
-}
-
 </style>
