@@ -89,15 +89,6 @@ export default class DDTableSorting extends BDropdown {
   right: 0;
   left: auto;
 }
-.contextmenu .btn{
-  text-align: left;
-  padding-left: 0;
-  width: 100%;
-}
-.contextmenu .btn::after {
-  float: right;
-  margin-top: 10px;
-}
 .sortDirectionWrapper > div {
   display: inline-block !important;
 }

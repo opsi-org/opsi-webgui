@@ -318,3 +318,13 @@ body .mobile .topbar_content .navbar > * {
 .labelcolor {
   color: var(--color) !important;
 }
+
+.contextmenu .btn{
+  text-align: left;
+  padding-left: 0;
+  width: 100%;
+}
+.contextmenu .btn::after {
+  float: right;
+  margin-top: 10px;
+}
