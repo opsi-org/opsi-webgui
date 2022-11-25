@@ -1,18 +1,19 @@
 <template>
   <div
-    @mouseover="incontextmenu ? onOver($refs.dropdown) : null"
-    @mouseleave="incontextmenu ? onLeave($refs.dropdown) : null"
-    @focusin="incontextmenu ? onOver($refs.dropdown) : null"
-    @focusout="incontextmenu ? onLeave($refs.dropdown) : null"
+    @mouseover="incontextmenu ? onOver($refs.sortdropdown) : null"
+    @mouseleave="incontextmenu ? onLeave($refs.sortdropdown) : null"
+    @focusin="incontextmenu ? onOver($refs.sortdropdown) : null"
+    @focusout="incontextmenu ? onLeave($refs.sortdropdown) : null"
   >
     <b-dropdown
       v-bind="$props"
-      ref="dropdown"
+      ref="sortdropdown"
       data-testid="DropdownDDTableSorting"
       variant="outline-primary border-0"
       :no-caret="!incontextmenu"
-      :title="$t('button.sort.tablecolumns')"
-      :class="{ 'rightmenu': $mq == 'mobile' }"
+      :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
+      :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
+      :dropright="incontextmenu"
     >
       <template #button-content>
         <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
@@ -62,12 +63,21 @@ export default class DDTableSorting extends BDropdown {
 }
 </script>
 <style>
-.selectedSort {
+.selectedSort .dropdown-item {
   color: var(--light) !important;
   background-color: var(--primary) !important;
 }
 .rightmenu .dropdown-menu {
   right: 0;
   left: auto;
+}
+.contextmenu .btn{
+  text-align: left;
+  padding-left: 0;
+  width: 100%;
+}
+.contextmenu .btn::after {
+  float: right;
+  margin-top: 10px;
 }
 </style>
