@@ -8,7 +8,9 @@
     <b-dropdown
       v-bind="$props"
       ref="sortdropdown"
+      size="sm"
       data-testid="DropdownDDTableSorting"
+      class="DDTableSorting"
       variant="outline-primary border-0"
       :no-caret="!incontextmenu"
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
@@ -19,24 +21,36 @@
         <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
         <small v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</small>
       </template>
-      <b-dropdown-form
-        inline
-        @keydown.prevent="changeSortDirection()"
-        @click.prevent="changeSortDirection()"
-      >
-        <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" />
-        <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
-      </b-dropdown-form>
-      <li class="li-delimiter" />
-      <b-dropdown-item
-        v-for="header in Object.values(headerData).filter(h=>h.sortable)"
-        :key="header.key"
-        :class="{'selectedSort': (sortBy==header.key)}"
-        @keydown="changeSortBy(header.key)"
-        @click="changeSortBy(header.key)"
-      >
-        {{ header.label }}
-      </b-dropdown-item>
+      <small><li class="dropdown-item">
+        <a class="sortDirectionWrapper" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
+          <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /> <span> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
+        </a>
+      </li></small>
+      <template v-if="incontextmenu">
+        <li class="li-delimiter" />
+        <li
+          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+          :key="header.key"
+          class="dropdown-item"
+          :class="{'selectedSort': (sortBy==header.key)}"
+          @keydown="changeSortBy(header.key)"
+          @click="changeSortBy(header.key)"
+        >
+          <small><a> {{ header.label }} </a></small>
+        </li>
+      </template>
+      <template v-else>
+        <li class="li-delimiter" />
+        <b-dropdown-item
+          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+          :key="header.key"
+          :class="{'selectedSort': (sortBy==header.key)}"
+          @keydown="changeSortBy(header.key)"
+          @click="changeSortBy(header.key)"
+        >
+          <small>{{ header.label }}</small>
+        </b-dropdown-item>
+      </template>
     </b-dropdown>
   </div>
 </template>
@@ -67,6 +81,10 @@ export default class DDTableSorting extends BDropdown {
   color: var(--light) !important;
   background-color: var(--primary) !important;
 }
+.DDTableSorting  .dropdown-menu li.selectedSort {
+  color: var(--light) !important;
+  background-color: var(--primary) !important;
+}
 .rightmenu .dropdown-menu {
   right: 0;
   left: auto;
@@ -79,5 +97,8 @@ export default class DDTableSorting extends BDropdown {
 .contextmenu .btn::after {
   float: right;
   margin-top: 10px;
+}
+.sortDirectionWrapper > div {
+  display: inline-block !important;
 }
 </style>
