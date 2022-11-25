@@ -21,11 +21,11 @@
         <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
         <small v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</small>
       </template>
-      <small><li>
-        <a class="sortDirectionWrapper dropdown-item" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
-          <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /> <span> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
+      <li class="dropdown-item" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
+        <a class="sortDirectionWrapper">
+          <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /><small>{{ $t('button.sort.tablecolumns.sortDirection') }}</small>
         </a>
-      </li></small>
+      </li>
       <template v-if="incontextmenu">
         <li class="li-delimiter" />
         <li
