@@ -135,6 +135,11 @@ body .mobile .topbar_content .navbar > * {
   background-color: transparent !important;
 }
 
+.btn , .btn:hover {
+  color: var(--color);
+  background-color: transparent;
+}
+
 .btn-block {
   display: block;
   width: 100%;

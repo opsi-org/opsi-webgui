@@ -8,7 +8,7 @@
   >
     <b-dropdown
       ref="actionsdropdown"
-      variant="outline-primary border-0"
+      :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
       size="sm"
       :no-caret="!incontextmenu"
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
@@ -20,7 +20,7 @@
         <small v-if="incontextmenu">{{ $t('button.item-actions') }}</small>
       </template>
       <ButtonBTNEvent
-        :class="{ 'dropdown-item contextmenu': incontextmenu }"
+        :class="{ 'dropdown-item contextmenu small': incontextmenu }"
         event="ondemand"
         :incontextmenu="incontextmenu"
         :data="clientId"
@@ -28,7 +28,7 @@
         :with-text="true"
       />
       <ButtonBTNEvent
-        :class="{ 'dropdown-item contextmenu': incontextmenu }"
+        :class="{ 'dropdown-item contextmenu small': incontextmenu }"
         event="showpopup"
         :incontextmenu="incontextmenu"
         :data="clientId"
@@ -36,15 +36,15 @@
         :with-text="true"
       />
       <ButtonBTNEvent
-        :class="{ 'dropdown-item contextmenu': incontextmenu }"
+        :class="{ 'dropdown-item contextmenu small': incontextmenu }"
         event="reboot"
         :incontextmenu="incontextmenu"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
         :with-text="true"
       />
-      <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" />
-      <ModalMDeleteClient :class="{ 'dropdown-item contextmenu': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" :refetch="fetch" />
+      <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" />
+      <ModalMDeleteClient :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" :refetch="fetch" />
     </b-dropdown>
   </div>
 </template>
