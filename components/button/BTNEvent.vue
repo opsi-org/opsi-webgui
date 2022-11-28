@@ -17,7 +17,7 @@
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (withText !== false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <span class="eventlabel"> {{ (withText || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </b-button>
     <li
@@ -34,7 +34,7 @@
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel"> {{ (withText !== false || incontextmenu !== false || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <span class="eventlabel"> {{ (withText || incontextmenu || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </li>
 

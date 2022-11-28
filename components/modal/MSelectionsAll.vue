@@ -6,10 +6,10 @@
       :class="{ 'pl-3': $mq=='mobile' }"
       size="md"
       tabindex="0"
-      :title="$t('title.selectedElements')"
+      :title="withText ? '' : $t('title.selectedElements')"
       @click="show = !show"
     >
-      <b-icon :icon="iconnames.info" />
+      <b-icon :icon="iconnames.info" /> <span v-if="withText"> {{ $t('title.selectedElements') }}</span>
     </b-button>
 
     <b-modal
@@ -75,6 +75,7 @@ export default class MSelectionsAll extends Vue {
   @Prop({ default: true }) showDepots!: string
   @Prop({ default: true }) showClients!: string
   @Prop({ default: false }) showProducts!: string
+  @Prop({ default: false }) withText!: boolean
   iconnames:any
   $mq:any
 
