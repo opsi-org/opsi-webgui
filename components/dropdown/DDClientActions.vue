@@ -19,11 +19,32 @@
         <b-icon :icon="iconnames.menu" :title="$t('button.tablerow.moreoptions')" />
         <small v-if="incontextmenu">{{ $t('button.item-actions') }}</small>
       </template>
-      <ButtonBTNEvent event="ondemand" class="dropdown-item" :data="clientId" :update-loading="loading => clientsLoading = loading" :with-text="true" />
-      <ButtonBTNEvent event="showpopup" class="dropdown-item" :data="clientId" :update-loading="loading => clientsLoading = loading" :with-text="true" />
-      <ButtonBTNEvent event="reboot" class="dropdown-item" :data="clientId" :update-loading="loading => clientsLoading = loading" :with-text="true" />
-      <ModalMDeployClientAgent class="dropdown-item" :client-id="clientId" />
-      <ModalMDeleteClient class="dropdown-item" :client-id="clientId" :refetch="fetch" />
+      <ButtonBTNEvent
+        :class="{ 'dropdown-item contextmenu': incontextmenu }"
+        event="ondemand"
+        :incontextmenu="incontextmenu"
+        :data="clientId"
+        :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
+      />
+      <ButtonBTNEvent
+        :class="{ 'dropdown-item contextmenu': incontextmenu }"
+        event="showpopup"
+        :incontextmenu="incontextmenu"
+        :data="clientId"
+        :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
+      />
+      <ButtonBTNEvent
+        :class="{ 'dropdown-item contextmenu': incontextmenu }"
+        event="reboot"
+        :incontextmenu="incontextmenu"
+        :data="clientId"
+        :update-loading="loading => clientsLoading = loading"
+        :with-text="true"
+      />
+      <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" />
+      <ModalMDeleteClient :class="{ 'dropdown-item contextmenu': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" :refetch="fetch" />
     </b-dropdown>
   </div>
 </template>
