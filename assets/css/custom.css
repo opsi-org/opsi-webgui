@@ -135,6 +135,11 @@ body .mobile .topbar_content .navbar > * {
   background-color: transparent !important;
 }
 
+.btn , .btn:hover {
+  color: var(--color);
+  background-color: transparent;
+}
+
 .btn-block {
   display: block;
   width: 100%;
@@ -317,4 +322,14 @@ body .mobile .topbar_content .navbar > * {
 
 .labelcolor {
   color: var(--color) !important;
+}
+
+.contextmenu .btn{
+  text-align: left;
+  padding-left: 0;
+  width: 100%;
+}
+.contextmenu .btn::after {
+  float: right;
+  margin-top: 10px;
 }

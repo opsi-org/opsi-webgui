@@ -39,20 +39,8 @@
         />
       </template>
       <template #contextcontent-general-2>
-        <DropdownDDTableSorting
-          :table-id="id"
-          :incontextmenu="true"
-          v-bind.sync="tableInfo"
-          onhover
-        />
-        <DropdownDDTableColumnVisibility
-          :table-id="id"
-          :headers.sync="tableInfo.headerData"
-          :sort-by="tableInfo.sortBy"
-          :multi="true"
-          :incontextmenu="true"
-          onhover
-        />
+        <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
+        <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
         <ButtonBTNRefetch
           :is-loading="isLoadingTable || isLoading"
           :tooltip="$t('button.refresh', {id: id})"

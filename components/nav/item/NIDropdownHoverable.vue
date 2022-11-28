@@ -1,13 +1,13 @@
 <template>
   <div
     data-testid="NIDropdownHoverable"
-    @mouseover="onMouseOver"
-    @mouseleave="onMouseLeave"
-    @focus="onMouseOver"
-    @blur="onMouseLeave"
+    @mouseover="onOver($refs.sidemenudropdown)"
+    @mouseleave="onLeave($refs.sidemenudropdown)"
+    @focus="onOver($refs.sidemenudropdown)"
+    @blur="onLeave($refs.sidemenudropdown)"
   >
     <b-nav-item-dropdown
-      ref="dropdown"
+      ref="sidemenudropdown"
       class="sidemenu_dropdown"
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       block
@@ -42,25 +42,20 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { HoverDropdown } from '../../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [HoverDropdown] })
 export default class NIDropdownHoverable extends Vue {
   $route: any
   $router: any
   $nuxt: any
+  onOver: any
+  onLeave: any
   @Prop({ }) title!: string
   @Prop({ default: false }) disabled!: boolean
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>
-
-  onMouseOver () {
-    (this.$refs.dropdown as any).visible = true
-  }
-
-  onMouseLeave () {
-    (this.$refs.dropdown as any).visible = false
-  }
 
   changeRoute () {
     this.$router.push({ path: this.route })

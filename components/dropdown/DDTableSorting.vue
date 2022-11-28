@@ -1,102 +1,58 @@
 <template>
-  <div v-if="onhover!==false" @mouseover="onOver($refs.dropdown)" @mouseleave="onLeave($refs.dropdown)" @focusin="onOver($refs.dropdown)" @focusout="onLeave($refs.dropdown)">
+  <div
+    @mouseover="incontextmenu ? onOver($refs.sortdropdown) : null"
+    @mouseleave="incontextmenu ? onLeave($refs.sortdropdown) : null"
+    @focusin="incontextmenu ? onOver($refs.sortdropdown) : null"
+    @focusout="incontextmenu ? onLeave($refs.sortdropdown) : null"
+  >
     <b-dropdown
-      ref="dropdown"
       v-bind="$props"
-      data-testid="DropdownDDTableSorting"
-      dropright
-      lazy
-      :no-caret="incontextmenu == false"
-      :toggle-tag="incontextmenu !== false ? 'li': 'button'"
-      :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
+      ref="sortdropdown"
       size="sm"
-      alt="Show column"
-      class="DropdownDDTableSorting fixed_column_selection noborder w-100 text-left"
-      :class="{ 'absolutright': (incontextmenu !== false) }"
-      :toggle-class="{
-        'DropdownDDTableSortingBtn w-100 h-100 text-left': true,
-        'dropdown-item': (incontextmenu !== false) }"
-      :title="$t('button.sort.tablecolumns')"
+      data-testid="DropdownDDTableSorting"
+      class="DDTableSorting"
+      :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
+      :no-caret="!incontextmenu"
+      :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
+      :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
+      :dropright="incontextmenu"
     >
       <template #button-content>
         <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
-        {{ incontextmenu !== false ? $t('button.sort.tablecolumns.title'): '' }}
+        <small v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</small>
       </template>
-      <small>
-        <li class="dropdown-item">
-          <a
-            class="sortDirectionWrapper"
-            @keydown.prevent="changeSortDirection()"
-            @click.prevent="changeSortDirection()"
-          >
-            <b-form-checkbox :checked="sortDesc" />
-            <span class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </span>
-          </a>
-        </li>
-      </small>
-      <li class="li-delimiter" />
-      <li
-        v-for="header in Object.values(headerData).filter(h=>h.sortable)"
-        :key="header.key"
-        class="dropdown-item"
-        :class="{'selected': (sortBy==header.key)}"
-        variant="primary"
-        @keydown="changeSortBy(header.key)"
-        @click="changeSortBy(header.key)"
-      >
-        <small>
-          <a>
-            {{ header.label }}
-          </a>
-        </small>
+      <li class="dropdown-item" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
+        <a class="sortDirectionWrapper">
+          <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /><small>{{ $t('button.sort.tablecolumns.sortDirection') }}</small>
+        </a>
       </li>
+      <template v-if="incontextmenu">
+        <li class="li-delimiter" />
+        <li
+          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+          :key="header.key"
+          class="dropdown-item"
+          :class="{'selectedSort': (sortBy==header.key)}"
+          @keydown="changeSortBy(header.key)"
+          @click="changeSortBy(header.key)"
+        >
+          <small><a> {{ header.label }} </a></small>
+        </li>
+      </template>
+      <template v-else>
+        <li class="li-delimiter" />
+        <b-dropdown-item
+          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+          :key="header.key"
+          :class="{'selectedSort': (sortBy==header.key)}"
+          @keydown="changeSortBy(header.key)"
+          @click="changeSortBy(header.key)"
+        >
+          <small>{{ header.label }}</small>
+        </b-dropdown-item>
+      </template>
     </b-dropdown>
   </div>
-  <b-dropdown
-    v-else
-    v-bind="$props"
-    data-testid="DropdownDDTableSorting"
-    :dropright="$mq=='desktop' || incontextmenu !== false"
-    :dropleft="$mq!='desktop' && incontextmenu === false"
-    lazy
-    :no-caret="incontextmenu == false"
-    :toggle-tag="incontextmenu !== false ? 'li': 'button'"
-    :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
-    size="sm"
-    alt="Show column"
-    class="DropdownDDTableSorting fixed_column_selection noborder w-100 text-left"
-    :class="{ 'absolutright': (incontextmenu !== false) }"
-    :toggle-class="{
-      'DropdownDDTableSortingBtn w-100 h-100 text-left': true,
-      'dropdown-item': (incontextmenu !== false) }"
-    :title="$t('button.sort.tablecolumns')"
-  >
-    <template #button-content>
-      <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
-      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.sort.tablecolumns.title') }}</small>
-    </template>
-    <b-dropdown-form
-      @keydown.prevent="changeSortDirection()"
-      @click.prevent="changeSortDirection()"
-    >
-      <b-form-checkbox
-        :checked="sortDesc"
-      />
-      <small class="sortDirection"> {{ $t('button.sort.tablecolumns.sortDirection') }} </small>
-    </b-dropdown-form>
-    <li class="li-delimiter" />
-    <b-dropdown-form
-      v-for="header in Object.values(headerData).filter(h=>h.sortable)"
-      :key="header.key"
-      :class="{'selected': (sortBy==header.key)}"
-      class="dropdown-item"
-      variant="primary"
-      @keydown="changeSortBy(header.key)"
-      @click="changeSortBy(header.key)"
-    >
-      <small>{{ header.label }}</small>
-    </b-dropdown-form>
-  </b-dropdown>
 </template>
 
 <script lang="ts">
@@ -107,85 +63,33 @@ import { Constants, HoverDropdown } from '../../mixins/uib-mixins'
 
 @Component({ mixins: [Constants, HoverDropdown] })
 export default class DDTableSorting extends BDropdown {
+  @Prop({ default: '' }) sortBy!: string
+  @Prop({ default: false }) sortDesc!: boolean
+  @Prop({ default: false }) incontextmenu!: boolean
+  @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeader
   $mq:any
   iconnames: any
   onOver:any
   onLeave:any
-  @Prop({ default: '' }) sortBy!: string
-  @Prop({ default: false }) sortDesc!: boolean
-  @Prop({ default: false }) incontextmenu!: boolean
-  @Prop({ default: false }) onhover!: boolean
-  @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeader
 
   changeSortDirection () { this.$emit('update:sortDesc', (!this.sortDesc)) }
   changeSortBy (key:string) { this.$emit('update:sortBy', key) }
 }
 </script>
 <style>
-.DropdownDDTableSorting {
-  max-width: fit-content !important;
-  max-height: var(--component-height) !important;
-  display: unset !important;
-}
-.DropdownDDTableSorting.absolutright {
-  min-width: 100% !important;
-  width: 100% !important;
-}
-.DropdownDDTableSortingBtn {
-  height: 100%;
-  max-height: var(--component-height) !important;
-}
-.DropdownDDTableSortingBtn::after {
-  float: right;
-  margin-top: 10px;
-}
-.DropdownDDTableSorting li.dropdown-item small {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-.DropdownDDTableSorting .dropdown-menu {
-  min-width: 220px !important;
-  max-width: 350px !important;
-  height: max-content !important;
-  z-index: 3000 !important;
-  overflow: auto;
-}
-.DropdownDDTableSorting .dropdown-menu .sortDirectionWrapper > div {
-  display: inline-block !important;
-}
-.DropdownDDTableSorting .dropdown-menu .dropdown-item:hover {
-  display: inline-flex !important;
-}
-.DropdownDDTableSorting .dropdown-menu li {
-  cursor: pointer;
-  padding-left: 5px;
-  padding-right: 5px;
-  white-space: normal;
-  font-weight: 300 !important;
-  overflow: auto !important;
-}
-.DropdownDDTableSorting .dropdown-menu li .b-dropdown-form {
-  margin: 0px !important;
-  padding: 0px !important;
-  padding-left: 15px !important;
-  padding-right: 15px !important;
-}
-.DropdownDDTableSorting .dropdown-menu li .b-dropdown-form .custom-control {
-  display: inline-block;
-  padding-bottom: 5px !important;
-}
-.DropdownDDTableSorting.absolutright > li {
-  border: unset !important;
-}
-.DropdownDDTableSorting.absolutright > li:hover {
-  border: unset !important;
-}
-.DropdownDDTableSorting  .dropdown-menu li.selected {
+.selectedSort .dropdown-item {
   color: var(--light) !important;
   background-color: var(--primary) !important;
 }
-.DropdownDDTableSorting .noborder .btn-outline-primary{
-  border: 0;
-  box-shadow: none;
+.DDTableSorting  .dropdown-menu li.selectedSort {
+  color: var(--light) !important;
+  background-color: var(--primary) !important;
+}
+.rightmenu .dropdown-menu {
+  right: 0;
+  left: auto;
+}
+.sortDirectionWrapper > div {
+  display: inline-block !important;
 }
 </style>

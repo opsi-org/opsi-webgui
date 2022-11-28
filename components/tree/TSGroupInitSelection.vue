@@ -34,5 +34,3 @@ export default class TSGroupInitSelection extends Vue {
   }
 }
 </script>
-
-<style>
