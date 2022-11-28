@@ -193,6 +193,7 @@ export default class BTNEvent extends Vue {
 
         if (this.updateLoading !== undefined) { this.updateLoading([]) }
       })
+    this.$bvModal.hide('event-modal-' + this.event + '-' + this.data)
   }
 
   showResultOndemand (ref:any, response:any) {
