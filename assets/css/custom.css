@@ -108,7 +108,7 @@ body .mobile .topbar_content .navbar > * {
   color: var(--orange) !important;
 }
 .width-max-content{
-    max-width: max-content !important;
+  max-width: max-content !important;
 }
 .footer_content .btn, .footer_content .navbar, .footer_content .navbar-brand, .footer_content .navbar-nav .nav-link, .footer_content .navbar-text,
 .topbar_content .btn, .topbar_content .navbar, .topbar_content .navbar-brand, .topbar_content .navbar-nav .nav-link, .topbar_content .navbar-text,

@@ -501,7 +501,7 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__menu {
   min-width: calc(var(--component-width) + 50px) !important;
-  margin-top: 8px;
+  margin-top: 15px;
   overflow: auto;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__input {
@@ -552,7 +552,6 @@ export default class TSDefault extends Vue {
 }
 
 .TSDefault-wrapper .vue-treeselect--single .vue-treeselect__option--highlight .hasSelection{
-  /* color: var(--light) !important; */
   color: var(--dark);
   background-color: var(--primary);
 }
