@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TSDefault" :class="{'form-control':true, 'form-inline':true, 'TSDefault-wrapper':true, [type]:true , 'is-origin': isOrigin, 'has-counter':showSelectionCount===true}">
+  <div data-testid="TSDefault" :class="{'TSDefault-wrapper form-control d-flex flex-nowrap':true, [type]:true , 'is-origin': isOrigin, 'has-counter':showSelectionCount===true}">
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
@@ -501,20 +501,8 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__menu {
   min-width: calc(var(--component-width) + 50px) !important;
-  /* margin-left: -102px; */
-  margin-top: 8px;
+  margin-top: 15px;
   overflow: auto;
-}
-
-.TSDefault-wrapper .treeselect .vue-treeselect__input-container {
-  margin-left: 55px;
-  /* margin-top: -5px; */
-  max-width: 50px;
-  /* padding-bottom: 5px; */
-}
-.TSDefault-wrapper .treeselect.treeselect.propertyvalues .vue-treeselect__input-container {
-  margin-left: 0px;
-  max-width: 100%;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__input {
   width: 100%;
@@ -564,7 +552,6 @@ export default class TSDefault extends Vue {
 }
 
 .TSDefault-wrapper .vue-treeselect--single .vue-treeselect__option--highlight .hasSelection{
-  /* color: var(--light) !important; */
   color: var(--dark);
   background-color: var(--primary);
 }

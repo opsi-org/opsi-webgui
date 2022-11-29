@@ -3,7 +3,12 @@
     <AlertAAlert ref="productPropViewAlert">
       <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
     </AlertAAlert>
-    <BarBCollapsePageHeader
+    <BarBPageHeader
+      :title="$t('title.config') + ' - '"
+      :subtitle="id"
+      :closeroute="closeroute"
+    />
+    <!-- <BarBCollapsePageHeader
       :id="id"
       :title="$t('title.config')"
       :subtitle="id"
@@ -12,8 +17,8 @@
       noheader
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
       :redirect-on-close-to="(asChild)? closeroute: undefined"
-    />
-    <div class="ml-3 mb-2">
+    /> -->
+    <div class="mb-3">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
     <b-tabs v-if="id" v-model="activeTab" lazy>
