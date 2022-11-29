@@ -37,7 +37,7 @@
             event="ondemand"
             classes="dropdown-item border-0 smaller-text-size"
             :update-loading="loading => clientsLoading = loading"
-            with-text
+            :with-text="true"
           />
         </small>
       </template>
