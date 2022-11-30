@@ -1484,7 +1484,7 @@ pre code {
   color: var(--color);
   background-color: var(--hover);
 }
-.table-primary,
+/* .table-primary,
 .table-primary > td,
 .table-primary > th {
   background-color: #b8d4e2;
@@ -1501,7 +1501,7 @@ pre code {
 .table-hover .table-primary:hover > td,
 .table-hover .table-primary:hover > th {
   background-color: #a6c9db;
-}
+} */
 .table-secondary,
 .table-secondary > td,
 .table-secondary > th {

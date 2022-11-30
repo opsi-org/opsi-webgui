@@ -333,3 +333,14 @@ body .mobile .topbar_content .navbar > * {
   float: right;
   margin-top: 10px;
 }
+.table-primary {
+  --bs-table-bg: var(--background);
+  --bs-table-striped-bg: var(--background);
+  --bs-table-striped-color: var(--color);
+  --bs-table-active-bg: var(--hover);
+  --bs-table-active-color: var(--color);
+  --bs-table-hover-bg: var(--hover);
+  --bs-table-hover-color: var(--color);
+  color: var(--color);
+  border-color: var(--border);
+}

@@ -1485,7 +1485,7 @@ pre code {
   color: var(--color);
   background-color: var(--hover);
 }
-.table-primary,
+/* .table-primary,
 .table-primary > td,
 .table-primary > th {
   color: #fff;
@@ -1498,16 +1498,14 @@ pre code {
   border-color: #000;
 }
 .table-hover .table-primary:hover {
-  /* background-color: #a6c9db; */
   color: var(--color);
   background-color: var(--hover);
 }
 .table-hover .table-primary:hover > td,
 .table-hover .table-primary:hover > th {
-  /* background-color: #a6c9db; */
   color: var(--color);
   background-color: var(--hover);
-}
+} */
 .table-secondary,
 .table-secondary > td,
 .table-secondary > th {
