@@ -27,6 +27,9 @@
         plaintext
         :value="selections.join('\n')"
       />
+      <div class="float-right">
+        <slot name="clear" />
+      </div>
     </b-modal>
   </div>
 </template>

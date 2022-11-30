@@ -7,7 +7,16 @@
       :id="id"
       :type="type"
       :selections="(type==='propertyvalues')?selectionWrapper:selectionDefault"
-    />
+    >
+      <template #clear>
+        <ButtonBTNClearSelection
+          v-if="(id == 'HostGroups' && multi && !treeselectSearchQueryFilled)"
+          class="BTN-before-list"
+          :disabled="selection.length<=0"
+          :clearselection="clearSelected"
+        />
+      </template>
+    </ModalMSelections>
     <!-- :always-open="(id=='PropertyValue-method')" -->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
