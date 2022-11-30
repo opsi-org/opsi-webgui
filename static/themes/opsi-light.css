@@ -1763,8 +1763,9 @@ pre code {
 }
 .form-control:disabled,
 .form-control[readonly] {
-  background-color: #fff;
-  opacity: 1;
+  opacity: 0.65;
+  /* background-color: #fff;
+  opacity: 1; */
 }
 input[type="date"].form-control,
 input[type="datetime-local"].form-control,
