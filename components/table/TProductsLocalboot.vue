@@ -18,6 +18,14 @@
       :routechild="routeToChild"
       :fetchitems="$fetch"
     >
+      <template #producttableheader>
+        <DropdownDDProductRequest
+          v-if="(selectionClients.length>0 && selectionProducts.length>0)"
+          :action.sync="action"
+          :title="$t('form.tooltip.actionRequest')"
+          :save="saveActionRequests"
+        />
+      </template>
       <template #contextcontent-specific-1="{itemkey}">
         <ButtonBTNRowLinkTo
           :label="$t('title.config')"

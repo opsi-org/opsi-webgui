@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-if="$mq == 'mobile'">
-      <slot name="producttableheader" />
+    <div v-if="$mq == 'mobile'" class="d-flex flex-nowrap">
       <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+      <slot name="producttableheader" />
     </div>
     <div
       :id="'TInfiniteScrollSmoothWrapper_' + id"
