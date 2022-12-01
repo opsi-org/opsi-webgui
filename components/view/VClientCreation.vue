@@ -18,6 +18,9 @@
           :state="checkValid"
           required
         />
+        <b-form-invalid-feedback :state="checkValid">
+          <span v-if="clientIds.includes(clientName + domainName)"> {{ $t('message.formvalid.clientExists') }} </span>
+        </b-form-invalid-feedback>
       </template>
       <template #valueMore>
         <b-form-input

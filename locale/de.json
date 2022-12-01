@@ -21,6 +21,7 @@
   "message.confirm.deleteClient": "Möchten Sie den Client '{client}' wirklich löschen?",
   "message.warning.title": "Warnung",
   "message.warning.clientExists": "{client} existiert bereits.",
+  "message.formvalid.clientExists": "Client existiert bereits.",
   "message.warning.differentProductVersions": "Es existieren verschiedene Produkt-Versionen",
   "message.warning.noClientsSelectedShowDepot": "Keine Clients ausgewählt (Änderungen am Server)",
   "message.warning.notOnEachDepot": "Produkt nur auf {count}/{countall} Servern",
