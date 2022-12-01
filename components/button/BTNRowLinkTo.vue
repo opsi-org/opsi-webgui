@@ -3,7 +3,7 @@
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
     :class="{'border-0 w-100 h-100 text-left': true, 'dropdown-item': incontextmenu}"
-    :title="title"
+    :title="label ? '' : title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
     :aria-label="title"

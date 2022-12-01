@@ -14,7 +14,7 @@
         >
           <template #right>
             <ButtonBTNRowLinkTo
-              :title="$t('button.show.products')"
+              :title="secondColumnOpened || $mq=='mobile'? $t('button.show.products'): ''"
               :label="secondColumnOpened?'': $t('title.products')"
               :icon="iconnames.product"
               to="/clients/products"

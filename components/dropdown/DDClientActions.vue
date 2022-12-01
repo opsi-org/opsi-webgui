@@ -11,7 +11,6 @@
       :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
       size="sm"
       :no-caret="!incontextmenu"
-      :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
       :class="{ 'dropdown-item contextmenu': incontextmenu }"
       :dropright="incontextmenu"
     >
