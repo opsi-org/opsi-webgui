@@ -1,106 +1,112 @@
 <template>
-  <div
-    :id="'TInfiniteScrollSmoothWrapper_' + id"
-    data-testid="TInfiniteScrollSmooth"
-    class="TInfiniteScrollSmoothWrapper"
-    :class="{
-      loadingCursor: isLoading,
-      empty: cache_pages.flat().length <= 0
-    }"
-  >
-    <p v-if="error">
-      {{ error }}
-    </p>
-    <b-table
-      v-else
-      :id="id"
-      :ref="id"
-      v-b-scrollspy
-      :stacked="$mq=='mobile'"
-      :primary-key="rowident"
-      class="TInfiniteScrollSmooth"
-      :class="{ firstpage: isFirstPage,
-                lastpage: isLastPage,
-                mobileview: $mq=='mobile',
-                isLoading: isLoading,
+  <div>
+    <div v-if="$mq == 'mobile'">
+      <slot name="producttableheader" />
+      <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+    </div>
+    <div
+      :id="'TInfiniteScrollSmoothWrapper_' + id"
+      data-testid="TInfiniteScrollSmooth"
+      class="TInfiniteScrollSmoothWrapper"
+      :class="{
+        loadingCursor: isLoading,
+        empty: cache_pages.flat().length <= 0
       }"
-      sticky-header
-      show-empty
-      :small="$mq=='mobile'"
-      responsive
-      hover
-      :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
-      :items="cache_pages.flat()"
-      selectable
-      selected-variant=""
-      select-mode="range"
-      sort-icon-left
-      :per-page="tableData.perPage*cache_pages.max_elements"
-      :no-local-sorting="true"
-      :sort-by.sync="tableData.sortBy"
-      :sort-desc.sync="tableData.sortDesc"
-      @row-clicked="onRowClicked"
-      @row-contextmenu="contextOpen"
     >
-      <template v-if="totalpages > 1" #top-row="{ columns }">
-        <b-th :colspan="columns" class="tablehead">
-          <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
-        </b-th>
-      </template>
-      <template v-if="totalpages > 1" #bottom-row="{ columns }">
-        <b-th v-if="isLastPage" :colspan="columns" class="tablefooter_lastpage" />
-        <b-th v-else :colspan="columns" class="tablefooter">
-          <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
-        </b-th>
-      </template>
+      <p v-if="error">
+        {{ error }}
+      </p>
+      <b-table
+        v-else
+        :id="id"
+        :ref="id"
+        v-b-scrollspy
+        :stacked="$mq=='mobile'"
+        :primary-key="rowident"
+        class="TInfiniteScrollSmooth"
+        :class="{ firstpage: isFirstPage,
+                  lastpage: isLastPage,
+                  mobileview: $mq=='mobile',
+                  isLoading: isLoading,
+        }"
+        sticky-header
+        show-empty
+        :small="$mq=='mobile'"
+        responsive
+        hover
+        :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
+        :items="cache_pages.flat()"
+        selectable
+        selected-variant=""
+        select-mode="range"
+        sort-icon-left
+        :per-page="tableData.perPage*cache_pages.max_elements"
+        :no-local-sorting="true"
+        :sort-by.sync="tableData.sortBy"
+        :sort-desc.sync="tableData.sortDesc"
+        @row-clicked="onRowClicked"
+        @row-contextmenu="contextOpen"
+      >
+        <template v-if="totalpages > 1" #top-row="{ columns }">
+          <b-th :colspan="columns" class="tablehead">
+            <span class="scrollcaption"> {{ $t('table.infinit.scrollup') }} </span>
+          </b-th>
+        </template>
+        <template v-if="totalpages > 1" #bottom-row="{ columns }">
+          <b-th v-if="isLastPage" :colspan="columns" class="tablefooter_lastpage" />
+          <b-th v-else :colspan="columns" class="tablefooter">
+            <span class="scrollcaption"> {{ $t('table.infinit.scrolldown') }} </span>
+          </b-th>
+        </template>
 
-      <template #empty>
-        {{ (isLoading) ? '' : $t('table.emptyText') }}
-      </template>
-      <template #head()="data">
-        <small> <b>{{ data.label }} </b> </small>
-      </template>
-      <template #head(selected)>
-        <small v-if="rowident !== 'productId'"> <b class="count">
-          {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
-        </b> </small>
-        <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
-      </template>
-      <template #head(rowactions)>
-        <b-button-group>
-          <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" />
-          <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
-          <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" />
-        </b-button-group>
-      </template>
-      <template #cell(rowactions)="row">
-        <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'">
-          <slot name="rowactions" v-bind="row" />
-        </b-button-group>
-      </template>
-      <template #cell(selected)="row">
-        <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" class="selectionitem selected" />
-        <b-icon v-else-if="$mq=='mobile'" :icon="iconnames.tablerowNotSelected" class="selectionitem not-selected" />
-        {{ fixRow(row) }}
-      </template>
-      <template
-        v-for="slotName in Object.keys($scopedSlots)"
-        #[slotName]="slotScope"
-      >
-        <slot :name="slotName" v-bind="slotScope" />
-      </template>
-    </b-table>
-    <BarBTableFooter v-if="cache_pages.flat().length>0" :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
-    <OverlayOLoading :is-loading="isLoading" />
-    <br>
-    <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
-      <template
-        v-for="slotName in contextSlots"
-        #[slotName]="slotScope"
-      >
-        <slot :name="slotName" v-bind="slotScope" />
-      </template>
-    </ContextmenuCMViewTable>
+        <template #empty>
+          {{ (isLoading) ? '' : $t('table.emptyText') }}
+        </template>
+        <template #head()="data">
+          <small> <b>{{ data.label }} </b> </small>
+        </template>
+        <template #head(selected)>
+          <small v-if="rowident !== 'productId'"> <b class="count">
+            {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
+          </b> </small>
+          <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+        </template>
+        <template #head(rowactions)>
+          <b-button-group>
+            <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" />
+            <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
+            <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" />
+          </b-button-group>
+        </template>
+        <template #cell(rowactions)="row">
+          <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'">
+            <slot name="rowactions" v-bind="row" />
+          </b-button-group>
+        </template>
+        <template #cell(selected)="row">
+          <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" class="selectionitem selected" />
+          <b-icon v-else-if="$mq=='mobile'" :icon="iconnames.tablerowNotSelected" class="selectionitem not-selected" />
+          {{ fixRow(row) }}
+        </template>
+        <template
+          v-for="slotName in Object.keys($scopedSlots)"
+          #[slotName]="slotScope"
+        >
+          <slot :name="slotName" v-bind="slotScope" />
+        </template>
+      </b-table>
+      <BarBTableFooter v-if="cache_pages.flat().length>0" :pagination="{ tableData, cache_pages, totalpages, totalRows:totalItems }" />
+      <OverlayOLoading :is-loading="isLoading" />
+      <br>
+      <ContextmenuCMViewTable ref="contextmenu" :context-clienttable="id=='Clients'" :primary-key="rowident">
+        <template
+          v-for="slotName in contextSlots"
+          #[slotName]="slotScope"
+        >
+          <slot :name="slotName" v-bind="slotScope" />
+        </template>
+      </ContextmenuCMViewTable>
+    </div>
   </div>
 </template>
 
