@@ -43,6 +43,8 @@
       :cache-options="false"
       :normalizer="normalizer"
       :load-options="loadOptionsChildren"
+      :no-children-text="$t('treeselect.nochildren')"
+      :no-options-text="$t('treeselect.nooption')"
       :no-results-text="textNoResult? textNoResult : $t('treeselect.noresult')"
       :limit="limitVisibleSelection"
       :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('treeselect.limitText', { count })"

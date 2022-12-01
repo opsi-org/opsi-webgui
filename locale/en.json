@@ -217,6 +217,8 @@
   "treeselect.assigntoGroups": "Assign to groups",
   "treeselect.clientGroups": "Client Groups",
   "treeselect.prodGroups": "Product Groups",
+  "treeselect.nochildren": "No sub-options.",
+  "treeselect.nooption": "No options available.",
   "treeselect.noresult": "No results found",
   "treeselect.editable": "No results found... Press Enter to add.",
   "treeselect.noResultTextEditable": "Not such item found",

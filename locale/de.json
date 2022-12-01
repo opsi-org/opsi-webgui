@@ -217,6 +217,8 @@
   "treeselect.assigntoGroups": "Assign to groups",
   "treeselect.clientGroups": "Clientgruppen",
   "treeselect.prodGroups": "Produktgruppen",
+  "treeselect.nochildren": "Keine Unteroptionen.",
+  "treeselect.nooption": "Keine Optionen verfügbar.",
   "treeselect.noresult": "Kein Eintrag gefunden",
   "treeselect.editable": "Kein Eintrag gefunden... Zum Hinzufügen Enter drücken.",
   "treeselect.selectioncount": "Ausgewählte {type}",
