@@ -60,7 +60,7 @@
         </b-list-group-item>
       </b-list-group>
       <b-list-group v-else-if="event=='showpopup'" flush>
-        <b-form-textarea v-model="eventdata.popup.msg" class="textarea" />
+        <b-form-textarea v-model="eventdata.popup.msg" :placeholder="$t('button.event.showpopup.message')" class="textarea" />
         {{ data }}
       </b-list-group>
       <div v-else class="modal-client-p">
@@ -99,7 +99,8 @@ export default class BTNEvent extends Vue {
   show:boolean = false
   selectionClientsDelete: Array<string> = []
 
-  eventdata: any = { popup: { msg: this.$t('button.event.showpopup.message') as string } }
+  eventdata: any = { popup: { msg: '' } }
+  // eventdata: any = { popup: { msg: this.$t('button.event.showpopup.message') as string } }
 
   @selections.Getter public selectionClients!: Array<string>
 
