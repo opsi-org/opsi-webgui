@@ -1,7 +1,7 @@
 <template>
-  <div data-testid="VModules" :class="{loadingCursor: isLoading}">
+  <div data-testid="VModules" :class="{loadingCursor: $fetchState.pending}">
     <AlertAAlert ref="modulesAlert" />
-    <OverlayOLoading :is-loading="isLoading" />
+    <OverlayOLoading :is-loading="$fetchState.pending" />
     <LazyGridGFormItem v-if="!errorText" v-once label-id="modules">
       <template #label>
         <span class="modules">{{ $t('form.modules.available') }}</span>
@@ -27,12 +27,10 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class VModules extends Vue {
   $axios: any
   $t:any
-  isLoading: boolean = false
   modules: object = {}
   errorText: string = ''
 
   async fetch () {
-    this.isLoading = true
     await this.$axios.$get('/api/opsidata/modulesContent')
       .then((response) => {
         this.modules = response.result
@@ -42,7 +40,6 @@ export default class VModules extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Modules', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
-    this.isLoading = false
   }
 }
 </script>

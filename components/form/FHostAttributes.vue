@@ -1,8 +1,8 @@
 <template>
   <div data-testid="FHostAttributes" class="FHostAttributes">
-    <OverlayOLoading :is-loading="isLoading" />
+    <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
     <AlertAAlert ref="hostAttrErrorAlert" class="FHostAttributesAlert">
-      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+      <ButtonBTNRefetch :is-loading="(isLoading || $fetchState.pending)" :refetch="$fetch" />
     </AlertAAlert>
     <AlertAAlert ref="uefiAlert" />
     <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr.hostId">
@@ -247,7 +247,6 @@ export default class FHostAttributes extends Vue {
   }
 
   async fetchAttributes (endPoint) {
-    this.isLoading = true
     await this.$axios.$get(endPoint)
       .then((response) => {
         this.hostAttr = response[0]
@@ -257,7 +256,6 @@ export default class FHostAttributes extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
-    this.isLoading = false
   }
 
   date (value:any) {

@@ -1,6 +1,6 @@
 <template>
-  <div v-if="!changelogs.includes('')" data-testid="CChangeLogs" :class="{loadingCursor: isLoading}">
-    <OverlayOLoading :is-loading="isLoading" />
+  <div v-if="!changelogs.includes('')" data-testid="CChangeLogs" :class="{loadingCursor: $fetchState.pending}">
+    <OverlayOLoading :is-loading="$fetchState.pending" />
     <b-card
       class="background text-color mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'max-width:500px;' "
@@ -26,11 +26,9 @@ export default class CChangeLogs extends Vue {
   $t: any
   $axios: any
   changelogs: any = ''
-  isLoading: boolean = false
   $mq: any
 
   async fetch () {
-    this.isLoading = true
     const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
     await this.$axios.$get('/api/opsidata/changelogs')
       .then((response) => {
@@ -39,7 +37,6 @@ export default class CChangeLogs extends Vue {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.fetch') as string + 'Changelogs', 'danger', detailedError)
       })
-    this.isLoading = false
   }
 
   parseMd (md: string) {
