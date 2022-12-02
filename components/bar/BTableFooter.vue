@@ -8,7 +8,6 @@
     >
       <b-container fluid>
         <b-navbar-nav class="ml-auto" small>
-          <!-- right -->
           <b-pagination
             v-if="pagination.totalpages > 1"
             v-model="pagination.tableData.pageNumber"
