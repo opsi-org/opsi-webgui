@@ -31,7 +31,8 @@ export default class SLogtype extends Vue {
 </script>
 
 <style>
-.logtype{
-  max-width: var(--component-width) !important;
+.logtype.custom-select{
+  width: var(--component-width) !important;
+  height: var(--component-height)!important;
 }
 </style>
