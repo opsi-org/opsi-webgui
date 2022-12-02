@@ -23,7 +23,7 @@
   "message.warning.clientExists": "{client} already exists.",
   "message.formvalid.clientExists": "Client name already exists.",
   "message.warning.differentProductVersions": "Different product versions exists.",
-  "message.warning.noClientsSelectedShowDepot": "no clients selected (changes server value)",
+  "message.warning.noClientsSelectedShowDepot": "No client selected. The changes will be made to selected server.",
   "message.warning.notOnEachDepot": "Product installed only on {count}/{countall} servers",
   "message.error.404": "Page not found",
   "message.error.else": "An error occurred",
