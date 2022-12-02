@@ -43,9 +43,8 @@
         <b-form-group :label="$t('table.fields.type')" label-for="type">
           <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
         </b-form-group>
-        <DivDComponentGroup class="float-right">
+        <div class="float-right mt-2">
           <b-button
-            class="float-right"
             variant="success"
             size="sm"
             :disabled="(config)?config.read_only:false"
@@ -53,7 +52,7 @@
           >
             <b-icon :icon="iconnames.product" />  <span class="deploy"> {{ $t('label.clientagent') }} </span>
           </b-button>
-        </DivDComponentGroup>
+        </div>
       </b-form>
     </b-modal>
   </div>
