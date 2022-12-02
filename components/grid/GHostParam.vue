@@ -1,8 +1,8 @@
 <template>
   <div data-testid="GHostParam">
-    <OverlayOLoading :is-loading="isLoading" />
+    <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
     <AlertAAlert ref="hostParamErrorAlert">
-      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+      <ButtonBTNRefetch :is-loading="(isLoading || $fetchState.pending)" :refetch="$fetch" />
     </AlertAAlert>
     <LazyInputIFilterTChanges v-if="hostParam.value" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
     <LazyDivDScrollResult v-if="hostParam.value" :key="hostParam.id">
@@ -71,7 +71,6 @@ export default class GHostParam extends Vue {
   }
 
   async fetchHostParameters (endpoint) {
-    this.isLoading = true
     await this.$axios.$get(endpoint)
       .then((response) => {
         this.hostParam = { id: this.id, value: response }
@@ -81,7 +80,6 @@ export default class GHostParam extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Host Parameters', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
-    this.isLoading = false
   }
 
   trackHostParameters (change) {
