@@ -12,7 +12,7 @@
       :id="id"
       :title="$t('title.config')"
       :subtitle="id"
-      :is-loading-parent="isLoading"
+      :is-loading-parent="$fetchState.pending"
       :fetch="$fetch"
       noheader
       :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
