@@ -493,9 +493,6 @@ def product_count(  # pylint: invalid-name, unused-argument
 		params["product_type"] = type
 		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
 
-	logger.devel(where)
-	logger.devel(params)
-
 	with mysql.session() as session:
 		count = session.execute(select(text("COUNT(*)")).select_from(text("PRODUCT_ON_DEPOT AS pod")).where(where), params).fetchone()[0]
 
