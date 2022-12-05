@@ -11,23 +11,6 @@
           :is-loading-parent="isLoading"
           :fetch="$fetch"
         />
-        <!-- <BarBCollapsePageHeader
-          :id="id"
-          :title="$t('title.depots') + ' (' + totalItems + ')' || 'Servers' + ' (' + totalItems + ')'"
-          :row-id="rowId"
-          :collapsed="$mq=='mobile'"
-          :collapseable="false"
-          :enable-depots="false"
-          :enable-clients="false"
-          :enable-products="false"
-          :is-loading-parent="isLoading"
-          :fetch="$fetch"
-          :enable-show-products="false"
-          :enable-show-changes="false"
-          :table-info.sync="tableInfo"
-          :redirect-on-close-to="undefined"
-          :redirect="undefined"
-        /> -->
         <LazyTableTInfiniteScrollSmooth
           v-if="items"
           :id="id"

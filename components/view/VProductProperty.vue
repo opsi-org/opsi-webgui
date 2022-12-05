@@ -3,21 +3,7 @@
     <AlertAAlert ref="productPropViewAlert">
       <ButtonBTNRefetch :is-loading="$fetchState.pending" :refetch="$fetch" />
     </AlertAAlert>
-    <BarBPageHeader
-      :title="$t('title.config') + ' - '"
-      :subtitle="id"
-      :closeroute="closeroute"
-    />
-    <!-- <BarBCollapsePageHeader
-      :id="id"
-      :title="$t('title.config')"
-      :subtitle="id"
-      :is-loading-parent="$fetchState.pending"
-      :fetch="$fetch"
-      noheader
-      :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
-      :redirect-on-close-to="(asChild)? closeroute: undefined"
-    /> -->
+    <BarBPageHeader :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
     <div class="mb-3">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>

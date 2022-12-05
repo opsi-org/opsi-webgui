@@ -25,22 +25,6 @@
             />
           </template>
         </BarBPageHeader>
-        <!-- <BarBCollapsePageHeader
-          :id="id"
-          :title="$t('title.clients')+ ' (' + totalItems + ')'"
-          :row-id="rowId"
-          :collapsed="$mq=='mobile' || secondColumnOpened"
-          :collapseable="true"
-          :is-child-layout="secondColumnOpened"
-          :is-loading-parent="isLoading"
-          :fetch="$fetch"
-          :enable-ondemand="true"
-          :enable-depots="true"
-          :enable-clients="true"
-          :table-info.sync="tableInfo"
-          :enable-show-products="true"
-          :redirect="routeRedirectWith"
-        /> -->
         <LazyTableTInfiniteScrollSmooth
           v-if="items"
           :id="id"
