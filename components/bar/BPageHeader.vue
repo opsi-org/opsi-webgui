@@ -17,7 +17,6 @@
       </b-navbar-nav>
     </b-navbar>
     <b-collapse v-if="navbartype == 'collapse' || $mq == 'mobile' && tableid" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
-      <!-- :class="$mq == 'mobile' || childopened ? 'flex-wrap' : ''" -->
       <b-navbar class="mb-1 flex-wrap">
         <template v-if="tableid">
           <TreeTSDepots v-if="tableid !== 'Depots'" class="tableheader_depots" />
