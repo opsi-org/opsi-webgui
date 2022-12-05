@@ -10,7 +10,7 @@ webgui product methods
 
 import json
 from functools import lru_cache
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
@@ -80,7 +80,7 @@ def depot_get_product_version(depot: str, product: str) -> Union[str, None]:
 		return version
 
 
-def get_product_description(product: str, product_version: str, package_version: str) -> Union[str, None]:
+def get_product_description(product: str, product_version: str, package_version: str) -> Union[Tuple[str]]:
 	description = None
 	params = {}
 	with mysql.session() as session:
@@ -90,16 +90,17 @@ def get_product_description(product: str, product_version: str, package_version:
 		params["package_version"] = package_version
 		where = text("p.productId = :product AND p.productVersion = :product_version AND p.packageVersion = :package_version")
 
-		query = select(text("description")).select_from(table("PRODUCT").alias("p")).where(where)
+		query = select(text("description, advice")).select_from(table("PRODUCT").alias("p")).where(where)
 
 		result = session.execute(query, params)
 		result = result.fetchone()
 
 		if result:
 			description = dict(result).get("description")
+			advice = dict(result).get("advice")
+			return (description, advice)
 
-		return description
-
+		return ("", "")
 
 @lru_cache(maxsize=1000)
 def get_product_type(product_id: str, product_version: str, package_version: str) -> Union[str, None]:
@@ -896,21 +897,32 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 
 			data["productVersions"] = {}
 			data["productDescriptionDetails"] = {}
+			data["productAdviceDetails"] = {}
 
 			for depot in clients_on_depot:
 				data["productVersions"][depot] = depot_get_product_version(depot, productId)
 				if data["productVersions"][depot]:
-					data["productDescriptionDetails"][depot] = get_product_description(
+					data["productDescriptionDetails"][depot], data["productAdviceDetails"][depot] = get_product_description(
 						productId, *data["productVersions"][depot].split("-")
 					)
 
-			if all(
-				description == list(data["productDescriptionDetails"].values())[0]
-				for description in data["productDescriptionDetails"].values()
-			):
-				data["productDescription"] = list(data["productDescriptionDetails"].values())[0]
-			else:
-				data["productDescription"] = "mixed"
+			if data["productDescriptionDetails"]:
+				if all(
+					description == list(data["productDescriptionDetails"].values())[0]
+					for description in data["productDescriptionDetails"].values()
+				):
+					data["productDescription"] = list(data["productDescriptionDetails"].values())[0]
+				else:
+					data["productDescription"] = "mixed"
+
+			if data["productAdviceDetails"]:
+				if all(
+					advice == list(data["productAdviceDetails"].values())[0]
+					for advice in data["productAdviceDetails"].values()
+				):
+					data["productAdvice"] = list(data["productAdviceDetails"].values())[0]
+				else:
+					data["productAdvice"] = "mixed"
 
 			for pp_id in data["properties"]:
 				property = data["properties"][pp_id]
@@ -1188,21 +1200,31 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 
 			data["productVersions"] = {}
 			data["productDescriptionDetails"] = {}
+			data["productAdviceDetails"] = {}
 
 			for depot in depots:
 				data["productVersions"][depot] = depot_get_product_version(depot, productId)
 				if data["productVersions"][depot]:
-					data["productDescriptionDetails"][depot] = get_product_description(
+					data["productDescriptionDetails"][depot], data["productAdviceDetails"][depot] = get_product_description(
 						productId, *data["productVersions"][depot].split("-")
 					)
+			if data["productDescriptionDetails"]:
+				if all(
+					description == list(data["productDescriptionDetails"].values())[0]
+					for description in data["productDescriptionDetails"].values()
+				):
+					data["productDescription"] = list(data["productDescriptionDetails"].values())[0]
+				else:
+					data["productDescription"] = "mixed"
 
-			if all(
-				description == list(data["productDescriptionDetails"].values())[0]
-				for description in data["productDescriptionDetails"].values()
-			):
-				data["productDescription"] = list(data["productDescriptionDetails"].values())[0]
-			else:
-				data["productDescription"] = "mixed"
+			if data["productAdviceDetails"]:
+				if all(
+					advice == list(data["productAdviceDetails"].values())[0]
+					for advice in data["productAdviceDetails"].values()
+				):
+					data["productAdvice"] = list(data["productAdviceDetails"].values())[0]
+				else:
+					data["productAdvice"] = "mixed"
 
 		except Exception as err:  # pylint: disable=broad-except
 			if isinstance(err, OpsiApiException):
