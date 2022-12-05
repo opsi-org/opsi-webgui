@@ -35,7 +35,7 @@
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
-                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + parseInt(netboot)}) }}
+                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
               </b> </small>
             </template>
           </b-tab>
@@ -59,7 +59,7 @@
           </b-tab>
           <b-tab>
             <template #title>
-              <span class="netboot"> {{ $t('title.netboot') + ' (' + netboot + ')' }} </span>
+              <span class="netboot"> {{ $t('title.netboot') + ' (' + totalnetboot+ ')' }} </span>
             </template>
             <TableTProductsNetboot
               ref="ref-products-netboot"
@@ -96,9 +96,11 @@ export default class VProducts extends Vue {
   $route:any
   $router:any
   $t:any
+  $axios: any
   @Prop() child!: boolean
   @Prop({}) id!: string
   @Prop({}) sortby!: string
+  @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
@@ -108,6 +110,7 @@ export default class VProducts extends Vue {
   isLoading: boolean = false
   localboot: string = ''
   netboot: string = ''
+  totalnetboot: number = 0
 
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
@@ -186,6 +189,10 @@ export default class VProducts extends Vue {
     this.updateColumnVisibility()
   }
 
+  async fetch () {
+    await this.getNetbootProductsCount()
+  }
+
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
     this.updateColumnVisibility()
   }
@@ -197,6 +204,16 @@ export default class VProducts extends Vue {
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
     this.$router.push(to)
+  }
+
+  async getNetbootProductsCount () {
+    const params: any = {}
+    params.selectedDepots = JSON.stringify(this.selectionDepots)
+    params.type = 'NetbootProduct'
+    await this.$axios.$get('/api/opsidata/products/count', { params })
+      .then((response) => {
+        this.totalnetboot = response
+      })
   }
 
   updateColumnVisibility () {
