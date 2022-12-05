@@ -191,6 +191,7 @@ class Product(BaseModel):  # pylint: disable=too-few-public-methods
 	productId: str
 	name: str
 	description: str
+	advice: str
 	selectedDepots: List[str]
 	depotVersions: List[str]
 	depot_version_diff: bool
@@ -263,6 +264,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 			pr.name AS name,
 			pr.priority AS priority,
 			pr.description AS description,
+			pr.advice AS advice,
 			GROUP_CONCAT(pod.depotId SEPARATOR ',') AS selectedDepots,
 			(
 				SELECT GROUP_CONCAT(poc.clientId SEPARATOR ',')
@@ -419,7 +421,11 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 				),
 			)
 		)
-
+		if not commons.get("filterQuery"):
+			commons["filterQuery"] = ""
+		if not commons.get("sortBy"):
+			commons["sortBy"] = ""
+		# logger.devel(commons)
 		if "actionRequest" in commons.get("sortBy", []):
 			query = query.order_by(text("actionRequest='none' ASC"))
 		if "installationStatus" in commons.get("sortBy", []):
