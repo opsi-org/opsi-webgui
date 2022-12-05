@@ -475,6 +475,33 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 		return RESTResponse(data=products, total=total)
 
 
+@product_router.get("/api/opsidata/products/count", response_model=List[Product])
+@rest_api
+@filter_depot_access
+def product_count(  # pylint: invalid-name, unused-argument
+	request: Request,
+	type: str = "all",
+	selectedDepots: List[str] = Depends(parse_depot_list)
+) -> RESTResponse:
+	"""
+	Get number products from selected depots.
+	"""
+	params = {"depots": selectedDepots}
+	if type == "all":
+		where = text("pod.depotId IN :depots")
+	else:
+		params["product_type"] = type
+		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
+
+	logger.devel(where)
+	logger.devel(params)
+
+	with mysql.session() as session:
+		count = session.execute(select(text("COUNT(*)")).select_from(text("PRODUCT_ON_DEPOT AS pod")).where(where), params).fetchone()[0]
+
+	return RESTResponse(data=count)
+
+
 class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
 	clientIds: List[str]
 	productIds: List[str]
