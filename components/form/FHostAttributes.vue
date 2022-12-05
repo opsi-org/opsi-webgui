@@ -198,14 +198,14 @@
           </template>
         </GridGFormItem>
       </template>
-      <LazyDivDComponentGroup v-if="hostAttr.type !== 'OpsiDepotserver'" class="float-right">
+      <div v-if="hostAttr.type !== 'OpsiDepotserver'" class="float-right mt-2">
         <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
           <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
         </b-button>
         <b-button id="updateButton" class="updateButton" variant="success" @click="updateAttributes()">
           <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
         </b-button>
-      </LazyDivDComponentGroup>
+      </div>
     </LazyDivDScrollResult>
     <DivDScrollResult v-else>
       {{ $t('empty') }}

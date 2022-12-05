@@ -33,9 +33,8 @@
     >
       <AlertAAlert ref="deleteClientAlert" />
       <span class="confirm"> {{ $t('message.confirm.deleteClient', { client: clientId }) }} </span>
-      <DivDComponentGroup class="float-right">
+      <div class="float-right mt-2">
         <b-button
-          class="float-right"
           variant="danger"
           size="sm"
           :disabled="(config)?config.read_only:false"
@@ -43,7 +42,7 @@
         >
           <b-icon :icon="iconnames.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
         </b-button>
-      </DivDComponentGroup>
+      </div>
     </b-modal>
   </div>
 </template>

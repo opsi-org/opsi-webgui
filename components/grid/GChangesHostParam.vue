@@ -18,13 +18,13 @@
         </template>
       </GridGFormItem>
     </span>
-    <DivDComponentGroup class="float-right">
+    <div class="float-right mt-2">
       <ButtonBTNClearChanges hide="trackChangesModal" from="hostparam" />
       <b-button variant="success" :title="$t('button.saveall')" @click="saveAllHostParam()">
         <b-icon :icon="iconnames.save" />
         <span class="saveall">{{ $t('button.saveall') }}</span>
       </b-button>
-    </DivDComponentGroup>
+    </div>
   </div>
 </template>
 

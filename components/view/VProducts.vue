@@ -13,24 +13,6 @@
           :childopened="secondColumnOpened"
           :closeroute="(child)? '/clients/': null"
         />
-        <!-- <BarBCollapsePageHeader
-          :id="id"
-          :title="$t('title.products')"
-          :row-id="rowId"
-          :collapsed="$mq=='mobile' || secondColumnOpened"
-          :collapseable="true"
-          :is-child-layout="secondColumnOpened"
-          :is-loading-parent="isLoading"
-          :fetch="triggerFetch"
-          :enable-ondemand="true"
-          :enable-depots="!child || $mq=='mobile'"
-          :enable-clients="!child || $mq=='mobile'"
-          :enable-products="true"
-          :enable-show-products="false"
-          :table-info="tableInfo"
-          :redirect-on-close-to="(child)? '/clients/': undefined"
-          :redirect="routeRedirectWith"
-        /> -->
         <b-tabs class="products_horizontaltabs" lazy>
           <b-tab disabled>
             <template #title>
