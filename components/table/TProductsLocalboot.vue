@@ -104,6 +104,25 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
+      <template #cell(actionProgress)="row">
+        <div v-if="row.item.actionProgress == 'mixed'">
+          <span :id="('tooltip_actionprogress_mixed'+row.item.productId)">
+            {{ row.item.actionProgress }}
+          </span>
+          <b-tooltip size="sm" :target="('tooltip_actionprogress_mixed'+row.item.productId)" triggers="hover">
+            <b-row v-for="(key, index) in row.item.selectedClients" :key="index">
+              <b-col class="d-flex flex-nowrap text-sm-left">
+                {{ key }}
+              </b-col> <b-col class="d-flex flex-nowrap text-sm-left">
+                {{ '  :  ' + row.item.actionProgressDetails[index] }}
+              </b-col>
+            </b-row>
+          </b-tooltip>
+        </div>
+        <div v-else>
+          {{ row.item.actionProgress }}
+        </div>
+      </template>
       <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
           :action.sync="action"
