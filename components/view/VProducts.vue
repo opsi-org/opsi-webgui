@@ -3,7 +3,8 @@
     <AlertAAlert ref="productsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <BarBPageHeader
+        <LazyBarBPageHeader
+          v-if="localboot"
           :title="$t('title.products')"
           :tableid="id"
           :table-info.sync="tableInfo"
