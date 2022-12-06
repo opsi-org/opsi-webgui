@@ -104,6 +104,20 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
+      <template #cell(actionProgress)="row">
+        <div v-if="row.item.actionProgress == 'mixed'">
+          <span :id="('tooltip_actionprogress_mixed'+row.item.productId)"> {{ row.item.actionProgress }}</span>
+          <b-tooltip size="sm" :target="('tooltip_actionprogress_mixed'+row.item.productId)" triggers="hover">
+            <b-row v-for="(key, index) in row.item.selectedClients" :key="index">
+              <b-col class="d-flex flex-nowrap text-sm-left">
+                {{ key }}
+              </b-col> <b-col class="d-flex flex-nowrap text-sm-left">
+                {{ '  :  ' + row.item.actionProgressDetails[index] }}
+              </b-col>
+            </b-row>
+          </b-tooltip>
+        </div>
+      </template>
       <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
           :action.sync="action"
@@ -359,5 +373,11 @@ export default class TProductsLocalboot extends Vue {
 <style>
 .minimalwidth {
   max-width: fit-content;
+}
+/* .actionprogress_tooltip .tooltip {
+  min-width: 600px !important;
+} */
+.actionprogress_tooltip .tooltip-inner {
+  min-width: 300px !important;
 }
 </style>
