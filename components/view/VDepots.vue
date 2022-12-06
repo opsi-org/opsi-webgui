@@ -4,15 +4,15 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
         <!-- v-if="$mq == 'mobile'" -->
-        <BarBPageHeader
+        <LazyBarBPageHeader
+          v-if="totalItems"
           :title="$t('title.depots') + ' (' + totalItems + ')'"
           :tableid="id"
           :table-info.sync="tableInfo"
           :is-loading-parent="isLoading"
           :fetch="$fetch"
         />
-        <LazyTableTInfiniteScrollSmooth
-          v-if="items"
+        <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -72,7 +72,7 @@
               :click="routeRedirectWith"
             />
           </template>
-        </LazyTableTInfiniteScrollSmooth>
+        </TableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />

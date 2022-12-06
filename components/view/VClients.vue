@@ -3,7 +3,8 @@
     <AlertAAlert ref="clientsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
-        <BarBPageHeader
+        <LazyBarBPageHeader
+          v-if="totalItems"
           :title="$t('title.clients') + ' (' + totalItems + ')'"
           :tableid="id"
           :table-info.sync="tableInfo"
@@ -24,9 +25,8 @@
               :click="routeRedirectWith"
             />
           </template>
-        </BarBPageHeader>
-        <LazyTableTInfiniteScrollSmooth
-          v-if="items"
+        </LazyBarBPageHeader>
+        <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -135,7 +135,7 @@
           >
             <slot :name="slotName" v-bind="slotScope" />
           </template>
-        </LazyTableTInfiniteScrollSmooth>
+        </TableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
