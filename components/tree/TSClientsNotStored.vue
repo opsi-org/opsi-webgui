@@ -32,10 +32,12 @@ export default class TSClientsNotStored extends Vue {
     const clients: Array<object> = []
     this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
     const params = this.clientRequest
+    // TODO : backend --> return clients data as list of { id: clientID, label: clientID } for treeselect component
     const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
     for (const c in result) {
       const client = result[c]
-      clients.push({ id: client, label: client })
+      clients[c] = { id: client, label: client }
+      // clients.push({ id: client, label: client })
     }
     this.clientIds = clients
     if (this.selectionClients.length !== 0) {

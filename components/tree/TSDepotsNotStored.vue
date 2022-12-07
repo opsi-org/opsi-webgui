@@ -28,10 +28,12 @@ export default class TSDepotsNotStored extends Vue {
 
   async fetch () {
     const depots: Array<object> = []
+    // TODO : backend --> return depots data as list of { id: depotID, label: depotID } for treeselect component
     const result = (await this.$axios.$get('/api/opsidata/depot_ids')).sort()
     for (const d in result) {
       const depot = result[d]
-      depots.push({ id: depot, label: depot })
+      depots[d] = { id: depot, label: depot }
+      // depots.push({ id: depot, label: depot })
     }
     this.depotIds = depots
     if (this.selectionDepots.length !== 0) {
