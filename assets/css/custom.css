@@ -250,10 +250,6 @@ body .mobile .topbar_content .navbar > * {
   background: var(--danger) !important;
   color: #fff !important;
 }
-.text-warning {
-  color:#212121 !important;
-  background: var(--warning) !important;
-}
 .text-info {
   color:#ffffff !important;
   background: var(--info) !important;
@@ -270,6 +266,10 @@ body .mobile .topbar_content .navbar > * {
 }
 .text-muted {
   color: var(--log-muted, gray) !important;
+}
+.bg-warning {
+  color:#212121 !important;
+  background: var(--warning) !important;
 }
 .nav-link.disabled {
   color: var(--log-muted, gray) !important;
