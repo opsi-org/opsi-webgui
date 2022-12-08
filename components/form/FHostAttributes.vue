@@ -198,7 +198,7 @@
           </template>
         </GridGFormItem>
       </template>
-      <div v-if="hostAttr.type !== 'OpsiDepotserver'" class="float-right mt-2">
+      <div v-if="hostAttr.type !== 'OpsiDepotserver' && config.read_only == false" class="float-right mt-2">
         <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
           <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
         </b-button>
@@ -214,10 +214,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 import { SetUEFI } from '../../mixins/save'
-
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+const config = namespace('config-app')
 @Component({ mixins: [Constants, SetUEFI] })
 export default class FHostAttributes extends Vue {
   @Prop({ }) id!: string
@@ -231,6 +232,7 @@ export default class FHostAttributes extends Vue {
   $axios: any
   $t: any
   $fetch: any
+  @config.Getter public config!: IObjectString2Boolean
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
