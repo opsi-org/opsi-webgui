@@ -58,8 +58,8 @@ const changes = namespace('changes')
           ref.alert(this.$t('message.success.save.prodActionRequest'), 'success')
         }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        ref.alert(this.$t('message.error.title'), 'danger', error.response.data)
       })
   }
 }
