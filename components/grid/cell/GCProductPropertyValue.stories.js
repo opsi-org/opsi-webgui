@@ -21,7 +21,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
     'config-app': {
       namespaced: true,
       getters: {
-        config () { return undefined }
+        config () { return false }
       }
     },
     changes: {
