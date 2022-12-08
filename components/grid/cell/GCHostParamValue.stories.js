@@ -1,3 +1,4 @@
+import { customstores } from '../../../.utils/storybook/mock'
 export default {
   title: 'Gridcell/G C Host Parameter value',
   parameters: { docs: { description: { component: 'Grid cell for Host param value' } } }
@@ -6,7 +7,15 @@ export default {
 const BoolConfig = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
-  template: '<GridCellGCHostParamValue v-bind="args" />'
+  template: '<GridCellGCHostParamValue v-bind="args" />',
+  store: customstores({
+    'config-app': {
+      namespaced: true,
+      getters: {
+        config () { return false }
+      }
+    }
+  })
 })
 
 export const GCHostParamValueBool = BoolConfig.bind({})

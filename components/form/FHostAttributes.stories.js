@@ -1,5 +1,5 @@
 
-import { mock } from '../../.utils/storybook/mock'
+import { mock, customstores } from '../../.utils/storybook/mock'
 const cid = 'dummy.client.id'
 const hostconfig = [{
   created: '2020-12-11T13:26:47',
@@ -24,7 +24,15 @@ export default {
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<FormFHostAttributes id="${cid}"/>`
+  template: `<FormFHostAttributes id="${cid}"/>`,
+  store: customstores({
+    'config-app': {
+      namespaced: true,
+      getters: {
+        config () { return false }
+      }
+    }
+  })
   // template: '<TableTHostAttributes :id="$props.id"/>'
 })
 
