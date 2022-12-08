@@ -1,4 +1,4 @@
-import { mock, data } from '../../.utils/storybook/mock'
+import { mock, customstores, data } from '../../.utils/storybook/mock'
 mock.onGet('/api/opsidata/hosts?hosts=foo').reply(200, data.config.client)
 
 export default {
@@ -7,7 +7,15 @@ export default {
 }
 
 const PrimaryTemplate = () => ({
-  template: '<ViewVConfig id="foo" />'
+  template: '<ViewVConfig id="foo" />',
+  store: customstores({
+    'config-app': {
+      namespaced: true,
+      getters: {
+        config () { return false }
+      }
+    }
+  })
 })
 
 // named export Primary to create respective story
