@@ -3,12 +3,14 @@
     <b-form-checkbox
       v-if="configtype === 'BoolConfig'"
       v-model="localval"
+      :disabled="(config)? config.read_only : false"
       data-testid="GCHostParamBool"
       @input="selectValue"
     />
     <TreeTSDefaultWithAdding
       v-else
       v-model="localval"
+      :disabled="(config)? config.read_only : false"
       data-testid="GCHostParamUnicode"
       class="treeselect_notstored"
       :multiple="row.multiValue"
@@ -25,7 +27,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { IObjectString2Boolean } from '../../../.utils/types/tgeneral'
+const config = namespace('config-app')
 
 @Component
 export default class GCHostParamVal extends Vue {
@@ -35,6 +39,7 @@ export default class GCHostParamVal extends Vue {
   hide: boolean = true
   options: Array<object> = []
   localval:any
+  @config.Getter public config!: IObjectString2Boolean
 
   beforeMount () {
     const possiblevalues: any = []
