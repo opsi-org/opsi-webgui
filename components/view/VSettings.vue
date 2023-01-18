@@ -4,17 +4,13 @@
       <template #title>
         <span class="localspecific"> {{ $t('form.general') }} </span>
       </template>
-      <b-card>
-        <ViewVSettingsLocalSpecific />
-      </b-card>
+      <ViewVSettingsLocalSpecific class="mt-2" />
     </b-tab>
     <b-tab>
       <template #title>
         <span class="opsispecific"> {{ $t('form.opsi') }} </span>
       </template>
-      <b-card>
-        <ViewVModules />
-      </b-card>
+      <ViewVModules class="mt-2" />
     </b-tab>
   </b-tabs>
 </template>
