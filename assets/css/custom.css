@@ -292,11 +292,14 @@ body .mobile .topbar_content .navbar > * {
   margin-right: auto;
   margin-left: auto;
 }
-
+.custom-control {
+  height: var(--component-height) !important;
+}
 .treeselect_short{
   max-width: var(--component-width) !important;
 }
 .treeselect_notstored .vue-treeselect__control {
+  /* height: 1.25rem !important; */
   background-color: var(--component, var(--background, black));
   color: var(--color, var(--light, white));
   border:1px solid var(--border, #ced4da );
