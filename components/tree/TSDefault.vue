@@ -465,7 +465,7 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__label-container {
   margin-left: 10px;
-  width: calc(100% - 10px);
+  width: max-content !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
   max-height: max-content !important;
