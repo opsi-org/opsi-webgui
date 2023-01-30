@@ -30,6 +30,7 @@
       hide-footer
       hide-title
       no-fade
+      no-stacking
     >
       <AlertAAlert ref="clientagentAlert" />
       <b-form>
