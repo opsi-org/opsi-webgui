@@ -198,7 +198,7 @@
           </template>
         </GridGFormItem>
       </template>
-      <div v-if="hostAttr.type !== 'OpsiDepotserver' && config.read_only == false" class="float-right mt-2">
+      <div v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" class="float-right mt-2">
         <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
           <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
         </b-button>
