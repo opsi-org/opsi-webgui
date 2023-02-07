@@ -8,7 +8,7 @@ export default class QueueNested {
   scrollDirection: 'none'|'up'|'down' = 'none'
 
   constructor(max, title='DefaultQueue') {
-    console.log(this.title, 'Queue constructor')
+    // console.log(this.title, 'Queue constructor')
     this.elements = []
     this.max_elements = max
     this.title = title
@@ -31,7 +31,7 @@ export default class QueueNested {
     }
 
     this.elements = elements
-    console.debug(this.title, 'Queue enqueueHead page_numbers', this.first_page_number, this.last_page_number)
+    // console.debug(this.title, 'Queue enqueueHead page_numbers', this.first_page_number, this.last_page_number)
   }
   enqueueTail(pnr: number, element: Array<any>) {
     let elements = [...this.elements]
@@ -45,7 +45,7 @@ export default class QueueNested {
     }
     this.elements = elements
 
-    console.debug(this.title, 'Queue enqueueTail page_numbers', this.first_page_number, this.last_page_number)
+    // console.debug(this.title, 'Queue enqueueTail page_numbers', this.first_page_number, this.last_page_number)
   }
 
   set(pnr:number, element: Array<any>) {
@@ -53,7 +53,7 @@ export default class QueueNested {
     this.first_page_number = pnr
     this.last_page_number = pnr
     this.elements = [element]
-    console.debug(this.title, 'Queue set page_numbers', this.first_page_number, this.last_page_number)
+    // console.debug(this.title, 'Queue set page_numbers', this.first_page_number, this.last_page_number)
   }
   setAuto (pnr:number, element: Array<any>) {
     if (!element) return
@@ -66,7 +66,7 @@ export default class QueueNested {
       this.last_page_number = pnr
       this.elements.length = 0
       this.elements.push(element)
-      console.debug(this.title, 'Queue setAuto page_numbers', this.first_page_number, this.last_page_number)
+      // console.debug(this.title, 'Queue setAuto page_numbers', this.first_page_number, this.last_page_number)
     }
   }
 
