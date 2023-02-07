@@ -1,3 +1,4 @@
+
 export default class QueueNested {
   elements: Array<any>
   max_elements: number = -1
