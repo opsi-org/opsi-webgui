@@ -94,6 +94,11 @@ export default {
   },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
+    '~/uib-components/.utils/utils/QueueNested.ts',
+    '~/uib-components/.utils/utils/scompares.ts',
+    '~/uib-components/.utils/utils/scomponents.ts',
+    '~/uib-components/.utils/utils/sfilters.ts',
+    '~/uib-components/.utils/utils/smappings.ts',
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
