@@ -1,4 +1,3 @@
-
 export function arrayEqual (aOrig: Array<any>, bOrig: Array<any>):boolean {
   // if (bOrig==undefined && aOrig==undefined) return true;
   // if (bOrig!=undefined && aOrig!=undefined){}

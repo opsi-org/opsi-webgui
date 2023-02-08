@@ -68,11 +68,6 @@ export default {
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    '~/.utils/utils/QueueNested.ts',
-    '~/.utils/utils/scompares.ts',
-    '~/.utils/utils/scomponents.ts',
-    '~/.utils/utils/sfilters.ts',
-    '~/.utils/utils/smappings.ts',
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
     // https://go.nuxtjs.dev/axios
