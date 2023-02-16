@@ -7,6 +7,7 @@ test('Client deletion', async ({ page }) => {
   await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
   await page.click('[data-testid="MDeleteClient"] .btn')
   await page.setViewportSize({ width: 750, height: 200 })
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.clientdeletion').innerHTML = val }, en['button.delete'])
   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['title.deleteClient'])
   await page.evaluate((val) => { document.querySelector('.confirm').innerHTML = val }, en['message.confirm.deleteClient'])

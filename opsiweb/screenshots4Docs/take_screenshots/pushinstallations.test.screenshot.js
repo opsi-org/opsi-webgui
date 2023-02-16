@@ -6,6 +6,7 @@ test('Push installations', async ({ page }) => {
   await callStoryId(page, 'button-btn-event', 'btn-event-on-demand-default')
   await page.click('[data-testid="BTNEvent"] .btn')
   await page.setViewportSize({ width: 750, height: 350 })
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.eventlabel').innerHTML = val }, en['button.event.ondemand'])
   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['button.event.ondemand'])
   await page.evaluate((val) => { document.querySelector('.footer').innerHTML = val }, en['button.event.modal.footer'])

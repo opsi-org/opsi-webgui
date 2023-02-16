@@ -4,6 +4,7 @@ const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story
 test('Button Client Actions', async ({ page }) => {
   await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
   const component = await page.locator('[data-testid="DDClientActions"]')
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await component.screenshot({ path: './screenshots/en/opsiweb_buttonclientactions.png' })
   await component.screenshot({ path: './screenshots/de/opsiweb_buttonclientactions.png' })
 })

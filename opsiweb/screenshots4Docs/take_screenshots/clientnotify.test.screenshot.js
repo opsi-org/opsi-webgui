@@ -7,6 +7,7 @@ test('Client notify', async ({ page }) => {
   await callStoryId(page, 'button-btn-event', 'btn-event-notify')
   await page.click('[data-testid="BTNEvent"] .btn')
   await page.setViewportSize({ width: 750, height: 350 })
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.eventlabel').innerHTML = val }, en['button.event.showpopup'])
   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['button.event.showpopup'])
   await page.evaluate((val) => { document.querySelector('.textarea').value = val }, en['button.event.showpopup.message'])

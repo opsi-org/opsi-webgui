@@ -5,6 +5,7 @@ const de = require('../../uib-components/locale/de.json')
 test('Track changes button', async ({ page }) => {
   await callStoryId(page, 'modal-m-track-changes', 'm-track-changes')
   const component = await page.locator('[data-testid="MTrackChanges"]')
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.btnlabel').innerHTML = val }, en['button.track.changes'])
   await component.screenshot({ path: './screenshots/en/opsiweb_buttontrackchanges.png' })
   await page.evaluate((val) => { document.querySelector('.btnlabel').innerHTML = val }, de['button.track.changes'])
@@ -13,7 +14,7 @@ test('Track changes button', async ({ page }) => {
 test('Track changes modal', async ({ page }) => {
   await callStoryId(page, 'modal-m-track-changes', 'm-track-changes')
   await page.click('[data-testid="MTrackChanges"] .btn')
-  await page.click('[data-testid="MTrackChanges"] .btn-block')
+  // await page.click('[data-testid="MTrackChanges"] .btn-block')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.setViewportSize({ width: 750, height: 450 })
   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['button.track.changes'])

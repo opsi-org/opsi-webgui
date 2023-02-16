@@ -6,6 +6,7 @@ test('Language', async ({ page }) => {
   const component = await page.locator('[data-testid="DropdownDDLang"]')
   await component.click()
   await page.setViewportSize({ width: 220, height: 150 })
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.screenshot({ path: './screenshots/en/opsiweb_language.png' })
   await page.screenshot({ path: './screenshots/de/opsiweb_language.png' })
 })

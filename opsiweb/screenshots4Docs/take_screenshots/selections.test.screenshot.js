@@ -6,6 +6,7 @@ test('Selections', async ({ page }) => {
   await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
   await page.click('[data-testid="MSelectionsAll"] .btn')
   await page.setViewportSize({ width: 750, height: 400 })
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['title.selectedElements'])
   await page.evaluate((val) => { document.querySelector('.depots').innerHTML = val }, en['title.depots'])
   await page.evaluate((val) => { document.querySelector('.clients').innerHTML = val }, en['title.clients'])

@@ -6,6 +6,7 @@ const de = require('../../uib-components/locale/de.json')
 test('Login', async ({ page }) => {
   await callStoryId(page, 'form-f-login', 'f-login')
   const component = await page.locator('[data-testid="FLogin"]')
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   await component.evaluate(() => { document.querySelector('.projectTitle').innerHTML = 'OPSIWEB' })
   await page.evaluate((val) => { document.querySelector('.username').placeholder = val }, en['form.username'])
   await page.evaluate((val) => { document.querySelector('.password').placeholder = val }, en['form.password'])
