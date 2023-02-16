@@ -20,8 +20,8 @@
     <!-- :always-open="(id=='PropertyValue-method')" -->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
-      :id="`id-select-${id}`"
-      :ref="`id-select-${id}`"
+      :id="`treeselect-${id}`"
+      :ref="`treeselect-${id}`"
       v-model="selectionWrapper"
       :flat="flat"
       :placeholder="placeholderWrapper"

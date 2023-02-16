@@ -4,7 +4,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
         <LazyBarBPageHeader
-          v-if="localboot"
+          v-if="totalnetboot"
           :title="$t('title.products')"
           :tableid="id"
           :table-info.sync="tableInfo"

@@ -6,6 +6,7 @@ mock.onGet('/api/opsidata/depot_ids').reply(200, data.depotIds)
 mock.onGet('/api/opsidata/clients').reply(() => [200, data.clients, { 'x-total-count': data.clients.length }])
 mock.onGet('/api/opsidata/products/groups').reply(200, data.groups.products)
 mock.onGet('/api/opsidata/products').reply(() => [200, data.products, { 'x-total-count': data.products.length }])
+mock.onGet('/api/opsidata/products/count').reply(200, data.products.length)
 
 // Request URL: https://localhost:4447/addons/webgui/api/opsidata/products?type=LocalbootProduct&pageNumber=1&perPage=15&sortBy=productId&sortDesc=false&filterQuery=&selectedDepots=[%22as-tp.uib.local%22]&selectedClients=[%22akunde1.uib.local%22]
 
