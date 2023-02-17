@@ -29,4 +29,14 @@ test.describe('Table', () => {
     await page.screenshot({ path: './screenshots/en/opsiweb_table_columnselection.png' })
     await page.screenshot({ path: './screenshots/de/opsiweb_table_columnselection.png' })
   })
+
+  test('refresh', async ({ page }) => {
+    await callStoryId(page, 'button-btn-refetch', 'btn-refetch')
+    const component = await page.locator('[data-testid="BTNRefetch"]')
+    await (new Promise(resolve => setTimeout(resolve, 1000)))
+    await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Refresh')
+    await component.screenshot({ path: './screenshots/en/opsiweb_table_refresh.png' })
+    await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Aktualisierung')
+    await component.screenshot({ path: './screenshots/de/opsiweb_table_refresh.png' })
+  })
 })
