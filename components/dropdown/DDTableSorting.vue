@@ -21,7 +21,7 @@
         <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
         <small v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</small>
       </template>
-      <li class="dropdown-item" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
+      <li class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
         <a class="sortDirectionWrapper">
           <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /><small>{{ $t('button.sort.tablecolumns.sortDirection') }}</small>
         </a>

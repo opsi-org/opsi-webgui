@@ -17,7 +17,7 @@
       <small style="font-size: 85%;">{{ label }}</small>
     </template>
     <div v-else-if="!tooltip">
-      {{ $t('button.tryAgain') }}
+      <span class="refreshlabel"> {{ $t('button.tryAgain') }} </span>
     </div>
   </b-button>
 </template>
