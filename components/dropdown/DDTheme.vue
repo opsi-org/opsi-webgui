@@ -3,6 +3,7 @@
     <b-nav-item-dropdown
       v-if="navbar"
       id="theme"
+      data-testid="DropdownDDThemeBTN"
       :aria-label="$t('form.theme')"
       class="px-2 text-left btn btn-primary"
       :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
@@ -28,6 +29,7 @@
     </b-nav-item-dropdown>
     <b-dropdown
       v-else
+      data-testid="DropdownDDThemeBTN"
       :text="theme.title"
       class="settingstheme"
       variant="outline-primary"
