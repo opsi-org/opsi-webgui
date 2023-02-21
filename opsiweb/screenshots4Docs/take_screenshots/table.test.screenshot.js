@@ -7,6 +7,8 @@ test.describe('Table', () => {
   test('filter', async ({ page }) => {
     await callStoryId(page, 'input-i-filter', 'i-filter')
     const component = await page.locator('[data-testid="IFilter"]')
+    await (new Promise(resolve => setTimeout(resolve, 1000)))
+    await page.setViewportSize({ width: 200, height: 340 })
     await component.type('Filter ID')
     await component.screenshot({ path: './screenshots/en/opsiweb_table_filter.png' })
     await component.screenshot({ path: './screenshots/de/opsiweb_table_filter.png' })
@@ -34,6 +36,7 @@ test.describe('Table', () => {
     await callStoryId(page, 'button-btn-refetch', 'btn-refetch')
     const component = await page.locator('[data-testid="BTNRefetch"]')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
+    await page.setViewportSize({ width: 200, height: 340 })
     await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Refresh')
     await component.screenshot({ path: './screenshots/en/opsiweb_table_refresh.png' })
     await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Aktualisierung')
