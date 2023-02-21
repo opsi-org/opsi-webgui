@@ -34,16 +34,10 @@
     >
       <AlertAAlert ref="clientagentAlert" />
       <b-form>
-        {{ $t('Client ID:   ') }} {{ clientId }}
-        <b-form-group :label="$t('form.username')" label-for="username">
-          <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" required />
-        </b-form-group>
-        <b-form-group :label="$t('form.password')" label-for="password">
-          <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" required />
-        </b-form-group>
-        <b-form-group :label="$t('table.fields.type')" label-for="type">
-          <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
-        </b-form-group>
+        <span class="clientId"> {{ $t('Client ID:   ') }} {{ clientId }} </span> <br>
+        <span class="username"> {{ $t('form.username') }} </span> <b-form-input id="username" v-model="form.username" required /> <br>
+        <span class="password"> {{ $t('form.password') }} </span> <b-form-input id="password" v-model="form.password" required /> <br>
+        <span class="type"> {{ $t('table.fields.type') }} </span> <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required /> <br>
         <div class="float-right mt-2">
           <b-button
             variant="success"
@@ -51,7 +45,7 @@
             :disabled="(config)?config.read_only:false"
             @click="deployclientagent()"
           >
-            <b-icon :icon="iconnames.product" />  <span class="deploy"> {{ $t('label.clientagent') }} </span>
+            <span class="deploy"> {{ $t('button.confirm') }} </span>
           </b-button>
         </div>
       </b-form>

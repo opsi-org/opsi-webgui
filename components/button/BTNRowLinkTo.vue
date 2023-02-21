@@ -11,7 +11,7 @@
   >
     <b-icon v-if="icon" :icon="icon" />
     <template v-if="label && ($mq!=='mobile' || incontextmenu)">
-      <small style="font-size: 85%;">{{ label }}</small>
+      <small class="label" style="font-size: 85%;">{{ label }}</small>
     </template>
   </b-button>
 </template>
