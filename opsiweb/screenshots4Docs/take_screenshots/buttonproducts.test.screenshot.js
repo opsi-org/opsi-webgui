@@ -1,0 +1,13 @@
+const { test } = require('@playwright/test')
+const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
+const en = require('../../uib-components/locale/en.json')
+const de = require('../../uib-components/locale/de.json')
+test('Button Products', async ({ page }) => {
+  await callStoryId(page, 'button-btn-row-link-to', 'btn-row-link-to-products')
+  const component = await page.locator('[data-testid="ButtonBTNRowLinkTo"]')
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
+  await page.evaluate((val) => { document.querySelector('.label').innerHTML = val }, en['title.products'])
+  await component.screenshot({ path: './screenshots/en/opsiweb_buttonproducts.png' })
+  await page.evaluate((val) => { document.querySelector('.label').innerHTML = val }, de['title.products'])
+  await component.screenshot({ path: './screenshots/de/opsiweb_buttonproducts.png' })
+})
