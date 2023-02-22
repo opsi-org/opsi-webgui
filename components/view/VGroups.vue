@@ -34,7 +34,7 @@
                   {{ $t("Add clients to group") }} <br><br>
                   <b-form inline>
                     <span>{{ $t("Select Clients:   ") }}</span><TreeTSClientsNotStored :id.sync="clientIds" />
-                    <b-button v-if="clientIds" variant="success">
+                    <b-button variant="success">
                       {{ $t("Add") }}
                     </b-button>
                   </b-form>
@@ -43,7 +43,13 @@
                   <template #title>
                     <span class="client"> {{ $t("Create subgroup") }} </span>
                   </template>
-                  {{ $t("Create subgroup, doubt: along with clients ?") }}
+                  {{ $t("Create subgroup, doubt: along with clients ?") }} <br><br>
+                  <b-form inline>
+                    <b-form-input id="inline-form-input-username" :placeholder="$t('Enter Subgroup')" />
+                    <b-button variant="success">
+                      {{ $t("Create") }}
+                    </b-button>
+                  </b-form>
                 </b-tab>
                 <b-tab>
                   <template #title>
@@ -56,18 +62,30 @@
                     <span class="client"> {{ $t("Move group") }} </span>
                   </template>
                   {{ $t("Move group to different location") }}
+                  <b-form inline>
+                    <treeselect value-format="object" :options="dummygroup" />
+                    <b-button variant="primary">
+                      {{ $t("Move") }}
+                    </b-button>
+                  </b-form>
                 </b-tab>
                 <b-tab>
                   <template #title>
                     <span class="client"> {{ $t("Delete group") }} </span>
                   </template>
                   {{ $t("Delete group with subgroup and all client assignments") }}
+                  <b-button variant="danger">
+                    {{ $t("Delete") }}
+                  </b-button>
                 </b-tab>
                 <b-tab>
                   <template #title>
                     <span class="client"> {{ $t("Delete client assignments") }} </span>
                   </template>
                   {{ $t("Only delete client assignments") }}
+                  <b-button variant="danger">
+                    {{ $t("Delete") }}
+                  </b-button>
                 </b-tab>
               </b-tabs>
             </div>
@@ -79,12 +97,24 @@
                     <span class="client"> {{ $t("Move") }} </span>
                   </template>
                   {{ $t("Move to another group") }}
+                  <b-form inline>
+                    <treeselect value-format="object" :options="dummygroup" />
+                    <b-button variant="primary">
+                      {{ $t("Move") }}
+                    </b-button>
+                  </b-form>
                 </b-tab>
                 <b-tab>
                   <template #title>
                     <span class="client"> {{ $t("Copy") }} </span>
                   </template>
                   {{ $t("Copy to another group") }}
+                  <b-form inline>
+                    <treeselect value-format="object" :options="dummygroup" />
+                    <b-button variant="primary">
+                      {{ $t("Copy") }}
+                    </b-button>
+                  </b-form>
                 </b-tab>
               </b-tabs>
             </div>
