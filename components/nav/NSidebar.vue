@@ -99,7 +99,7 @@ export default class NSidebar extends Vue {
             ]
           },
           { title: 'title.products', icon: this.iconnames.product, route: '/products/' },
-          { title: 'title.groups', icon: this.iconnames.groups, route: '/groups/' }
+          { title: 'title.groups', icon: this.iconnames.group, route: '/groups/' }
         ]
       },
       {

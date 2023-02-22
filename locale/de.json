@@ -87,6 +87,7 @@
   "title.deleteClient": "Client löschen",
   "title.whatsnew":"Was gibt's neues ?",
   "title.hostparam": "Parameter",
+  "title.groups": "Gruppen",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
