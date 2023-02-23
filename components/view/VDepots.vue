@@ -40,6 +40,16 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.healthcheck')"
+              :label="$t('title.healthcheck')"
+              :icon="iconnames.healthcheck"
+              to="/depots/healthcheck"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
           </template>
           <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
@@ -264,7 +274,7 @@ export default class VDepots extends Vue {
   }
 
   get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log')
+    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('healthcheck')
   }
 }
 </script>
