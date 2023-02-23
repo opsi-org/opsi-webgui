@@ -10,7 +10,7 @@
   <!-- TODO: If client selected: Copy to another group -->
 
   <!-- <IconILoading v-if="$fetchState.pending" :small="true" /> -->
-  <div>
+  <div class="VGroups">
     <!-- {{ dummygroup }} -->
     <b-tabs data-testid="VGroups">
       <b-tab>
@@ -25,19 +25,21 @@
           <b-col v-if="value">
             <!-- {{ value }} -->
             <div v-if="value.type == 'HostGroup'">
-              {{ $t('Selected Group : ') }} {{ value.label }}
+              <span class="font-weight-bold">
+                {{ $t('Selected Group : ') }} {{ value.label }}
+              </span>
               <b-tabs>
                 <b-tab>
                   <template #title>
                     <span class="client"> {{ $t("Add clients") }} </span>
                   </template>
                   {{ $t("Add clients to group") }} <br><br>
-                  <b-form inline>
+                  <div>
                     <span>{{ $t("Select Clients:   ") }}</span><TreeTSClientsNotStored :id.sync="clientIds" />
                     <b-button variant="success">
                       {{ $t("Add") }}
                     </b-button>
-                  </b-form>
+                  </div>
                 </b-tab>
                 <b-tab>
                   <template #title>
@@ -62,12 +64,12 @@
                     <span class="client"> {{ $t("Move group") }} </span>
                   </template>
                   {{ $t("Move group to different location") }}
-                  <b-form inline>
+                  <div>
                     <treeselect value-format="object" :options="dummygroup" />
                     <b-button variant="primary">
                       {{ $t("Move") }}
                     </b-button>
-                  </b-form>
+                  </div>
                 </b-tab>
                 <b-tab>
                   <template #title>
@@ -90,31 +92,33 @@
               </b-tabs>
             </div>
             <div v-if="value.type == 'ObjectToGroup'">
-              {{ $t('Selected Client : ') }} {{ value.label }} <br>
+              <span class="font-weight-bold">
+                {{ $t('Selected Client : ') }} {{ value.label }}
+              </span>
               <b-tabs>
                 <b-tab>
                   <template #title>
                     <span class="client"> {{ $t("Move") }} </span>
                   </template>
                   {{ $t("Move to another group") }}
-                  <b-form inline>
+                  <div>
                     <treeselect value-format="object" :options="dummygroup" />
                     <b-button variant="primary">
                       {{ $t("Move") }}
                     </b-button>
-                  </b-form>
+                  </div>
                 </b-tab>
                 <b-tab>
                   <template #title>
                     <span class="client"> {{ $t("Copy") }} </span>
                   </template>
                   {{ $t("Copy to another group") }}
-                  <b-form inline>
+                  <div>
                     <treeselect value-format="object" :options="dummygroup" />
                     <b-button variant="primary">
                       {{ $t("Copy") }}
                     </b-button>
-                  </b-form>
+                  </div>
                 </b-tab>
               </b-tabs>
             </div>
@@ -207,3 +211,8 @@ export default class VGroups extends Vue {
   // }
 }
 </script>
+<style>
+.VGroups {
+  width: 98% ;
+}
+</style>
