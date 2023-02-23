@@ -116,6 +116,15 @@
           <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="smbiosuuid">{{ $t('table.fields.smbiosuuid') }}</span>
+        </template>
+        <template #value>
+          <!-- v-model="hostAttr.smbiosuuid" -->
+          <b-form-input id="smbiosuuid" :aria-label="$t('table.fields.smbiosuuid')" type="text" readonly />
+        </template>
+      </GridGFormItem>
       <template v-if="type !== 'clients'">
         <GridGFormItem>
           <template #label>
@@ -286,6 +295,7 @@ export default class FHostAttributes extends Vue {
     delete attr.type
     delete attr.created
     delete attr.lastSeen
+    delete attr.smbiosuuid
     if (this.type === 'clients') {
       this.setUEFI(this.hostAttr.hostId)
     }
