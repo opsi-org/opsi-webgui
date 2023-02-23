@@ -84,7 +84,8 @@ export default class NSidebar extends Vue {
             icon: this.iconnames.depot,
             submenu: [
               { title: 'title.allDepots', route: '/depots/' },
-              { title: 'title.config', route: '/depotsconfig' }
+              { title: 'title.config', route: '/depotsconfig' },
+              { title: 'title.healthcheck', route: '/depotshealthcheck' }
             ]
           },
           {
