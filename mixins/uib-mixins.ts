@@ -71,6 +71,7 @@ const settings = namespace('settings')
     menu: 'three-dots-vertical',
     log: 'file-earmark-text',
     columns: 'grid3x3',
+    healthcheck: 'list-check',
     x: 'x',
     add: 'plus',
     menuOpen: 'list',

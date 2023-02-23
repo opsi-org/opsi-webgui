@@ -71,6 +71,15 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.healthcheck')"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.healthcheck'):''"
+              :icon="iconnames.healthcheck"
+              to="/depots/healthcheck"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
           </template>
         </TableTInfiniteScrollSmooth>
       </template>
