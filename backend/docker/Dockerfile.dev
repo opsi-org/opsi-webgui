@@ -8,7 +8,8 @@ ARG UID
 ENV DOCKER_ENV=${DOCKER_ENV} \
 	DEV_USER=${USER} \
 	DEV_UID=${UID} \
-	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/development/Debian_9.0/ \
+	OPSI_REPO=http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_11/ \
+	OPSI_REPO42=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/development/Debian_9.0/ \
 	# python:
 	PYTHONFAULTHANDLER=1 \
 	PYTHONUNBUFFERED=1 \
@@ -40,7 +41,9 @@ RUN apt-get update \
 	&& echo "deb https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list \
 	&& wget -q -O - https://packages.grafana.com/gpg.key | apt-key add - \
 	&& echo "deb $OPSI_REPO /" > /etc/apt/sources.list.d/opsi.list \
+	&& echo "deb $OPSI_REPO42 /" > /etc/apt/sources.list.d/opsi42.list \
 	&& wget -q -O - ${OPSI_REPO}Release.key | apt-key add - \
+	&& wget -q -O - ${OPSI_REPO42}Release.key | apt-key add - \
 	&& apt-get update \
 	&& apt-get --yes install \
 		apt-transport-https \
