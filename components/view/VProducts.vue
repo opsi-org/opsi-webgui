@@ -4,7 +4,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
         <LazyBarBPageHeader
-          v-if="totalnetboot"
+          v-if="tableloaded"
           :title="$t('title.products')"
           :tableid="id"
           :table-info.sync="tableInfo"
@@ -94,6 +94,7 @@ export default class VProducts extends Vue {
   localboot: string = ''
   netboot: string = ''
   totalnetboot: number = 0
+  tableloaded: boolean = false
 
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
@@ -275,6 +276,7 @@ export default class VProducts extends Vue {
           thiss.items = response.data || []
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
           const items = response.data || []
+          this.tableloaded = true
           return items
         }).catch((error) => {
           // eslint-disable-next-line no-console
