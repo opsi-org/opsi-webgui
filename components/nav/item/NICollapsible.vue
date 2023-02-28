@@ -5,9 +5,8 @@
       v-b-toggle="'collapse-navitem-'+title"
       :data-testid="'NSidebar-'+title"
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
-      :to="$mq === 'desktop' ? route: null "
       :disabled="disabled"
-      @click="refresh(route)"
+      @click.prevent="refresh(route)"
     >
       <b-icon :icon="icon" /> {{ $t(title) }}
       <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
@@ -21,8 +20,7 @@
           :disabled="sub.disabled"
           :class="{checkactive: $route.path.includes(sub.route)}"
           class="pl-3"
-          :to="sub.route"
-          @click="refresh(sub.route)"
+          @click.prevent="refresh(sub.route)"
         >
           <span class="submenu">
             {{ $t(sub.title) }}
@@ -40,6 +38,7 @@ import { Constants } from '../../../mixins/uib-mixins'
 @Component({ mixins: [Constants] })
 export default class NICollapsible extends Vue {
   $route: any
+  $router:any
   $nuxt: any
   iconnames: any
   $mq:any
@@ -52,6 +51,8 @@ export default class NICollapsible extends Vue {
   refresh (route) {
     if (this.$route.path.includes(route)) {
       this.$nuxt.refresh()
+    } else {
+      this.$router.push({ path: route })
     }
   }
 }

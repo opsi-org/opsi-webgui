@@ -16,7 +16,7 @@
       :disabled="disabled"
     >
       <template #button-content>
-        <b-icon :icon="icon" @click="changeRoute" />
+        <b-icon :icon="icon" @click="refresh(route)" />
       </template>
       <b-dropdown-item disabled>
         {{ $t(title) }}
@@ -28,7 +28,6 @@
       >
         <b-dropdown-item
           :class="{checkactive: $route.path.includes(sub.route)}"
-          :to="sub.route"
           :style="(sub.disabled)? 'pointer-events: none;':''"
           :disabled="sub.disabled"
           @click="refresh(sub.route)"
@@ -57,14 +56,11 @@ export default class NIDropdownHoverable extends Vue {
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>
 
-  changeRoute () {
-    this.$router.push({ path: this.route })
-    this.refresh(this.route)
-  }
-
   refresh (route) {
     if (this.$route.path.includes(route)) {
       this.$nuxt.refresh()
+    } else {
+      this.$router.push({ path: route })
     }
   }
 }

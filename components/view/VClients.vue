@@ -4,7 +4,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <LazyBarBPageHeader
-          v-if="totalItems"
+          v-if="tableloaded"
           :title="$t('title.clients') + ' (' + totalItems + ')'"
           :tableid="id"
           :table-info.sync="tableInfo"
@@ -196,6 +196,7 @@ export default class VClients extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
+  tableloaded: boolean = false
 
   deleteClient: DeleteClient = { clientid: '' }
   tableData: ITableData = {
@@ -333,6 +334,7 @@ export default class VClients extends Vue {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
         this.isLoading = false
+        this.tableloaded = true
         if (response.data === null) {
           return []
         } else {

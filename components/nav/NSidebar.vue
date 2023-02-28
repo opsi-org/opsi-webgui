@@ -61,12 +61,6 @@ export default class NSidebar extends Vue {
   @Prop({ }) expanded!: boolean
   @config.Getter public config!: IObjectString2Boolean
 
-  refresh (route) {
-    if (this.$route.path.includes(route)) {
-      this.$nuxt.refresh()
-    }
-  }
-
   get navItems (): Array<IMenuItem> {
     return [
       // {
