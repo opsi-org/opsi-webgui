@@ -17,7 +17,7 @@
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
-        <b class="basics">{{ $t('title.basics') }} </b>
+        <b class="basics">{{ $t('title.targetclient') }} </b>
       </b-row>
       <GridGFormItem value-more="true">
         <template #label>
@@ -39,9 +39,26 @@
             id="domainName"
             class="domainName"
             :aria-label="$t('table.name.domain')"
+            :value="id.substring(id.indexOf('.'))"
             type="text"
             required
           />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="hwAddr" :aria-label="$t('table.fields.hwAddr')" type="text" />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #label>
+          <span class="ip">{{ $t('table.fields.ip') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="ip" :aria-label="$t('table.fields.ip')" type="text" />
         </template>
       </GridGFormItem>
       <b-row class="mt-4 mb-2">
