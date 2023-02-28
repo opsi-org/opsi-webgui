@@ -1,14 +1,14 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="logErrorAlert">
-      <b-button
+      <!-- <b-button
         v-if="!isLoading"
         variant="outline-dark"
         class="float-right"
         @click="$fetch"
       >
         {{ $t('button.tryAgain') }}
-      </b-button>
+      </b-button> -->
     </AlertAAlert>
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
@@ -79,7 +79,6 @@ export default class VClientLog extends Vue {
   filterQuery: string = ''
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   errorText: string = ''
-  $fetch: any
 
   @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
   @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }

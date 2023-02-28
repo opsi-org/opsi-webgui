@@ -5,7 +5,7 @@
       <template #parent>
         <!-- v-if="$mq == 'mobile'" -->
         <LazyBarBPageHeader
-          v-if="totalItems"
+          v-if="tableloaded"
           :title="$t('title.depots') + ' (' + totalItems + ')'"
           :tableid="id"
           :table-info.sync="tableInfo"
@@ -128,6 +128,7 @@ export default class VDepots extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
+  tableloaded: boolean = false
   fetchedDataClients2Depots: IObjectString2String = {}
 
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
@@ -243,6 +244,7 @@ export default class VDepots extends Vue {
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
+        this.tableloaded = true
         if (response.data === null) {
           this.isLoading = false
           return []
