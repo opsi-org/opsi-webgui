@@ -249,9 +249,9 @@ export default class TProductsNetboot extends Vue {
     this.syncSort({ filterQuery: this.filterQuery }, this.tableData, false, this.parentId)
   }
 
-  mounted () {
-    this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
-  }
+  // mounted () {
+  //   this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
+  // }
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
