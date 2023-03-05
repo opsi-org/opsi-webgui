@@ -20,8 +20,8 @@ from sqlalchemy import alias, and_, column, select, text
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.sql.expression import table, update
 
-from opsiconfd.application.utils import get_configserver_id
 from opsiconfd.backend import execute_on_secondary_backends
+from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -101,6 +101,7 @@ def get_product_description(product: str, product_version: str, package_version:
 			return (description, advice)
 
 		return ("", "")
+
 
 @lru_cache(maxsize=1000)
 def get_product_type(product_id: str, product_version: str, package_version: str) -> Union[str, None]:
@@ -486,9 +487,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 @rest_api
 @filter_depot_access
 def product_count(  # pylint: invalid-name, unused-argument
-	request: Request,
-	type: str = "all",
-	selectedDepots: List[str] = Depends(parse_depot_list)
+	request: Request, type: str = "all", selectedDepots: List[str] = Depends(parse_depot_list)
 ) -> RESTResponse:
 	"""
 	Get number products from selected depots.
@@ -518,7 +517,9 @@ class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
 @product_router.post("/api/opsidata/clients/products")
 @rest_api
 @read_only_check
-def save_poduct_on_client(request: Request, data: PocItem) -> RESTResponse:  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
+def save_poduct_on_client(
+	request: Request, data: PocItem
+) -> RESTResponse:  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
 	"""
 	Save a Product On Client object.
 	"""
@@ -916,10 +917,7 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 					data["productDescription"] = "mixed"
 
 			if data["productAdviceDetails"]:
-				if all(
-					advice == list(data["productAdviceDetails"].values())[0]
-					for advice in data["productAdviceDetails"].values()
-				):
+				if all(advice == list(data["productAdviceDetails"].values())[0] for advice in data["productAdviceDetails"].values()):
 					data["productAdvice"] = list(data["productAdviceDetails"].values())[0]
 				else:
 					data["productAdvice"] = "mixed"
@@ -1017,8 +1015,7 @@ class ProductProperty(BaseModel):  # pylint: disable=too-few-public-methods
 @rest_api
 @read_only_check
 def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
-	request: Request,
-	productId: str, data: ProductProperty
+	request: Request, productId: str, data: ProductProperty
 ) -> RESTResponse:
 	"""
 	Save Product Properties.
@@ -1218,10 +1215,7 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 					data["productDescription"] = "mixed"
 
 			if data["productAdviceDetails"]:
-				if all(
-					advice == list(data["productAdviceDetails"].values())[0]
-					for advice in data["productAdviceDetails"].values()
-				):
+				if all(advice == list(data["productAdviceDetails"].values())[0] for advice in data["productAdviceDetails"].values()):
 					data["productAdvice"] = list(data["productAdviceDetails"].values())[0]
 				else:
 					data["productAdvice"] = "mixed"

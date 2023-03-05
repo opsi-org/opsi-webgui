@@ -17,8 +17,8 @@ from sqlalchemy import and_, column, or_, select, table, text, union, update
 from sqlalchemy.exc import IntegrityError
 
 from OPSI.Exceptions import BackendBadValueError
-from opsiconfd.application.utils import get_configserver_id
-from opsiconfd.backend import get_client_backend
+from opsiconfd.backend import get_unprotected_backend as get_client_backend
+from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,

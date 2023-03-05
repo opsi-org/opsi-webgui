@@ -15,9 +15,8 @@ from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
 from opsiconfd import contextvar_client_session
-from opsiconfd.application.utils import get_configserver_id
-from opsiconfd.backend import get_backend
-from opsiconfd.config import config
+from opsiconfd.backend import get_unprotected_backend as get_backend
+from opsiconfd.config import config, get_configserver_id
 from opsiconfd.logging import logger
 
 from .utils import (

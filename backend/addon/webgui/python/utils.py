@@ -9,43 +9,44 @@ webgui utils
 """
 
 from functools import wraps
+from json import loads  # pylint: disable=no-name-in-module
 from operator import and_
 from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
-from orjson import loads  # pylint: disable=no-name-in-module
 from sqlalchemy import select, text
 
-from OPSI.Backend.MySQL import MySQL, MySQLBackend
+# from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
-from opsiconfd.application.utils import get_configserver_id, parse_list
-from opsiconfd.backend import get_backend
-from opsiconfd.backend import get_mysql as backend_get_mysql
+from opsiconfd.application.utils import parse_list
+from opsiconfd.backend import get_mysql, get_unprotected_backend
+from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
 
 
-def get_mysql() -> MySQL:
-	try:
-		return backend_get_mysql()
-	except RuntimeError:
-		return None
+# def get_mysql():
+# 	try:
+# 		return backend_get_mysql()
+# 	except RuntimeError:
+# 		return None
+#
+#
+# def get_mysql_backend():
+# 	backend = get_backend()  # pylint: disable=redefined-outer-name
+# 	return backend._mysql
+# 	# while getattr(backend, "_backend", None):
+# 	# 	backend = backend._backend  # pylint: disable=protected-access
+# 	# 	if backend.__class__.__name__ == "BackendDispatcher":
+# 	# 		try:
+# 	# 			return backend._backends["mysql"]["instance"]  # pylint: disable=protected-access
+# 	# 		except KeyError:
+# 	# 			# No mysql backend
+# 	# 			pass
+# 	# raise RuntimeError("MySQL backend not active")
 
 
-def get_mysql_backend() -> MySQLBackend:
-	backend = get_backend()  # pylint: disable=redefined-outer-name
-	while getattr(backend, "_backend", None):
-		backend = backend._backend  # pylint: disable=protected-access
-		if backend.__class__.__name__ == "BackendDispatcher":
-			try:
-				return backend._backends["mysql"]["instance"]  # pylint: disable=protected-access
-			except KeyError:
-				# No mysql backend
-				pass
-	raise RuntimeError("MySQL backend not active")
-
-
-backend = get_mysql_backend()
+backend = get_unprotected_backend()
 
 mysql = get_mysql()
 
@@ -56,9 +57,7 @@ def get_depot_of_client(client: str) -> str:
 		params["client"] = client
 		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId = :client")
 
-		query = select(text("cs.objectId AS client, cs.values"))\
-			.select_from(text("CONFIG_STATE AS cs"))\
-			.where(where)
+		query = select(text("cs.objectId AS client, cs.values")).select_from(text("CONFIG_STATE AS cs")).where(where)
 
 		result = session.execute(query, params)
 		result = result.fetchone()
@@ -94,7 +93,7 @@ def get_username() -> str:
 	client_session = contextvar_client_session.get()
 	if not client_session:
 		raise RuntimeError("Session invalid")
-	return client_session.user_store.username
+	return client_session.username
 
 
 def get_allowed_objects() -> dict:
@@ -110,7 +109,9 @@ def get_allowed_objects() -> dict:
 	return allowed
 
 
-def build_tree(group: dict, groups: List[dict], allowed: List[str], processed: List[str] = None, default_expanded: bool = None) -> dict:  # pylint: disable=too-many-branches
+def build_tree(
+	group: dict, groups: List[dict], allowed: List[str], processed: List[str] = None, default_expanded: bool = None
+) -> dict:  # pylint: disable=too-many-branches
 	if not processed:
 		processed = []
 	processed.append(group["id"])
@@ -173,9 +174,7 @@ def merge_dicts(dict_a: dict, dict_b: dict, path: Optional[List] = None) -> dict
 def _get_bool_config_value(config_id: str) -> bool:
 	with mysql.session() as session:
 		where = text(f"cv.configId='{config_id}'")
-		query = select(text("cv.value, cv.isDefault"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
+		query = select(text("cv.value, cv.isDefault")).select_from(text("CONFIG_VALUE AS cv")).where(where)
 		result = session.execute(query)
 		result = result.fetchall()
 	if result:
@@ -214,9 +213,7 @@ def get_allowd_depots(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.depotaccess.depots'")
 		where = and_(where, text("cv.isDefault=1"))
-		query = select(text("cv.value"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
+		query = select(text("cv.value")).select_from(text("CONFIG_VALUE AS cv")).where(where)
 		result = session.execute(query)
 		result = result.fetchall()
 		depots = []
@@ -229,9 +226,7 @@ def get_allowd_product_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.product.groupaccess.productgroups'")
 		where = and_(where, text("cv.isDefault=1"))
-		query = select(text("cv.value"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
+		query = select(text("cv.value")).select_from(text("CONFIG_VALUE AS cv")).where(where)
 		result = session.execute(query)
 		result = result.fetchall()
 		groups = []
@@ -244,9 +239,7 @@ def get_allowd_host_groups(user: str) -> list:
 	with mysql.session() as session:
 		where = text("cv.configId='user.{" + user + "}.privilege.host.groupaccess.hostgroups'")
 		where = and_(where, text("cv.isDefault=1"))
-		query = select(text("cv.value"))\
-			.select_from(text("CONFIG_VALUE AS cv"))\
-			.where(where)
+		query = select(text("cv.value")).select_from(text("CONFIG_VALUE AS cv")).where(where)
 		result = session.execute(query)
 		result = result.fetchall()
 		groups = []
@@ -260,9 +253,7 @@ def get_allowed_clients(user: str) -> list:
 	allowed_clients = []
 	with mysql.session() as session:
 		for group in allowed_groups:
-			query = select(text("otg.objectId AS client"))\
-				.select_from(text("OBJECT_TO_GROUP AS otg"))\
-				.where(text(f"otg.groupId='{group}'"))
+			query = select(text("otg.objectId AS client")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text(f"otg.groupId='{group}'"))
 			otg_result = session.execute(query)
 			otg_result = otg_result.fetchall()
 			for otg_row in otg_result:
@@ -276,9 +267,9 @@ def get_allowed_products(user: str) -> list:
 	allowed_products = []
 	with mysql.session() as session:
 		for group in allowed_groups:
-			query = select(text("otg.objectId AS product"))\
-				.select_from(text("OBJECT_TO_GROUP AS otg"))\
-				.where(text(f"otg.groupId='{group}'"))
+			query = (
+				select(text("otg.objectId AS product")).select_from(text("OBJECT_TO_GROUP AS otg")).where(text(f"otg.groupId='{group}'"))
+			)
 			otg_result = session.execute(query)
 			otg_result = otg_result.fetchall()
 			for otg_row in otg_result:
@@ -294,10 +285,9 @@ def read_only_check(func: Callable) -> Callable:
 			username = kwargs.get("request").scope.get("session").user_store.username
 			if read_only_user(username):
 				logger.error("User %s is a read only user.", username)
-				raise OpsiApiException(
-					message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN
-				)
+				raise OpsiApiException(message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN)
 		return func(*args, **kwargs)
+
 	return check_user
 
 
@@ -318,6 +308,7 @@ def filter_depot_access(func: Callable) -> Callable:
 				else:
 					kwargs["selectedDepots"] = []
 		return func(*args, **kwargs)
+
 	return check_user
 
 
@@ -328,10 +319,9 @@ def check_client_creation_rights(func: Callable) -> Callable:
 			username = kwargs.get("request").scope.get("session").user_store.username
 			if not client_creation_allowed(username):
 				logger.error("User %s is not allowed to create clients.", username)
-				raise OpsiApiException(
-					message=f"User {username} is not allowed to create clients.", http_status=status.HTTP_403_FORBIDDEN
-				)
+				raise OpsiApiException(message=f"User {username} is not allowed to create clients.", http_status=status.HTTP_403_FORBIDDEN)
 		return func(*args, **kwargs)
+
 	return check_user
 
 

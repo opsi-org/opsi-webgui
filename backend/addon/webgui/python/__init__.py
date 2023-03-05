@@ -19,10 +19,11 @@ from starlette.types import Receive, Send
 
 from OPSI.Exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
-from opsiconfd.backend import get_client_backend
+from opsiconfd.backend import get_protected_backend as get_client_backend
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
 from opsiconfd.utils import remove_route_path
+from opsiconfd.session import authenticate as opsiconfd_authenticate
 
 from .clients import client_router
 from .config import conifg_router
@@ -133,14 +134,9 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	logger.info("Start authentication of client %s", connection.client.host)
 	username = None
 	password = None
-	# if connection.scope["path"] == "/addons/webgui/api/auth/login":
 	req = Request(connection.scope, receive)
 	form = await req.form()
 	username = form.get("username")
 	password = form.get("password")
-	auth_type = None
 
-	def sync_auth(username, password, auth_type):
-		get_client_backend().backendAccessControl.authenticate(username, password, auth_type=auth_type)
-
-	await run_in_threadpool(sync_auth, username, password, auth_type)
+	await opsiconfd_authenticate(connection.scope, username, password)
