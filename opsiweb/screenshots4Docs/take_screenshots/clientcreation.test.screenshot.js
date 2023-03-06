@@ -6,6 +6,7 @@ const de = require('../../uib-components/locale/de.json')
 test('Client Creation', async ({ page }) => {
   await callStoryId(page, 'view-v-client-creation', 'v-client-creation')
   const component = await page.locator('[data-testid="VClientCreation"]')
+  await page.click('[data-testid="AAlert"] .close')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.id').innerHTML = val }, en['table.fields.id'])
   await component.evaluate(() => { document.querySelector('.domainName').placeholder = '.domain.local' })
@@ -25,15 +26,6 @@ test('Client Creation', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.clientagent').innerHTML = val }, en['table.fields.clientagent'])
   await page.evaluate((val) => { document.querySelector('.resetButton').innerHTML = val }, en['button.reset'])
   await page.evaluate((val) => { document.querySelector('.addButton').innerHTML = val }, en['button.create'])
-  // await page.screenshot({
-  //   path: './screenshots/en/opsi-webgui_clientcreation.png',
-  //   clip: {
-  //     x: 0,
-  //     y: 85,
-  //     width: 1200,
-  //     height: 1700
-  //   }
-  // })
   await component.screenshot({ path: './screenshots/en/opsi-webgui_clientcreation.png' })
   await page.evaluate((val) => { document.querySelector('.description').innerHTML = val }, de['table.fields.description'])
   await page.evaluate((val) => { document.querySelector('.inventNum').innerHTML = val }, de['table.fields.inventNum'])

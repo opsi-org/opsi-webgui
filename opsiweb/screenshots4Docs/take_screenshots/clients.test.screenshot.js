@@ -13,8 +13,24 @@ test('Clients', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.tableheader_products').innerHTML = val }, en['title.products'])
   await component.evaluate(() => { document.querySelector('.count').innerHTML = '0/5' })
   await component.evaluate(() => { document.querySelector('.filter').placeholder = 'Filter ID' })
-  await component.screenshot({ path: './screenshots/en/opsi-webgui_clients.png' })
+  await page.screenshot({
+    path: './screenshots/en/opsi-webgui_clients.png',
+    clip: {
+      x: 0,
+      y: 0,
+      width: 1400,
+      height: 460
+    }
+  })
   await page.evaluate((val) => { document.getElementById('treeselect-HostGroups').innerHTML = val }, de['treeselect.clientGroups'])
   await page.evaluate((val) => { document.querySelector('.tableheader_products').innerHTML = val }, de['title.products'])
-  await component.screenshot({ path: './screenshots/de/opsi-webgui_clients.png' })
+  await page.screenshot({
+    path: './screenshots/de/opsi-webgui_clients.png',
+    clip: {
+      x: 0,
+      y: 0,
+      width: 1400,
+      height: 460
+    }
+  })
 })
