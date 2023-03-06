@@ -17,7 +17,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.concurrency import run_in_threadpool
 from starlette.types import Receive, Send
 
-from OPSI.Exceptions import BackendAuthenticationError, BackendPermissionDeniedError
+from opsicommon.exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
 from opsiconfd.backend import get_protected_backend as get_client_backend
 from opsiconfd.logging import logger
@@ -42,14 +42,14 @@ class Webgui(Addon):
 	name = ADDON_NAME
 	version = ADDON_VERSION
 
-	def setup(self, app):
+	def setup(self, app: FastAPI) -> None:
 
 		if not mysql:
 			logger.warning("No mysql backend found! Webgui only works with mysql backend.")
 			error_router = APIRouter()
 
 			@error_router.get(f"{self.router_prefix}/app")
-			def webgui_error():
+			def webgui_error() -> PlainTextResponse:
 				return PlainTextResponse("No mysql backend found! Webgui only works with mysql backend.", status_code=501)
 
 			app.include_router(error_router)
@@ -109,7 +109,7 @@ class Webgui(Addon):
 		Return true to skip further request processing."""
 		message = str(err)
 		status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-		headers = {}
+		headers: dict = {}
 
 		if isinstance(err, (BackendAuthenticationError, BackendPermissionDeniedError)):
 			status_code = status.HTTP_403_FORBIDDEN
@@ -131,7 +131,7 @@ class Webgui(Addon):
 
 
 async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
-	logger.info("Start authentication of client %s", connection.client.host)
+	logger.info("Start authentication of client %s", connection.client.host)  # type: ignore[union-attr]
 	username = None
 	password = None
 	req = Request(connection.scope, receive)
@@ -139,4 +139,4 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	username = form.get("username")
 	password = form.get("password")
 
-	await opsiconfd_authenticate(connection.scope, username, password)
+	await opsiconfd_authenticate(connection.scope, username, password)  # type: ignore[union-attr]
