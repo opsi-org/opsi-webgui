@@ -24,7 +24,6 @@ from starlette.concurrency import run_in_threadpool
 
 from OPSI.Exceptions import BackendBadValueError
 from OPSI.Object import Host, OpsiClient  # type: ignore
-from opsiconfd.backend import execute_on_secondary_backends
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -298,14 +297,6 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 
 			headers = {"Location": f"{request.url}/{client.hostId}"}
 
-			client_data = {
-				"id": values.get("hostId"),
-				"hardwareAddress": values.get("hardwareAddress"),
-				"ipAddress": values.get("ipAddress"),
-			}
-
-			execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
-
 			if depot:
 				set_depot(client.hostId, depot)
 
@@ -368,9 +359,7 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 					"hardwareAddress": values.get("hardwareAddress"),
 				}
 
-				execute_on_secondary_backends(method="host_updateObject", host=OpsiClient(**client_data))
 			if values.get("ipAddress"):
-				client_data = {"id": values.get("hostId"), "ipAddress": values.get("ipAddress")}
 				# IPv4Address/IPv6Address is not JSON serializable
 				values["ipAddress"] = str(values["ipAddress"])
 			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
@@ -535,9 +524,6 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: d
 			query = delete(table("HOST")).where(text(f"HOST.hostId = '{clientid}' and HOST.type = 'OpsiClient'"))
 			session.execute(query)
 
-			client_data = {"id": clientid}
-
-			execute_on_secondary_backends("host_deleteObjects", tuple([OpsiClient(**client_data)]))
 			return RESTResponse()
 
 		except Exception as err:  # pylint: disable=broad-except

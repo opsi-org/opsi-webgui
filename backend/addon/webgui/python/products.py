@@ -20,7 +20,6 @@ from sqlalchemy import alias, and_, column, select, text
 from sqlalchemy.dialects.mysql import insert
 from sqlalchemy.sql.expression import table, update
 
-from opsiconfd.backend import execute_on_secondary_backends
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -593,18 +592,7 @@ def save_poduct_on_client(
 					session.execute(stmt)
 
 				result_data[client_id][product_id] = values
-				poc = ProductOnClient(
-					clientId=values.get("clientId"),
-					productId=values.get("productId"),
-					productType=values.get("productType"),
-					productVersion=values.get("productVersion"),
-					packageVersion=values.get("packageVersion"),
-					actionRequest=values.get("actionRequest"),
-					actionProgress=values.get("actionProgress"),
-					actionResult=values.get("actionResult"),
-					installationStatus=values.get("installationStatus"),
-				)
-				execute_on_secondary_backends("productOnClient_updateObject", productOnClient=poc)
+
 			except Exception as err:  # pylint: disable=broad-except
 				if isinstance(err, OpsiApiException):
 					raise err
