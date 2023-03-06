@@ -25,6 +25,7 @@
     <b-modal
       :id="'event-modal-delete-' + clientId"
       :title="$t('title.deleteClient')"
+      data-testid="MDeleteClientModal"
       centered
       scrollable
       hide-footer

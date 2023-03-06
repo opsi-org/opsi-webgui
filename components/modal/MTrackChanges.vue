@@ -15,6 +15,7 @@
     </b-button>
     <b-modal
       id="trackChangesModal"
+      data-testid="MTrackChangesModal"
       size="xl"
       :title="$t('button.track.changes')"
       hide-footer

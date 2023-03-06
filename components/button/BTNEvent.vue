@@ -41,6 +41,7 @@
     <b-modal
       :id="'event-modal-' + event + '-' + data"
       :title="$t(events[event].titlemodal)"
+      data-testid="BTNEventModal"
       size="sm"
     >
       <b-list-group v-if="event=='ondemand'" flush>
