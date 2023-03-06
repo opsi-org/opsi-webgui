@@ -139,4 +139,4 @@ async def authenticate(connection: HTTPConnection, receive: Receive) -> None:
 	username = form.get("username")
 	password = form.get("password")
 
-	await opsiconfd_authenticate(connection.scope, username, password)  # type: ignore[union-attr]
+	await opsiconfd_authenticate(connection.scope, username, password)  # type: ignore

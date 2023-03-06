@@ -16,14 +16,13 @@ from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Body, Depends, Request, status
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, delete, select, text, update
-from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.sql.expression import table
+from sqlalchemy import alias, and_, column, delete, select, text, update  # type: ignore[import]
+from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
+from sqlalchemy.exc import IntegrityError  # type: ignore[import]
+from sqlalchemy.sql.expression import table  # type: ignore[import]
 from starlette.concurrency import run_in_threadpool
 
-from OPSI.Exceptions import BackendBadValueError
-from OPSI.Object import Host, OpsiClient  # type: ignore
+from opsicommon.exceptions import BackendBadValueError
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -353,12 +352,6 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 
 			headers = {"Location": f"{request.url}/{client.hostId}"}
 
-			if values.get("ipAddress") or values.get("hardwareAddress"):
-				client_data = {
-					"id": values.get("hostId"),
-					"hardwareAddress": values.get("hardwareAddress"),
-				}
-
 			if values.get("ipAddress"):
 				# IPv4Address/IPv6Address is not JSON serializable
 				values["ipAddress"] = str(values["ipAddress"])
@@ -621,7 +614,7 @@ def host_check_duplicates(client: Client, session: Any) -> None:
 			raise BackendBadValueError(f"Hardware address {client.hardwareAddress!r} is already used by host {result}")
 
 
-class ClientDeployData(BaseModel):
+class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
 	clients: List[str]
 	username: str
 	password: str
@@ -688,8 +681,8 @@ def set_depot(client: str, depot: str) -> None:
 @rest_api
 @read_only_check
 def add_client_to_groups(
-	request: Request, clientid: str, groups: List[str] = Body(default=None)
-) -> RESTResponse:  # pylint: disable=unused-argument
+	request: Request, clientid: str, groups: List[str] = Body(default=None)  # pylint: disable=unused-argument
+) -> RESTResponse:
 	"""
 	Add client to a list of groups.
 	"""
