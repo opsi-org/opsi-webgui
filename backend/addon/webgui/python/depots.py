@@ -226,8 +226,6 @@ def products_on_depots(
 
 		# where = and_(where, where_depots)  # type: ignore
 		query = select(text("pod.productId AS product")).select_from(table("PRODUCT_ON_DEPOT").alias("pod")).where(where)  # type: ignore
-		logger.devel(params)
-		logger.devel(query)
 		result = session.execute(query, params)
 		result = result.fetchall()
 

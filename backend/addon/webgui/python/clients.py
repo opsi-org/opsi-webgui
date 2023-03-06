@@ -25,7 +25,6 @@ from starlette.concurrency import run_in_threadpool
 from OPSI.Exceptions import BackendBadValueError
 from OPSI.Object import Host, OpsiClient  # type: ignore
 from opsiconfd.backend import execute_on_secondary_backends
-from opsiconfd.backend import get_unprotected_backend as get_client_backend
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -609,7 +608,7 @@ def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # 
 	Run RPC on opsiclientd
 	"""
 	try:
-		result = get_client_backend().hostControl_opsiclientdRpc(
+		result = backend.hostControl_opsiclientdRpc(
 			method=data.method, params=data.params or [], hostIds=data.client_ids
 		)  # pylint: disable=no-member
 	except Exception as err:  # pylint: disable=broad-except
@@ -620,7 +619,7 @@ def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # 
 
 def host_check_duplicates(client: Client, session: Any) -> None:
 	if (
-		mysql._unique_hardware_addresses  # pylint: disable=protected-access
+		mysql.unique_hardware_addresses  # pylint: disable=protected-access
 		and client.hardwareAddress
 		and not client.hardwareAddress.startswith("00:00:00")
 	):

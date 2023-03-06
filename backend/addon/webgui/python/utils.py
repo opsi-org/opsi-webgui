@@ -19,7 +19,7 @@ from sqlalchemy import select, text
 # from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
 from opsiconfd.application.utils import parse_list
-from opsiconfd.backend import get_mysql, get_unprotected_backend
+from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
@@ -46,7 +46,7 @@ from opsiconfd.rest import OpsiApiException
 # 	# raise RuntimeError("MySQL backend not active")
 
 
-backend = get_unprotected_backend()
+backend = get_protected_backend()
 
 mysql = get_mysql()
 

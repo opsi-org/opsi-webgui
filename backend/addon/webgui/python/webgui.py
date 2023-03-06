@@ -15,11 +15,11 @@ from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
 from opsiconfd import contextvar_client_session
-from opsiconfd.backend import get_unprotected_backend as get_backend
 from opsiconfd.config import config, get_configserver_id
 from opsiconfd.logging import logger
 
 from .utils import (
+	backend,
 	build_tree,
 	client_creation_allowed,
 	depot_access_configured,
@@ -111,14 +111,12 @@ def user_configuration():
 @webgui_router.get("/api/opsidata/modulesContent")
 @webgui_router.post("/api/opsidata/modulesContent")
 async def modules_content():
-	return JSONResponse({"result": get_backend().backend_getLicensingInfo()["available_modules"]})
+	return JSONResponse({"result": backend.backend_getLicensingInfo()["available_modules"]})
 
 
 @webgui_router.get("/api/opsidata/log")
 async def opsidata_log(selectedClient: Optional[str], selectedLogType: Optional[str]):  # pylint: disable=invalid-name
-	return JSONResponse(
-		{"result": get_backend().readLog(type=selectedLogType, objectId=selectedClient).split("\n")}  # pylint: disable=no-member
-	)
+	return JSONResponse({"result": backend.readLog(type=selectedLogType, objectId=selectedClient).split("\n")})  # pylint: disable=no-member
 
 
 @webgui_router.get("/api/opsidata/home")

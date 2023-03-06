@@ -17,7 +17,6 @@ from sqlalchemy import and_, column, or_, select, table, text, union, update
 from sqlalchemy.exc import IntegrityError
 
 from OPSI.Exceptions import BackendBadValueError
-from opsiconfd.backend import get_unprotected_backend as get_client_backend
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -641,7 +640,7 @@ def update_client(request: Request, server_id: str, server: Server) -> RESTRespo
 
 # TODO merege with client check duplicates
 def host_check_duplicates(host: Host, session: Any) -> None:
-	if backend.unique_hardware_addresses and host.hardwareAddress and not host.hardwareAddress.startswith("00:00:00"):
+	if mysql.unique_hardware_addresses and host.hardwareAddress and not host.hardwareAddress.startswith("00:00:00"):
 		select_query = (
 			select(text("h.hostId AS hostId"))  # type: ignore
 			.select_from(table("HOST").alias("h"))
