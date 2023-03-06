@@ -347,9 +347,3 @@ body .mobile .topbar_content .navbar > * {
   color: var(--color);
   border-color: var(--border);
 }
-
-.nav-tabs .nav-item:focus,
-.nav-tabs .nav-item:hover {
-  background-color: var(--primary-dark);
-  color: var(--color);
-}
