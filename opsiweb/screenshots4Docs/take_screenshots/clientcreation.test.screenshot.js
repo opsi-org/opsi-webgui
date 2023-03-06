@@ -3,7 +3,7 @@ const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story
 const en = require('../../uib-components/locale/en.json')
 const de = require('../../uib-components/locale/de.json')
 
-test('Client creation', async ({ page }) => {
+test('Client Creation', async ({ page }) => {
   await callStoryId(page, 'view-v-client-creation', 'v-client-creation')
   const component = await page.locator('[data-testid="VClientCreation"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
@@ -26,7 +26,7 @@ test('Client creation', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.resetButton').innerHTML = val }, en['button.reset'])
   await page.evaluate((val) => { document.querySelector('.addButton').innerHTML = val }, en['button.create'])
   // await page.screenshot({
-  //   path: './screenshots/en/opsiweb_clientcreation.png',
+  //   path: './screenshots/en/opsi-webgui_clientcreation.png',
   //   clip: {
   //     x: 0,
   //     y: 85,
@@ -34,15 +34,13 @@ test('Client creation', async ({ page }) => {
   //     height: 1700
   //   }
   // })
-
-  await component.screenshot({ path: './screenshots/en/opsiweb_clientcreation.png' })
+  await component.screenshot({ path: './screenshots/en/opsi-webgui_clientcreation.png' })
   await page.evaluate((val) => { document.querySelector('.description').innerHTML = val }, de['table.fields.description'])
   await page.evaluate((val) => { document.querySelector('.inventNum').innerHTML = val }, de['table.fields.inventNum'])
   await page.evaluate((val) => { document.querySelector('.settings').innerHTML = val }, de['title.settings'])
   await page.evaluate((val) => { document.querySelector('.notes').innerHTML = val }, de['table.fields.notes'])
   await page.evaluate((val) => { document.querySelector('.assignments').innerHTML = val }, de['title.assignments'])
-
   await page.evaluate((val) => { document.querySelector('.resetButton').innerHTML = val }, de['button.reset'])
   await page.evaluate((val) => { document.querySelector('.addButton').innerHTML = val }, de['button.create'])
-  await component.screenshot({ path: './screenshots/de/opsiweb_clientcreation.png' })
+  await component.screenshot({ path: './screenshots/de/opsi-webgui_clientcreation.png' })
 })

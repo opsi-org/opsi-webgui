@@ -7,6 +7,6 @@ test('Products Actionrequest', async ({ page }) => {
   await page.setViewportSize({ width: 300, height: 350 })
   await page.click('[data-testid="DropdownDDProductRequest"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  await page.screenshot({ path: './screenshots/en/opsiweb_productactionrequest.png' })
-  await page.screenshot({ path: './screenshots/de/opsiweb_productactionrequest.png' })
+  await page.screenshot({ path: './screenshots/en/opsi-webgui_productactionreq.png' })
+  await page.screenshot({ path: './screenshots/de/opsi-webgui_productactionreq.png' })
 })
