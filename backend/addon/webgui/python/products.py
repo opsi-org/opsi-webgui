@@ -14,11 +14,10 @@ from typing import Dict, List, Optional, Tuple, Union
 
 from fastapi import APIRouter, Depends, Request, status
 from fastapi.responses import JSONResponse
-from opsicommon.objects import ProductOnClient
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, select, text
-from sqlalchemy.dialects.mysql import insert
-from sqlalchemy.sql.expression import table, update
+from sqlalchemy import alias, and_, column, select, text  # type: ignore[import]
+from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
+from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
@@ -79,7 +78,7 @@ def depot_get_product_version(depot: str, product: str) -> Union[str, None]:
 		return version
 
 
-def get_product_description(product: str, product_version: str, package_version: str) -> Union[Tuple[str]]:
+def get_product_description(product: str, product_version: str, package_version: str) -> Tuple[str, str]:
 	description = None
 	params = {}
 	with mysql.session() as session:
@@ -95,8 +94,8 @@ def get_product_description(product: str, product_version: str, package_version:
 		result = result.fetchone()
 
 		if result:
-			description = dict(result).get("description")
-			advice = dict(result).get("advice")
+			description = dict(result).get("description", "")
+			advice = dict(result).get("advice", "")
 			return (description, advice)
 
 		return ("", "")
@@ -485,13 +484,15 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 @product_router.get("/api/opsidata/products/count", response_model=List[Product])
 @rest_api
 @filter_depot_access
-def product_count(  # pylint: invalid-name, unused-argument
-	request: Request, type: str = "all", selectedDepots: List[str] = Depends(parse_depot_list)
+def product_count(
+	request: Request,  # pylint:  disable=invalid-name, unused-argument
+	type: str = "all",  # pylint:  disable=redefined-builtin
+	selectedDepots: List[str] = Depends(parse_depot_list),  # pylint:  disable=invalid-name, unused-argument
 ) -> RESTResponse:
 	"""
 	Get number products from selected depots.
 	"""
-	params = {"depots": selectedDepots}
+	params = {"depots": selectedDepots, "product_type": ""}
 	if type == "all":
 		where = text("pod.depotId IN :depots")
 	else:
@@ -516,9 +517,9 @@ class PocItem(BaseModel):  # pylint: disable=too-few-public-methods
 @product_router.post("/api/opsidata/clients/products")
 @rest_api
 @read_only_check
-def save_poduct_on_client(
-	request: Request, data: PocItem
-) -> RESTResponse:  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
+def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statements, too-many-branches, unused-argument
+	request: Request, data: PocItem  # pylint: disable=unused-argument
+) -> RESTResponse:
 	"""
 	Save a Product On Client object.
 	"""
