@@ -75,6 +75,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	hardwareAddress: Optional[str]
 	ipAddress: Optional[Union[IPv4Address, IPv6Address]]
 	inventoryNumber: Optional[str] = ""
+	systemUUID: Optional[str] = ""
 	oneTimePassword: Optional[str]
 	created: Optional[datetime]
 	lastSeen: Optional[datetime]
@@ -136,6 +137,7 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 				h.hostId AS clientId,
 				h.hostId AS ident,
 				h.hardwareAddress AS macAddress,
+				h.systemUUID AS systemUUID,
 				h.ipAddress AS  ipAddress,
 				h.description AS description,
 				h.notes AS notes,
@@ -395,6 +397,7 @@ def get_client(clientid: str) -> RESTResponse:  # pylint: disable=too-many-branc
 				h.hardwareAddress AS hardwareAddress,
 				h.ipAddress AS ipAddress,
 				h.inventoryNumber AS inventoryNumber,
+				h.systemUUID AS systemUUID,
 				h.created AS created,
 				h.lastSeen AS lastSeen,
 				h.opsiHostKey AS opsiHostKey,
