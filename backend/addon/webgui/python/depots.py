@@ -12,10 +12,9 @@ from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, or_, select, table, text
+from sqlalchemy import and_, or_, select, table, text  # type: ignore[import]
 
 from opsiconfd.config import get_configserver_id
-from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	RESTErrorResponse,
 	RESTResponse,
@@ -50,7 +49,7 @@ class Depot(BaseModel):  # pylint: disable=too-few-public-methods
 	description: str
 
 
-def get_depots(username: str = None) -> List[str]:
+def get_depots(username: str | None = None) -> List[str]:
 	with mysql.session() as session:
 		query = "SELECT hostId FROM HOST WHERE `type` IN ('OpsiConfigserver', 'OpsiDepotserver') ORDER BY hostId"
 		result = session.execute(query).fetchall()
@@ -71,7 +70,7 @@ def depot_ids(request: Request) -> RESTResponse:
 	Get all depotIds.
 	"""
 	# TODO Item "None" of "Optional[Any]" has no attribute "user_store"  [union-attr]mypy(error)
-	username = request.scope.get("session", OPSISession("0.0.0.0", "4447")).username
+	username = request.scope.get("session", OPSISession("0.0.0.0", 4447)).username
 	depot_list = get_depots(username)
 
 	return RESTResponse(data=depot_list)
@@ -144,8 +143,8 @@ def depots(
 @rest_api
 @filter_depot_access
 def clients_on_depots(
-	request: Request, selectedDepots: List[str] = Depends(parse_depot_list)
-) -> RESTResponse:  # pylint: disable=invalid-name
+	request: Request, selectedDepots: List[str] = Depends(parse_depot_list)  # pylint: disable=invalid-name
+) -> RESTResponse:
 	"""
 	Get all client ids on selected depots.
 	"""
