@@ -14,7 +14,7 @@ from operator import and_
 from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
-from sqlalchemy import select, text
+from sqlalchemy import select, text  # type: ignore[import]
 
 # from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
@@ -23,27 +23,6 @@ from opsiconfd.backend import get_mysql, get_protected_backend
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import OpsiApiException
-
-
-# def get_mysql():
-# 	try:
-# 		return backend_get_mysql()
-# 	except RuntimeError:
-# 		return None
-#
-#
-# def get_mysql_backend():
-# 	backend = get_backend()  # pylint: disable=redefined-outer-name
-# 	return backend._mysql
-# 	# while getattr(backend, "_backend", None):
-# 	# 	backend = backend._backend  # pylint: disable=protected-access
-# 	# 	if backend.__class__.__name__ == "BackendDispatcher":
-# 	# 		try:
-# 	# 			return backend._backends["mysql"]["instance"]  # pylint: disable=protected-access
-# 	# 		except KeyError:
-# 	# 			# No mysql backend
-# 	# 			pass
-# 	# raise RuntimeError("MySQL backend not active")
 
 
 backend = get_protected_backend()
@@ -93,7 +72,7 @@ def get_username() -> str:
 	client_session = contextvar_client_session.get()
 	if not client_session:
 		raise RuntimeError("Session invalid")
-	return client_session.username
+	return client_session.username  # type: ignore
 
 
 def get_allowed_objects() -> dict:
@@ -109,12 +88,12 @@ def get_allowed_objects() -> dict:
 	return allowed
 
 
-def build_tree(
-	group: dict, groups: List[dict], allowed: List[str], processed: List[str] = None, default_expanded: bool = None
-) -> dict:  # pylint: disable=too-many-branches
+def build_tree(  # pylint: disable=too-many-branches
+	group: dict, groups: List[dict], allowed: List[str], processed: List[str] | None = None, default_expanded: bool | None = None
+) -> dict:
 	if not processed:
 		processed = []
-	processed.append(group["id"])
+	processed.append(group.get("id", ""))
 
 	is_root_group = group["parent"] == "#"  # or group["id"] == "clientdirectory"
 	group["allowed"] = is_root_group or allowed == ... or group["id"] in allowed
