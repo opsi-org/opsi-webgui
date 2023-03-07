@@ -13,10 +13,10 @@ from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, column, or_, select, table, text, union, update
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import and_, column, or_, select, table, text, union, update  # type: ignore[import]
+from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
-from OPSI.Exceptions import BackendBadValueError
+from opsicommon.exceptions import BackendBadValueError
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -30,7 +30,6 @@ from opsiconfd.rest import (
 )
 
 from .utils import (
-	backend,
 	build_tree,
 	get_allowed_clients,
 	get_allowed_objects,
@@ -50,19 +49,36 @@ host_router = APIRouter()
 
 class Host(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
-	type: str
-	description: str
-	notes: str
-	hardwareAddress: str
-	ipAddress: str
-	inventoryNumber: str
+	opsiHostKey: Optional[str]
+	type: Optional[str]
+	inventoryNumber: Optional[str]
+	description: Optional[str]
+	notes: Optional[str]
+	hardwareAddress: Optional[str]
+	ipAddress: Optional[str]
+
+
+class Server(Host):  # pylint: disable=too-few-public-methods
+	depotLocalUrl: Optional[str]
+	depotRemoteUrl: Optional[str]
+	depotWebdavUrl: Optional[str]
+	repositoryLocalUrl: Optional[str]
+	repositoryRemoteUrl: Optional[str]
+	workbenchLocalUrl: Optional[str]
+	workbenchRemoteUrl: Optional[str]
+	networkAddress: Optional[str]
+	maxBandwidth: Optional[int]
+	isMasterDepot: Optional[bool]
+	masterDepotId: Optional[str]
+
+
+class Client(Host):  # pylint: disable=too-few-public-methods
 	created: str
 	lastSeen: str
-	opsiHostKey: str
 	oneTimePassword: str
 
 
-@host_router.get("/api/opsidata/hosts", response_model=List[Host])
+@host_router.get("/api/opsidata/hosts", response_model=List[Client])
 @rest_api
 def get_host_data(
 	commons: dict = Depends(common_query_parameters),
@@ -142,7 +158,7 @@ def get_host_data(
 
 @host_router.get("/api/opsidata/hosts/groups")
 @rest_api
-def get_host_groups(  # pylint: disable=invalid-name
+def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	parentGroup: Optional[str] = None,
 	selectedClients: List[str] = Depends(parse_client_list),
@@ -340,24 +356,28 @@ def get_host_groups(  # pylint: disable=invalid-name
 		return RESTResponse(data={"groups": host_groups})
 
 
-def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:
-	clients = set()
-	all_clients = set()
+def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:  # pylint: disable: dangerous-default-value
+	clients = set()  # pylint: disable: dangerous-default-value
+	all_clients = set()  # pylint: disable: dangerous-default-value
 	groups = {group}
 
 	with mysql.session() as session:
 
 		while groups:
-			for group in groups.copy():
+			for group_id in groups.copy():
 				groups.remove(group)
-				query = select(text("g.groupId AS group_id, g.type AS group_type")).select_from(table("GROUP").alias("g")).where(text(f"g.parentGroupId='{group}'"))  # type: ignore[arg-type,attr-defined]
+				query = (
+					select(text("g.groupId AS group_id, g.type AS group_type"))
+					.select_from(table("GROUP").alias("g"))
+					.where(text(f"g.parentGroupId='{group_id}'"))
+				)
 				result = session.execute(query)
 				result = result.fetchall()
 
 				for row in result:
 					if row:
-						groups.add(dict(row).get("group_id"))
-				query = select(text("objectId")).select_from(table("OBJECT_TO_GROUP")).where(text(f"groupId='{group}'"))
+						groups.add(dict(row).get("group_id", ""))
+				query = select(text("objectId")).select_from(table("OBJECT_TO_GROUP")).where(text(f"groupId='{group_id}'"))
 				result2 = session.execute(query)
 				result2 = result2.fetchall()
 				for row in result2:
@@ -369,7 +389,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 		if user_register() and host_group_access_configured(username):
 			allowed_clients = get_allowed_clients(username)
 		where = and_(text("h.type = 'OpsiClient'"))
-		params = {"depot_ids": []}
+		params: dict = {"depot_ids": []}
 		if allowed_clients:
 			params["allowed_clients"] = allowed_clients
 			where = and_(where, text("(h.hostId in :allowed_clients)"))
@@ -472,51 +492,7 @@ def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> di
 	return all_groups
 
 
-# "description": "text1",
-# "notes": "abc",
-# "id": "bonifax.uib.local",
-# "hardwareAddress": "7a:1c:65:aa:98:ea",
-# "ipAddress": "192.168.1.14",
-# "inventoryNumber": "123456",
-# "opsiHostKey": "432721195f1ab54a990ab4148bda53ff",
-# "depotLocalUrl": "file:///var/lib/opsi/depot",
-# "depotRemoteUrl": "smb://192.168.1.14/opsi_depot",
-# "depotWebdavUrl": "webdavs://bonifax.uib.local:4447/depot",
-# "repositoryLocalUrl": "file:///var/lib/opsi/repository",
-# "repositoryRemoteUrl": "webdavs://bonifax.uib.local:4447/repository",
-# "networkAddress": "192.168.1.0/24",
-# "maxBandwidth": 0,
-# "isMasterDepot": true,
-# "masterDepotId": null,
-# "workbenchLocalUrl": "file:///var/lib/opsi/workbench/",
-# "workbenchRemoteUrl": "smb://192.168.1.14/opsi_workbench",
-# "type": "OpsiConfigserver",
-# "ident": "bonifax.uib.local"
-
-
-class Server(BaseModel):
-	hostId: str
-	description: Optional[str]
-	notes: Optional[str]
-	hardwareAddress: Optional[str]
-	ipAddress: Optional[str]
-	inventoryNumber: Optional[str]
-	opsiHostKey: Optional[str]
-	depotLocalUrl: Optional[str]
-	depotRemoteUrl: Optional[str]
-	depotWebdavUrl: Optional[str]
-	repositoryLocalUrl: Optional[str]
-	repositoryRemoteUrl: Optional[str]
-	workbenchLocalUrl: Optional[str]
-	workbenchRemoteUrl: Optional[str]
-	networkAddress: Optional[str]
-	maxBandwidth: Optional[str]
-	isMasterDepot: Optional[str]
-	masterDepotId: Optional[str]
-	type: Optional[str]
-
-
-@host_router.get("/api/opsidata/servers", response_model=List[Host])
+@host_router.get("/api/opsidata/servers", response_model=List[Server])
 @rest_api
 def get_server_data(
 	commons: dict = Depends(common_query_parameters),
@@ -546,10 +522,7 @@ def get_server_data(
 			h.hardwareAddress AS hardwareAddress,
 			h.ipAddress AS ipAddress,
 			h.inventoryNumber AS inventoryNumber,
-			h.created AS created,
-			h.lastSeen AS lastSeen,
 			h.opsiHostKey AS opsiHostKey,
-			h.oneTimePassword AS oneTimePassword,
 			h.depotLocalUrl AS depotLocalUrl,
 			h.depotRemoteUrl AS depotRemoteUrl,
 			h.depotWebdavUrl AS depotWebdavUrl,
@@ -578,7 +551,8 @@ def get_server_data(
 			if row is not None:
 				row_dict = dict(row)
 				for key in row_dict.keys():
-
+					if key == "isMasterDepot":
+						row_dict[key] = bool(row_dict.get(key, 0))
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
 						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
 
@@ -589,7 +563,7 @@ def get_server_data(
 @host_router.put("/api/opsidata/servers/{server_id}")
 @rest_api
 @read_only_check
-def update_client(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
+def update_server(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
 	"""
 	Update OPSI-Server (Config and Depot).
 	"""
