@@ -52,6 +52,7 @@ class Host(BaseModel):  # pylint: disable=too-few-public-methods
 	opsiHostKey: Optional[str]
 	type: Optional[str]
 	inventoryNumber: Optional[str]
+	systemUUID: Optional[str]
 	description: Optional[str]
 	notes: Optional[str]
 	hardwareAddress: Optional[str]
@@ -118,6 +119,7 @@ def get_host_data(
 			h.hardwareAddress AS hardwareAddress,
 			h.ipAddress AS ipAddress,
 			h.inventoryNumber AS inventoryNumber,
+			h.systemUUID AS systemUUID,
 			h.created AS created,
 			h.lastSeen AS lastSeen,
 			h.opsiHostKey AS opsiHostKey,
@@ -522,6 +524,7 @@ def get_server_data(
 			h.hardwareAddress AS hardwareAddress,
 			h.ipAddress AS ipAddress,
 			h.inventoryNumber AS inventoryNumber,
+			h.systemUUID AS systemUUID,
 			h.opsiHostKey AS opsiHostKey,
 			h.depotLocalUrl AS depotLocalUrl,
 			h.depotRemoteUrl AS depotRemoteUrl,
