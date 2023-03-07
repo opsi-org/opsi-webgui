@@ -15,8 +15,7 @@ from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
 from opsiconfd import contextvar_client_session
-from opsiconfd.config import config, get_configserver_id
-from opsiconfd.logging import logger
+from opsiconfd.config import get_configserver_id
 
 from .utils import (
 	backend,
@@ -38,24 +37,24 @@ webgui_router = APIRouter()
 
 @webgui_router.get("")
 @webgui_router.get("/")
-async def route_index(request: Request):
+async def route_index(request: Request) -> RedirectResponse:
 	return RedirectResponse(url=f"{request.scope['path'].rstrip('/')}/app/", status_code=status.HTTP_307_TEMPORARY_REDIRECT)
 
 
 @webgui_router.options("/api/{any:path}")
-async def options():
+async def options() -> PlainTextResponse:
 	return PlainTextResponse("OK", status_code=200)
 
 
 @webgui_router.get("/api/auth/login")
 @webgui_router.post("/api/auth/login")
-async def auth_login():
+async def auth_login() -> JSONResponse:
 	return JSONResponse({"result": "Login success"})
 
 
 @webgui_router.get("/api/auth/logout")
 @webgui_router.post("/api/auth/logout")
-async def auth_logout():
+async def auth_logout() -> JSONResponse:
 	client_session = contextvar_client_session.get()
 	if client_session:
 		await client_session.delete()
@@ -64,32 +63,32 @@ async def auth_logout():
 
 @webgui_router.get("/api/user/getsettings")
 @webgui_router.post("/api/user/getsettings")
-async def user_getsettings():
+async def user_getsettings() -> JSONResponse:
 	return JSONResponse({"username": get_username(), "expertmode": False, "recentactivityexpiry": "3m"})
 
 
 @webgui_router.get("/api/user/createactivity")
 @webgui_router.post("/api/user/createactivity")
-async def user_create_activity(request: Request):
+async def user_create_activity(request: Request) -> JSONResponse:
 	# {"username":"adminuser","type":"Login","status":"ok"}
 	request_data = {}
 	try:
 		request_data = await request.json()
 	except ValueError:
 		pass
-	if request_data.get("type").lower() == "login":
+	if request_data.get("type", "").lower() == "login":
 		pass
 	return JSONResponse({"result": {}})
 
 
 @webgui_router.get("/api/user/opsiserver")
 @webgui_router.post("/api/user/opsiserver")
-async def user_opsiserver():
+async def user_opsiserver() -> JSONResponse:
 	return JSONResponse({"result": get_configserver_id()})
 
 
 @webgui_router.get("/api/user/configuration")
-def user_configuration():
+def user_configuration() -> JSONResponse:
 	username = get_username()
 	if user_register():
 		return JSONResponse(
@@ -110,18 +109,18 @@ def user_configuration():
 
 @webgui_router.get("/api/opsidata/modulesContent")
 @webgui_router.post("/api/opsidata/modulesContent")
-async def modules_content():
+async def modules_content() -> JSONResponse:
 	return JSONResponse({"result": backend.backend_getLicensingInfo()["available_modules"]})
 
 
 @webgui_router.get("/api/opsidata/log")
-async def opsidata_log(selectedClient: Optional[str], selectedLogType: Optional[str]):  # pylint: disable=invalid-name
+async def opsidata_log(selectedClient: Optional[str], selectedLogType: Optional[str]) -> JSONResponse:  # pylint: disable=invalid-name
 	return JSONResponse({"result": backend.readLog(type=selectedLogType, objectId=selectedClient).split("\n")})  # pylint: disable=no-member
 
 
 @webgui_router.get("/api/opsidata/home")
 @webgui_router.post("/api/opsidata/home")
-async def home():
+async def home() -> JSONResponse:
 	allowed = get_allowed_objects()
 
 	with mysql.session() as session:
@@ -160,11 +159,11 @@ async def home():
 						"id": row["group_id"],
 						"type": group_type,
 						"text": row["group_id"],
-						"parent": row["parent_id"] or root_group["id"],
+						"parent": row["parent_id"] or root_group["id"],  # type: ignore
 						"allowed": True,
 					}
 				if row["object_id"]:
-					if not "children" in all_groups[row["group_id"]]:
+					if "children" not in all_groups[row["group_id"]]:
 						all_groups[row["group_id"]]["children"] = {}
 					all_groups[row["group_id"]]["children"][row["object_id"]] = {
 						"id": row["object_id"],
@@ -175,9 +174,9 @@ async def home():
 					}
 
 			if group_type == "ProductGroup":
-				product_groups = build_tree(root_group, all_groups.values(), allowed["product_groups"])
+				product_groups = build_tree(root_group, all_groups.values(), allowed["product_groups"])  # type: ignore
 			elif group_type == "HostGroup":
-				host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
+				host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])  # type: ignore
 
 		return JSONResponse({"groups": {"productgroups": product_groups, "clientdirectory": host_groups}})
 
