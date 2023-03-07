@@ -10,14 +10,12 @@ webgui config methods
 
 
 import json
-from numbers import Integral
-from sqlite3 import IntegrityError
 from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, column, or_, select, table, text, update
-from sqlalchemy.dialects.mysql import insert
+from sqlalchemy import and_, column, select, table, text, update  # type: ignore[import]
+from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
@@ -53,14 +51,16 @@ def get_server_config(
 			select(
 				text(  # type: ignore
 					"""
-			cv.configId AS configId,
-			c.description AS description,
-			c.type AS type,
-			(SELECT GROUP_CONCAT(CONFIG_VALUE.value  SEPARATOR '|') FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
-			(SELECT GROUP_CONCAT(`value`  SEPARATOR '|') FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
-			c.multiValue AS multiValue,
-			c.editable AS editable
-		"""
+						cv.configId AS configId,
+						c.description AS description,
+						c.type AS type,
+						(SELECT GROUP_CONCAT(CONFIG_VALUE.value  SEPARATOR '|')
+							FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
+						(SELECT GROUP_CONCAT(`value`  SEPARATOR '|')
+							FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
+						c.multiValue AS multiValue,
+						c.editable AS editable
+					"""
 				)
 			)
 			.select_from(table("CONFIG_VALUE").alias("cv"))
@@ -123,16 +123,17 @@ def get_client_config(
 			select(
 				text(  # type: ignore
 					"""
-			cv.configId AS configId,
-			c.description AS description,
-			c.type AS type,
-			cv.value AS defaultValue,
-			(SELECT GROUP_CONCAT(IF(cs.values IS NOT NULL, cs.values, CONFIG_VALUE.value)  SEPARATOR ',') FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
-			(SELECT GROUP_CONCAT(`value`  SEPARATOR ',') FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
-			c.multiValue AS multiValue,
-			c.editable AS editable,
-			cs.objectId AS objectId
-		"""
+						cv.configId AS configId,
+						c.description AS description,
+						c.type AS type,
+						cv.value AS defaultValue,
+						(SELECT GROUP_CONCAT(IF(cs.values IS NOT NULL, cs.values, CONFIG_VALUE.value)  SEPARATOR ',')
+							FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
+						(SELECT GROUP_CONCAT(`value`  SEPARATOR ',') FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
+						c.multiValue AS multiValue,
+						c.editable AS editable,
+						cs.objectId AS objectId
+					"""
 				)
 			)
 			.select_from(table("CONFIG").alias("c"))
@@ -182,10 +183,10 @@ def get_client_config(
 
 @conifg_router.get("/api/opsidata/config/clients")
 @rest_api
-def get_client_configs(
-	selectedClients: List[str] = Depends(parse_client_list),
+def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
+	selectedClients: List[str] = Depends(parse_client_list),  # pylint: disable=invalid-name
 	commons: dict = Depends(common_query_parameters),
-) -> RESTResponse:  # pylint: disable=redefined-builtin
+) -> RESTResponse:
 	"""
 	Get client config data.
 	"""
@@ -201,22 +202,23 @@ def get_client_configs(
 			select(
 				text(  # type: ignore
 					"""
-			cv.configId AS configId,
-			c.description AS description,
-			c.type AS type,
-			GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';') AS defaultValue,
-			IF(
-				COUNT(DISTINCT cs.values) > 1,
-				"mixed",
-				IF(cs.values IS NOT NULL, cs.values, GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';'))
-			) AS value,
-			GROUP_CONCAT(DISTINCT cs.values SEPARATOR ';') AS clientValuesOld,
-			(SELECT GROUP_CONCAT(cs.values SEPARATOR ';') FROM CONFIG_STATE AS cs WHERE cs.configId=c.configId AND cs.objectId IN :clients GROUP BY cs.configId) AS clientValues,
-			GROUP_CONCAT(DISTINCT cv.value SEPARATOR ';') AS possibleValues,
-			c.multiValue AS multiValue,
-			c.editable AS editable,
-			GROUP_CONCAT(DISTINCT cs.objectId SEPARATOR ';') AS clientsWithDiff
-		"""
+						cv.configId AS configId,
+						c.description AS description,
+						c.type AS type,
+						GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';') AS defaultValue,
+						IF(
+							COUNT(DISTINCT cs.values) > 1,
+							"mixed",
+							IF(cs.values IS NOT NULL, cs.values, GROUP_CONCAT(DISTINCT IF(cv.isDefault, cv.value, NULL) SEPARATOR ';'))
+						) AS value,
+						GROUP_CONCAT(DISTINCT cs.values SEPARATOR ';') AS clientValuesOld,
+						(SELECT GROUP_CONCAT(cs.values SEPARATOR ';')
+							FROM CONFIG_STATE AS cs WHERE cs.configId=c.configId AND cs.objectId IN :clients GROUP BY cs.configId) AS clientValues,
+						GROUP_CONCAT(DISTINCT cv.value SEPARATOR ';') AS possibleValues,
+						c.multiValue AS multiValue,
+						c.editable AS editable,
+						GROUP_CONCAT(DISTINCT cs.objectId SEPARATOR ';') AS clientsWithDiff
+				"""
 				)
 			)
 			.select_from(table("CONFIG").alias("c"))
@@ -302,7 +304,10 @@ def get_client_configs(
 				config["clients"] = {}
 				if (
 					config.get("clientsWithDiff", "")
-					and (not config.get("allClientValuesEqual", False) or len(config.get("clientsWithDiff", "").split(";")) == len(selectedClients))  # len 1
+					and (
+						not config.get("allClientValuesEqual", False)
+						or len(config.get("clientsWithDiff", "").split(";")) == len(selectedClients)
+					)  # len 1
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
 
@@ -329,14 +334,14 @@ def get_client_configs(
 		return RESTResponse(data=configs)
 
 
-class Config(BaseModel):
+class Config(BaseModel):  # pylint: disable=too-few-public-methods
 	configId: str
 	description: Optional[str]
 	value: Optional[Union[str, List[str], bool]]
 
 
 class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
-	clientIds: Optional[List[str]] = []
+	clientIds: List[str] = []
 	configs: List[Config]
 
 
@@ -358,11 +363,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 			try:
 				values = {"configId": config.configId, "value": config.value, "isDefault": True}
 				stmt = (
-					update(
-						table(
-							"CONFIG_VALUE", column("isDefault")
-						)  # pylint: disable=consider-iterating-dictionary
-					)
+					update(table("CONFIG_VALUE", column("isDefault")))  # pylint: disable=consider-iterating-dictionary
 					.where(text(f"configId = '{config.configId}' AND isDefault = 1"))
 					.values(**{"isDefault": False})
 				)
@@ -374,8 +375,9 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							stmt = (
 								update(
 									table(
-										"CONFIG_VALUE", *[column(name) for name in values.keys()]
-									)  # pylint: disable=consider-iterating-dictionary
+										"CONFIG_VALUE",
+										*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
+									)
 								)
 								.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
 								.values(**values)
@@ -384,7 +386,8 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							stmt = (
 								insert(
 									table(
-										"CONFIG_VALUE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+										"CONFIG_VALUE",
+										*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
 									)
 								)
 								.values(**values)
@@ -392,14 +395,15 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							)
 						session.execute(stmt)
 				else:
-					value = config.value
+					value: Union[str, bool, None] = config.value  # type: ignore[no-redef]
 					values = {"configId": config.configId, "value": value, "isDefault": True}
 					if get_config_value(config.configId, value):
 						stmt = (
 							update(
 								table(
-									"CONFIG_VALUE", *[column(name) for name in values.keys()]
-								)  # pylint: disable=consider-iterating-dictionary
+									"CONFIG_VALUE",
+									*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
+								)
 							)
 							.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
 							.values(**values)
@@ -408,7 +412,8 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 						stmt = (
 							insert(
 								table(
-									"CONFIG_VALUE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+									"CONFIG_VALUE",
+									*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
 								)
 							)
 							.values(**values)
@@ -424,12 +429,13 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	if errors:
 		message = "Failed to save: "
 		ids = []
-		for config in errors:
-			message += config.get("id") + "\n"
-			ids.append(config.get("id"))
+		for config_error in errors:
+			message += config_error.get("id", "") + "\n"
+			ids.append(config_error.get("id", ""))
 		return RESTErrorResponse(message=message, http_status=status.HTTP_400_BAD_REQUEST, details=errors)
 
 	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Values for {','.join(ids)} changed.")
+
 
 @conifg_router.post("/api/opsidata/config/clients")
 @rest_api
@@ -442,6 +448,10 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 	"""
 	changes = []
 
+	if not data.clientIds:
+		logger.notice("No configurations were transferred to save. Nothing to do...")
+		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No configurations were transferred to save.")
+
 	for client in data.clientIds:
 		for config in data.configs:
 			changes.append(f"{client}: {config.configId}")
@@ -452,7 +462,6 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 			else:
 				cs_values = f'["{config.value}"]'
 
-
 			values = {"objectId": client, "configId": config.configId, "values": cs_values}
 
 			with mysql.session() as session:
@@ -460,8 +469,8 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 					stmt = (
 						update(
 							table(
-								"CONFIG_STATE", *[column(name) for name in values.keys()]
-							)  # pylint: disable=consider-iterating-dictionary
+								"CONFIG_STATE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+							)
 						)
 						.where(text(f"objectId = '{client}' AND configId = '{config.configId}'"))
 						.values(**values)
