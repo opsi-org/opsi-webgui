@@ -6,7 +6,7 @@ const de = require('../../uib-components/locale/de.json')
 test('Product Properties', async ({ page }) => {
   await callStoryId(page, 'view-v-product-property', 'v-product-property')
   const component = await page.locator('[data-testid="VProductProperty"]')
-  await page.setViewportSize({ width: 900, height: 370 })
+  await page.setViewportSize({ width: 900, height: 320 })
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, en['title.config'])
   await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, en['title.properties'])

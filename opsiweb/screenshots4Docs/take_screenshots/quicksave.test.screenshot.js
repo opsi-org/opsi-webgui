@@ -11,7 +11,7 @@ test('Quick Save', async ({ page }) => {
     clip: {
       x: 5,
       y: 55,
-      width: 330,
+      width: 350,
       height: 60
     }
   })
@@ -21,7 +21,7 @@ test('Quick Save', async ({ page }) => {
     clip: {
       x: 5,
       y: 55,
-      width: 330,
+      width: 350,
       height: 60
     }
   })
