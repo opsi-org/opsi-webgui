@@ -11,7 +11,7 @@ webgui host methods
 import datetime
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Body, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
@@ -215,6 +215,38 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			session.rollback()
 			raise OpsiApiException(
 				message="Could not create group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
+@host_router.post("/api/opsidata/hosts/groups/{group}")
+@rest_api
+def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str, clients: List[str] = Body(default=None)
+) -> RESTResponse:
+	"""
+	Add clients to host group
+	"""
+	with mysql.session() as session:
+		try:
+
+			values = {
+				"groupType": "HostGroup",
+				"groupId": group,
+			}
+
+			for client in clients:
+				values["objectId"] = client
+				query = insert(table("OBJECT_TO_GROUP", column("groupType"), column("groupId"), column("objectId"))).values(values)
+				session.execute(query)
+
+			return RESTResponse(data=clients, http_status=status.HTTP_201_CREATED)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not add client '%s' to group object.", client)
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message=f"Could not add client '{client}'  to group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 			) from err
 
 
