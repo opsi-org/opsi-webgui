@@ -30,6 +30,7 @@ from opsiconfd.rest import (
 )
 
 from .utils import (
+	backend,
 	build_tree,
 	get_allowed_clients,
 	get_allowed_objects,
@@ -248,6 +249,23 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 			raise OpsiApiException(
 				message=f"Could not add client '{client}'  to group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 			) from err
+
+
+@host_router.delete("/api/opsidata/hosts/groups/{group}")
+@rest_api
+def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str
+) -> RESTResponse:
+	"""
+	Delete host group
+	"""
+	try:
+		backend.group_delete(group)
+	except Exception as error:
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
+
+	return RESTResponse(data=f"Deleted group {group}.")
 
 
 @host_router.get("/api/opsidata/hosts/groups")
