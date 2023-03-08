@@ -9,10 +9,28 @@
     <AlertAAlert ref="healthCheckAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <!-- <div> {{ healthcheckdata }}</div> -->
-    <b-table small hover :items="healthcheckdata">
+    <!-- <b-table small hover :items="healthcheckdata">
       <template #cell(partial_results)="data">
-        <!-- {{ data.item.partial_results }} -->
         <b-table small striped hover :items="data.item.partial_results" />
+      </template>
+    </b-table> -->
+    <!-- <span v-for="health in healthcheckdata" :key="health.check_id">
+      <b-button v-b-toggle="'collapse-'+health.check_id" class="text-left font-weight-bold border-0" block variant="outline-primary">
+        {{ health.check_id }}
+      </b-button>
+      <b-collapse :id="'collapse-'+health.check_id">
+        <b-table small striped :items="health.partial_results" />
+      </b-collapse>
+    </span> -->
+    <b-table small :items="healthcheckdata">
+      <template #cell(partial_results)="row">
+        <b-button size="sm" @click="row.toggleDetails">
+          {{ row.detailsShowing }}
+        </b-button>
+        <!-- <b-table small striped hover :items="data.item.partial_results" /> -->
+      </template>
+      <template #row-details="row">
+        <b-table small striped hover :items="row.item.partial_results" />
       </template>
     </b-table>
   </div>
