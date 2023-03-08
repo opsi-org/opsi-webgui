@@ -251,6 +251,24 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 			) from err
 
 
+@host_router.delete("/api/opsidata/hosts/groups/{group}/clients")
+@rest_api
+def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str
+) -> RESTResponse:
+	"""
+	Remove clients from host group
+	"""
+
+	try:
+		backend.objectToGroup_delete(groupType="HostGroup", objectId="*", groupId=group)
+	except Exception as error:
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
+
+	return RESTResponse(data=f"Removed all clients from {group}.")
+
+
 @host_router.delete("/api/opsidata/hosts/groups/{group}")
 @rest_api
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
