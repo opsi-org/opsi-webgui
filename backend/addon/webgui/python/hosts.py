@@ -168,7 +168,7 @@ class HostGroup(BaseModel):
 
 @host_router.post("/api/opsidata/hosts/groups")
 @rest_api
-def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	request: Request, group: HostGroup
 ) -> RESTResponse:
 	"""
@@ -219,7 +219,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			) from err
 
 
-@host_router.post("/api/opsidata/hosts/groups/{group}")
+@host_router.post("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
 def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	request: Request, group: str, clients: List[str] = Body(default=None)
@@ -266,6 +266,31 @@ def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
 
 	return RESTResponse(data=f"Deleted group {group}.")
+
+
+@host_router.put("/api/opsidata/hosts/groups/{group}")
+@rest_api
+def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	group: str, parent: str = Body(default=None), description: str = Body(default=None), note: str = Body(default=None)
+) -> RESTResponse:
+	"""
+	Update host group
+	"""
+	values = {"id": group, "type": "HostGroup"}
+	if parent:
+		values["parentGroupId"] = parent
+	if description:
+		values["description"] = description
+	if note:
+		values["note"] = note
+
+	try:
+		backend.group_updateObject(values)
+	except Exception as error:
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not update group {group}.", details=error)
+
+	return RESTResponse(data=f"Updated group: {values}")
 
 
 @host_router.get("/api/opsidata/hosts/groups")
