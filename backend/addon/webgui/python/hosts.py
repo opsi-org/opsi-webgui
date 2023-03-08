@@ -13,7 +13,7 @@ from typing import Any, List, Optional
 
 from fastapi import APIRouter, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, column, or_, select, table, text, union, update  # type: ignore[import]
+from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
 from opsicommon.exceptions import BackendBadValueError
@@ -156,6 +156,66 @@ def get_host_data(
 				row_dict["uefi"] = bool(row_dict["uefi"])
 				host_data.append(row_dict)
 		return RESTResponse(data=host_data)
+
+
+class HostGroup(BaseModel):
+	groupId: str
+	parentGroupId: Optional[str] = None
+	description: Optional[str] = None
+	notes: Optional[str] = None
+
+
+@host_router.post("/api/opsidata/hosts/groups")
+@rest_api
+def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: HostGroup
+) -> RESTResponse:
+	"""
+	Create host groups
+	"""
+
+	values = vars(group)
+	values["type"] = "HostGroup"
+
+	if group.parentGroupId:
+		groups = _get_host_groups_ids()
+		if group.parentGroupId not in groups:
+			return RESTErrorResponse(
+				message=f"Could not create group... Parent group '{group.parentGroupId}' does not exist.",
+				http_status=status.HTTP_400_BAD_REQUEST,
+			)
+
+	with mysql.session() as session:
+		try:
+
+			query = insert(
+				table(
+					"GROUP", column("type"), *[column(key) for key in vars(group).keys()]
+				)  # pylint: disable=consider-iterating-dictionary
+			).values(values)
+			session.execute(query)
+
+			headers = {"Location": f"{request.url}/{group.groupId}"}
+
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+
+		except IntegrityError as err:
+			logger.error("Could not create group object.")
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not create group object. Group '{group.groupId}' already exists",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not create group object.")
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message="Could not create group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
 
 
 @host_router.get("/api/opsidata/hosts/groups")
@@ -422,12 +482,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 	return list(all_clients - clients)
 
 
-@host_router.get("/api/opsidata/hosts/groups/id")
-@rest_api
-def get_host_group_ids() -> RESTResponse:
-	"""
-	Get ids of all host groups
-	"""
+def _get_host_groups_ids() -> list[str]:
 	groups = []
 	with mysql.session() as session:
 		query = select(text("g.groupId AS group_id")).select_from(table("GROUP").alias("g"))  # type: ignore[arg-type,attr-defined]
@@ -436,7 +491,17 @@ def get_host_group_ids() -> RESTResponse:
 
 		for row in result:
 			if row:
-				groups.append(dict(row).get("group_id"))
+				groups.append(dict(row).get("group_id", ""))
+		return groups
+
+
+@host_router.get("/api/opsidata/hosts/groups/id")
+@rest_api
+def get_host_group_ids() -> RESTResponse:
+	"""
+	Get ids of all host groups
+	"""
+	groups = _get_host_groups_ids()
 	return RESTResponse(data=groups)
 
 
