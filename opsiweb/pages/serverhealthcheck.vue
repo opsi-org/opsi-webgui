@@ -5,6 +5,6 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
-export default class PHealthCheck extends Vue {
+export default class PServerHealthCheck extends Vue {
 }
 </script>
