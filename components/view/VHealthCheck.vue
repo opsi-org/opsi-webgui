@@ -86,6 +86,9 @@
                 <small>{{ data.item.message }}</small>
               </div>
             </template>
+            <template #cell(upgrade_issue)="data">
+              <small><span v-if="data.item.upgrade_issue" class="font-weight-bold">{{ $t('Upgrade Issue:') }}</span> {{ data.item.upgrade_issue }}</small>
+            </template>
             <template #cell()="data">
               <small>{{ data.value }}</small>
             </template>
