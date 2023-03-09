@@ -18,79 +18,81 @@
         </b-button>
       </template>
     </BarBPageHeader>
-    <b-table
-      thead-class="hide"
-      borderless
-      :filter="filter"
-      :filter-included-fields="['partial_results', 'message']"
-      :items="healthcheckdata"
-      :fields="['partial_results', 'message']"
-    >
-      <template #cell(partial_results)="row">
-        <div>
-          <b-button
-            v-if="row.item.partial_results.length !== 0"
-            v-b-tooltip.hover
-            size="sm"
-            :style="'min-width: 30px !important;'"
-            variant="transparent"
-            :title="row.detailsShowing ? $t('Hide Details') : $t('Show Details')"
-            @click="row.toggleDetails"
-          >
-            <b-icon v-if="row.detailsShowing" font-scale="0.8" :icon="iconnames.arrowFillUp" />
-            <b-icon v-else font-scale="0.8" :icon="iconnames.arrowFillDown" />
-          </b-button>
-          <b-button
-            v-else
-            disabled
-            :style="'min-width: 30px !important;'"
-            class="border-0"
-            variant="transparent"
-          >
-            {{ $t('') }}
-          </b-button>
-          <b-badge :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(row.item.check_status)">
-            <div class="text-uppercase">
-              {{ row.item.check_status }}
-            </div>
-          </b-badge>
-          <small><span class="font-weight-bold">
-            {{ row.item.check_name }}
-          </span></small>
-        </div>
-      </template>
-      <template #cell()="row">
-        <small>{{ row.value }}</small>
-      </template>
-      <template #row-details="row">
-        <b-table
-          thead-class="hide"
-          small
-          fixed
-          hover
-          :filter="filter"
-          :filter-included-fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
-          :items="row.item.partial_results"
-          :fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
-        >
-          <template #cell(check_status)="data">
-            <b-badge size="sm" :variant="getVariant(data.item.check_status)">
+    <DivDScrollResult>
+      <b-table
+        thead-class="hide"
+        borderless
+        :filter="filter"
+        :filter-included-fields="['partial_results', 'message']"
+        :items="healthcheckdata"
+        :fields="['partial_results', 'message']"
+      >
+        <template #cell(partial_results)="row">
+          <div>
+            <b-button
+              v-if="row.item.partial_results.length !== 0"
+              v-b-tooltip.hover
+              size="sm"
+              :style="'min-width: 30px !important;'"
+              variant="transparent"
+              :title="row.detailsShowing ? $t('Hide Details') : $t('Show Details')"
+              @click="row.toggleDetails"
+            >
+              <b-icon v-if="row.detailsShowing" font-scale="0.8" :icon="iconnames.arrowFillUp" />
+              <b-icon v-else font-scale="0.8" :icon="iconnames.arrowFillDown" />
+            </b-button>
+            <b-button
+              v-else
+              disabled
+              :style="'min-width: 30px !important;'"
+              class="border-0"
+              variant="transparent"
+            >
+              {{ $t('') }}
+            </b-button>
+            <b-badge :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(row.item.check_status)">
               <div class="text-uppercase">
-                {{ data.item.check_status }}
+                {{ row.item.check_status }}
               </div>
             </b-badge>
-          </template>
-          <template #cell(message)="data">
-            <div v-b-tooltip.hover :title="data.item.details ? JSON.stringify(data.item.details) : ''">
-              <small>{{ data.item.message }}</small>
-            </div>
-          </template>
-          <template #cell()="data">
-            <small>{{ data.value }}</small>
-          </template>
-        </b-table>
-      </template>
-    </b-table>
+            <small><span class="font-weight-bold">
+              {{ row.item.check_name }}
+            </span></small>
+          </div>
+        </template>
+        <template #cell()="row">
+          <small>{{ row.value }}</small>
+        </template>
+        <template #row-details="row">
+          <b-table
+            thead-class="hide"
+            small
+            fixed
+            hover
+            :filter="filter"
+            :filter-included-fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
+            :items="row.item.partial_results"
+            :fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
+          >
+            <template #cell(check_status)="data">
+              <b-badge size="sm" :variant="getVariant(data.item.check_status)">
+                <div class="text-uppercase">
+                  {{ data.item.check_status }}
+                </div>
+              </b-badge>
+            </template>
+            <template #cell(message)="data">
+              <div v-b-tooltip.hover :title="data.item.details ? JSON.stringify(data.item.details) : ''">
+                <small>{{ data.item.message }}</small>
+              </div>
+            </template>
+            <template #cell()="data">
+              <small>{{ data.value }}</small>
+            </template>
+          </b-table>
+        </template>
+      </b-table>
+    </DivDScrollResult>
   </div>
 </template>
 
@@ -117,11 +119,8 @@ export default class VHealthCheck extends Vue {
 
   togglePartialResults (val) {
     for (const item of this.healthcheckdata) {
-    // item._showDetails = true
-      // console.log(item)
       this.$set(item, '_showDetails', val)
     }
-    // if (item._showDetails) { item._showDetails = false } else { this.$set(item, '_showDetails', true) }
   }
 
   fetch () {

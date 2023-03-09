@@ -41,6 +41,7 @@
               :click="routeRedirectWith"
             />
             <ButtonBTNRowLinkTo
+              v-if="itemkey==opsiconfigserver"
               :title="$t('title.healthcheck')"
               :label="$t('title.healthcheck')"
               :icon="iconnames.healthcheck"
@@ -82,6 +83,7 @@
               :click="routeRedirectWith"
             />
             <ButtonBTNRowLinkTo
+              v-if="row.item.ident==opsiconfigserver"
               :title="$t('title.healthcheck')"
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.healthcheck'):''"
               :icon="iconnames.healthcheck"
