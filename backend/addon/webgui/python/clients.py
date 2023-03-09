@@ -731,3 +731,33 @@ def add_client_to_groups(
 			) from err
 
 	return RESTResponse(http_status=200, data=f"Client '{clientid}' is now a member of: {', '.join(groups)}.")
+
+
+@client_router.delete("/api/opsidata/clients/{clientid}/groups")
+@rest_api
+@read_only_check
+def rm_client_from_groups(
+	request: Request, clientid: str, groups: List[str] = Body(default=None)  # pylint: disable=unused-argument
+) -> RESTResponse:
+	"""
+	Remove client from a list of groups.
+	"""
+
+	if not groups:
+		logger.error("No group given.")
+		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No group given.")
+
+	try:
+		for group in groups:
+			backend.objectToGroup_delete(groupType="HostGroup", groupId=group, objectId=clientid)
+
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not remove client %s from groups: %s.", clientid, groups)
+		logger.error(err)
+		raise OpsiApiException(
+			message=f"Could not remove client '{clientid}' from groups {groups}.\nLast group was: {group}.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
+
+	return RESTResponse(http_status=200, data=f"Client '{clientid}' was removed from: {', '.join(groups)}.")
