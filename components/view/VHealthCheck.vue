@@ -23,7 +23,7 @@
         thead-class="hide"
         borderless
         :filter="filter"
-        :filter-included-fields="['partial_results', 'message']"
+        :filter-included-fields="['check_status', 'check_name', 'partial_results', 'message']"
         :items="healthcheckdata"
         :fields="['partial_results', 'message']"
       >
