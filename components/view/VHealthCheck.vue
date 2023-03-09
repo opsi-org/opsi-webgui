@@ -1,28 +1,31 @@
 <template>
   <div data-testid="VHealthCheck" class="VHealthCheck">
     <BarBPageHeader v-if="asChild" :title="$t('title.healthcheck') + ' - '" :subtitle="id" :closeroute="closeroute" />
-    <!-- <BarBPageHeader v-if="!asChild">
-      <template #left>
-        <slot name="IDSelection" />
-      </template>
-    </BarBPageHeader> -->
     <AlertAAlert ref="healthCheckAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
-    <!-- <div> {{ healthcheckdata }}</div> -->
-    <!-- <b-table small hover :items="healthcheckdata">
-      <template #cell(partial_results)="data">
-        <b-table small striped hover :items="data.item.partial_results" />
+    <BarBPageHeader>
+      <template #left>
+        <InputIFilterTChanges v-if="healthcheckdata" :placeholder="$t('Filter')" :filter.sync="filter" />
+        <b-button
+          size="sm"
+          variant="outline-primary"
+          class="border-0"
+          @click="togglePartialResults(expandAll = !expandAll)"
+        >
+          <b-icon v-if="expandAll" :icon="iconnames.save" />
+          <b-icon v-else />
+          {{ $t('Show Details') }}
+        </b-button>
       </template>
-    </b-table> -->
-    <!-- <span v-for="health in healthcheckdata" :key="health.check_id">
-      <b-button v-b-toggle="'collapse-'+health.check_id" class="text-left font-weight-bold border-0" block variant="outline-primary">
-        {{ health.check_id }}
-      </b-button>
-      <b-collapse :id="'collapse-'+health.check_id">
-        <b-table small striped :items="health.partial_results" />
-      </b-collapse>
-    </span> -->
-    <b-table thead-class="hide" borderless :items="healthcheckdata" :fields="['partial_results', 'message']">
+    </BarBPageHeader>
+    <b-table
+      thead-class="hide"
+      borderless
+      :filter="filter"
+      :filter-included-fields="['partial_results', 'message']"
+      :items="healthcheckdata"
+      :fields="['partial_results', 'message']"
+    >
       <template #cell(partial_results)="row">
         <div>
           <b-button
@@ -65,6 +68,8 @@
           small
           fixed
           hover
+          :filter="filter"
+          :filter-included-fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
           :items="row.item.partial_results"
           :fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
         >
@@ -103,9 +108,20 @@ export default class VHealthCheck extends Vue {
 
   healthcheckdata: Array<object> = []
   errorText: string = ''
+  filter: string = ''
+  expandAll: boolean = false
 
   getVariant (status: string) {
     if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
+  }
+
+  togglePartialResults (val) {
+    for (const item of this.healthcheckdata) {
+    // item._showDetails = true
+      // console.log(item)
+      this.$set(item, '_showDetails', val)
+    }
+    // if (item._showDetails) { item._showDetails = false } else { this.$set(item, '_showDetails', true) }
   }
 
   fetch () {
