@@ -85,6 +85,7 @@ const settings = namespace('settings')
     arrowDoubleLeft: 'chevron-double-left',
     arrowDoubleRight: 'chevron-double-right',
     arrowFillDown: 'caret-down-fill',
+    arrowFillUp: 'caret-up-fill',
     valueShow: 'eye-slash',
     valueHide: 'eye',
     productInstallationStatus: 'box-seam',

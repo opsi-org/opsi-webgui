@@ -347,3 +347,6 @@ body .mobile .topbar_content .navbar > * {
   color: var(--color);
   border-color: var(--border);
 }
+.hide {
+  display: none;
+}
