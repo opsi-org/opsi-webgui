@@ -63,12 +63,13 @@ export default class NSidebar extends Vue {
 
   get navItems (): Array<IMenuItem> {
     return [
-      // {
-      //   title: 'title.overview',
-      //   menu: [
-      //     // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-      //   ]
-      // },
+      {
+        title: 'title.overview',
+        menu: [
+          { title: 'title.healthcheck', icon: 'heart', route: '/healthcheck' }
+          // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
+        ]
+      },
       {
         title: 'title.manage',
         menu: [
@@ -78,8 +79,7 @@ export default class NSidebar extends Vue {
             icon: this.iconnames.depot,
             submenu: [
               { title: 'title.allDepots', route: '/depots/' },
-              { title: 'title.config', route: '/depotsconfig' },
-              { title: 'title.healthcheck', route: '/depotshealthcheck' }
+              { title: 'title.config', route: '/depotsconfig' }
             ]
           },
           {
