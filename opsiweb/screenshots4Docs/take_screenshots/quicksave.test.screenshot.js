@@ -7,21 +7,21 @@ test('Quick Save', async ({ page }) => {
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
   await page.screenshot({
-    path: './screenshots/en/opsiweb_quicksave.png',
+    path: './screenshots/en/opsi-webgui_quicksave.png',
     clip: {
       x: 5,
       y: 55,
-      width: 330,
+      width: 350,
       height: 60
     }
   })
   await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
   await page.screenshot({
-    path: './screenshots/de/opsiweb_quicksave.png',
+    path: './screenshots/de/opsi-webgui_quicksave.png',
     clip: {
       x: 5,
       y: 55,
-      width: 330,
+      width: 350,
       height: 60
     }
   })
