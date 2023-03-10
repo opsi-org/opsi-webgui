@@ -11,8 +11,13 @@
 
   <!-- <IconILoading v-if="$fetchState.pending" :small="true" /> -->
   <div class="VGroups">
-    <IconILoading v-if="$fetchState.pending" :small="true" />
-    <b-tabs v-else data-testid="VGroups">
+    <OverlayOLoading :is-loading="$fetchState.pending" />
+    <BarBPageHeader>
+      <template #left>
+        <TreeTSDepots />
+      </template>
+    </BarBPageHeader>
+    <b-tabs data-testid="VGroups">
       <b-tab>
         <template #title>
           <span class="client"> {{ $t("form.clientgroups") }} </span>
@@ -20,8 +25,8 @@
         <DivDScrollResult>
           <b-row>
             <b-col cols="4">
-              {{ $t('Select Server : ') }}<TreeTSDepotsNotStored :id.sync="depotId" /> <br>
-              {{ $t('Select Group or Client : ') }}
+              <!-- {{ $t('Select Server : ') }}<TreeTSDepotsNotStored :id.sync="depotId" /> <br> -->
+              <!-- {{ $t('Select Group or Client : ') }} -->
               <treeselect
                 v-model="value"
                 class="treeselect_notstored treeselect_fullpage"
@@ -155,12 +160,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 // const selections = namespace('selections')
 // interface ClientRequest {
 //     selectedDepots: string
 // }
+const selections = namespace('selections')
 @Component({ mixins: [Constants] })
 export default class VGroups extends Vue {
   iconnames: any
@@ -170,6 +176,9 @@ export default class VGroups extends Vue {
   clientIds: any
   $axios: any
   node: any
+  $fetch: any
+
+  @selections.Getter public selectionDepots!: Array<string>
 
   normalizer (node: any) {
     return {
@@ -179,8 +188,16 @@ export default class VGroups extends Vue {
     }
   }
 
+  @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
+    await this.$fetch()
+  }
+
+  // @Watch('depotId', { deep: true }) async depotsChanged () {
+  //   await this.$fetch()
+  // }
+
   async fetch () {
-    const result = await this.$axios.$get('/api/opsidata/hosts/groups')
+    const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
     this.group = Object.values(result)
     // this.group = [
     //   {
