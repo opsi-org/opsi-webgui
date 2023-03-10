@@ -40,7 +40,7 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
-            <ButtonBTNRowLinkTo
+            <!-- <ButtonBTNRowLinkTo
               v-if="itemkey==opsiconfigserver"
               :title="$t('title.healthcheck')"
               :label="$t('title.healthcheck')"
@@ -50,7 +50,7 @@
               :pressed="isRouteActive"
               :incontextmenu="true"
               :click="routeRedirectWith"
-            />
+            /> -->
           </template>
           <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
@@ -82,7 +82,7 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <ButtonBTNRowLinkTo
+            <!-- <ButtonBTNRowLinkTo
               v-if="row.item.ident==opsiconfigserver"
               :title="$t('title.healthcheck')"
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.healthcheck'):''"
@@ -91,7 +91,7 @@
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
-            />
+            /> -->
           </template>
         </TableTInfiniteScrollSmooth>
       </template>

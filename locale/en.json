@@ -70,6 +70,7 @@
   "title.config": "Configuration",
   "title.log": "Logs",
   "title.healthcheck": "Health Check",
+  "title.serverhealthcheck": "Server Health Check",
   "title.products": "Products",
   "title.configure": "CONFIGURE",
   "title.settings": "Settings",

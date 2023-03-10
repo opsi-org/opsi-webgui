@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VHealthCheck" class="VHealthCheck">
-    <BarBPageHeader v-if="asChild" :title="$t('title.healthcheck') + ' - '" :subtitle="id" :closeroute="closeroute" />
+    <!-- <BarBPageHeader v-if="asChild" :title="$t('title.healthcheck') + ' - '" :subtitle="id" :closeroute="closeroute" /> -->
     <AlertAAlert ref="healthCheckAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <BarBPageHeader>
