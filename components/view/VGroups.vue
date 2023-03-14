@@ -198,7 +198,15 @@ export default class VGroups extends Vue {
 
   async fetch () {
     const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
-    this.group = Object.values(result)
+    // this.group = Object.values(result)
+    if (result) {
+      const customgroups: any = result.groups
+      console.log(JSON.stringify(customgroups.children.clientdirectory))
+      // delete customgroups.children.clientdirectory
+
+      this.group = [customgroups, result.groups.children.clientdirectory]
+    }
+
     // this.group = [
     //   {
     //     id: 'groups',
