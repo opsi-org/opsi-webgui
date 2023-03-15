@@ -26,6 +26,9 @@ BSide.args = { attributes: { expanded: false, visible: true } }
 export const BSideAuthenticated = DefaultVisibleAuthTemplate.bind({})
 BSideAuthenticated.args = { attributes: { expanded: false, visible: true, authenticated: true } } // small
 
+export const BSideAuthenticatedExpanded = DefaultVisibleAuthTemplate.bind({})
+BSideAuthenticatedExpanded.args = { attributes: { expanded: true, visible: true, authenticated: true } }
+
 // todo clicking on expand-btn not possible (only in storebook - why??)
 // export const BSideSmall = DefaultVisibleTemplate.bind({})
 // BSideSmall.args = { attributes: { expanded: false, visible: true } }

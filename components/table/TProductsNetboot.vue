@@ -159,9 +159,9 @@ import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import QueueNested from '../../.utils/utils/QueueNested'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 import { SaveProductActionRequest } from '../../mixins/save'
-import QueueNested from '../../.utils/utils/QueueNested'
 
 const selections = namespace('selections')
 const settings = namespace('settings')
@@ -249,9 +249,9 @@ export default class TProductsNetboot extends Vue {
     this.syncSort({ filterQuery: this.filterQuery }, this.tableData, false, this.parentId)
   }
 
-  mounted () {
-    this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
-  }
+  // mounted () {
+  //   this.tableData.sortBy = (this.selectionClients.length > 0) ? 'productId' : 'productId'
+  // }
 
   toogleDetailsTooltip (row: ITableRow, tooltiptext: IObjectString2ObjectString2String) {
     (row.item as ITableRowItemProducts).tooltiptext = tooltiptext

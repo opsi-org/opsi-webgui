@@ -150,7 +150,7 @@ import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { Constants, Synchronization } from '../../mixins/uib-mixins'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { IObjectString2Boolean } from '~/.utils/types/tgeneral'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
 const config = namespace('config')
 interface DeleteClient {

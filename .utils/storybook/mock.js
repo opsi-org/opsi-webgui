@@ -85,6 +85,8 @@ module.exports.data = {
     { productId:'product3', name:'product3 name',description:'product3 Description',selectedDepots:['depot1.uib.local'], selectedClients:null, installationStatus:'unknown',actionRequest:'setup', actionProgress:null, actionResult:'failed', clientVersions:null ,client_version_outdated: false, actions:['setup','none'], depot_version_diff: false,depotVersions: ['3.0-6'], productType:'LocalbootProduct', selected:0 },
   ],
 
+  netbootproductIds: ['netbootproduct1', 'netbootproduct2', 'netbootproduct3', 'netbootproduct4'],
+
   tableInfo: {
     filterQuery: '',
     sortBy: 'a',
