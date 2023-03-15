@@ -3,7 +3,7 @@
     <AlertAAlert ref="healthCheckAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <BarBPageHeader>
-      <template #left>
+      <template v-if="!jsonformat" #left>
         <InputIFilterTChanges v-if="healthcheckdata" :placeholder="$t('Filter')" :filter.sync="filter" />
         <b-button
           size="sm"
@@ -15,9 +15,17 @@
           <b-icon v-else />
           {{ $t('Show Details') }}
         </b-button>
+        <b-form-checkbox v-model="diagnostic" class="ml-4 pt-1" switch>
+          {{ $t('Diagnostic Data') }}
+        </b-form-checkbox>
       </template>
       <template #right>
-        <b-form-checkbox v-model="jsonformat" class="pt-1" switch>
+        <div v-if="healthcheckdata && jsonformat">
+          <b-button class="downloadButton border-0" variant="outline-primary" @click="downloadHealthData">
+            <b-icon :icon="iconnames.download" /> {{ $t('Download') }}
+          </b-button>
+        </div>
+        <b-form-checkbox v-model="jsonformat" class="ml-4 pt-1" switch>
           {{ $t('JSON') }}
         </b-form-checkbox>
       </template>
@@ -26,11 +34,12 @@
       <DivDScrollResult>
         <pre>{{ prettyJSON(healthcheckdata) }}</pre>
       </DivDScrollResult>
-      <div v-if="healthcheckdata" class="float-right mt-2">
-        <b-button class="downloadButton" variant="outline-primary" @click="downloadHealthData">
-          <b-icon :icon="iconnames.download" /> {{ $t('Download') }}
-        </b-button>
-      </div>
+    </template>
+    <template v-else-if="diagnostic">
+      {{ fetchDiagnosticData () }}
+      <DivDScrollResult>
+        <pre>{{ prettyJSON(diagnosticdata) }}</pre>
+      </DivDScrollResult>
     </template>
     <DivDScrollResult v-else>
       <b-table
@@ -126,10 +135,12 @@ export default class VHealthCheck extends Vue {
   @Prop({ default: false }) 'closeroute'!: string
 
   healthcheckdata: Array<object> = []
+  diagnosticdata: Array<object> = []
   errorText: string = ''
   filter: string = ''
   expandAll: boolean = false
   jsonformat: boolean = false
+  diagnostic: boolean = false
 
   getVariant (status: string) {
     if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
@@ -145,6 +156,18 @@ export default class VHealthCheck extends Vue {
     await this.$axios.$get('/api/opsidata/server/health')
       .then((response) => {
         this.healthcheckdata = response
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.healthCheckAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'Health Check', 'danger', detailedError)
+        this.errorText = this.$t('message.error.defaulttext') as string
+      })
+  }
+
+  async fetchDiagnosticData () {
+    await this.$axios.$get('/api/opsidata/server/diagnostic')
+      .then((response) => {
+        this.diagnosticdata = response
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.healthCheckAlert as any)
