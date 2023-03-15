@@ -60,6 +60,7 @@ const settings = namespace('settings')
   // iconnames: any = _icons
   iconnames: any = {
     language: 'globe2',
+    download: 'download',
     depot: 'server',
     client: 'laptop',
     // product: 'grid',

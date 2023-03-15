@@ -27,8 +27,8 @@
         <pre>{{ prettyJSON(healthcheckdata) }}</pre>
       </DivDScrollResult>
       <div v-if="healthcheckdata" class="float-right mt-2">
-        <b-button class="downloadButton" variant="transparent">
-          <b-icon :icon="iconnames.save" /> {{ $t('Download') }}
+        <b-button class="downloadButton" variant="outline-primary" @click="downloadHealthData">
+          <b-icon :icon="iconnames.download" /> {{ $t('Download') }}
         </b-button>
       </div>
     </template>
@@ -155,6 +155,20 @@ export default class VHealthCheck extends Vue {
 
   prettyJSON (data: Object) {
     return JSON.stringify(data, null, 4)
+  }
+
+  downloadHealthData () {
+    const text = JSON.stringify(this.healthcheckdata)
+    const filename = 'healthcheck.json'
+    const element = document.createElement('a')
+    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text))
+    element.setAttribute('download', filename)
+
+    element.style.display = 'none'
+    document.body.appendChild(element)
+
+    element.click()
+    document.body.removeChild(element)
   }
 }
 </script>
