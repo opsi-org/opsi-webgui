@@ -16,8 +16,23 @@
           {{ $t('Show Details') }}
         </b-button>
       </template>
+      <template #right>
+        <b-form-checkbox v-model="jsonformat" class="pt-1" switch>
+          {{ $t('JSON') }}
+        </b-form-checkbox>
+      </template>
     </BarBPageHeader>
-    <DivDScrollResult>
+    <template v-if="jsonformat">
+      <DivDScrollResult>
+        <pre>{{ prettyJSON(healthcheckdata) }}</pre>
+      </DivDScrollResult>
+      <div v-if="healthcheckdata" class="float-right mt-2">
+        <b-button class="downloadButton" variant="transparent">
+          <b-icon :icon="iconnames.save" /> {{ $t('Download') }}
+        </b-button>
+      </div>
+    </template>
+    <DivDScrollResult v-else>
       <b-table
         thead-class="hide"
         borderless
@@ -114,6 +129,7 @@ export default class VHealthCheck extends Vue {
   errorText: string = ''
   filter: string = ''
   expandAll: boolean = false
+  jsonformat: boolean = false
 
   getVariant (status: string) {
     if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
@@ -135,6 +151,10 @@ export default class VHealthCheck extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Health Check', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
+  }
+
+  prettyJSON (data: Object) {
+    return JSON.stringify(data, null, 4)
   }
 }
 </script>
