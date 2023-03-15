@@ -39,7 +39,7 @@
             id="notes"
             v-model="hostAttr.notes"
             :aria-label="$t('table.fields.notes')"
-            rows="3"
+            rows="1"
             max-rows="3"
             no-resize
           />
@@ -116,7 +116,8 @@
           <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
-      <GridGFormItem v-if="hostAttr.systemUUID">
+      <!-- v-if="hostAttr.systemUUID" -->
+      <GridGFormItem>
         <template #label>
           <span class="smbiosuuid">{{ $t('table.fields.smbiosuuid') }}</span>
         </template>
@@ -194,7 +195,7 @@
             <span class="isMasterDepot">{{ $t('table.fields.isMasterDepot') }}</span>
           </template>
           <template #value>
-            <b-form-input id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
+            <b-form-checkbox id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -269,9 +270,9 @@ export default class FHostAttributes extends Vue {
   }
 
   date (value:any) {
-    if (value !== '') {
+    if (value !== '' || value !== undefined) {
       return new Date(value).toString()
-    } else { return value }
+    } else { return '' }
   }
 
   async update (attr, endPoint) {
