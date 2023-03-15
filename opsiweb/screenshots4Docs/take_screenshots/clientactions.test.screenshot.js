@@ -4,6 +4,13 @@ const en = require('../../uib-components/locale/en.json')
 const de = require('../../uib-components/locale/de.json')
 
 test.describe('Client Actions', () => {
+  test('Button', async ({ page }) => {
+    await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
+    const component = await page.locator('[data-testid="DDClientActions"]')
+    await (new Promise(resolve => setTimeout(resolve, 1000)))
+    await component.screenshot({ path: './screenshots/en/opsi-webgui_buttonclientactions.png' })
+    await component.screenshot({ path: './screenshots/de/opsi-webgui_buttonclientactions.png' })
+  })
   test('Dropdown', async ({ page }) => {
     await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
     await page.click('[data-testid="DDClientActions"] .btn')
@@ -14,19 +21,11 @@ test.describe('Client Actions', () => {
     await page.evaluate((val) => { document.querySelector('.reboot').innerHTML = val }, en['button.event.reboot'])
     await page.evaluate((val) => { document.querySelector('.clientagent').innerHTML = val }, en['label.clientagent'])
     await page.evaluate((val) => { document.querySelector('.clientdeletion').innerHTML = val }, en['label.delete'])
-    await page.screenshot({ path: './screenshots/en/opsiweb_clientactions.png' })
+    await page.screenshot({ path: './screenshots/en/opsi-webgui_clientactions.png' })
     await page.evaluate((val) => { document.querySelector('.showpopup').innerHTML = val }, de['button.event.showpopup'])
     await page.evaluate((val) => { document.querySelector('.reboot').innerHTML = val }, de['button.event.reboot'])
     await page.evaluate((val) => { document.querySelector('.clientagent').innerHTML = val }, de['label.clientagent'])
     await page.evaluate((val) => { document.querySelector('.clientdeletion').innerHTML = val }, de['label.delete'])
-    await page.screenshot({ path: './screenshots/de/opsiweb_clientactions.png' })
-  })
-
-  test('Button', async ({ page }) => {
-    await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
-    const component = await page.locator('[data-testid="DDClientActions"]')
-    await (new Promise(resolve => setTimeout(resolve, 1000)))
-    await component.screenshot({ path: './screenshots/en/opsiweb_buttonclientactions.png' })
-    await component.screenshot({ path: './screenshots/de/opsiweb_buttonclientactions.png' })
+    await page.screenshot({ path: './screenshots/de/opsi-webgui_clientactions.png' })
   })
 })

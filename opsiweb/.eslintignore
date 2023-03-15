@@ -4,4 +4,3 @@ dist/*
 .vscode/*.json
 **/*/tsconfig.json
 vuex-persist.js
-./uib-components/.utils/utils/*.ts
