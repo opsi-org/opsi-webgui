@@ -350,3 +350,6 @@ body .mobile .topbar_content .navbar > * {
 .hide {
   display: none;
 }
+pre {
+  color: var(--color);
+}
