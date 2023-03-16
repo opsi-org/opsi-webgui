@@ -2,10 +2,10 @@
   <div data-testid="VHealthCheck" class="VHealthCheck">
     <AlertAAlert ref="healthCheckAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
-    <BarBPageHeader>
+    <BarBPageHeader v-if="diagnosticdata">
       <template v-if="!jsonformat" #left>
-        <!-- <InputIFilterTChanges v-if="healthcheckdata" :placeholder="$t('Filter')" :filter.sync="filter" />
-        <b-button
+        <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
+        <!-- <b-button
           size="sm"
           variant="outline-primary"
           class="border-0"
@@ -17,7 +17,7 @@
         </b-button> -->
       </template>
       <template #right>
-        <div v-if="jsonformat && diagnosticdata">
+        <div v-if="jsonformat">
           <b-button class="downloadButton border-0" variant="outline-primary" @click="downloadHealthData">
             <b-icon :icon="iconnames.download" /> {{ $t('Download') }}
           </b-button>
@@ -33,63 +33,68 @@
       </DivDScrollResult>
     </template>
     <template v-else>
-      <span v-for="v,k in diagnosticdata" :key="k">
+      <span v-for="diagnostic,k in diagnosticdata" :key="k"">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
-        <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
+        <b-collapse :id="'collapse-'+k" :visible="k === 'health_check'">
           <div v-if="k === 'health_check'" class="container-fluid">
-            <span v-for="health in v" :key="health">
-              <GridGFormItem value-more="true">
-                <template #label>
-                  <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">{{ '>' }}</b-button>
-                  <b-button v-else class="border-0" variant="outline-primary" :style="'min-width: 35px !important;'" disabled />
-                  <b-badge v-if="health.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(health.check_status)">
-                    <div class="text-uppercase">
-                      {{ health.check_status }}
-                    </div>
-                  </b-badge>
-                </template>
-                <template #value>
-                  <span class="font-weight-bold text-capitalize">{{ health.check_name }}</span>
-                </template>
-                <template #valueMore>
-                  {{ health.message }}
-                </template>
-              </GridGFormItem>
-              <b-collapse :id="'collapse-'+health.check_id">
-                <span v-for="(data, index) in health.partial_results" :key="index">
-                  <GridGFormItem value-more="true">
-                    <template #label>
-                      <b-button class="border-0" variant="outline-primary" :style="'min-width: 35px !important;'" disabled />
-                      <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(data.check_status)">
-                        <div class="text-uppercase">
-                          {{ data.check_status }}
-                        </div>
-                      </b-badge>
-                    </template>
-                    <template #value>
-                      {{ data.check_name }}
-                    </template>
-                    <template #valueMore>
-                      {{ data.message }}
-                    </template>
-                  </GridGFormItem>
-                </span>
-              </b-collapse>
-              <br>
-            </span>
+            <DivDScrollResult>
+              <!-- :class="{ 'd-none': !health.indexOf(filter) }" -->
+              <span v-for="health, i in diagnostic" :key="i" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
+                <GridGFormItem value-more="true">
+                  <template #label>
+                    <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">{{ '>' }}</b-button>
+                    <b-button v-else class="border-0" variant="outline-primary" :style="'min-width: 35px !important;'" disabled />
+                    <b-badge v-if="health.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(health.check_status)">
+                      <div class="text-uppercase">
+                        {{ health.check_status }}
+                      </div>
+                    </b-badge>
+                  </template>
+                  <template #value>
+                    <span class="font-weight-bold text-capitalize">{{ health.check_name }}</span>
+                  </template>
+                  <template #valueMore>
+                    {{ health.message }}
+                  </template>
+                </GridGFormItem>
+                <b-collapse :id="'collapse-'+health.check_id">
+                  <span v-for="(data, index) in health.partial_results" :key="index">
+                    <GridGFormItem value-more="true">
+                      <template #label>
+                        <b-button class="border-0" variant="outline-primary" :style="'min-width: 35px !important;'" disabled />
+                        <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(data.check_status)">
+                          <div class="text-uppercase">
+                            {{ data.check_status }}
+                          </div>
+                        </b-badge>
+                      </template>
+                      <template #value>
+                        <small>{{ data.check_name }}</small>
+                      </template>
+                      <template #valueMore>
+                        <small> {{ data.message }} </small>
+                      </template>
+                    </GridGFormItem>
+                  </span>
+                </b-collapse>
+                <br>
+              </span>
+            </DivDScrollResult>
           </div>
           <template v-else>
-            <span v-for="v2,k2 in v" :key="k2">
+            <span v-for="val,i in diagnostic" :key="i">
               <GridGFormItem>
                 <template #label>
-                  {{ k2 }}
+                  {{ i }}
                 </template>
                 <template #value>
-                  <template v-if="typeof v2 == 'object'">
-                    <pre>{{ JSON.stringify(v2, null, 4) }}</pre>
+                  <template v-if="typeof val == 'object'">
+                    <div class="scrollValue">
+                      <pre>{{ JSON.stringify(val, null, 4) }}</pre>
+                    </div>
                   </template>
                   <template v-else>
-                    {{ v2 }}
+                    {{ val }}
                   </template>
                 </template>
               </GridGFormItem>
@@ -97,82 +102,6 @@
           </template>
         </b-collapse>
       </span>
-      <!-- <b-table
-        thead-class="hide"
-        borderless
-        :filter="filter"
-        :filter-included-fields="['check_status', 'check_name', 'partial_results', 'message']"
-        :items="healthcheckdata"
-        :fields="['partial_results', 'message']"
-      >
-        <template #cell(partial_results)="row">
-          <div>
-            <b-button
-              v-if="row.item.partial_results.length !== 0"
-              v-b-tooltip.hover
-              size="sm"
-              :style="'min-width: 30px !important;'"
-              variant="transparent"
-              :title="row.detailsShowing ? $t('Hide Details') : $t('Show Details')"
-              @click="row.toggleDetails"
-            >
-              <b-icon v-if="row.detailsShowing" font-scale="0.8" :icon="iconnames.arrowFillUp" />
-              <b-icon v-else font-scale="0.8" :icon="iconnames.arrowFillDown" />
-            </b-button>
-            <b-button
-              v-else
-              disabled
-              :style="'min-width: 30px !important;'"
-              class="border-0"
-              variant="transparent"
-            >
-              {{ $t('') }}
-            </b-button>
-            <b-badge :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(row.item.check_status)">
-              <div class="text-uppercase">
-                {{ row.item.check_status }}
-              </div>
-            </b-badge>
-            <small><span class="font-weight-bold">
-              {{ row.item.check_name }}
-            </span></small>
-          </div>
-        </template>
-        <template #cell()="row">
-          <small>{{ row.value }}</small>
-        </template>
-        <template #row-details="row">
-          <b-table
-            thead-class="hide"
-            small
-            fixed
-            hover
-            :filter="filter"
-            :filter-included-fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
-            :items="row.item.partial_results"
-            :fields="['check_status', 'check_name', 'message', 'upgrade_issue']"
-          >
-            <template #cell(check_status)="data">
-              <b-badge size="sm" :variant="getVariant(data.item.check_status)">
-                <div class="text-uppercase">
-                  {{ data.item.check_status }}
-                </div>
-              </b-badge>
-            </template>
-            <template #cell(message)="data">
-              <div v-b-tooltip.hover :title="data.item.details ? JSON.stringify(data.item.details) : ''">
-                <small>{{ data.item.message }}</small>
-              </div>
-            </template>
-            <template #cell(upgrade_issue)="data">
-              <small><span v-if="data.item.upgrade_issue" class="font-weight-bold">{{ $t('Upgrade Issue:') }}</span> {{ data.item.upgrade_issue }}</small>
-            </template>
-            <template #cell()="data">
-              <small>{{ data.value }}</small>
-            </template>
-          </b-table>
-        </template>
-      </b-table> -->
     </template>
   </div>
 </template>
@@ -251,3 +180,11 @@ export default class VHealthCheck extends Vue {
   }
 }
 </script>
+<style scoped>
+div.scrollValue {
+  max-height: 500px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* border:1px solid var(--border, #ced4da ); */
+}
+</style>
