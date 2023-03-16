@@ -36,9 +36,21 @@
       </DivDScrollResult>
     </template>
     <template v-else-if="diagnostic">
-      {{ fetchDiagnosticData () }}
+      <!-- {{ fetchDiagnosticData () }} -->
       <DivDScrollResult>
         <pre>{{ prettyJSON(diagnosticdata) }}</pre>
+        <!-- {{ diagnosticdata }} -->
+        <!-- <span v-for="index in diagnosticdata" :key="index">
+          <span v-for="i in diagnosticdata[index]" :key="i">
+            {{ i }}
+          </span>
+          <br>
+        </span> -->
+        <!-- <b-table small borderless stacked :items="[diagnosticdata]">
+          <template #cell()="row">
+            <b-table small borderless stacked :items="[row.value]" />
+          </template>
+        </b-table> -->
       </DivDScrollResult>
     </template>
     <DivDScrollResult v-else>
@@ -162,6 +174,7 @@ export default class VHealthCheck extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Health Check', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
+    await this.fetchDiagnosticData()
   }
 
   async fetchDiagnosticData () {
