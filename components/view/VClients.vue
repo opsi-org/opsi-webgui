@@ -262,10 +262,9 @@ export default class VClients extends Vue {
 
   @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg
-    console.log('MessageBus: receive-watch: ', msg)
     if (msg && msg.channel === 'event:host_created') {
       const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
-      ref.alert(`MessageBus received:  host_created ${msg.data.id}`, 'info')
+      ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
       await this.$fetch()
     }
   }

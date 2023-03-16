@@ -37,6 +37,7 @@ interface SideBarAttr {
 
 @Component({ mixins: [MBus] })
 export default class LayoutDefault extends Vue {
+  $t: any
   $mq: any
   $axios: any
   wsInit: any // mixin
