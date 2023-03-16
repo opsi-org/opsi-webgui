@@ -9,6 +9,7 @@
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
+      <AlertAAlert ref="messageBusInfo" />
       <AlertAAlert ref="statusAlert" />
       <AlertAAlert ref="alertConfigurationError" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
@@ -20,6 +21,7 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
+import { MBus } from '../mixins/uib-mixins'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
 
@@ -33,10 +35,11 @@ interface SideBarAttr {
     expanded: boolean
 }
 
-@Component
+@Component({ mixins: [MBus] })
 export default class LayoutDefault extends Vue {
   $mq: any
   $axios: any
+  wsInit: any // mixin
 
   @config.Getter public config!: IObjectString2Boolean
   @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
@@ -59,6 +62,7 @@ export default class LayoutDefault extends Vue {
     window.onbeforeunload = this.confirmToSaveChanges
     await this.checkServer()
     await this.checkConfig()
+    this.wsInit()
   }
 
   confirmToSaveChanges () {
