@@ -160,7 +160,7 @@ import { IObjectString2ObjectString2String, IObjectString2String } from '../../.
 import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import { Constants, MBus, Synchronization } from '../../mixins/uib-mixins'
 import { SaveProductActionRequest } from '../../mixins/save'
 
 const selections = namespace('selections')
@@ -171,7 +171,7 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [Constants, Synchronization, SaveProductActionRequest] })
+@Component({ mixins: [MBus, Constants, Synchronization, SaveProductActionRequest] })
 export default class TProductsNetboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -181,6 +181,7 @@ export default class TProductsNetboot extends Vue {
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoading!: boolean
+  wsBusMsg: any // mixin // store
   iconnames: any
   syncSort: any
   $axios: any
@@ -220,6 +221,35 @@ export default class TProductsNetboot extends Vue {
   @changes.Mutation public pushToChangesProducts!: (s: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public quicksave!: boolean
+
+  get visibleProductIds () {
+    return this.cache_pages.valuesOfKey('productId')
+  }
+
+  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+    const msg = this.wsBusMsg // todo deepCopy
+    console.log('ProductIds: ', this.visibleProductIds)
+    console.log('MessageBus: receive-watch: ', msg)
+    if (msg
+      && ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel)
+      && msg.data.productType === 'NetbootProduct'
+      && this.visibleProductIds.includes(msg.data.productId)
+      && this.selectionClients.includes(msg.data.clientId)
+    ) {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
+      if (this.quicksave) {
+        this.$fetch()
+        ref.hide()
+      } else { /* quicksave is false ... do sth .. show message or sth */
+        const objIndex = this.changesProducts.findIndex(
+          item => item.user === localStorage.getItem('username')
+          && item.clientId === msg.data.clientId
+          && item.productId === msg.data.productId)
+        if (objIndex > -1) { /* show msg product updated */ }
+      }
+    }
+  }
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
@@ -264,7 +294,11 @@ export default class TProductsNetboot extends Vue {
   }
 
   async fetchWrapper () { await this.$fetch() }
-  async fetch () { await this.$emit('fetch-products', this) } // will trigger -> this.setItemsCache(items)
+  async fetch () {
+    const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+    ref.hide()
+    await this.$emit('fetch-products', this)
+  } // will trigger -> this.setItemsCache(items)
 
   setItemsCache (items) {
     Vue.nextTick(() => {

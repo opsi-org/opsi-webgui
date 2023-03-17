@@ -74,6 +74,13 @@ export default class QueueNested {
     this.elements.filter(e => e)
     return this.elements.flat();
   }
+  valuesOfKey(key:string) {
+    const l:Array<string> = []
+    this.elements.flat().forEach(e => {
+      l.push(e[key])
+    })
+    return l
+  }
   setTotalPages (totalPages:number) {
     this.totalPages = totalPages
   }
