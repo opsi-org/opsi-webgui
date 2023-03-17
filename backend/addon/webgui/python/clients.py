@@ -303,6 +303,9 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 
 			# IPv4Address/IPv6Address is not JSON serializable
 			values["ipAddress"] = str(values["ipAddress"])
+			backend._send_messagebus_event(  # pylint: disable=protected-access
+				"host_created", data={"type": "OpsiClient", "id": client.hostId}
+			)
 			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
 
 		except IntegrityError as err:
