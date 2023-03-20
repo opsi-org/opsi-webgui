@@ -2,18 +2,17 @@
   <div data-testid="VHealthCheck" class="VHealthCheck">
     <AlertAAlert ref="healthCheckAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
-    <BarBPageHeader v-if="diagnosticdata">
+    <BarBPageHeader>
       <template v-if="!jsonformat" #left>
         <!-- <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" /> -->
         <b-button
           size="sm"
           variant="outline-primary"
-          class="border-0"
           :pressed.sync="expandAll"
         >
-          <b-icon v-if="expandAll" :icon="iconnames.save" />
-          <b-icon v-else />
-          {{ $t('Expand All') }}
+          <b-icon v-if="expandAll" :icon="iconnames.arrowDoubleUp" />
+          <b-icon v-else :icon="iconnames.arrowDoubleDown" />
+          {{ expandAll? $t('button.collapse') : $t('button.expand') }}
         </b-button>
       </template>
       <template #right>
@@ -33,7 +32,6 @@
       </DivDScrollResult>
     </template>
     <template v-else>
-      <!-- {{ diagnosticdata }} -->
       <span v-for="diagnostic,k in diagnosticdata" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="k === 'health_check' || expandAll">
@@ -43,13 +41,13 @@
                 <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
                 <b-button
                   size="sm"
+                  class="ml-2"
                   variant="outline-primary"
-                  class="border-0"
                   :pressed.sync="expandHCD"
                 >
-                  <b-icon v-if="expandHCD" :icon="iconnames.save" />
-                  <b-icon v-else />
-                  {{ $t('Show Details') }}
+                  <b-icon v-if="expandHCD" :icon="iconnames.arrowDoubleUp" />
+                  <b-icon v-else :icon="iconnames.arrowDoubleDown" />
+                  {{ expandHCD? $t('button.collapse') : $t('button.expand') }}
                 </b-button>
               </template>
             </BarBPageHeader>
