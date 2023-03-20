@@ -5,16 +5,16 @@
     <BarBPageHeader v-if="diagnosticdata">
       <template v-if="!jsonformat" #left>
         <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
-        <!-- <b-button
+        <b-button
           size="sm"
           variant="outline-primary"
           class="border-0"
-          @click="togglePartialResults(expandAll = !expandAll)"
+          @click="expandDiagnosticData(expandAll = !expandAll)"
         >
           <b-icon v-if="expandAll" :icon="iconnames.save" />
           <b-icon v-else />
-          {{ $t('Show Details') }}
-        </b-button> -->
+          {{ $t('Expand All') }}
+        </b-button>
       </template>
       <template #right>
         <div v-if="jsonformat">
@@ -33,13 +33,13 @@
       </DivDScrollResult>
     </template>
     <template v-else>
-      <span v-for="diagnostic,k in diagnosticdata" :key="k"">
+      <span v-for="diagnostic,k in diagnosticdata" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
-        <b-collapse :id="'collapse-'+k" :visible="k === 'health_check'">
+        <b-collapse :id="'collapse-'+k" :visible="k === 'health_check' || expand || filter!==''">
           <div v-if="k === 'health_check'" class="container-fluid">
             <DivDScrollResult>
               <!-- :class="{ 'd-none': !health.indexOf(filter) }" -->
-              <span v-for="health, i in diagnostic" :key="i" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
+              <span v-for="health, i in diagnostic" :key="i" :class="{ 'd-none': !health.check_id.includes(filter) && !health.check_status.includes(filter) }">
                 <GridGFormItem value-more="true">
                   <template #label>
                     <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">{{ '>' }}</b-button>
@@ -57,7 +57,7 @@
                     {{ health.message }}
                   </template>
                 </GridGFormItem>
-                <b-collapse :id="'collapse-'+health.check_id">
+                <b-collapse :id="'collapse-'+health.check_id" :visible="expand || filter!==''">
                   <span v-for="(data, index) in health.partial_results" :key="index">
                     <GridGFormItem value-more="true">
                       <template #label>
@@ -82,7 +82,7 @@
             </DivDScrollResult>
           </div>
           <template v-else>
-            <span v-for="val,i in diagnostic" :key="i">
+            <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.includes(filter) }">
               <GridGFormItem>
                 <template #label>
                   {{ i }}
@@ -123,6 +123,7 @@ export default class VHealthCheck extends Vue {
   errorText: string = ''
   filter: string = ''
   expandAll: boolean = false
+  expand: boolean = false
   jsonformat: boolean = false
   diagnostic: boolean = false
 
@@ -134,6 +135,10 @@ export default class VHealthCheck extends Vue {
     for (const item of data) {
       this.$set(item, '_showDetails', val)
     }
+  }
+
+  expandDiagnosticData (value) {
+    this.expand = value
   }
 
   async fetch () {
