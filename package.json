@@ -38,7 +38,11 @@
     "nuxt-mq": "^2.0.2",
     "nuxt-property-decorator": "^2.9.1",
     "vuex-persist": "^3.1.3",
-    "@msgpack/msgpack":"^3.0.0-beta1"
+    "@msgpack/msgpack":"^3.0.0-beta1",
+    "xterm":"^5.1.0",
+    "xterm-addon-fit":"0.7.0",
+    "xterm-addon-search":"0.11.0",
+    "xterm-addon-web-links":"0.8.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",

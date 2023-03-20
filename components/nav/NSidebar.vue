@@ -98,6 +98,17 @@ export default class NSidebar extends Vue {
       {
         title: 'title.configure',
         menu: [
+          {
+            title: 'title.admin',
+            route: '/admin/terminal/',
+            icon: this.iconnames.admin,
+            submenu: [
+              { title: 'title.adminterminal', route: '/admin/terminal' },
+              // { title: 'title.addNew', route: '/clientscreation', disabled: (this.config) ? !this.config?.client_creation : false },
+              // { title: 'title.config', route: '/clientsconfig' },
+              // { title: 'title.log', route: '/clientslog' }
+            ]
+          },
           { title: 'title.support', icon: this.iconnames.support, route: '/support' },
           { title: 'title.settings', icon: this.iconnames.settings, route: '/settings' }
           // { title: 'Index page', icon: 'collection-fill', route: '/' }

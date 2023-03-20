@@ -41,6 +41,7 @@ export default class LayoutDefault extends Vue {
   $mq: any
   $axios: any
   wsInit: any // mixin
+  wsBus: any // mixin
 
   @config.Getter public config!: IObjectString2Boolean
   @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
@@ -63,7 +64,10 @@ export default class LayoutDefault extends Vue {
     window.onbeforeunload = this.confirmToSaveChanges
     await this.checkServer()
     await this.checkConfig()
-    this.wsInit()
+    if (this.wsBus === undefined) {
+      console.debug('MessageBus WS: connect from default.vue')
+      this.wsInit()
+    }
   }
 
   confirmToSaveChanges () {
