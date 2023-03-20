@@ -8,6 +8,7 @@
 webgui client methods
 """
 
+import asyncio
 import os
 import subprocess
 from datetime import date, datetime
@@ -226,12 +227,16 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
-
+		reachable_clients = backend._host_control_reachable([], 20)  # pylint: disable=protected-access
 		data = []
 		for row in result:
 			if row is not None:
 				client = dict(row)
 				client["uefi"] = bool(client["uefi"])
+				if reachable_clients.get(client["clientId"], False):
+					client["reachable"] = True
+				else:
+					client["reachable"] = False
 				data.append(client)
 
 		return RESTResponse(data=data, total=total)
