@@ -85,7 +85,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 @client_router.get("/api/opsidata/clients", response_model=List[ClientList])
 @rest_api
 @filter_depot_access
-def clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
+async def clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
 	selectedDepots: List[str] = Depends(parse_depot_list),
@@ -227,13 +227,16 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
-		reachable_clients = backend._host_control_reachable([], 20)  # pylint: disable=protected-access
+		if backend._host_control_use_messagebus is True:
+			reachable_clients = await backend.hostControl_reachable([], 20)  # pylint: disable=protected-access
 		data = []
 		for row in result:
 			if row is not None:
 				client = dict(row)
 				client["uefi"] = bool(client["uefi"])
-				if reachable_clients.get(client["clientId"], False):
+				if backend._host_control_use_messagebus is not True:
+					client["reachable"] = None
+				elif reachable_clients.get(client["clientId"], False):
 					client["reachable"] = True
 				else:
 					client["reachable"] = False
