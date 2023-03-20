@@ -115,6 +115,7 @@
   "table.fields.lastSeen": "Zuletzt gesehen",
   "table.fields.hostKey": "OPSI-Hostschlüssel",
   "table.fields.otp": "Einmalpasswort OTP",
+  "table.fields.smbiosuuid": "SMBIOS UUID",
   "table.fields.uefi": "UEFI",
   "table.fields.notes": "Anmerkungen",
   "table.fields.stats": "Statistiken",

@@ -85,9 +85,9 @@
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import { IObjectString2String } from '../../.utils/types/tgeneral'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { IObjectString2String } from '~/.utils/types/tgeneral'
+import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 

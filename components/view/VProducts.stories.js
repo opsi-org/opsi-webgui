@@ -27,9 +27,15 @@ export default {
   })
 }
 
-const PrimaryTemplate = () => ({
-  template: '<ViewVProducts/>'
+const PrimaryTemplate = (args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  computed: { args () { return args } },
+  template: '<ViewVProducts v-bind="args" />'
 })
-
 // named export Primary to create respective story
 export const VProducts = PrimaryTemplate.bind({})
+VProducts.args = {
+  tableloaded: true,
+  child: false,
+  id: 'products'
+}

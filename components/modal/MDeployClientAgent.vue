@@ -25,6 +25,7 @@
     <b-modal
       :id="'event-modal-deployCA-' + clientId"
       :title="$t('label.clientagent')"
+      data-testid="MDeployClientAgentModal"
       centered
       scrollable
       hide-footer

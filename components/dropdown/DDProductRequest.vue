@@ -40,8 +40,8 @@
 import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableRowItemProducts } from '../../.utils/types/ttable'
-import { mapValues2Objects } from '../../.utils/utils/smappings'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { mapValues2Objects } from '../../.utils/utils/smappings'
 const selections = namespace('selections')
 const config = namespace('config-app')
 @Component

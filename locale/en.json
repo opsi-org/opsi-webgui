@@ -115,6 +115,7 @@
   "table.fields.lastSeen": "Last Seen",
   "table.fields.hostKey": "OPSI Host Key",
   "table.fields.otp": "One Time Password",
+  "table.fields.smbiosuuid": "SMBIOS UUID",
   "table.fields.uefi": "UEFI",
   "table.fields.notes": "Notes",
   "table.fields.modificationTime": "Modified",
