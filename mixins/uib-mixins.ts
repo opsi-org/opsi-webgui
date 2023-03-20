@@ -82,6 +82,8 @@ const settings = namespace('settings')
     trackchanges: 'card-checklist',
     sort: 'sort-up',
     sortDesc: 'sort-down',
+    arrowRight: 'chevron-right',
+    arrowUp: 'chevron-up',
     arrowDoubleUp: 'chevron-double-up',
     arrowDoubleDown: 'chevron-double-down',
     arrowDoubleLeft: 'chevron-double-left',

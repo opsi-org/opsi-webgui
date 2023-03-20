@@ -55,8 +55,11 @@
               <span v-for="health, i in diagnostic" :key="i" :class="{ 'd-none': !health.check_id.includes(filter) && !health.check_status.includes(filter) }">
                 <GridGFormItem value-more="true">
                   <template #label>
-                    <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">{{ $t('>') }}</b-button>
-                    <b-button v-else class="border-0" variant="outline-primary" :style="'min-width: 35px !important;'" disabled />
+                    <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">
+                      <b-icon v-if="expandHCD" :icon="iconnames.arrowUp" />
+                      <b-icon v-else :icon="iconnames.arrowRight" />
+                    </b-button>
+                    <b-button v-else class="border-0" variant="outline-primary" :style="'min-width: 45px !important;'" disabled />
                     <b-badge v-if="health.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(health.check_status)">
                       <div class="text-uppercase">
                         {{ health.check_status }}
@@ -74,7 +77,7 @@
                   <span v-for="(data, index) in health.partial_results" :key="index">
                     <GridGFormItem value-more="true">
                       <template #label>
-                        <b-button class="border-0" variant="outline-primary" :style="'min-width: 35px !important;'" disabled />
+                        <b-button class="border-0" variant="outline-primary" :style="'min-width: 45px !important;'" disabled />
                         <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(data.check_status)">
                           <div class="text-uppercase">
                             {{ data.check_status }}
