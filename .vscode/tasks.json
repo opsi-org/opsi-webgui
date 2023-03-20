@@ -22,6 +22,15 @@
 			}
 		},
 		{
+			"label": "Restore Backup 43",
+			"type": "shell",
+			"command": "sudo opsiconfd restore --server-id=${OPSI_HOSTNAME} ${input:opsi-backup}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			}
+		},
+		{
 			"label": "Create .env file",
 			"type": "shell",
 			"command": "${workspaceFolder}/.devcontainer/devenv.sh",
