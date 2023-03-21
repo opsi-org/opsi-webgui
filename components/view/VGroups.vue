@@ -109,7 +109,7 @@
                     </template>
                     <br>
                     <span> {{ $t('Are you sure you want to delete the selected group along with its subgroups and client assignments?') }}</span>
-                    <b-button class="float-right" variant="danger">
+                    <b-button class="float-right" variant="danger" @click="deleteGroup">
                       {{ $t("Delete") }}
                     </b-button>
                   </b-tab>
@@ -121,7 +121,7 @@
                     </template>
                     <br>
                     <span> {{ $t('Are you sure you want to delete client assignments of the selected group?') }}</span>
-                    <b-button class="float-right" variant="danger">
+                    <b-button class="float-right" variant="danger" @click="removeClientAssignments">
                       {{ $t("Remove") }}
                     </b-button>
                   </b-tab>
@@ -258,7 +258,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string + 'DepotClients', 'danger', detailedError)
+        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
       })
   }
 
@@ -268,7 +268,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string + 'DepotClients', 'danger', detailedError)
+        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
       })
   }
 
@@ -278,7 +278,25 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string + 'DepotClients', 'danger', detailedError)
+        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+      })
+  }
+
+  async deleteGroup () {
+    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.id}`)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+      })
+  }
+
+  async removeClientAssignments () {
+    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.id}/clients`)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
       })
   }
 }
