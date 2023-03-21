@@ -239,11 +239,11 @@ export default class TProductsLocalboot extends Vue {
     const msg = this.wsBusMsg // todo deepCopy
     console.log('ProductIds: ', this.visibleProductIds)
     console.log('MessageBus: receive-watch: ', msg)
-    if (msg
-      && ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel)
-      && msg.data.productType === 'LocalbootProduct'
-      && this.visibleProductIds.includes(msg.data.productId)
-      && this.selectionClients.includes(msg.data.clientId)
+    if (msg &&
+      ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
+      msg.data.productType === 'LocalbootProduct' &&
+      this.visibleProductIds.includes(msg.data.productId) &&
+      this.selectionClients.includes(msg.data.clientId)
     ) {
       const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
       ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
@@ -252,9 +252,9 @@ export default class TProductsLocalboot extends Vue {
         ref.hide()
       } else { /* quicksave is false ... do sth .. show message or sth */
         const objIndex = this.changesProducts.findIndex(
-          item => item.user === localStorage.getItem('username')
-          && item.clientId === msg.data.clientId
-          && item.productId === msg.data.productId)
+          item => item.user === localStorage.getItem('username') &&
+          item.clientId === msg.data.clientId &&
+          item.productId === msg.data.productId)
         if (objIndex > -1) { /* show msg product updated */ }
       }
     }
@@ -299,8 +299,12 @@ export default class TProductsLocalboot extends Vue {
 
   async fetchWrapper () { await this.$fetch() }
   async fetch () {
-    const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
-    ref.hide()
+    try {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      if (ref) { ref.hide() }
+    } catch (e) {
+      console.warn('Couldnt find AlertBox for messagebusinfo')
+    }
     await this.$emit('fetch-products', this)
     // will trigger -> this.setItemsCache(items)
   }

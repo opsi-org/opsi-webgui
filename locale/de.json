@@ -87,7 +87,14 @@
   "title.deleteClient": "Client löschen",
   "title.whatsnew":"Was gibt's neues ?",
   "title.hostparam": "Parameter",
+<<<<<<< HEAD
   "title.groups": "Gruppen",
+=======
+  "title.admin": "Administration",
+  "title.adminterminal": "Terminal",
+  "table.fields.terminalId": "Termuinal id",
+  "table.fields.terminalChannel": "Channel",
+>>>>>>> develop
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
