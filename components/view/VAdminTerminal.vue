@@ -120,7 +120,7 @@ export default class VAdminTerminal extends Vue {
       scrollback: 1000,
       fontSize: 14,
       allowProposedApi: true,
-      cols: 60,
+      cols: 60
       // cursorBlink: true,
       // scrollback: 1000,
       // fontSize: 14,
@@ -130,11 +130,11 @@ export default class VAdminTerminal extends Vue {
       // rendererType: 'canvas', // Tipo de representación
       // rows: 35,
       // theme: 'light',
-      theme: {
-        // foreground: 'yellow', //Fuente
-        background: '#060101', //Fondo de fondo de fondo
-        cursor: 'help' //CURSOR
-      }
+      // theme: {
+      //    // foreground: 'yellow',
+      //    background: '#060101',
+      //    cursor: 'help'
+      // }
     })
     // this.mbTerminal.skipResizeEvent = false
 
