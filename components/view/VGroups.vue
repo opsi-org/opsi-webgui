@@ -255,6 +255,10 @@ export default class VGroups extends Vue {
 
   async addClientsToSelectedGroup () {
     await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.id}/clients`, this.selectedClients)
+      .then((response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+      })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
@@ -265,6 +269,10 @@ export default class VGroups extends Vue {
   async createSubGroup () {
     this.subgroup.parentGroupId = this.selectedvalue.id
     await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
+      .then((response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+      })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
@@ -275,6 +283,10 @@ export default class VGroups extends Vue {
   async updateGroup () {
     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.id : ''
     await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.id}`, this.updategroup)
+      .then((response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+      })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
@@ -284,6 +296,10 @@ export default class VGroups extends Vue {
 
   async deleteGroup () {
     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.id}`)
+      .then((response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+      })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
@@ -293,6 +309,10 @@ export default class VGroups extends Vue {
 
   async removeClientAssignments () {
     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.id}/clients`)
+      .then((response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+      })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
