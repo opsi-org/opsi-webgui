@@ -1,6 +1,7 @@
 <template>
   <div class="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
+    <AlertAAlert ref="groupAlert" />
     <BarBPageHeader>
       <template #left>
         <TreeTSDepots />
@@ -33,10 +34,12 @@
               </treeselect>
             </b-col>
             <b-col v-if="selectedvalue">
+              <br>
               <div v-if="selectedvalue.type == 'HostGroup'">
                 <span class="font-weight-bold">
                   {{ $t('Selected Group : ') }} {{ selectedvalue.text }}
                 </span>
+                <br><br>
                 <b-tabs>
                   <b-tab>
                     <template #title>
@@ -66,10 +69,10 @@
                     </template>
                     <br>
                     <b-form>
-                      <b-form-input v-b-tooltip.hover :title="$t('Subgroup ID')" :placeholder="$t('Subgroup ID')" />
-                      <b-form-input v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
-                      <b-form-input v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
-                      <b-button class="float-right" variant="success">
+                      <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('Subgroup ID')" :placeholder="$t('Subgroup ID')" />
+                      <b-form-input v-model="subgroup.description" v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
+                      <b-form-input v-model="subgroup.notes" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
+                      <b-button class="float-right" variant="success" @click="createSubGroup()">
                         {{ $t("Create") }}
                       </b-button>
                     </b-form>
@@ -111,7 +114,7 @@
                   </b-tab>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Remove client from the selected group.')">
+                      <span v-b-tooltip.hover :title="$t('Remove client assignments from the selected group.')">
                         {{ $t("Remove clients") }}
                       </span>
                     </template>
@@ -127,6 +130,7 @@
                 <span class="font-weight-bold">
                   {{ $t('Selected Client : ') }} {{ selectedvalue.text }}
                 </span>
+                <br><br>
                 <b-tabs>
                   <b-tab>
                     <template #title>
@@ -190,9 +194,16 @@ export default class VGroups extends Vue {
   $axios: any
   node: any
   $fetch: any
+  $t: any
   group: Array<object> = []
   selectedvalue: any = null
   clientIds: Array<string> = []
+  subgroup: any = {
+    parentGroupId: '',
+    groupId: '',
+    description: '',
+    notes: ''
+  }
 
   @selections.Getter public selectionDepots!: Array<string>
 
@@ -229,6 +240,16 @@ export default class VGroups extends Vue {
     await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.clientIds = response.sort()
+      })
+  }
+
+  async createSubGroup () {
+    this.subgroup.parentGroupId = this.selectedvalue.id
+    await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('ERROR:') as string + 'DepotClients', 'danger', detailedError)
       })
   }
 }
