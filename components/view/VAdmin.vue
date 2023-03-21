@@ -1,12 +1,11 @@
 <template>
   <div data-testid="VAdminTerminal" class="VAdminTerminal">
-    WIP
     <!-- <div class="console" v-html="html"> hii </div> -->
   </div>
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/uib-mixins'
 const cache = namespace('data-cache')
 

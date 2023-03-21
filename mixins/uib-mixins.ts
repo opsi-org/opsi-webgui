@@ -1,6 +1,6 @@
 import Cookie from 'js-cookie'
 import { encode, decode } from '@msgpack/msgpack'
-import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
 // import msgpk from 'msgpack5'
 
 // var msgpack = require('msgpack5')() // namespace our extensions
@@ -96,17 +96,17 @@ const mbus = namespace('messagebus')
       if (this.bus === undefined) { return }
       let data = ''
       if (msg.data) { data = String.fromCharCode(...msg.data) }
-      console.debug('MessageBus send "' + msg.type + '": "' + data + '"', msg)
+      // console.debug('MessageBus send "' + msg.type + '": "' + data + '"', msg)
       this.bus.send(encode(msg))
     })
   }
 
-  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-    const msg = this.wsBusMsg
-    let data = ''
-    if (msg.data) { data = String.fromCharCode(...msg.data) }
-    console.debug('MessageBus received "' + msg.type + '": "' + data + '"', msg)
-  }
+  // @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+  //   const msg = this.wsBusMsg
+  //   let data = ''
+  //   if (msg.data) { data = String.fromCharCode(...msg.data) }
+  //   console.debug('MessageBus received "' + msg.type + '": "' + data + '"', msg)
+  // }
 
   wsSubscribeChannel (channels: Array<string>) {
     console.log('subscribe channels ', channels)
@@ -162,6 +162,20 @@ const mbus = namespace('messagebus')
     message.data = utf8Encode.encode(msg)
     this.wsSend(message)
     console.log('send: ', message)
+  }
+
+  wsTerminalResize (rows: any, cols: any, terminal: any) {
+    if (this.bus === undefined) { return }
+
+    const message = this.wsCreateMsgTemplate()
+    message.type = 'terminal_resize_request'
+    message.channel = terminal.terminalChannel
+    message.terminal_id = terminal.terminalId
+    message.back_channel = terminal.terminalSessionChannel
+    message.rows = rows
+    message.cols = cols
+
+    this.wsSend(message)
   }
 
   wsCreateMsgTemplate (): any {
