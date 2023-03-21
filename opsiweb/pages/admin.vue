@@ -9,4 +9,3 @@ import { Component, Vue } from 'nuxt-property-decorator'
 export default class PAdmin extends Vue {
 }
 </script>
-
