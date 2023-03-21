@@ -299,8 +299,12 @@ export default class TProductsLocalboot extends Vue {
 
   async fetchWrapper () { await this.$fetch() }
   async fetch () {
-    const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
-    ref.hide()
+    try {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      if (ref) { ref.hide() }
+    } catch (e) {
+      console.warn('Couldnt find AlertBox for messagebusinfo')
+    }
     await this.$emit('fetch-products', this)
     // will trigger -> this.setItemsCache(items)
   }
