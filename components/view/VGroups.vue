@@ -72,7 +72,7 @@
                       <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('Subgroup ID')" :placeholder="$t('Subgroup ID')" />
                       <b-form-input v-model="subgroup.description" v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
                       <b-form-input v-model="subgroup.notes" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
-                      <b-button class="float-right" variant="success" @click="createSubGroup()">
+                      <b-button class="float-right" variant="success" @click="createSubGroup">
                         {{ $t("Create") }}
                       </b-button>
                     </b-form>
@@ -86,6 +86,7 @@
                     <br>
                     <div>
                       <treeselect
+                        v-model="updategroupparent"
                         v-b-tooltip.hover
                         :title="$t('Parent Group ID')"
                         :placeholder="$t('Parent Group ID')"
@@ -93,9 +94,9 @@
                         :options="group"
                         :normalizer="normalizer"
                       />
-                      <b-form-input v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
-                      <b-form-input v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
-                      <b-button class="float-right" variant="success">
+                      <b-form-input v-model="updategroup.description" v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
+                      <b-form-input v-model="updategroup.note" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
+                      <b-button class="float-right" variant="success" @click="updateGroup">
                         {{ $t("Update") }}
                       </b-button>
                     </div>
@@ -206,6 +207,14 @@ export default class VGroups extends Vue {
     notes: ''
   }
 
+  updategroupparent: any = null
+
+  updategroup: any = {
+    parent: '',
+    description: '',
+    notes: ''
+  }
+
   @selections.Getter public selectionDepots!: Array<string>
 
   normalizer (node: any) {
@@ -256,6 +265,16 @@ export default class VGroups extends Vue {
   async createSubGroup () {
     this.subgroup.parentGroupId = this.selectedvalue.id
     await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('ERROR:') as string + 'DepotClients', 'danger', detailedError)
+      })
+  }
+
+  async updateGroup () {
+    this.updategroup.parent = this.updategroupparent ? this.updategroupparent.id : ''
+    await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.id}`, this.updategroup)
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
