@@ -49,14 +49,14 @@
                     </template>
                     <br>
                     <b-form>
-                      <b-form-select v-b-tooltip.hover :title="$t('Select a Client')" :options="clientIds">
+                      <b-form-select v-model="selectedClients" v-b-tooltip.hover :title="$t('Select a Client')" multiple :options="clientIds">
                         <template #first>
                           <b-form-select-option :value="null" disabled>
-                            {{ $t('Select a Client') }}
+                            {{ $t('-- Select a Client --') }}
                           </b-form-select-option>
                         </template>
                       </b-form-select>
-                      <b-button class="float-right" variant="success">
+                      <b-button class="float-right" variant="success" @click="addClientsToSelectedGroup">
                         {{ $t("Add") }}
                       </b-button>
                     </b-form>
@@ -198,6 +198,7 @@ export default class VGroups extends Vue {
   group: Array<object> = []
   selectedvalue: any = null
   clientIds: Array<string> = []
+  selectedClients: Array<string> = []
   subgroup: any = {
     parentGroupId: '',
     groupId: '',
@@ -240,6 +241,15 @@ export default class VGroups extends Vue {
     await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
       .then((response) => {
         this.clientIds = response.sort()
+      })
+  }
+
+  async addClientsToSelectedGroup () {
+    await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.id}/clients`, this.selectedClients)
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('ERROR:') as string + 'DepotClients', 'danger', detailedError)
       })
   }
 
