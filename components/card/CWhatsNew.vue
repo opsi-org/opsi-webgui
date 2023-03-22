@@ -2,8 +2,8 @@
   <div v-if="!changelogs.includes('')" data-testid="CChangeLogs" :class="{loadingCursor: $fetchState.pending}">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <b-card
-      class="background text-color mt-3 mx-auto"
-      :style="$mq === 'mobile'? 'width:100%;' : 'max-width:500px;' "
+      :class="supportPage ? '' : 'bg-primary text-light mt-3 mx-auto'"
+      :style="$mq === 'mobile' || supportPage ? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
       <h5 class="text-center text-color">
         {{ $t('title.whatsnew') }}
@@ -19,10 +19,11 @@
   </div>
 </template>
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class CChangeLogs extends Vue {
+  @Prop({ default: false }) supportPage!: string
   $t: any
   $axios: any
   changelogs: any = ''

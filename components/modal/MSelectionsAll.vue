@@ -1,6 +1,7 @@
 <template>
   <div data-testid="MSelectionsAll">
     <b-button
+      data-testid="MSelectionsAllButton"
       variant="primary"
       class="mt-2 border-0 text-left"
       :class="{ 'pl-3': $mq=='mobile' }"
@@ -15,6 +16,7 @@
     <b-modal
       v-model="show"
       class="modalselection"
+      data-testid="MSelectionsModal"
       :title="$t('title.selectedElements')"
       centered
       scrollable

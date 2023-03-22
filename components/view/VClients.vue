@@ -4,7 +4,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <LazyBarBPageHeader
-          v-if="totalItems"
+          v-if="tableloaded"
           :title="$t('title.clients') + ' (' + totalItems + ')'"
           :tableid="id"
           :table-info.sync="tableInfo"
@@ -148,19 +148,20 @@
 import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import { Constants, MBus, Synchronization } from '../../mixins/uib-mixins'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { IObjectString2Boolean } from '~/.utils/types/tgeneral'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
 const config = namespace('config')
 interface DeleteClient {
   clientid: string
 }
 
-@Component({ mixins: [Constants, Synchronization] })
+@Component({ mixins: [MBus, Constants, Synchronization] })
 export default class VClients extends Vue {
   syncSort: any
   iconnames: any
+  wsBusMsg: any // mixin // store
   $axios: any
   $t: any
   $mq: any
@@ -177,6 +178,7 @@ export default class VClients extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
+  tableloaded: boolean = false
 
   deleteClient: DeleteClient = { clientid: '' }
   tableData: ITableData = {
@@ -258,6 +260,15 @@ export default class VClients extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
+  @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
+    const msg = this.wsBusMsg
+    if (msg && msg.channel === 'event:host_created') {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
+      await this.$fetch()
+    }
+  }
+
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.setSelectionClients([])
     this.fetchPageOne()
@@ -314,6 +325,7 @@ export default class VClients extends Vue {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
         this.isLoading = false
+        this.tableloaded = true
         if (response.data === null) {
           return []
         } else {

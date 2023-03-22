@@ -3,7 +3,7 @@
     <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
         <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? iconnames.arrowDoubleDown : iconnames.arrowDoubleRight" />
-        <span v-if="title" class="labelcolor font-weight-bold">{{ title }}</span>
+        <span v-if="title" class="labelcolor font-weight-bold tableheader_title">{{ title }}</span>
         <span v-if="subtitle" class="labelcolor font-italic ml-1"> {{ subtitle }} </span>
       </div>
       <b-navbar-nav class="flex-wrap">
@@ -19,9 +19,9 @@
     <b-collapse v-if="navbartype == 'collapse' || $mq == 'mobile' && tableid" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
       <b-navbar class="mb-1 flex-wrap">
         <template v-if="tableid">
-          <TreeTSDepots v-if="tableid !== 'Depots'" class="tableheader_depots" />
-          <TreeTSHostGroups v-if="tableid !== 'Depots'" class="tableheader_hostgroup" />
-          <TreeTSProductGroups v-if="tableid == 'products'" class="tableheader_productgroup" />
+          <TreeTSDepots v-if="tableid !== 'Depots'" />
+          <TreeTSHostGroups v-if="tableid !== 'Depots'" />
+          <TreeTSProductGroups v-if="tableid == 'products'" />
         </template>
         <template v-if="$mq == 'mobile'">
           <InputIFilter class="header_filter" :data="tableInfo" />

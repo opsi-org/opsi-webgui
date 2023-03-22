@@ -1,14 +1,14 @@
 <template>
-  <div data-testid="VClientsLog" :class="{loadingCursor: $fetchState.pending}">
+  <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="logErrorAlert">
-      <b-button
-        v-if="!$fetchState.pending"
+      <!-- <b-button
+        v-if="!isLoading"
         variant="outline-dark"
         class="float-right"
         @click="$fetch"
       >
         {{ $t('button.tryAgain') }}
-      </b-button>
+      </b-button> -->
     </AlertAAlert>
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
@@ -27,7 +27,7 @@
         />
       </template>
     </BarBPageHeader>
-    <OverlayOLoading :is-loading="$fetchState.pending" />
+    <OverlayOLoading :is-loading="isLoading" />
     <p v-if="errorText" />
     <DivDScrollResult v-if="logResult">
       <div v-if="filteredLog.includes('')">
@@ -74,18 +74,18 @@ export default class VClientLog extends Vue {
   logtype: string = 'instlog'
   loglevel: number = 5
   logResult: Array<string> = []
+  isLoading: boolean = false
   filteredLog: Array<string> = []
   filterQuery: string = ''
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   errorText: string = ''
-  $fetch: any
 
-  @Watch('logtype', { deep: true }) logtypeChanged () { this.$fetch() }
-  @Watch('id', { deep: true }) idChanged () { this.$fetch() }
+  @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
+  @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
 
-  async fetch () {
-    if (this.logtype && this.id) { await this.getLog(this.id, this.logtype) }
+  beforeMount () {
+    if (this.logtype && this.id) { this.getLog(this.id, this.logtype) }
   }
 
   filterLog () {
@@ -106,6 +106,7 @@ export default class VClientLog extends Vue {
   }
 
   async getLog (id: string, logtype: string) {
+    this.isLoading = true
     this.logrequest.selectedClient = id
     this.logrequest.selectedLogType = logtype
     const params = this.logrequest
@@ -119,6 +120,7 @@ export default class VClientLog extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Log', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
+    this.isLoading = false
   }
 }
 </script>

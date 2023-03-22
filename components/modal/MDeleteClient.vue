@@ -25,11 +25,13 @@
     <b-modal
       :id="'event-modal-delete-' + clientId"
       :title="$t('title.deleteClient')"
+      data-testid="MDeleteClientModal"
       centered
       scrollable
       hide-footer
       hide-title
       no-fade
+      no-stacking
     >
       <AlertAAlert ref="deleteClientAlert" />
       <span class="confirm"> {{ $t('message.confirm.deleteClient', { client: clientId }) }} </span>

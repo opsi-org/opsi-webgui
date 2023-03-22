@@ -9,8 +9,26 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: '<TableCellTCActionResult v-bind="args" />'
 })
 
-// named export Primary to create respective story
-export const TCActionResult = PrimaryTemplate.bind({})
-TCActionResult.args = {
-  text: 'sample action result'
+export const TCActionResultUnknown = PrimaryTemplate.bind({})
+TCActionResultUnknown.args = {
+  text: 'unknown',
+  variant: 'warning'
 }
+
+export const TCActionResultInstalled = PrimaryTemplate.bind({})
+TCActionResultInstalled.args = {
+  text: 'installed',
+  variant: 'success'
+}
+
+// export const TCActionResultSuccess = PrimaryTemplate.bind({})
+// TCActionResultSuccess.args = {
+//   text: 'successful',
+//   variant: 'success'
+// }
+
+// export const TCActionResultFailed = PrimaryTemplate.bind({})
+// TCActionResultFailed.args = {
+//   text: 'failed',
+//   variant: 'danger'
+// }

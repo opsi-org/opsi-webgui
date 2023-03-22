@@ -4,7 +4,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
         <LazyBarBPageHeader
-          v-if="localboot"
+          v-if="tableloaded"
           :title="$t('title.products')"
           :tableid="id"
           :table-info.sync="tableInfo"
@@ -94,6 +94,7 @@ export default class VProducts extends Vue {
   localboot: string = ''
   netboot: string = ''
   totalnetboot: number = 0
+  tableloaded: boolean = false
 
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
@@ -138,7 +139,7 @@ export default class VProducts extends Vue {
     // },
     version: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : true
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : false
     },
     actionProgress: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', sortable: true,
@@ -166,9 +167,9 @@ export default class VProducts extends Vue {
     if (this.secondColumnOpened && !this.child) {
       this.$router.push('/products/')
     }
-    if (!this.tableInfo.sortBy) {
-      this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
-    }
+    // if (!this.tableInfo.sortBy) {
+    //   this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
+    // }
     this.updateColumnVisibility()
   }
 
@@ -275,6 +276,7 @@ export default class VProducts extends Vue {
           thiss.items = response.data || []
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
           const items = response.data || []
+          this.tableloaded = true
           return items
         }).catch((error) => {
           // eslint-disable-next-line no-console

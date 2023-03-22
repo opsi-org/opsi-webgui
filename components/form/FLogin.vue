@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: Read changelogs from tag and add it to changelog.md. Frontend is ready with a What's new view added to login and support page.  -->
   <div>
     <OverlayOLoading :is-loading="isLoading" />
     <b-card

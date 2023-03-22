@@ -39,7 +39,7 @@
             id="notes"
             v-model="hostAttr.notes"
             :aria-label="$t('table.fields.notes')"
-            rows="3"
+            rows="1"
             max-rows="3"
             no-resize
           />
@@ -116,6 +116,15 @@
           <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
+      <!-- v-if="hostAttr.systemUUID" -->
+      <GridGFormItem>
+        <template #label>
+          <span class="smbiosuuid">{{ $t('table.fields.smbiosuuid') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="smbiosuuid" v-model="hostAttr.systemUUID" :aria-label="$t('table.fields.smbiosuuid')" type="text" readonly />
+        </template>
+      </GridGFormItem>
       <template v-if="type !== 'clients'">
         <GridGFormItem>
           <template #label>
@@ -186,7 +195,7 @@
             <span class="isMasterDepot">{{ $t('table.fields.isMasterDepot') }}</span>
           </template>
           <template #value>
-            <b-form-input id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
+            <b-form-checkbox id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -198,7 +207,7 @@
           </template>
         </GridGFormItem>
       </template>
-      <div v-if="hostAttr.type !== 'OpsiDepotserver' && config.read_only == false" class="float-right mt-2">
+      <div v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" class="float-right mt-2">
         <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
           <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
         </b-button>
@@ -261,9 +270,9 @@ export default class FHostAttributes extends Vue {
   }
 
   date (value:any) {
-    if (value !== '') {
+    if (value !== '' || value !== undefined) {
       return new Date(value).toString()
-    } else { return value }
+    } else { return '' }
   }
 
   async update (attr, endPoint) {
@@ -286,6 +295,7 @@ export default class FHostAttributes extends Vue {
     delete attr.type
     delete attr.created
     delete attr.lastSeen
+    delete attr.systemUUID
     if (this.type === 'clients') {
       this.setUEFI(this.hostAttr.hostId)
     }
