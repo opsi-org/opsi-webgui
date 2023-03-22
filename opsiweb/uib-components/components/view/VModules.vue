@@ -1,0 +1,45 @@
+<template>
+  <div data-testid="VModules" :class="{loadingCursor: $fetchState.pending}">
+    <AlertAAlert ref="modulesAlert" />
+    <OverlayOLoading :is-loading="$fetchState.pending" />
+    <LazyGridGFormItem v-if="!errorText" v-once label-id="modules">
+      <template #label>
+        <span class="modules">{{ $t('form.modules.available') }}</span>
+      </template>
+      <template #value>
+        <b-form-textarea
+          id="modules-list"
+          rows="3"
+          :label="$t('settingsPage.modules.available')"
+          max-rows="30"
+          no-resize
+          plaintext
+          :value="Object.values(modules).join('\n')"
+        />
+      </template>
+    </LazyGridGFormItem>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Vue } from 'nuxt-property-decorator'
+@Component
+export default class VModules extends Vue {
+  $axios: any
+  $t:any
+  modules: object = {}
+  errorText: string = ''
+
+  async fetch () {
+    await this.$axios.$get('/api/opsidata/modulesContent')
+      .then((response) => {
+        this.modules = response.result
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.modulesAlert as any)
+        ref.alert(this.$t('message.error.fetch') as string + 'Modules', 'danger', detailedError)
+        this.errorText = this.$t('message.error.defaulttext') as string
+      })
+  }
+}
+</script>

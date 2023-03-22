@@ -1,0 +1,79 @@
+<template>
+  <div>
+    <b-nav-item-dropdown
+      id="language"
+      data-testid="DropdownDDLang"
+      alt="select theme"
+      :aria-label="$t('button.lang.tooltip')"
+      :title="$t('button.lang.tooltip')"
+      class="px-2 btn btn-primary text-left"
+      :class="{'pt-0 pb-0 pl-3 w-100': $mq=='mobile'}"
+      variant="primary"
+      :dropup="dropup"
+    >
+      <template #button-content>
+        <span style="color:white; text-transform:uppercase;"> <b-icon :icon="iconnames.language" /> {{ language }} </span>
+      </template>
+      <b-dropdown-item
+        v-for="(lang, i) in languages"
+        :key="i"
+        :class="{ selected: lang==language }"
+        :data-testid="`DropdownDDLang-Item-${lang}`"
+        @click="changeLanguage(lang)"
+      >
+        <span style="text-transform:uppercase;"> {{ lang }} </span>
+      </b-dropdown-item>
+    </b-nav-item-dropdown>
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
+import { Constants } from '../../mixins/uib-mixins'
+const settings = namespace('settings')
+
+@Component({ mixins: [Constants] })
+export default class DDLang extends Vue {
+  iconnames:any
+  $i18n:any
+  $mq:any
+
+  @Prop({ default: false }) dropup!: boolean
+
+  languages: Array<string> = []
+
+  @settings.Getter public language!: string
+  @settings.Mutation public setLanguage!: (lang: string) => void
+
+  beforeMount () {
+    if (this.language) {
+      this.$i18n.locale = this.language
+    }
+  }
+
+  mounted () {
+    this.languages = Object.keys(this.$i18n.messages)
+  }
+
+  changeLanguage (lang : string) {
+    this.setLanguage(lang)
+    this.$i18n.locale = lang
+  }
+}
+</script>
+
+<style>
+
+#language .dropdown-toggle::after{
+  display:none;
+}
+#language .selected,
+#language .selected > a.dropdown-item,
+#language .selected:hover {
+  color: var(--light) !important;
+  background-color: var(--primary) !important;
+}
+#language .selected > a.dropdown-item:hover {
+  background-color: var(--primary-dark) !important;
+}
+</style>

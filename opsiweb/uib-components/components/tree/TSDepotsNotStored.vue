@@ -1,0 +1,47 @@
+<template>
+  <div data-testid="TSDepotsNotStored">
+    <treeselect
+      v-if="depotIds"
+      v-model="idselection"
+      :class="cssclass"
+      class="treeselect_notstored"
+      :options="depotIds"
+      :placeholder="$t('form.depot')"
+      :always-open="false"
+      @input="$emit('update:id', idselection)"
+    />
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+const selections = namespace('selections')
+
+@Component
+export default class TSDepotsNotStored extends Vue {
+  $axios: any
+  @Prop({ }) cssclass!: string
+
+  depotIds: Array<object> = []
+  idselection: string = ''
+  @selections.Getter public selectionDepots!: Array<string>
+
+  async fetch () {
+    const depots: Array<object> = []
+    // TODO : backend --> return depots data as list of { id: depotID, label: depotID } for treeselect component
+    const result = (await this.$axios.$get('/api/opsidata/depot_ids')).sort()
+    for (const d in result) {
+      const depot = result[d]
+      depots[d] = { id: depot, label: depot }
+      // depots.push({ id: depot, label: depot })
+    }
+    this.depotIds = depots
+    if (this.selectionDepots.length !== 0) {
+      this.idselection = this.selectionDepots[0]
+    } else {
+      this.idselection = result[0]
+    }
+    this.$emit('update:id', this.idselection)
+  }
+}
+</script>

@@ -1,0 +1,223 @@
+image: node:17
+stages:
+  - init
+  - test
+  - cleanup
+
+
+.get_changed_files: &get_changed_files |
+  git fetch
+  changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
+  # echo "$changedFiles"
+  basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
+  basenamesWithSlash=""
+  for val in $basenames; do basenamesWithSlash+="/$val "; done
+  testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' ')
+  # echo "$basenames"
+  # todo checking if each file in testfilesUnique exists
+  echo "$testfilesUnique"
+
+#################################################################################### cache
+# .dependencies_cache_develop:
+# cache: &dependencies_cache_develop
+#   key: devel-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
+#   untracked: true
+#   paths:
+#     - package-lock.json
+#     - node_modules
+#   policy: pull
+# # .dependencies_cache_productive:
+# cache: &dependencies_cache_productive
+#   key: productive-$CI_COMMIT_REF_SLUG-CI_PIPELINE_ID
+#   untracked: true
+#   paths:
+#     - test.txt
+#   policy: pull
+
+#################################################################################### cleanup
+# cleanup:cache:devel:
+#   stage: cleanup
+#   when: always
+#   cache:
+#     <<: *dependencies_cache_develop  # inherit all global cache settings
+#     policy: pull-push # override the policy
+#   script:
+#     - echo "Cleaning up"
+#     - rm -rf package-lock.json
+#     - rm -rf node_modules
+#   tags:
+#     - test-anna
+# cleanup:cache:productive:
+#   stage: cleanup
+#   when: always
+#   cache:
+#     <<: *dependencies_cache_productive  # inherit all global cache settings
+#     policy: pull-push # override the policy
+#   script:
+#     - echo "Cleaning up"
+#     - rm -rf test.txt
+#   tags:
+#     - test-anna
+
+#################################################################################### init
+# init:npm:prod:
+#   image: mcr.microsoft.com/playwright:v1.15.2-focal
+#   stage: init
+#   cache:
+#     <<: *dependencies_cache_productive  # inherit all global cache settings
+#     policy: pull-push # override the policy
+#   script: |
+#     echo "test" >> test.txt
+#     cat test.txt
+#   tags:
+#     - test-anna
+
+init:npm:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: init
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
+  #   policy: pull-push # override the policy
+  script: |
+    echo "[script.sh] install dependencies..."
+    npm run libclean
+    npm run libbuild
+    npm i -D @playwright/test
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 day
+  # tags:
+  #   - test-anna
+
+
+#################################################################################### test
+# test:file-prod:
+#   stage: test
+#   cache:
+#     <<: *dependencies_cache_productive  # inherit all global cache settings
+#   dependencies:
+#     - init:npm:prod
+#   script:
+#     - ls -lah
+#     - cat test.txt
+#   # tags:
+#   #   - test-anna
+
+test:lint:
+  stage: test
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
+  dependencies:
+    - init:npm
+  script:
+    - ls -lah
+    - ls -lah node_modules
+    - npm run liblint
+  # tags:
+  #   - test-anna
+
+test:unit:
+  stage: test
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
+  dependencies:
+    - init:npm
+  script:
+    # -curl -o ./node_modules/ -H "PRIVATE-TOKEN:$TOKEN" https://gitlab.uib.gmbh/uib/opsiweb-ui-components/-/jobs/artifacts/$BRANCH/raw/artifact1?job=vue-job1
+    - ls -lah
+    - ls -lah node_modules
+    - npm run libtest:unit
+  coverage: /All files\s*\|\s*([\d\.]+)/
+  allow_failure: true
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/clover.xmlci
+  # tags:
+  #   - test-anna
+
+
+test:components:changed:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
+  dependencies:
+    - init:npm
+  except:
+    - develop
+  script:
+    - *get_changed_files
+    - echo "$testfilesUnique"
+    - npx playwright install
+    - npx playwright install-deps
+
+    - PORT=8888 nohup npm run libdev > .dev.log &
+    - PORT=3003 nohup npm run libstory > .storybook.log &
+    - sleep 60
+    - npm run libtest:component '$testfilesUnique' || exit_code=$?
+    - npm run libtest:delete-empty-results
+    - exit $exit_code
+  # allow_failure: true
+  artifacts:
+    name: 'opsi-ui-components-test-result-components'
+    when: on_failure
+    paths:
+      - test-results/
+      - .storybook.log
+      - .dev.log
+    expire_in: 2 day
+  # tags:
+  #   - test-anna
+
+test:components:all:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  # cache:
+  #   <<: *dependencies_cache_develop  # inherit all global cache settings
+  dependencies:
+    - init:npm
+  only:
+    - develop
+  script:
+    - npx playwright install
+    - npx playwright install-deps
+
+    - PORT=8888 nohup npm run libdev > .dev.log &
+    - PORT=3003 nohup npm run libstory > .storybook.log &
+    - sleep 60
+    - npm run libtest:component || exit_code=$?
+    - npm run libtest:delete-empty-results
+    - exit $exit_code
+  # allow_failure: true
+  artifacts:
+    name: 'opsi-ui-components-test-result-components'
+    when: on_failure
+    paths:
+      - test-results/
+      - .storybook.log
+      - .dev.log
+    expire_in: 2 day
+  # tags:
+  #   - test-anna
+# test:test-usecase:
+#   stage: test
+#   cache:
+#     <<: *dependencies_cache_develop  # inherit all global cache settings
+#   dependencies:
+#     - init:npm
+#   script:
+#     - npx playwright install
+#     - PORT=8888 nohup npm run libdev &
+#     - sleep 20
+#     - echo $PLAYWRIGHT_BROWSERS_PATH
+#     - npm run libtest:usecase
+#   allow_failure: true
+#   artifacts:
+#     name: 'opsi-webgui-test-result-usecase'
+#     when: on_failure
+#     paths:
+#       - test-results/
+#     expire_in: 2 day
