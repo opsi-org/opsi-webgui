@@ -18,6 +18,9 @@
           :state="checkValid"
           required
         />
+        <b-form-invalid-feedback :state="checkValid">
+          <span v-if="clientIds.includes(clientName + domainName)"> {{ $t('message.formvalid.clientExists') }} </span>
+        </b-form-invalid-feedback>
       </template>
       <template #valueMore>
         <b-form-input
@@ -129,14 +132,14 @@
         </b-form>
       </template>
     </GridGFormItem>
-    <DivDComponentGroup class="float-right">
+    <div class="float-right mt-2">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
         <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
       </b-button>
       <b-button id="addButton" class="addButton" variant="success" :disabled="!clientName" @click="createOpsiClient()">
         <b-icon :icon="iconnames.add" /> {{ $t('button.create') }}
       </b-button>
-    </DivDComponentGroup>
+    </div>
   </div>
 </template>
 
@@ -329,6 +332,5 @@ export default class VClientCreation extends Vue {
 .VClientCreation {
   overflow-x: hidden;
   padding-left: 10px;
-  height: 100vh !important;
 }
 </style>

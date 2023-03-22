@@ -1,5 +1,5 @@
 export default {
-  title: 'Grid/G Host Parameter',
+  title: 'Grid/G Host Param',
   parameters: { docs: { description: { component: 'Grid for Host Parameters' } } }
 }
 

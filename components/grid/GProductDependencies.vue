@@ -9,7 +9,7 @@
           {{ getValue(item) }}
         </template>
         <template #valueMore>
-          {{ getType(item.requirementType, item.productAction) }}
+          <span class="reqType"> {{ getType(item.requirementType, item.productAction) }} </span>
         </template>
       </GridGFormItem>
     </span>

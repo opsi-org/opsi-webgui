@@ -29,13 +29,13 @@
           </b-collapse>
         </div>
       </DivDScrollResult>
-      <DivDComponentGroup class="float-right">
+      <div class="float-right mt-2">
         <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
         <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
           <b-icon :icon="iconnames.save" />
           <span class="saveall">{{ $t('button.saveall') }}</span>
         </b-button>
-      </DivDComponentGroup>
+      </div>
     </div>
     <div v-else>
       {{ $t('empty') }}

@@ -58,7 +58,7 @@
         </b-form>
       </div>
     </b-card>
-    <CardCWhatsNew />
+    <!-- <CardCWhatsNew /> -->
   </div>
 </template>
 

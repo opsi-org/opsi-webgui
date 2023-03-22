@@ -2,7 +2,7 @@
   <b-button
     v-b-tooltip.hover
     data-testid="BTNRefetch"
-    :title="tooltip? tooltip : ''"
+    :title="tooltip && !label ? tooltip : ''"
     :variant="(tooltip || incontextmenu !== false )? 'outline-primary border-0' : 'outline-dark'"
     class="BTNRefetch btn-sm"
     :class="{
@@ -17,7 +17,7 @@
       <small style="font-size: 85%;">{{ label }}</small>
     </template>
     <div v-else-if="!tooltip">
-      {{ $t('button.tryAgain') }}
+      <span class="refreshlabel"> {{ $t('button.tryAgain') }} </span>
     </div>
   </b-button>
 </template>

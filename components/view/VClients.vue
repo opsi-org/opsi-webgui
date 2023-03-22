@@ -3,24 +3,30 @@
     <AlertAAlert ref="clientsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
-        <BarBCollapsePageHeader
-          :id="id"
-          :title="$t('title.clients')+ ' (' + totalItems + ')'"
-          :row-id="rowId"
-          :collapsed="$mq=='mobile' || secondColumnOpened"
-          :collapseable="true"
-          :is-child-layout="secondColumnOpened"
+        <LazyBarBPageHeader
+          v-if="tableloaded"
+          :title="$t('title.clients') + ' (' + totalItems + ')'"
+          :tableid="id"
+          :table-info.sync="tableInfo"
           :is-loading-parent="isLoading"
           :fetch="$fetch"
-          :enable-ondemand="true"
-          :enable-depots="true"
-          :enable-clients="true"
-          :table-info.sync="tableInfo"
-          :enable-show-products="true"
-          :redirect="routeRedirectWith"
-        />
-        <LazyTableTInfiniteScrollSmooth
-          v-if="items"
+          navbartype="collapse"
+          :childopened="secondColumnOpened"
+        >
+          <template #right>
+            <ButtonBTNRowLinkTo
+              :title="secondColumnOpened || $mq=='mobile'? $t('button.show.products'): ''"
+              :label="secondColumnOpened?'': $t('title.products')"
+              :icon="iconnames.product"
+              to="/clients/products"
+              ident="dummy"
+              class="tableheader_products"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+          </template>
+        </LazyBarBPageHeader>
+        <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -61,20 +67,8 @@
             />
           </template>
           <template #contextcontent-general-1>
-            <DropdownDDTableSorting
-              :table-id="id"
-              :incontextmenu="true"
-              onhover
-              v-bind.sync="tableInfo"
-            />
-            <DropdownDDTableColumnVisibility
-              :table-id="id"
-              :headers.sync="tableInfo.headerData"
-              :sort-by="tableInfo.sortBy"
-              :multi="true"
-              :incontextmenu="true"
-              onhover
-            />
+            <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
+            <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
             <ButtonBTNRefetch
               :is-loading="isLoading"
               :tooltip="$t('button.refresh', {id: id})"
@@ -122,7 +116,6 @@
               to="/clients/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
-              :style="($route.path.includes('config')) ? 'background-color: var(--primary)': ''"
               :click="routeRedirectWith"
             />
             <ButtonBTNRowLinkTo
@@ -130,7 +123,6 @@
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log'):''"
               :icon="iconnames.log"
               to="/clients/log"
-              :style="($route.path.includes('log')) ? 'background-color: var(--primary)': ''"
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
@@ -143,7 +135,7 @@
           >
             <slot :name="slotName" v-bind="slotScope" />
           </template>
-        </LazyTableTInfiniteScrollSmooth>
+        </TableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -156,19 +148,20 @@
 import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import { Constants, MBus, Synchronization } from '../../mixins/uib-mixins'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { IObjectString2Boolean } from '~/.utils/types/tgeneral'
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
 const config = namespace('config')
 interface DeleteClient {
   clientid: string
 }
 
-@Component({ mixins: [Constants, Synchronization] })
+@Component({ mixins: [MBus, Constants, Synchronization] })
 export default class VClients extends Vue {
   syncSort: any
   iconnames: any
+  wsBusMsg: any // mixin // store
   $axios: any
   $t: any
   $mq: any
@@ -185,6 +178,7 @@ export default class VClients extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
+  tableloaded: boolean = false
 
   deleteClient: DeleteClient = { clientid: '' }
   tableData: ITableData = {
@@ -199,9 +193,9 @@ export default class VClients extends Vue {
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true,
-      class: 'mobileVisibleOnlySelection'
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
     },
+    // class: 'mobileVisibleOnlySelection'
     clientId: { // eslint-disaconfigble-next-line object-property-newline
       label: this.$t('table.fields.id') as string,
       key: 'clientId',
@@ -245,7 +239,7 @@ export default class VClients extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
@@ -266,13 +260,18 @@ export default class VClients extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
 
+  @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
+    const msg = this.wsBusMsg
+    if (msg && msg.channel === 'event:host_created') {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
+      await this.$fetch()
+    }
+  }
+
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.setSelectionClients([])
     this.fetchPageOne()
-  }
-
-  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
-    this.tableData.sortBy = 'selected'
   }
 
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
@@ -326,6 +325,7 @@ export default class VClients extends Vue {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
         this.isLoading = false
+        this.tableloaded = true
         if (response.data === null) {
           return []
         } else {

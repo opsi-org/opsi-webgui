@@ -1,27 +1,30 @@
 <template>
   <div data-testid="GHostParam">
-    <OverlayOLoading :is-loading="isLoading" />
+    <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
     <AlertAAlert ref="hostParamErrorAlert">
-      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+      <ButtonBTNRefetch :is-loading="(isLoading || $fetchState.pending)" :refetch="$fetch" />
     </AlertAAlert>
-    <LazyInputIFilterTChanges v-if="hostParam" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
-    <LazyDivDScrollResult v-if="hostParam">
-      <span v-for="v,k in hostParam" :key="k">
+    <LazyInputIFilterTChanges v-if="hostParam.value" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
+    <LazyDivDScrollResult v-if="hostParam.value" :key="hostParam.id">
+      <span v-for="v,k in hostParam.value" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
-          <span v-for="item in v" :key="item.configId" :class="{ 'd-none': !item.configId.includes(filter) }">
+          <span v-for="item,index in v" :key="index" :class="{ 'd-none': !item.configId.includes(filter) }">
             <GridGFormItem variant="longlabel">
               <template #label>
                 {{ item.configId }}
               </template>
               <template #value>
-                <GridCellGCHostParam :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
+                <GridCellGCHostParamValue :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
               </template>
             </GridGFormItem>
           </span>
         </b-collapse>
       </span>
     </LazyDivDScrollResult>
+    <DivDScrollResult v-else>
+      {{ $t('empty') }}
+    </DivDScrollResult>
   </div>
 </template>
 
@@ -68,17 +71,15 @@ export default class GHostParam extends Vue {
   }
 
   async fetchHostParameters (endpoint) {
-    this.isLoading = true
     await this.$axios.$get(endpoint)
       .then((response) => {
-        this.hostParam = response
+        this.hostParam = { id: this.id, value: response }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.hostParamErrorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Host Parameters', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
-    this.isLoading = false
   }
 
   trackHostParameters (change) {

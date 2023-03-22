@@ -4,25 +4,15 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
         <!-- v-if="$mq == 'mobile'" -->
-        <BarBCollapsePageHeader
-          :id="id"
-          :title="$t('title.depots') + ' (' + totalItems + ')' || 'Servers' + ' (' + totalItems + ')'"
-          :row-id="rowId"
-          :collapsed="$mq=='mobile'"
-          :collapseable="false"
-          :enable-depots="false"
-          :enable-clients="false"
-          :enable-products="false"
+        <LazyBarBPageHeader
+          v-if="tableloaded"
+          :title="$t('title.depots') + ' (' + totalItems + ')'"
+          :tableid="id"
+          :table-info.sync="tableInfo"
           :is-loading-parent="isLoading"
           :fetch="$fetch"
-          :enable-show-products="false"
-          :enable-show-changes="false"
-          :table-info.sync="tableInfo"
-          :redirect-on-close-to="undefined"
-          :redirect="undefined"
         />
-        <LazyTableTInfiniteScrollSmooth
-          v-if="items"
+        <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -50,28 +40,28 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
+            <!-- <ButtonBTNRowLinkTo
+              v-if="itemkey==opsiconfigserver"
+              :title="$t('title.healthcheck')"
+              :label="$t('title.healthcheck')"
+              :icon="iconnames.healthcheck"
+              to="/depots/healthcheck"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            /> -->
           </template>
           <template #contextcontent-general-1>
-            <DropdownDDTableSorting
-              :table-id="id"
-              :incontextmenu="true"
-              v-bind.sync="tableInfo"
-              onhover
-            />
-            <DropdownDDTableColumnVisibility
-              :table-id="id"
-              :headers.sync="tableInfo.headerData"
-              :sort-by="tableInfo.sortBy"
-              :multi="true"
-              :incontextmenu="true"
-              onhover
-            />
+            <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
+            <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
             <ButtonBTNRefetch
               :is-loading="isLoading"
               :tooltip="$t('button.refresh', {id: id})"
               :label="$t('button.refresh', {id: ''})"
               incontextmenu
-              :refetch="_fetch" />
+              :refetch="_fetch"
+            />
           </template>
           <template #head(depotId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
@@ -92,8 +82,18 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+            <!-- <ButtonBTNRowLinkTo
+              v-if="row.item.ident==opsiconfigserver"
+              :title="$t('title.healthcheck')"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.healthcheck'):''"
+              :icon="iconnames.healthcheck"
+              to="/depots/healthcheck"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            /> -->
           </template>
-        </LazyTableTInfiniteScrollSmooth>
+        </TableTInfiniteScrollSmooth>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -106,9 +106,9 @@
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import { IObjectString2String } from '../../.utils/types/tgeneral'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { IObjectString2String } from '~/.utils/types/tgeneral'
+import { Constants, Synchronization } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
@@ -130,6 +130,7 @@ export default class VDepots extends Vue {
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
+  tableloaded: boolean = false
   fetchedDataClients2Depots: IObjectString2String = {}
 
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
@@ -165,7 +166,7 @@ export default class VDepots extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ip') : false
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
@@ -245,6 +246,7 @@ export default class VDepots extends Vue {
       .then((response) => {
         this.totalItems = response.headers['x-total-count']
         this.totalpages = Math.ceil(this.totalItems / params.perPage)
+        this.tableloaded = true
         if (response.data === null) {
           this.isLoading = false
           return []
@@ -276,7 +278,7 @@ export default class VDepots extends Vue {
   }
 
   get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log')
+    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('healthcheck')
   }
 }
 </script>

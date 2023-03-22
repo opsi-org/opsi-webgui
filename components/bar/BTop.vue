@@ -21,7 +21,7 @@
         <span v-once class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
-      <BarBBreadcrumbRow v-if="$mq == 'desktop'" type="light" />
+      <BarBBreadcrumbRow v-if="$mq == 'desktop'" />
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
         <b-button variant="primary" class="h-100" :pressed.sync="rightmenuVisible">
@@ -44,8 +44,8 @@
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto float-right">
-          <ModalMSelectionsAll :navbar="true" />
-          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" />
+          <ModalMSelectionsAll :navbar="true" :with-text="$mq=='mobile'" />
+          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang v-once :navbar="true" />
           <DropdownDDTheme v-once :navbar="true" />
@@ -97,15 +97,12 @@ export default class BTop extends Vue {
 .mobile .topbar .navbar-brand{
   margin: auto;
 }
-
 .topbar::before {
   content: unset !important;
 }
-
 .topbar::after {
   content: unset !important;
 }
-
 .topbar_brand{
   max-height: var(--height-navbar) !important;
   display: inline-flex !important;
@@ -116,7 +113,6 @@ export default class BTop extends Vue {
   margin-left: -3px;
   margin-top: 7px;
 }
-
 .topbar_version{
   font-size: var(--text-small-size)!important;
 }
@@ -132,7 +128,6 @@ export default class BTop extends Vue {
   content: "";
   border: 1px solid var(--primary-dark);
 }
-
 .mobile #nav-collapse,
 .mobile #nav-collapse .navbar-nav {
   top:0px !important;

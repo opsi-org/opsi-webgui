@@ -28,5 +28,19 @@ const PrimaryTemplateLog = (_args, { argTypes }) => ({
   /></b-badge>`
 })
 
+const PrimaryTemplateProducts = (_args, { argTypes }) => ({
+  props: Object.keys(argTypes),
+  template: `<b-badge variant="transparent"><ButtonBTNRowLinkTo
+    title="title"
+    label="Products"
+    icon="box-seam"
+    to="#"
+    :ident="'ident'"
+    :pressed="() => {}"
+    :click-parent="() => {}"
+  /></b-badge>`
+})
+
 export const BTNRowLinkToConfig = PrimaryTemplateConfig.bind({})
 export const BTNRowLinkToLog = PrimaryTemplateLog.bind({})
+export const BTNRowLinkToProducts = PrimaryTemplateProducts.bind({})

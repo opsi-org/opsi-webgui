@@ -34,8 +34,8 @@
 
   --text-small-size: 10px;
 
-  --component-height: 35px;
-  --component-width: 200px;
+  --component-height: 36px;
+  --component-width: 250px;
 
   --max-height-window:500px;
   --height-navbar: 56px;
@@ -108,7 +108,7 @@ body .mobile .topbar_content .navbar > * {
   color: var(--orange) !important;
 }
 .width-max-content{
-    max-width: max-content !important;
+  max-width: max-content !important;
 }
 .footer_content .btn, .footer_content .navbar, .footer_content .navbar-brand, .footer_content .navbar-nav .nav-link, .footer_content .navbar-text,
 .topbar_content .btn, .topbar_content .navbar, .topbar_content .navbar-brand, .topbar_content .navbar-nav .nav-link, .topbar_content .navbar-text,
@@ -133,6 +133,11 @@ body .mobile .topbar_content .navbar > * {
   border-top: none !important;
   border-bottom: none !important;
   background-color: transparent !important;
+}
+
+.btn , .btn:hover {
+  color: var(--color);
+  background-color: transparent;
 }
 
 .btn-block {
@@ -226,7 +231,10 @@ body .mobile .topbar_content .navbar > * {
 .bg-secondary {
   background-color: var(--secondary) !important;
 }
-
+.bg-normal {
+  color:var(--color) !important;
+  background: var(--background) !important;
+}
 .text-primary {
   color:#ffffff !important;
   background: var(--primary) !important;
@@ -241,10 +249,6 @@ body .mobile .topbar_content .navbar > * {
 .text-danger {
   background: var(--danger) !important;
   color: #fff !important;
-}
-.text-warning {
-  color:#212121 !important;
-  background: var(--warning) !important;
 }
 .text-info {
   color:#ffffff !important;
@@ -262,6 +266,10 @@ body .mobile .topbar_content .navbar > * {
 }
 .text-muted {
   color: var(--log-muted, gray) !important;
+}
+.bg-warning {
+  color:#212121 !important;
+  background: var(--warning) !important;
 }
 .nav-link.disabled {
   color: var(--log-muted, gray) !important;
@@ -283,4 +291,65 @@ body .mobile .topbar_content .navbar > * {
   padding-left: 15px;
   margin-right: auto;
   margin-left: auto;
+}
+.custom-control {
+  height: var(--component-height) !important;
+}
+.treeselect_short{
+  max-width: var(--component-width) !important;
+}
+.treeselect_notstored .vue-treeselect__control {
+  /* height: 1.25rem !important; */
+  background-color: var(--component, var(--background, black));
+  color: var(--color, var(--light, white));
+  border:1px solid var(--border, #ced4da );
+}
+.treeselect_notstored .vue-treeselect__menu {
+  background-color: var(--component, var(--background, black));
+  color: var(--color, var(--light, white));
+}
+.treeselect_notstored .vue-treeselect__single-value {
+  color: var(--color, var(--light, white));
+}
+.treeselect_notstored .vue-treeselect__input {
+  color: var(--color) !important;
+}
+.treeselect_notstored .vue-treeselect__menu .vue-treeselect__option--highlight {
+  color: var(--color);
+  background-color: var(--hover);
+}
+.treeselect_notstored.vue-treeselect--single .vue-treeselect__option--selected{
+  color: var(--light);
+  background-color: var(--primary);
+}
+
+.labelcolor {
+  color: var(--color) !important;
+}
+
+.contextmenu .btn{
+  text-align: left;
+  padding-left: 0;
+  width: 100%;
+}
+.contextmenu .btn::after {
+  float: right;
+  margin-top: 10px;
+}
+.table-primary {
+  --bs-table-bg: var(--background);
+  --bs-table-striped-bg: var(--background);
+  --bs-table-striped-color: var(--color);
+  --bs-table-active-bg: var(--hover);
+  --bs-table-active-color: var(--color);
+  --bs-table-hover-bg: var(--hover);
+  --bs-table-hover-color: var(--color);
+  color: var(--color);
+  border-color: var(--border);
+}
+.hide {
+  display: none;
+}
+pre {
+  color: var(--color);
 }

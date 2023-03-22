@@ -10,8 +10,8 @@
     </GridGFormItem>
     <GridGFormItem v-once data-testid="quicksave">
       <template #label>
-        <ButtonBTNHelp id="savemode-help" />
         <span class="quicksave">{{ $t('form.quicksave') }}</span>
+        <ButtonBTNHelp id="savemode-help" />
         <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="grid" />
       </template>
       <template #value>

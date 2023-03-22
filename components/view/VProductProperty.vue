@@ -1,22 +1,13 @@
 <template>
   <div data-testid="VProductProperty">
     <AlertAAlert ref="productPropViewAlert">
-      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+      <ButtonBTNRefetch :is-loading="$fetchState.pending" :refetch="$fetch" />
     </AlertAAlert>
-    <BarBCollapsePageHeader
-      :id="id"
-      :title="$t('title.config')"
-      :subtitle="id"
-      :is-loading-parent="isLoading"
-      :fetch="$fetch"
-      noheader
-      :enable-show-changes="changesProducts.filter((o) => o.user === username).length != 0"
-      :redirect-on-close-to="(asChild)? closeroute: undefined"
-    />
-    <div class="VProductProperty-Card-Description">
+    <BarBPageHeader :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
+    <div class="mb-3">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
-    <b-tabs v-if="id" v-model="activeTab" class="horizontaltab" lazy>
+    <b-tabs v-if="id" v-model="activeTab" lazy>
       <div v-if="!$fetchState.pending && ($fetchState.error || activeTabSet < -1)">
         <p>
           {{ errorText.properties }}
@@ -26,14 +17,14 @@
       </div>
 
       <p v-if="$fetchState.pending">
-        <OverlayOLoading :is-loading="isLoading" />
+        <OverlayOLoading :is-loading="$fetchState.pending" />
       </p>
       <b-tab
         ref="VProductProperties_TabProperties"
         :disabled="tabPropertiesDisabled"
       >
         <template #title>
-          <span class="property"> {{ $t('title.properties') + ((!isLoading && tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'') }} </span>
+          <span class="property"> {{ $t('title.properties') + ((!$fetchState.pending && tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'') }} </span>
         </template>
         <br>
         <DivDScrollResult>
@@ -51,7 +42,7 @@
         :active="activeTab===1"
       >
         <template #title>
-          <span class="dependency"> {{ $t('title.dependencies') + ((!isLoading && tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'') }} </span>
+          <span class="dependency"> {{ $t('title.dependencies') + ((!$fetchState.pending && tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'') }} </span>
         </template>
         <br>
         <DivDScrollResult>
@@ -94,7 +85,6 @@ export default class VProductProperty extends Vue {
 
   activeTabSet: number = -1
   errorText: IErrorDepProp = { dependencies: '', properties: '' }
-  isLoading: boolean = true
   fetchedData: IFetchedData = {
     dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {} },
     properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {} }
@@ -125,7 +115,6 @@ export default class VProductProperty extends Vue {
   }
 
   async fetch () {
-    this.isLoading = true
     this.activeTabSet = -1
     this.fetchedData = {
       dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {} },
@@ -137,7 +126,6 @@ export default class VProductProperty extends Vue {
     await this.fetchDependencies()
 
     if (this.activeTabSet >= -1) { this.activeTabSet = -1 }
-    this.isLoading = false
   }
 
   async fetchProperties (refetch:boolean = false) {
@@ -176,13 +164,3 @@ export default class VProductProperty extends Vue {
   }
 }
 </script>
-
-<style>
-.horizontaltab .nav-item{
-  min-width: 20%;
-}
-.VProductProperty-Card-Description {
-  margin-bottom: 10px;
-  margin-left: 15px;
-}
-</style>

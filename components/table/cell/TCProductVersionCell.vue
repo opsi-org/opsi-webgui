@@ -39,9 +39,9 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { mapValues2Objects } from '../../../.utils/utils/smappings'
 import { IObjectString2String, IObjectString2ObjectString2String } from '../../../.utils/types/tgeneral'
 import { ITableRow, ITableRowItemProducts } from '../../../.utils/types/ttable'
+import { mapValues2Objects } from '../../../.utils/utils/smappings'
 const selections = namespace('selections')
 
 @Component

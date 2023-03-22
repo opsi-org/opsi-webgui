@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-alert v-if="changesProducts.filter(o => o.user === username).length>0 && !quicksave" show variant="danger">
+    <b-alert v-if="(changesProducts.filter(o => o.user === username).length>0 || changesHostParam.filter((o) => o.user === username).length>0 )&& !quicksave" show variant="danger">
       {{ $t('message.error.unsavedChanges') }}
     </b-alert>
     <b-form-checkbox
@@ -30,6 +30,7 @@ export default class CBQuickSave extends Vue {
   @settings.Mutation public setQuicksave!: (isQuicksave: boolean) => void
   @auth.Getter public username!: string
   @changes.Getter public changesProducts!: Array<ChangeObj>
+  @changes.Getter public changesHostParam!: Array<ChangeObj>
   $t: any
 
   beforeMount () {

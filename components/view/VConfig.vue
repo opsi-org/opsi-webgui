@@ -6,7 +6,7 @@
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
-    <b-tabs class="config_horizontaltabs" lazy>
+    <b-tabs lazy>
       <b-tab active>
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
@@ -37,8 +37,3 @@ export default class VConfig extends Vue {
   @cache.Getter public opsiconfigserver!: string
 }
 </script>
-<style>
-.config_horizontaltabs .nav-item{
-  min-width: 10%;
-}
-</style>

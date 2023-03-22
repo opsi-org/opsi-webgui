@@ -2,16 +2,16 @@
   <b-button
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
-    :class="{ ...classes, 'ButtonBTNRowLinkToBtn border-0 w-100 h-100 text-left': true, 'dropdown-item': incontextmenu !== false}"
-    :title="title"
+    :class="{'border-0 w-100 h-100 text-left': true, 'dropdown-item': incontextmenu}"
+    :title="label ? '' : title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
     :aria-label="title"
     @click="action"
   >
     <b-icon v-if="icon" :icon="icon" />
-    <template v-if="label && ($mq!=='mobile' || incontextmenu !== false)">
-      <small style="font-size: 85%;">{{ label }}</small>
+    <template v-if="label && ($mq!=='mobile' || incontextmenu)">
+      <small class="label" style="font-size: 85%;">{{ label }}</small>
     </template>
   </b-button>
 </template>
@@ -32,7 +32,6 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ default: 'title' }) title!: string
   @Prop({ default: '' }) icon!: string
   @Prop({ default: 'outline-primary' }) variant!: string
-  @Prop({ default: 'border-0' }) classes!: string
   $mq: any
 
   action () {

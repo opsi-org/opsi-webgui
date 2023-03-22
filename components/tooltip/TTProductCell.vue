@@ -1,6 +1,6 @@
 <template>
   <div data-testid="TTProductCell">
-    <b-tooltip :target="target" triggers="hover" :placement="placement">
+    <b-tooltip :target="target" class="productcell_tooltip" triggers="hover" :placement="placement">
       <TableTTooltipContent
         :target="target"
         :details="details"
@@ -35,7 +35,7 @@ export default class TTProductCell extends Vue {
 .tt-table th {
   background-color: transparent !important;
 }
-.tooltip-inner {
+.productcell_tooltip.tooltip-inner {
   max-width: inherit !important;
   max-height: 250px;
   overflow: auto;

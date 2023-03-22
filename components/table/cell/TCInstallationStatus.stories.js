@@ -9,8 +9,32 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: '<TableCellTCInstallationStatus v-bind="args" />'
 })
 
-// named export Primary to create respective story
-export const TCInstallationStatus = PrimaryTemplate.bind({})
-TCInstallationStatus.args = {
-  text: 'sample installation status'
+export const TCInstallationStatusUnknown = PrimaryTemplate.bind({})
+TCInstallationStatusUnknown.args = {
+  text: '≠',
+  variant: 'warning'
+}
+
+export const TCInstallationStatusInstalled = PrimaryTemplate.bind({})
+TCInstallationStatusInstalled.args = {
+  text: '≠',
+  variant: 'success'
+}
+
+export const TCInstallationStatusDanger = PrimaryTemplate.bind({})
+TCInstallationStatusDanger.args = {
+  text: '≠',
+  variant: 'danger'
+}
+
+export const TCActionResultSuccess = PrimaryTemplate.bind({})
+TCActionResultSuccess.args = {
+  text: 'successful',
+  variant: 'success'
+}
+
+export const TCActionResultFailed = PrimaryTemplate.bind({})
+TCActionResultFailed.args = {
+  text: 'failed',
+  variant: 'danger'
 }

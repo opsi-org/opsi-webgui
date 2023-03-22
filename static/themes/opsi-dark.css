@@ -445,7 +445,7 @@ kbd kbd {
 pre {
   display: block;
   font-size: 87.5%;
-  color: #212529;
+  /* color: #212529; */
 }
 pre code {
   font-size: inherit;
@@ -1485,7 +1485,7 @@ pre code {
   color: var(--color);
   background-color: var(--hover);
 }
-.table-primary,
+/* .table-primary,
 .table-primary > td,
 .table-primary > th {
   color: #fff;
@@ -1498,16 +1498,14 @@ pre code {
   border-color: #000;
 }
 .table-hover .table-primary:hover {
-  /* background-color: #a6c9db; */
   color: var(--color);
   background-color: var(--hover);
 }
 .table-hover .table-primary:hover > td,
 .table-hover .table-primary:hover > th {
-  /* background-color: #a6c9db; */
   color: var(--color);
   background-color: var(--hover);
-}
+} */
 .table-secondary,
 .table-secondary > td,
 .table-secondary > th {
@@ -1784,9 +1782,10 @@ pre code {
 }
 .form-control:disabled,
 .form-control[readonly] {
-  color: #ffffffb4;
+  opacity: 0.65;
+  /* color: #ffffffb4;
   background-color: #495057;
-  opacity: 1;
+  opacity: 1; */
 }
 input[type="date"].form-control,
 input[type="datetime-local"].form-control,
@@ -3133,6 +3132,9 @@ input[type="submit"].btn-block {
   line-height: 1.5;
   vertical-align: middle;
   color: #ffffffb4;
+  background: #fff
+    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
+    no-repeat right 0.75rem center/8px 10px;
   background-color: #495057;
   border: 1px solid #495057;
   border-radius: 0.25rem;

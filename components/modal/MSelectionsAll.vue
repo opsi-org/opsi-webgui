@@ -1,20 +1,22 @@
 <template>
   <div data-testid="MSelectionsAll">
     <b-button
+      data-testid="MSelectionsAllButton"
       variant="primary"
       class="mt-2 border-0 text-left"
       :class="{ 'pl-3': $mq=='mobile' }"
       size="md"
       tabindex="0"
-      :title="$t('title.selectedElements')"
+      :title="withText ? '' : $t('title.selectedElements')"
       @click="show = !show"
     >
-      <b-icon :icon="iconnames.info" />
+      <b-icon :icon="iconnames.info" /> <span v-if="withText"> {{ $t('title.selectedElements') }}</span>
     </b-button>
 
     <b-modal
       v-model="show"
       class="modalselection"
+      data-testid="MSelectionsModal"
       :title="$t('title.selectedElements')"
       centered
       scrollable
@@ -75,6 +77,7 @@ export default class MSelectionsAll extends Vue {
   @Prop({ default: true }) showDepots!: string
   @Prop({ default: true }) showClients!: string
   @Prop({ default: false }) showProducts!: string
+  @Prop({ default: false }) withText!: boolean
   iconnames:any
   $mq:any
 
@@ -83,19 +86,3 @@ export default class MSelectionsAll extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
 }
 </script>
-<style>
-.selection_badge {
-  margin-top: var(--min-line-height);
-  line-height: 1.5 !important;
-  width: 20px !important;
-  max-width: 20px !important;
-  height: 20px !important;
-  max-height: 20px !important;
-  min-height: 20px !important;
-  border: unset !important;
-  padding: 0px !important;
-  font-size: small !important;
-  background-color: inherit !important;
-  color: inherit !important;
-}
-</style>

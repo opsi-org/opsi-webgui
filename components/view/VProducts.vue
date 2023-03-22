@@ -3,29 +3,22 @@
     <AlertAAlert ref="productsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <BarBCollapsePageHeader
-          :id="id"
+        <LazyBarBPageHeader
+          v-if="tableloaded"
           :title="$t('title.products')"
-          :row-id="rowId"
-          :collapsed="$mq=='mobile' || secondColumnOpened"
-          :collapseable="true"
-          :is-child-layout="secondColumnOpened"
+          :tableid="id"
+          :table-info.sync="tableInfo"
           :is-loading-parent="isLoading"
-          :fetch="triggerFetch"
-          :enable-ondemand="true"
-          :enable-depots="!child || $mq=='mobile'"
-          :enable-clients="!child || $mq=='mobile'"
-          :enable-products="true"
-          :enable-show-products="false"
-          :table-info="tableInfo"
-          :redirect-on-close-to="(child)? '/clients/': undefined"
-          :redirect="routeRedirectWith"
+          :fetch="$fetch"
+          navbartype="collapse"
+          :childopened="secondColumnOpened"
+          :closeroute="(child)? '/clients/': null"
         />
         <b-tabs class="products_horizontaltabs" lazy>
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
-                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + parseInt(netboot)}) }}
+                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
               </b> </small>
             </template>
           </b-tab>
@@ -49,7 +42,7 @@
           </b-tab>
           <b-tab>
             <template #title>
-              <span class="netboot"> {{ $t('title.netboot') + ' (' + netboot + ')' }} </span>
+              <span class="netboot"> {{ $t('title.netboot') + ' (' + totalnetboot+ ')' }} </span>
             </template>
             <TableTProductsNetboot
               ref="ref-products-netboot"
@@ -86,9 +79,11 @@ export default class VProducts extends Vue {
   $route:any
   $router:any
   $t:any
+  $axios: any
   @Prop() child!: boolean
   @Prop({}) id!: string
   @Prop({}) sortby!: string
+  @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
@@ -98,6 +93,8 @@ export default class VProducts extends Vue {
   isLoading: boolean = false
   localboot: string = ''
   netboot: string = ''
+  totalnetboot: number = 0
+  tableloaded: boolean = false
 
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
@@ -142,7 +139,7 @@ export default class VProducts extends Vue {
     // },
     version: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : true
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : false
     },
     actionProgress: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', sortable: true,
@@ -153,7 +150,7 @@ export default class VProducts extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionRequest') : false
     },
     rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: false,
+      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
@@ -170,10 +167,14 @@ export default class VProducts extends Vue {
     if (this.secondColumnOpened && !this.child) {
       this.$router.push('/products/')
     }
-    if (!this.tableInfo.sortBy) {
-      this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
-    }
+    // if (!this.tableInfo.sortBy) {
+    //   this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
+    // }
     this.updateColumnVisibility()
+  }
+
+  async fetch () {
+    await this.getNetbootProductsCount()
   }
 
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
@@ -187,6 +188,16 @@ export default class VProducts extends Vue {
   routeRedirectWith (to: string, rowIdent: string) {
     this.rowId = rowIdent
     this.$router.push(to)
+  }
+
+  async getNetbootProductsCount () {
+    const params: any = {}
+    params.selectedDepots = JSON.stringify(this.selectionDepots)
+    params.type = 'NetbootProduct'
+    await this.$axios.$get('/api/opsidata/products/count', { params })
+      .then((response) => {
+        this.totalnetboot = response
+      })
   }
 
   updateColumnVisibility () {
@@ -265,6 +276,7 @@ export default class VProducts extends Vue {
           thiss.items = response.data || []
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
           const items = response.data || []
+          this.tableloaded = true
           return items
         }).catch((error) => {
           // eslint-disable-next-line no-console
@@ -287,9 +299,4 @@ export default class VProducts extends Vue {
 .products_horizontaltabs .nav-item{
   min-width: min-content;
 }
-.changeslink.btn-link {
-  font-weight: bold;
-  color: green;
-}
-
 </style>

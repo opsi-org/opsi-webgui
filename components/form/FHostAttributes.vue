@@ -1,11 +1,11 @@
 <template>
   <div data-testid="FHostAttributes" class="FHostAttributes">
-    <OverlayOLoading :is-loading="isLoading" />
+    <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
     <AlertAAlert ref="hostAttrErrorAlert" class="FHostAttributesAlert">
-      <ButtonBTNRefetch :is-loading="isLoading" :refetch="$fetch" />
+      <ButtonBTNRefetch :is-loading="(isLoading || $fetchState.pending)" :refetch="$fetch" />
     </AlertAAlert>
     <AlertAAlert ref="uefiAlert" />
-    <LazyDivDScrollResult v-if="hostAttr">
+    <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr.hostId">
       <GridGFormItem>
         <template #label>
           <span class="id">{{ $t('table.fields.id') }}</span>
@@ -39,7 +39,7 @@
             id="notes"
             v-model="hostAttr.notes"
             :aria-label="$t('table.fields.notes')"
-            rows="3"
+            rows="1"
             max-rows="3"
             no-resize
           />
@@ -116,6 +116,15 @@
           <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
+      <!-- v-if="hostAttr.systemUUID" -->
+      <GridGFormItem>
+        <template #label>
+          <span class="smbiosuuid">{{ $t('table.fields.smbiosuuid') }}</span>
+        </template>
+        <template #value>
+          <b-form-input id="smbiosuuid" v-model="hostAttr.systemUUID" :aria-label="$t('table.fields.smbiosuuid')" type="text" readonly />
+        </template>
+      </GridGFormItem>
       <template v-if="type !== 'clients'">
         <GridGFormItem>
           <template #label>
@@ -186,7 +195,7 @@
             <span class="isMasterDepot">{{ $t('table.fields.isMasterDepot') }}</span>
           </template>
           <template #value>
-            <b-form-input id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
+            <b-form-checkbox id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -198,23 +207,27 @@
           </template>
         </GridGFormItem>
       </template>
-      <LazyDivDComponentGroup v-if="hostAttr.type !== 'OpsiDepotserver'" class="float-right">
+      <div v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" class="float-right mt-2">
         <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
           <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
         </b-button>
         <b-button id="updateButton" class="updateButton" variant="success" @click="updateAttributes()">
           <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
         </b-button>
-      </LazyDivDComponentGroup>
+      </div>
     </LazyDivDScrollResult>
+    <DivDScrollResult v-else>
+      {{ $t('empty') }}
+    </DivDScrollResult>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
 import { SetUEFI } from '../../mixins/save'
-
+import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+const config = namespace('config-app')
 @Component({ mixins: [Constants, SetUEFI] })
 export default class FHostAttributes extends Vue {
   @Prop({ }) id!: string
@@ -228,6 +241,7 @@ export default class FHostAttributes extends Vue {
   $axios: any
   $t: any
   $fetch: any
+  @config.Getter public config!: IObjectString2Boolean
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
@@ -244,7 +258,6 @@ export default class FHostAttributes extends Vue {
   }
 
   async fetchAttributes (endPoint) {
-    this.isLoading = true
     await this.$axios.$get(endPoint)
       .then((response) => {
         this.hostAttr = response[0]
@@ -254,13 +267,12 @@ export default class FHostAttributes extends Vue {
         ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
-    this.isLoading = false
   }
 
   date (value:any) {
-    if (value !== '') {
+    if (value !== '' || value !== undefined) {
       return new Date(value).toString()
-    } else { return value }
+    } else { return '' }
   }
 
   async update (attr, endPoint) {
@@ -283,6 +295,7 @@ export default class FHostAttributes extends Vue {
     delete attr.type
     delete attr.created
     delete attr.lastSeen
+    delete attr.systemUUID
     if (this.type === 'clients') {
       this.setUEFI(this.hostAttr.hostId)
     }

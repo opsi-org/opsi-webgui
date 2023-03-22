@@ -1,149 +1,60 @@
 <template>
-  <div v-if="onhover!==false" @mouseover="onOver($refs.dropdown)" @mouseleave="onLeave($refs.dropdown)" @focusin="onOver($refs.dropdown)" @focusout="onLeave($refs.dropdown)">
+  <div
+    @mouseover="incontextmenu ? onOver($refs.columndropdown) : null"
+    @mouseleave="incontextmenu ? onLeave($refs.columndropdown) : null"
+    @focusin="incontextmenu ? onOver($refs.columndropdown) : null"
+    @focusout="incontextmenu ? onLeave($refs.columndropdown) : null"
+  >
     <b-dropdown
-      ref="dropdown"
+      ref="columndropdown"
       v-bind="$props"
-      data-testid="DropdownDDTableColumnVisibility"
-      lazy
-      dropright
-      :no-caret="incontextmenu == false"
-      :toggle-tag="incontextmenu !== false ? 'li': 'button'"
-      :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
       size="sm"
-      alt="Show column"
-      class="DDTableColumnVisibility fixed_column_selection noborder w-100 text-left"
-      :class="{ 'absolutright': (incontextmenu !== false) }"
-      :toggle-class="{
-        'DDTableColumnVisibilityBtn w-100 h-100 text-left': true,
-        'dropdown-item': (incontextmenu !== false) }"
-      :title="$t('table.showCol')"
+      data-testid="DropdownDDTableColumnVisibility"
+      :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
+      :no-caret="!incontextmenu"
+      :title="incontextmenu ? '' : $t('table.showCol')"
+      :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
+      :dropright="incontextmenu"
       @show="init"
     >
       <template #button-content>
         <IconITableColumn />
-        {{ incontextmenu !== false ? $t('button.showCol'): '' }}
+        <small v-if="incontextmenu">{{ $t('button.showCol') }}</small>
       </template>
-      <template v-if="!multiCondition">
-        <b-dropdown-form
-          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
-          :key="header.key"
-          class="dropdown-item"
-          :class="{
-            'selected':columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key),
-            disabled: header.disabled!=undefined&&header.disabled,
-          }"
-          variant="primary"
-          @click.prevent="setColumnVisibilityModel(header.key)"
-        >
-          <!-- :disabled="columnVisibilityStates[header.key]" -->
-          {{ header.label }}
-        </b-dropdown-form>
-      </template>
-      <template v-else>
-        <!-- id="selectableColumns-group"
-        name="selectableColumns" -->
-
+      <template v-if="multiCondition">
         <li
           v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
           :key="header.key"
           class="dropdown-item"
           :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
-        >
-          <a
-            class=""
-            @keydown.prevent="handleItem(header.key)"
-            @click.prevent="handleItem(header.key)"
-          >
-            <b-form-checkbox
-              :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
-              :class="{'selected':columnVisibilityStates[header.key]}"
-            />
-            <small>{{ header.label }}</small>
-          </a>
-        </li>
-        <!-- <b-dropdown-form
-          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
-          :key="header.key"
-          class="dropdown-item"
-          :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
+          :tabindex="incontextmenu ? undefined : 0"
+          @keydown.prevent="handleItem(header.key)"
           @click.prevent="handleItem(header.key)"
         >
-          <b-input-group>
+          <a class="columnWrapper">
             <b-form-checkbox
-              v-model="columnVisibilityList"
-              :name="header.label"
-              :value="header.key"
-              :class="{'selected':columnVisibilityStates[header.key]}"
-            />
-           B <small>{{ header.label }}</small>
-          </b-input-group>
-        </b-dropdown-form> -->
+              :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
+              :class="{'selectedColumn':columnVisibilityStates[header.key]}"
+            /> <small>{{ header.label }}</small>
+          </a>
+        </li>
+      </template>
+      <template v-else>
+        <b-dropdown-item
+          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
+          :key="header.key"
+          inline
+          :class="{
+            'selectedColumn':columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key),
+            disabled: header.disabled!=undefined&&header.disabled,
+          }"
+          @click.prevent="setColumnVisibilityModel(header.key)"
+        >
+          {{ header.label }}
+        </b-dropdown-item>
       </template>
     </b-dropdown>
   </div>
-  <b-dropdown
-    v-else
-    ref="dropdown"
-    v-bind="$props"
-    data-testid="DropdownDDTableColumnVisibility"
-    :dropright="$mq=='desktop' || incontextmenu !== false"
-    :dropleft="$mq!=='desktop' && incontextmenu === false"
-    lazy
-    :no-caret="incontextmenu == false"
-    :toggle-tag="incontextmenu !== false ? 'li': 'button'"
-    :variant="incontextmenu !== false ? 'outline-primary': 'outline-primary'"
-    size="sm"
-    alt="Show column"
-    class="DDTableColumnVisibility fixed_column_selection noborder w-100 text-left"
-    :class="{ 'absolutright': (incontextmenu !== false) }"
-    :toggle-class="{
-      'DDTableColumnVisibilityBtn w-100 h-100 text-left': true,
-      'dropdown-item': (incontextmenu !== false) }"
-    :title="$t('table.showCol')"
-    @show="init"
-  >
-    <template #button-content>
-      <IconITableColumn />
-      <small v-if="incontextmenu !== false" style="font-size: 85%;">{{ $t('button.showCol') }}</small>
-    </template>
-    <template v-if="!multiCondition">
-      <b-dropdown-form
-        v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h._majorKey==undefined)"
-        :key="header.key"
-        class="dropdown-item"
-        :class="{
-          'selected':columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key),
-          disabled: header.disabled!=undefined&&header.disabled,
-        }"
-        variant="primary"
-        @click.prevent="setColumnVisibilityModel(header.key)"
-      >
-        <!-- :disabled="columnVisibilityStates[header.key]" -->
-        <small>{{ header.label }}</small>
-      </b-dropdown-form>
-    </template>
-    <template v-else>
-      <!-- id="selectableColumns-group"
-      name="selectableColumns" -->
-      <b-dropdown-form
-        v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
-        :key="header.key"
-        class="dropdown-item"
-        :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
-        @click.prevent="handleItem(header.key)"
-      >
-        <b-input-group>
-          <b-form-checkbox
-            v-model="columnVisibilityList"
-            :name="header.label"
-            :value="header.key"
-            :class="{'selected':columnVisibilityStates[header.key]}"
-          />
-          <small>{{ header.label }}</small>
-        </b-input-group>
-      </b-dropdown-form>
-    </template>
-  </b-dropdown>
 </template>
 
 <script lang="ts">
@@ -163,7 +74,6 @@ export default class DDTableColumnVisibility extends BDropdown {
   @Prop({ default: 'table' }) tableId!: string
   @Prop({ }) sortBy!: string
   @Prop({ default: undefined }) multi!: boolean|undefined
-  @Prop({ default: false }) onhover!: boolean
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) headers!: ITableHeaders
   viewId = ((this.tableId === 'Localboot') || (this.tableId === 'Netboot')) ? 'products' : this.tableId
@@ -269,82 +179,17 @@ export default class DDTableColumnVisibility extends BDropdown {
   }
 }
 </script>
+
 <style>
-.DDTableColumnVisibility {
-  max-width: fit-content !important;
-  /* max-height: inherit !important; */
-  max-height: var(--component-height) !important;
-  z-index: 30 !important;
+.selectedColumn .dropdown-item {
+  color: var(--light) !important;
+  background-color: var(--primary) !important;
 }
-.DDTableColumnVisibility.absolutright {
-  min-width: 100% !important;
-  width: 100% !important;
+.rightmenu .dropdown-menu {
+  right: 0;
+  left: auto;
 }
-.DDTableColumnVisibility .dropdown-menu {
-  overflow: visible !important;
-  height: max-content !important;
-  /* max-height: 300px !important; */
-  min-width: 200px !important;
-  max-width: 250px !important;
-  z-index: 300 !important;
-  /* position: sticky !important; */
+.columnWrapper > div {
+  display: inline-block !important;
 }
-.DDTableColumnVisibility .dropdown-menu .dropdown-item {
-  padding: 0px !important;
-  cursor: pointer;
-}
-.DDTableColumnVisibility .dropdown-menu .custom-checkbox{
-  display: inline;
-  margin-left: 15px;
-}
-
-.DDTableColumnVisibility .dropdown-menu li .b-dropdown-form {
-  margin: 0px !important;
-  padding: 0px !important;
-  padding-left: 15px !important;
-  padding-right: 15px !important;
-}
-/*
-.DDTableColumnVisibility .dropdown-menu .dropdown-item {
-  padding-top: 2px !important;
-  padding-bottom: 2px !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important;
-}
-*/
-
-.DDTableColumnVisibilityBtn {
-  height: 100% !important;
-  max-height: var(--component-height) !important;
-}
-
-.DDTableColumnVisibilityBtn::after {
-  float: right;
-  margin-top: 10px;
-}
-
-.DDTableColumnVisibility.absolutright > li {
-  border: unset !important;
-  /* color: var(--light) !important; */
-  min-width: 100% !important;
-}
-.DDTableColumnVisibility.absolutright > li:hover {
-  border: unset !important;
-  /* color: var(--light) !important; */
-}
-/* .DDTableColumnVisibility .dropdown-menu .dropdown-item {
-  cursor: pointer;
-  display: flex !important;
-} */
-/* .DDTableColumnVisibility a.selected.disabled {
-  background-color: var(--primary);
-  color:var(--light);
-}
-.DDTableColumnVisibility a.selected {
-  background-color: var(--primary);
-} */
-/* .DDTableColumnVisibility .noborder .btn-outline-primary{
-  border: 0;
-  box-shadow: none;
-} */
 </style>

@@ -35,17 +35,11 @@ export default class BAuthFooter extends Vue {
 </script>
 
 <style>
-.fixed-bottom .navbar {
-  margin-bottom: 0;
-}
 .auth_footer{
   height: var(--height-navbar) !important;
 }
 .auth_footer_wrap {
   display: flex;
   flex-wrap: wrap;
-}
-.navbar {
-  z-index: inherit !important;
 }
 </style>

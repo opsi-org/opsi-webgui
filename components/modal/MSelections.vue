@@ -14,6 +14,7 @@
     <b-modal
       :id="type + '-selection-' + id"
       class="modalselection"
+      data-testid="MSelectionsModal"
       :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
       centered
       scrollable
@@ -27,6 +28,9 @@
         plaintext
         :value="selections.join('\n')"
       />
+      <div class="float-right">
+        <slot name="clear" />
+      </div>
     </b-modal>
   </div>
 </template>

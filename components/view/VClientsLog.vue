@@ -1,21 +1,20 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
     <AlertAAlert ref="logErrorAlert">
-      <b-button
+      <!-- <b-button
         v-if="!isLoading"
         variant="outline-dark"
         class="float-right"
-        @click="getLog(id, logtype)"
+        @click="$fetch"
       >
         {{ $t('button.tryAgain') }}
-      </b-button>
+      </b-button> -->
     </AlertAAlert>
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
         <SelectSLogtype class="ml-1" :logtype.sync="logtype" />
-        <!-- v-if="logResult.length > 1" -->
         <SpinbuttonSBLoglevel class="ml-1" :loglevel.sync="loglevel" />
         <b-form-input
           v-if="logResult.length > 1"
@@ -30,11 +29,9 @@
     </BarBPageHeader>
     <OverlayOLoading :is-loading="isLoading" />
     <p v-if="errorText" />
-    <DivDScrollResult v-else>
-      <div v-if="filteredLog == ''" class="container-fluid">
-        <div style="height: 500px;">
-          {{ $t('empty') }}
-        </div>
+    <DivDScrollResult v-if="logResult">
+      <div v-if="filteredLog.includes('')">
+        {{ $t('empty') }}
       </div>
       <div
         v-for="(log, index) in filteredLog"
@@ -45,21 +42,14 @@
           v-if="index != 0"
           style="font-family: monospace; font-size: 15px; text-align: justify ; display:block;"
           :class="{
-            'bg-secondary': true,
-            'bg-secondary': log.startsWith('[0]'),
-            'bg-secondary': log.startsWith('[1]'),
+            'bg-normal': log.startsWith('[0]') || log.startsWith('[1]') || log.startsWith('[6]') || log.startsWith('[7]') || log.startsWith('[8]') || log.startsWith('[9]'),
             'bg-danger': log.startsWith('[2]'),
             'bg-warning': log.startsWith('[3]'),
             'bg-info': log.startsWith('[4]'),
-            'bg-success': log.startsWith('[5]'),
-            'bg-secondary': log.startsWith('[6]'),
-            'bg-muted': log.startsWith('[7]'),
-            'bg-muted': log.startsWith('[8]'),
-            'bg-muted': log.startsWith('[9]')
+            'bg-success': log.startsWith('[5]')
           }"
         >
           {{ $t('(content)', {content: index}) }} {{ log }}
-          <!-- ({{ index }}) {{ log }} -->
         </span>
       </div>
     </DivDScrollResult>
@@ -84,10 +74,10 @@ export default class VClientLog extends Vue {
   logtype: string = 'instlog'
   loglevel: number = 5
   logResult: Array<string> = []
+  isLoading: boolean = false
   filteredLog: Array<string> = []
   filterQuery: string = ''
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
-  isLoading: boolean = false
   errorText: string = ''
 
   @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }

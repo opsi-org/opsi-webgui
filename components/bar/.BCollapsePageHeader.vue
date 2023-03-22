@@ -24,14 +24,14 @@
         </span>
       </slot>
       <slot />
-      <div v-if="!collapseable && $mq == 'mobile' && tableInfo && noheader" style="display: inline-flex; float: right;">
-        <InputIFilter class="header_filter pl-4" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
+      <div v-if="!collapseable && $mq == 'mobile' && tableInfo && noheader" style="display: inline-flex;">
+        <InputIFilter class="header_filter" :data="tableInfo" />
         <DropdownDDTableSorting :table-id="id" v-bind.sync="tableInfo" />
         <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+        <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: id})" :refetch="fetch" />
       </div>
     </div>
     <b-navbar-nav class="sm-auto title-right-buttons">
-      <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: id})" :refetch="fetch" />
       <ButtonBTNRowLinkTo
         v-if="enableShowProducts"
         :title="$t('button.show.products')"
@@ -57,7 +57,7 @@
               <TreeTSDepots v-if="enableDepots" class="tableheader_depots" />
               <TreeTSHostGroups v-if="enableClients" class="tableheader_hostgroup" />
               <TreeTSProductGroups v-if="enableProducts" class="tableheader_productgroup" />
-              <InputIFilter v-if="$mq == 'mobile' && tableInfo && noheader" class="header_filter" :data="tableInfo" :additional-title="$t('table.fields.localbootid')" />
+              <InputIFilter v-if="$mq == 'mobile' && tableInfo && noheader" class="header_filter" :data="tableInfo" />
             </slot>
           </b-col>
           <b-col class="nav-child nav-child-right" cols="*">
@@ -67,6 +67,9 @@
               </b-col>
               <b-col v-if="$mq == 'mobile' && tableInfo && noheader" cols="*">
                 <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+              </b-col>
+              <b-col v-if="$mq == 'mobile' && tableInfo && noheader" cols="*">
+                <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: id})" :refetch="fetch" />
               </b-col>
             </slot>
           </b-col>

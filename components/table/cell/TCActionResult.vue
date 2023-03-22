@@ -1,19 +1,19 @@
 <template>
   <div data-testid="TCActionResult">
-    <b-badge v-if="text=='mixed'" :variant="variant">
+    <b-badge v-if="text=='mixed'" data-testid="TCActionResultBadge" :variant="variant">
       <span class="h6"> {{ $t('unequal') }} </span>
     </b-badge>
-    <b-badge v-else-if="text=='successful'" variant="success">
+    <b-badge v-else-if="text=='successful'" data-testid="TCActionResultBadge" variant="success">
       <span class="h6"> <b-icon :icon="iconnames.productActionResultSuccessful" alt="successful" /> </span>
     </b-badge>
-    <b-badge v-else-if="text=='failed'" variant="danger">
+    <b-badge v-else-if="text=='failed'" data-testid="TCActionResultBadge" variant="danger">
       <span class="h6"> <b-icon :icon="iconnames.productActionResultFailed" alt="failed" /> </span>
     </b-badge>
-    <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent">
+    <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" data-testid="TCActionResultBadge" variant="transparent">
       <span class="h6"> {{ ($mq=='mobile')? $t('empty'):'' }} </span>
     </b-badge>
-    <b-badge v-else-if="$mq!='mobile'&&(text=='not_installed'||text==''||text=='none')" variant="transparent" />
-    <b-badge v-else :variant="variant">
+    <b-badge v-else-if="$mq!='mobile'&&(text=='not_installed'||text==''||text=='none')" data-testid="TCActionResultBadge" variant="transparent" />
+    <b-badge v-else data-testid="TCActionResultBadge" :variant="variant">
       <span class="h6"> {{ text }} </span>
     </b-badge>
   </div>

@@ -6,7 +6,7 @@
     class="px-2 text-left"
     :class="{'pt-0 pb-0 pl-3 w-100': $mq=='mobile'}"
     :title="$t('button.logout.tooltip')"
-    variant="primary"
+    variant="transparent"
     @click="doLogout"
   >
     <b-icon :icon="iconnames.logout" />

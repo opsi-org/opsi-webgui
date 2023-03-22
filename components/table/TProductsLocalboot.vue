@@ -18,6 +18,14 @@
       :routechild="routeToChild"
       :fetchitems="$fetch"
     >
+      <template #producttableheader>
+        <DropdownDDProductRequest
+          v-if="(selectionClients.length>0 && selectionProducts.length>0)"
+          :action.sync="action"
+          :title="$t('form.tooltip.actionRequest')"
+          :save="saveActionRequests"
+        />
+      </template>
       <template #contextcontent-specific-1="{itemkey}">
         <ButtonBTNRowLinkTo
           :label="$t('title.config')"
@@ -35,24 +43,12 @@
           event="ondemand"
           classes="dropdown-item border-0 smaller-text-size"
           :update-loading="loading => clientsLoading = loading"
-          with-text
+          :with-text="true"
         />
       </template>
       <template #contextcontent-general-2>
-        <DropdownDDTableSorting
-          :table-id="id"
-          :incontextmenu="true"
-          v-bind.sync="tableInfo"
-          onhover
-        />
-        <DropdownDDTableColumnVisibility
-          :table-id="id"
-          :headers.sync="tableInfo.headerData"
-          :sort-by="tableInfo.sortBy"
-          :multi="true"
-          :incontextmenu="true"
-          onhover
-        />
+        <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
+        <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
         <ButtonBTNRefetch
           :is-loading="isLoadingTable || isLoading"
           :tooltip="$t('button.refresh', {id: id})"
@@ -108,6 +104,25 @@
           :objectsorigin="selectionClients || []"
         />
       </template>
+      <template #cell(actionProgress)="row">
+        <div v-if="row.item.actionProgress == 'mixed'">
+          <span :id="('tooltip_actionprogress_mixed'+row.item.productId)">
+            {{ row.item.actionProgress }}
+          </span>
+          <b-tooltip size="sm" :target="('tooltip_actionprogress_mixed'+row.item.productId)" triggers="hover">
+            <b-row v-for="(key, index) in row.item.selectedClients" :key="index">
+              <b-col class="d-flex flex-nowrap text-sm-left">
+                {{ key }}
+              </b-col> <b-col class="d-flex flex-nowrap text-sm-left">
+                {{ '  :  ' + row.item.actionProgressDetails[index] }}
+              </b-col>
+            </b-row>
+          </b-tooltip>
+        </div>
+        <div v-else>
+          {{ row.item.actionProgress }}
+        </div>
+      </template>
       <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
           :action.sync="action"
@@ -152,9 +167,9 @@ import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { Constants, Synchronization } from '../../mixins/uib-mixins'
-import { SaveProductActionRequest } from '../../mixins/save'
 import QueueNested from '../../.utils/utils/QueueNested'
+import { Constants, MBus, Synchronization } from '../../mixins/uib-mixins'
+import { SaveProductActionRequest } from '../../mixins/save'
 
 const selections = namespace('selections')
 const settings = namespace('settings')
@@ -164,7 +179,7 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [Constants, Synchronization, SaveProductActionRequest] })
+@Component({ mixins: [Constants, MBus, Synchronization, SaveProductActionRequest] })
 export default class TProductsLocalboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -174,6 +189,7 @@ export default class TProductsLocalboot extends Vue {
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoading!: boolean
+  wsBusMsg: any // mixin // store
   iconnames: any
   syncSort: any
   $axios: any
@@ -183,6 +199,7 @@ export default class TProductsLocalboot extends Vue {
   $fetch: any
   $route: any
   $router: any
+
   saveProdActionRequest:any
   id = 'localboot'
   items: Array<any> = []
@@ -213,6 +230,35 @@ export default class TProductsLocalboot extends Vue {
   @changes.Mutation public pushToChangesProducts!: (o: object) => void
   @changes.Mutation public delWithIndexChangesProducts!: (i:number) => void
   @settings.Getter public quicksave!: boolean
+
+  get visibleProductIds () {
+    return this.cache_pages.valuesOfKey('productId')
+  }
+
+  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+    const msg = this.wsBusMsg // todo deepCopy
+    console.log('ProductIds: ', this.visibleProductIds)
+    console.log('MessageBus: receive-watch: ', msg)
+    if (msg &&
+      ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
+      msg.data.productType === 'LocalbootProduct' &&
+      this.visibleProductIds.includes(msg.data.productId) &&
+      this.selectionClients.includes(msg.data.clientId)
+    ) {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
+      if (this.quicksave) {
+        this.$fetch()
+        ref.hide()
+      } else { /* quicksave is false ... do sth .. show message or sth */
+        const objIndex = this.changesProducts.findIndex(
+          item => item.user === localStorage.getItem('username') &&
+          item.clientId === msg.data.clientId &&
+          item.productId === msg.data.productId)
+        if (objIndex > -1) { /* show msg product updated */ }
+      }
+    }
+  }
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
@@ -253,6 +299,12 @@ export default class TProductsLocalboot extends Vue {
 
   async fetchWrapper () { await this.$fetch() }
   async fetch () {
+    try {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      if (ref) { ref.hide() }
+    } catch (e) {
+      console.warn('Couldnt find AlertBox for messagebusinfo')
+    }
     await this.$emit('fetch-products', this)
     // will trigger -> this.setItemsCache(items)
   }

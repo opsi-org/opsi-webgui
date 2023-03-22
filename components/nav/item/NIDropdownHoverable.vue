@@ -1,13 +1,13 @@
 <template>
   <div
     data-testid="NIDropdownHoverable"
-    @mouseover="onMouseOver"
-    @mouseleave="onMouseLeave"
-    @focus="onMouseOver"
-    @blur="onMouseLeave"
+    @mouseover="onOver($refs.sidemenudropdown)"
+    @mouseleave="onLeave($refs.sidemenudropdown)"
+    @focus="onOver($refs.sidemenudropdown)"
+    @blur="onLeave($refs.sidemenudropdown)"
   >
     <b-nav-item-dropdown
-      ref="dropdown"
+      ref="sidemenudropdown"
       class="sidemenu_dropdown"
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       block
@@ -16,7 +16,7 @@
       :disabled="disabled"
     >
       <template #button-content>
-        <b-icon :icon="icon" @click="changeRoute" />
+        <b-icon :icon="icon" @click="refresh(route)" />
       </template>
       <b-dropdown-item disabled>
         {{ $t(title) }}
@@ -28,7 +28,6 @@
       >
         <b-dropdown-item
           :class="{checkactive: $route.path.includes(sub.route)}"
-          :to="sub.route"
           :style="(sub.disabled)? 'pointer-events: none;':''"
           :disabled="sub.disabled"
           @click="refresh(sub.route)"
@@ -42,34 +41,26 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { HoverDropdown } from '../../../mixins/uib-mixins'
 
-@Component
+@Component({ mixins: [HoverDropdown] })
 export default class NIDropdownHoverable extends Vue {
   $route: any
   $router: any
   $nuxt: any
+  onOver: any
+  onLeave: any
   @Prop({ }) title!: string
   @Prop({ default: false }) disabled!: boolean
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>
 
-  onMouseOver () {
-    (this.$refs.dropdown as any).visible = true
-  }
-
-  onMouseLeave () {
-    (this.$refs.dropdown as any).visible = false
-  }
-
-  changeRoute () {
-    this.$router.push({ path: this.route })
-    this.refresh(this.route)
-  }
-
   refresh (route) {
     if (this.$route.path.includes(route)) {
       this.$nuxt.refresh()
+    } else {
+      this.$router.push({ path: route })
     }
   }
 }
