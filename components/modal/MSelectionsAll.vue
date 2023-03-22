@@ -3,7 +3,7 @@
     <b-button
       data-testid="MSelectionsAllButton"
       variant="primary"
-      class="mt-2 border-0 text-left"
+      class="border-0 text-left global_topbar_button"
       :class="{ 'pl-3': $mq=='mobile' }"
       size="md"
       tabindex="0"

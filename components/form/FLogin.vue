@@ -8,7 +8,7 @@
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
       <IconIOpsiLogo v-once :light="true" class="mb-3" height="35" />
-      <h2 v-once data-testid="login_title" class="d-inline-block text-light projectTitle">
+      <h2 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
         {{ $t('title.project') }}
       </h2>
       <div @keyup.enter="doLogin">
@@ -47,13 +47,13 @@
               class="mb-2 password"
               autocomplete="current_password"
             />
-            <b-button variant="primary" :pressed.sync="showPassword" class="mb-2">
+            <b-button variant="primary" :pressed.sync="showPassword" class="mb-2 text-light">
               <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
               <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
               <b-icon v-else :icon="iconnames.valueHide" />
             </b-button>
           </b-input-group>
-          <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login" block @click="doLogin">
+          <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login text-light" block @click="doLogin">
             {{ $t('button.login') }}
           </b-button>
         </b-form>

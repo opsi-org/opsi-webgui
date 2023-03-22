@@ -93,6 +93,8 @@
   "title.adminterminal": "Terminal",
   "table.fields.terminalId": "Terminal ID",
   "table.fields.terminalChannel": "Channel",
+  "button.reconnect": "Verbinden",
+  "button.clear": "Clear",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
