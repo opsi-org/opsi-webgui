@@ -373,6 +373,9 @@ body .mobile .topbar_content .navbar > * {
   color: var(--light);
   background-color: var(--primary);
 }
+.treeselect_fullpage .vue-treeselect__menu {
+  min-height: 60vh;
+}
 
 .labelcolor {
   color: var(--color) !important;

@@ -93,6 +93,7 @@
   "title.deleteClient": "Delete Client",
   "title.whatsnew":"What's new ?",
   "title.hostparam": "Parameters",
+  "title.groups": "Groups",
   "title.admin": "Administration",
   "title.adminterminal": "Terminal",
   "table.fields.terminalId": "Terminal ID",
@@ -240,6 +241,15 @@
   "treeselect.searchOrAdd": "Search or add item",
   "treeselect.limitText": "... (+{count})",
   "treeselect.selectioncount": "Selected {type}",
+
+  "group.select": "Selected Group: ",
+  "group.add": "Add",
+  "group.addclient": "Add client",
+  "group.addclient.tooltip": "Add client to the selected group.",
+  "group.subgroup": "Create subgroup",
+  "group.subgroup.tooltip": "Create subgroup for the selected group.",
+  "group.subgroupname": "Subgroup Name",
+
   "form.depot": "Select a server",
   "form.client": "Select a client",
   "form.logtype": "Select a log type",
