@@ -162,151 +162,45 @@ module.exports.data = {
     client:[{"hostId":"client1.domain.local","type":"OpsiClient","description":"A test client","notes":"Ubuntu 20.04","hardwareAddress":"af:fe:af:fe:af:fe","ipAddress":"192.0.2.1","inventoryNumber":"","created":"2021-01-10T14:59:44","lastSeen":"2022-04-21T13:24:26","opsiHostKey":"abcdef","oneTimePassword":null,"uefi":false}]
   },
   modules: {"result":["directory-connector","dynamic_depot","install_by_shutdown","license_management","linux_agent","local_imaging","macos_agent","monitoring","mysql_backend","roaming_profiles","scalability1","secureboot","swondemand","treeview","uefi","userroles","vista","wim-capture","win-vhd","vpn","os_install_by_wlan"]},
-  diagnostic:  {
-      "system": {
+  diagnostic:  { "system": {
           "product_name": "10SF002EGE",
           "docker": true
       },
-      "processor": {
-          "model": "Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz",
-          "cpu_count": 12,
-          "load_avg": [
-              1.87,
-              2.52,
-              2.35
-          ]
-      },
-      "memory": {
-          "total": 16612110336,
-          "available": 6050193408,
-          "total_human": "15.47GiB",
-          "available_human": "5.63GiB",
-          "used_percent": 63.6
-      },
-      "depots": {
-          "ids": [
-              "test.uib.local"
-          ]
-      },
-      "clients": {
-          "client_count": 28,
-          "active_client_count": 28
-      },
-      "products": {
-          "test.uib.local": {
-              "activate-win": {
-                  "version": "1.0-9",
-                  "type": "LocalbootProduct"
-              },
-              "wipedisk": {
-                  "version": "2.3-7",
-                  "type": "NetbootProduct"
-              }
-          }
-      },
-      "backendmanager_extensions": {},
-      "licenses": {
-          "client_numbers": {
-              "macos": 0,
-              "linux": 21,
-              "windows": 7,
-              "inactive": 0,
-              "all": 28
-          },
-          "known_modules": [
-              "directory-connector"
-          ],
-          "obsolete_modules": [
-              "dynamic_depot",
-              "treeview",
-              "vista"
-          ],
-          "available_modules": [
-              "dynamic_depot",
-              "install_by_shutdown",
-              "roaming_profiles",
-              "swondemand",
-              "treeview",
-              "vista"
-          ],
-          "modules": {
-              "vpn": {
-                  "available": false,
-                  "state": "over_limit",
-                  "license_ids": [],
-                  "client_number": 0
-              }
-          },
-          "licenses_checksum": "0",
-          "config": {
-              "client_limit_warning_percent": 95,
-              "client_limit_warning_absolute": 10,
-              "client_limit_warning_days": 500,
-              "disable_warning_for_modules": [
-                  "wim-capture",
-                  "win-vhd"
-              ]
-          }
-      },
-      "health_check":
-          {
-              "partial_results": [
-                  {
-                      "check_description": "",
-                      "check_id": "opsiconfd_config:log-level-file",
-                      "check_name": "Config log-level-file",
-                      "check_status": "ok",
-                      "details": {
-                          "config": "log-level-file",
-                          "value": 4
-                      },
-                      "message": "Log level WARNING is suitable for productive use.",
-                      "upgrade_issue": null
-                  },
-                  {
-                      "check_description": "",
-                      "check_id": "opsiconfd_config:log-level",
-                      "check_name": "Config log-level",
-                      "check_status": "ok",
-                      "details": {
-                          "config": "log-level",
-                          "value": 5
-                      },
-                      "message": "Log level NOTICE is suitable for productive use.",
-                      "upgrade_issue": null
-                  },
-                  {
-                      "check_description": "",
-                      "check_id": "opsiconfd_config:debug-options",
-                      "check_name": "Config debug-options",
-                      "check_status": "ok",
-                      "details": {
-                          "config": "debug-options",
-                          "value": []
-                      },
-                      "message": "No debug options are set.",
-                      "upgrade_issue": null
-                  },
-                  {
-                      "check_description": "",
-                      "check_id": "opsiconfd_config:profiler",
-                      "check_name": "Config profiler",
-                      "check_status": "ok",
-                      "details": {
-                          "config": "profiler",
-                          "value": false
-                      },
-                      "message": "Profiler is not enabled.",
-                      "upgrade_issue": null
-                  }
-              ],
-              "check_description": "Check opsiconfd configuration",
-              "check_id": "opsiconfd_config",
-              "check_name": "Opsiconfd config",
-              "check_status": "error",
-              "details": {},
-              "message": "1 issues found in the configuration.",
-              "upgrade_issue": null
-          }
-  }
+      "health_check" :[
+        {
+            "partial_results": [
+                {
+                    "check_description": "",
+                    "check_id": "opsiconfd_config:debug-options",
+                    "check_name": "Config debug-options",
+                    "check_status": "ok",
+                    "details": {
+                        "config": "debug-options",
+                        "value": []
+                    },
+                    "message": "No debug options are set.",
+                    "upgrade_issue": null
+                },
+                {
+                    "check_description": "",
+                    "check_id": "opsiconfd_config:run-as-user",
+                    "check_name": "Config run-as-user",
+                    "check_status": "error",
+                    "details": {
+                        "config": "profiler",
+                        "value": "root"
+                    },
+                    "message": "Opsiconfd is runnning as user root.",
+                    "upgrade_issue": null
+                }
+            ],
+            "check_description": "Check opsiconfd configuration",
+            "check_id": "opsiconfd_config",
+            "check_name": "Opsiconfd config",
+            "check_status": "error",
+            "details": {},
+            "message": "1 issues found in the configuration.",
+            "upgrade_issue": null
+        }]
+    }
 }
