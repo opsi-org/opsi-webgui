@@ -2,6 +2,7 @@
   <b-nav vertical tabs class="sidemenu_nav" :class="{expanded:expanded}" data-testid="NSidebar">
     <span v-for="catogery in navItems" :key="catogery.title">
       <br>
+      <!-- <small v-if="expanded" class="container"> <small>{{ $t(catogery.title) }} </small> </small> -->
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
           <NavItemNICollapsible
@@ -63,12 +64,13 @@ export default class NSidebar extends Vue {
 
   get navItems (): Array<IMenuItem> {
     return [
-      // {
-      //   title: 'title.overview',
-      //   menu: [
-      //     // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-      //   ]
-      // },
+      {
+        title: 'title.overview',
+        menu: [
+          { title: 'title.healthcheck', icon: 'heart', route: '/serverhealthcheck' }
+          // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
+        ]
+      },
       {
         title: 'title.manage',
         menu: [

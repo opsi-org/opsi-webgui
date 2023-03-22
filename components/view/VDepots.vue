@@ -40,6 +40,17 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
+            <!-- <ButtonBTNRowLinkTo
+              v-if="itemkey==opsiconfigserver"
+              :title="$t('title.healthcheck')"
+              :label="$t('title.healthcheck')"
+              :icon="iconnames.healthcheck"
+              to="/depots/healthcheck"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            /> -->
           </template>
           <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
@@ -71,6 +82,16 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+            <!-- <ButtonBTNRowLinkTo
+              v-if="row.item.ident==opsiconfigserver"
+              :title="$t('title.healthcheck')"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.healthcheck'):''"
+              :icon="iconnames.healthcheck"
+              to="/depots/healthcheck"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            /> -->
           </template>
         </TableTInfiniteScrollSmooth>
       </template>
@@ -257,7 +278,7 @@ export default class VDepots extends Vue {
   }
 
   get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log')
+    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('healthcheck')
   }
 }
 </script>
