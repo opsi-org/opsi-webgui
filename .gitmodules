@@ -1,9 +1,0 @@
-# IMPORTANT:
-# This file is ONLY for VSCode !
-# opsiweb-ui-components (uib-components) is NOT a submodule
-# - it is a independent repository, which is checkedout in <path>
-
-[submodule "uib-components"]
-    path = opsiweb/uib-components
-    url = ../opsiweb-ui-components.git
-    branch = develop

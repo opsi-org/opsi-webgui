@@ -6,36 +6,36 @@ stages:
   # - test-components
   - build
   - publish
-  - release 
+  - release
 
-.prepare_repo: &prepare_repo |
-  # BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
-  BRANCH=$(echo ${CI_COMMIT_BRANCH} || echo "develop")
-  echo "CIC_Branch ${CI_COMMIT_BRANCH}"
-  echo "GIT_Branch $BRANCH"
+# .prepare_repo: &prepare_repo |
+#   # BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
+#   BRANCH=$(echo ${CI_COMMIT_BRANCH} || echo "develop")
+#   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
+#   echo "GIT_Branch $BRANCH"
 
-  echo "exec: git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH}"
+#   echo "exec: git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH}"
 
-  git_result=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
-  echo "gitresult $git_result"
-  if [ $git_result -eq 0 ]; then
-    echo "Use default branch"
-    BRANCH=develop
-    echo "GIT_Branch $BRANCH"
-  fi
-  if [ -z "$BRANCH" ]; then
-    BRANCH=$(echo "develop")
-  fi
-  echo "GIT_Branch $BRANCH"
+#   git_result=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
+#   echo "gitresult $git_result"
+#   if [ $git_result -eq 0 ]; then
+#     echo "Use default branch"
+#     BRANCH=develop
+#     echo "GIT_Branch $BRANCH"
+#   fi
+#   if [ -z "$BRANCH" ]; then
+#     BRANCH=$(echo "develop")
+#   fi
+#   echo "GIT_Branch $BRANCH"
 
-  # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-  # Testing using current branch (othewise job failes on "tag"-execution)
+#   # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
+#   # Testing using current branch (othewise job failes on "tag"-execution)
 
-  git clone --branch $BRANCH https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-  cd opsiweb/uib-components
-  git branch -a
-  ls -lah
-  cd -
+#   git clone --branch $BRANCH https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
+#   cd opsiweb/uib-components
+#   git branch -a
+#   ls -lah
+#   cd -
 
 .define_globals: &define_globals |
   npm i -g dry-dry
@@ -161,7 +161,7 @@ stages:
 init:dry:
   stage: init
   script:
-    - *prepare_repo
+    # - *prepare_repo
     - cd opsiweb
     - *define_globals
     - npm-uib i
@@ -179,7 +179,7 @@ init:dry:production:
     - develop
     - tags
   script:
-    - *prepare_repo
+    # - *prepare_repo
     - cd opsiweb
     #- #rm package-lock.json # todo: how to? rm here or not include to repo? (currently not included)
     - *define_globals
