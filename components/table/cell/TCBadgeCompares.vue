@@ -19,8 +19,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { mapValues2Value, mapValues2Objects } from '../../../.utils/utils/smappings'
 import { IObjectString2String } from '../../../.utils/types/tgeneral'
+import { mapValues2Value, mapValues2Objects } from '../../../.utils/utils/smappings'
 
 @Component
 export default class TCBadgeCompares extends Vue {

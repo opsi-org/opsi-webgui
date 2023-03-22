@@ -347,9 +347,12 @@ body .mobile .topbar_content .navbar > * {
   color: var(--color);
   border-color: var(--border);
 }
+<<<<<<< HEAD
 .hide {
   display: none;
 }
 pre {
   color: var(--color);
 }
+=======
+>>>>>>> develop

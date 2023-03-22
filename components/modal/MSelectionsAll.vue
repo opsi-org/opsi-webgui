@@ -16,6 +16,7 @@
     <b-modal
       v-model="show"
       class="modalselection"
+      data-testid="MSelectionsModal"
       :title="$t('title.selectedElements')"
       centered
       scrollable

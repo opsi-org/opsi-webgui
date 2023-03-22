@@ -100,6 +100,17 @@ export default class NSidebar extends Vue {
       {
         title: 'title.configure',
         menu: [
+          {
+            title: 'title.admin',
+            route: '/admin/terminal/',
+            icon: this.iconnames.admin,
+            submenu: [
+              { title: 'title.adminterminal', route: '/admin/terminal' }
+              // { title: 'title.addNew', route: '/clientscreation', disabled: (this.config) ? !this.config?.client_creation : false },
+              // { title: 'title.config', route: '/clientsconfig' },
+              // { title: 'title.log', route: '/clientslog' }
+            ]
+          },
           { title: 'title.support', icon: this.iconnames.support, route: '/support' },
           { title: 'title.settings', icon: this.iconnames.settings, route: '/settings' }
           // { title: 'Index page', icon: 'collection-fill', route: '/' }
@@ -114,9 +125,8 @@ export default class NSidebar extends Vue {
 .sidemenu_nav a.nuxt-link-active,
 .sidemenu_nav a.nuxt-link-exact-active,
 .sidemenu_nav .checkactive.nav-item {
-  color:var(--light);
-  background-color: var(--primary);
-  filter: saturate(.4) brightness(1) !important;
+  color:var(--color);
+  background-color: var(--primary-dark);
 }
 .navbar-light .navbar-nav .nav .nav-item{
   color: inherit !important;
@@ -140,5 +150,10 @@ export default class NSidebar extends Vue {
 }
 .sidebar_collapsed .sidemenu_nav .nav-link > svg{
   margin: 0 auto !important;
+}
+.sidemenu_nav.nav-tabs .nav-item:focus,
+.sidemenu_nav.nav-tabs .nav-item:hover {
+  background-color: var(--primary-dark);
+  color: var(--color);
 }
 </style>
