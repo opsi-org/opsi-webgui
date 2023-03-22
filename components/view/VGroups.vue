@@ -140,14 +140,14 @@
                       </span>
                     </template>
                     <treeselect
+                      v-model="selectedGroups"
                       v-b-tooltip.hover
                       :title="$t('Select groups to add the selected client')"
                       :placeholder="$t('Select groups to add the selected client')"
-                      value-format="object"
                       :options="group"
                       :normalizer="normalizer"
                     />
-                    <b-button class="float-right" variant="success">
+                    <b-button class="float-right" variant="success" @click="addSelectedClientToGroups">
                       {{ $t("Add") }}
                     </b-button>
                   </b-tab>
@@ -158,14 +158,14 @@
                       </span>
                     </template>
                     <treeselect
+                      v-model="selectedGroups"
                       v-b-tooltip.hover
                       :title="$t('Select groups to remove the selected client assignment')"
                       :placeholder="$t('Select groups to remove the selected client assignment')"
-                      value-format="object"
                       :options="group"
                       :normalizer="normalizer"
                     />
-                    <b-button class="float-right" variant="danger">
+                    <b-button class="float-right" variant="danger" @click="removeSelectedClientFromGroups">
                       {{ $t("Remove") }}
                     </b-button>
                   </b-tab>
@@ -214,6 +214,8 @@ export default class VGroups extends Vue {
     description: '',
     notes: ''
   }
+
+  selectedGroups: any = null
 
   @selections.Getter public selectionDepots!: Array<string>
 
@@ -309,6 +311,32 @@ export default class VGroups extends Vue {
 
   async removeClientAssignments () {
     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.id}/clients`)
+      .then((response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+      })
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+      })
+  }
+
+  async addSelectedClientToGroups () {
+    await this.$axios.$post(`/api/opsidata/clients/${this.selectedvalue.id}/groups`, this.selectedGroups)
+      .then((response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+      })
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+      })
+  }
+
+  async removeSelectedClientFromGroups () {
+    await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.id}/groups`, this.selectedGroups)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
