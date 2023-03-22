@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // TODO: do not use type 'object' define it in details through an interface
+// TODO: Erro handling for multi-save. Only store is created.
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 
 @Module({ name: 'errors', stateFactory: true, namespaced: true })
