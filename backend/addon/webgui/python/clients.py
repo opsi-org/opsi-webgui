@@ -8,6 +8,7 @@
 webgui client methods
 """
 
+import asyncio
 import os
 import subprocess
 from datetime import date, datetime
@@ -84,7 +85,7 @@ class Client(BaseModel):  # pylint: disable=too-few-public-methods
 @client_router.get("/api/opsidata/clients", response_model=List[ClientList])
 @rest_api
 @filter_depot_access
-def clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
+async def clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
 	request: Request,
 	commons: dict = Depends(common_query_parameters),
 	selectedDepots: List[str] = Depends(parse_depot_list),
@@ -226,12 +227,19 @@ def clients(  # pylint: disable=too-many-branches, dangerous-default-value, inva
 		result = result.fetchall()
 
 		total = session.execute(select(text("COUNT(*)")).select_from(client_with_depot), params).fetchone()[0]  # type: ignore
-
+		if backend._host_control_use_messagebus is True:
+			reachable_clients = await backend.hostControl_reachable([], 20)  # pylint: disable=protected-access
 		data = []
 		for row in result:
 			if row is not None:
 				client = dict(row)
 				client["uefi"] = bool(client["uefi"])
+				if backend._host_control_use_messagebus is not True:
+					client["reachable"] = None
+				elif reachable_clients.get(client["clientId"], False):
+					client["reachable"] = True
+				else:
+					client["reachable"] = False
 				data.append(client)
 
 		return RESTResponse(data=data, total=total)
@@ -303,6 +311,9 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 
 			# IPv4Address/IPv6Address is not JSON serializable
 			values["ipAddress"] = str(values["ipAddress"])
+			backend._send_messagebus_event(  # pylint: disable=protected-access
+				"host_created", data={"type": "OpsiClient", "id": client.hostId}
+			)
 			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
 
 		except IntegrityError as err:

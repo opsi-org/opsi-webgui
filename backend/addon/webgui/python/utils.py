@@ -8,6 +8,7 @@
 webgui utils
 """
 
+import asyncio
 from functools import wraps
 from json import loads  # pylint: disable=no-name-in-module
 from operator import and_
@@ -272,7 +273,7 @@ def read_only_check(func: Callable) -> Callable:
 
 def filter_depot_access(func: Callable) -> Callable:
 	@wraps(func)
-	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
+	async def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		logger.debug("%s - check user", func)
 		if user_register():
 			username = kwargs.get("request").scope.get("session").user_store.username
@@ -286,6 +287,8 @@ def filter_depot_access(func: Callable) -> Callable:
 					kwargs["selectedDepots"] = selected_depots
 				else:
 					kwargs["selectedDepots"] = []
+		if asyncio.iscoroutinefunction(func):
+			return await func(*args, **kwargs)
 		return func(*args, **kwargs)
 
 	return check_user
