@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VSupport" class="support">
     <b-row>
-      <!-- <b-col sm="4">
+      <!-- <b-col>
         <CardCWhatsNew :support-page="true" />
       </b-col> -->
       <b-col v-for="item in supportItems" :key="item.title">
