@@ -65,6 +65,16 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.cloneclient')"
+              :label="$t('title.cloneclient')"
+              :icon="iconnames.client"
+              to="/clients/clone"
+              :ident="itemkey"
+              :pressed="isRouteActive"
+              :incontextmenu="true"
+              :click="routeRedirectWith"
+            />
           </template>
           <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
@@ -123,6 +133,15 @@
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log'):''"
               :icon="iconnames.log"
               to="/clients/log"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.cloneclient')"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.cloneclient'):''"
+              :icon="iconnames.client"
+              to="/clients/clone"
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
@@ -358,7 +377,7 @@ export default class VClients extends Vue {
   }
 
   get secondColumnOpened () {
-    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('products')
+    return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('products') || this.$route.path.includes('clone')
   }
 
   routeToChild (id: string) {
