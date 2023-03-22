@@ -157,20 +157,50 @@ module.exports.data = {
         "[5] [2022-05-24 12:58:08.412] [] -------- submitted part of log file ends here, see the rest of log file on client ---------- "
       ]
     }
-      // result: ["",
-      //   "[0] [2021-08-23 13:28:07.151] [] ",
-      //   "[1] [2021-08-23 13:28:07.151] [] --",
-      //   "[2] [2021-08-23 13:28:07.151] [productId] next row",
-      //   "[3] [2021-08-23 13:28:07.151] [productId] next row",
-      //   "[4] [2021-08-23 13:28:07.151] [productId] next row",
-      //   "[6] [2021-08-23 13:28:07.151] [productId] next row",
-      //   "[7] [2021-08-23 13:28:07.151] [productId] next row",
-      //   "[8] [2021-08-23 13:28:07.151] [productId] next row",
-      //   "[9] [2021-08-23 13:28:07.151] [productId] next row",
-      // ]}
   },
   config:{
     client:[{"hostId":"client1.domain.local","type":"OpsiClient","description":"A test client","notes":"Ubuntu 20.04","hardwareAddress":"af:fe:af:fe:af:fe","ipAddress":"192.0.2.1","inventoryNumber":"","created":"2021-01-10T14:59:44","lastSeen":"2022-04-21T13:24:26","opsiHostKey":"abcdef","oneTimePassword":null,"uefi":false}]
   },
-  modules: {"result":["directory-connector","dynamic_depot","install_by_shutdown","license_management","linux_agent","local_imaging","macos_agent","monitoring","mysql_backend","roaming_profiles","scalability1","secureboot","swondemand","treeview","uefi","userroles","vista","wim-capture","win-vhd","vpn","os_install_by_wlan"]}
+  modules: {"result":["directory-connector","dynamic_depot","install_by_shutdown","license_management","linux_agent","local_imaging","macos_agent","monitoring","mysql_backend","roaming_profiles","scalability1","secureboot","swondemand","treeview","uefi","userroles","vista","wim-capture","win-vhd","vpn","os_install_by_wlan"]},
+  diagnostic:  { "system": {
+          "product_name": "10SF002EGE",
+          "docker": true
+      },
+      "health_check" :[
+        {
+            "partial_results": [
+                {
+                    "check_description": "",
+                    "check_id": "opsiconfd_config:debug-options",
+                    "check_name": "Config debug-options",
+                    "check_status": "ok",
+                    "details": {
+                        "config": "debug-options",
+                        "value": []
+                    },
+                    "message": "No debug options are set.",
+                    "upgrade_issue": null
+                },
+                {
+                    "check_description": "",
+                    "check_id": "opsiconfd_config:run-as-user",
+                    "check_name": "Config run-as-user",
+                    "check_status": "error",
+                    "details": {
+                        "config": "profiler",
+                        "value": "root"
+                    },
+                    "message": "Opsiconfd is runnning as user root.",
+                    "upgrade_issue": null
+                }
+            ],
+            "check_description": "Check opsiconfd configuration",
+            "check_id": "opsiconfd_config",
+            "check_name": "Opsiconfd config",
+            "check_status": "error",
+            "details": {},
+            "message": "1 issues found in the configuration.",
+            "upgrade_issue": null
+        }]
+    }
 }

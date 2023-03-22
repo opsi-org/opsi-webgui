@@ -69,6 +69,8 @@
   "title.addNewClient": "Client Erstellung",
   "title.config": "Konfiguration",
   "title.log": "Log",
+  "title.healthcheck": "Health Check",
+  "title.serverhealthcheck": "Server Health Check",
   "title.products": "Produkte",
   "title.configure": "KONFIGURIEREN",
   "title.settings": "Einstellungen",
@@ -92,7 +94,7 @@
 =======
   "title.admin": "Administration",
   "title.adminterminal": "Terminal",
-  "table.fields.terminalId": "Termuinal id",
+  "table.fields.terminalId": "Terminal ID",
   "table.fields.terminalChannel": "Channel",
 >>>>>>> develop
   "values.mixed": "<mixed>",
