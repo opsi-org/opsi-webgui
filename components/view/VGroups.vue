@@ -69,7 +69,7 @@
                     </template>
                     <br>
                     <b-form>
-                      <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('Subgroup ID')" :placeholder="$t('Subgroup ID')" />
+                      <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('Subgroup Name')" :placeholder="$t('Subgroup ID')" />
                       <b-form-input v-model="subgroup.description" v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
                       <b-form-input v-model="subgroup.notes" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
                       <b-button class="float-right" variant="success" @click="createSubGroup">
@@ -88,14 +88,14 @@
                       <treeselect
                         v-model="updategroupparent"
                         v-b-tooltip.hover
-                        :title="$t('Parent Group ID')"
-                        :placeholder="$t('Parent Group ID')"
+                        :title="$t('Parent Group')"
+                        :placeholder="$t('Parent Group')"
                         value-format="object"
                         :options="group"
-                        :normalizer="normalizer"
+                        :normalizer="normalizerUpdateGroup"
                       />
                       <b-form-input v-model="updategroup.description" v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
-                      <b-form-input v-model="updategroup.note" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
+                      <b-form-input v-model="updategroup.notes" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
                       <b-button class="float-right" variant="success" @click="updateGroup">
                         {{ $t("Update") }}
                       </b-button>
@@ -227,6 +227,15 @@ export default class VGroups extends Vue {
     }
   }
 
+  normalizerUpdateGroup (node: any) {
+    return {
+      id: node.id,
+      label: node.text,
+      isDisabled: node.type === 'ObjectToGroup',
+      children: node.children ? Object.values(node.children) : (node.type === 'HostGroup' ? [] : undefined)
+    }
+  }
+
   @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
     await this.fetchGroups()
   }
@@ -256,10 +265,11 @@ export default class VGroups extends Vue {
   }
 
   async addClientsToSelectedGroup () {
-    await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.id}/clients`, this.selectedClients)
+    await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
+        this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
@@ -269,11 +279,12 @@ export default class VGroups extends Vue {
   }
 
   async createSubGroup () {
-    this.subgroup.parentGroupId = this.selectedvalue.id
+    this.subgroup.parentGroupId = this.selectedvalue.text
     await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
+        this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
@@ -283,11 +294,12 @@ export default class VGroups extends Vue {
   }
 
   async updateGroup () {
-    this.updategroup.parent = this.updategroupparent ? this.updategroupparent.id : ''
-    await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.id}`, this.updategroup)
+    this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
+    await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
+        this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
@@ -297,10 +309,11 @@ export default class VGroups extends Vue {
   }
 
   async deleteGroup () {
-    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.id}`)
+    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
+        this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
@@ -310,10 +323,11 @@ export default class VGroups extends Vue {
   }
 
   async removeClientAssignments () {
-    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.id}/clients`)
+    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
+        this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
