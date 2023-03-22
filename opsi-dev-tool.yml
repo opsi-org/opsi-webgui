@@ -1,6 +1,6 @@
 project:
   name: opsi-webgui
-  version: &project_version 4.2.22
+  version: &project_version 4.3.1
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
@@ -12,7 +12,7 @@ package:
   type: binary
   architecture: all
   depends:
-    - opsiconfd (>= 4.2.0.253)
+    - opsiconfd (>= 4.3.0.20)
   source_script: |
     mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
     cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
