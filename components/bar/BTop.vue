@@ -15,7 +15,7 @@
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
         <IconIOpsiLogo v-once :light="true" class="mt-2" height="20" />
-        <span class="ml-1 topbar_title">
+        <span class="ml-1 topbar_title webgui_title">
           {{ $t('title.project') }}
         </span>
         <span v-once class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
@@ -43,9 +43,9 @@
           @keydown="rightmenuVisible = false"
           @click="rightmenuVisible = false"
         />
-        <b-navbar-nav class="pt-0 ml-auto float-right">
+        <b-navbar-nav class="pt-0 ml-auto mr-3 float-right">
           <ModalMSelectionsAll :navbar="true" :with-text="$mq=='mobile'" />
-          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" />
+          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary"/>
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang v-once :navbar="true" />
           <DropdownDDTheme v-once :navbar="true" />

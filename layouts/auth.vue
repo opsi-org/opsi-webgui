@@ -23,10 +23,13 @@ export default class LayoutAuth extends Vue {
 
   head () {
     return {
-      link: [{
-        rel: 'stylesheet',
-        href: (this.colortheme) ? this.colortheme.rel : ''
-      }]
+      link: [
+        // { rel: 'stylesheet', href: (this.colortheme) ? this.colortheme.rel : '' },
+        { rel: 'stylesheet', href: (this.colortheme) ? '/themes/opsi-dark.css' : '' },
+        { rel: 'stylesheet', href: 'css/custom.css' },
+        { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' },
+      ]
+
     }
   }
 }

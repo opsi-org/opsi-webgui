@@ -93,14 +93,13 @@
   "title.deleteClient": "Client löschen",
   "title.whatsnew":"Was gibt's neues ?",
   "title.hostparam": "Parameter",
-<<<<<<< HEAD
   "title.groups": "Gruppen",
-=======
   "title.admin": "Administration",
   "title.adminterminal": "Terminal",
   "table.fields.terminalId": "Terminal ID",
   "table.fields.terminalChannel": "Channel",
->>>>>>> develop
+  "button.reconnect": "Verbinden",
+  "button.clear": "Clear",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",

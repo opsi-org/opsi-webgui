@@ -1,0 +1,54 @@
+:root{
+  --opsi-blue: #3f5aa6; /**/
+  --opsi-red: #cb1e58;  /**/
+  --opsi-blue-dark: #3f3f3e;  /**/
+  --opsi-red-dark: #b2b2b2; /**/
+
+  --general-opsi-grey-dark: #b2b2b2;
+  --general-opsi-grey-light: #e4e4e3;
+
+  --general-fg: #E1E1E1; /**/
+  --general-bg: #3f3f3e; /**/
+
+  --success: #009605; /**/
+  --warning: #FF9100; /**/
+  --danger: #E51D3B; /**/
+  --primary: var(--opsi-blue);
+  --secondary: var(--opsi-red);
+  /* --primary: var(--general-fg); */
+  --info: var(--opsi-blue);
+  --light: var(--general-opsi-grey-light);
+  --dark: var(--general-opsi-grey-dark);
+
+  --success-dark: #246b32;
+  /* --danger-dark: #aa2126; */
+  /* --warning-dark: #bb8819; */
+  --info-dark: #0161a0;
+  --light-dark: #b9bbbd;
+  --dark-dark: #181a1d;
+
+  /* --color:#212529; */
+
+  /* --table-border: #ced4da; */
+  /* --component:#495057; */
+
+  /**/
+  --log-secret: #D500F9;
+  --log-trace: #8B8B8B;
+  --log-debug: #C0C0C0;
+  --log-info: #F5F5F5;
+  --log-notice: #009605;
+  --log-warning: #FF9100;
+  --log-error: #E51D3B;
+  --log-critical: #E20066;
+  --log-essential: #2979FF;
+
+  /**???***/
+  --log-secondary: #212121;
+  --log-muted: #5b616b;
+}
+
+
+/* color: var(--table-fg);
+background-color: var(--table-bg);
+border-color: var(--table-bg-border); */

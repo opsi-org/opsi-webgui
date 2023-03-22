@@ -245,7 +245,7 @@ export default class TInfiniteScroll extends Vue {
 }
 .TInfiniteScrollWrapper .TInfiniteScroll .table td,
 .TInfiniteScrollWrapper .TInfiniteScroll .table th {
-  border-top: 1px solid var(--table-border);
+  border-top: 1px solid var(--table-bg-border);
 }
 .TInfiniteScrollWrapper .mobileview.TInfiniteScroll .table td,
 .TInfiniteScrollWrapper .mobileview.TInfiniteScroll .table th {
@@ -294,7 +294,7 @@ export default class TInfiniteScroll extends Vue {
   text-align: center;
   height: 200px;
   margin-top: 200px;
-  color: var(--color, #6c757d);
+  color: var(--primary, #6c757d);
   font-size: small;
 }
 
@@ -324,6 +324,6 @@ export default class TInfiniteScroll extends Vue {
   display: none !important;
 }
 .mobile .TInfiniteScrollWrapper .table.b-table.b-table-stacked > tbody > tr {
-  border-top: 1px solid var(--dark) !important;
+  border-top: 1px solid var(--background) !important;
 }
 </style>

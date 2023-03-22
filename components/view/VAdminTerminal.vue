@@ -7,7 +7,12 @@
         <span class="terminalId">{{ $t('table.fields.terminalId') }}</span>
       </template>
       <template #value>
-        <b-form-input id="terminalId" v-model="terminalId" :aria-label="$t('table.fields.terminalId')" type="text" />
+        <b-input-group>
+          <b-form-input id="terminalId" v-model="terminalId" :aria-label="$t('table.fields.terminalId')" type="text" />
+          <template #append>
+            <b-button variant="primary" class="form-control" @click="() => {terminalId = ''}">{{ $t("button.clear") }}</b-button>
+          </template>
+        </b-input-group>
       </template>
     </GridGFormItem>
     <GridGFormItem>
@@ -15,10 +20,20 @@
         <span class="terminalChannel">{{ $t('table.fields.terminalChannel') }}</span>
       </template>
       <template #value>
-        <b-form-input id="terminalChannel" v-model="terminalChannel" :aria-label="$t('table.fields.terminalChannel')" type="text" />
+        <b-input-group>
+          <b-form-input id="terminalChannel" v-model="terminalChannel" :aria-label="$t('table.fields.terminalChannel')" type="text" />
+          <template #append>
+            <b-button variant="primary" class="form-control" @click="() => {terminalChannel = terminalChannelDefault}">{{ $t("button.clear") }}</b-button>
+          </template>
+        </b-input-group>
       </template>
     </GridGFormItem>
-
+    <GridGFormItem>
+      <template #label />
+      <template #value>
+        <b-button @click="init" class="form-control" variant="primary">{{ $t('button.reconnect') }}</b-button>
+      </template>
+    </GridGFormItem>
     <div ref="terminal" />
 
     <!-- <div class="box">
@@ -73,7 +88,8 @@ export default class VAdminTerminal extends Vue {
 
   mbTerminal: any
   terminalId: string = 'f40dbaa4-dc9f-46c0-9dc5-186a87a3eee5'
-  terminalChannel = 'service:config:terminal'
+  terminalChannelDefault = 'service:config:terminal'
+  terminalChannel = this.terminalChannelDefault
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChangedTerminal () {
     const msg = this.wsBusMsg
@@ -84,17 +100,17 @@ export default class VAdminTerminal extends Vue {
         this.terminalChannel = msg.back_channel
         this.mbTerminal.terminalChannel = this.terminalChannel
       }
-      // if (this.mbTerminal.cols !== msg.cols || this.mbTerminal.rows !== msg.rows) {
-      //   this.mbTerminal.skipResizeEvent = true
-      //   const dims = this.mbTerminal._core._renderService.dimensions
-      //   const width = dims.actualCellWidth * msg.cols + 20
-      //   const height = dims.actualCellHeight * msg.rows + 9
-      //   // const terminalContainer = document.getElementById('terminal')
-      //   const terminal = this.$refs.terminal as any
-      //   terminal.style.width = width + 'px'
-      //   terminal.style.height = height + 'px'
-      //   this.mbTerminal.fitAddon.fit()
-      // }
+      if (this.mbTerminal.cols !== msg.cols || this.mbTerminal.rows !== msg.rows) {
+        // this.mbTerminal.skipResizeEvent = true
+        // const dims = this.mbTerminal._core._renderService.dimensions
+        // const width = dims.actualCellWidth * msg.cols + 20
+        // const height = dims.actualCellHeight * msg.rows + 9
+        // // const terminalContainer = document.getElementById('terminal')
+        // const terminal = this.$refs.terminal as any
+        // terminal.style.width = width + 'px'
+        // terminal.style.height = height + 'px'
+        this.mbTerminal.fitAddon.fit()
+      }
     } else if (msg.type === 'terminal_data_read') {
       this.mbTerminal.write(msg.data)
     } else if (msg.type === 'terminal_close_event') {
@@ -110,10 +126,18 @@ export default class VAdminTerminal extends Vue {
   }
 
   mounted () {
+    this.init()
+  }
+
+  beforeDestroy () {
+    // disconnect msgbus terminal channel
+  }
+
+  init () {
     // this.wsWait(2000)
-    // if (this.mbTerminal) {
-    //   this.mbTerminal.dispose()
-    // }
+    if (this.mbTerminal) {
+      this.mbTerminal.dispose()
+    }
 
     this.mbTerminal = new Terminal({
       cursorBlink: true,
@@ -164,14 +188,15 @@ export default class VAdminTerminal extends Vue {
     this.mbTerminal.onData((data) => {
       this.wsTerminalSend(data, this.mbTerminal)
     })
-    // this.mbTerminal.onResize((event) => {
-    //   console.debug("Resize: ", event.rows, event.cols)
-    //   if (this.mbTerminal.skipResizeEvent) {
-    //     this.mbTerminal.skipResizeEvent = false
-    //   } else {
-    //     this.wsTerminalResize(event.rows, event.cols, this.mbTerminal)
-    //   }
-    // })
+    this.mbTerminal.onResize((event) => {
+      console.debug('Resize: ', event.rows, event.cols)
+      if (this.mbTerminal.skipResizeEvent) {
+        this.mbTerminal.skipResizeEvent = false
+      } else {
+        this.wsTerminalResize(event.rows, event.cols, this.mbTerminal)
+        this.mbTerminal.fitAddon.fit()
+      }
+    })
 
     // const terminal = this.$refs.terminal as any
     // terminal.ondragenter = function (event) {
@@ -183,10 +208,6 @@ export default class VAdminTerminal extends Vue {
     // terminal.ondragleave = function (event) {
     //   return false
     // }
-  }
-
-  beforeDestroy () {
-    // disconnect msgbus terminal channel
   }
 }
 </script>
