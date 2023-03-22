@@ -10,7 +10,7 @@
     <b-tabs data-testid="VGroups">
       <b-tab>
         <template #title>
-          <span> {{ $t("form.clientgroups") }} </span>
+          <span> {{ $t("form.clientGroups") }} </span>
         </template>
         <DivDScrollResult>
           <b-row>
@@ -37,43 +37,43 @@
               <br>
               <div v-if="selectedvalue.type == 'HostGroup'">
                 <span class="font-weight-bold">
-                  {{ $t('Selected Group : ') }} {{ selectedvalue.text }}
+                  {{ $t('group.select') }} {{ selectedvalue.text }}
                 </span>
                 <br><br>
                 <b-tabs>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Add client to the selected group.')">
-                        {{ $t("Add client") }}
+                      <span v-b-tooltip.hover :title="$t('group.addclient.tooltip')">
+                        {{ $t("group.addclient") }}
                       </span>
                     </template>
                     <br>
                     <b-form>
-                      <b-form-select v-model="selectedClients" v-b-tooltip.hover :title="$t('Select a Client')" multiple :options="clientIds">
+                      <b-form-select v-model="selectedClients" v-b-tooltip.hover :title="$t('form.client')" multiple :options="clientIds">
                         <template #first>
                           <b-form-select-option :value="null" disabled>
-                            {{ $t('-- Select a Client --') }}
+                            {{ $t('form.client') }}
                           </b-form-select-option>
                         </template>
                       </b-form-select>
                       <b-button class="float-right" variant="success" @click="addClientsToSelectedGroup">
-                        {{ $t("Add") }}
+                        {{ $t("group.add") }}
                       </b-button>
                     </b-form>
                   </b-tab>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Create subgroup for the selected group.')">
-                        {{ $t("Create subgroup") }}
+                      <span v-b-tooltip.hover :title="$t('group.subgroup.tooltip')">
+                        {{ $t("group.subgroup") }}
                       </span>
                     </template>
                     <br>
                     <b-form>
-                      <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('Subgroup Name')" :placeholder="$t('Subgroup ID')" />
-                      <b-form-input v-model="subgroup.description" v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
-                      <b-form-input v-model="subgroup.notes" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
+                      <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('group.subgroupname')" :placeholder="$t('group.subgroupname')" />
+                      <b-form-input v-model="subgroup.description" v-b-tooltip.hover :title="$t('table.fields.description')" :placeholder="$t('table.fields.description')" />
+                      <b-form-input v-model="subgroup.notes" v-b-tooltip.hover :title="$t('table.fields.notes')" :placeholder="$t('table.fields.notes')" />
                       <b-button class="float-right" variant="success" @click="createSubGroup">
-                        {{ $t("Create") }}
+                        {{ $t("button.create") }}
                       </b-button>
                     </b-form>
                   </b-tab>

@@ -241,6 +241,15 @@
   "treeselect.search": "Suche",
   "treeselect.searchOrAdd": "Suchen oder hinzufügen",
   "treeselect.limitText": "... (+{count})",
+
+  "group.select": "Selected Group: ",
+  "group.add": "Add",
+  "group.addclient": "Add client",
+  "group.addclient.tooltip": "Add client to the selected group.",
+  "group.subgroup": "Create subgroup",
+  "group.subgroup.tooltip": "Create subgroup for the selected group.",
+  "group.subgroupname": "Subgroup Name",
+
   "form.depot": "Serverauswahl",
   "form.client": "Clientauswahl",
   "form.logtype": "Logtypauswahl",
