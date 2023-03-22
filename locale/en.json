@@ -89,7 +89,7 @@
   "title.hostparam": "Parameters",
   "title.admin": "Administration",
   "title.adminterminal": "Terminal",
-  "table.fields.terminalId": "Termuinal id",
+  "table.fields.terminalId": "Terminal ID",
   "table.fields.terminalChannel": "Channel",
   "values.mixed": "<mixed>",
   "values.add": "+",
