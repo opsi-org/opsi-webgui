@@ -34,8 +34,8 @@
     <template v-else>
       <span v-for="diagnostic,k in diagnosticdata" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">{{ k }}</b-button>
-        <b-collapse :id="'collapse-'+k" :visible="k === 'health_check' || expandAll">
-          <div v-if="k === 'health_check'" class="container-fluid">
+        <b-collapse :id="'collapse-'+k" :visible="k.toString() === 'health_check' || expandAll">
+          <div v-if="k.toString() === 'health_check'" class="container-fluid">
             <BarBPageHeader>
               <template #left>
                 <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
@@ -52,7 +52,7 @@
               </template>
             </BarBPageHeader>
             <DivDScrollResult>
-              <span v-for="health, i in diagnostic" :key="i" :class="{ 'd-none': !health.check_id.includes(filter) && !health.check_status.includes(filter) }">
+              <span v-for="health, i in Object.values(diagnostic)" :key="i" :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }">
                 <GridGFormItem value-more="true">
                   <template #label>
                     <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">
@@ -98,7 +98,8 @@
             </DivDScrollResult>
           </div>
           <template v-else>
-            <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.includes(filter) }">
+            <!-- :class="{ 'd-none': !i.includes(filter) }" -->
+            <span v-for="val,i in diagnostic" :key="i">
               <GridGFormItem>
                 <template #label>
                   {{ i }}
