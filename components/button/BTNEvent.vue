@@ -41,7 +41,9 @@
     <b-modal
       :id="'event-modal-' + event + '-' + data"
       :title="$t(events[event].titlemodal)"
-      size="sm"
+      data-testid="BTNEventModal"
+      centered
+      scrollable
     >
       <b-list-group v-if="event=='ondemand'" flush>
         <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->

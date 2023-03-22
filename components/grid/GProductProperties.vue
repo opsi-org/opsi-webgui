@@ -78,8 +78,8 @@
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IProp, IProperty } from '../../.utils/types/ttable'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
-import { arrayEqual } from '../../.utils/utils/scompares'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { arrayEqual } from '../../.utils/utils/scompares'
 import { Constants } from '../../mixins/uib-mixins'
 import { SaveProductProperties } from '../../mixins/save'
 const selections = namespace('selections')
