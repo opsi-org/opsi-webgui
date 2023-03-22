@@ -11,14 +11,13 @@ webgui host methods
 import datetime
 from typing import Any, List, Optional
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Body, Depends, Request, status
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, column, or_, select, table, text, union, update
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
+from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
-from OPSI.Exceptions import BackendBadValueError
-from opsiconfd.application.utils import get_configserver_id
-from opsiconfd.backend import get_client_backend
+from opsicommon.exceptions import BackendBadValueError
+from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -51,19 +50,37 @@ host_router = APIRouter()
 
 class Host(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
-	type: str
-	description: str
-	notes: str
-	hardwareAddress: str
-	ipAddress: str
-	inventoryNumber: str
+	opsiHostKey: Optional[str]
+	type: Optional[str]
+	inventoryNumber: Optional[str]
+	systemUUID: Optional[str]
+	description: Optional[str]
+	notes: Optional[str]
+	hardwareAddress: Optional[str]
+	ipAddress: Optional[str]
+
+
+class Server(Host):  # pylint: disable=too-few-public-methods
+	depotLocalUrl: Optional[str]
+	depotRemoteUrl: Optional[str]
+	depotWebdavUrl: Optional[str]
+	repositoryLocalUrl: Optional[str]
+	repositoryRemoteUrl: Optional[str]
+	workbenchLocalUrl: Optional[str]
+	workbenchRemoteUrl: Optional[str]
+	networkAddress: Optional[str]
+	maxBandwidth: Optional[int]
+	isMasterDepot: Optional[bool]
+	masterDepotId: Optional[str]
+
+
+class Client(Host):  # pylint: disable=too-few-public-methods
 	created: str
 	lastSeen: str
-	opsiHostKey: str
 	oneTimePassword: str
 
 
-@host_router.get("/api/opsidata/hosts", response_model=List[Host])
+@host_router.get("/api/opsidata/hosts", response_model=List[Client])
 @rest_api
 def get_host_data(
 	commons: dict = Depends(common_query_parameters),
@@ -103,6 +120,7 @@ def get_host_data(
 			h.hardwareAddress AS hardwareAddress,
 			h.ipAddress AS ipAddress,
 			h.inventoryNumber AS inventoryNumber,
+			h.systemUUID AS systemUUID,
 			h.created AS created,
 			h.lastSeen AS lastSeen,
 			h.opsiHostKey AS opsiHostKey,
@@ -141,9 +159,161 @@ def get_host_data(
 		return RESTResponse(data=host_data)
 
 
+class HostGroup(BaseModel):
+	groupId: str
+	parentGroupId: Optional[str] = None
+	description: Optional[str] = None
+	notes: Optional[str] = None
+
+
+@host_router.post("/api/opsidata/hosts/groups")
+@rest_api
+def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: HostGroup
+) -> RESTResponse:
+	"""
+	Create host groups
+	"""
+
+	values = vars(group)
+	values["type"] = "HostGroup"
+
+	if group.parentGroupId:
+		groups = _get_host_groups_ids()
+		if group.parentGroupId not in groups:
+			return RESTErrorResponse(
+				message=f"Could not create group... Parent group '{group.parentGroupId}' does not exist.",
+				http_status=status.HTTP_400_BAD_REQUEST,
+			)
+
+	with mysql.session() as session:
+		try:
+
+			query = insert(
+				table(
+					"GROUP", column("type"), *[column(key) for key in vars(group).keys()]
+				)  # pylint: disable=consider-iterating-dictionary
+			).values(values)
+			session.execute(query)
+
+			headers = {"Location": f"{request.url}/{group.groupId}"}
+
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+
+		except IntegrityError as err:
+			logger.error("Could not create group object.")
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not create group object. Group '{group.groupId}' already exists",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not create group object.")
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message="Could not create group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
+@host_router.post("/api/opsidata/hosts/groups/{group}/clients")
+@rest_api
+def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str, clients: List[str] = Body(default=None)
+) -> RESTResponse:
+	"""
+	Add clients to host group
+	"""
+	with mysql.session() as session:
+		try:
+
+			values = {
+				"groupType": "HostGroup",
+				"groupId": group,
+			}
+
+			for client in clients:
+				values["objectId"] = client
+				query = insert(table("OBJECT_TO_GROUP", column("groupType"), column("groupId"), column("objectId"))).values(values)
+				session.execute(query)
+
+			return RESTResponse(data=clients, http_status=status.HTTP_201_CREATED)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not add client '%s' to group object.", client)
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message=f"Could not add client '{client}'  to group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
+@host_router.delete("/api/opsidata/hosts/groups/{group}/clients")
+@rest_api
+def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str
+) -> RESTResponse:
+	"""
+	Remove clients from host group
+	"""
+
+	try:
+		backend.objectToGroup_delete(groupType="HostGroup", objectId="*", groupId=group)
+	except Exception as error:
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
+
+	return RESTResponse(data=f"Removed all clients from {group}.")
+
+
+@host_router.delete("/api/opsidata/hosts/groups/{group}")
+@rest_api
+def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str
+) -> RESTResponse:
+	"""
+	Delete host group
+	"""
+	try:
+		backend.group_delete(group)
+	except Exception as error:
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
+
+	return RESTResponse(data=f"Deleted group {group}.")
+
+
+@host_router.put("/api/opsidata/hosts/groups/{group}")
+@rest_api
+def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	group: str, parent: str = Body(default=None), description: str = Body(default=None), note: str = Body(default=None)
+) -> RESTResponse:
+	"""
+	Update host group
+	"""
+	values = {"id": group, "type": "HostGroup"}
+	if parent:
+		values["parentGroupId"] = parent
+	if description:
+		values["description"] = description
+	if note:
+		values["note"] = note
+
+	try:
+		backend.group_updateObject(values)
+	except Exception as error:
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not update group {group}.", details=error)
+
+	return RESTResponse(data=f"Updated group: {values}")
+
+
 @host_router.get("/api/opsidata/hosts/groups")
 @rest_api
-def get_host_groups(  # pylint: disable=invalid-name
+def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	parentGroup: Optional[str] = None,
 	selectedClients: List[str] = Depends(parse_client_list),
@@ -341,24 +511,28 @@ def get_host_groups(  # pylint: disable=invalid-name
 		return RESTResponse(data={"groups": host_groups})
 
 
-def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:
-	clients = set()
-	all_clients = set()
+def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:  # pylint: disable: dangerous-default-value
+	clients = set()  # pylint: disable: dangerous-default-value
+	all_clients = set()  # pylint: disable: dangerous-default-value
 	groups = {group}
 
 	with mysql.session() as session:
 
 		while groups:
-			for group in groups.copy():
+			for group_id in groups.copy():
 				groups.remove(group)
-				query = select(text("g.groupId AS group_id, g.type AS group_type")).select_from(table("GROUP").alias("g")).where(text(f"g.parentGroupId='{group}'"))  # type: ignore[arg-type,attr-defined]
+				query = (
+					select(text("g.groupId AS group_id, g.type AS group_type"))
+					.select_from(table("GROUP").alias("g"))
+					.where(text(f"g.parentGroupId='{group_id}'"))
+				)
 				result = session.execute(query)
 				result = result.fetchall()
 
 				for row in result:
 					if row:
-						groups.add(dict(row).get("group_id"))
-				query = select(text("objectId")).select_from(table("OBJECT_TO_GROUP")).where(text(f"groupId='{group}'"))
+						groups.add(dict(row).get("group_id", ""))
+				query = select(text("objectId")).select_from(table("OBJECT_TO_GROUP")).where(text(f"groupId='{group_id}'"))
 				result2 = session.execute(query)
 				result2 = result2.fetchall()
 				for row in result2:
@@ -370,7 +544,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 		if user_register() and host_group_access_configured(username):
 			allowed_clients = get_allowed_clients(username)
 		where = and_(text("h.type = 'OpsiClient'"))
-		params = {"depot_ids": []}
+		params: dict = {"depot_ids": []}
 		if allowed_clients:
 			params["allowed_clients"] = allowed_clients
 			where = and_(where, text("(h.hostId in :allowed_clients)"))
@@ -401,12 +575,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 	return list(all_clients - clients)
 
 
-@host_router.get("/api/opsidata/hosts/groups/id")
-@rest_api
-def get_host_group_ids() -> RESTResponse:
-	"""
-	Get ids of all host groups
-	"""
+def _get_host_groups_ids() -> list[str]:
 	groups = []
 	with mysql.session() as session:
 		query = select(text("g.groupId AS group_id")).select_from(table("GROUP").alias("g"))  # type: ignore[arg-type,attr-defined]
@@ -415,7 +584,17 @@ def get_host_group_ids() -> RESTResponse:
 
 		for row in result:
 			if row:
-				groups.append(dict(row).get("group_id"))
+				groups.append(dict(row).get("group_id", ""))
+		return groups
+
+
+@host_router.get("/api/opsidata/hosts/groups/id")
+@rest_api
+def get_host_group_ids() -> RESTResponse:
+	"""
+	Get ids of all host groups
+	"""
+	groups = _get_host_groups_ids()
 	return RESTResponse(data=groups)
 
 
@@ -473,51 +652,7 @@ def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> di
 	return all_groups
 
 
-# "description": "text1",
-# "notes": "abc",
-# "id": "bonifax.uib.local",
-# "hardwareAddress": "7a:1c:65:aa:98:ea",
-# "ipAddress": "192.168.1.14",
-# "inventoryNumber": "123456",
-# "opsiHostKey": "432721195f1ab54a990ab4148bda53ff",
-# "depotLocalUrl": "file:///var/lib/opsi/depot",
-# "depotRemoteUrl": "smb://192.168.1.14/opsi_depot",
-# "depotWebdavUrl": "webdavs://bonifax.uib.local:4447/depot",
-# "repositoryLocalUrl": "file:///var/lib/opsi/repository",
-# "repositoryRemoteUrl": "webdavs://bonifax.uib.local:4447/repository",
-# "networkAddress": "192.168.1.0/24",
-# "maxBandwidth": 0,
-# "isMasterDepot": true,
-# "masterDepotId": null,
-# "workbenchLocalUrl": "file:///var/lib/opsi/workbench/",
-# "workbenchRemoteUrl": "smb://192.168.1.14/opsi_workbench",
-# "type": "OpsiConfigserver",
-# "ident": "bonifax.uib.local"
-
-
-class Server(BaseModel):
-	hostId: str
-	description: Optional[str]
-	notes: Optional[str]
-	hardwareAddress: Optional[str]
-	ipAddress: Optional[str]
-	inventoryNumber: Optional[str]
-	opsiHostKey: Optional[str]
-	depotLocalUrl: Optional[str]
-	depotRemoteUrl: Optional[str]
-	depotWebdavUrl: Optional[str]
-	repositoryLocalUrl: Optional[str]
-	repositoryRemoteUrl: Optional[str]
-	workbenchLocalUrl: Optional[str]
-	workbenchRemoteUrl: Optional[str]
-	networkAddress: Optional[str]
-	maxBandwidth: Optional[str]
-	isMasterDepot: Optional[str]
-	masterDepotId: Optional[str]
-	type: Optional[str]
-
-
-@host_router.get("/api/opsidata/servers", response_model=List[Host])
+@host_router.get("/api/opsidata/servers", response_model=List[Server])
 @rest_api
 def get_server_data(
 	commons: dict = Depends(common_query_parameters),
@@ -547,10 +682,8 @@ def get_server_data(
 			h.hardwareAddress AS hardwareAddress,
 			h.ipAddress AS ipAddress,
 			h.inventoryNumber AS inventoryNumber,
-			h.created AS created,
-			h.lastSeen AS lastSeen,
+			h.systemUUID AS systemUUID,
 			h.opsiHostKey AS opsiHostKey,
-			h.oneTimePassword AS oneTimePassword,
 			h.depotLocalUrl AS depotLocalUrl,
 			h.depotRemoteUrl AS depotRemoteUrl,
 			h.depotWebdavUrl AS depotWebdavUrl,
@@ -579,7 +712,8 @@ def get_server_data(
 			if row is not None:
 				row_dict = dict(row)
 				for key in row_dict.keys():
-
+					if key == "isMasterDepot":
+						row_dict[key] = bool(row_dict.get(key, 0))
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
 						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
 
@@ -590,7 +724,7 @@ def get_server_data(
 @host_router.put("/api/opsidata/servers/{server_id}")
 @rest_api
 @read_only_check
-def update_client(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
+def update_server(request: Request, server_id: str, server: Server) -> RESTResponse:  # pylint: disable=too-many-locals
 	"""
 	Update OPSI-Server (Config and Depot).
 	"""
@@ -641,7 +775,7 @@ def update_client(request: Request, server_id: str, server: Server) -> RESTRespo
 
 # TODO merege with client check duplicates
 def host_check_duplicates(host: Host, session: Any) -> None:
-	if backend.unique_hardware_addresses and host.hardwareAddress and not host.hardwareAddress.startswith("00:00:00"):
+	if mysql.unique_hardware_addresses and host.hardwareAddress and not host.hardwareAddress.startswith("00:00:00"):
 		select_query = (
 			select(text("h.hostId AS hostId"))  # type: ignore
 			.select_from(table("HOST").alias("h"))
