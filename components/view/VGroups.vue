@@ -19,7 +19,7 @@
                 v-model="selectedvalue"
                 class="treeselect_notstored treeselect_fullpage"
                 always-open
-                :default-expand-level="1"
+                :default-expand-level="4"
                 :normalizer="normalizer"
                 value-format="object"
                 :options="group"
@@ -142,10 +142,13 @@
                     <treeselect
                       v-model="selectedGroups"
                       v-b-tooltip.hover
+                      :multiple="true"
+                      :flat="true"
                       :title="$t('Select groups to add the selected client')"
                       :placeholder="$t('Select groups to add the selected client')"
                       :options="group"
-                      :normalizer="normalizer"
+                      value-format="object"
+                      :normalizer="normalizerUpdateGroup"
                     />
                     <b-button class="float-right" variant="success" @click="addSelectedClientToGroups">
                       {{ $t("Add") }}
@@ -158,12 +161,15 @@
                       </span>
                     </template>
                     <treeselect
-                      v-model="selectedGroups"
+                      v-model="selectedGroupsRemove"
                       v-b-tooltip.hover
+                      :multiple="true"
+                      :flat="true"
                       :title="$t('Select groups to remove the selected client assignment')"
                       :placeholder="$t('Select groups to remove the selected client assignment')"
                       :options="group"
-                      :normalizer="normalizer"
+                      value-format="object"
+                      :normalizer="normalizerUpdateGroup"
                     />
                     <b-button class="float-right" variant="danger" @click="removeSelectedClientFromGroups">
                       {{ $t("Remove") }}
@@ -216,6 +222,7 @@ export default class VGroups extends Vue {
   }
 
   selectedGroups: any = null
+  selectedGroupsRemove: any = null
 
   @selections.Getter public selectionDepots!: Array<string>
 
@@ -337,10 +344,14 @@ export default class VGroups extends Vue {
   }
 
   async addSelectedClientToGroups () {
-    await this.$axios.$post(`/api/opsidata/clients/${this.selectedvalue.id}/groups`, this.selectedGroups)
+    const selectedGroupsArr = this.selectedGroups.map(function (item) {
+      return item.text
+    })
+    await this.$axios.$post(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, selectedGroupsArr)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
+        this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
@@ -350,10 +361,14 @@ export default class VGroups extends Vue {
   }
 
   async removeSelectedClientFromGroups () {
-    await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.id}/groups`, this.selectedGroups)
+    const selectedGroupsArr = this.selectedGroupsRemove.map(function (item) {
+      return item.text
+    })
+    await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: selectedGroupsArr })
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
+        this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
