@@ -33,6 +33,7 @@ from .hosts import host_router
 from .products import product_router
 from .utils import mysql
 from .webgui import set_data_path_var, webgui_router
+from .server import server_router
 
 SESSION_LIFETIME = 60 * 30
 
@@ -61,6 +62,7 @@ class Webgui(Addon):
 		app.include_router(client_router, prefix=self.router_prefix)
 		app.include_router(depot_router, prefix=self.router_prefix)
 		app.include_router(conifg_router, prefix=self.router_prefix)
+		app.include_router(server_router, prefix=self.router_prefix)
 
 		app.mount(path=f"{self.router_prefix}/app", app=StaticFiles(directory=os.path.join(self.data_path, "app"), html=True), name="app")
 		set_data_path_var(self.data_path)
