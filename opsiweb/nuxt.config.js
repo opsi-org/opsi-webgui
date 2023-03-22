@@ -59,7 +59,7 @@ export default {
     // '~/plugins/vue-i18n.js'
   ],
 
-  css: ['uib-components/assets/css/custom'],
+  // css: ['uib-components/assets/css/custom'],
   dir: {
     layouts: 'uib-components/layouts',
     store: 'uib-components/store',
