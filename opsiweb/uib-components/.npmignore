@@ -1,5 +1,0 @@
-*test*
-.utils
-**/*.test.*.js*
-**/*.stories.js
-.utils/types/
