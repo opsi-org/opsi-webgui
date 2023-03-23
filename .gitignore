@@ -5,6 +5,7 @@
 *backup*
 backend/opsibackup
 backend/addon/webgui/data
+backend/.vscode/settings.json
 .nuxt/
 .nuxt-storybook/
 *node_modules*
