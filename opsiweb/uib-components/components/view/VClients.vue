@@ -109,6 +109,9 @@
               <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" />
             </div>
           </template>
+          <template #head(reachable)>
+            <ModalMClientReachable />
+          </template>
           <template #cell(uefi)="row">
             <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
           </template>

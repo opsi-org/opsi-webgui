@@ -168,6 +168,8 @@
   "table.fields.netbootproduct": "Netboot Product",
   "table.fields.clientagent": "OPSI Client Agent",
   "table.fields.reachable": "Reachable",
+  "table.fields.checkreachable": "Check the Client Reachability",
+  "button.reachable": "Check reachability for the selected clients",
   "table.name.client": "Client name",
   "table.name.domain": "Domain name",
   "table.details.productproperty.defaults":"Product default",
