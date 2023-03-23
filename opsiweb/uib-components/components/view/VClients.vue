@@ -291,6 +291,11 @@ export default class VClients extends Vue {
       ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
       await this.$fetch()
     }
+    if (msg && msg.event === ('host_connected' || 'host_disconnected')) {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
+      await this.$fetch()
+    }
   }
 
   @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
