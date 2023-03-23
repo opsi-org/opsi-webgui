@@ -257,6 +257,11 @@ export default class VClients extends Vue {
       label: this.$t('table.fields.installationStatusUnknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
+    // TODO: Sorting for reachable column
+    reachable: { // eslint-disable-next-line object-property-newline
+      key: 'reachable', label: this.$t('table.fields.reachable') as string, _fixed: true, sortable: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('reachable') : true
+    },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,

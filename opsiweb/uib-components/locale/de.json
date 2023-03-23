@@ -167,6 +167,7 @@
   "table.fields.group": "Group",
   "table.fields.netbootproduct": "Netboot Product",
   "table.fields.clientagent": "OPSI Client Agent",
+  "table.fields.reachable": "Erreichbar",
   "table.name.client": "Clientname",
   "table.name.domain": "Domainname",
   "table.details.productproperty.defaults":"Produkt Default",
