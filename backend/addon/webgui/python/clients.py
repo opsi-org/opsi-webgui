@@ -245,6 +245,20 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 		return RESTResponse(data=data, total=total)
 
 
+@client_router.get("/api/opsidata/clients/reachable", response_model=List[ClientList])
+@rest_api
+@filter_depot_access
+async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-default-value, invalid-name, unused-argument, too-many-locals
+	request: Request,
+	selectedClients: List[str] = Depends(parse_client_list),
+) -> RESTResponse:
+	"""
+	Get List of reachable Clients. Only test "clients".
+	"""
+	result = await backend.hostControl_reachable(selectedClients, 20)
+	return RESTResponse(data=result, total=len(result))
+
+
 @client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
 @rest_api
 def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
