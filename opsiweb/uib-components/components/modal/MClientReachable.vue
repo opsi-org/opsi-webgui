@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="MClientReachable">
+  <div data-testid="MClientreachable">
     <b-button
       :title="$t('table.fields.checkreachable')"
       class="border-0"

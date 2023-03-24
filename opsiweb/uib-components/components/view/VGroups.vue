@@ -1,5 +1,5 @@
 <template>
-  <div class="VGroups">
+  <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" />
     <BarBPageHeader>
