@@ -49,7 +49,14 @@
                     </template>
                     <br>
                     <b-form>
-                      <b-form-select v-model="selectedClients" v-b-tooltip.hover :title="$t('form.client')" multiple :options="clientIds">
+                      <b-form-select
+                        v-model="selectedClients"
+                        v-b-tooltip.hover
+                        :title="$t('form.client')"
+                        multiple
+                        :select-size="20"
+                        :options="clientIds"
+                      >
                         <template #first>
                           <b-form-select-option :value="null" disabled>
                             {{ $t('form.client') }}
@@ -139,20 +146,29 @@
                         {{ $t("group.add") }}
                       </span>
                     </template>
-                    <treeselect
-                      v-model="selectedGroups"
-                      v-b-tooltip.hover
-                      :multiple="true"
-                      :flat="true"
-                      :title="$t('group.addtogroup.tooltip')"
-                      :placeholder="$t('group.addtogroup.tooltip')"
-                      :options="group"
-                      value-format="object"
-                      :normalizer="normalizerUpdateGroup"
-                    />
-                    <b-button class="float-right" variant="success" @click="addSelectedClientToGroups">
-                      {{ $t("group.add") }}
-                    </b-button>
+                    <b-row>
+                      <b-col>
+                        <treeselect
+                          v-model="selectedGroups"
+                          v-b-tooltip.hover
+                          class="treeselect_notstored"
+                          :multiple="true"
+                          :flat="true"
+                          always-open
+                          :default-expand-level="4"
+                          :title="$t('group.addtogroup.tooltip')"
+                          :placeholder="$t('group.addtogroup.tooltip')"
+                          :options="group"
+                          value-format="object"
+                          :normalizer="normalizerUpdateGroup"
+                        />
+                      </b-col>
+                      <b-col cols="2">
+                        <b-button class="float-right" variant="success" @click="addSelectedClientToGroups">
+                          {{ $t("group.add") }}
+                        </b-button>
+                      </b-col>
+                    </b-row>
                   </b-tab>
                   <b-tab>
                     <template #title>
@@ -160,27 +176,35 @@
                         {{ $t("group.remove") }}
                       </span>
                     </template>
-                    <treeselect
-                      v-model="selectedGroupsRemove"
-                      v-b-tooltip.hover
-                      :multiple="true"
-                      :flat="true"
-                      :title="$t('group.removefromgroup.tooltip')"
-                      :placeholder="$t('group.removefromgroup.tooltip')"
-                      :options="group"
-                      value-format="object"
-                      :normalizer="normalizerUpdateGroup"
-                    />
-                    <b-button class="float-right" variant="danger" @click="removeSelectedClientFromGroups">
-                      {{ $t("group.remove") }}
-                    </b-button>
+                    <b-row>
+                      <b-col>
+                        <treeselect
+                          v-model="selectedGroupsRemove"
+                          v-b-tooltip.hover
+                          class="treeselect_notstored"
+                          :multiple="true"
+                          :flat="true"
+                          always-open
+                          :default-expand-level="4"
+                          :title="$t('group.removefromgroup.tooltip')"
+                          :placeholder="$t('group.removefromgroup.tooltip')"
+                          :options="group"
+                          value-format="object"
+                          :normalizer="normalizerUpdateGroup"
+                        />
+                      </b-col>
+                      <b-col cols="2">
+                        <b-button class="float-right" variant="danger" @click="removeSelectedClientFromGroups">
+                          {{ $t("group.remove") }}
+                        </b-button>
+                      </b-col>
+                    </b-row>
                   </b-tab>
                 </b-tabs>
               </div>
             </b-col>
           </b-row>
         </DivDScrollResult>
-        <!-- {{ group }} -->
       </b-tab>
       <!-- <b-tab>
         <template #title>
