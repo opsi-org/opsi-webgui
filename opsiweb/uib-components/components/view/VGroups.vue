@@ -7,7 +7,7 @@
         <TreeTSDepots />
       </template>
     </BarBPageHeader>
-    <b-tabs data-testid="VGroups">
+    <b-tabs>
       <b-tab>
         <template #title>
           <span> {{ $t("form.clientGroups") }} </span>
