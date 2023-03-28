@@ -317,6 +317,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	parentGroup: Optional[str] = None,
 	selectedClients: List[str] = Depends(parse_client_list),
+	withClients: bool = True,
 ) -> RESTResponse:
 	"""
 	Get host groups as tree.
@@ -396,7 +397,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			result = session.execute(query, params)
 			result = result.fetchall()
 
-			all_groups = read_groups(result, root_group, selectedClients)
+			all_groups = read_groups(result, root_group, selectedClients, withClients)
 
 		elif parentGroup == "root":
 			all_groups = {
@@ -441,10 +442,11 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 				)
 				.where(where)
 			)
+			print(query)
 			result = session.execute(query, params)
 			result = result.fetchall()
 
-			all_groups = read_groups(result, root_group, selectedClients)
+			all_groups = read_groups(result, root_group, selectedClients, withClients)
 
 		if selectedClients:
 			params = {}
@@ -494,7 +496,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			}
 			host_groups["children"] = {**not_assigned, **host_groups["children"]}
 
-		if parentGroup == "not_assigned":
+		if parentGroup == "not_assigned" and withClients:
 			clients = group_get_all_clients("clientdirectory", selectedDepots)
 			host_groups["children"] = {}
 			for client in clients:
@@ -617,8 +619,10 @@ def find_parent(group: str) -> str:
 		return parent_id
 
 
-def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> dict:  # pylint: disable=invalid-name
-	if not isinstance(selectedClients, list):
+def read_groups(
+	raw_groups: List, root_group: dict, selectedClients: List, withClients: bool = True  # pylint: disable=invalid-name
+) -> dict:
+	if not isinstance(selectedClients, list) and withClients:
 		selectedClients = []
 	all_groups = {}
 	for row in raw_groups:
@@ -629,7 +633,7 @@ def read_groups(raw_groups: List, root_group: dict, selectedClients: List) -> di
 				"text": row["group_id"],
 				"parent": row["parent_id"] or root_group["id"],
 			}
-		if row["object_id"]:
+		if row["object_id"] and withClients:
 			if row["object_id"] in selectedClients:
 				all_groups[row["group_id"]]["hasAnySelection"] = True
 			if "children" not in all_groups[row["group_id"]]:
