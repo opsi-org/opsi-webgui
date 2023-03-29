@@ -18,12 +18,12 @@
       </template>
     </ModalMSelections>
     <!--:always-open="(id=='PropertyValue-method')"-->
+    <!--:always-open="(id=='HostGroups')"-->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
       :ref="`treeselect-${id}`"
       v-model="selectionWrapper"
-      :always-open="(id=='HostGroups')"
       :flat="flat"
       :placeholder="placeholderWrapper"
       class="treeselect"
