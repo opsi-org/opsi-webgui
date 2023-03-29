@@ -17,12 +17,13 @@
         />
       </template>
     </ModalMSelections>
-    <!-- :always-open="(id=='PropertyValue-method')" -->
+    <!--:always-open="(id=='PropertyValue-method')"-->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
       :ref="`treeselect-${id}`"
       v-model="selectionWrapper"
+      :always-open="(id=='HostGroups')"
       :flat="flat"
       :placeholder="placeholderWrapper"
       class="treeselect"
@@ -38,7 +39,6 @@
       :open-on-focus="false"
       :branch-nodes-first="true"
       :max-height="300"
-      :always-open="false"
       :disabled="disabled"
       :cache-options="false"
       :normalizer="normalizer"
@@ -389,6 +389,12 @@ export default class TSDefault extends Vue {
 </script>
 
 <style>
+.vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked,
+.vue-treeselect__checkbox--checked:hover {
+  border-color: var(--b-custom_control-checked) !important;
+  background: var(--bg-custom_control-checked);
+  color: var(--fg-custom_control-checked);
+}
 .TSDefault-wrapper {
   line-height: inherit !important;
   font-size: inherit !important;
@@ -400,26 +406,26 @@ export default class TSDefault extends Vue {
   cursor: not-allowed;
   pointer-events: none;
   /* color: var(--dark); */
-  color: var(--color, var(--dark, inherit));
+  color: var(--general-fg, var(--dark, inherit));
 }
 
 /* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
 
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
-  color: var(--color);
+  color: var(--secondary);
 }
 
 .TSDefault-wrapper,
 .TSDefault-wrapper .treeselect,
 .TSDefault-wrapper .vue-treeselect__menu-container,
 .TSDefault-wrapper .vue-treeselect__menu {
-  background-color: var(--component, white);
+  background-color: var(--secondary, white);
 }
 
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--color);
-  background-color: var(--hover);
+  color: var(--primary-foreground);
+  background-color: var(--primary-dark);
 }
 
 .TSDefault-wrapper .hasSelection {
@@ -460,7 +466,7 @@ export default class TSDefault extends Vue {
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
-  color: var(--color)!important;
+  color: var(--general-fg)!important;
   /* color: inherit !important; */
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__label-container {
@@ -472,14 +478,14 @@ export default class TSDefault extends Vue {
   padding-bottom: 5px;
   margin-top: -6px !important;
   /* color: inherit !important; */
-  color: var(--color, var(--dark, inherit));
+  color: var(--general-fg, var(--dark, inherit));
 }
 .TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
 .TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {
   display: inline !important;
 }
 .TSDefault-wrapper .vue-treeselect__option-arrow-container:hover .vue-treeselect__option-arrow{
- color: var(--color, black) !important;
+ color: var(--general-fg) !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__control{
   max-height: 10px !important;
@@ -489,7 +495,7 @@ export default class TSDefault extends Vue {
   padding-left: 0px !important;
   padding-right: 0px !important;
   background-color: var(--component, var(--background, inherit));
-  color: var(--color, var(--light, inherit));
+  color: var(--general-fg, var(--light, inherit));
 }
 
 .TSDefault-wrapper .treeselect {
@@ -519,7 +525,7 @@ export default class TSDefault extends Vue {
   width: 100%;
   max-width: 100%;
   margin-top: 5px;
-  color: var(--color) !important;
+  color: var(--general-fg) !important;
 }
 /* .TSDefault-wrapper .vue-treeselect__value-container, */
 .TSDefault-wrapper .treeselect .vue-treeselect__multi-value {

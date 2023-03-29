@@ -390,6 +390,25 @@ export default class TInfiniteScrollSmooth extends Vue {
 </script>
 
 <style>
+.theme-light .table.b-table > thead > tr > [aria-sort=none], .table.b-table > tfoot > tr > [aria-sort=none] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='black' opacity='.3' d='M51 1l25 23 24 22H1l25-22zM51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+}
+.theme-light .table.b-table > thead > tr > [aria-sort=ascending], .table.b-table > tfoot > tr > [aria-sort=ascending] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='black' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='black' opacity='.3' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e")
+}
+.theme-light .table.b-table > thead > tr > [aria-sort=descending], .table.b-table > tfoot > tr > [aria-sort=descending] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='black' opacity='.3' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='black' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+}
+.theme-dark .table.b-table > thead > tr > [aria-sort=none], .table.b-table > tfoot > tr > [aria-sort=none] {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='white' opacity='.3' d='M51 1l25 23 24 22H1l25-22zM51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+}
+.theme-dark .table.b-table > thead > tr > [aria-sort=ascending], .table.b-table > tfoot > tr > [aria-sort=ascending] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='white' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='white' opacity='.3' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e")
+}
+.theme-dark .table.b-table > thead > tr > [aria-sort=descending], .table.b-table > tfoot > tr > [aria-sort=descending] {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='101' height='101' view-box='0 0 101 101' preserveAspectRatio='none'%3e%3cpath fill='white' opacity='.3' d='M51 1l25 23 24 22H1l25-22z'/%3e%3cpath fill='white' d='M51 101l25-23 24-22H1l25 22z'/%3e%3c/svg%3e");
+}
+
 .TInfiniteScrollSmoothWrapper{
   max-height: max-content;
 }
@@ -475,12 +494,16 @@ export default class TInfiniteScrollSmooth extends Vue {
   background-color: var(--background, white);
 }
 
+.TInfiniteScrollSmoothWrapper tr:hover .btn-group .btn-outline-primary {
+  border-color: var(--primary-foreground) !important;
+  color: var(--primary-foreground) !important;
+}
 .TInfiniteScrollSmoothWrapper th .btn-group .btn-outline-primary,
 .TInfiniteScrollSmoothWrapper th .btn-group .btn-outline-primary:hover,
 .TInfiniteScrollSmoothWrapper td .btn-group .btn-outline-primary,
 .TInfiniteScrollSmoothWrapper td .btn-group .btn-outline-primary:hover {
-  border: unset !important; /* removes border artifacts in rowactions buttons*/
-  border-color: unset !important; /* removes border artifacts in rowactions buttons*/
+  /*border: unset !important; /* removes border artifacts in rowactions buttons*/
+  /*border-color: unset !important; /* removes border artifacts in rowactions buttons*/
 }
 .TInfiniteScrollSmoothWrapper thead .col-rowactions {
   padding-left: 12px !important;

@@ -53,7 +53,7 @@
   --bg-invalid_label: #e4606d;
   --s-invalid_label: rgba(220, 53, 69, 0.25);
 
-  --fg-btn: var(--general-fg);
+  --fg-btn: var(--primary-outline-foreground);
   --bg-btn: var(--primary);
   --b-btn: var(--primary);
   --fg-btn-disabled: var(--primary);
@@ -139,8 +139,8 @@
   --bg-dropdown_menu: var(--general-bg-light);
   --fg-dropdown_item: var(--primary-foreground);
   --bg-dropdown_item: var(--general-bg-light);
-  --fg-dropdown_item-hover: var(--general-fg);
-  --bg-dropdown_item-hover: var(--dropdown-hover);
+  --fg-dropdown_item-hover: var(--primary-foreground);
+  --bg-dropdown_item-hover: var(--primary-dark);
   --fg-dropdown_item-active: var(--primary-foreground);
   --bg-dropdown_item-active: var(--primary);
   --fg-dropdown_item-disabled: var(--primary-foreground-disabled);
@@ -444,12 +444,19 @@
   --bb-modal_header: #dee2e6;
   --bt-modal_footer: #dee2e6;
 
-  --bt-bs_tooltip: var(--background);
-  --br-bs_tooltip: var(--background);
-  --bl-bs_tooltip: var(--background);
-  --bb-bs_tooltip: var(--background);
+  /* --b-context_menu: var(--b-secondary); */
+  --fg-context_menu: var(--general-fg);
+  --bg-context_menu: var(--general-bg);
+  --b-context_menu: var(--general-bg-weak);
+  --fg-context_menu_titles: var(--fg-context_menu);
+
+
+  --bt-bs_tooltip: var(--general-bg);
+  --br-bs_tooltip: var(--general-bg);
+  --bl-bs_tooltip: var(--general-bg);
+  --bb-bs_tooltip: var(--general-bg);
   --fg-tooltip_inner: var(--general-fg);
-  --bg-tooltip_inner: var(--background);
+  --bg-tooltip_inner: var(--general-bg-light);
   --bg-popover: var(--general-fg);
   --b-popover: rgba(0, 0, 0, 0.2);
   --bt-popover: rgba(0, 0, 0, 0.25);

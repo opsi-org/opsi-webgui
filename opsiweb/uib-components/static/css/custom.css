@@ -58,6 +58,7 @@
   --general-fg: var(--opsi-base-foreground);
   --general-bg: var(--opsi-base-background);
 
+  /** simple outline element like btn */
   --primary-outline-foreground: var(--general-fg);
   --primary-outline-foreground-disabled: var(--general-fg-disabled);
   --primary-outline-background: var(--general-bg);
@@ -148,8 +149,8 @@
   /* font-weight: 200; */
 }
 .li-delimiter {
-  border-top: 1px solid var(--log-muted);
-  color: var(--log-muted);
+  border-top: 1px solid var(--primary-outline-foreground-disabled);
+  color: var(--primary-outline-foreground-disabled);
 }
 body {
   font-family: var(--font-family-general) !important;
@@ -355,7 +356,10 @@ body .mobile .topbar_content .navbar > * {
 
 
 
-
+/* .table.b-table > thead > tr > [aria-sort=none] {
+  background-color: aqua;
+  color: green !important;
+} */
 
 
 
@@ -399,14 +403,14 @@ body .mobile .topbar_content .navbar > * {
   color: var(--txt-fg) !important;
 }
 .text-muted {
-  color: var(--log-muted, gray) !important;
+  color: var(--primary-outline-foreground-disabled, gray) !important;
 }
 .bg-warning {
   color:#212121 !important;
   background: var(--warning) !important;
 }
 .nav-link.disabled {
-  color: var(--log-muted, gray) !important;
+  color: var(--primary-outline-foreground-disabled, gray) !important;
   cursor: not-allowed;
 }
 .loadingCursor {
@@ -434,13 +438,13 @@ body .mobile .topbar_content .navbar > * {
 }
 .treeselect_notstored .vue-treeselect__control {
   /* height: 1.25rem !important; */
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
+  background-color: var(--general-bg, var(--background, black));
+  color: var(--general-fg, var(--light, white));
   border:1px solid var(--border, #ced4da );
 }
 .treeselect_notstored .vue-treeselect__menu {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
+  background-color: var(--general-bg, var(--background, black));
+  color: var(--color, var(--general-fg, white));
 }
 .treeselect_notstored .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
@@ -449,7 +453,7 @@ body .mobile .topbar_content .navbar > * {
   color: var(--color) !important;
 }
 .treeselect_notstored .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--color);
+  color: var(--white);
   background-color: var(--treeselect-hover);
 }
 .treeselect_notstored.vue-treeselect--single .vue-treeselect__option--selected{
