@@ -515,24 +515,6 @@ def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # 
 	return RESTResponse(http_status=status.HTTP_200_OK, data=result)
 
 
-def host_check_duplicates(client: Client, session: Any) -> None:
-	if (
-		mysql.unique_hardware_addresses  # pylint: disable=protected-access
-		and client.hardwareAddress
-		and not client.hardwareAddress.startswith("00:00:00")
-	):
-		select_query = (
-			select(text("h.hostId AS hostId"))  # type: ignore
-			.select_from(table("HOST").alias("h"))
-			.where(text(f"h.hostId != '{client.hostId}' AND hardwareAddress = '{client.hardwareAddress}'"))
-		)  # pylint: disable=redefined-outer-name
-
-		result = session.execute(select_query)
-		result = result.fetchone()
-		if result:
-			raise BackendBadValueError(f"Hardware address {client.hardwareAddress!r} is already used by host {result}")
-
-
 class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
 	clients: List[str]
 	username: str
