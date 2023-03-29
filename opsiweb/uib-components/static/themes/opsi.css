@@ -1808,8 +1808,8 @@ input[type="time"].form-control {
   appearance: none;
 }
 select.form-control:focus::-ms-value {
-  color: var(--fg-form_control);
-  background-color: var(--bg-form_control);
+  color: var(--fg-form_control) !important;
+  background-color: var(--bg-form_control) !important;
 }
 .form-control-file,
 .form-control-range {
@@ -3150,13 +3150,20 @@ input[type="submit"].btn-block {
   line-height: 1.5;
   vertical-align: middle;
   color: var(--fg-custom_select);
-  background: var(--fg-custom_select)
+  background: var(--fg-custom_select),
     url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
     no-repeat right 0.75rem center/8px 10px;
   background-color: var(--bg-custom_select);
   border: 1px solid var(--b-custom_select);
   border-radius: 0.25rem;
   appearance: none;
+}
+select option:checked {
+  color: var(--fg-custom_select) !important;
+  background: var(--fg-custom_select),
+    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e")
+    no-repeat right 0.75rem center/8px 10px;
+  background-color: var(--bg-custom_select) !important;
 }
 .custom-select:focus {
   border-color: var(--b-custom_select-focus);

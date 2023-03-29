@@ -156,8 +156,8 @@
   --b-custom_control-checked: var(--primary);
   --s-custom_control-focus: var(--primary-dark);
   --b-custom_control-focus: var(--primary-dark);
-  --fg-custom_control-active: var(--general-fg);
-  --bg-custom_control-active: #4dc2ff;
+  --fg-custom_control-active: var(--primary-foreground);
+  --bg-custom_control-active: var(--primary);
   --b-custom_control-active: var(--primary-dark);
   --fg-custom_control-disabled: var(--element-disabled);
   --bg-custom_control-disabled: #e9ecef;
@@ -168,7 +168,7 @@
   --bg-custom_item-checked-disabled: rgba(0, 101, 153, 0.5);
   --bg-custom_switch: var(--general-bg-light);
   --fg-custom_select: var(--general-fg);
-  --bg-custom_select: var(--general-bg-light);
+  --bg-custom_select: var(--general-bg);
   --b-custom_select: var(--general-bg-light);
   --b-custom_select-focus: var(--primary);
   --fg-custom_select-focus: var(--general-bg-light);
