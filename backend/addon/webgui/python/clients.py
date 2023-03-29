@@ -525,7 +525,7 @@ class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
 @client_router.post("/api/opsidata/clients/deploy")
 @rest_api
 async def deploy_client_agent(clientDeployData: ClientDeployData) -> RESTResponse:  # pylint: disable=invalid-name
-	logger.devel(clientDeployData)
+	logger.debug(clientDeployData)
 
 	deploy_script = "/var/lib/opsi/depot/opsi-client-agent/opsi-deploy-client-agent"
 	if clientDeployData.type == "linux":
@@ -533,7 +533,7 @@ async def deploy_client_agent(clientDeployData: ClientDeployData) -> RESTRespons
 	if clientDeployData.type == "macos":
 		deploy_script = "/var/lib/opsi/depot/opsi-mac-client-agent/opsi-deploy-client-agent"
 
-	logger.devel(clientDeployData.clients)
+	logger.debug(clientDeployData.clients)
 
 	if os.path.isfile(deploy_script):
 		logger.notice("Running opsi-deploy-client-agent script...")
@@ -566,16 +566,7 @@ def set_depot(client: str, depot: str) -> None:
 	"""
 	Set depot of client.
 	"""
-
-	values = {"objectId": client, "configId": "clientconfig.depot.id", "values": f'["{depot}"]'}
-
-	with mysql.session() as session:
-		stmt = (
-			insert(table("CONFIG_STATE", *[column(name) for name in values.keys()]))  # pylint: disable=consider-iterating-dictionary
-			.values(**values)
-			.on_duplicate_key_update(**values)
-		)
-		session.execute(stmt, values)
+	backend.configState_create("clientconfig.depot.id", client, f'["{depot}"]')
 
 
 @client_router.post("/api/opsidata/clients/{clientid}/groups")
@@ -587,48 +578,19 @@ def add_client_to_groups(
 	"""
 	Add client to a list of groups.
 	"""
+	try:
+		for group in groups:
+			backend.objectToGroup_create("HostGroup", group, clientid)
+		return RESTResponse(http_status=200, data=f"Client '{clientid}' is now a member of: {', '.join(groups)}.")
 
-	if not groups:
-		logger.error("No group given.")
-		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No group given.")
-
-	with mysql.session() as session:
-		try:
-			for group in groups:
-				values = {"groupType": "HostGroup", "objectId": clientid, "groupId": group}
-
-				with mysql.session() as session:
-					stmt = (
-						insert(
-							table(
-								"OBJECT_TO_GROUP", *[column(name) for name in values.keys()]
-							)  # pylint: disable=consider-iterating-dictionary
-						)
-						.values(**values)
-						.on_duplicate_key_update(**values)
-					)
-					session.execute(stmt, values)
-		except IntegrityError as err:
-			logger.error("Could not add client %s to groups: %s.", clientid, groups)
-			logger.error(err)
-			session.rollback()
-			return RESTErrorResponse(
-				message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
-				http_status=status.HTTP_409_CONFLICT,
-				details=err,
-			)
-
-		except Exception as err:  # pylint: disable=broad-except
-			logger.error("Could not add client %s to groups: %s.", clientid, groups)
-			logger.error(err)
-			session.rollback()
-			raise OpsiApiException(
-				message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
-				http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-				error=err,
-			) from err
-
-	return RESTResponse(http_status=200, data=f"Client '{clientid}' is now a member of: {', '.join(groups)}.")
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not add client %s to groups: %s.", clientid, groups)
+		logger.error(err)
+		raise OpsiApiException(
+			message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
 
 
 @client_router.delete("/api/opsidata/clients/{clientid}/groups")
@@ -648,7 +610,7 @@ def rm_client_from_groups(
 	try:
 		for group in groups:
 			backend.objectToGroup_delete(groupType="HostGroup", groupId=group, objectId=clientid)
-
+		return RESTResponse(http_status=200, data=f"Client '{clientid}' was removed from: {', '.join(groups)}.")
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could not remove client %s from groups: %s.", clientid, groups)
 		logger.error(err)
@@ -657,5 +619,3 @@ def rm_client_from_groups(
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err
-
-	return RESTResponse(http_status=200, data=f"Client '{clientid}' was removed from: {', '.join(groups)}.")
