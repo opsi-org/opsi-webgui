@@ -1,6 +1,6 @@
 <template>
   <div v-if="Object.keys($scopedSlots).length > 0" data-testid="CMViewTable">
-    <div v-if="viewMenu" class="right-click-backdrop bg-primary" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
+    <div v-if="viewMenu" class="right-click-backdrop bg-modal-backdrop" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
     <div v-if="withButton !== false" id="contextmenu-content" @click.right="openMenu" @keydown="openMenu">
       <slot name="item" />
       <ul
@@ -128,22 +128,35 @@ export default class CMViewTable extends Vue {
 <style lang="css">
 
 #contextmenu-content {
-    width: 100%;
-    height: 100%;
-    min-width: 100%;
-    min-height: 100%;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
 }
 
 #right-click-menu{
-    border: 1px solid #BDBDBD;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
-    display: block;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: fixed;
-    min-width: 250px;
-    z-index: 200;
+  color: var(--fg-context_menu_titles) !important;
+  border: 1px solid var(--b-context_menu) !important;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+  display: block;
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+  position: fixed;
+  min-width: 250px;
+  z-index: 200;
+}
+#right-click-menu .dropdown-menu {
+  border-color: var(--b-context_menu);
+}
+#right-click-menu .dropdown-menu .dropdown-item,
+#right-click-menu .dropdown-menu,
+#right-click-menu .dropdown,
+#right-click-menu .dropdown .btn,
+#right-click-menu .btn,
+#right-click-menu.dropdown-menu {
+  background-color: var(--bg-context_menu) !important;
+  color: var(--fg-context_menu) ;
 }
 
 /* #right-click-menu small > li.dropdown-item .btn-outline-primary {
@@ -162,11 +175,17 @@ export default class CMViewTable extends Vue {
     margin: 0;
 }
 
+.bg-modal-backdrop {
+  background-color: var(--bg-modal_backdrop);
+}
+
 #right-click-menu header {
-  color: var(--log-muted);
+  color: var(--fg-context_menu_titles);
   pointer-events: none;
   background-color: transparent;
   font-size: small;
+  padding: 10px;
+  padding-bottom: 0px;
 }
 .right-click-backdrop {
   position: fixed;
@@ -176,12 +195,12 @@ export default class CMViewTable extends Vue {
   min-width: 100%;
   height: 100%;
   min-height: 100%;
-  opacity: 0.2;
+  opacity: 0.8;
   overflow: hidden;
   z-index: 10; /* overlap also menus */
 }
 .dropdown-header {
   padding: 0px ;
-  color: var(--light);
+  color: var(--secondary);
 }
 </style>

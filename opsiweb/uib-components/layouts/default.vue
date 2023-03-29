@@ -1,10 +1,12 @@
 <template>
   <div
     :class="{
+      [themeclass]: true,
       mobile: $mq === 'mobile',
       desktop: $mq === 'desktop',
       sidebar_collapsed: !sidebarAttr.expanded && $mq!=='mobile',
-      sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile'}"
+      sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile',
+    }"
   >
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" />
@@ -54,6 +56,10 @@ export default class LayoutDefault extends Vue {
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
     await this.checkServer()
+  }
+
+  get themeclass () {
+    return (this.colortheme && this.colortheme.title === 'light') ? 'theme-light' : 'theme-dark'
   }
 
   get username () {
