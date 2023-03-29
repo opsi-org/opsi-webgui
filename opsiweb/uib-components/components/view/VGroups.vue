@@ -1,5 +1,5 @@
 <template>
-  <div class="VGroups">
+  <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" />
     <BarBPageHeader>
@@ -7,7 +7,7 @@
         <TreeTSDepots />
       </template>
     </BarBPageHeader>
-    <b-tabs data-testid="VGroups">
+    <b-tabs>
       <b-tab>
         <template #title>
           <span> {{ $t("form.clientGroups") }} </span>
@@ -49,7 +49,14 @@
                     </template>
                     <br>
                     <b-form>
-                      <b-form-select v-model="selectedClients" v-b-tooltip.hover :title="$t('form.client')" multiple :options="clientIds">
+                      <b-form-select
+                        v-model="selectedClients"
+                        v-b-tooltip.hover
+                        :title="$t('form.client')"
+                        multiple
+                        :select-size="20"
+                        :options="clientIds"
+                      >
                         <template #first>
                           <b-form-select-option :value="null" disabled>
                             {{ $t('form.client') }}
@@ -79,8 +86,8 @@
                   </b-tab>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Move the selected group to a new parent or update its attributes.')">
-                        {{ $t("Update group") }}
+                      <span v-b-tooltip.hover :title="$t('group.update.tooltip')">
+                        {{ $t("group.update") }}
                       </span>
                     </template>
                     <br>
@@ -88,99 +95,116 @@
                       <treeselect
                         v-model="updategroupparent"
                         v-b-tooltip.hover
-                        :title="$t('Parent Group')"
-                        :placeholder="$t('Parent Group')"
+                        :title="$t('group.parent')"
+                        :placeholder="$t('group.parent')"
                         value-format="object"
                         :options="group"
                         :normalizer="normalizerUpdateGroup"
                       />
-                      <b-form-input v-model="updategroup.description" v-b-tooltip.hover :title="$t('Description')" :placeholder="$t('Description')" />
-                      <b-form-input v-model="updategroup.notes" v-b-tooltip.hover :title="$t('Notes')" :placeholder="$t('Notes')" />
+                      <b-form-input v-model="updategroup.description" v-b-tooltip.hover :title="$t('table.fields.description')" :placeholder="$t('table.fields.description')" />
+                      <b-form-input v-model="updategroup.notes" v-b-tooltip.hover :title="$t('table.fields.notes')" :placeholder="$t('table.fields.notes')" />
                       <b-button class="float-right" variant="success" @click="updateGroup">
-                        {{ $t("Update") }}
+                        {{ $t("button.update") }}
                       </b-button>
                     </div>
                   </b-tab>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Delete selected group along with subgroups and client assignments.')">
-                        {{ $t("Delete group") }}
+                      <span v-b-tooltip.hover :title="$t('group.delete.tooltip')">
+                        {{ $t("group.delete") }}
                       </span>
                     </template>
                     <br>
-                    <span> {{ $t('Are you sure you want to delete the selected group along with its subgroups and client assignments?') }}</span>
+                    <span> {{ $t('group.delete.confirm') }}</span>
                     <b-button class="float-right" variant="danger" @click="deleteGroup">
-                      {{ $t("Delete") }}
+                      {{ $t("label.delete") }}
                     </b-button>
                   </b-tab>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Remove client assignments from the selected group.')">
-                        {{ $t("Remove clients") }}
+                      <span v-b-tooltip.hover :title="$t('group.remove.tooltip')">
+                        {{ $t("group.remove.clients") }}
                       </span>
                     </template>
                     <br>
-                    <span> {{ $t('Are you sure you want to delete client assignments of the selected group?') }}</span>
+                    <span> {{ $t('group.remove.confirm') }}</span>
                     <b-button class="float-right" variant="danger" @click="removeClientAssignments">
-                      {{ $t("Remove") }}
+                      {{ $t("group.remove") }}
                     </b-button>
                   </b-tab>
                 </b-tabs>
               </div>
               <div v-if="selectedvalue.type == 'ObjectToGroup'">
                 <span class="font-weight-bold">
-                  {{ $t('Selected Client : ') }} {{ selectedvalue.text }}
+                  {{ $t('group.clientselect') }} {{ selectedvalue.text }}
                 </span>
                 <br><br>
                 <b-tabs>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Add the selected client to groups.')">
-                        {{ $t("Add") }}
+                      <span v-b-tooltip.hover :title="$t('group.addtogroup')">
+                        {{ $t("group.add") }}
                       </span>
                     </template>
-                    <treeselect
-                      v-model="selectedGroups"
-                      v-b-tooltip.hover
-                      :multiple="true"
-                      :flat="true"
-                      :title="$t('Select groups to add the selected client')"
-                      :placeholder="$t('Select groups to add the selected client')"
-                      :options="group"
-                      value-format="object"
-                      :normalizer="normalizerUpdateGroup"
-                    />
-                    <b-button class="float-right" variant="success" @click="addSelectedClientToGroups">
-                      {{ $t("Add") }}
-                    </b-button>
+                    <b-row>
+                      <b-col>
+                        <treeselect
+                          v-model="selectedGroups"
+                          v-b-tooltip.hover
+                          class="treeselect_notstored"
+                          :multiple="true"
+                          :flat="true"
+                          always-open
+                          :default-expand-level="4"
+                          :title="$t('group.addtogroup.tooltip')"
+                          :placeholder="$t('group.addtogroup.tooltip')"
+                          :options="group"
+                          value-format="object"
+                          :normalizer="normalizerUpdateGroup"
+                        />
+                      </b-col>
+                      <b-col cols="2">
+                        <b-button class="float-right" variant="success" @click="addSelectedClientToGroups">
+                          {{ $t("group.add") }}
+                        </b-button>
+                      </b-col>
+                    </b-row>
                   </b-tab>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('Remove the selected client from groups.')">
-                        {{ $t("Remove") }}
+                      <span v-b-tooltip.hover :title="$t('group.removefromgroup')">
+                        {{ $t("group.remove") }}
                       </span>
                     </template>
-                    <treeselect
-                      v-model="selectedGroupsRemove"
-                      v-b-tooltip.hover
-                      :multiple="true"
-                      :flat="true"
-                      :title="$t('Select groups to remove the selected client assignment')"
-                      :placeholder="$t('Select groups to remove the selected client assignment')"
-                      :options="group"
-                      value-format="object"
-                      :normalizer="normalizerUpdateGroup"
-                    />
-                    <b-button class="float-right" variant="danger" @click="removeSelectedClientFromGroups">
-                      {{ $t("Remove") }}
-                    </b-button>
+                    <b-row>
+                      <b-col>
+                        <treeselect
+                          v-model="selectedGroupsRemove"
+                          v-b-tooltip.hover
+                          class="treeselect_notstored"
+                          :multiple="true"
+                          :flat="true"
+                          always-open
+                          :default-expand-level="4"
+                          :title="$t('group.removefromgroup.tooltip')"
+                          :placeholder="$t('group.removefromgroup.tooltip')"
+                          :options="group"
+                          value-format="object"
+                          :normalizer="normalizerUpdateGroup"
+                        />
+                      </b-col>
+                      <b-col cols="2">
+                        <b-button class="float-right" variant="danger" @click="removeSelectedClientFromGroups">
+                          {{ $t("group.remove") }}
+                        </b-button>
+                      </b-col>
+                    </b-row>
                   </b-tab>
                 </b-tabs>
               </div>
             </b-col>
           </b-row>
         </DivDScrollResult>
-        <!-- {{ group }} -->
       </b-tab>
       <!-- <b-tab>
         <template #title>
@@ -283,7 +307,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 
@@ -298,7 +322,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 
@@ -313,7 +337,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 
@@ -327,7 +351,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 
@@ -341,7 +365,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 
@@ -358,7 +382,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 
@@ -375,7 +399,7 @@ export default class VGroups extends Vue {
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('ERROR:') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 }

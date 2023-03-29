@@ -64,13 +64,12 @@ export default class NSidebar extends Vue {
 
   get navItems (): Array<IMenuItem> {
     return [
-      {
-        title: 'title.overview',
-        menu: [
-          { title: 'title.healthcheck', icon: 'heart', route: '/serverhealthcheck' }
-          // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
-        ]
-      },
+      // {
+      //   title: 'title.overview',
+      //   menu: [
+      //     // { title: 'Dashboard', icon: 'bar-chart-line-fill', route: '/dashboard' },
+      //   ]
+      // },
       {
         title: 'title.manage',
         menu: [
@@ -108,10 +107,8 @@ export default class NSidebar extends Vue {
             route: '/admin/terminal/',
             icon: this.iconnames.admin,
             submenu: [
-              { title: 'title.adminterminal', route: '/admin/terminal' }
-              // { title: 'title.addNew', route: '/clientscreation', disabled: (this.config) ? !this.config?.client_creation : false },
-              // { title: 'title.config', route: '/clientsconfig' },
-              // { title: 'title.log', route: '/clientslog' }
+              { title: 'title.adminterminal', route: '/admin/terminal' },
+              { title: 'title.healthcheck', route: '/adminserverhealthcheck' }
             ]
           },
           { title: 'title.support', icon: this.iconnames.support, route: '/support' },

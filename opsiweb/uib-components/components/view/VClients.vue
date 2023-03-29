@@ -109,6 +109,9 @@
               <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" />
             </div>
           </template>
+          <template #head(reachable)>
+            <ModalMClientReachable />
+          </template>
           <template #cell(uefi)="row">
             <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
           </template>
@@ -257,6 +260,11 @@ export default class VClients extends Vue {
       label: this.$t('table.fields.installationStatusUnknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
+    // TODO: Sorting for reachable column
+    reachable: { // eslint-disable-next-line object-property-newline
+      key: 'reachable', label: this.$t('table.fields.reachable') as string, _fixed: true, sortable: false,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('reachable') : true
+    },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
@@ -284,6 +292,11 @@ export default class VClients extends Vue {
     if (msg && msg.channel === 'event:host_created') {
       const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
       ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
+      await this.$fetch()
+    }
+    if (msg && msg.event === ('host_connected' || 'host_disconnected')) {
+      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       await this.$fetch()
     }
   }
