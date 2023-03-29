@@ -3729,6 +3729,11 @@ input[type="submit"].btn-block {
   outline: 0;
   box-shadow: 0 0 0 0.2rem var(--bs-page_link-focus);
 }
+.page-item .page-link {
+  background-color: var(--bg-page_link);
+  color: var(--fg-page_link);
+  border: var(var(--b-page_link));
+}
 .page-item:first-child .page-link {
   margin-left: 0;
   border-top-left-radius: 0.25rem;

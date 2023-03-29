@@ -79,7 +79,7 @@
           </b-button-group>
         </template>
         <template #cell(rowactions)="row">
-          <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'">
+          <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'" :class="{'row-selected': selection.includes(row.item[rowident])}">
             <slot name="rowactions" v-bind="row" />
           </b-button-group>
         </template>

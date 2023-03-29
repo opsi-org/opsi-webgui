@@ -16,13 +16,14 @@
   --bg-kbd: var(--color);
 
   --bg-table: var(--general-bg); /* general g */
+  --fg-table-selected: var(--primary-foreground);
   --bg-table-selected: var(--primary);
   --bg-table-hover: var(--opsi-blue-dark);
   --bg-table-hover-selected: var(--opsi-blue-dark);
   --b-table: var(--general-opsi-grey-dark);
   --fg-table: var(--general-fg);
-  --fg-table-hover: var(--general-fg);
-  --fg-table-hover-seleted: var(--general-fg);
+  --fg-table-hover: var(--primary-foreground);
+  --fg-table-hover-seleted: var(--primary-foreground);
 
 
   --bg-table_success-hover: #aed4c3;
@@ -57,7 +58,7 @@
   --b-btn: var(--primary);
   --fg-btn-disabled: var(--primary);
   --bg-btn-disabled: transparent;
-  --fg-btn-hover: var(--general-fg);
+  --fg-btn-hover: var(--primary-foreground);
   --bg-btn-hover: var(--primary-dark);
   /* --fg-btn-disabled: var(--element-disabled); */
   --b-btn-hover: var(--primary-dark);
@@ -217,19 +218,21 @@
   --bt-card_footer: rgba(0, 0, 0, 0.125);
   --bg-breadcrumb: transparent;
   --fg-breadcrumb_item: var(--general-fg);
-  --fg-page_link: var(--general-fg);
-  --bg-page_link: var(--general-bg-light);
-  --b-page_link: var(--general-bg-light);
+
+  --fg-page_link: var(--primary-foreground);
+  --bg-page_link: var(--general-bg-weak);
+  --b-page_link: var(--general-bg-weak);
+
   --fg-page_link-hover: var(--color);
   --bg-page_link-hover: var(--page-link-hover);
   --b-page_link-hover: var(--general-bg-light);
   --bs-page_link-focus: rgba(0, 101, 153, 0.25);
-  --fg-page_item-active: var(--general-fg);
-  --bg-page_item-active: var(--primary);
+  --fg-page_item-active: var(--primary-foreground);
+  --bg-page_item-active: var(--primary-dark);
   --b-page_item-active: var(--general-bg-light);
-  --fg-page_item-disabled: var(--general-fg);
-  --bg-page_item-disabled: var(--general-bg-light);
-  --b-page_item-disabled: var(--general-bg-light);
+  --fg-page_item-disabled: var(--primary-foreground-disabled);
+  --bg-page_item-disabled: transparent;
+  --b-page_item-disabled: var(--b-page_link);
 
   --fg-badge_primary: var(--opsi-general-grey);
   --bg-badge_primary: var(--primary);

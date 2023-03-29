@@ -1,10 +1,22 @@
+@font-face {
+  font-family: "Montserrat";
+  src: local("Montserrat"), url(../fonts/montserrat-alt1/fonts/ttf/MontserratAlt1-Regular.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Ubuntu";
+  src: local("Ubuntu"), url(../fonts/ubuntu-font-family-0.80/Ubuntu-R.ttf) format("truetype");
+}
 :root{
   /* color schema see color-light / dark.css */
   /* --primary: var(--opsi-red);
   --secondary: var(--opsi-blue); */
 
   /* --font-family-general: "Ubuntu"; */
+  /* --font-family-logo: "Montserrat"; */
+  /* --font-family-logo: "Montserrat-Alt1 Thin"; */
   --font-family-logo: "Montserrat";
+  --font-family-logo-weight: 100;
+
   /* --font-family-logo: "Montserrat alt-1"; */
   --font-family-general: "Ubuntu";
   --font-family-code: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
@@ -45,6 +57,11 @@
 
   --general-fg: var(--opsi-base-foreground);
   --general-bg: var(--opsi-base-background);
+
+  --primary-outline-foreground: var(--general-fg);
+  --primary-outline-foreground-disabled: var(--general-fg-disabled);
+  --primary-outline-background: var(--general-bg);
+
   --primary-selected-item-background: var(--primary-dark);
   --primary-foreground: var(--white);
   --primary-foreground-disabled: var(--general-fg-disabled);
@@ -112,8 +129,8 @@
   --bs-table-hover-color: var(--fg-table-hover-seleted);
   --bs-table-bg: var(--bg-table-selected);
   --bs-table-active-bg: var(--bg-table-selected);
-  --bs-table-active-color: var(--fg-table);
-  --bs-table-color: var(--fg-table);
+  --bs-table-active-color: var(--fg-table-selected);
+  --bs-table-color: var(--fg-table-selected);
   /* Selected rows: */
 
   /* --bs-table-accent-bg: var(--bs-table-hover-bg); */
@@ -122,19 +139,13 @@
   --bs-table-accent-bg: var(--bs-table-hover-bg);
   color: var(--bs-table-hover-color);
 }
-@font-face {
-  font-family: "Montserrat";
-  src: local("Montserrat"),
-   url(/fonts/montserrat-alt1/fonts/ttf/MontserratAlt1-Regular.ttf) format("truetype");
-}
-@font-face {
-  font-family: "Ubuntu";
-  src: local("Ubuntu"),
-   url(/fonts/ubuntu-font-family-0.80/Ubuntu-R.ttf) format("truetype");
-}
 
 .webgui_title {
   font-family: var(--font-family-logo) !important;
+  font-weight: var(--font-family-logo-weight) !important;
+  /* font-family: Montserrat, regular !important; */
+  /* font-family: 'Montserrat-Alt1'; */
+  /* font-weight: 200; */
 }
 .li-delimiter {
   border-top: 1px solid var(--log-muted);

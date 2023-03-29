@@ -32,7 +32,7 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ default: 'title' }) title!: string
   @Prop({ default: '' }) icon!: string
   @Prop({ default: 'outline-primary' }) variant!: string
-  @Prop({ default: 'border-0' }) classes!: string
+  @Prop({ default: 'border-0 color-primary-selected' }) classes!: string
   $mq: any
 
   action () {
@@ -47,3 +47,9 @@ export default class BTNRowLinkTo extends Vue {
   }
 }
 </script>
+<style>
+.row-selected .color-primary-selected,
+.row-selected .color-primary-selected:hover {
+  color: var(--primary-foreground) !important;
+}
+</style>

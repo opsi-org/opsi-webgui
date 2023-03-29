@@ -51,11 +51,11 @@ export default class BarBTableFooter extends Vue {
 </script>
 
 <style>
-.BTableFooter .paginationCurrent {
+/* .BTableFooter .paginationCurrent {
   background-color: var(--primary) !important;
   border: 1px solid var(--primary) !important;
   color: var(--light) !important;
-}
+} */
 
 .BTableFooter .navbar {
   bottom: 0px;

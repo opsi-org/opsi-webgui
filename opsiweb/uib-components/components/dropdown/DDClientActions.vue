@@ -15,8 +15,8 @@
       :dropright="incontextmenu"
     >
       <template #button-content>
-        <b-icon :icon="iconnames.menu" :title="$t('button.tablerow.moreoptions')" />
-        <small v-if="incontextmenu">{{ $t('button.item-actions') }}</small>
+        <b-icon :icon="iconnames.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected" />
+        <small v-if="incontextmenu" class="color-primary-selected">{{ $t('button.item-actions') }}</small>
       </template>
       <ButtonBTNEvent
         :class="{ 'dropdown-item contextmenu small': incontextmenu }"
@@ -64,4 +64,9 @@ export default class DDClientActions extends Vue {
 }
 </script>
 <style>
+
+.row-selected .color-primary-selected,
+.row-selected .color-primary-selected:hover {
+  color: var(--primary-foreground) !important;
+}
 </style>
