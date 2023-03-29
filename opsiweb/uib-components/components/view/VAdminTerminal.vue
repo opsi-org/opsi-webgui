@@ -87,7 +87,8 @@ export default class VAdminTerminal extends Vue {
   wsTerminalResize: any
 
   mbTerminal: any
-  terminalId: string = 'f40dbaa4-dc9f-46c0-9dc5-186a87a3eee5'
+  // terminalId: string = 'f40dbaa4-dc9f-46c0-9dc5-186a87a3eee5'
+  terminalId: string = ''
   terminalChannelDefault = 'service:config:terminal'
   terminalChannel = this.terminalChannelDefault
 

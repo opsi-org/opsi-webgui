@@ -3423,13 +3423,15 @@ input[type="submit"].btn-block {
 }
 .nav-tabs .nav-link {
   color: var(--fg-nav_tabs);
-  border: 1px solid transparent;
+  background-color: var(--bg-nav_tabs);
+  border: 1px solid var(--b-nav_tabs);
+  border-bottom: var(--bb-nav_tabs);
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
 }
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover {
-  color: var(--fg-nav_tabs);
+  color: var(--fg-nav_tabs-hover);
   background-color: var(--bg-nav_tabs-hover);
   border-color: var(--b-nav_tabs-hover);
 }
@@ -3440,10 +3442,10 @@ input[type="submit"].btn-block {
 }
 .nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
-  background-color: var(--bg-nav_tabs);
-  color: var(--fg-nav_tabs);
-  border-color: var(--b-nav_tabs);
-  border-bottom: var(--bb-nav_tabs);
+  color: var(--fg-nav_tabs-active);
+  background-color: var(--bg-nav_tabs-active);
+  border-color: var(--b-nav_tabs-active);
+  border-bottom: var(--bb-nav_tabs-active);
 }
 .nav-tabs .dropdown-menu {
   margin-top: -1px;
@@ -3466,6 +3468,11 @@ input[type="submit"].btn-block {
   flex-basis: 0;
   flex-grow: 1;
   text-align: center;
+}
+.tab-content{
+  border: 1px solid var(--b-tab_content);
+  border-radius: 5px;
+  padding: 5px;
 }
 .tab-content > .tab-pane {
   display: none;

@@ -1,14 +1,26 @@
 :root{
   --opsi-blue: #3f5aa6; /**/
   --opsi-red: #cb1e58; /**/
-  --opsi-blue-dark: #3f3f3e;
+  --opsi-blue-light: #4a67b5;
+  --opsi-blue-dark: #2d4178;
   --opsi-red-dark: #b2b2b2;
 
+  --opsi-general-grey-dark: #4b4b49;
+  --opsi-general-grey: #b2b2b2;
+  --opsi-general-grey-light: #e4e4e3;
+
+  --opsi-base-background: #ffffff;
+  --opsi-base-foreground: #000000;
+
+
+
+  /*--general-realy-dark: #545453;  /*new*/
   --general-opsi-grey-dark: #b2b2b2;
   --general-opsi-grey-light: #e4e4e3;
 
-  --general-fg: #000000; /**/
-  --general-bg: #FFFFFF; /**/
+  --general-bg-weak: var(--general-opsi-grey-light);
+  --general-bg-light: var(--opsi-blue-light); /*updated*/
+
 
   --success: #009605; /**/
   --warning: #FF9100; /**/
