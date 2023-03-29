@@ -20,7 +20,7 @@
               :icon="iconnames.product"
               to="/clients/products"
               ident="dummy"
-              class="tableheader_products"
+              classes="tableheader_products border-0 pt-2 btn"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
@@ -398,3 +398,13 @@ export default class VClients extends Vue {
   }
 }
 </script>
+
+<style>
+.tableheader_products:hover {
+  background-color: var(--bg-btn-hover) !important;
+}
+.tableheader_products:fokus {
+  background-color: var(--bg-btn-hover) !important;
+  border: var(--bg-btn-hover) !important;
+}
+</style>

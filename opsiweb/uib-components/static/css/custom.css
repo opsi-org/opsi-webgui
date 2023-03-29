@@ -47,6 +47,7 @@
   --general-bg: var(--opsi-base-background);
   --primary-selected-item-background: var(--primary-dark);
   --primary-foreground: var(--white);
+  --primary-foreground-disabled: var(--general-fg-disabled);
   --secondary-foreground: var(--white);
   --ok-foreground: var(--white);
   --warning-foreground: var(--white);

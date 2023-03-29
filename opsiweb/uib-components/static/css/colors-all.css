@@ -59,7 +59,6 @@
   --bg-btn-disabled: transparent;
   --fg-btn-hover: var(--general-fg);
   --bg-btn-hover: var(--primary-dark);
-  --bg-btn-hover: var(--primary-dark);
   /* --fg-btn-disabled: var(--element-disabled); */
   --b-btn-hover: var(--primary-dark);
   --s-btn-focus: var(--primary-dark);
@@ -137,13 +136,13 @@
 
   --fg-dropdown_menu: var(--general-fg);
   --bg-dropdown_menu: var(--general-bg-light);
-  --fg-dropdown_item: var(--general-fg);
+  --fg-dropdown_item: var(--primary-foreground);
   --bg-dropdown_item: var(--general-bg-light);
   --fg-dropdown_item-hover: var(--general-fg);
   --bg-dropdown_item-hover: var(--dropdown-hover);
-  --fg-dropdown_item-active: var(--general-fg);
+  --fg-dropdown_item-active: var(--primary-foreground);
   --bg-dropdown_item-active: var(--primary);
-  --fg-dropdown_item-disabled: var(--log-muted);
+  --fg-dropdown_item-disabled: var(--primary-foreground-disabled);
   --bg-dropdown_item-disabled: transparent;
   --fg-dropdown_header: var(--element-disabled);
 

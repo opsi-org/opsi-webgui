@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1">
+    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1 mr-3">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
         <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? iconnames.arrowDoubleDown : iconnames.arrowDoubleRight" />
         <span v-if="title" class="labelcolor font-weight-bold tableheader_title">{{ title }}</span>

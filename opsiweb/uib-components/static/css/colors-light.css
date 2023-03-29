@@ -18,6 +18,7 @@
   --general-opsi-grey-dark: #b2b2b2;
   --general-opsi-grey-light: #e4e4e3;
 
+  --general-fg-disabled: var(--opsi-general-grey);
   --general-bg-weak: var(--general-opsi-grey-light);
   --general-bg-light: var(--opsi-blue-light); /*updated*/
 
