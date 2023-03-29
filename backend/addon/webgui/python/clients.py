@@ -9,6 +9,7 @@ webgui client methods
 """
 
 import asyncio
+import json
 import os
 import subprocess
 from datetime import date, datetime
@@ -302,50 +303,46 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 	Create OPSI-Client.
 	"""
 
-	values = vars(client)
-	values["type"] = "OpsiClient"
-	if not values.get("created"):
-		values["created"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		values["lastSeen"] = values["created"]
-
-	with mysql.session() as session:
-		try:
-			host_check_duplicates(client, session)
-			query = insert(
-				table(
-					"HOST", column("type"), *[column(key) for key in vars(client).keys()]  # pylint: disable=consider-iterating-dictionary
-				)
-			).values(values)
-			session.execute(query)
-
-			headers = {"Location": f"{request.url}/{client.hostId}"}
-
-			if depot:
-				set_depot(client.hostId, depot)
-
-			# IPv4Address/IPv6Address is not JSON serializable
-			values["ipAddress"] = str(values["ipAddress"])
-			backend._send_messagebus_event(  # pylint: disable=protected-access
-				"host_created", data={"type": "OpsiClient", "id": client.hostId}
-			)
-			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
-
-		except IntegrityError as err:
+	try:
+		client_ids = backend.host_getIdents()
+		if client.hostId in client_ids:
 			logger.error("Could not create client object.")
-			logger.error(err)
-			session.rollback()
-			return RESTErrorResponse(
+			raise OpsiApiException(
 				message=f"Could not create client object. Client '{client.hostId}' already exists",
 				http_status=status.HTTP_409_CONFLICT,
-				details=err,
 			)
+		backend.host_createOpsiClient(
+			client.hostId,
+			client.opsiHostKey,
+			client.description,
+			client.notes,
+			client.hardwareAddress,
+			client.ipAddress,
+			client.inventoryNumber,
+			client.oneTimePassword,
+			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			client.systemUUID,
+		)
+		headers = {"Location": f"{request.url}/{client.hostId}"}
 
-		except Exception as err:  # pylint: disable=broad-except
-			logger.error("Could not create client object.")
-			logger.error(err)
-			raise OpsiApiException(
-				message="Could not create client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
-			) from err
+		return RESTResponse(data=client.__dict__, http_status=status.HTTP_201_CREATED, headers=headers)
+
+	except IntegrityError as err:
+		logger.error("Could not create client object.")
+		logger.error(err)
+		return RESTErrorResponse(
+			message=f"Could not create client object. Client '{client.hostId}' already exists",
+			http_status=status.HTTP_409_CONFLICT,
+			details=err,
+		)
+
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not create client object.")
+		logger.error(err)
+		raise OpsiApiException(
+			message="Could not create client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+		) from err
 
 
 @client_router.put("/api/opsidata/clients/{client_id}")
