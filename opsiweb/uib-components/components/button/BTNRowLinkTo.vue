@@ -48,6 +48,10 @@ export default class BTNRowLinkTo extends Vue {
 }
 </script>
 <style>
+.col-rowactions > .btn-group .btn {
+  color: var(--general-fg);
+}
+tbody tr:hover .col-rowactions > .btn-group .btn,
 .row-selected .color-primary-selected,
 .row-selected .color-primary-selected:hover {
   color: var(--primary-foreground) !important;
