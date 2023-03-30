@@ -43,6 +43,8 @@
   --warning-foreground: var(--light);
   --danger-foreground: var(--light);
 
+  --primary-dark: var(--opsi-blue-dark);
+  --secondary-dark: var(--opsi-red-dark);
   --success-dark: #246b32;
   --danger-dark: #aa2126;
   --warning-dark: #bb8819;

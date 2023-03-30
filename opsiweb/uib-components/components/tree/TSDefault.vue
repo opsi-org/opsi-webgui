@@ -1,18 +1,23 @@
 <template>
-  <div data-testid="TSDefault" :class="{
-    'TSDefault-wrapper form-control d-flex flex-nowrap':true,
-    [type]:true ,
-    'is-origin':
-    isOrigin,
-    hasSelection: (type==='propertyvalues')?selectionWrapper.length > 0:selectionDefault.length>0,
-    'has-counter':showSelectionCount===true}">
+  <div
+    data-testid="TSDefault"
+    :class="{
+      'TSDefault-wrapper form-control d-flex flex-nowrap':true,
+      [type]:true ,
+      'is-origin':
+      isOrigin,
+      hasSelection: ((type==='propertyvalues')?selectionWrapper.length > 0:selectionDefault.length>0),
+      'has-counter':showSelectionCount===true
+    }"
+    class=""
+  >
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
       v-else-if="multi && showSelectionCount===true"
       :id="id"
       :type="type"
-      :selections="(type==='propertyvalues')?selectionWrapper:selectionDefault"
+      :selections="((type==='propertyvalues')?selectionWrapper:selectionDefault)"
     >
       <template #clear>
         <ButtonBTNClearSelection
@@ -51,7 +56,7 @@
       :load-options="loadOptionsChildren"
       :no-children-text="$t('treeselect.nochildren')"
       :no-options-text="$t('treeselect.nooption')"
-      :no-results-text="textNoResult? textNoResult : $t('treeselect.noresult')"
+      :no-results-text="(textNoResult? textNoResult : $t('treeselect.noresult'))"
       :limit="limitVisibleSelection"
       :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('treeselect.limitText', { count })"
       :value-format="valueFormat"
@@ -67,7 +72,7 @@
         slot-scope="{ node }"
         :class="{
           'form-control is-invalid':
-            validate && node.label ? !validate(node.label) : false,
+            (validate && node.label ? !validate(node.label) : false),
         }"
       >
         {{ Array.isArray(node.label) ? node.label[0] : node.label }}
@@ -100,8 +105,7 @@
         slot-scope="{ node }"
         :class="{
           'test':true,
-          'form-control is-invalid':
-            validate && node.label ? !validate(node.label) : false,
+          'form-control is-invalid': (validate && node.label ? !validate(node.label) : false),
         }"
       >
         <div :ref="'tree-item-'+node.id">
@@ -398,9 +402,9 @@ export default class TSDefault extends Vue {
 .vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked,
 .vue-treeselect__checkbox--checked:hover,
 .vue-treeselect__checkbox--checked {
-  border-color: var(--b-custom_control-checked) !important;
-  background: var(--bg-custom_control-checked);
-  color: var(--fg-custom_control-checked);
+  border-color: var(--primary-dark) !important;
+  background: var(--secondary) !important;
+  color: var(--primary-foreground);
 }
 
 .TSDefault-wrapper {

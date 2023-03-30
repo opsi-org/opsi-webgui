@@ -125,8 +125,8 @@
         <b-form inline>
           <b-form-checkbox v-model="clientagent" />
           <div :class="{'d-none' : !clientagent}">
-            <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" :state="formvalidation" required />
-            <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" :state="formvalidation" required />
+            <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" class="valid-none" :state="formvalidation_user" required />
+            <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" class="valid-none" :state="formvalidation_pw" required />
             <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
           </div>
         </b-form>
@@ -219,13 +219,8 @@ export default class VClientCreation extends Vue {
     this.domain = val
   }
 
-  get formvalidation () {
-    if (this.form.username && this.form.password) {
-      return true
-    } else {
-      return false
-    }
-  }
+  get formvalidation_user () { return this.form.username !== '' }
+  get formvalidation_pw () { return this.form.password !== '' }
 
   get checkValid () {
     return this.clientName.length > 0 && !this.clientIds.includes(this.clientName + this.domainName)
@@ -332,5 +327,14 @@ export default class VClientCreation extends Vue {
 .VClientCreation {
   overflow-x: hidden;
   padding-left: 10px;
+}
+.valid-none.is-valid {
+  background-image: unset !important;
+  border-color: var(--b-input_component) !important;
+  box-shadow: unset !important;
+}
+.valid-none.is-valid:focus {
+  border-color: var(--b-input_component-focus) !important;
+  box-shadow: unset !important;
 }
 </style>

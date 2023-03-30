@@ -28,14 +28,14 @@
 
   --bg-table_success-hover: #aed4c3;
   --bg-table_info: #bbe9fb;
-  --fg-form_control: var(--general-fg);
-  --fg-form_control-disabled: var(--element-disabled);
+  --fg-form_control: var(--fg-input_component);
   /* --fg-form_control-placeholder: var(--general-fg); */
-  --bg-form_control: var(--component, var(--general-bg-light));
-  --bg-form_control-focus: var(--general-bg-light);
-  --b-form_control: var(--opsi-general-grey);
-  --b-form_control-focus: var(--general-bg-light);
-  --s-form_control-focus: rgba(0, 101, 153, 0.25); /* shadow */
+  --bg-form_control: var(--bg-input_component);
+  --b-form_control: var(--b-input_component);
+  --fg-form_control-disabled: var(--element-disabled);
+  --bg-form_control-focus: var(--bg-input_component-focus);
+  --b-form_control-focus: var(--b-input_component-focus);
+  --s-form_control-focus: unset; /* shadow */
 
   /** successful validation **/
   --b-form_control-valid: var(--success);
@@ -149,13 +149,14 @@
 
   --fg-input_group_text: var(--general-bg-light);
   --bg-input_group_text: #e9ecef;
-  --b-input_group_text: #ced4da;
+  --b-input_group_text: var(--b-input_component);
 
-  --fg-custom_control-checked: var(--general-fg);
-  --bg-custom_control-checked: var(--primary);
-  --b-custom_control-checked: var(--primary);
-  --s-custom_control-focus: var(--primary-dark);
-  --b-custom_control-focus: var(--primary-dark);
+  --fg-custom_control-checked: var(--fg-input_component);
+  --bg-custom_control-checked: var(--bg-input_component);
+  --b-custom_control-checked: var(--b-input_component);
+  --s-custom_control-focus: var(--b-input_component-focus);
+  --b-custom_control-focus: var(--b-input_component-focus);
+
   --fg-custom_control-active: var(--primary-foreground);
   --bg-custom_control-active: var(--primary);
   --b-custom_control-active: var(--primary-dark);
@@ -167,13 +168,13 @@
   --b-custom_checkbox-indeterminate: var(--primary);
   --bg-custom_item-checked-disabled: rgba(0, 101, 153, 0.5);
   --bg-custom_switch: var(--general-bg-light);
-  --fg-custom_select: var(--general-fg);
-  --bg-custom_select: var(--general-bg);
-  --b-custom_select: var(--general-bg-light);
-  --b-custom_select-focus: var(--primary);
-  --fg-custom_select-focus: var(--general-bg-light);
-  --bg-custom_select-focus: var(--fg-custom_select);
-  --bs-custom_select-focus: rgba(0, 101, 153, 0.25);
+  --fg-custom_select: var(--fg-input_component);
+  --bg-custom_select: var(--bg-input_component);
+  --b-custom_select: var(--b-input_component);
+  --b-custom_select-focus: var(--b-input_component-focus);
+  --fg-custom_select-focus: var(--fg-input_component-focus);
+  --bg-custom_select-focus: var(--bg-input_component-focus);
+  --bs-custom_select-focus: var(--b-input_component-focus);
   --ts-custom_select: var(--general-bg-light);
   --fg-custom_select-disabled: var(--element-disabled);
   --bg-custom_select-disabled: #e9ecef;
