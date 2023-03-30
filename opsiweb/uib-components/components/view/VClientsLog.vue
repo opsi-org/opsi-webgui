@@ -40,13 +40,21 @@
       >
         <span
           v-if="index != 0"
-          style="font-family: monospace; font-size: 15px; text-align: justify ; display:block;"
+          class="log-row-text"
           :class="{
-            'bg-normal': log.startsWith('[0]') || log.startsWith('[1]') || log.startsWith('[6]') || log.startsWith('[7]') || log.startsWith('[8]') || log.startsWith('[9]'),
-            'bg-danger': log.startsWith('[2]'),
-            'bg-warning': log.startsWith('[3]'),
-            'bg-info': log.startsWith('[4]'),
-            'bg-success': log.startsWith('[5]')
+            'log-row-1': log.startsWith('[1]'),
+            'log-row-2': log.startsWith('[2]'),
+            'log-row-3': log.startsWith('[3]'),
+            'log-row-4': log.startsWith('[4]'),
+            'log-row-5': log.startsWith('[5]'),
+            'log-row-6': log.startsWith('[6]'),
+            'log-row-7': log.startsWith('[7]'),
+            'log-row-8': log.startsWith('[8]'),
+            'log-row-9': log.startsWith('[9]'),
+            // 'bg-danger': log.startsWith('[2]'),
+            // 'bg-warning': log.startsWith('[3]'),
+            // 'bg-info': log.startsWith('[4]'),
+            // 'bg-success': log.startsWith('[5]')
           }"
         >
           {{ $t('(content)', {content: index}) }} {{ log }}
@@ -57,8 +65,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
 import { Constants } from '../../mixins/uib-mixins'
+const selections = namespace('selections')
 interface LogRequest {
     selectedClient: string,
     selectedLogType: string
@@ -80,12 +89,40 @@ export default class VClientLog extends Vue {
   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
   errorText: string = ''
 
-  @Watch('logtype', { deep: true }) logtypeChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
-  @Watch('id', { deep: true }) idChanged () { if (this.logtype && this.id) { this.getLog(this.id, this.logtype) } }
+  @selections.Getter public XselectionLogClient!: string
+  @selections.Getter public XselectionLogType!: string
+  @selections.Getter public XselectionLogLevel!: number
+  @selections.Mutation public XsetSelectionLogClient!: (s: string) => void
+  @selections.Mutation public XsetSelectionLogType!: (s: string) => void
+  @selections.Mutation public XsetSelectionLogLevel!: (s: number) => void
+
   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
+  @Watch('loglevel', { deep: true }) loglevelChanged () {
+    this.XsetSelectionLogLevel(this.loglevel)
+  }
+
+  @Watch('logtype', { deep: true }) logtypeChanged () {
+    this.XsetSelectionLogType(this.logtype)
+    if (this.XselectionLogType && this.id) { this.getLog(this.id, this.logtype) }
+  }
+
+  @Watch('id', { deep: true }) idChanged () {
+    // this.setSelectionLogClient(this.id)
+    if (this.XselectionLogType && this.id) { this.getLog(this.id, this.logtype) }
+  }
 
   beforeMount () {
-    if (this.logtype && this.id) { this.getLog(this.id, this.logtype) }
+    // eslint-disable-next-line brace-style
+    if (this.id) { this.XsetSelectionLogClient(this.id) }
+    else if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
+
+    this.loglevel = this.XselectionLogLevel
+    this.logtype = this.XselectionLogType
+    if (this.XselectionLogType && this.id) { this.getLog(this.id, this.logtype) }
+  }
+
+  mounted () {
+    if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
   }
 
   filterLog () {
@@ -126,6 +163,14 @@ export default class VClientLog extends Vue {
 </script>
 
 <style>
+.log-row-text {
+  /* font-family: monospace; */
+  font-family: var(--font-family-log);
+  /* font-size: 15px;
+  font-style: monospace; */
+  text-align: justify ;
+  display:block;
+}
 .filter_logs{
   max-width: var(--component-width) !important;
 }

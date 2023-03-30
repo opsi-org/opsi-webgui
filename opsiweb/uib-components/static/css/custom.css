@@ -3,8 +3,15 @@
   src: local("Montserrat"), url(../fonts/montserrat-alt1/fonts/ttf/MontserratAlt1-Regular.ttf) format("truetype");
 }
 @font-face {
-  font-family: "Ubuntu";
-  src: local("Ubuntu"), url(../fonts/ubuntu-font-family-0.80/Ubuntu-R.ttf) format("truetype");
+  font-family: "Ubuntu-R";
+  src: url(../fonts/ubuntu-font-family-0.80/Ubuntu-R.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Ubuntu-M";
+  /* font-style: monospace; */
+  font-size: 13px;
+  font-weight: 100;
+  src: url(../fonts/ubuntu-font-family-0.80/UbuntuM.ttf) format("truetype");
 }
 :root{
   /* color schema see color-light / dark.css */
@@ -18,9 +25,12 @@
   --font-family-logo-weight: 100;
 
   /* --font-family-logo: "Montserrat alt-1"; */
-  --font-family-general: "Ubuntu";
-  --font-family-code: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-  "Courier New", monospace !important;
+  --font-family-general: "Ubuntu-R";
+  /* --font-family-code: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+  "Courier New", monospace !important; */
+  --font-family-code:  "Ubuntu-M";
+  --font-family-log:  "Ubuntu-M";
+  /* --font-family-log: var(--font-family-general); */
   --font-family-popover: var(--font-family-general);
   --font-family-tooltip: var(--font-family-general);
   /* --font-family-tooltip: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -238,7 +248,7 @@ body .mobile .topbar_content .navbar > * {
 }
 .btn , .btn:hover {
   /* color: var(--color); */
-  color: var(--fg-btn);
+  color: var(--general-fg);
   background-color: transparent;
 }
 .btn:hover {
@@ -365,6 +375,15 @@ body .mobile .topbar_content .navbar > * {
   color: green !important;
 } */
 
+.log-row-1 { background-color: transparent; color: var(--log-essential); }
+.log-row-2 { background-color: transparent; color: var(--log-critical); }
+.log-row-3 { background-color: transparent; color: var(--log-error); }
+.log-row-4 { background-color: transparent; color: var(--log-warning); }
+.log-row-5 { background-color: transparent; color: var(--log-notice); }
+.log-row-6 { background-color: transparent; color: var(--log-info); }
+.log-row-7 { background-color: transparent; color: var(--log-debug); }
+.log-row-8 { background-color: transparent; color: var(--log-trace); }
+.log-row-9 { background-color: transparent; color: var(--log-secret); }
 
 
 .bg-primary {
@@ -494,6 +513,14 @@ border-color: var(--bg-table-border); */
   --bs-tooltip-bg: transparent !important;
   background-color: var(--bs-tooltip-bg) !important;
   color: var(--bs-tooltip-color) !important;
+}
+tooltip {
+  --bs-tooltip-color: var(--fg-tooltip_inner) !important;
+  --bs-tooltip-bg: var(--bg-tooltip_inner) !important;
+  background-color: var(--bs-tooltip-bg) !important;
+  color: var(--bs-tooltip-color) !important;
+  border: 1px solid var(--b-bs_tooltip) !important;
+  padding: 10px;
 }
 .tooltip>.tooltip-inner {
   --bs-tooltip-color: var(--fg-tooltip_inner) !important;

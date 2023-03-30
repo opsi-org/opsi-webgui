@@ -6,9 +6,20 @@ export default class Selections extends VuexModule {
   _selectionClients: Array<string> = []
   _selectionProducts: Array<string> = []
 
+  _selectionLogClient: string = ''
+  _selectionLogType: string = 'instlog'
+  _selectionLogLevel: number = 5
+
   get selectionDepots (): Array<string> { return this._selectionDepots }
   get selectionClients (): Array<string> { return this._selectionClients }
   get selectionProducts (): Array<string> { return this._selectionProducts }
+
+  get XselectionLogClient (): string { return this._selectionLogClient }
+  get XselectionLogType (): string { return this._selectionLogType }
+  get XselectionLogLevel (): number { return this._selectionLogLevel }
+  @VuexMutation public XsetSelectionLogClient (s: string) { this._selectionLogClient = s }
+  @VuexMutation public XsetSelectionLogType (s: string) { this._selectionLogType = s }
+  @VuexMutation public XsetSelectionLogLevel (s: number) { this._selectionLogLevel = s }
 
   @VuexMutation public setSelectionDepots (s: Array<string>) { this._selectionDepots = s }
   @VuexMutation public pushToSelectionDepots (s: string) {
@@ -25,6 +36,7 @@ export default class Selections extends VuexModule {
     }
   }
 
+  // @VuexMutation public setSelectionClientLog (s: string) { this._selectionClientLog = s }
   @VuexMutation public setSelectionClients (s: Array<string>) { this._selectionClients = s }
   @VuexMutation public pushToSelectionClients (s: string) {
     const index = this._selectionClients.indexOf(s)
