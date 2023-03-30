@@ -270,6 +270,8 @@
   "form.depot": "Select a server",
   "form.client": "Select a client",
   "form.logtype": "Select a log type",
+  "form.clientGroups": "Client groups",
+  "form.productGroups": "Product groups",
   "form.tooltip.actionRequest": "Set actionRequest for all selected products",
   "form.username": "Username",
   "form.password": "Password",

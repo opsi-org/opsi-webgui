@@ -267,6 +267,8 @@
   "group.addtogroup.tooltip": "Wählen Sie Gruppen aus, um den ausgewählten Client hinzuzufügen",
   "group.removefromgroup": "Ausgewählten Client aus Gruppen entfernen.",
   "group.removefromgroup.tooltip": "Wählen Sie Gruppen aus, um die ausgewählte Client-Zuweisung zu entfernen.",
+  "form.clientGroups": "Client Gruppen",
+  "form.productGroups": "Produkt Gruppen",
   "form.depot": "Serverauswahl",
   "form.client": "Clientauswahl",
   "form.logtype": "Logtypauswahl",
