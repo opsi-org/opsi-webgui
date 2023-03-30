@@ -242,6 +242,11 @@ body .mobile .topbar_content .navbar > * {
   color: var(--fg-btn);
   background-color: transparent;
 }
+.btn:hover {
+  /* color: var(--color); */
+  color: var(--primary-foreground);
+  background-color: transparent;
+}
 
 .btn-block {
   display: block;
