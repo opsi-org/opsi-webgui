@@ -4764,9 +4764,9 @@ a.close.disabled {
 .tooltip-inner {
   max-width: 200px;
   padding: 0.25rem 0.5rem;
-  color: var(--fg-tooltip_inner);
+  color: var(--fg-tooltip_inner) !important;
   text-align: center;
-  background-color: var(--bg-tooltip_inner);
+  background-color: var(--bg-tooltip_inner) !important;
   border-radius: 0.25rem;
 }
 .popover {

@@ -37,9 +37,15 @@
   --light: var(--general-opsi-grey-light);
   --dark: var(--general-opsi-grey-dark);
 
+  --primary-foreground: var(--light);
+  --secondary-foreground: var(--light);
+  --success-foreground: var(--light);
+  --warning-foreground: var(--light);
+  --danger-foreground: var(--light);
+
   --success-dark: #246b32;
-  /* --danger-dark: #aa2126; */
-  /* --warning-dark: #bb8819; */
+  --danger-dark: #aa2126;
+  --warning-dark: #bb8819;
   --info-dark: #0161a0;
   --light-dark: #b9bbbd;
   --dark-dark: #181a1d;

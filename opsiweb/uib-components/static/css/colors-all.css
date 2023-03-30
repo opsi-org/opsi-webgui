@@ -53,10 +53,10 @@
   --bg-invalid_label: #e4606d;
   --s-invalid_label: rgba(220, 53, 69, 0.25);
 
-  --fg-btn: var(--primary-outline-foreground);
+  --fg-btn: var(--primary-foreground);
   --bg-btn: var(--primary);
   --b-btn: var(--primary);
-  --fg-btn-disabled: var(--primary);
+  --fg-btn-disabled: var(--primary-outline-foreground);
   --bg-btn-disabled: transparent;
   --fg-btn-hover: var(--primary-foreground);
   --bg-btn-hover: var(--primary-dark);
@@ -64,23 +64,23 @@
   --b-btn-hover: var(--primary-dark);
   --s-btn-focus: var(--primary-dark);
 
-  --fg-btn_secondary: var(--general-fg);
+  --fg-btn_secondary: var(--secondary-foreground);
   --bg-btn_secondary: var(--secondary);
   --b-btn_secondary: var(--secondary);
   --s-btn_secondary: rgba(195, 59, 103, 0.5);
-  --fg-btn_secondary-disabled: var(--general-fg);
+  --fg-btn_secondary-disabled: var(--secondary-foreground);
   --bg-btn_secondary-disabled: transparent;
-  --fg-btn_secondary-hover: var(--general-fg);
+  --fg-btn_secondary-hover: var(--secondary-foreground);
   --bg-btn_secondary-hover: rgba(195, 59, 103, 0.5);
   --b-btn_secondary-hover: rgba(195, 59, 103, 0.5);
 
-  --fg-btn_success: var(--general-fg);
+  --fg-btn_success: var(--success-foreground);
   --bg-btn_success: var(--success);
-  --b-btn_success: var(--success);
-  --s-btn_success: rgba(25, 135, 84, 0.5);
-  --fg-btn_success-disabled: var(--general-fg);
+  --b-btn_success: var(--success-dark);
+  --s-btn_success: var(--success-dark);
+  --fg-btn_success-disabled: var(--primary-dark);
   --bg-btn_success-disabled: transparent;
-  --fg-btn_success-hover: var(--general-fg);
+  --fg-btn_success-hover: var(--success-foreground);
   --bg-btn_success-hover: var(--s-btn_success);
   --b-btn_success-hover: var(--s-btn_success);
 
@@ -237,28 +237,28 @@
   --b-page_link-hover: var(--general-bg-light);
   --bs-page_link-focus: rgba(0, 101, 153, 0.25);
 
-  --fg-badge_primary: var(--opsi-general-grey);
+  --fg-badge_primary: var(--primary-foreground);
   --bg-badge_primary: var(--primary);
-  --fg-badge_primary-hover: var(--opsi-general-grey);
-  --bg-badge_primary-hover: #004366;
+  --fg-badge_primary-hover: var(--primary-foreground);
+  --bg-badge_primary-hover: var(--primary-dark);
   --bs-badge_primary-focus: var(--bg-custom_item-checked-disabled);
 
-  --fg-badge_secondary: var(--opsi-general-grey);
+  --fg-badge_secondary: var(--secondary-foreground);
   --bg-badge_secondary: var(--secondary);
-  --fg-badge_secondary-hover: var(--opsi-general-grey);
-  --bg-badge_secondary-hover: #9c2f52;
+  --fg-badge_secondary-hover: var(--secondary-foreground);
+  --bg-badge_secondary-hover: var(--secondary-dark);
   --bs-badge_secondary-focus: rgba(195, 59, 103, 0.5);
 
-  --fg-badge_success: var(--ok-foreground);
+  --fg-badge_success: var(--success-foreground);
   --bg-badge_success: var(--success);
-  --fg-badge_success-hover: var(--ok-foreground);
-  --bg-badge_success-hover: #115c39;
+  --fg-badge_success-hover: var(--success-foreground);
+  --bg-badge_success-hover: var(--success-dark);
   --bs-badge_success-focus: rgba(25, 135, 84, 0.5);
 
   --fg-badge_info: var(--general-fg);
   --bg-badge_info: var(--info); /**#0db1f0**/
   --fg-badge_info-hover: var(--general-fg);
-  --bg-badge_info-hover: #0a8dc0;
+  --bg-badge_info-hover: pink; /*#0a8dc0;*/
   --bs-badge_info-focus: rgba(13, 177, 240, 0.5);
 
   --fg-badge_warning: var(--warning-foreground);
@@ -267,10 +267,10 @@
   --bg-badge_warning-hover: var(--warning-hover);
   --bs-badge_warning-focus: rgba(255, 193, 7, 0.5);
 
-  --fg-badge_danger: var(--error-foreground);
+  --fg-badge_danger: var(--danger-foreground);
   --bg-badge_danger: var(--danger); /**#0db1f0**/
-  --fg-badge_danger-hover: var(--error-foreground);
-  --bg-badge_danger-hover: #bd2130;
+  --fg-badge_danger-hover: var(--danger-foreground);
+  --bg-badge_danger-hover: var(--danger-dark);
   --bs-badge_danger-focus: rgba(220, 53, 69, 0.5);
 
   --fg-badge_light: var(--color);
@@ -287,7 +287,7 @@
 
   --bg-jumbotron: #e9ecef;
 
-  --fg-alert_primary: var(--general-fg); /*#003550*/
+  --fg-alert_primary: var(--primary-foreground); /*#003550*/
   --bg-alert_primary: var(--primary); /*#cce0eb*/
   --b-alert_primary: var(--primary-dark); /*#b8d4e2*/
   --bt-alert_primary_hr: #a6c9db; /*#a6c9db*/
@@ -300,8 +300,8 @@
   --fg-alert_secondary_link: #3e1321; /**/
 
   /* --color:#212529; */
+  --fg-alert_success: var(--success-foreground);
   --bg-alert_success: var(--success-dark);
-  --fg-alert_success: var(--general-fg);
   --b-alert_success: var(--success);
   --bt-alert_success_hr: #aed4c3; /*#a6c9db*/
   --fg-alert_success_link: #051b11; /**/
@@ -312,13 +312,13 @@
   --bt-alert_info_hr: #a3e1fa; /*#a6c9db*/
   --fg-alert_info_link: #04384d; /**/
 
-  --fg-alert_warning: var(--general-bg);
+  --fg-alert_warning: var(--warning-foreground);
   --bg-alert_warning: var(--warning-dark);
   --b-alert_warning: var(--warning);
   --bt-alert_warning_hr: #ffe8a1; /*#a6c9db*/
   --fg-alert_warning_link: #533f03; /**/
 
-  --fg-alert_danger: var(--general-bg);
+  --fg-alert_danger: var(--danger-foreground);
   --bg-alert_danger: var(--danger-dark);
   --b-alert_danger: var(--danger);
   --bt-alert_danger_hr: #f1b0b7; /*#a6c9db*/
@@ -454,12 +454,16 @@
   --fg-context_menu_titles: var(--fg-context_menu);
 
 
-  --bt-bs_tooltip: var(--general-bg);
-  --br-bs_tooltip: var(--general-bg);
-  --bl-bs_tooltip: var(--general-bg);
-  --bb-bs_tooltip: var(--general-bg);
-  --fg-tooltip_inner: var(--general-fg);
-  --bg-tooltip_inner: var(--general-bg-light);
+  --b-bs_tooltip: var(--general-bg);
+  --bt-bs_tooltip: var(--b-bs_tooltip);
+  --br-bs_tooltip: var(--b-bs_tooltip);
+  --bl-bs_tooltip: var(--b-bs_tooltip);
+  --bb-bs_tooltip: var(--b-bs_tooltip);
+  --fg-tooltip_inner: var(--general-fg); /* general-fg*/
+  --bg-tooltip_inner: var(--b-bs_tooltip); /*general-bg */
+  --bg-tooltip_inner_table: var(--bg-tooltip_inner); /*general-bg */
+
+
   --bg-popover: var(--general-fg);
   --b-popover: rgba(0, 0, 0, 0.2);
   --bt-popover: rgba(0, 0, 0, 0.25);
