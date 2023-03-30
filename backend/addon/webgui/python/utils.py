@@ -262,7 +262,7 @@ def read_only_check(func: Callable) -> Callable:
 	@wraps(func)
 	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		if user_register():
-			username = kwargs.get("request").scope.get("session").user_store.username
+			username = kwargs.get("request").scope.get("session").username
 			if read_only_user(username):
 				logger.error("User %s is a read only user.", username)
 				raise OpsiApiException(message=f"User {username} is a read only user.", http_status=status.HTTP_403_FORBIDDEN)
@@ -276,7 +276,7 @@ def filter_depot_access(func: Callable) -> Callable:
 	async def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		logger.debug("%s - check user", func)
 		if user_register():
-			username = kwargs.get("request").scope.get("session").user_store.username
+			username = kwargs.get("request").scope.get("session").username
 			if depot_access_configured(username):
 				allowed_depots = get_allowd_depots(username)
 				selected_depots = kwargs.get("selectedDepots")
@@ -298,7 +298,7 @@ def check_client_creation_rights(func: Callable) -> Callable:
 	@wraps(func)
 	def check_user(*args, **kwargs):  # type: ignore[no-untyped-def]
 		if user_register():
-			username = kwargs.get("request").scope.get("session").user_store.username
+			username = kwargs.get("request").scope.get("session").username
 			if not client_creation_allowed(username):
 				logger.error("User %s is not allowed to create clients.", username)
 				raise OpsiApiException(message=f"User {username} is not allowed to create clients.", http_status=status.HTTP_403_FORBIDDEN)

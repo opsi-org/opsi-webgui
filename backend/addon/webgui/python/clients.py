@@ -9,6 +9,7 @@ webgui client methods
 """
 
 import asyncio
+import json
 import os
 import subprocess
 from datetime import date, datetime
@@ -302,50 +303,46 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 	Create OPSI-Client.
 	"""
 
-	values = vars(client)
-	values["type"] = "OpsiClient"
-	if not values.get("created"):
-		values["created"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		values["lastSeen"] = values["created"]
-
-	with mysql.session() as session:
-		try:
-			host_check_duplicates(client, session)
-			query = insert(
-				table(
-					"HOST", column("type"), *[column(key) for key in vars(client).keys()]  # pylint: disable=consider-iterating-dictionary
-				)
-			).values(values)
-			session.execute(query)
-
-			headers = {"Location": f"{request.url}/{client.hostId}"}
-
-			if depot:
-				set_depot(client.hostId, depot)
-
-			# IPv4Address/IPv6Address is not JSON serializable
-			values["ipAddress"] = str(values["ipAddress"])
-			backend._send_messagebus_event(  # pylint: disable=protected-access
-				"host_created", data={"type": "OpsiClient", "id": client.hostId}
-			)
-			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
-
-		except IntegrityError as err:
+	try:
+		client_ids = backend.host_getIdents()
+		if client.hostId in client_ids:
 			logger.error("Could not create client object.")
-			logger.error(err)
-			session.rollback()
-			return RESTErrorResponse(
+			raise OpsiApiException(
 				message=f"Could not create client object. Client '{client.hostId}' already exists",
 				http_status=status.HTTP_409_CONFLICT,
-				details=err,
 			)
+		backend.host_createOpsiClient(
+			client.hostId,
+			client.opsiHostKey,
+			client.description,
+			client.notes,
+			client.hardwareAddress,
+			client.ipAddress,
+			client.inventoryNumber,
+			client.oneTimePassword,
+			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			client.systemUUID,
+		)
+		headers = {"Location": f"{request.url}/{client.hostId}"}
 
-		except Exception as err:  # pylint: disable=broad-except
-			logger.error("Could not create client object.")
-			logger.error(err)
-			raise OpsiApiException(
-				message="Could not create client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
-			) from err
+		return RESTResponse(data=client.__dict__, http_status=status.HTTP_201_CREATED, headers=headers)
+
+	except IntegrityError as err:
+		logger.error("Could not create client object.")
+		logger.error(err)
+		return RESTErrorResponse(
+			message=f"Could not create client object. Client '{client.hostId}' already exists",
+			http_status=status.HTTP_409_CONFLICT,
+			details=err,
+		)
+
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not create client object.")
+		logger.error(err)
+		raise OpsiApiException(
+			message="Could not create client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+		) from err
 
 
 @client_router.put("/api/opsidata/clients/{client_id}")
@@ -356,50 +353,39 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 	Update OPSI-Client.
 	"""
 
-	values = vars(client)
-	values["type"] = "OpsiClient"
-	values = {k: v for k, v in values.items() if v is not None}
+	try:
+		backend.host_createOpsiClient(
+			client_id,
+			client.opsiHostKey,
+			client.description,
+			client.notes,
+			client.hardwareAddress,
+			client.ipAddress,
+			client.inventoryNumber,
+			client.oneTimePassword,
+			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+			client.systemUUID,
+		)
+		headers = {"Location": f"{request.url}/{client_id}"}
 
-	with mysql.session() as session:
+		return RESTResponse(data=client.__dict__, http_status=status.HTTP_201_CREATED, headers=headers)
 
-		try:
-			host_check_duplicates(client, session)
-			query = (
-				update(
-					table(
-						"HOST",
-						column("type"),
-						*[column(key) for key in vars(client).keys()],  # pylint: disable=consider-iterating-dictionary
-					)
-				)
-				.where(text(f"hostId='{client_id}'"))
-				.values(values)
-			)
-			session.execute(query)
+	except IntegrityError as err:
+		logger.error("Could not update client object.")
+		logger.error(err)
+		return RESTErrorResponse(
+			message=f"Could not update client '{client.hostId}' object.",
+			http_status=status.HTTP_409_CONFLICT,
+			details=err,
+		)
 
-			headers = {"Location": f"{request.url}/{client.hostId}"}
-
-			if values.get("ipAddress"):
-				# IPv4Address/IPv6Address is not JSON serializable
-				values["ipAddress"] = str(values["ipAddress"])
-			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
-
-		except IntegrityError as err:
-			logger.error("Could not update client object.")
-			logger.error(err)
-			session.rollback()
-			return RESTErrorResponse(
-				message=f"Could not update client '{client.hostId}' object.",
-				http_status=status.HTTP_409_CONFLICT,
-				details=err,
-			)
-
-		except Exception as err:  # pylint: disable=broad-except
-			logger.error("Could not update client object.")
-			logger.error(err)
-			raise OpsiApiException(
-				message="Could not update client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
-			) from err
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not update client object.")
+		logger.error(err)
+		raise OpsiApiException(
+			message="Could not update client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+		) from err
 
 
 @client_router.get("/api/opsidata/clients/{clientid}", response_model=Client)
@@ -471,90 +457,22 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: d
 	"""
 	Delete Client with ID.
 	"""
+	try:
+		servers = backend.host_getIdents(type="*server")
+		if clientid in servers:
+			raise OpsiApiException(message="Can not delete server object.", http_status=status.HTTP_403_FORBIDDEN)
+		backend.host_delete(clientid)
 
-	with mysql.session() as session:
-		try:
-			select_query = (
-				select(text("h.hostId AS hostId"))  # type: ignore
-				.select_from(table("HOST").alias("h"))
-				.where(text(f"h.hostId = '{clientid}' and h.type = 'OpsiClient'"))
-			)  # pylint: disable=redefined-outer-name
+		return RESTResponse()
 
-			result = session.execute(select_query)
-			result = result.fetchone()
-
-			if not result:
-				logger.info("Client does not exist")
-				logger.error("Client with id '%s' not found.", clientid)
-				raise OpsiApiException(
-					message=f"Client with id '{clientid}' not found.",
-					http_status=status.HTTP_404_NOT_FOUND,
-				)
-
-			tables = ["OBJECT_TO_GROUP", "CONFIG_STATE", "PRODUCT_PROPERTY_STATE"]
-
-			for table_name in tables:
-				query = delete(table(table_name)).where(text(f"objectId = '{clientid}'"))
-				session.execute(query)
-
-			tables = ["PRODUCT_ON_CLIENT", "LICENSE_ON_CLIENT", "SOFTWARE_CONFIG"]
-
-			for table_name in tables:
-				query = delete(table(table_name)).where(text(f"clientId = '{clientid}'"))
-				session.execute(query)
-
-			tables = [
-				"HARDWARE_CONFIG_1394_CONTROLLER",
-				"HARDWARE_CONFIG_AUDIO_CONTROLLER",
-				"HARDWARE_CONFIG_BASE_BOARD",
-				"HARDWARE_CONFIG_BIOS",
-				"HARDWARE_CONFIG_CACHE_MEMORY",
-				"HARDWARE_CONFIG_CHASSIS",
-				"HARDWARE_CONFIG_COMPUTER_SYSTEM",
-				"HARDWARE_CONFIG_DISK_PARTITION",
-				"HARDWARE_CONFIG_FLOPPY_CONTROLLER",
-				"HARDWARE_CONFIG_FLOPPY_DRIVE",
-				"HARDWARE_CONFIG_HARDDISK_DRIVE",
-				"HARDWARE_CONFIG_HDAUDIO_DEVICE",
-				"HARDWARE_CONFIG_IDE_CONTROLLER",
-				"HARDWARE_CONFIG_KEYBOARD",
-				"HARDWARE_CONFIG_MEMORY_BANK",
-				"HARDWARE_CONFIG_MEMORY_MODULE",
-				"HARDWARE_CONFIG_MONITOR",
-				"HARDWARE_CONFIG_NETWORK_CONTROLLER",
-				"HARDWARE_CONFIG_OPTICAL_DRIVE",
-				"HARDWARE_CONFIG_PCI_DEVICE",
-				"HARDWARE_CONFIG_PCMCIA_CONTROLLER",
-				"HARDWARE_CONFIG_POINTING_DEVICE",
-				"HARDWARE_CONFIG_PORT_CONNECTOR",
-				"HARDWARE_CONFIG_PRINTER",
-				"HARDWARE_CONFIG_PROCESSOR",
-				"HARDWARE_CONFIG_SCSI_CONTROLLER",
-				"HARDWARE_CONFIG_SYSTEM_SLOT",
-				"HARDWARE_CONFIG_TAPE_DRIVE",
-				"HARDWARE_CONFIG_TPM",
-				"HARDWARE_CONFIG_USB_CONTROLLER",
-				"HARDWARE_CONFIG_USB_DEVICE",
-				"HARDWARE_CONFIG_VIDEO_CONTROLLER",
-			]
-
-			for table_name in tables:
-				query = delete(table(table_name)).where(text(f"hostId = '{clientid}'"))
-				session.execute(query)
-
-			query = delete(table("HOST")).where(text(f"HOST.hostId = '{clientid}' and HOST.type = 'OpsiClient'"))
-			session.execute(query)
-
-			return RESTResponse()
-
-		except Exception as err:  # pylint: disable=broad-except
-			if isinstance(err, OpsiApiException):
-				raise err
-			logger.error("Could not delete client object.")
-			logger.error(err)
-			raise OpsiApiException(
-				message="Could not delete client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
-			) from err
+	except Exception as err:  # pylint: disable=broad-except
+		if isinstance(err, OpsiApiException):
+			raise err
+		logger.error("Could not delete client object.")
+		logger.error(err)
+		raise OpsiApiException(
+			message="Could not delete client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+		) from err
 
 
 @client_router.post("/api/opsidata/clients/{clientid}/uefi")
@@ -566,40 +484,13 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -
 	"""
 
 	if uefi:
-		config_value = '["linux/pxelinux.cfg/shimx64.efi.signed"]'
+		config_value = ["linux/pxelinux.cfg/shimx64.efi.signed"]
 	else:
-		config_value = '[""]'
+		config_value = [""]
 
-	with mysql.session() as session:
+	backend.configState_create("clientconfig.dhcpd.filename", clientid, config_value)
 
-		query = (
-			select(text("cs.objectId AS objectId, cs.configId AS configId"))  # type: ignore
-			.select_from(table("CONFIG_STATE").alias("cs"))
-			.where(text(f"cs.objectId = '{clientid}' and cs.configId = 'clientconfig.dhcpd.filename'"))
-		)  # pylint: disable=redefined-outer-name
-
-		result = session.execute(query)
-		result = result.fetchone()
-
-		values = {"configId": "clientconfig.dhcpd.filename", "objectId": clientid, "values": config_value}
-
-		if result:
-			stmt = (
-				update(table("CONFIG_STATE", *[column(name) for name in values]))
-				.where(text(f"configId = 'clientconfig.dhcpd.filename' AND objectId = '{clientid}'"))
-				.values(values=config_value)
-			)
-			session.execute(stmt)
-
-		else:
-			stmt = (
-				insert(table("CONFIG_STATE", *[column(name) for name in values]))
-				.values(**values)
-				.on_duplicate_key_update(configId="clientconfig.dhcpd.filename", objectId=clientid)
-			)
-			session.execute(stmt)
-
-	return RESTResponse(http_status=200, data=values)
+	return RESTResponse(http_status=200, data={"configId": "clientconfig.dhcpd.filename", "objectId": clientid, "values": config_value})
 
 
 class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
@@ -624,24 +515,6 @@ def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # 
 	return RESTResponse(http_status=status.HTTP_200_OK, data=result)
 
 
-def host_check_duplicates(client: Client, session: Any) -> None:
-	if (
-		mysql.unique_hardware_addresses  # pylint: disable=protected-access
-		and client.hardwareAddress
-		and not client.hardwareAddress.startswith("00:00:00")
-	):
-		select_query = (
-			select(text("h.hostId AS hostId"))  # type: ignore
-			.select_from(table("HOST").alias("h"))
-			.where(text(f"h.hostId != '{client.hostId}' AND hardwareAddress = '{client.hardwareAddress}'"))
-		)  # pylint: disable=redefined-outer-name
-
-		result = session.execute(select_query)
-		result = result.fetchone()
-		if result:
-			raise BackendBadValueError(f"Hardware address {client.hardwareAddress!r} is already used by host {result}")
-
-
 class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
 	clients: List[str]
 	username: str
@@ -652,7 +525,7 @@ class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
 @client_router.post("/api/opsidata/clients/deploy")
 @rest_api
 async def deploy_client_agent(clientDeployData: ClientDeployData) -> RESTResponse:  # pylint: disable=invalid-name
-	logger.devel(clientDeployData)
+	logger.debug(clientDeployData)
 
 	deploy_script = "/var/lib/opsi/depot/opsi-client-agent/opsi-deploy-client-agent"
 	if clientDeployData.type == "linux":
@@ -660,7 +533,7 @@ async def deploy_client_agent(clientDeployData: ClientDeployData) -> RESTRespons
 	if clientDeployData.type == "macos":
 		deploy_script = "/var/lib/opsi/depot/opsi-mac-client-agent/opsi-deploy-client-agent"
 
-	logger.devel(clientDeployData.clients)
+	logger.debug(clientDeployData.clients)
 
 	if os.path.isfile(deploy_script):
 		logger.notice("Running opsi-deploy-client-agent script...")
@@ -693,16 +566,7 @@ def set_depot(client: str, depot: str) -> None:
 	"""
 	Set depot of client.
 	"""
-
-	values = {"objectId": client, "configId": "clientconfig.depot.id", "values": f'["{depot}"]'}
-
-	with mysql.session() as session:
-		stmt = (
-			insert(table("CONFIG_STATE", *[column(name) for name in values.keys()]))  # pylint: disable=consider-iterating-dictionary
-			.values(**values)
-			.on_duplicate_key_update(**values)
-		)
-		session.execute(stmt, values)
+	backend.configState_create("clientconfig.depot.id", client, f'["{depot}"]')
 
 
 @client_router.post("/api/opsidata/clients/{clientid}/groups")
@@ -714,48 +578,19 @@ def add_client_to_groups(
 	"""
 	Add client to a list of groups.
 	"""
+	try:
+		for group in groups:
+			backend.objectToGroup_create("HostGroup", group, clientid)
+		return RESTResponse(http_status=200, data=f"Client '{clientid}' is now a member of: {', '.join(groups)}.")
 
-	if not groups:
-		logger.error("No group given.")
-		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No group given.")
-
-	with mysql.session() as session:
-		try:
-			for group in groups:
-				values = {"groupType": "HostGroup", "objectId": clientid, "groupId": group}
-
-				with mysql.session() as session:
-					stmt = (
-						insert(
-							table(
-								"OBJECT_TO_GROUP", *[column(name) for name in values.keys()]
-							)  # pylint: disable=consider-iterating-dictionary
-						)
-						.values(**values)
-						.on_duplicate_key_update(**values)
-					)
-					session.execute(stmt, values)
-		except IntegrityError as err:
-			logger.error("Could not add client %s to groups: %s.", clientid, groups)
-			logger.error(err)
-			session.rollback()
-			return RESTErrorResponse(
-				message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
-				http_status=status.HTTP_409_CONFLICT,
-				details=err,
-			)
-
-		except Exception as err:  # pylint: disable=broad-except
-			logger.error("Could not add client %s to groups: %s.", clientid, groups)
-			logger.error(err)
-			session.rollback()
-			raise OpsiApiException(
-				message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
-				http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-				error=err,
-			) from err
-
-	return RESTResponse(http_status=200, data=f"Client '{clientid}' is now a member of: {', '.join(groups)}.")
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not add client %s to groups: %s.", clientid, groups)
+		logger.error(err)
+		raise OpsiApiException(
+			message=f"Could not add client '{clientid}' to groups {groups}.\nLast group was: {group}.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
 
 
 @client_router.delete("/api/opsidata/clients/{clientid}/groups")
@@ -775,7 +610,7 @@ def rm_client_from_groups(
 	try:
 		for group in groups:
 			backend.objectToGroup_delete(groupType="HostGroup", groupId=group, objectId=clientid)
-
+		return RESTResponse(http_status=200, data=f"Client '{clientid}' was removed from: {', '.join(groups)}.")
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could not remove client %s from groups: %s.", clientid, groups)
 		logger.error(err)
@@ -784,5 +619,3 @@ def rm_client_from_groups(
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err
-
-	return RESTResponse(http_status=200, data=f"Client '{clientid}' was removed from: {', '.join(groups)}.")
