@@ -1,4 +1,4 @@
-:root {
+/* :root { */
   /* --log-secondary: #dce4ef;
   --log-muted: #e7e4e4b4;
   --color:var(--fg-basic);
@@ -7,7 +7,7 @@
   --border: var(--background);
   --hover: #5f6163;
   --component:var(--general-bg-light); */
-}
+/* } */
 *,
 ::after,
 ::before {
