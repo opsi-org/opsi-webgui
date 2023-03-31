@@ -9,9 +9,8 @@
 @font-face {
   font-family: "Ubuntu-M";
   /* font-style: monospace; */
-  font-size: 13px;
-  font-weight: 100;
-  src: url(../fonts/ubuntu-font-family-0.80/UbuntuM.ttf) format("truetype");
+  font-weight: 50;
+  src: url(../fonts/ubuntu-font-family-0.80/UbuntuMono-R.ttf) format("truetype");
 }
 :root{
   /* color schema see color-light / dark.css */
@@ -30,6 +29,7 @@
   "Courier New", monospace !important; */
   --font-family-code:  "Ubuntu-M";
   --font-family-log:  "Ubuntu-M";
+  --font-family-log-size:  13px;
   /* --font-family-log: var(--font-family-general); */
   --font-family-popover: var(--font-family-general);
   --font-family-tooltip: var(--font-family-general);
