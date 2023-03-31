@@ -296,8 +296,9 @@ export default class VClients extends Vue {
     }
     if (msg && msg.event === ('host_connected' || 'host_disconnected')) {
       const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
-      ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
-      await this.$fetch()
+      // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
+      console.log('message bud host_connected', msg)
+      // await this.$fetch()
     }
   }
 
