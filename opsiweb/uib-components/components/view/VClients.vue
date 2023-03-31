@@ -15,8 +15,8 @@
         >
           <template #right>
             <ButtonBTNRowLinkTo
-              :title="secondColumnOpened || $mq=='mobile'? $t('button.show.products'): ''"
-              :label="secondColumnOpened?'': $t('title.products')"
+              :title="(secondColumnOpened || $mq=='mobile'? $t('button.show.products') : '')"
+              :label="((secondColumnOpened) ? '' : $t('title.products'))"
               :icon="iconnames.product"
               to="/clients/products"
               ident="dummy"
@@ -124,7 +124,7 @@
           <template #rowactions="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
-              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
+              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config') : '')"
               :icon="iconnames.settingsobject"
               to="/clients/config"
               :ident="row.item.ident"
@@ -133,7 +133,7 @@
             />
             <ButtonBTNRowLinkTo
               :title="$t('title.log')"
-              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log'):''"
+              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log') : '')"
               :icon="iconnames.log"
               to="/clients/log"
               :ident="row.item.ident"
@@ -142,7 +142,7 @@
             />
             <ButtonBTNRowLinkTo
               :title="$t('title.cloneclient')"
-              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.cloneclient'):''"
+              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.cloneclient') : '')"
               :icon="iconnames.client"
               to="/clients/clone"
               :ident="row.item.ident"
@@ -298,6 +298,7 @@ export default class VClients extends Vue {
       const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
       // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       console.log('message bud host_connected', msg)
+      this.cache_pages.
       // await this.$fetch()
     }
   }
