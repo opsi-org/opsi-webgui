@@ -282,12 +282,16 @@ const mbus = namespace('messagebus')
 @Component export class Constants extends Vue {
   // iconnames: any = _icons
   iconnames: any = {
+    //
+    // !!!!!!!!!!! Please add icon also to icon server
+    //
     admin: 'tools',
     adminterminal: 'terminal',
     language: 'globe2',
     download: 'download',
     depot: 'server',
     client: 'laptop',
+    clientReachable: 'link45deg',
     // product: 'grid',
     product: 'box-seam',
     changes: 'list-check',

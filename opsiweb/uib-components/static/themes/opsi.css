@@ -2753,6 +2753,9 @@ input[type="submit"].btn-block {
 .btn-group > .btn:focus {
   z-index: 1;
 }
+.btn:disabled, .btn.disabled {
+  --bs-btn-disabled-opacity: 0.45;
+}
 .btn-toolbar {
   display: flex;
   flex-wrap: wrap;

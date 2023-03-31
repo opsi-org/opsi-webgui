@@ -7,8 +7,8 @@
       :disabled="selectionClients.length <= 0"
       @click="$bvModal.show('clientreachability')"
     >
-      <b-icon :icon="iconnames.client" />
-      <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" />
+      <b-icon :icon="iconnames.clientReachable" />
+      <!-- <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" /> -->
     </b-button>
     <b-modal
       id="clientreachability"
