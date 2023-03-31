@@ -2,7 +2,12 @@
   <b-button
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
-    :class="{'w-100 h-100 text-left d-flex ': true, 'dropdown-item': incontextmenu, [classes]: true}"
+    :class="{
+      'w-100 h-100 text-left d-flex ': true,
+      'dropdown-item': incontextmenu,
+      [classes]: true,
+      'border-0': incontextmenu
+    }"
     :title="label ? '' : title"
     size="sm"
     :pressed="pressed(to, ident, sortby)"
@@ -32,7 +37,7 @@ export default class BTNRowLinkTo extends Vue {
   @Prop({ default: 'title' }) title!: string
   @Prop({ default: '' }) icon!: string
   @Prop({ default: 'outline-primary' }) variant!: string
-  @Prop({ default: 'border-0 color-primary-selected' }) classes!: string
+  @Prop({ default: 'color-primary-selected' }) classes!: string
   $mq: any
 
   action () {
@@ -47,13 +52,3 @@ export default class BTNRowLinkTo extends Vue {
   }
 }
 </script>
-<style>
-.col-rowactions > .btn-group .btn {
-  color: var(--general-fg);
-}
-tbody tr:hover .col-rowactions > .btn-group .btn,
-.row-selected .color-primary-selected,
-.row-selected .color-primary-selected:hover {
-  color: var(--primary-foreground) !important;
-}
-</style>

@@ -495,7 +495,12 @@ export default class TInfiniteScrollSmooth extends Vue {
 }
 
 .TInfiniteScrollSmoothWrapper tbody tr:hover .btn-group .btn-outline-primary {
-  border-color: var(--primary-foreground) !important;
+  border-color: var(--bg-page_item-disabled) !important;
+  color: var(--primary-foreground) !important;
+}
+.TInfiniteScrollSmoothWrapper tbody tr:hover .btn-group .btn-outline-primary:hover {
+  border-color: var(--bg-page_item-disabled) !important;
+  background-color: var(--primary) !important;
   color: var(--primary-foreground) !important;
 }
 .TInfiniteScrollSmoothWrapper th .btn-group .btn-outline-primary,

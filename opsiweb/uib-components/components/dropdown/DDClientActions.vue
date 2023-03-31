@@ -8,10 +8,10 @@
   >
     <b-dropdown
       ref="actionsdropdown"
-      :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
+      :variant="incontextmenu? 'transparent border-0' : 'outline-primary'"
       size="sm"
       :no-caret="!incontextmenu"
-      :class="{ 'dropdown-item contextmenu': incontextmenu }"
+      :class="{ 'dropdown-item contextmenu ': incontextmenu!==false }"
       :dropright="incontextmenu"
     >
       <template #button-content>

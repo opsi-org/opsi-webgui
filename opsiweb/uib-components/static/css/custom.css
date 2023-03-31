@@ -259,8 +259,9 @@ body .mobile .topbar_content .navbar > * {
 }
 .btn:hover {
   /* color: var(--color); */
-  color: var(--primary-foreground);
-  background-color: transparent;
+  color: var(--primary-foreground) !important;
+  background-color: var(--primary-dark) !important;
+  border-color: var(--bg-page_item-disabled) !important;
 }
 
 .btn-block {

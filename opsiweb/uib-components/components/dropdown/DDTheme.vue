@@ -5,7 +5,7 @@
       id="theme"
       data-testid="DropdownDDThemeBTN"
       :aria-label="$t('form.theme')"
-      class="global_topbar_button px-2 text-left btn btn-primary"
+      class="global_topbar_button px-2 text-left btn btn-primary border-0"
       :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
       :text="theme.title"
       :title="$t('button.theme.tooltip')"

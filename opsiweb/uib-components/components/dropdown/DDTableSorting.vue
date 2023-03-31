@@ -11,7 +11,7 @@
       size="sm"
       data-testid="DropdownDDTableSorting"
       class="DDTableSorting"
-      :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
+      :variant="incontextmenu? 'transparent border-0' : 'outline-primary'"
       :no-caret="!incontextmenu"
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"

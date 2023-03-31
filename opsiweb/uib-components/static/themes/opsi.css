@@ -2201,7 +2201,7 @@ textarea.form-control.is-invalid {
 }
 .btn-outline-primary:hover {
   color: var(--fg-btn);
-  background-color: var(--bg-btn-hover);
+  background-color: var(--secondary);
   border-color: var(--b-btn-hover);
 }
 .btn-outline-primary.focus,
@@ -2753,8 +2753,14 @@ input[type="submit"].btn-block {
 .btn-group > .btn:focus {
   z-index: 1;
 }
+.btn:not(.disabled):not(.border-0), .btn:not(.border-0) {
+  border: 1px solid var(--b-page_item-active) !important;
+}
 .btn:disabled, .btn.disabled {
-  --bs-btn-disabled-opacity: 0.45;
+  /* --bs-btn-disabled-opacity: 0.45; */
+  color: var(--fg-page_item-disabled) !important;
+  background-color: var(--bg-page_item-disabled) !important;
+  border-color: var(--b-page_item-disabled) !important;
 }
 .btn-toolbar {
   display: flex;

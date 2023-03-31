@@ -3,7 +3,7 @@
     ref="btn-logout"
     v-bind="$props"
     data-testid="ButtonBTNLogout"
-    class="global_topbar_button px-2 text-left w-100 "
+    class="global_topbar_button px-2 text-left w-100 border-0"
     :class="{'pt-0 pb-0 pl-3 w-100': $mq=='mobile'}"
     :title="$t('button.logout.tooltip')"
     variant="primary"
