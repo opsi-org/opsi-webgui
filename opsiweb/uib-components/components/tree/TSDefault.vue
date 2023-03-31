@@ -403,7 +403,7 @@ export default class TSDefault extends Vue {
 .vue-treeselect__checkbox--checked:hover,
 .vue-treeselect__checkbox--checked {
   border-color: var(--primary-dark) !important;
-  background: var(--secondary) !important;
+  background: var(--primary) !important;
   color: var(--primary-foreground);
 }
 
