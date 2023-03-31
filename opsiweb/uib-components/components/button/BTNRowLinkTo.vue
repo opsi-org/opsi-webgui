@@ -3,7 +3,7 @@
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
     :class="{
-      'w-100 h-100 text-left d-flex ': true,
+      'w-100 h-100 text-left d-flex rowlinkto': true,
       'dropdown-item': incontextmenu,
       [classes]: true,
       'border-0': incontextmenu

@@ -267,6 +267,13 @@ body .mobile .topbar_content .navbar > * {
   border-color: var(--bg-page_item-disabled) !important;
 }
 
+tbody .col-rowactions > div >.btn-group> .btn {
+  height: var(--component-height) !important;
+  min-height: var(--min-height-button) !important;
+}
+tbody .col-rowactions :not(div).btn {
+  padding-top: 7px;
+}
 .btn-block {
   display: block;
   width: 100%;

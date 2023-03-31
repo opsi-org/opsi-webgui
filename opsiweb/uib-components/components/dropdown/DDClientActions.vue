@@ -1,6 +1,11 @@
 <template>
   <div
     data-testid="DDClientActions"
+    class="DDClientActions"
+    :class="{
+      'contextmenu ': incontextmenu!==false,
+      'btn btn-outline-primary btn-sm w-100 h-100 text-left d-flex rowlinkto color-primary-selected': incontextmenu===false,
+    }"
     @mouseover="incontextmenu ? onOver($refs.actionsdropdown) : null"
     @mouseleave="incontextmenu ? onLeave($refs.actionsdropdown) : null"
     @focusin="incontextmenu ? onOver($refs.actionsdropdown) : null"
@@ -69,4 +74,26 @@ export default class DDClientActions extends Vue {
 .row-selected .color-primary-selected:hover {
   color: var(--primary-foreground) !important;
 }
+.DDClientActions.btn {
+  padding: 0px;
+}
+.DDClientActions > div:not(.contextmenu) > .btn-outline-primary:hover,
+.DDClientActions > div:not(.contextmenu) > .btn:hover,
+.DDClientActions > div:not(.contextmenu) > .btn {
+  border: 0px!important;
+  background-color: unset !important;
+  /* padding: 0px; */
+  margin: 0px;
+  height: calc(var(--component-height) - 5px) !important;
+  min-height: calc(var(--min-height-button) - 5px) !important;
+  /* height: 100%; */
+  width: 100%;
+
+  /* border-radius: 0px;
+  margin-right: -1px; */
+}
+/* .DDClientActions > :not(.contextmenu) {
+  border: 1px solid green !important;
+  border-radius: 0px;
+} */
 </style>
