@@ -106,7 +106,7 @@
           <template #head(installationStatus_unknown)>
             <div :title="$t('table.fields.installationStatusUnknown')">
               <b-icon :icon="iconnames.product" />
-              <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" />
+              <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="primary" />
             </div>
           </template>
           <template #head(reachable)>
