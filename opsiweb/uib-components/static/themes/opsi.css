@@ -3023,7 +3023,7 @@ input[type="submit"].btn-block {
   position: absolute;
   left: 0;
   z-index: -1;
-  width: 1rem;
+  width: 2rem;
   height: 1.25rem;
   opacity: 0;
 }
@@ -3168,10 +3168,6 @@ input[type="submit"].btn-block {
   appearance: none;
 }
 
-select:hover {
-  /* background-color: var(--primary) !important; */
-  /* box-shadow: 0 0 0 0.2rem var(--bs-custom_select-focus); */
-}
 select option:hover {
   background: unset !important;
   background-image: unset !important;

@@ -152,7 +152,7 @@
   --b-input_group_text: var(--b-input_component);
 
   --fg-custom_control-checked: var(--fg-input_component);
-  --bg-custom_control-checked: var(--bg-input_component);
+  --bg-custom_control-checked: var(--general-bg-weak);
   --b-custom_control-checked: var(--b-input_component);
   --s-custom_control-focus: var(--b-input_component-focus);
   --b-custom_control-focus: var(--b-input_component-focus);
@@ -162,7 +162,7 @@
   --b-custom_control-active: var(--primary-dark);
   --fg-custom_control-disabled: var(--element-disabled);
   --bg-custom_control-disabled: #e9ecef;
-  --bg-custom_control_label: var(--general-fg);
+  --bg-custom_control_label: var(--general-bg);
   --b-custom_control_label: #adb5bd;
   --bg-custom_checkbox-indeterminate: var(--primary);
   --b-custom_checkbox-indeterminate: var(--primary);
