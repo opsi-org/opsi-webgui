@@ -45,7 +45,7 @@
         />
         <b-navbar-nav class="pt-0 ml-auto mr-3 float-right">
           <ModalMSelectionsAll :navbar="true" :with-text="$mq=='mobile'" />
-          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary border-0"/>
+          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang v-once :navbar="true" />
           <DropdownDDTheme v-once :navbar="true" />

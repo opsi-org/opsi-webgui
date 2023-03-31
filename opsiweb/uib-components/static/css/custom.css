@@ -241,12 +241,15 @@ body .mobile .topbar_content .navbar > * {
   border-bottom: none !important;
   background-color: transparent !important;
 }
-
-.global_topbar_button {
+.global_topbar_button{
   margin-top: 0 !important;
   min-height: 100% !important;
   min-width: 44px !important;
   text-align: center !important;
+}
+.mobile .global_topbar_button {
+  height: var(--component-height) !important;
+  min-height: var(--min-height-button) !important;
 }
 .form-control.focus {
   border-color: var(--b-input_component-focus);

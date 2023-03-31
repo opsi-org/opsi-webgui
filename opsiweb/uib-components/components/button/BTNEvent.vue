@@ -27,11 +27,12 @@
       :variant="events[event].variant"
       :size="size"
       :class="{
-        [classes]: true
+        [classes]: true,
+        'global_topbar_button_mobile': $mq=='mobile'
       }"
       @click="$bvModal.show('event-modal-' + event + '-' + data)"
       @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
-    >
+    >iiii
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
       <span class="eventlabel" :class="event"> {{ (withText || incontextmenu || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
@@ -109,6 +110,7 @@ export default class BTNEvent extends Vue {
   @Prop({ default: 'ondemand' }) event!: string
   @Prop({ default: '' }) classes!: string
   @Prop({ default: false }) incontextmenu!: boolean
+  @Prop({ default: false }) navbar!: boolean
   @Prop({ default: false }) withText!: boolean
   @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
