@@ -37,7 +37,7 @@
   --light: var(--general-opsi-grey-light);
   --dark: var(--general-opsi-grey-dark);
 
-  --primary-foreground: var(--light);
+  --primary-foreground: var(--white);
   --secondary-foreground: var(--light);
   --success-foreground: var(--light);
   --warning-foreground: var(--light);

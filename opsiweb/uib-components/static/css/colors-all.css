@@ -218,7 +218,7 @@
   --bg-card_footer: rgba(0, 0, 0, 0.03);
   --bt-card_footer: rgba(0, 0, 0, 0.125);
   --bg-breadcrumb: transparent;
-  --fg-breadcrumb_item: var(--general-fg);
+  --fg-breadcrumb_item: var(--primary-foreground);
 
   --fg-page_link: var(--opsi-general-grey);
   --bg-page_link: var(--general-bg);
