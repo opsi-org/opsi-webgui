@@ -17,9 +17,7 @@ test.beforeEach(async ({ page }) => {
   // "jest-playwright-preset": "^1.7.0",
   // })
   await page.unroute('**/api/**')
-  await apiMock(page, '**/api/user/opsiserver', { result: 'mydepot.uib.local' })
-  await apiMock(page, '**/api/auth/login', { result: 'Login success' })
-  await apiMock(page, '**/api/auth/logout', { result: 'logout success' })
+  await apiMock(page, '**/api/user/opsiserver', { result: 'testconfigserver.uib.local' })
   await page.goto('./login')
 })
 
@@ -28,10 +26,11 @@ test.afterEach(async ({ page }) => {
 })
 
 test('Login and Logout', async ({ page, context }) => {
+  await apiMock(page, '**/api/auth/login', { result: 'Login success' })
   let title = page.locator('[data-testid="login_title"]')
   await expect(title).toHaveText('opsi-webgui')
   title = page.locator('[data-testid="login_configserver"]')
-  await expect(title).toHaveAttribute('placeholder', 'mydepot.uib.local')
+  await expect(title).toHaveAttribute('placeholder', 'testconfigserver.uib.local')
   await page.type('[placeholder="Username"]', 'adminuser')
   await page.press('[placeholder="Username"]', 'Tab')
   await page.type('[placeholder="Password"]', 'adminuser')
@@ -39,14 +38,21 @@ test('Login and Logout', async ({ page, context }) => {
   await context.addCookies(cookieOpsiconfdSession)
   title = await context.cookies()
   expect(title).toEqual(cookieOpsiconfdSession)
-  await page.waitForNavigation({ url: './clients/' })
+  await expect(page).toHaveURL('/addons/webgui/app/clients/')
   await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.click('[data-testid="ButtonBTNLogout"]')
-  // await page.waitForNavigation({ url: './login' })
-  await page.waitForNavigation()
   page.setDefaultTimeout(55555)
   await expect(page).toHaveURL('/addons/webgui/app/login')
-  // TODO Test 'Failed login' with incorrect credentials
-  // TODO Check if password hidden by default and Unhide it and check if it shows password
-  // TODO Login page: expect version, company name, language dropdown, and try changing Language.
 })
+
+// test('Login with incorrect credentials', async ({ page }) => {
+//   await expect(page.locator('[data-testid="login_configserver"]')).toHaveAttribute('placeholder', 'testconfigserver.uib.local')
+//   await page.type('[placeholder="Username"]', 'adminuser')
+//   await page.press('[placeholder="Username"]', 'Tab')
+//   await page.type('[placeholder="Password"]', 'adminuser1')
+//   await page.press('[placeholder="Password"]', 'Enter')
+//   await apiMock(page, '**/api/auth/login', { http_status: 403, error: '', message: 'Opsi service authentication error' })
+//   await page.waitForLoadState('networkidle')
+//   await page.screenshot({ path: './screenshots/loginFailed.png' })
+//   await expect(page.getByTestId('authAlert')).toContainText('Login Failed')
+// })

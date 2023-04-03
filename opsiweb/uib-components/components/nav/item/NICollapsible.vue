@@ -16,7 +16,7 @@
         <b-nav-item
           v-for="sub in submenu"
           :key="sub.title"
-          :data-testid="'NICollapsible-submenu-'+sub.title"
+          :data-testid="'NICollapsible-submenu-'+title+sub.title"
           :disabled="sub.disabled"
           :class="{checkactive: $route.path.includes(sub.route)}"
           class="pl-3"

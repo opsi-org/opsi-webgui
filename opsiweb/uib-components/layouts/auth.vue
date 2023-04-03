@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AlertAAlert ref="authAlert" />
+    <AlertAAlert ref="authAlert" data-testid="authAlert" />
     <Nuxt />
     <BarBAuthFooter v-once class="footer_content" />
   </div>

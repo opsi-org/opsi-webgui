@@ -33,10 +33,10 @@
       no-fade
       no-stacking
     >
-      <AlertAAlert ref="deleteClientAlert" />
       <span class="confirm"> {{ $t('message.confirm.deleteClient', { client: clientId }) }} </span>
       <div class="float-right mt-2">
         <b-button
+          data-testid="ConfirmDeleteClient"
           variant="danger"
           size="sm"
           :disabled="(config)?config.read_only:false"
@@ -72,15 +72,14 @@ export default class MDeleteClient extends Vue {
 
   async deleteOpsiClient (ident:string) {
     const id = ident
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$delete('/api/opsidata/clients/' + id)
       .then(() => {
-        const ref = (this.$refs.deleteClientAlert as any)
         ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
         this.delFromSelectionClients(id)
         this.$bvModal.hide('event-modal-delete-' + this.clientId)
         this.refetch()
       }).catch((error) => {
-        const ref = (this.$refs.deleteClientAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
       })
