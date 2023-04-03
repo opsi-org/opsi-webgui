@@ -180,7 +180,8 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 			hd.macAddress,
 			hd.ipAddress,
 			hd.description,
-			hd.notes,akone-%dT%TZ') AS lastSeen,
+			hd.notes,
+			DATE_FORMAT(hd.lastSeen, '%Y-%m-%dT%TZ') AS lastSeen,
 			hd.uefi,
 			hd.uefi_value,
 			(
