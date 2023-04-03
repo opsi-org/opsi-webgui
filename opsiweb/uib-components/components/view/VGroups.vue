@@ -1,7 +1,7 @@
 <template>
   <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
-    <AlertAAlert ref="groupAlert" />
+    <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <BarBPageHeader>
       <template #left>
         <TreeTSDepots />
@@ -10,7 +10,7 @@
     <b-tabs>
       <b-tab>
         <template #title>
-          <span> {{ $t("form.clientGroups") }} </span>
+          <span> {{ $t("treeselect.clientGroups") }} </span>
         </template>
         <DivDScrollResult>
           <b-row>
@@ -63,14 +63,14 @@
                           </b-form-select-option>
                         </template>
                       </b-form-select>
-                      <b-button class="float-right" variant="success" @click="addClientsToSelectedGroup">
+                      <b-button class="float-right" variant="success" data-testid="addClientsToSelectedGroup" @click="addClientsToSelectedGroup">
                         {{ $t("group.add") }}
                       </b-button>
                     </b-form>
                   </b-tab>
                   <b-tab>
                     <template #title>
-                      <span v-b-tooltip.hover :title="$t('group.subgroup.tooltip')">
+                      <span v-b-tooltip.hover data-testid="subgroup" :title="$t('group.subgroup.tooltip')">
                         {{ $t("group.subgroup") }}
                       </span>
                     </template>
@@ -79,7 +79,7 @@
                       <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('group.subgroupname')" :placeholder="$t('group.subgroupname')" />
                       <b-form-input v-model="subgroup.description" v-b-tooltip.hover :title="$t('table.fields.description')" :placeholder="$t('table.fields.description')" />
                       <b-form-input v-model="subgroup.notes" v-b-tooltip.hover :title="$t('table.fields.notes')" :placeholder="$t('table.fields.notes')" />
-                      <b-button class="float-right" variant="success" @click="createSubGroup">
+                      <b-button class="float-right" variant="success" data-testid="createSubGroup" @click="createSubGroup">
                         {{ $t("button.create") }}
                       </b-button>
                     </b-form>
@@ -103,7 +103,7 @@
                       />
                       <b-form-input v-model="updategroup.description" v-b-tooltip.hover :title="$t('table.fields.description')" :placeholder="$t('table.fields.description')" />
                       <b-form-input v-model="updategroup.notes" v-b-tooltip.hover :title="$t('table.fields.notes')" :placeholder="$t('table.fields.notes')" />
-                      <b-button class="float-right" variant="success" @click="updateGroup">
+                      <b-button class="float-right" variant="success" data-testid="updateGroup" @click="updateGroup">
                         {{ $t("button.update") }}
                       </b-button>
                     </div>
@@ -116,7 +116,7 @@
                     </template>
                     <br>
                     <span> {{ $t('group.delete.confirm') }}</span>
-                    <b-button class="float-right" variant="danger" @click="deleteGroup">
+                    <b-button class="float-right" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
                       {{ $t("label.delete") }}
                     </b-button>
                   </b-tab>
@@ -128,7 +128,7 @@
                     </template>
                     <br>
                     <span> {{ $t('group.remove.confirm') }}</span>
-                    <b-button class="float-right" variant="danger" @click="removeClientAssignments">
+                    <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" @click="removeClientAssignments">
                       {{ $t("group.remove") }}
                     </b-button>
                   </b-tab>
@@ -208,7 +208,7 @@
       </b-tab>
       <!-- <b-tab>
         <template #title>
-          <span> {{ $t('form.productgroups') }} </span>
+          <span> {{ $t('treeselect.prodGroups') }} </span>
         </template>
       </b-tab> -->
     </b-tabs>

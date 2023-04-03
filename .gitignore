@@ -25,6 +25,7 @@ opsiweb/test-result-pw-reporter-components.xml
 opsiweb/test-result-pw-reporter-component.xml
 opsiweb/test-results/
 opsiweb/screenshots4Docs/test-result-pw-reporter-screenshot.xml
+opsiweb/.config/test-result-pw-reporter-usecase.xml
 .devcontainer/*modules*
 
 # python

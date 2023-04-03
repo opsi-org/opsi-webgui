@@ -10,7 +10,7 @@
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" />
     <div class="main_content">
       <AlertAAlert ref="messageBusInfo" />
-      <AlertAAlert ref="statusAlert" />
+      <AlertAAlert ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="alertConfigurationError" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
       <AlertAAlert ref="ondemandMessage" /> <!-- referenced in BTop, any changes should be checked with expiring-session-behaviour-->
@@ -84,7 +84,7 @@ export default class LayoutDefault extends Vue {
         // { rel: 'stylesheet', href: (this.colortheme) ? this.colortheme.rel : '' },
         { rel: 'stylesheet', href: (this.colortheme) ? '/themes/opsi-dark.css' : '' },
         { rel: 'stylesheet', href: 'css/custom.css' },
-        { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' },
+        { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' }
       ]
     }
   }
