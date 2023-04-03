@@ -600,7 +600,7 @@ def get_host_group_ids() -> RESTResponse:
 	return RESTResponse(data=groups)
 
 
-def find_parent(group: str) -> str:
+def find_parent(group: str) -> str | None:
 	with mysql.session() as session:
 		query = (
 			select(
@@ -615,8 +615,9 @@ def find_parent(group: str) -> str:
 			.where(text(f"g.groupId = '{group}'"))
 		)  # pylint: disable=redefined-outer-name
 		result = session.execute(query)
-		parent_id = result.fetchone()["parent_id"]
-		return parent_id
+		parent_id = result.fetchone()
+		if parent_id:
+			return parent_id["parent_id"]
 
 
 def read_groups(
