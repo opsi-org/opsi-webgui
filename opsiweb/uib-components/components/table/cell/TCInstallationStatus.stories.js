@@ -26,15 +26,3 @@ TCInstallationStatusDanger.args = {
   text: '≠',
   variant: 'danger'
 }
-
-export const TCActionResultSuccess = PrimaryTemplate.bind({})
-TCActionResultSuccess.args = {
-  text: 'successful',
-  variant: 'success'
-}
-
-export const TCActionResultFailed = PrimaryTemplate.bind({})
-TCActionResultFailed.args = {
-  text: 'failed',
-  variant: 'danger'
-}
