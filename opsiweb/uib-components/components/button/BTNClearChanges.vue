@@ -26,7 +26,6 @@ export default class BTNClearChanges extends Vue {
     if (this.from === 'hostparam') {
       this.deleteAllChangesHostParam()
     }
-    this.$nuxt.refresh()
   }
 }
 </script>

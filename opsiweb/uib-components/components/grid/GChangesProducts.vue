@@ -1,5 +1,6 @@
 <template>
   <div data-testid="GChangesProducts">
+    <AlertAAlert ref="changesProductsAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
       <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
       <DivDScrollResult>
@@ -50,6 +51,7 @@ import { Constants } from '../../mixins/uib-mixins'
 import { SaveProductActionRequest, SaveProductProperties } from '../../mixins/save'
 const auth = namespace('auth')
 const changes = namespace('changes')
+const errors = namespace('errors')
 
 @Component({ mixins: [Constants, SaveProductActionRequest, SaveProductProperties] })
 export default class GChangesProducts extends Vue {
@@ -63,6 +65,8 @@ export default class GChangesProducts extends Vue {
   filter: string = ''
   groupedById: Array<any> = []
   @auth.Getter public username!: string
+  @errors.Getter public errorsProducts!: Array<any>
+  @errors.Mutation public clearErrorsProducts!: () => void
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
 
@@ -83,16 +87,21 @@ export default class GChangesProducts extends Vue {
     }, {})
   }
 
-  async save (rowItem: ChangeObj) {
+  async save (rowItem: ChangeObj, saveAll:Boolean) {
     const change = rowItem
+    let showalert: any = true
+    if (saveAll) {
+      showalert = false
+    } else {
+      showalert = true
+    }
     if (change.actionRequest) {
       const data = {
         clientIds: [change.clientId],
         productIds: [change.productId],
         actionRequest: change.actionRequest
       }
-      const successalert = false
-      await this.saveProdActionRequest(data, change, successalert)
+      await this.saveProdActionRequest(data, change, showalert)
     } else if (change.property) {
       const propObj: any = {}
       propObj[change.property] = change.propertyValue
@@ -108,15 +117,21 @@ export default class GChangesProducts extends Vue {
           properties: propObj
         }
       }
-      await this.saveProdProperties(change.productId, propertychanges, change)
+      await this.saveProdProperties(change.productId, propertychanges, change, showalert)
     }
   }
 
   async saveAll () {
+    const ref = (this.$refs.changesProductsAlert as any)
     const changelist = this.changesProducts.filter(o => o.user === this.username)
+    const saveAll = true
     for (const p in changelist) {
       const change = changelist[p]
-      await this.save(change)
+      await this.save(change, saveAll)
+    }
+    if (this.errorsProducts.length !== 0) {
+      ref.alert(this.$t('message.error.title'), 'danger', this.errorsProducts)
+      this.clearErrorsProducts()
     }
   }
 }

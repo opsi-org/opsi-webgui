@@ -1,5 +1,6 @@
 <template>
   <div data-testid="GChangesHostParam">
+    <AlertAAlert ref="changesHostParamAlert" />
     <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :placeholder="$t('table.filterBy.ConfigHost')" :filter.sync="filter" />
     <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
       <GridGFormItem value-more="true">
@@ -34,6 +35,7 @@ import { Constants } from '../../mixins/uib-mixins'
 import { SaveParameters } from '../../mixins/save'
 const auth = namespace('auth')
 const changes = namespace('changes')
+const errors = namespace('errors')
 
 @Component({ mixins: [Constants, SaveParameters] })
 export default class GChangesHostParam extends Vue {
@@ -44,12 +46,20 @@ export default class GChangesHostParam extends Vue {
   iconnames:any
   saveParameters:any
   @auth.Getter public username!: string
+  @errors.Getter public errorsHostParam!: Array<any>
+  @errors.Mutation public clearErrorsHostParam!: () => void
   @changes.Getter public changesHostParam!: Array<any>
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
 
-  async saveHostParam (item: any) {
+  async saveHostParam (item: any, saveAll:Boolean) {
     let url: string = ''
     let request: any = []
+    let showalert: any = true
+    if (saveAll) {
+      showalert = false
+    } else {
+      showalert = true
+    }
     if (item.type === 'clients') {
       url = '/api/opsidata/config/clients'
       request = {
@@ -60,14 +70,20 @@ export default class GChangesHostParam extends Vue {
       url = '/api/opsidata/config/server'
       request = [{ configId: item.configId, value: item.value }]
     }
-    await this.saveParameters(url, request, item)
+    await this.saveParameters(url, request, item, showalert)
   }
 
   async saveAllHostParam () {
+    const ref = (this.$refs.changesHostParamAlert as any)
     const changelist = this.changesHostParam.filter(o => o.user === this.username)
+    const saveAll = true
     for (const count in changelist) {
       const item = changelist[count]
-      await this.saveHostParam(item)
+      await this.saveHostParam(item, saveAll)
+    }
+    if (this.errorsHostParam.length !== 0) {
+      ref.alert(this.$t('message.error.title'), 'danger', this.errorsHostParam)
+      this.clearErrorsHostParam()
     }
   }
 }
