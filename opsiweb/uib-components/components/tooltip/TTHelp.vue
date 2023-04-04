@@ -15,6 +15,7 @@
       </template>
       <template v-else>
         {{ tooltipContent }}
+        <slot name="tooltipContentHTML" />
       </template>
     </b-tooltip>
   </div>
