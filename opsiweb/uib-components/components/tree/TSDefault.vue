@@ -4,9 +4,8 @@
     :class="{
       'TSDefault-wrapper form-control d-flex flex-nowrap':true,
       [type]:true ,
-      'is-origin':
-      isOrigin,
-      hasSelection: ((type==='propertyvalues')?selectionWrapper.length > 0:selectionDefault.length>0),
+      'is-origin': isOrigin,
+      'hasSelection': ((type==='propertyvalues')?selectionWrapper.length > 0 : selectionDefault.length>0),
       'has-counter':showSelectionCount===true
     }"
     class=""
@@ -14,16 +13,16 @@
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
-      v-else-if="multi && showSelectionCount===true"
+      v-else-if="(multi && showSelectionCount===true)"
       :id="id"
       :type="type"
-      :selections="((type==='propertyvalues')?selectionWrapper:selectionDefault)"
+      :selections="((type==='propertyvalues')?selectionWrapper : selectionDefault)"
     >
       <template #clear>
         <ButtonBTNClearSelection
           v-if="(id == 'HostGroups' && multi && !treeselectSearchQueryFilled)"
           class="BTN-before-list"
-          :disabled="selection.length<=0"
+          :disabled="(selection.length <= 0)"
           :clearselection="clearSelected"
         />
       </template>
@@ -35,6 +34,7 @@
       :id="`treeselect-${id}`"
       :ref="`treeselect-${id}`"
       v-model="selectionWrapper"
+      :always-open="alwaysOpen"
       :flat="flat"
       :placeholder="placeholderWrapper"
       class="treeselect"
@@ -170,6 +170,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: 0 }) limitVisibleSelection!: number
   @Prop({ default: true }) showSelectionCount!: boolean
   @Prop({ default: false }) disabled!: boolean
+  @Prop({ default: false }) alwaysOpen!: boolean
   @Prop({ default: false }) clearable!: boolean
   @Prop({ default: true }) isOrigin!: boolean
   @Prop({ default: false }) multi!: boolean
@@ -441,6 +442,8 @@ export default class TSDefault extends Vue {
   /*left: -35px;*/
 .TSDefault-wrapper.hasSelection .vue-treeselect__menu { left: -55px; }
 .TSDefault-wrapper:not(.hasSelection) .vue-treeselect__menu { left: -35px;}
+.TSDefault-wrapper.propertyvalues .vue-treeselect__menu { left: -11px;}
+.TSDefault-wrapper.undefined .vue-treeselect__menu { left: -13px; }
 
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
   color: var(--primary-foreground);
@@ -531,9 +534,13 @@ export default class TSDefault extends Vue {
 }
 
 .TSDefault-wrapper .treeselect {
+  /* border: 1px solid red; */
   max-width: max-content !important;
   max-height: 20px;
-  width: 72% !important;
+  width: 100% !important;
+  width: calc(100% - 30px);
+  margin-right: 10px;
+  /* width: 72% !important; */
   cursor: pointer;
 }
 .TSDefault-wrapper .treeselect.propertyvalues {
@@ -549,7 +556,7 @@ export default class TSDefault extends Vue {
   border-radius: 0px !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__menu {
-  min-width: calc(var(--component-width) + 50px) !important;
+  min-width: var(--component-width) !important;
   margin-top: 15px;
   overflow: auto;
 }
