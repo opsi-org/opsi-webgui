@@ -297,5 +297,6 @@
   "supportPage.forum.button": "Visit OPSI Forum",
   "supportPage.support.title": "Support",
   "supportPage.support.description": "Do you need support at OPSI? We will get you the help you need. ",
-  "supportPage.support.button": "Learn More"
+  "supportPage.support.button": "Learn More",
+  "supportPage.support.opsi-doc-disabled": "opsi-doc disabled."
   }

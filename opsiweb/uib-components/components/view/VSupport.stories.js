@@ -4,7 +4,7 @@ export default {
 }
 
 const PrimaryTemplate = () => ({
-  template: '<ViewVSupport />'
+  template: '<ViewVSupport :with-iframe="false" />'
 })
 
 // named export Primary to create respective story

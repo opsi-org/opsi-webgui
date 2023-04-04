@@ -25,6 +25,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component
 export default class VSettingsLocalSpecific extends Vue {
+  $mq: any
   $t: any
   get helpSavemode () {
     return [

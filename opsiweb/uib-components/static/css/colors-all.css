@@ -163,7 +163,7 @@
   --fg-custom_control-disabled: var(--element-disabled);
   --bg-custom_control-disabled: #e9ecef;
   --bg-custom_control_label: var(--general-bg);
-  --b-custom_control_label: #adb5bd;
+  --b-custom_control_label: var(--primary);
   --bg-custom_checkbox-indeterminate: var(--primary);
   --b-custom_checkbox-indeterminate: var(--primary);
   --bg-custom_item-checked-disabled: rgba(0, 101, 153, 0.5);

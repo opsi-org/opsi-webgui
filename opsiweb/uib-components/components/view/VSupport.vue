@@ -9,6 +9,7 @@
       </b-col>
     </b-row>
     <b-embed
+      v-if="withIframe"
       type="iframe"
       class="opsidoc-frame"
       :title="$t('supportPage.documentation.title')"
@@ -18,15 +19,17 @@
       frameborder="0"
       allowfullscreen
     />
+    <div v-else>{{$t('supportPage.support.opsi-doc-disabled')}}</div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class VSupport extends Vue {
   $i18n: any
+  @Prop({ default: true }) withIframe!: boolean
   get supportItems (): Array<any> {
     return [
       {
