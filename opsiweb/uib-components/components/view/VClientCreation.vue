@@ -125,8 +125,22 @@
         <b-form inline>
           <b-form-checkbox v-model="clientagent" />
           <div :class="{'d-none' : !clientagent}">
-            <b-form-input id="username" v-model="form.username" :placeholder="$t('form.username')" class="valid-none" :state="formvalidation_user" required />
-            <b-form-input id="password" v-model="form.password" :placeholder="$t('form.password')" class="valid-none" :state="formvalidation_pw" required />
+            <b-form-input
+              id="username"
+              v-model="form.username"
+              class="valid-none"
+              :placeholder="$t('form.username')"
+              :state="formvalidation_user"
+              required
+            />
+            <b-form-input
+              id="password"
+              v-model="form.password"
+              class="valid-none"
+              :placeholder="$t('form.password')"
+              :state="formvalidation_pw"
+              required
+            />
             <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
           </div>
         </b-form>
