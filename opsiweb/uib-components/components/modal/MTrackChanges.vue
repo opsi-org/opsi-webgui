@@ -20,6 +20,7 @@
       :title="$t('button.track.changes')"
       hide-footer
       no-fade
+      @hide="$nuxt.refresh()"
     >
       <b-tabs lazy>
         <b-tab v-if="changesHostParam.filter((o) => o.user === username).length!==0" :title="$t('Host Parameters')" active>

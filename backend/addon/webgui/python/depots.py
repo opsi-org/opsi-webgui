@@ -26,6 +26,7 @@ from opsiconfd.rest import (
 from opsiconfd.session import OPSISession
 
 from .utils import (
+	backend,
 	depot_access_configured,
 	filter_depot_access,
 	get_allowd_depots,
@@ -213,24 +214,5 @@ def products_on_depots(
 	if productType not in ("NetbootProduct", "LocalbootProduct"):
 		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="Product type not recognised.")
 
-	params = {"ptype": productType}
-	if selectedDepots is None:
-		username = request.scope.get("session").username
-		params["depots"] = get_depots(username)
-	else:
-		params["depots"] = selectedDepots  # type: ignore
-
-	with mysql.session() as session:
-		where = text("pod.productType = :ptype and pod.depotId in :depots")
-
-		# where = and_(where, where_depots)  # type: ignore
-		query = select(text("pod.productId AS product")).select_from(table("PRODUCT_ON_DEPOT").alias("pod")).where(where)  # type: ignore
-		result = session.execute(query, params)
-		result = result.fetchall()
-
-		products = []  # pylint: disable=redefined-outer-name
-
-		for row in result:
-			if row is not None and dict(row).get("product"):
-				products.append(dict(row).get("product"))
-		return RESTResponse(data=products)
+	products = [pod.serialize() for pod in backend.productOnDepot_getObjects(depotId=selectedDepots, productType=productType)]
+	return RESTResponse(data=products)

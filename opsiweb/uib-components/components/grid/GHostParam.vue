@@ -112,7 +112,7 @@ export default class GHostParam extends Vue {
         url = '/api/opsidata/config/server'
         request = [change]
       }
-      await this.saveParameters(url, request, null)
+      await this.saveParameters(url, request, null, true)
       this.isLoading = false
     } else {
       this.trackHostParameters(change)

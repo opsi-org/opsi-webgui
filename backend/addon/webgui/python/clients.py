@@ -27,6 +27,7 @@ from starlette.concurrency import run_in_threadpool
 from opsicommon.exceptions import BackendBadValueError
 from opsiconfd.config import get_configserver_id
 from opsiconfd.logging import logger
+from opsiconfd.application.admininterface import _unblock_client, _unblock_all_clients
 from opsiconfd.rest import (
 	OpsiApiException,
 	RESTErrorResponse,
@@ -616,6 +617,48 @@ def rm_client_from_groups(
 		logger.error(err)
 		raise OpsiApiException(
 			message=f"Could not remove client '{clientid}' from groups {groups}.\nLast group was: {group}.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
+
+
+@client_router.post("/api/opsidata/clients/{client}/unblock")
+@rest_api
+@read_only_check
+def unblock_client(request: Request, client: str) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Unblock client with id <client>.
+	"""
+
+	try:
+		_unblock_client(client)
+		return RESTResponse(http_status=200, data=f"Client '{client}' was unblocked.")
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could unblock client %s", client)
+		logger.error(err)
+		raise OpsiApiException(
+			message=f"Could not unblock client '{client}'.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
+
+
+@client_router.post("/api/opsidata/clients/unblock")
+@rest_api
+@read_only_check
+def unblock_all_clients(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Unblock client with id <client>.
+	"""
+
+	try:
+		_unblock_all_clients()
+		return RESTResponse(http_status=200, data=f"Unblocked all clients.")
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could unblock clients.")
+		logger.error(err)
+		raise OpsiApiException(
+			message=f"Could unblock clients.",
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err

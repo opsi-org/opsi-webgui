@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// TODO: do not use type 'object' define it in details through an interface
-// TODO: Erro handling for multi-save. Only store is created.
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 
 @Module({ name: 'errors', stateFactory: true, namespaced: true })
@@ -12,31 +10,23 @@ export default class Errors extends VuexModule {
     return this._errorsProducts
   }
 
+  get errorsHostParam (): Array<any> {
+    return this._errorsHostParam
+  }
+
   @VuexMutation public pushToErrorsProducts (obj: object) {
     this._errorsProducts.push(obj)
   }
 
-  @VuexMutation public delFromErrorsProducts (obj: object) {
-    this._errorsProducts.splice(this._errorsProducts.indexOf(obj), 1)
-  }
-
-  @VuexMutation public deleteAllErrorsProducts () {
-    this._errorsProducts.splice(0, this._errorsProducts.length)
-  }
-
-  get errorsHostParam (): Array<any> {
-    return this._errorsHostParam
+  @VuexMutation public clearErrorsProducts () {
+    this._errorsProducts = []
   }
 
   @VuexMutation public pushToErrorsHostParam (obj: object) {
     this._errorsHostParam.push(obj)
   }
 
-  @VuexMutation public delFromErrorsHostParam (obj: object) {
-    this._errorsHostParam.splice(this._errorsHostParam.indexOf(obj), 1)
-  }
-
-  @VuexMutation public deleteAllErrorsHostParam () {
-    this._errorsHostParam.splice(0, this._errorsHostParam.length)
+  @VuexMutation public clearErrorsHostParam () {
+    this._errorsHostParam = []
   }
 }

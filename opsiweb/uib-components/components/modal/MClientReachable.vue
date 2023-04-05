@@ -40,7 +40,7 @@ export default class MClientReachable extends Vue {
   iconnames: any
   $axios: any
   $t: any
-  reachability: any
+  reachability: any = null
   isLoading:boolean = false
 
   @selections.Getter public selectionClients!: Array<string>

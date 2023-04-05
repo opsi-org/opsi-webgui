@@ -20,6 +20,7 @@ from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
 from opsiconfd.config import get_configserver_id
+from opsiconfd.application.admininterface import _unlock_product, _unlock_all_products
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -1219,3 +1220,23 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 			) from err
 
 	return RESTResponse(http_status=status_code, data=data)
+
+
+@product_router.post("/api/opsidata/products/{product}/unlock")
+@rest_api
+@read_only_check
+async def unlock_product(request: Request, product: str) -> RESTResponse:
+
+	try:
+		request_body = await request.json()
+		depots = request_body.get("depots", None)
+	except json.decoder.JSONDecodeError:
+		pass
+	return await _unlock_product(product, depots)
+
+
+@product_router.post("/api/opsidata/products/unlock")
+@rest_api
+@read_only_check
+async def unlock_all_products() -> RESTResponse:
+	return await _unlock_all_products()

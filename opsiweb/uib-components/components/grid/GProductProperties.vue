@@ -139,7 +139,7 @@ export default class GProductProperties extends Vue {
       } else {
         data.depotIds = this.selectionDepots
       }
-      await this.saveProdProperties(this.id, data, null)
+      await this.saveProdProperties(this.id, data, null, true)
     }
     this.isLoading = false
   }
