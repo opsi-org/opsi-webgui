@@ -65,7 +65,7 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
-            <ButtonBTNRowLinkTo
+            <!-- <ButtonBTNRowLinkTo
               :title="$t('title.cloneclient')"
               :label="$t('title.cloneclient')"
               :icon="iconnames.client"
@@ -74,7 +74,7 @@
               :pressed="isRouteActive"
               :incontextmenu="true"
               :click="routeRedirectWith"
-            />
+            /> -->
           </template>
           <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
@@ -140,7 +140,7 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <ButtonBTNRowLinkTo
+            <!-- <ButtonBTNRowLinkTo
               :title="$t('title.cloneclient')"
               :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.cloneclient') : '')"
               :icon="iconnames.client"
@@ -148,7 +148,7 @@
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
-            />
+            /> -->
             <DropdownDDClientActions :client-id="row.item.clientId" :fetch="$fetch" />
           </template>
           <template
