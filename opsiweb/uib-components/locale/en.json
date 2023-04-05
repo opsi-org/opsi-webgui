@@ -270,6 +270,8 @@
   "form.depot": "Select a server",
   "form.client": "Select a client",
   "form.logtype": "Select a log type",
+  "form.clientGroups": "Client groups",
+  "form.productGroups": "Product groups",
   "form.tooltip.actionRequest": "Set actionRequest for all selected products",
   "form.username": "Username",
   "form.password": "Password",
@@ -295,5 +297,6 @@
   "supportPage.forum.button": "Visit OPSI Forum",
   "supportPage.support.title": "Support",
   "supportPage.support.description": "Do you need support at OPSI? We will get you the help you need. ",
-  "supportPage.support.button": "Learn More"
+  "supportPage.support.button": "Learn More",
+  "supportPage.support.opsi-doc-disabled": "opsi-doc disabled."
   }

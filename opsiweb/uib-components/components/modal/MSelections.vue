@@ -2,7 +2,7 @@
   <div data-testid="MSelections">
     <b-badge
       v-if="selections.length > 0"
-      class="selection_badge btn"
+      class="selection_badge btn border-0"
       :variant="variant"
       size="sm"
       tabindex="0"
@@ -59,5 +59,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
   font-size: small !important;
   background-color: inherit !important;
   color: inherit !important;
+  border: unset !important;
+  border-color: unset !important;
 }
 </style>

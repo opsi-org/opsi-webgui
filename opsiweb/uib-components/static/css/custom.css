@@ -1,14 +1,36 @@
+@font-face {
+  font-family: "Montserrat";
+  src: local("Montserrat"), url(../fonts/montserrat-alt1/fonts/ttf/MontserratAlt1-Regular.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Ubuntu-R";
+  src: url(../fonts/ubuntu-font-family-0.80/Ubuntu-R.ttf) format("truetype");
+}
+@font-face {
+  font-family: "Ubuntu-M";
+  /* font-style: monospace; */
+  font-weight: 50;
+  src: url(../fonts/ubuntu-font-family-0.80/UbuntuMono-R.ttf) format("truetype");
+}
 :root{
   /* color schema see color-light / dark.css */
   /* --primary: var(--opsi-red);
   --secondary: var(--opsi-blue); */
 
   /* --font-family-general: "Ubuntu"; */
+  /* --font-family-logo: "Montserrat"; */
+  /* --font-family-logo: "Montserrat-Alt1 Thin"; */
   --font-family-logo: "Montserrat";
+  --font-family-logo-weight: 100;
+
   /* --font-family-logo: "Montserrat alt-1"; */
-  --font-family-general: "Ubuntu";
-  --font-family-code: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-  "Courier New", monospace !important;
+  --font-family-general: "Ubuntu-R";
+  /* --font-family-code: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+  "Courier New", monospace !important; */
+  --font-family-code:  "Ubuntu-M";
+  --font-family-log:  "Ubuntu-M";
+  --font-family-log-size:  13px;
+  /* --font-family-log: var(--font-family-general); */
   --font-family-popover: var(--font-family-general);
   --font-family-tooltip: var(--font-family-general);
   /* --font-family-tooltip: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -41,18 +63,39 @@
   --min-height-button: 35px;
   --min-line-height: 12px;
 
+  --white: #ffffff;
+
+  --general-fg: var(--opsi-base-foreground);
+  --general-bg: var(--opsi-base-background);
+
+  /** simple outline element like btn */
+  --primary-outline-foreground: var(--general-fg);
+  --primary-outline-foreground-disabled: var(--general-fg-disabled);
+  --primary-outline-background: var(--general-bg);
+
+  --primary-selected-item-background: var(--primary-dark);
+  --primary-foreground-disabled: var(--general-fg-disabled);
+  --secondary-foreground: var(--white);
+  --ok-foreground: var(--white);
+  --warning-foreground: var(--white);
+  --error-foreground: var(--white);
+
   /***** COLORS *****/
-  --primary-dark: var(--opsi-blue-dark);
-  --secondary-dark: var(--opsi-red-dark);
+  --fg-input_component: var(--general-fg);
+  --bg-input_component: var(--general-bg);
+  --b-input_component: var(--general-bg-weak);
+  --fg-input_component-focus: var(--general-fg);
+  --bg-input_component-focus: var(--general-bg);
+  --b-input_component-focus: var(--primary);
 
   /* foreground / text */
-  --btn-fg: var(--general-fg);
-  --btn-bg: var(--primary);
   --foreground:var(--general-fg);
+  --fg-basic:var(--general-fg);
   --color:var(--general-fg);
   --element-disabled: var(--light);
 
   /* backgrounds */
+  --bg-basic:var(--general-bg);
   --background:var(--general-bg);
   --component: var(--background);
 
@@ -63,42 +106,62 @@
   --border: var(--general-primary);
 
   /* hover colors */
-  --hover: var(--general-opsi-grey-dark);
+  --hover: var(--primary-dark);
   --btn-hover: var(--general-bg);
   --dropdown-hover: var(--hover);
   --nav-tab-hover: var(--hover);
   --page-link-hover: var(--hover);
   --treeselect-hover: var(--hover);
+  --table-hover: var(--hover);
   --color-hover: 155, 155, 155, .1; /**?????**/
 
 
   /** Dark DONE: **/
+
+
   /* --table-border */
-  --table-bg-border: var(--general-opsi-grey-dark);
   /* --table-hover */
-  --table-bg: var(--general-bg);
-  --table-fg: var(--general-fg);
-  --table-bg-hover: var(--general-opsi-grey-dark);
-  --table-bg-selected: var(--primary);
-  --table-fg-hover: var(--general-fg);
 }
-@font-face {
-  font-family: "Montserrat";
-  src: local("Montserrat"),
-   url(/fonts/montserrat-alt1/fonts/ttf/MontserratAlt1-Regular.ttf) format("truetype");
+
+.table {
+  --bs-table-border-color: var(--general-fg);
+  /* --bs-table-striped-bg: #c5d7f2; */
+  --bs-table-striped-color: var(--secondary);
+  --bs-table-hover-bg: var(--bg-table-hover);
+  --bs-table-hover-color: var(--fg-table-hover);
+
+  --bs-table-color: var(--general-fg);
+  --bs-table-active-bg: var(--bg-table-hover);
+  --bs-table-active-color: var(--idk);
+  --bs-table-bg: var(--general-bg);
 }
-@font-face {
-  font-family: "Ubuntu";
-  src: local("Ubuntu"),
-   url(/fonts/ubuntu-font-family-0.80/Ubuntu-R.ttf) format("truetype");
+
+.table-primary {
+  --bs-table-hover-bg: var(--bg-table-hover-selected);
+  --bs-table-hover-color: var(--fg-table-hover-seleted);
+  --bs-table-bg: var(--bg-table-selected);
+  --bs-table-active-bg: var(--bg-table-selected);
+  --bs-table-active-color: var(--fg-table-selected);
+  --bs-table-color: var(--fg-table-selected);
+  /* Selected rows: */
+
+  /* --bs-table-accent-bg: var(--bs-table-hover-bg); */
+}
+.table-hover > tbody > tr:hover > * {
+  --bs-table-accent-bg: var(--bs-table-hover-bg);
+  color: var(--bs-table-hover-color);
 }
 
 .webgui_title {
   font-family: var(--font-family-logo) !important;
+  font-weight: var(--font-family-logo-weight) !important;
+  /* font-family: Montserrat, regular !important; */
+  /* font-family: 'Montserrat-Alt1'; */
+  /* font-weight: 200; */
 }
 .li-delimiter {
-  border-top: 1px solid var(--log-muted);
-  color: var(--log-muted);
+  border-top: 1px solid var(--primary-outline-foreground-disabled);
+  color: var(--primary-outline-foreground-disabled);
 }
 body {
   font-family: var(--font-family-general) !important;
@@ -178,104 +241,168 @@ body .mobile .topbar_content .navbar > * {
   border-bottom: none !important;
   background-color: transparent !important;
 }
-
-.global_topbar_button {
+.global_topbar_button{
   margin-top: 0 !important;
   min-height: 100% !important;
   min-width: 44px !important;
   text-align: center !important;
 }
+.mobile .global_topbar_button {
+  height: var(--component-height) !important;
+  min-height: var(--min-height-button) !important;
+}
+.form-control.focus {
+  border-color: var(--b-input_component-focus);
+  box-shadow: unset;
+}
 .btn , .btn:hover {
   /* color: var(--color); */
-  color: var(--btn-fg);
+  color: var(--general-fg);
   background-color: transparent;
 }
+.btn:hover {
+  /* color: var(--color); */
+  color: var(--primary-foreground) !important;
+  background-color: var(--primary-dark) !important;
+  border-color: var(--bg-page_item-disabled) !important;
+}
 
+tbody .col-rowactions > div >.btn-group> .btn {
+  height: var(--component-height) !important;
+  min-height: var(--min-height-button) !important;
+}
+tbody .col-rowactions :not(div).btn {
+  padding-top: 7px;
+}
 .btn-block {
   display: block;
   width: 100%;
 }
 
 .btn-primary {
-  color: var(--btn-fg);
-  background-color: var(--primary) !important;
-  border-color: var(--primary) !important;
+  color: var(--fg-btn);
+  background-color: var(--bg-btn) !important;
+  border-color: var(--b-btn) !important;
 }
 .btn-primary:hover {
-  color: var(--btn-fg);
-  background-color: var(--primary-dark) !important;
-  border-color: var(--primary-dark) !important;
+  color: var(--fg-btn-hover);
+  background-color: var(--bg-btn-hover) !important;
+  border-color: var(--b-btn-hover) !important;
 }
 .btn-secondary {
-  color: var(--btn-fg) !important;
-  background-color: var(--secondary) !important;
-  border-color: var(--secondary) !important;
+  color: var(--fg-btn_secondary) !important;
+  background-color: var(--bg-btn_secondary) !important;
+  border-color: var(--b-btn_secondary) !important;
 }
 .btn-secondary:hover {
-  color: var(--btn-fg) !important;
-  background-color: var(--secondary-dark) !important;
-  border-color: var(--secondary-dark) !important;
+  color: var(--fg-btn_secondary-hover) !important;
+  background-color: var(--bg-btn_secondary-hover) !important;
+  border-color: var(--b-btn_secondary-hover) !important;
 }
 .btn-success {
-  color: var(--btn-fg);
-  background-color: var(--success) !important;
-  border-color: var(--success) !important;
+  color: var(--fg-btn_success);
+  background-color: var(--bg-btn_success) !important;
+  border-color: var(--b-btn_success) !important;
 }
 .btn-success:hover {
-  color: var(--btn-fg);
-  background-color: var(--success-dark) !important;
-  border-color: var(--success-dark) !important;
+  color: var(--fg-btn_success-hover);
+  background-color: var(--bg-btn_success-hover) !important;
+  border-color: var(--b-btn_success-hover) !important;
 }
 .btn-danger {
-  color: var(--btn-fg);
-  background-color: var(--danger) !important;
-  border-color: var(--danger) !important;
+  color: var(--fg-btn_danger);
+  background-color: var(--bg-btn_danger) !important;
+  border-color: var(--b-btn_danger) !important;
 }
 .btn-danger:hover {
-  color: var(--btn-fg);
-  background-color: var(--danger-dark) !important;
-  border-color: var(--danger-dark) !important;
+  color: var(--fg-btn_danger-hover);
+  background-color: var(--bg-btn_danger-hover) !important;
+  border-color: var(--b-btn_danger-hover) !important;
 }
 .btn-warning {
-  color: #212529;
+  /* color: #212529;
   background-color: var(--warning) !important;
-  border-color: var(--warning) !important;
+  border-color: var(--warning) !important; */
+  color: var(--fg-btn_warning);
+  background-color: var(--bg-btn_warning) !important;
+  border-color: var(--b-btn_warning) !important;
 }
 .btn-warning:hover {
-  color: #212529;
+  /* color: #212529;
   background-color: var(--warning-dark) !important;
-  border-color: var(--warning-dark) !important;
+  border-color: var(--warning-dark) !important; */
+  color: var(--fg-btn_warning-hover);
+  background-color: var(--bg-btn_warning-hover) !important;
+  border-color: var(--b-btn_warning-hover) !important;
 }
 .btn-info {
-  color: var(--btn-fg);
+  color: var(--fg-btn_info);
+  background-color: var(--bg-btn_info) !important;
+  border-color: var(--b-btn_info) !important;
+  /* color: var(--btn-fg);
   background-color: var(--info) !important;
-  border-color: var(--info) !important;
+  border-color: var(--info) !important; */
 }
 .btn-info:hover {
-  color: var(--btn-fg);
+  /* color: var(--btn-fg);
   background-color: var(--info-dark) !important;
-  border-color: var(--info-dark) !important;
+  border-color: var(--info-dark) !important; */
+  color: var(--fg-btn_info-hover);
+  background-color: var(--bg-btn_info-hover) !important;
+  border-color: var(--b-btn_info-hover) !important;
 }
 .btn-light {
-  color: #212529;
+  /* color: #212529;
   background-color: var(--light) !important;
-  border-color: var(--light) !important;
+  border-color: var(--light) !important; */
+  color: var(--fg-btn_light);
+  background-color: var(--bg-btn_light) !important;
+  border-color: var(--b-btn_light) !important;
 }
 .btn-light:hover {
-  color: #212529;
+  /* color: #212529;
   background-color: var(--light-dark) !important;
-  border-color: var(--light-dark) !important;
+  border-color: var(--light-dark) !important; */
+  color: var(--fg-btn_light-hover);
+  background-color: var(--bg-btn_light-hover) !important;
+  border-color: var(--b-btn_light-hover) !important;
 }
 .btn-dark {
-  color: var(--btn-fg);
+  /* color: var(--btn-fg);
   background-color: var(--dark) !important;
-  border-color: var(--dark) !important;
+  border-color: var(--dark) !important; */
+  color: var(--fg-btn_dark);
+  background-color: var(--bg-btn_dark) !important;
+  border-color: var(--b-btn_dark) !important;
 }
 .btn-dark:hover {
-  color: var(--btn-fg);
+  /* color: var(--btn-fg);
   background-color: var(--dark-dark) !important;
-  border-color: var(--dark-dark) !important;
+  border-color: var(--dark-dark) !important; */
+  color: var(--fg-btn_dark-hover);
+  background-color: var(--bg-btn_dark-hover) !important;
+  border-color: var(--b-btn_dark-hover) !important;
 }
+
+
+
+
+/* .table.b-table > thead > tr > [aria-sort=none] {
+  background-color: aqua;
+  color: green !important;
+} */
+
+.log-row-1 { background-color: transparent; color: var(--log-essential); }
+.log-row-2 { background-color: transparent; color: var(--log-critical); }
+.log-row-3 { background-color: transparent; color: var(--log-error); }
+.log-row-4 { background-color: transparent; color: var(--log-warning); }
+.log-row-5 { background-color: transparent; color: var(--log-notice); }
+.log-row-6 { background-color: transparent; color: var(--log-info); }
+.log-row-7 { background-color: transparent; color: var(--log-debug); }
+.log-row-8 { background-color: transparent; color: var(--log-trace); }
+.log-row-9 { background-color: transparent; color: var(--log-secret); }
+
+
 .bg-primary {
   background-color: var(--primary) !important;
 }
@@ -316,14 +443,14 @@ body .mobile .topbar_content .navbar > * {
   color: var(--txt-fg) !important;
 }
 .text-muted {
-  color: var(--log-muted, gray) !important;
+  color: var(--primary-outline-foreground-disabled, gray) !important;
 }
 .bg-warning {
   color:#212121 !important;
   background: var(--warning) !important;
 }
 .nav-link.disabled {
-  color: var(--log-muted, gray) !important;
+  color: var(--primary-outline-foreground-disabled, gray) !important;
   cursor: not-allowed;
 }
 .loadingCursor {
@@ -346,18 +473,28 @@ body .mobile .topbar_content .navbar > * {
 .custom-control {
   height: var(--component-height) !important;
 }
+.vue-treeselect__x-container:hover {
+  color: var(--general-fg);
+}
 .treeselect_short{
   max-width: var(--component-width) !important;
 }
 .treeselect_notstored .vue-treeselect__control {
   /* height: 1.25rem !important; */
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
-  border:1px solid var(--border, #ced4da );
+  color: var(--fg-input_component) !important;
+  background-color: var(--bg-input_component) !important;
+  border:1px solid var(--b-input_component) !important;
+}
+.treeselect_notstored.vue-treeselect--focused .vue-treeselect__control {
+  /* height: 1.25rem !important; */
+  color: var(--fg-input_component-focus) !important;
+  background-color: var(--bg-input_component-focus) !important;
+  border:1px solid var(--b-input_component-focus) !important;
+  box-shadow: var(--b-input_component-focus) !important;
 }
 .treeselect_notstored .vue-treeselect__menu {
-  background-color: var(--component, var(--background, black));
-  color: var(--color, var(--light, white));
+  background-color: var(--general-bg, var(--background, black));
+  color: var(--color, var(--general-fg, white));
 }
 .treeselect_notstored .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
@@ -366,7 +503,7 @@ body .mobile .topbar_content .navbar > * {
   color: var(--color) !important;
 }
 .treeselect_notstored .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--color);
+  color: var(--white);
   background-color: var(--treeselect-hover);
 }
 .treeselect_notstored.vue-treeselect--single .vue-treeselect__option--selected{
@@ -390,19 +527,33 @@ body .mobile .topbar_content .navbar > * {
   float: right;
   margin-top: 10px;
 }
-.table-primary {
-  --bs-table-bg: var(--background);
-  --bs-table-striped-bg: var(--background);
-  --bs-table-striped-color: var(--color);
-  --bs-table-active-color: var(--color);
-  --bs-table-active-bg: var(--table-bg-hover);
-  --bs-table-hover-bg: var(--table-bg-hover);
-  --bs-table-hover-color: var(--table-fg-hover);
-  /* color: var(--table-fg);
-  border-color: var(--table-bg-border); */
-}
+/* color: var(--fg-table);
+border-color: var(--bg-table-border); */
 .table-primary.b-table-row-selected {
   /* color: var(--primary); */
-  background-color: var(--table-bg-selected);
-  /* border-color: var(--table-bg-border); */
+  background-color: var(--bg-table-selected);
+  /* border-color: var(--bg-table-border); */
+}
+
+.tooltip>.arrow {
+  --bs-tooltip-color: var(--bg-tooltip_inner) !important;
+  --bs-tooltip-bg: transparent !important;
+  background-color: var(--bs-tooltip-bg) !important;
+  color: var(--bs-tooltip-color) !important;
+}
+tooltip {
+  --bs-tooltip-color: var(--fg-tooltip_inner) !important;
+  --bs-tooltip-bg: var(--bg-tooltip_inner) !important;
+  background-color: var(--bs-tooltip-bg) !important;
+  color: var(--bs-tooltip-color) !important;
+  border: 1px solid var(--b-bs_tooltip) !important;
+  padding: 10px;
+}
+.tooltip>.tooltip-inner {
+  --bs-tooltip-color: var(--fg-tooltip_inner) !important;
+  --bs-tooltip-bg: var(--bg-tooltip_inner) !important;
+  background-color: var(--bs-tooltip-bg) !important;
+  color: var(--bs-tooltip-color) !important;
+  border: 1px solid var(--b-bs_tooltip) !important;
+  padding: 10px;
 }

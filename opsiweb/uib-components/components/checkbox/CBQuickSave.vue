@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="">
     <b-alert v-if="(changesProducts.filter(o => o.user === username).length>0 || changesHostParam.filter((o) => o.user === username).length>0 )&& !quicksave" show variant="danger">
       {{ $t('message.error.unsavedChanges') }}
     </b-alert>
@@ -8,6 +8,7 @@
       v-model="localquicksave"
       data-testid="CBQuickSave"
       switch
+      class=""
       @change="changeSaveMode(localquicksave)"
     >
       <span class="sr-only">{{ localquicksave ? $t('form.quicksave.enable'): $t('form.quicksave.disable') }}</span>

@@ -7,9 +7,9 @@
           <BarBTooltipCollapseRow
             :title="depotId"
             :value="depotClientDetails[depotId]"
+            :value-variant="((depotVersionDiff || depotClientDetails[depotId]=='--')? 'warning':'info')"
             :collapsed="Object.keys(details).length <= 1"
             :collapseable="Object.keys(depotClientDetails).length > 1"
-            :value-variant="(depotVersionDiff || depotClientDetails[depotId]=='--')? 'warning':'info'"
           >
             <template
               v-if="Object.keys(depotClientDetails).length > 1"
@@ -118,7 +118,7 @@ export default class TTProductCell extends Vue {
 }
 .tt-table,
 .tt-table th {
-  background: var(--light) !important;
+  background-color: var(--bg-tooltip_inner_table) !important;
 }
 .tooltip-inner {
   max-width: inherit !important;

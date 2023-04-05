@@ -2,13 +2,13 @@
   <div data-testid="MClientreachable">
     <b-button
       :title="$t('table.fields.checkreachable')"
-      class="border-0"
+      :class="{ 'border-0': selectionClients.length <= 0 }"
       variant="transparent"
       :disabled="selectionClients.length <= 0"
       @click="$bvModal.show('clientreachability')"
     >
-      <b-icon :icon="iconnames.client" />
-      <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" />
+      <b-icon :icon="iconnames.clientReachable" />
+      <!-- <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" /> -->
     </b-button>
     <b-modal
       id="clientreachability"

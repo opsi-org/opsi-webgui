@@ -12,11 +12,15 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   computed: {
     args () { return args }
   },
+  mounted () {
+    // this.isLoading = false
+  },
   template: `
   <TableTInfiniteScrollSmooth
     id="TableId" primary-key="TableId"
 
     rowident="depotId"
+    :is-loading="false"
     :total-items="args.cache_pages.elementLength"
     :totalpages="args.totalpages"
 

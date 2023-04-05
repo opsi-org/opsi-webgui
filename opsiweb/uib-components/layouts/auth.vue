@@ -24,10 +24,19 @@ export default class LayoutAuth extends Vue {
   head () {
     return {
       link: [
-        // { rel: 'stylesheet', href: (this.colortheme) ? this.colortheme.rel : '' },
-        { rel: 'stylesheet', href: (this.colortheme) ? '/themes/opsi-dark.css' : '' },
+        // // { rel: 'stylesheet', href: (this.colortheme) ? this.colortheme.rel : '' },
+        // { rel: 'stylesheet', href: (this.colortheme) ? '/themes/opsi-dark.css' : '' },
+        // { rel: 'stylesheet', href: 'css/custom.css' },
+        // { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' },
+        // { rel: 'stylesheet', href: 'fonts/montserrat-alt1/fonts/webfonts/Montserrat-Alt1.css' },
+        // { rel: 'stylesheet', href: 'fonts/montserrat-alt1/fonts/webfonts/Montserrat-Alt1.css' },
+
+        // { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Montserrat:400,500,800' },
+        // { rel: 'preload', as: 'font', type: 'css', href: '/fonts/montserrat-alt1/fonts/webfonts/Montserrat-Alt1.css' },
+        { rel: 'stylesheet', href: (this.colortheme) ? 'themes/opsi.css' : '' },
+        { rel: 'stylesheet', href: 'css/colors-all.css' },
         { rel: 'stylesheet', href: 'css/custom.css' },
-        { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' },
+        { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' }
       ]
 
     }

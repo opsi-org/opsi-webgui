@@ -1,14 +1,27 @@
 :root{
   --opsi-blue: #3f5aa6; /**/
   --opsi-red: #cb1e58; /**/
-  --opsi-blue-dark: #3f3f3e;
+  --opsi-blue-light: #4a67b5;
+  --opsi-blue-dark: #2d4178;
   --opsi-red-dark: #b2b2b2;
 
+  --opsi-general-grey-dark: #4b4b49;
+  --opsi-general-grey: #b2b2b2;
+  --opsi-general-grey-light: #e4e4e3;
+
+  --opsi-base-background: #ffffff;
+  --opsi-base-foreground: #000000;
+
+
+
+  /*--general-realy-dark: #545453;  /*new*/
   --general-opsi-grey-dark: #b2b2b2;
   --general-opsi-grey-light: #e4e4e3;
 
-  --general-fg: #000000; /**/
-  --general-bg: #FFFFFF; /**/
+  --general-fg-disabled: var(--opsi-general-grey);
+  --general-bg-weak: var(--general-opsi-grey-light);
+  --general-bg-light: var(--opsi-blue-light); /*updated*/
+
 
   --success: #009605; /**/
   --warning: #FF9100; /**/
@@ -19,9 +32,17 @@
   --light: var(--general-opsi-grey-light);
   --dark: var(--general-opsi-grey-dark);
 
-  --success-dark: #246b32;
-  /* --danger-dark: #aa2126; */
-  /* --warning-dark: #bb8819; */
+  --primary-foreground: var(--white);
+  --secondary-foreground: var(--light);
+  --success-foreground: var(--light);
+  --warning-foreground: var(--light);
+  --danger-foreground: var(--light);
+
+  --primary-dark: var(--opsi-blue-dark);
+  --secondary-dark: var(--opsi-red-dark);
+  --success-dark: #006f04;
+  --danger-dark: #a11429;
+  --warning-dark: #bc6a00;
   --info-dark: #0161a0;
   --light-dark: #b9bbbd;
   --dark-dark: #181a1d;

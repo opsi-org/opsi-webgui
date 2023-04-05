@@ -38,6 +38,10 @@ export default class BAuthFooter extends Vue {
 .auth_footer{
   height: var(--height-navbar) !important;
 }
+.auth_footer > div{
+  margin-left: 20px;
+  margin-right: 20px;
+}
 .auth_footer_wrap {
   display: flex;
   flex-wrap: wrap;

@@ -8,7 +8,7 @@
       type="dark"
     >
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
-        <b-button variant="primary" size="sm" class="h-100" :pressed.sync="attributes.visible">
+        <b-button variant="primary" size="sm" class="h-100 border-0" :pressed.sync="attributes.visible">
           <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
           <b-icon font-scale="1.5" :icon="iconnames.menuOpen" />
         </b-button>
@@ -24,7 +24,7 @@
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" />
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
-        <b-button variant="primary" class="h-100" :pressed.sync="rightmenuVisible">
+        <b-button variant="primary" class="h-100 border-0" :pressed.sync="rightmenuVisible">
           <span class="sr-only">{{ $t('menu.open-topmenu.sr-only') }}</span>
           <b-icon :icon="iconnames.menu" font-scale="1.4" />
         </b-button>
@@ -39,13 +39,13 @@
           v-if="rightmenuVisible"
           role="button"
           tabindex="0"
-          class="b-sidebar-backdrop bg-dark"
+          class="b-sidebar-backdrop bg-dark border-0"
           @keydown="rightmenuVisible = false"
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto mr-3 float-right">
           <ModalMSelectionsAll :navbar="true" :with-text="$mq=='mobile'" />
-          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary"/>
+          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang v-once :navbar="true" />
           <DropdownDDTheme v-once :navbar="true" />

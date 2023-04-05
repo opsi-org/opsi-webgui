@@ -1,10 +1,12 @@
 <template>
   <div
     :class="{
+      [themeclass]: true,
       mobile: $mq === 'mobile',
       desktop: $mq === 'desktop',
       sidebar_collapsed: !sidebarAttr.expanded && $mq!=='mobile',
-      sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile'}"
+      sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile',
+    }"
   >
     <BarBTop class="topbar_content" :attributes="sidebarAttr" />
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" />
@@ -56,6 +58,10 @@ export default class LayoutDefault extends Vue {
     await this.checkServer()
   }
 
+  get themeclass () {
+    return (this.colortheme && this.colortheme.title === 'light') ? 'theme-light' : 'theme-dark'
+  }
+
   get username () {
     return localStorage.getItem('username')
   }
@@ -82,7 +88,8 @@ export default class LayoutDefault extends Vue {
     return {
       link: [
         // { rel: 'stylesheet', href: (this.colortheme) ? this.colortheme.rel : '' },
-        { rel: 'stylesheet', href: (this.colortheme) ? '/themes/opsi-dark.css' : '' },
+        { rel: 'stylesheet', href: 'themes/opsi.css' },
+        { rel: 'stylesheet', href: 'css/colors-all.css' },
         { rel: 'stylesheet', href: 'css/custom.css' },
         { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' }
       ]

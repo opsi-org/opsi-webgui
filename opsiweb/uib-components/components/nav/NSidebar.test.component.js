@@ -12,21 +12,21 @@ test('nav-sidebar snapshot collapsed hover depots', async ({ page }) => {
   await callStoryId(page, 'nav-n-sidebar', 'n-sidebar-not-expanded')
   await page.hover('[data-testid="NSidebar-title.depots"]')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-depots.png', { maxDiffPixelRatio: 0.2 })
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-depots.png', { threshold: 0.1 })
 })
 
 test('nav-sidebar snapshot collapsed hover clients', async ({ page }) => {
   await callStoryId(page, 'nav-n-sidebar', 'n-sidebar-not-expanded')
   await page.hover('[data-testid="NSidebar-title.clients"]')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-clients.png', { maxDiffPixelRatio: 0.2 })
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-not-expanded-clients.png', { threshold: 0.1 })
 })
 
 // expanded
 test('nav-sidebar snapshot expanded', async ({ page }) => {
   await callStoryId(page, 'nav-n-sidebar', 'n-sidebar-expanded')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-expanded-main.png')
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-expanded-main.png', { threshold: 0.1 })
 })
 
 test('nav-sidebar snapshot depots expanded', async ({ page }) => {
@@ -35,7 +35,7 @@ test('nav-sidebar snapshot depots expanded', async ({ page }) => {
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   // await page.waitForSelector('#collapse-navitem-title.depots, [data-testid="NICollapsible-submenu-title.config"]')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-expanded-depots.png')
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-expanded-depots.png', { threshold: 0.1 })
 })
 
 test('nav-sidebar snapshot clients expanded', async ({ page }) => {
@@ -44,5 +44,5 @@ test('nav-sidebar snapshot clients expanded', async ({ page }) => {
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   // await page.waitForSelector('[data-testid="NSidebar-title.clients"]')
   const component = await page.locator('[data-testid="NSidebar"]')
-  expect(await component.screenshot()).toMatchSnapshot('NSidebar-expanded-clients.png')
+  expect(await component.screenshot()).toMatchSnapshot('NSidebar-expanded-clients.png', { threshold: 0.1 })
 })

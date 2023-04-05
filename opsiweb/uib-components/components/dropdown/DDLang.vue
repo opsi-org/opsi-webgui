@@ -6,7 +6,7 @@
       alt="select theme"
       :aria-label="$t('button.lang.tooltip')"
       :title="$t('button.lang.tooltip')"
-      class="global_topbar_button px-2 btn btn-primary text-left"
+      class="global_topbar_button px-2 btn btn-primary text-left border-0"
       :class="{'pt-0 pb-0 pl-3 w-100': $mq=='mobile'}"
       variant="primary"
       :dropup="dropup"

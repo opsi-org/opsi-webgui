@@ -10,7 +10,7 @@ test('form-login snapshot', async ({ page }) => {
   // const apiServerPath = '**/api/user/opsiserver'
   // await page.unroute(apiServerPath)
   // await apiMock(page, apiServerPath, { result: 'mydepot.uib.local' })
-
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
   const component = await page.locator('[data-testid="FLogin"]')
   expect(await component.screenshot()).toMatchSnapshot('FLogin.png')
 })

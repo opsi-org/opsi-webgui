@@ -1,17 +1,34 @@
 :root{
   --opsi-blue: #3f5aa6; /**/
   --opsi-red: #cb1e58;  /**/
-  --opsi-blue-dark: #3f3f3e;  /**/
+  --opsi-blue-light: #4a67b5;
+  --opsi-blue-dark: #2d4178;  /**/
   --opsi-red-dark: #b2b2b2; /**/
 
-  --general-opsi-grey-dark: #b2b2b2;
-  --general-opsi-grey-light: #e4e4e3;
 
-  --general-fg: #E1E1E1; /**/
-  --general-bg: #3f3f3e; /**/
+  --opsi-general-grey-dark: #4b4b49; /*new*/
+  --opsi-general-grey: #e4e4e3;
+  --opsi-general-grey-light: #b2b2b2;
+
+  --opsi-base-foreground: #E1E1E1;
+  --opsi-base-background: #3f3f3e; /*updated*/
+
+
+
+
+
+  /*--general-realy-dark: #545453;  /*new*/
+  --general-opsi-grey-dark: #4b4b49; /*updated*/
+  --general-opsi-grey: #b2b2b2; /*updated*/
+  --general-opsi-grey-light: #e4e4e3;
+/* bg: #2b2b2b*/
+  --general-fg-disabled: var(--opsi-general-grey);
+  --general-bg-weak: var(--opsi-general-grey-dark);
+  --general-bg-light: var(--opsi-blue); /*updated*/
 
   --success: #009605; /**/
   --warning: #FF9100; /**/
+  --warning-hover: #FF9100; /**/
   --danger: #E51D3B; /**/
   --primary: var(--opsi-blue);
   --secondary: var(--opsi-red);
@@ -20,17 +37,25 @@
   --light: var(--general-opsi-grey-light);
   --dark: var(--general-opsi-grey-dark);
 
+  --primary-foreground: var(--white);
+  --secondary-foreground: var(--light);
+  --success-foreground: var(--light);
+  --warning-foreground: var(--light);
+  --danger-foreground: var(--light);
+
+  --primary-dark: var(--opsi-blue-dark);
+  --secondary-dark: var(--opsi-red-dark);
   --success-dark: #246b32;
-  /* --danger-dark: #aa2126; */
-  /* --warning-dark: #bb8819; */
+  --danger-dark: #aa2126;
+  --warning-dark: #bb8819;
   --info-dark: #0161a0;
   --light-dark: #b9bbbd;
   --dark-dark: #181a1d;
 
-  /* --color:#212529; */
 
-  /* --table-border: #ced4da; */
-  /* --component:#495057; */
+
+  /* borders durchgehen */
+  /* shadow box order so durchgehen */
 
   /**/
   --log-secret: #D500F9;

@@ -1,28 +1,40 @@
 <template>
-  <div data-testid="TSDefault" :class="{'TSDefault-wrapper form-control d-flex flex-nowrap':true, [type]:true , 'is-origin': isOrigin, 'has-counter':showSelectionCount===true}">
+  <div
+    data-testid="TSDefault"
+    :class="{
+      'TSDefault-wrapper form-control d-flex flex-nowrap':true,
+      [type]:true ,
+      'is-origin': isOrigin,
+      'hasSelection': ((type==='propertyvalues')?selectionWrapper.length > 0 : selectionDefault.length>0),
+      'has-counter':showSelectionCount===true
+    }"
+    class=""
+  >
     <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
-      v-else-if="multi && showSelectionCount===true"
+      v-else-if="(multi && showSelectionCount===true)"
       :id="id"
       :type="type"
-      :selections="(type==='propertyvalues')?selectionWrapper:selectionDefault"
+      :selections="((type==='propertyvalues')?selectionWrapper : selectionDefault)"
     >
       <template #clear>
         <ButtonBTNClearSelection
           v-if="(id == 'HostGroups' && multi && !treeselectSearchQueryFilled)"
           class="BTN-before-list"
-          :disabled="selection.length<=0"
+          :disabled="(selection.length <= 0)"
           :clearselection="clearSelected"
         />
       </template>
     </ModalMSelections>
-    <!-- :always-open="(id=='PropertyValue-method')" -->
+    <!--:always-open="(id=='PropertyValue-method')"-->
+    <!--:always-open="(id=='HostGroups')"-->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
       :ref="`treeselect-${id}`"
       v-model="selectionWrapper"
+      :always-open="alwaysOpen"
       :flat="flat"
       :placeholder="placeholderWrapper"
       class="treeselect"
@@ -38,14 +50,13 @@
       :open-on-focus="false"
       :branch-nodes-first="true"
       :max-height="300"
-      :always-open="false"
       :disabled="disabled"
       :cache-options="false"
       :normalizer="normalizer"
       :load-options="loadOptionsChildren"
       :no-children-text="$t('treeselect.nochildren')"
       :no-options-text="$t('treeselect.nooption')"
-      :no-results-text="textNoResult? textNoResult : $t('treeselect.noresult')"
+      :no-results-text="(textNoResult? textNoResult : $t('treeselect.noresult'))"
       :limit="limitVisibleSelection"
       :limit-text="(limitVisibleSelection<=0)? ()=>'' : (count) => $t('treeselect.limitText', { count })"
       :value-format="valueFormat"
@@ -61,7 +72,7 @@
         slot-scope="{ node }"
         :class="{
           'form-control is-invalid':
-            validate && node.label ? !validate(node.label) : false,
+            (validate && node.label ? !validate(node.label) : false),
         }"
       >
         {{ Array.isArray(node.label) ? node.label[0] : node.label }}
@@ -94,8 +105,7 @@
         slot-scope="{ node }"
         :class="{
           'test':true,
-          'form-control is-invalid':
-            validate && node.label ? !validate(node.label) : false,
+          'form-control is-invalid': (validate && node.label ? !validate(node.label) : false),
         }"
       >
         <div :ref="'tree-item-'+node.id">
@@ -160,6 +170,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: 0 }) limitVisibleSelection!: number
   @Prop({ default: true }) showSelectionCount!: boolean
   @Prop({ default: false }) disabled!: boolean
+  @Prop({ default: false }) alwaysOpen!: boolean
   @Prop({ default: false }) clearable!: boolean
   @Prop({ default: true }) isOrigin!: boolean
   @Prop({ default: false }) multi!: boolean
@@ -389,6 +400,14 @@ export default class TSDefault extends Vue {
 </script>
 
 <style>
+.vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked,
+.vue-treeselect__checkbox--checked:hover,
+.vue-treeselect__checkbox--checked {
+  border-color: var(--primary-dark) !important;
+  background: var(--primary) !important;
+  color: var(--primary-foreground);
+}
+
 .TSDefault-wrapper {
   line-height: inherit !important;
   font-size: inherit !important;
@@ -400,26 +419,35 @@ export default class TSDefault extends Vue {
   cursor: not-allowed;
   pointer-events: none;
   /* color: var(--dark); */
-  color: var(--color, var(--dark, inherit));
+  color: var(--general-fg, var(--dark, inherit));
 }
 
 /* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
 
 .TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
-  color: var(--color);
+  color: var(--general-fg);
 }
 
 .TSDefault-wrapper,
 .TSDefault-wrapper .treeselect,
 .TSDefault-wrapper .vue-treeselect__menu-container,
 .TSDefault-wrapper .vue-treeselect__menu {
-  background-color: var(--component, white);
+  background-color: var(--general-bg, white);
 }
 
+.TSDefault-wrapper .vue-treeselect__menu {
+  position: absolute;
+}
+  /*left: -35px;*/
+.TSDefault-wrapper.hasSelection .vue-treeselect__menu { left: -55px; }
+.TSDefault-wrapper:not(.hasSelection) .vue-treeselect__menu { left: -35px;}
+.TSDefault-wrapper.propertyvalues .vue-treeselect__menu { left: -11px;}
+.TSDefault-wrapper.undefined .vue-treeselect__menu { left: -13px; }
+
 .TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--color);
-  background-color: var(--hover);
+  color: var(--primary-foreground);
+  background-color: var(--primary-dark);
 }
 
 .TSDefault-wrapper .hasSelection {
@@ -454,14 +482,27 @@ export default class TSDefault extends Vue {
   max-width: 100% !important;
   width: 100% !important;
 }
+.TSDefault-wrapper .treeselect .btn {
+  color: var(--general-fg);
+}
 .TSDefault-wrapper .treeselect .BTN-before-list{
   width: 100% !important;
   text-align: left;
 }
+/*
+.vue-treeselect__option--disabled .vue-treeselect__label-container {
+  color: var(--general-fg) !important;
+}*/
+.vue-treeselect__checkbox--disabled,
+.vue-treeselect__checkbox--disabled:hover {
+  background-color: var(--general-fg-disabled) !important;
+  border: var(--general-fg-disabled) !important;
+  color: var(--general-fg) !important;
+}
+.vue-treeselect__option--disabled .vue-treeselect__label-container,
 .TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
   cursor: pointer;
-  color: var(--color)!important;
-  /* color: inherit !important; */
+  color: var(--general-fg-disabled) !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__label-container {
   margin-left: 10px;
@@ -472,14 +513,14 @@ export default class TSDefault extends Vue {
   padding-bottom: 5px;
   margin-top: -6px !important;
   /* color: inherit !important; */
-  color: var(--color, var(--dark, inherit));
+  color: var(--general-fg, var(--dark, inherit));
 }
 .TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
 .TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {
   display: inline !important;
 }
 .TSDefault-wrapper .vue-treeselect__option-arrow-container:hover .vue-treeselect__option-arrow{
- color: var(--color, black) !important;
+ color: var(--general-fg) !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__control{
   max-height: 10px !important;
@@ -489,13 +530,17 @@ export default class TSDefault extends Vue {
   padding-left: 0px !important;
   padding-right: 0px !important;
   background-color: var(--component, var(--background, inherit));
-  color: var(--color, var(--light, inherit));
+  color: var(--general-fg, var(--light, inherit));
 }
 
 .TSDefault-wrapper .treeselect {
+  /* border: 1px solid red; */
   max-width: max-content !important;
   max-height: 20px;
-  width: 72% !important;
+  width: 100% !important;
+  width: calc(100% - 30px);
+  margin-right: 10px;
+  /* width: 72% !important; */
   cursor: pointer;
 }
 .TSDefault-wrapper .treeselect.propertyvalues {
@@ -511,7 +556,7 @@ export default class TSDefault extends Vue {
   border-radius: 0px !important;
 }
 .TSDefault-wrapper .treeselect .vue-treeselect__menu {
-  min-width: calc(var(--component-width) + 50px) !important;
+  min-width: var(--component-width) !important;
   margin-top: 15px;
   overflow: auto;
 }
@@ -519,7 +564,7 @@ export default class TSDefault extends Vue {
   width: 100%;
   max-width: 100%;
   margin-top: 5px;
-  color: var(--color) !important;
+  color: var(--general-fg) !important;
 }
 /* .TSDefault-wrapper .vue-treeselect__value-container, */
 .TSDefault-wrapper .treeselect .vue-treeselect__multi-value {

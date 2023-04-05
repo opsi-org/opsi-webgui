@@ -6,8 +6,12 @@ export default {
 const PrimaryTemplate = () => ({
   template: `
     <div>
-    <button id="target">tooltip test</button>
-    <TooltipTTHelp target="target" />
+    <button id="target">tooltip test button</button>
+      <TooltipTTHelp id="target" tooltipContent="simple string content">
+        <template #tooltipContentHTML >
+          <div class="bg-primary">Custom html content</div>
+        </template>
+      </TooltipTTHelp>
     </div>
     `
 })

@@ -3,13 +3,15 @@
     <b-button
       data-testid="MSelectionsAllButton"
       variant="primary"
-      class="border-0 text-left global_topbar_button"
-      :class="{ 'pl-3': $mq=='mobile' }"
+      class="global_topbar_button px-2 text-left btn btn-primary border-0"
+      :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
       size="md"
       tabindex="0"
       :title="withText ? '' : $t('title.selectedElements')"
       @click="show = !show"
-    >
+      >
+      <!-- class="border-0 global_topbar_button"
+      :class="{ 'pl-3': $mq=='mobile' }" -->
       <b-icon :icon="iconnames.info" /> <span v-if="withText"> {{ $t('title.selectedElements') }}</span>
     </b-button>
 
@@ -74,9 +76,10 @@ const selections = namespace('selections')
 @Component({ mixins: [Constants] })
 export default class MSelectionsAll extends Vue {
   show:boolean = false
-  @Prop({ default: true }) showDepots!: string
-  @Prop({ default: true }) showClients!: string
-  @Prop({ default: false }) showProducts!: string
+  @Prop({ default: true }) navbar!: boolean
+  @Prop({ default: true }) showDepots!: boolean
+  @Prop({ default: true }) showClients!: boolean
+  @Prop({ default: false }) showProducts!: boolean
   @Prop({ default: false }) withText!: boolean
   iconnames:any
   $mq:any

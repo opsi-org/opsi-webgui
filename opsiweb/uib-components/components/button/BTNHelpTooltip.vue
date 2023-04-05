@@ -3,7 +3,7 @@
     <b-button
       :id="id"
       data-testid="BTNHelpTooltip"
-      variant="transparent"
+      variant="light"
       size="sm"
     >
       <b-icon :icon="iconnames.help" />
