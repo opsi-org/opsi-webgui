@@ -511,7 +511,7 @@ tbody .col-rowactions :not(div).btn {
   background-color: var(--primary);
 }
 .treeselect_fullpage .vue-treeselect__menu {
-  min-height: 60vh;
+  min-height: 70vh;
 }
 
 .labelcolor {

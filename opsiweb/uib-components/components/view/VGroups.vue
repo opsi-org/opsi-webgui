@@ -41,7 +41,7 @@
                 </span>
                 <br><br>
                 <b-tabs>
-                  <b-tab>
+                  <b-tab active>
                     <template #title>
                       <span v-b-tooltip.hover :title="$t('group.addclient.tooltip')">
                         {{ $t("group.addclient") }}
@@ -51,10 +51,8 @@
                     <b-form>
                       <b-form-select
                         v-model="selectedClients"
-                        v-b-tooltip.hover
-                        :title="$t('form.client')"
                         multiple
-                        :select-size="20"
+                        :select-size="23"
                         :options="clientIds"
                       >
                         <template #first>
@@ -140,7 +138,7 @@
                 </span>
                 <br><br>
                 <b-tabs>
-                  <b-tab>
+                  <b-tab active>
                     <template #title>
                       <span v-b-tooltip.hover :title="$t('group.addtogroup')">
                         {{ $t("group.add") }}
