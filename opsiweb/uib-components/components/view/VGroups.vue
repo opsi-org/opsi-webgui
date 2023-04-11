@@ -19,7 +19,7 @@
                 v-model="selectedvalue"
                 class="treeselect_notstored treeselect_fullpage"
                 always-open
-                :default-expand-level="4"
+                :default-expand-level="1"
                 :normalizer="normalizer"
                 value-format="object"
                 :options="group"
