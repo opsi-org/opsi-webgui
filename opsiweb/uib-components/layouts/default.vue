@@ -106,7 +106,7 @@ export default class LayoutDefault extends Vue {
     try {
       const response = (await this.$axios.$get('/api/user/configuration')).configuration
       if (response == null) {
-        this.setConfig({ read_only: false })
+        this.setConfig({ read_only: false, client_creation: false })
       } else {
         this.setConfig(response)
       }
@@ -115,7 +115,7 @@ export default class LayoutDefault extends Vue {
       const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.alertConfigurationError as any)
       ref.alert(this.$t('message.error.fetch') as string + 'User Configuration', 'danger', detailedError || '')
-      this.setConfig({ read_only: true })
+      this.setConfig({ read_only: true, client_creation: true })
     }
   }
 }

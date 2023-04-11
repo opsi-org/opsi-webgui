@@ -206,15 +206,15 @@
           </template>
         </GridGFormItem>
       </template>
-      <div v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" class="float-right mt-2">
-        <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
-          <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
-        </b-button>
-        <b-button id="updateButton" class="updateButton" variant="success" @click="updateAttributes()">
-          <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
-        </b-button>
-      </div>
     </LazyDivDScrollResult>
+    <div v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" class="float-right mt-2">
+      <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
+        <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
+      </b-button>
+      <b-button id="updateButton" class="updateButton" variant="success" @click="updateAttributes()">
+        <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
+      </b-button>
+    </div>
     <DivDScrollResult v-else>
       {{ $t('empty') }}
     </DivDScrollResult>
