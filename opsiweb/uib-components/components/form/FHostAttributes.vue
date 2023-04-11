@@ -69,7 +69,7 @@
           <b-form-input id="inventNum" v-model="hostAttr.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
         </template>
       </GridGFormItem>
-      <GridGFormItem>
+      <GridGFormItem v-if="hostAttr.created">
         <template #label>
           <span class="created">{{ $t('table.fields.created') }}</span>
         </template>
@@ -77,7 +77,7 @@
           <b-form-input id="created" :value="date(hostAttr.created)" :aria-label="$t('table.fields.created')" readonly />
         </template>
       </GridGFormItem>
-      <GridGFormItem>
+      <GridGFormItem v-if="hostAttr.lastSeen">
         <template #label>
           <span class="lastSeen">{{ $t('table.fields.lastSeen') }}</span>
         </template>
@@ -116,8 +116,7 @@
           <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
-      <!-- v-if="hostAttr.systemUUID" -->
-      <GridGFormItem>
+      <GridGFormItem v-if="hostAttr.systemUUID">
         <template #label>
           <span class="smbiosuuid">{{ $t('table.fields.smbiosuuid') }}</span>
         </template>
