@@ -155,7 +155,7 @@
                           :multiple="true"
                           :flat="true"
                           always-open
-                          :default-expand-level="4"
+                          :default-expand-level="1"
                           :title="$t('group.addtogroup.tooltip')"
                           :placeholder="$t('group.addtogroup.tooltip')"
                           :options="group"
@@ -185,7 +185,7 @@
                           :multiple="true"
                           :flat="true"
                           always-open
-                          :default-expand-level="4"
+                          :default-expand-level="1"
                           :title="$t('group.removefromgroup.tooltip')"
                           :placeholder="$t('group.removefromgroup.tooltip')"
                           :options="group"
