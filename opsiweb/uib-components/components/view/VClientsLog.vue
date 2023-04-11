@@ -154,7 +154,7 @@ export default class VClientLog extends Vue {
     const params = this.logrequest
     await this.$axios.$get('/api/opsidata/log', { params })
       .then((response) => {
-        // this.logResult = response.result
+        this.logResult = response.result
         this.filteredLog = this.logResult
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
