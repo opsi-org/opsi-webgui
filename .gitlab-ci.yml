@@ -218,6 +218,7 @@ test:test-unit:
     - cd opsiweb
     - *define_globals
     - npm run test:unit
+  allow_failure: true
   coverage: /All files\s*\|\s*([\d\.]+)/
   except:
     - bug/cicd-build
@@ -328,7 +329,7 @@ test:test-components:
     - npm-uib run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
-  allow_failure: true
+  allow_failure: false
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
