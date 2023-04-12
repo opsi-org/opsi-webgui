@@ -10,7 +10,7 @@
 
   "message.loading": "Loading",
   "message.info.event": "Information to the event: ",
-  "message.success.title": "Sucess",
+  "message.success.title": "Success",
   "message.success.createClient": "{client} has been added succesfully.",
   "message.success.updateHostAttr": "Host attributes of {client} has been saved succesfully.",
   "message.success.deleteClient": "{client} has been deleted successfully.",
@@ -94,7 +94,8 @@
   "title.whatsnew":"What's new ?",
   "title.hostparam": "Parameters",
   "title.groups": "Groups",
-  "title.admin": "Administration",
+  "title.admin": "Admin",
+  "title.administration": "Administration",
   "title.adminterminal": "Terminal",
   "table.fields.terminalId": "Terminal ID",
   "table.fields.terminalChannel": "Channel",
