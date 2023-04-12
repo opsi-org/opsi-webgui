@@ -502,12 +502,12 @@ class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
 
 @client_router.post("/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]])
 @rest_api
-def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # pylint: disable=unused-argument
+async def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	Run RPC on opsiclientd
 	"""
 	try:
-		result = backend.hostControl_opsiclientdRpc(
+		result = await backend.hostControl_opsiclientdRpc(
 			method=data.method, params=data.params or [], hostIds=data.client_ids
 		)  # pylint: disable=no-member
 	except Exception as err:  # pylint: disable=broad-except
