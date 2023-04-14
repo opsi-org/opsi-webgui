@@ -381,7 +381,7 @@ test:test-components:
 #   poetry run pylint --disable=R,C,fixme
 
 test:backend-pytest:
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.10
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   services:
     - name: mysql:latest
       command:
@@ -464,13 +464,13 @@ publish:obs_ext:
     - build:static:app
   script:
     - *install_tools
-    - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
+    - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
   only:
     - tags
     - bug/cicd-build
   # Copy to experimental
-  # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
-  # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.2:/development/Debian_10/
+  # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
+  # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
 
 publish:binary-index:
   stage: publish
@@ -484,25 +484,25 @@ publish:binary-index:
   only:
     - tags
 
-release:experimental:
-  stage: release
-  when: manual
-  before_script:
-    - "which ssh-agent || (apt update && apt -y install openssh-client)"
-    - mkdir -p ~/.ssh
-    - eval $(ssh-agent -s)
-    - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-  dependencies:
-    - publish:obs_ext
-    - publish:binary-index
-  script:
-    - *install_tools
-    - ./opsi-dev-tool -l debug --binary-pull
-    - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-    - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-    - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.2:experimental
-  only:
-    - tags
+# release:experimental:
+#   stage: release
+#   when: manual
+#   before_script:
+#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
+#     - mkdir -p ~/.ssh
+#     - eval $(ssh-agent -s)
+#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+#   dependencies:
+#     - publish:obs_ext
+#     - publish:binary-index
+#   script:
+#     - *install_tools
+#     - ./opsi-dev-tool -l debug --binary-pull
+#     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
+#   only:
+#     - tags
 #publish:obs_int:
 #  stage: publish
 #  dependencies:
