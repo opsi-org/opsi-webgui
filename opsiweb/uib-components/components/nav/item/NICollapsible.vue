@@ -6,7 +6,7 @@
       :data-testid="'NSidebar-'+title"
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       :disabled="disabled"
-      @click.prevent="refresh(route)"
+      @click.prevent="$mq == 'desktop' ? refresh(route) : ''"
     >
       <b-icon :icon="iconprop" /> {{ $t(title) }}
       <b-icon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
