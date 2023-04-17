@@ -8,8 +8,15 @@
       sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile',
     }"
   >
-    <BarBTop class="topbar_content" :attributes="sidebarAttr" />
-    <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" />
+    <BarBTop class="topbar_content">
+      <template #mobilemenu>
+        <b-button variant="primary" size="sm" class="h-100 border-0" :pressed.sync="sidebarAttr.visible">
+          <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
+          <b-icon font-scale="1.5" :icon="icon.navmenu" />
+        </b-button>
+      </template>
+    </BarBTop>
+    <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
     <div class="main_content">
       <AlertAAlert ref="messageBusInfo" />
       <AlertAAlert ref="statusAlert" data-testid="statusAlert" />
@@ -25,6 +32,7 @@
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { MBus } from '../mixins/messagebus'
 import { Configserver } from '../mixins/get'
+import { Icons } from '../mixins/icons'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
 
@@ -38,7 +46,7 @@ interface SideBarAttr {
     expanded: boolean
 }
 
-@Component({ mixins: [MBus, Configserver] })
+@Component({ mixins: [MBus, Configserver, Icons] })
 export default class LayoutDefault extends Vue {
   $t: any
   $mq: any
@@ -75,6 +83,11 @@ export default class LayoutDefault extends Vue {
     if (this.wsBus === undefined) {
       console.debug('MessageBus WS: connect from default.vue')
       this.wsInit()
+    }
+    if (this.$mq === 'mobile') {
+      this.sidebarAttr.visible = false
+    } else {
+      this.sidebarAttr.visible = true
     }
   }
 

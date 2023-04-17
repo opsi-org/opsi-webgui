@@ -8,10 +8,7 @@
       type="dark"
     >
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
-        <b-button variant="primary" size="sm" class="h-100 border-0" :pressed.sync="attributes.visible">
-          <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
-          <b-icon font-scale="1.5" :icon="icon.navmenu" />
-        </b-button>
+        <slot name="mobilemenu" />
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
         <IconIOpsiLogo v-once :light="true" class="mt-2" height="20" />
@@ -57,9 +54,8 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue, Prop } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
-import { ISidebarAttributes } from '../../.utils/types/tsettings'
 import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
 
@@ -72,8 +68,6 @@ export default class BTop extends Vue {
   icon:any
 
   rightmenuVisible:boolean = false
-
-  @Prop({ default: { visible: true, expanded: false } }) readonly attributes!: ISidebarAttributes
 
   @config.Getter public config!: IObjectString2Boolean
   get username () {

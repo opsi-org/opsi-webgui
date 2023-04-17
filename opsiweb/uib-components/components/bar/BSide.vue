@@ -11,6 +11,7 @@
     :backdrop="$mq == 'mobile'"
     :no-close-on-route-change="$mq == 'desktop'"
     :visible="attributes.visible"
+    @hidden="$emit('update:sidebarshown', false)"
   >
     <NavNSidebar :expanded="attributes.expanded" />
     <template #footer>
