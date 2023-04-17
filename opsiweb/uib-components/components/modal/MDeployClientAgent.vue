@@ -8,7 +8,7 @@
       :disabled="(config)?config.read_only:false"
       @click="$bvModal.show('event-modal-deployCA-' + clientId)"
     >
-      <b-icon :icon="iconnames.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
+      <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </b-button>
     <div
       v-else
@@ -19,7 +19,7 @@
       @click="$bvModal.show('event-modal-deployCA-' + clientId)"
       @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId)"
     >
-      <b-icon :icon="iconnames.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
+      <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </div>
 
     <b-modal
@@ -57,8 +57,8 @@
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
-import { Constants } from '../../mixins/uib-mixins'
-import { DeployClientAgent } from '../../mixins/save'
+import { Icons } from '../../mixins/icons'
+import { DeployClientAgent } from '../../mixins/post'
 const config = namespace('config-app')
 
 interface FormClientAgent {
@@ -68,7 +68,7 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Constants, DeployClientAgent] })
+@Component({ mixins: [Icons, DeployClientAgent] })
 export default class MDeployClientAgent extends Vue {
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: true }) clientId!: string
@@ -76,7 +76,7 @@ export default class MDeployClientAgent extends Vue {
   $axios: any
   $t: any
   $router: any
-  iconnames: any
+  icon: any
   deployClientAgent:any
   form: FormClientAgent = { clients: [this.clientId], username: '', password: '', type: 'windows' }
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']

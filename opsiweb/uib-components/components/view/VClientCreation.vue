@@ -3,6 +3,7 @@
     <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="uefiAlert" />
+    <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <OverlayOLoading :is-loading="isLoading" />
     <br>
     <GridGFormItem value-more="true">
@@ -149,7 +150,7 @@
     </GridGFormItem>
     <div class="float-right mt-2">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
-        <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
+        <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
       </b-button>
       <b-button
         id="addButton"
@@ -159,7 +160,7 @@
         :disabled="!clientName"
         @click="createOpsiClient()"
       >
-        <b-icon :icon="iconnames.add" /> {{ $t('button.create') }}
+        <b-icon :icon="icon.add" /> {{ $t('button.create') }}
       </b-button>
     </div>
   </div>
@@ -167,8 +168,10 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
-import { SetUEFI, DeployClientAgent, SaveProductActionRequest } from '../../mixins/save'
+import { Icons } from '../../mixins/icons'
+import { SaveProductActionRequest } from '../../mixins/save'
+import { Client } from '../../mixins/get'
+import { Group, SetUEFI, DeployClientAgent } from '../../mixins/post'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
@@ -189,9 +192,10 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Constants, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
+@Component({ mixins: [Icons, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
 export default class VClientCreation extends Vue {
-  iconnames: any
+  getClientIdList:any
+  icon: any
   $axios: any
   $nuxt: any
   $fetch: any
@@ -225,6 +229,7 @@ export default class VClientCreation extends Vue {
 
   @cache.Getter public opsiconfigserver!: string
   @selections.Getter public selectionDepots!: Array<string>
+  addClientToListOfGroups: any
 
   @Watch('depotId', { deep: true }) depotIdChanged () { this.fetchNetbootProducts() }
 
@@ -254,14 +259,7 @@ export default class VClientCreation extends Vue {
   }
 
   async fetchClients () {
-    await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
-      .then((response) => {
-        this.clientIds = response.sort()
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'DepotClients', 'danger', detailedError)
-      })
+    this.clientIds = await this.getClientIdList(this.selectionDepots)
   }
 
   async fetchNetbootProducts () {
@@ -286,12 +284,7 @@ export default class VClientCreation extends Vue {
   }
 
   async assignToGroup () {
-    await this.$axios.$post(`api/opsidata/clients/${this.newClient.hostId}/groups`, this.group)
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.assignGroup') as string, 'danger', detailedError)
-      })
+    await this.addClientToListOfGroups(this.newClient.hostId, this.group)
   }
 
   async setupNetbootProduct () {

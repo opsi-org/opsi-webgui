@@ -12,7 +12,7 @@
       :dropup="dropup"
     >
       <template #button-content>
-        <span style="color:white; text-transform:uppercase;"> <b-icon :icon="iconnames.language" /> {{ language }} </span>
+        <span style="color:white; text-transform:uppercase;"> <b-icon :icon="icon.language" /> {{ language }} </span>
       </template>
       <b-dropdown-item
         v-for="(lang, i) in languages"
@@ -29,12 +29,12 @@
 
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const settings = namespace('settings')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class DDLang extends Vue {
-  iconnames:any
+  icon:any
   $i18n:any
   $mq:any
 

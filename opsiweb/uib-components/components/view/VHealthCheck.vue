@@ -10,15 +10,15 @@
           variant="outline-primary"
           :pressed.sync="expandAll"
         >
-          <b-icon v-if="expandAll" :icon="iconnames.arrowDoubleUp" />
-          <b-icon v-else :icon="iconnames.arrowDoubleDown" />
+          <b-icon v-if="expandAll" :icon="icon.arrowDoubleUp" />
+          <b-icon v-else :icon="icon.arrowDoubleDown" />
           {{ expandAll? $t('button.collapse') : $t('button.expand') }}
         </b-button>
       </template>
       <template #right>
         <div v-if="jsonformat">
           <b-button class="downloadButton border-0" variant="outline-primary" @click="downloadHealthData">
-            <b-icon :icon="iconnames.download" /> {{ $t('Download') }}
+            <b-icon :icon="icon.download" /> {{ $t('Download') }}
           </b-button>
         </div>
         <b-form-checkbox v-model="jsonformat" class="ml-4 pt-1" switch>
@@ -45,8 +45,8 @@
                   variant="outline-primary"
                   :pressed.sync="expandHCD"
                 >
-                  <b-icon v-if="expandHCD" :icon="iconnames.arrowDoubleUp" />
-                  <b-icon v-else :icon="iconnames.arrowDoubleDown" />
+                  <b-icon v-if="expandHCD" :icon="icon.arrowDoubleUp" />
+                  <b-icon v-else :icon="icon.arrowDoubleDown" />
                   {{ expandHCD? $t('button.collapse') : $t('button.expand') }}
                 </b-button>
               </template>
@@ -56,8 +56,8 @@
                 <GridGFormItem value-more="true">
                   <template #label>
                     <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">
-                      <b-icon v-if="expandHCD" :icon="iconnames.arrowUp" />
-                      <b-icon v-else :icon="iconnames.arrowRight" />
+                      <b-icon v-if="expandHCD" :icon="icon.arrowUp" />
+                      <b-icon v-else :icon="icon.arrowRight" />
                     </b-button>
                     <b-button v-else class="border-0" variant="outline-primary" :style="'min-width: 45px !important;'" disabled />
                     <b-badge v-if="health.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(health.check_status)">
@@ -125,10 +125,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
-@Component({ mixins: [Constants] })
+import { Icons } from '../../mixins/icons'
+@Component({ mixins: [Icons] })
 export default class VHealthCheck extends Vue {
-  iconnames: any
+  icon: any
   $axios: any
   $t:any
   @Prop({ }) id!: string

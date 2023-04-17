@@ -6,19 +6,19 @@
       :variant="variant"
     >
       <span v-if="content=='depot-unequal'" class="h6">
-        <span> {{ text ? text: $t('unequal') }}</span> <b-icon :icon="iconnames.depot" />
+        <span> {{ text ? text: $t('unequal') }}</span> <b-icon :icon="icon.server" />
       </span>
       <span v-else-if="content=='depot-wo-prod'" class="h6">
-        {{ $t('notOrigin') }} <b-icon :icon="iconnames.depot" />
+        {{ $t('notOrigin') }} <b-icon :icon="icon.server" />
       </span>
       <span v-else-if="content=='client-outdated'" class="h6">
-        <span> {{ text ? text: $t('unequal') }}</span> <b-icon :icon="iconnames.client" />
+        <span> {{ text ? text: $t('unequal') }}</span> <b-icon :icon="icon.client" />
       </span>
       <span v-else-if="content=='ppv-client-different'" class="h6">
-        <span> {{ text ? text: $t('unequal') }}</span> <b-icon :icon="iconnames.client" />
+        <span> {{ text ? text: $t('unequal') }}</span> <b-icon :icon="icon.client" />
       </span>
       <span v-else-if="content=='ppid-not-exists-on-depot'" class="h6">
-        {{ $t('unequal') }} <b-icon :icon="iconnames.depot" />
+        {{ $t('unequal') }} <b-icon :icon="icon.server" />
       </span>
       <span v-else class="h6">{{ content==='unequal'? $t('unequal'):content }} </span>
     </b-badge>
@@ -27,11 +27,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class IDetails extends Vue {
-  iconnames:any
+  icon:any
   @Prop({ default: '' }) text?: string
   @Prop({ default: '*' }) content?: string
   @Prop({ default: 'warning' }) variant?: string

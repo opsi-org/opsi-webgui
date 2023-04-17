@@ -10,7 +10,7 @@
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
         <b-button variant="primary" size="sm" class="h-100 border-0" :pressed.sync="attributes.visible">
           <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
-          <b-icon font-scale="1.5" :icon="iconnames.menuOpen" />
+          <b-icon font-scale="1.5" :icon="icon.navmenu" />
         </b-button>
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
@@ -26,7 +26,7 @@
       <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
         <b-button variant="primary" class="h-100 border-0" :pressed.sync="rightmenuVisible">
           <span class="sr-only">{{ $t('menu.open-topmenu.sr-only') }}</span>
-          <b-icon :icon="iconnames.menu" font-scale="1.4" />
+          <b-icon :icon="icon.menu" font-scale="1.4" />
         </b-button>
       </b-navbar-nav>
       <b-collapse
@@ -60,16 +60,16 @@
 import { Component, namespace, Vue, Prop } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTop extends Vue {
   $nuxt: any
   $mq:any
   $t:any
   $config:any
-  iconnames:any
+  icon:any
 
   rightmenuVisible:boolean = false
 

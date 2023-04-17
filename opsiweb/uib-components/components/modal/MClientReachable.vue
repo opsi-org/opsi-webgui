@@ -7,7 +7,7 @@
       :disabled="selectionClients.length <= 0"
       @click="$bvModal.show('clientreachability')"
     >
-      <b-icon :icon="iconnames.clientReachable" />
+      <b-icon :icon="icon.clientReachable" />
       <!-- <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" /> -->
     </b-button>
     <b-modal
@@ -32,12 +32,12 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class MClientReachable extends Vue {
-  iconnames: any
+  icon: any
   $axios: any
   $t: any
   reachability: any = null

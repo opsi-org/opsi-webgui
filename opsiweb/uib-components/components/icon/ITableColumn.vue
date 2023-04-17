@@ -1,13 +1,13 @@
 <template>
-  <b-icon data-testid="ITableColumn" :icon="iconnames.columns" />
+  <b-icon data-testid="ITableColumn" :icon="icon.columns" />
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class ITableColumn extends Vue {
-  iconnames:any // mixin/plugin
+  icon:any
 }
 </script>

@@ -14,7 +14,7 @@
           <ButtonBTNDeleteObj :item="item" from="hostparam" />
           <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="saveHostParam(item)">
             <span class="sr-only">{{ $t('button.save') }}</span>
-            <b-icon :icon="iconnames.save" />
+            <b-icon :icon="icon.check" />
           </b-button>
         </template>
       </GridGFormItem>
@@ -22,7 +22,7 @@
     <div class="float-right mt-2">
       <ButtonBTNClearChanges hide="trackChangesModal" from="hostparam" />
       <b-button variant="success" :title="$t('button.saveall')" @click="saveAllHostParam()">
-        <b-icon :icon="iconnames.save" />
+        <b-icon :icon="icon.check" />
         <span class="saveall">{{ $t('button.saveall') }}</span>
       </b-button>
     </div>
@@ -31,19 +31,19 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 import { SaveParameters } from '../../mixins/save'
 const auth = namespace('auth')
 const changes = namespace('changes')
 const errors = namespace('errors')
 
-@Component({ mixins: [Constants, SaveParameters] })
+@Component({ mixins: [Icons, SaveParameters] })
 export default class GChangesHostParam extends Vue {
   filter: string = ''
   $axios: any
   $t: any
   $nuxt: any
-  iconnames:any
+  icon:any
   saveParameters:any
   @auth.Getter public username!: string
   @errors.Getter public errorsHostParam!: Array<any>

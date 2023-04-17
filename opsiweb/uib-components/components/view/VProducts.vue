@@ -70,16 +70,18 @@
 <script lang="ts">
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
+import { Client } from '../../mixins/get'
 import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
 import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
-@Component
+@Component({ mixins: [Client] })
 export default class VProducts extends Vue {
   $mq: any
   $route:any
   $router:any
   $t:any
   $axios: any
+  getClientToDepot:any
   @Prop() child!: boolean
   @Prop({}) id!: string
   @Prop({}) sortby!: string
@@ -235,13 +237,7 @@ export default class VProducts extends Vue {
   async fetchProducts (thiss) {
     thiss.isLoadingTable = true // have to be "thiss" -> overwise sorting breaks - whyever
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
-      await thiss.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${thiss.selectionClients}]`)
-        .then((response) => {
-          thiss.fetchedDataClients2Depots = response
-        }).catch((error) => {
-        // eslint-disable-next-line no-console
-          console.error(error)
-        })
+      await this.getClientToDepot(thiss.selectionClients)
       thiss.fetchOptions.fetchClients2Depots = false
     }
 

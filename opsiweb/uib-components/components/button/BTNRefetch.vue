@@ -13,7 +13,7 @@
     :disabled="isLoading==true"
     @click="refetch"
   >
-    <b-icon :icon="iconnames.refresh" />
+    <b-icon :icon="icon.refresh" />
     <template v-if="label && incontextmenu !== false">
       <small style="font-size: 85%;">{{ label }}</small>
     </template>
@@ -25,11 +25,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTNRefetch extends Vue {
-  iconnames:any
+  icon:any
   @Prop({ default: true }) isLoading?: boolean
   @Prop({ default: '' }) tooltip?: string
   @Prop({ default: undefined }) label?: string

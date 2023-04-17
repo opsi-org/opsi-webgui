@@ -7,18 +7,18 @@
     @click="deleteChanges()"
   >
     <span class="sr-only">{{ $t('button.reset') }}</span>
-    <b-icon :icon="iconnames.reset" />
+    <b-icon :icon="icon.reset" />
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTNDeleteObj extends Vue {
-  iconnames: any
+  icon: any
   @Prop({ }) item!: object
   @Prop({ }) from!: string
 

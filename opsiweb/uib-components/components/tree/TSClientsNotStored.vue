@@ -14,15 +14,13 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Client } from '../../mixins/get'
 const selections = namespace('selections')
-interface ClientRequest {
-    selectedDepots: string
-}
 
-@Component
+@Component({ mixins: [Client] })
 export default class TSClientsNotStored extends Vue {
   $axios:any
-  clientRequest: ClientRequest = { selectedDepots: '' }
+  getClientIdList:any
   clientIds: Array<object> = []
   idselection: string = ''
   @selections.Getter public selectionDepots!: Array<string>
@@ -30,10 +28,8 @@ export default class TSClientsNotStored extends Vue {
 
   async fetch () {
     const clients: Array<object> = []
-    this.clientRequest.selectedDepots = JSON.stringify(this.selectionDepots)
-    const params = this.clientRequest
     // TODO : backend --> return clients data as list of { id: clientID, label: clientID } for treeselect component
-    const result = (await this.$axios.$get('/api/opsidata/depots/clients', { params })).sort()
+    const result = await this.getClientIdList(this.selectionDepots)
     for (const c in result) {
       const client = result[c]
       clients[c] = { id: client, label: client }

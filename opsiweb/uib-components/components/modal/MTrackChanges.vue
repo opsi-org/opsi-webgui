@@ -9,7 +9,7 @@
       <b-icon
         v-b-tooltip.hover
         :title="$t('button.track.changes')"
-        :icon="iconnames.trackchanges"
+        :icon="icon.trackChanges"
       />
       <span v-if="$mq!='mobile'" class="btnlabel"> {{ $t('button.track.changes') }} </span>
     </b-button>
@@ -37,14 +37,14 @@
 <script lang="ts">
 import { Component, Vue, Prop, namespace } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const auth = namespace('auth')
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class MTrackChanges extends Vue {
-  iconnames: any
+  icon: any
   $nuxt: any
   $axios: any
   $t:any

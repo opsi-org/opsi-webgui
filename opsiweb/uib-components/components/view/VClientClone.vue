@@ -90,10 +90,10 @@
       </GridGFormItem>
       <div class="float-right mt-2">
         <b-button id="resetButton" class="resetButton" variant="primary">
-          <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
+          <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
         </b-button>
         <b-button id="addButton" class="addButton" variant="success">
-          <b-icon :icon="iconnames.client" /> {{ $t('title.clone') }}
+          <b-icon :icon="icon.client" /> {{ $t('title.clone') }}
         </b-button>
       </div>
     </div>
@@ -102,10 +102,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
-@Component({ mixins: [Constants] })
+import { Icons } from '../../mixins/icons'
+@Component({ mixins: [Icons] })
 export default class VClientClone extends Vue {
-  iconnames: any
+  icon: any
   @Prop({ }) id!: string
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string

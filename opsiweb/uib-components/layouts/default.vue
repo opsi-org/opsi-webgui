@@ -23,7 +23,8 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { MBus } from '../mixins/uib-mixins'
+import { MBus } from '../mixins/messagebus'
+import { Configserver } from '../mixins/get'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
 
@@ -37,13 +38,14 @@ interface SideBarAttr {
     expanded: boolean
 }
 
-@Component({ mixins: [MBus] })
+@Component({ mixins: [MBus, Configserver] })
 export default class LayoutDefault extends Vue {
   $t: any
   $mq: any
   $axios: any
   wsInit: any // mixin
   wsBus: any // mixin
+  getOpsiConfigServer:any
 
   @config.Getter public config!: IObjectString2Boolean
   @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
@@ -98,7 +100,8 @@ export default class LayoutDefault extends Vue {
 
   async checkServer () {
     if (this.opsiconfigserver === '') {
-      this.setOpsiconfigserver((await this.$axios.$get('/api/user/opsiserver')).result)
+      const alertRef = (this.$refs.statusAlert as any)
+      await this.getOpsiConfigServer(alertRef)
     }
   }
 

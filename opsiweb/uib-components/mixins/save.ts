@@ -2,31 +2,6 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 
 const changes = namespace('changes')
 const errors = namespace('errors')
-@Component export class SetUEFI extends Vue {
-  async setUEFI (clientId: string) {
-    await this.$axios.$post(`api/opsidata/clients/${clientId}/uefi`)
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.uefiAlert as any)
-        ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
-      })
-  }
-}
-@Component export class DeployClientAgent extends Vue {
-  async deployClientAgent (data: any, hidemodal:boolean) {
-    const ref = (this.$refs.clientagentAlert as any)
-    await this.$axios.$post('/api/opsidata/clients/deploy', data)
-      .then(() => {
-        ref.alert(this.$t('message.success.clientagent', { client: data.clientId[0] }) as string, 'success')
-        if (hidemodal) {
-          this.$bvModal.hide('event-modal-deployCA-' + data.clientId[0])
-        }
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
-      })
-  }
-}
 @Component export class SaveParameters extends Vue {
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
   @errors.Mutation public pushToErrorsHostParam!: (s: object) => void

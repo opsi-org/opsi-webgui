@@ -4,11 +4,9 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
 
-@Component({ mixins: [Constants] })
+@Component
 export default class OLoading extends Vue {
-  iconnames: any
   @Prop({ default: true }) isLoading?: boolean
 }
 </script>

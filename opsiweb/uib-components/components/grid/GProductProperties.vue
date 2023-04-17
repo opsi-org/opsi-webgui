@@ -31,7 +31,7 @@
         <template #label>
           <div class="d-inline-flex">
             <GridCellGCProductPropertyId :row="item" :product-versions="properties.productVersions" />
-            <b-icon :id="`property_${item.propertyId}`" class="mt-1 ml-1" :icon="iconnames.info" />
+            <b-icon :id="`property_${item.propertyId}`" class="mt-1 ml-1" :icon="icon.info" />
           </div>
           <b-tooltip :target="`property_${item.propertyId}`" triggers="hover">
             <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${item.propertyId}`" class="text-left">
@@ -80,19 +80,21 @@ import { IProp, IProperty } from '../../.utils/types/ttable'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { arrayEqual } from '../../.utils/utils/scompares'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
+import { Client } from '../../mixins/get'
 import { SaveProductProperties } from '../../mixins/save'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants, SaveProductProperties] })
+@Component({ mixins: [Icons, SaveProductProperties, Client] })
 export default class GProductProperties extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: '' }) errorText!: string
   @Prop({ }) properties!: IProp
   saveProdProperties:any
-  iconnames: any
+  getClientToDepot:any
+  icon: any
   $axios: any
   $nuxt: any
   $mq: any
@@ -110,13 +112,7 @@ export default class GProductProperties extends Vue {
 
   async fetch () {
     if (this.selectionClients.length > 0) {
-      await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
-        .then((response) => {
-          this.fetchedDataClients2Depots = response
-        }).catch((error) => {
-          this.errorText = (this as any).$t('message.error.defaulttext')
-          throw new Error(error)
-        })
+      await this.getClientToDepot(this.selectionClients)
     }
   }
 

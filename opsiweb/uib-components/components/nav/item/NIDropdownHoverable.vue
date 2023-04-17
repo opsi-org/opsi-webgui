@@ -41,7 +41,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { HoverDropdown } from '../../../mixins/uib-mixins'
+import { HoverDropdown } from '../../../mixins/component'
 
 @Component({ mixins: [HoverDropdown] })
 export default class NIDropdownHoverable extends Vue {

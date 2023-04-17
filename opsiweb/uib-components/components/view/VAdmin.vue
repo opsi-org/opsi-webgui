@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { MBus } from '../../mixins/uib-mixins'
+import { MBus } from '../../mixins/messagebus'
 const cache = namespace('data-cache')
 
 @Component({ mixins: [MBus] })

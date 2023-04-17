@@ -49,8 +49,8 @@
             />
             <b-button variant="primary" :pressed.sync="showPassword" class="mb-2 text-light">
               <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
-              <b-icon v-if="showPassword" :icon="iconnames.valueShow" />
-              <b-icon v-else :icon="iconnames.valueHide" />
+              <b-icon v-if="showPassword" :icon="icon.valueShow" />
+              <b-icon v-else :icon="icon.valueHide" />
             </b-button>
           </b-input-group>
           <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login text-light" block @click="doLogin">
@@ -65,7 +65,8 @@
 
 <script lang="ts">
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
+import { Configserver } from '../../mixins/get'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
@@ -74,14 +75,15 @@ interface FormUser {
     password: string
 }
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons, Configserver] })
 export default class FLogin extends Vue {
-  iconnames: any
+  icon: any
   $router:any
   $route:any
   $axios:any
   $t: any
   $mq:any
+  getOpsiConfigServer:any
 
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
@@ -96,15 +98,8 @@ export default class FLogin extends Vue {
   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 
   async fetch () {
-    await this.$axios.$get('/api/user/opsiserver')
-      .then((response) => {
-        this.setOpsiconfigserver(response.result)
-      }).catch((error) => {
-        const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
-        const errorMsg = this.$t('message.error.opsiconfd') as string
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        ref.alert(errorMsg, 'danger', detailedError as string)
-      })
+    const alertRef = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
+    await this.getOpsiConfigServer(alertRef)
   }
 
   get validUsername () {

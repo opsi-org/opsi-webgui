@@ -15,11 +15,13 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Depot } from '../../mixins/get'
 const selections = namespace('selections')
 
-@Component
+@Component({ mixins: [Depot] })
 export default class TSDepotsNotStored extends Vue {
   $axios: any
+  getDepotIdList:any
   @Prop({ }) cssclass!: string
 
   depotIds: Array<object> = []
@@ -29,7 +31,8 @@ export default class TSDepotsNotStored extends Vue {
   async fetch () {
     const depots: Array<object> = []
     // TODO : backend --> return depots data as list of { id: depotID, label: depotID } for treeselect component
-    const result = (await this.$axios.$get('/api/opsidata/depot_ids')).sort()
+    const result = await this.getDepotIdList()
+    result.sort()
     for (const d in result) {
       const depot = result[d]
       depots[d] = { id: depot, label: depot }

@@ -36,8 +36,8 @@
     </b-col>
     <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn" cols="*">
       <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
-        <b-icon v-if="showValue" :icon="iconnames.valueShow" />
-        <b-icon v-else :icon="iconnames.valueHide" />
+        <b-icon v-if="showValue" :icon="icon.valueShow" />
+        <b-icon v-else :icon="icon.valueHide" />
       </b-button>
     </b-col>
     <b-col v-if="showTooltip" class="GCProductPropertyValue_MixedTT" cols="*">
@@ -58,17 +58,17 @@ import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { IProperty } from '../../../.utils/types/ttable'
 import { IObjectString2Boolean, IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
-import { Constants } from '../../../mixins/uib-mixins'
+import { Icons } from '../../../mixins/icons'
 const settings = namespace('settings')
 const selections = namespace('selections')
 const changes = namespace('changes')
 const config = namespace('config-app')
 // const mixed = '<mixed>'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class GCProductPropertyValue extends Vue {
   $t:any
-  iconnames:any
+  icon:any
   // @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String

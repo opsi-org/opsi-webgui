@@ -17,7 +17,7 @@
             <ButtonBTNRowLinkTo
               :title="(secondColumnOpened || $mq=='mobile'? $t('button.show.products') : '')"
               :label="((secondColumnOpened) ? '' : $t('title.products'))"
-              :icon="iconnames.product"
+              :icon="icon.product"
               to="/clients/products"
               ident="dummy"
               classes="tableheader_products border-0 pt-2 btn"
@@ -48,7 +48,7 @@
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               :label="$t('title.config')"
-              :icon="iconnames.settingsobject"
+              :icon="icon.settings"
               to="/clients/config"
               :ident="itemkey"
               :pressed="isRouteActive"
@@ -58,7 +58,7 @@
             <ButtonBTNRowLinkTo
               :title="$t('title.log')"
               :label="$t('title.log')"
-              :icon="iconnames.log"
+              :icon="icon.log"
               to="/clients/log"
               :ident="itemkey"
               :pressed="isRouteActive"
@@ -68,7 +68,7 @@
             <!-- <ButtonBTNRowLinkTo
               :title="$t('title.cloneclient')"
               :label="$t('title.cloneclient')"
-              :icon="iconnames.client"
+              :icon="icon.client"
               to="/clients/clone"
               :ident="itemkey"
               :pressed="isRouteActive"
@@ -92,21 +92,21 @@
           </template>
           <template #head(version_outdated)>
             <div :title="$t('table.fields.versionOutdated')">
-              <b-icon :icon="iconnames.product" />
-              <b-icon font-scale="1.2" :icon="iconnames.productsOutdated" style="color: var(--warning);" />
+              <b-icon :icon="icon.product" />
+              <b-icon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
             </div>
           </template>
 
           <template #head(actionResult_failed)>
             <div :title="$t('table.fields.actionResultFailed')">
-              <b-icon :icon="iconnames.product" />
-              <b-icon :icon="iconnames. productsFailedActionResult" class="rounded-circle" variant="danger" />
+              <b-icon :icon="icon.product" />
+              <b-icon :icon="icon. productsFailedActionResult" class="rounded-circle" variant="danger" />
             </div>
           </template>
           <template #head(installationStatus_unknown)>
             <div :title="$t('table.fields.installationStatusUnknown')">
-              <b-icon :icon="iconnames.product" />
-              <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="primary" />
+              <b-icon :icon="icon.product" />
+              <b-icon :icon="icon. productInstallationStatusUnknown" class="rounded-circle" variant="primary" />
             </div>
           </template>
           <template #head(reachable)>
@@ -125,7 +125,7 @@
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config') : '')"
-              :icon="iconnames.settingsobject"
+              :icon="icon.settings"
               to="/clients/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -134,7 +134,7 @@
             <ButtonBTNRowLinkTo
               :title="$t('title.log')"
               :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log') : '')"
-              :icon="iconnames.log"
+              :icon="icon.log"
               to="/clients/log"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -143,7 +143,7 @@
             <!-- <ButtonBTNRowLinkTo
               :title="$t('title.cloneclient')"
               :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.cloneclient') : '')"
-              :icon="iconnames.client"
+              :icon="icon.client"
               to="/clients/clone"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -170,7 +170,9 @@
 import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-import { Constants, MBus, Synchronization } from '../../mixins/uib-mixins'
+import { MBus } from '../../mixins/messagebus'
+import { Synchronization } from '../../mixins/component'
+import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
@@ -179,10 +181,10 @@ interface DeleteClient {
   clientid: string
 }
 
-@Component({ mixins: [MBus, Constants, Synchronization] })
+@Component({ mixins: [MBus, Icons, Synchronization] })
 export default class VClients extends Vue {
   syncSort: any
-  iconnames: any
+  icon: any
   wsBusMsg: any // mixin // store
   $axios: any
   $t: any

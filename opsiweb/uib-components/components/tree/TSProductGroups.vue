@@ -6,7 +6,7 @@
     :text="$t('treeselect.prodGroups')"
     :text-no-result="$t('treeselect.noresult')"
     :selection-default="selectionProducts"
-    :icon="iconnames.product"
+    :icon-prop="icon.product"
     :fetch-data="fetchData"
     :disable-root-objects="false"
     :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
@@ -16,12 +16,12 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class TSProductGroups extends Vue {
-  iconnames: any // from mixin
+  icon: any // from mixin
   $axios: any
 
   @selections.Getter public selectionProducts!: Array<string>

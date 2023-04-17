@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-import { CallLogout } from '../../mixins/uib-mixins'
+import { CallLogout } from '../../mixins/post'
 const auth = namespace('auth')
 const settings = namespace('settings')
 

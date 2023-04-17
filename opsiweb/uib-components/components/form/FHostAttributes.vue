@@ -93,8 +93,8 @@
           <b-input-group>
             <b-button :pressed.sync="showValue" size="sm" class="border-0" variant="outline-primary">
               <span class="sr-only">{{ showValue? $t('form.hostkey.hide'): $t('form.hostkey.show') }}</span>
-              <b-icon v-if="showValue" :icon="iconnames.valueShow" />
-              <b-icon v-else :icon="iconnames.valueHide" />
+              <b-icon v-if="showValue" :icon="icon.valueShow" />
+              <b-icon v-else :icon="icon.valueHide" />
             </b-button>
             <b-form-input id="hostKey" v-model="hostAttr.opsiHostKey" :aria-label="$t('table.fields.hostKey')" :class="{'d-none' : !showValue}" type="text" />
           </b-input-group>
@@ -209,10 +209,10 @@
     </LazyDivDScrollResult>
     <div v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" class="float-right mt-2">
       <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
-        <b-icon :icon="iconnames.reset" /> {{ $t('button.reset') }}
+        <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
       </b-button>
       <b-button id="updateButton" class="updateButton" variant="success" @click="updateAttributes()">
-        <b-icon :icon="iconnames.save" /> {{ $t('button.save') }}
+        <b-icon :icon="icon.check" /> {{ $t('button.save') }}
       </b-button>
     </div>
     <DivDScrollResult v-else>
@@ -223,11 +223,11 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
-import { SetUEFI } from '../../mixins/save'
+import { Icons } from '../../mixins/icons'
+import { SetUEFI } from '../../mixins/post'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const config = namespace('config-app')
-@Component({ mixins: [Constants, SetUEFI] })
+@Component({ mixins: [Icons, SetUEFI] })
 export default class FHostAttributes extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -236,7 +236,7 @@ export default class FHostAttributes extends Vue {
   isLoading: boolean = false
   errorText: string = ''
   setUEFI: any
-  iconnames: any
+  icon: any
   $axios: any
   $t: any
   $fetch: any
