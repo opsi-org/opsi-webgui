@@ -33,7 +33,7 @@
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               :label="$t('title.config')"
-              :icon="iconnames.settingsobject"
+              :icon="icon.settings"
               to="/depots/config"
               :ident="itemkey"
               :pressed="isRouteActive"
@@ -44,7 +44,7 @@
               v-if="itemkey==opsiconfigserver"
               :title="$t('title.healthcheck')"
               :label="$t('title.healthcheck')"
-              :icon="iconnames.healthcheck"
+              :icon="icon.healthcheck"
               to="/depots/healthcheck"
               :ident="itemkey"
               :pressed="isRouteActive"
@@ -76,7 +76,7 @@
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
-              :icon="iconnames.settingsobject"
+              :icon="icon.settings"
               to="/depots/config"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -86,7 +86,7 @@
               v-if="row.item.ident==opsiconfigserver"
               :title="$t('title.healthcheck')"
               :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.healthcheck'):''"
-              :icon="iconnames.healthcheck"
+              :icon="icon.healthcheck"
               to="/depots/healthcheck"
               :ident="row.item.ident"
               :pressed="isRouteActive"
@@ -108,13 +108,15 @@ import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { IObjectString2String } from '../../.utils/types/tgeneral'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { Constants, Synchronization } from '../../mixins/uib-mixins'
+import { Synchronization } from '../../mixins/component'
+import { Icons } from '../../mixins/icons'
+import { Client } from '../../mixins/get'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
-@Component({ mixins: [Constants, Synchronization] })
+@Component({ mixins: [Icons, Synchronization, Client] })
 export default class VDepots extends Vue {
-  iconnames: any
+  icon: any
   syncSort: any
   $axios: any
   $fetch: any
@@ -122,6 +124,7 @@ export default class VDepots extends Vue {
   $t: any
   $route: any
   $router: any
+  getClientToDepot:any
 
   id: string = 'Depots'
   rowId: string = ''
@@ -209,13 +212,7 @@ export default class VDepots extends Vue {
     }
 
     if (this.selectionClients.length > 0) {
-      await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
-        .then((response) => {
-          this.fetchedDataClients2Depots = response
-        }).catch((error) => {
-          this.fetchedDataClients2Depots = {}
-          throw new Error(error)
-        })
+      await this.getClientToDepot(this.selectionClients)
     }
   }
 

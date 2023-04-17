@@ -9,20 +9,21 @@
     variant="primary"
     @click="doLogout"
   >
-    <b-icon :icon="iconnames.logout" />
+    <b-icon :icon="icon.logout" />
     {{ ($mq!=='desktop')? $t('button.logout'):'' }}
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants, CallLogout } from '../../mixins/uib-mixins'
+import { CallLogout } from '../../mixins/post'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants, CallLogout] })
+@Component({ mixins: [Icons, CallLogout] })
 export default class BTNLogout extends Vue {
   @Prop({ default: false }) abortClick!: boolean
   callLogout: any
-  iconnames: any
+  icon: any
   $axios:any
   $mq: any
 

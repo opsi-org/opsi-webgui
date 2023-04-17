@@ -10,17 +10,17 @@
     @click="action"
   >
     <span class="sr-only">{{ $t('button.reset') }}</span>
-    <b-icon :icon="iconnames.reset" /> <span>{{ label? '' : $t('button.reset') }} </span>
+    <b-icon :icon="icon.reset" /> <span>{{ label? '' : $t('button.reset') }} </span>
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTNReset extends Vue {
-  iconnames:any
+  icon:any
   @Prop({}) label?: string
   @Prop({ default: () => { return () => { /* default */ } } }) action!: Function
 }

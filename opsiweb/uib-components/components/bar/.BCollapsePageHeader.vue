@@ -8,8 +8,8 @@
       @click="toggleCollapse"
     >
       <span v-if="collapseable">
-        <b-icon v-if="contentVisible" :icon="iconnames.arrowDoubleDown" />
-        <b-icon v-else :icon="iconnames.arrowDoubleRight" />
+        <b-icon v-if="contentVisible" :icon="icon.arrowDoubleDown" />
+        <b-icon v-else :icon="icon.arrowDoubleRight" />
       </span>
 
       <slot name="nav-title" v-bind="{ title }">
@@ -38,7 +38,7 @@
         :label="(isChildLayout==true)?'': $t('title.products')"
         classes=""
         class="tableheader_products"
-        :icon="iconnames.product"
+        :icon="icon.product"
         to="/clients/products"
         ident="dummy"
         :pressed="isRouteActive"
@@ -46,7 +46,7 @@
       />
       <b-button v-if="redirectOnCloseTo" class="closebtn h-100 border-0" variant="outline-primary" :to="redirectOnCloseTo">
         <span class="sr-only">{{ $t('button.close') }}</span>
-        <b-icon :icon="iconnames.x" />
+        <b-icon :icon="icon.x" />
       </b-button>
     </b-navbar-nav>
     <b-collapse :id="'collapse-navitem-'+title" v-model="contentVisible" accordion="pageHeaderAccordion" :visible="contentVisible" class="collapse-navitem container">
@@ -81,13 +81,13 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 import { ITableInfo } from '../../.utils/types/ttable'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTooltipCollapseRow extends Vue {
   $mq: any
-  iconnames: any
+  icon: any
   @Prop({ }) id!: string
   @Prop({ }) title!: string
   @Prop({ }) subtitle!: string

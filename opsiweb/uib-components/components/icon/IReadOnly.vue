@@ -7,7 +7,7 @@
   >
     <b-iconstack font-scale="1.5">
       <b-icon
-        v-for="el in iconnames._stackedIcons.readonly"
+        v-for="el in icon._stackedIcons.readonly"
         :key="el.icon"
         stacked
         :icon="el.icon"
@@ -21,12 +21,12 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class ILoading extends Vue {
-  iconnames: any
+  icon: any
 
   @config.Getter public config!: IObjectString2Boolean
 }

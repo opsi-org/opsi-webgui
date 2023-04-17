@@ -11,7 +11,7 @@
     :selection-default="selectionDepots"
     :editable="false"
     :is-list="true"
-    :icon="iconnames.depot"
+    :icon-prop="icon.server"
     :fetch-data="fetchDepotData"
     @change="changeSelection"
   />
@@ -19,14 +19,17 @@
 
 <script lang="ts">
 import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
+import { Depot, Client } from '../../mixins/get'
 import { IObjectString2String } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons, Depot, Client] })
 export default class TSDepots extends Vue {
-  iconnames: any // from mixin
+  icon: any // from mixin
   $axios: any
+  getDepotIdList:any
+  getClientToDepot:any
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -37,13 +40,7 @@ export default class TSDepots extends Vue {
     if (this.selectionClients.length <= 0) {
       this.fetchedDataClients2Depots = {}
     } else {
-      await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
-        .then((response) => {
-          this.fetchedDataClients2Depots = response
-        }).catch((error) => {
-          this.fetchedDataClients2Depots = {}
-          throw new Error(error)
-        })
+      await this.getClientToDepot(this.selectionClients)
     }
   }
 
@@ -55,7 +52,7 @@ export default class TSDepots extends Vue {
   }
 
   async fetchDepotData () {
-    return await this.$axios.$get('/api/opsidata/depot_ids')
+    return await this.getDepotIdList()
   }
 
   changeSelection (selection: Event) {

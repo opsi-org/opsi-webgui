@@ -7,7 +7,7 @@
         <div v-for="changes, k in groupedById" :key="changes.productId">
           <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" variant="outline-primary">
             <b>{{ k }}</b>
-            <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
+            <b-icon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
           </b-button>
           <b-collapse :id="k" :visible="filter === '' ? false : true">
             <span v-for="item, index in changes" :key="index" :class="{ 'd-none': item.clientId && !item.clientId.includes(filter) || item.depotId && !item.depotId.includes(filter)}">
@@ -22,7 +22,7 @@
                   <ButtonBTNDeleteObj :item="item" from="products" />
                   <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(item)">
                     <span class="sr-only">{{ $t('button.save') }}</span>
-                    <b-icon :icon="iconnames.save" />
+                    <b-icon :icon="icon.check" />
                   </b-button>
                 </template>
               </GridGFormItem>
@@ -33,7 +33,7 @@
       <div class="float-right mt-2">
         <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
         <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
-          <b-icon :icon="iconnames.save" />
+          <b-icon :icon="icon.check" />
           <span class="saveall">{{ $t('button.saveall') }}</span>
         </b-button>
       </div>
@@ -47,15 +47,15 @@
 <script lang="ts">
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest, SaveProductProperties } from '../../mixins/save'
 const auth = namespace('auth')
 const changes = namespace('changes')
 const errors = namespace('errors')
 
-@Component({ mixins: [Constants, SaveProductActionRequest, SaveProductProperties] })
+@Component({ mixins: [Icons, SaveProductActionRequest, SaveProductProperties] })
 export default class GChangesProducts extends Vue {
-  iconnames: any
+  icon: any
   $axios: any
   $mq: any
   $nuxt: any

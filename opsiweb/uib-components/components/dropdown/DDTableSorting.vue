@@ -18,7 +18,7 @@
       :dropright="incontextmenu"
     >
       <template #button-content>
-        <b-icon :icon="(sortDesc)? iconnames.sortDesc: iconnames.sort" />
+        <b-icon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
         <small v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</small>
       </template>
       <li class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
@@ -59,16 +59,17 @@
 import { Component, Prop } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeader } from '../../.utils/types/ttable'
-import { Constants, HoverDropdown } from '../../mixins/uib-mixins'
+import { HoverDropdown } from '../../mixins/component'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants, HoverDropdown] })
+@Component({ mixins: [Icons, HoverDropdown] })
 export default class DDTableSorting extends BDropdown {
   @Prop({ default: '' }) sortBy!: string
   @Prop({ default: false }) sortDesc!: boolean
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeader
   $mq:any
-  iconnames: any
+  icon: any
   onOver:any
   onLeave:any
 

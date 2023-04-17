@@ -5,17 +5,17 @@
     :style="'color:(--color, ' + color + ') !important;'"
   >
     {{ (small)? '': $t('message.loading') }}
-    <b-icon class="loading-icon" :icon="iconnames.loading" :animation="animation" :title="$t('message.loading')" />
+    <b-icon class="loading-icon" :icon="icon.loading" :animation="animation" :title="$t('message.loading')" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class ILoading extends Vue {
-  iconnames: any
+  icon: any
   @Prop({ default: false }) small!: boolean
   @Prop({ default: 'cylon' }) animation!: string
   @Prop({ default: 'black' }) color!: string

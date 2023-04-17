@@ -12,7 +12,7 @@
       >
       <!-- class="border-0 global_topbar_button"
       :class="{ 'pl-3': $mq=='mobile' }" -->
-      <b-icon :icon="iconnames.info" /> <span v-if="withText"> {{ $t('title.selectedElements') }}</span>
+      <b-icon :icon="icon.info" /> <span v-if="withText"> {{ $t('title.selectedElements') }}</span>
     </b-button>
 
     <b-modal
@@ -70,10 +70,10 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class MSelectionsAll extends Vue {
   show:boolean = false
   @Prop({ default: true }) navbar!: boolean
@@ -81,7 +81,7 @@ export default class MSelectionsAll extends Vue {
   @Prop({ default: true }) showClients!: boolean
   @Prop({ default: false }) showProducts!: boolean
   @Prop({ default: false }) withText!: boolean
-  iconnames:any
+  icon:any
   $mq:any
 
   @selections.Getter public selectionDepots!: Array<string>

@@ -31,7 +31,7 @@
           :label="$t('title.config')"
           :incontextmenu="true"
           :title="$t('title.config')"
-          :icon="iconnames.settingsobject"
+          :icon="icon.settings"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="itemkey"
           :pressed="isRouteActive"
@@ -75,14 +75,14 @@
       <template #head(installationStatus)>
         <b-icon
           :title="$t('table.fields.instStatus')"
-          :icon="iconnames.productInstallationStatus"
+          :icon="icon.product"
           alt="installation status"
         />
       </template>
       <template #head(actionResult)>
         <b-icon
           :title="$t('table.fields.actionResult')"
-          :icon="iconnames.productActionResult"
+          :icon="icon.productActionResult"
           alt="action result"
         />
       </template>
@@ -150,7 +150,7 @@
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
           :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
-          :icon="iconnames.settingsobject"
+          :icon="icon.settings"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
           :pressed="isRouteActive"
@@ -168,7 +168,9 @@ import { IObjectString2ObjectString2String, IObjectString2String } from '../../.
 import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { Constants, MBus, Synchronization } from '../../mixins/uib-mixins'
+import { MBus } from '../../mixins/messagebus'
+import { Synchronization } from '../../mixins/component'
+import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
 
 const selections = namespace('selections')
@@ -179,7 +181,7 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [Constants, MBus, Synchronization, SaveProductActionRequest] })
+@Component({ mixins: [Icons, MBus, Synchronization, SaveProductActionRequest] })
 export default class TProductsLocalboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -190,7 +192,7 @@ export default class TProductsLocalboot extends Vue {
   @Prop({ }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoading!: boolean
   wsBusMsg: any // mixin // store
-  iconnames: any
+  icon: any
   syncSort: any
   $axios: any
   $nuxt: any

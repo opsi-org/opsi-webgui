@@ -58,7 +58,7 @@
             @click="selectionClientsDelete.push(c)"
           >
             <span class="sr-only">{{ $t('button.reset') }}</span>
-            <b-icon :icon="iconnames.x" />
+            <b-icon :icon="icon.x" />
           </b-button>
         </b-list-group-item>
       </b-list-group>
@@ -89,13 +89,13 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTNEvent extends Vue {
   $axios: any
-  iconnames: any
+  icon: any
   $t: any
 
   isLoading:any = false
@@ -122,7 +122,7 @@ export default class BTNEvent extends Vue {
       showpopup: {
         tooltip: 'button.event.showpopup.tooltip',
         titlemodal: 'button.event.showpopup',
-        icon: this.iconnames.message,
+        icon: this.icon.message,
         variant: 'outline-primary',
 
         params: {
@@ -135,7 +135,7 @@ export default class BTNEvent extends Vue {
         tooltip: 'button.event.ondemand.tooltip',
         titlemodal: 'button.event.ondemand',
         variant: 'outline-primary',
-        icon: this.iconnames.ondemand,
+        icon: this.icon.ondemand,
         params: {
           method: 'fireEvent',
           params: ['on_demand'],
@@ -146,7 +146,7 @@ export default class BTNEvent extends Vue {
       reboot: {
         tooltip: 'button.event.reboot.tooltip',
         titlemodal: 'button.event.reboot',
-        icon: this.iconnames.reboot,
+        icon: this.icon.reboot,
         variant: 'outline-primary',
         params: {
           method: 'reboot',

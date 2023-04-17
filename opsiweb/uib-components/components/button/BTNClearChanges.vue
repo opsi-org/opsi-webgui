@@ -1,19 +1,19 @@
 <template>
   <b-button data-testid="BTNClearChanges" variant="primary" :title="$t('button.resetAll')" @click="deleteAll()">
-    <b-icon :icon="iconnames.reset" />
+    <b-icon :icon="icon.reset" />
     <span class="resetall">{{ $t('button.resetAll') }}</span>
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTNClearChanges extends Vue {
   $nuxt: any
-  iconnames: any
+  icon: any
   @Prop({ }) from!: string
 
   @changes.Mutation public deleteAllProductChanges!: () => void

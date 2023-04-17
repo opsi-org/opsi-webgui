@@ -84,8 +84,8 @@
           </b-button-group>
         </template>
         <template #cell(selected)="row">
-          <b-icon v-if="selection.includes(row.item[rowident])" :icon="iconnames.tablerowSelected" class="selectionitem selected" />
-          <b-icon v-else-if="$mq=='mobile'" :icon="iconnames.tablerowNotSelected" class="selectionitem not-selected" />
+          <b-icon v-if="selection.includes(row.item[rowident])" :icon="icon.check" class="selectionitem selected" />
+          <b-icon v-else-if="$mq=='mobile'" :icon="icon.dash" class="selectionitem not-selected" />
           {{ fixRow(row) }}
         </template>
         <template
@@ -114,12 +114,12 @@
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const cache = namespace('data-cache')
 //  TODO Fix Scrolling for Netboot
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class TInfiniteScrollSmooth extends Vue {
-  iconnames: any
+  icon: any
   $axios: any
   $mq: any
   @Prop({ }) error!: string

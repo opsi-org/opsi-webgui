@@ -56,7 +56,6 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { Constants } from '../../mixins/uib-mixins'
 import { IDepend, IProp } from '../../.utils/types/ttable'
 
 const selections = namespace('selections')
@@ -69,7 +68,7 @@ interface IFetchedData {
   dependencies:IDepend,
   properties:IProp
 }
-@Component({ mixins: [Constants] })
+@Component
 export default class VProductProperty extends Vue {
   $fetchState: any
   $axios: any

@@ -9,7 +9,7 @@
     :validate="() => true"
     :validate-description="''"
     :selection-default="selectionClients"
-    :icon="iconnames.client"
+    :icon-prop="icon.client"
     :fetch-data="fetchHostGroupsData"
     :fetch-children="fetchChildren"
     :disable-root-objects="true"
@@ -19,14 +19,17 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
+import { Client } from '../../mixins/get'
 import { IObjectString2String } from '../../.utils/types/tgeneral'
 
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons, Client] })
 export default class TSHostGroups extends Vue {
-  iconnames: any // from mixin
+  icon: any
+  getClientIdList:any
+  getClientToDepot:any
   $axios: any
   $fetch: any
   id: string = 'HostGroups'
@@ -47,13 +50,7 @@ export default class TSHostGroups extends Vue {
     if (this.selectionClients.length <= 0) {
       this.fetchedDataClients2Depots = {}
     } else {
-      await this.$axios.$get(`/api/opsidata/clientsdepots?selectedClients=[${this.selectionClients}]`)
-        .then((response) => {
-          this.fetchedDataClients2Depots = response
-        }).catch((error) => {
-          this.fetchedDataClients2Depots = {}
-          throw new Error(error)
-        })
+      await this.getClientToDepot(this.selectionClients)
     }
   }
 
@@ -72,7 +69,7 @@ export default class TSHostGroups extends Vue {
 
   async fetch () { // clientlist
     this.clientlistGroups = []
-    const resultclients = (await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)).sort()
+    const resultclients = await this.getClientIdList(this.selectionDepots)
     resultclients.forEach((c) => { this.clientlistGroups.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup', isDisabled: false }) })
   }
 

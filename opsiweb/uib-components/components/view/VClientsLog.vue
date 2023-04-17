@@ -69,13 +69,12 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
 const selections = namespace('selections')
 interface LogRequest {
     selectedClient: string,
     selectedLogType: string
 }
-@Component({ mixins: [Constants] })
+@Component
 export default class VClientLog extends Vue {
   $axios: any
   $t: any

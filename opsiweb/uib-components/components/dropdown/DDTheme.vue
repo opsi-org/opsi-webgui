@@ -56,14 +56,14 @@
 <script lang="ts">
 import { Component, Prop, Vue, namespace } from 'nuxt-property-decorator'
 import { ITheme } from '../../.utils/types/tsettings'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const settings = namespace('settings')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class DDTheme extends Vue {
   @Prop({ default: false }) dropup!: boolean
   @Prop({ default: false }) navbar!: boolean
-  iconnames: any
+  icon: any
   $mq:any
   t: string = ''
 
@@ -88,8 +88,8 @@ export default class DDTheme extends Vue {
     return [
       // Created with https://bootstrap.build/app :
       // Used from https://bootswatch.com/ :
-      { title: 'light', rel: 'themes/opsi-light.css', icon: this.iconnames.themelight },
-      { title: 'dark', rel: 'themes/opsi-dark.css', icon: this.iconnames.themedark }
+      { title: 'light', rel: 'themes/opsi-light.css', icon: this.icon.themelight },
+      { title: 'dark', rel: 'themes/opsi-dark.css', icon: this.icon.themedark }
       // ,
       // { title: 'Bootswatch-Cerulean', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cerulean/bootstrap.min.css' },
       // { title: 'Bootswatch-Cosmo', rel: '//netdna.bootstrapcdn.com/bootswatch/3.0.0/cosmo/bootstrap.min.css' },

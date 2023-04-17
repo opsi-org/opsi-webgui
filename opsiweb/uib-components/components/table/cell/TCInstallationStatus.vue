@@ -5,12 +5,12 @@
     </b-badge>
     <b-badge v-else-if="text=='installed'" data-testid="TCInstallationStatusBadge" variant="success">
       <span class="h6">
-        <b-icon :icon="iconnames.productInstallationStatusInstalled" alt="installed" :title="text" />
+        <b-icon :icon="icon.client" alt="installed" :title="text" />
       </span>
     </b-badge>
     <b-badge v-else-if="text=='unknown'" data-testid="TCInstallationStatusBadge" variant="warning" text-variant="dark">
       <span class="h6">
-        <b-icon :icon="iconnames.productInstallationStatusUnknown" :alt="text" />
+        <b-icon :icon="icon.productInstallationStatusUnknown" :alt="text" />
       </span>
     </b-badge>
     <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" data-testid="TCInstallationStatusBadge" variant="transparent">
@@ -25,11 +25,11 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../../mixins/uib-mixins'
+import { Icons } from '../../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class TCInstallationStatus extends Vue {
-  iconnames: any // from mixin
+  icon: any // from mixin
   $mq:any
 
   @Prop({ }) text!: string

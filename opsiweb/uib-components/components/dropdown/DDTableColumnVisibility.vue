@@ -63,7 +63,7 @@ import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '../../.utils/types/ttable'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
-import { HoverDropdown } from '../../mixins/uib-mixins'
+import { HoverDropdown } from '../../mixins/component'
 const settings = namespace('settings')
 
 @Component({ mixins: [HoverDropdown] })

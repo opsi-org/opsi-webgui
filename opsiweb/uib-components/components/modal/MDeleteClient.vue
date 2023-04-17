@@ -8,7 +8,7 @@
       :disabled="(config)?config.read_only:false"
       @click="$bvModal.show('event-modal-delete-' + clientId)"
     >
-      <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
+      <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>
     <div
       v-else
@@ -19,7 +19,7 @@
       @click="$bvModal.show('event-modal-delete-' + clientId)"
       @keypress.enter="$bvModal.show('event-modal-delete-' + clientId)"
     >
-      <b-icon :icon="iconnames.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
+      <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </div>
 
     <b-modal
@@ -42,7 +42,7 @@
           :disabled="(config)?config.read_only:false"
           @click="deleteOpsiClient(clientId)"
         >
-          <b-icon :icon="iconnames.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
+          <b-icon :icon="icon.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
         </b-button>
       </div>
     </b-modal>
@@ -52,13 +52,13 @@
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
 const selections = namespace('selections')
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class MDeleteClient extends Vue {
-  iconnames: any
+  icon: any
   show:boolean = false
   $axios: any
   $t: any

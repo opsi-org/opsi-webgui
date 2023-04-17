@@ -59,9 +59,8 @@
  * (rest doesnt matter)
  */
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
 
-@Component({ mixins: [Constants] })
+@Component
 export default class CMViewTable extends Vue {
   slotScope:any
   //   @Prop({ default: 'key' }) item!: string

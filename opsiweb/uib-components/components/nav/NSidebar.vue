@@ -9,7 +9,7 @@
             v-if="expanded"
             :title="menuitem.title"
             :disabled="menuitem.disabled"
-            :icon="menuitem.icon"
+            :iconprop="menuitem.icon"
             :route="menuitem.route"
             :submenu="menuitem.submenu"
           />
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
 
 interface IMenuItem {
@@ -54,11 +54,11 @@ interface IMenuItem {
   menu?: Array<IMenuItem>
 }
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class NSidebar extends Vue {
   $route: any
   $nuxt: any
-  iconnames: any // from mixin
+  icon: any // from mixin
   @Prop({ }) expanded!: boolean
   @config.Getter public config!: IObjectString2Boolean
 
@@ -76,7 +76,7 @@ export default class NSidebar extends Vue {
           {
             title: 'title.depots',
             route: '/depots/',
-            icon: this.iconnames.depot,
+            icon: this.icon.server,
             submenu: [
               { title: 'title.allDepots', route: '/depots/' },
               { title: 'title.config', route: '/depotsconfig' }
@@ -85,7 +85,7 @@ export default class NSidebar extends Vue {
           {
             title: 'title.clients',
             route: '/clients/',
-            icon: this.iconnames.client,
+            icon: this.icon.client,
             submenu: [
               { title: 'title.allClients', route: '/clients/' },
               { title: 'title.addNew', route: '/clientscreation', disabled: (this.config) ? this.config.client_creation : false },
@@ -95,8 +95,8 @@ export default class NSidebar extends Vue {
               { title: 'title.log', route: '/clientslog' }
             ]
           },
-          { title: 'title.products', icon: this.iconnames.product, route: '/products/' },
-          { title: 'title.groups', icon: this.iconnames.group, route: '/groups/' }
+          { title: 'title.products', icon: this.icon.product, route: '/products/' },
+          { title: 'title.groups', icon: this.icon.group, route: '/groups/' }
         ]
       },
       {
@@ -105,15 +105,15 @@ export default class NSidebar extends Vue {
           {
             title: 'title.administration',
             route: '/admin/',
-            icon: this.iconnames.admin,
+            icon: this.icon.admin,
             submenu: [
               { title: 'title.admin', route: '/admin/' },
               { title: 'title.adminterminal', route: '/adminterminal' },
               { title: 'title.healthcheck', route: '/adminserverhealthcheck' }
             ]
           },
-          { title: 'title.support', icon: this.iconnames.support, route: '/support' },
-          { title: 'title.settings', icon: this.iconnames.settings, route: '/settings' }
+          { title: 'title.support', icon: this.icon.support, route: '/support' },
+          { title: 'title.settings', icon: this.icon.settings, route: '/settings' }
           // { title: 'Index page', icon: 'collection-fill', route: '/' }
         ]
       }

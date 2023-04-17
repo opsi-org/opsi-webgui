@@ -8,8 +8,8 @@
       :disabled="disabled"
       @click.prevent="refresh(route)"
     >
-      <b-icon :icon="icon" /> {{ $t(title) }}
-      <b-icon :icon="iconnames.arrowFillDown" class="caret_icon" font-scale="0.8" />
+      <b-icon :icon="iconprop" /> {{ $t(title) }}
+      <b-icon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
     </b-nav-item>
     <b-collapse :id="'collapse-navitem-'+title" accordion="sidebarAccordion">
       <b-nav vertical>
@@ -33,18 +33,18 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../../mixins/uib-mixins'
+import { Icons } from '../../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class NICollapsible extends Vue {
   $route: any
   $router:any
   $nuxt: any
-  iconnames: any
+  icon: any
   $mq:any
   @Prop({ }) title!: string
   @Prop({ default: false }) disabled!: boolean
-  @Prop({ }) icon!: string
+  @Prop({ }) iconprop!: string
   @Prop({ }) route!: string
   @Prop({ }) submenu!: Array<any>
 

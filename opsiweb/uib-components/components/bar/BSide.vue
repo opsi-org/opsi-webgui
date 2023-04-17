@@ -25,8 +25,8 @@
         :pressed.sync="attributes.expanded"
       >
         <span class="sr-only">{{ attributes.expanded? $t('button.collapse'): $t('button.expand') }}</span>
-        <b-icon v-if="attributes.expanded" :icon="iconnames.arrowDoubleLeft" />
-        <b-icon v-else :icon="iconnames.arrowDoubleRight" />
+        <b-icon v-if="attributes.expanded" :icon="icon.arrowDoubleLeft" />
+        <b-icon v-else :icon="icon.arrowDoubleRight" />
       </b-button>
     </template>
   </b-sidebar>
@@ -36,12 +36,12 @@
 import Cookie from 'js-cookie'
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BSide extends Vue {
   $mq:any
-  iconnames:any
+  icon:any
   @Prop({ }) attributes!: ISidebarAttributes
   @Prop({ default: false }) alwaysVisible!: boolean
 

@@ -4,10 +4,10 @@
       <span class="h6"> {{ $t('unequal') }} </span>
     </b-badge>
     <b-badge v-else-if="text=='successful'" data-testid="TCActionResultBadge" variant="success">
-      <span class="h6"> <b-icon :icon="iconnames.productActionResultSuccessful" alt="successful" /> </span>
+      <span class="h6"> <b-icon :icon="icon.productActionResultSuccessful" alt="successful" /> </span>
     </b-badge>
     <b-badge v-else-if="text=='failed'" data-testid="TCActionResultBadge" variant="danger">
-      <span class="h6"> <b-icon :icon="iconnames.productActionResultFailed" alt="failed" /> </span>
+      <span class="h6"> <b-icon :icon="icon.x" alt="failed" /> </span>
     </b-badge>
     <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" data-testid="TCActionResultBadge" variant="transparent">
       <span class="h6"> {{ ($mq=='mobile')? $t('empty'):'' }} </span>
@@ -21,12 +21,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../../mixins/uib-mixins'
+import { Icons } from '../../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class TCActionResult extends Vue {
   $mq: any
-  iconnames: any
+  icon: any
   @Prop({ }) text!: string
   @Prop({ default: 'warning' }) variant!: string
 }

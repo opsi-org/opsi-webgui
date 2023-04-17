@@ -30,12 +30,11 @@
 
 <script lang="ts">
 import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
 import { SaveParameters } from '../../mixins/save'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Constants, SaveParameters] })
+@Component({ mixins: [SaveParameters] })
 export default class GHostParam extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -46,7 +45,6 @@ export default class GHostParam extends Vue {
   errorText: string = ''
   newVal: any
   saveParameters:any
-  iconnames: any
   $axios: any
   $t: any
   $fetch: any

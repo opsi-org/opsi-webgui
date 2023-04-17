@@ -10,7 +10,7 @@
     }"
     class=""
   >
-    <b-icon v-if="icon" :icon="icon" variant="transparent" font-scale="1.5" />
+    <b-icon v-if="icon" :icon="iconProp" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
       v-else-if="(multi && showSelectionCount===true)"
@@ -96,7 +96,7 @@
           :title="$t('button.tsdefault.add.tooltip')"
           @click="triggerSelection()"
         >
-          <b-icon :icon="iconnames.add" />
+          <b-icon :icon="icon.add" />
           {{ $t('button.tsdefault.add') }}
         </b-button>
       </div>
@@ -109,8 +109,8 @@
         }"
       >
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch||false" :icon="iconnames.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
-          <b-icon v-else :icon="(type === 'products') ? iconnames.product: (type=='clients') ? iconnames.client: (type==='depots') ? iconnames.depot:''" />
+          <b-icon v-if="node.isBranch||false" :icon="icon.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
+          <b-icon v-else :icon="(type === 'products') ? icon.product: (type=='clients') ? icon.client: (type==='depots') ? icon.server:''" />
           <template v-if="type=='depots' && node.label===opsiconfigserver">
             <b> {{ node.label }} </b>
           </template>
@@ -125,7 +125,7 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 // import { arrayEqual } from '../../.utils/utils/scompares'
 
 const cache = namespace('data-cache')
@@ -146,10 +146,9 @@ interface StoreSelection {
   delSelection: Function
 }
 
-@Component({ mixins: [Constants] })
-// export default class TSDefault extends mixins(Constants) {
+@Component({ mixins: [Icons] })
 export default class TSDefault extends Vue {
-  iconnames: any // from mixin
+  icon: any // from mixin
   node: any
   $axios: any
   $fetch: any
@@ -163,7 +162,7 @@ export default class TSDefault extends Vue {
   @Prop({}) textNoResult!: string
   @Prop({}) validate!: Function
   @Prop({}) validateDescription!: string
-  @Prop({}) icon!: string
+  @Prop({}) iconProp!: string
   @Prop({ default: 'id' }) valueFormat!: string
   @Prop({ default: 'LEAF_PRIORITY' }) valueConsistsOf!: string
   @Prop({ default: '' }) placeholder?: string

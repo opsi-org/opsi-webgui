@@ -26,8 +26,8 @@
               >
                 <div slot="option-label" slot-scope="{ node }">
                   <div :ref="'tree-item-'+node.id">
-                    <b-icon v-if="node.isBranch" :icon="iconnames.group" />
-                    <b-icon v-else :icon="iconnames.client" />
+                    <b-icon v-if="node.isBranch" :icon="icon.group" />
+                    <b-icon v-else :icon="icon.client" />
                     <small> {{ node.label }} </small>
                   </div>
                 </div>
@@ -215,11 +215,14 @@
 
 <script lang="ts">
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
+import { Client } from '../../mixins/get'
+import { Group } from '../../mixins/post'
 const selections = namespace('selections')
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons, Client, Group] })
 export default class VGroups extends Vue {
-  iconnames: any
+  icon: any
+  getClientIdList:any
   $axios: any
   node: any
   $fetch: any
@@ -247,6 +250,7 @@ export default class VGroups extends Vue {
   selectedGroupsRemove: any = null
 
   @selections.Getter public selectionDepots!: Array<string>
+  addClientToListOfGroups: any
 
   normalizer (node: any) {
     return {
@@ -276,23 +280,11 @@ export default class VGroups extends Vue {
 
   async fetchGroups () {
     const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
-    // const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&parentGroup=root`)).groups
-
     this.group = Object.values(result)
-    // if (result) {
-    //   const customgroups: any = result.groups
-    //   // console.log(JSON.stringify(customgroups.children.clientdirectory))
-    //   // delete customgroups.children.clientdirectory
-
-    //   this.group = [customgroups, result.groups.children.clientdirectory]
-    // }
   }
 
   async fetchClients () {
-    await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${this.selectionDepots}]`)
-      .then((response) => {
-        this.clientIds = response.sort()
-      })
+    this.clientIds = await this.getClientIdList(this.selectionDepots)
   }
 
   async addClientsToSelectedGroup () {
@@ -368,20 +360,12 @@ export default class VGroups extends Vue {
   }
 
   async addSelectedClientToGroups () {
-    const selectedGroupsArr = this.selectedGroups.map(function (item) {
+    const groupsList = this.selectedGroups.map(function (item) {
       return item.text
     })
-    await this.$axios.$post(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, selectedGroupsArr)
-      .then((response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
-        this.fetchGroups()
-      })
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
+    const client = this.selectedvalue.text
+    await this.addClientToListOfGroups(client, groupsList)
+    await this.fetchGroups()
   }
 
   async removeSelectedClientFromGroups () {

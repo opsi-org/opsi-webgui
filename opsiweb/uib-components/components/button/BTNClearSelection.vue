@@ -10,18 +10,18 @@
     @click="clearselection"
   >
     <span class="sr-only">{{ $t('table.selection.clear') }}</span>
-    <b-icon :icon="iconnames.clear" />
+    <b-icon :icon="icon.clear" />
     <span v-if="showLabel" class="clearButton">{{ label? label: $t('table.selection.clear') }} </span>
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTNClearSelection extends Vue {
-  iconnames:any
+  icon:any
   @Prop({}) label?: string
   @Prop({ default: true }) showLabel?: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function

@@ -2,7 +2,7 @@
   <div>
     <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1 mr-3">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
-        <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? iconnames.arrowDoubleDown : iconnames.arrowDoubleRight" />
+        <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
         <span v-if="title" class="labelcolor font-weight-bold tableheader_title">{{ title }}</span>
         <span v-if="subtitle" class="labelcolor font-italic ml-1"> {{ subtitle }} </span>
       </div>
@@ -12,7 +12,7 @@
       <b-navbar-nav class="ml-auto">
         <slot name="right" />
         <b-button v-if="closeroute" class="border-0" variant="outline-primary" :to="closeroute">
-          <span class="sr-only">{{ $t('button.close') }}</span> <b-icon :icon="iconnames.x" />
+          <span class="sr-only">{{ $t('button.close') }}</span> <b-icon :icon="icon.x" />
         </b-button>
       </b-navbar-nav>
     </b-navbar>
@@ -38,10 +38,10 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 import { ITableInfo } from '../../.utils/types/ttable'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BPageHeader extends Vue {
   @Prop({ default: 'expand' }) navbartype!: string
   @Prop({}) title!: string
@@ -52,7 +52,7 @@ export default class BPageHeader extends Vue {
   @Prop({ default: false }) isLoadingParent!: boolean
   @Prop({ default: undefined }) fetch!: Function
   @Prop({ default: false }) childopened!: boolean
-  iconnames:any
+  icon:any
   $mq: any
   expanded: boolean = true
   @Watch('childopened', {}) childOpened () { this.expanded = !this.childopened }

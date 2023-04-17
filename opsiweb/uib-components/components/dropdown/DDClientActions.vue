@@ -20,7 +20,7 @@
       :dropright="incontextmenu"
     >
       <template #button-content>
-        <b-icon :icon="iconnames.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected" />
+        <b-icon :icon="icon.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected" />
         <small v-if="incontextmenu" class="color-primary-selected">{{ $t('button.item-actions') }}</small>
       </template>
       <ButtonBTNEvent
@@ -55,11 +55,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants, HoverDropdown } from '../../mixins/uib-mixins'
+import { HoverDropdown } from '../../mixins/component'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants, HoverDropdown] })
+@Component({ mixins: [Icons, HoverDropdown] })
 export default class DDClientActions extends Vue {
-  iconnames: any
+  icon: any
   onOver: any
   onLeave: any
   @Prop({}) clientId!: string

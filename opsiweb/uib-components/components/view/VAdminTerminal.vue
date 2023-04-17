@@ -68,7 +68,7 @@ import { WebLinksAddon } from 'xterm-addon-web-links'
 // import Terminal from 'primevue/terminal'
 // import TerminalService from 'primevue/terminalservice'
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
-import { MBus } from '../../mixins/uib-mixins'
+import { MBus } from '../../mixins/messagebus'
 const cache = namespace('data-cache')
 
 @Component({ mixins: [MBus] })

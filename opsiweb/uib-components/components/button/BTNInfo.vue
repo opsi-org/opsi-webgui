@@ -7,17 +7,17 @@
     variant="outline-primary"
     @click="click"
   >
-    <b-icon :icon="iconnames.info" />
+    <b-icon :icon="icon.info" />
   </b-button>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
-import { Constants } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Constants] })
+@Component({ mixins: [Icons] })
 export default class BTNInfo extends Vue {
-  iconnames: any
+  icon: any
   @Prop() click?: Function
 }
 </script>
