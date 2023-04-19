@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <b-input-group>
     <b-form-input
       id="filter"
       v-bind="$props"
@@ -10,16 +10,21 @@
       class="filter"
       :placeholder="$t('table.filter', {el: additionalTitle})"
     />
-  </div>
+    <b-button variant="outline-dark" @click="clearFilter">
+      <b-icon :icon="icon.clear" />
+    </b-button>
+  </b-input-group>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Ref } from 'nuxt-property-decorator'
 import { BFormInput } from 'bootstrap-vue'
+import { Icons } from '../../mixins/icons'
 import { ITableData, ITableInfo } from '../../.utils/types/ttable'
 
-@Component
+@Component({ mixins: [Icons] })
 export default class IFilter extends BFormInput {
+  icon: any
   @Ref('IFilter') readonly IFilter!: HTMLInputElement
   @Prop({}) dataChanging!: string
   @Prop({}) data!: ITableData|ITableInfo
@@ -29,6 +34,10 @@ export default class IFilter extends BFormInput {
     if (this.IFilter) {
       this.IFilter.focus()
     }
+  }
+
+  clearFilter () {
+    this.data.filterQuery = ''
   }
 }
 </script>
