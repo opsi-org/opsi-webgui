@@ -80,7 +80,7 @@ export default class MDeleteClient extends Vue {
         this.$bvModal.hide('event-modal-delete-' + this.clientId)
         this.refetch()
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
       })
   }

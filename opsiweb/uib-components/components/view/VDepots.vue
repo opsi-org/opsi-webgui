@@ -252,7 +252,7 @@ export default class VDepots extends Vue {
           return response.data
         }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.depotsViewAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Depots', 'danger', detailedError)
         this.error = this.$t('message.error.defaulttext') as string

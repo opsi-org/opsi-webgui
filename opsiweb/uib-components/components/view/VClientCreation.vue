@@ -268,7 +268,7 @@ export default class VClientCreation extends Vue {
       .then((response) => {
         this.netbootproductslist = response
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.newClientAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'NetbootProducts', 'danger', detailedError)
       })
@@ -325,7 +325,7 @@ export default class VClientCreation extends Vue {
           this.setupNetbootProduct()
         }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
       })
     this.isLoading = false

@@ -35,7 +35,7 @@ export default class CChangeLogs extends Vue {
       .then((response) => {
         this.changelogs = response.split(/\r?\n/)
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.fetch') as string + 'Changelogs', 'danger', detailedError)
       })
   }

@@ -192,7 +192,7 @@ export default class BTNEvent extends Vue {
         this.isLoading = false
         if (this.updateLoading !== undefined) { this.updateLoading([]) }
       }).catch((error) => {
-        const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
         this.isLoading = false
 
