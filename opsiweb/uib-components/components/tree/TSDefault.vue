@@ -10,7 +10,7 @@
     }"
     class=""
   >
-    <b-icon v-if="icon" :icon="iconProp" variant="transparent" font-scale="1.5" />
+    <b-icon v-if="iconProp" :icon="iconProp" variant="transparent" font-scale="1.5" />
     <IconILoading v-if="$fetchState.pending" :small="true" />
     <ModalMSelections
       v-else-if="(multi && showSelectionCount===true)"
