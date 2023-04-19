@@ -10,7 +10,7 @@
       class="filter"
       :placeholder="$t('table.filter', {el: additionalTitle})"
     />
-    <b-button variant="outline-dark" @click="clearFilter">
+    <b-button variant="outline-dark" :title="$t('button.clearFilter')" @click="clearFilter">
       <b-icon :icon="icon.clear" />
     </b-button>
   </b-input-group>

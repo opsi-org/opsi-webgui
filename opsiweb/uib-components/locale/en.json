@@ -101,6 +101,7 @@
   "table.fields.terminalChannel": "Channel",
   "button.reconnect": "Re-/connect",
   "button.clear": "Clear",
+  "button.clearFilter": "Clear FIlter",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
