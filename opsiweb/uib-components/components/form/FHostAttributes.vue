@@ -1,7 +1,7 @@
 <template>
   <div data-testid="FHostAttributes" class="FHostAttributes">
     <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
-    <AlertAAlert ref="hostAttrErrorAlert" class="FHostAttributesAlert">
+    <AlertAAlert ref="hostAttrErrorAlert">
       <ButtonBTNRefetch :is-loading="(isLoading || $fetchState.pending)" :refetch="$fetch" />
     </AlertAAlert>
     <AlertAAlert ref="uefiAlert" />
@@ -261,7 +261,7 @@ export default class FHostAttributes extends Vue {
       .then((response) => {
         this.hostAttr = response[0]
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.hostAttrErrorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
@@ -282,7 +282,7 @@ export default class FHostAttributes extends Vue {
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
         this.$fetch()
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
       })
     this.isLoading = false

@@ -295,7 +295,7 @@ export default class VGroups extends Vue {
         this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
@@ -310,7 +310,7 @@ export default class VGroups extends Vue {
         this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })

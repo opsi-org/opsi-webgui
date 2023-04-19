@@ -53,7 +53,7 @@ export default class MClientReachable extends Vue {
       .then((response) => {
         this.reachability = response
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.CheckAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Reachability Check', 'danger', detailedError)
       })

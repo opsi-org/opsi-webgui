@@ -32,7 +32,7 @@ const settings = namespace('settings')
         ref.alert('', 'success', response)
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
@@ -43,7 +43,7 @@ const settings = namespace('settings')
   async setUEFI (clientId: string) {
     await this.$axios.$post(`api/opsidata/clients/${clientId}/uefi`)
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.details : '')
         const ref = (this.$refs.uefiAlert as any)
         ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
       })
@@ -59,7 +59,7 @@ const settings = namespace('settings')
           this.$bvModal.hide('event-modal-deployCA-' + data.clientId[0])
         }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
       })
   }
