@@ -172,6 +172,10 @@ export default class VProducts extends Vue {
     // if (!this.tableInfo.sortBy) {
     //   this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
     // }
+    if (this.sortby) {
+      this.tableInfo.sortBy = this.sortby
+      this.tableInfo.sortDesc = true
+    }
     this.updateColumnVisibility()
   }
 

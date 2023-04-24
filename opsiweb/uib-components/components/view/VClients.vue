@@ -1,6 +1,13 @@
 <template>
   <div data-testid="VClients">
     <AlertAAlert ref="clientsViewAlert" />
+    <AlertAAlert ref="sortProductsAlert">
+      <template #footer>
+        <b-button variant="outline-primary" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
+          {{ $t('button.continue') }}
+        </b-button>
+      </template>
+    </AlertAAlert>
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <LazyBarBPageHeader
@@ -121,6 +128,36 @@
           <template #cell(description)="row">
             {{ row.item.description }}
           </template>
+          <template #cell(version_outdated)="row">
+            <b-button
+              variant="outline-primary"
+              :disabled="row.item.version_outdated == 0"
+              :title="$t('Sort Products table')"
+              @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
+            >
+              {{ row.item.version_outdated }}
+            </b-button>
+          </template>
+          <template #cell(actionResult_failed)="row">
+            <b-button
+              variant="outline-primary"
+              :disabled="row.item.actionResult_failed == 0"
+              :title="$t('Sort Products table')"
+              @click="sortProductTable(row.item.clientId, 'actionResult', false)"
+            >
+              {{ row.item.actionResult_failed }}
+            </b-button>
+          </template>
+          <template #cell(installationStatus_unknown)="row">
+            <b-button
+              variant="outline-primary"
+              :disabled="row.item.installationStatus_unknown == 0"
+              :title="$t('Sort Products table')"
+              @click="sortProductTable(row.item.clientId, 'installationStatus', false)"
+            >
+              {{ row.item.installationStatus_unknown }}
+            </b-button>
+          </template>
           <template #rowactions="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
@@ -160,7 +197,7 @@
         </TableTInfiniteScrollSmooth>
       </template>
       <template #child>
-        <NuxtChild :id="rowId" :as-child="true" />
+        <NuxtChild :id="rowId" :as-child="true" :sortby="sortProductsByCol" />
       </template>
     </GridGTwoColumnLayout>
   </div>
@@ -195,6 +232,8 @@ export default class VClients extends Vue {
   $route: any
 
   id: string = 'Clients'
+  sortProductsByCol: string = ''
+  sortProductsByClient: string = ''
   rowId: string = ''
   isLoading: Boolean = false
   // isLoadingEventReboot: Boolean = false
@@ -251,15 +290,15 @@ export default class VClients extends Vue {
       label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false
     },
     version_outdated: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', sortable: true,
+      label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', sortable: true, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version_outdated') : true
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', sortable: true,
+      label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', sortable: true, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult_failed') : true
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.installationStatusUnknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true,
+      label: this.$t('table.fields.installationStatusUnknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true, _fixed: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
     },
     // TODO: Sorting for reachable column
@@ -399,6 +438,20 @@ export default class VClients extends Vue {
 
   routeToChild (id: string) {
     this.routeRedirectWith('/clients/config', id)
+  }
+
+  sortProductTable (clientid: string, type: string, toContinue: boolean) {
+    const ref = (this.$refs.sortProductsAlert as any)
+    this.sortProductsByCol = type
+    this.sortProductsByClient = clientid
+    if (this.selectionClients.length <= 0 || toContinue || this.selectionClients[0] === clientid) {
+      ref.hide()
+      this.setSelectionClients([this.sortProductsByClient])
+      this.rowId = 'dummy'
+      this.$router.push('/clients/products')
+    } else {
+      ref.alert(this.$t('message.warning.title'), 'warning', 'All other client selections will be removed except ' + this.sortProductsByClient + '. Do you want to continue?')
+    }
   }
 }
 </script>

@@ -29,6 +29,7 @@
         <b>{{ k + $t('colon') }}</b> {{ v.error || v.result }}
       </b-list-group-item>
     </b-list-group>
+    <slot name="footer" />
   </b-alert>
 </template>
 

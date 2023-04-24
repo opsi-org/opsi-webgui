@@ -102,6 +102,7 @@
   "button.reconnect": "Re-/connect",
   "button.clear": "Clear",
   "button.clearFilter": "Clear FIlter",
+  "button.continue": "Continue",
   "values.mixed": "<mixed>",
   "values.add": "+",
   "table.filter": "Filter {el}",
