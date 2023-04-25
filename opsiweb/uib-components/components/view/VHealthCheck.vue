@@ -55,11 +55,15 @@
               <span v-for="health, i in Object.values(diagnostic)" :key="i" :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }">
                 <GridGFormItem value-more="true">
                   <template #label>
-                    <b-button v-if="health.partial_results.length !== 0" v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">
-                      <b-icon v-if="expandHCD" :icon="icon.arrowUp" />
-                      <b-icon v-else :icon="icon.arrowRight" />
-                    </b-button>
-                    <b-button v-else class="border-0" variant="outline-primary" :style="'min-width: 45px !important;'" disabled />
+                    <template v-if="health.partial_results.length != 0">
+                      <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">
+                        <b-icon v-if="expandHCD" :icon="icon.arrowUp" />
+                        <b-icon v-else :icon="icon.arrowRight" />
+                      </b-button>
+                    </template>
+                    <template v-else>
+                      <span :style="'width: 47px; min-height: 1px; float: left;'" />
+                    </template>
                     <b-badge v-if="health.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(health.check_status)">
                       <div class="text-uppercase">
                         {{ health.check_status }}
