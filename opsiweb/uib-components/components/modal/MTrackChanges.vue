@@ -2,7 +2,7 @@
   <div data-testid="MTrackChanges" class="MTrackChanges">
     <b-button
       v-if="!quicksave && (changesProducts.filter((o) => o.user === username).length!==0 || changesHostParam.filter((o) => o.user === username).length!==0)"
-      class="mt-2"
+      class="border-0"
       variant="primary"
       @click="$bvModal.show('trackChangesModal')"
     >
@@ -11,7 +11,6 @@
         :title="$t('button.track.changes')"
         :icon="icon.trackChanges"
       />
-      <span v-if="$mq!='mobile'" class="btnlabel"> {{ $t('button.track.changes') }} </span>
     </b-button>
     <b-modal
       id="trackChangesModal"

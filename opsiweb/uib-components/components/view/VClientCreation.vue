@@ -116,7 +116,13 @@
         <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
       </template>
       <template #value>
-        <b-form-select id="netbootproduct" v-model="netbootproduct" :options="netbootproductslist" />
+        <b-form-select
+          id="netbootproduct"
+          v-model="netbootproduct"
+          value-field="productId"
+          text-field="productId"
+          :options="netbootproductslist"
+        />
       </template>
     </GridGFormItem>
     <GridGFormItem>

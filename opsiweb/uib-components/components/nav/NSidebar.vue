@@ -13,9 +13,9 @@
             :route="menuitem.route"
             :submenu="menuitem.submenu"
           />
+          <!-- :data-testid="'NSidebar-'+menuitem.title" -->
           <NavItemNIDropdownHoverable
             v-else
-            :data-testid="'NSidebar-'+menuitem.title"
             :title="menuitem.title"
             :disabled="menuitem.disabled"
             :icon="menuitem.icon"

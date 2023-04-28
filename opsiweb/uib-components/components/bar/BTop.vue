@@ -41,9 +41,9 @@
           @click="rightmenuVisible = false"
         />
         <b-navbar-nav class="pt-0 ml-auto mr-3 float-right">
+          <b-nav-item><span class="sr-only">{{ $t('button.track.changes') }}</span> <ModalMTrackChanges v-if="$mq != 'mobile'" /> </b-nav-item>
           <ModalMSelectionsAll :navbar="true" :with-text="$mq=='mobile'" />
           <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
-          <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <DropdownDDLang v-once :navbar="true" />
           <DropdownDDTheme v-once :navbar="true" />
           <ButtonBTNLogout v-once :navbar="true" />

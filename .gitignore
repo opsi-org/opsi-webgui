@@ -21,6 +21,7 @@ opsiweb/package-merged.json
 # package-lock.json
 # opsi.bak
 opsiweb/.config/test-result-pw-reporter-component.xml
+opsiweb/.config/test-result-pw-reporter-accessibility.xml
 opsiweb/test-result-pw-reporter-components.xml
 opsiweb/test-result-pw-reporter-component.xml
 opsiweb/test-results/

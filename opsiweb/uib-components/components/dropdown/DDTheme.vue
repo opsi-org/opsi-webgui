@@ -1,56 +1,54 @@
 <template>
-  <div data-testid="DropdownDDTheme">
-    <b-nav-item-dropdown
-      v-if="navbar"
-      id="theme"
-      data-testid="DropdownDDThemeBTN"
-      :aria-label="$t('form.theme')"
-      class="global_topbar_button px-2 text-left btn btn-primary border-0"
-      :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
-      :text="theme.title"
-      :title="$t('button.theme.tooltip')"
-      alt="select theme"
-      :dropup="dropup"
+  <b-nav-item-dropdown
+    v-if="navbar"
+    id="theme"
+    data-testid="DropdownDDThemeBTN"
+    :aria-label="$t('form.theme')"
+    class="global_topbar_button px-2 text-left btn btn-primary border-0"
+    :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
+    :text="theme.title"
+    :title="$t('button.theme.tooltip')"
+    alt="select theme"
+    :dropup="dropup"
+  >
+    <template #button-content>
+      <b-icon v-if="themeicon" :icon="themeicon" />
+      {{ ($mq=='mobile') ? theme.title :'' }}
+    </template>
+    <b-dropdown-item
+      v-for="t in themes"
+      :key="t.rel"
+      :disable="t.title==theme.title"
+      :class="{selected: t.title == theme.title}"
+      @click="theme = t;"
     >
-      <template #button-content>
-        <b-icon v-if="themeicon" :icon="themeicon" />
-        {{ ($mq=='mobile') ? theme.title :'' }}
-      </template>
-      <b-dropdown-item
-        v-for="t in themes"
-        :key="t.rel"
-        :disable="t.title==theme.title"
-        :class="{selected: t.title == theme.title}"
-        @click="theme = t;"
-      >
-        <b-icon v-if="t.icon" :icon="t.icon" />
-        {{ t.title }}
-      </b-dropdown-item>
-    </b-nav-item-dropdown>
-    <b-dropdown
-      v-else
-      data-testid="DropdownDDThemeBTN"
-      :text="theme.title"
-      class="settingstheme"
-      variant="outline-primary"
-      :dropup="dropup"
+      <b-icon v-if="t.icon" :icon="t.icon" />
+      {{ t.title }}
+    </b-dropdown-item>
+  </b-nav-item-dropdown>
+  <b-dropdown
+    v-else
+    data-testid="DropdownDDThemeBTN"
+    :text="theme.title"
+    class="settingstheme"
+    variant="outline-primary"
+    :dropup="dropup"
+  >
+    <template #button-content>
+      <b-icon v-if="themeicon" :icon="themeicon" />
+      {{ theme.title }}
+    </template>
+    <b-dropdown-item
+      v-for="t in themes"
+      :key="t.rel"
+      :disable="t.title==theme"
+      variant="transparent"
+      @click="theme = t;"
     >
-      <template #button-content>
-        <b-icon v-if="themeicon" :icon="themeicon" />
-        {{ theme.title }}
-      </template>
-      <b-dropdown-item
-        v-for="t in themes"
-        :key="t.rel"
-        :disable="t.title==theme"
-        variant="transparent"
-        @click="theme = t;"
-      >
-        <b-icon v-if="t.icon" :icon="t.icon" />
-        {{ t.title }}
-      </b-dropdown-item>
-    </b-dropdown>
-  </div>
+      <b-icon v-if="t.icon" :icon="t.icon" />
+      {{ t.title }}
+    </b-dropdown-item>
+  </b-dropdown>
 </template>
 
 <script lang="ts">

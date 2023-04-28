@@ -210,7 +210,7 @@ test:lint:
     - *define_globals
     - npm run lint
 
-test:test-unit:
+test:unit:
   stage: test
   dependencies:
     - init:dry
@@ -228,7 +228,36 @@ test:test-unit:
         coverage_format: cobertura
         path: opsiweb/coverage/clover.xmlci
 
-test:test-usecase:
+test:accessibility:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:dry
+  script:
+    - cd opsiweb
+    - ls -lah uib-components
+    - *define_globals
+    - npm-uib i -D @playwright/test
+    - npx playwright install --with-deps chromium
+    - npm-uib i -D @axe-core/playwright
+    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+    - sleep 60
+    - echo $PLAYWRIGHT_BROWSERS_PATH
+    - npm-uib run test:all:accessibility || exit_code=$?
+    - npm run test:all:delete-empty-results
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: "opsi-webgui-test-result-accessibility"
+    when: on_failure
+    paths:
+      - ./**/*/test-results/
+      - opsiweb/.dev.log
+    reports:
+      junit: opsiweb/test-result-pw-reporter-accessibility.xml
+    expire_in: 2 day
+
+test:usecase:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
@@ -262,7 +291,7 @@ test:test-usecase:
       junit: opsiweb/test-result-pw-reporter-usecase.xml
     expire_in: 2 day
 
-test:test-components:changes:
+test:components:changes:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
@@ -306,7 +335,7 @@ test:test-components:changes:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 2 day
 
-test:test-components:
+test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
