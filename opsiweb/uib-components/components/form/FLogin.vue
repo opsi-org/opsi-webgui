@@ -1,6 +1,9 @@
 <template>
   <!-- TODO: Read changelogs from tag and add it to changelog.md. Frontend is ready with a What's new view added to login and support page.  -->
-  <div>
+  <div role="main">
+    <h1 class="sr-only">
+      {{ $t('button.login') }}
+    </h1>
     <OverlayOLoading :is-loading="isLoading" />
     <b-card
       data-testid="FLogin"
@@ -33,7 +36,6 @@
               :placeholder="$t('form.username')"
               :state="validUsername"
               class="mb-2 username"
-              autocomplete="current_username"
             />
           </b-input-group>
           <b-input-group>
@@ -45,7 +47,6 @@
               :state="validPassword"
               :type="showPassword? 'text': 'password'"
               class="mb-2 password"
-              autocomplete="current_password"
             />
             <b-button variant="primary" :pressed.sync="showPassword" class="mb-2 text-light">
               <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>

@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="MSelectionsAll">
+  <b-nav-item data-testid="MSelectionsAll">
     <b-button
       data-testid="MSelectionsAllButton"
       variant="primary"
@@ -65,7 +65,7 @@
         />
       </div>
     </b-modal>
-  </div>
+  </b-nav-item>
 </template>
 
 <script lang="ts">

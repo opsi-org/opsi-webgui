@@ -1,9 +1,8 @@
 <template>
   <div data-testid="NICollapsible">
     <b-nav-item
-      id="parentnav"
       v-b-toggle="'collapse-navitem-'+title"
-      :data-testid="'NSidebar-'+title"
+      :data-testid="'NICollapsible-'+title"
       :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
       :disabled="disabled"
       @click.prevent="$mq == 'desktop' ? refresh(route) : ''"

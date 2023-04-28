@@ -1,6 +1,6 @@
 <template>
   <div
-    data-testid="NIDropdownHoverable"
+    :data-testid="'NIDropdownHoverable-'+title"
     @mouseover="onOver($refs.sidemenudropdown)"
     @mouseleave="onLeave($refs.sidemenudropdown)"
     @focus="onOver($refs.sidemenudropdown)"

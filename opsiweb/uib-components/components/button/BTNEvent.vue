@@ -1,5 +1,5 @@
 <template>
-  <div
+  <b-nav-item
     :title="withText == false ? $t(events[event].tooltip) : ''"
     data-testid="BTNEvent"
   >
@@ -84,7 +84,7 @@
         </b-button>
       </template>
     </b-modal>
-  </div>
+  </b-nav-item>
 </template>
 
 <script lang="ts">

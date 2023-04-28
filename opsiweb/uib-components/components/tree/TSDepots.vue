@@ -4,7 +4,7 @@
     id="Depots"
     type="depots"
     data-testid="TSDepots"
-    :lazy-load="false"
+    :lazy-load="true"
     :multi="true"
     :text="$t('title.depots')"
     :text-no-result="$t('treeselect.noresult')"

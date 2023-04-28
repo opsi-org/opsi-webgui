@@ -27,9 +27,7 @@ module.exports = {
     // 'scripts/**/*.{js,ts,vue}'
   ],
   testPathIgnorePatterns: [
-    // 'components/**/*.spec.js',
-    'test/component/',
-    'test/usecase/'
+    // 'components/**/*.spec.js'
   ],
   coveragePathIgnorePatterns: [
     '../node_modules/',
