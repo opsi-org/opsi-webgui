@@ -1,6 +1,23 @@
 <template>
-  <b-row data-testid="GTwoColumnLayout" class="GTwoColumnLayout">
+  <div>
     <b-button
+      v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
+      size="sm"
+      variant="primary"
+      :title="expandClients? $t('button.collapse'): $t('button.expand')"
+      :pressed.sync="expandClients"
+    >
+      <small>
+        <b v-if="expandClients">
+          {{ $t('label.layout.hide-clients') }}
+        </b>
+        <b v-else>
+          {{ $t('label.layout.show-clients') }}
+        </b>
+      </small>
+    </b-button>
+    <b-row data-testid="GTwoColumnLayout" class="GTwoColumnLayout">
+      <!-- <b-button
       v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
       class="clients_button"
       variant="outline-primary"
@@ -14,18 +31,20 @@
           {{ $t('label.layout.show-clients') }}
         </b>
       </small>
-    </b-button>
-    <b-col
-      id="parentcol"
-      :class="{'d-none' : showchild && $mq === 'mobile' || $route.path.includes('clients/products/config') && parentId === 'tableclients' && !expandClients ,
-               column2visible: showchild}"
-    >
-      <slot name="parent" />
-    </b-col>
-    <b-col v-if="showchild" :class="{column2visible: Boolean(showchild)}">
-      <slot name="child" />
-    </b-col>
-  </b-row>
+    </b-button> -->
+      <b-col
+        id="parentcol"
+        :cols="$route.path.includes('clients/products/config') && parentId === 'tableclients' && expandClients? 4: null"
+        :class="{'d-none' : showchild && $mq === 'mobile' || $route.path.includes('clients/products/config') && parentId === 'tableclients' && !expandClients ,
+                 column2visible: showchild}"
+      >
+        <slot name="parent" />
+      </b-col>
+      <b-col v-if="showchild" :class="{column2visible: Boolean(showchild)}">
+        <slot name="child" />
+      </b-col>
+    </b-row>
+  </div>
 </template>
 
 <script lang="ts">
