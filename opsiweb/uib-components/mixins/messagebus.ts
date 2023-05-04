@@ -157,7 +157,7 @@ const mbus = namespace('messagebus')
     message.terminal_id = terminal.terminalId
     message.data = utf8Encode.encode(msg)
     this.wsSend(message)
-    console.log('send: ', message)
+    // console.log('send: ', message)
   }
 
   wsTerminalResize (rows: any, cols: any, terminal: any) {
