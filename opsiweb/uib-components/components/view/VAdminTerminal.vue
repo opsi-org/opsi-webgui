@@ -160,13 +160,11 @@ export default class VAdminTerminal extends Vue {
     }
 
     this.mbTerminal = new Terminal({
-      // cursorBlink: true,
-      // scrollback: 1000,
-      // fontSize: 14,
+      fontSize: 14,
       convertEol: true,
       disableStdin: false,
       cursorBlink: true,
-      scrollback: 0,
+      scrollback: 1000,
       // allowProposedApi: true,
       // cols: 80,
 
