@@ -10,7 +10,9 @@
         <b-input-group>
           <b-form-input id="terminalId" v-model="terminalId" :aria-label="$t('table.fields.terminalId')" type="text" />
           <template #append>
-            <b-button variant="primary" class="form-control" @click="() => {terminalId = ''}">{{ $t("button.clear") }}</b-button>
+            <b-button variant="primary" class="form-control" @click="() => {terminalId = ''}">
+              {{ $t("button.clear") }}
+            </b-button>
           </template>
         </b-input-group>
       </template>
@@ -23,7 +25,9 @@
         <b-input-group>
           <b-form-input id="terminalChannel" v-model="terminalChannel" :aria-label="$t('table.fields.terminalChannel')" type="text" />
           <template #append>
-            <b-button variant="primary" class="form-control" @click="() => {terminalChannel = terminalChannelDefault}">{{ $t("button.clear") }}</b-button>
+            <b-button variant="primary" class="form-control" @click="() => {terminalChannel = terminalChannelDefault}">
+              {{ $t("button.clear") }}
+            </b-button>
           </template>
         </b-input-group>
       </template>
@@ -31,10 +35,14 @@
     <GridGFormItem>
       <template #label />
       <template #value>
-        <b-button @click="init" class="form-control" variant="primary">{{ $t('button.reconnect') }}</b-button>
+        <b-button class="form-control" variant="primary" @click="init">
+          {{ $t('button.reconnect') }}
+        </b-button>
       </template>
     </GridGFormItem>
-    <div ref="terminal" />
+    <div ref="terminalcontainer" class="terminalContainer">
+      <div id="terminal" ref="terminal" />
+    </div>
 
     <!-- <div class="box">
       <div id="xterm"></div>
@@ -128,10 +136,21 @@ export default class VAdminTerminal extends Vue {
 
   mounted () {
     this.init()
+    this.listenScreenResize()
   }
 
   beforeDestroy () {
     // disconnect msgbus terminal channel
+  }
+
+  listenScreenResize () {
+    window.addEventListener('resize', () => {
+      this.updateTerminalSize()
+    })
+  }
+
+  updateTerminalSize () {
+    this.mbTerminal.fitAddon.fit()
   }
 
   init () {
@@ -141,15 +160,16 @@ export default class VAdminTerminal extends Vue {
     }
 
     this.mbTerminal = new Terminal({
-      cursorBlink: true,
-      scrollback: 1000,
-      fontSize: 14,
-      allowProposedApi: true,
-      cols: 80,
       // cursorBlink: true,
       // scrollback: 1000,
       // fontSize: 14,
+      convertEol: true,
+      disableStdin: false,
+      cursorBlink: true,
+      scrollback: 0,
       // allowProposedApi: true,
+      // cols: 80,
+
       // disableStdin: false,
       // cursorStyle: 'underline'
       // rendererType: 'canvas', // Tipo de representación
@@ -172,16 +192,8 @@ export default class VAdminTerminal extends Vue {
     this.mbTerminal.loadAddon(webLinksAddon)
     this.mbTerminal.fitAddon = new FitAddon()
     this.mbTerminal.loadAddon(this.mbTerminal.fitAddon)
-    // this.mbTerminal.rows = 20
-    this.mbTerminal.open(this.$refs.terminal as any)
-    // this.mbTerminal.fitAddon.fit()
-    // this.mbTerminal.focus()
-
-    // const _this = this //Asegúrate de redefinir unothis,de lo contrariothisSeñalar al problema
-    // this.mbTerminal.onData((key) => {
-    //   console.log('send..', key)
-    //   this.wsTerminalSend()
-    // })
+    this.mbTerminal.open(this.$refs.terminalcontainer as any)
+    this.mbTerminal.fitAddon.fit()
 
     this.wsTerminalOpen(this.terminalId, this.mbTerminal)
     this.terminalId = this.mbTerminal.terminalId
@@ -190,7 +202,7 @@ export default class VAdminTerminal extends Vue {
       this.wsTerminalSend(data, this.mbTerminal)
     })
     this.mbTerminal.onResize((event) => {
-      console.debug('Resize: ', event.rows, event.cols)
+      // console.debug('Resize: ', event.rows, event.cols)
       if (this.mbTerminal.skipResizeEvent) {
         this.mbTerminal.skipResizeEvent = false
       } else {
@@ -214,7 +226,16 @@ export default class VAdminTerminal extends Vue {
 </script>
 
 <style>
-.console {
+.terminalContainer {
+  width:100%;
+  min-height:75vh;
+}
+#terminal
+{
+  width:100%;
+  height:100%;
+}
+/* .console {
   min-height: 300px;
   min-width: 300px;
   font-family: monospace;
@@ -231,9 +252,6 @@ export default class VAdminTerminal extends Vue {
 }
 
 .console > .consolerow {
-  /* background-color: green !important; */
-  /* color: blue !important; */
-  /* min-width: 100px; */
   margin: 0px;
-}
+} */
 </style>
