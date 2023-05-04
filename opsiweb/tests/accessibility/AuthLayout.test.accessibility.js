@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test')
 const AxeBuilder = require('@axe-core/playwright').default
 const { apiMock } = require('../../uib-components/.utils/playwright/pw-api-mock')
 
-test('Scan Login page for accessibility issues', async ({ page }) => {
+test('Scan accessibility issues before login', async ({ page }) => {
   apiMock(page, '**/api/user/opsiserver', { result: 'testconfigserver.uib.local' })
   await page.goto('./login')
   const accessibilityScanResults = await new AxeBuilder({ page })
