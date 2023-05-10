@@ -3,7 +3,7 @@
     v-b-tooltip.hover
     data-testid="BTNRefetch"
     :title="tooltip && !label ? tooltip : ''"
-    :variant="(tooltip || incontextmenu !== false )? 'outline-primary' : 'outline-dark'"
+    :variant="(tooltip || incontextmenu !== false )? 'outline-primary border-0' : 'outline-dark'"
     class="BTNRefetch btn-sm"
     :class="{
       'border-0': incontextmenu !== false,
