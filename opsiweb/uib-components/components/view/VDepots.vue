@@ -63,9 +63,9 @@
               :refetch="_fetch"
             />
           </template>
-          <template #head(depotId)>
+          <!-- <template #head(depotId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
-          </template>
+          </template> -->
           <template #cell(depotId)="row">
             <b v-if="row.item.depotId==opsiconfigserver">
               {{ row.item.depotId }}

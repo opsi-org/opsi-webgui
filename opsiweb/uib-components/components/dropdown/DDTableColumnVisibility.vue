@@ -10,7 +10,7 @@
       v-bind="$props"
       size="sm"
       data-testid="DropdownDDTableColumnVisibility"
-      :variant="incontextmenu? 'transparent border-0' : 'outline-primary'"
+      :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
       :no-caret="!incontextmenu"
       :title="incontextmenu ? '' : $t('table.showCol')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"

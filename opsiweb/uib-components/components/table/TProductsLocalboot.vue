@@ -57,9 +57,9 @@
           :refetch="$fetch"
         />
       </template>
-      <template #head(productId)>
+      <!-- <template #head(productId)>
         <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
-      </template>
+      </template> -->
       <template #cell(desc)="row">
         {{ row.item.description }}
       </template>

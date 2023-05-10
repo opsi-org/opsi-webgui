@@ -1,16 +1,25 @@
 <template>
-  <b-input-group>
+  <b-input-group class="border">
+    <b-dropdown size="sm" no-caret variant="outline-primary border-0">
+      <template #button-content>
+        <b-icon :icon="icon.filter" />
+      </template>
+      <b-dropdown-item active>
+        {{ $t('table.fields.id') }}
+      </b-dropdown-item>
+    </b-dropdown>
     <b-form-input
       id="filter"
       v-bind="$props"
       ref="IFilter"
       v-model="data.filterQuery"
+      size="sm"
       :aria-label="$t('table.filter', {el: additionalTitle})"
       data-testid="IFilter"
-      class="filter"
+      class="filter border-0"
       :placeholder="$t('table.filter', {el: additionalTitle})"
     />
-    <b-button variant="outline-dark" :title="$t('button.clearFilter')" @click="clearFilter">
+    <b-button variant="outline-dark" class="border-0" size="sm" :title="$t('button.clearFilter')" @click="clearFilter">
       <b-icon :icon="icon.clear" />
     </b-button>
   </b-input-group>

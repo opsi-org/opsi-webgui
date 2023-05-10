@@ -71,13 +71,13 @@
           </b> </small>
           <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
         </template>
-        <template #head(rowactions)>
+        <!-- <template #head(rowactions)>
           <b-button-group>
             <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" />
             <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
             <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" />
           </b-button-group>
-        </template>
+        </template> -->
         <template #cell(rowactions)="row">
           <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'" :class="{'row-selected': selection.includes(row.item[rowident])}">
             <slot name="rowactions" v-bind="row" />

@@ -94,9 +94,9 @@
               :refetch="_fetch"
             />
           </template>
-          <template #head(clientId)>
+          <!-- <template #head(clientId)>
             <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
-          </template>
+          </template> -->
           <template #head(version_outdated)>
             <div :title="$t('table.fields.versionOutdated')">
               <b-icon :icon="icon.product" />

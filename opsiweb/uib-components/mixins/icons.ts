@@ -46,6 +46,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     sort: 'sort-up',
     sortDesc: 'sort-down',
     columns: 'grid3x3',
+    filter: 'funnel',
     clear: 'brush',
     refresh: 'arrow-repeat',
     _stackedIcons: {

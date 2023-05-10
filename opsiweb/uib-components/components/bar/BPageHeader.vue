@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1 mr-3">
+    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
         <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
         <span v-if="title" class="labelcolor font-weight-bold tableheader_title">{{ title }}</span>
@@ -16,21 +16,20 @@
         </b-button>
       </b-navbar-nav>
     </b-navbar>
-    <b-collapse v-if="navbartype == 'collapse' || $mq == 'mobile' && tableid" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
-      <b-navbar class="mb-1 flex-wrap">
+    <b-collapse v-if="tableid" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
+      <b-navbar class="flex-wrap">
         <template v-if="tableid">
           <TreeTSDepots v-if="tableid !== 'Depots'" />
           <TreeTSHostGroups v-if="tableid !== 'Depots'" />
           <TreeTSProductGroups v-if="tableid == 'products'" />
         </template>
-        <template v-if="$mq == 'mobile'">
-          <InputIFilter class="header_filter" :data="tableInfo" />
-          <b-navbar-nav class="ml-auto">
-            <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
-            <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-            <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: tableid})" :refetch="fetch" />
-          </b-navbar-nav>
-        </template>
+
+        <b-navbar-nav :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto'">
+          <InputIFilter :data="tableInfo" />
+          <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
+          <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+          <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: tableid})" :refetch="fetch" />
+        </b-navbar-nav>
       </b-navbar>
     </b-collapse>
   </div>
