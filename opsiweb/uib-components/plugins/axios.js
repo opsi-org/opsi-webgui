@@ -8,7 +8,7 @@ export default function ({ $axios, redirect, store, route }) {
     if (config.url !== '/api/user/opsiserver') {
       config.withCredentials = true
     }
-    if (config.url !== '/api/auth/logout') {
+    if (config.url !== '/api/auth/logout' || config.url !== '/api/user/configuration') {
       const expiry = store.getters['auth/sessionExpiry']
       $axios.setHeader('X-opsi-session-lifetime', expiry)
       store.commit('auth/setSession', expiry)
