@@ -17,7 +17,7 @@
       </b-navbar-nav>
     </b-navbar>
     <b-collapse v-if="tableid" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
-      <b-navbar class="flex-wrap">
+      <b-navbar class="flex-wrap p-0">
         <template v-if="tableid">
           <TreeTSDepots v-if="tableid !== 'Depots'" />
           <TreeTSHostGroups v-if="tableid !== 'Depots'" />
