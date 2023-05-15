@@ -131,6 +131,7 @@
           <template #cell(version_outdated)="row">
             <b-button
               variant="outline-primary"
+              class="btn-client-statistic"
               :disabled="row.item.version_outdated == 0"
               :title="$t('Sort Products table')"
               @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
@@ -141,6 +142,7 @@
           <template #cell(actionResult_failed)="row">
             <b-button
               variant="outline-primary"
+              class="btn-client-statistic"
               :disabled="row.item.actionResult_failed == 0"
               :title="$t('Sort Products table')"
               @click="sortProductTable(row.item.clientId, 'actionResult', false)"
@@ -151,6 +153,7 @@
           <template #cell(installationStatus_unknown)="row">
             <b-button
               variant="outline-primary"
+              class="btn-client-statistic"
               :disabled="row.item.installationStatus_unknown == 0"
               :title="$t('Sort Products table')"
               @click="sortProductTable(row.item.clientId, 'installationStatus', false)"

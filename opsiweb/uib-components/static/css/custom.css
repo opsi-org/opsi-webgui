@@ -255,7 +255,17 @@ body .mobile .topbar_content .navbar > * {
   border-color: var(--b-input_component-focus);
   box-shadow: unset;
 }
-.btn , .btn:hover {
+.navbar > .btn:hover {
+  color: var(--primary-foreground) !important;
+}
+tr.b-table-row-selected > td > .btn,
+tr:hover > td > .btn {
+  color: var(--primary-foreground) !important;
+}
+tr:hover > td > .btn:hover {
+  background-color: var(--primary) !important;
+}
+.btn, .btn:hover {
   /* color: var(--color); */
   color: var(--general-fg);
   background-color: transparent;
@@ -515,7 +525,7 @@ tbody .col-rowactions :not(div).btn {
 }
 
 .labelcolor {
-  color: var(--color) !important;
+  /* color: var(--color) !important; */
 }
 
 .contextmenu .btn{
