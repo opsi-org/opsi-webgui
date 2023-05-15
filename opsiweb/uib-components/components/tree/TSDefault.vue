@@ -536,8 +536,8 @@ export default class TSDefault extends Vue {
   /* border: 1px solid red; */
   max-width: max-content !important;
   max-height: 20px;
-  width: 100% !important;
-  width: calc(100% - 30px);
+  /*width: 100% !important;*/
+  width: calc(100% - 55px) !important; /* 30 */
   margin-right: 10px;
   /* width: 72% !important; */
   cursor: pointer;
