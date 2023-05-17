@@ -1,19 +1,13 @@
 <template>
-  <div
-    data-testid="TSDefault"
-    :class="{
-      'TSDefault-wrapper form-control d-flex flex-nowrap':true,
-      [type]:true ,
-      'is-origin': isOrigin,
-      'hasSelection': ((type==='propertyvalues')?selectionWrapper.length > 0 : selectionDefault.length>0),
-      'has-counter':showSelectionCount===true
-    }"
-    class=""
-  >
-    <b-icon v-if="iconProp" :icon="iconProp" variant="transparent" font-scale="1.5" />
-    <IconILoading v-if="$fetchState.pending" :small="true" />
+  <b-input-group data-testid="TSDefault" class="TreeWrapper border">
+    <div v-if="iconProp" class="p-1">
+      <b-iconstack font-scale="1">
+        <b-icon stacked :icon="iconProp" variant="transparent" />
+        <b-icon v-if="$fetchState.pending" stacked :icon="icon.reset" animation="spin" scale="2" />
+      </b-iconstack>
+    </div>
     <ModalMSelections
-      v-else-if="(multi && showSelectionCount===true)"
+      v-if="(multi && showSelectionCount===true)"
       :id="id"
       :type="type"
       :selections="((type==='propertyvalues')?selectionWrapper : selectionDefault)"
@@ -27,8 +21,6 @@
         />
       </template>
     </ModalMSelections>
-    <!--:always-open="(id=='PropertyValue-method')"-->
-    <!--:always-open="(id=='HostGroups')"-->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
@@ -37,7 +29,7 @@
       :always-open="alwaysOpen"
       :flat="flat"
       :placeholder="placeholderWrapper"
-      class="treeselect"
+      class="treeselect treeselect_with_wrapper treeselect_short"
       :class="{ 'disable-roots': disableRootObjects, [type]:true, 'search-filled': treeselectSearchQueryFilled }"
       :searchable="!lazyLoad"
       :editable="editable"
@@ -49,7 +41,6 @@
       :options="options"
       :open-on-focus="false"
       :branch-nodes-first="true"
-      :max-height="300"
       :disabled="disabled"
       :cache-options="false"
       :normalizer="normalizer"
@@ -120,20 +111,18 @@
         </div>
       </div>
     </LazyTreeTSDefaultWithAdding>
-  </div>
+  </b-input-group>
 </template>
 
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
-// import { arrayEqual } from '../../.utils/utils/scompares'
 
 const cache = namespace('data-cache')
 
 interface Group {
   id: string
   text: string
-  // isBranch?: boolean
   type: string
   isDisabled?: boolean
   isNew?: boolean
@@ -267,11 +256,6 @@ export default class TSDefault extends Vue {
     this.data.forEach((element) => { this.options.push({ id: element, text: element, type: 'ObjectToGroup' }) })
     if (this.nested) { return }
 
-    // const resultObjects = []
-    // for (const sitem in this.selectionDefault) {
-    //   filterObject(this.options, sitem, 'id', resultObjects)
-    // }
-
     // if its not nested: add selection to options if not already inside (e.g. newValue)
     const optionIds = this.options.map((e:any) => e.id)
     for (const i in this.selectionDefault) {
@@ -399,216 +383,11 @@ export default class TSDefault extends Vue {
 </script>
 
 <style>
-.vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked,
-.vue-treeselect__checkbox--checked:hover,
-.vue-treeselect__checkbox--checked {
-  border-color: var(--primary-dark) !important;
-  background: var(--primary) !important;
-  color: var(--primary-foreground);
+.TreeWrapper.input-group{
+  position: inherit;
+  align-items: normal;
+  margin-right: 5px;
+  width:fit-content;
+  flex-wrap: nowrap;
 }
-
-.TSDefault-wrapper {
-  line-height: inherit !important;
-  font-size: inherit !important;
-  font-weight: inherit !important;
-}
-/* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
-.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
-.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option > .vue-treeselect__label-container {
-  cursor: not-allowed;
-  pointer-events: none;
-  /* color: var(--dark); */
-  color: var(--general-fg, var(--dark, inherit));
-}
-
-/* hide checkbox and disable click for hostgroups: groups, clientdirectory, clientlist (need to have .disable-roots class)*/
-.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container > .vue-treeselect__checkbox-container { display:none }
-
-.TSDefault-wrapper .treeselect.disable-roots .vue-treeselect__indent-level-0 >.vue-treeselect__option--highlight > .vue-treeselect__label-container {
-  color: var(--general-fg);
-}
-
-.TSDefault-wrapper,
-.TSDefault-wrapper .treeselect,
-.TSDefault-wrapper .vue-treeselect__menu-container,
-.TSDefault-wrapper .vue-treeselect__menu {
-  background-color: var(--general-bg, white);
-}
-
-.TSDefault-wrapper .vue-treeselect__menu {
-  position: absolute;
-}
-  /*left: -35px;*/
-.TSDefault-wrapper.hasSelection .vue-treeselect__menu { left: -55px; }
-.TSDefault-wrapper:not(.hasSelection) .vue-treeselect__menu { left: -35px;}
-.TSDefault-wrapper.propertyvalues .vue-treeselect__menu { left: -11px;}
-.TSDefault-wrapper.undefined .vue-treeselect__menu { left: -13px; }
-
-.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--primary-foreground);
-  background-color: var(--primary-dark);
-}
-
-.TSDefault-wrapper .hasSelection {
-  color: var(--light);
-  background-color: var(--primary);
-}
-
-.TSDefault-wrapper .vue-treeselect__menu .vue-treeselect__option--highlight .hasSelection{
-  color: var(--light)!important;
-  background-color: var(--primary);
-}
-
-.form-inline{
-  flex-flow: nowrap;
-}
-.TSDefault-wrapper:not(.is-origin) {
-  border: 1px solid var(--warning, yellow);
-}
-.TSDefault-wrapper{
-  /* border: 1px solid var(--primary); */
-  border-radius: 5px;
-  min-width: var(--component-width) !important;
-  max-width: var(--component-width) !important;
-  flex-flow: inherit !important;
-  padding-left: 10px;
-  padding-right: 15px;
-  margin-right: 10px;
-  line-height: 1.5 !important;
-  min-height: 40px !important;
-}
-.TSDefault-wrapper.propertyvalues {
-  max-width: 100% !important;
-  width: 100% !important;
-}
-.TSDefault-wrapper .treeselect .btn {
-  color: var(--general-fg);
-}
-.TSDefault-wrapper .treeselect .BTN-before-list{
-  width: 100% !important;
-  text-align: left;
-}
-/*
-.vue-treeselect__option--disabled .vue-treeselect__label-container {
-  color: var(--general-fg) !important;
-}*/
-.vue-treeselect__checkbox--disabled,
-.vue-treeselect__checkbox--disabled:hover {
-  background-color: var(--general-fg-disabled) !important;
-  border: var(--general-fg-disabled) !important;
-  color: var(--general-fg) !important;
-}
-.vue-treeselect__option--disabled .vue-treeselect__label-container,
-.TSDefault-wrapper .treeselect .vue-treeselect__option--disabled .vue-treeselect__label-container{
-  cursor: pointer;
-  color: var(--general-fg-disabled) !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__label-container {
-  margin-left: 10px;
-  width: max-content !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__placeholder {
-  max-height: max-content !important;
-  padding-bottom: 5px;
-  margin-top: -6px !important;
-  /* color: inherit !important; */
-  color: var(--general-fg, var(--dark, inherit));
-}
-.TSDefault-wrapper .treeselect .vue-treeselect-helper-hide,
-.TSDefault-wrapper .treeselect .vue-treeselect__control-arrow-container {
-  display: inline !important;
-}
-.TSDefault-wrapper .vue-treeselect__option-arrow-container:hover .vue-treeselect__option-arrow{
- color: var(--general-fg) !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__control{
-  max-height: 10px !important;
-  height: 10px !important;
-  margin-top: 0px !important;
-  padding-top: 0px !important;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-  background-color: var(--component, var(--background, inherit));
-  color: var(--general-fg, var(--light, inherit));
-}
-
-.TSDefault-wrapper .treeselect {
-  /* border: 1px solid red; */
-  max-width: max-content !important;
-  max-height: 20px;
-  width: 100% !important;
-  width: calc(100% - 30px);
-  margin-right: 10px;
-  /* width: 72% !important; */
-  cursor: pointer;
-}
-.TSDefault-wrapper .treeselect.propertyvalues {
-  max-width: calc(100% - 10px) !important;
-  width: calc(100% - 10px) !important;
-}
-.TSDefault-wrapper.propertyvalues.has-counter .treeselect.propertyvalues {
-  max-width: calc(100% - 32px) !important;
-  width: calc(100% - 32px) !important;
-}
-.TSDefault-wrapper .treeselect > .vue-treeselect__control{
-  border: none !important;
-  border-radius: 0px !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__menu {
-  min-width: var(--component-width) !important;
-  margin-top: 15px;
-  overflow: auto;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__input {
-  width: 100%;
-  max-width: 100%;
-  margin-top: 5px;
-  color: var(--general-fg) !important;
-}
-/* .TSDefault-wrapper .vue-treeselect__value-container, */
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value {
-  margin-bottom: 0px !important;
-  background-color: var(--component, inherit);
-}
-
-.TSDefault-wrapper .treeselect.search-filled .vue-treeselect__multi-value-item,
-.TSDefault-wrapper .treeselect.search-filled .vue-treeselect__single-value,
-.TSDefault-wrapper .treeselect.search-filled .vue-treeselect__placeholder,
-.TSDefault-wrapper .treeselect.search-filled.propertyvalues .vue-treeselect__limit-tip,
-.TSDefault-wrapper .treeselect:not(.propertyvalues) .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder),
-.TSDefault-wrapper .treeselect .vue-treeselect__icon.vue-treeselect__value-remove {
-  display: none !important;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item {
-  cursor: not-allowed;
-  pointer-events: none;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__single-value,
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value {
-  margin-top: -5px;
-}
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item.vue-treeselect__multi-value-item,
-.TSDefault-wrapper .treeselect .vue-treeselect__multi-value-item.vue-treeselect__multi-value-item-new {
-  background: var(--primary);
-  color: var(--light);
-  min-height: 20px;
-}
-.TSDefault-wrapper .treeselect.propertyvalues .vue-treeselect__multi-value-item-container :not(.vue-treeselect__placeholder) {
-  max-height: 20px;
-  white-space: normal;
-}
-
-.TSDefault-wrapper .vue-treeselect--single .vue-treeselect__option--selected {
-  color: var(--light);
-  background-color: var(--primary);
-}
-.TSDefault-wrapper .vue-treeselect--single .vue-treeselect__label-container svg {
-  display: none;
-}
-
-.TSDefault-wrapper .vue-treeselect--single .vue-treeselect__option--highlight .hasSelection{
-  color: var(--dark);
-  background-color: var(--primary);
-}
-
 </style>

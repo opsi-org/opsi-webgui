@@ -17,7 +17,7 @@
             <b-col cols="4">
               <treeselect
                 v-model="selectedvalue"
-                class="treeselect_notstored treeselect_fullpage"
+                class="treeselect_notstored treeselect treeselect_fullpage"
                 always-open
                 :default-expand-level="1"
                 :normalizer="normalizer"
@@ -149,7 +149,7 @@
                         <treeselect
                           v-model="selectedGroups"
                           v-b-tooltip.hover
-                          class="treeselect_notstored"
+                          class="treeselect_notstored treeselect"
                           :multiple="true"
                           :flat="true"
                           always-open
@@ -179,7 +179,7 @@
                         <treeselect
                           v-model="selectedGroupsRemove"
                           v-b-tooltip.hover
-                          class="treeselect_notstored"
+                          class="treeselect_notstored treeselect"
                           :multiple="true"
                           :flat="true"
                           always-open
@@ -389,5 +389,6 @@ export default class VGroups extends Vue {
 <style>
 .VGroups {
   width: 98% ;
+  height: 100vh;
 }
 </style>

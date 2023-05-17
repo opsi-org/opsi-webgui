@@ -4,7 +4,7 @@
       v-if="clientIds"
       v-model="idselection"
       data-testid="TSClientsNotStored"
-      class="treeselect_notstored treeselect_short"
+      class="treeselect_notstored treeselect treeselect_short"
       :options="clientIds"
       :placeholder="$t('form.client')"
       @input="$emit('update:id', idselection)"

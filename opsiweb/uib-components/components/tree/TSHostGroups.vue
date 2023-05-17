@@ -1,7 +1,9 @@
 <template>
   <TreeTSDefaultGroups
     :id="id"
-    type="clients"
+    :class="classes"
+    :type="type"
+    :always-open="open"
     data-testid="TSHostGroups"
     :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
     :text="$t('treeselect.clientGroups')"
@@ -18,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Client } from '../../mixins/get'
 import { IObjectString2String } from '../../.utils/types/tgeneral'
@@ -33,6 +35,9 @@ export default class TSHostGroups extends Vue {
   $axios: any
   $fetch: any
   id: string = 'HostGroups'
+  @Prop({ default: false }) open!: boolean
+  @Prop({ }) classes!: any
+  @Prop({ default: 'clients' }) type!: string
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void

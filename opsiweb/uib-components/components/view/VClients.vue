@@ -31,9 +31,15 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+            <!-- <b-button variant="outline-primary" size="sm" :title="(showTreeView? $t('View Clients as Table') : $t('View Clients as Tree'))" :pressed.sync="showTreeView">
+              <b-icon v-if="showTreeView" variant="primary" :icon="icon.table" />
+              <b-icon v-else :icon="icon.tree" />
+            </b-button> -->
           </template>
         </LazyBarBPageHeader>
+        <TreeTSClientGroupsExpanded v-if="showTreeView" :row-ident.sync="rowId" :row-id="rowId" />
         <TableTInfiniteScrollSmooth
+          v-else
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -235,13 +241,14 @@ export default class VClients extends Vue {
   sortProductsByCol: string = ''
   sortProductsByClient: string = ''
   rowId: string = ''
-  isLoading: Boolean = false
+  isLoading: boolean = false
   // isLoadingEventReboot: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
   tableloaded: boolean = false
+  showTreeView: boolean = false
 
   deleteClient: DeleteClient = { clientid: '' }
   tableData: ITableData = {

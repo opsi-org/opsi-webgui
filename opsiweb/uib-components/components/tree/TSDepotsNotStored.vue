@@ -4,7 +4,7 @@
       v-if="depotIds"
       v-model="idselection"
       :class="cssclass"
-      class="treeselect_notstored"
+      class="treeselect_notstored treeselect"
       :options="depotIds"
       :placeholder="$t('form.depot')"
       :always-open="false"
