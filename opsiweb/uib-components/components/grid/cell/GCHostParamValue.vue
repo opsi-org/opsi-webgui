@@ -12,7 +12,7 @@
       v-model="localval"
       :disabled="(config)? config.read_only : false"
       data-testid="GCHostParamUnicode"
-      class="treeselect_notstored"
+      class="treeselect_notstored treeselect"
       :multiple="row.multiValue"
       :editable="row.editable"
       :limit="1"

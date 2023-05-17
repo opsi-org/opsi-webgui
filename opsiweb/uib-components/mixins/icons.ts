@@ -13,6 +13,8 @@ import { Component, Vue } from 'nuxt-property-decorator'
     themelight: 'sun',
     themedark: 'moon',
     trackChanges: 'card-checklist',
+    tree: 'list-nested',
+    table: 'table',
     navmenu: 'list',
     menu: 'three-dots-vertical',
     loading: 'three-dots',

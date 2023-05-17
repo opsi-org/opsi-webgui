@@ -13,8 +13,9 @@ export default class DScrollResult extends Vue {
 
 <style>
 .content-scroll{
-  min-height: 75vh !important;
-  max-height: 75vh !important;
+  /* min-height: 75vh !important; */
+  height: 75vh !important;
+  /* max-height: 75vh !important; */
   overflow-x:hidden;
   overflow-y: auto;
 }

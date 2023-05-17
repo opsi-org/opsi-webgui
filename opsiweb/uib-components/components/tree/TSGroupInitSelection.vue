@@ -4,7 +4,7 @@
       v-if="groupIds"
       v-model="idselection"
       :multiple="true"
-      class="treeselect_notstored"
+      class="treeselect_notstored treeselect"
       :options="groupIds"
       :placeholder="$t('treeselect.assigntoGroups')"
       :always-open="false"

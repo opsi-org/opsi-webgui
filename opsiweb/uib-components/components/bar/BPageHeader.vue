@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1">
+    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1 p-1">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
         <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
         <span v-if="title" class="labelcolor font-weight-bold tableheader_title">{{ title }}</span>
@@ -20,7 +20,8 @@
       <b-navbar class="flex-wrap p-0">
         <template v-if="tableid">
           <TreeTSDepots v-if="tableid !== 'Depots'" />
-          <TreeTSHostGroups v-if="tableid !== 'Depots'" />
+          <!-- <TreeTSHostGroups v-if="tableid !== 'Depots'" /> -->
+          <TreeTSHostGroups v-if="tableid == 'products'" />
           <TreeTSProductGroups v-if="tableid == 'products'" />
         </template>
 
