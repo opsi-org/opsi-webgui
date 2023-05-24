@@ -13,8 +13,19 @@
           navbartype="collapse"
           :childopened="secondColumnOpened"
           :closeroute="(child)? '/clients/': null"
-        />
-        <b-tabs class="products_horizontaltabs" lazy>
+          :treeview="showTreeView"
+        >
+          <template #right>
+            <b-button variant="outline-primary" size="sm" :title="(showTreeView? $t('View Products as Table') : $t('View Products as Tree'))" :pressed.sync="showTreeView">
+              <b-icon v-if="showTreeView" variant="primary" :icon="icon.table" />
+              <b-icon v-else :icon="icon.tree" />
+            </b-button>
+          </template>
+        </LazyBarBPageHeader>
+        <div v-if="showTreeView" class="VProductGroupsExpanded" data-testid="VProductGroupsExpanded">
+          <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
+        </div>
+        <b-tabs v-else class="products_horizontaltabs" lazy>
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
@@ -71,17 +82,20 @@
 import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { Client } from '../../mixins/get'
+import { Icons } from '../../mixins/icons'
 import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
 import { IObjectString2Any } from '~/.utils/types/tgeneral'
 const selections = namespace('selections')
-@Component({ mixins: [Client] })
+@Component({ mixins: [Client, Icons] })
 export default class VProducts extends Vue {
+  icon: any
   $mq: any
   $route:any
   $router:any
   $t:any
   $axios: any
   getClientToDepot:any
+  showTreeView: boolean = false
   @Prop() child!: boolean
   @Prop({}) id!: string
   @Prop({}) sortby!: string
@@ -298,5 +312,9 @@ export default class VProducts extends Vue {
 <style>
 .products_horizontaltabs .nav-item{
   min-width: min-content;
+}
+.VProductGroupsExpanded {
+  width: 98% ;
+  height: 80vh;
 }
 </style>

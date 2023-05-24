@@ -2,7 +2,7 @@
   <LazyTreeTSDefault
     v-if="fetchDepotData"
     id="Depots"
-    type="depots"
+    type="treeselect_short"
     data-testid="TSDepots"
     :lazy-load="true"
     :multi="true"

@@ -1,7 +1,9 @@
 <template>
   <TreeTSDefaultGroups
     id="ProductGroups"
-    type="products"
+    :class="classes"
+    :type="type"
+    :always-open="open"
     data-testid="TSProductGroups"
     :text="$t('treeselect.prodGroups')"
     :text-no-result="$t('treeselect.noresult')"
@@ -15,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
@@ -23,6 +25,9 @@ const selections = namespace('selections')
 export default class TSProductGroups extends Vue {
   icon: any // from mixin
   $axios: any
+  @Prop({ default: false }) open!: boolean
+  @Prop({ }) classes!: any
+  @Prop({ default: 'treeselect_short' }) type!: string
 
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
@@ -30,11 +35,28 @@ export default class TSProductGroups extends Vue {
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
   groups: Array<any>|undefined = undefined
+  // prodgroup: Object = {
+  //   groups:
+  //   {
+  //     id: 'testsub',
+  //     type: 'ProductGroup',
+  //     text: 'testsub',
+  //     parent: null,
+  //     allowed: true,
+  //     hasAnySelection: true,
+  //     children: {
+  //       testsub1: { id: 'testsub1;testsub', type: 'ProductGroup', text: 'testsub1', parent: 'testsub', allowed: true, children: null },
+  //       'activate-win': { id: 'activate-win;testsub', type: 'ObjectToGroup', text: 'activate-win', parent: 'testsub', allowed: true }
+  //     }
+  //   }
+  // }
+
   async fetchData () {
     // return Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectionProducts=${this.selectionProducts}`)).groups)
     if (this.groups === undefined) { // dont refetch
       this.groups = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
     }
+    // this.groups = Object.values(this.prodgroup)
     return this.groups
   }
 

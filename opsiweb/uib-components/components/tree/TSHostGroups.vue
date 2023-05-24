@@ -37,7 +37,7 @@ export default class TSHostGroups extends Vue {
   id: string = 'HostGroups'
   @Prop({ default: false }) open!: boolean
   @Prop({ }) classes!: any
-  @Prop({ default: 'clients' }) type!: string
+  @Prop({ default: 'treeselect_short' }) type!: string
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -84,6 +84,7 @@ export default class TSHostGroups extends Vue {
       throw new Error(this.id + ' No root host-groups found')
     }
     if (result.clientlist) {
+      result.clientlist.isDefaultExpanded = this.open
       result.clientlist.children = this.clientlistGroups
     }
     const values = Object.values(result)

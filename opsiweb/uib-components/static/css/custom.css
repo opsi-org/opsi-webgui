@@ -476,9 +476,6 @@ tbody .col-rowactions :not(div).btn {
 .vue-treeselect__x-container:hover {
   color: var(--general-fg);
 }
-.treeselect_short{
-  max-width: var(--component-width) !important;
-}
 .treeselect_notstored .vue-treeselect__control {
   /* height: 1.25rem !important; */
   color: var(--fg-input_component) !important;
@@ -525,7 +522,11 @@ tbody .col-rowactions :not(div).btn {
 }
 
 .treeselect_fullpage .vue-treeselect__menu {
-  min-height: 70vh;
+  min-height: 75vh;
+}
+
+.treeselect_short{
+  max-width: var(--component-width) !important;
 }
 
 .labelcolor {

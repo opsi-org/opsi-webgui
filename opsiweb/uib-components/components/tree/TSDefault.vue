@@ -21,6 +21,7 @@
         />
       </template>
     </ModalMSelections>
+    <!-- treeselect_short -->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
@@ -29,7 +30,7 @@
       :always-open="alwaysOpen"
       :flat="flat"
       :placeholder="placeholderWrapper"
-      class="treeselect treeselect_with_wrapper treeselect_short"
+      class="treeselect treeselect_with_wrapper"
       :class="{ 'disable-roots': disableRootObjects, [type]:true, 'search-filled': treeselectSearchQueryFilled }"
       :searchable="!lazyLoad"
       :editable="editable"
