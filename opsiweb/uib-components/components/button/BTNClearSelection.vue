@@ -3,7 +3,7 @@
     v-b-tooltip.hover
     data-testid="BTNClearSelection"
     :aria-label="$t('table.selection.clear')"
-    :title="label? '' : $t('table.selection.clear')"
+    :title="showLabel? '' : $t('table.selection.clear')"
     variant="outline-primary"
     class="ml-0 border-0"
     size="sm"

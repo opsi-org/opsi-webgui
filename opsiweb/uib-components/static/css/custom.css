@@ -486,9 +486,6 @@ tbody .col-rowactions :not(div).btn {
 .vue-treeselect__x-container:hover {
   color: var(--general-fg);
 }
-.treeselect_short{
-  max-width: var(--component-width) !important;
-}
 .treeselect_notstored .vue-treeselect__control {
   /* height: 1.25rem !important; */
   color: var(--fg-input_component) !important;
@@ -502,26 +499,44 @@ tbody .col-rowactions :not(div).btn {
   border:1px solid var(--b-input_component-focus) !important;
   box-shadow: var(--b-input_component-focus) !important;
 }
-.treeselect_notstored .vue-treeselect__menu {
+
+.treeselect_with_wrapper .vue-treeselect__control {
+  color: var(--fg-input_component) !important;
+  background-color: var(--bg-input_component) !important;
+  border: 0px;
+}
+.treeselect_with_wrapper.vue-treeselect--focused .vue-treeselect__control {
+  color: var(--fg-input_component-focus) !important;
+  background-color: var(--bg-input_component-focus) !important;
+  border:0px;
+  box-shadow: var(--b-input_component-focus) !important;
+}
+
+.treeselect .vue-treeselect__menu {
   background-color: var(--general-bg, var(--background, black));
   color: var(--color, var(--general-fg, white));
 }
-.treeselect_notstored .vue-treeselect__single-value {
+.treeselect .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
 }
-.treeselect_notstored .vue-treeselect__input {
+.treeselect .vue-treeselect__input {
   color: var(--color) !important;
 }
-.treeselect_notstored .vue-treeselect__menu .vue-treeselect__option--highlight {
+.treeselect .vue-treeselect__menu .vue-treeselect__option--highlight {
   color: var(--white);
   background-color: var(--treeselect-hover);
 }
-.treeselect_notstored.vue-treeselect--single .vue-treeselect__option--selected{
+.treeselect.vue-treeselect--single .vue-treeselect__option--selected{
   color: var(--light);
   background-color: var(--primary);
 }
+
 .treeselect_fullpage .vue-treeselect__menu {
-  min-height: 70vh;
+  min-height: 75vh;
+}
+
+.treeselect_short{
+  max-width: var(--component-width) !important;
 }
 
 .labelcolor {

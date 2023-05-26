@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1">
+    <b-navbar data-testid="BarBPageHeader" variant="transparent" class="pt-0 pb-1 p-1">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-11 text-left border-0 pl-0' : ''">
         <b-icon v-if="navbartype == 'collapse'" class="labelcolor" :icon="expanded ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
         <span v-if="title" class="labelcolor font-weight-bold tableheader_title">{{ title }}</span>
@@ -20,11 +20,12 @@
       <b-navbar class="flex-wrap p-0">
         <template v-if="tableid">
           <TreeTSDepots v-if="tableid !== 'Depots'" />
-          <TreeTSHostGroups v-if="tableid !== 'Depots'" />
-          <TreeTSProductGroups v-if="tableid == 'products'" />
+          <!-- <TreeTSHostGroups v-if="tableid !== 'Depots'" /> -->
+          <TreeTSHostGroups v-if="tableid == 'products'" />
+          <!-- <TreeTSProductGroups v-if="tableid == 'products'" /> -->
         </template>
 
-        <b-navbar-nav :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto'">
+        <b-navbar-nav v-if="!treeview" :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto'">
           <InputIFilter :data="tableInfo" />
           <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
           <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
@@ -51,6 +52,7 @@ export default class BPageHeader extends Vue {
   @Prop({ default: false }) isLoadingParent!: boolean
   @Prop({ default: undefined }) fetch!: Function
   @Prop({ default: false }) childopened!: boolean
+  @Prop({ default: false }) treeview!: boolean
   icon:any
   $mq: any
   expanded: boolean = true

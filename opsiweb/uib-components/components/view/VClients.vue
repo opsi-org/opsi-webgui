@@ -19,6 +19,7 @@
           :fetch="$fetch"
           navbartype="collapse"
           :childopened="secondColumnOpened"
+          :treeview="showTreeView"
         >
           <template #right>
             <ButtonBTNRowLinkTo
@@ -31,9 +32,17 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+            <b-button variant="outline-primary" size="sm" :title="(showTreeView? $t('View Clients as Table') : $t('View Clients as Tree'))" :pressed.sync="showTreeView">
+              <b-icon v-if="showTreeView" variant="primary" :icon="icon.table" />
+              <b-icon v-else :icon="icon.tree" />
+            </b-button>
           </template>
         </LazyBarBPageHeader>
+        <div v-if="showTreeView" class="VClientGroupsExpanded" data-testid="VClientGroupsExpanded">
+          <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
+        </div>
         <TableTInfiniteScrollSmooth
+          v-else
           :id="id"
           :ref="id"
           :primary-key="id"
@@ -238,13 +247,14 @@ export default class VClients extends Vue {
   sortProductsByCol: string = ''
   sortProductsByClient: string = ''
   rowId: string = ''
-  isLoading: Boolean = false
+  isLoading: boolean = false
   // isLoadingEventReboot: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
   tableloaded: boolean = false
+  showTreeView: boolean = false
 
   deleteClient: DeleteClient = { clientid: '' }
   tableData: ITableData = {
@@ -466,5 +476,9 @@ export default class VClients extends Vue {
 .tableheader_products:fokus {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
+}
+.VClientGroupsExpanded {
+  width: 98% ;
+  height: 80vh;
 }
 </style>
