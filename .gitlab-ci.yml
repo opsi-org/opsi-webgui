@@ -37,13 +37,13 @@ stages:
 #   ls -lah
 #   cd -
 
-.define_globals: &define_globals |
-  npm i -g dry-dry
-  shopt -s expand_aliases
-  alias npm-uib='dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
-  cd uib-components
-  git branch
-  cd -
+# .define_globals: &define_globals |
+#   npm i -g dry-dry
+#   shopt -s expand_aliases
+#   alias npm-uib='npm'
+#   cd uib-components
+#   git branch
+#   cd -
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -158,13 +158,13 @@ stages:
 #########################################################################
 ######################################################################### init
 #########################################################################
-init:dry:
+init:npm:
   stage: init
   script:
     # - *prepare_repo
     - cd opsiweb
-    - *define_globals
-    - npm-uib i
+    # - *define_globals
+    - npm i
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
   artifacts:
     paths:
@@ -173,7 +173,7 @@ init:dry:
       - opsiweb/uib-components/
     expire_in: 1 day
 
-init:dry:production:
+init:npm:production:
   stage: init
   only:
     - develop
@@ -182,8 +182,8 @@ init:dry:production:
     # - *prepare_repo
     - cd opsiweb
     #- #rm package-lock.json # todo: how to? rm here or not include to repo? (currently not included)
-    - *define_globals
-    - npm-uib --production --only=prod i # Todo: whats the difference between --production and --only=prod
+    # - *define_globals
+    - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
   artifacts:
     paths:
@@ -201,22 +201,22 @@ init:dry:production:
 test:lint:
   stage: test
   dependencies:
-    - init:dry
+    - init:npm
   script:
     - cd opsiweb
     - ls -lah .
     - ls -lah node_modules/
     - npm --version
-    - *define_globals
+    # - *define_globals
     - npm run lint
 
 test:unit:
   stage: test
   dependencies:
-    - init:dry
+    - init:npm
   script:
     - cd opsiweb
-    - *define_globals
+    # - *define_globals
     - npm run test:unit
   allow_failure: true
   coverage: /All files\s*\|\s*([\d\.]+)/
@@ -232,18 +232,18 @@ test:accessibility:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
-    - init:dry
+    - init:npm
   script:
     - cd opsiweb
     - ls -lah uib-components
-    - *define_globals
-    - npm-uib i -D @playwright/test
+    # - *define_globals
+    - npm i -D @playwright/test
     - npx playwright install --with-deps chromium
-    - npm-uib i -D @axe-core/playwright
-    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+    - npm i -D @axe-core/playwright
+    - PORT=8888 nohup npm run dev > .dev.log &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:all:accessibility || exit_code=$?
+    - npm run test:all:accessibility || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -261,17 +261,17 @@ test:usecase:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
-    - init:dry
+    - init:npm
   script:
     - cd opsiweb
     - ls -lah uib-components
-    - *define_globals
-    - npm-uib i -D @playwright/test
+    # - *define_globals
+    - npm i -D @playwright/test
     - npx playwright install
-    - PORT=8888 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
+    - PORT=8888 nohup npm run dev > .dev.log &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm-uib run test:all:usecase || exit_code=$?
+    - npm run test:all:usecase || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -295,7 +295,7 @@ test:components:changes:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
-    - init:dry
+    - init:npm
   except:
     - tags # cause in tags we test all browsers (and all files)
     - develop # cause in develop we test all files
@@ -306,21 +306,21 @@ test:components:changes:
       - opsiweb/uib-components/*
   script:
     - cd opsiweb
-    - *define_globals
+    # - *define_globals
     # get changed files (in comparison to develop branch)
     - cd uib-components
     - *get_changed_files
     - cd ..
     - echo "$testfilesUnique"
     # install and start services
-    - npm-uib i -D @playwright/test
+    - npm i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+    - PORT=3003 nohup npm run dev > .dev.log &
+    - PORT=3003 nohup npm run story > .storybook.log &
     - sleep 120
     # run tests
-    - npm-uib run test:all:components $testfilesUnique || exit_code=$?
+    - npm run test:all:components $testfilesUnique || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -339,7 +339,7 @@ test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
-    - init:dry
+    - init:npm
   except:
     - bug/cicd-build
     # - tags # cause in tags we test all browsers
@@ -348,14 +348,14 @@ test:components:
     - tags
   script:
     - cd opsiweb
-    - *define_globals
-    - npm-uib i -D @playwright/test
+    # - *define_globals
+    - npm i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run dev > .dev.log &
-    - PORT=3003 nohup dry --dry-save-package-json-to package-merged.json --dry-keep-package-json run story > .storybook.log &
+    - PORT=3003 nohup npm run dev > .dev.log &
+    - PORT=3003 nohup npm run story > .storybook.log &
     - sleep 60
-    - npm-uib run test:all:components || exit_code=$?
+    - npm run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -374,21 +374,21 @@ test:components:
 #   image: mcr.microsoft.com/playwright:v1.15.2-focal
 #   stage: test
 #   dependencies:
-#     - init:dry
+#     - init:npm
 #   except:
 #     - bug/cicd-build
 #   only:
 #     - tags # cause in tags we test each file and browser
 #   script:
 #     - cd opsiweb
-#     - *define_globals
-#     - npm-uib i -D @playwright/test
+#     #- *define_globals
+#     - npm i -D @playwright/test
 #     - npx playwright install
 #     - npx playwright install-deps
-#     - PORT=3003 nohup npm run dev > .dev.log & # npm-cause package.json already created through npm-uib command in this task
-#     - PORT=3003 nohup npm run story > .storybook.log & # npm-cause package.json already created through npm-uib command in this task
+#     - PORT=3003 nohup npm run dev > .dev.log &
+#     - PORT=3003 nohup npm run story > .storybook.log &
 #     - sleep 60
-#     - npm-uib run test:all:components-devices || exit_code=$?
+#     - npm run test:all:components-devices || exit_code=$?
 #     - npm run test:all:delete-empty-results
 #     - exit $exit_code
 #   # allow_failure: true
@@ -439,13 +439,13 @@ test:backend-pytest:
 build:static:app:
   stage: build
   dependencies:
-    - init:dry:production
+    - init:npm:production
     - test:lint
     #- test:jtest
   script:
     - cd opsiweb
-    - *define_globals
-    - npm-uib run generate
+    # - *define_globals
+    - npm run generate
   artifacts:
     paths:
       - opsiweb/dist # not used...?
@@ -458,14 +458,14 @@ build:static:app:
 build:addon:
   stage: build
   dependencies:
-    - init:dry:production # doesnt download artifacts from static-app
+    - init:npm:production # doesnt download artifacts from static-app
     - build:static:app
   script:
     - *install_tools
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
-    - *define_globals
-    - npm-uib run generate
+    # - *define_globals
+    - npm run generate
     - cd .. # copy to addon
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app

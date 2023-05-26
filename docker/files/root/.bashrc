@@ -21,8 +21,8 @@ alias ll='ls -l'
 #alias npm-uib='/usr/bin/dry --dry-save-package-json-to package-merged.json --dry-keep-package-json'
 alias ls='ls --color=auto'
 
-function npm-uib(){ /usr/bin/dry --dry-save-package-json-to package-merged.json --dry-keep-package-json "$@"; }
-export -f npm-uib
+# function npm-uib(){ /usr/bin/dry --dry-save-package-json-to package-merged.json --dry-keep-package-json "$@"; }
+# export -f npm-uib
 
 function gitall(){ echo ""; cd /workspace/opsiweb/uib-components; git "$@"; echo ""; cd -; echo "Entering Main-Repository (opsiweb-ui)"; git "$@"; }
 function gitallcheckout(){ cd /workspace/opsiweb/uib-components; git checkout -B "$@"; cd -; git checkout -B "$@"; }

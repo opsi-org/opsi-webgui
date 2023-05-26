@@ -10,7 +10,7 @@ file_ext_new=$2
 npm_command=$3
 file_prepattern_new=$4
 
-# import bash-aliases to be able to use npm-uib
+# import bash-aliases to be able to use npm -uib
 shopt -s expand_aliases
 source $HOME/.bashrc
 
@@ -24,7 +24,7 @@ fi
 
 if [[ ${file} == "all" ]]; then
     echo ""
-    echo "run: npm-uib run $npm_command "
+    echo "run: npm run $npm_command "
     npm run $npm_command
     if [[ ${npm_command} == "test:all:components" ]]; then
         echo "run clean tests"
@@ -46,8 +46,8 @@ if [[ ${file} == "all-changed" ]]; then
     # echo "$basenamesWithSlash"
     testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )
     cd ..
-    echo "run: npm-uib run $npm_command '$testfilesUnique'"
-    npm-uib run $npm_command "$testfilesUnique"
+    echo "run: npm run $npm_command '$testfilesUnique'"
+    npm run $npm_command "$testfilesUnique"
     npm run test:all:delete-empty-results
     exit 0
 fi
@@ -80,7 +80,7 @@ fi
 # run playwright test on the testfile
 # echo ""
 echo ""
-echo "run: npm-uib run $npm_command $file_prepattern_new$testfile"
+echo "run: npm run $npm_command $file_prepattern_new$testfile"
 npm run $npm_command "$file_prepattern_new$testfile"
 
 if [[ ${npm_command} == "test:all:components*" ]]; then

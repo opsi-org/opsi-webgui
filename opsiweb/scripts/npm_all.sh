@@ -5,7 +5,7 @@ echo "################ TEST ALL #####################"
 echo "###############################################"
 echo "\n\n\n"
 echo ".................check lint...................."
-npm-uib run lint:all
+npm run lint:all
 echo ".................check test:unit..............."
 npx jest --reporters jest-silent-reporter --ci --silent
 echo ".................check test:component........"

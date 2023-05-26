@@ -1,10 +1,10 @@
 /* eslint-disable import/order */
 import path from 'path'
 import fs from 'fs'
-import pkg from './package-dry.json'
+import pkg from './package.json'
 
-import delib from 'uib-components/locale/de.json'
-import enlib from 'uib-components/locale/en.json'
+import delib from './uib-components/locale/de.json'
+import enlib from './uib-components/locale/en.json'
 
 import enui from './locale/en.json'
 import deui from './locale/de.json'

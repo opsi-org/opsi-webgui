@@ -58,7 +58,7 @@ case $do_any in
             CHANGED_FILES=$(git diff --name-only --cached --diff-filter=ACMR | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
             echo "got changed files $CHANGED_FILES"
             cd /workspace/opsiweb
-            npm-uib run createpackagejson
+            npm run createpackagejsons
             cd -
             ;;
     * ) ;;

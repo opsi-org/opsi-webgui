@@ -17,12 +17,9 @@
 		{ // Webgui
 			"name": "webgui",
 			"cwd": "${workspaceFolder}/opsiweb",
-			"runtimeExecutable": "dry",
+			"runtimeExecutable": "npm",
 			// "--dry-save-package-json-to package-merged.json",
 			"runtimeArgs": [
-				"--dry-keep-package-json",
-				"--dry-save-package-json-to",
-				"package-merged.json",
 				"run-script",
 				"dev"
 			],
@@ -36,11 +33,8 @@
 		},
 		{ // Webgui-Storybook
 			"name": "webgui-storybook",
-			"runtimeExecutable": "dry",
+			"runtimeExecutable": "npm",
 			"runtimeArgs": [
-				"--dry-keep-package-json",
-				"--dry-save-package-json-to",
-				"package-merged.json",
 				"run-script",
 				"story"
 			],
@@ -51,41 +45,6 @@
 				"<node_internals>/**"
 			],
 			"auto": true,
-            "cwd": "${workspaceFolder}/opsiweb"
-		},
-		{ // (Lib) Uib-components
-			"name": "Uib-Components",
-			"runtimeExecutable": "npm-uib",
-			"runtimeArgs": [
-				"run-script",
-				"dev"
-			],
-			"outputCapture": "std",
-			"request": "launch",
-			"type": "node",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
-			"auto": false,
-			"cwd": "${workspaceFolder}/opsiweb"
-		},
-		{ // (Lib) Uib-Components-Storybook
-			"name": "Uib-Components Storybook",
-			"runtimeExecutable": "dry",
-			"runtimeArgs": [
-				"--dry-keep-package-json",
-				"--dry-save-package-json-to",
-				"package-merged.json",
-				"run-script",
-				"story-components"
-			],
-			"outputCapture": "std",
-			"request": "launch",
-			"type": "node",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
-			"auto": false,
             "cwd": "${workspaceFolder}/opsiweb"
 		},
 		// {

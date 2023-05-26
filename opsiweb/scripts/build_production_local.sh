@@ -8,7 +8,7 @@
 
 cd /workspace/opsiweb/
 
-npm-uib run generate-nossl
+npm run generate-nossl
 mkdir -p webgui
 rm -rf opsi-webgui.zip
 
