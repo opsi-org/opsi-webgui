@@ -258,6 +258,8 @@
   "group.update.tooltip": "Move the selected group to a new parent or update its attributes.",
   "group.parent": "Parent Group",
   "button.update": "Update",
+  "switch.table": "View {type} as Table",
+  "switch.tree": "View {type} as Group",
   "group.delete": "Delete group",
   "group.delete.tooltip": "Delete selected group along with subgroups and client assignments.",
   "group.delete.confirm": "Are you sure you want to delete the selected group along with its subgroups and client assignments?",

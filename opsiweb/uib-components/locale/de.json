@@ -247,6 +247,8 @@
   "treeselect.search": "Suche",
   "treeselect.searchOrAdd": "Suchen oder hinzufügen",
   "treeselect.limitText": "... (+{count})",
+  "switch.table": "{type} als Tabelle anzeigen",
+  "switch.tree": "{type} als Gruppe anzeigen",
   "group.select": "Ausgewählte Gruppe: ",
   "group.add": "Hinzufügen",
   "group.addclient": "Client hinzufügen",

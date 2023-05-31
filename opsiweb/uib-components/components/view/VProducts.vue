@@ -16,7 +16,12 @@
           :treeview="showTreeView"
         >
           <template #right>
-            <b-button variant="outline-primary" size="sm" :title="(showTreeView? $t('View Products as Table') : $t('View Products as Tree'))" :pressed.sync="showTreeView">
+            <b-button
+              variant="outline-primary"
+              size="sm"
+              :title="(showTreeView? $t('switch.table',{type:'Products'}) : $t('switch.tree',{type:'Products'}))"
+              :pressed.sync="showTreeView"
+            >
               <b-icon v-if="showTreeView" variant="primary" :icon="icon.table" />
               <b-icon v-else :icon="icon.tree" />
             </b-button>

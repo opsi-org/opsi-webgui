@@ -32,7 +32,12 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <b-button variant="outline-primary" size="sm" :title="(showTreeView? $t('View Clients as Table') : $t('View Clients as Tree'))" :pressed.sync="showTreeView">
+            <b-button
+              variant="outline-primary"
+              size="sm"
+              :title="(showTreeView? $t('switch.table',{type:'Clients'}) : $t('switch.tree',{type:'Clients'}))"
+              :pressed.sync="showTreeView"
+            >
               <b-icon v-if="showTreeView" variant="primary" :icon="icon.table" />
               <b-icon v-else :icon="icon.tree" />
             </b-button>
