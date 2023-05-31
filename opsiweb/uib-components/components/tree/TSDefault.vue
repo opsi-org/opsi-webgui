@@ -390,5 +390,6 @@ export default class TSDefault extends Vue {
   margin-right: 5px;
   width:fit-content;
   flex-wrap: nowrap;
+  z-index: 1000;
 }
 </style>
