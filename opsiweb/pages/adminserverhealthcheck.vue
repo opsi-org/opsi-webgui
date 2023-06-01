@@ -1,5 +1,5 @@
 <template>
-  <ViewVHealthCheck :as-child="false" />
+  <ViewVServerHealth />
 </template>
 
 <script lang="ts">

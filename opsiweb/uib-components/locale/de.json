@@ -71,6 +71,7 @@
   "title.cloneclient": "Clone Client",
   "title.config": "Konfiguration",
   "title.log": "Log",
+  "title.diagnostics": "Diagnostics Data",
   "title.healthcheck": "Health Check",
   "title.serverhealthcheck": "Server Health Check",
   "title.products": "Produkte",
