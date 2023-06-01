@@ -258,7 +258,7 @@
   "group.parent": "Parent Group",
   "button.update": "Update",
   "group.deleteOnlyClients": "Remove Clients",
-  "group.deleteOnlyClients.confirm": "Are you sure you want to delete client assignments of the selected group?",
+  "group.deleteOnlyClients.confirm": "Are you sure you want to remove client assignments of the selected group?",
   "group.delete": "Delete group",
   "group.delete.tooltip": "Delete selected group along with subgroups and client assignments.",
   "group.delete.confirm": "Are you sure you want to delete the selected group along with its subgroups and client assignments?",
