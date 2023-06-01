@@ -8,207 +8,190 @@
       </template>
     </BarBPageHeader>
     <b-tabs>
-      <b-tab>
+      <b-tab class="VGroups">
         <template #title>
           <span> {{ $t("treeselect.clientGroups") }} </span>
         </template>
-        <DivDScrollResult>
-          <b-row>
-            <b-col cols="4">
-              <treeselect
-                v-model="selectedvalue"
-                class="treeselect_notstored treeselect treeselect_fullpage"
-                always-open
-                :default-expand-level="1"
-                :normalizer="normalizer"
-                value-format="object"
-                :options="group"
-              >
-                <div slot="option-label" slot-scope="{ node }">
-                  <div :ref="'tree-item-'+node.id">
-                    <b-icon v-if="node.isBranch" :icon="icon.group" />
-                    <b-icon v-else :icon="icon.client" />
+        <b-row>
+          <b-col :class="{'d-none' : action && $mq === 'mobile'}">
+            <treeselect
+              v-model="selectedvalue"
+              class="treeselect_notstored treeselect treeselect_fullpage"
+              :placeholder="$t('Filter')"
+              always-open
+              :default-expand-level="1"
+              :normalizer="normalizer"
+              value-format="object"
+              :options="group"
+            >
+              <div slot="option-label" slot-scope="{ node }">
+                <div :ref="'tree-item-'+node.id">
+                  <template v-if="node.isBranch">
+                    <b-icon :icon="icon.group" />
                     <small> {{ node.label }} </small>
-                  </div>
-                </div>
-              </treeselect>
-            </b-col>
-            <b-col v-if="selectedvalue">
-              <br>
-              <div v-if="selectedvalue.type == 'HostGroup'">
-                <span class="font-weight-bold">
-                  {{ $t('group.select') }} {{ selectedvalue.text }}
-                </span>
-                <br><br>
-                <b-tabs>
-                  <b-tab active>
-                    <template #title>
-                      <span v-b-tooltip.hover :title="$t('group.addclient.tooltip')">
-                        {{ $t("group.addclient") }}
-                      </span>
-                    </template>
-                    <br>
-                    <b-form>
-                      <b-form-select
-                        v-model="selectedClients"
-                        multiple
-                        :select-size="23"
-                        :options="clientIds"
+                    <div class="float-right">
+                      <b-button
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.addClientsToGroup')"
+                        @click="showChild('addClientsToGroup')"
                       >
-                        <template #first>
-                          <b-form-select-option :value="null" disabled>
-                            {{ $t('form.client') }}
-                          </b-form-select-option>
-                        </template>
-                      </b-form-select>
-                      <b-button class="float-right" variant="success" data-testid="addClientsToSelectedGroup" @click="addClientsToSelectedGroup">
-                        {{ $t("group.add") }}
+                        <b-icon :icon="icon.client" /><b-icon :icon="icon.add" font-scale="0.8" />
                       </b-button>
-                    </b-form>
-                  </b-tab>
-                  <b-tab>
-                    <template #title>
-                      <span v-b-tooltip.hover data-testid="subgroup" :title="$t('group.subgroup.tooltip')">
-                        {{ $t("group.subgroup") }}
-                      </span>
-                    </template>
-                    <br>
-                    <b-form>
-                      <b-form-input v-model="subgroup.groupId" v-b-tooltip.hover :title="$t('group.subgroupname')" :placeholder="$t('group.subgroupname')" />
-                      <b-form-input v-model="subgroup.description" v-b-tooltip.hover :title="$t('table.fields.description')" :placeholder="$t('table.fields.description')" />
-                      <b-form-input v-model="subgroup.notes" v-b-tooltip.hover :title="$t('table.fields.notes')" :placeholder="$t('table.fields.notes')" />
-                      <b-button class="float-right" variant="success" data-testid="createSubGroup" @click="createSubGroup">
-                        {{ $t("button.create") }}
+                      <b-button
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.addSubgroup')"
+                        @click="showChild('addSubgroup')"
+                      >
+                        <b-icon :icon="icon.group" /><b-icon :icon="icon.add" font-scale="0.8" />
                       </b-button>
-                    </b-form>
-                  </b-tab>
-                  <b-tab>
-                    <template #title>
-                      <span v-b-tooltip.hover :title="$t('group.update.tooltip')">
-                        {{ $t("group.update") }}
-                      </span>
-                    </template>
-                    <br>
-                    <div>
-                      <treeselect
-                        v-model="updategroupparent"
-                        v-b-tooltip.hover
-                        :title="$t('group.parent')"
-                        :placeholder="$t('group.parent')"
-                        value-format="object"
-                        :options="group"
-                        :normalizer="normalizerUpdateGroup"
-                      />
-                      <b-form-input v-model="updategroup.description" v-b-tooltip.hover :title="$t('table.fields.description')" :placeholder="$t('table.fields.description')" />
-                      <b-form-input v-model="updategroup.notes" v-b-tooltip.hover :title="$t('table.fields.notes')" :placeholder="$t('table.fields.notes')" />
-                      <b-button class="float-right" variant="success" data-testid="updateGroup" @click="updateGroup">
-                        {{ $t("button.update") }}
+                      <b-button
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.editGroup')"
+                        @click="showChild('editGroup')"
+                      >
+                        <b-icon icon="pencil" />
+                      </b-button>
+                      <b-button
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.deleteOnlyClients')"
+                        @click="showChild('deleteOnlyClients')"
+                      >
+                        <b-icon :icon="icon.client" /><b-icon font-scale="0.8" :icon="icon.delete" />
+                      </b-button>
+                      <b-button
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.deletegroup')"
+                        @click="showChild('deletegroup')"
+                      >
+                        <b-icon :icon="icon.delete" />
                       </b-button>
                     </div>
-                  </b-tab>
-                  <b-tab>
-                    <template #title>
-                      <span v-b-tooltip.hover :title="$t('group.delete.tooltip')">
-                        {{ $t("group.delete") }}
-                      </span>
-                    </template>
-                    <br>
-                    <span> {{ $t('group.delete.confirm') }}</span>
-                    <b-button class="float-right" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
-                      {{ $t("label.delete") }}
-                    </b-button>
-                  </b-tab>
-                  <b-tab>
-                    <template #title>
-                      <span v-b-tooltip.hover :title="$t('group.remove.tooltip')">
-                        {{ $t("group.remove.clients") }}
-                      </span>
-                    </template>
-                    <br>
-                    <span> {{ $t('group.remove.confirm') }}</span>
-                    <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" @click="removeClientAssignments">
-                      {{ $t("group.remove") }}
-                    </b-button>
-                  </b-tab>
-                </b-tabs>
+                  </template>
+                  <template v-else>
+                    <b-icon :icon="icon.client" />
+                    <small> {{ node.label }} </small>
+                    <div class="float-right">
+                      <b-button
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.copyClient')"
+                        @click="showChild('copyClient')"
+                      >
+                        <b-icon :icon="icon.client" /><b-icon :icon="icon.group" font-scale="0.8" />
+                      </b-button>
+                      <b-button
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.removeClient')"
+                        @click="showChild('removeClient')"
+                      >
+                        <b-icon :icon="icon.delete" />
+                      </b-button>
+                    </div>
+                  </template>
+                </div>
               </div>
-              <div v-if="selectedvalue.type == 'ObjectToGroup'">
-                <span class="font-weight-bold">
-                  {{ $t('group.clientselect') }} {{ selectedvalue.text }}
-                </span>
-                <br><br>
-                <b-tabs>
-                  <b-tab active>
-                    <template #title>
-                      <span v-b-tooltip.hover :title="$t('group.addtogroup')">
-                        {{ $t("group.add") }}
-                      </span>
-                    </template>
-                    <b-row>
-                      <b-col>
-                        <treeselect
-                          v-model="selectedGroups"
-                          v-b-tooltip.hover
-                          class="treeselect_notstored treeselect"
-                          :multiple="true"
-                          :flat="true"
-                          always-open
-                          :default-expand-level="1"
-                          :title="$t('group.addtogroup.tooltip')"
-                          :placeholder="$t('group.addtogroup.tooltip')"
-                          :options="group"
-                          value-format="object"
-                          :normalizer="normalizerUpdateGroup"
-                        />
-                      </b-col>
-                      <b-col cols="2">
-                        <b-button class="float-right" variant="success" @click="addSelectedClientToGroups">
-                          {{ $t("group.add") }}
-                        </b-button>
-                      </b-col>
-                    </b-row>
-                  </b-tab>
-                  <b-tab>
-                    <template #title>
-                      <span v-b-tooltip.hover :title="$t('group.removefromgroup')">
-                        {{ $t("group.remove") }}
-                      </span>
-                    </template>
-                    <b-row>
-                      <b-col>
-                        <treeselect
-                          v-model="selectedGroupsRemove"
-                          v-b-tooltip.hover
-                          class="treeselect_notstored treeselect"
-                          :multiple="true"
-                          :flat="true"
-                          always-open
-                          :default-expand-level="1"
-                          :title="$t('group.removefromgroup.tooltip')"
-                          :placeholder="$t('group.removefromgroup.tooltip')"
-                          :options="group"
-                          value-format="object"
-                          :normalizer="normalizerUpdateGroup"
-                        />
-                      </b-col>
-                      <b-col cols="2">
-                        <b-button class="float-right" variant="danger" @click="removeSelectedClientFromGroups">
-                          {{ $t("group.remove") }}
-                        </b-button>
-                      </b-col>
-                    </b-row>
-                  </b-tab>
-                </b-tabs>
-              </div>
-            </b-col>
-          </b-row>
-        </DivDScrollResult>
+            </treeselect>
+          </b-col>
+          <b-col v-if="action && selectedvalue">
+            <b> {{ title + $t(' - ') }}</b><i>{{ selectedvalue.text }}</i>
+            <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
+              <b-icon :icon="icon.x" />
+            </b-button>
+            <br><br>
+            <template v-if="action == 'addClientsToGroup'">
+              <b-form-select
+                v-model="selectedClients"
+                multiple
+                :select-size="10"
+                :options="clientIds"
+              >
+                <template #first>
+                  <b-form-select-option :value="null" disabled>
+                    {{ $t('group.selectClients') }}
+                  </b-form-select-option>
+                </template>
+              </b-form-select>
+              <b-button class="float-right" variant="success" data-testid="addClientsToSelectedGroup" @click="addClientsToSelectedGroup">
+                {{ $t("group.add") }}
+              </b-button>
+            </template>
+            <template v-else-if="action == 'addSubgroup'">
+              <b-form>
+                <b-form-input v-model="subgroup.groupId" :placeholder="$t('group.subgroupname')" />
+                <b-form-input v-model="subgroup.description" :placeholder="$t('table.fields.description')" />
+                <b-form-input v-model="subgroup.notes" :placeholder="$t('table.fields.notes')" />
+                <b-button class="float-right" variant="success" data-testid="createSubGroup" @click="createSubGroup">
+                  {{ $t("button.create") }}
+                </b-button>
+              </b-form>
+            </template>
+            <template v-else-if="action == 'editGroup'">
+              <b-form>
+                <treeselect
+                  v-model="updategroupparent"
+                  v-b-tooltip.hover
+                  :placeholder="$t('group.parent')"
+                  value-format="object"
+                  :options="group"
+                  :normalizer="normalizerUpdateGroup"
+                />
+                <b-form-input v-model="updategroup.description" :placeholder="$t('table.fields.description')" />
+                <b-form-input v-model="updategroup.notes" :placeholder="$t('table.fields.notes')" />
+                <b-button class="float-right" variant="success" data-testid="updateGroup" @click="updateGroup">
+                  {{ $t("button.update") }}
+                </b-button>
+              </b-form>
+            </template>
+            <template v-else-if="action == 'deleteOnlyClients'">
+              <p> {{ $t('group.deleteOnlyClients.confirm') }}</p>
+              <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" @click="removeClientAssignments">
+                {{ $t("group.remove") }}
+              </b-button>
+            </template>
+            <template v-else-if="action == 'deletegroup'">
+              <p> {{ $t('group.deletegroup.confirm') }}</p>
+              <b-button class="float-right" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
+                {{ $t("label.delete") }}
+              </b-button>
+            </template>
+            <template v-else-if="action == 'copyClient'">
+              <treeselect
+                v-model="selectedGroups"
+                v-b-tooltip.hover
+                class="treeselect_notstored treeselect"
+                :multiple="true"
+                :flat="true"
+                :placeholder="$t('group.copyClient.selectgroup')"
+                :options="group"
+                value-format="object"
+                :normalizer="normalizerUpdateGroup"
+              />
+              <b-button variant="success" class="float-right" size="sm" :disabled="selectedGroups.length<1" @click="copyClientToGroups">
+                {{ $t('group.copy') }}
+              </b-button>
+            </template>
+            <template v-else-if="action == 'removeClient'">
+              <p>{{ $t('group.removeClient.confirm') }}</p>
+              <b-button variant="danger" class="float-right" size="sm" @click="removeClientFromGroup">
+                {{ $t('group.remove') }}
+              </b-button>
+            </template>
+          </b-col>
+        </b-row>
       </b-tab>
-      <!-- <b-tab>
-        <template #title>
-          <span> {{ $t('treeselect.prodGroups') }} </span>
-        </template>
-      </b-tab> -->
     </b-tabs>
   </div>
 </template>
@@ -227,10 +210,17 @@ export default class VGroups extends Vue {
   node: any
   $fetch: any
   $t: any
+  $mq: any
   group: Array<object> = []
   selectedvalue: any = null
   clientIds: Array<string> = []
   selectedClients: Array<string> = []
+  updategroupparent: any = null
+  selectedGroups: Array<any> = []
+  selectedGroupsRemove: any = null
+  addClientToListOfGroups: any
+  action: string = ''
+  title: string = ''
   subgroup: any = {
     parentGroupId: '',
     groupId: '',
@@ -238,34 +228,42 @@ export default class VGroups extends Vue {
     notes: ''
   }
 
-  updategroupparent: any = null
-
   updategroup: any = {
     parent: '',
     description: '',
     notes: ''
   }
 
-  selectedGroups: any = null
-  selectedGroupsRemove: any = null
-
   @selections.Getter public selectionDepots!: Array<string>
-  addClientToListOfGroups: any
 
   normalizer (node: any) {
+    if (node.children) {
+      return {
+        id: node.id,
+        label: node.text,
+        children: Object.values(node.children)
+      }
+    }
     return {
       id: node.id,
       label: node.text,
-      children: node.children ? Object.values(node.children) : (node.type === 'HostGroup' ? [] : undefined)
+      children: node.type === 'HostGroup' ? [] : undefined
     }
   }
 
   normalizerUpdateGroup (node: any) {
+    if (node.children) {
+      return {
+        id: node.id,
+        label: node.text,
+        children: Object.values(node.children)
+      }
+    }
     return {
       id: node.id,
       label: node.text,
       isDisabled: node.type === 'ObjectToGroup',
-      children: node.children ? Object.values(node.children) : (node.type === 'HostGroup' ? [] : undefined)
+      children: node.type === 'HostGroup' ? [] : undefined
     }
   }
 
@@ -283,106 +281,117 @@ export default class VGroups extends Vue {
     this.group = Object.values(result)
   }
 
-  async fetchClients () {
-    this.clientIds = await this.getClientIdList(this.selectionDepots)
+  showChild (selectedAction: string) {
+    this.action = selectedAction
+    const groupaction = 'group.' + this.action
+    this.title = this.$t(groupaction)
   }
 
-  async addClientsToSelectedGroup () {
-    await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
-      .then((response) => {
+  async removeClientFromGroup () {
+    const group = this.selectedvalue.parent
+    await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: [group] })
+      .then(async (response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
-        this.fetchGroups()
-      })
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
-  }
-
-  async createSubGroup () {
-    this.subgroup.parentGroupId = this.selectedvalue.text
-    await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
-      .then((response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
-        this.fetchGroups()
-      })
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
-  }
-
-  async updateGroup () {
-    this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
-    await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
-      .then((response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
-        this.fetchGroups()
+        await this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
+    this.action = ''
   }
 
-  async deleteGroup () {
-    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
-      .then((response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
-        this.fetchGroups()
-      })
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
-  }
-
-  async removeClientAssignments () {
-    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
-      .then((response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
-        this.fetchGroups()
-      })
-      .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
-  }
-
-  async addSelectedClientToGroups () {
+  async copyClientToGroups () {
     const groupsList = this.selectedGroups.map(function (item) {
       return item.text
     })
     const client = this.selectedvalue.text
     await this.addClientToListOfGroups(client, groupsList)
     await this.fetchGroups()
+    this.action = ''
   }
 
-  async removeSelectedClientFromGroups () {
-    const selectedGroupsArr = this.selectedGroupsRemove.map(function (item) {
-      return item.text
-    })
-    await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: selectedGroupsArr })
-      .then((response) => {
+  async fetchClients () {
+    this.clientIds = await this.getClientIdList(this.selectionDepots)
+  }
+
+  async addClientsToSelectedGroup () {
+    await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
+      .then(async (response) => {
         const ref = (this.$refs.groupAlert as any)
         ref.alert('', 'success', response)
-        this.fetchGroups()
+        await this.fetchGroups()
+      })
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+      })
+    this.action = ''
+  }
+
+  async createSubGroup () {
+    this.subgroup.parentGroupId = this.selectedvalue.text
+    await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
+      .then(async (response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+        await this.fetchGroups()
+      })
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+      })
+    this.action = ''
+  }
+
+  async updateGroup () {
+    this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
+    await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
+      .then(async (response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+        await this.fetchGroups()
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
+    this.action = ''
+  }
+
+  async deleteGroup () {
+    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
+      .then(async (response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+        await this.fetchGroups()
+      })
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+      })
+    this.action = ''
+  }
+
+  async removeClientAssignments () {
+    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
+      .then(async (response) => {
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert('', 'success', response)
+        await this.fetchGroups()
+      })
+      .catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const ref = (this.$refs.groupAlert as any)
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+      })
+    this.action = ''
   }
 }
 </script>

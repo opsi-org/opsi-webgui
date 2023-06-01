@@ -12,7 +12,7 @@
   --opsi-base-background: #ffffff;
   --opsi-base-foreground: #000000;
 
-
+  --test-hover:#f2f2f2; /* current hovering styles are very loud*/
 
   /*--general-realy-dark: #545453;  /*new*/
   --general-opsi-grey-dark: #b2b2b2;
