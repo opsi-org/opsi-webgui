@@ -68,7 +68,7 @@ export default class VHealthCheck extends Vue {
   $t:any
 
   diagnosticdata: Array<any> = []
-  onlyDiagnostics: Array<any> = []
+  onlyDiagnostics: any
   filter: string = ''
   expandAll: boolean = false
 
@@ -81,7 +81,7 @@ export default class VHealthCheck extends Vue {
       .then((response) => {
         this.diagnosticdata = response
         this.onlyDiagnostics = response
-        delete this.onlyDiagnostics.health_check
+        if (this.onlyDiagnostics.length !== 0 && this.onlyDiagnostics.health_check) { delete this.onlyDiagnostics.health_check }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
         const ref = (this.$refs.healthCheckAlert as any)
