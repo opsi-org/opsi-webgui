@@ -220,8 +220,6 @@ test:unit:
     - npm run test:unit
   allow_failure: true
   coverage: /All files\s*\|\s*([\d\.]+)/
-  except:
-    - bug/cicd-build
   artifacts:
     reports:
       coverage_report:
@@ -275,9 +273,6 @@ test:usecase:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
-  except:
-    - bug/cicd-build
-    - test/usecase
   only:
     - develop
     - tags
@@ -340,9 +335,6 @@ test:components:
   stage: test
   dependencies:
     - init:dry
-  except:
-    - bug/cicd-build
-    # - tags # cause in tags we test all browsers
   only:
     - develop # cause in develop we test all files, but only chromium browser
     - tags
@@ -375,8 +367,6 @@ test:components:
 #   stage: test
 #   dependencies:
 #     - init:dry
-#   except:
-#     - bug/cicd-build
 #   only:
 #     - tags # cause in tags we test each file and browser
 #   script:
@@ -430,8 +420,6 @@ test:backend-pytest:
     - echo "##########################################"
     - *pytest
   allow_failure: true ##### TODO remove again
-  except:
-    - bug/cicd-build
 
 #########################################################################
 ######################################################################### build
@@ -453,7 +441,6 @@ build:static:app:
   only:
     - develop
     - tags
-    - bug/cicd-build
 
 build:addon:
   stage: build
@@ -476,7 +463,6 @@ build:addon:
   only:
     - tags
     - develop
-    - bug/cicd-build
   artifacts:
     name: "opsi-webgui"
     paths:
@@ -486,6 +472,15 @@ build:addon:
 #########################################################################
 ######################################################################### publish
 #########################################################################
+publish:obs_int:
+  stage: publish
+  dependencies:
+    - build:static:app
+  script:
+    - *install_tools
+    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
+  only:
+    - tags
 
 publish:obs_ext:
   stage: publish
@@ -496,7 +491,6 @@ publish:obs_ext:
     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
   only:
     - tags
-    - bug/cicd-build
   # Copy to experimental
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
@@ -541,7 +535,6 @@ publish:binary-index:
 #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
 #  only:
 #    - tags
-#    - bug/cicd-build
 
 # publish:obs_ext:
 #   stage: publish
