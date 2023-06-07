@@ -8,7 +8,7 @@
       </template>
     </BarBPageHeader>
     <b-tabs>
-      <b-tab class="VGroups">
+      <b-tab>
         <template #title>
           <span> {{ $t("treeselect.clientGroups") }} </span>
         </template>
@@ -398,6 +398,6 @@ export default class VGroups extends Vue {
 <style>
 .VGroups {
   width: 98% ;
-  height: 100vh;
+  height: 90vh;
 }
 </style>
