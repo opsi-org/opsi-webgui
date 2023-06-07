@@ -237,7 +237,7 @@ export default class VClientCreation extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   addClientToListOfGroups: any
 
-  @Watch('depotId', { deep: true }) depotIdChanged () { this.fetchNetbootProducts() }
+  @Watch('depotId', { deep: true }) async depotIdChanged () { await this.fetchNetbootProducts() }
 
   get domainName () {
     if (this.opsiconfigserver) {
@@ -316,19 +316,19 @@ export default class VClientCreation extends Vue {
       client: this.newClient, depot: this.depotId
     }
     await this.$axios.$post('/api/opsidata/clients', request)
-      .then(() => {
+      .then(async () => {
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         if (this.uefi) {
           this.setUEFI(this.newClient.hostId)
         }
         if (this.group) {
-          this.assignToGroup()
+          await this.assignToGroup()
         }
         if (this.clientagent) {
-          this.deployclientagent()
+          await this.deployclientagent()
         }
         if (this.netbootproduct) {
-          this.setupNetbootProduct()
+          await this.setupNetbootProduct()
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')

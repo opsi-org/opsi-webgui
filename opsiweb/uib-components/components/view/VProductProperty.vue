@@ -94,7 +94,17 @@ export default class VProductProperty extends Vue {
   get tabDependenciesDisabled () { return this.fetchedData.dependencies.dependencies.length <= 0 }
   get tabPropertiesActive () { return !this.tabPropertiesDisabled || this.tabDependenciesDisabled }
   get tabDependenciesActive () { return this.tabPropertiesDisabled && !this.tabDependenciesDisabled }
-  get activeTab () { return (this.activeTabSet >= 0) ? this.activeTabSet : (this.tabPropertiesActive) ? 0 : (this.tabDependenciesActive) ? 1 : 0 }
+  get activeTab () {
+    if (this.activeTabSet >= 0) {
+      return this.activeTabSet
+    }
+    if (this.tabPropertiesActive) {
+      return 0
+    } else {
+      return 1
+    }
+  }
+
   set activeTab (val:number) { this.activeTabSet = val }
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>

@@ -1,15 +1,6 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <AlertAAlert ref="logErrorAlert">
-      <!-- <b-button
-        v-if="!isLoading"
-        variant="outline-dark"
-        class="float-right"
-        @click="$fetch"
-      >
-        {{ $t('button.tryAgain') }}
-      </b-button> -->
-    </AlertAAlert>
+    <AlertAAlert ref="logErrorAlert" />
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
@@ -29,9 +20,7 @@
     </BarBPageHeader>
     <OverlayOLoading :is-loading="isLoading" />
     <p v-if="errorText" />
-    <div class="log-row-text">
-
-    </div>
+    <div class="log-row-text" />
     <DivDScrollResult v-if="logResult">
       <div v-if="filteredLog.includes('')">
         {{ $t('empty') }}
@@ -104,24 +93,24 @@ export default class VClientLog extends Vue {
     this.XsetSelectionLogLevel(this.loglevel)
   }
 
-  @Watch('logtype', { deep: true }) logtypeChanged () {
+  @Watch('logtype', { deep: true }) async logtypeChanged () {
     this.XsetSelectionLogType(this.logtype)
-    if (this.XselectionLogType && this.id) { this.getLog(this.id, this.logtype) }
+    if (this.XselectionLogType && this.id) { await this.getLog(this.id, this.logtype) }
   }
 
-  @Watch('id', { deep: true }) idChanged () {
+  @Watch('id', { deep: true }) async idChanged () {
     // this.setSelectionLogClient(this.id)
-    if (this.XselectionLogType && this.id) { this.getLog(this.id, this.logtype) }
+    if (this.XselectionLogType && this.id) { await this.getLog(this.id, this.logtype) }
   }
 
-  beforeMount () {
+  async beforeMount () {
     // eslint-disable-next-line brace-style
     if (this.id) { this.XsetSelectionLogClient(this.id) }
     else if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
 
     this.loglevel = this.XselectionLogLevel
     this.logtype = this.XselectionLogType
-    if (this.XselectionLogType && this.id) { this.getLog(this.id, this.logtype) }
+    if (this.XselectionLogType && this.id) { await this.getLog(this.id, this.logtype) }
     if (this.testdata) { this.logResult = this.testdata }
   }
 
@@ -142,7 +131,7 @@ export default class VClientLog extends Vue {
   isLoglevelSmaller (logrow:string, loglevel:number) {
     // match charakters in beginning with [<=loglevel] or not [0-9]
     const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
-    const result = logrow.match(rxSelf2)
+    const result = RegExp(rxSelf2).exec(logrow)
     return !!result
   }
 

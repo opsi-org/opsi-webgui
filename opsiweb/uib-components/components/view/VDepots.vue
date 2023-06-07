@@ -3,7 +3,6 @@
     <AlertAAlert ref="depotsViewAlert" />
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
-        <!-- v-if="$mq == 'mobile'" -->
         <LazyBarBPageHeader
           v-if="tableloaded"
           :title="$t('title.depots') + ' (' + totalItems + ')'"
@@ -52,9 +51,6 @@
               :refetch="_fetch"
             />
           </template>
-          <!-- <template #head(depotId)>
-            <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
-          </template> -->
           <template #cell(depotId)="row">
             <b v-if="row.item.depotId==opsiconfigserver">
               {{ row.item.depotId }}
@@ -107,25 +103,13 @@ export default class VDepots extends Vue {
 
   id: string = 'Depots'
   rowId: string = ''
-  isLoading: Boolean = false
+  isLoading: boolean = false
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
   tableloaded: boolean = false
   fetchedDataClients2Depots: IObjectString2String = {}
-
-  cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
-  cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
-
-  tableData: ITableData = {
-    pageNumber: 1,
-    perPage: 15,
-    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'depotId',
-    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
-    filterQuery: ''
-  }
-
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
@@ -152,6 +136,17 @@ export default class VDepots extends Vue {
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
       class: 'col-rowactions'
     }
+  }
+
+  cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
+  cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
+
+  tableData: ITableData = {
+    pageNumber: 1,
+    perPage: 15,
+    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'depotId',
+    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
+    filterQuery: ''
   }
 
   tableInfo: ITableInfo = { sortBy: this.tableData.sortBy || 'depotId', sortDesc: this.tableData.sortDesc || false, headerData: this.headerData, filterQuery: this.tableData.filterQuery }
@@ -198,7 +193,7 @@ export default class VDepots extends Vue {
   async fetch () {
     const items = await this._fetch()
 
-    await Vue.nextTick(() => {
+    Vue.nextTick(() => {
       if (!this.cache_pages.scrollDirection || this.cache_pages.scrollDirection === 'none') {
         this.cache_pages.set(this.tableData.pageNumber, items) // clear cache and set new page
       } else {

@@ -86,16 +86,6 @@
               :incontextmenu="true"
               :click="routeRedirectWith"
             />
-            <!-- <ButtonBTNRowLinkTo
-              :title="$t('title.cloneclient')"
-              :label="$t('title.cloneclient')"
-              :icon="icon.client"
-              to="/clients/clone"
-              :ident="itemkey"
-              :pressed="isRouteActive"
-              :incontextmenu="true"
-              :click="routeRedirectWith"
-            /> -->
           </template>
           <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
@@ -108,9 +98,6 @@
               :refetch="_fetch"
             />
           </template>
-          <!-- <template #head(clientId)>
-            <InputIFilter :data="tableData" :additional-title="$t('table.fields.id')" />
-          </template> -->
           <template #head(version_outdated)>
             <div :title="$t('table.fields.versionOutdated')">
               <b-icon :icon="icon.product" />
@@ -191,15 +178,6 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
-            <!-- <ButtonBTNRowLinkTo
-              :title="$t('title.cloneclient')"
-              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.cloneclient') : '')"
-              :icon="icon.client"
-              to="/clients/clone"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            /> -->
             <DropdownDDClientActions :client-id="row.item.clientId" :fetch="$fetch" />
           </template>
           <template
@@ -250,24 +228,12 @@ export default class VClients extends Vue {
   sortProductsByClient: string = ''
   rowId: string = ''
   isLoading: boolean = false
-  // isLoadingEventReboot: Boolean = false
   items: Array<any> = []
   totalItems: number = 0
   totalpages: number = 0
   error: string = ''
   tableloaded: boolean = false
   showTreeView: boolean = false
-
-  deleteClient: DeleteClient = { clientid: '' }
-  tableData: ITableData = {
-    pageNumber: 1,
-    perPage: 15,
-    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'clientId',
-    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
-    filterQuery: '',
-    selected: ''
-  }
-
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
@@ -328,6 +294,16 @@ export default class VClients extends Vue {
     }
   }
 
+  deleteClient: DeleteClient = { clientid: '' }
+  tableData: ITableData = {
+    pageNumber: 1,
+    perPage: 15,
+    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'clientId',
+    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
+    filterQuery: '',
+    selected: ''
+  }
+
   tableInfo: ITableInfo = {
     sortBy: this.tableData.sortBy || 'clientId',
     sortDesc: this.tableData.sortDesc || false,
@@ -351,17 +327,18 @@ export default class VClients extends Vue {
       await this.$fetch()
     }
     if (msg && msg.event === ('host_connected' || 'host_disconnected')) {
-      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      // const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
       // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
-      console.log('message bud host_connected', msg)
+      // eslint-disable-next-line no-console
+      console.log('message bus host_connected', msg)
       // this.cache_pages.
       // await this.$fetch()
     }
   }
 
-  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
+  @Watch('selectionDepots', { deep: true }) async selectionDepotsChanged () {
     this.setSelectionClients([])
-    this.fetchPageOne()
+    await this.fetchPageOne()
   }
 
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
@@ -421,7 +398,6 @@ export default class VClients extends Vue {
         } else {
           return response.data
         }
-        // this.items = this.items.concat(response.data)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.clientsViewAlert as any)
@@ -475,7 +451,7 @@ export default class VClients extends Vue {
 .tableheader_products:hover {
   background-color: var(--bg-btn-hover) !important;
 }
-.tableheader_products:fokus {
+.tableheader_products:focus {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
 }

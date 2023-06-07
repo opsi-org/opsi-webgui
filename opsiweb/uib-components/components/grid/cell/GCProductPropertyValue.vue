@@ -15,7 +15,6 @@
         @change="handleBoolChange"
       >
         <span style="font-size: 25px;"> {{ isOrigin? '': $t('notOrigin') }} </span>
-        <!-- TODO -->
       </b-form-checkbox>
       <TreeTSDefault
         v-else
@@ -63,16 +62,13 @@ const settings = namespace('settings')
 const selections = namespace('selections')
 const changes = namespace('changes')
 const config = namespace('config-app')
-// const mixed = '<mixed>'
 
 @Component({ mixins: [Icons] })
 export default class GCProductPropertyValue extends Vue {
   $t:any
   icon:any
-  // @Prop() type!: 'unicode'|'bool'|'functional'
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String
-  // @Prop({ default: () => { return [] } }) valuesNew!: Array<string>
 
   @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionClients!: Array<string>
@@ -85,7 +81,6 @@ export default class GCProductPropertyValue extends Vue {
   changedValue: Array<string>|undefined
   selectedValues!: Array<string|boolean>
   tooltipChanges!: object
-  // selectedValuesOriginal!: Array<string|boolean>
   isOrigin: boolean = true
   visibleValueBool!: boolean
   visibleValueBoolIndeterminate!: boolean
@@ -110,17 +105,9 @@ export default class GCProductPropertyValue extends Vue {
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
 
-  @Watch('selectedValues', { deep: true }) async selectedValuesChanged () {
-    // console.log('-------------ProductPropertyValue changeValue ', this.selectedValues)
-    // if (!arrayEqual(this.selectedValues, this.selectedValuesOriginal)) {
-    //   this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
-    // }
-    await this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
+  @Watch('selectedValues', { deep: true }) selectedValuesChanged () {
+    this.$emit('change', this.rowItem.propertyId, this.selectedValues, this.selectedValuesOriginal)
     if (this.quicksave) { this.initSelection() }
-    // this.isOrigin = arrayEqual(this.selectedValues, this.selectedValuesOriginal)
-    // console.log('-------------ProductPropertyValue selectedValues ', this.selectedValues)
-    // console.log('-------------ProductPropertyValue selectedValuesOrigin ', this.selectedValuesOriginal)
-    // console.log('-------------ProductPropertyValue isOrigin ', this.isOrigin)
   }
 
   @Watch('rowItem.clients', { deep: true }) rowItemClientsChanged () { this.selectedValues = JSON.parse(JSON.stringify(this.selectedValuesOriginal)) }
@@ -131,7 +118,7 @@ export default class GCProductPropertyValue extends Vue {
     if (this.rowItem.multiValue) {
       this.selectedValues = this.uniques([...this.selectedValues, ...this.rowItem.newValues || []])
     } else {
-      this.selectedValues = [this.rowItem.newValue || '']
+      this.selectedValues = [this.rowItem.newValue ?? '']
     }
     this.selectedValuesChanged()
   }
@@ -141,15 +128,11 @@ export default class GCProductPropertyValue extends Vue {
   }
 
   get allOptionsUnique () {
-    const options = this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues || []])
+    const options = this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues ?? []])
     if (this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)) {
       options.push(this.$t('values.mixed') as string)
     }
     return options.filter(val => val !== null && val !== undefined)
-    // if (options.includes(null) && options.includes('')) {
-    //   options.splice(options.indexOf(''), 1)
-    // }
-    // return options
   }
 
   get selectedValuesOriginal () {
@@ -183,17 +166,13 @@ export default class GCProductPropertyValue extends Vue {
     if (this.rowItem.type === 'BoolProductProperty') {
       return this.visibleValueBoolIndeterminate
     }
-    // if (this.rowItem.type === 'UnicodeProductProperty') {
     return this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)
-    // }
-    // return true
   }
 
   uniques (arr:Array<any>) { return [...new Set(arr)] }
 
   handleBoolChange () {
     this.selectedValues = JSON.parse(JSON.stringify([!this.selectedValues[0]]))
-    // this.selectedValues = [!this.selectedValues[0]]
     this.selectedValuesChanged()
   }
 
@@ -229,7 +208,6 @@ export default class GCProductPropertyValue extends Vue {
       changesList.forEach((e) => {
         if (arrayEqual(e.propertyValue, originalValue)) { return } // everything ok
 
-        // value != originalValue
         if (selectionHosts.length > 1) { // at least one host has different value
           changes[e[key]] = e.propertyValue
         }
@@ -271,14 +249,9 @@ export default class GCProductPropertyValue extends Vue {
       return newValue
     }
     this.isOrigin = true
-    if (this.selectedValues && Object.values(this.selectedValues).length >= 0) {
+    if (this.selectedValues && Object.values(this.selectedValues).length > 0) {
       this.isOrigin = arrayEqual(Object.values(this.selectedValues || {}), originalValue)
     }
-    // console.log('update selectionValues with changes - return original', originalValue)
-    // console.log('----- selectedValues', Object.values(this.selectedValues || {}))
-    // console.log('----- originalValue', originalValue)
-    // console.log('----- newValue', newValue)
-    // console.log('----- selectedValuesOriginal', this.selectedValuesOriginal)
     return originalValue
   }
 }
@@ -288,19 +261,4 @@ export default class GCProductPropertyValue extends Vue {
 .GCProductPropertyValue_ValueBool {
   display:inline-block !important;
 }
-/* .dropdown {
-  max-width: -moz-available;
-  max-width: -moz-available;          For Mozzila
-  max-width: -webkit-fill-available;  For Chrome
-}
-.GCProductPropertyValue_Value .dropdown > .dropdown-menu,
-.GCProductPropertyValue_Value .dropdown > .dropdown-menu .dropdown-item {
-  max-width: 100%;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-.GCProductPropertyValue_Value .dropdown button {
-  text-overflow: ellipsis;
-  overflow: hidden;
-} */
 </style>

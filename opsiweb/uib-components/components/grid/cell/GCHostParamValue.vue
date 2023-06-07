@@ -34,8 +34,8 @@ const config = namespace('config-app')
 @Component
 export default class GCHostParamVal extends Vue {
   @Prop() row!: any
-  @Prop() type!: String
-  @Prop() configtype!: String
+  @Prop() type!: string
+  @Prop() configtype!: string
   hide: boolean = true
   options: Array<object> = []
   localval:any
@@ -76,9 +76,9 @@ export default class GCHostParamVal extends Vue {
     }
   }
 
-  async selectValue () {
+  selectValue () {
     const change = { configId: this.row.configId, value: this.localval }
-    await this.$emit('change', change)
+    this.$emit('change', change)
   }
 }
 </script>

@@ -97,7 +97,7 @@ export default class DDProductRequest extends BDropdown {
       return {}
     }
     if (this.rowitem.actionRequestDetails || this.selectionClients.length > 1) {
-      return mapValues2Objects(this.rowitem.actionRequestDetails || [this.rowitem.actionRequest], this.rowitem.selectedClients as Array<string>, this.selectionClients, 'none')
+      return mapValues2Objects(this.rowitem.actionRequestDetails ?? [this.rowitem.actionRequest], this.rowitem.selectedClients, this.selectionClients, 'none')
     }
     return {}
   }
@@ -105,7 +105,6 @@ export default class DDProductRequest extends BDropdown {
 </script>
 
 <style>
-
 .widthmax {
   width: 100%;
 }

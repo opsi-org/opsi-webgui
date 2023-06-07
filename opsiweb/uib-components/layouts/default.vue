@@ -48,6 +48,7 @@ interface SideBarAttr {
 
 @Component({ mixins: [MBus, Configserver, Icons] })
 export default class LayoutDefault extends Vue {
+  icon:any
   $t: any
   $mq: any
   $axios: any
@@ -81,7 +82,6 @@ export default class LayoutDefault extends Vue {
     await this.checkServer()
     await this.checkConfig()
     if (this.wsBus === undefined) {
-      console.debug('MessageBus WS: connect from default.vue')
       this.wsInit()
     }
     if (this.$mq === 'mobile') {
@@ -128,7 +128,7 @@ export default class LayoutDefault extends Vue {
       }
       // this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
     } catch (error: any) {
-      const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+      const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.alertConfigurationError as any)
       ref.alert(this.$t('message.error.fetch') as string + 'User Configuration', 'danger', detailedError || '')
       this.setConfig({ read_only: true, client_creation: true })
@@ -140,17 +140,13 @@ export default class LayoutDefault extends Vue {
 <style>
 .topbar_content {
   z-index: 1000;
+  width: 100% !important;
+  max-height: 100px;
 }
-
 .topbar_content,
 .sidebar_content ,
 .footer_content {
   color: var(--light) !important;
-}
-
-.topbar_content {
-  width: 100% !important;
-  max-height: 100px;
 }
 .main_content{
   position:absolute;
@@ -164,7 +160,6 @@ export default class LayoutDefault extends Vue {
 .main_content > .container-fluid{
   min-height: 350px;
 }
-
 :not(.mobile).sidebar_collapsed .main_content{
   margin-left: calc(var(--margin-left-maincontent-if-sidebar-collpased));
   width: calc(100% - var(--margin-left-maincontent-if-sidebar-collpased) - var(--margin-left-maincontent));

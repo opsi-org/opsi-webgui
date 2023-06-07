@@ -67,8 +67,8 @@ export default class TSHostGroups extends Vue {
   }
 
   async asyncForEach (array, callback) {
-    for (let index = 0; index < array.length; index++) {
-      await callback(array[index])
+    for (const element of array) {
+      await callback(element)
     }
   }
 
@@ -108,7 +108,6 @@ export default class TSHostGroups extends Vue {
   }
 
   async loadChilds (node) {
-    // if (node.hasAnySelection === true && !['groups', 'clientdirectory', 'clientlist'].includes(node.text)) {
     if (node.hasAnySelection === true) {
       const c = await this.fetchChildren(node)
       if (c) { node.children = c }

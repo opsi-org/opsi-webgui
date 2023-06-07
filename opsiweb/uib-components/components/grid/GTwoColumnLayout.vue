@@ -17,21 +17,6 @@
       </small>
     </b-button>
     <b-row data-testid="GTwoColumnLayout" class="GTwoColumnLayout">
-      <!-- <b-button
-      v-if="$mq !== 'mobile' && $route.path.includes('clients/products/config') && parentId === 'tableclients'"
-      class="clients_button"
-      variant="outline-primary"
-      :pressed.sync="expandClients"
-    >
-      <small>
-        <b v-if="expandClients">
-          {{ $t('label.layout.hide-clients') }}
-        </b>
-        <b v-else>
-          {{ $t('label.layout.show-clients') }}
-        </b>
-      </small>
-    </b-button> -->
       <b-col
         id="parentcol"
         :cols="$route.path.includes('clients/products/config') && parentId === 'tableclients' && expandClients? 4: null"

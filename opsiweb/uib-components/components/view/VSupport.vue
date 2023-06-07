@@ -1,9 +1,6 @@
 <template>
   <div data-testid="VSupport" class="support">
     <b-row>
-      <!-- <b-col>
-        <CardCWhatsNew :support-page="true" />
-      </b-col> -->
       <b-col v-for="item in supportItems" :key="item.title">
         <CardCSupport v-once :item="item" />
       </b-col>
@@ -19,7 +16,9 @@
       frameborder="0"
       allowfullscreen
     />
-    <div v-else>{{$t('supportPage.support.opsi-doc-disabled')}}</div>
+    <div v-else>
+      {{ $t('supportPage.support.opsi-doc-disabled') }}
+    </div>
   </div>
 </template>
 

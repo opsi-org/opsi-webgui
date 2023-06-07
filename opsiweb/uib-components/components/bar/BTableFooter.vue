@@ -30,7 +30,6 @@ import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 export default class BarBTableFooter extends Vue {
   $mq: any
   @Prop({ default: () => { return () => { /* default */ } } }) pagination!: any
-  // @Watch('pagination.tableData.pageNumber') pageChanged () { this.colorizePageNumbers() }
   @Watch('pagination.cache_pages.first_page_number') firstPageChanged () { this.colorizePageNumbers() }
   @Watch('pagination.cache_pages.last_page_number') lastPageChanged () { this.colorizePageNumbers() }
 
@@ -51,12 +50,6 @@ export default class BarBTableFooter extends Vue {
 </script>
 
 <style>
-/* .BTableFooter .paginationCurrent {
-  background-color: var(--primary) !important;
-  border: 1px solid var(--primary) !important;
-  color: var(--light) !important;
-} */
-
 .BTableFooter .navbar {
   bottom: 0px;
   right: 0;

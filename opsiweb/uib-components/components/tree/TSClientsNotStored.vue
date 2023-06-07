@@ -32,8 +32,7 @@ export default class TSClientsNotStored extends Vue {
     const result = await this.getClientIdList(this.selectionDepots)
     for (const c in result) {
       const client = result[c]
-      clients[c] = { id: client, label: client }
-      // clients.push({ id: client, label: client })
+      clients.push({ id: client, label: client })
     }
     this.clientIds = clients
     if (this.selectionClients.length !== 0) {
