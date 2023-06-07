@@ -19,7 +19,7 @@
           </template>
           <template #right>
             <div>
-              <b-button class="downloadButton border-0" variant="outline-primary" @click="downloadHealthData">
+              <b-button class="downloadButton" size="sm" variant="outline-primary" @click="downloadHealthData">
                 <b-icon :icon="icon.download" /> {{ $t('Download') }}
               </b-button>
             </div>
