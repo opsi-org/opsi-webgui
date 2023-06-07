@@ -90,7 +90,7 @@ export default class VHealthCheck extends Vue {
   }
 
   downloadHealthData () {
-    const text = JSON.stringify(this.diagnosticdata)
+    const text = JSON.stringify(this.diagnosticdata, null, 2)
     const filename = 'server_diagnostics.json'
     const element = document.createElement('a')
     element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text))
