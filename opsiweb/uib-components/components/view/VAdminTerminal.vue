@@ -1,7 +1,5 @@
 <template>
   <div data-testid="VAdminTerminal" class="VAdminTerminal">
-    <!-- {{ uid }} -->
-    <!-- <b-button :pressed.sync="dark" variant="primary">{{!dark? 'LightMode':'DarkMode'}}</b-button> -->
     <GridGFormItem>
       <template #label>
         <span class="terminalId">{{ $t('table.fields.terminalId') }}</span>
@@ -43,20 +41,6 @@
     <div ref="terminalcontainer" class="terminalContainer">
       <div id="terminal" ref="terminal" />
     </div>
-
-    <!-- <div class="box">
-      <div id="xterm"></div>
-    </div> -->
-    <!-- :class="dark?'dark':'light'" -->
-    <!-- v-html="html" -->
-
-    <!-- <Terminal
-      ref="terminal"
-      prompt=""
-      welcome-message=""
-      class="console"
-      :class="dark?'dark':'light'"
-    /> -->
   </div>
 </template>
 
@@ -73,8 +57,6 @@ import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 // SearchAddon, FitAddon, WebLinksAddon
 
-// import Terminal from 'primevue/terminal'
-// import TerminalService from 'primevue/terminalservice'
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
 const cache = namespace('data-cache')
@@ -102,7 +84,7 @@ export default class VAdminTerminal extends Vue {
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChangedTerminal () {
     const msg = this.wsBusMsg
-    if (msg && msg.type && !msg.type.startsWith('terminal_')) { return }
+    if (msg?.type && !msg.type.startsWith('terminal_')) { return }
 
     if (msg.type === 'terminal_open_event' || msg.type === 'terminal_resize_event') {
       if (msg.type === 'terminal_open_event') {
@@ -110,14 +92,6 @@ export default class VAdminTerminal extends Vue {
         this.mbTerminal.terminalChannel = this.terminalChannel
       }
       if (this.mbTerminal.cols !== msg.cols || this.mbTerminal.rows !== msg.rows) {
-        // this.mbTerminal.skipResizeEvent = true
-        // const dims = this.mbTerminal._core._renderService.dimensions
-        // const width = dims.actualCellWidth * msg.cols + 20
-        // const height = dims.actualCellHeight * msg.rows + 9
-        // // const terminalContainer = document.getElementById('terminal')
-        // const terminal = this.$refs.terminal as any
-        // terminal.style.width = width + 'px'
-        // terminal.style.height = height + 'px'
         this.mbTerminal.fitAddon.fit()
       }
     } else if (msg.type === 'terminal_data_read') {
@@ -129,7 +103,6 @@ export default class VAdminTerminal extends Vue {
 
   created () {
     if (this.wsBus === undefined) {
-      console.debug('MessageBus WS: connect from VAdminTerminal.vue')
       this.wsInit()
     }
   }

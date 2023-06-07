@@ -16,7 +16,7 @@ import { ITheme, ISidebarAttributes } from '../.utils/types/tsettings'
 const settings = namespace('settings')
 @Component({ layout: 'default' })
 export default class LError extends Vue {
-  @Prop({ }) error!: object
+  @Prop({ }) error!: any
 
   sidebarAttr: ISidebarAttributes = { visible: true, expanded: true }
 

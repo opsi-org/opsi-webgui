@@ -134,6 +134,11 @@
   --bs-table-active-bg: var(--bg-table-hover);
   --bs-table-active-color: var(--idk);
   --bs-table-bg: var(--general-bg);
+  color: unset !important;
+}
+
+.table > :not(caption) > * > * {
+  border-bottom-width: 0px;
 }
 
 .table-primary {
@@ -185,10 +190,6 @@ body .mobile .topbar_content .navbar > * {
   height: 90% !important;
 }
 
-.tooltip {
-  font-family: inherit !important;
-}
-
 [class$="bg-orange"] { background-color: var(--orange) !important;}
 [class$="bg-yellow"] { background-color: var(--yellow) !important;}
 [class$="bg-red"] { background-color: var(--red) !important;}
@@ -204,12 +205,6 @@ body .mobile .topbar_content .navbar > * {
 [class$="fg-grey"] { color: var(--gray) !important;}
 .btn, .dropdown-item{
   min-height: var(--min-height-button) !important;
-}
-.table{
-  color: unset !important;
-}
-.table > :not(caption) > * > * {
-  border-bottom-width: 0px;
 }
 .value-changed-not-saved {
   color: var(--orange) !important;
@@ -557,13 +552,14 @@ border-color: var(--bg-table-border); */
   background-color: var(--bs-tooltip-bg) !important;
   color: var(--bs-tooltip-color) !important;
 }
-tooltip {
+.tooltip {
   --bs-tooltip-color: var(--fg-tooltip_inner) !important;
   --bs-tooltip-bg: var(--bg-tooltip_inner) !important;
   background-color: var(--bs-tooltip-bg) !important;
   color: var(--bs-tooltip-color) !important;
   border: 1px solid var(--b-bs_tooltip) !important;
   padding: 10px;
+  font-family: inherit !important;
 }
 .tooltip>.tooltip-inner {
   --bs-tooltip-color: var(--fg-tooltip_inner) !important;

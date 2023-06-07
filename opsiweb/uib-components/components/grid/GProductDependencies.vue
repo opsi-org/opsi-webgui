@@ -23,20 +23,25 @@ import { IDepend, IProductDependency } from '../../.utils/types/ttable'
 
 @Component
 export default class GProductProperties extends Vue {
+  $t: any
   @Prop({ }) id!: string
   @Prop({ }) dependencies!: IDepend
 
-  types2text: IObjectString2String = {
-    'null-setup': this.$t('table.fields.required') as string,
-    'after-setup': this.$t('table.fields.post-required') as string,
-    'before-setup': this.$t('table.fields.pre-required') as string,
-    'before-uninstall': this.$t('table.fields.on-deinstall') as string + '(not possible)'
+  types2text: IObjectString2String = {}
+
+  mounted () {
+    this.types2text = {
+      'null-setup': this.$t('table.fields.required') as string,
+      'after-setup': this.$t('table.fields.post-required') as string,
+      'before-setup': this.$t('table.fields.pre-required') as string,
+      'before-uninstall': this.$t('table.fields.on-deinstall') as string + '(not possible)'
+    }
   }
 
   getValue (rowItem: IProductDependency) {
     const isAction = (rowItem.requiredAction) ? ':' : ''
     const isStatus = (rowItem.requiredInstallationStatus) ? ':' : ''
-    const value = rowItem.requiredAction || rowItem.requiredInstallationStatus
+    const value = rowItem.requiredAction ?? rowItem.requiredInstallationStatus
     return isAction + value + isStatus
   }
 

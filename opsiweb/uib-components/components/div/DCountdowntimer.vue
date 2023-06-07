@@ -24,7 +24,7 @@ export default class BCountdowntimer extends Vue {
   countdowntimer: string = ''
   first_notification_showed: boolean = false
   @auth.Getter public sessionEndTime!: string
-  @auth.Getter public isAuthenticated!: Boolean
+  @auth.Getter public isAuthenticated!: boolean
   @auth.Mutation public setSession!: () => void
   @auth.Mutation public clearSession!: () => void
   @auth.Mutation public logout!: () => void
@@ -38,8 +38,6 @@ export default class BCountdowntimer extends Vue {
 
   mounted () {
     this.first_notification_showed = false
-    // ref is different in development and production: children[1] is correct for production children[2] for development
-    // this.initRefVar()
     this.refAlert = (this.$root.$children[1].$refs.expiringAlert as any) || (this.$root.$children[2].$refs.expiringAlert as any)
 
     this.notifyInMilliSec = ((this.isAuthenticated) ? 5 : -1) * 60000
@@ -84,26 +82,8 @@ export default class BCountdowntimer extends Vue {
     }
   }
 
-  // initRefVar () {
-  //   if (this.$root && this.$root.$children && this.$root.$children[1] && this.$root.$children[1].$refs) {
-  //     this.refAlert = this.$root.$children[1].$refs.expiringAlert as any
-  //   } else if (this.$root && this.$root.$children && this.$root.$children[2] && this.$root.$children[2].$refs) {
-  //     this.refAlert = this.$root.$children[2].$refs.expiringAlert as any
-  //   }
-  // }
-
   initRef (time: any) {
     this.refAlert.alert(this.$t('message.session.expiresInMinutesDetails', time), 'warning')
-
-    // if (this.refAlert === undefined) {
-    //   this.initRefVar()
-    // }
-    // if (this.refAlert !== undefined) {
-    //   this.refAlert.alert(this.$t('message.session.expiresInMinutesDetails', time) as string, 'warning')
-    // } else {
-    //   // eslint-disable-next-line no-console
-    //   console.error(this.$t('message.session.expiresInMinutesDetails', time))
-    // }
   }
 
   getText (t) {

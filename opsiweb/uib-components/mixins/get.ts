@@ -12,7 +12,7 @@ const cache = namespace('data-cache')
       }).catch((error) => {
         const errorMsg = this.$t('message.error.opsiconfd') as string
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        alertRef.alert(errorMsg, 'danger', detailedError as string)
+        alertRef.alert(errorMsg, 'danger', detailedError)
       })
   }
 }

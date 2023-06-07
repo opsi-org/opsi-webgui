@@ -1,4 +1,4 @@
-// es l i nt-disable-next-line import/no-named-as-default
+// eslint-disable-next-line import/no-named-as-default
 import VuexPersistence from 'vuex-persist'
 
 export default ({ store }) => {

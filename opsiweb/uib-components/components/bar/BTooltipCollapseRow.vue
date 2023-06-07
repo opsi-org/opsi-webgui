@@ -4,8 +4,7 @@
       v-b-toggle="`collapse-navitem-${title}`"
       data-testid="BarBTooltipCollapseRow"
       class="collapse-navitem BarBTooltipCollapseRow"
-      >
-      <!-- light -->
+    >
       <b-th class="text-left">
         <span v-if="collapseable">
           <b-icon v-if="collapsed" :icon="icon.arrowDoubleDown" />

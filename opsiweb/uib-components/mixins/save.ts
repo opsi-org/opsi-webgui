@@ -32,12 +32,12 @@ const errors = namespace('errors')
   async saveProdActionRequest (change : object, deleteitem:any, showalert:boolean) {
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post('/api/opsidata/clients/products', change)
-      .then(() => {
+      .then(async () => {
         if (deleteitem) {
           this.delFromChangesProducts(deleteitem)
         } else {
           ref.alert(this.$t('message.success.save.prodActionRequest'), 'success')
-          this.$nuxt.refresh()
+          await this.$nuxt.refresh()
         }
       }).catch((error) => {
         if (showalert) {

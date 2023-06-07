@@ -35,28 +35,11 @@ export default class TSProductGroups extends Vue {
   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
   groups: Array<any>|undefined = undefined
-  // prodgroup: Object = {
-  //   groups:
-  //   {
-  //     id: 'testsub',
-  //     type: 'ProductGroup',
-  //     text: 'testsub',
-  //     parent: null,
-  //     allowed: true,
-  //     hasAnySelection: true,
-  //     children: {
-  //       testsub1: { id: 'testsub1;testsub', type: 'ProductGroup', text: 'testsub1', parent: 'testsub', allowed: true, children: null },
-  //       'activate-win': { id: 'activate-win;testsub', type: 'ObjectToGroup', text: 'activate-win', parent: 'testsub', allowed: true }
-  //     }
-  //   }
-  // }
 
   async fetchData () {
-    // return Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectionProducts=${this.selectionProducts}`)).groups)
     if (this.groups === undefined) { // dont refetch
       this.groups = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
     }
-    // this.groups = Object.values(this.prodgroup)
     return this.groups
   }
 

@@ -35,8 +35,7 @@ export default class TSDepotsNotStored extends Vue {
     result.sort()
     for (const d in result) {
       const depot = result[d]
-      depots[d] = { id: depot, label: depot }
-      // depots.push({ id: depot, label: depot })
+      depots.push({ id: depot, label: depot })
     }
     this.depotIds = depots
     if (this.selectionDepots.length !== 0) {

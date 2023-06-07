@@ -9,9 +9,7 @@
       tabindex="0"
       :title="withText ? '' : $t('title.selectedElements')"
       @click="show = !show"
-      >
-      <!-- class="border-0 global_topbar_button"
-      :class="{ 'pl-3': $mq=='mobile' }" -->
+    >
       <b-icon :icon="icon.info" /> <span v-if="withText"> {{ $t('title.selectedElements') }}</span>
     </b-button>
 

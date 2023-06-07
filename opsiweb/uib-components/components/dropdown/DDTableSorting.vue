@@ -21,26 +21,34 @@
         <b-icon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
         <small v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</small>
       </template>
-      <li class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
-        <a class="sortDirectionWrapper">
-          <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /><small>{{ $t('button.sort.tablecolumns.sortDirection') }}</small>
-        </a>
-      </li>
-      <template v-if="incontextmenu">
-        <li class="li-delimiter" />
-        <li
-          v-for="header in Object.values(headerData).filter(h=>h.sortable)"
-          :key="header.key"
-          class="dropdown-item"
-          :class="{'selectedSort': (sortBy==header.key)}"
-          @keydown="changeSortBy(header.key)"
-          @click="changeSortBy(header.key)"
-        >
-          <small><a> {{ header.label }} </a></small>
+      <ul>
+        <li class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
+          <a class="sortDirectionWrapper">
+            <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /><small>{{ $t('button.sort.tablecolumns.sortDirection') }}</small>
+          </a>
         </li>
+      </ul>
+
+      <template v-if="incontextmenu">
+        <ul>
+          <li class="li-delimiter" />
+          <li
+            v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+            :key="header.key"
+            class="dropdown-item"
+            :class="{'selectedSort': (sortBy==header.key)}"
+            @keydown="changeSortBy(header.key)"
+            @click="changeSortBy(header.key)"
+          >
+            <small><a> {{ header.label }} </a></small>
+          </li>
+        </ul>
       </template>
       <template v-else>
-        <li class="li-delimiter" />
+        <ul>
+          <li class="li-delimiter" />
+        </ul>
+
         <b-dropdown-item
           v-for="header in Object.values(headerData).filter(h=>h.sortable)"
           :key="header.key"

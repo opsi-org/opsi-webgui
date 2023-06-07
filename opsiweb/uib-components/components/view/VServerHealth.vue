@@ -30,7 +30,7 @@
             {{ k }}
           </b-button>
           <b-collapse :id="'collapse-'+k" :visible="expandAll || filter!= ''">
-            <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.includes(filter) }">
+            <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.toString().includes(filter) }">
               <GridGFormItem class="ml-3">
                 <template #label>
                   {{ i }}
@@ -68,7 +68,7 @@ export default class VHealthCheck extends Vue {
   $t:any
 
   diagnosticdata: Array<any> = []
-  onlyDiagnostics: any
+  onlyDiagnostics: any = []
   filter: string = ''
   expandAll: boolean = false
 
@@ -109,6 +109,5 @@ div.scrollValue {
   max-height: 500px;
   overflow-x: hidden;
   overflow-y: auto;
-  /* border:1px solid var(--border, #ced4da ); */
 }
 </style>

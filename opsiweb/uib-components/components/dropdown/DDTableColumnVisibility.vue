@@ -22,22 +22,24 @@
         <small v-if="incontextmenu">{{ $t('button.showCol') }}</small>
       </template>
       <template v-if="multiCondition">
-        <li
-          v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
-          :key="header.key"
-          class="dropdown-item"
-          :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
-          :tabindex="incontextmenu ? undefined : 0"
-          @keydown.prevent="handleItem(header.key)"
-          @click.prevent="handleItem(header.key)"
-        >
-          <a class="columnWrapper">
-            <b-form-checkbox
-              :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
-              :class="{'selectedColumn':columnVisibilityStates[header.key]}"
-            /> <small>{{ header.label }}</small>
-          </a>
-        </li>
+        <ul>
+          <li
+            v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
+            :key="header.key"
+            class="dropdown-item"
+            :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
+            :tabindex="incontextmenu ? undefined : 0"
+            @keydown.prevent="handleItem(header.key)"
+            @click.prevent="handleItem(header.key)"
+          >
+            <a class="columnWrapper">
+              <b-form-checkbox
+                :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
+                :class="{'selectedColumn':columnVisibilityStates[header.key]}"
+              /> <small>{{ header.label }}</small>
+            </a>
+          </li>
+        </ul>
       </template>
       <template v-else>
         <b-dropdown-item
@@ -84,7 +86,7 @@ export default class DDTableColumnVisibility extends BDropdown {
   columnVisibilityStates: IObjectString2Boolean = {}
 
   get multiCondition () {
-    return this.multi || (this.$mq === 'mobile' || this.twoColumnLayoutCollapsed[this.viewId])
+    return this.multi ?? (this.$mq === 'mobile' || this.twoColumnLayoutCollapsed[this.viewId])
   }
 
   created () { this.init() }

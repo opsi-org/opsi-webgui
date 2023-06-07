@@ -292,50 +292,50 @@
   --bg-alert_primary: var(--primary); /*#cce0eb*/
   --b-alert_primary: var(--primary-dark); /*#b8d4e2*/
   --bt-alert_primary_hr: #a6c9db; /*#a6c9db*/
-  --fg-alert_primary_link: #00131d; /**/
+  --fg-alert_primary_link: #00131d;
 
   --fg-alert_secondary: var(--general-fg); /*#651f36*/
   --bg-alert_secondary: var(--secondary); /*#f3d8e1*/
   --b-alert_secondary: var(--secondary-dark); /*#eec8d4*/
   --bt-alert_secondary_hr: #e8b5c5; /*#a6c9db*/
-  --fg-alert_secondary_link: #3e1321; /**/
+  --fg-alert_secondary_link: #3e1321;
 
   /* --color:#212529; */
   --fg-alert_success: var(--success-foreground);
   --bg-alert_success: var(--success-dark);
   --b-alert_success: var(--success);
   --bt-alert_success_hr: #aed4c3; /*#a6c9db*/
-  --fg-alert_success_link: #051b11; /**/
+  --fg-alert_success_link: #051b11;
 
   --bg-alert_info: var(--info-dark);
   --fg-alert_info: var(--general-fg);
   --b-alert_info: var(--info);
   --bt-alert_info_hr: #a3e1fa; /*#a6c9db*/
-  --fg-alert_info_link: #04384d; /**/
+  --fg-alert_info_link: #04384d;
 
   --fg-alert_warning: var(--warning-foreground);
   --bg-alert_warning: var(--warning-dark);
   --b-alert_warning: var(--warning);
   --bt-alert_warning_hr: #ffe8a1; /*#a6c9db*/
-  --fg-alert_warning_link: #533f03; /**/
+  --fg-alert_warning_link: #533f03;
 
   --fg-alert_danger: var(--danger-foreground);
   --bg-alert_danger: var(--danger-dark);
   --b-alert_danger: var(--danger);
   --bt-alert_danger_hr: #f1b0b7; /*#a6c9db*/
-  --fg-alert_danger_link: #491217; /**/
+  --fg-alert_danger_link: #491217;
 
   --fg-alert_light: var(--general-bg);
   --bg-alert_light: var(--light-dark);
   --b-alert_light: var(--light);
   --bt-alert_light_hr: #ececf6; /*#a6c9db*/
-  --fg-alert_light_link: #686868; /**/
+  --fg-alert_light_link: #686868;
 
   --fg-alert_dark: var(--general-bg);
   --bg-alert_dark: var(--dark-dark);
   --b-alert_dark: var(--dark);
   --bt-alert_dark_hr: #b9bbbe; /*#a6c9db*/
-  --fg-alert_dark_link: #040505; /**/
+  --fg-alert_dark_link: #040505;
 
 
   --alert-dark-bg: var(--dark-dark);

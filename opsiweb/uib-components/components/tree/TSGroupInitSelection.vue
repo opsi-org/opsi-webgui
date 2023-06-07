@@ -28,8 +28,7 @@ export default class TSGroupInitSelection extends Vue {
     const result = (await this.$axios.$get('/api/opsidata/hosts/groups/id')).sort()
     for (const c in result) {
       const host = result[c]
-      hostgroups[c] = { id: host, label: host }
-      // hostgroups.push({ id: host, label: host })
+      hostgroups.push({ id: host, label: host })
     }
     this.groupIds = hostgroups
   }

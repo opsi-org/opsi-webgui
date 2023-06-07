@@ -11,7 +11,7 @@ export default class Settings extends VuexModule {
   get sessionEndTime (): string { return this.sessionendTime }
   get sessionExpiry (): number { return this.sessionexpiry }
   get username (): string { return this.myusername }
-  get isAuthenticated (): Boolean { return Boolean(Cookie.get('opsiconfd-session') && localStorage.getItem('username')) }
+  get isAuthenticated (): boolean { return Boolean(Cookie.get('opsiconfd-session') && localStorage.getItem('username')) }
 
   @VuexMutation login (username: string) {
     this.myusername = username

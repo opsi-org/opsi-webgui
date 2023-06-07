@@ -1,6 +1,5 @@
 <template>
   <span variant="primary">
-    <!-- <label for="expiredAfterMinutesChanger"> {{ $t('input.expiredTimeChanger', {min: expiresInMin}) }} </label> -->
     <b-form-input
       id="expiredAfterMinutesChanger"
       v-model="expiresInMin"
@@ -20,6 +19,7 @@ const auth = namespace('auth')
 
 @Component
 export default class IExpiredTimeChanger extends Vue {
+  $t:any
   expiresInMin: number = 1
 
   @auth.Getter public sessionExpiry!: number
@@ -37,5 +37,3 @@ export default class IExpiredTimeChanger extends Vue {
 }
 </script>
 
-<style>
-</style>

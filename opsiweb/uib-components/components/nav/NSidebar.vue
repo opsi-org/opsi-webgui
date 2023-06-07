@@ -2,7 +2,6 @@
   <b-nav vertical tabs class="sidemenu_nav" :class="{expanded:expanded}" data-testid="NSidebar">
     <span v-for="catogery in navItems" :key="catogery.title">
       <br>
-      <!-- <small v-if="expanded" class="container"> <small>{{ $t(catogery.title) }} </small> </small> -->
       <span v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
           <NavItemNICollapsible
@@ -13,7 +12,6 @@
             :route="menuitem.route"
             :submenu="menuitem.submenu"
           />
-          <!-- :data-testid="'NSidebar-'+menuitem.title" -->
           <NavItemNIDropdownHoverable
             v-else
             :title="menuitem.title"

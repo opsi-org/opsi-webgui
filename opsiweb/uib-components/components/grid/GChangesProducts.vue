@@ -20,7 +20,7 @@
                 </template>
                 <template #valueMore>
                   <ButtonBTNDeleteObj :item="item" from="products" />
-                  <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(item)">
+                  <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(item, false)">
                     <span class="sr-only">{{ $t('button.save') }}</span>
                     <b-icon :icon="icon.check" />
                   </b-button>
@@ -82,18 +82,17 @@ export default class GChangesProducts extends Vue {
 
   groupArrayOfObjects (list: Array<any>, key:any) {
     return list.reduce(function (rv, x) {
-      (rv[x[key]] = rv[x[key]] || []).push(x)
+      rv[x[key]] = rv[x[key]] || []
+      rv[x[key]].push(x)
       return rv
     }, {})
   }
 
-  async save (rowItem: ChangeObj, saveAll:Boolean) {
+  async save (rowItem: ChangeObj, saveAll:boolean) {
     const change = rowItem
     let showalert: any = true
     if (saveAll) {
       showalert = false
-    } else {
-      showalert = true
     }
     if (change.actionRequest) {
       const data = {

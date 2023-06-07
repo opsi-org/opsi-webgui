@@ -1,5 +1,4 @@
 <template>
-<!-- global_topbar_button px-2 btn btn-primary text-left border-0 -->
   <b-nav-item-dropdown
     id="language"
     data-testid="DropdownDDLang"

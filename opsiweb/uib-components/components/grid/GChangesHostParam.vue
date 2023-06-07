@@ -12,7 +12,7 @@
         </template>
         <template #valueMore>
           <ButtonBTNDeleteObj :item="item" from="hostparam" />
-          <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="saveHostParam(item)">
+          <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="saveHostParam(item, false)">
             <span class="sr-only">{{ $t('button.save') }}</span>
             <b-icon :icon="icon.check" />
           </b-button>
@@ -51,14 +51,12 @@ export default class GChangesHostParam extends Vue {
   @changes.Getter public changesHostParam!: Array<any>
   @changes.Mutation public delFromChangesHostParam!: (s: object) => void
 
-  async saveHostParam (item: any, saveAll:Boolean) {
+  async saveHostParam (item: any, saveAll:boolean) {
     let url: string = ''
     let request: any = []
     let showalert: any = true
     if (saveAll) {
       showalert = false
-    } else {
-      showalert = true
     }
     if (item.type === 'clients') {
       url = '/api/opsidata/config/clients'

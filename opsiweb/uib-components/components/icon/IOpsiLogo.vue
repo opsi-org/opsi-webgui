@@ -2,10 +2,9 @@
   <img
     data-testid="IconIOpsiLogo"
     src="../../assets/images/LogoOpsi.png"
-    :alt="$t('button.reload.app')"
+    :alt="translatedLabel"
     :class="{opsilogo_light: light}"
   >
-  <!-- TODO: translate alt text -->
 </template>
 
 <script lang="ts">
@@ -13,7 +12,12 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 @Component
 export default class IOpsiLogo extends Vue {
-@Prop({ default: false }) light!: boolean
+  @Prop({ default: false }) light!: boolean
+  $t: any
+  translatedLabel: string = ''
+  mounted () {
+    this.translatedLabel = this.$t('button.reload.app')
+  }
 }
 </script>
 
