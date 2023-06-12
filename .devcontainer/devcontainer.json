@@ -30,6 +30,7 @@
 		"seunlanlege.action-buttons",
 		"sakamoto66.vscode-playwright-test-runner",
 		"shardulm94.trailing-spaces",
-		"octref.vetur"
+		"octref.vetur",
+		"SonarSource.sonarlint-vscode"
 	]
 }
