@@ -22,6 +22,7 @@
       </template>
     </ModalMSelections>
     <!-- treeselect_short -->
+    <!-- text:{{ placeholderWrapper }} -->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
@@ -412,5 +413,8 @@ export default class TSDefault extends Vue {
   width:fit-content;
   flex-wrap: nowrap;
   z-index: 1000;
+}
+.TreeWrapper .vue-treeselect__placeholder {
+  display: block;
 }
 </style>
