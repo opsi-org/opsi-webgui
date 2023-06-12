@@ -27,12 +27,10 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IObjectString2StringOrUndefined } from '../../../.utils/types/tgeneral'
-// import { ITableRowProperty } from '../../../.utils/types/ttable'
 const selections = namespace('selections')
 
 @Component
 export default class GCProductPropertyId extends Vue {
-  // @Prop({ }) row!: ITableRowProperty
   @Prop({ }) row!: any
   @Prop({ }) productVersions!: IObjectString2StringOrUndefined
 

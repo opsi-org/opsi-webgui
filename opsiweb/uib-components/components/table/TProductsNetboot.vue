@@ -41,14 +41,12 @@
       </template>
 
       <template #contextcontent-general-1>
-        <small style="">
-          <ButtonBTNEvent
-            event="ondemand"
-            classes="dropdown-item border-0 smaller-text-size"
-            :update-loading="loading => clientsLoading = loading"
-            :with-text="true"
-          />
-        </small>
+        <ButtonBTNEvent
+          event="ondemand"
+          classes="dropdown-item border-0 smaller-text-size"
+          :update-loading="loading => clientsLoading = loading"
+          :with-text="true"
+        />
       </template>
       <template #contextcontent-general-2>
         <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
@@ -61,9 +59,6 @@
           :refetch="$fetch"
         />
       </template>
-      <!-- <template #head(productId)>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.netbootid')" />
-      </template> -->
       <template #cell(desc)="row">
         {{ row.item.description }}
       </template>
@@ -230,8 +225,6 @@ export default class TProductsNetboot extends Vue {
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
     const msg = this.wsBusMsg // todo deepCopy
-    console.log('ProductIds: ', this.visibleProductIds)
-    console.log('MessageBus: receive-watch: ', msg)
     if (msg &&
       ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
       msg.data.productType === 'NetbootProduct' &&
@@ -253,17 +246,17 @@ export default class TProductsNetboot extends Vue {
     }
   }
 
-  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
+  @Watch('selectionDepots', { deep: true }) async selectionDepotsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.setSelectionProducts([])
-    this.fetchPageOne()
+    await this.fetchPageOne()
   }
 
-  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+  @Watch('selectionClients', { deep: true }) async selectionClientsChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
-    this.fetchPageOne()
+    await this.fetchPageOne()
   }
 
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
@@ -296,14 +289,15 @@ export default class TProductsNetboot extends Vue {
   }
 
   async fetchWrapper () { await this.$fetch() }
-  async fetch () {
+  fetch () {
     try {
       const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
       if (ref) { ref.hide() }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn('Couldnt find AlertBox for messagebusinfo')
     }
-    await this.$emit('fetch-products', this)
+    this.$emit('fetch-products', this)
   } // will trigger -> this.setItemsCache(items)
 
   setItemsCache (items) {

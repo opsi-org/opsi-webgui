@@ -1,9 +1,9 @@
 :root{
-  --opsi-blue: #3f5aa6; /**/
-  --opsi-red: #cb1e58;  /**/
+  --opsi-blue: #3f5aa6;
+  --opsi-red: #cb1e58;
   --opsi-blue-light: #4a67b5;
-  --opsi-blue-dark: #2d4178;  /**/
-  --opsi-red-dark: #b2b2b2; /**/
+  --opsi-blue-dark: #2d4178;
+  --opsi-red-dark: #b2b2b2;
 
 
   --opsi-general-grey-dark: #4b4b49; /*new*/
@@ -13,9 +13,7 @@
   --opsi-base-foreground: #E1E1E1;
   --opsi-base-background: #3f3f3e; /*updated*/
 
-
-
-
+  --test-hover:#4b4b49; /* current hovering styles are very loud*/
 
   /*--general-realy-dark: #545453;  /*new*/
   --general-opsi-grey-dark: #4b4b49; /*updated*/
@@ -26,10 +24,10 @@
   --general-bg-weak: var(--opsi-general-grey-dark);
   --general-bg-light: var(--opsi-blue); /*updated*/
 
-  --success: #009605; /**/
-  --warning: #FF9100; /**/
-  --warning-hover: #FF9100; /**/
-  --danger: #E51D3B; /**/
+  --success: #009605;
+  --warning: #FF9100;
+  --warning-hover: #FF9100;
+  --danger: #E51D3B;
   --primary: var(--opsi-blue);
   --secondary: var(--opsi-red);
   /* --primary: var(--general-fg); */
@@ -57,7 +55,6 @@
   /* borders durchgehen */
   /* shadow box order so durchgehen */
 
-  /**/
   --log-secret: #D500F9;
   --log-trace: #8B8B8B;
   --log-debug: #C0C0C0;

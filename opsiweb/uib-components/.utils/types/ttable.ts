@@ -61,6 +61,7 @@ export interface ITableHeader {
   class?: string,
   variant?: string,
   stickyColumn?: boolean
+  mergeOnMobile?: boolean
 }
 export interface ITableHeaders {
   [key: string]: ITableHeader
@@ -84,6 +85,7 @@ export interface IProperty {
   editable: boolean|string
   default: Array<string|boolean> // combined: product-packageVersion
   allValues: Array<string|boolean> // (all possibleValues concatinated without duplicates)
+  details: string
 
   versionDetails?: { [key:string]: string}
   descriptionDetails?: { [key:string]: string}

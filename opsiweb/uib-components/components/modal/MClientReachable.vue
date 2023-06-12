@@ -8,7 +8,6 @@
       @click="$bvModal.show('clientreachability')"
     >
       <b-icon :icon="icon.clientReachable" />
-      <!-- <b-icon :icon="iconnames. productInstallationStatusUnknown" class="rounded-circle" variant="dark" /> -->
     </b-button>
     <b-modal
       id="clientreachability"

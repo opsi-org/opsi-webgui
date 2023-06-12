@@ -71,13 +71,6 @@
           </b> </small>
           <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
         </template>
-        <!-- <template #head(rowactions)>
-          <b-button-group>
-            <DropdownDDTableSorting :table-id="id" :sort-by.sync="tableData.sortBy" :sort-desc.sync="tableData.sortDesc" :header-data.sync="headerData" />
-            <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="headerData" :sort-by="tableData.sortBy" :multi="true" />
-            <ButtonBTNRefetch :is-loading="isLoading" :tooltip="$t('button.refresh', {id: id})" :refetch="fetchitems" />
-          </b-button-group>
-        </template> -->
         <template #cell(rowactions)="row">
           <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'" :class="{'row-selected': selection.includes(row.item[rowident])}">
             <slot name="rowactions" v-bind="row" />
@@ -302,7 +295,7 @@ export default class TInfiniteScrollSmooth extends Vue {
     if (!this.tableScrollBody || !el) { return }
     // const toprowHeight = document.querySelector('.b-table-top-row')?.getBoundingClientRect()?.height || 0 // space for scrolling up
     const elToprowHeight = document.querySelector('#TInfiniteScrollSmoothWrapper_' + this.id + ' .b-table-top-row') // space for scrolling up
-    const toprowHeight = elToprowHeight?.getBoundingClientRect()?.height || 0 // space for scrolling up
+    const toprowHeight = elToprowHeight?.getBoundingClientRect()?.height ?? 0 // space for scrolling up
     if (this.cache_pages.max_elements === 1 || direction === null || direction === undefined || direction === 'none') {
       // direction = none if trigger e.g. by paginationbar buttons (jumps directly to a specific page)
       if (this.tableData.pageNumber === 1) {
@@ -502,13 +495,6 @@ export default class TInfiniteScrollSmooth extends Vue {
   border-color: var(--bg-page_item-disabled) !important;
   background-color: var(--primary) !important;
   color: var(--primary-foreground) !important;
-}
-.TInfiniteScrollSmoothWrapper th .btn-group .btn-outline-primary,
-.TInfiniteScrollSmoothWrapper th .btn-group .btn-outline-primary:hover,
-.TInfiniteScrollSmoothWrapper td .btn-group .btn-outline-primary,
-.TInfiniteScrollSmoothWrapper td .btn-group .btn-outline-primary:hover {
-  /*border: unset !important; /* removes border artifacts in rowactions buttons*/
-  /*border-color: unset !important; /* removes border artifacts in rowactions buttons*/
 }
 .TInfiniteScrollSmoothWrapper thead .col-rowactions {
   padding-left: 12px !important;

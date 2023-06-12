@@ -16,7 +16,12 @@
           :treeview="showTreeView"
         >
           <template #right>
-            <b-button variant="outline-primary" size="sm" :title="(showTreeView? $t('View Products as Table') : $t('View Products as Tree'))" :pressed.sync="showTreeView">
+            <b-button
+              variant="outline-primary"
+              size="sm"
+              :title="(showTreeView? $t('switch.table',{type:'Products'}) : $t('switch.tree',{type:'Products'}))"
+              :pressed.sync="showTreeView"
+            >
               <b-icon v-if="showTreeView" variant="primary" :icon="icon.table" />
               <b-icon v-else :icon="icon.tree" />
             </b-button>
@@ -83,8 +88,8 @@ import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { Client } from '../../mixins/get'
 import { Icons } from '../../mixins/icons'
-import { ITableHeaders, ITableInfo } from '~/.utils/types/ttable'
-import { IObjectString2Any } from '~/.utils/types/tgeneral'
+import { ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
+import { IObjectString2Any } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
 @Component({ mixins: [Client, Icons] })
 export default class VProducts extends Vue {
@@ -95,7 +100,7 @@ export default class VProducts extends Vue {
   $t:any
   $axios: any
   getClientToDepot:any
-  showTreeView: boolean = false
+
   @Prop() child!: boolean
   @Prop({}) id!: string
   @Prop({}) sortby!: string
@@ -103,7 +108,7 @@ export default class VProducts extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-
+  showTreeView: boolean = false
   sortdesc: boolean = false
   rowId: string = ''
   isLoading: boolean = false
@@ -111,7 +116,6 @@ export default class VProducts extends Vue {
   netboot: string = ''
   totalnetboot: number = 0
   tableloaded: boolean = false
-
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,

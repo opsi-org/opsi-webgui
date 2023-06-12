@@ -111,7 +111,7 @@
   --dropdown-hover: var(--hover);
   --nav-tab-hover: var(--hover);
   --page-link-hover: var(--hover);
-  --treeselect-hover: var(--hover);
+  --treeselect-hover: var(--test-hover);
   --table-hover: var(--hover);
   --color-hover: 155, 155, 155, .1; /**?????**/
 
@@ -134,6 +134,11 @@
   --bs-table-active-bg: var(--bg-table-hover);
   --bs-table-active-color: var(--idk);
   --bs-table-bg: var(--general-bg);
+  color: unset !important;
+}
+
+.table > :not(caption) > * > * {
+  border-bottom-width: 0px;
 }
 
 .table-primary {
@@ -185,10 +190,6 @@ body .mobile .topbar_content .navbar > * {
   height: 90% !important;
 }
 
-.tooltip {
-  font-family: inherit !important;
-}
-
 [class$="bg-orange"] { background-color: var(--orange) !important;}
 [class$="bg-yellow"] { background-color: var(--yellow) !important;}
 [class$="bg-red"] { background-color: var(--red) !important;}
@@ -204,12 +205,6 @@ body .mobile .topbar_content .navbar > * {
 [class$="fg-grey"] { color: var(--gray) !important;}
 .btn, .dropdown-item{
   min-height: var(--min-height-button) !important;
-}
-.table{
-  color: unset !important;
-}
-.table > :not(caption) > * > * {
-  border-bottom-width: 0px;
 }
 .value-changed-not-saved {
   color: var(--orange) !important;
@@ -515,6 +510,7 @@ tbody .col-rowactions :not(div).btn {
 .treeselect .vue-treeselect__menu {
   background-color: var(--general-bg, var(--background, black));
   color: var(--color, var(--general-fg, white));
+  border:1px solid var(--b-input_component) !important;
 }
 .treeselect .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
@@ -523,7 +519,7 @@ tbody .col-rowactions :not(div).btn {
   color: var(--color) !important;
 }
 .treeselect .vue-treeselect__menu .vue-treeselect__option--highlight {
-  color: var(--white);
+  color: var(--color);
   background-color: var(--treeselect-hover);
 }
 .treeselect.vue-treeselect--single .vue-treeselect__option--selected{
@@ -566,13 +562,14 @@ border-color: var(--bg-table-border); */
   background-color: var(--bs-tooltip-bg) !important;
   color: var(--bs-tooltip-color) !important;
 }
-tooltip {
+.tooltip {
   --bs-tooltip-color: var(--fg-tooltip_inner) !important;
   --bs-tooltip-bg: var(--bg-tooltip_inner) !important;
   background-color: var(--bs-tooltip-bg) !important;
   color: var(--bs-tooltip-color) !important;
   border: 1px solid var(--b-bs_tooltip) !important;
   padding: 10px;
+  font-family: inherit !important;
 }
 .tooltip>.tooltip-inner {
   --bs-tooltip-color: var(--fg-tooltip_inner) !important;

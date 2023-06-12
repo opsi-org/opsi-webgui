@@ -18,7 +18,7 @@ const settings = namespace('settings')
       this.setExpiresInterval(undefined)
       this.clearAllSelection()
       if (this.$route.name !== 'login') {
-        this.$router.push({ path: '/login' })
+        await this.$router.push({ path: '/login' })
       }
     }
   }

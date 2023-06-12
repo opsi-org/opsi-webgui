@@ -21,7 +21,7 @@
 import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Depot, Client } from '../../mixins/get'
-import { IObjectString2String } from '~/.utils/types/tgeneral'
+import { IObjectString2String } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
 
 @Component({ mixins: [Icons, Depot, Client] })

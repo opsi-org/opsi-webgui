@@ -20,24 +20,25 @@
       <span class="eventlabel" :class="event"> {{ (withText || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </b-button>
-    <li
-      v-else
-      :pressed="isLoading"
-      :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
-      :variant="events[event].variant"
-      :size="size"
-      :class="{
-        [classes]: true,
-        'global_topbar_button_mobile': $mq=='mobile'
-      }"
-      @click="$bvModal.show('event-modal-' + event + '-' + data)"
-      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
-    >
-      <b-icon v-if="events[event].icon" :icon="events[event].icon" />
-      {{ (!isLoading) ? $t(events[event].title) : '' }}
-      <span class="eventlabel" :class="event"> {{ (withText || incontextmenu || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
-      <IconILoading v-if="isLoading" :small="true" />
-    </li>
+    <ul v-else>
+      <li
+        :pressed="isLoading"
+        :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
+        :variant="events[event].variant"
+        :size="size"
+        :class="{
+          [classes]: true,
+          'global_topbar_button_mobile': $mq=='mobile'
+        }"
+        @click="$bvModal.show('event-modal-' + event + '-' + data)"
+        @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
+      >
+        <b-icon v-if="events[event].icon" :icon="events[event].icon" />
+        {{ (!isLoading) ? $t(events[event].title) : '' }}
+        <span class="eventlabel" :class="event"> {{ (withText || incontextmenu || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+        <IconILoading v-if="isLoading" :small="true" />
+      </li>
+    </ul>
 
     <b-modal
       :id="'event-modal-' + event + '-' + data"
@@ -47,7 +48,6 @@
       scrollable
     >
       <b-list-group v-if="event=='ondemand'" flush>
-        <!-- <b-list-group-item>Cras justo odio</b-list-group-item> -->
         <b-list-group-item v-for="c in selection" :key="c" class="modal-client-p">
           {{ c }}
           <b-button
@@ -97,13 +97,13 @@ export default class BTNEvent extends Vue {
   $axios: any
   icon: any
   $t: any
+  $mq:any
 
   isLoading:any = false
   show:boolean = false
   selectionClientsDelete: Array<string> = []
 
   eventdata: any = { popup: { msg: '' } }
-  // eventdata: any = { popup: { msg: this.$t('button.event.showpopup.message') as string } }
 
   @selections.Getter public selectionClients!: Array<string>
 
@@ -114,8 +114,8 @@ export default class BTNEvent extends Vue {
   @Prop({ default: false }) withText!: boolean
   @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
-  @Prop({ default: undefined }) isLoadingParent ?: boolean|undefined
-  @Prop({ default: undefined }) updateLoading ?: Function|undefined
+  @Prop({ default: undefined }) isLoadingParent ?: boolean
+  @Prop({ default: undefined }) updateLoading ?: Function
 
   get events () {
     return {
@@ -192,7 +192,7 @@ export default class BTNEvent extends Vue {
         this.isLoading = false
         if (this.updateLoading !== undefined) { this.updateLoading([]) }
       }).catch((error) => {
-        const detailedError = ((error && error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
         this.isLoading = false
 

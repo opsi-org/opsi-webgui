@@ -1,5 +1,5 @@
 <template>
-  <b-input-group class="border">
+  <b-input-group class="border pr-2">
     <b-dropdown size="sm" no-caret variant="outline-primary border-0">
       <template #button-content>
         <b-icon :icon="icon.filter" />

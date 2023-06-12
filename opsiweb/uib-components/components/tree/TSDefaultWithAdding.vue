@@ -60,7 +60,7 @@ export default {
       }
 
       if (value && value !== '') {
-        if (this.overridesCheckValueInNodes(value) || (node && node.isMatched)) {
+        if (this.overridesCheckValueInNodes(value) || (node?.isMatched)) {
           // If there is a value, we just fallback to the default function (select or desect the first entry in result list)
           this.resetSearchQuery()
           return Treeselect.mixins[0].methods.select.call(this, node)
@@ -75,7 +75,6 @@ export default {
        * We can emit a new node here, call your append function
        * sending it the ID and making this work.
        */
-      // const id = `new-node-${++this.overridesLastNodeId}`
 
       const elem = { id: value, text: value, type: 'ObjectToGroup', isNew: true }
       this.$emit('new-node', elem)

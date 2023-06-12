@@ -41,7 +41,7 @@
     <b-dropdown-item
       v-for="t in themes"
       :key="t.rel"
-      :disable="t.title==theme"
+      :disable="t.title==theme.title"
       variant="transparent"
       @click="theme = t;"
     >

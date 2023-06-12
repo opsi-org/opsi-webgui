@@ -85,11 +85,12 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
-import { Icons } from '../../mixins/uib-mixins'
+import { Icons } from '../../mixins/icons'
 const cache = namespace('data-cache')
 
 @Component({ mixins: [Icons] })
 export default class TInfiniteScroll extends Vue {
+  $t:any
   icon: any
   $axios: any
   $mq: any

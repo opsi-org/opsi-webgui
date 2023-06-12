@@ -57,9 +57,6 @@
           :refetch="$fetch"
         />
       </template>
-      <!-- <template #head(productId)>
-        <InputIFilter :data="tableData" :additional-title="$t('table.fields.localbootid')" />
-      </template> -->
       <template #cell(desc)="row">
         {{ row.item.description }}
       </template>
@@ -163,7 +160,6 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch, namespace } from 'nuxt-property-decorator'
-// import { makeToast } from '../../.utils/utils/scomponents'
 import { IObjectString2ObjectString2String, IObjectString2String } from '../../.utils/types/tgeneral'
 import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../.utils/types/ttable'
 import { ChangeObj } from '../../.utils/types/tchanges'
@@ -239,8 +235,6 @@ export default class TProductsLocalboot extends Vue {
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
     const msg = this.wsBusMsg // todo deepCopy
-    console.log('ProductIds: ', this.visibleProductIds)
-    console.log('MessageBus: receive-watch: ', msg)
     if (msg &&
       ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
       msg.data.productType === 'LocalbootProduct' &&
@@ -262,16 +256,18 @@ export default class TProductsLocalboot extends Vue {
     }
   }
 
-  @Watch('selectionDepots', { deep: true }) selectionDepotsChanged () {
-    this.fetchedDataClients2Depots = {}
-    this.fetchOptions.fetchClients2Depots = true
-    this.fetchPageOne()
+  @Watch('selectionDepots', { deep: true }) async selectionDepotsChanged () {
+    await this.selectionChanged()
   }
 
-  @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
+  @Watch('selectionClients', { deep: true }) async selectionClientsChanged () {
+    await this.selectionChanged()
+  }
+
+  async selectionChanged () {
     this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
-    this.fetchPageOne()
+    await this.fetchPageOne()
   }
 
   @Watch('tableData.filterQuery', { deep: true }) tdFilterQueryChanged () {
@@ -300,14 +296,15 @@ export default class TProductsLocalboot extends Vue {
   }
 
   async fetchWrapper () { await this.$fetch() }
-  async fetch () {
+  fetch () {
     try {
       const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
       if (ref) { ref.hide() }
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warn('Couldnt find AlertBox for messagebusinfo')
     }
-    await this.$emit('fetch-products', this)
+    this.$emit('fetch-products', this)
     // will trigger -> this.setItemsCache(items)
   }
 

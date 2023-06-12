@@ -112,7 +112,7 @@ export default class CMViewTable extends Vue {
     this.item = item
     if (e) {
       Vue.nextTick(function () {
-        (this.$refs.right as any)?.focus()
+        (this.$refs.right)?.focus()
 
         this.setMenu(e.y, e.x)
       }.bind(this))
@@ -165,15 +165,13 @@ export default class CMViewTable extends Vue {
   margin: 0px !important;
   padding: 0px !important;
 }
-#right-click-menu li.li-delimiter:first,
-  #right-click-menu .contextmenu-part > .li-delimiter:last-of-type {
+#right-click-menu .contextmenu-part > .li-delimiter:last-of-type {
     border: unset;
     color: transparent;
 }
 #right-click-menu li:not(.li-delimiter) {
     margin: 0;
 }
-
 .bg-modal-backdrop {
   background-color: var(--bg-modal_backdrop);
 }

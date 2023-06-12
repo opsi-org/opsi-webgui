@@ -2,7 +2,7 @@
   <div
     v-if="config && config.read_only"
     data-testid="IReadOnly"
-    :title="$t('label.readonly')"
+    :title="translatedLabel"
     class="IReadOnly container-fluid"
   >
     <b-iconstack font-scale="1.5">
@@ -27,8 +27,12 @@ const config = namespace('config-app')
 @Component({ mixins: [Icons] })
 export default class ILoading extends Vue {
   icon: any
-
+  $t:any
   @config.Getter public config!: IObjectString2Boolean
+  translatedLabel: string = ''
+  mounted () {
+    this.translatedLabel = this.$t('label.readonly')
+  }
 }
 </script>
 

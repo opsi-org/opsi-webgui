@@ -1,6 +1,6 @@
 :root{
-  --opsi-blue: #3f5aa6; /**/
-  --opsi-red: #cb1e58; /**/
+  --opsi-blue: #3f5aa6;
+  --opsi-red: #cb1e58;
   --opsi-blue-light: #4a67b5;
   --opsi-blue-dark: #2d4178;
   --opsi-red-dark: #b2b2b2;
@@ -12,7 +12,7 @@
   --opsi-base-background: #ffffff;
   --opsi-base-foreground: #000000;
 
-
+  --test-hover:#f2f2f2; /* current hovering styles are very loud*/
 
   /*--general-realy-dark: #545453;  /*new*/
   --general-opsi-grey-dark: #b2b2b2;
@@ -23,9 +23,9 @@
   --general-bg-light: var(--opsi-blue-light); /*updated*/
 
 
-  --success: #009605; /**/
-  --warning: #FF9100; /**/
-  --danger: #E51D3B; /**/
+  --success: #009605;
+  --warning: #FF9100;
+  --danger: #E51D3B;
   --primary: var(--opsi-blue);
   /* --primary: var(--general-fg);  */
   --info: var(--opsi-blue);
@@ -47,7 +47,6 @@
   --light-dark: #b9bbbd;
   --dark-dark: #181a1d;
 
-  /* light mode! */ /**/
   --log-secret: #D500F9;
   --log-trace: #8B8B8B;
   --log-debug: #565656;

@@ -198,7 +198,14 @@ export default class TSDefault extends Vue {
 
   get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }
   set selection (s) { this.model[(this.nested) ? 'nested' : 'default'] = s }
-  set selectionWrapper (s) { (Array.isArray(s)) ? this.selection = s : this.selection = [s] } // can be overwritten by children
+  set selectionWrapper (s) {
+    if (Array.isArray(s)) {
+      this.selection = s
+    } else {
+      this.selection = [s]
+    }
+  }
+
   get selectionWrapper () { return this.selection }
   get placeholderWrapper () {
     if (this.multi && !this.text) { return '' }
@@ -276,22 +283,36 @@ export default class TSDefault extends Vue {
   }
 
   normalizer (node: Group) {
+    if (this.lazyLoad) {
+      return {
+        id: node.id,
+        type: node.type,
+        isNew: node.isNew ?? false,
+        hasAnySelection: node.hasAnySelection ?? false,
+        isDisabled: (node.isDisabled === true) || (node.id === this.$t('values.mixed')) || false,
+        label: node.text ? node.text.replace(/_+$/, '') : node.id,
+        children: this.getChildren(node)
+      }
+    }
+
+    this.normalizerWithChildren(node)
+  }
+
+  normalizerWithChildren (node) {
     return {
       id: node.id,
       type: node.type,
-      isNew: node.isNew || false,
-      hasAnySelection: node.hasAnySelection || false,
+      isNew: node.isNew ?? false,
+      hasAnySelection: node.hasAnySelection ?? false,
       isDisabled: (node.isDisabled === true) || (node.id === this.$t('values.mixed')) || false,
       label: node.text ? node.text.replace(/_+$/, '') : node.id,
-      children: this.lazyLoad
-        ? this.getChildren(node)
-        : node.children
-          ? this.getChildren(node).sort(function (a: Group, b: Group) {
-            if (a.text < b.text) { return -1 }
-            if (a.text > b.text) { return 1 }
-            return 0
-          })
-          : {}
+      children: node.children
+        ? this.getChildren(node).sort(function (a: Group, b: Group) {
+          if (a.text < b.text) { return -1 }
+          if (a.text > b.text) { return 1 }
+          return 0
+        })
+        : {}
     }
   }
 
@@ -390,5 +411,6 @@ export default class TSDefault extends Vue {
   margin-right: 5px;
   width:fit-content;
   flex-wrap: nowrap;
+  z-index: 1000;
 }
 </style>
