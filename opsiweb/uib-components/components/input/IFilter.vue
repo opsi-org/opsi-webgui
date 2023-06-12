@@ -19,8 +19,14 @@
       class="filter border-0"
       :placeholder="$t('table.filter', {el: additionalTitle})"
     />
-    <b-button variant="outline-dark" class="border-0" size="sm" :title="$t('button.clearFilter')" @click="clearFilter">
-      <b-icon :icon="icon.clear" />
+    <b-button
+      variant="transparent"
+      class="border-0 filterclear"
+      size="sm"
+      :title="$t('button.clearFilter')"
+      @click="clearFilter"
+    >
+      <b-icon :class="data.filterQuery? '' : 'd-none'" :icon="icon.x" />
     </b-button>
   </b-input-group>
 </template>
@@ -54,5 +60,8 @@ export default class IFilter extends BFormInput {
 <style>
 .filter {
   max-width: var(--component-width) !important;
+}
+.filterclear{
+  width: 30px;
 }
 </style>
