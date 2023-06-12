@@ -37,9 +37,9 @@ stages:
 #   ls -lah
 #   cd -
 
-# .define_globals: &define_globals |
+.define_globals: &define_globals |
 #   npm i -g dry-dry
-#   shopt -s expand_aliases
+  shopt -s expand_aliases
 #   alias npm-uib='npm'
 #   cd uib-components
 #   git branch
@@ -163,7 +163,7 @@ init:npm:
   script:
     # - *prepare_repo
     - cd opsiweb
-    # - *define_globals
+    - *define_globals
     - npm i
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
   artifacts:
@@ -182,7 +182,7 @@ init:npm:production:
     # - *prepare_repo
     - cd opsiweb
     #- #rm package-lock.json # todo: how to? rm here or not include to repo? (currently not included)
-    # - *define_globals
+    - *define_globals
     - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
   artifacts:
@@ -207,7 +207,7 @@ test:lint:
     - ls -lah .
     - ls -lah node_modules/
     - npm --version
-    # - *define_globals
+    - *define_globals
     - npm run lint
 
 test:unit:
@@ -216,7 +216,7 @@ test:unit:
     - init:npm
   script:
     - cd opsiweb
-    # - *define_globals
+    - *define_globals
     - npm run test:unit
   allow_failure: true
   coverage: /All files\s*\|\s*([\d\.]+)/
@@ -234,7 +234,7 @@ test:accessibility:
   script:
     - cd opsiweb
     - ls -lah uib-components
-    # - *define_globals
+    - *define_globals
     - npm i -D @playwright/test
     - npx playwright install --with-deps chromium
     - npm i -D @axe-core/playwright
@@ -263,7 +263,7 @@ test:usecase:
   script:
     - cd opsiweb
     - ls -lah uib-components
-    # - *define_globals
+    - *define_globals
     - npm i -D @playwright/test
     - npx playwright install
     - PORT=8888 nohup npm run dev > .dev.log &
@@ -301,7 +301,7 @@ test:components:changes:
       - opsiweb/uib-components/*
   script:
     - cd opsiweb
-    # - *define_globals
+    - *define_globals
     # get changed files (in comparison to develop branch)
     - cd uib-components
     - *get_changed_files
@@ -343,7 +343,7 @@ test:components:
     - tags
   script:
     - cd opsiweb
-    # - *define_globals
+    - *define_globals
     - npm i -D @playwright/test
     - npx playwright install
     - npx playwright install-deps
@@ -437,8 +437,8 @@ build:static:app:
     #- test:jtest
   script:
     - cd opsiweb
-    # - *define_globals
-    - npm run generate
+    - *define_globals
+    - npm run generate-nossl
   artifacts:
     paths:
       - opsiweb/dist # not used...?
@@ -456,8 +456,8 @@ build:addon:
     - *install_tools
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
-    # - *define_globals
-    - npm run generate
+    - *define_globals
+    - npm run generate-nossl
     - cd .. # copy to addon
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
