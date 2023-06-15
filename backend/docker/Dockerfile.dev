@@ -1,5 +1,4 @@
-# FROM python:3.7-buster as opsiconfd_development_build
-FROM docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 as opsiconfd_development_build
+FROM docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 as opsiconfd_development_build_43
 
 ARG DOCKER_ENV
 ARG USER
@@ -8,7 +7,7 @@ ARG UID
 ENV DOCKER_ENV=${DOCKER_ENV} \
 	DEV_USER=${USER} \
 	DEV_UID=${UID} \
-	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.2:/development/Debian_9.0/ \
+	OPSI_REPO=https://download.opensuse.org/repositories/home:/uibmz:/opsi:/4.3:/development/Debian_9.0/ \
 	# python:
 	PYTHONFAULTHANDLER=1 \
 	PYTHONUNBUFFERED=1 \
@@ -21,7 +20,7 @@ ENV DOCKER_ENV=${DOCKER_ENV} \
 # System deps:
 RUN apt-get update \
 	&& apt-get --yes dist-upgrade \
-	&& apt-get --yes install \
+	&& apt-get --yes --allow-downgrades install \
 		cpio \
 		vim \
 		wget \
@@ -30,17 +29,18 @@ RUN apt-get update \
 		libmariadb-dev \
 		psmisc \
 		librsync1 \
-		sqlite3 \
+		libsqlite3-0=3.16.2-5+deb9u1 \
 		sudo \
 		git \
 		bash-completion \
 		nano \
 		netcat \
 		supervisor \
-	&& echo "deb https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list \
-	&& wget -q -O - https://packages.grafana.com/gpg.key | apt-key add - \
-	&& echo "deb $OPSI_REPO /" > /etc/apt/sources.list.d/opsi.list \
-	&& wget -q -O - ${OPSI_REPO}Release.key | apt-key add - \
+	&& mkdir -p /usr/local/share/keyrings \
+	&& wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor > /usr/local/share/keyrings/grafana.gpg \
+	&& echo "deb [signed-by=/usr/local/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" > /etc/apt/sources.list.d/grafana.list \
+	&& wget -q -O - ${OPSI_REPO}Release.key | gpg --dearmor > /usr/local/share/keyrings/opsi.gpg \
+	&& echo "deb [signed-by=/usr/local/share/keyrings/opsi.gpg] ${OPSI_REPO} /" > /etc/apt/sources.list.d/opsi.list \
 	&& apt-get update \
 	&& apt-get --yes install \
 		apt-transport-https \
@@ -76,6 +76,6 @@ RUN useradd --create-home -s /bin/bash ${DEV_USER} \
 	&& cp -r /root/.bash* /home/adminuser/ \
 	&& cp -r /root/.bash* /home/${DEV_USER}/ \
 	&& chmod g+rw -R . \
-	&& chmod +x "/docker-entrypoint.sh" \
+	&& chmod +x /*entrypoint.sh \
 	&& mkdir tftpboot \
 	&& chown -R $DEV_USER /workspace
