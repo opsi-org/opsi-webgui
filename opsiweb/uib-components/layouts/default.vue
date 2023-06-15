@@ -60,6 +60,7 @@ export default class LayoutDefault extends Vue {
   @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
   @settings.Getter public colortheme!: any
   @changes.Getter public changesProducts!: Array<ChangeObj>
+    @changes.Getter public changesHostParam!: Array<ChangeObj>
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
@@ -92,7 +93,7 @@ export default class LayoutDefault extends Vue {
   }
 
   confirmToSaveChanges () {
-    if (this.changesProducts.filter(o => o.user === this.username).length !== 0) {
+    if (this.changesProducts.filter(o => o.user === this.username).length !== 0 || this.changesHostParam.filter(o => o.user === this.username).length !== 0) {
       return true
     } else {
       return null
