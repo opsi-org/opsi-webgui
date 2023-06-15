@@ -9,6 +9,7 @@ webgui client methods
 """
 
 import asyncio
+from packaging import version
 import json
 import os
 import subprocess
@@ -261,19 +262,11 @@ async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-def
 	return RESTResponse(data=result, total=len(result))
 
 
-@client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
-@rest_api
-def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
-	selectedClients: List[str] = Depends(parse_client_list),
-) -> RESTResponse:
-	"""
-	Get a mapping of clients to depots.
-	"""
-
+def _depots_of_clients(clients: list) -> dict:
 	# TODO check if clients of config server always work
 	params = {}
-	if selectedClients != [""] and selectedClients is not None:
-		params["clients"] = selectedClients
+	if clients != [""] and clients is not None:
+		params["clients"] = clients
 
 	with mysql.session() as session:
 		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId IN :clients")
@@ -291,8 +284,19 @@ def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, 
 
 		for client in params["clients"]:
 			response[client] = get_configserver_id()
+		return response
 
-		return RESTResponse(data=response)
+
+@client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
+@rest_api
+def depots_of_clients(  # pylint: disable=too-many-branches, redefined-builtin, dangerous-default-value, invalid-name
+	selectedClients: List[str] = Depends(parse_client_list),
+) -> RESTResponse:
+	"""
+	Get a mapping of clients to depots.
+	"""
+
+	return RESTResponse(data=_depots_of_clients(selectedClients))
 
 
 @client_router.post("/api/opsidata/clients")
@@ -477,8 +481,6 @@ def delete_client(request: Request, clientid: str) -> RESTResponse:  # pylint: d
 
 
 @client_router.post("/api/opsidata/clients/{clientid}/uefi")
-@rest_api
-@read_only_check
 def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -> RESTResponse:  # pylint: disable=unused-argument
 	"""
 	Set uefi config of client
@@ -659,6 +661,74 @@ def unblock_all_clients(request: Request) -> RESTResponse:  # pylint: disable=un
 		logger.error(err)
 		raise OpsiApiException(
 			message=f"Could unblock clients.",
+			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+			error=err,
+		) from err
+
+
+class ProductAction(BaseModel):  # pylint: disable=too-few-public-methods
+	action: str
+	outdated: bool
+	installation_status: str | None
+	action_result: str | None
+
+
+@client_router.post("/api/opsidata/clients/action")
+@rest_api
+@read_only_check
+def set_product_action(request: Request, product_action: ProductAction) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Set product action where condition
+	"""
+
+	try:
+		updates: dict = {}
+		poc_list = set()
+
+		if product_action.installation_status or product_action.action_result:
+			poc_list = set(
+				backend.productOnClient_getObjects(
+					installationStatus=product_action.installation_status, actionResult=product_action.action_result
+				)
+			)
+
+		if product_action.outdated:
+			depot_versions: dict = {}
+			for pod in backend.productOnDepot_getObjects():
+				if not depot_versions.get(pod.depotId):
+					depot_versions[pod.depotId] = {}
+				depot_versions[pod.depotId][pod.productId] = f"{pod.productVersion}-{pod.packageVersion}"
+			result = set(backend.productOnClient_getObjects(installationStatus="installed"))
+			for poc in result.difference(poc_list):
+				if not poc.installationStatus == "installed":
+					continue
+				if version.parse(f"{poc.productVersion}-{poc.packageVersion}") < version.parse(
+					depot_versions[_depots_of_clients([poc.clientId])[poc.clientId]][poc.productId]
+				):
+					logger.info(
+						"Product %s is outeded on client %s (depot is %s)",
+						poc.productId,
+						poc.clientId,
+						_depots_of_clients([poc.clientId][poc.clientId]),
+					)
+					if poc not in poc_list:
+						poc_list.add(poc)
+
+		for poc in poc_list:
+			poc.actionRequest = product_action.action
+			if poc.clientId not in updates:
+				updates[poc.clientId] = []
+			updates[poc.clientId].append(
+				{"productId": poc.productId, "productVersion": poc.productVersion, "packageVersion": poc.packageVersion}
+			)
+		result = backend.productOnClient_updateObjects(poc_list)
+
+		return RESTResponse(http_status=200, data=updates)
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not set product action.")
+		logger.error(err)
+		raise OpsiApiException(
+			message="Could not set product action.",
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err
