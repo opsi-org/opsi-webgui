@@ -96,7 +96,7 @@ def build_tree(  # pylint: disable=too-many-branches
 		processed = []
 	processed.append(group.get("id", ""))
 
-	is_root_group = group["parent"] == "#"  # or group["id"] == "clientdirectory"
+	is_root_group = group["parent"] == "groups" or group["id"] == "clientdirectory"
 	group["allowed"] = is_root_group or allowed == ... or group["id"] in allowed
 
 	children = {}
@@ -105,6 +105,7 @@ def build_tree(  # pylint: disable=too-many-branches
 			if default_expanded and grp.get("hasAnySelection"):
 				group["hasAnySelection"] = True
 			continue
+
 		if grp["parent"] == group["id"]:
 			if grp["id"] in processed:
 				logger.error("Loop: %s %s", grp["id"], processed)
@@ -116,9 +117,9 @@ def build_tree(  # pylint: disable=too-many-branches
 		if "children" not in group:
 			group["children"] = {}
 		group["children"].update(children)
-	else:
-		if group["type"] == "HostGroup":
-			group["children"] = None
+	# else:
+	# 	if group["type"] == "HostGroup":
+	# 		group["children"] = None
 
 	if not is_root_group and group.get("children"):
 		for child in group["children"].values():
