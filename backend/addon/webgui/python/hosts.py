@@ -483,8 +483,9 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 				elif "groups" in all_groups:
 					all_groups["groups"]["hasAnySelection"] = True
 			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"], default_expanded=True)
+
 		else:
-			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])
+			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"], default_expanded=True)
 
 		if parentGroup == "clientdirectory":
 			not_assigned = {
@@ -656,6 +657,9 @@ def read_groups(
 					"text": row["object_id"],
 					"parent": row["group_id"],
 				}
+		# if row["group_id"] == "clientdirectory":
+		# 	all_groups["clientdirectory"]["parent"] = None
+
 	return all_groups
 
 
