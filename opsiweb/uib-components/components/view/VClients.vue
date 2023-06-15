@@ -121,7 +121,7 @@
             <ModalMClientReachable />
           </template>
           <template #cell(uefi)="row">
-            <b-form-checkbox v-model="row.item.uefi" :title="''+row.item.uefi" disabled />
+            <b-form-checkbox v-if="row.item.uefi" v-model="row.item.uefi" size="sm" :title="''+row.item.uefi" disabled />
           </template>
           <template #cell(clientId)="row">
             {{ row.item.clientId }}
@@ -132,6 +132,7 @@
           <template #cell(version_outdated)="row">
             <b-button
               variant="outline-primary"
+              size="sm"
               class="btn-client-statistic"
               :disabled="row.item.version_outdated == 0"
               :title="$t('Sort Products table')"
@@ -143,6 +144,7 @@
           <template #cell(actionResult_failed)="row">
             <b-button
               variant="outline-primary"
+              size="sm"
               class="btn-client-statistic"
               :disabled="row.item.actionResult_failed == 0"
               :title="$t('Sort Products table')"
@@ -154,6 +156,7 @@
           <template #cell(installationStatus_unknown)="row">
             <b-button
               variant="outline-primary"
+              size="sm"
               class="btn-client-statistic"
               :disabled="row.item.installationStatus_unknown == 0"
               :title="$t('Sort Products table')"

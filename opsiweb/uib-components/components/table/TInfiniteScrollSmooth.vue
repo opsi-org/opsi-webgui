@@ -31,7 +31,7 @@
         }"
         sticky-header
         show-empty
-        :small="$mq=='mobile'"
+        small
         responsive
         hover
         :fields="Object.values(headerData).filter((h) => { return (h.visible || h._fixed) })"
