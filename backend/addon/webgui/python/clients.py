@@ -8,9 +8,8 @@
 webgui client methods
 """
 
-import asyncio
+from opsiconfd.redis import ip_address_from_redis_key, redis_client
 from packaging import version
-import json
 import os
 import subprocess
 from datetime import date, datetime
@@ -26,7 +25,7 @@ from sqlalchemy.sql.expression import table  # type: ignore[import]
 from starlette.concurrency import run_in_threadpool
 
 from opsicommon.exceptions import BackendBadValueError
-from opsiconfd.config import get_configserver_id
+from opsiconfd.config import get_configserver_id, config
 from opsiconfd.logging import logger
 from opsiconfd.application.admininterface import _unblock_client, _unblock_all_clients
 from opsiconfd.rest import (
@@ -645,6 +644,24 @@ def unblock_client(request: Request, client: str) -> RESTResponse:  # pylint: di
 		) from err
 
 
+@client_router.get("/api/opsidata/blocked-clients")
+@rest_api
+@read_only_check
+def blocked_clients(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	blocked clients
+	"""
+
+	with redis_client() as redis:
+		redis_keys = redis.scan_iter(f"{config.redis_key('stats')}:client:blocked:*")
+
+		blocked_client_list = []
+		for key in redis_keys:
+			blocked_client_list.append(ip_address_from_redis_key(key.decode("utf8").split(":")[-1]))
+		logger.devel(blocked_client_list)
+	return RESTResponse(data=blocked_client_list, total=len(blocked_client_list))
+
+
 @client_router.post("/api/opsidata/clients/unblock")
 @rest_api
 @read_only_check
@@ -655,12 +672,12 @@ def unblock_all_clients(request: Request) -> RESTResponse:  # pylint: disable=un
 
 	try:
 		_unblock_all_clients()
-		return RESTResponse(http_status=200, data=f"Unblocked all clients.")
+		return RESTResponse(http_status=200, data="Unblocked all clients.")
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could unblock clients.")
 		logger.error(err)
 		raise OpsiApiException(
-			message=f"Could unblock clients.",
+			message="Could unblock clients.",
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
 		) from err
