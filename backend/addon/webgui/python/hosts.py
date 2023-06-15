@@ -178,6 +178,8 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 	values = vars(group)
 	values["type"] = "HostGroup"
 
+	if group.parentGroupId == "groups":
+		group.parentGroupId = None
 	if group.parentGroupId:
 		groups = _get_host_groups_ids()
 		if group.parentGroupId not in groups:
