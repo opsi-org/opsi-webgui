@@ -173,7 +173,6 @@ export default class BTNEvent extends Vue {
     }
     this.isLoading = true
     const data = this.events[this.event]
-    const ref = (this.$root.$children[1].$refs.ondemandMessage as any) || (this.$root.$children[2].$refs.ondemandMessage as any)
 
     if (this.event === 'ondemand') { data.params.client_ids = this.selection }
     if (this.event === 'reboot') { data.params.client_ids = [this.data] }
@@ -185,7 +184,7 @@ export default class BTNEvent extends Vue {
     if (this.updateLoading !== undefined) {
       this.updateLoading(data.params.client_ids)
     }
-
+    const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
     await this.$axios.$post('/api/command/opsiclientd_rpc', data.params)
       .then((response) => {
         data.responseVisualization(ref, response)

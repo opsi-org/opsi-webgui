@@ -27,7 +27,7 @@ const mbus = namespace('messagebus')
   //     const msg = this.wsBusMsg
   //     console.log('MessageBus: receive-watch: ', msg)
   //     if (msg && msg.channel === 'event:host_created') {
-  //        const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+  //        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
   //        ref.alert(`MessageBus received:  host_created ${msg.data.id}`, 'info')
   //        await this.$fetch()
   //     }
@@ -188,7 +188,7 @@ const mbus = namespace('messagebus')
   wsNotification (text: any) {
     const stringtext = JSON.stringify(text)
     // console.debug('MessageBus: ', stringtext)
-    // const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+    // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     // // const ref = (this.$refs.alertConfigurationError as any)
     // ref.alert(`MessageBus: ${stringtext}`, 'danger')
   }

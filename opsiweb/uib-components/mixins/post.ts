@@ -29,7 +29,7 @@ const settings = namespace('settings')
     await this.$axios.$post(`/api/opsidata/clients/${client}/groups`, groupsList)
       .then((response) => {
         const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
+        ref.alert(response, 'success')
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
@@ -43,19 +43,19 @@ const settings = namespace('settings')
   async setUEFI (clientId: string) {
     await this.$axios.$post(`api/opsidata/clients/${clientId}/uefi`)
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.details : '')
-        const ref = (this.$refs.uefiAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.uefi') as string, 'danger', detailedError)
       })
   }
 }
 @Component export class DeployClientAgent extends Vue {
-  async deployClientAgent (data: any, hidemodal:boolean) {
+  async deployClientAgent (data: any, modal:boolean) {
     const ref = (this.$refs.clientagentAlert as any)
     await this.$axios.$post('/api/opsidata/clients/deploy', data)
       .then(() => {
         ref.alert(this.$t('message.success.clientagent', { client: data.clientId[0] }) as string, 'success')
-        if (hidemodal) {
+        if (modal) {
           this.$bvModal.hide('event-modal-deployCA-' + data.clientId[0])
         }
       }).catch((error) => {

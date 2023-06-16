@@ -18,11 +18,9 @@
     </BarBTop>
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
     <div class="main_content">
-      <AlertAAlert ref="messageBusInfo" />
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
-      <AlertAAlert ref="alertConfigurationError" />
+      <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
-      <AlertAAlert ref="ondemandMessage" /> <!-- referenced in BTop, any changes should be checked with expiring-session-behaviour-->
       <Nuxt />
     </div>
   </div>
@@ -130,7 +128,7 @@ export default class LayoutDefault extends Vue {
       // this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
     } catch (error: any) {
       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-      const ref = (this.$refs.alertConfigurationError as any)
+      const ref = (this.$refs.errorAlert as any)
       ref.alert(this.$t('message.error.fetch') as string + 'User Configuration', 'danger', detailedError || '')
       this.setConfig({ read_only: true, client_creation: true })
     }

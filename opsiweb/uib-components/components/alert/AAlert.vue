@@ -11,39 +11,52 @@
     v-model="showAlert"
     data-testid="AAlert"
     class="alertbar"
+    size="sm"
     v-bind="$props"
     dismissible
     :variant="alertVariant"
     :aria-label="$props.variant"
   >
     <slot />
-    <p class="text-justify font-weight-bold">
-      {{ alertMessage }}
-    </p>
-    <p v-if="moreDetails" class="text-justify mh-25">
-      {{ moreDetails }}
-    </p>
-
-    <b-list-group v-if="type=='object' && data" flush class="list-data-object">
-      <b-list-group-item v-for="(v, k) in data" :key="k" :variant="(v.error)? 'danger': 'success'">
-        <b>{{ k }}</b> {{ $t('colon') }} {{ v.error || v.result }}
-      </b-list-group-item>
-    </b-list-group>
-    <slot name="footer" />
+    <div class="text-medium">
+      {{ alertMessage }}<span><slot name="button" /></span>
+      <template v-if="moreDetails">
+        <b-button
+          v-if="moreDetails.length>1"
+          :title="showMore? $t('button.collapse'): $t('button.expand')"
+          size="sm"
+          class="float-right border-0 p-0 pb-2"
+          :pressed.sync="showMore"
+        >
+          <b-icon v-if="showMore" :icon="icon.arrowUp" />
+          <b-icon v-else :icon="icon.arrowDown" />
+        </b-button>
+        <template v-if="showMore">
+          <div v-if="typeof moreDetails == 'object'" class="scrollValue">
+            <pre>{{ JSON.stringify(moreDetails, null, 2) }}</pre>
+          </div>
+          <div v-else class="overflow-auto mh-25">
+            {{ moreDetails }}
+          </div>
+        </template>
+      </template>
+    </div>
   </b-alert>
 </template>
 
 <script lang="ts">
 import { Component } from 'nuxt-property-decorator'
 import { BAlert } from 'bootstrap-vue'
+import { Icons } from '../../mixins/icons'
 
-@Component
+@Component({ mixins: [Icons] })
 export default class AAlert extends BAlert {
+  icon: any
   showAlert: boolean = false
   alertMessage: string = ''
   alertVariant : string = ''
   moreDetails: string = ''
-  type:string = ''
+  showMore:boolean = true
   data:any = { }
 
   alert (message, variant = '', details = '') {
@@ -53,20 +66,12 @@ export default class AAlert extends BAlert {
     this.showAlert = true
   }
 
-  set (type = '', data = undefined) {
-    this.type = type
-    this.data = data
-  }
-
   hide () {
     this.showAlert = false
   }
 }
 </script>
 <style>
-.alertbar.alert-dismissible .close {
-  color: black;
-}
 .alertbar .list-data-object{
   max-height: 200px;
   overflow: auto;

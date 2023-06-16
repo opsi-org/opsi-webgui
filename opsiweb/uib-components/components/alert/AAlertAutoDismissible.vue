@@ -1,8 +1,9 @@
 <template>
   <b-alert
-    data-testid="AAlertLocal"
+    data-testid="AlertAutoDismissible"
     :show="dismissCountDown"
     dismissible
+    size="sm"
     v-bind="$props"
     :variant="alertVariant"
     :aria-label="$props.variant"
@@ -10,28 +11,26 @@
     @dismiss-count-down="countDownChanged"
   >
     <slot />
-    {{ alertMessage }}
-    <b-button v-if="moreDetails" class="btn-showDetails" variant="link" :pressed.sync="showMore">
-      {{ $t('message.learnmore') }}
-    </b-button>
-    <p v-if="showMore">
-      {{ moreDetails }}
-    </p>
+    <div class="mh-25 text-medium">
+      {{ alertMessage }}
+      <span v-if="moreDetails">
+        {{ moreDetails }}
+      </span>
+    </div>
   </b-alert>
 </template>
 
 <script lang="ts">
-import { Component, Prop } from 'nuxt-property-decorator'
+import { Component } from 'nuxt-property-decorator'
 import { BAlert } from 'bootstrap-vue'
 
 @Component
 export default class AAlertAutoDismissible extends BAlert {
   alertMessage: string = ''
-  showMore:boolean = false
   moreDetails: string = ''
   dismissSecs: number = 5
   dismissCountDown: number = 0
-  @Prop({ default: 'success' }) alertVariant!: string
+  alertVariant : string = 'success'
 
   mounted () {
     this.alert(this.alertMessage, this.alertVariant, this.moreDetails)

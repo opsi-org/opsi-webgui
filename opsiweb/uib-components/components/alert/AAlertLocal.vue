@@ -3,6 +3,7 @@
     v-model="showAlert"
     data-testid="AAlertLocal"
     class="alertMsg"
+    size="sm"
     v-bind="$props"
     :variant="alertVariant"
     :aria-label="$props.variant"

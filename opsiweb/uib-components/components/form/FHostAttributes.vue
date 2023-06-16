@@ -1,10 +1,7 @@
 <template>
   <div data-testid="FHostAttributes" class="FHostAttributes">
     <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
-    <AlertAAlert ref="hostAttrErrorAlert">
-      <ButtonBTNRefetch :is-loading="(isLoading || $fetchState.pending)" :refetch="$fetch" />
-    </AlertAAlert>
-    <AlertAAlert ref="uefiAlert" />
+    <AlertAAlert ref="hostAttrErrorAlert" />
     <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr.hostId">
       <GridGFormItem>
         <template #label>
@@ -263,7 +260,7 @@ export default class FHostAttributes extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.hostAttrErrorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Host Attributes', 'danger', detailedError)
+        ref.alert(this.$t('message.error.fetch') + this.$t('title.hostattr') + '.', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })
   }
@@ -276,12 +273,13 @@ export default class FHostAttributes extends Vue {
 
   async update (attr, endPoint) {
     this.isLoading = true
-    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$put(endPoint, attr)
       .then(() => {
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
         ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
         this.$fetch()
       }).catch((error) => {
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
       })
@@ -297,8 +295,6 @@ export default class FHostAttributes extends Vue {
     delete attr.systemUUID
     if (this.type === 'clients') {
       this.setUEFI(this.hostAttr.hostId)
-    }
-    if (this.hostAttr.type === 'OpsiClient') {
       delete attr.uefi
       endPoint = `/api/opsidata/clients/${this.hostAttr.hostId}`
     } else {

@@ -291,12 +291,12 @@ export default class VGroups extends Vue {
     const group = this.selectedvalue.parent
     await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: [group] })
       .then(async (response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
@@ -320,8 +320,8 @@ export default class VGroups extends Vue {
   async addClientsToSelectedGroup () {
     await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
       .then(async (response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
         await this.fetchGroups()
       })
       .catch((error) => {
@@ -336,8 +336,8 @@ export default class VGroups extends Vue {
     this.subgroup.parentGroupId = this.selectedvalue.text
     await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
       .then(async (response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
         await this.fetchGroups()
       })
       .catch((error) => {
@@ -352,12 +352,12 @@ export default class VGroups extends Vue {
     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
     await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
       .then(async (response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
@@ -367,12 +367,12 @@ export default class VGroups extends Vue {
   async deleteGroup () {
     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
       .then(async (response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
@@ -382,12 +382,12 @@ export default class VGroups extends Vue {
   async removeClientAssignments () {
     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
       .then(async (response) => {
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert('', 'success', response)
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })

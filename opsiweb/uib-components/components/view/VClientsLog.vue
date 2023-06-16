@@ -1,6 +1,5 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <AlertAAlert ref="logErrorAlert" />
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
@@ -146,7 +145,7 @@ export default class VClientLog extends Vue {
         this.filteredLog = this.logResult
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = this.$refs.logErrorAlert as any
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Log', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })

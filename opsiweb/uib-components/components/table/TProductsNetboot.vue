@@ -231,7 +231,7 @@ export default class TProductsNetboot extends Vue {
       this.visibleProductIds.includes(msg.data.productId) &&
       this.selectionClients.includes(msg.data.clientId)
     ) {
-      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
       if (this.quicksave) {
         this.$fetch()
@@ -291,11 +291,11 @@ export default class TProductsNetboot extends Vue {
   async fetchWrapper () { await this.$fetch() }
   fetch () {
     try {
-      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       if (ref) { ref.hide() }
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warn('Couldnt find AlertBox for messagebusinfo')
+      console.warn('Couldnt find AlertBox for statusAlert')
     }
     this.$emit('fetch-products', this)
   } // will trigger -> this.setItemsCache(items)

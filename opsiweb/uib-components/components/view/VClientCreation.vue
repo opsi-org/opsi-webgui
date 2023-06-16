@@ -2,7 +2,6 @@
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
-    <AlertAAlert ref="uefiAlert" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <OverlayOLoading :is-loading="isLoading" />
     <br>
@@ -285,8 +284,8 @@ export default class VClientCreation extends Vue {
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
-    const hidemodal = false
-    await this.deployClientAgent(this.form, hidemodal)
+    const modal = false
+    await this.deployClientAgent(this.form, modal)
   }
 
   async assignToGroup () {

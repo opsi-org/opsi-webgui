@@ -2,6 +2,7 @@
   <b-button
     data-testid="ButtonBTNDeleteObj"
     class="border-0"
+    size="sm"
     variant="outline-primary"
     :title="$t('button.reset')"
     @click="deleteChanges()"
