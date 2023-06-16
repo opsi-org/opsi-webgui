@@ -11,7 +11,7 @@ const cache = namespace('data-cache')
         this.setOpsiconfigserver(response.result)
       }).catch((error) => {
         const errorMsg = this.$t('message.error.opsiconfd') as string
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         alertRef.alert(errorMsg, 'danger', detailedError)
       })
   }

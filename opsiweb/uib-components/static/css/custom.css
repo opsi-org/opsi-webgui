@@ -45,7 +45,7 @@
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
 
-  --text-small-size: 10px;
+  --text-small: 10px;
 
   --component-height: 36px;
   --component-width: 250px;
@@ -578,4 +578,19 @@ border-color: var(--bg-table-border); */
   color: var(--bs-tooltip-color) !important;
   border: 1px solid var(--b-bs_tooltip) !important;
   padding: 10px;
+}
+
+.text-small  {
+  font-size: var(--text-small)!important;
+}
+.text-medium  {
+  font-size: 13px !important;
+}
+div.scrollValue {
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.filter {
+  max-width: var(--component-width) !important;
 }

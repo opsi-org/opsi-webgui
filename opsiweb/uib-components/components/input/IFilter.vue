@@ -58,9 +58,6 @@ export default class IFilter extends BFormInput {
 </script>
 
 <style>
-.filter {
-  max-width: var(--component-width) !important;
-}
 .filterclear{
   width: 30px;
 }
