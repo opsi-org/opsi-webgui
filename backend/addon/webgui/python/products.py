@@ -34,6 +34,7 @@ from opsiconfd.rest import (
 
 from .depots import get_depots
 from .utils import (
+	backend,
 	bool_value,
 	filter_depot_access,
 	get_allowd_product_groups,
@@ -1240,3 +1241,11 @@ async def unlock_product(request: Request, product: str) -> RESTResponse:
 @read_only_check
 async def unlock_all_products() -> RESTResponse:
 	return await _unlock_all_products()
+
+
+@product_router.get("/api/opsidata/locked-products", response_model=list[str])
+@rest_api
+async def get_locked_products_list() -> RESTResponse:
+
+	locked_products = backend.getProductLocks_hash()  # pylint: disable=no-member
+	return RESTResponse(locked_products)
