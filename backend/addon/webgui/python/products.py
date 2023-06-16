@@ -1226,12 +1226,12 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 @product_router.post("/api/opsidata/products/{product}/unlock")
 @rest_api
 @read_only_check
-def unlock_product(request: Request, product: str) -> RESTResponse:  # pylint: disabale=unused-argument
+def unlock_product(request: Request, product: str) -> RESTResponse:  # pylint: disable=unused-argument
 
 	try:
 		unlocked_products = []
 		for pod in backend.productOnDepot_getObjects(productId=product, locked=True):
-			unlocked_products.append(product.productId)
+			unlocked_products.append(product)
 			pod.locked = False
 			backend.productOnDepot_updateObject(pod)
 		return RESTResponse(data=unlocked_products)
