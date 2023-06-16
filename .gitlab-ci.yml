@@ -38,8 +38,8 @@ stages:
 #   cd -
 
 .define_globals: &define_globals |
-#   npm i -g dry-dry
   shopt -s expand_aliases
+#   npm i -g dry-dry
 #   alias npm-uib='npm'
 #   cd uib-components
 #   git branch
