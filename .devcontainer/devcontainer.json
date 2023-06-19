@@ -14,23 +14,27 @@
 	// },
 	// "remoteUser": "echo $(id -u $(whoami))",
 	// "remoteUser": "1000",
-	"extensions": [
-		"dbaeumer.vscode-eslint",
-		"gruntfuggly.todo-tree",
-		"fooxly.workspace",
-		"esbenp.prettier-vscode",
-		"lokalise.i18n-ally",
-		"orta.vscode-jest",
-		"philfontaine.autolaunch",
-		"ms-playwright.playwright",
-		"eamodio.gitlens",
-		"misterj.vue-volar-extention-pack",
-		"johnsoncodehk.vscode-typescript-vue-plugin",
-		"pucelle.run-on-save",
-		"seunlanlege.action-buttons",
-		"sakamoto66.vscode-playwright-test-runner",
-		"shardulm94.trailing-spaces",
-		"octref.vetur",
-		"SonarSource.sonarlint-vscode"
-	]
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint",
+				"gruntfuggly.todo-tree",
+				"fooxly.workspace",
+				"esbenp.prettier-vscode",
+				"lokalise.i18n-ally",
+				"orta.vscode-jest",
+				"philfontaine.autolaunch",
+				"ms-playwright.playwright",
+				"eamodio.gitlens",
+				"misterj.vue-volar-extention-pack",
+				"johnsoncodehk.vscode-typescript-vue-plugin",
+				"pucelle.run-on-save",
+				"seunlanlege.action-buttons",
+				"sakamoto66.vscode-playwright-test-runner",
+				"shardulm94.trailing-spaces",
+				"octref.vetur",
+				"SonarSource.sonarlint-vscode"
+			]
+		}
+	}
 }
