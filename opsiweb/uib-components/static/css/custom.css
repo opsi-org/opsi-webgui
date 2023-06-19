@@ -481,6 +481,17 @@ tbody .col-rowactions :not(div).btn {
 .vue-treeselect__x-container:hover {
   color: var(--general-fg);
 }
+
+.vue-treeselect__checkbox--checked,
+.vue-treeselect__checkbox--indeterminate,
+.vue-treeselect__label-container:hover .vue-treeselect__checkbox--checked,
+.vue-treeselect__label-container:hover .vue-treeselect__checkbox--indeterminate{
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+.vue-treeselect__label-container:hover .vue-treeselect__checkbox--unchecked {
+  border-color: var(--general-fg);
+}
 .treeselect_notstored .vue-treeselect__control {
   /* height: 1.25rem !important; */
   color: var(--fg-input_component) !important;

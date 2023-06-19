@@ -1,10 +1,17 @@
 :root{
-  --opsi-blue: #3f5aa6;
-  --opsi-red: #cb1e58;
-  --opsi-blue-light: #4a67b5;
-  --opsi-blue-dark: #2d4178;
-  --opsi-red-dark: #b2b2b2;
 
+  /* opsi red cb1e58 ; opsi blue 3f5aa6*/
+  --opsi-first: #3f5aa6;
+  --opsi-first-light: #4a67b5;
+  --opsi-first-dark: #2d4178;
+  --opsi-second: #cb1e58;
+  --opsi-second-dark: #b2b2b2;
+
+  /* --opsi-first: #cb1e58;
+  --opsi-first-light: #c7a6b1;
+  --opsi-first-dark: #741031;
+  --opsi-second: #3f5aa6;
+  --opsi-second-dark: #2d4178; */
 
   --opsi-general-grey-dark: #4b4b49; /*new*/
   --opsi-general-grey: #e4e4e3;
@@ -22,16 +29,16 @@
 /* bg: #2b2b2b*/
   --general-fg-disabled: var(--opsi-general-grey);
   --general-bg-weak: var(--opsi-general-grey-dark);
-  --general-bg-light: var(--opsi-blue); /*updated*/
+  --general-bg-light: var(--opsi-first); /*updated*/
 
   --success: #009605;
   --warning: #FF9100;
   --warning-hover: #FF9100;
   --danger: #E51D3B;
-  --primary: var(--opsi-blue);
-  --secondary: var(--opsi-red);
+  --primary: var(--opsi-first);
+  --secondary: var(--opsi-second);
   /* --primary: var(--general-fg); */
-  --info: var(--opsi-blue);
+  --info: var(--opsi-first);
   --light: var(--general-opsi-grey-light);
   --dark: var(--general-opsi-grey-dark);
 
@@ -41,8 +48,8 @@
   --warning-foreground: var(--light);
   --danger-foreground: var(--light);
 
-  --primary-dark: var(--opsi-blue-dark);
-  --secondary-dark: var(--opsi-red-dark);
+  --primary-dark: var(--opsi-first-dark);
+  --secondary-dark: var(--opsi-second-dark);
   --success-dark: #246b32;
   --danger-dark: #aa2126;
   --warning-dark: #bb8819;

@@ -3168,7 +3168,7 @@ select option:hover {
   background-color: var(--primary-dark) !important;
 }
 select option:active {
-  --primary: var(--opsi-blue);
+  --primary: var(--opsi-first);
   background-color: var(--primary) !important;
 }
 select option:checked {

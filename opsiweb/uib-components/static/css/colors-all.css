@@ -18,8 +18,8 @@
   --bg-table: var(--general-bg); /* general g */
   --fg-table-selected: var(--primary-foreground);
   --bg-table-selected: var(--primary);
-  --bg-table-hover: var(--opsi-blue-dark);
-  --bg-table-hover-selected: var(--opsi-blue-dark);
+  --bg-table-hover: var(--opsi-first-light);
+  --bg-table-hover-selected: var(--opsi-first-light);
   --b-table: var(--general-opsi-grey-dark);
   --fg-table: var(--general-fg);
   --fg-table-hover: var(--primary-foreground);
