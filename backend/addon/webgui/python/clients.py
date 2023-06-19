@@ -671,8 +671,20 @@ def unblock_all_clients(request: Request) -> RESTResponse:  # pylint: disable=un
 	"""
 
 	try:
-		_unblock_all_clients()
-		return RESTResponse(http_status=200, data="Unblocked all clients.")
+		with redis_client() as redis:
+			client_set = set()
+			deleted_keys = set()
+			with redis.pipeline(transaction=False) as pipe:
+				for base_key in (f"{config.redis_key('stats')}:client:failed_auth", f"{config.redis_key('stats')}:client:blocked"):
+					for key in redis.scan_iter(f"{base_key}:*"):
+						key_str = key.decode("utf8")
+						deleted_keys.add(key_str)
+						client = ip_address_from_redis_key(key_str.split(":")[-1])
+						client_set.add(client)
+						logger.debug("redis key to delete: %s", key_str)
+						pipe.delete(key)  # type: ignore[attr-defined]
+				pipe.execute()  # type: ignore[attr-defined]
+			return RESTResponse({"clients": list(client_set), "redis-keys": list(deleted_keys)})
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Could unblock clients.")
 		logger.error(err)

@@ -15,7 +15,7 @@
         <span class="ml-1 topbar_title webgui_title">
           {{ $t('title.project') }}
         </span>
-        <span v-once class="ml-1 topbar_version"> {{ $config.packageVersion }} </span>
+        <span v-once class="ml-1 text-small"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" />
@@ -106,9 +106,6 @@ export default class BTop extends Vue {
   font-size: 18px;
   margin-left: -3px;
   margin-top: 7px;
-}
-.topbar_version{
-  font-size: var(--text-small-size)!important;
 }
 .mobile #nav-collapse {
   max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));

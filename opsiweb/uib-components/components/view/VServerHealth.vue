@@ -1,6 +1,5 @@
 <template>
   <div data-testid="VServerHealthCheck">
-    <AlertAAlert ref="healthCheckAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <b-tabs>
       <b-tab :title="$t('title.diagnostics')" active>
@@ -83,8 +82,8 @@ export default class VHealthCheck extends Vue {
         this.onlyDiagnostics = response
         if (this.onlyDiagnostics.length !== 0 && this.onlyDiagnostics.health_check) { delete this.onlyDiagnostics.health_check }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.healthCheckAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Health Check', 'danger', detailedError)
       })
   }
@@ -104,10 +103,3 @@ export default class VHealthCheck extends Vue {
   }
 }
 </script>
-<style scoped>
-div.scrollValue {
-  max-height: 500px;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-</style>

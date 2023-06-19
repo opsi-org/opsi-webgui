@@ -1,6 +1,5 @@
 <template>
   <div data-testid="VModules" :class="{loadingCursor: $fetchState.pending}">
-    <AlertAAlert ref="modulesAlert" />
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <LazyGridGFormItem v-if="!errorText" v-once label-id="modules">
       <template #label>
@@ -35,8 +34,8 @@ export default class VModules extends Vue {
       .then((response) => {
         this.modules = response.result
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.modulesAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Modules', 'danger', detailedError)
         this.errorText = this.$t('message.error.defaulttext') as string
       })

@@ -13,14 +13,14 @@
             <span v-for="item, index in changes" :key="index" :class="{ 'd-none': item.clientId && !item.clientId.includes(filter) || item.depotId && !item.depotId.includes(filter)}">
               <GridGFormItem value-more="true">
                 <template #label>
-                  {{ item.depotId || item.clientId }}
+                  <small> {{ item.depotId || item.clientId }} </small>
                 </template>
                 <template #value>
-                  {{ item.actionRequest || ($t('{ ') + item.property + $t(' : ') + item.propertyValue + $t(' }') ) }}
+                  <small> {{ item.actionRequest || ($t('{ ') + item.property + $t(' : ') + item.propertyValue + $t(' }') ) }} </small>
                 </template>
                 <template #valueMore>
                   <ButtonBTNDeleteObj :item="item" from="products" />
-                  <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="save(item, false)">
+                  <b-button class="border-0" variant="outline-primary" size="sm" :title="$t('button.save')" @click="save(item, false)">
                     <span class="sr-only">{{ $t('button.save') }}</span>
                     <b-icon :icon="icon.check" />
                   </b-button>

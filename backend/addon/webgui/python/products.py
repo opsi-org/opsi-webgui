@@ -20,7 +20,7 @@ from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
 from opsiconfd.config import get_configserver_id
-from opsiconfd.application.admininterface import _unlock_product, _unlock_all_products
+from opsiconfd.application.admininterface import _unlock_products
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,
@@ -34,6 +34,7 @@ from opsiconfd.rest import (
 
 from .depots import get_depots
 from .utils import (
+	backend,
 	bool_value,
 	filter_depot_access,
 	get_allowd_product_groups,
@@ -1225,18 +1226,39 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 @product_router.post("/api/opsidata/products/{product}/unlock")
 @rest_api
 @read_only_check
-async def unlock_product(request: Request, product: str) -> RESTResponse:
+def unlock_product(request: Request, product: str) -> RESTResponse:  # pylint: disable=unused-argument
 
 	try:
-		request_body = await request.json()
-		depots = request_body.get("depots", None)
-	except json.decoder.JSONDecodeError:
-		pass
-	return await _unlock_product(product, depots)
+		unlocked_products = []
+		for pod in backend.productOnDepot_getObjects(productId=product, locked=True):
+			unlocked_products.append(product)
+			pod.locked = False
+			backend.productOnDepot_updateObject(pod)
+		return RESTResponse(data=unlocked_products)
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Error while unlocking products: %s", err)
+		return RESTErrorResponse(message="Error while unlocking products", details=err)
 
 
 @product_router.post("/api/opsidata/products/unlock")
 @rest_api
 @read_only_check
-async def unlock_all_products() -> RESTResponse:
-	return await _unlock_all_products()
+def unlock_all_products() -> RESTResponse:
+	try:
+		unlocked_products = []
+		for product in backend.productOnDepot_getObjects(locked=True):
+			unlocked_products.append(product.productId)
+			product.locked = False
+			backend.productOnDepot_updateObject(product)
+		return RESTResponse(data=unlocked_products)
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Error while unlocking products: %s", err)
+		return RESTErrorResponse(message="Error while unlocking products", details=err)
+
+
+@product_router.get("/api/opsidata/locked-products", response_model=list[str])
+@rest_api
+def get_locked_products_list() -> RESTResponse:
+
+	locked_products = backend.getProductLocks_hash()  # pylint: disable=no-member
+	return RESTResponse(locked_products)

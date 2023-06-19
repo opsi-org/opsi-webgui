@@ -1,8 +1,5 @@
 <template>
   <div data-testid="VProductProperty">
-    <AlertAAlert ref="productPropViewAlert">
-      <ButtonBTNRefetch :is-loading="$fetchState.pending" :refetch="$fetch" />
-    </AlertAAlert>
     <BarBPageHeader :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
     <div class="mb-3">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
@@ -150,8 +147,8 @@ export default class VProductProperty extends Vue {
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.error.fetch.productProperty')
         this.activeTabSet = -3
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.productPropViewAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Properties', 'danger', detailedError)
       })
   }
@@ -166,8 +163,8 @@ export default class VProductProperty extends Vue {
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.error.fetch.productDependency')
         this.activeTabSet = -3
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.details) ? error.response.data.details : '')
-        const ref = (this.$refs.productPropViewAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Dependencies', 'danger', detailedError)
       })
   }

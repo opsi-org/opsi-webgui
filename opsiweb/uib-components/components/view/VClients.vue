@@ -1,9 +1,8 @@
 <template>
   <div data-testid="VClients">
-    <AlertAAlert ref="clientsViewAlert" />
     <AlertAAlert ref="sortProductsAlert">
-      <template #footer>
-        <b-button variant="outline-primary" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
+      <template #button>
+        <b-button variant="transparent" class="border-0 float-right" size="sm" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
           {{ $t('button.continue') }}
         </b-button>
       </template>
@@ -328,12 +327,12 @@ export default class VClients extends Vue {
   @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg
     if (msg && msg.channel === 'event:host_created') {
-      const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
       await this.$fetch()
     }
     if (msg && msg.event === ('host_connected' || 'host_disconnected')) {
-      // const ref = (this.$root.$children[1].$refs.messageBusInfo as any) || (this.$root.$children[2].$refs.messageBusInfo as any)
+      // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       // eslint-disable-next-line no-console
       console.log('message bus host_connected', msg)
@@ -406,7 +405,7 @@ export default class VClients extends Vue {
         }
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.clientsViewAlert as any)
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.fetch') as string + 'Clients', 'danger', detailedError)
         this.error = this.$t('message.error.defaulttext') as string
         this.error += JSON.stringify(error.message)
@@ -447,7 +446,7 @@ export default class VClients extends Vue {
       this.rowId = 'dummy'
       this.$router.push('/clients/products')
     } else {
-      ref.alert(this.$t('message.warning.title'), 'warning', 'All other client selections will be removed except ' + this.sortProductsByClient + '. Do you want to continue?')
+      ref.alert(this.$t('message.warning.sortProductsByClient', { client: this.sortProductsByClient }) as string, 'warning')
     }
   }
 }

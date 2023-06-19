@@ -3,7 +3,7 @@
     <b-button
       :title="$t('table.fields.checkreachable')"
       :class="{ 'border-0': selectionClients.length <= 0 }"
-      variant="transparent"
+      variant="outline-primary"
       :disabled="selectionClients.length <= 0"
       @click="$bvModal.show('clientreachability')"
     >
@@ -19,7 +19,7 @@
       hide-footer
       no-fade
     >
-      <b-button class="border" variant="transparent" @click="checkReachable">
+      <b-button variant="outline-primary" @click="checkReachable">
         {{ $t('button.reachable') }}
       </b-button>
       <AlertAAlert ref="CheckAlert" />
@@ -54,7 +54,7 @@ export default class MClientReachable extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.CheckAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Reachability Check', 'danger', detailedError)
+        ref.alert(this.$t('message.error.title') + this.$t('table.fields.reachablility'), 'danger', detailedError)
       })
     this.isLoading = false
   }

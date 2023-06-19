@@ -87,8 +87,8 @@ export default class MDeployClientAgent extends Vue {
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
-    const hidemodal = true
-    await this.deployClientAgent(this.form, hidemodal)
+    const modal = true
+    await this.deployClientAgent(this.form, modal)
   }
 }
 </script>

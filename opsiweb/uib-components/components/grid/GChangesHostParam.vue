@@ -5,14 +5,14 @@
     <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
       <GridGFormItem value-more="true">
         <template #label>
-          <span :class="{'font-weight-bold': item.type=='depots'}"> {{ item.hostId }} </span>
+          <span :class="{'font-weight-bold': item.type=='depots'}"><small> {{ item.hostId }}</small></span>
         </template>
         <template #value>
-          {{ $t('{') }} {{ item.configId }} {{ $t(':') }} {{ item.value }} {{ $t('}') }}
+          <small> {{ $t('{') }} {{ item.configId }} {{ $t(':') }} {{ item.value }} {{ $t('}') }} </small>
         </template>
         <template #valueMore>
           <ButtonBTNDeleteObj :item="item" from="hostparam" />
-          <b-button class="border-0" variant="outline-primary" :title="$t('button.save')" @click="saveHostParam(item, false)">
+          <b-button class="border-0" variant="outline-primary" size="sm" :title="$t('button.save')" @click="saveHostParam(item, false)">
             <span class="sr-only">{{ $t('button.save') }}</span>
             <b-icon :icon="icon.check" />
           </b-button>

@@ -3,7 +3,7 @@
     <b-form-input
       id="filterchanges"
       v-model="filter"
-      class="filterchanges"
+      size="sm"
       :aria-label="placeholder"
       type="search"
       :placeholder="placeholder"

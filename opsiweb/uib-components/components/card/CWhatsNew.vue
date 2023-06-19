@@ -30,7 +30,10 @@ export default class CChangeLogs extends Vue {
   $mq: any
 
   async fetch () {
-    const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
+    let ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
+    if (this.supportPage) {
+      ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
+    }
     await this.$axios.$get('/api/opsidata/changelogs')
       .then((response) => {
         this.changelogs = response.split(/\r?\n/)
