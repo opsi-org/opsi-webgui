@@ -535,10 +535,6 @@ tbody .col-rowactions :not(div).btn {
   max-width: var(--component-width) !important;
 }
 
-.labelcolor {
-  /* color: var(--color) !important; */
-}
-
 .contextmenu .btn{
   text-align: left;
   padding-left: 0;
