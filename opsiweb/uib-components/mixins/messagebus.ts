@@ -1,16 +1,9 @@
 import { encode, decode } from '@msgpack/msgpack'
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
-// import msgpk from 'msgpack5'
-
-// var msgpack = require('msgpack5')() // namespace our extensions
-//   , a       = new MyType(2, 'a')
-//   , encode  = msgpack.encode
-//   , decode  = msgpack.decode
-
 const mbus = namespace('messagebus')
 
 @Component export class MBus extends Vue {
-  uid: String = this.createUUID()
+  uid: string = this.createUUID()
 
   @mbus.Getter public bus!: WebSocket|undefined
   @mbus.Getter public wsBusMsg!: any
@@ -47,7 +40,7 @@ const mbus = namespace('messagebus')
 
   async wsInit (reconnect: boolean = false) {
     if (!reconnect && this.bus !== undefined) {
-      console.debug('MessageBud: already connecting/connected')
+      // console.debug('MessageBud: already connecting/connected')
       return
     }
 
@@ -76,7 +69,7 @@ const mbus = namespace('messagebus')
       ])
     }
     this._setBus(this.bus, this.setBusLastMsg)
-    console.debug('MessageBus: connected')
+    // console.debug('MessageBus: connected')
     await this.wsWait(1000)
   }
 
@@ -90,9 +83,6 @@ const mbus = namespace('messagebus')
     if (this.bus === undefined) { return }
     this._waitForSocketConnection(this.bus, () => {
       if (this.bus === undefined) { return }
-      let data = ''
-      if (msg.data) { data = String.fromCharCode(...msg.data) }
-      // console.debug('MessageBus send "' + msg.type + '": "' + data + '"', msg)
       this.bus.send(encode(msg))
     })
   }
@@ -105,7 +95,7 @@ const mbus = namespace('messagebus')
   // }
 
   wsSubscribeChannel (channels: Array<string>) {
-    console.log('subscribe channels ', channels)
+    // console.log('subscribe channels ', channels)
     const message = this.wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'
@@ -186,7 +176,7 @@ const mbus = namespace('messagebus')
   }
 
   wsNotification (text: any) {
-    const stringtext = JSON.stringify(text)
+    return JSON.stringify(text)
     // console.debug('MessageBus: ', stringtext)
     // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     // // const ref = (this.$refs.alertConfigurationError as any)
