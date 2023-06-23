@@ -16,8 +16,8 @@ export interface ITableRowItemProducts {
   actionRequestDetails?: Array<string>
   depotVersions: Array<string>
   clientVersions: Array<string>
-  clientVersionOutdated: boolean
-  depotVersionDiff: boolean
+  client_version_outdated: boolean
+  depot_version_diff: boolean
   installationStatus: Array<string>
   actionResult: Array<string>
   actionRequest: string,
@@ -34,6 +34,10 @@ export interface ITableRow {
     depotId?: string
     clientId?: string
     _rowVariant?: string
+    // depot_version_diff?: boolean
+    // client_version_outdated?: boolean
+    // depotVersions?: any //list?
+    // selectedDepots?: any // list?
   };
 }
 
@@ -149,8 +153,3 @@ export interface IProp {
   productDescription: string
   productDescriptionDetails: IObjectString2String
 }
-// import * as MyFn from './myfile.js'
-// export * from './ttable.js'
-// export default {
-//   ITableData
-// }

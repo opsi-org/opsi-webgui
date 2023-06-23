@@ -1,38 +1,38 @@
 <template>
   <div data-testid="TCProductVersionCell" class="d-inline-block">
     <div
-      :id="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
+      :id="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       class="TCProductVersionCell_hover"
     >
-      {{ (row.item.depot_version_diff)? '' : row.item.depotVersions[0] }}
+      {{ (rowitem.depot_version_diff)? '' : rowitem.depotVersions[0] }}
       <IconIDetails
-        v-if="row.item.depot_version_diff"
+        v-if="rowitem.depot_version_diff"
         class="details depot-unequal"
         content="depot-unequal"
-        :variant="(row.item.depot_version_diff||false)?'warning':''"
+        :variant="(rowitem.depot_version_diff||false)?'warning':''"
         @click="$emit('details', row, tooltiptext)"
       />
       <IconIDetails
-        v-if="(row.item.selectedDepots.length != selectionDepots.length)"
-        :variant="(row.item.selectedDepots.length != selectionDepots.length)?'warning':''"
+        v-if="(rowitem.selectedDepots.length != selectionDepots.length)"
+        :variant="(rowitem.selectedDepots.length != selectionDepots.length)?'warning':''"
         class="details depot-wo-prod"
         content="depot-wo-prod"
       />
 
       <IconIDetails
-        v-if="row.item.client_version_outdated||false"
-        :variant="(row.item.client_version_outdated||false)?'danger':''"
+        v-if="rowitem.client_version_outdated||false"
+        :variant="(rowitem.client_version_outdated||false) ?'danger':''"
         class="details client-outdated"
         content="client-outdated"
         @click="$emit('details', row, tooltiptext)"
       />
     </div>
     <TooltipTTProductCell
-      v-if="row.item.depot_version_diff || row.item.client_version_outdated||(row.item.selectedDepots.length != selectionDepots.length)||false"
+      v-if="rowitem.depot_version_diff || rowitem.client_version_outdated||(rowitem.selectedDepots.length != selectionDepots.length)||false"
       type="version"
-      :target="`TCProductVersionCell_hover_${row.item.productId}_${type}`"
+      :target="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       :details="tooltiptext"
-      :depot-version-diff="row.item.depot_version_diff"
+      :depot-version-diff="rowitem.depot_version_diff"
     />
   </div>
 </template>
@@ -53,6 +53,7 @@ export default class TCProductVersionCell extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
 
+  get rowitem (): ITableRowItemProducts { return this.row.item as ITableRowItemProducts }
   get tooltiptext () {
     // console.debug('key length: ', Object.keys(this.clients2depots).length)
     const depots: IObjectString2String = mapValues2Objects((this.row.item as ITableRowItemProducts).depotVersions, (this.row.item as ITableRowItemProducts).selectedDepots, this.selectionDepots, '--')
