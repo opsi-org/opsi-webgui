@@ -11,7 +11,7 @@
           :fetch="$fetch"
           navbartype="collapse"
           :childopened="secondColumnOpened"
-          :closeroute="(child)? '/clients/': null"
+          :closeroute="child? '/clients/' : null"
           :treeview="showTreeView"
         >
           <template #right>
@@ -90,6 +90,7 @@ import { Icons } from '../../mixins/icons'
 import { ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { IObjectString2Any } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
+
 @Component({ mixins: [Client, Icons] })
 export default class VProducts extends Vue {
   icon: any
@@ -263,28 +264,7 @@ export default class VProducts extends Vue {
     }
 
     if (thiss.fetchOptions.fetchClients) {
-      const params = { ...thiss.tableData }
-      params.selectedDepots = JSON.stringify(thiss.selectionDepots)
-      params.selectedClients = JSON.stringify(thiss.selectionClients)
-      if (params.sortBy === 'installationStatus') {
-        params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
-      } else if (params.sortBy === 'actionResult') {
-        params.sortBy = '["actionResultErrorLevel", "actionResult"]'
-      } else if (params.sortBy === 'depotVersions') {
-        params.sortBy = 'depot_version_diff'
-      } else if (params.sortBy === 'clientVersions') {
-        params.sortBy = 'client_version_outdated'
-      } else if (params.sortBy === 'desc') {
-        params.sortBy = 'description'
-      } else if (params.sortBy === '') {
-        params.sortBy = 'productId'
-      } else if (params.sortBy === 'version') {
-        params.sortBy = '["client_version_outdated", "depot_version_diff", "not_on_all_depots" ]'
-      } else if (params.sortBy === 'selected') {
-        params.sortDesc = true
-        params.selected = JSON.stringify(thiss.selectionProducts)
-        // params.sortBy = '["selected", "productId"]'
-      }
+      const params = this.fetchProductsPrepareParams(thiss)
       const myitems = await thiss.$axios.get('/api/opsidata/products', { params })
         .then((response) => {
           thiss.totalItems = response.headers['x-total-count'] || 0
@@ -308,6 +288,32 @@ export default class VProducts extends Vue {
       thiss.setItemsCache(myitems)
       return myitems
     }
+  }
+
+  fetchProductsPrepareParams (thiss) {
+    const params = { ...thiss.tableData }
+    params.selectedDepots = JSON.stringify(thiss.selectionDepots)
+    params.selectedClients = JSON.stringify(thiss.selectionClients)
+    if (params.sortBy === 'installationStatus') {
+      params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
+    } else if (params.sortBy === 'actionResult') {
+      params.sortBy = '["actionResultErrorLevel", "actionResult"]'
+    } else if (params.sortBy === 'depotVersions') {
+      params.sortBy = 'depot_version_diff'
+    } else if (params.sortBy === 'clientVersions') {
+      params.sortBy = 'client_version_outdated'
+    } else if (params.sortBy === 'desc') {
+      params.sortBy = 'description'
+    } else if (params.sortBy === '') {
+      params.sortBy = 'productId'
+    } else if (params.sortBy === 'version') {
+      params.sortBy = '["client_version_outdated", "depot_version_diff", "not_on_all_depots" ]'
+    } else if (params.sortBy === 'selected') {
+      params.sortDesc = true
+      params.selected = JSON.stringify(thiss.selectionProducts)
+      // params.sortBy = '["selected", "productId"]'
+    }
+    return params
   }
 }
 </script>
