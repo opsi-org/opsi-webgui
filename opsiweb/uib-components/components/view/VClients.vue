@@ -63,7 +63,7 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
-          <template #contextcontent-1="{itemkey}">
+          <template #contextcontent-1="{itemkey}"> <!-- row actions -->
             <DropdownDDClientActions :client-id="itemkey" :fetch="$fetch" :incontextmenu="true" />
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
@@ -86,7 +86,7 @@
               :click="routeRedirectWith"
             />
           </template>
-          <template #contextcontent-general-1>
+          <template #contextcontent-general-1> <!-- table actions -->
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
             <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
             <ButtonBTNRefetch
@@ -97,13 +97,13 @@
               :refetch="_fetch"
             />
           </template>
+
           <template #head(version_outdated)>
             <div :title="$t('table.fields.versionOutdated')">
               <b-icon :icon="icon.product" />
               <b-icon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
             </div>
           </template>
-
           <template #head(actionResult_failed)>
             <div :title="$t('table.fields.actionResultFailed')">
               <b-icon :icon="icon.product" />
@@ -119,6 +119,7 @@
           <template #head(reachable)>
             <ModalMClientReachable />
           </template>
+
           <template #cell(uefi)="row">
             <b-form-checkbox v-if="row.item.uefi" v-model="row.item.uefi" size="sm" :title="''+row.item.uefi" disabled />
           </template>
@@ -145,6 +146,7 @@
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
+              :class="selectionClients.includes(row.item.clientId)? 'selected' : ''"
               :disabled="row.item.actionResult_failed == 0"
               :title="$t('Sort Products table')"
               @click="sortProductTable(row.item.clientId, 'actionResult', false)"
