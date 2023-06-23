@@ -1,6 +1,6 @@
 export default {
   title: 'Div/D Scroll Result',
-  parameters: { docs: { description: { component: 'Collapse/CContent description' } } }
+  parameters: { docs: { description: { component: 'Scrollable Content Div' } } }
 }
 
 const DefaultVisibleTemplate = (_args, { argTypes }) => ({

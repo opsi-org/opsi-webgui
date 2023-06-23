@@ -3,11 +3,9 @@ const BootstrapVueIcons = require('bootstrap-vue').BootstrapVueIcons
 const createLocalVue = require('@vue/test-utils').createLocalVue
 const mount = require('@vue/test-utils').mount
 const BAuthFooter = require('./BAuthFooter').default
-// const DCountdowntimer = require('../div/DCountdowntimer').default
-// tzesz
+
 const localVue = createLocalVue()
 localVue.use(BootstrapVue)
-
 localVue.use(BootstrapVueIcons)
 
 describe('BAuthFooter', () => {

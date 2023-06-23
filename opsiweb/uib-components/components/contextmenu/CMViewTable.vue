@@ -158,9 +158,6 @@ export default class CMViewTable extends Vue {
   color: var(--fg-context_menu) ;
 }
 
-/* #right-click-menu small > li.dropdown-item .btn-outline-primary {
-  color:blue;
-} */
 #right-click-menu small > div > li.dropdown-item .dropdown-item {
   margin: 0px !important;
   padding: 0px !important;

@@ -13,6 +13,7 @@
         <b-form-input
           id="clientname"
           v-model="clientName"
+          size="sm"
           data-testid="clientname"
           :aria-label="$t('table.name.client')"
           type="text"
@@ -27,6 +28,7 @@
         <b-form-input
           id="domainName"
           v-model="domainName"
+          size="sm"
           class="domainName"
           :aria-label="$t('table.name.domain')"
           type="text"
@@ -34,7 +36,7 @@
         />
       </template>
     </GridGFormItem>
-    <b-row class="mt-4 mb-2">
+    <b-row class="text-small mb-2">
       <b class="basics">{{ $t('title.basics') }} </b>
     </b-row>
     <GridGFormItem>
@@ -42,7 +44,7 @@
         <span class="description">{{ $t('table.fields.description') }}</span>
       </template>
       <template #value>
-        <b-form-input id="description" v-model="newClient.description" :aria-label="$t('table.fields.description')" type="text" />
+        <b-form-input id="description" v-model="newClient.description" size="sm" :aria-label="$t('table.fields.description')" type="text" />
       </template>
     </GridGFormItem>
     <GridGFormItem>
@@ -50,7 +52,7 @@
         <span class="inventNum">{{ $t('table.fields.inventNum') }}</span>
       </template>
       <template #value>
-        <b-form-input id="inventNum" v-model="newClient.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
+        <b-form-input id="inventNum" v-model="newClient.inventoryNumber" size="sm" :aria-label="$t('table.fields.inventNum')" type="text" />
       </template>
     </GridGFormItem>
     <GridGFormItem>
@@ -58,7 +60,7 @@
         <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
       </template>
       <template #value>
-        <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" :aria-label="$t('table.fields.hwAddr')" type="text" />
+        <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" size="sm" :aria-label="$t('table.fields.hwAddr')" type="text" />
       </template>
     </GridGFormItem>
     <GridGFormItem>
@@ -66,7 +68,7 @@
         <span class="ip">{{ $t('table.fields.ip') }}</span>
       </template>
       <template #value>
-        <b-form-input id="ip" v-model="newClient.ipAddress" :aria-label="$t('table.fields.ip')" type="text" />
+        <b-form-input id="ip" v-model="newClient.ipAddress" size="sm" :aria-label="$t('table.fields.ip')" type="text" />
       </template>
     </GridGFormItem>
     <GridGFormItem>
@@ -74,10 +76,17 @@
         <span class="notes">{{ $t('table.fields.notes') }}</span>
       </template>
       <template #value>
-        <b-form-textarea id="notes" v-model="newClient.notes" :aria-label="$t('table.fields.notes')" rows="2" no-resize />
+        <b-form-textarea
+          id="notes"
+          v-model="newClient.notes"
+          size="sm"
+          :aria-label="$t('table.fields.notes')"
+          rows="2"
+          no-resize
+        />
       </template>
     </GridGFormItem>
-    <b-row class="mt-4 mb-2">
+    <b-row class="text-small mb-2">
       <b class="settings">{{ $t('title.settings') }} </b>
     </b-row>
     <GridGFormItem>
@@ -85,10 +94,10 @@
         <span class="uefi">{{ $t('table.fields.uefi') }}</span>
       </template>
       <template #value>
-        <b-form-checkbox id="uefi" v-model="uefi" :aria-label="$t('table.fields.uefi')" />
+        <b-form-checkbox id="uefi" v-model="uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
       </template>
     </GridGFormItem>
-    <b-row class="mt-4 mb-2">
+    <b-row class="text-small mb-2">
       <b class="assignments">{{ $t('title.assignments') }} </b>
     </b-row>
     <GridGFormItem>
@@ -107,7 +116,7 @@
         <TreeTSGroupInitSelection :id.sync="group" />
       </template>
     </GridGFormItem>
-    <b-row class="mt-4 mb-2">
+    <b-row class="text-small mb-2">
       <b class="initsetup">{{ $t('title.initsetup') }} </b>
     </b-row>
     <GridGFormItem>
@@ -118,6 +127,7 @@
         <b-form-select
           id="netbootproduct"
           v-model="netbootproduct"
+          size="sm"
           value-field="productId"
           text-field="productId"
           :options="netbootproductslist"
@@ -135,6 +145,7 @@
             <b-form-input
               id="username"
               v-model="form.username"
+              size="sm"
               class="valid-none"
               :placeholder="$t('form.username')"
               :state="formvalidation_user"
@@ -143,31 +154,37 @@
             <b-form-input
               id="password"
               v-model="form.password"
+              size="sm"
               class="valid-none"
               :placeholder="$t('form.password')"
               :state="formvalidation_pw"
               required
             />
-            <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required />
+            <b-form-select id="type" v-model="form.type" size="sm" :options="clientagenttypes" required />
           </div>
         </b-form>
       </template>
     </GridGFormItem>
-    <div class="float-right mt-2">
-      <b-button id="resetButton" class="resetButton" variant="primary" @click="resetNewClientForm()">
-        <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
-      </b-button>
-      <b-button
-        id="addButton"
-        data-testid="addButton"
-        class="addButton"
-        variant="success"
-        :disabled="!clientName"
-        @click="createOpsiClient()"
-      >
-        <b-icon :icon="icon.add" /> {{ $t('button.create') }}
-      </b-button>
-    </div>
+    <GridGFormItem>
+      <template #value>
+        <div class="float-right mt-2">
+          <b-button id="resetButton" class="resetButton" size="sm" variant="primary" @click="resetNewClientForm()">
+            <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
+          </b-button>
+          <b-button
+            id="addButton"
+            data-testid="addButton"
+            size="sm"
+            class="addButton"
+            variant="success"
+            :disabled="!clientName"
+            @click="createOpsiClient()"
+          >
+            <b-icon :icon="icon.add" /> {{ $t('button.create') }}
+          </b-button>
+        </div>
+      </template>
+    </GridGFormItem>
   </div>
 </template>
 

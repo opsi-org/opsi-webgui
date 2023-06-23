@@ -18,8 +18,8 @@
     :aria-label="$props.variant"
   >
     <slot />
-    <div class="text-medium">
-      {{ alertMessage }}<span><slot name="button" /></span>
+    <div class="text-small">
+      {{ alertMessage }}<slot name="button" />
       <template v-if="moreDetails">
         <b-button
           v-if="moreDetails.length>1"

@@ -1,6 +1,6 @@
 export default {
   title: 'Icon/I Opsi Logo',
-  parameters: { docs: { description: { component: 'Icon/IOpsiLogo description' } } }
+  parameters: { docs: { description: { component: 'OPSI Logo as icon' } } }
 }
 
 const DefaultVisibleTemplateHead = (_args, { argTypes }) => ({

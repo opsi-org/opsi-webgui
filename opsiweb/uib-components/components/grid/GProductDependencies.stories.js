@@ -17,9 +17,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   `
 })
 
-// named export Primary to create respective story
 export const GProductDependencies = PrimaryTemplate.bind({})
-
 GProductDependencies.args = {
   id: 'id',
   deps: dependencies

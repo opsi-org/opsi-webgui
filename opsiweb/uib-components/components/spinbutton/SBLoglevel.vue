@@ -3,6 +3,7 @@
     <b-form-spinbutton
       id="loglevel"
       v-model="level"
+      size="sm"
       :aria-label="$t('button.change.loglevel')"
       class="loglevel_spinbutton"
       min="0"
@@ -27,5 +28,6 @@ export default class SLoglevel extends Vue {
 .loglevel_spinbutton{
   min-width: var(--component-width) !important;
   padding: 0 !important;
+  font-size: var(--text-small);
 }
 </style>

@@ -45,22 +45,23 @@
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
 
-  --text-small: 10px;
+  --text-smaller: 10px;
+  --text-small: 13px;
 
-  --component-height: 36px;
+  --component-height: 30px;
   --component-width: 250px;
 
   --max-height-window:500px;
-  --height-navbar: 56px;
+  --height-navbar: 45px;
 
-  --width-sidebar-expanded:190px;
+  --width-sidebar-expanded:170px;
   --width-sidebar-collapsed:53px;
 
-  --margin-top-maincontent:60px;
+  --margin-top-maincontent:50px;
   --margin-left-maincontent:15px;
-  --margin-left-maincontent-if-sidebar-collpased:70px;
-  --margin-left-maincontent-if-sidebar-expanded:205px;
-  --min-height-button: 35px;
+  --margin-left-maincontent-if-sidebar-collpased:65px;
+  --margin-left-maincontent-if-sidebar-expanded:180px;
+  --min-height-button: var(--component-height);
   --min-line-height: 12px;
 
   --white: #ffffff;
@@ -213,8 +214,13 @@ body .mobile .topbar_content .navbar > * {
 [class$="fg-green"] { color: var(--green) !important;}
 [class$="fg-blue"] { color: var(--blue) !important;}
 [class$="fg-grey"] { color: var(--gray) !important;}
-.btn, .dropdown-item{
+.btn, .dropdown-item, .treeselect{
   min-height: var(--min-height-button) !important;
+  min-width: var(--min-height-button) !important;
+  font-size: var(--text-small);
+}
+.form-control-sm, .custom-select-sm{
+  font-size: var(--text-small);
 }
 .value-changed-not-saved {
   color: var(--orange) !important;
@@ -247,14 +253,15 @@ body .mobile .topbar_content .navbar > * {
   background-color: transparent !important;
 }
 .global_topbar_button{
-  margin-top: 0 !important;
+  /* margin-top: 0 !important; */
   min-height: 100% !important;
-  min-width: 44px !important;
+  min-width: 45px !important;
   text-align: center !important;
 }
 .mobile .global_topbar_button {
   height: var(--component-height) !important;
   min-height: var(--min-height-button) !important;
+  min-width: 100% !important;
 }
 .form-control.focus {
   border-color: var(--b-input_component-focus);
@@ -287,7 +294,7 @@ tbody .col-rowactions > div >.btn-group> .btn {
   min-height: var(--min-height-button) !important;
 }
 tbody .col-rowactions :not(div).btn {
-  padding-top: 7px;
+  padding-top: 6px;
 }
 .btn-block {
   display: block;
@@ -503,13 +510,11 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--general-fg);
 }
 .treeselect_notstored .vue-treeselect__control {
-  /* height: 1.25rem !important; */
   color: var(--fg-input_component) !important;
   background-color: var(--bg-input_component) !important;
   border:1px solid var(--b-input_component) !important;
 }
 .treeselect_notstored.vue-treeselect--focused .vue-treeselect__control {
-  /* height: 1.25rem !important; */
   color: var(--fg-input_component-focus) !important;
   background-color: var(--bg-input_component-focus) !important;
   border:1px solid var(--b-input_component-focus) !important;
@@ -549,7 +554,7 @@ tbody .col-rowactions :not(div).btn {
 }
 
 .treeselect_fullpage .vue-treeselect__menu {
-  min-height: 75vh;
+  min-height: 77vh;
 }
 
 .treeselect_short{
@@ -565,12 +570,8 @@ tbody .col-rowactions :not(div).btn {
   float: right;
   margin-top: 10px;
 }
-/* color: var(--fg-table);
-border-color: var(--bg-table-border); */
 .table-primary.b-table-row-selected {
-  /* color: var(--primary); */
   background-color: var(--bg-table-selected);
-  /* border-color: var(--bg-table-border); */
 }
 
 .tooltip>.arrow {
@@ -597,11 +598,11 @@ border-color: var(--bg-table-border); */
   padding: 10px;
 }
 
+.text-smaller  {
+  font-size: var(--text-smaller)!important;
+}
 .text-small  {
   font-size: var(--text-small)!important;
-}
-.text-medium  {
-  font-size: 13px !important;
 }
 div.scrollValue {
   max-height: 300px;

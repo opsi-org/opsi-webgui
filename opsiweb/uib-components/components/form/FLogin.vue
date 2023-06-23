@@ -10,12 +10,12 @@
       class="text-center bg-primary mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
-      <IconIOpsiLogo v-once :light="true" class="mb-3" height="35" />
-      <h2 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
+      <IconIOpsiLogo v-once :light="true" class="mb-2" height="33" />
+      <h3 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
         {{ $t('title.project') }}
-      </h2>
+      </h3>
       <div @keyup.enter="doLogin">
-        <b-form>
+        <b-form class="mt-1">
           <b-input-group>
             <b-form-input
               id="configserver"
@@ -23,6 +23,7 @@
               data-testid="login_configserver"
               :aria-label="$t('title.configserver')"
               readonly
+              size="sm"
               class="mb-2"
               :placeholder="opsiconfigserver"
             />
@@ -35,6 +36,7 @@
               :aria-label="$t('form.username')"
               :placeholder="$t('form.username')"
               :state="validUsername"
+              size="sm"
               class="mb-2 username"
             />
           </b-input-group>
@@ -46,15 +48,23 @@
               :placeholder="$t('form.password')"
               :state="validPassword"
               :type="showPassword? 'text': 'password'"
+              size="sm"
               class="mb-2 password"
             />
-            <b-button variant="primary" :pressed.sync="showPassword" class="mb-2 text-light">
+            <b-button variant="primary" :pressed.sync="showPassword" size="sm" class="mb-2 text-light">
               <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
               <b-icon v-if="showPassword" :icon="icon.valueShow" />
               <b-icon v-else :icon="icon.valueHide" />
             </b-button>
           </b-input-group>
-          <b-button data-testid="btn-login" variant="primary" class="mt-1 border-light login text-light" block @click="doLogin">
+          <b-button
+            data-testid="btn-login"
+            variant="primary"
+            size="sm"
+            class="mt-1 border-light login text-light"
+            block
+            @click="doLogin"
+          >
             {{ $t('button.login') }}
           </b-button>
         </b-form>

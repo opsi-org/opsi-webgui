@@ -9,7 +9,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: '<NavItemNIItem v-bind="args" />'
 })
 
-// named export Primary to create respective story
 export const NIItem = PrimaryTemplate.bind({})
 NIItem.args = {
   expanded: true,

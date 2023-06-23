@@ -2,15 +2,13 @@ import { store } from '../../.utils/storybook/mock'
 
 export default {
   title: 'bar/B Side',
-  parameters: { docs: { description: { component: 'Bar/BSide description' } } }
+  parameters: { docs: { description: { component: 'Sidebar for page navigation' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
   template: '<BarBSide class="sidebar_content" :always-visible="true" :attributes="args.attributes" /> '
-  // data () { return { attributes: { visible: args.attributes.visible, collapsed: args.attributes.collapsed } } },
-  // template: '<BarBSide class="sidebar_content" :always-visible="true" :attributes="attributes" /> '
 })
 
 const DefaultVisibleAuthTemplate = (args, { argTypes }) => ({

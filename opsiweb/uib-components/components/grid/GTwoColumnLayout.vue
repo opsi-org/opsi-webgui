@@ -7,19 +7,13 @@
       :title="expandClients? $t('button.collapse'): $t('button.expand')"
       :pressed.sync="expandClients"
     >
-      <small>
-        <b v-if="expandClients">
-          {{ $t('label.layout.hide-clients') }}
-        </b>
-        <b v-else>
-          {{ $t('label.layout.show-clients') }}
-        </b>
-      </small>
+      <b>{{ expandClients ? $t('label.layout.hide-clients'): $t('label.layout.show-clients') }}</b>
     </b-button>
     <b-row data-testid="GTwoColumnLayout" class="GTwoColumnLayout">
       <b-col
         id="parentcol"
         :cols="$route.path.includes('clients/products/config') && parentId === 'tableclients' && expandClients? 4: null"
+        class="pl-0"
         :class="{'d-none' : showchild && $mq === 'mobile' || $route.path.includes('clients/products/config') && parentId === 'tableclients' && !expandClients ,
                  column2visible: showchild}"
       >

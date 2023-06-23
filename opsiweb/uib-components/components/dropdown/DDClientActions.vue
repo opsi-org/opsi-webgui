@@ -4,7 +4,7 @@
     class="DDClientActions"
     :class="{
       'contextmenu ': incontextmenu!==false,
-      'btn btn-outline-primary btn-sm w-100 h-100 text-left d-flex rowlinkto color-primary-selected': incontextmenu===false,
+      'btn btn-outline-primary btn-sm color-primary-selected': incontextmenu===false,
     }"
     @mouseover="incontextmenu ? onOver($refs.actionsdropdown) : null"
     @mouseleave="incontextmenu ? onLeave($refs.actionsdropdown) : null"
@@ -20,8 +20,8 @@
       :dropright="incontextmenu"
     >
       <template #button-content>
-        <b-icon :icon="icon.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected" />
-        <small v-if="incontextmenu" class="color-primary-selected">{{ $t('button.item-actions') }}</small>
+        <b-icon :icon="icon.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected mb-1" />
+        <span v-if="incontextmenu" class="color-primary-selected">{{ $t('button.item-actions') }}</span>
       </template>
       <ButtonBTNEvent
         :class="{ 'dropdown-item contextmenu small': incontextmenu }"

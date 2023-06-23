@@ -1,6 +1,6 @@
 export default {
   title: 'Icon/I Loading',
-  parameters: { docs: { description: { component: 'Loading Icon' } } }
+  parameters: { docs: { description: { component: 'Icon for Loading Status' } } }
 }
 
 const DefaultVisibleTemplateHead = (_args, { argTypes }) => ({

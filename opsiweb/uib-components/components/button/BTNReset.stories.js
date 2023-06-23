@@ -1,6 +1,6 @@
 export default {
   title: 'Button/BTN Reset',
-  parameters: { docs: { description: { component: 'Button/BTNReset description' } } }
+  parameters: { docs: { description: { component: 'Reset button' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
@@ -9,6 +9,4 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: '<ButtonBTNReset :action="() => {}" />'
 })
 
-// named export Primary to create respective story
 export const BTNReset = PrimaryTemplate.bind({})
-// BTNReset.args = { isOrigin: true }

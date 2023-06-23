@@ -1,17 +1,16 @@
 <template>
-  <b-nav-item-dropdown
+  <b-dropdown
     id="language"
     data-testid="DropdownDDLang"
-    alt="select theme"
     :aria-label="$t('button.lang.tooltip')"
     :title="$t('button.lang.tooltip')"
-    class="btn btn-primary border-0"
-    :class="{'pt-0 pb-0 pl-3 w-100': $mq=='mobile'}"
-    variant="primary"
+    variant="primary border-0"
+    class="global_topbar_button"
+    size="sm"
     :dropup="dropup"
   >
     <template #button-content>
-      <span style="color:white; text-transform:uppercase;"> <b-icon :icon="icon.language" /> {{ language }} </span>
+      <span style="text-transform:uppercase;"> <b-icon :icon="icon.language" /> {{ language }} </span>
     </template>
     <b-dropdown-item
       v-for="(lang, i) in languages"
@@ -22,7 +21,7 @@
     >
       <span style="text-transform:uppercase;"> {{ lang }} </span>
     </b-dropdown-item>
-  </b-nav-item-dropdown>
+  </b-dropdown>
 </template>
 
 <script lang="ts">
@@ -61,7 +60,6 @@ export default class DDLang extends Vue {
 </script>
 
 <style>
-
 #language .dropdown-toggle::after{
   display:none;
 }

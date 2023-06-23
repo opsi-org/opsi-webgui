@@ -1,9 +1,8 @@
-
 import { data } from '../../.utils/storybook/mock'
 
 export default {
   title: 'Table/T Products Netboot',
-  parameters: { docs: { description: { component: 'Table for ProductsNetboot' } } }
+  parameters: { docs: { description: { component: 'Netboot Products Table' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
@@ -31,7 +30,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   `
 })
 
-// named export Primary to create respective story
 export const TProductsNetboot = PrimaryTemplate.bind({})
 TProductsNetboot.args = {
   parentId: 'productId',

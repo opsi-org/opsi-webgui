@@ -1,5 +1,4 @@
 import { mock, data } from '../../.utils/storybook/mock'
-
 mock.onGet(`/api/opsidata/products/groups?selectedProducts=${''}`).reply(200, data.groups.products)
 
 export default {
@@ -11,5 +10,4 @@ const PrimaryTemplate = () => ({
   template: '<TreeTSProductGroups />'
 })
 
-// named export Primary to create respective story
 export const TSProductGroups = PrimaryTemplate.bind({})

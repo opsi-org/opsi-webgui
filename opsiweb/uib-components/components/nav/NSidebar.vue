@@ -2,7 +2,7 @@
   <b-nav vertical tabs class="sidemenu_nav" :class="{expanded:expanded}" data-testid="NSidebar">
     <span v-for="catogery in navItems" :key="catogery.title">
       <br>
-      <span v-for="menuitem in catogery.menu" :key="menuitem.title">
+      <small v-for="menuitem in catogery.menu" :key="menuitem.title">
         <template v-if="menuitem.submenu">
           <NavItemNICollapsible
             v-if="expanded"
@@ -31,7 +31,7 @@
             :route="menuitem.route"
           />
         </template>
-      </span>
+      </small>
       <br>
     </span>
   </b-nav>

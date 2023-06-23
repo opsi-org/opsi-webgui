@@ -1,7 +1,7 @@
 
 export default {
   title: 'bar/B Table Footer',
-  parameters: { docs: { description: { component: 'Bar/BTableFooter description' } } }
+  parameters: { docs: { description: { component: 'Table footer' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({

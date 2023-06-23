@@ -9,7 +9,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: '<NavItemNICollapsible v-bind="args" />'
 })
 
-// named export Primary to create respective story
 export const NICollapsible = PrimaryTemplate.bind({})
 NICollapsible.args = {
   title: 'Servers',

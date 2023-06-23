@@ -19,7 +19,7 @@ mock.onGet(`/api/opsidata/hosts?hosts=${cid}`).reply(200, hostconfig)
 
 export default {
   title: 'Form/F Host Attributes',
-  parameters: { docs: { description: { component: 'Form for HostAttributes' } } }
+  parameters: { docs: { description: { component: 'Form for Host Attributes' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
@@ -33,7 +33,6 @@ const PrimaryTemplate = (_args, { argTypes }) => ({
       }
     }
   })
-  // template: '<TableTHostAttributes :id="$props.id"/>'
 })
 
 export const FHostAttributes = PrimaryTemplate.bind({})

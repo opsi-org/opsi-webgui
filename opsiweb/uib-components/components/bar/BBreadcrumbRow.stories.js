@@ -1,10 +1,8 @@
-// Describe card component
 export default {
   title: 'Bar/B Breadcrumb',
-  parameters: { docs: { description: { component: 'Bar/BBreadcrumb description' } } }
+  parameters: { docs: { description: { component: 'Breadcrumb for page navigation' } } }
 }
 
-// Define template for Story
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   template: '<BarBBreadcrumbRow :specific-items="crumbs" />',
@@ -13,7 +11,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   }
 })
 
-// named export to create respective story
 export const BBreadcrumb = PrimaryTemplate.bind({})
 BBreadcrumb.args = {
   items: [

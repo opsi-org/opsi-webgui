@@ -60,25 +60,36 @@
         </template>
 
         <template #empty>
-          {{ (isLoading) ? '' : $t('table.emptyText') }}
+          <small>{{ (isLoading) ? '' : $t('table.emptyText') }}</small>
         </template>
         <template #head()="data">
           <small> <b>{{ data.label }} </b> </small>
         </template>
+        <template #cell()="data">
+          <small>{{ data.value }}</small>
+        </template>
         <template #head(selected)>
-          <small v-if="rowident !== 'productId'"> <b class="count">
-            {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
-          </b> </small>
-          <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+          <small>
+            <b v-if="rowident !== 'productId'" class="count">
+              {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
+            </b>
+            <ButtonBTNClearSelection :disabled="selection.length<1" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+          </small>
         </template>
         <template #cell(rowactions)="row">
-          <b-button-group v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'" :class="{'row-selected': selection.includes(row.item[rowident])}">
+          <b-button-group
+            v-if="headerData.rowactions.mergeOnMobile!==true || $mq!=='mobile'"
+            :class="{'row-selected': selection.includes(row.item[rowident])}"
+            size="sm"
+          >
             <slot name="rowactions" v-bind="row" />
           </b-button-group>
         </template>
         <template #cell(selected)="row">
-          <b-icon v-if="selection.includes(row.item[rowident])" :icon="icon.check" class="selectionitem selected" />
-          <b-icon v-else-if="$mq=='mobile'" :icon="icon.dash" class="selectionitem not-selected" />
+          <small>
+            <b-icon v-if="selection.includes(row.item[rowident])" :icon="icon.check" class="selectionitem selected" />
+            <b-icon v-else-if="$mq=='mobile'" :icon="icon.dash" class="selectionitem not-selected" />
+          </small>
           {{ fixRow(row) }}
         </template>
         <template
@@ -415,13 +426,13 @@ export default class TInfiniteScrollSmooth extends Vue {
   /* overflow: inherit !important; */
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
-  max-height: 70vh;
+  max-height: 76vh;
 }
 .TInfiniteScrollSmoothWrapper .singleRowTable.b-table-sticky-header {
   max-height: 15vh;
 }
 .TInfiniteScrollSmoothWrapper .mobileview.table-responsive {
-  max-height: 70vh;
+  max-height: 76vh;
 }
 .TInfiniteScrollSmoothWrapper .singleRowTable.mobileview.table-responsive {
   max-height: 17vh;

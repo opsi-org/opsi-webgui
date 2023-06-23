@@ -1,7 +1,7 @@
 
 export default {
   title: 'Button/BTN Clear Changes',
-  parameters: { docs: { description: { component: 'Button/BTN Clear Changes' } } }
+  parameters: { docs: { description: { component: 'Button to clear tracked changes' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({

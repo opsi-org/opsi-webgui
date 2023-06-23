@@ -1,7 +1,7 @@
 import { argTypeTextContent } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Button/BTN Help Tooltip',
-  parameters: { docs: { description: { component: 'Button/BTNHelpTooltip description' } } },
+  parameters: { docs: { description: { component: 'Help button to get to know some new features' } } },
   argTypes: {
     tooltiptext: argTypeTextContent
   }

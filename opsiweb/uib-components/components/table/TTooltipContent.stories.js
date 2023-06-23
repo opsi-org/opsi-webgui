@@ -12,5 +12,4 @@ const PrimaryTemplate = () => ({
 })
 // TODO: more stories/tests
 
-// named export Primary to create respective story
 export const TTooltipContent = PrimaryTemplate.bind({})

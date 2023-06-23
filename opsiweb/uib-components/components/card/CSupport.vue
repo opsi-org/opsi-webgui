@@ -8,7 +8,7 @@
           </p>
         </b-col>
         <b-col md="4">
-          <a class="btn btn-outline-primary border" :class="{smallText: $mq=='mobile', normalText: $mq=='desktop'}" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
+          <a class="btn btn-outline-primary btn-sm border" :class="{smallText: $mq=='mobile', normalText: $mq=='desktop'}" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
         </b-col>
       </b-row>
     </b-card>

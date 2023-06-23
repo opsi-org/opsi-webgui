@@ -1,6 +1,6 @@
 export default {
   title: 'Tablecell/T C Badge Compares',
-  parameters: { docs: { description: { component: 'Table cell for Badge compares' } } }
+  parameters: { docs: { description: { component: 'Table cell for Product Comparison' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
@@ -9,5 +9,4 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: '<TableCellTCBadgeCompares />'
 })
 
-// named export Primary to create respective story
 export const TCBadgeCompares = PrimaryTemplate.bind({})

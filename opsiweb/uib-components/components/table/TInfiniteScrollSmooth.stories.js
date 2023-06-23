@@ -4,16 +4,13 @@ import QueueNested from '../../.utils/utils/QueueNested'
 
 export default {
   title: 'Table/T Infinite Scroll Smooth',
-  parameters: { docs: { description: { component: 'Infinite Scroll Table' } } }
+  parameters: { docs: { description: { component: 'Table with Infinite Scroll' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: {
     args () { return args }
-  },
-  mounted () {
-    // this.isLoading = false
   },
   template: `
   <TableTInfiniteScrollSmooth
@@ -43,7 +40,6 @@ const pageQueue = new QueueNested(1)
 pageQueue.set(1, [...data.depots])
 pageQueue.setTotalPages(data.depots.length / tableData.perPage)
 
-// named export Primary to create respective story
 export const TInfiniteScrollSmooth = PrimaryTemplate.bind({})
 TInfiniteScrollSmooth.args = {
   tableData,

@@ -51,10 +51,10 @@
             />
           </template>
           <template #cell(depotId)="row">
-            <b v-if="row.item.depotId==opsiconfigserver">
-              {{ row.item.depotId }}
-            </b>
-            {{ (row.item.depotId!=opsiconfigserver) ? row.item.depotId:'' }}
+            <small>
+              <b v-if="row.item.depotId==opsiconfigserver">{{ row.item.depotId }}</b>
+              {{ (row.item.depotId!=opsiconfigserver) ? row.item.depotId:'' }}
+            </small>
           </template>
           <template #rowactions="row">
             <ButtonBTNRowLinkTo
@@ -142,7 +142,7 @@ export default class VDepots extends Vue {
 
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 15,
+    perPage: 20,
     sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'depotId',
     sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
     filterQuery: ''

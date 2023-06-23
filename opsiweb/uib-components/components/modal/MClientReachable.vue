@@ -4,6 +4,7 @@
       :title="$t('table.fields.checkreachable')"
       :class="{ 'border-0': selectionClients.length <= 0 }"
       variant="outline-primary"
+      size="sm"
       :disabled="selectionClients.length <= 0"
       @click="$bvModal.show('clientreachability')"
     >
@@ -19,7 +20,7 @@
       hide-footer
       no-fade
     >
-      <b-button variant="outline-primary" @click="checkReachable">
+      <b-button variant="outline-primary" size="sm" @click="checkReachable">
         {{ $t('button.reachable') }}
       </b-button>
       <AlertAAlert ref="CheckAlert" />

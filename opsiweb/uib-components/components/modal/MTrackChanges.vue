@@ -2,8 +2,9 @@
   <div data-testid="MTrackChanges" class="MTrackChanges">
     <b-button
       v-if="!quicksave && (changesProducts.filter((o) => o.user === username).length!==0 || changesHostParam.filter((o) => o.user === username).length!==0)"
-      class="border-0"
-      variant="primary"
+      class="global_topbar_button"
+      variant="primary border-0"
+      size="sm"
       @click="$bvModal.show('trackChangesModal')"
     >
       <b-icon
@@ -21,7 +22,7 @@
       no-fade
       @hide="$nuxt.refresh()"
     >
-      <b-tabs lazy>
+      <b-tabs small lazy>
         <b-tab v-if="changesHostParam.filter((o) => o.user === username).length!==0" :title="$t('Host Parameters')" active>
           <GridGChangesHostParam />
         </b-tab>
@@ -59,13 +60,3 @@ export default class MTrackChanges extends Vue {
   @changes.Getter public changesHostParam!: Array<ChangeObj>
 }
 </script>
-
-<style>
-.MTrackChanges .modal-header .close {
-  color: var(--color, var(--primary, black));
-}
-.MTrackChanges .modal-dialog {
-  left: 0% !important;
-  top:10% !important;
-}
-</style>

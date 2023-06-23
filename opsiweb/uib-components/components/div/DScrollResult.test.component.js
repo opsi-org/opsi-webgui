@@ -1,9 +1,9 @@
 const { test, expect } = require('@playwright/test')
 const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
-test('div dscrollresult snapshot', async ({ page }) => {
+test('snapshot > scrollable div', async ({ page }) => {
   await callStoryId(page, 'div-d-scroll-result', 'd-scroll-result')
-  const component = await page.locator('[data-testid="DivDScrollResult"]')
+  const component = page.locator('[data-testid="DivDScrollResult"]')
   expect(await component.screenshot()).toMatchSnapshot('DScrollResult.png')
 })
 

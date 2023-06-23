@@ -4016,7 +4016,8 @@ a.close.disabled{
   padding:1rem 1rem;
   border-bottom:1px solid var(--bb-modal_header);
   border-top-left-radius:calc(0.3rem - 1px);
-  border-top-right-radius:calc(0.3rem - 1px)
+  border-top-right-radius:calc(0.3rem - 1px);
+  font-size: small;
 }
 .modal-header .close{
   padding:1rem 1rem;
@@ -4024,7 +4025,9 @@ a.close.disabled{
 }
 .modal-title{
   margin-bottom:0;
-  line-height:1.5
+  line-height:1.5;
+  font-size: small;
+  font-weight: bold;
 }
 .modal-body{
   position:relative;

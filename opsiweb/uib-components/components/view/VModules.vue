@@ -11,6 +11,7 @@
           rows="3"
           :label="$t('settingsPage.modules.available')"
           max-rows="30"
+          size="sm"
           no-resize
           plaintext
           :value="Object.values(modules).join('\n')"

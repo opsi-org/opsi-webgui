@@ -1,6 +1,6 @@
 export default {
   title: 'Dropdown/DD Theme',
-  parameters: { docs: { description: { component: 'Dropdown/DDTheme description' } } }
+  parameters: { docs: { description: { component: 'Themes dropdown' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({
@@ -9,7 +9,5 @@ const DefaultVisibleTemplate = (args, { argTypes }) => ({
   template: '<DropdownDDTheme :navbar="args.navbar"/>'
 })
 
-// export const DDTheme = DefaultVisibleTemplate.bind({})
-// DDTheme.args = { navbar: true }
 export const DDTheme = DefaultVisibleTemplate.bind({})
 DDTheme.args = { navbar: false }

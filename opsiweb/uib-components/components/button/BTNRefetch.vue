@@ -4,7 +4,8 @@
     data-testid="BTNRefetch"
     :title="tooltip && !label ? tooltip : ''"
     :variant="(tooltip || incontextmenu !== false )? 'outline-primary border-0' : 'outline-dark'"
-    class="BTNRefetch btn-sm"
+    class="BTNRefetch"
+    size="sm"
     :class="{
       'border-0': incontextmenu !== false,
       'dropdown-item': incontextmenu !== false,
@@ -15,7 +16,7 @@
   >
     <b-icon :icon="icon.refresh" />
     <template v-if="label && incontextmenu !== false">
-      <small style="font-size: 85%;">{{ label }}</small>
+      {{ label }}
     </template>
     <div v-else-if="!tooltip">
       <span class="refreshlabel"> {{ $t('button.tryAgain') }} </span>
@@ -37,11 +38,3 @@ export default class BTNRefetch extends Vue {
   @Prop({ default: () => { return () => { /* default */ } } }) refetch!: Function
 }
 </script>
-
-<style>
-.BTNRefetch,
-.BTNRefetch > svg,
-.BTNRefetch > div {
-  display: inline-block !important;
-}
-</style>

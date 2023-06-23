@@ -1,5 +1,5 @@
 <template>
-  <b-tabs data-testid="VSettings" lazy>
+  <b-tabs data-testid="VSettings" small lazy>
     <b-tab active>
       <template #title>
         <span class="localspecific"> {{ $t('form.general') }} </span>

@@ -59,8 +59,11 @@
           :refetch="$fetch"
         />
       </template>
-      <template #cell(desc)="row">
-        {{ row.item.description }}
+      <template #head(installationStatus)>
+        <b-icon :icon="icon.product" alt="installation status" />
+      </template>
+      <template #head(actionResult)>
+        <b-icon :icon="icon.productActionResult" alt="action result" />
       </template>
       <template #cell(version)="row">
         <TableCellTCProductVersionCell
@@ -69,12 +72,6 @@
           :clients2depots="fetchedDataClients2Depots"
           @details="toogleDetailsTooltip"
         />
-      </template>
-      <template #head(installationStatus)>
-        <b-icon :icon="icon.product" alt="installation status" />
-      </template>
-      <template #head(actionResult)>
-        <b-icon :icon="icon.productActionResult" alt="action result" />
       </template>
       <template #cell(installationStatus)="row">
         <TableCellTCBadgeCompares
@@ -96,7 +93,7 @@
       </template>
       <template #cell(actionProgress)="row">
         <div v-if="row.item.actionProgress == 'mixed'">
-          <span :id="('tooltip_actionprogress_mixed'+row.item.productId)"> {{ row.item.actionProgress }}</span>
+          <small :id="('tooltip_actionprogress_mixed'+row.item.productId)"> {{ row.item.actionProgress }}</small>
           <b-tooltip size="sm" :target="('tooltip_actionprogress_mixed'+row.item.productId)" triggers="hover">
             <b-row v-for="(key, index) in row.item.selectedClients" :key="index">
               <b-col class="d-flex flex-nowrap text-sm-left">
@@ -107,9 +104,7 @@
             </b-row>
           </b-tooltip>
         </div>
-        <div v-else>
-          {{ row.item.actionProgress }}
-        </div>
+        <small v-else> {{ row.item.actionProgress }} </small>
       </template>
       <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
         <DropdownDDProductRequest
@@ -204,7 +199,7 @@ export default class TProductsNetboot extends Vue {
   tableData: ITableData = {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 15,
+    perPage: 20,
     sortBy: this.sort.sortBy ? this.sort.sortBy : 'productId',
     sortDesc: false,
     filterQuery: this.filterQuery || ''

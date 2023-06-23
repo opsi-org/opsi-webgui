@@ -2,7 +2,7 @@ import { customstores } from '../../.utils/storybook/mock'
 
 export default {
   title: 'Grid/G Changes Products',
-  parameters: { docs: { description: { component: 'Grid for Product Changes' } } }
+  parameters: { docs: { description: { component: 'Grid for Product tracked changes' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({

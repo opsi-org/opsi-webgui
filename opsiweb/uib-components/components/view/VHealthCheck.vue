@@ -10,8 +10,7 @@
           :title="expandHCD? $t('button.collapse') : $t('button.expand')"
           :pressed.sync="expandHCD"
         >
-          <b-icon v-if="expandHCD" :icon="icon.arrowDoubleUp" />
-          <b-icon v-else :icon="icon.arrowDoubleDown" />
+          <small><b-icon :icon="expandHCD? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
         </b-button>
         <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
       </template>
@@ -21,15 +20,14 @@
         <GridGFormItem value-more="true" classprop="none">
           <template #label>
             <template v-if="health.partial_results.length != 0">
-              <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" variant="transparent">
-                <b-icon v-if="expandHCD" :icon="icon.arrowUp" />
-                <b-icon v-else :icon="icon.arrowRight" />
+              <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" size="sm" variant="transparent">
+                <small><b-icon :icon="expandHCD? icon.arrowUp : icon.arrowRight" /></small>
               </b-button>
             </template>
             <template v-else>
-              <span :style="'width: 47px; min-height: 1px; float: left;'" />
+              <span :style="'width: 34px; min-height: 1px; float: left;'" />
             </template>
-            <b-badge v-if="health.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(health.check_status)">
+            <b-badge v-if="health.check_status" :style="'min-width: 70px !important;'" :variant="getVariant(health.check_status)">
               <div class="text-uppercase">
                 {{ health.check_status }}
               </div>
@@ -46,18 +44,18 @@
           <span v-for="(data, index) in health.partial_results" :key="index">
             <GridGFormItem value-more="true" classprop="none">
               <template #label>
-                <span :style="'width: 47px; min-height: 1px; float: left;'" />
-                <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" size="sm" :variant="getVariant(data.check_status)">
+                <span :style="'width: 34px; min-height: 1px; float: left;'" />
+                <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" :variant="getVariant(data.check_status)">
                   <div class="text-uppercase">
                     {{ data.check_status }}
                   </div>
                 </b-badge>
               </template>
               <template #value>
-                <small>{{ data.check_name }}</small>
+                {{ data.check_name }}
               </template>
               <template #valueMore>
-                <small> {{ data.message }} </small>
+                {{ data.message }}
               </template>
             </GridGFormItem>
           </span>

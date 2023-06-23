@@ -12,5 +12,4 @@ const PrimaryTemplate = () => ({
   `
 })
 
-// named export Primary to create respective story
 export const GTwoColumnLayout = PrimaryTemplate.bind({})

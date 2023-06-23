@@ -6,9 +6,9 @@
       </template>
       <template #value>
         <b-input-group>
-          <b-form-input id="terminalId" v-model="terminalId" :aria-label="$t('table.fields.terminalId')" type="text" />
+          <b-form-input id="terminalId" v-model="terminalId" size="sm" :aria-label="$t('table.fields.terminalId')" type="text" />
           <template #append>
-            <b-button variant="primary" class="form-control" @click="() => {terminalId = ''}">
+            <b-button variant="primary" size="sm" @click="() => {terminalId = ''}">
               {{ $t("button.clear") }}
             </b-button>
           </template>
@@ -21,9 +21,9 @@
       </template>
       <template #value>
         <b-input-group>
-          <b-form-input id="terminalChannel" v-model="terminalChannel" :aria-label="$t('table.fields.terminalChannel')" type="text" />
+          <b-form-input id="terminalChannel" v-model="terminalChannel" size="sm" :aria-label="$t('table.fields.terminalChannel')" type="text" />
           <template #append>
-            <b-button variant="primary" class="form-control" @click="() => {terminalChannel = terminalChannelDefault}">
+            <b-button variant="primary" size="sm" @click="() => {terminalChannel = terminalChannelDefault}">
               {{ $t("button.clear") }}
             </b-button>
           </template>
@@ -33,7 +33,7 @@
     <GridGFormItem>
       <template #label />
       <template #value>
-        <b-button class="form-control" variant="primary" @click="init">
+        <b-button variant="primary" size="sm" block @click="init">
           {{ $t('button.reconnect') }}
         </b-button>
       </template>

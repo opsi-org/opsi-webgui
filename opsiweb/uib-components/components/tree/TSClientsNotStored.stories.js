@@ -12,5 +12,4 @@ const PrimaryTemplate = () => ({
   template: '<TreeTSClientsNotStored />'
 })
 
-// named export Primary to create respective story
 export const TSClientsNotStored = PrimaryTemplate.bind({})

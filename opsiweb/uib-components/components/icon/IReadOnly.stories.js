@@ -1,7 +1,7 @@
 import { customstores } from '../../.utils/storybook/mock'
 export default {
   title: 'Icon/I Read Only',
-  parameters: { docs: { description: { component: 'Read Only Icon' } } }
+  parameters: { docs: { description: { component: 'Icon for showing user Read Only status' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({

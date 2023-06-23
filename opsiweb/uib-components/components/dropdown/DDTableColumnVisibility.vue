@@ -16,11 +16,12 @@
       :title="incontextmenu ? '' : $t('table.showCol')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
       :dropright="incontextmenu"
+      :dropleft="!incontextmenu"
       @show="init"
     >
       <template #button-content>
-        <IconITableColumn />
-        <small v-if="incontextmenu">{{ $t('button.showCol') }}</small>
+        <b-icon data-testid="ITableColumn" :icon="icon.columns" />
+        <span v-if="incontextmenu">{{ $t('button.showCol') }}</span>
       </template>
       <template v-if="multiCondition">
         <ul>
@@ -37,7 +38,7 @@
               <b-form-checkbox
                 :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
                 :class="{'selectedColumn':columnVisibilityStates[header.key]}"
-              /> <small>{{ header.label }}</small>
+              /> {{ header.label }}
             </a>
           </li>
         </ul>
@@ -67,10 +68,12 @@ import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '../../.utils/types/ttable'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { HoverDropdown } from '../../mixins/component'
+import { Icons } from '../../mixins/icons'
 const settings = namespace('settings')
 
-@Component({ mixins: [HoverDropdown] })
+@Component({ mixins: [Icons, HoverDropdown] })
 export default class DDTableColumnVisibility extends BDropdown {
+  icon:any
   $mq:any
   onOver:any
   onLeave:any

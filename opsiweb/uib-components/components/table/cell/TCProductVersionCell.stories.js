@@ -19,7 +19,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   })
 })
 
-// named export Primary to create respective story
 export const TCProductVersionCell = PrimaryTemplate.bind({})
 TCProductVersionCell.args = {
   row: {

@@ -1,6 +1,6 @@
 export default {
   title: 'Tree/TS Default',
-  parameters: { docs: { description: { component: 'Default Treeselect' } } }
+  parameters: { docs: { description: { component: 'Treeselect' } } }
 }
 
 const PrimaryTemplate = () => ({
@@ -9,8 +9,6 @@ const PrimaryTemplate = () => ({
     allOptionsUnique () { return ['0', '1', '2', '3', '4'] },
     selection () { return ['1'] }
   },
-  // type=""
-  // :text="'undefined'"
   template: `
   <TreeTSDefault :selectionDefault="selection"
     :id="'treeselect-id'"
@@ -27,5 +25,4 @@ const PrimaryTemplate = () => ({
   />`
 })
 
-// named export Primary to create respective story
 export const TSDefault = PrimaryTemplate.bind({})

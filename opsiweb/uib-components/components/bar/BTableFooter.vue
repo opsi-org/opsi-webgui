@@ -1,26 +1,23 @@
 <template>
-  <div class="BTableFooter">
-    <b-navbar
-      toggleable="sm"
-      data-testid="BTableFooter"
-      variant="outline-primary"
-      :class="{footer: $mq === 'desktop', footer_wrap: $mq === 'mobile'}"
-    >
-      <b-container fluid>
-        <b-navbar-nav class="ml-auto" small>
-          <b-pagination
-            v-if="pagination.totalpages > 1"
-            v-model="pagination.tableData.pageNumber"
-            :total-rows="pagination.totalRows"
-            :per-page="pagination.tableData.perPage"
-            last-number
-            page-class="my-page-item"
-          />
-          <slot />
-        </b-navbar-nav>
-      </b-container>
-    </b-navbar>
-  </div>
+  <b-navbar
+    toggleable="sm"
+    data-testid="BTableFooter"
+    variant="outline-primary"
+    :class="{footer: $mq === 'desktop', footer_wrap: $mq === 'mobile'}"
+  >
+    <b-navbar-nav class="ml-auto" small>
+      <b-pagination
+        v-if="pagination.totalpages > 1"
+        v-model="pagination.tableData.pageNumber"
+        size="sm"
+        :total-rows="pagination.totalRows"
+        :per-page="pagination.tableData.perPage"
+        last-number
+        page-class="my-page-item"
+      />
+      <slot />
+    </b-navbar-nav>
+  </b-navbar>
 </template>
 
 <script lang="ts">
@@ -48,38 +45,3 @@ export default class BarBTableFooter extends Vue {
   }
 }
 </script>
-
-<style>
-.BTableFooter .navbar {
-  bottom: 0px;
-  right: 0;
-  left: 0;
-  margin-top: 10px;
-  margin-bottom: 2px;
-  display: inline;
-  background-image: none !important;
-  background-repeat: none !important;
-  border: none !important;
-}
-.BTableFooter .navbar-nav {
-  flex-direction: row;
-}
-.BTableFooter .b-pagination li span,
-.BTableFooter .b-pagination li button {
-  padding: 8px 12px;
-  line-height: 1;
-}
-.BTableFooter .b-pagination{
-  display: flex;
-}
-.BTableFooter .footer{
-  height: var(--height-navbar) !important;
-}
-.footer_wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
-.navbar {
-  z-index: inherit !important;
-}
-</style>

@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VServerHealthCheck">
     <OverlayOLoading :is-loading="$fetchState.pending" />
-    <b-tabs>
+    <b-tabs small>
       <b-tab :title="$t('title.diagnostics')" active>
         <BarBPageHeader>
           <template #left>
@@ -11,21 +11,18 @@
               :title="expandAll? $t('button.collapse') : $t('button.expand')"
               :pressed.sync="expandAll"
             >
-              <b-icon v-if="expandAll" :icon="icon.arrowDoubleUp" />
-              <b-icon v-else :icon="icon.arrowDoubleDown" />
+              <small><b-icon :icon="expandAll? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
             </b-button>
             <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
           </template>
           <template #right>
-            <div>
-              <b-button class="downloadButton" size="sm" variant="outline-primary" @click="downloadHealthData">
-                <b-icon :icon="icon.download" /> {{ $t('Download') }}
-              </b-button>
-            </div>
+            <b-button class="downloadButton" size="sm" variant="outline-primary" @click="downloadHealthData">
+              <b-icon :icon="icon.download" /> {{ $t('Download') }}
+            </b-button>
           </template>
         </BarBPageHeader>
         <span v-for="diagnostic,k in onlyDiagnostics" :key="k">
-          <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" block variant="outline-primary">
+          <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" size="sm" block variant="outline-primary">
             {{ k }}
           </b-button>
           <b-collapse :id="'collapse-'+k" :visible="expandAll || filter!= ''">

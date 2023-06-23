@@ -1,6 +1,6 @@
 export default {
   title: 'Dropdown/DD Table Sorting',
-  parameters: { docs: { description: { component: 'Dropdown/DDTableSorting description' } } }
+  parameters: { docs: { description: { component: 'Dropdown to select table sorting' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({

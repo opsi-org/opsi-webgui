@@ -13,5 +13,4 @@ const PrimaryTemplate = (_args, { argTypes }) => ({
   template: '<ButtonBTNRefetch v-bind="$props" />'
 })
 
-// named export Primary to create respective story
 export const BTNRefetch = PrimaryTemplate.bind({})

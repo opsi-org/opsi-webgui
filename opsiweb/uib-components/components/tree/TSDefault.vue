@@ -1,5 +1,5 @@
 <template>
-  <b-input-group data-testid="TSDefault" class="TreeWrapper border">
+  <b-input-group data-testid="TSDefault" size="sm" class="TreeWrapper border">
     <div v-if="iconProp" class="p-1">
       <b-iconstack font-scale="1">
         <b-icon stacked :icon="iconProp" variant="transparent" />
@@ -21,8 +21,6 @@
         />
       </template>
     </ModalMSelections>
-    <!-- treeselect_short -->
-    <!-- text:{{ placeholderWrapper }} -->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
@@ -413,8 +411,13 @@ export default class TSDefault extends Vue {
   width:fit-content;
   flex-wrap: nowrap;
   z-index: 1000;
+  min-height: var(--min-height-button) !important;
+  min-width: var(--min-height-button) !important;
+  font-size: var(--text-small);
 }
 .TreeWrapper .vue-treeselect__placeholder {
   display: block;
+  color:var(--color);
+  padding: 0%;
 }
 </style>

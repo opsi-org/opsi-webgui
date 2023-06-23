@@ -1,6 +1,6 @@
 export default {
   title: 'Spinbutton/SB Loglevel',
-  parameters: { docs: { description: { component: 'Spin button for Loglevel' } } }
+  parameters: { docs: { description: { component: 'Spin button for Log level selection' } } }
 }
 
 const PrimaryTemplate = () => ({

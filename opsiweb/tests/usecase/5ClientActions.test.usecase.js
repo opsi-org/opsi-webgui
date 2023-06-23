@@ -25,24 +25,26 @@ test.beforeEach(async ({ page, context }) => {
 })
 
 test.afterEach(async ({ page }) => {
-  await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+  apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.click('[data-testid="ButtonBTNLogout"]')
   page.setDefaultTimeout(55555)
   await expect(page).toHaveURL('/addons/webgui/app/login')
   await page.close()
 })
 
-test.describe('Client Actions', () => {
-  test('Delete', async ({ page }) => {
-    const row = page.locator('tr:has-text("testclient")')
-    const action = row.locator('[data-testid="DDClientActions"]')
-    await action.click()
-    await page.click('[data-testid="MDeleteClient"]')
-    await (new Promise(resolve => setTimeout(resolve, 2000)))
-    await page.locator('[data-testid="MDeleteClientModal"]').isVisible()
-    await (new Promise(resolve => setTimeout(resolve, 2000)))
-    await page.click('[data-testid="ConfirmDeleteClient"]')
-    await expect(page.getByTestId('statusAlert')).toContainText('has been deleted successfully')
-    await expect(page.getByTestId('statusAlert')).toHaveClass('alert alertbar alert-dismissible alert-success')
+test.describe('usecase', () => {
+  test.describe('Client Actions', () => {
+    test('Delete', async ({ page }) => {
+      const row = page.locator('tr:has-text("testclient")')
+      const action = row.locator('[data-testid="DDClientActions"]')
+      await action.click()
+      await page.click('[data-testid="MDeleteClient"]')
+      await (new Promise(resolve => setTimeout(resolve, 2000)))
+      await page.locator('[data-testid="MDeleteClientModal"]').isVisible()
+      await (new Promise(resolve => setTimeout(resolve, 2000)))
+      await page.click('[data-testid="ConfirmDeleteClient"]')
+      await expect(page.getByTestId('statusAlert')).toContainText('has been deleted successfully')
+      await expect(page.getByTestId('statusAlert')).toHaveClass('alert alertbar alert-dismissible alert-success')
+    })
   })
 })

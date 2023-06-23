@@ -2,7 +2,7 @@ import { customstores } from '../../.utils/storybook/mock'
 
 export default {
   title: 'Grid/G Changes Host Param',
-  parameters: { docs: { description: { component: 'Grid for Host param Changes' } } }
+  parameters: { docs: { description: { component: 'Grid for Host Parameter tracked changes' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({

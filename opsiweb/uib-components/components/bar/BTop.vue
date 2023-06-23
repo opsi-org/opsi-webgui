@@ -7,7 +7,7 @@
       fixed="top"
       type="dark"
     >
-      <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
+      <b-navbar-nav v-if="$mq === 'mobile'" small class="h-100">
         <slot name="mobilemenu" />
       </b-navbar-nav>
       <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
@@ -15,13 +15,16 @@
         <span class="ml-1 topbar_title webgui_title">
           {{ $t('title.project') }}
         </span>
-        <span v-once class="ml-1 text-small"> {{ $config.packageVersion }} </span>
+        <span v-once class="ml-1 text-smaller topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
+      <b-badge v-if="quicksave" size="sm" class="mr-1" :title="$t('message.warning.quicksave.on')" variant="warning">
+        <b-icon :icon="icon.exclamation" />
+      </b-badge>
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" />
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
-      <b-navbar-nav v-if="$mq === 'mobile'" class="h-100">
-        <b-button variant="primary" class="h-100 border-0" :pressed.sync="rightmenuVisible">
+      <b-navbar-nav v-if="$mq === 'mobile'" small class="h-100">
+        <b-button variant="primary" class="h-100 border-0" size="sm" :pressed.sync="rightmenuVisible">
           <span class="sr-only">{{ $t('menu.open-topmenu.sr-only') }}</span>
           <b-icon :icon="icon.menu" font-scale="1.4" />
         </b-button>
@@ -40,13 +43,13 @@
           @keydown="rightmenuVisible = false"
           @click="rightmenuVisible = false"
         />
-        <b-navbar-nav class="pt-0 ml-auto mr-3 float-right">
-          <b-nav-item><span class="sr-only">{{ $t('button.track.changes') }}</span> <ModalMTrackChanges v-if="$mq != 'mobile'" /> </b-nav-item>
-          <ModalMSelectionsAll :navbar="true" :with-text="$mq=='mobile'" />
-          <ButtonBTNEvent :navbar="true" event="ondemand" size="md" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
-          <DropdownDDLang v-once :navbar="true" />
+        <b-navbar-nav class="ml-auto p-1">
+          <ModalMTrackChanges v-if="$mq != 'mobile'" />
+          <ModalMSelectionsAll :with-text="$mq=='mobile'" />
+          <ButtonBTNEvent :navbar="true" event="ondemand" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
+          <DropdownDDLang v-once />
           <DropdownDDTheme v-once :navbar="true" />
-          <ButtonBTNLogout v-once :navbar="true" />
+          <ButtonBTNLogout v-once />
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -58,6 +61,7 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
+const settings = namespace('settings')
 
 @Component({ mixins: [Icons] })
 export default class BTop extends Vue {
@@ -70,6 +74,8 @@ export default class BTop extends Vue {
   rightmenuVisible:boolean = false
 
   @config.Getter public config!: IObjectString2Boolean
+  @settings.Getter public quicksave!: boolean
+
   get username () {
     return localStorage.getItem('username')
   }
@@ -91,20 +97,13 @@ export default class BTop extends Vue {
 .mobile .topbar .navbar-brand{
   margin: auto;
 }
-.topbar::before {
-  content: unset !important;
-}
-.topbar::after {
-  content: unset !important;
-}
 .topbar_brand{
   max-height: var(--height-navbar) !important;
   display: inline-flex !important;
   padding-bottom: 0px !important;
 }
 .topbar_title{
-  font-size: 18px;
-  margin-left: -3px;
+  font-size: 16px;
   margin-top: 7px;
 }
 .mobile #nav-collapse {

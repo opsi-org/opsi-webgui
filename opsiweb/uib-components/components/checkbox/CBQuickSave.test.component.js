@@ -1,9 +1,9 @@
 const { test, expect } = require('@playwright/test')
 const { callStoryId } = require('../../.utils/playwright/pw-story-call')
 
-test('button quick save snapshot', async ({ page }) => {
+test('snapshot > quick save checkbox', async ({ page }) => {
   await callStoryId(page, 'checkbox-c-b-quick-save', 'cb-quick-save')
-  const component = await page.locator('[data-testid="CBQuickSave"]')
+  const component = page.locator('[data-testid="CBQuickSave"]')
   expect(await component.screenshot()).toMatchSnapshot('CBQuickSave.png')
 })
 // TODO: Test clicking.

@@ -35,20 +35,39 @@
     >
       <AlertAAlert ref="clientagentAlert" />
       <b-form>
-        <span class="clientId"> {{ $t('Client ID:   ') }} {{ clientId }} </span> <br>
-        <span class="username"> {{ $t('form.username') }} </span> <b-form-input id="username" v-model="form.username" required /> <br>
-        <span class="password"> {{ $t('form.password') }} </span> <b-form-input id="password" v-model="form.password" required /> <br>
-        <span class="type"> {{ $t('table.fields.type') }} </span> <b-form-select id="type" v-model="form.type" :options="clientagenttypes" required /> <br>
-        <div class="float-right mt-2">
-          <b-button
-            variant="success"
-            size="sm"
-            :disabled="(config)?config.read_only:false"
-            @click="deployclientagent()"
-          >
-            <span class="deploy"> {{ $t('button.confirm') }} </span>
-          </b-button>
-        </div>
+        <GridGFormItem :label="$t('Client ID')">
+          <template #value>
+            <b-form-input :value="clientId" size="sm" disabled />
+          </template>
+        </GridGFormItem>
+        <GridGFormItem :label="$t('form.username')">
+          <template #value>
+            <b-form-input id="username" v-model="form.username" size="sm" required />
+          </template>
+        </GridGFormItem>
+        <GridGFormItem :label="$t('form.password')">
+          <template #value>
+            <b-form-input id="password" v-model="form.password" size="sm" required />
+          </template>
+        </GridGFormItem>
+        <GridGFormItem :label="$t('table.fields.type')">
+          <template #value>
+            <b-form-select id="type" v-model="form.type" size="sm" :options="clientagenttypes" required />
+          </template>
+        </GridGFormItem>
+        <GridGFormItem>
+          <template #value>
+            <b-button
+              variant="success"
+              size="sm"
+              class="float-right"
+              :disabled="(config)?config.read_only:false"
+              @click="deployclientagent()"
+            >
+              <span class="deploy"> {{ $t('button.confirm') }} </span>
+            </b-button>
+          </template>
+        </GridGFormItem>
       </b-form>
     </b-modal>
   </div>

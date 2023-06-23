@@ -33,18 +33,17 @@
       no-fade
       no-stacking
     >
-      <span class="confirm"> {{ $t('message.confirm.deleteClient', { client: clientId }) }} </span>
-      <div class="float-right mt-2">
-        <b-button
-          data-testid="ConfirmDeleteClient"
-          variant="danger"
-          size="sm"
-          :disabled="(config)?config.read_only:false"
-          @click="deleteOpsiClient(clientId)"
-        >
-          <b-icon :icon="icon.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
-        </b-button>
-      </div>
+      <span class="confirm text-small"> {{ $t('message.confirm.deleteClient', { client: clientId }) }} </span>
+      <b-button
+        data-testid="ConfirmDeleteClient"
+        variant="danger"
+        class="float-right"
+        size="sm"
+        :disabled="(config)?config.read_only:false"
+        @click="deleteOpsiClient(clientId)"
+      >
+        <b-icon :icon="icon.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
+      </b-button>
     </b-modal>
   </div>
 </template>

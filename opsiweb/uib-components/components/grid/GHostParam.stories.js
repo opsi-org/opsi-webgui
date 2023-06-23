@@ -9,5 +9,4 @@ const PrimaryTemplate = () => ({
   `
 })
 
-// named export Primary to create respective story
 export const GHostParam = PrimaryTemplate.bind({})

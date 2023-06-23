@@ -18,18 +18,4 @@ const PrimaryTemplateClient = () => ({
   })
 })
 
-// const PrimaryTemplateServer = () => ({
-//   template: '<ViewVConfig id="<config-server-id>" type="depots" />',
-//   store: customstores({
-//     'config-app': {
-//       namespaced: true,
-//       getters: {
-//         config () { return false }
-//       }
-//     }
-//   })
-// })
-
-// named export Primary to create respective story
 export const VConfigClients = PrimaryTemplateClient.bind({})
-// export const VConfigServer = PrimaryTemplateServer.bind({})

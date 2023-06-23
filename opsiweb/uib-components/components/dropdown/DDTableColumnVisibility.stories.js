@@ -1,6 +1,6 @@
 export default {
   title: 'Dropdown/DD Table Column Visibility',
-  parameters: { docs: { description: { component: 'Dropdown/DDTableColumnVisibility description' } } }
+  parameters: { docs: { description: { component: 'Dropdown to select table column' } } }
 }
 
 const DefaultVisibleTemplateHead = (args, { argTypes }) => ({

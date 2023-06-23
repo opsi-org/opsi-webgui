@@ -9,7 +9,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   template: '<NavItemNIDropdownHoverable v-bind="args" />'
 })
 
-// named export Primary to create respective story
 export const NIDropdownHoverable = PrimaryTemplate.bind({})
 NIDropdownHoverable.args = {
   title: 'Servers',

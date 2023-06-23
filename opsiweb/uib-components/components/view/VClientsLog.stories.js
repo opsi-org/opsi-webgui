@@ -1,6 +1,5 @@
 import { mock, data } from '../../.utils/storybook/mock'
 mock.onGet('/api/opsidata/log').reply(200, data.logs.clients)
-// ?selectedClient=client1&selectedLogType=opsiconfd
 
 export default {
   title: 'View/V Clients Log',
@@ -27,5 +26,4 @@ const PrimaryTemplate = () => ({
   }
 })
 
-// named export Primary to create respective story
 export const VClientsLog = PrimaryTemplate.bind({})

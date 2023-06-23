@@ -1,6 +1,6 @@
 export default {
   title: 'contextmenu/CM View Table',
-  parameters: { docs: { description: { component: 'context menu for table actions' } } }
+  parameters: { docs: { description: { component: 'Context menu for table' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({
@@ -11,7 +11,6 @@ const DefaultVisibleTemplate = (args, { argTypes }) => ({
       this.$refs.cmviewtable.openMenu({ x: 100, y: 50, preventDefault: () => {} }, this.args.clientId)
     }, 200)
   },
-  // mounted () { this.$refs.cmviewtable.openMenu(undefined, this.args.clientId) },
   template: `<ContextmenuCMViewTable ref="cmviewtable" primary-key="clientId">
     <template #contextcontent-1>
     <li>specific content</li>

@@ -1,19 +1,19 @@
 <template>
   <div data-testid="VAdmin" class="VAdmin">
-    <b-row class="mt-4 mb-2">
-      <b>{{ $t('Clients') }} </b>
+    <b-row class="mt-4 mb-2 text-small">
+      <b>{{ $t('Clients') }}</b>
     </b-row>
     <GridGFormItem>
       <template #label>
         <span>{{ $t('Blocked Clients') }}</span>
       </template>
       <template #value>
-        <b-button variant="outiline-primary" @click="unblockAllClients()">
+        <b-button variant="outiline-primary" class="w-25" size="sm" @click="unblockAllClients()">
           {{ $t('Unblock All') }}
         </b-button>
       </template>
     </GridGFormItem>
-    <b-row class="mt-4 mb-2">
+    <b-row class="mt-4 mb-2 text-small">
       <b>{{ $t('Products') }} </b>
     </b-row>
     <GridGFormItem>
@@ -21,7 +21,7 @@
         <span>{{ $t('Locked Products') }}</span>
       </template>
       <template #value>
-        <b-button variant="outiline-primary" @click="unlockAllProducts()">
+        <b-button variant="outiline-primary" class="w-25" size="sm" @click="unlockAllProducts()">
           {{ $t('Unlock All') }}
         </b-button>
       </template>

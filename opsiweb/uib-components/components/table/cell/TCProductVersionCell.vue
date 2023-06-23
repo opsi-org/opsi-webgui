@@ -2,7 +2,7 @@
   <div data-testid="TCProductVersionCell" class="d-inline-block">
     <div
       :id="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
-      class="TCProductVersionCell_hover"
+      class="TCProductVersionCell_hover text-small"
     >
       {{ (rowitem.depot_version_diff)? '' : rowitem.depotVersions[0] }}
       <IconIDetails

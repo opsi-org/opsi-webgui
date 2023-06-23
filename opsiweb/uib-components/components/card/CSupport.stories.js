@@ -1,14 +1,12 @@
 export default {
   title: 'Card/C Support',
-  parameters: { docs: { description: { component: 'Card/CSupport description' } } }
+  parameters: { docs: { description: { component: 'Cards in support page' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
   template: '<CardCSupport :item="{title: args.title, description: args.content, link:args.link, buttonname: args.buttonname}" />'
-  // :item="{title:'title', description:'desc', link:'.', buttonname:'buttonname'}"
-  // :item="{ title: 'props.title', description: 'props.content', link:'.', buttonname:'props.buttonname'}"
 })
 
 export const CSupport = PrimaryTemplate.bind({})

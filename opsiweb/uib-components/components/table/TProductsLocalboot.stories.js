@@ -63,7 +63,7 @@ mock.onGet('/api/opsidata/products').reply(200, result, { 'x-total-count': resul
 
 export default {
   title: 'Table/T Products Localboot',
-  parameters: { docs: { description: { component: 'Table for ProductsLocalboot' } } }
+  parameters: { docs: { description: { component: 'Localboot Products Table' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
@@ -77,7 +77,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
       thiss.setItemsCache(args.items)
     }
   },
-  // template: '<div> {{args}} <TableTProductsLocalboot  v-bind="args" /></div>'
   template: `<TableTProductsLocalboot
     :rowident="args.rowident"
     :routeRedirectWith="args.routeRedirectWith"
@@ -92,7 +91,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   `
 })
 
-// named export Primary to create respective story
 export const TProductsLocalboot = PrimaryTemplate.bind({})
 TProductsLocalboot.args = {
   parentId: 'productId',
