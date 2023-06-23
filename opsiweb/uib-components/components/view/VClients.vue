@@ -63,7 +63,8 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
-          <template #contextcontent-1="{itemkey}"> <!-- row actions -->
+          <!-- row actions: -->
+          <template #contextcontent-1="{itemkey}">
             <DropdownDDClientActions :client-id="itemkey" :fetch="$fetch" :incontextmenu="true" />
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
@@ -86,7 +87,8 @@
               :click="routeRedirectWith"
             />
           </template>
-          <template #contextcontent-general-1> <!-- table actions -->
+          <!-- table actions: -->
+          <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
             <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
             <ButtonBTNRefetch
@@ -333,7 +335,7 @@ export default class VClients extends Vue {
       ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
       await this.$fetch()
     }
-    if (msg && msg.event === ('host_connected' || 'host_disconnected')) {
+    if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
       // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       // eslint-disable-next-line no-console
