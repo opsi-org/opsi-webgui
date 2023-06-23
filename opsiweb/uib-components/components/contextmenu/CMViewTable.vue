@@ -1,7 +1,12 @@
 <template>
   <div v-if="Object.keys($scopedSlots).length > 0" data-testid="CMViewTable">
     <div v-if="viewMenu" class="right-click-backdrop bg-modal-backdrop" @click="closeMenu" @keypress="closeMenu" @click.right="closeMenu" />
-    <div v-if="withButton !== false" id="contextmenu-content" @click.right="openMenu" @keydown="openMenu">
+    <div
+      v-if="withButton !== false"
+      id="contextmenu-content"
+      @click.right="(e) => openMenu(e, item)"
+      @keydown="(e) => openMenu(e, item)"
+    >
       <slot name="item" />
       <ul
         v-if="viewMenu"
@@ -102,21 +107,16 @@ export default class CMViewTable extends Vue {
     this.viewMenu = false
   }
 
-  reopenMenu (e, item) {
-    this.closeMenu()
-    this.openMenu(e, item)
-  }
-
-  openMenu (e, item) {
+  openMenu (payload, item) {
     this.viewMenu = true
     this.item = item
-    if (e) {
-      Vue.nextTick(function () {
-        (this.$refs.right)?.focus()
-
-        this.setMenu(e.y, e.x)
-      }.bind(this))
-      e.preventDefault()
+    if (payload) {
+      const f = () => {
+        (this.$refs.right as any)?.focus()
+        this.setMenu(payload.y, payload.x)
+      }
+      Vue.nextTick(f.bind(this))
+      payload.preventDefault()
     } else {
       this.setMenu(0, 0)
     }

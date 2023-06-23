@@ -6,6 +6,7 @@
     // "editor.codeActionsOnSave": {
     //   "source.fixAll.eslint": false
     // },
+    "trailing-spaces.trimOnSave": true,
     "js/ts.implicitProjectConfig.experimentalDecorators": true,
     "i18n-ally.localesPaths": [
         "/workspace/opsiweb/uib-components/locale",
