@@ -152,8 +152,8 @@ export default class TInfiniteScrollSmooth extends Vue {
       el = this.elementBeforeFetch
     }
     const lastScrollDirection = this.cache_pages.scrollDirection
-    await Vue.nextTick(async () => { // scroll to element
-      await this.scrollToElement(el, this.cache_pages.scrollDirection)
+    Vue.nextTick(() => { // scroll to element
+      this.scrollToElement(el, this.cache_pages.scrollDirection)
       this.cache_pages.scrollDirection = 'none'
     })
     const x = this.getRowForAnimation(lastScrollDirection, false)
@@ -168,7 +168,12 @@ export default class TInfiniteScrollSmooth extends Vue {
   }
 
   beforeDestroy () {
-    window.removeEventListener('scroll', this.onScroll)
+    try {
+      // window.removeEventListener('scroll', this.onScroll)
+      this.tableScrollBody.removeEventListener('scroll', this.onScroll)
+    } catch (error) {
+      // console.warn('error removing scrolllistener: ', error)
+    }
   }
 
   addScrollEvent () {
@@ -257,7 +262,7 @@ export default class TInfiniteScrollSmooth extends Vue {
       page = 1
       lastPageIndex = 0
     }
-    if (!(this.cache_pages.elements[page] && this.cache_pages.elements[page][0])) { return }
+    if (!this.cache_pages.elements?.[page]?.[0]) { return }
 
     if (direction === 'up') {
       rowid = this.cache_pages.elements[page][0][this.rowident]
