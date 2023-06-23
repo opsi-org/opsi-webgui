@@ -44,9 +44,9 @@
         <ButtonBTNEvent
           event="ondemand"
           classes="dropdown-item border-0 smaller-text-size"
-          :update-loading="loading => clientsLoading = loading"
           :with-text="true"
         />
+        <!-- :update-loading = *"loading => clientsLoading = loading" -->
       </template>
       <template #contextcontent-general-2>
         <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
