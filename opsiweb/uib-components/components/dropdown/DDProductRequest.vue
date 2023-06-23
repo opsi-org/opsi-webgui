@@ -12,6 +12,7 @@
       size="sm"
       alt="Show column"
       class="DDProdRequest fixed_column_selection widthmax"
+      :class="rowIsSelected? 'selected' : ''"
     >
       <template #button-content>
         <span :class="{'value-changed-not-saved' : currentReq != preRequest}">
@@ -47,6 +48,7 @@ const config = namespace('config-app')
 @Component
 export default class DDProductRequest extends BDropdown {
   @Prop({ }) rowitem!: ITableRowItemProducts|undefined
+  @Prop({ }) rowIsSelected: boolean|undefined
   @Prop({ default: () => { return '---' } }) request!: string
   @Prop({ default: () => { return ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } }) requestoptions!: Array<string>
   @Prop({ default: () => { return () => { return {} } } }) save!: Function

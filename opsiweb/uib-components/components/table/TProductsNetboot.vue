@@ -118,6 +118,7 @@
           :request="row.item.actionRequest || 'none'"
           :requestoptions="[...row.item.actions]"
           :rowitem="row.item"
+          :row-is-selected="selectionProducts.includes(row.item.productId)"
           :save="saveActionRequest"
         />
       </template>

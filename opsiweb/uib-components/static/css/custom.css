@@ -157,17 +157,18 @@
   --bs-table-accent-bg: var(--bs-table-hover-bg);
   color: var(--bs-table-hover-color);
 }
-.table .selected.btn-outline-primary {
+
+.table tr .selected.btn , /* initially selected rows*/
+.table tr .selected>.btn {
   color: var(--fg-table-selected) !important;
 }
-
-.table tr.table-primary:hover .btn-outline-primary {
+.table tr:hover .btn {
   color: var(--fg-table-hover-hover) !important;
 }
-.table tr.table-primary:hover .selected.btn-outline-primary {
+.table tr:hover .selected.btn,
+.table tr:hover .selected>.btn {
   color: var(--fg-table-hover-seleted) !important;
 }
-
 .webgui_title {
   font-family: var(--font-family-logo) !important;
   font-weight: var(--font-family-logo-weight) !important;
