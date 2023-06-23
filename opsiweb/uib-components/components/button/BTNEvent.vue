@@ -172,14 +172,7 @@ export default class BTNEvent extends Vue {
       return
     }
     this.isLoading = true
-    const data = this.events[this.event]
-
-    if (this.event === 'ondemand') { data.params.client_ids = this.selection }
-    if (this.event === 'reboot') { data.params.client_ids = [this.data] }
-    if (this.event === 'showpopup') {
-      data.params.client_ids = this.selection
-      data.params.params = [this.eventdata.popup.msg]
-    }
+    const data = this.callEventPrepareData()
 
     if (this.updateLoading !== undefined) {
       this.updateLoading(data.params.client_ids)
@@ -188,16 +181,29 @@ export default class BTNEvent extends Vue {
     await this.$axios.$post('/api/command/opsiclientd_rpc', data.params)
       .then((response) => {
         data.responseVisualization(ref, response)
-        this.isLoading = false
-        if (this.updateLoading !== undefined) { this.updateLoading([]) }
+        this.callEventSended()
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
-        this.isLoading = false
-
-        if (this.updateLoading !== undefined) { this.updateLoading([]) }
+        this.callEventSended()
       })
     this.$bvModal.hide('event-modal-' + this.event + '-' + this.data)
+  }
+
+  callEventPrepareData () {
+    const data = this.events[this.event]
+    if (this.event === 'ondemand') { data.params.client_ids = this.selection }
+    if (this.event === 'reboot') { data.params.client_ids = [this.data] }
+    if (this.event === 'showpopup') {
+      data.params.client_ids = this.selection
+      data.params.params = [this.eventdata.popup.msg]
+    }
+    return data
+  }
+
+  callEventSended () {
+    this.isLoading = false
+    if (this.updateLoading !== undefined) { this.updateLoading([]) }
   }
 
   showResultOndemand (ref:any, response:any) {
