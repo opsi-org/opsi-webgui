@@ -1,5 +1,6 @@
 <template>
   <div
+    class="DropdownDDTableColumnVisibilityWrapper"
     @mouseover="incontextmenu ? onOver($refs.columndropdown) : null"
     @mouseleave="incontextmenu ? onLeave($refs.columndropdown) : null"
     @focusin="incontextmenu ? onOver($refs.columndropdown) : null"
@@ -126,15 +127,16 @@ export default class DDTableColumnVisibility extends BDropdown {
     }
   }
 
-  @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
-    if (this.multiCondition && this.twoColumnLayoutCollapsed[this.viewId]) {
-      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
-      this.setColumnVisibilityModel(firstVisible)
-    } else if (this.multiCondition && !this.twoColumnLayoutCollapsed[this.viewId]) {
-      const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
-      this.setColumnVisibilityModel(firstVisible)
-    }
-  }
+  // @Watch('twoColumnLayoutCollapsed', { deep: true }) layoutChanged () {
+  //   console.error('VISIBILITYX', this.twoColumnLayoutCollapsed)
+  //   if (this.multiCondition && this.twoColumnLayoutCollapsed[this.viewId]) {
+  //     const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+  //     this.setColumnVisibilityModel(firstVisible)
+  //   } else if (this.multiCondition && !this.twoColumnLayoutCollapsed[this.viewId]) {
+  //     const firstVisible: string|undefined = Object.keys(this.columnVisibilityStates).find(k => !this.headers[k]._fixed && k !== '_empty_' && this.columnVisibilityStates[k])
+  //     this.setColumnVisibilityModel(firstVisible)
+  //   }
+  // }
 
   @Watch('columnVisibilityList') keysChanged () {
     this.setColumnVisibilityModel(undefined)
@@ -183,15 +185,22 @@ export default class DDTableColumnVisibility extends BDropdown {
 </script>
 
 <style>
-.selectedColumn .dropdown-item {
+.DropdownDDTableColumnVisibilityWrapper .selectedColumn .dropdown-item {
   color: var(--light) !important;
   background-color: var(--primary) !important;
 }
-.rightmenu .dropdown-menu {
-  right: 0;
-  left: auto;
+.DropdownDDTableColumnVisibilityWrapper .rightmenu .dropdown-menu {
+  right: 0 !important;
 }
-.columnWrapper > div {
+.DropdownDDTableColumnVisibilityWrapper .columnWrapper > div {
   display: inline-block !important;
+}
+.DropdownDDTableColumnVisibilityWrapper .dropdown-menu > ul {
+  padding: 0;
+}
+.DropdownDDTableColumnVisibilityWrapper .dropdown-menu.show{
+  position: absolute !important;
+  left: auto;
+  right: 0;
 }
 </style>
