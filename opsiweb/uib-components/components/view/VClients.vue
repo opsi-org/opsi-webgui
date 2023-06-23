@@ -2,7 +2,7 @@
   <div data-testid="VClients">
     <AlertAAlert ref="sortProductsAlert">
       <template #button>
-        <b-button variant="transparent" class="border-0 float-right" size="sm" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
+        <b-button variant="transparent" size="sm" class="ml-3" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
           {{ $t('button.continue') }}
         </b-button>
       </template>
@@ -125,19 +125,13 @@
           <template #cell(uefi)="row">
             <b-form-checkbox v-if="row.item.uefi" v-model="row.item.uefi" size="sm" :title="''+row.item.uefi" disabled />
           </template>
-          <template #cell(clientId)="row">
-            {{ row.item.clientId }}
-          </template>
-          <template #cell(description)="row">
-            {{ row.item.description }}
-          </template>
           <template #cell(version_outdated)="row">
             <b-button
+              v-if="row.item.version_outdated > 0"
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
-              :disabled="row.item.version_outdated == 0"
-              :title="$t('Sort Products table')"
+              :title="$t('button.show.products')"
               @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
             >
               {{ row.item.version_outdated }}
@@ -145,12 +139,13 @@
           </template>
           <template #cell(actionResult_failed)="row">
             <b-button
+              v-if="row.item.actionResult_failed > 0"
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
+              :title="$t('button.show.products')"
               :class="selectionClients.includes(row.item.clientId)? 'selected' : ''"
               :disabled="row.item.actionResult_failed == 0"
-              :title="$t('Sort Products table')"
               @click="sortProductTable(row.item.clientId, 'actionResult', false)"
             >
               {{ row.item.actionResult_failed }}
@@ -158,11 +153,11 @@
           </template>
           <template #cell(installationStatus_unknown)="row">
             <b-button
+              v-if="row.item.installationStatus_unknown > 0"
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
-              :disabled="row.item.installationStatus_unknown == 0"
-              :title="$t('Sort Products table')"
+              :title="$t('button.show.products')"
               @click="sortProductTable(row.item.clientId, 'installationStatus', false)"
             >
               {{ row.item.installationStatus_unknown }}
@@ -306,7 +301,7 @@ export default class VClients extends Vue {
   deleteClient: DeleteClient = { clientid: '' }
   tableData: ITableData = {
     pageNumber: 1,
-    perPage: 15,
+    perPage: 20,
     sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'clientId',
     sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
     filterQuery: '',

@@ -10,6 +10,7 @@
           v-if="logResult.length > 1"
           id="filter"
           v-model.trim="filterQuery"
+          size="sm"
           class="ml-1 filter_logs"
           :aria-label="$t('form.filter.logs')"
           :placeholder="$t('form.filter.logs')"

@@ -1,10 +1,8 @@
-// Describe card component
 export default {
   title: 'Bar/B Page Header',
-  parameters: { docs: { description: { component: 'Bar/BPageHeader description' } } }
+  parameters: { docs: { description: { component: 'Pageheader' } } }
 }
 
-// Define template for Story
 const PrimaryTemplate = (args, { argTypes }) => ({
   props: Object.keys(argTypes),
   computed: { args () { return args } },
@@ -15,7 +13,6 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   `
 })
 
-// named export to create respective story
 export const BPageHeader = PrimaryTemplate.bind({})
 BPageHeader.args = {
   variant: 'transparent',

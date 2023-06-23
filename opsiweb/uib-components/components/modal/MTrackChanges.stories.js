@@ -1,7 +1,7 @@
 import { customstores } from '../../.utils/storybook/mock'
 export default {
   title: 'Modal/M Track Changes',
-  parameters: { docs: { description: { component: 'Modal for tracking changes. Currently shows only the product config changes, where user can reset or save the changes.' } } }
+  parameters: { docs: { description: { component: 'Modal for showing tracked changes.' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({

@@ -8,12 +8,13 @@
     :variant="alertVariant"
     :aria-label="$props.variant"
   >
-    <slot />
-    {{ alertMessage }}
-    <b-button v-if="moreDetails" class="btn-showDetails" variant="link" :pressed.sync="showMore">
+    <small><slot />
+      {{ alertMessage }}</small>
+
+    <b-button v-if="moreDetails" size="sm" class="btn-showDetails" variant="link" :pressed.sync="showMore">
       {{ $t('message.learnmore') }}
     </b-button>
-    <p v-if="showMore">
+    <p v-if="showMore" class="text-small">
       {{ moreDetails }}
     </p>
   </b-alert>

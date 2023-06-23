@@ -19,6 +19,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     menu: 'three-dots-vertical',
     loading: 'three-dots',
     reset: 'arrow-counterclockwise',
+    exclamation: 'exclamation',
     x: 'x',
     add: 'plus',
     delete: 'trash',

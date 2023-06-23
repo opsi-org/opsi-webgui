@@ -1,11 +1,10 @@
 <template>
-  <b-nav-item data-testid="MSelectionsAll">
+  <div data-testid="MSelectionsAll">
     <b-button
       data-testid="MSelectionsAllButton"
-      variant="primary"
-      class="global_topbar_button px-2 text-left btn btn-primary border-0"
-      :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
-      size="md"
+      variant="primary border-0"
+      class="global_topbar_button"
+      size="sm"
       tabindex="0"
       :title="withText ? '' : $t('title.selectedElements')"
       @click="show = !show"
@@ -24,46 +23,42 @@
       hide-title
       no-fade
     >
-      <div v-if="showDepots">
-        <h6 class="depots">
-          {{ $t('title.depots') }}
-        </h6>
-        <b-form-textarea
-          rows="2"
-          max-rows="30"
-          no-resize
-          plaintext
-          :value="[...selectionDepots].sort().join('\n')"
-        />
-        <br>
-      </div>
-      <div v-if="showClients">
-        <h6 class="clients">
-          {{ $t('title.clients') }}
-        </h6>
-        <b-form-textarea
-          rows="2"
-          max-rows="30"
-          no-resize
-          plaintext
-          :value="[...selectionClients].sort().join('\n')"
-        />
-        <br>
-      </div>
-      <div v-if="showProducts">
-        <h6>
-          {{ $t('title.products') }}
-        </h6>
-        <b-form-textarea
-          rows="2"
-          max-rows="30"
-          no-resize
-          plaintext
-          :value="[...selectionProducts].sort().join('\n')"
-        />
-      </div>
+      <GridGFormItem v-if="showDepots">
+        <template #label>
+          <span class="depots">{{ $t('title.depots') }}</span>
+        </template>
+        <template #value>
+          <b-form-textarea
+            v-if="selectionDepots.length>0"
+            rows="1"
+            max-rows="10"
+            size="sm"
+            no-resize
+            plaintext
+            :value="[...selectionDepots].sort().join('\n')"
+          />
+          <span v-else>{{ $t('empty') }}</span>
+        </template>
+      </GridGFormItem>
+      <GridGFormItem v-if="showClients">
+        <template #label>
+          <span class="clients">{{ $t('title.clients') }}</span>
+        </template>
+        <template #value>
+          <b-form-textarea
+            v-if="selectionClients.length>0"
+            rows="1"
+            max-rows="10"
+            size="sm"
+            no-resize
+            plaintext
+            :value="[...selectionClients].sort().join('\n')"
+          />
+          <span v-else>{{ $t('empty') }}</span>
+        </template>
+      </GridGFormItem>
     </b-modal>
-  </b-nav-item>
+  </div>
 </template>
 
 <script lang="ts">
@@ -74,16 +69,13 @@ const selections = namespace('selections')
 @Component({ mixins: [Icons] })
 export default class MSelectionsAll extends Vue {
   show:boolean = false
-  @Prop({ default: true }) navbar!: boolean
   @Prop({ default: true }) showDepots!: boolean
   @Prop({ default: true }) showClients!: boolean
-  @Prop({ default: false }) showProducts!: boolean
   @Prop({ default: false }) withText!: boolean
   icon:any
   $mq:any
 
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
-  @selections.Getter public selectionProducts!: Array<string>
 }
 </script>

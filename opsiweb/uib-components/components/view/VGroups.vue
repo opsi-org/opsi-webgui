@@ -7,7 +7,7 @@
         <TreeTSDepots />
       </template>
     </BarBPageHeader>
-    <b-tabs>
+    <b-tabs small>
       <b-tab>
         <template #title>
           <span> {{ $t("treeselect.clientGroups") }} </span>
@@ -28,7 +28,7 @@
                 <div :ref="'tree-item-'+node.id">
                   <template v-if="node.isBranch">
                     <b-icon :icon="icon.group" />
-                    <small> {{ node.label }} </small>
+                    {{ node.label }}
                     <div class="float-right">
                       <b-button
                         class="border-0"
@@ -79,7 +79,7 @@
                   </template>
                   <template v-else>
                     <b-icon :icon="icon.client" />
-                    <small> {{ node.label }} </small>
+                    {{ node.label }}
                     <div class="float-right">
                       <b-button
                         class="border-0"
@@ -106,7 +106,7 @@
             </treeselect>
           </b-col>
           <b-col v-if="action && selectedvalue">
-            <b> {{ title + $t(' - ') }}</b><i>{{ selectedvalue.text }}</i>
+            <span class="text-small"><b> {{ title + $t(' - ') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
               <b-icon :icon="icon.x" />
             </b-button>
@@ -115,6 +115,7 @@
               <b-form-select
                 v-model="selectedClients"
                 multiple
+                size="sm"
                 :select-size="10"
                 :options="clientIds"
               >
@@ -124,16 +125,16 @@
                   </b-form-select-option>
                 </template>
               </b-form-select>
-              <b-button class="float-right" variant="success" data-testid="addClientsToSelectedGroup" @click="addClientsToSelectedGroup">
+              <b-button class="float-right" variant="success" size="sm" data-testid="addClientsToSelectedGroup" @click="addClientsToSelectedGroup">
                 {{ $t("group.add") }}
               </b-button>
             </template>
             <template v-else-if="action == 'addSubgroup'">
               <b-form>
-                <b-form-input v-model="subgroup.groupId" :placeholder="$t('group.subgroupname')" />
-                <b-form-input v-model="subgroup.description" :placeholder="$t('table.fields.description')" />
-                <b-form-input v-model="subgroup.notes" :placeholder="$t('table.fields.notes')" />
-                <b-button class="float-right" variant="success" data-testid="createSubGroup" @click="createSubGroup">
+                <b-form-input v-model="subgroup.groupId" size="sm" :placeholder="$t('group.subgroupname')" />
+                <b-form-input v-model="subgroup.description" size="sm" :placeholder="$t('table.fields.description')" />
+                <b-form-input v-model="subgroup.notes" size="sm" :placeholder="$t('table.fields.notes')" />
+                <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
                   {{ $t("button.create") }}
                 </b-button>
               </b-form>
@@ -148,22 +149,22 @@
                   :options="group"
                   :normalizer="normalizerUpdateGroup"
                 />
-                <b-form-input v-model="updategroup.description" :placeholder="$t('table.fields.description')" />
-                <b-form-input v-model="updategroup.notes" :placeholder="$t('table.fields.notes')" />
-                <b-button class="float-right" variant="success" data-testid="updateGroup" @click="updateGroup">
+                <b-form-input v-model="updategroup.description" size="sm" :placeholder="$t('table.fields.description')" />
+                <b-form-input v-model="updategroup.notes" size="sm" :placeholder="$t('table.fields.notes')" />
+                <b-button class="float-right" size="sm" variant="success" data-testid="updateGroup" @click="updateGroup">
                   {{ $t("button.update") }}
                 </b-button>
               </b-form>
             </template>
             <template v-else-if="action == 'deleteOnlyClients'">
-              <p> {{ $t('group.deleteOnlyClients.confirm') }}</p>
-              <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" @click="removeClientAssignments">
+              <small> {{ $t('group.deleteOnlyClients.confirm') }}</small>
+              <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" size="sm" @click="removeClientAssignments">
                 {{ $t("group.remove") }}
               </b-button>
             </template>
             <template v-else-if="action == 'deletegroup'">
-              <p> {{ $t('group.deletegroup.confirm') }}</p>
-              <b-button class="float-right" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
+              <small> {{ $t('group.deletegroup.confirm') }}</small>
+              <b-button class="float-right" size="sm" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
                 {{ $t("label.delete") }}
               </b-button>
             </template>
@@ -184,7 +185,7 @@
               </b-button>
             </template>
             <template v-else-if="action == 'removeClient'">
-              <p>{{ $t('group.removeClient.confirm') }}</p>
+              <small>{{ $t('group.removeClient.confirm') }}</small>
               <b-button variant="danger" class="float-right" size="sm" @click="removeClientFromGroup">
                 {{ $t('group.remove') }}
               </b-button>

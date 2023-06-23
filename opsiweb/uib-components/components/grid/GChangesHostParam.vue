@@ -1,31 +1,37 @@
 <template>
   <div data-testid="GChangesHostParam">
     <AlertAAlert ref="changesHostParamAlert" />
-    <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :placeholder="$t('table.filterBy.ConfigHost')" :filter.sync="filter" />
-    <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
-      <GridGFormItem value-more="true">
-        <template #label>
-          <span :class="{'font-weight-bold': item.type=='depots'}"><small> {{ item.hostId }}</small></span>
-        </template>
-        <template #value>
-          <small> {{ $t('{') }} {{ item.configId }} {{ $t(':') }} {{ item.value }} {{ $t('}') }} </small>
-        </template>
-        <template #valueMore>
-          <ButtonBTNDeleteObj :item="item" from="hostparam" />
-          <b-button class="border-0" variant="outline-primary" size="sm" :title="$t('button.save')" @click="saveHostParam(item, false)">
-            <span class="sr-only">{{ $t('button.save') }}</span>
-            <b-icon :icon="icon.check" />
-          </b-button>
-        </template>
-      </GridGFormItem>
-    </span>
-    <div class="float-right mt-2">
-      <ButtonBTNClearChanges hide="trackChangesModal" from="hostparam" />
-      <b-button variant="success" :title="$t('button.saveall')" @click="saveAllHostParam()">
-        <b-icon :icon="icon.check" />
-        <span class="saveall">{{ $t('button.saveall') }}</span>
-      </b-button>
-    </div>
+    <b-row>
+      <b-col>
+        <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :placeholder="$t('table.filterBy.ConfigHost')" :filter.sync="filter" />
+      </b-col>
+      <b-col cols="auto">
+        <ButtonBTNClearChanges hide="trackChangesModal" from="hostparam" />
+        <b-button variant="success" size="sm" :title="$t('button.saveall')" @click="saveAllHostParam()">
+          <b-icon :icon="icon.check" />
+          <span class="saveall">{{ $t('button.saveall') }}</span>
+        </b-button>
+      </b-col>
+    </b-row>
+    <DivDScrollResult>
+      <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
+        <GridGFormItem value-more="true">
+          <template #label>
+            <span :class="{'font-weight-bold': item.type=='depots'}">{{ item.hostId }}</span>
+          </template>
+          <template #value>
+            {{ $t('{') }} {{ item.configId }} {{ $t(':') }} {{ item.value }} {{ $t('}') }}
+          </template>
+          <template #valueMore>
+            <ButtonBTNDeleteObj :item="item" from="hostparam" />
+            <b-button class="border-0" variant="outline-primary" size="sm" :title="$t('button.save')" @click="saveHostParam(item, false)">
+              <span class="sr-only">{{ $t('button.save') }}</span>
+              <b-icon :icon="icon.check" />
+            </b-button>
+          </template>
+        </GridGFormItem>
+      </span>
+    </DivDScrollResult>
   </div>
 </template>
 

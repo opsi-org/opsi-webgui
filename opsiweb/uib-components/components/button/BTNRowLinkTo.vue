@@ -3,10 +3,9 @@
     :variant="variant"
     data-testid="ButtonBTNRowLinkTo"
     :class="{
-      'w-100 h-100 text-left d-flex rowlinkto': true,
-      'dropdown-item': incontextmenu,
+      'w-100 h-100 text-left d-flex': true,
+      'dropdown-item border-0': incontextmenu,
       [classes]: true,
-      'border-0': incontextmenu
     }"
     :title="label ? '' : title"
     size="sm"
@@ -15,9 +14,9 @@
     @click="action"
   >
     <b-icon v-if="icon" :icon="icon" />
-    <template v-if="label && ($mq!=='mobile' || incontextmenu)">
-      <small class="label pl-1" style="font-size: 85%;">{{ label }}</small>
-    </template>
+    <span v-if="label && ($mq!=='mobile' || incontextmenu)" class="ml-1">
+      {{ label }}
+    </span>
   </b-button>
 </template>
 

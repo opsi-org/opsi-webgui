@@ -1,5 +1,5 @@
 <template>
-  <b-nav-item
+  <div
     :title="withText == false ? $t(events[event].tooltip) : ''"
     data-testid="BTNEvent"
   >
@@ -12,7 +12,7 @@
         [classes]: true,
         'w-100 h-100 text-left border-0': true
       }"
-      :size="size"
+      :size="navbar? 'md': 'sm'"
       @click="$bvModal.show('event-modal-' + event + '-' + data)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
@@ -20,25 +20,20 @@
       <span class="eventlabel" :class="event"> {{ (withText || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
     </b-button>
-    <ul v-else>
-      <li
-        :pressed="isLoading"
-        :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
-        :variant="events[event].variant"
-        :size="size"
-        :class="{
-          [classes]: true,
-          'global_topbar_button_mobile': $mq=='mobile'
-        }"
-        @click="$bvModal.show('event-modal-' + event + '-' + data)"
-        @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
-      >
-        <b-icon v-if="events[event].icon" :icon="events[event].icon" />
-        {{ (!isLoading) ? $t(events[event].title) : '' }}
-        <span class="eventlabel" :class="event"> {{ (withText || incontextmenu || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
-        <IconILoading v-if="isLoading" :small="true" />
-      </li>
-    </ul>
+    <div
+      v-else
+      variant="outline-primary"
+      :size="navbar? 'md': 'sm'"
+      class="w-100 h-100 text-left border-0"
+      :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
+      @click="$bvModal.show('event-modal-' + event + '-' + data)"
+      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
+    >
+      <b-icon v-if="events[event].icon" :icon="events[event].icon" />
+      {{ (!isLoading) ? $t(events[event].title) : '' }}
+      <span class="eventlabel" :class="event"> {{ (withText || incontextmenu || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
+      <IconILoading v-if="isLoading" :small="true" />
+    </div>
 
     <b-modal
       :id="'event-modal-' + event + '-' + data"
@@ -48,10 +43,10 @@
       scrollable
     >
       <b-list-group v-if="event=='ondemand'" flush>
-        <b-list-group-item v-for="c in selection" :key="c" class="modal-client-p">
+        <b-list-group-item v-for="c in selection" :key="c" class="modal-client-p text-small">
           {{ c }}
           <b-button
-            class="border-0 float-right"
+            class="border-0 float-right text-small"
             variant="outline-primary"
             :title="$t('button.delete')"
             size="sm"
@@ -62,11 +57,11 @@
           </b-button>
         </b-list-group-item>
       </b-list-group>
-      <b-list-group v-else-if="event=='showpopup'" flush>
-        <b-form-textarea v-model="eventdata.popup.msg" :placeholder="$t('button.event.showpopup.message')" class="textarea" />
+      <b-list-group v-else-if="event=='showpopup'" class="text-small" flush>
+        <b-form-textarea v-model="eventdata.popup.msg" size="sm" :placeholder="$t('button.event.showpopup.message')" class="textarea" />
         {{ data }}
       </b-list-group>
-      <div v-else class="modal-client-p">
+      <div v-else class="modal-client-p text-small">
         {{ data }}
       </div>
 
@@ -84,7 +79,7 @@
         </b-button>
       </template>
     </b-modal>
-  </b-nav-item>
+  </div>
 </template>
 
 <script lang="ts">
@@ -112,7 +107,6 @@ export default class BTNEvent extends Vue {
   @Prop({ default: false }) incontextmenu!: boolean
   @Prop({ default: false }) navbar!: boolean
   @Prop({ default: false }) withText!: boolean
-  @Prop({ default: 'sm' }) size!: string
   @Prop({ default: undefined }) data?: any
   @Prop({ default: undefined }) isLoadingParent ?: boolean
   @Prop({ default: undefined }) updateLoading ?: Function

@@ -1,6 +1,6 @@
 export default {
   title: 'Button/BTN Help',
-  parameters: { docs: { description: { component: 'Button/BTNHelp description' } } }
+  parameters: { docs: { description: { component: 'Help button to get to know some new features' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({

@@ -1,14 +1,11 @@
-// Describe card component
 export default {
   title: 'Bar/B Auth Footer',
-  parameters: { docs: { description: { component: 'Bar/BAuthFooter description' } } }
+  parameters: { docs: { description: { component: 'Login Page Footer' } } }
 }
 
-// Define template for Story
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<BarBAuthFooter class="footer_content" />' // {{$props.default}}
+  template: '<BarBAuthFooter class="footer_content" />'
 })
 
-// named export to create respective story
 export const BAuthFooter = PrimaryTemplate.bind({})

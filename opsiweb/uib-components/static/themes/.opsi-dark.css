@@ -4563,7 +4563,6 @@ a.close.disabled {
 }
 .modal-header {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
   padding: 1rem 1rem;
   border-bottom: 1px solid var(--bb-modal_header);

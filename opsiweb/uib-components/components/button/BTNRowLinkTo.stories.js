@@ -1,7 +1,7 @@
 // import { argTypeBoolFalse, argTypeTextContent } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Button/BTN Row Link To',
-  parameters: { docs: { description: { component: 'Button/BTNRowLinkTo description' } } }
+  parameters: { docs: { description: { component: 'Table row button for page navigation' } } }
 }
 
 const PrimaryTemplateConfig = (_args, { argTypes }) => ({

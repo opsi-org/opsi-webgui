@@ -1,5 +1,5 @@
 <template>
-  <div class="text-capitalize">
+  <div class="text-capitalize text-small">
     <b-breadcrumb
       v-if="crumbs.length > 0"
       data-testid="BarBBreadcrumb"

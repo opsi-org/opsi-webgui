@@ -1,21 +1,22 @@
 <template>
   <div data-testid="MSelections">
-    <b-badge
-      class="selection_badge btn border-0"
+    <b-button
       :disabled="selections.length < 1"
       :variant="variant"
+      class="border-0 mt-1"
       size="sm"
       tabindex="0"
-      :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
+      :title="$t('treeselect.selectioncount', { type: id })"
       @click="$bvModal.show(type + '-selection-' + id)"
     >
       {{ selections.length }}
-    </b-badge>
+    </b-button>
+
     <b-modal
       :id="type + '-selection-' + id"
       class="modalselection"
       data-testid="MSelectionsModal"
-      :title="$t('treeselect.selectioncount', { type: $t('title.'+ type) })"
+      :title="$t('treeselect.selectioncount', { type: id })"
       centered
       scrollable
       hide-footer
@@ -23,6 +24,7 @@
     >
       <b-form-textarea
         rows="2"
+        size="sm"
         max-rows="30"
         no-resize
         plaintext
@@ -45,21 +47,3 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
   @Prop({ }) selections!: Array<string>
 }
 </script>
-<style>
-.selection_badge {
-  margin-top: var(--min-line-height);
-  line-height: 1.5 !important;
-  width: 20px !important;
-  border: unset !important;
-  padding: 0px !important;
-  font-size: small !important;
-  background-color: inherit !important;
-  color: inherit !important;
-  border-color: unset !important;
-}
-
-.selection_badge.btn {
-  max-height: 20px !important;
-  min-height: 20px !important;
-}
-</style>

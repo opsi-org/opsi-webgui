@@ -20,6 +20,7 @@
         v-if="$mq === 'desktop'"
         v-b-tooltip.hover
         variant="primary"
+        size="sm"
         class="border-0"
         data-testid="BarBSideBtnExpand"
         :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"

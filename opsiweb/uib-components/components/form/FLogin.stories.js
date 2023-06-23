@@ -6,12 +6,11 @@ mock.onPost('/api/auth/login').reply(200, { result: 'Login success' })
 
 export default {
   title: 'Form/F Login',
-  parameters: { docs: { description: { component: 'Form for Login' } } }
+  parameters: { docs: { description: { component: 'Login Form' } } }
 }
 
 const PrimaryTemplate = () => ({
   template: '<FormFLogin />'
 })
 
-// named export Primary to create respective story
 export const FLogin = PrimaryTemplate.bind({})

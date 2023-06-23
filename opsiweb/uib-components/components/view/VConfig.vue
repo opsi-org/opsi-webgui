@@ -6,7 +6,7 @@
         <slot name="IDSelection" />
       </template>
     </BarBPageHeader>
-    <b-tabs lazy>
+    <b-tabs small lazy>
       <b-tab active>
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>

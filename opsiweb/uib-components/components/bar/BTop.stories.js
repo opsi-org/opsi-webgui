@@ -2,7 +2,7 @@ import { argTypeBoolFalse, argTypeBoolTrue } from '../../.utils/types/ttestconst
 
 export default {
   title: 'bar/B Top',
-  parameters: { docs: { description: { component: 'Bar/BTop description' } } },
+  parameters: { docs: { description: { component: 'Topbar' } } },
   argTypes: {
     visible: argTypeBoolTrue,
     expanded: argTypeBoolFalse

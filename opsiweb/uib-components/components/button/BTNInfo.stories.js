@@ -2,7 +2,7 @@ import { argTypeVariants } from '../../.utils/types/ttestconsts'
 
 export default {
   title: 'Button/BTN Info',
-  parameters: { docs: { description: { component: 'Button/BTNInfo description' } } },
+  parameters: { docs: { description: { component: 'Info button' } } },
   argTypes: {
     onclick: { action: 'clicked' },
     variant: argTypeVariants
@@ -14,5 +14,4 @@ const PrimaryTemplate = (_args, { argTypes }) => ({
   template: '<ButtonBTNInfo :click="$props.onclick" />'
 })
 
-// named export Primary to create respective story
 export const BTNInfo = PrimaryTemplate.bind({})

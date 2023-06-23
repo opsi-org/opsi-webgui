@@ -3,6 +3,7 @@
     <b-form-select
       id="logtype"
       v-model="type"
+      size="sm"
       :aria-label="$t('form.logtype')"
       class="logtype"
       data-testid="SLogtype"
@@ -11,9 +12,9 @@
     >
       <template #first>
         <b-form-select-option :value="null" disabled>
-          {{ $t('dropdown.before-after.defaultvalue') }}
+          {{ $t('empty') }}
           {{ $t('form.logtype') }}
-          {{ $t('dropdown.before-after.defaultvalue') }}
+          {{ $t('empty') }}
         </b-form-select-option>
       </template>
     </b-form-select>
@@ -34,5 +35,6 @@ export default class SLogtype extends Vue {
 .logtype.custom-select{
   width: var(--component-width) !important;
   height: var(--component-height)!important;
+  font-size: var(--text-small);
 }
 </style>

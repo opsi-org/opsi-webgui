@@ -16,15 +16,16 @@
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
       :dropright="incontextmenu"
+      :dropleft="!incontextmenu"
     >
       <template #button-content>
         <b-icon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
-        <small v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</small>
+        <span v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</span>
       </template>
       <ul>
         <li class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
           <a class="sortDirectionWrapper">
-            <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" /><small>{{ $t('button.sort.tablecolumns.sortDirection') }}</small>
+            <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" />{{ $t('button.sort.tablecolumns.sortDirection') }}
           </a>
         </li>
       </ul>
@@ -40,7 +41,7 @@
             @keydown="changeSortBy(header.key)"
             @click="changeSortBy(header.key)"
           >
-            <small><a> {{ header.label }} </a></small>
+            <a> {{ header.label }} </a>
           </li>
         </ul>
       </template>
@@ -56,7 +57,7 @@
           @keydown="changeSortBy(header.key)"
           @click="changeSortBy(header.key)"
         >
-          <small>{{ header.label }}</small>
+          {{ header.label }}
         </b-dropdown-item>
       </template>
     </b-dropdown>

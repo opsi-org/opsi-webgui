@@ -3,24 +3,22 @@
     <OverlayOLoading :is-loading="isLoading" />
     <div v-if="!errorText && selectionClients.length <= 0">
       <AlertAAlertLocal show variant="warning" class="noClientsSelectedShowDepot">
-        <small>{{ $t('message.warning.noClientsSelectedShowDepot') }}</small>
+        {{ $t('message.warning.noClientsSelectedShowDepot') }}
       </AlertAAlertLocal>
     </div>
     <div v-else-if="!errorText && $mq=='mobile'">
       <AlertAAlertLocal show variant="primary">
-        <small>{{ $t('table.fields.clientsIds') + $t('colon') }} {{ selectionClients.length }}</small>
+        {{ $t('table.fields.clientsIds') + $t('colon') }} {{ selectionClients.length }}
       </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
       <AlertAAlertLocal show variant="warning" class="notOnEachDepot">
-        <small>
-          {{ $t('message.warning.notOnEachDepot', {count:Object.values(properties.productVersions).filter(n => n).length, countall:selectionDepots.length}) }}
-        </small>
+        {{ $t('message.warning.notOnEachDepot', {count:Object.values(properties.productVersions).filter(n => n).length, countall:selectionDepots.length}) }}
       </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).some((v)=>v!=Object.values(properties.productVersions).filter(n => n)[0])">
       <AlertAAlertLocal show variant="warning">
-        <small>{{ $t('message.warning.differentProductVersions') }}</small>
+        {{ $t('message.warning.differentProductVersions') }}
       </AlertAAlertLocal>
     </div>
     <p v-if="errorText">

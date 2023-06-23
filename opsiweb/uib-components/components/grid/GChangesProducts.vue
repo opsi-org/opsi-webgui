@@ -2,10 +2,22 @@
   <div data-testid="GChangesProducts">
     <AlertAAlert ref="changesProductsAlert" />
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
-      <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
+      <b-row>
+        <b-col>
+          <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
+        </b-col>
+        <b-col cols="auto">
+          <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
+          <b-button variant="success" :title="$t('button.saveall')" size="sm" @click="saveAll()">
+            <b-icon :icon="icon.check" />
+            <span class="saveall">{{ $t('button.saveall') }}</span>
+          </b-button>
+        </b-col>
+      </b-row>
+
       <DivDScrollResult>
         <div v-for="changes, k in groupedById" :key="changes.productId">
-          <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" variant="outline-primary">
+          <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
             <b>{{ k }}</b>
             <b-icon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
           </b-button>
@@ -13,10 +25,10 @@
             <span v-for="item, index in changes" :key="index" :class="{ 'd-none': item.clientId && !item.clientId.includes(filter) || item.depotId && !item.depotId.includes(filter)}">
               <GridGFormItem value-more="true">
                 <template #label>
-                  <small> {{ item.depotId || item.clientId }} </small>
+                  {{ item.depotId || item.clientId }}
                 </template>
                 <template #value>
-                  <small> {{ item.actionRequest || ($t('{ ') + item.property + $t(' : ') + item.propertyValue + $t(' }') ) }} </small>
+                  {{ item.actionRequest || ($t('{ ') + item.property + $t(' : ') + item.propertyValue + $t(' }') ) }}
                 </template>
                 <template #valueMore>
                   <ButtonBTNDeleteObj :item="item" from="products" />
@@ -30,13 +42,6 @@
           </b-collapse>
         </div>
       </DivDScrollResult>
-      <div class="float-right mt-2">
-        <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
-        <b-button variant="success" :title="$t('button.saveall')" @click="saveAll()">
-          <b-icon :icon="icon.check" />
-          <span class="saveall">{{ $t('button.saveall') }}</span>
-        </b-button>
-      </div>
     </div>
     <div v-else>
       {{ $t('empty') }}

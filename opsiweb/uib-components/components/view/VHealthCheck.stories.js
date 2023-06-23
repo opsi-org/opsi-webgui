@@ -10,5 +10,4 @@ const PrimaryTemplate = () => ({
   template: '<ViewVHealthCheck />'
 })
 
-// named export Primary to create respective story
 export const VHealthcheck = PrimaryTemplate.bind({})

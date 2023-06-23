@@ -57,18 +57,6 @@
           :refetch="$fetch"
         />
       </template>
-      <template #cell(desc)="row">
-        {{ row.item.description }}
-      </template>
-      <template #cell(version)="row">
-        <TableCellTCProductVersionCell
-          v-if="Object.keys(fetchedDataClients2Depots).length == selectionClients.length"
-          type="depotVersions"
-          :row="row"
-          :clients2depots="fetchedDataClients2Depots"
-          @details="toogleDetailsTooltip"
-        />
-      </template>
       <template #head(installationStatus)>
         <b-icon
           :title="$t('table.fields.instStatus')"
@@ -81,6 +69,30 @@
           :title="$t('table.fields.actionResult')"
           :icon="icon.productActionResult"
           alt="action result"
+        />
+      </template>
+      <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
+        <DropdownDDProductRequest
+          :action.sync="action"
+          :title="$t('form.tooltip.actionRequest')"
+          :save="saveActionRequests"
+        />
+      </template>
+      <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
+        <DropdownDDProductRequest
+          :request="row.item.actionRequest || 'none'"
+          :requestoptions="[...row.item.actions]"
+          :rowitem="row.item"
+          :save="saveActionRequest"
+        />
+      </template>
+      <template #cell(version)="row">
+        <TableCellTCProductVersionCell
+          v-if="Object.keys(fetchedDataClients2Depots).length == selectionClients.length"
+          type="depotVersions"
+          :row="row"
+          :clients2depots="fetchedDataClients2Depots"
+          @details="toogleDetailsTooltip"
         />
       </template>
       <template #cell(installationStatus)="row">
@@ -103,9 +115,9 @@
       </template>
       <template #cell(actionProgress)="row">
         <div v-if="row.item.actionProgress == 'mixed'">
-          <span :id="('tooltip_actionprogress_mixed'+row.item.productId)">
+          <small :id="('tooltip_actionprogress_mixed'+row.item.productId)">
             {{ row.item.actionProgress }}
-          </span>
+          </small>
           <b-tooltip size="sm" :target="('tooltip_actionprogress_mixed'+row.item.productId)" triggers="hover">
             <b-row v-for="(key, index) in row.item.selectedClients" :key="index">
               <b-col class="d-flex flex-nowrap text-sm-left">
@@ -116,24 +128,7 @@
             </b-row>
           </b-tooltip>
         </div>
-        <div v-else>
-          {{ row.item.actionProgress }}
-        </div>
-      </template>
-      <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
-        <DropdownDDProductRequest
-          :action.sync="action"
-          :title="$t('form.tooltip.actionRequest')"
-          :save="saveActionRequests"
-        />
-      </template>
-      <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
-        <DropdownDDProductRequest
-          :request="row.item.actionRequest || 'none'"
-          :requestoptions="[...row.item.actions]"
-          :rowitem="row.item"
-          :save="saveActionRequest"
-        />
+        <small v-else> {{ row.item.actionProgress }}</small>
       </template>
       <template #row-details="row">
         <TableTTooltipContent
@@ -211,7 +206,7 @@ export default class TProductsLocalboot extends Vue {
   tableData: ITableData = {
     type: 'LocalbootProduct',
     pageNumber: 1,
-    perPage: 15,
+    perPage: 20,
     sortBy: this.sort.sortBy ? this.sort.sortBy : 'productId',
     sortDesc: false,
     filterQuery: this.filterQuery || ''

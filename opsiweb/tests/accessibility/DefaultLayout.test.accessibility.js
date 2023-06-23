@@ -25,15 +25,15 @@ test.beforeEach(async ({ page, context }) => {
 })
 
 test.afterEach(async ({ page }) => {
-  await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+  apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.click('[data-testid="ButtonBTNLogout"]')
   page.setDefaultTimeout(55555)
   await expect(page).toHaveURL('/addons/webgui/app/login')
   await page.close()
 })
 
-test.describe('Scan accessibility issues after login', () => {
-  test('Topbar', async ({ page }) => {
+test.describe('accessibility', () => {
+  test('topbar', async ({ page }) => {
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .include('[data-testid="BarBTop"]')
@@ -41,7 +41,7 @@ test.describe('Scan accessibility issues after login', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('Sidebar', async ({ page }) => {
+  test('sidebar', async ({ page }) => {
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .include('[data-testid="BarBSide"]')
@@ -49,14 +49,14 @@ test.describe('Scan accessibility issues after login', () => {
     expect(accessibilityScanResults.violations).toEqual([])
   })
 
-  test('Clients', async ({ page }) => {
+  test('clients', async ({ page }) => {
     const accessibilityScanResults = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
       .include('[data-testid="VClients"]')
       .analyze()
     expect(accessibilityScanResults.violations).toEqual([])
   })
-  test('Clients - Creation', async ({ page }) => {
+  test('clients - creation', async ({ page }) => {
     await page.click('[data-testid="NICollapsible-title.clients"]')
     await page.click('[data-testid="NICollapsible-submenu-title.clientstitle.addNew"]')
     await (new Promise(resolve => setTimeout(resolve, 4000)))
@@ -67,7 +67,7 @@ test.describe('Scan accessibility issues after login', () => {
       .analyze()
     expect(accessibilityScanResults.violations).toEqual([])
   })
-  test('Clients - Config with active Atrributes tab', async ({ page }) => {
+  test('clients - config with active Atrributes tab', async ({ page }) => {
     await page.click('[data-testid="NICollapsible-title.clients"]')
     await page.click('[data-testid="NICollapsible-submenu-title.clientstitle.config"]')
     await (new Promise(resolve => setTimeout(resolve, 4000)))
@@ -78,7 +78,7 @@ test.describe('Scan accessibility issues after login', () => {
       .analyze()
     expect(accessibilityScanResults.violations).toEqual([])
   })
-  test('Clients - Parameters', async ({ page }) => {
+  test('clients - parameters', async ({ page }) => {
     await page.click('[data-testid="NICollapsible-title.clients"]')
     await page.click('[data-testid="NICollapsible-submenu-title.clientstitle.config"]')
     await expect(page).toHaveURL('/addons/webgui/app/clientsconfig')
@@ -91,7 +91,7 @@ test.describe('Scan accessibility issues after login', () => {
       .analyze()
     expect(accessibilityScanResults.violations).toEqual([])
   })
-  test('Groups with a selected group', async ({ page }) => {
+  test('groups with a selected group', async ({ page }) => {
     await page.click('[data-testid="NIItem-title.groups"]')
     await expect(page).toHaveURL('/addons/webgui/app/groups/')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
@@ -103,7 +103,7 @@ test.describe('Scan accessibility issues after login', () => {
       .analyze()
     expect(accessibilityScanResults.violations).toEqual([])
   })
-  test('Products', async ({ page }) => {
+  test('products', async ({ page }) => {
     await page.click('[data-testid="NIItem-title.products"]')
     await expect(page).toHaveURL('/addons/webgui/app/products/')
     const accessibilityScanResults = await new AxeBuilder({ page })

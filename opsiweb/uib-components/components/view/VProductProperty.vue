@@ -1,17 +1,17 @@
 <template>
   <div data-testid="VProductProperty">
     <BarBPageHeader :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
-    <div class="mb-3">
+    <div class="mb-3 text-small">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
-    <b-tabs v-if="id" v-model="activeTab" lazy>
-      <div v-if="!$fetchState.pending && ($fetchState.error || activeTabSet < -1)">
+    <b-tabs v-if="id" v-model="activeTab" small lazy>
+      <small v-if="!$fetchState.pending && ($fetchState.error || activeTabSet < -1)">
         <p>
           {{ errorText.properties }}
           {{ (errorText.dependencies && errorText.properties)? '\n':'' }}
           {{ errorText.dependencies }}
         </p>
-      </div>
+      </small>
 
       <p v-if="$fetchState.pending">
         <OverlayOLoading :is-loading="$fetchState.pending" />

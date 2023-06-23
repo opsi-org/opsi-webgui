@@ -13,5 +13,4 @@ const PrimaryTemplate = () => ({
   template: '<ViewVGroups />'
 })
 
-// named export Primary to create respective story
 export const VGroups = PrimaryTemplate.bind({})

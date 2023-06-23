@@ -1,7 +1,7 @@
 
 export default {
   title: 'Button/BTN Clear Selection',
-  parameters: { docs: { description: { component: 'Button/BTN Clear Selection' } } }
+  parameters: { docs: { description: { component: 'Button to clear selections from Table or Tree' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({

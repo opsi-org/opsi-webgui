@@ -7,5 +7,4 @@ const PrimaryTemplate = () => ({
   template: '<TreeTSDepots />'
 })
 
-// named export Primary to create respective story
 export const TSDepots = PrimaryTemplate.bind({})

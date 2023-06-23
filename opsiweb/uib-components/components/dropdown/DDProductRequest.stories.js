@@ -1,6 +1,6 @@
 export default {
   title: 'Dropdown/DD Product Request',
-  parameters: { docs: { description: { component: 'Dropdown/DDProductRequest description' } } }
+  parameters: { docs: { description: { component: 'Dropdown for Product Action Request' } } }
 }
 
 const DefaultVisibleTemplateHead = (args, { argTypes }) => ({

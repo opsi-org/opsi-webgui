@@ -1,6 +1,6 @@
 export default {
   title: 'Dropdown/DD Lang',
-  parameters: { docs: { description: { component: 'Dropdown/DDLang description' } } }
+  parameters: { docs: { description: { component: 'Language dropdown' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({

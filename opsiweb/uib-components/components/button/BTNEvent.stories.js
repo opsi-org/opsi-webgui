@@ -1,8 +1,7 @@
-// import { argTypeVariants } from '../../.utils/types/ttestconsts'
 import { customstores } from '../../.utils/storybook/mock'
 export default {
   title: 'Button/BTN Event',
-  parameters: { docs: { description: { component: 'Button Event' } } }
+  parameters: { docs: { description: { component: 'Button to execute events (ondemand, notify, reboot) on client' } } }
 }
 
 const PrimaryTemplateOnDemandDefault = (_args, { argTypes }) => ({
@@ -25,7 +24,6 @@ const PrimaryTemplateReboot = (_args, { argTypes }) => ({
     :data="'clientId.domain'"
     /></b-badge>
   `
-  // :update-loading="loading => clientsLoading = loading"
 })
 
 const PrimaryTemplateNotify = (_args, { argTypes }) => ({
@@ -35,7 +33,6 @@ const PrimaryTemplateNotify = (_args, { argTypes }) => ({
     :data="'clientId.domain'"
     /></b-badge>
   `
-  // :update-loading="loading => clientsLoading = loading"
 })
 
 export const BTNEventOnDemandDefault = PrimaryTemplateOnDemandDefault.bind({})

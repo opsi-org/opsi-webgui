@@ -1,7 +1,7 @@
 // import { argTypeVariants } from '../../.utils/types/ttestconsts'
 export default {
   title: 'Button/BTN Delete Obj',
-  parameters: { docs: { description: { component: 'Button/BTNDeleteObj description' } } }
+  parameters: { docs: { description: { component: 'Button to delete an object from a list' } } }
   // argTypes: {
   //   hide: { action: 'clicked' },
   // }

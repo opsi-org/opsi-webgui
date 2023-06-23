@@ -1,8 +1,6 @@
-// import { mock, data } from '../../.utils/storybook/mock'
-// mock.onGet('/api/opsidata/depots/products?selectedDepots=').reply(200, data.netbootproductIds)
 export default {
   title: 'View/V Client Creation',
-  parameters: { docs: { description: { component: 'New opsi client creation view' } } }
+  parameters: { docs: { description: { component: 'Page for creating new opsi client' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({
@@ -12,6 +10,3 @@ const PrimaryTemplate = (args, { argTypes }) => ({
 })
 
 export const VClientCreation = PrimaryTemplate.bind({})
-// VClientCreation.args = {
-//   netbootproductslist: data.netbootproductIds
-// }

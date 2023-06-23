@@ -8,7 +8,7 @@
           <span class="id">{{ $t('table.fields.id') }}</span>
         </template>
         <template #value>
-          <b-form-input id="id" v-model="hostAttr.hostId" :aria-label="$t('table.fields.id')" readonly />
+          <b-form-input id="id" v-model="hostAttr.hostId" size="sm" :aria-label="$t('table.fields.id')" readonly />
         </template>
       </GridGFormItem>
       <GridGFormItem>
@@ -16,7 +16,7 @@
           <span class="type">{{ $t('table.fields.type') }}</span>
         </template>
         <template #value>
-          <b-form-input id="type" :value="hostAttr.type" :aria-label="$t('table.fields.type')" readonly />
+          <b-form-input id="type" :value="hostAttr.type" size="sm" :aria-label="$t('table.fields.type')" readonly />
         </template>
       </GridGFormItem>
       <GridGFormItem>
@@ -24,7 +24,7 @@
           <span class="description">{{ $t('table.fields.description') }}</span>
         </template>
         <template #value>
-          <b-form-input id="description" v-model="hostAttr.description" :aria-label="$t('table.fields.description')" type="text" />
+          <b-form-input id="description" v-model="hostAttr.description" size="sm" :aria-label="$t('table.fields.description')" type="text" />
         </template>
       </GridGFormItem>
       <GridGFormItem>
@@ -38,6 +38,7 @@
             :aria-label="$t('table.fields.notes')"
             rows="1"
             max-rows="3"
+            size="sm"
             no-resize
           />
         </template>
@@ -47,7 +48,7 @@
           <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
         </template>
         <template #value>
-          <b-form-input id="hwAddr" v-model="hostAttr.hardwareAddress" :aria-label="$t('table.fields.hwAddr')" type="text" />
+          <b-form-input id="hwAddr" v-model="hostAttr.hardwareAddress" size="sm" :aria-label="$t('table.fields.hwAddr')" type="text" />
         </template>
       </GridGFormItem>
       <GridGFormItem>
@@ -55,7 +56,7 @@
           <span class="ip">{{ $t('table.fields.ip') }}</span>
         </template>
         <template #value>
-          <b-form-input id="ip" v-model="hostAttr.ipAddress" :aria-label="$t('table.fields.ip')" />
+          <b-form-input id="ip" v-model="hostAttr.ipAddress" size="sm" :aria-label="$t('table.fields.ip')" />
         </template>
       </GridGFormItem>
       <GridGFormItem>
@@ -63,7 +64,7 @@
           <span class="inventNum">{{ $t('table.fields.inventNum') }}</span>
         </template>
         <template #value>
-          <b-form-input id="inventNum" v-model="hostAttr.inventoryNumber" :aria-label="$t('table.fields.inventNum')" type="text" />
+          <b-form-input id="inventNum" v-model="hostAttr.inventoryNumber" size="sm" :aria-label="$t('table.fields.inventNum')" type="text" />
         </template>
       </GridGFormItem>
       <GridGFormItem v-if="hostAttr.created">
@@ -71,7 +72,7 @@
           <span class="created">{{ $t('table.fields.created') }}</span>
         </template>
         <template #value>
-          <b-form-input id="created" :value="date(hostAttr.created)" :aria-label="$t('table.fields.created')" readonly />
+          <b-form-input id="created" :value="date(hostAttr.created)" size="sm" :aria-label="$t('table.fields.created')" readonly />
         </template>
       </GridGFormItem>
       <GridGFormItem v-if="hostAttr.lastSeen">
@@ -79,7 +80,7 @@
           <span class="lastSeen">{{ $t('table.fields.lastSeen') }}</span>
         </template>
         <template #value>
-          <b-form-input id="lastSeen" :value="date(hostAttr.lastSeen)" :aria-label="$t('table.fields.lastSeen')" readonly />
+          <b-form-input id="lastSeen" :value="date(hostAttr.lastSeen)" size="sm" :aria-label="$t('table.fields.lastSeen')" readonly />
         </template>
       </GridGFormItem>
       <GridGFormItem>
@@ -93,7 +94,7 @@
               <b-icon v-if="showValue" :icon="icon.valueShow" />
               <b-icon v-else :icon="icon.valueHide" />
             </b-button>
-            <b-form-input id="hostKey" v-model="hostAttr.opsiHostKey" :aria-label="$t('table.fields.hostKey')" :class="{'d-none' : !showValue}" type="text" />
+            <b-form-input id="hostKey" v-model="hostAttr.opsiHostKey" size="sm" :aria-label="$t('table.fields.hostKey')" :class="{'d-none' : !showValue}" />
           </b-input-group>
         </template>
       </GridGFormItem>
@@ -102,7 +103,7 @@
           <span class="otp">{{ $t('table.fields.otp') }}</span>
         </template>
         <template #value>
-          <b-form-input id="otp" v-model="hostAttr.oneTimePassword" :aria-label="$t('table.fields.otp')" type="text" />
+          <b-form-input id="otp" v-model="hostAttr.oneTimePassword" size="sm" :aria-label="$t('table.fields.otp')" type="text" />
         </template>
       </GridGFormItem>
       <GridGFormItem v-if="type == 'clients'">
@@ -110,7 +111,7 @@
           <span class="uefi">{{ $t('table.fields.uefi') }}</span>
         </template>
         <template #value>
-          <b-form-checkbox id="uefi" v-model="hostAttr.uefi" :aria-label="$t('table.fields.uefi')" />
+          <b-form-checkbox id="uefi" v-model="hostAttr.uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
         </template>
       </GridGFormItem>
       <GridGFormItem v-if="hostAttr.systemUUID">
@@ -118,7 +119,14 @@
           <span class="smbiosuuid">{{ $t('table.fields.smbiosuuid') }}</span>
         </template>
         <template #value>
-          <b-form-input id="smbiosuuid" v-model="hostAttr.systemUUID" :aria-label="$t('table.fields.smbiosuuid')" type="text" readonly />
+          <b-form-input
+            id="smbiosuuid"
+            v-model="hostAttr.systemUUID"
+            size="sm"
+            :aria-label="$t('table.fields.smbiosuuid')"
+            type="text"
+            readonly
+          />
         </template>
       </GridGFormItem>
       <template v-if="type !== 'clients'">
@@ -127,7 +135,7 @@
             <span class="depotLocalUrl">{{ $t('table.fields.depotLocalUrl') }}</span>
           </template>
           <template #value>
-            <b-form-input id="depotLocalUrl" v-model="hostAttr.depotLocalUrl" :aria-label="$t('table.fields.depotLocalUrl')" type="text" />
+            <b-form-input id="depotLocalUrl" v-model="hostAttr.depotLocalUrl" size="sm" :aria-label="$t('table.fields.depotLocalUrl')" type="text" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -135,7 +143,7 @@
             <span class="depotWebdavUrl">{{ $t('table.fields.depotWebdavUrl') }}</span>
           </template>
           <template #value>
-            <b-form-input id="depotWebdavUrl" v-model="hostAttr.depotWebdavUrl" :aria-label="$t('table.fields.depotWebdavUrl')" type="text" />
+            <b-form-input id="depotWebdavUrl" v-model="hostAttr.depotWebdavUrl" size="sm" :aria-label="$t('table.fields.depotWebdavUrl')" type="text" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -143,7 +151,7 @@
             <span class="repositoryLocalUrl">{{ $t('table.fields.repositoryLocalUrl') }}</span>
           </template>
           <template #value>
-            <b-form-input id="repositoryLocalUrl" v-model="hostAttr.repositoryLocalUrl" :aria-label="$t('table.fields.repositoryLocalUrl')" type="text" />
+            <b-form-input id="repositoryLocalUrl" v-model="hostAttr.repositoryLocalUrl" size="sm" :aria-label="$t('table.fields.repositoryLocalUrl')" type="text" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -151,7 +159,7 @@
             <span class="repositoryRemoteUrl">{{ $t('table.fields.repositoryRemoteUrl') }}</span>
           </template>
           <template #value>
-            <b-form-input id="repositoryRemoteUrl" v-model="hostAttr.repositoryRemoteUrl" :aria-label="$t('table.fields.repositoryRemoteUrl')" type="text" />
+            <b-form-input id="repositoryRemoteUrl" v-model="hostAttr.repositoryRemoteUrl" size="sm" :aria-label="$t('table.fields.repositoryRemoteUrl')" type="text" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -159,7 +167,7 @@
             <span class="workbenchLocalUrl">{{ $t('table.fields.workbenchLocalUrl') }}</span>
           </template>
           <template #value>
-            <b-form-input id="workbenchLocalUrl" v-model="hostAttr.workbenchLocalUrl" :aria-label="$t('table.fields.workbenchLocalUrl')" type="text" />
+            <b-form-input id="workbenchLocalUrl" v-model="hostAttr.workbenchLocalUrl" size="sm" :aria-label="$t('table.fields.workbenchLocalUrl')" type="text" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -167,7 +175,7 @@
             <span class="workbenchRemoteUrl">{{ $t('table.fields.workbenchRemoteUrl') }}</span>
           </template>
           <template #value>
-            <b-form-input id="workbenchRemoteUrl" v-model="hostAttr.workbenchRemoteUrl" :aria-label="$t('table.fields.workbenchRemoteUrl')" type="text" />
+            <b-form-input id="workbenchRemoteUrl" v-model="hostAttr.workbenchRemoteUrl" size="sm" :aria-label="$t('table.fields.workbenchRemoteUrl')" type="text" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -175,7 +183,7 @@
             <span class="networkAddress">{{ $t('table.fields.networkAddress') }}</span>
           </template>
           <template #value>
-            <b-form-input id="networkAddress" v-model="hostAttr.networkAddress" :aria-label="$t('table.fields.networkAddress')" />
+            <b-form-input id="networkAddress" v-model="hostAttr.networkAddress" size="sm" :aria-label="$t('table.fields.networkAddress')" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -183,7 +191,7 @@
             <span class="maxBandwidth">{{ $t('table.fields.maxBandwidth') }}</span>
           </template>
           <template #value>
-            <b-form-input id="maxBandwidth" v-model="hostAttr.maxBandwidth" :aria-label="$t('table.fields.maxBandwidth')" />
+            <b-form-input id="maxBandwidth" v-model="hostAttr.maxBandwidth" size="sm" :aria-label="$t('table.fields.maxBandwidth')" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -191,7 +199,7 @@
             <span class="isMasterDepot">{{ $t('table.fields.isMasterDepot') }}</span>
           </template>
           <template #value>
-            <b-form-checkbox id="isMasterDepot" v-model="hostAttr.isMasterDepot" :aria-label="$t('table.fields.isMasterDepot')" />
+            <b-form-checkbox id="isMasterDepot" v-model="hostAttr.isMasterDepot" size="sm" :aria-label="$t('table.fields.isMasterDepot')" />
           </template>
         </GridGFormItem>
         <GridGFormItem>
@@ -199,19 +207,23 @@
             <span class="masterDepotId">{{ $t('table.fields.masterDepotId') }}</span>
           </template>
           <template #value>
-            <b-form-input id="masterDepotId" v-model="hostAttr.masterDepotId" :aria-label="$t('table.fields.masterDepotId')" type="text" />
+            <b-form-input id="masterDepotId" v-model="hostAttr.masterDepotId" size="sm" :aria-label="$t('table.fields.masterDepotId')" type="text" />
           </template>
         </GridGFormItem>
       </template>
     </LazyDivDScrollResult>
-    <div v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" class="float-right mt-2">
-      <b-button id="resetButton" class="resetButton" variant="primary" @click="$fetch">
-        <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
-      </b-button>
-      <b-button id="updateButton" class="updateButton" variant="success" @click="updateAttributes()">
-        <b-icon :icon="icon.check" /> {{ $t('button.save') }}
-      </b-button>
-    </div>
+    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)">
+      <template #value>
+        <div class="float-right">
+          <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="$fetch">
+            <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
+          </b-button>
+          <b-button id="updateButton" class="updateButton" variant="success" size="sm" @click="updateAttributes()">
+            <b-icon :icon="icon.check" /> {{ $t('button.save') }}
+          </b-button>
+        </div>
+      </template>
+    </GridGFormItem>
     <DivDScrollResult v-else>
       {{ $t('empty') }}
     </DivDScrollResult>

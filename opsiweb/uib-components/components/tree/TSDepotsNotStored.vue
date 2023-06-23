@@ -30,7 +30,6 @@ export default class TSDepotsNotStored extends Vue {
 
   async fetch () {
     const depots: Array<object> = []
-    // TODO : backend --> return depots data as list of { id: depotID, label: depotID } for treeselect component
     const result = await this.getDepotIdList()
     result.sort()
     for (const d in result) {

@@ -1,6 +1,6 @@
 export default {
   title: 'Checkbox/C B Quick Save',
-  parameters: { docs: { description: { component: 'Checkbox Quick save' } } }
+  parameters: { docs: { description: { component: 'Checkbox to enable/disable Quick Save' } } }
 }
 
 const PrimaryTemplate = () => ({

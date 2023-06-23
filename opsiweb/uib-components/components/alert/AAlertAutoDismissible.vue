@@ -11,7 +11,7 @@
     @dismiss-count-down="countDownChanged"
   >
     <slot />
-    <div class="mh-25 text-medium">
+    <div class="mh-25 text-small">
       {{ alertMessage }}
       <span v-if="moreDetails">
         {{ moreDetails }}

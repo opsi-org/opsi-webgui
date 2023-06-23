@@ -36,9 +36,7 @@ const PrimaryTemplate = (args, { argTypes }) => ({
   `
 })
 
-// named export Primary to create respective story
 export const GProductProperties = PrimaryTemplate.bind({})
-
 GProductProperties.args = {
   id: 'id',
   props: properties,

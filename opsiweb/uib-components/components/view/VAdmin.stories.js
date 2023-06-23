@@ -1,6 +1,6 @@
 export default {
   title: 'View/V Admin',
-  parameters: { docs: { description: { component: 'Admin' } } }
+  parameters: { docs: { description: { component: 'Admin Page' } } }
 }
 
 const PrimaryTemplate = (args, { argTypes }) => ({

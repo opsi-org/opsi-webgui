@@ -4,6 +4,7 @@
       v-bind="$props"
       data-testid="IDetailsBadge"
       :variant="variant"
+      size="sm"
     >
       <span v-if="content=='depot-unequal'" class="h6">
         <span> {{ text ? text: $t('unequal') }}</span> <b-icon :icon="icon.server" />

@@ -1,15 +1,13 @@
 <template>
-  <b-nav-item-dropdown
+  <b-dropdown
     v-if="navbar"
-    id="theme"
-    data-testid="DropdownDDThemeBTN"
+    data-testid="DropdownDDTheme"
     :aria-label="$t('form.theme')"
-    class="global_topbar_button px-2 text-left btn btn-primary border-0"
-    :class="{ 'pt-0 pb-0 pl-3  w-100': $mq=='mobile'}"
-    :text="theme.title"
+    variant="primary border-0"
+    size="sm"
+    class="global_topbar_button"
+    no-caret
     :title="$t('button.theme.tooltip')"
-    alt="select theme"
-    :dropup="dropup"
   >
     <template #button-content>
       <b-icon v-if="themeicon" :icon="themeicon" />
@@ -25,14 +23,17 @@
       <b-icon v-if="t.icon" :icon="t.icon" />
       {{ t.title }}
     </b-dropdown-item>
-  </b-nav-item-dropdown>
+  </b-dropdown>
+
   <b-dropdown
     v-else
-    data-testid="DropdownDDThemeBTN"
+    data-testid="DropdownDDTheme"
     :text="theme.title"
     class="settingstheme"
+    size="sm"
     variant="outline-primary"
-    :dropup="dropup"
+    no-caret
+    dropright
   >
     <template #button-content>
       <b-icon v-if="themeicon" :icon="themeicon" />
@@ -59,7 +60,6 @@ const settings = namespace('settings')
 
 @Component({ mixins: [Icons] })
 export default class DDTheme extends Vue {
-  @Prop({ default: false }) dropup!: boolean
   @Prop({ default: false }) navbar!: boolean
   icon: any
   $mq:any

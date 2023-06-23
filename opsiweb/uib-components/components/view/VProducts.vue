@@ -29,7 +29,7 @@
         <div v-if="showTreeView" class="VProductGroupsExpanded" data-testid="VProductGroupsExpanded">
           <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
         </div>
-        <b-tabs v-else class="products_horizontaltabs" lazy>
+        <b-tabs v-else class="products_horizontaltabs" small lazy>
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
@@ -137,9 +137,9 @@ export default class VProducts extends Vue {
       label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
       visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('name') : false
     },
-    desc: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.description') as string, key: 'desc', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('desc') : false
+    description: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
+      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('description') : false
     },
     modificationTime: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.modificationTime') as string, key: 'modificationTime', sortable: true,

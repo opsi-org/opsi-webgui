@@ -1,7 +1,7 @@
 
 export default {
   title: 'bar/B Tooltip Collapse Row',
-  parameters: { docs: { description: { component: 'Bar/BTooltipCollapseRow description' } } }
+  parameters: { docs: { description: { component: 'Tooltip with collapseable rows' } } }
 }
 
 const DefaultVisibleTemplate = (args, { argTypes }) => ({

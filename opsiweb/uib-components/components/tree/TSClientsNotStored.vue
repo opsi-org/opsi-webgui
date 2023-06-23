@@ -28,7 +28,6 @@ export default class TSClientsNotStored extends Vue {
 
   async fetch () {
     const clients: Array<object> = []
-    // TODO : backend --> return clients data as list of { id: clientID, label: clientID } for treeselect component
     const result = await this.getClientIdList(this.selectionDepots)
     for (const c in result) {
       const client = result[c]

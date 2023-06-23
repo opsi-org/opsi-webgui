@@ -20,10 +20,6 @@ describe('BTooltipCollapseRow', () => {
       propsData: {
         title: '',
         value: ''
-        /* props with defaults: */
-        // valueVariant: 'info',
-        // collapseable: true,
-        // collapsed: false,
       }
     })
   })
