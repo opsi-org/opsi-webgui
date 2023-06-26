@@ -468,6 +468,7 @@ build:addon:
   only:
     - tags
     - develop
+    - 622-cleanup-dependencies
   artifacts:
     name: "opsi-webgui"
     paths:
