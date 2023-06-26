@@ -503,7 +503,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   background-color: var(--background, white);
 }
 
-.TInfiniteScrollSmoothWrapper tbody tr:hover .btn-group .btn-outline-primary {
+/* .TInfiniteScrollSmoothWrapper tbody tr:hover .btn-group .btn-outline-primary {
   border-color: var(--bg-page_item-disabled) !important;
   color: var(--primary-foreground) !important;
 }
@@ -511,7 +511,7 @@ export default class TInfiniteScrollSmooth extends Vue {
   border-color: var(--bg-page_item-disabled) !important;
   background-color: var(--primary) !important;
   color: var(--primary-foreground) !important;
-}
+} */
 .TInfiniteScrollSmoothWrapper thead .col-rowactions {
   padding-left: 12px !important;
 }

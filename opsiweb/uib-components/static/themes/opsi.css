@@ -1877,11 +1877,11 @@ textarea.form-control{
   color:var(--fg-btn-disabled);
   background-color:var(--bg-btn-disabled)
 }
-.btn-outline-primary:not(:disabled):not(.disabled).active,.btn-outline-primary:not(:disabled):not(.disabled):active,.show > .btn-outline-primary.dropdown-toggle{
+/* .btn-outline-primary:not(:disabled):not(.disabled).active,.btn-outline-primary:not(:disabled):not(.disabled):active,.show > .btn-outline-primary.dropdown-toggle{
   color:var(--fg-btn);
   background-color:var(--bg-btn);
   border-color:var(--b-btn)
-}
+} */
 .btn-outline-primary:not(:disabled):not(.disabled).active:focus,.btn-outline-primary:not(:disabled):not(.disabled):active:focus,.show > .btn-outline-primary.dropdown-toggle:focus{
   box-shadow:0 0 0 0.2rem var(--s-btn-focus)
 }
