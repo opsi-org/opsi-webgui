@@ -446,6 +446,7 @@ build:static:app:
   only:
     - develop
     - tags
+    - 622-cleanup-dependencies
 
 build:addon:
   stage: build
