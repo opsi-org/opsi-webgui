@@ -18,9 +18,6 @@
         <span v-once class="ml-1 text-smaller topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
-      <b-badge v-if="quicksave" size="sm" class="mr-1" :title="$t('message.warning.quicksave.on')" variant="warning">
-        <b-icon :icon="icon.exclamation" />
-      </b-badge>
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" />
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
       <b-navbar-nav v-if="$mq === 'mobile'" small class="h-100">
@@ -61,7 +58,6 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
-const settings = namespace('settings')
 
 @Component({ mixins: [Icons] })
 export default class BTop extends Vue {
@@ -74,7 +70,6 @@ export default class BTop extends Vue {
   rightmenuVisible:boolean = false
 
   @config.Getter public config!: IObjectString2Boolean
-  @settings.Getter public quicksave!: boolean
 
   get username () {
     return localStorage.getItem('username')
