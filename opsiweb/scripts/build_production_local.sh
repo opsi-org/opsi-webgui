@@ -7,6 +7,7 @@
 # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
 cd /workspace/opsiweb/
+rm -rf /workspace/opsiweb/dist
 
 npm run generate-nossl
 mkdir -p webgui
@@ -28,7 +29,7 @@ chown 1000:1000 opsi-webgui.zip
 
 
 rm -rf /var/lib/opsiconfd/addons/webgui
-rm -rf /workspace/opsiweb/dist
+# rm -rf /workspace/opsiweb/dist
 
 mv -f webgui/ /var/lib/opsiconfd/addons/.
 
