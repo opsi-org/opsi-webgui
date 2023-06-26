@@ -178,6 +178,7 @@ init:npm:production:
   only:
     - develop
     - tags
+    - 622-cleanup-dependencies
   script:
     # - *prepare_repo
     - cd opsiweb
