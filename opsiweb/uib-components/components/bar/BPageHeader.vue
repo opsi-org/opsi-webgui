@@ -20,10 +20,11 @@
       <b-navbar class="flex-wrap p-0">
         <template v-if="tableid">
           <TreeTSDepots v-if="tableid !== 'Depots'" />
-          <TreeTSHostGroups v-if="tableid == 'products'" />
+          <TreeTSHostGroups v-if="tableid !== 'Depots'" />
+          <TreeTSProductGroups v-if="tableid == 'products'" />
         </template>
 
-        <b-navbar-nav v-if="!treeview" :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto'">
+        <b-navbar-nav v-if="!treeview" :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto mb-1'">
           <InputIFilter :data="tableInfo" />
           <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
           <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
