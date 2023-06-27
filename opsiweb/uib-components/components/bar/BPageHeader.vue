@@ -21,7 +21,7 @@
         <template v-if="tableid">
           <TreeTSDepots v-if="tableid !== 'Depots'" />
           <TreeTSHostGroups v-if="tableid !== 'Depots' && !treeview" /><slot name="expandClientGroup" />
-          <TreeTSProductGroups v-if="tableid == 'products'" /><slot name="expandProdGroup" />
+          <TreeTSProductGroups v-if="tableid == 'products' && !treeview" /><slot name="expandProdGroup" />
         </template>
 
         <b-navbar-nav :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto mb-1'">
