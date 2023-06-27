@@ -13,7 +13,7 @@
       <b-col
         id="parentcol"
         class="pl-0"
-        :cols="$route.path.includes('clients/products/config') && parentId === 'tableclients' && expandClients && !treeopened? 4: null"
+        :cols="$route.path.includes('clients/products/config') && parentId === 'tableclients' && expandClients && !treeopened ? 4 : null"
         :class="{'d-none' : showchild && $mq === 'mobile' || $route.path.includes('clients/products/config') && parentId === 'tableclients' && !expandClients ,
                  column2visible: showchild}"
       >
