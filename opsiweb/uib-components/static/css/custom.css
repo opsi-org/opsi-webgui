@@ -50,6 +50,7 @@
 
   --component-height: 30px;
   --component-width: 250px;
+  --wrapper-width: 300px;
 
   --max-height-window:500px;
   --height-navbar: 45px;
@@ -612,4 +613,7 @@ div.scrollValue {
 }
 .filter {
   max-width: var(--component-width) !important;
+}
+.componentwrapper {
+  max-width: var(--wrapper-width)!important;
 }
