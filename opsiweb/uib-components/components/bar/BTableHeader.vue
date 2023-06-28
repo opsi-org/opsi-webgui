@@ -1,9 +1,11 @@
 <template>
   <b-navbar size="sm">
     <InputIFilter :data="tableInfo" v-bind.sync="tableInfo" />
-    <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
-    <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-    <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: tableid})" :refetch="fetch" />
+    <b-navbar-nav>
+      <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
+      <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
+      <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: tableid})" :refetch="fetch" />
+    </b-navbar-nav>
   </b-navbar>
 </template>
 

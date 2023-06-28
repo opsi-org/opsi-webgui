@@ -11,7 +11,7 @@
       <template #parent>
         <LazyBarBPageHeader
           v-if="tableloaded"
-          :title="$t('title.clients') + ' (' + totalItems + ')'"
+          :title="$t('title.clients')"
           :tableid="id"
           :table-info.sync="tableInfo"
           :is-loading-parent="isLoading"
@@ -48,6 +48,7 @@
             <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
           </b-col>
           <b-col>
+            <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
             <TableTInfiniteScrollSmooth
               :id="id"
               :ref="id"

@@ -23,13 +23,6 @@
           <TreeTSHostGroups v-if="tableid !== 'Depots' && !treeview" /><slot name="expandClientGroup" />
           <TreeTSProductGroups v-if="tableid == 'products' && !treeview" /><slot name="expandProdGroup" />
         </template>
-
-        <b-navbar-nav :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto mb-1'">
-          <InputIFilter :data="tableInfo" />
-          <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
-          <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-          <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: tableid})" :refetch="fetch" />
-        </b-navbar-nav>
       </b-navbar>
     </b-collapse>
   </div>
@@ -38,7 +31,6 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
-import { ITableInfo } from '../../.utils/types/ttable'
 
 @Component({ mixins: [Icons] })
 export default class BPageHeader extends Vue {
@@ -47,9 +39,6 @@ export default class BPageHeader extends Vue {
   @Prop({}) subtitle!: string
   @Prop({}) closeroute!: string
   @Prop({ default: null }) tableid!: string
-  @Prop({ default: () => { return {} } }) tableInfo!: ITableInfo
-  @Prop({ default: false }) isLoadingParent!: boolean
-  @Prop({ default: undefined }) fetch!: Function
   @Prop({ default: false }) childopened!: boolean
   @Prop({ default: false }) treeview!: boolean
   icon:any
