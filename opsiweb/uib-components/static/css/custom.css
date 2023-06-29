@@ -301,7 +301,11 @@ tbody .col-rowactions :not(div).btn {
   display: block;
   width: 100%;
 }
-
+.btn-sm.active {
+  color: var(--fg-btn);
+  background-color: var(--bg-btn) !important;
+  border-color: var(--b-btn) !important;
+}
 .btn-primary {
   color: var(--fg-btn);
   background-color: var(--bg-btn) !important;
