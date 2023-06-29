@@ -28,7 +28,6 @@
               :placeholder="opsiconfigserver"
             />
           </b-input-group>
-
           <b-input-group>
             <b-form-input
               id="username"
@@ -53,8 +52,7 @@
             />
             <b-button variant="primary" :pressed.sync="showPassword" size="sm" class="mb-2 text-light">
               <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
-              <b-icon v-if="showPassword" :icon="icon.valueShow" />
-              <b-icon v-else :icon="icon.valueHide" />
+              <b-icon :icon="showPassword ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
           <b-button

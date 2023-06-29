@@ -55,7 +55,7 @@
                         :title="$t('group.editGroup')"
                         @click="showChild('editGroup')"
                       >
-                        <b-icon icon="pencil" />
+                        <b-icon :icon="icon.pencil" />
                       </b-button>
                       <b-button
                         class="border-0"
@@ -143,7 +143,6 @@
               <b-form>
                 <treeselect
                   v-model="updategroupparent"
-                  v-b-tooltip.hover
                   :placeholder="$t('group.parent')"
                   value-format="object"
                   :options="group"
@@ -171,7 +170,6 @@
             <template v-else-if="action == 'copyClient'">
               <treeselect
                 v-model="selectedGroups"
-                v-b-tooltip.hover
                 class="treeselect_notstored treeselect"
                 :multiple="true"
                 :flat="true"

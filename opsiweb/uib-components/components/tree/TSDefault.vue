@@ -410,7 +410,6 @@ export default class TSDefault extends Vue {
   margin-right: 5px;
   width:fit-content;
   flex-wrap: nowrap;
-  z-index: 1000;
   min-height: var(--min-height-button) !important;
   min-width: var(--min-height-button) !important;
   font-size: var(--text-small);

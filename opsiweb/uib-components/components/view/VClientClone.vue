@@ -1,99 +1,76 @@
 <template>
   <div data-testid="VClientClone" class="VClientClone">
     <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') + ' - '" :subtitle="id" :closeroute="closeroute" />
-    <BarBPageHeader v-if="!asChild">
-      <template #left>
+    <GridGFormItem v-if="!asChild" :label="$t('Select a client to clone:')">
+      <template #value>
         <slot name="IDSelection" />
       </template>
-    </BarBPageHeader>
-    <br>
-    <div>
-      <GridGFormItem>
-        <template #label>
-          <span class="selectedClient">{{ $t('Selected client to clone:') }}</span>
-        </template>
-        <template #value>
-          <span class="font-weight-bold">{{ id }}</span>
-        </template>
-      </GridGFormItem>
-      <b-row class="mt-4 mb-2">
-        <b class="basics">{{ $t('title.targetclient') }} </b>
-      </b-row>
-      <GridGFormItem value-more="true">
-        <template #label>
-          <span class="id">{{ $t('table.fields.id') }}</span>
-        </template>
-        <template #value>
-          <b-form-input
-            id="clientname"
-            :aria-label="$t('table.name.client')"
-            type="text"
-            required
-          />
-        </template>
-        <template #valueMore>
-          <b-form-input
-            id="domainName"
-            class="domainName"
-            :aria-label="$t('table.name.domain')"
-            :value="id.substring(id.indexOf('.'))"
-            type="text"
-            required
-          />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
-        </template>
-        <template #value>
-          <b-form-input id="hwAddr" :aria-label="$t('table.fields.hwAddr')" type="text" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="ip">{{ $t('table.fields.ip') }}</span>
-        </template>
-        <template #value>
-          <b-form-input id="ip" :aria-label="$t('table.fields.ip')" type="text" />
-        </template>
-      </GridGFormItem>
-      <b-row class="mt-4 mb-2">
-        <b class="clone">{{ $t('title.clone') }} </b>
-      </b-row>
-      <GridGFormItem>
-        <template #label>
-          <span class="atrributes">{{ $t('title.hostattr') }}</span>
-        </template>
-        <template #value>
-          <b-form-checkbox id="atrributes" :aria-label="$t('title.hostattr')" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="products">{{ $t('title.products') }}</span>
-        </template>
-        <template #value>
-          <b-form-checkbox id="products" :aria-label="$t('title.products')" />
-        </template>
-      </GridGFormItem>
-      <GridGFormItem>
-        <template #label>
-          <span class="productproperties">{{ $t('title.prodproperties') }}</span>
-        </template>
-        <template #value>
-          <b-form-checkbox id="productproperties" :aria-label="$t('title.prodproperties')" />
-        </template>
-      </GridGFormItem>
-      <div class="float-right mt-2">
-        <b-button id="resetButton" class="resetButton" variant="primary">
-          <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
-        </b-button>
-        <b-button id="addButton" class="addButton" variant="success">
-          <b-icon :icon="icon.client" /> {{ $t('title.clone') }}
-        </b-button>
-      </div>
-    </div>
+    </GridGFormItem>
+    <b-row class="text-small mb-2">
+      <b>{{ $t('title.targetclient') }} </b>
+    </b-row>
+    <GridGFormItem value-more="true" :label="$t('table.fields.id')">
+      <template #value>
+        <b-form-input
+          id="clientname"
+          :aria-label="$t('table.name.client')"
+          size="sm"
+          type="text"
+          required
+        />
+      </template>
+      <template #valueMore>
+        <b-form-input
+          id="domainName"
+          class="domainName"
+          :aria-label="$t('table.name.domain')"
+          :value="id.substring(id.indexOf('.'))"
+          size="sm"
+          type="text"
+          required
+        />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem :label="$t('table.fields.hwAddr')">
+      <template #value>
+        <b-form-input id="hwAddr" size="sm" :aria-label="$t('table.fields.hwAddr')" type="text" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem :label="$t('table.fields.ip')">
+      <template #value>
+        <b-form-input id="ip" size="sm" :aria-label="$t('table.fields.ip')" type="text" />
+      </template>
+    </GridGFormItem>
+    <b-row class="text-small mb-2">
+      <b>{{ $t('title.clone') }} </b>
+    </b-row>
+    <GridGFormItem :label="$t('title.hostparam')">
+      <template #value>
+        <b-form-checkbox id="atrributes" size="sm" :aria-label="$t('title.hostparam')" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem :label="$t('title.products')">
+      <template #value>
+        <b-form-checkbox id="products" size="sm" :aria-label="$t('title.products')" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem :label="$t('title.prodproperties')">
+      <template #value>
+        <b-form-checkbox id="productproperties" size="sm" :aria-label="$t('title.prodproperties')" />
+      </template>
+    </GridGFormItem>
+    <GridGFormItem>
+      <template #value>
+        <div class="float-right mt-2">
+          <b-button id="resetButton" class="resetButton" size="sm" variant="primary">
+            <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
+          </b-button>
+          <b-button id="addButton" class="addButton" size="sm" variant="success">
+            <b-icon :icon="icon.client" /> {{ $t('title.clone') }}
+          </b-button>
+        </div>
+      </template>
+    </GridGFormItem>
   </div>
 </template>
 

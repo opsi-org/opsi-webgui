@@ -30,7 +30,7 @@
         id="nav-collapse"
         v-model="rightmenuVisible"
         is-nav
-        :class="{ 'pt-2 pb-2': $mq=='mobile' }"
+        :class="{ 'pt-2 pb-2 zindex-dropdown': $mq=='mobile' }"
       >
         <div
           v-if="rightmenuVisible"

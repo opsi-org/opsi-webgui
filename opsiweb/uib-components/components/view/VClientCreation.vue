@@ -4,11 +4,7 @@
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <OverlayOLoading :is-loading="isLoading" />
-    <br>
-    <GridGFormItem value-more="true">
-      <template #label>
-        <span class="id">{{ $t('table.fields.id') }}</span>
-      </template>
+    <GridGFormItem value-more="true" :label="$t('table.fields.id')">
       <template #value>
         <b-form-input
           id="clientname"
@@ -39,79 +35,29 @@
     <b-row class="text-small mb-2">
       <b class="basics">{{ $t('title.basics') }} </b>
     </b-row>
-    <GridGFormItem>
-      <template #label>
-        <span class="description">{{ $t('table.fields.description') }}</span>
-      </template>
-      <template #value>
-        <b-form-input id="description" v-model="newClient.description" size="sm" :aria-label="$t('table.fields.description')" type="text" />
-      </template>
-    </GridGFormItem>
-    <GridGFormItem>
-      <template #label>
-        <span class="inventNum">{{ $t('table.fields.inventNum') }}</span>
-      </template>
-      <template #value>
-        <b-form-input id="inventNum" v-model="newClient.inventoryNumber" size="sm" :aria-label="$t('table.fields.inventNum')" type="text" />
-      </template>
-    </GridGFormItem>
-    <GridGFormItem>
-      <template #label>
-        <span class="hwAddr">{{ $t('table.fields.hwAddr') }}</span>
-      </template>
-      <template #value>
-        <b-form-input id="hwAddr" v-model="newClient.hardwareAddress" size="sm" :aria-label="$t('table.fields.hwAddr')" type="text" />
-      </template>
-    </GridGFormItem>
-    <GridGFormItem>
-      <template #label>
-        <span class="ip">{{ $t('table.fields.ip') }}</span>
-      </template>
-      <template #value>
-        <b-form-input id="ip" v-model="newClient.ipAddress" size="sm" :aria-label="$t('table.fields.ip')" type="text" />
-      </template>
-    </GridGFormItem>
-    <GridGFormItem>
-      <template #label>
-        <span class="notes">{{ $t('table.fields.notes') }}</span>
-      </template>
-      <template #value>
-        <b-form-textarea
-          id="notes"
-          v-model="newClient.notes"
-          size="sm"
-          :aria-label="$t('table.fields.notes')"
-          rows="2"
-          no-resize
-        />
-      </template>
-    </GridGFormItem>
-    <b-row class="text-small mb-2">
-      <b class="settings">{{ $t('title.settings') }} </b>
-    </b-row>
-    <GridGFormItem>
-      <template #label>
-        <span class="uefi">{{ $t('table.fields.uefi') }}</span>
-      </template>
-      <template #value>
-        <b-form-checkbox id="uefi" v-model="uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
-      </template>
-    </GridGFormItem>
+    <div v-for="(value, label, index) in newClient" :key="index">
+      <GridGFormItem :label="label" labelclass="text-capitalize" :class="label.toString() === 'hostId' ? 'd-none' : ''">
+        <template #value>
+          <b-form-textarea
+            v-if="label.toString() === 'notes'"
+            v-model="newClient.notes"
+            size="sm"
+            rows="4"
+            no-resize
+          />
+          <b-form-input v-else v-model="newClient[label.toString()]" size="sm" type="text" />
+        </template>
+      </GridGFormItem>
+    </div>
     <b-row class="text-small mb-2">
       <b class="assignments">{{ $t('title.assignments') }} </b>
     </b-row>
-    <GridGFormItem>
-      <template #label>
-        <span class="depot">{{ $t('table.fields.depot') }}</span>
-      </template>
+    <GridGFormItem :label="$t('table.fields.depot')">
       <template #value>
         <TreeTSDepotsNotStored :id.sync="depotId" />
       </template>
     </GridGFormItem>
-    <GridGFormItem>
-      <template #label>
-        <span class="group">{{ $t('table.fields.group') }}</span>
-      </template>
+    <GridGFormItem :label="$t('table.fields.group')">
       <template #value>
         <TreeTSGroupInitSelection :id.sync="group" />
       </template>
@@ -119,10 +65,7 @@
     <b-row class="text-small mb-2">
       <b class="initsetup">{{ $t('title.initsetup') }} </b>
     </b-row>
-    <GridGFormItem>
-      <template #label>
-        <span class="netbootproduct">{{ $t('table.fields.netbootproduct') }}</span>
-      </template>
+    <GridGFormItem :label=" $t('table.fields.netbootproduct')">
       <template #value>
         <b-form-select
           id="netbootproduct"
@@ -134,10 +77,7 @@
         />
       </template>
     </GridGFormItem>
-    <GridGFormItem>
-      <template #label>
-        <span class="clientagent">{{ $t('table.fields.clientagent') }}</span>
-      </template>
+    <GridGFormItem :label="$t('table.fields.clientagent')">
       <template #value>
         <b-form inline>
           <b-form-checkbox v-model="clientagent" />
@@ -163,6 +103,14 @@
             <b-form-select id="type" v-model="form.type" size="sm" :options="clientagenttypes" required />
           </div>
         </b-form>
+      </template>
+    </GridGFormItem>
+    <b-row class="text-small mb-2">
+      <b class="settings">{{ $t('title.settings') }} </b>
+    </b-row>
+    <GridGFormItem :label="$t('table.fields.uefi')">
+      <template #value>
+        <b-form-checkbox id="uefi" v-model="uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
       </template>
     </GridGFormItem>
     <GridGFormItem>
@@ -355,7 +303,14 @@ export default class VClientCreation extends Vue {
 
   resetNewClientForm () {
     this.clientName = ''
-    this.newClient = {} as NewClient
+    this.newClient = {
+      hostId: '',
+      description: '',
+      inventoryNumber: '',
+      hardwareAddress: '',
+      ipAddress: null,
+      notes: ''
+    } as NewClient
   }
 }
 </script>
