@@ -18,7 +18,6 @@
       <DivDCountdowntimer :small="!attributes.expanded" />
       <b-button
         v-if="$mq === 'desktop'"
-        v-b-tooltip.hover
         variant="primary"
         size="sm"
         class="border-0"
@@ -27,8 +26,7 @@
         :pressed.sync="attributes.expanded"
       >
         <span class="sr-only">{{ attributes.expanded? $t('button.collapse'): $t('button.expand') }}</span>
-        <b-icon v-if="attributes.expanded" :icon="icon.arrowDoubleLeft" />
-        <b-icon v-else :icon="icon.arrowDoubleRight" />
+        <b-icon :icon="attributes.expanded ? icon.arrowDoubleLeft : icon.arrowDoubleRight" />
       </b-button>
     </template>
   </b-sidebar>

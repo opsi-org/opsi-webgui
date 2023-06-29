@@ -1,6 +1,6 @@
 <template>
-  <b-nav-item :data-testid="'NIItem-'+title" class="NItem-nav-item" :disabled="disabled" @click.prevent="refresh(route)">
-    <b-icon v-b-tooltip.hover :title="$t(title)" class="" :icon="icon" />
+  <b-nav-item :data-testid="'NIItem-'+title" :title="$t(title)" class="NItem-nav-item" :disabled="disabled" @click.prevent="refresh(route)">
+    <b-icon :icon="icon" />
     <span v-if="expanded">
       {{ $t(title) }}
     </span>

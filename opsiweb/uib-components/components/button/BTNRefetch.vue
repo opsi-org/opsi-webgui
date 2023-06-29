@@ -1,6 +1,5 @@
 <template>
   <b-button
-    v-b-tooltip.hover
     data-testid="BTNRefetch"
     :title="tooltip && !label ? tooltip : ''"
     :variant="(tooltip || incontextmenu !== false )? 'outline-primary border-0' : 'outline-dark'"

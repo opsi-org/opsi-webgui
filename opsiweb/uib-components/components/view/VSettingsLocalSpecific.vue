@@ -1,9 +1,6 @@
 <template>
   <div data-testid="VSettingsLocalSpecific" :class="'VSettingsLocalSpecific '+ $mq">
-    <GridGFormItem v-once>
-      <template #label>
-        <span class="theme">{{ $t('form.theme') }}</span>
-      </template>
+    <GridGFormItem v-once :label="$t('form.theme')">
       <template #value>
         <DropdownDDTheme />
       </template>

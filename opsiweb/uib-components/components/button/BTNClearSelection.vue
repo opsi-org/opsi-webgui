@@ -1,6 +1,5 @@
 <template>
   <b-button
-    v-b-tooltip.hover
     data-testid="BTNClearSelection"
     :aria-label="$t('table.selection.clear')"
     :title="showLabel? '' : $t('table.selection.clear')"

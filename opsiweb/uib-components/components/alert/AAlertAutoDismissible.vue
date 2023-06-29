@@ -13,9 +13,7 @@
     <slot />
     <div class="mh-25 text-small">
       {{ alertMessage }}
-      <span v-if="moreDetails">
-        {{ moreDetails }}
-      </span>
+      <span v-if="moreDetails"> {{ moreDetails }} </span>
     </div>
   </b-alert>
 </template>

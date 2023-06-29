@@ -3,10 +3,7 @@
     <b-row class="mt-4 mb-2 text-small">
       <b>{{ $t('Clients') }}</b>
     </b-row>
-    <GridGFormItem>
-      <template #label>
-        <span>{{ $t('Blocked Clients') }}</span>
-      </template>
+    <GridGFormItem :label="$t('Blocked Clients')">
       <template #value>
         <b-button variant="outiline-primary" class="w-25" size="sm" @click="unblockAllClients()">
           {{ $t('Unblock All') }}
@@ -16,10 +13,7 @@
     <b-row class="mt-4 mb-2 text-small">
       <b>{{ $t('Products') }} </b>
     </b-row>
-    <GridGFormItem>
-      <template #label>
-        <span>{{ $t('Locked Products') }}</span>
-      </template>
+    <GridGFormItem :label="$t('Locked Products')">
       <template #value>
         <b-button variant="outiline-primary" class="w-25" size="sm" @click="unlockAllProducts()">
           {{ $t('Unlock All') }}

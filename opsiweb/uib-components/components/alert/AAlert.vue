@@ -28,8 +28,7 @@
           class="float-right border-0 p-0 pb-2"
           :pressed.sync="showMore"
         >
-          <b-icon v-if="showMore" :icon="icon.arrowUp" />
-          <b-icon v-else :icon="icon.arrowDown" />
+          <b-icon :icon="showMore ? icon.arrowUp : icon.arrowDown" />
         </b-button>
         <template v-if="showMore">
           <div v-if="typeof moreDetails == 'object'" class="scrollValue">
