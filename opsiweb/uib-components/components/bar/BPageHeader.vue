@@ -19,8 +19,8 @@
     <b-collapse v-if="tableid" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
       <b-navbar class="flex-wrap p-0">
         <template v-if="tableid">
-          <TreeTSDepots v-if="tableid !== 'Depots'" />
-          <TreeTSHostGroups v-if="tableid !== 'Depots' && !treeview" /><slot name="expandClientGroup" />
+          <TreeTSDepots v-if="showDepot()" />
+          <TreeTSHostGroups v-if="showClientGroup()" /><slot name="expandClientGroup" />
           <TreeTSProductGroups v-if="tableid == 'products' && !treeview" /><slot name="expandProdGroup" />
         </template>
       </b-navbar>
@@ -42,8 +42,24 @@ export default class BPageHeader extends Vue {
   @Prop({ default: false }) childopened!: boolean
   @Prop({ default: false }) treeview!: boolean
   icon:any
-  $mq: any
+  $route:any
   expanded: boolean = true
   @Watch('childopened', {}) childOpened () { this.expanded = !this.childopened }
+
+  showDepot () {
+    if (this.tableid === 'Clients') {
+      return true
+    } else if (this.tableid === 'products' && !this.$route.path.includes('clients/products')) {
+      return true
+    } else { return false }
+  }
+
+  showClientGroup () {
+    if (this.tableid === 'Clients' && !this.treeview) {
+      return true
+    } else if (this.tableid === 'products' && !this.$route.path.includes('clients/products')) {
+      return true
+    } else { return false }
+  }
 }
 </script>

@@ -36,7 +36,7 @@
             <b-button
               variant="outline-primary"
               size="sm"
-              :title="showTreeView? $t('Minimize ClientGroups'): $t('Maximize ClientGroups')"
+              :title="showTreeView? $t('Minimize Client Groups'): $t('Maximize Client Groups')"
               :pressed.sync="showTreeView"
             >
               <b-icon :icon="showTreeView? 'box-arrow-left' : 'arrow-down-left'" />
