@@ -18,6 +18,7 @@
             <b-button
               variant="outline-primary"
               size="sm"
+              class="border-0"
               :title="showTreeView? $t('Minimize Product Groups'): $t('Maximize Product Groups')"
               :pressed.sync="showTreeView"
             >

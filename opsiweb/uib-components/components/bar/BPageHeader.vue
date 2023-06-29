@@ -21,7 +21,7 @@
         <template v-if="tableid">
           <TreeTSDepots v-if="showDepot()" />
           <TreeTSHostGroups v-if="showClientGroup()" /><slot name="expandClientGroup" />
-          <TreeTSProductGroups v-if="tableid == 'products' && !treeview" /><slot name="expandProdGroup" />
+          <TreeTSProductGroups v-if="tableid == 'products' && !treeview" /><slot v-if="showExpandProdGroup()" name="expandProdGroup" />
         </template>
       </b-navbar>
     </b-collapse>
@@ -58,6 +58,12 @@ export default class BPageHeader extends Vue {
     if (this.tableid === 'Clients' && !this.treeview) {
       return true
     } else if (this.tableid === 'products' && !this.$route.path.includes('clients/products')) {
+      return true
+    } else { return false }
+  }
+
+  showExpandProdGroup () {
+    if (this.tableid === 'products' && !this.$route.path.includes('clients/products')) {
       return true
     } else { return false }
   }
