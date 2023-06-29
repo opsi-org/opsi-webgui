@@ -18,13 +18,13 @@ const hostconfig = [{
 mock.onGet(`/api/opsidata/hosts?hosts=${cid}`).reply(200, hostconfig)
 
 export default {
-  title: 'Form/F Host Attributes',
-  parameters: { docs: { description: { component: 'Form for Host Attributes' } } }
+  title: 'Grid/G Host Attributes',
+  parameters: { docs: { description: { component: 'Grid for Host Attributes' } } }
 }
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<FormFHostAttributes id="${cid}"/>`,
+  template: `<GridGHostAttributes id="${cid}"/>`,
   store: customstores({
     'config-app': {
       namespaced: true,
@@ -35,5 +35,5 @@ const PrimaryTemplate = (_args, { argTypes }) => ({
   })
 })
 
-export const FHostAttributes = PrimaryTemplate.bind({})
-FHostAttributes.args = { id: cid }
+export const GHostAttributes = PrimaryTemplate.bind({})
+GHostAttributes.args = { id: cid }

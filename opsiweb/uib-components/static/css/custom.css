@@ -530,18 +530,29 @@ tbody .col-rowactions :not(div).btn {
 }
 .treeselect_with_wrapper.vue-treeselect--focused .vue-treeselect__control {
   color: var(--fg-input_component-focus) !important;
-  background-color: var(--bg-input_component-focus) !important;
+  background: var(--bg-input_component-focus) !important;
   border:0px;
   box-shadow: var(--b-input_component-focus) !important;
 }
 
 .treeselect .vue-treeselect__menu {
-  background-color: var(--general-bg, var(--background, black));
+  background: var(--general-bg, var(--background, black));
   color: var(--color, var(--general-fg, white));
   border:1px solid var(--b-input_component) !important;
 }
 .treeselect .vue-treeselect__single-value {
   color: var(--color, var(--light, white));
+}
+.treeselect .vue-treeselect__multi-value-label {
+  color: var(--color, var(--light, white));
+  background: var(--general-bg, var(--background, black));
+}
+.treeselect .vue-treeselect__multi-value-item {
+  background: var(--general-bg, var(--background, black));
+  font-size: small;
+}
+.treeselect .vue-treeselect__value-remove {
+  display: none;
 }
 .treeselect .vue-treeselect__input {
   color: var(--color) !important;

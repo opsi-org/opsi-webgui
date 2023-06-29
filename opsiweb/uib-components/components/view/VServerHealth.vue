@@ -27,10 +27,7 @@
           </b-button>
           <b-collapse :id="'collapse-'+k" :visible="expandAll || filter!= ''">
             <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.toString().includes(filter) }">
-              <GridGFormItem class="ml-3">
-                <template #label>
-                  {{ i }}
-                </template>
+              <GridGFormItem class="ml-2" :label="i">
                 <template #value>
                   <template v-if="typeof val == 'object'">
                     <div class="scrollValue">

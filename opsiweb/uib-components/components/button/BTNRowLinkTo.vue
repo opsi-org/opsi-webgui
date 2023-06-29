@@ -14,9 +14,7 @@
     @click="action"
   >
     <b-icon v-if="icon" :icon="icon" />
-    <span v-if="label && ($mq!=='mobile' || incontextmenu)" class="ml-1">
-      {{ label }}
-    </span>
+    <span v-if="label && ($mq!=='mobile' || incontextmenu)" class="ml-1"> {{ label }} </span>
   </b-button>
 </template>
 

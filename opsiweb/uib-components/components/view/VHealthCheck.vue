@@ -17,7 +17,7 @@
     </BarBPageHeader>
     <DivDScrollResult>
       <span v-for="health, i in healthcheckdata" :key="i" :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }">
-        <GridGFormItem value-more="true" classprop="none">
+        <GridGFormItem value-more="true" formclass="none" :valuedetails="health.message">
           <template #label>
             <template v-if="health.partial_results.length != 0">
               <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" size="sm" variant="transparent">
@@ -36,13 +36,10 @@
           <template #value>
             <span class="font-weight-bold text-capitalize">{{ health.check_name }}</span>
           </template>
-          <template #valueMore>
-            {{ health.message }}
-          </template>
         </GridGFormItem>
         <b-collapse :id="'collapse-'+health.check_id" :visible="expandHCD || filter!==''">
           <span v-for="(data, index) in health.partial_results" :key="index">
-            <GridGFormItem value-more="true" classprop="none">
+            <GridGFormItem value-more="true" formclass="none" :value="data.check_name" :valuedetails="data.message">
               <template #label>
                 <span :style="'width: 34px; min-height: 1px; float: left;'" />
                 <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" :variant="getVariant(data.check_status)">
@@ -50,12 +47,6 @@
                     {{ data.check_status }}
                   </div>
                 </b-badge>
-              </template>
-              <template #value>
-                {{ data.check_name }}
-              </template>
-              <template #valueMore>
-                {{ data.message }}
               </template>
             </GridGFormItem>
           </span>

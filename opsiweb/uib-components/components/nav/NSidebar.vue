@@ -87,7 +87,7 @@ export default class NSidebar extends Vue {
             submenu: [
               { title: 'title.allClients', route: '/clients/' },
               { title: 'title.addNew', route: '/clientscreation', disabled: (this.config) ? this.config.client_creation : false },
-              // TODO: Unhide clone client when backend is ready
+              // TODO: Display clone client when backend is ready
               // { title: 'title.clone', route: '/clientsclone' },
               { title: 'title.config', route: '/clientsconfig' },
               { title: 'title.log', route: '/clientslog' }
