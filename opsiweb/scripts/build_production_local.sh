@@ -13,7 +13,8 @@ npm run generate-nossl
 mkdir -p webgui
 rm -rf opsi-webgui.zip
 
-
+chmod 770 /workspace/backend/addon/changelogs.md
+chown opsiconfd:pwuser /workspace/backend/addon/changelogs.md
 mkdir -p /workspace/backend/addon/webgui/data
 mkdir -p /workspace/backend/addon/webgui/data/app
 cp -r /workspace/opsiweb/dist/* /workspace/backend/addon/webgui/data/app/
