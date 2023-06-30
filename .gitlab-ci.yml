@@ -230,6 +230,8 @@ test:unit:
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
+  except:
+    - 622-cleanup-dependencies
   dependencies:
     - init:npm
   script:
@@ -295,6 +297,7 @@ test:components:changes:
   except:
     - tags # cause in tags we test all browsers (and all files)
     - develop # cause in develop we test all files
+    - 622-cleanup-dependencies
   only:
     changes:
       - opsiweb/pages/*
