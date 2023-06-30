@@ -434,7 +434,7 @@ test:backend-pytest:
 ######################################################################### build
 #########################################################################
 build:static:app:
-  stage: build
+  stage: buildApp
   dependencies:
     - init:npm:production
     - test:lint
@@ -460,12 +460,12 @@ build:addon:
     - build:static:app
   script:
     - *install_tools
-    # - pwd && ls -la opsiweb
-    # - cd opsiweb # generate dist
-    # - npm i @nuxt/typescript-build
-    # - *define_globals
-    # - npm run generate-nossl
-    # - cd .. # copy to addon
+    - pwd && ls -la opsiweb
+    - cd opsiweb # generate dist
+    - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
+    - *define_globals
+    - npm run generate-nossl
+    - cd .. # copy to addon
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
