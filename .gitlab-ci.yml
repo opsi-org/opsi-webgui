@@ -434,7 +434,7 @@ test:backend-pytest:
 ######################################################################### build
 #########################################################################
 build:static:app:
-  stage: buildApp
+  stage: build
   dependencies:
     - init:npm:production
     - test:lint
