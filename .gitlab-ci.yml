@@ -178,7 +178,6 @@ init:npm:production:
   only:
     - develop
     - tags
-    - 622-cleanup-dependencies
   script:
     # - *prepare_repo
     - cd opsiweb
@@ -231,7 +230,6 @@ test:accessibility:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   except:
-    - 622-cleanup-dependencies
   dependencies:
     - init:npm
   script:
@@ -297,7 +295,6 @@ test:components:changes:
   except:
     - tags # cause in tags we test all browsers (and all files)
     - develop # cause in develop we test all files
-    - 622-cleanup-dependencies
   only:
     changes:
       - opsiweb/pages/*
@@ -451,7 +448,6 @@ build:static:app:
   only:
     - develop
     - tags
-    - 622-cleanup-dependencies
 
 build:addon:
   stage: build
@@ -475,7 +471,6 @@ build:addon:
   only:
     - tags
     - develop
-    - 622-cleanup-dependencies
   artifacts:
     name: "opsi-webgui"
     paths:
