@@ -441,6 +441,7 @@ build:static:app:
     #- test:jtest
   script:
     - cd opsiweb
+    - npm i @nuxt/typescript-build
     - *define_globals
     - npm run generate-nossl
   artifacts:
@@ -459,11 +460,12 @@ build:addon:
     - build:static:app
   script:
     - *install_tools
-    - pwd && ls -la opsiweb
-    - cd opsiweb # generate dist
-    - *define_globals
-    - npm run generate-nossl
-    - cd .. # copy to addon
+    # - pwd && ls -la opsiweb
+    # - cd opsiweb # generate dist
+    # - npm i @nuxt/typescript-build
+    # - *define_globals
+    # - npm run generate-nossl
+    # - cd .. # copy to addon
     - mkdir -p backend/addon/webgui/data
     - mkdir -p backend/addon/webgui/data/app
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/

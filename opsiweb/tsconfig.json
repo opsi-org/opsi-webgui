@@ -28,7 +28,7 @@
       "@types/node",
       "@types/jest",
       "@nuxt/types",
-      // "@nuxt/typescript-build",
+      "@nuxt/typescript-build",
       "@nuxtjs/i18n",
       "@nuxtjs/axios",
       "bootstrap-vue",
