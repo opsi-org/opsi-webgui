@@ -3,15 +3,12 @@
     <b-button
       v-if="!quicksave && (changesProducts.filter((o) => o.user === username).length!==0 || changesHostParam.filter((o) => o.user === username).length!==0)"
       class="global_topbar_button"
+      :title="$t('button.track.changes')"
       variant="primary border-0"
       size="sm"
       @click="$bvModal.show('trackChangesModal')"
     >
-      <b-icon
-        v-b-tooltip.hover
-        :title="$t('button.track.changes')"
-        :icon="icon.trackChanges"
-      />
+      <b-icon :icon="icon.trackChanges" />
     </b-button>
     <b-modal
       id="trackChangesModal"

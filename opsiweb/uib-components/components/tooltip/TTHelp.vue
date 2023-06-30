@@ -3,14 +3,7 @@
     <b-tooltip :target="id">
       <template v-if="type === 'grid'">
         <span v-for="item, index in tooltipContent" :key="index">
-          <GridGFormItem classgrid="text-sm-left">
-            <template #label>
-              {{ item.label }}
-            </template>
-            <template #value>
-              {{ item.description }}
-            </template>
-          </GridGFormItem>
+          <GridGFormItem :label="item.label" :value="item.description" />
         </span>
       </template>
       <template v-else>

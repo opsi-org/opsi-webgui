@@ -44,8 +44,3 @@ export default class AAlertLocal extends BAlert {
   }
 }
 </script>
-<style>
-.alertMsg.alert-dismissible .close {
-  color: black;
-}
-</style>

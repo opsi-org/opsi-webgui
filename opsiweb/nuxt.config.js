@@ -72,7 +72,7 @@ export default {
   },
   // Auto import components: https://go.nuxtjs.dev/config-components
   // components: true,
-  components: ['~/uib-components/components/'], // { path: 'uib-components/components/', extensions: ['vue'] },
+  components: ['~/uib-components/components/'], // { path: '~/uib-components/components/', extensions: ['vue'] },
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [

@@ -11,7 +11,7 @@
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
         </template>
-        <LazyFormFHostAttributes v-if="id" :id="id" :type="type" />
+        <LazyGridGHostAttributes v-if="id" :id="id" :type="type" />
         <div v-else style="height: 70vh;" />
       </b-tab>
       <b-tab v-if="type == 'clients' || id == opsiconfigserver">

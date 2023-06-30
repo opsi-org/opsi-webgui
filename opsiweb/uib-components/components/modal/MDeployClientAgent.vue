@@ -34,41 +34,40 @@
       no-stacking
     >
       <AlertAAlert ref="clientagentAlert" />
-      <b-form>
-        <GridGFormItem :label="$t('Client ID')">
-          <template #value>
-            <b-form-input :value="clientId" size="sm" disabled />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('form.username')">
-          <template #value>
-            <b-form-input id="username" v-model="form.username" size="sm" required />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('form.password')">
-          <template #value>
-            <b-form-input id="password" v-model="form.password" size="sm" required />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('table.fields.type')">
-          <template #value>
-            <b-form-select id="type" v-model="form.type" size="sm" :options="clientagenttypes" required />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem>
-          <template #value>
-            <b-button
-              variant="success"
-              size="sm"
-              class="float-right"
-              :disabled="(config)?config.read_only:false"
-              @click="deployclientagent()"
-            >
-              <span class="deploy"> {{ $t('button.confirm') }} </span>
-            </b-button>
-          </template>
-        </GridGFormItem>
-      </b-form>
+
+      <GridGFormItem :label="$t('Client ID')">
+        <template #value>
+          <b-form-input :value="clientId" size="sm" disabled />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label="$t('form.username')">
+        <template #value>
+          <b-form-input id="username" v-model="form.username" size="sm" required />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label="$t('form.password')">
+        <template #value>
+          <b-form-input id="password" v-model="form.password" size="sm" required />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label="$t('table.fields.type')">
+        <template #value>
+          <b-form-select id="type" v-model="form.type" size="sm" :options="clientagenttypes" required />
+        </template>
+      </GridGFormItem>
+      <GridGFormItem>
+        <template #value>
+          <b-button
+            variant="success"
+            size="sm"
+            class="float-right"
+            :disabled="(config)?config.read_only:false"
+            @click="deployclientagent()"
+          >
+            <span class="deploy"> {{ $t('button.confirm') }} </span>
+          </b-button>
+        </template>
+      </GridGFormItem>
     </b-modal>
   </div>
 </template>

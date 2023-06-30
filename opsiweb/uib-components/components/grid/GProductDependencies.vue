@@ -1,15 +1,9 @@
 <template>
   <b-container data-testid="GProductDependencies">
     <span v-for="item, index in dependencies.dependencies" :key="index">
-      <GridGFormItem value-more="true" classgrid="text-sm-left">
+      <GridGFormItem value-more="true" :value="getValue(item)" :valuedetails="getType(item.requirementType, item.productAction)">
         <template #label>
           <span class="font-weight-bold"> {{ item.requiredProductId }} </span> <span v-if="item.requiredVersion"> {{ item.requiredVersion }}</span>
-        </template>
-        <template #value>
-          {{ getValue(item) }}
-        </template>
-        <template #valueMore>
-          <span class="reqType"> {{ getType(item.requirementType, item.productAction) }} </span>
         </template>
       </GridGFormItem>
     </span>

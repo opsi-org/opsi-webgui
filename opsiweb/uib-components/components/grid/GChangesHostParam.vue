@@ -15,13 +15,12 @@
     </b-row>
     <DivDScrollResult>
       <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
-        <GridGFormItem value-more="true">
-          <template #label>
-            <span :class="{'font-weight-bold': item.type=='depots'}">{{ item.hostId }}</span>
-          </template>
-          <template #value>
-            {{ $t('{') }} {{ item.configId }} {{ $t(':') }} {{ item.value }} {{ $t('}') }}
-          </template>
+        <GridGFormItem
+          value-more="true"
+          :label="item.hostId"
+          :labelclass="{'font-weight-bold': item.type=='depots'}"
+          :value="'{ '+ item.configId + ' : ' + item.value + ' }'"
+        >
           <template #valueMore>
             <ButtonBTNDeleteObj :item="item" from="hostparam" />
             <b-button class="border-0" variant="outline-primary" size="sm" :title="$t('button.save')" @click="saveHostParam(item, false)">

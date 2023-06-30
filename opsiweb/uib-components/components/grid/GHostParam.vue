@@ -8,10 +8,7 @@
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" size="sm" block variant="outline-primary">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
           <span v-for="item,index in v" :key="index" :class="{ 'd-none': !item.configId.includes(filter) }">
-            <GridGFormItem variant="longlabel">
-              <template #label>
-                {{ item.configId }}
-              </template>
+            <GridGFormItem class="ml-2" variant="longlabel" :label="item.configId">
               <template #value>
                 <GridCellGCHostParamValue :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
               </template>

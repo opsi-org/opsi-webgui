@@ -20,6 +20,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     loading: 'three-dots',
     reset: 'arrow-counterclockwise',
     exclamation: 'exclamation',
+    pencil: 'pencil',
     x: 'x',
     add: 'plus',
     delete: 'trash',
