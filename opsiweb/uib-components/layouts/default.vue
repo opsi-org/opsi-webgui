@@ -6,6 +6,8 @@
       desktop: $mq === 'desktop',
       sidebar_collapsed: !sidebarAttr.expanded && $mq!=='mobile',
       sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile',
+      groupexplorer_opened: showTreeExplorer,
+      groupexplorer_closed: !showTreeExplorer
     }"
   >
     <BarBTop class="topbar_content">
@@ -17,7 +19,22 @@
       </template>
     </BarBTop>
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
+    <b-sidebar
+      id="groupexplorer"
+      :visible="showTreeExplorer"
+      :title="$t('Group Explorer')"
+      bg-variant="primary"
+      text-variant="light"
+      right
+      no-close-on-route-change
+    >
+      <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
+    </b-sidebar>
     <div class="main_content">
+      <b-button :pressed.sync="showTreeExplorer" :title="$t('Group Explorer')" variant="outline-primary" class="float-right">
+        <b-icon :icon="icon.group" />
+      </b-button>
+      {{ showTreeExplorer }}
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
@@ -58,11 +75,13 @@ export default class LayoutDefault extends Vue {
   @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
   @settings.Getter public colortheme!: any
   @changes.Getter public changesProducts!: Array<ChangeObj>
-    @changes.Getter public changesHostParam!: Array<ChangeObj>
+  @changes.Getter public changesHostParam!: Array<ChangeObj>
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
+
+  showTreeExplorer:boolean = false
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
     await this.checkServer()
@@ -166,5 +185,18 @@ export default class LayoutDefault extends Vue {
 :not(.mobile).sidebar_expanded .main_content{
   margin-left: var(--margin-left-maincontent-if-sidebar-expanded);
   width: calc(100% - var(--margin-left-maincontent-if-sidebar-expanded) - var(--margin-left-maincontent));
+}
+:not(.mobile).groupexplorer_opened .main_content{
+  margin-right: 300px;
+  width: calc(100% - 300px);
+}
+:not(.mobile).groupexplorer_closed.main_content{
+  margin-right: 0px;
+  width: 100%;
+}
+#groupexplorer {
+  top: calc(var(--height-navbar) - 2px) !important;
+  width: 300px;
+  height: 100% !important;
 }
 </style>
