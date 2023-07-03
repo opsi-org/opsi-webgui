@@ -229,6 +229,7 @@ test:unit:
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
+  except:
   dependencies:
     - init:npm
   script:
@@ -437,6 +438,7 @@ build:static:app:
     #- test:jtest
   script:
     - cd opsiweb
+    - npm i @nuxt/typescript-build
     - *define_globals
     - npm run generate-nossl
   artifacts:
@@ -456,6 +458,7 @@ build:addon:
     - *install_tools
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
+    - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
     - *define_globals
     - npm run generate-nossl
     - cd .. # copy to addon

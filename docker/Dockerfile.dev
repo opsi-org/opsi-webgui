@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.15.2-focal as opsiweb-gui-dev
+FROM mcr.microsoft.com/playwright:v1.15.2-focal AS opsiweb-gui-dev
 
 ARG DOCKER_ENV
 
