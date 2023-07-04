@@ -23,18 +23,23 @@
       id="groupexplorer"
       :visible="showTreeExplorer"
       :title="$t('Group Explorer')"
+      header-class="text-small"
       bg-variant="primary"
       text-variant="light"
       right
       no-close-on-route-change
+      @hidden="showTreeExplorer = false"
     >
-      <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
+      <b-container>
+        <TreeTSDepots /> <br>
+        <TreeTSHostGroups /> <br>
+        <TreeTSProductGroups /> <br>
+      </b-container>
     </b-sidebar>
     <div class="main_content">
-      <b-button :pressed.sync="showTreeExplorer" :title="$t('Group Explorer')" variant="outline-primary" class="float-right">
+      <b-button :pressed.sync="showTreeExplorer" :title="$t('Group Explorer')" size="sm" variant="outline-primary" class="float-right">
         <b-icon :icon="icon.group" />
       </b-button>
-      {{ showTreeExplorer }}
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
@@ -187,16 +192,14 @@ export default class LayoutDefault extends Vue {
   width: calc(100% - var(--margin-left-maincontent-if-sidebar-expanded) - var(--margin-left-maincontent));
 }
 :not(.mobile).groupexplorer_opened .main_content{
-  margin-right: 300px;
-  width: calc(100% - 300px);
+  width: calc(100% - 510px) !important;
 }
 :not(.mobile).groupexplorer_closed.main_content{
-  margin-right: 0px;
   width: 100%;
 }
 #groupexplorer {
   top: calc(var(--height-navbar) - 2px) !important;
-  width: 300px;
+  width: 320px;
   height: 100% !important;
 }
 </style>
