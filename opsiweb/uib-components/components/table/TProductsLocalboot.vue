@@ -1,5 +1,6 @@
 <template>
   <div data-testid="TProductsLocalboot">
+    <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
     <LazyTableTInfiniteScrollSmooth
       v-if="cache_pages"
       id="Localboot"

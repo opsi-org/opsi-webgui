@@ -31,7 +31,6 @@
             <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
           </b-col>
           <b-col>
-            <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
             <b-tabs class="products_horizontaltabs" small lazy>
               <b-tab disabled>
                 <template #title>

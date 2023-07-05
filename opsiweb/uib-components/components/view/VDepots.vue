@@ -3,7 +3,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
         <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.depots')" :tableid="id" />
-        <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
+        <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
         <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
