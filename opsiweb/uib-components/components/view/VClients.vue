@@ -50,7 +50,7 @@
             <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
           </b-col>
           <b-col>
-            <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
+            <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
             <TableTInfiniteScrollSmooth
               :id="id"
               :ref="id"
@@ -127,7 +127,7 @@
               </template>
 
               <template #cell(uefi)="row">
-                <b-form-checkbox v-if="row.item.uefi" v-model="row.item.uefi" size="sm" :title="''+row.item.uefi" disabled />
+                <b-icon v-if="row.item.uefi" :icon="icon.check" />
               </template>
               <template #cell(version_outdated)="row">
                 <b-button
