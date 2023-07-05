@@ -7,11 +7,11 @@
         </b-button>
       </template>
     </AlertAAlert>
-    <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
+    <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients" :treeopened="showTreeView">
       <template #parent>
         <LazyBarBPageHeader
           v-if="tableloaded"
-          :title="$t('title.clients') + ' (' + totalItems + ')'"
+          :title="$t('title.clients')"
           :tableid="id"
           :table-info.sync="tableInfo"
           :is-loading-parent="isLoading"
@@ -22,6 +22,7 @@
         >
           <template #right>
             <ButtonBTNRowLinkTo
+              v-if="$mq == 'desktop'"
               :title="(secondColumnOpened || $mq=='mobile'? $t('button.show.products') : '')"
               :label="((secondColumnOpened) ? '' : $t('title.products'))"
               :icon="icon.product"
@@ -31,166 +32,171 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+          </template>
+          <template #expandClientGroup>
             <b-button
               variant="outline-primary"
               size="sm"
-              :title="(showTreeView? $t('switch.table',{type:'Clients'}) : $t('switch.tree',{type:'Clients'}))"
+              class="border-0"
+              :title="showTreeView? $t('Minimize Client Groups'): $t('Maximize Client Groups')"
               :pressed.sync="showTreeView"
             >
-              <b-icon v-if="showTreeView" variant="primary" :icon="icon.table" />
-              <b-icon v-else :icon="icon.tree" />
+              <b-icon :icon="showTreeView? 'box-arrow-left' : 'arrow-down-left'" />
             </b-button>
           </template>
         </LazyBarBPageHeader>
-        <div v-if="showTreeView" class="VClientGroupsExpanded" data-testid="VClientGroupsExpanded">
-          <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
-        </div>
-        <TableTInfiniteScrollSmooth
-          v-else
-          :id="id"
-          :ref="id"
-          :primary-key="id"
-          rowident="clientId"
-          :error="error"
-          :is-loading="isLoading"
-          :table-data="tableData"
-          :header-data="headerData"
-          :items="items"
-          :cache_pages="cache_pages"
-          :total-items="totalItems"
-          :totalpages="totalpages"
-          :selection="selectionClients"
-          :setselection="setSelectionClients"
-          :fetchitems="_fetch"
-        >
-          <!-- row actions: -->
-          <template #contextcontent-1="{itemkey}">
-            <DropdownDDClientActions :client-id="itemkey" :fetch="$fetch" :incontextmenu="true" />
-            <ButtonBTNRowLinkTo
-              :title="$t('title.config')"
-              :label="$t('title.config')"
-              :icon="icon.settings"
-              to="/clients/config"
-              :ident="itemkey"
-              :pressed="isRouteActive"
-              :incontextmenu="true"
-              :click="routeRedirectWith"
-            />
-            <ButtonBTNRowLinkTo
-              :title="$t('title.log')"
-              :label="$t('title.log')"
-              :icon="icon.log"
-              to="/clients/log"
-              :ident="itemkey"
-              :pressed="isRouteActive"
-              :incontextmenu="true"
-              :click="routeRedirectWith"
-            />
-          </template>
-          <!-- table actions: -->
-          <template #contextcontent-general-1>
-            <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
-            <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
-            <ButtonBTNRefetch
+        <b-row>
+          <b-col v-if="showTreeView" data-testid="VClientGroupsExpanded">
+            <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
+          </b-col>
+          <b-col>
+            <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
+            <TableTInfiniteScrollSmooth
+              :id="id"
+              :ref="id"
+              :primary-key="id"
+              rowident="clientId"
+              :error="error"
               :is-loading="isLoading"
-              :tooltip="$t('button.refresh', {id: id})"
-              :label="$t('button.refresh', {id: ''})"
-              incontextmenu
-              :refetch="_fetch"
-            />
-          </template>
+              :table-data="tableData"
+              :header-data="headerData"
+              :items="items"
+              :cache_pages="cache_pages"
+              :total-items="totalItems"
+              :totalpages="totalpages"
+              :selection="selectionClients"
+              :setselection="setSelectionClients"
+              :fetchitems="_fetch"
+            >
+              <!-- row actions: -->
+              <template #contextcontent-1="{itemkey}">
+                <DropdownDDClientActions :client-id="itemkey" :fetch="$fetch" :incontextmenu="true" />
+                <ButtonBTNRowLinkTo
+                  :title="$t('title.config')"
+                  :label="$t('title.config')"
+                  :icon="icon.settings"
+                  to="/clients/config"
+                  :ident="itemkey"
+                  :pressed="isRouteActive"
+                  :incontextmenu="true"
+                  :click="routeRedirectWith"
+                />
+                <ButtonBTNRowLinkTo
+                  :title="$t('title.log')"
+                  :label="$t('title.log')"
+                  :icon="icon.log"
+                  to="/clients/log"
+                  :ident="itemkey"
+                  :pressed="isRouteActive"
+                  :incontextmenu="true"
+                  :click="routeRedirectWith"
+                />
+              </template>
+              <!-- table actions: -->
+              <template #contextcontent-general-1>
+                <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
+                <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
+                <ButtonBTNRefetch
+                  :is-loading="isLoading"
+                  :tooltip="$t('button.refresh', {id: id})"
+                  :label="$t('button.refresh', {id: ''})"
+                  incontextmenu
+                  :refetch="_fetch"
+                />
+              </template>
+              <template #head(version_outdated)>
+                <div :title="$t('table.fields.versionOutdated')">
+                  <b-icon :icon="icon.product" />
+                  <b-icon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
+                </div>
+              </template>
+              <template #head(actionResult_failed)>
+                <div :title="$t('table.fields.actionResultFailed')">
+                  <b-icon :icon="icon.product" />
+                  <b-icon :icon="icon. productsFailedActionResult" class="rounded-circle" variant="danger" />
+                </div>
+              </template>
+              <template #head(installationStatus_unknown)>
+                <div :title="$t('table.fields.installationStatusUnknown')">
+                  <b-icon :icon="icon.product" />
+                  <b-icon :icon="icon. productInstallationStatusUnknown" class="rounded-circle" variant="primary" />
+                </div>
+              </template>
+              <template #head(reachable)>
+                <ModalMClientReachable />
+              </template>
 
-          <template #head(version_outdated)>
-            <div :title="$t('table.fields.versionOutdated')">
-              <b-icon :icon="icon.product" />
-              <b-icon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
-            </div>
-          </template>
-          <template #head(actionResult_failed)>
-            <div :title="$t('table.fields.actionResultFailed')">
-              <b-icon :icon="icon.product" />
-              <b-icon :icon="icon. productsFailedActionResult" class="rounded-circle" variant="danger" />
-            </div>
-          </template>
-          <template #head(installationStatus_unknown)>
-            <div :title="$t('table.fields.installationStatusUnknown')">
-              <b-icon :icon="icon.product" />
-              <b-icon :icon="icon. productInstallationStatusUnknown" class="rounded-circle" variant="primary" />
-            </div>
-          </template>
-          <template #head(reachable)>
-            <ModalMClientReachable />
-          </template>
-
-          <template #cell(uefi)="row">
-            <b-form-checkbox v-if="row.item.uefi" v-model="row.item.uefi" size="sm" :title="''+row.item.uefi" disabled />
-          </template>
-          <template #cell(version_outdated)="row">
-            <b-button
-              v-if="row.item.version_outdated > 0"
-              variant="outline-primary"
-              size="sm"
-              class="btn-client-statistic"
-              :title="$t('button.show.products')"
-              @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
-            >
-              {{ row.item.version_outdated }}
-            </b-button>
-          </template>
-          <template #cell(actionResult_failed)="row">
-            <b-button
-              v-if="row.item.actionResult_failed > 0"
-              variant="outline-primary"
-              size="sm"
-              class="btn-client-statistic"
-              :title="$t('button.show.products')"
-              :class="selectionClients.includes(row.item.clientId)? 'selected' : ''"
-              :disabled="row.item.actionResult_failed == 0"
-              @click="sortProductTable(row.item.clientId, 'actionResult', false)"
-            >
-              {{ row.item.actionResult_failed }}
-            </b-button>
-          </template>
-          <template #cell(installationStatus_unknown)="row">
-            <b-button
-              v-if="row.item.installationStatus_unknown > 0"
-              variant="outline-primary"
-              size="sm"
-              class="btn-client-statistic"
-              :title="$t('button.show.products')"
-              @click="sortProductTable(row.item.clientId, 'installationStatus', false)"
-            >
-              {{ row.item.installationStatus_unknown }}
-            </b-button>
-          </template>
-          <template #rowactions="row">
-            <ButtonBTNRowLinkTo
-              :title="$t('title.config')"
-              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config') : '')"
-              :icon="icon.settings"
-              to="/clients/config"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-            <ButtonBTNRowLinkTo
-              :title="$t('title.log')"
-              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log') : '')"
-              :icon="icon.log"
-              to="/clients/log"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-            <DropdownDDClientActions :client-id="row.item.clientId" :fetch="$fetch" />
-          </template>
-          <template
-            v-for="slotName in Object.keys($scopedSlots)"
-            #[slotName]="slotScope"
-          >
-            <slot :name="slotName" v-bind="slotScope" />
-          </template>
-        </TableTInfiniteScrollSmooth>
+              <template #cell(uefi)="row">
+                <b-form-checkbox v-if="row.item.uefi" v-model="row.item.uefi" size="sm" :title="''+row.item.uefi" disabled />
+              </template>
+              <template #cell(version_outdated)="row">
+                <b-button
+                  v-if="row.item.version_outdated > 0"
+                  variant="outline-primary"
+                  size="sm"
+                  class="btn-client-statistic"
+                  :title="$t('button.show.products')"
+                  @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
+                >
+                  {{ row.item.version_outdated }}
+                </b-button>
+              </template>
+              <template #cell(actionResult_failed)="row">
+                <b-button
+                  v-if="row.item.actionResult_failed > 0"
+                  variant="outline-primary"
+                  size="sm"
+                  class="btn-client-statistic"
+                  :title="$t('button.show.products')"
+                  :class="selectionClients.includes(row.item.clientId)? 'selected' : ''"
+                  :disabled="row.item.actionResult_failed == 0"
+                  @click="sortProductTable(row.item.clientId, 'actionResult', false)"
+                >
+                  {{ row.item.actionResult_failed }}
+                </b-button>
+              </template>
+              <template #cell(installationStatus_unknown)="row">
+                <b-button
+                  v-if="row.item.installationStatus_unknown > 0"
+                  variant="outline-primary"
+                  size="sm"
+                  class="btn-client-statistic"
+                  :title="$t('button.show.products')"
+                  @click="sortProductTable(row.item.clientId, 'installationStatus', false)"
+                >
+                  {{ row.item.installationStatus_unknown }}
+                </b-button>
+              </template>
+              <template #rowactions="row">
+                <ButtonBTNRowLinkTo
+                  :title="$t('title.config')"
+                  :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config') : '')"
+                  :icon="icon.settings"
+                  to="/clients/config"
+                  :ident="row.item.ident"
+                  :pressed="isRouteActive"
+                  :click="routeRedirectWith"
+                />
+                <ButtonBTNRowLinkTo
+                  :title="$t('title.log')"
+                  :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log') : '')"
+                  :icon="icon.log"
+                  to="/clients/log"
+                  :ident="row.item.ident"
+                  :pressed="isRouteActive"
+                  :click="routeRedirectWith"
+                />
+                <DropdownDDClientActions :client-id="row.item.clientId" :fetch="$fetch" />
+              </template>
+              <template
+                v-for="slotName in Object.keys($scopedSlots)"
+                #[slotName]="slotScope"
+              >
+                <slot :name="slotName" v-bind="slotScope" />
+              </template>
+            </TableTInfiniteScrollSmooth>
+          </b-col>
+        </b-row>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" :sortby="sortProductsByCol" />
@@ -458,9 +464,5 @@ export default class VClients extends Vue {
 .tableheader_products:focus {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
-}
-.VClientGroupsExpanded {
-  width: 98% ;
-  height: 80vh;
 }
 </style>
