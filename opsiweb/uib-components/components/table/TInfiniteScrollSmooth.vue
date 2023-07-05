@@ -426,13 +426,13 @@ export default class TInfiniteScrollSmooth extends Vue {
   /* overflow: inherit !important; */
 }
 .TInfiniteScrollSmoothWrapper .TInfiniteScrollSmooth.b-table-sticky-header {
-  max-height: 76vh;
+  max-height: 70vh;
 }
 .TInfiniteScrollSmoothWrapper .singleRowTable.b-table-sticky-header {
   max-height: 15vh;
 }
 .TInfiniteScrollSmoothWrapper .mobileview.table-responsive {
-  max-height: 76vh;
+  max-height: 60vh;
 }
 .TInfiniteScrollSmoothWrapper .singleRowTable.mobileview.table-responsive {
   max-height: 17vh;
