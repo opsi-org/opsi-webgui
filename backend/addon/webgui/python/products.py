@@ -487,7 +487,7 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
 	selectedDepots: List[str] = Depends(parse_depot_list),
 ) -> RESTResponse:
 	"""
-	Get products ids with depo
+	Get product ids with depots
 	"""
 
 	if selectedDepots == []:
