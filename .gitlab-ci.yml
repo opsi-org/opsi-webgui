@@ -9,8 +9,8 @@ stages:
   - release
 
 # .prepare_repo: &prepare_repo |
-#   # BRANCH=$(git symbolic-ref --short HEAD || echo "develop")
-#   BRANCH=$(echo ${CI_COMMIT_BRANCH} || echo "develop")
+#   # BRANCH=$(git symbolic-ref --short HEAD || echo "main")
+#   BRANCH=$(echo ${CI_COMMIT_BRANCH} || echo "main")
 #   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
 #   echo "GIT_Branch $BRANCH"
 
@@ -20,11 +20,11 @@ stages:
 #   echo "gitresult $git_result"
 #   if [ $git_result -eq 0 ]; then
 #     echo "Use default branch"
-#     BRANCH=develop
+#     BRANCH=main
 #     echo "GIT_Branch $BRANCH"
 #   fi
 #   if [ -z "$BRANCH" ]; then
-#     BRANCH=$(echo "develop")
+#     BRANCH=$(echo "main")
 #   fi
 #   echo "GIT_Branch $BRANCH"
 
@@ -147,7 +147,7 @@ stages:
   fi
 
 .get_changed_files: &get_changed_files |
-  changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
+  changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
   echo "$basenames"
@@ -176,7 +176,7 @@ init:npm:
 init:npm:production:
   stage: init
   only:
-    - develop
+    - main
     - tags
   script:
     # - *prepare_repo
@@ -275,7 +275,7 @@ test:usecase:
     - exit $exit_code
   allow_failure: true
   only:
-    - develop
+    - main
     - tags
   artifacts:
     name: "opsi-webgui-test-result-usecase"
@@ -294,7 +294,7 @@ test:components:changes:
     - init:npm
   except:
     - tags # cause in tags we test all browsers (and all files)
-    - develop # cause in develop we test all files
+    - main # cause in develop we test all files
   only:
     changes:
       - opsiweb/pages/*
@@ -340,7 +340,7 @@ test:components:
     - bug/cicd-build
     # - tags # cause in tags we test all browsers
   only:
-    - develop # cause in develop we test all files, but only chromium browser
+    - main # cause in develop we test all files, but only chromium browser
     - tags
   script:
     - cd opsiweb
@@ -446,7 +446,7 @@ build:static:app:
       - opsiweb/dist # not used...?
     expire_in: 3 day
   only:
-    - develop
+    - main
     - tags
 
 build:addon:
@@ -470,7 +470,7 @@ build:addon:
     - ls -lah webgui # debug
   only:
     - tags
-    - develop
+    - main
   artifacts:
     name: "opsi-webgui"
     paths:
