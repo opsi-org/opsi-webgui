@@ -216,9 +216,10 @@ interface DeleteClient {
 
 @Component({ mixins: [MBus, Icons, Synchronization] })
 export default class VClients extends Vue {
-  syncSort: any
+  syncSort: any // mixin Synchronization
   icon: any
-  wsBusMsg: any // mixin // store
+  wsBusMsg: any // mixin MBus
+  wsNotificationInfo: any // mixin MBus
   $axios: any
   $t: any
   $mq: any
@@ -326,11 +327,11 @@ export default class VClients extends Vue {
   @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg
     if (msg && msg.channel === 'event:host_created') {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
+      this.wsNotificationInfo('MessageBus received event host_created', `${msg.data.id}`)
       await this.$fetch()
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
+      this.wsNotification('Client msg', msg)
       // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       // eslint-disable-next-line no-console

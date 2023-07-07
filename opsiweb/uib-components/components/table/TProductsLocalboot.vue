@@ -20,7 +20,7 @@
     >
       <template #producttableheader>
         <DropdownDDProductRequest
-          v-if="(selectionClients.length>0 && selectionProducts.length>0)"
+          v-if="selectionClients.length>0 && selectionProducts.length>0"
           :action.sync="action"
           :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
@@ -133,7 +133,7 @@
       </template>
       <template #row-details="row">
         <TableTTooltipContent
-          v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+          v-if="row.item.depot_version_diff || row.item.client_version_outdated || false"
           type="version"
           :details="row.item.tooltiptext"
           :depot-version-diff="row.item.depot_version_diff"
@@ -142,7 +142,7 @@
       <template #rowactions="row">
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
-          :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
+          :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config') : ''"
           :icon="icon.settings"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
