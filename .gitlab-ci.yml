@@ -294,7 +294,7 @@ test:components:changes:
     - init:npm
   except:
     - tags # cause in tags we test all browsers (and all files)
-    - main # cause in develop we test all files
+    - main # cause in main we test all files
   only:
     changes:
       - opsiweb/pages/*
@@ -303,7 +303,7 @@ test:components:changes:
   script:
     - cd opsiweb
     - *define_globals
-    # get changed files (in comparison to develop branch)
+    # get changed files (in comparison to main branch)
     - cd uib-components
     - *get_changed_files
     - cd ..
@@ -340,7 +340,7 @@ test:components:
     - bug/cicd-build
     # - tags # cause in tags we test all browsers
   only:
-    - main # cause in develop we test all files, but only chromium browser
+    - main # cause in main we test all files, but only chromium browser
     - tags
   script:
     - cd opsiweb
