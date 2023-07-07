@@ -31,7 +31,7 @@
         :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
       >
         <span
-          v-if="index != 0"
+          v-if="log != ''"
           class="log-row-text"
           :class="{
             'log-row-1': log.startsWith('[1]'),
@@ -69,7 +69,7 @@ export default class VClientLog extends Vue {
   $t: any
 
   @Prop({ }) id!: string
-  @Prop({ default: [] }) 'testdata'!: Array<string>
+  @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
   @Prop({ default: false }) 'asChild'!: string
 
   logtype: string = 'instlog'
