@@ -103,8 +103,18 @@ def user_configuration() -> JSONResponse:
 				},
 			}
 		)
-
-	return JSONResponse({"user": username, "configuration": None})
+	return JSONResponse(
+		{
+			"user": username,
+			"configuration": {
+				"read_only": False,
+				"depot_access": False,
+				"host_group_access": False,
+				"product_group_access": False,
+				"client_creation": False,
+			},
+		}
+	)
 
 
 @webgui_router.get("/api/opsidata/modulesContent")
@@ -183,7 +193,6 @@ async def home() -> JSONResponse:
 
 @webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-
 	with open(os.path.join(DATA_PATH, "changelog", "changelog.md"), "r", encoding="utf-8") as changelogs_file:
 		text = changelogs_file.read()
 	return PlainTextResponse(text)
