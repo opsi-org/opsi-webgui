@@ -337,7 +337,6 @@ export default class VClients extends Vue {
       await this.$fetch()
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
-      this.wsNotification('Client msg', msg)
       // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       // eslint-disable-next-line no-console
