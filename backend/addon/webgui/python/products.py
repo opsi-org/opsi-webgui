@@ -60,7 +60,6 @@ def depot_get_product_version(depot: str, product: str) -> Union[str, None]:
 	version = None
 	params = {}
 	with mysql.session() as session:
-
 		params["depot"] = depot
 		params["product"] = product
 		where = text("pod.depotId = :depot AND pod.productId = :product")
@@ -84,7 +83,6 @@ def get_product_description(product: str, product_version: str, package_version:
 	description = None
 	params = {}
 	with mysql.session() as session:
-
 		params["product"] = product
 		params["product_version"] = product_version
 		params["package_version"] = package_version
@@ -120,7 +118,6 @@ def get_product_type(product_id: str, product_version: str, package_version: str
 
 
 def get_product_actions(product: str, version: str, package_version: str) -> List[str]:
-
 	params = {}
 	params["product"] = product
 	params["version"] = version
@@ -158,7 +155,6 @@ def get_product_actions(product: str, version: str, package_version: str) -> Lis
 
 
 def is_product_on_depot(product: str, version: str, package_version: str, depot: str) -> bool:
-
 	params = {}
 	params["product"] = product
 	params["version"] = version
@@ -446,7 +442,6 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 			if row is not None:
 				product = dict(row)
 				for value in ["installationStatus", "actionRequest", "actionProgress", "actionResult"]:
-
 					if product[value] != "mixed":
 						del product[f"{value}Details"]
 
@@ -481,6 +476,71 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 		total = session.execute(select(text("COUNT(*)")).select_from(products_on_depots), params).fetchone()[0]
 
 		return RESTResponse(data=products, total=total)
+
+
+@product_router.get("/api/opsidata/products/depots")
+@rest_api
+@filter_depot_access
+def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument, too-many-arguments
+	request: Request,
+	type: str = "LocalbootProduct",
+	selectedDepots: List[str] = Depends(parse_depot_list),
+) -> RESTResponse:
+	"""
+	Get product ids with depots
+	"""
+
+	if selectedDepots == []:
+		return RESTResponse(data=[], total=0)
+	username = get_username()
+	params = {"clients": [""], "client_count": 0, "depots": [""], "product_type": str}
+	params["product_type"] = type
+
+	if selectedDepots is None:
+		params["depots"] = get_depots(username)
+	else:
+		params["depots"] = selectedDepots
+
+	allowed_products = None
+
+	if user_register() and product_group_access_configured(username):
+		allowed_products = get_allowed_products(username)
+
+	with mysql.session() as session:
+		where = text("pod.depotId IN :depots AND pod.producttype = :product_type")
+
+		if allowed_products:
+			params["allowed_products"] = allowed_products
+			where = and_(where, text("(pod.productId in :allowed_products)"))
+		query = (
+			select(
+				text(
+					"""
+						pod.productId AS productId,
+						pod.depotId AS depotId
+
+					"""
+				)
+			)
+			.select_from(text("PRODUCT_ON_DEPOT AS pod"))
+			.where(where)
+			.group_by(text("pod.productId"))
+		)
+
+		result = session.execute(query, params)
+		result = result.fetchall()
+
+		products = {}  # pylint: disable=redefined-outer-name
+		for row in result:
+			if row is not None:
+				product = dict(row)
+				logger.devel(product)
+				if not products.get(product["productId"]):
+					products[product["productId"]] = [product["depotId"]]
+				else:
+					products[product["productId"]].append(product["depotId"])
+
+		return RESTResponse(data=products)
 
 
 @product_router.get("/api/opsidata/products/count", response_model=List[Product])
@@ -619,7 +679,6 @@ def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
 	where = text("g.`type` = 'ProductGroup'")
 
 	with mysql.session() as session:
-
 		query = (
 			select(
 				text(
@@ -739,7 +798,6 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 				params["depots"].append(depot)
 	where = and_(where, text("(pod.depotId IN :depots)"))
 	with mysql.session() as session:
-
 		try:  # pylint: disable=too-many-nested-blocks
 			query = (
 				select(
@@ -953,7 +1011,6 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 
 @lru_cache(maxsize=1000)
 def get_product_properties(product: str, version: str) -> List:
-
 	product_version, package_version = version.split("-", 1)
 	with mysql.session() as session:
 		query = (
@@ -972,7 +1029,6 @@ def get_product_properties(product: str, version: str) -> List:
 
 
 def get_product_product_property_state(object_id: str, product_id: str, property_id: str) -> Union[str, None]:
-
 	with mysql.session() as session:
 		query = (
 			select(
@@ -1049,7 +1105,6 @@ def save_poduct_property(  # pylint: disable=invalid-name, too-many-locals, too-
 			available_properties = get_product_properties(productId, version)
 
 			for property_id in data.properties:
-
 				if property_id not in available_properties:
 					logger.error("Propertiy %s does not exist on %s.", property_id, depot_id)
 					raise OpsiApiException(
@@ -1147,7 +1202,6 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 	where = and_(where, text("(pod.depotId IN :depots)"))
 
 	with mysql.session() as session:
-
 		try:
 			query = (
 				select(
@@ -1227,7 +1281,6 @@ def product_dependencies(  # pylint: disable=too-many-locals, too-many-branches,
 @rest_api
 @read_only_check
 def unlock_product(request: Request, product: str) -> RESTResponse:  # pylint: disable=unused-argument
-
 	try:
 		unlocked_products = []
 		for pod in backend.productOnDepot_getObjects(productId=product, locked=True):
@@ -1259,6 +1312,5 @@ def unlock_all_products() -> RESTResponse:
 @product_router.get("/api/opsidata/locked-products", response_model=list[str])
 @rest_api
 def get_locked_products_list() -> RESTResponse:
-
 	locked_products = backend.getProductLocks_hash()  # pylint: disable=no-member
 	return RESTResponse(locked_products)
