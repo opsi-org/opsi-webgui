@@ -2,14 +2,8 @@
   <div data-testid="VDepots">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
-        <LazyBarBPageHeader
-          v-if="tableloaded"
-          :title="$t('title.depots') + ' (' + totalItems + ')'"
-          :tableid="id"
-          :table-info.sync="tableInfo"
-          :is-loading-parent="isLoading"
-          :fetch="$fetch"
-        />
+        <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.depots')" :tableid="id" />
+        <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
         <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"

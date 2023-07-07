@@ -25,6 +25,7 @@
           v-if="moreDetails.length>1"
           :title="showMore? $t('button.collapse'): $t('button.expand')"
           size="sm"
+          :variant="alertVariant"
           class="float-right border-0 p-0 pb-2"
           :pressed.sync="showMore"
         >

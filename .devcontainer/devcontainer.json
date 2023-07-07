@@ -33,7 +33,8 @@
 				"sakamoto66.vscode-playwright-test-runner",
 				"shardulm94.trailing-spaces",
 				"octref.vetur",
-				"SonarSource.sonarlint-vscode"
+				"SonarSource.sonarlint-vscode",
+				"Vue.volar"
 			]
 		}
 	}

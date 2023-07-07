@@ -20,7 +20,7 @@ from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
 
 from opsiconfd.config import get_configserver_id
-from opsiconfd.application.admininterface import _unlock_products
+
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	OpsiApiException,

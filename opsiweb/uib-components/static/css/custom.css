@@ -50,6 +50,7 @@
 
   --component-height: 30px;
   --component-width: 250px;
+  --wrapper-width: 300px;
 
   --max-height-window:500px;
   --height-navbar: 45px;
@@ -302,9 +303,9 @@ tbody .col-rowactions :not(div).btn {
   width: 100%;
 }
 .btn-sm.active {
-  color: var(--fg-btn);
-  background-color: var(--bg-btn) !important;
-  border-color: var(--b-btn) !important;
+  color: inherit;
+  background-color: inherit !important;
+  border-color: inherit !important;
 }
 .btn-primary {
   color: var(--fg-btn);
@@ -627,4 +628,7 @@ div.scrollValue {
 }
 .filter {
   max-width: var(--component-width) !important;
+}
+.componentwrapper {
+  max-width: var(--wrapper-width)!important;
 }

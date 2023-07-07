@@ -19,16 +19,10 @@
     <b-collapse v-if="tableid" :id="'collapse' + tableid" v-model="expanded" :visible="expanded">
       <b-navbar class="flex-wrap p-0">
         <template v-if="tableid">
-          <TreeTSDepots v-if="tableid !== 'Depots'" />
-          <TreeTSHostGroups v-if="tableid == 'products'" />
+          <TreeTSDepots v-if="showDepot()" />
+          <TreeTSHostGroups v-if="showClientGroup()" /><slot v-if="$mq == 'desktop'" name="expandClientGroup" />
+          <TreeTSProductGroups v-if="tableid == 'products' && !treeview" /><slot v-if="showExpandProdGroup()" name="expandProdGroup" />
         </template>
-
-        <b-navbar-nav v-if="!treeview" :class="(childopened || closeroute) && $mq == 'desktop' ? '': 'ml-auto'">
-          <InputIFilter :data="tableInfo" />
-          <DropdownDDTableSorting :table-id="tableid" v-bind.sync="tableInfo" />
-          <DropdownDDTableColumnVisibility :table-id="tableid" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" />
-          <ButtonBTNRefetch :is-loading="isLoadingParent" :tooltip="$t('button.refresh', {id: tableid})" :refetch="fetch" />
-        </b-navbar-nav>
       </b-navbar>
     </b-collapse>
   </div>
@@ -37,7 +31,6 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
-import { ITableInfo } from '../../.utils/types/ttable'
 
 @Component({ mixins: [Icons] })
 export default class BPageHeader extends Vue {
@@ -46,14 +39,34 @@ export default class BPageHeader extends Vue {
   @Prop({}) subtitle!: string
   @Prop({}) closeroute!: string
   @Prop({ default: null }) tableid!: string
-  @Prop({ default: () => { return {} } }) tableInfo!: ITableInfo
-  @Prop({ default: false }) isLoadingParent!: boolean
-  @Prop({ default: undefined }) fetch!: Function
   @Prop({ default: false }) childopened!: boolean
   @Prop({ default: false }) treeview!: boolean
-  icon:any
   $mq: any
+  icon:any
+  $route:any
   expanded: boolean = true
   @Watch('childopened', {}) childOpened () { this.expanded = !this.childopened }
+
+  showDepot () {
+    if (this.tableid === 'Clients') {
+      return true
+    } else if (this.tableid === 'products' && !this.$route.path.includes('clients/products')) {
+      return true
+    } else { return false }
+  }
+
+  showClientGroup () {
+    if (this.tableid === 'Clients' && !this.treeview) {
+      return true
+    } else if (this.tableid === 'products' && !this.$route.path.includes('clients/products')) {
+      return true
+    } else { return false }
+  }
+
+  showExpandProdGroup () {
+    if (this.tableid === 'products' && !this.$route.path.includes('clients/products') && this.$mq === 'desktop') {
+      return true
+    } else { return false }
+  }
 }
 </script>
