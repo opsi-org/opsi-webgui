@@ -481,7 +481,7 @@ def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-st
 @product_router.get("/api/opsidata/products/depots")
 @rest_api
 @filter_depot_access
-def products(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument, too-many-arguments
+def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, too-many-statements, redefined-builtin, invalid-name, unused-argument, too-many-arguments
 	request: Request,
 	type: str = "LocalbootProduct",
 	selectedDepots: List[str] = Depends(parse_depot_list),
