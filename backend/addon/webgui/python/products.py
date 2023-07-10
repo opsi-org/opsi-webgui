@@ -642,21 +642,8 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 					values[attr] = getattr(data, attr)
 
 			try:
-				# with mysql.session() as session:
-				# 	stmt = (
-				# 		insert(
-				# 			table(
-				# 				"PRODUCT_ON_CLIENT", *[column(name) for name in values.keys()]
-				# 			)  # pylint: disable=consider-iterating-dictionary
-				# 		)
-				# 		.values(**values)
-				# 		.on_duplicate_key_update(**values)
-				# 	)
-				# 	session.execute(stmt)
-
-				# result_data[client_id][product_id] = values
-
-				backend.productOnClient_updateObject(values)
+				backend.productOnClient_updateObjects([values])
+				result_data[client_id][product_id] = values
 
 			except Exception as err:  # pylint: disable=broad-except
 				if isinstance(err, OpsiApiException):
