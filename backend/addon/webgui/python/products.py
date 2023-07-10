@@ -592,7 +592,7 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 
 	get_product_type.cache_clear()
 	depot_get_product_version.cache_clear()
-
+	poc_list = []
 	for client_id in data.clientIds:
 		if client_id not in result_data:
 			result_data[client_id] = {}
@@ -640,17 +640,17 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 			for attr in ("actionRequest", "actionProgress", "actionResult", "installationStatus"):
 				if getattr(data, attr) is not None:
 					values[attr] = getattr(data, attr)
+			poc_list.append(values)
+			result_data[client_id][product_id] = values
 
-			try:
-				backend.productOnClient_updateObjects([values])
-				result_data[client_id][product_id] = values
+	try:
+		backend.productOnClient_updateObjects(poc_list)
 
-			except Exception as err:  # pylint: disable=broad-except
-				if isinstance(err, OpsiApiException):
-					raise err
-				logger.error("Could not create ProductOnClient: %s", err)
-				# session.rollback()
-				return RESTErrorResponse(message="Could not create ProductOnClient.", http_status=status.HTTP_400_BAD_REQUEST, details=err)
+	except Exception as err:  # pylint: disable=broad-except
+		if isinstance(err, OpsiApiException):
+			raise err
+		logger.error("Could not create ProductOnClient: %s", err)
+		return RESTErrorResponse(message="Could not create ProductOnClient.", http_status=status.HTTP_400_BAD_REQUEST, details=err)
 
 	return RESTResponse(http_status=http_status, data=result_data)
 
