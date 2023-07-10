@@ -5,7 +5,7 @@
     </b-row>
     <GridGFormItem :label="$t('Blocked Clients')">
       <template #value>
-        <b-button variant="outiline-primary" class="w-25" size="sm" @click="unblockAllClients()">
+        <b-button variant="outiline-primary" class="w-100" size="sm" @click="unblockAllClients()">
           {{ $t('Unblock All') }}
         </b-button>
       </template>
@@ -15,7 +15,7 @@
     </b-row>
     <GridGFormItem :label="$t('Locked Products')">
       <template #value>
-        <b-button variant="outiline-primary" class="w-25" size="sm" @click="unlockAllProducts()">
+        <b-button variant="outiline-primary" class="w-100" size="sm" @click="unlockAllProducts()">
           {{ $t('Unlock All') }}
         </b-button>
       </template>

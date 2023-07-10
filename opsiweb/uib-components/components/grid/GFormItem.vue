@@ -1,16 +1,30 @@
 <template>
-  <b-row data-testid="GFormItem" :class="formclass" class="p-0">
-    <b-col :sm="variant === 'longlabel' ? 5 : 3" class="text-break pl-4 text-small text-sm-left" :class="labelclass">
+  <b-row data-testid="GFormItem" :class="formclass" class="GFormItem p-0 pt-1">
+    <b-col :sm="variant === 'longlabel' ? 5 : 2" class="firstcol d-inline pl-4 text-small text-sm-left " :class="labelclass">
       <slot name="label" />
       {{ label }}
     </b-col>
-    <b-col class="text-sm-left text-small">
+    <div v-if="($mq == 'mobile')" class="w-100" />
+    <b-col
+      class="text-sm-left text-small"
+      :class="{'mobile-leftspace': ($mq == 'mobile'),
+               'mt-1': (formclass.includes('collapsable'))}"
+      :sm="variant === 'longlabel' || $mq=='mobile' ? '' : 3"
+    >
       <slot name="value" />
-      {{ value }}
+      {{ value? value:'' }}
     </b-col>
-    <b-col v-if="valueMore" class="text-sm-left text-small">
+    <div v-if="($mq == 'mobile')" class="w-100" />
+    <b-col
+      v-if="valueMore"
+      class="text-sm-left text-small"
+      :class="{'mobile-leftspace': ($mq == 'mobile'),
+               'mt-1': (formclass.includes('collapsable'))}"
+    >
+    <!-- :sm="$mq=='mobile' ? '' : 3" -->
       <slot name="valueMore" />
       {{ valuedetails }}
+      <!-- {{ valuedetails?.startsWith('No issues found')? '': valuedetails}} -->
     </b-col>
   </b-row>
 </template>
@@ -19,6 +33,7 @@
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 @Component
 export default class GFormItem extends Vue {
+  $mq: any
   @Prop({ }) label?: string
   @Prop({ }) labelclass?: string
   @Prop({ }) value?: string
@@ -28,3 +43,15 @@ export default class GFormItem extends Vue {
   @Prop({ default: 'mb-2 container' }) formclass?: any
 }
 </script>
+
+<style>
+.GFormItem.mainitem {
+  border-top: 1px solid var(--general-bg-weak);
+}
+.GFormItem .mobile-leftspace {
+  margin-left: 50px;
+}
+.GFormItem .firstcol {
+  min-width: max-content !important;
+}
+</style>
