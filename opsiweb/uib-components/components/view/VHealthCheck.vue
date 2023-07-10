@@ -74,6 +74,7 @@ import { Icons } from '../../mixins/icons'
 @Component({ mixins: [Icons] })
 export default class VHealthCheck extends Vue {
   icon: any
+  $mq: any
   $axios: any
   $t:any
 
