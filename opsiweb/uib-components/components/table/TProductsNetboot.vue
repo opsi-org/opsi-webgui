@@ -232,7 +232,7 @@ export default class TProductsNetboot extends Vue {
       ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
       if (this.quicksave) {
         this.$fetch()
-        ref.hide()
+        // ref.hide()
       } else { /* quicksave is false ... do sth .. show message or sth */
         const objIndex = this.changesProducts.findIndex(
           item => item.user === localStorage.getItem('username') &&
