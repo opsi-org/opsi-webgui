@@ -347,7 +347,6 @@ export default class TProductsLocalboot extends Vue {
       const successalert = true
       await this.saveProdActionRequest(data, null, successalert)
       this.fetchOptions.fetchClients = true
-      this.$fetch()
     }
   }
 

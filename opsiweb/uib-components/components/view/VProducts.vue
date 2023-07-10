@@ -260,8 +260,13 @@ export default class VProducts extends Vue {
     }
   }
 
+  async waitBeforeFetch () {
+    // await new Promise(resolve => setTimeout(resolve, 5))
+  }
+
   async fetchProducts (thiss) {
     thiss.isLoadingTable = true // have to be "thiss" -> overwise sorting breaks - whyever
+    await this.waitBeforeFetch() // needed for messagebus timing problem
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
       await this.getClientToDepot(thiss.selectionClients)
       thiss.fetchOptions.fetchClients2Depots = false

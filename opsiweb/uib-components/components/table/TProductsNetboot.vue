@@ -339,7 +339,6 @@ export default class TProductsNetboot extends Vue {
       const successalert = true
       await this.saveProdActionRequest(data, null, successalert)
       this.fetchOptions.fetchClients = true
-      this.$fetch()
     }
   }
 
