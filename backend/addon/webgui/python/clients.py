@@ -358,8 +358,11 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 	"""
 
 	try:
+		if client_id != client.hostId:
+			logger.notice("Renaming Client %s to %s.", client_id, client.hostId)
+			backend.host_renameOpsiClient(client_id, client.hostId)
 		backend.host_createOpsiClient(
-			client_id,
+			client.hostId,
 			client.opsiHostKey,
 			client.description,
 			client.notes,
@@ -371,7 +374,7 @@ def update_client(request: Request, client_id: str, client: Client) -> RESTRespo
 			datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
 			client.systemUUID,
 		)
-		headers = {"Location": f"{request.url}/{client_id}"}
+		headers = {"Location": f"{request.url}/{client.hostId}"}
 
 		return RESTResponse(data=client.__dict__, http_status=status.HTTP_201_CREATED, headers=headers)
 
