@@ -10,7 +10,7 @@ webgui
 
 import os
 from typing import Optional
-
+from pydantic import BaseModel
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
@@ -18,7 +18,6 @@ from opsiconfd import contextvar_client_session
 from opsiconfd.application import AppState
 from opsiconfd.config import get_configserver_id
 from opsiconfd.rest import RESTResponse, rest_api
-from pydantic import BaseModel
 from starlette.concurrency import run_in_threadpool
 
 from .utils import (
@@ -217,6 +216,12 @@ async def set_app_state(request: Request, app_state: State) -> RESTResponse:
 			params["retry_after"] = app_state.retry_after
 
 	await run_in_threadpool(request.app.set_app_state, AppState.from_dict(params))
+	return RESTResponse(data=request.app.app_state.to_dict())
+
+
+@webgui_router.get("/api/app-state")
+@rest_api
+async def get_app_state(request: Request) -> RESTResponse:
 	return RESTResponse(data=request.app.app_state.to_dict())
 
 
