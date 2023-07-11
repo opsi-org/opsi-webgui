@@ -15,7 +15,11 @@ from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
 from opsiconfd import contextvar_client_session
+from opsiconfd.application import AppState
 from opsiconfd.config import get_configserver_id
+from opsiconfd.rest import RESTResponse, rest_api
+from pydantic import BaseModel
+from starlette.concurrency import run_in_threadpool
 
 from .utils import (
 	backend,
@@ -189,6 +193,31 @@ async def home() -> JSONResponse:
 				host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"])  # type: ignore
 
 		return JSONResponse({"groups": {"productgroups": product_groups, "clientdirectory": host_groups}})
+
+
+class State(BaseModel):  # pylint: disable=too-few-public-methods
+	type: str = "normal"
+	address_exceptions: list | None = None  #
+	retry_after: int | None = None
+
+
+@webgui_router.post("/api/app-state")
+@rest_api
+async def set_app_state(request: Request, app_state: State) -> RESTResponse:
+	params: dict = {}
+	params["type"] = app_state.type
+	if app_state.type == "maintenance":
+		params["address_exceptions"] = ["127.0.0.1/32", "::1/128"]
+		params["retry_after"] = 600
+		if request.client:
+			params["address_exceptions"].append(request.client.host)
+		if app_state.address_exceptions:
+			params["address_exceptions"] = params["address_exceptions"] + app_state.address_exceptions
+		if app_state.retry_after:
+			params["retry_after"] = app_state.retry_after
+
+	await run_in_threadpool(request.app.set_app_state, AppState.from_dict(params))
+	return RESTResponse(data=request.app.app_state.to_dict())
 
 
 @webgui_router.get("/api/opsidata/changelogs")
