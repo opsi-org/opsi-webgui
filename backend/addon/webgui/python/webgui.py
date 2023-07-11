@@ -225,6 +225,13 @@ async def get_app_state(request: Request) -> RESTResponse:
 	return RESTResponse(data=request.app.app_state.to_dict())
 
 
+@webgui_router.post("/api/backup/create")
+@rest_api
+async def create_backup() -> RESTResponse:
+	backup_file = await run_in_threadpool(backend.service_createBackup)
+	return RESTResponse(data=backup_file)
+
+
 @webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
 	with open(os.path.join(DATA_PATH, "changelog", "changelog.md"), "r", encoding="utf-8") as changelogs_file:
