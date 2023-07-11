@@ -14,6 +14,10 @@
           :closeroute="child? '/clients/' : null"
           :treeview="showTreeView"
         >
+          <template #right>
+            <ModalMProductActions />
+          </template>
+
           <template #expandProdGroup>
             <b-button
               variant="outline-primary"
