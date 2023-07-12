@@ -9,9 +9,9 @@ webgui
 """
 
 import os
-from typing import Optional
+from typing import Annotated, Optional
 from pydantic import BaseModel
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Body, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
 from opsiconfd import contextvar_client_session
@@ -227,8 +227,12 @@ async def get_app_state(request: Request) -> RESTResponse:
 
 @webgui_router.post("/api/backup/create")
 @rest_api
-async def create_backup() -> RESTResponse:
-	backup_file = await run_in_threadpool(backend.service_createBackup)
+async def create_backup(
+	config_files: Annotated[bool, Body()] = True,
+	maintenance_mode: Annotated[bool, Body()] = True,
+	password: Annotated[str, Body()] | None = None,
+) -> RESTResponse:
+	backup_file = await run_in_threadpool(backend.service_createBackup, [config_files, maintenance_mode, password, "file_id"])
 	return RESTResponse(data=backup_file)
 
 
