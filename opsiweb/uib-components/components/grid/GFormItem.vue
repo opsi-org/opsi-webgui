@@ -45,6 +45,10 @@ export default class GFormItem extends Vue {
 </script>
 
 <style>
+.GFormItem {
+  max-width: 100%;
+  min-width: 100%;
+}
 .GFormItem.mainitem {
   border-top: 1px solid var(--general-bg-weak);
 }
@@ -52,6 +56,9 @@ export default class GFormItem extends Vue {
   margin-left: 50px;
 }
 .GFormItem .firstcol {
-  min-width: max-content !important;
+  /* min-width: max-content; */
+  min-width: 50px;
+  word-wrap: revert;
+  overflow-wrap: break-word;
 }
 </style>

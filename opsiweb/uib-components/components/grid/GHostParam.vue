@@ -7,13 +7,18 @@
       <span v-for="v,k in hostParam.value" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" size="sm" block variant="outline-primary">{{ k }}</b-button>
         <b-collapse :id="'collapse-'+k" :visible="filter === '' ? false : true">
-          <span v-for="item,index in v" :key="index" :class="{ 'd-none': !item.configId.includes(filter) }">
-            <GridGFormItem class="ml-2" variant="longlabel" :label="item.configId">
+            <GridGFormItem
+              v-for="item,index in v"
+              :key="index"
+              :class="{ 'd-none': !item.configId.includes(filter) }"
+              class="ml-2 mb-0 mw-50"
+              variant="longlabel"
+              :label="item.configId"
+            >
               <template #value>
                 <GridCellGCHostParamValue :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
               </template>
             </GridGFormItem>
-          </span>
         </b-collapse>
       </span>
     </LazyDivDScrollResult>
@@ -113,3 +118,15 @@ export default class GHostParam extends Vue {
   }
 }
 </script>
+
+<style>
+.GHostParam .GFormItem {
+  min-width: 100%;
+}
+.GHostParam .GFormItem .firstcol {
+  /* display: flex; */
+  max-width: 50%;
+  word-wrap: break-word;
+
+}
+</style>
