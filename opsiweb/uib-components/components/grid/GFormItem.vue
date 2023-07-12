@@ -1,15 +1,15 @@
 <template>
   <b-row data-testid="GFormItem" :class="formclass" class="GFormItem p-0 pt-1">
-    <b-col :sm="variant === 'longlabel' ? 5 : 2" class="firstcol d-inline pl-4 text-small text-sm-left " :class="labelclass">
+    <b-col :sm="variant === 'longlabel' ? 5 : (variant === 'longvalue' ? 3 : 2)" class="firstcol d-inline pl-4 text-small text-sm-left " :class="labelclass">
       <slot name="label" />
       {{ label }}
     </b-col>
     <div v-if="($mq == 'mobile')" class="w-100" />
     <b-col
-      class="text-sm-left text-small"
+      class="text-sm-left text-small valcol"
       :class="{'mobile-leftspace': ($mq == 'mobile'),
                'mt-1': (formclass.includes('collapsable'))}"
-      :sm="variant === 'longlabel' || $mq=='mobile' ? '' : 3"
+      :sm="variant === 'longlabel' || $mq=='mobile' || variant==='longvalue' ? '' : 3"
     >
       <slot name="value" />
       {{ value? value:'' }}
@@ -17,7 +17,7 @@
     <div v-if="($mq == 'mobile')" class="w-100" />
     <b-col
       v-if="valueMore"
-      class="text-sm-left text-small"
+      class="text-sm-left text-small morevalcol"
       :class="{'mobile-leftspace': ($mq == 'mobile'),
                'mt-1': (formclass.includes('collapsable'))}"
     >
@@ -46,8 +46,8 @@ export default class GFormItem extends Vue {
 
 <style>
 .GFormItem {
-  max-width: 100%;
-  min-width: 100%;
+  max-width: 99%;
+  min-width: 99%;
 }
 .GFormItem.mainitem {
   border-top: 1px solid var(--general-bg-weak);

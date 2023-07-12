@@ -4,7 +4,7 @@
     <AlertAAlert ref="hostAttrErrorAlert" />
     <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr.hostId">
       <div v-for="(value, label, index) in hostAttr" :key="index">
-        <GridGFormItem :label="label" :labelclass="label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize'" variant="longlabel">
+        <GridGFormItem :label="label" :labelclass="label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize'" variant="longvalue">
           <template #value>
             <b-form-input v-if="label.toString() === 'created' || label.toString() === 'lastSeen'" :value="date(value)" size="sm" readonly />
             <b-input-group v-else-if="label.toString() === 'opsiHostKey'">
@@ -20,7 +20,7 @@
         </GridGFormItem>
       </div>
     </LazyDivDScrollResult>
-    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" variant="longlabel">
+    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" variant="longvalue">
       <template #value>
         <div class="float-right">
           <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="$fetch">
