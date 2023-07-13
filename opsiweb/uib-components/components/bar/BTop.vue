@@ -40,14 +40,14 @@
           @keydown="rightmenuVisible = false"
           @click="rightmenuVisible = false"
         />
-        <b-navbar-nav class="ml-auto p-1">
+        <div class="ml-auto p-1" :class="$mq=='mobile' ? '': 'navbar-nav'">
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <ModalMSelectionsAll :with-text="$mq=='mobile'" />
           <ButtonBTNEvent :navbar="true" event="ondemand" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
           <DropdownDDLang v-once />
           <DropdownDDTheme v-once :navbar="true" />
           <ButtonBTNLogout v-once />
-        </b-navbar-nav>
+        </div>
       </b-collapse>
     </b-navbar>
   </div>
