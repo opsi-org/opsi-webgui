@@ -16,23 +16,18 @@
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
       :dropright="incontextmenu"
-      :dropleft="!incontextmenu"
     >
       <template #button-content>
         <b-icon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
         <span v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</span>
       </template>
-      <ul>
-        <li class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
-          <a class="sortDirectionWrapper">
-            <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc" />{{ $t('button.sort.tablecolumns.sortDirection') }}
-          </a>
-        </li>
-      </ul>
+      <div class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
+        <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc">{{ $t('button.sort.tablecolumns.sortDirection') }}</b-form-checkbox>
+      </div>
+      <b-dropdown-divider />
 
       <template v-if="incontextmenu">
         <ul>
-          <li class="li-delimiter" />
           <li
             v-for="header in Object.values(headerData).filter(h=>h.sortable)"
             :key="header.key"
@@ -46,10 +41,6 @@
         </ul>
       </template>
       <template v-else>
-        <ul>
-          <li class="li-delimiter" />
-        </ul>
-
         <b-dropdown-item
           v-for="header in Object.values(headerData).filter(h=>h.sortable)"
           :key="header.key"

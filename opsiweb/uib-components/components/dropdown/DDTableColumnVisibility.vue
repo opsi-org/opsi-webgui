@@ -16,7 +16,6 @@
       :title="incontextmenu ? '' : $t('table.showCol')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
       :dropright="incontextmenu"
-      :dropleft="!incontextmenu"
       @show="init"
     >
       <template #button-content>
@@ -36,9 +35,9 @@
           >
             <a class="columnWrapper">
               <b-form-checkbox
-                :checked="columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key)"
+                :checked="columnVisibilityList.includes(header.key)"
                 :class="{'selectedColumn':columnVisibilityStates[header.key]}"
-              /> {{ header.label }}
+              >  {{ header.label }} </b-form-checkbox>
             </a>
           </li>
         </ul>
