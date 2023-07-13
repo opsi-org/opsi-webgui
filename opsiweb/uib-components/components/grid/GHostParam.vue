@@ -75,7 +75,7 @@ export default class GHostParam extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.hostParamErrorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Host Parameters', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
         this.errorText = this.$t('message.error.defaulttext') as string
       })
   }

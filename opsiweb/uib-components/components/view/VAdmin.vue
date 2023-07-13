@@ -90,7 +90,7 @@ export default class VAdminTerminal extends Vue {
       }).catch((error) => {
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.fetch') + this.$t('label.blockedclients') + '.', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
       })
   }
 
@@ -101,7 +101,7 @@ export default class VAdminTerminal extends Vue {
       }).catch((error) => {
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.fetch') + this.$t('label.lockedproducts') + '.', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
       })
   }
 

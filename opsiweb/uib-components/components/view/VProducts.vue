@@ -295,7 +295,7 @@ export default class VProducts extends Vue {
           thiss.error += (error as IObjectString2Any).message
           const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
           const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
+          ref.alert(detailedError, 'danger')
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
         })
       thiss.setItemsCache(myitems)

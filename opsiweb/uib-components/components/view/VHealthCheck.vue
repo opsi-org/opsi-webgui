@@ -93,7 +93,7 @@ export default class VHealthCheck extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Health Check', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
       })
   }
 }
