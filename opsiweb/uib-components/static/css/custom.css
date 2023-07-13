@@ -302,10 +302,10 @@ tbody .col-rowactions :not(div).btn {
   display: block;
   width: 100%;
 }
-.btn-sm.active {
-  color: inherit;
-  background-color: inherit !important;
-  border-color: inherit !important;
+.btn-sm.active, .btn:hover {
+  color: var(--primary-foreground) !important;
+  background-color: var(--primary-dark) !important;
+  border-color: var(--bg-page_item-disabled) !important;
 }
 .btn-primary {
   color: var(--fg-btn);
