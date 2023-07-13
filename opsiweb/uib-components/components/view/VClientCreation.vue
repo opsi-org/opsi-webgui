@@ -248,7 +248,7 @@ export default class VClientCreation extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'NetbootProducts', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
       })
   }
 

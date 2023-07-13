@@ -129,7 +129,7 @@ export default class LayoutDefault extends Vue {
     } catch (error: any) {
       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.errorAlert as any)
-      ref.alert(this.$t('message.error.fetch') as string + 'User Configuration', 'danger', detailedError || '')
+      ref.alert(detailedError, 'danger')
       this.setConfig({ read_only: true, client_creation: true })
     }
   }

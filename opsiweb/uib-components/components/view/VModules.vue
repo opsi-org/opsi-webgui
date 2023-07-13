@@ -34,7 +34,7 @@ export default class VModules extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Modules', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
         this.errorText = this.$t('message.error.defaulttext') as string
       })
   }
