@@ -7,7 +7,7 @@
         <TreeTSDepots />
       </template>
     </BarBPageHeader>
-    <b-tabs small>
+    <b-tabs small class="groupstabs">
       <b-tab>
         <template #title>
           <span> {{ $t("treeselect.clientGroups") }} </span>
@@ -395,8 +395,7 @@ export default class VGroups extends Vue {
 }
 </script>
 <style>
-.VGroups {
-  width: 98% ;
-  height: 90vh;
+.groupstabs .tab-content {
+  height: 82vh;
 }
 </style>
