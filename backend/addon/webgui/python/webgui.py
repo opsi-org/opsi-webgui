@@ -9,11 +9,12 @@ webgui
 """
 
 import os
-from typing import Annotated, Optional
+from typing import Annotated, Any, Optional
 from pydantic import BaseModel
 from fastapi import APIRouter, Body, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
+from opsiconfd.logging import logger
 from opsiconfd import contextvar_client_session
 from opsiconfd.application import AppState
 from opsiconfd.config import get_configserver_id
@@ -225,14 +226,30 @@ async def get_app_state(request: Request) -> RESTResponse:
 	return RESTResponse(data=request.app.app_state.to_dict())
 
 
-@webgui_router.post("/api/backup/create")
+@webgui_router.post("/api/backup/restore")
 @rest_api
 async def create_backup(
+	file_id: Annotated[str, Body()],
+	config_files: Annotated[bool, Body()] = False,
+	server_id: Annotated[str, Body(examples=["backup", "local", "new-id.test.local"])] = "backup",
+	password: Annotated[str, Body()] | None = None,
+) -> RESTResponse:
+	logger.devel(file_id)
+	logger.devel(server_id)
+	await run_in_threadpool(backend.service_restoreBackup, file_id, config_files, server_id, password)
+	return RESTResponse(
+		data="Backup restored",
+	)
+
+
+@webgui_router.post("/api/backup/create")
+@rest_api
+async def restorebackup(
 	config_files: Annotated[bool, Body()] = True,
 	maintenance_mode: Annotated[bool, Body()] = True,
 	password: Annotated[str, Body()] | None = None,
 ) -> RESTResponse:
-	backup_file = await run_in_threadpool(backend.service_createBackup, [config_files, maintenance_mode, password, "file_id"])
+	backup_file = await run_in_threadpool(backend.service_createBackup, config_files, maintenance_mode, password)
 	return RESTResponse(data=backup_file)
 
 
