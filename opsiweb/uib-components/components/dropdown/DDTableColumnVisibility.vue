@@ -16,7 +16,6 @@
       :title="incontextmenu ? '' : $t('table.showCol')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
       :dropright="incontextmenu"
-      :dropleft="!incontextmenu"
       @show="init"
     >
       <template #button-content>

@@ -16,7 +16,6 @@
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
       :dropright="incontextmenu"
-      :dropleft="!incontextmenu"
     >
       <template #button-content>
         <b-icon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
