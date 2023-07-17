@@ -1,25 +1,61 @@
 <template>
   <div data-testid="VAdmin" class="VAdmin">
     <b-row class="mt-4 mb-2 text-small">
-      <b>{{ $t('Clients') }}</b>
+      <b>{{ $t('title.clients') }}</b>
     </b-row>
-    <GridGFormItem :label="$t('Blocked Clients')">
-      <template #value>
-        <b-button variant="outiline-primary" class="w-25" size="sm" @click="unblockAllClients()">
-          {{ $t('Unblock All') }}
-        </b-button>
-      </template>
-    </GridGFormItem>
+    <template v-if="blockedClients.length > 1">
+      <GridGFormItem :label="$t('label.blockedclients.select')">
+        <template #value>
+          <b-input-group>
+            <b-form-select :options="blockedClients" />
+            <template #append>
+              <b-button v-model="clientId" variant="outiline-primary" size="sm" @click="unblockClient()">
+                {{ $t('label.unblock') }}
+              </b-button>
+            </template>
+          </b-input-group>
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label="$t('label.blockedclients')">
+        <template #value>
+          <b-button variant="outiline-primary" block size="sm" @click="unblockAllClients()">
+            {{ $t('label.unblock.all') }}
+          </b-button>
+        </template>
+      </GridGFormItem>
+    </template>
+
+    <AlertAAlertLocal v-else show alert-variant="light">
+      {{ $t('label.blockedclients.null') }}
+    </AlertAAlertLocal>
+
     <b-row class="mt-4 mb-2 text-small">
-      <b>{{ $t('Products') }} </b>
+      <b>{{ $t('title.products') }} </b>
     </b-row>
-    <GridGFormItem :label="$t('Locked Products')">
-      <template #value>
-        <b-button variant="outiline-primary" class="w-25" size="sm" @click="unlockAllProducts()">
-          {{ $t('Unlock All') }}
-        </b-button>
-      </template>
-    </GridGFormItem>
+    <template v-if="lockedProducts.length > 1">
+      <GridGFormItem :label="$t('label.lockedproducts.select')">
+        <template #value>
+          <b-input-group>
+            <b-form-select :options="lockedProducts" />
+            <template #append>
+              <b-button v-model="productId" variant="outiline-primary" size="sm" @click="unlockProduct()">
+                {{ $t('label.unlock') }}
+              </b-button>
+            </template>
+          </b-input-group>
+        </template>
+      </GridGFormItem>
+      <GridGFormItem :label="$t('label.lockedproducts')">
+        <template #value>
+          <b-button variant="outiline-primary" block size="sm" @click="unlockAllProducts()">
+            {{ $t('label.unlock.all') }}
+          </b-button>
+        </template>
+      </GridGFormItem>
+    </template>
+    <AlertAAlertLocal v-else show alert-variant="light">
+      {{ $t('label.lockedproducts.null') }}
+    </AlertAAlertLocal>
   </div>
 </template>
 
@@ -37,24 +73,83 @@ export default class VAdminTerminal extends Vue {
   @cache.Getter public opsiconfigserver!: string
   $axios: any
   $t: any
+  blockedClients: Array<string> = []
+  lockedProducts: Array<string> = []
+  clientId: string = ''
+  productId: string = ''
+
+  async mounted () {
+    await this.fetchBlockedClients()
+    await this.fetchLockedProducts()
+  }
+
+  async fetchBlockedClients () {
+    await this.$axios.$get('/api/opsidata/blocked-clients')
+      .then((response) => {
+        this.blockedClients = response
+      }).catch((error) => {
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        ref.alert(detailedError, 'danger')
+      })
+  }
+
+  async fetchLockedProducts () {
+    await this.$axios.$get('/api/opsidata/locked-products')
+      .then((response) => {
+        this.lockedProducts = response
+      }).catch((error) => {
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        ref.alert(detailedError, 'danger')
+      })
+  }
+
+  async unblockClient () {
+    await this.$axios.$post(`/api/opsidata/clients/${this.clientId}/unblock`)
+      .then((response) => {
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
+      })
+      .catch((error) => {
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+      })
+  }
+
+  async unlockProduct () {
+    await this.$axios.$post(`/api/opsidata/products/${this.productId}/unlock`)
+      .then((response) => {
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+        ref.alert(response, 'success')
+      })
+      .catch((error) => {
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+      })
+  }
 
   async unblockAllClients () {
-    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post('/api/opsidata/clients/unblock')
       .then((response) => {
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
         ref.alert(this.$t('message.success.title'), 'success', response)
       }).catch((error) => {
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
   }
 
   async unlockAllProducts () {
-    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post('/api/opsidata/products/unlock')
       .then((response) => {
+        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
         ref.alert(this.$t('message.success.title'), 'success', response)
       }).catch((error) => {
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })

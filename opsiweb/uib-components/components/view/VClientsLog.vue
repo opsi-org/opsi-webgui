@@ -31,7 +31,7 @@
         :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
       >
         <span
-          v-if="index != 0"
+          v-if="log != ''"
           class="log-row-text"
           :class="{
             'log-row-1': log.startsWith('[1]'),
@@ -69,7 +69,7 @@ export default class VClientLog extends Vue {
   $t: any
 
   @Prop({ }) id!: string
-  @Prop({ default: [] }) 'testdata'!: Array<string>
+  @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
   @Prop({ default: false }) 'asChild'!: string
 
   logtype: string = 'instlog'
@@ -147,7 +147,7 @@ export default class VClientLog extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Log', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
         this.errorText = this.$t('message.error.defaulttext') as string
       })
     this.isLoading = false

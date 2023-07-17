@@ -4,7 +4,7 @@
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <OverlayOLoading :is-loading="isLoading" />
-    <GridGFormItem value-more="true" :label="$t('table.fields.id')">
+    <GridGFormItem value-more="true" variant="longvalue" :label="$t('table.fields.id')">
       <template #value>
         <b-form-input
           id="clientname"
@@ -35,14 +35,22 @@
     <b-row class="text-small mb-2">
       <b class="basics">{{ $t('title.basics') }} </b>
     </b-row>
-    <div v-for="(value, label, index) in newClient" :key="index">
-      <GridGFormItem :label="label" labelclass="text-capitalize" :class="label.toString() === 'hostId' ? 'd-none' : ''">
+    <div>
+      <GridGFormItem
+        v-for="(value, label, index) in newClient"
+        :key="index"
+        :label="label"
+        labelclass="text-capitalize"
+        variant="longvalue"
+        :class="label.toString() === 'hostId' ? 'd-none' : ''"
+      >
         <template #value>
           <b-form-textarea
             v-if="label.toString() === 'notes'"
             v-model="newClient.notes"
             size="sm"
             rows="4"
+
             no-resize
           />
           <b-form-input v-else v-model="newClient[label.toString()]" size="sm" type="text" />
@@ -52,12 +60,12 @@
     <b-row class="text-small mb-2">
       <b class="assignments">{{ $t('title.assignments') }} </b>
     </b-row>
-    <GridGFormItem :label="$t('table.fields.depot')">
+    <GridGFormItem :label="$t('table.fields.depot')" variant="longvalue">
       <template #value>
         <TreeTSDepotsNotStored :id.sync="depotId" />
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.group')">
+    <GridGFormItem :label="$t('table.fields.group')" variant="longvalue">
       <template #value>
         <TreeTSGroupInitSelection :id.sync="group" />
       </template>
@@ -65,7 +73,7 @@
     <b-row class="text-small mb-2">
       <b class="initsetup">{{ $t('title.initsetup') }} </b>
     </b-row>
-    <GridGFormItem :label=" $t('table.fields.netbootproduct')">
+    <GridGFormItem :label=" $t('table.fields.netbootproduct')" variant="longvalue">
       <template #value>
         <b-form-select
           id="netbootproduct"
@@ -77,7 +85,7 @@
         />
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.clientagent')">
+    <GridGFormItem :label="$t('table.fields.clientagent')" variant="longvalue">
       <template #value>
         <b-form inline>
           <b-form-checkbox v-model="clientagent" />
@@ -108,12 +116,12 @@
     <b-row class="text-small mb-2">
       <b class="settings">{{ $t('title.settings') }} </b>
     </b-row>
-    <GridGFormItem :label="$t('table.fields.uefi')">
+    <GridGFormItem :label="$t('table.fields.uefi')" variant="longvalue">
       <template #value>
         <b-form-checkbox id="uefi" v-model="uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
       </template>
     </GridGFormItem>
-    <GridGFormItem>
+    <GridGFormItem variant="longvalue">
       <template #value>
         <div class="float-right mt-2">
           <b-button id="resetButton" class="resetButton" size="sm" variant="primary" @click="resetNewClientForm()">
@@ -240,7 +248,7 @@ export default class VClientCreation extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.newClientAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'NetbootProducts', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
       })
   }
 
@@ -319,6 +327,9 @@ export default class VClientCreation extends Vue {
 .VClientCreation {
   overflow-x: hidden;
   padding-left: 10px;
+}
+.VClientCreation .valcol {
+  /* display: flex; */
 }
 .valid-none.is-valid {
   background-image: unset !important;

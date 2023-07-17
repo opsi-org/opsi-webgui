@@ -2,7 +2,11 @@
   <div data-testid="VServerHealthCheck">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <b-tabs small>
-      <b-tab :title="$t('title.diagnostics')" active>
+      <b-tab :title="$t('title.healthcheck')" active>
+        <ViewVHealthCheck />
+      </b-tab>
+
+      <b-tab :title="$t('title.diagnostics')">
         <BarBPageHeader>
           <template #left>
             <b-button
@@ -27,7 +31,7 @@
           </b-button>
           <b-collapse :id="'collapse-'+k" :visible="expandAll || filter!= ''">
             <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.toString().includes(filter) }">
-              <GridGFormItem class="ml-2" :label="i">
+              <GridGFormItem class="ml-2" :label="i" variant="longvalue">
                 <template #value>
                   <template v-if="typeof val == 'object'">
                     <div class="scrollValue">
@@ -42,10 +46,6 @@
             </span>
           </b-collapse>
         </span>
-      </b-tab>
-
-      <b-tab :title="$t('title.healthcheck')">
-        <ViewVHealthCheck />
       </b-tab>
     </b-tabs>
   </div>
@@ -78,7 +78,7 @@ export default class VHealthCheck extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Health Check', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
       })
   }
 

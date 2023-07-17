@@ -1,5 +1,6 @@
 <template>
   <div data-testid="TProductsNetboot">
+    <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
     <LazyTableTInfiniteScrollSmooth
       v-if="cache_pages"
       id="Netboot"
@@ -231,7 +232,7 @@ export default class TProductsNetboot extends Vue {
       ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
       if (this.quicksave) {
         this.$fetch()
-        ref.hide()
+        // ref.hide()
       } else { /* quicksave is false ... do sth .. show message or sth */
         const objIndex = this.changesProducts.findIndex(
           item => item.user === localStorage.getItem('username') &&
@@ -338,7 +339,6 @@ export default class TProductsNetboot extends Vue {
       const successalert = true
       await this.saveProdActionRequest(data, null, successalert)
       this.fetchOptions.fetchClients = true
-      this.$fetch()
     }
   }
 

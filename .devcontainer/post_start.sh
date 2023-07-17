@@ -11,6 +11,7 @@
 # chown -f -R 1000:1000 /root/.cache/*
 
 id
+apt update && apt upgrade opsiconfd --yes
 
 echo "* Fetch a test license"
 if [ -n "${OPSILICSRV_TOKEN}" ]; then

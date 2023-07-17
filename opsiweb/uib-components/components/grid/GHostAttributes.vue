@@ -4,7 +4,7 @@
     <AlertAAlert ref="hostAttrErrorAlert" />
     <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr.hostId">
       <div v-for="(value, label, index) in hostAttr" :key="index">
-        <GridGFormItem :label="label" :labelclass="label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize'">
+        <GridGFormItem :label="label" :labelclass="label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize'" variant="longvalue">
           <template #value>
             <b-form-input v-if="label.toString() === 'created' || label.toString() === 'lastSeen'" :value="date(value)" size="sm" readonly />
             <b-input-group v-else-if="label.toString() === 'opsiHostKey'">
@@ -20,7 +20,7 @@
         </GridGFormItem>
       </div>
     </LazyDivDScrollResult>
-    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)">
+    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" variant="longvalue">
       <template #value>
         <div class="float-right">
           <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="$fetch">
@@ -92,7 +92,7 @@ export default class GHostAttributes extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.hostAttrErrorAlert as any)
-        ref.alert(this.$t('message.error.fetch') + this.$t('title.hostattr') + '.', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
         this.errorText = this.$t('message.error.defaulttext') as string
       })
   }

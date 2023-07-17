@@ -22,6 +22,7 @@
         >
           <template #right>
             <ButtonBTNRowLinkTo
+              v-if="$mq == 'desktop'"
               :title="(secondColumnOpened || $mq=='mobile'? $t('button.show.products') : '')"
               :label="((secondColumnOpened) ? '' : $t('title.products'))"
               :icon="icon.product"
@@ -49,7 +50,7 @@
             <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
           </b-col>
           <b-col>
-            <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
+            <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
             <TableTInfiniteScrollSmooth
               :id="id"
               :ref="id"
@@ -126,7 +127,7 @@
               </template>
 
               <template #cell(uefi)="row">
-                <b-form-checkbox v-if="row.item.uefi" v-model="row.item.uefi" size="sm" :title="''+row.item.uefi" disabled />
+                <b-icon v-if="row.item.uefi" :icon="icon.check" />
               </template>
               <template #cell(version_outdated)="row">
                 <b-button
@@ -221,9 +222,10 @@ interface DeleteClient {
 
 @Component({ mixins: [MBus, Icons, Synchronization] })
 export default class VClients extends Vue {
-  syncSort: any
+  syncSort: any // mixin Synchronization
   icon: any
-  wsBusMsg: any // mixin // store
+  wsBusMsg: any // mixin MBus
+  wsNotificationInfo: any // mixin MBus
   $axios: any
   $t: any
   $mq: any
@@ -331,8 +333,7 @@ export default class VClients extends Vue {
   @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg
     if (msg && msg.channel === 'event:host_created') {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      ref.alert('MessageBus received event host_created', 'info', `host: ${msg.data.id}`)
+      this.wsNotificationInfo('MessageBus received event host_created', `${msg.data.id}`)
       await this.$fetch()
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
@@ -410,7 +411,7 @@ export default class VClients extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Clients', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
         this.error = this.$t('message.error.defaulttext') as string
         this.error += JSON.stringify(error.message)
         this.isLoading = false

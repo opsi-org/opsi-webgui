@@ -28,7 +28,7 @@ echo "---------------------------------------"
 if [[ ${file} == "all-changed" ]]; then
     echo "try to get changed filenames"
     cd /workspace/opsiweb/uib-components
-    changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
+    changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
     # echo "$changedFiles"
     basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
     # Iterate the string variable using for loop

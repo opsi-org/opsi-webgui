@@ -3,7 +3,7 @@
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
       <template #parent>
         <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.depots')" :tableid="id" />
-        <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
+        <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
         <TableTInfiniteScrollSmooth
           :id="id"
           :ref="id"
@@ -221,7 +221,7 @@ export default class VDepots extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.fetch') as string + 'Depots', 'danger', detailedError)
+        ref.alert(detailedError, 'danger')
         this.error = this.$t('message.error.defaulttext') as string
         this.isLoading = false
       })

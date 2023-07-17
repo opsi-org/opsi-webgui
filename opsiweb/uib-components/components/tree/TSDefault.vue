@@ -106,7 +106,7 @@
             <b> {{ node.label }} </b>
           </template>
           <template v-else>
-            {{ node.label }}
+            {{ node.label ? node.label : node.id }}
           </template>
         </div>
       </div>

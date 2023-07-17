@@ -1,5 +1,6 @@
 <template>
   <div data-testid="TProductsLocalboot">
+    <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
     <LazyTableTInfiniteScrollSmooth
       v-if="cache_pages"
       id="Localboot"
@@ -20,7 +21,7 @@
     >
       <template #producttableheader>
         <DropdownDDProductRequest
-          v-if="(selectionClients.length>0 && selectionProducts.length>0)"
+          v-if="selectionClients.length>0 && selectionProducts.length>0"
           :action.sync="action"
           :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
@@ -133,7 +134,7 @@
       </template>
       <template #row-details="row">
         <TableTTooltipContent
-          v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+          v-if="row.item.depot_version_diff || row.item.client_version_outdated || false"
           type="version"
           :details="row.item.tooltiptext"
           :depot-version-diff="row.item.depot_version_diff"
@@ -142,7 +143,7 @@
       <template #rowactions="row">
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
-          :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
+          :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config') : ''"
           :icon="icon.settings"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
@@ -241,7 +242,7 @@ export default class TProductsLocalboot extends Vue {
       ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
       if (this.quicksave) {
         this.$fetch()
-        ref.hide()
+        // if (ref) { ref.hide() }
       } else { /* quicksave is false ... do sth .. show message or sth */
         const objIndex = this.changesProducts.findIndex(
           item => item.user === localStorage.getItem('username') &&
@@ -346,7 +347,6 @@ export default class TProductsLocalboot extends Vue {
       const successalert = true
       await this.saveProdActionRequest(data, null, successalert)
       this.fetchOptions.fetchClients = true
-      this.$fetch()
     }
   }
 

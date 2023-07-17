@@ -7,7 +7,7 @@ stages:
 
 .get_changed_files: &get_changed_files |
   git fetch
-  changedFiles=$(git diff origin/develop -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
+  changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   # echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
   basenamesWithSlash=""
@@ -147,7 +147,7 @@ test:components:changed:
   dependencies:
     - init:npm
   except:
-    - develop
+    - main
   script:
     - *get_changed_files
     - echo "$testfilesUnique"
@@ -180,7 +180,7 @@ test:components:all:
   dependencies:
     - init:npm
   only:
-    - develop
+    - main
   script:
     - npx playwright install
     - npx playwright install-deps

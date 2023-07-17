@@ -9,13 +9,17 @@ webgui
 """
 
 import os
-from typing import Optional
-
-from fastapi import APIRouter, Request, status
+from typing import Annotated, Any, Optional
+from pydantic import BaseModel
+from fastapi import APIRouter, Body, Request, status
 from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse
 
+from opsiconfd.logging import logger
 from opsiconfd import contextvar_client_session
+from opsiconfd.application import AppState
 from opsiconfd.config import get_configserver_id
+from opsiconfd.rest import RESTResponse, rest_api
+from starlette.concurrency import run_in_threadpool
 
 from .utils import (
 	backend,
@@ -103,8 +107,18 @@ def user_configuration() -> JSONResponse:
 				},
 			}
 		)
-
-	return JSONResponse({"user": username, "configuration": None})
+	return JSONResponse(
+		{
+			"user": username,
+			"configuration": {
+				"read_only": False,
+				"depot_access": False,
+				"host_group_access": False,
+				"product_group_access": False,
+				"client_creation": False,
+			},
+		}
+	)
 
 
 @webgui_router.get("/api/opsidata/modulesContent")
@@ -181,9 +195,66 @@ async def home() -> JSONResponse:
 		return JSONResponse({"groups": {"productgroups": product_groups, "clientdirectory": host_groups}})
 
 
+class State(BaseModel):  # pylint: disable=too-few-public-methods
+	type: str = "normal"
+	address_exceptions: list | None = None  #
+	retry_after: int | None = None
+
+
+@webgui_router.post("/api/app-state")
+@rest_api
+async def set_app_state(request: Request, app_state: State) -> RESTResponse:
+	params: dict = {}
+	params["type"] = app_state.type
+	if app_state.type == "maintenance":
+		params["address_exceptions"] = ["127.0.0.1/32", "::1/128"]
+		params["retry_after"] = 600
+		if request.client:
+			params["address_exceptions"].append(request.client.host)
+		if app_state.address_exceptions:
+			params["address_exceptions"] = params["address_exceptions"] + app_state.address_exceptions
+		if app_state.retry_after:
+			params["retry_after"] = app_state.retry_after
+
+	await run_in_threadpool(request.app.set_app_state, AppState.from_dict(params))
+	return RESTResponse(data=request.app.app_state.to_dict())
+
+
+@webgui_router.get("/api/app-state")
+@rest_api
+async def get_app_state(request: Request) -> RESTResponse:
+	return RESTResponse(data=request.app.app_state.to_dict())
+
+
+@webgui_router.post("/api/backup/restore")
+@rest_api
+async def create_backup(
+	file_id: Annotated[str, Body()],
+	config_files: Annotated[bool, Body()] = False,
+	server_id: Annotated[str, Body(examples=["backup", "local", "new-id.test.local"])] = "backup",
+	password: Annotated[str, Body()] | None = None,
+) -> RESTResponse:
+	logger.devel(file_id)
+	logger.devel(server_id)
+	await run_in_threadpool(backend.service_restoreBackup, file_id, config_files, server_id, password)
+	return RESTResponse(
+		data="Backup restored",
+	)
+
+
+@webgui_router.post("/api/backup/create")
+@rest_api
+async def restorebackup(
+	config_files: Annotated[bool, Body()] = True,
+	maintenance_mode: Annotated[bool, Body()] = True,
+	password: Annotated[str, Body()] | None = None,
+) -> RESTResponse:
+	backup_file = await run_in_threadpool(backend.service_createBackup, config_files, maintenance_mode, password)
+	return RESTResponse(data=backup_file)
+
+
 @webgui_router.get("/api/opsidata/changelogs")
 def get_markdown() -> PlainTextResponse:
-
 	with open(os.path.join(DATA_PATH, "changelog", "changelog.md"), "r", encoding="utf-8") as changelogs_file:
 		text = changelogs_file.read()
 	return PlainTextResponse(text)

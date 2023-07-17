@@ -1,5 +1,5 @@
 import { encode, decode } from '@msgpack/msgpack'
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
 const mbus = namespace('messagebus')
 
 @Component export class MBus extends Vue {
@@ -24,7 +24,17 @@ const mbus = namespace('messagebus')
   //        ref.alert(`MessageBus received:  host_created ${msg.data.id}`, 'info')
   //        await this.$fetch()
   //     }
-  //  }
+  // }
+
+  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+    // triggered before specific Watch method e.g. in VClients, VProductsLocalboot, ...
+    this.wsNotification('Any msg', this.wsBusMsg)
+    // const msg = this.wsBusMsg
+    // let data = ''
+    // if (msg.data) { data = String.fromCharCode(...msg.data) }
+    // this.wsNotification('MessageBus received "' + msg.type + '": "' + data + '"', msg)
+  }
+
   get wsBus () { return this.bus }
 
   createUUID () {
@@ -40,10 +50,11 @@ const mbus = namespace('messagebus')
 
   async wsInit (reconnect: boolean = false) {
     if (!reconnect && this.bus !== undefined) {
-      // console.debug('MessageBud: already connecting/connected')
+      this.wsNotification('already connecting/connected')
       return
     }
 
+    this.wsNotification('connecting')
     const host = window.location.hostname
     const url = 'wss://' + host + ':4447/messagebus/v1?'
     const _bus = new WebSocket(url)
@@ -51,7 +62,7 @@ const mbus = namespace('messagebus')
     if (this.bus === undefined) { throw new Error('MessageBus shouldnt be undefined') }
     this.bus.binaryType = 'arraybuffer'
     this.bus.onopen = () => {
-      this.wsNotification('MessageBus websocket opened')
+      this.wsNotification('websocket opened')
       this.wsSubscribeChannel([
         '@',
         '$',
@@ -87,15 +98,9 @@ const mbus = namespace('messagebus')
     })
   }
 
-  // @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-  //   const msg = this.wsBusMsg
-  //   let data = ''
-  //   if (msg.data) { data = String.fromCharCode(...msg.data) }
-  //   console.debug('MessageBus received "' + msg.type + '": "' + data + '"', msg)
-  // }
-
   wsSubscribeChannel (channels: Array<string>) {
     // console.log('subscribe channels ', channels)
+    this.wsNotification('subscribe: ', channels)
     const message = this.wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'
@@ -175,30 +180,44 @@ const mbus = namespace('messagebus')
     }
   }
 
-  wsNotification (text: any) {
-    return JSON.stringify(text)
+  wsNotification (text: any, data: any = '') {
+    console.debug('MessageBus:', text, data)
+  }
+
+  wsNotificationInfo (text: any, data: any = '') {
+    console.info('MessageBus:', text, data)
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+    ref.alert(text, 'info', data)
+  }
+
+  wsNotificationWarn (text: any, data: any = '') {
+    const stringtext = JSON.stringify(data)
     // console.debug('MessageBus: ', stringtext)
-    // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-    // // const ref = (this.$refs.alertConfigurationError as any)
-    // ref.alert(`MessageBus: ${stringtext}`, 'danger')
+    console.warn('MessageBus:', text, data)
+    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+    // const ref = (this.$refs.alertConfigurationError as any)
+    ref.alert(`MessageBus: ${stringtext}`, 'warning')
   }
 
   _setBus (bus: WebSocket, setBusLastMsgMethod: any) {
     bus.onclose = () => {
-      this.wsNotification('MessageBus websocket closed')
+      this.wsNotificationWarn('websocket closed')
       this.setBus(undefined)
     }
     bus.onerror = (err:any) => {
-      this.wsNotification('MessageBus websocket error ' + JSON.stringify(err))
+      this.wsNotificationWarn('websocket error ', err)
       this.setBus(undefined)
     }
     bus.onmessage = (event) => {
-      const message = decode(event.data)
-      // console.debug('MessageBus: receive: ', message)
-
+      const message:any = decode(event.data)
+      const msgIsValid = message.expires > Date.now() // new Date().getTime()
+      if (!msgIsValid) {
+        this.wsNotification('Message is expired', message)
+        return
+      }
       // this.setBusLastMsg(message)
       setBusLastMsgMethod(message)
-      this.wsNotification(message)
+      // this.wsNotification('received: ' + JSON.stringify(message))
     }
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VProducts">
+  <div data-testid="VProducts" class="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
         <LazyBarBPageHeader
@@ -14,6 +14,10 @@
           :closeroute="child? '/clients/' : null"
           :treeview="showTreeView"
         >
+          <template #right>
+            <ModalMProductActions />
+          </template>
+
           <template #expandProdGroup>
             <b-button
               variant="outline-primary"
@@ -31,7 +35,6 @@
             <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
           </b-col>
           <b-col>
-            <BarBTableHeader :tableid="id" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
             <b-tabs class="products_horizontaltabs" small lazy>
               <b-tab disabled>
                 <template #title>
@@ -261,8 +264,13 @@ export default class VProducts extends Vue {
     }
   }
 
+  async waitBeforeFetch () {
+    // await new Promise(resolve => setTimeout(resolve, 5))
+  }
+
   async fetchProducts (thiss) {
     thiss.isLoadingTable = true // have to be "thiss" -> overwise sorting breaks - whyever
+    await this.waitBeforeFetch() // needed for messagebus timing problem
     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
       await this.getClientToDepot(thiss.selectionClients)
       thiss.fetchOptions.fetchClients2Depots = false
@@ -287,7 +295,7 @@ export default class VProducts extends Vue {
           thiss.error += (error as IObjectString2Any).message
           const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
           const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-          ref.alert(this.$t('message.error.fetch') as string + 'Products', 'danger', detailedError)
+          ref.alert(detailedError, 'danger')
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
         })
       thiss.setItemsCache(myitems)
@@ -324,6 +332,9 @@ export default class VProducts extends Vue {
 </script>
 
 <style>
+/* .VProducts {
+  max-height: min-content;
+} */
 .products_horizontaltabs .nav-item{
   min-width: min-content;
 }

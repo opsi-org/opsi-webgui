@@ -20,7 +20,7 @@
       <b-navbar class="flex-wrap p-0">
         <template v-if="tableid">
           <TreeTSDepots v-if="showDepot()" />
-          <TreeTSHostGroups v-if="showClientGroup()" /><slot name="expandClientGroup" />
+          <TreeTSHostGroups v-if="showClientGroup()" /><slot v-if="$mq == 'desktop'" name="expandClientGroup" />
           <TreeTSProductGroups v-if="tableid == 'products' && !treeview" /><slot v-if="showExpandProdGroup()" name="expandProdGroup" />
         </template>
       </b-navbar>
@@ -41,6 +41,7 @@ export default class BPageHeader extends Vue {
   @Prop({ default: null }) tableid!: string
   @Prop({ default: false }) childopened!: boolean
   @Prop({ default: false }) treeview!: boolean
+  $mq: any
   icon:any
   $route:any
   expanded: boolean = true
@@ -63,7 +64,7 @@ export default class BPageHeader extends Vue {
   }
 
   showExpandProdGroup () {
-    if (this.tableid === 'products' && !this.$route.path.includes('clients/products')) {
+    if (this.tableid === 'products' && !this.$route.path.includes('clients/products') && this.$mq === 'desktop') {
       return true
     } else { return false }
   }
