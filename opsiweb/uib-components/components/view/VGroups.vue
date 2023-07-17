@@ -2,11 +2,11 @@
   <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
-    <BarBPageHeader>
+    <!-- <BarBPageHeader>
       <template #left>
         <TreeTSDepots />
       </template>
-    </BarBPageHeader>
+    </BarBPageHeader> -->
     <b-tabs small class="groupstabs">
       <b-tab>
         <template #title>
