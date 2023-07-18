@@ -151,7 +151,6 @@ def get_host_data(
 			if row is not None:
 				row_dict = dict(row)
 				for key in row_dict.keys():
-
 					if isinstance(row_dict.get(key), (datetime.date, datetime.datetime)):
 						row_dict[key] = row_dict.get(key, datetime.datetime(2000, 1, 1, 0, 0)).isoformat()
 				row_dict["uefi"] = bool(row_dict["uefi"])
@@ -190,7 +189,6 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 	with mysql.session() as session:
 		try:
-
 			query = insert(
 				table(
 					"GROUP", column("type"), *[column(key) for key in vars(group).keys()]
@@ -231,7 +229,6 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 	"""
 	with mysql.session() as session:
 		try:
-
 			values = {
 				"groupType": "HostGroup",
 				"groupId": group,
@@ -317,6 +314,124 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 @rest_api
 def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	selectedDepots: List[str] = Depends(parse_depot_list),
+	withClients: bool = True,
+) -> RESTResponse:
+	"""
+	Get host groups as tree.
+	"""
+
+	params = {"parent": "", "depots": []}
+	if selectedDepots == [] or selectedDepots is None:
+		params["depots"] = [get_configserver_id()]
+	else:
+		params["depots"] = selectedDepots
+
+	where = text("g.`type` = 'HostGroup'")
+	where_depots = text("")
+
+	for idx, depot in enumerate(params["depots"]):
+		if idx > 0:
+			where_depots = or_(where_depots, text(f"cs.values LIKE '%{depot}%'"))  # type: ignore[assignment]
+		else:
+			where_depots = text(f"cs.values LIKE '%{depot}%'")
+		if depot == get_configserver_id():
+			where_depots = or_(where_depots, text("cs.values IS NULL"))  # type: ignore[assignment]
+
+	with mysql.session() as session:
+		query = (
+			select(  # type: ignore[arg-type,attr-defined]
+				text(  # type: ignore[arg-type]
+					"""
+			g.parentGroupId AS parent_id,
+			g.groupId AS group_id,
+			og.objectId AS object_id,
+			TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) AS depot_id
+		"""
+				)
+			)
+			.select_from(table("GROUP").alias("g"))
+			.join(table("OBJECT_TO_GROUP").alias("og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
+			.join(
+				table("CONFIG_STATE").alias("cs"),
+				and_(
+					text("og.objectId = cs.objectId"),
+					or_(text("cs.configId = 'clientconfig.depot.id'"), text("cs.values IS NULL")),
+					where_depots,
+				),
+				isouter=True,
+			)
+			.where(where)
+		)
+		print(query)
+		result = session.execute(query, params)
+		result = result.fetchall()
+
+	all_groups = {}
+	processed = []
+	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
+	for row in result:
+		if not row["group_id"] in all_groups:
+			all_groups[row["group_id"]] = {
+				"id": row["group_id"],
+				"type": "HostGroup",
+				"text": row["group_id"],
+				"parent": row["parent_id"] or root_group["id"],
+			}
+
+		if row["object_id"]:
+			# if row["object_id"] in selectedClients:
+			# 	all_groups[row["group_id"]]["hasAnySelection"] = True
+			if "children" not in all_groups[row["group_id"]]:
+				all_groups[row["group_id"]]["children"] = {}
+			if row.group_id == row.parent_id:
+				if not row["object_id"] in all_groups:
+					all_groups[row["object_id"]] = {
+						"id": row["object_id"],
+						"type": "ObjectToGroup",
+						"text": row["object_id"],
+						"parent": row["parent_id"] or root_group["id"],
+					}
+			else:
+				all_groups[row["group_id"]]["children"][row["object_id"]] = {
+					"id": row["object_id"],
+					"type": "ObjectToGroup",
+					"text": row["object_id"],
+					"parent": row["group_id"],
+				}
+
+	host_groups = build_group_tree(root_group, all_groups.values(), processed)
+	logger.devel(host_groups["children"]["clientdirectory"])
+	clientdirectory = host_groups["children"]["clientdirectory"]
+	clientdirectory["parent"] = None
+	del host_groups["children"]["clientdirectory"]
+	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
+
+
+def build_group_tree(current_group, groups, processed):
+	if not processed:
+		processed = []
+	processed.append(current_group["id"])
+	children = {}
+	for group in groups:
+		if group["parent"] == current_group["id"]:  # or (group["parent"] is None and current_group["id"] == "groups"):
+			if group["id"] in processed:
+				logger.error("Loop: %s %s", group["id"], processed)
+			else:
+				children[group["id"]] = build_group_tree(group, groups, processed)
+	if children:
+		if "children" not in current_group:
+			current_group["children"] = {}
+		current_group["children"].update(children)
+	# else:
+	# 	if current_group["type"] == "HostGroup":
+	# 		current_group["children"] = None
+	return current_group
+
+
+@host_router.get("/api/opsidata/hosts/groups-dynamic")
+@rest_api
+def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	selectedDepots: List[str] = Depends(parse_depot_list),
 	parentGroup: Optional[str] = None,
 	selectedClients: List[str] = Depends(parse_client_list),
 	withClients: bool = True,
@@ -362,7 +477,6 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			where_depots = or_(where_depots, text("cs.values IS NULL"))  # type: ignore[assignment]
 
 	with mysql.session() as session:
-
 		if parentGroup and parentGroup != "root":
 			query = union(
 				select(
@@ -403,52 +517,18 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 
 		elif parentGroup == "root":
 			all_groups = {
-				"groups": {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None},
+				"groups": {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None, "children": None},
 				"clientdirectory": {
 					"id": "clientdirectory",
 					"type": "HostGroup",
 					"text": "clientdirectory",
 					"parent": None,
+					"children": None,
 				},
-				"clientlist": {
-					"id": "clientlist",
-					"type": "HostGroup",
-					"text": "clientlist",
-					"parent": None,
-				},
+				"clientlist": {"id": "clientlist", "type": "HostGroup", "text": "clientlist", "parent": None, "children": None},
 			}
 			if selectedClients:
 				all_groups["clientlist"]["hasAnySelection"] = True
-		else:
-			query = (
-				select(  # type: ignore[arg-type,attr-defined]
-					text(  # type: ignore[arg-type]
-						"""
-				g.parentGroupId AS parent_id,
-				g.groupId AS group_id,
-				og.objectId AS object_id,
-				TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) AS depot_id
-			"""
-					)
-				)
-				.select_from(table("GROUP").alias("g"))
-				.join(table("OBJECT_TO_GROUP").alias("og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
-				.join(
-					table("CONFIG_STATE").alias("cs"),
-					and_(
-						text("og.objectId = cs.objectId"),
-						or_(text("cs.configId = 'clientconfig.depot.id'"), text("cs.values IS NULL")),
-						where_depots,
-					),
-					isouter=True,
-				)
-				.where(where)
-			)
-			print(query)
-			result = session.execute(query, params)
-			result = result.fetchall()
-
-			all_groups = read_groups(result, root_group, selectedClients, withClients)
 
 		if selectedClients:
 			params = {}
@@ -510,7 +590,8 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 					"parent": "not_assigned",
 					"allowed": True,
 				}
-
+		if not host_groups.get("children"):
+			host_groups["children"] = []
 		if parentGroup == "root":
 			return RESTResponse(data={"groups": host_groups.get("children")})
 		return RESTResponse(data={"groups": host_groups})
@@ -522,7 +603,6 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 	groups = {group}
 
 	with mysql.session() as session:
-
 		while groups:
 			for group_id in groups.copy():
 				groups.remove(group)
@@ -621,6 +701,7 @@ def find_parent(group: str) -> str | None:
 		parent_id = result.fetchone()
 		if parent_id:
 			return parent_id["parent_id"]
+		return None
 
 
 def read_groups(
@@ -636,6 +717,7 @@ def read_groups(
 				"type": "HostGroup",
 				"text": row["group_id"],
 				"parent": row["parent_id"] or root_group["id"],
+				"children": None,
 			}
 		if row["object_id"] and withClients:
 			if row["object_id"] in selectedClients:
@@ -745,7 +827,6 @@ def update_server(request: Request, server_id: str, server: Server) -> RESTRespo
 	values = {k: v for k, v in values.items() if v is not None}
 
 	with mysql.session() as session:
-
 		try:
 			host_check_duplicates(server, session)
 			query = (

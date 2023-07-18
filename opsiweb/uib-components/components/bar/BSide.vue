@@ -20,7 +20,7 @@
         v-if="$mq === 'desktop'"
         variant="primary"
         size="sm"
-        class="border-0"
+        class="border-0 float-right"
         data-testid="BarBSideBtnExpand"
         :title=" (attributes.expanded)? $t('button.collapse'): $t('button.expand')"
         :pressed.sync="attributes.expanded"
@@ -96,11 +96,6 @@ export default class BSide extends Vue {
   float: right;
   margin-right: 2px;
   margin-bottom: 0px;
-}
-#sidemenu .b-sidebar-footer .btn {
-  width: 100%;
-  text-align: right;
-  z-index: 100;
 }
 .sidebar_content .b-sidebar-backdrop{
   width: 100% !important;
