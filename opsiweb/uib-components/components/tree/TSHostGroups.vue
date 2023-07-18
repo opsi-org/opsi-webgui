@@ -79,7 +79,7 @@ export default class TSHostGroups extends Vue {
   }
 
   async fetchHostGroupsData () {
-    const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=root`)).groups
+    const result = (await this.$axios.$get(`/api/opsidata/hosts/groups-dynamic?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=root`)).groups
     if (result === undefined) {
       throw new Error(this.id + ' No root host-groups found')
     }
