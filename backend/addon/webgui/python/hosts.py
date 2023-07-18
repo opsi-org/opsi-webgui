@@ -428,9 +428,9 @@ def build_group_tree(current_group, groups, processed):
 	return current_group
 
 
-@host_router.get("/api/opsidata/hosts/groups_old")
+@host_router.get("/api/opsidata/hosts/groups-dynamic")
 @rest_api
-def get_host_groups_old(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	selectedDepots: List[str] = Depends(parse_depot_list),
 	parentGroup: Optional[str] = None,
 	selectedClients: List[str] = Depends(parse_client_list),
@@ -517,52 +517,18 @@ def get_host_groups_old(  # pylint: disable=invalid-name, too-many-locals, too-m
 
 		elif parentGroup == "root":
 			all_groups = {
-				"groups": {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None},
+				"groups": {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None, "children": None},
 				"clientdirectory": {
 					"id": "clientdirectory",
 					"type": "HostGroup",
 					"text": "clientdirectory",
 					"parent": None,
+					"children": None,
 				},
-				"clientlist": {
-					"id": "clientlist",
-					"type": "HostGroup",
-					"text": "clientlist",
-					"parent": None,
-				},
+				"clientlist": {"id": "clientlist", "type": "HostGroup", "text": "clientlist", "parent": None, "children": None},
 			}
 			if selectedClients:
 				all_groups["clientlist"]["hasAnySelection"] = True
-		else:
-			query = (
-				select(  # type: ignore[arg-type,attr-defined]
-					text(  # type: ignore[arg-type]
-						"""
-				g.parentGroupId AS parent_id,
-				g.groupId AS group_id,
-				og.objectId AS object_id,
-				TRIM(TRAILING '"]' FROM TRIM(LEADING '["' FROM cs.`values`)) AS depot_id
-			"""
-					)
-				)
-				.select_from(table("GROUP").alias("g"))
-				.join(table("OBJECT_TO_GROUP").alias("og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
-				.join(
-					table("CONFIG_STATE").alias("cs"),
-					and_(
-						text("og.objectId = cs.objectId"),
-						or_(text("cs.configId = 'clientconfig.depot.id'"), text("cs.values IS NULL")),
-						where_depots,
-					),
-					isouter=True,
-				)
-				.where(where)
-			)
-			print(query)
-			result = session.execute(query, params)
-			result = result.fetchall()
-
-			all_groups = read_groups(result, root_group, selectedClients, withClients)
 
 		if selectedClients:
 			params = {}
@@ -624,7 +590,8 @@ def get_host_groups_old(  # pylint: disable=invalid-name, too-many-locals, too-m
 					"parent": "not_assigned",
 					"allowed": True,
 				}
-
+		if not host_groups.get("children"):
+			host_groups["children"] = []
 		if parentGroup == "root":
 			return RESTResponse(data={"groups": host_groups.get("children")})
 		return RESTResponse(data={"groups": host_groups})
@@ -750,6 +717,7 @@ def read_groups(
 				"type": "HostGroup",
 				"text": row["group_id"],
 				"parent": row["parent_id"] or root_group["id"],
+				"children": None,
 			}
 		if row["object_id"] and withClients:
 			if row["object_id"] in selectedClients:
