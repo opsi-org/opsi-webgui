@@ -22,18 +22,29 @@
     <b-sidebar
       id="groupexplorer"
       :visible="showTreeExplorer"
-      :title="$t('Group Explorer')"
+      :title="$t('Quick Actions')"
       header-class="text-small"
-      bg-variant="primary"
-      text-variant="light"
+      bg-variant="sidebar-bg"
+      text-variant="sidebar-text"
       right
       no-close-on-route-change
       @hidden="showTreeExplorer = false"
     >
       <b-container>
+        <b-row class="text-small mb-2">
+          <b>{{ $t('Quick Selections') }} </b>
+        </b-row>
         <TreeTSDepots /> <br>
         <TreeTSHostGroups /> <br>
         <TreeTSProductGroups /> <br>
+        <b-row class="text-small mb-2">
+          <b>{{ $t('Quick Tasks') }} </b>
+        </b-row>
+        <GridGFormItem :label="$t('title.products')" variant="longlabel">
+          <template #value>
+            <ModalMProductActions />
+          </template>
+        </GridGFormItem>
       </b-container>
     </b-sidebar>
     <div class="main_content">
@@ -201,5 +212,11 @@ export default class LayoutDefault extends Vue {
   top: calc(var(--height-navbar) - 2px) !important;
   width: 320px;
   height: 100% !important;
+}
+.sidebar-bg {
+  background-color: var(--background) !important;
+}
+.sidebar-text{
+  color: var(--color) !important;
 }
 </style>
