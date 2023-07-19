@@ -39,6 +39,11 @@
             <ModalMSelectionsAll />
           </template>
         </GridGFormItem>
+        <GridGFormItem :label="$t('View Tracked Changes')" variant="longlabel">
+          <template #value>
+            <ModalMTrackChanges v-if="$mq != 'mobile'" />
+          </template>
+        </GridGFormItem>
 
         <b-row class="text-small mt-4 mb-2">
           <b>{{ $t('Quick Selections') }} </b>
@@ -74,6 +79,19 @@
         <GridGFormItem :label="$t('title.products')" variant="longlabel">
           <template #value>
             <ModalMProductActions />
+          </template>
+        </GridGFormItem>
+        <b-row class="text-small mt-4 mb-2">
+          <b>{{ $t('Settings') }} </b>
+        </b-row>
+        <GridGFormItem v-once data-testid="quicksave">
+          <template #label>
+            <span class="quicksave">{{ $t('form.quicksave') }}</span>
+            <ButtonBTNHelp id="savemode-help" />
+            <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="grid" />
+          </template>
+          <template #value>
+            <CheckboxCBQuickSave />
           </template>
         </GridGFormItem>
       </b-container>
@@ -134,6 +152,13 @@ export default class LayoutDefault extends Vue {
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
     await this.checkServer()
+  }
+
+  get helpSavemode () {
+    return [
+      { label: this.$t('label.on'), description: this.$t('description.quicksave.on') },
+      { label: this.$t('label.off'), description: this.$t('description.quicksave.off') }
+    ]
   }
 
   get themeclass () {
