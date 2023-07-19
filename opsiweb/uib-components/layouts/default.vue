@@ -6,8 +6,8 @@
       desktop: $mq === 'desktop',
       sidebar_collapsed: !sidebarAttr.expanded && $mq!=='mobile',
       sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile',
-      groupexplorer_opened: showTreeExplorer,
-      groupexplorer_closed: !showTreeExplorer
+      groupexplorer_opened: showQuickPanel,
+      groupexplorer_closed: !showQuickPanel
     }"
   >
     <BarBTop class="topbar_content">
@@ -21,23 +21,54 @@
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
     <b-sidebar
       id="groupexplorer"
-      :visible="showTreeExplorer"
-      :title="$t('Quick Actions')"
-      header-class="text-small"
-      bg-variant="sidebar-bg"
-      text-variant="sidebar-text"
+      :visible="showQuickPanel"
+      :no-header="$mq=='desktop'"
+      :backdrop="$mq == 'mobile'"
+      :bg-variant="$mq == 'mobile'? 'primary' : 'sidebar-bg'"
+      :text-variant="$mq == 'mobile'? 'light' : 'sidebar-text'"
       right
       no-close-on-route-change
-      @hidden="showTreeExplorer = false"
+      @hidden="showQuickPanel = false"
     >
       <b-container>
-        <b-row class="text-small mb-2">
+        <b-row class="text-small mb-2 mt-3">
+          <b>{{ $t('Quick Overview') }} </b>
+        </b-row>
+        <GridGFormItem :label="$t('View Selections')" variant="longlabel">
+          <template #value>
+            <ModalMSelectionsAll />
+          </template>
+        </GridGFormItem>
+
+        <b-row class="text-small mt-4 mb-2">
           <b>{{ $t('Quick Selections') }} </b>
         </b-row>
-        <TreeTSDepots /> <br>
-        <TreeTSHostGroups /> <br>
-        <TreeTSProductGroups /> <br>
-        <b-row class="text-small mb-2">
+        <TreeTSDepots classes="treeselect_fullpage" />
+        <b-input-group class="d-flex flex-nowrap">
+          <TreeTSHostGroups :open="clientAlwaysOpen" type="propertyvalues" classes="treeselect_fullpage" />
+          <b-button
+            variant="outline-primary"
+            size="sm"
+            class="border-0"
+            :title="clientAlwaysOpen? $t('Minimize Client Groups'): $t('Maximize Client Groups')"
+            :pressed.sync="clientAlwaysOpen"
+          >
+            <b-icon :icon="clientAlwaysOpen? 'box-arrow-left' : 'arrow-down-left'" />
+          </b-button>
+        </b-input-group>
+        <b-input-group class="d-flex flex-nowrap">
+          <TreeTSProductGroups :open="productAlwaysOpen" type="propertyvalues" classes="treeselect_fullpage" />
+          <b-button
+            variant="outline-primary"
+            size="sm"
+            class="border-0"
+            :title="productAlwaysOpen? $t('Minimize Product Groups'): $t('Maximize Product Groups')"
+            :pressed.sync="productAlwaysOpen"
+          >
+            <b-icon :icon="productAlwaysOpen? 'box-arrow-left' : 'arrow-down-left'" />
+          </b-button>
+        </b-input-group>
+        <b-row class="text-small mt-4 mb-2">
           <b>{{ $t('Quick Tasks') }} </b>
         </b-row>
         <GridGFormItem :label="$t('title.products')" variant="longlabel">
@@ -48,8 +79,8 @@
       </b-container>
     </b-sidebar>
     <div class="main_content">
-      <b-button :pressed.sync="showTreeExplorer" :title="$t('Group Explorer')" size="sm" variant="outline-primary" class="float-right">
-        <b-icon :icon="icon.group" />
+      <b-button :pressed.sync="showQuickPanel" :title="showQuickPanel ? $t('Show Quick Panel'): $t('Hide Quick Panel')" size="sm" variant="outline-primary" class="float-right mt-1">
+        <b-icon :icon="showQuickPanel ? icon.arrowRight: icon.arrowLeft" />
       </b-button>
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
@@ -86,6 +117,8 @@ export default class LayoutDefault extends Vue {
   wsInit: any // mixin
   wsBus: any // mixin
   getOpsiConfigServer:any
+  clientAlwaysOpen: boolean = false
+  productAlwaysOpen: boolean = false
 
   @config.Getter public config!: IObjectString2Boolean
   @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
@@ -97,7 +130,7 @@ export default class LayoutDefault extends Vue {
 
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
 
-  showTreeExplorer:boolean = false
+  showQuickPanel:boolean = false
 
   @Watch('opsiconfigserver', { deep: true }) async serverChanged () {
     await this.checkServer()
@@ -203,14 +236,14 @@ export default class LayoutDefault extends Vue {
   width: calc(100% - var(--margin-left-maincontent-if-sidebar-expanded) - var(--margin-left-maincontent));
 }
 :not(.mobile).groupexplorer_opened .main_content{
-  width: calc(100% - 510px) !important;
+  width: calc(100% - 600px) !important;
 }
 :not(.mobile).groupexplorer_closed.main_content{
   width: 100%;
 }
 #groupexplorer {
   top: calc(var(--height-navbar) - 2px) !important;
-  width: 320px;
+  width: 400px;
   height: 100% !important;
 }
 .sidebar-bg {

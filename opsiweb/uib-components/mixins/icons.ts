@@ -32,6 +32,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     valueShow: 'eye-slash',
     valueHide: 'eye',
     arrowRight: 'chevron-right',
+    arrowLeft: 'chevron-left',
     arrowUp: 'chevron-up',
     arrowDown: 'chevron-down',
     arrowDoubleUp: 'chevron-double-up',
