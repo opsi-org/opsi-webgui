@@ -18,6 +18,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     navmenu: 'list',
     menu: 'three-dots-vertical',
     loading: 'three-dots',
+    refetch: 'arrow-clockwise',
     reset: 'arrow-counterclockwise',
     exclamation: 'exclamation',
     pencil: 'pencil',

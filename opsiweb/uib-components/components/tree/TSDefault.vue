@@ -3,7 +3,7 @@
     <div v-if="iconProp" class="p-1">
       <b-iconstack font-scale="1">
         <b-icon stacked :icon="iconProp" variant="transparent" />
-        <b-icon v-if="$fetchState.pending" stacked :icon="icon.reset" animation="spin" scale="2" />
+        <b-icon v-if="$fetchState.pending" stacked :icon="icon.refetch" animation="spin" scale="2" />
       </b-iconstack>
     </div>
     <ModalMSelections
