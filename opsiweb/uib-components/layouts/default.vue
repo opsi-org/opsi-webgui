@@ -84,7 +84,7 @@
         <b-row class="text-small mt-4 mb-2">
           <b>{{ $t('Settings') }} </b>
         </b-row>
-        <GridGFormItem v-once data-testid="quicksave">
+        <GridGFormItem v-once data-testid="quicksave" variant="longlabel">
           <template #label>
             <span class="quicksave">{{ $t('form.quicksave') }}</span>
             <ButtonBTNHelp id="savemode-help" />
