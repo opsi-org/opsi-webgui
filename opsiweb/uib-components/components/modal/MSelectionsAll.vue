@@ -2,7 +2,7 @@
   <div data-testid="MSelectionsAll">
     <b-button
       data-testid="MSelectionsAllButton"
-      variant="primary border-0"
+      variant="outline-primary border-0"
       class="global_topbar_button"
       size="sm"
       tabindex="0"
