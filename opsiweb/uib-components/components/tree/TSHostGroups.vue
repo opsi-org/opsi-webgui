@@ -98,7 +98,7 @@ export default class TSHostGroups extends Vue {
         parentNode.children = this.clientlistGroups
       }
     } else {
-      const result = (await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=${parentNode.text}`)).groups.children
+      const result = (await this.$axios.$get(`/api/opsidata/hosts/groups-dynamic?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=${parentNode.text}`)).groups.children
       if (result !== null) {
         const values = Object.values(result)
         await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
