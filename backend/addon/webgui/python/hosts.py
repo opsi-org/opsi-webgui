@@ -448,25 +448,23 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 	else:
 		params["depots"] = selectedDepots
 
-	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
-
 	where = text("g.`type` = 'HostGroup'")
 	where_depots = text("")
-	if parentGroup:
-		if parentGroup == "groups":
-			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))  # type: ignore
-			where_hosts = text("og.groupId IS NULL")
-		elif parentGroup == "root":
-			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))  # type: ignore
-			where_hosts = text("og.groupId IS NULL")
-			root_group = {"id": None, "type": "HostGroup", "text": None, "parent": None}
-		else:
-			params["parent"] = parentGroup
-			where = and_(where, text("g.parentGroupId = :parent"))  # type: ignore
-			where_hosts = text("og.groupId = :parent")  # type: ignore
-			root_group = {"id": parentGroup, "type": "HostGroup", "text": parentGroup, "parent": None}
+
+	if parentGroup == "root" or not parentGroup:
+		parentGroup = "root"
+		where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))  # type: ignore
+		where_hosts = text("og.groupId IS NULL")
+		root_group = {"id": None, "type": "HostGroup", "text": None, "parent": None}
+	elif parentGroup == "groups":
+		where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))  # type: ignore
+		where_hosts = text("og.groupId IS NULL")
+		root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
 	else:
-		parentGroup = ""
+		params["parent"] = parentGroup
+		where = and_(where, text("g.parentGroupId = :parent"))  # type: ignore
+		where_hosts = text("og.groupId = :parent")  # type: ignore
+		root_group = {"id": parentGroup, "type": "HostGroup", "text": parentGroup, "parent": None}
 
 	for idx, depot in enumerate(params["depots"]):
 		if idx > 0:
@@ -605,7 +603,6 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 	with mysql.session() as session:
 		while groups:
 			for group_id in groups.copy():
-				groups.remove(group)
 				query = (
 					select(text("g.groupId AS group_id, g.type AS group_type"))
 					.select_from(table("GROUP").alias("g"))
@@ -623,6 +620,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 				for row in result2:
 					if row:
 						clients.add(dict(row).get("objectId"))
+				groups.remove(group_id)
 
 		username = get_username()
 		allowed_clients = None
@@ -657,7 +655,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 			if row:
 				all_clients.add(dict(row).get("clientId"))
 
-	return list(all_clients - clients)
+	return sorted(list(all_clients - clients))
 
 
 def _get_host_groups_ids() -> list[str]:
