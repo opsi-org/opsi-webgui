@@ -25,7 +25,7 @@
           v-if="moreDetails.length>1"
           :title="showMore? $t('button.collapse'): $t('button.expand')"
           size="sm"
-          :variant="alertVariant"
+          variant="alertdetails"
           class="float-right border-0 p-0 pb-2"
           :pressed.sync="showMore"
         >
@@ -79,5 +79,9 @@ export default class AAlert extends BAlert {
 .alertbar .list-data-object .list-group-item {
   padding-top: 0px;
   padding-bottom: 0px;
+}
+.alertdetails {
+  color: var(--color);
+  background-color: var(--background);
 }
 </style>
