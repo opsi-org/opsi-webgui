@@ -362,7 +362,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			)
 			.where(where)
 		)
-		print(query)
+
 		result = session.execute(query, params)
 		result = result.fetchall()
 
@@ -400,9 +400,35 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 				}
 
 	host_groups = build_group_tree(root_group, all_groups.values(), processed)
-	logger.devel(host_groups["children"]["clientdirectory"])
+
+	# logger.devel(host_groups["children"]["clientdirectory"])
 	clientdirectory = host_groups["children"]["clientdirectory"]
 	clientdirectory["parent"] = None
+
+	if not clientdirectory.get("children"):
+		clientdirectory["children"] = {}
+
+	children = {}
+	children["not_assigned"] = {
+		"id": "not_assigned",
+		"type": "HostGroup",
+		"text": "not_assigned",
+		"parent": "clientdirectory",
+		"children": {},
+	}
+	children.update(clientdirectory["children"])
+	clientdirectory["children"] = children
+
+	clients = group_get_all_clients("clientdirectory", selectedDepots)
+
+	for client in clients:
+		clientdirectory["children"]["not_assigned"]["children"][client] = {
+			"id": client,
+			"type": "ObjectToGroup",
+			"text": client,
+			"parent": "not_assigned",
+		}
+
 	del host_groups["children"]["clientdirectory"]
 	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
 
