@@ -25,13 +25,20 @@
         </GridGFormItem>
       </div>
     </DivDScrollResult>
-    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" variant="longvalue">
+    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver'" variant="longvalue">
       <template #value>
         <div class="float-right">
           <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="$fetch">
             <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
           </b-button>
-          <b-button id="updateButton" class="updateButton" variant="success" size="sm" @click="updateAttributes()">
+          <b-button
+            id="updateButton"
+            :disabled="config?.read_only"
+            class="updateButton"
+            variant="success"
+            size="sm"
+            @click="updateAttributes()"
+          >
             <b-icon :icon="icon.check" /> {{ $t('button.save') }}
           </b-button>
         </div>

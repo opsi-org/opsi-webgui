@@ -5,7 +5,7 @@
       variant="outline-primary"
       size="sm"
       class="w-100 h-100 text-left border-0"
-      :disabled="(config)?config.read_only:false"
+      :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-rename-' + clientId)"
     >
       <b-icon :icon="icon.pencil" />  <span> {{ $t('label.rename') }} </span>
@@ -15,7 +15,7 @@
       variant="outline-primary"
       size="sm"
       class="w-100 h-100 text-left border-0"
-      :disabled="(config)?config.read_only:false"
+      :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-rename-' + clientId)"
       @keypress.enter="$bvModal.show('event-modal-rename-' + clientId)"
     >

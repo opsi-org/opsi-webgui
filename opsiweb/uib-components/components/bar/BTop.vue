@@ -54,10 +54,8 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { Component, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
-const config = namespace('config-app')
 
 @Component({ mixins: [Icons] })
 export default class BTop extends Vue {
@@ -68,8 +66,6 @@ export default class BTop extends Vue {
   icon:any
 
   rightmenuVisible:boolean = false
-
-  @config.Getter public config!: IObjectString2Boolean
 
   get username () {
     return localStorage.getItem('username')
