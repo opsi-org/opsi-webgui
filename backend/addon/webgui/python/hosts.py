@@ -158,7 +158,7 @@ def get_host_data(
 		return RESTResponse(data=host_data)
 
 
-class HostGroup(BaseModel):
+class HostGroup(BaseModel):  # pylint: disable=too-few-public-methods
 	groupId: str
 	parentGroupId: Optional[str] = None
 	description: Optional[str] = None
@@ -222,7 +222,9 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 @host_router.post("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
 def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str, clients: List[str] = Body(default=None)
+	request: Request,  # pylint: disable=unused-argument
+	group: str,
+	clients: List[str] = Body(default=None),
 ) -> RESTResponse:
 	"""
 	Add clients to host group
@@ -253,7 +255,7 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 @host_router.delete("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
 def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str
+	request: Request, group: str  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Remove clients from host group
@@ -261,7 +263,7 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
 
 	try:
 		backend.objectToGroup_delete(groupType="HostGroup", objectId="*", groupId=group)
-	except Exception as error:
+	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
 		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
 
@@ -271,14 +273,14 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
 @host_router.delete("/api/opsidata/hosts/groups/{group}")
 @rest_api
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str
+	request: Request, group: str  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Delete host group
 	"""
 	try:
 		backend.group_delete(group)
-	except Exception as error:
+	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
 		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
 
@@ -303,7 +305,7 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 	try:
 		backend.group_updateObject(values)
-	except Exception as error:
+	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
 		return RESTErrorResponse(message=f"Could not update group {group}.", details=error)
 
@@ -314,7 +316,6 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 @rest_api
 def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	selectedDepots: List[str] = Depends(parse_depot_list),
-	withClients: bool = True,
 ) -> RESTResponse:
 	"""
 	Get host groups as tree.
@@ -366,43 +367,13 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 		result = session.execute(query, params)
 		result = result.fetchall()
 
-	all_groups = {}
-	processed = []
+	all_groups: dict = {}
+	processed: list[str] = []
 	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
 	all_groups = read_groups(result, root_group, [], True)
-	# for row in result:
-	# 	if not row["group_id"] in all_groups:
-	# 		all_groups[row["group_id"]] = {
-	# 			"id": row["group_id"],
-	# 			"type": "HostGroup",
-	# 			"text": row["group_id"],
-	# 			"parent": row["parent_id"] or root_group["id"],
-	# 		}
 
-	# 	if row["object_id"]:
-	# 		# if row["object_id"] in selectedClients:
-	# 		# 	all_groups[row["group_id"]]["hasAnySelection"] = True
-	# 		if "children" not in all_groups[row["group_id"]]:
-	# 			all_groups[row["group_id"]]["children"] = {}
-	# 		if row.group_id == row.parent_id:
-	# 			if not row["object_id"] in all_groups:
-	# 				all_groups[row["object_id"]] = {
-	# 					"id": row["object_id"],
-	# 					"type": "ObjectToGroup",
-	# 					"text": row["object_id"],
-	# 					"parent": row["parent_id"] or root_group["id"],
-	# 				}
-	# 		else:
-	# 			all_groups[row["group_id"]]["children"][row["object_id"]] = {
-	# 				"id": row["object_id"],
-	# 				"type": "ObjectToGroup",
-	# 				"text": row["object_id"],
-	# 				"parent": row["group_id"],
-	# 			}
+	host_groups = build_group_tree(root_group, dict(all_groups.values()), processed)
 
-	host_groups = build_group_tree(root_group, all_groups.values(), processed)
-
-	# logger.devel(host_groups["children"]["clientdirectory"])
 	clientdirectory = host_groups["children"]["clientdirectory"]
 	clientdirectory["parent"] = None
 
@@ -434,7 +405,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
 
 
-def build_group_tree(current_group: dict, groups: dict, processed: list):
+def build_group_tree(current_group: dict, groups: dict, processed: list) -> dict:
 	if not processed:
 		processed = []
 	processed.append(current_group["id"])
@@ -622,9 +593,9 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 		return RESTResponse(data={"groups": host_groups})
 
 
-def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:  # pylint: disable: dangerous-default-value
-	clients = set()  # pylint: disable: dangerous-default-value
-	all_clients = set()  # pylint: disable: dangerous-default-value
+def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:  # pylint: disable=dangerous-default-value
+	clients = set()
+	all_clients = set()
 	groups = {group}
 
 	with mysql.session() as session:
