@@ -3,14 +3,14 @@
     <b-form-checkbox
       v-if="configtype === 'BoolConfig'"
       v-model="localval"
-      :disabled="(config)? config.read_only : false"
+      :disabled="config?.read_only"
       data-testid="GCHostParamBool"
       @input="selectValue"
     />
     <TreeTSDefaultWithAdding
       v-else
       v-model="localval"
-      :disabled="(config)? config.read_only : false"
+      :disabled="config?.read_only"
       data-testid="GCHostParamUnicode"
       class="treeselect_notstored treeselect"
       :multiple="row.multiValue"

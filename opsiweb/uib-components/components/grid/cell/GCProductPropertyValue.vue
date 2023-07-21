@@ -9,7 +9,7 @@
         v-if="rowItem.type=='BoolProductProperty'"
         :class="{'GCProductPropertyValue_ValueBool':true,'value-changed-not-saved': !isOrigin }"
         :checked="selectedValues[0]"
-        :disabled="(config)? config.read_only : false"
+        :disabled="config?.read_only"
         :aria-label="rowItem.propertyId + (selectedValues[0]?'checked':'unchecked')"
         :indeterminate="visibleValueBoolIndeterminate"
         @change="handleBoolChange"
@@ -20,7 +20,7 @@
         v-else
         :id="'PropertyValue-' + rowItem.propertyId"
         type="propertyvalues"
-        :disabled="(config)? config.read_only : false"
+        :disabled="config?.read_only"
         :text="undefined"
         :show-selection-count="selectedValues.length>1 || !isOrigin"
         :limit-visible-selection="1"

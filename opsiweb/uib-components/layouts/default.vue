@@ -120,17 +120,11 @@ export default class LayoutDefault extends Vue {
   async checkConfig () {
     try {
       const response = (await this.$axios.$get('/api/user/configuration')).configuration
-      if (response == null) {
-        this.setConfig({ read_only: false, client_creation: false })
-      } else {
-        this.setConfig(response)
-      }
-      // this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
+      this.setConfig(response)
     } catch (error: any) {
       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.errorAlert as any)
       ref.alert(detailedError, 'danger')
-      this.setConfig({ read_only: true, client_creation: true })
     }
   }
 }

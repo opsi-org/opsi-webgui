@@ -5,7 +5,7 @@
       variant="outline-primary"
       size="sm"
       class="w-100 h-100 text-left border-0"
-      :disabled="(config)?config.read_only:false"
+      :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-delete-' + clientId)"
     >
       <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
@@ -15,7 +15,7 @@
       variant="outline-primary"
       size="sm"
       class="w-100 h-100 text-left border-0"
-      :disabled="(config)?config.read_only:false"
+      :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-delete-' + clientId)"
       @keypress.enter="$bvModal.show('event-modal-delete-' + clientId)"
     >
@@ -39,7 +39,7 @@
         variant="danger"
         class="float-right"
         size="sm"
-        :disabled="(config)?config.read_only:false"
+        :disabled="config?.read_only"
         @click="deleteOpsiClient(clientId)"
       >
         <b-icon :icon="icon.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>

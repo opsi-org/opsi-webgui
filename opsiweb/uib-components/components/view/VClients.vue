@@ -213,9 +213,7 @@ import { MBus } from '../../mixins/messagebus'
 import { Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
-const config = namespace('config')
 interface DeleteClient {
   clientid: string
 }
@@ -325,7 +323,6 @@ export default class VClients extends Vue {
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
   cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
 
-  @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void

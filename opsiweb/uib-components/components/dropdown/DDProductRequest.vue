@@ -7,7 +7,7 @@
       no-caret
       lazy
       dropdown
-      :disabled="(config)? config.read_only : false"
+      :disabled="config?.read_only"
       variant="outline-primary"
       size="sm"
       alt="Show column"

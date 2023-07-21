@@ -5,7 +5,7 @@
       variant="outline-primary"
       size="sm"
       class="w-100 h-100 text-left border-0"
-      :disabled="(config)?config.read_only:false"
+      :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-deployCA-' + clientId)"
     >
       <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
@@ -15,7 +15,7 @@
       variant="outline-primary"
       size="sm"
       class="w-100 h-100 text-left border-0"
-      :disabled="(config)?config.read_only:false"
+      :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-deployCA-' + clientId)"
       @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId)"
     >
@@ -61,7 +61,7 @@
             variant="success"
             size="sm"
             class="float-right"
-            :disabled="(config)?config.read_only:false"
+            :disabled="config?.read_only"
             @click="deployclientagent()"
           >
             <span class="deploy"> {{ $t('button.confirm') }} </span>
