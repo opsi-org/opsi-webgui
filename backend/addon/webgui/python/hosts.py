@@ -369,35 +369,36 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	all_groups = {}
 	processed = []
 	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
-	for row in result:
-		if not row["group_id"] in all_groups:
-			all_groups[row["group_id"]] = {
-				"id": row["group_id"],
-				"type": "HostGroup",
-				"text": row["group_id"],
-				"parent": row["parent_id"] or root_group["id"],
-			}
+	all_groups = read_groups(result, root_group, [], True)
+	# for row in result:
+	# 	if not row["group_id"] in all_groups:
+	# 		all_groups[row["group_id"]] = {
+	# 			"id": row["group_id"],
+	# 			"type": "HostGroup",
+	# 			"text": row["group_id"],
+	# 			"parent": row["parent_id"] or root_group["id"],
+	# 		}
 
-		if row["object_id"]:
-			# if row["object_id"] in selectedClients:
-			# 	all_groups[row["group_id"]]["hasAnySelection"] = True
-			if "children" not in all_groups[row["group_id"]]:
-				all_groups[row["group_id"]]["children"] = {}
-			if row.group_id == row.parent_id:
-				if not row["object_id"] in all_groups:
-					all_groups[row["object_id"]] = {
-						"id": row["object_id"],
-						"type": "ObjectToGroup",
-						"text": row["object_id"],
-						"parent": row["parent_id"] or root_group["id"],
-					}
-			else:
-				all_groups[row["group_id"]]["children"][row["object_id"]] = {
-					"id": row["object_id"],
-					"type": "ObjectToGroup",
-					"text": row["object_id"],
-					"parent": row["group_id"],
-				}
+	# 	if row["object_id"]:
+	# 		# if row["object_id"] in selectedClients:
+	# 		# 	all_groups[row["group_id"]]["hasAnySelection"] = True
+	# 		if "children" not in all_groups[row["group_id"]]:
+	# 			all_groups[row["group_id"]]["children"] = {}
+	# 		if row.group_id == row.parent_id:
+	# 			if not row["object_id"] in all_groups:
+	# 				all_groups[row["object_id"]] = {
+	# 					"id": row["object_id"],
+	# 					"type": "ObjectToGroup",
+	# 					"text": row["object_id"],
+	# 					"parent": row["parent_id"] or root_group["id"],
+	# 				}
+	# 		else:
+	# 			all_groups[row["group_id"]]["children"][row["object_id"]] = {
+	# 				"id": row["object_id"],
+	# 				"type": "ObjectToGroup",
+	# 				"text": row["object_id"],
+	# 				"parent": row["group_id"],
+	# 			}
 
 	host_groups = build_group_tree(root_group, all_groups.values(), processed)
 
@@ -433,7 +434,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
 
 
-def build_group_tree(current_group, groups, processed):
+def build_group_tree(current_group: dict, groups: dict, processed: list):
 	if not processed:
 		processed = []
 	processed.append(current_group["id"])
@@ -445,7 +446,7 @@ def build_group_tree(current_group, groups, processed):
 			else:
 				children[group["id"]] = build_group_tree(group, groups, processed)
 	if children:
-		if "children" not in current_group:
+		if not current_group.get("children"):
 			current_group["children"] = {}
 		current_group["children"].update(children)
 	# else:
@@ -746,7 +747,7 @@ def read_groups(
 		if row["object_id"] and withClients:
 			if row["object_id"] in selectedClients:
 				all_groups[row["group_id"]]["hasAnySelection"] = True
-			if "children" not in all_groups[row["group_id"]]:
+			if not all_groups[row["group_id"]].get("children"):
 				all_groups[row["group_id"]]["children"] = {}
 			if row.group_id == row.parent_id:
 				if not row["object_id"] in all_groups:
@@ -763,8 +764,6 @@ def read_groups(
 					"text": row["object_id"],
 					"parent": row["group_id"],
 				}
-		# if row["group_id"] == "clientdirectory":
-		# 	all_groups["clientdirectory"]["parent"] = None
 
 	return all_groups
 
