@@ -40,8 +40,8 @@ const settings = namespace('settings')
 }
 
 @Component export class SetUEFI extends Vue {
-  async setUEFI (clientId: string) {
-    await this.$axios.$post(`api/opsidata/clients/${clientId}/uefi`)
+  async setUEFI (clientId: string, uefi:string) {
+    await this.$axios.$post(`api/opsidata/clients/${clientId}/uefi`, uefi)
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)

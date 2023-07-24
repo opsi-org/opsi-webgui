@@ -128,7 +128,7 @@ export default class GHostAttributes extends Vue {
     delete attr.lastSeen
     delete attr.systemUUID
     if (this.type === 'clients') {
-      this.setUEFI(this.hostAttr.hostId)
+      this.setUEFI(this.hostAttr.hostId, attr.uefi.toString())
       delete attr.uefi
       endPoint = `/api/opsidata/clients/${this.hostAttr.hostId}`
     } else {
