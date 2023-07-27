@@ -174,11 +174,14 @@ export default class BTNEvent extends Vue {
     const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
     await this.$axios.$post('/api/command/opsiclientd_rpc', data.params)
       .then((response) => {
-        data.responseVisualization(ref, response)
+        ref.alert(this.$t('message.info.event'), 'info', response)
+        // data.responseVisualization(ref, response)
         this.callEventSended()
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
+        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        // ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
+        // eslint-disable-next-line no-console
+        console.error(error)
         this.callEventSended()
       })
     this.$bvModal.hide('event-modal-' + this.event + '-' + this.data)

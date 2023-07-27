@@ -44,6 +44,7 @@
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
           <ModalMSelectionsAll :with-text="$mq=='mobile'" />
           <ButtonBTNEvent :navbar="true" event="ondemand" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
+          <ModalMClientEvents event="ondemand" :multiclients="true" />
           <DropdownDDLang v-once />
           <DropdownDDTheme v-once :navbar="true" />
           <ButtonBTNLogout v-once />

@@ -9,7 +9,7 @@
   "empty": "--",
 
   "message.loading": "Loading",
-  "message.info.event": "Information to the event: ",
+  "message.info.event": "EVENT INFO: ",
   "message.success.title": "Success",
   "message.success.createClient": "{client} has been added succesfully.",
   "message.success.updateHostAttr": "Attributes of {client} has been saved succesfully.",
