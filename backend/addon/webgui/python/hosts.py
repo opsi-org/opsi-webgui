@@ -270,6 +270,16 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
 	return RESTResponse(data=f"Removed all clients from {group}.")
 
 
+def get_sub_groups(group: str) -> list:
+	result = set()
+	groups = [g.id for g in backend.group_getObjects(parentGroupId=group)]
+	result.update(groups)
+	for subgroup in groups:
+		result.update(get_sub_groups(subgroup))
+
+	return result
+
+
 @host_router.delete("/api/opsidata/hosts/groups/{group}")
 @rest_api
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
@@ -279,6 +289,9 @@ def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 	Delete host group
 	"""
 	try:
+		subgroups = get_sub_groups(group)
+		for grp in subgroups:
+			backend.group_delete(grp)
 		backend.group_delete(group)
 	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
