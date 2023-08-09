@@ -372,7 +372,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
 	all_groups = read_groups(result, root_group, [], True)
 
-	host_groups = build_group_tree(root_group, dict(all_groups.values()), processed)
+	host_groups = build_group_tree(root_group, list(all_groups.values()), processed)
 
 	clientdirectory = host_groups["children"]["clientdirectory"]
 	clientdirectory["parent"] = None
@@ -405,7 +405,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
 
 
-def build_group_tree(current_group: dict, groups: dict, processed: list) -> dict:
+def build_group_tree(current_group: dict, groups: list[dict], processed: list) -> dict:
 	if not processed:
 		processed = []
 	processed.append(current_group["id"])
@@ -573,7 +573,10 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 					"children": None,
 				}
 			}
-			host_groups["children"] = {**not_assigned, **host_groups["children"]}
+			if host_groups.get("children"):
+				host_groups["children"] = {**not_assigned, **host_groups["children"]}
+			else:
+				host_groups["children"] = {**not_assigned}
 
 		if parentGroup == "not_assigned" and withClients:
 			clients = group_get_all_clients("clientdirectory", selectedDepots)
