@@ -31,6 +31,37 @@
                     {{ node.label }}
                     <div class="float-right">
                       <b-button
+                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.editGroup')"
+                        @click="showChild('editGroup')"
+                      >
+                        <b-icon :icon="icon.pencil" />
+                      </b-button>
+                      <b-button
+                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.deletegroup')"
+                        @click="showChild('deletegroup')"
+                      >
+                        <b-icon :icon="icon.delete" />
+                      </b-button>
+                      <b-button
+                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
+                        class="border-0"
+                        variant="outline-primary"
+                        size="sm"
+                        :title="$t('group.deleteOnlyClients')"
+                        @click="showChild('deleteOnlyClients')"
+                      >
+                        <b-icon :icon="icon.client" /><b-icon font-scale="0.8" :icon="icon.delete" />
+                      </b-button>
+                      <b-button
+                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
@@ -47,33 +78,6 @@
                         @click="showChild('addSubgroup')"
                       >
                         <b-icon :icon="icon.group" /><b-icon :icon="icon.add" font-scale="0.8" />
-                      </b-button>
-                      <b-button
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.editGroup')"
-                        @click="showChild('editGroup')"
-                      >
-                        <b-icon :icon="icon.pencil" />
-                      </b-button>
-                      <b-button
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.deleteOnlyClients')"
-                        @click="showChild('deleteOnlyClients')"
-                      >
-                        <b-icon :icon="icon.client" /><b-icon font-scale="0.8" :icon="icon.delete" />
-                      </b-button>
-                      <b-button
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.deletegroup')"
-                        @click="showChild('deletegroup')"
-                      >
-                        <b-icon :icon="icon.delete" />
                       </b-button>
                     </div>
                   </template>
