@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VModules" :class="{loadingCursor: $fetchState.pending}">
     <OverlayOLoading :is-loading="$fetchState.pending" />
-    <LazyGridGFormItem v-if="!errorText" v-once :label="$t('form.modules.available')">
+    <LazyGridGFormItem v-if="!errorText" v-once :label="$t('form.modules.available')" labelclass="modules">
       <template #value>
         <b-form-textarea
           id="modules-list"

@@ -4,7 +4,7 @@
     <AlertAAlert ref="clientagentAlert" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <OverlayOLoading :is-loading="isLoading" />
-    <GridGFormItem value-more="true" variant="longvalue" :label="$t('table.fields.id')">
+    <GridGFormItem value-more="true" variant="longvalue" :label="$t('table.fields.id')" labelclass="id">
       <template #value>
         <b-form-input
           id="clientname"
@@ -40,7 +40,7 @@
         v-for="(value, label, index) in newClient"
         :key="index"
         :label="label"
-        labelclass="text-capitalize"
+        :labelclass="'text-capitalize ' + label"
         variant="longvalue"
         :class="label.toString() === 'hostId' ? 'd-none' : ''"
       >
@@ -60,12 +60,12 @@
     <b-row class="text-small mb-2">
       <b class="assignments">{{ $t('title.assignments') }} </b>
     </b-row>
-    <GridGFormItem :label="$t('table.fields.depot')" variant="longvalue">
+    <GridGFormItem :label="$t('table.fields.depot')" variant="longvalue" labelclass="depot">
       <template #value>
         <TreeTSDepotsNotStored :id.sync="depotId" />
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.group')" variant="longvalue">
+    <GridGFormItem :label="$t('table.fields.group')" variant="longvalue" labelclass="group">
       <template #value>
         <TreeTSGroupInitSelection :id.sync="group" />
       </template>
@@ -73,7 +73,7 @@
     <b-row class="text-small mb-2">
       <b class="initsetup">{{ $t('title.initsetup') }} </b>
     </b-row>
-    <GridGFormItem :label=" $t('table.fields.netbootproduct')" variant="longvalue">
+    <GridGFormItem :label=" $t('table.fields.netbootproduct')" variant="longvalue" labelclass="netbootproduct">
       <template #value>
         <b-form-select
           id="netbootproduct"
@@ -85,7 +85,7 @@
         />
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.clientagent')" variant="longvalue">
+    <GridGFormItem :label="$t('table.fields.clientagent')" variant="longvalue" labelclass="clientagent">
       <template #value>
         <b-form inline>
           <b-form-checkbox v-model="clientagent" />
@@ -116,7 +116,7 @@
     <b-row class="text-small mb-2">
       <b class="settings">{{ $t('title.settings') }} </b>
     </b-row>
-    <GridGFormItem :label="$t('table.fields.uefi')" variant="longvalue">
+    <GridGFormItem :label="$t('table.fields.uefi')" variant="longvalue" labelclass="uefi">
       <template #value>
         <b-form-checkbox id="uefi" v-model="uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
       </template>
@@ -124,19 +124,22 @@
     <GridGFormItem variant="longvalue">
       <template #value>
         <div class="float-right mt-2">
-          <b-button id="resetButton" class="resetButton" size="sm" variant="primary" @click="resetNewClientForm()">
-            <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
+          <b-button id="resetButton" class="resetButton d-inline" size="sm" variant="primary" @click="resetNewClientForm()">
+            <b-icon :icon="icon.reset" class="d-inline" />
+            <div class="resetButtonLabel d-inline">{{ $t('button.reset') }}</div>
           </b-button>
+
           <b-button
             id="addButton"
             data-testid="addButton"
             size="sm"
-            class="addButton"
+            class="addButton d-inline"
             variant="success"
             :disabled="!clientName"
             @click="createOpsiClient()"
           >
-            <b-icon :icon="icon.add" /> {{ $t('button.create') }}
+            <b-icon :icon="icon.add" class="d-inline" />
+            <div class="addButtonLabel d-inline">{{ $t('button.create') }}</div>
           </b-button>
         </div>
       </template>

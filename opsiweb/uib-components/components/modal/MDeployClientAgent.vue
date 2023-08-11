@@ -35,22 +35,22 @@
     >
       <AlertAAlert ref="clientagentAlert" />
 
-      <GridGFormItem :label="$t('Client ID')">
+      <GridGFormItem :label="$t('Client ID')" variant="longlabel" labelclass="clientId">
         <template #value>
           <b-form-input :value="clientId" size="sm" disabled />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label="$t('form.username')">
+      <GridGFormItem :label="$t('form.username')" variant="longlabel" labelclass="username">
         <template #value>
           <b-form-input id="username" v-model="form.username" size="sm" required />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label="$t('form.password')">
+      <GridGFormItem :label="$t('form.password')" variant="longlabel" labelclass="password">
         <template #value>
           <b-form-input id="password" v-model="form.password" size="sm" required />
         </template>
       </GridGFormItem>
-      <GridGFormItem :label="$t('table.fields.type')">
+      <GridGFormItem :label="$t('table.fields.type')" variant="longlabel" labelclass="type">
         <template #value>
           <b-form-select id="type" v-model="form.type" size="sm" :options="clientagenttypes" required />
         </template>

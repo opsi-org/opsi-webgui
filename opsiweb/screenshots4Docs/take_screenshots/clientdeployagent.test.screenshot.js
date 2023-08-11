@@ -21,7 +21,7 @@ test.describe('Client Deploy Agent', () => {
     const component = await page.locator('[data-testid="MDeployClientAgentModal"] .modal-content')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.modal-header').innerHTML = val }, en['label.clientagent'])
-    await page.evaluate((val) => { document.querySelector('.clientId').innerHTML = val }, 'Client ID: client1.domain.local')
+    // await page.evaluate((val) => { document.querySelector('.clientId').innerHTML = val }, 'Client ID: client1.domain.local')
     await page.evaluate((val) => { document.querySelector('.username').innerHTML = val }, en['form.username'])
     await page.evaluate((val) => { document.querySelector('.password').innerHTML = val }, en['form.password'])
     await page.evaluate((val) => { document.querySelector('.type').innerHTML = val }, en['table.fields.type'])

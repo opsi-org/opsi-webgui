@@ -23,7 +23,7 @@
       hide-title
       no-fade
     >
-      <GridGFormItem v-if="showDepots" :label="$t('title.depots')">
+      <GridGFormItem v-if="showDepots" :label="$t('title.depots')" variant="longlabel" labelclass="depots">
         <template #value>
           <b-form-textarea
             v-if="selectionDepots.length>0"
@@ -37,7 +37,7 @@
           <span v-else>{{ $t('empty') }}</span>
         </template>
       </GridGFormItem>
-      <GridGFormItem v-if="showClients" :label="$t('title.clients')">
+      <GridGFormItem v-if="showClients" :label="$t('title.clients')" variant="longlabel" labelclass="clients">
         <template #value>
           <b-form-textarea
             v-if="selectionClients.length>0"
