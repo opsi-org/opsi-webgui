@@ -627,6 +627,9 @@ tbody .col-rowactions :not(div).btn {
 .text-small  {
   font-size: var(--text-small)!important;
 }
+.componentwidth {
+  width: var(--component-width) !important;
+}
 div.scrollValue {
   max-height: 300px;
   overflow-x: hidden;
