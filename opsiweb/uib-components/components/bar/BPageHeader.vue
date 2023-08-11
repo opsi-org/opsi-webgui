@@ -1,5 +1,20 @@
 <template>
-  <div>
+  <b-navbar data-testid="BarBPageHeader" variant="transparent" class="p-1">
+    <div class="text-small">
+      <span v-if="title" class="font-weight-bold tableheader_title">{{ title }}</span>
+      <span v-if="subtitle" class="font-italic ml-1"> {{ subtitle }} </span>
+    </div>
+    <b-navbar-nav class="flex-wrap">
+      <slot name="left" />
+    </b-navbar-nav>
+    <b-navbar-nav class="ml-auto">
+      <slot name="right" />
+      <b-button v-if="closeroute" size="sm" class="border-0" variant="outline-primary" :to="closeroute">
+        <span class="sr-only">{{ $t('button.close') }}</span> <b-icon :icon="icon.x" />
+      </b-button>
+    </b-navbar-nav>
+  </b-navbar>
+  <!-- <div>
     <b-navbar data-testid="BarBPageHeader" variant="transparent" class="p-1">
       <div v-b-toggle="'collapse' + tableid" :class="navbartype == 'collapse' ? 'btn col-10 text-left border-0 pl-0' : 'text-small'">
         <b-icon v-if="navbartype == 'collapse'" :icon="expanded ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
@@ -25,7 +40,7 @@
         </template>
       </b-navbar>
     </b-collapse>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
