@@ -308,7 +308,7 @@
   --fg-alert_success_link: #051b11;
 
   --bg-alert_info: var(--info-dark);
-  --fg-alert_info: var(--general-fg);
+  --fg-alert_info: white;   /* var(--general-fg) */
   --b-alert_info: var(--info);
   --bt-alert_info_hr: #a3e1fa; /*#a6c9db*/
   --fg-alert_info_link: #04384d;

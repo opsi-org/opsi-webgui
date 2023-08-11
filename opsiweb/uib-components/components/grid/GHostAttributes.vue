@@ -2,7 +2,7 @@
   <div data-testid="GHostAttributes">
     <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
     <AlertAAlert ref="hostAttrErrorAlert" />
-    <LazyDivDScrollResult v-if="hostAttr" :key="hostAttr.hostId">
+    <DivDScrollResult>
       <div v-for="(value, label, index) in hostAttr" :key="index">
         <GridGFormItem :label="label" :labelclass="label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize'" variant="longvalue">
           <template #value>
@@ -15,18 +15,30 @@
               <b-form-input id="hostKey" v-model="hostAttr[label.toString()]" size="sm" :class="{'d-none' : !showValue}" />
             </b-input-group>
             <b-form-checkbox v-else-if="typeof value == 'boolean'" v-model="hostAttr[label.toString()]" size="sm" />
-            <b-form-input v-else v-model="hostAttr[label.toString()]" size="sm" :readonly="readonly(label.toString())" />
+            <b-form-input
+              v-else
+              v-model="hostAttr[label.toString()]"
+              size="sm"
+              :readonly="readOnlyFields.includes(label.toString())"
+            />
           </template>
         </GridGFormItem>
       </div>
-    </LazyDivDScrollResult>
-    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver' && (config && config.read_only == false)" variant="longvalue">
+    </DivDScrollResult>
+    <GridGFormItem v-if="hostAttr.type !== 'OpsiDepotserver'" variant="longvalue">
       <template #value>
         <div class="float-right">
           <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="$fetch">
             <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
           </b-button>
-          <b-button id="updateButton" class="updateButton" variant="success" size="sm" @click="updateAttributes()">
+          <b-button
+            id="updateButton"
+            :disabled="config?.read_only"
+            class="updateButton"
+            variant="success"
+            size="sm"
+            @click="updateAttributes()"
+          >
             <b-icon :icon="icon.check" /> {{ $t('button.save') }}
           </b-button>
         </div>
@@ -57,21 +69,11 @@ export default class GHostAttributes extends Vue {
   $axios: any
   $t: any
   $fetch: any
+  readOnlyFields: Array<string> = ['hostId', 'type', 'systemUUID', 'created', 'lastSeen']
 
   @config.Getter public config!: IObjectString2Boolean
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
-
-  readonly (label: string) {
-    switch (label) {
-      case 'hostId': return true
-      case 'type': return true
-      case 'systemUUID': return true
-      case 'created': return true
-      case 'lastSeen': return true
-      default: return false
-    }
-  }
 
   async fetch () {
     if (this.id) {
@@ -106,14 +108,14 @@ export default class GHostAttributes extends Vue {
   async update (attr, endPoint) {
     this.isLoading = true
     await this.$axios.$put(endPoint, attr)
-      .then(() => {
+      .then((response) => {
         const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(this.$t('message.success.updateHostAttr', { client: this.hostAttr.hostId }) as string, 'success')
+        ref.alert(this.$t('message.success.title'), 'success', response)
         this.$fetch()
       }).catch((error) => {
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.updateHostAttr') as string, 'danger', detailedError)
+        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
       })
     this.isLoading = false
   }
@@ -126,7 +128,7 @@ export default class GHostAttributes extends Vue {
     delete attr.lastSeen
     delete attr.systemUUID
     if (this.type === 'clients') {
-      this.setUEFI(this.hostAttr.hostId)
+      this.setUEFI(this.hostAttr.hostId, attr.uefi.toString())
       delete attr.uefi
       endPoint = `/api/opsidata/clients/${this.hostAttr.hostId}`
     } else {

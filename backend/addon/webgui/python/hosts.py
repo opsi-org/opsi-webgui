@@ -158,7 +158,7 @@ def get_host_data(
 		return RESTResponse(data=host_data)
 
 
-class HostGroup(BaseModel):
+class HostGroup(BaseModel):  # pylint: disable=too-few-public-methods
 	groupId: str
 	parentGroupId: Optional[str] = None
 	description: Optional[str] = None
@@ -222,7 +222,9 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 @host_router.post("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
 def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str, clients: List[str] = Body(default=None)
+	request: Request,  # pylint: disable=unused-argument
+	group: str,
+	clients: List[str] = Body(default=None),
 ) -> RESTResponse:
 	"""
 	Add clients to host group
@@ -253,7 +255,7 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 @host_router.delete("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
 def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str
+	request: Request, group: str  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Remove clients from host group
@@ -261,24 +263,37 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
 
 	try:
 		backend.objectToGroup_delete(groupType="HostGroup", objectId="*", groupId=group)
-	except Exception as error:
+	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
 		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
 
 	return RESTResponse(data=f"Removed all clients from {group}.")
 
 
+def get_sub_groups(group: str) -> list:
+	result = set()
+	groups = [g.id for g in backend.group_getObjects(parentGroupId=group)]
+	result.update(groups)
+	for subgroup in groups:
+		result.update(get_sub_groups(subgroup))
+
+	return result
+
+
 @host_router.delete("/api/opsidata/hosts/groups/{group}")
 @rest_api
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
-	request: Request, group: str
+	request: Request, group: str  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Delete host group
 	"""
 	try:
+		subgroups = get_sub_groups(group)
+		for grp in subgroups:
+			backend.group_delete(grp)
 		backend.group_delete(group)
-	except Exception as error:
+	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
 		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
 
@@ -303,7 +318,7 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 	try:
 		backend.group_updateObject(values)
-	except Exception as error:
+	except Exception as error:  # pylint: disable=broad-exception-caught
 		logger.error(error)
 		return RESTErrorResponse(message=f"Could not update group {group}.", details=error)
 
@@ -314,7 +329,6 @@ def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 @rest_api
 def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	selectedDepots: List[str] = Depends(parse_depot_list),
-	withClients: bool = True,
 ) -> RESTResponse:
 	"""
 	Get host groups as tree.
@@ -362,52 +376,49 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 			)
 			.where(where)
 		)
-		print(query)
+
 		result = session.execute(query, params)
 		result = result.fetchall()
 
-	all_groups = {}
-	processed = []
+	all_groups: dict = {}
+	processed: list[str] = []
 	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
-	for row in result:
-		if not row["group_id"] in all_groups:
-			all_groups[row["group_id"]] = {
-				"id": row["group_id"],
-				"type": "HostGroup",
-				"text": row["group_id"],
-				"parent": row["parent_id"] or root_group["id"],
-			}
+	all_groups = read_groups(result, root_group, [], True)
 
-		if row["object_id"]:
-			# if row["object_id"] in selectedClients:
-			# 	all_groups[row["group_id"]]["hasAnySelection"] = True
-			if "children" not in all_groups[row["group_id"]]:
-				all_groups[row["group_id"]]["children"] = {}
-			if row.group_id == row.parent_id:
-				if not row["object_id"] in all_groups:
-					all_groups[row["object_id"]] = {
-						"id": row["object_id"],
-						"type": "ObjectToGroup",
-						"text": row["object_id"],
-						"parent": row["parent_id"] or root_group["id"],
-					}
-			else:
-				all_groups[row["group_id"]]["children"][row["object_id"]] = {
-					"id": row["object_id"],
-					"type": "ObjectToGroup",
-					"text": row["object_id"],
-					"parent": row["group_id"],
-				}
+	host_groups = build_group_tree(root_group, list(all_groups.values()), processed)
 
-	host_groups = build_group_tree(root_group, all_groups.values(), processed)
-	logger.devel(host_groups["children"]["clientdirectory"])
 	clientdirectory = host_groups["children"]["clientdirectory"]
 	clientdirectory["parent"] = None
+
+	if not clientdirectory.get("children"):
+		clientdirectory["children"] = {}
+
+	children = {}
+	children["not_assigned"] = {
+		"id": "not_assigned",
+		"type": "HostGroup",
+		"text": "not_assigned",
+		"parent": "clientdirectory",
+		"children": {},
+	}
+	children.update(clientdirectory["children"])
+	clientdirectory["children"] = children
+
+	clients = group_get_all_clients("clientdirectory", selectedDepots)
+
+	for client in clients:
+		clientdirectory["children"]["not_assigned"]["children"][client] = {
+			"id": client,
+			"type": "ObjectToGroup",
+			"text": client,
+			"parent": "not_assigned",
+		}
+
 	del host_groups["children"]["clientdirectory"]
 	return RESTResponse(data={"groups": host_groups, "clientdirectory": clientdirectory})
 
 
-def build_group_tree(current_group, groups, processed):
+def build_group_tree(current_group: dict, groups: list[dict], processed: list) -> dict:
 	if not processed:
 		processed = []
 	processed.append(current_group["id"])
@@ -419,7 +430,7 @@ def build_group_tree(current_group, groups, processed):
 			else:
 				children[group["id"]] = build_group_tree(group, groups, processed)
 	if children:
-		if "children" not in current_group:
+		if not current_group.get("children"):
 			current_group["children"] = {}
 		current_group["children"].update(children)
 	# else:
@@ -448,25 +459,23 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 	else:
 		params["depots"] = selectedDepots
 
-	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
-
 	where = text("g.`type` = 'HostGroup'")
 	where_depots = text("")
-	if parentGroup:
-		if parentGroup == "groups":
-			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))  # type: ignore
-			where_hosts = text("og.groupId IS NULL")
-		elif parentGroup == "root":
-			where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))  # type: ignore
-			where_hosts = text("og.groupId IS NULL")
-			root_group = {"id": None, "type": "HostGroup", "text": None, "parent": None}
-		else:
-			params["parent"] = parentGroup
-			where = and_(where, text("g.parentGroupId = :parent"))  # type: ignore
-			where_hosts = text("og.groupId = :parent")  # type: ignore
-			root_group = {"id": parentGroup, "type": "HostGroup", "text": parentGroup, "parent": None}
+
+	if parentGroup == "root" or not parentGroup:
+		parentGroup = "root"
+		where = and_(where, text("g.parentGroupId IS NULL AND g.groupId = 'clientdirectory'"))  # type: ignore
+		where_hosts = text("og.groupId IS NULL")
+		root_group = {"id": None, "type": "HostGroup", "text": None, "parent": None}
+	elif parentGroup == "groups":
+		where = and_(where, text("g.parentGroupId IS NULL AND g.groupId != 'clientdirectory'"))  # type: ignore
+		where_hosts = text("og.groupId IS NULL")
+		root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
 	else:
-		parentGroup = ""
+		params["parent"] = parentGroup
+		where = and_(where, text("g.parentGroupId = :parent"))  # type: ignore
+		where_hosts = text("og.groupId = :parent")  # type: ignore
+		root_group = {"id": parentGroup, "type": "HostGroup", "text": parentGroup, "parent": None}
 
 	for idx, depot in enumerate(params["depots"]):
 		if idx > 0:
@@ -577,7 +586,10 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 					"children": None,
 				}
 			}
-			host_groups["children"] = {**not_assigned, **host_groups["children"]}
+			if host_groups.get("children"):
+				host_groups["children"] = {**not_assigned, **host_groups["children"]}
+			else:
+				host_groups["children"] = {**not_assigned}
 
 		if parentGroup == "not_assigned" and withClients:
 			clients = group_get_all_clients("clientdirectory", selectedDepots)
@@ -597,15 +609,14 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 		return RESTResponse(data={"groups": host_groups})
 
 
-def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:  # pylint: disable: dangerous-default-value
-	clients = set()  # pylint: disable: dangerous-default-value
-	all_clients = set()  # pylint: disable: dangerous-default-value
+def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> List:  # pylint: disable=dangerous-default-value
+	clients = set()
+	all_clients = set()
 	groups = {group}
 
 	with mysql.session() as session:
 		while groups:
 			for group_id in groups.copy():
-				groups.remove(group)
 				query = (
 					select(text("g.groupId AS group_id, g.type AS group_type"))
 					.select_from(table("GROUP").alias("g"))
@@ -623,6 +634,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 				for row in result2:
 					if row:
 						clients.add(dict(row).get("objectId"))
+				groups.remove(group_id)
 
 		username = get_username()
 		allowed_clients = None
@@ -657,7 +669,7 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 			if row:
 				all_clients.add(dict(row).get("clientId"))
 
-	return list(all_clients - clients)
+	return sorted(list(all_clients - clients))
 
 
 def _get_host_groups_ids() -> list[str]:
@@ -722,7 +734,7 @@ def read_groups(
 		if row["object_id"] and withClients:
 			if row["object_id"] in selectedClients:
 				all_groups[row["group_id"]]["hasAnySelection"] = True
-			if "children" not in all_groups[row["group_id"]]:
+			if not all_groups[row["group_id"]].get("children"):
 				all_groups[row["group_id"]]["children"] = {}
 			if row.group_id == row.parent_id:
 				if not row["object_id"] in all_groups:
@@ -739,8 +751,6 @@ def read_groups(
 					"text": row["object_id"],
 					"parent": row["group_id"],
 				}
-		# if row["group_id"] == "clientdirectory":
-		# 	all_groups["clientdirectory"]["parent"] = None
 
 	return all_groups
 

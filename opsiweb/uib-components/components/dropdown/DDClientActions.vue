@@ -48,6 +48,7 @@
         :with-text="true"
       />
       <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" />
+      <ModalMRenameClient :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" :refetch="fetch" />
       <ModalMDeleteClient :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" :refetch="fetch" />
     </b-dropdown>
   </div>

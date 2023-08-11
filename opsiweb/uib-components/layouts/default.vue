@@ -6,8 +6,8 @@
       desktop: $mq === 'desktop',
       sidebar_collapsed: !sidebarAttr.expanded && $mq!=='mobile',
       sidebar_expanded: sidebarAttr.expanded && $mq!=='mobile',
-      groupexplorer_opened: showQuickPanel,
-      groupexplorer_closed: !showQuickPanel
+      QPwithSBexpanded: showQuickPanel && sidebarAttr.expanded,
+      QPwithSBcollapsed: showQuickPanel && !sidebarAttr.expanded
     }"
   >
     <BarBTop class="topbar_content">
@@ -20,85 +20,66 @@
     </BarBTop>
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
     <b-sidebar
-      id="groupexplorer"
-      :visible="showQuickPanel"
-      :no-header="$mq=='desktop'"
-      :backdrop="$mq == 'mobile'"
-      :bg-variant="$mq == 'mobile'? 'primary' : 'sidebar-bg'"
-      :text-variant="$mq == 'mobile'? 'light' : 'sidebar-text'"
+      id="quickpanel"
       right
+      :visible="showQuickPanel"
+      no-header
+      :backdrop="$mq == 'mobile'"
+      :bg-variant="$mq == 'mobile'? 'dark' : 'sidebar-bg'"
+      :text-variant="$mq == 'mobile'? 'color' : 'sidebar-text'"
       no-close-on-route-change
       @hidden="showQuickPanel = false"
     >
-      <b-container>
-        <b-row class="text-small mb-2 mt-3">
-          <b>{{ $t('Quick Overview') }} </b>
-        </b-row>
-        <GridGFormItem :label="$t('View Selections')" variant="longlabel">
-          <template #value>
-            <ModalMSelectionsAll />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('View Tracked Changes')" variant="longlabel">
-          <template #value>
-            <ModalMTrackChanges v-if="$mq != 'mobile'" />
-          </template>
-        </GridGFormItem>
-
-        <b-row class="text-small mt-4 mb-2">
+      <b-button
+        :pressed.sync="showQuickPanel"
+        :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
+        size="sm"
+        class="mt-3 border-0 mr-3 float-right"
+        variant="outline-primary"
+      >
+        <b-icon :icon="icon.quickpanel" />
+      </b-button>
+      <b-container class="mt-5">
+        <b-row class="text-small mb-2">
           <b>{{ $t('Quick Selections') }} </b>
         </b-row>
-        <TreeTSDepots classes="treeselect_fullpage" />
-        <b-input-group class="d-flex flex-nowrap">
-          <TreeTSHostGroups :open="clientAlwaysOpen" type="propertyvalues" classes="treeselect_fullpage" />
-          <b-button
-            variant="outline-primary"
-            size="sm"
-            class="border-0"
-            :title="clientAlwaysOpen? $t('Minimize Client Groups'): $t('Maximize Client Groups')"
-            :pressed.sync="clientAlwaysOpen"
-          >
-            <b-icon :icon="clientAlwaysOpen? 'box-arrow-left' : 'arrow-down-left'" />
-          </b-button>
-        </b-input-group>
-        <b-input-group class="d-flex flex-nowrap">
-          <TreeTSProductGroups :open="productAlwaysOpen" type="propertyvalues" classes="treeselect_fullpage" />
-          <b-button
-            variant="outline-primary"
-            size="sm"
-            class="border-0"
-            :title="productAlwaysOpen? $t('Minimize Product Groups'): $t('Maximize Product Groups')"
-            :pressed.sync="productAlwaysOpen"
-          >
-            <b-icon :icon="productAlwaysOpen? 'box-arrow-left' : 'arrow-down-left'" />
-          </b-button>
-        </b-input-group>
-        <b-row class="text-small mt-4 mb-2">
-          <b>{{ $t('Quick Tasks') }} </b>
-        </b-row>
-        <GridGFormItem :label="$t('title.products')" variant="longlabel">
-          <template #value>
-            <ModalMProductActions />
-          </template>
-        </GridGFormItem>
-        <b-row class="text-small mt-4 mb-2">
-          <b>{{ $t('Settings') }} </b>
-        </b-row>
-        <GridGFormItem v-once data-testid="quicksave" variant="longlabel">
-          <template #label>
-            <span class="quicksave">{{ $t('form.quicksave') }}</span>
-            <ButtonBTNHelp id="savemode-help" />
-            <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="grid" />
-          </template>
-          <template #value>
-            <CheckboxCBQuickSave />
-          </template>
-        </GridGFormItem>
+
+        <b-button v-b-toggle.depots block class="text-left border-0 p-0" variant="outline-primary">
+          {{ $t('Servers') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
+        </b-button>
+        <b-collapse id="depots" accordion="quickpanelgroups" role="tabpanel">
+          <div class="scrollcontent">
+            <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
+          </div>
+        </b-collapse>
+        <b-button v-b-toggle.clientgroup block class="text-left border-0 p-0" variant="outline-primary">
+          {{ $t('Client Groups') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
+        </b-button>
+        <b-collapse id="clientgroup" visible accordion="quickpanelgroups" role="tabpanel">
+          <div class="scrollcontent">
+            <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
+          </div>
+        </b-collapse>
+        <b-button v-b-toggle.productgroup block class="text-left border-0 p-0" variant="outline-primary">
+          {{ $t('Product Groups') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
+        </b-button>
+        <b-collapse id="productgroup" accordion="quickpanelgroups" role="tabpanel">
+          <div class="scrollcontent">
+            <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
+          </div>
+        </b-collapse>
       </b-container>
     </b-sidebar>
     <div class="main_content">
-      <b-button :pressed.sync="showQuickPanel" :title="showQuickPanel ? $t('Show Quick Panel'): $t('Hide Quick Panel')" size="sm" variant="outline-primary" class="float-right mt-1">
-        <b-icon :icon="showQuickPanel ? icon.arrowRight: icon.arrowLeft" />
+      <b-button
+        v-if="!showQuickPanel"
+        :pressed.sync="showQuickPanel"
+        :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
+        size="sm"
+        class="mt-1 border-0 float-right"
+        variant="outline-primary"
+      >
+        <b-icon :icon="icon.quickpanel" />
       </b-button>
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
@@ -213,23 +194,22 @@ export default class LayoutDefault extends Vue {
   async checkConfig () {
     try {
       const response = (await this.$axios.$get('/api/user/configuration')).configuration
-      if (response == null) {
-        this.setConfig({ read_only: false, client_creation: false })
-      } else {
-        this.setConfig(response)
-      }
-      // this.setConfig((await this.$axios.$get('/api/user/configuration')).configuration)
+      this.setConfig(response)
     } catch (error: any) {
       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.errorAlert as any)
       ref.alert(detailedError, 'danger')
-      this.setConfig({ read_only: true, client_creation: true })
     }
   }
 }
 </script>
 
 <style>
+.scrollcontent {
+  min-height: 40vh !important;
+  overflow-x:auto;
+  overflow-y: auto;
+}
 .topbar_content {
   z-index: 1000;
   width: 100% !important;
@@ -260,13 +240,13 @@ export default class LayoutDefault extends Vue {
   margin-left: var(--margin-left-maincontent-if-sidebar-expanded);
   width: calc(100% - var(--margin-left-maincontent-if-sidebar-expanded) - var(--margin-left-maincontent));
 }
-:not(.mobile).groupexplorer_opened .main_content{
-  width: calc(100% - 600px) !important;
+:not(.mobile).QPwithSBexpanded .main_content{
+  width: calc(100% - 590px) !important;
 }
-:not(.mobile).groupexplorer_closed.main_content{
-  width: 100%;
+:not(.mobile).QPwithSBcollapsed .main_content{
+  width: calc(100% - 470px) !important;
 }
-#groupexplorer {
+#quickpanel {
   top: calc(var(--height-navbar) - 2px) !important;
   width: 400px;
   height: 100% !important;

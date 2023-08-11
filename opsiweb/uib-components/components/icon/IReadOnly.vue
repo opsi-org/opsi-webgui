@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="config && config.read_only"
+    v-if="config?.read_only"
     data-testid="IReadOnly"
     :title="translatedLabel"
     class="IReadOnly container-fluid"

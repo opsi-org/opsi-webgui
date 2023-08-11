@@ -291,7 +291,7 @@ export default class VClientCreation extends Vue {
       .then(async () => {
         ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
         if (this.uefi) {
-          this.setUEFI(this.newClient.hostId)
+          this.setUEFI(this.newClient.hostId, this.uefi.toString())
         }
         if (this.group) {
           await this.assignToGroup()

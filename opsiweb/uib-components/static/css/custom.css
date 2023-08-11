@@ -573,6 +573,12 @@ tbody .col-rowactions :not(div).btn {
 .treeselect_fullpage .vue-treeselect__menu {
   min-height: 77vh;
 }
+.treeselect_quickpanel .vue-treeselect__menu {
+  min-height: 35vh;
+}
+.treeselect_quickpanel .vue-treeselect__control-arrow-container {
+  display: none;
+}
 
 .treeselect_short{
   max-width: var(--component-width) !important;
