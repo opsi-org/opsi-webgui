@@ -20,7 +20,7 @@
       </b-navbar-brand>
       <slot name="quickpanel" />
       <BarBBreadcrumbRow v-if="$mq == 'desktop'" class="ml-2" />
-      <ModalMTrackChanges v-if="$mq === 'mobile'" />
+      <ModalMTrackChanges v-if="$mq === 'mobile'" class="ml-auto p-1" />
       <b-navbar-nav v-if="$mq === 'mobile'" small class="h-100">
         <b-button variant="primary" class="h-100 border-0" size="sm" :pressed.sync="rightmenuVisible">
           <span class="sr-only">{{ $t('menu.open-topmenu.sr-only') }}</span>
@@ -43,10 +43,10 @@
         />
         <div class="ml-auto p-1" :class="$mq=='mobile' ? '': 'navbar-nav'">
           <ModalMTrackChanges v-if="$mq != 'mobile'" />
-          <ModalMSelectionsAll :with-text="$mq=='mobile'" />
+          <!-- <ModalMSelectionsAll :with-text="$mq=='mobile'" /> -->
           <ButtonBTNEvent :navbar="true" event="ondemand" :with-text="$mq=='mobile'" classes="global_topbar_button btn-primary" />
-          <DropdownDDLang v-once />
-          <DropdownDDTheme v-once :navbar="true" />
+          <!-- <DropdownDDLang v-once />
+          <DropdownDDTheme v-once :navbar="true" /> -->
           <ButtonBTNLogout v-once />
         </div>
       </b-collapse>
