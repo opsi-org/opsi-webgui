@@ -2,7 +2,7 @@
   <b-alert
     v-model="showAlert"
     data-testid="AAlertLocal"
-    class="alertMsg"
+    class="alertMsg p-0"
     size="sm"
     v-bind="$props"
     :variant="alertVariant"
