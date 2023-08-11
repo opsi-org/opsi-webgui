@@ -4,10 +4,9 @@
     data-testid="DropdownDDLang"
     :aria-label="$t('button.lang.tooltip')"
     :title="$t('button.lang.tooltip')"
-    variant="primary border-0"
-    class="global_topbar_button"
+    :variant="footer? 'primary border-0' : 'outline-primary'"
     size="sm"
-    :dropup="dropup"
+    :dropup="footer"
   >
     <template #button-content>
       <span style="text-transform:uppercase;"> <b-icon :icon="icon.language" /> {{ language }} </span>
@@ -35,7 +34,7 @@ export default class DDLang extends Vue {
   $i18n:any
   $mq:any
 
-  @Prop({ default: false }) dropup!: boolean
+  @Prop({ default: false }) footer!: boolean
 
   languages: Array<string> = []
 
