@@ -18,7 +18,8 @@
         <span v-once class="ml-1 text-smaller topbar_version"> {{ $config.packageVersion }} </span>
         <IconIReadOnly />
       </b-navbar-brand>
-      <BarBBreadcrumbRow v-if="$mq == 'desktop'" />
+      <slot name="quickpanel" />
+      <BarBBreadcrumbRow v-if="$mq == 'desktop'" class="ml-2" />
       <ModalMTrackChanges v-if="$mq === 'mobile'" />
       <b-navbar-nav v-if="$mq === 'mobile'" small class="h-100">
         <b-button variant="primary" class="h-100 border-0" size="sm" :pressed.sync="rightmenuVisible">
@@ -94,7 +95,7 @@ export default class BTop extends Vue {
   padding-bottom: 0px !important;
 }
 .topbar_title{
-  font-size: 16px;
+  font-size: 15px;
   margin-top: 7px;
 }
 .mobile #nav-collapse {

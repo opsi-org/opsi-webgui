@@ -1,12 +1,14 @@
 <template>
   <LazyTreeTSDefault
     v-if="fetchDepotData"
+    v-bind="$props"
     id="Depots"
-    type="treeselect_short"
+    :class="classes"
+    :type="type"
+    :always-open="open"
     data-testid="TSDepots"
     :lazy-load="true"
     :multi="true"
-    :text="$t('title.depots')"
     :text-no-result="$t('treeselect.noresult')"
     :selection-default="selectionDepots"
     :editable="false"
@@ -15,10 +17,11 @@
     :fetch-data="fetchDepotData"
     @change="changeSelection"
   />
+  <!-- :text="$t('title.depots')" -->
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Depot, Client } from '../../mixins/get'
 import { IObjectString2String } from '../../.utils/types/tgeneral'
@@ -30,6 +33,9 @@ export default class TSDepots extends Vue {
   $axios: any
   getDepotIdList:any
   getClientToDepot:any
+  @Prop({ default: false }) open!: boolean
+  @Prop({ }) classes!: any
+  @Prop({ default: 'treeselect_short' }) type!: string
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
