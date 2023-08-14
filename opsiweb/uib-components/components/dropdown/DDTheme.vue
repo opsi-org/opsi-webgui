@@ -5,7 +5,6 @@
     :aria-label="$t('form.theme')"
     variant="primary border-0"
     size="sm"
-    class="global_topbar_button"
     no-caret
     :title="$t('button.theme.tooltip')"
   >

@@ -5,12 +5,12 @@
     data-testid="ButtonBTNLogout"
     :title="$t('button.logout')"
     size="sm"
-    class="global_topbar_button"
-    variant="primary border-0"
+    block
+    variant="outline-primary"
     @click="doLogout"
   >
     <b-icon :icon="icon.logout" />
-    {{ ($mq!=='desktop')? $t('button.logout'):'' }}
+    {{ $t('button.logout') }}
   </b-button>
 </template>
 
