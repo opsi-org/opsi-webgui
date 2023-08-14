@@ -1,12 +1,12 @@
 <template>
   <b-tabs data-testid="VSettings" small lazy>
-    <b-tab active>
+    <!-- <b-tab active>
       <template #title>
         <span class="localspecific"> {{ $t('form.general') }} </span>
       </template>
       <ViewVSettingsLocalSpecific class="mt-2" />
-    </b-tab>
-    <b-tab>
+    </b-tab> -->
+    <b-tab active>
       <template #title>
         <span class="opsispecific"> {{ $t('form.opsi') }} </span>
       </template>
