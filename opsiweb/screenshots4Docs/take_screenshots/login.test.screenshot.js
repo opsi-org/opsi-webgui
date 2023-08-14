@@ -8,6 +8,7 @@ test('Login', async ({ page }) => {
   const component = await page.locator('[data-testid="FLogin"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await component.evaluate(() => { document.querySelector('.projectTitle').innerHTML = 'opsi-webgui' })
+  await page.evaluate((val) => { document.querySelector('[data-testid="login_configserver"]').placeholder = val }, 'testconfigserver.uib.local')
   await page.evaluate((val) => { document.querySelector('.username').placeholder = val }, en['form.username'])
   await page.evaluate((val) => { document.querySelector('.password').placeholder = val }, en['form.password'])
   await page.evaluate((val) => { document.querySelector('.login').innerHTML = val }, en['button.login'])

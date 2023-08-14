@@ -4,6 +4,7 @@ const en = require('../../uib-components/locale/en.json')
 const de = require('../../uib-components/locale/de.json')
 test('ClientGroups', async ({ page }) => {
   await callStoryId(page, 'tree-ts-host-groups', 'ts-host-groups')
+  // apiMock(page, '**/api/opsidata/hosts/groups/id', ['clientdirectory', 'testgroup', 'test'])
   await page.click('[data-testid="TSHostGroups"]')
   await page.setViewportSize({ width: 400, height: 210 })
   await (new Promise(resolve => setTimeout(resolve, 1000)))

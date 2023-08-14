@@ -6,6 +6,7 @@
       size="sm"
       :aria-label="placeholder"
       type="search"
+      class="filterchanges"
       :placeholder="placeholder"
       @input="$emit('update:filter', filter)"
     />

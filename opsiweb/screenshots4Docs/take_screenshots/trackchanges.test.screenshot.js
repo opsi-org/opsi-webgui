@@ -22,6 +22,7 @@ test.describe('Track Changes', () => {
     await page.evaluate((val) => { document.querySelector('.saveall').innerHTML = val }, en['button.saveall'])
     await page.evaluate((val) => { document.querySelector('.resetall').innerHTML = val }, en['button.resetAll'])
     await component.screenshot({ path: './screenshots/en/opsi-webgui_trackchanges.png' })
+
     await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, de['button.track.changes'])
     await page.evaluate((val) => { document.querySelector('.filterchanges').placeholder = val }, de['table.filterBy.DepotsClients'])
     await page.evaluate((val) => { document.querySelector('.saveall').innerHTML = val }, de['button.saveall'])
