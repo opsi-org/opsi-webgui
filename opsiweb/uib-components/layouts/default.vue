@@ -17,6 +17,17 @@
           <b-icon font-scale="1.5" :icon="icon.navmenu" />
         </b-button>
       </template>
+      <template #quickpanel>
+        <b-button
+          :pressed.sync="showQuickPanel"
+          :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
+          size="sm"
+          class="border-0"
+          variant="outline-primary"
+        >
+          <b-icon :icon="icon.quickpanel" />
+        </b-button>
+      </template>
     </BarBTop>
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
     <b-sidebar
@@ -25,20 +36,11 @@
       :visible="showQuickPanel"
       no-header
       :backdrop="$mq == 'mobile'"
-      :bg-variant="$mq == 'mobile'? 'dark' : 'sidebar-bg'"
+      :bg-variant="$mq == 'mobile'? 'primary' : 'sidebar-bg'"
       :text-variant="$mq == 'mobile'? 'color' : 'sidebar-text'"
       no-close-on-route-change
       @hidden="showQuickPanel = false"
     >
-      <b-button
-        :pressed.sync="showQuickPanel"
-        :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
-        size="sm"
-        class="mt-3 border-0 mr-3 float-right"
-        variant="outline-primary"
-      >
-        <b-icon :icon="icon.quickpanel" />
-      </b-button>
       <b-container class="mt-5">
         <b-row class="text-smaller mt-2 mb-2">
           <b>{{ $t('Settings') }} </b>
@@ -47,6 +49,8 @@
         <b-row class="text-smaller mt-2 mb-2">
           <b>{{ $t('Quick Actions') }} </b>
         </b-row>
+        <ButtonBTNEvent :navbar="true" event="ondemand" :with-text="$mq=='mobile'" classes="btn-primary" />
+        <ModalMProductActions />
 
         <b-row class="text-smaller mt-2 mb-2">
           <b>{{ $t('Quick Selections') }} </b>
@@ -77,18 +81,13 @@
           </div>
         </b-collapse>
       </b-container>
+      <template #footer>
+        <div class="text-center">
+          <ButtonBTNLogout v-once />
+        </div>
+      </template>
     </b-sidebar>
     <div class="main_content">
-      <b-button
-        v-if="!showQuickPanel"
-        :pressed.sync="showQuickPanel"
-        :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
-        size="sm"
-        class="mt-1 border-0 float-right"
-        variant="outline-primary"
-      >
-        <b-icon :icon="icon.quickpanel" />
-      </b-button>
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
@@ -258,6 +257,9 @@ export default class LayoutDefault extends Vue {
   top: calc(var(--height-navbar) - 2px) !important;
   width: 400px;
   height: 100% !important;
+}
+#quickpanel .b-sidebar-footer {
+  margin-bottom: 70px;
 }
 .sidebar-bg {
   background-color: var(--background) !important;
