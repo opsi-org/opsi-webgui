@@ -5,18 +5,22 @@
       show
       variant="danger"
     >
-      {{ $t('message.error.unsavedChanges') }}
+      <span class="text-smaller">{{ $t('message.error.unsavedChanges') }}</span>
     </AlertAAlertLocal>
-    <b-form-checkbox
-      v-else
-      v-model="localquicksave"
-      data-testid="CBQuickSave"
-      switch
-      size="sm"
-      @change="changeSaveMode(localquicksave)"
-    >
-      <span class="sr-only">{{ localquicksave ? $t('form.quicksave.enable'): $t('form.quicksave.disable') }}</span>
-    </b-form-checkbox>
+    <div v-else class="d-flex flex-nowrap">
+      <b-form-checkbox
+        v-model="localquicksave"
+        data-testid="CBQuickSave"
+        switch
+        size="sm"
+        @change="changeSaveMode(localquicksave)"
+      >
+        <span class="sr-only">{{ localquicksave ? $t('form.quicksave.enable'): $t('form.quicksave.disable') }}</span>
+        <span class="text-small">{{ $t('form.quicksave') }}</span>
+      </b-form-checkbox>
+      <ButtonBTNHelp id="savemode-help" />
+      <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="grid" />
+    </div>
   </div>
 </template>
 
@@ -45,6 +49,13 @@ export default class CBQuickSave extends Vue {
   changeSaveMode (isQuickSave: boolean) {
     this.localquicksave = isQuickSave
     this.setQuicksave(isQuickSave)
+  }
+
+  get helpSavemode () {
+    return [
+      { label: this.$t('label.on'), description: this.$t('description.quicksave.on') },
+      { label: this.$t('label.off'), description: this.$t('description.quicksave.off') }
+    ]
   }
 }
 </script>
