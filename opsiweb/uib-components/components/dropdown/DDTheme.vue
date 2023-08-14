@@ -29,7 +29,6 @@
     v-else
     data-testid="DropdownDDTheme"
     :text="theme.title"
-    class="settingstheme"
     size="sm"
     variant="outline-primary"
     no-caret
@@ -108,9 +107,6 @@ export default class DDTheme extends Vue {
 </script>
 
 <style>
-.settingstheme {
-  width: var(--component-width) !important;
-}
 #theme .dropdown-toggle::after{
   display:none;
 }
