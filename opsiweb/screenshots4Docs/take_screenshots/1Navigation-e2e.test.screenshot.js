@@ -35,7 +35,7 @@ test.beforeEach(async ({ page, context }) => {
 })
 
 test.afterEach(async ({ page }) => {
-  await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+  apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.click('[data-testid="ButtonBTNLogout"]')
   page.setDefaultTimeout(55555)
   await expect(page).toHaveURL('/addons/webgui/app/login')
@@ -86,7 +86,6 @@ const testPages = async (page, lang) => {
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await expect(page).toHaveURL('/addons/webgui/app/clientsconfig')
   await page.screenshot({ path: './screenshots/new/' + lang + '/opsi-webgui_clientconfig.png' })
-
 
   // await page.click('[data-testid="NICollapsible-title.clients"]')
   await page.click('[data-testid="NICollapsible-title.depots"]')
