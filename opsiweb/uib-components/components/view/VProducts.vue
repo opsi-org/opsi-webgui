@@ -207,6 +207,7 @@ export default class VProducts extends Vue {
 
   async fetch () {
     await this.getNetbootProductsCount()
+    this.updateColumnVisibility()
   }
 
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
