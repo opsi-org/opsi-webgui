@@ -9,10 +9,11 @@
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
       :class="{
-        [classes]: true,
-        'w-100 h-100 text-left border-0': true
+        'w-100 h-100': true,
+        [classes]: true
+
       }"
-      :size="navbar? 'md': 'sm'"
+      size="sm"
       @click="$bvModal.show('event-modal-' + event + '-' + data)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
@@ -23,7 +24,7 @@
     <div
       v-else
       variant="outline-primary"
-      :size="navbar? 'md': 'sm'"
+      size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       @click="$bvModal.show('event-modal-' + event + '-' + data)"
@@ -103,9 +104,8 @@ export default class BTNEvent extends Vue {
   @selections.Getter public selectionClients!: Array<string>
 
   @Prop({ default: 'ondemand' }) event!: string
-  @Prop({ default: '' }) classes!: string
+  @Prop({ default: 'border-0 text-left' }) classes!: string
   @Prop({ default: false }) incontextmenu!: boolean
-  @Prop({ default: false }) navbar!: boolean
   @Prop({ default: false }) withText!: boolean
   @Prop({ default: undefined }) data?: any
   @Prop({ default: undefined }) isLoadingParent ?: boolean

@@ -3,9 +3,10 @@
     <b-button
       variant="outline-primary"
       size="sm"
+      block
       @click="$bvModal.show('productactions')"
     >
-      {{ $t('label.quickaction') }}
+      {{ $t(label) }}
     </b-button>
     <b-modal
       id="productactions"
@@ -79,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 
 interface QuickAction {
   action: any,
@@ -91,6 +92,7 @@ interface QuickAction {
 @Component export default class MProductActions extends Vue {
   $t: any
   $axios: any
+  @Prop({ default: 'label.quickaction' }) label?: string
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   quickaction: QuickAction = {

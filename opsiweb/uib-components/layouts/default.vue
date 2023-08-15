@@ -43,16 +43,6 @@
     >
       <b-container>
         <b-row class="text-smaller mt-2 mb-2">
-          <b>{{ $t('Settings') }} </b>
-        </b-row>
-        <ViewVQuickSettings />
-        <b-row class="text-smaller mt-2 mb-2">
-          <b>{{ $t('Quick Actions') }} </b>
-        </b-row>
-        <ButtonBTNEvent :navbar="true" event="ondemand" :with-text="$mq=='mobile'" classes="btn-primary" />
-        <ModalMProductActions />
-
-        <b-row class="text-smaller mt-2 mb-2">
           <b>{{ $t('Quick Selections') }} </b>
         </b-row>
         <ModalMSelectionsAll :with-text="true" />
@@ -80,6 +70,21 @@
             <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
           </div>
         </b-collapse>
+        <b-row class="text-smaller mt-2 mb-2">
+          <b>{{ $t('Quick Actions') }} </b>
+        </b-row>
+        <b-row>
+          <b-col>
+            <ButtonBTNEvent event="ondemand" :with-text="true" classes="outline-primary border" />
+          </b-col>
+          <b-col>
+            <ModalMProductActions :label="'label.prodquickaction'" />
+          </b-col>
+        </b-row>
+        <b-row class="text-smaller mt-2 mb-2">
+          <b>{{ $t('Settings') }} </b>
+        </b-row>
+        <ViewVQuickSettings />
       </b-container>
       <template #footer>
         <div class="text-center">
