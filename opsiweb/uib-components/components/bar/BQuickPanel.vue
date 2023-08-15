@@ -15,40 +15,8 @@
       <b-row class="text-smaller mt-2 mb-2">
         <b>{{ $t('Quick Selections') }} </b>
       </b-row>
-      <b-tabs justified small lazy>
-        <b-tab>
-          <template #title>
-            <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
-          </template>
-          <div class="scrollcontent">
-            <ModalMSelectionsAll />
-          </div>
-        </b-tab>
-        <b-tab>
-          <template #title>
-            <b-icon :icon="icon.server" />
-          </template>
-          <div class="scrollcontent">
-            <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-          </div>
-        </b-tab>
-        <b-tab active>
-          <template #title>
-            <b-icon :icon="icon.client" />
-          </template>
-          <div class="scrollcontent">
-            <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-          </div>
-        </b-tab>
-        <b-tab>
-          <template #title>
-            <b-icon :icon="icon.product" />
-          </template>
-          <div class="scrollcontent">
-            <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-          </div>
-        </b-tab>
-      </b-tabs>
+      <ViewVQuickSelections />
+      <!-- <ModalMSelectionsAll /> -->
       <!-- <b-button v-b-toggle.depots block class="text-left border-0" variant="outline-primary">
         {{ $t('Servers') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
       </b-button>
