@@ -24,7 +24,7 @@
       </b-row>
       <GridGFormItem variant="longlabel" :label="$t('table.fields.instStatus')">
         <template #value>
-          <b-form-select v-model="quickaction.installation_status" :options="conditn_InstStatus">
+          <b-form-select v-model="quickaction.installation_status" size="sm" :options="conditn_InstStatus">
             <template #first>
               <b-form-select-option :value="null">
                 {{ $t('empty') }}
@@ -35,7 +35,7 @@
       </GridGFormItem>
       <GridGFormItem variant="longlabel" :label="$t('table.fields.actionResult')">
         <template #value>
-          <b-form-select v-model="quickaction.action_result" :options="conditn_ActionResult">
+          <b-form-select v-model="quickaction.action_result" size="sm" :options="conditn_ActionResult">
             <template #first>
               <b-form-select-option :value="null">
                 {{ $t('empty') }}
@@ -46,7 +46,7 @@
       </GridGFormItem>
       <GridGFormItem variant="longlabel" :label="$t('label.pv.outdatedonclient')">
         <template #value>
-          <b-form-checkbox v-model="quickaction.outdated" />
+          <b-form-checkbox v-model="quickaction.outdated" size="sm" />
         </template>
       </GridGFormItem>
       <b-row class="text-small mb-2">
@@ -54,7 +54,7 @@
       </b-row>
       <GridGFormItem variant="longlabel" :label="$t('table.fields.rowactions')">
         <template #value>
-          <b-form-select v-model="quickaction.action" :options="actions">
+          <b-form-select v-model="quickaction.action" size="sm" :options="actions">
             <template #first>
               <b-form-select-option :value="null">
                 {{ $t('empty') }}
