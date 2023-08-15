@@ -2,18 +2,7 @@
   <div data-testid="VProducts" class="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <LazyBarBPageHeader
-          v-if="tableloaded"
-          :title="$t('title.products')"
-          :tableid="id"
-          :table-info.sync="tableInfo"
-          :is-loading-parent="isLoading"
-          :fetch="$fetch"
-          navbartype="collapse"
-          :childopened="secondColumnOpened"
-          :closeroute="child? '/clients/' : null"
-          :treeview="showTreeView"
-        >
+        <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.products')" :closeroute="child? '/clients/' : null">
           <template #right>
             <ModalMProductActions />
           </template>

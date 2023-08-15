@@ -9,17 +9,7 @@
     </AlertAAlert>
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients" :treeopened="showTreeView">
       <template #parent>
-        <LazyBarBPageHeader
-          v-if="tableloaded"
-          :title="$t('title.clients')"
-          :tableid="id"
-          :table-info.sync="tableInfo"
-          :is-loading-parent="isLoading"
-          :fetch="$fetch"
-          navbartype="collapse"
-          :childopened="secondColumnOpened"
-          :treeview="showTreeView"
-        >
+        <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.clients')">
           <template #right>
             <ButtonBTNRowLinkTo
               v-if="$mq == 'desktop'"
