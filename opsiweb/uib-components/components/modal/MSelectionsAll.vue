@@ -1,34 +1,6 @@
 <template>
   <div data-testid="MSelectionsAll">
-    <GridGFormItem v-if="showDepots" :label="$t('title.depots')" variant="longvalue" labelclass="depots">
-      <template #value>
-        <b-form-textarea
-          v-if="selectionDepots.length>0"
-          rows="1"
-          max-rows="10"
-          size="sm"
-          no-resize
-          plaintext
-          :value="[...selectionDepots].sort().join('\n')"
-        />
-        <span v-else>{{ $t('empty') }}</span>
-      </template>
-    </GridGFormItem>
-    <GridGFormItem v-if="showClients" :label="$t('title.clients')" variant="longvalue" labelclass="clients">
-      <template #value>
-        <b-form-textarea
-          v-if="selectionClients.length>0"
-          rows="1"
-          max-rows="10"
-          size="sm"
-          no-resize
-          plaintext
-          :value="[...selectionClients].sort().join('\n')"
-        />
-        <span v-else>{{ $t('empty') }}</span>
-      </template>
-    </GridGFormItem>
-    <!-- <b-button
+    <b-button
       data-testid="MSelectionsAllButton"
       variant="outline-primary"
       size="sm"
@@ -78,7 +50,7 @@
           <span v-else>{{ $t('empty') }}</span>
         </template>
       </GridGFormItem>
-    </b-modal> -->
+    </b-modal>
   </div>
 </template>
 
