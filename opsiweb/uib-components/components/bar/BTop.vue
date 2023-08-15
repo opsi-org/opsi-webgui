@@ -18,7 +18,7 @@
     </b-navbar-brand>
     <BarBBreadcrumbRow v-if="$mq == 'desktop'" class="ml-2" />
     <b-navbar-nav small class="ml-auto">
-      <ModalMTrackChanges />
+      <ModalMTrackChanges class="mr-1" />
       <slot name="quickpanel" />
     </b-navbar-nav>
   </b-navbar>

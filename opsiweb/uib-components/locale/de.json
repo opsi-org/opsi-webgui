@@ -44,7 +44,7 @@
   "message.error.event": "Fehler beim Event: ",
   "message.error.fetch.productProperty": "Fehler beim Abrufen: Produkt-Properties",
   "message.error.fetch.productDependency": "Fehler beim Abrufen: Produkt-Abhängigkeiten",
-  "message.error.unsavedChanges": "Speichern oder verwerfen nachverfolgte Änderungen, um QuickSave zu aktivieren.",
+  "message.error.unsavedChanges": "Speichern oder verwerfen die nachverfolgten Änderungen, um QuickSave zu aktivieren.",
   "message.session.expired": "Sitzung abgelaufen.",
   "message.session.expires": "Sitzung läuft in {min} Minuten ab.",
   "message.session.expiresInDays": "Sitzung läuft ab in {d} days, {h} hours, {min} minutes and {s} seconds.",

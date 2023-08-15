@@ -1,6 +1,6 @@
 <template>
   <b-dropdown
-    id="language"
+    id="quicksettingsDD"
     data-testid="DropdownDDLang"
     :aria-label="$t('button.lang.tooltip')"
     :title="$t('button.lang.tooltip')"
@@ -57,18 +57,3 @@ export default class DDLang extends Vue {
   }
 }
 </script>
-
-<style>
-#language .dropdown-toggle::after{
-  display:none;
-}
-#language .selected,
-#language .selected > a.dropdown-item,
-#language .selected:hover {
-  color: var(--light) !important;
-  background-color: var(--primary) !important;
-}
-#language .selected > a.dropdown-item:hover {
-  background-color: var(--primary-dark) !important;
-}
-</style>

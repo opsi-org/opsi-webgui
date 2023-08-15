@@ -22,7 +22,7 @@
           :pressed.sync="showQuickPanel"
           :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
           size="sm"
-          class="border-0"
+          class="border-0 mr-1"
           variant="outline-primary"
         >
           <b-icon :icon="icon.quickpanel" />
@@ -41,11 +41,11 @@
       no-close-on-route-change
       @hidden="showQuickPanel = false"
     >
-      <b-container class="mt-5">
+      <b-container>
         <b-row class="text-smaller mt-2 mb-2">
           <b>{{ $t('Settings') }} </b>
         </b-row>
-        <ViewVSettingsLocalSpecific />
+        <ViewVQuickSettings />
         <b-row class="text-smaller mt-2 mb-2">
           <b>{{ $t('Quick Actions') }} </b>
         </b-row>

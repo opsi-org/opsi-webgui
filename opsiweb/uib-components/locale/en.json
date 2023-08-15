@@ -44,7 +44,7 @@
   "message.error.event": "Failed to execute event: ",
   "message.error.fetch.productProperty": "Failed to fetch: ProductProperties",
   "message.error.fetch.productDependency": "Failed to fetch: ProductDependencies",
-  "message.error.unsavedChanges": "Save or discard tracked changes to enable QuickSave.",
+  "message.error.unsavedChanges": "Save or discard the tracked changes to enable QuickSave.",
   "message.session.title": "Session Timeoout",
   "message.session.expired": "Session expired.",
   "message.session.expires": "Automatically log out in: {min} minutes",

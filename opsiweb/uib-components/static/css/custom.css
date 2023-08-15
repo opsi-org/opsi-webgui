@@ -630,3 +630,19 @@ div.scrollValue {
 .componentwrapper {
   max-width: var(--wrapper-width)!important;
 }
+
+#quicksettingsDD {
+  width: 70px;
+}
+#quicksettingsDD .dropdown-toggle::after{
+  display:none;
+}
+#quicksettingsDD .selected,
+#quicksettingsDD .selected > a.dropdown-item,
+#quicksettingsDD .selected:hover {
+  color: var(--light) !important;
+  background-color: var(--primary) !important;
+}
+#quicksettingsDD .selected > a.dropdown-item:hover {
+  background-color: var(--primary-dark) !important;
+}

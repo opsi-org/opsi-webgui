@@ -3,23 +3,35 @@
     <AlertAAlertLocal
       v-if="(changesProducts.filter(o => o.user === username).length>0 || changesHostParam.filter((o) => o.user === username).length>0 )&& !quicksave"
       show
-      variant="danger"
+      variant="warning"
+      class="quickpanelwarning"
     >
-      <span class="text-smaller">{{ $t('message.error.unsavedChanges') }}</span>
+      <span class="text-small">{{ $t('message.error.unsavedChanges') }}</span>
     </AlertAAlertLocal>
-    <div v-else class="d-flex flex-nowrap">
+    <div v-else class="d-flex flex-nowrap justify-content-center border">
       <b-form-checkbox
         v-model="localquicksave"
         data-testid="CBQuickSave"
         switch
+        class="pt-1"
         size="sm"
         @change="changeSaveMode(localquicksave)"
       >
         <span class="sr-only">{{ localquicksave ? $t('form.quicksave.enable'): $t('form.quicksave.disable') }}</span>
         <span class="text-small">{{ $t('form.quicksave') }}</span>
+        <b-icon
+          id="quicksavehelp"
+          data-testid="ButtonBTNHelp"
+          :icon="icon.help"
+          type="help"
+          font-scale="0.9"
+        />
       </b-form-checkbox>
-      <ButtonBTNHelp id="savemode-help" />
-      <TooltipTTHelp id="savemode-help" :tooltip-content="helpSavemode" type="grid" />
+      <b-tooltip target="quicksavehelp" data-testid="TTHelp">
+        <span v-for="item, index in helpSavemode" :key="index">
+          <GridGFormItem :label="item.label" :value="item.description" variant="longvalue" />
+        </span>
+      </b-tooltip>
     </div>
   </div>
 </template>
@@ -27,12 +39,15 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
+import { Icons } from '../../mixins/icons'
 const settings = namespace('settings')
 const auth = namespace('auth')
 const changes = namespace('changes')
 
-@Component
+@Component({ mixins: [Icons] })
 export default class CBQuickSave extends Vue {
+  icon: any
+  $t: any
   localquicksave: boolean = false
 
   @settings.Getter public quicksave!: boolean
@@ -40,7 +55,6 @@ export default class CBQuickSave extends Vue {
   @auth.Getter public username!: string
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Getter public changesHostParam!: Array<ChangeObj>
-  $t: any
 
   beforeMount () {
     this.localquicksave = this.quicksave
@@ -59,3 +73,8 @@ export default class CBQuickSave extends Vue {
   }
 }
 </script>
+<style>
+.quickpanelwarning {
+  line-height: 0.9;
+}
+</style>
