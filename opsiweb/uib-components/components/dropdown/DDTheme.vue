@@ -10,7 +10,7 @@
   >
     <template #button-content>
       <b-icon v-if="themeicon" :icon="themeicon" />
-      {{ theme.title }}
+      <span class="text-capitalize">{{ theme.title }}</span>
     </template>
     <b-dropdown-item
       v-for="t in themes"
@@ -21,7 +21,7 @@
       @click="theme = t;"
     >
       <b-icon v-if="t.icon" :icon="t.icon" />
-      {{ t.title }}
+      <span class="text-capitalize">{{ t.title }}</span>
     </b-dropdown-item>
   </b-dropdown>
 </template>
