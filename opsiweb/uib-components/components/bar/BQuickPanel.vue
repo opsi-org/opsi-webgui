@@ -7,6 +7,7 @@
     :backdrop="$mq == 'mobile'"
     :bg-variant="$mq == 'mobile'? 'primary' : 'sidebar-bg'"
     :text-variant="$mq == 'mobile'? 'color' : 'sidebar-text'"
+    shadow
     no-close-on-route-change
     @hidden="showQuickPanel = false"
   >
@@ -56,7 +57,7 @@
       <ViewVQuickSettings />
     </b-container>
     <template #footer>
-      <div class="text-center">
+      <div class="text-center p-3">
         <ButtonBTNLogout v-once />
       </div>
     </template>
