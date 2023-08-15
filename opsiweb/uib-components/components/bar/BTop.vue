@@ -66,26 +66,4 @@ export default class BTop extends Vue {
   font-size: 15px;
   margin-top: 7px;
 }
-.mobile #nav-collapse {
-  max-height:calc(var(--max-height-window) - var(--margin-top-maincontent));
-  overflow: auto;
-  background-color: var(--primary) !important;
-  border-bottom: 3px solid var(--primary) !important;
-}
-.desktop #nav-collapse .vertical-line {
-  min-height: 100%;
-  min-width: 2px;
-  content: "";
-  border: 1px solid var(--primary-dark);
-}
-.mobile #nav-collapse,
-.mobile #nav-collapse .navbar-nav {
-  top:0px !important;
-  width: 100% !important;
-  padding: 0px;
-  margin: 0px !important;
-  border-left: 0px !important;
-  border-right: 0px !important;
-  border-top: 0px !important;
-}
 </style>
