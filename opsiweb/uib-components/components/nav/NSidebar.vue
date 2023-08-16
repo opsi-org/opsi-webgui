@@ -111,8 +111,7 @@ export default class NSidebar extends Vue {
               { title: 'form.modules', route: '/adminmodules' }
             ]
           },
-          { title: 'title.support', icon: this.icon.support, route: '/support' },
-          { title: 'title.settings', icon: this.icon.settings, route: '/settings' }
+          { title: 'title.support', icon: this.icon.support, route: '/support' }
           // { title: 'Index page', icon: 'collection-fill', route: '/' }
         ]
       }
