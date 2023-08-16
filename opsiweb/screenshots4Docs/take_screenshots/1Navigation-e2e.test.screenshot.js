@@ -87,7 +87,6 @@ const testPages = async (page, lang) => {
   await expect(page).toHaveURL('/addons/webgui/app/clientsconfig')
   await page.screenshot({ path: './screenshots/new/' + lang + '/opsi-webgui_clientconfig.png' })
 
-
   // await page.click('[data-testid="NICollapsible-title.clients"]')
   await page.click('[data-testid="NICollapsible-title.depots"]')
   await expect(page).toHaveURL('/addons/webgui/app/depots/')
