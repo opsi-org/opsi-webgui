@@ -295,6 +295,7 @@
   "form.quicksave": "Quick save",
   "form.general": "General",
   "form.opsi": "OPSI",
+  "form.modules": "Modules",
   "form.modules.available": "Available modules",
   "form.quicksave.enable": "Enable Quick save",
   "form.quicksave.disable": "Disable Quick save",

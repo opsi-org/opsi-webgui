@@ -6,12 +6,6 @@
       </template>
       <ViewVSettingsLocalSpecific class="mt-2" />
     </b-tab> -->
-    <b-tab active>
-      <template #title>
-        <span class="opsispecific"> {{ $t('form.opsi') }} </span>
-      </template>
-      <ViewVModules class="mt-2" />
-    </b-tab>
   </b-tabs>
 </template>
 

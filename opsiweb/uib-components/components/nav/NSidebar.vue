@@ -102,12 +102,13 @@ export default class NSidebar extends Vue {
         menu: [
           {
             title: 'title.administration',
-            route: '/adminserverhealthcheck/',
+            route: '/adminterminal',
             icon: this.icon.admin,
             submenu: [
-              { title: 'title.healthcheck', route: '/adminserverhealthcheck/' },
-              { title: 'title.adminterminal', route: '/adminterminal/' },
-              { title: 'title.admin', route: '/admin/' }
+              { title: 'title.adminterminal', route: '/adminterminal' },
+              { title: 'title.healthcheck', route: '/adminserverhealthcheck' },
+              { title: 'title.admin', route: '/admin/' },
+              { title: 'form.modules', route: '/adminmodules' }
             ]
           },
           { title: 'title.support', icon: this.icon.support, route: '/support' },
