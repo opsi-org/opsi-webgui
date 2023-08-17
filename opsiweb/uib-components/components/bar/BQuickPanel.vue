@@ -16,31 +16,6 @@
         <b>{{ $t('Quick Selections') }} </b>
       </b-row>
       <ViewVQuickSelections />
-      <!-- <ModalMSelectionsAll /> -->
-      <!-- <b-button v-b-toggle.depots block class="text-left border-0" variant="outline-primary">
-        {{ $t('Servers') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
-      </b-button>
-      <b-collapse id="depots" accordion="quickpanelgroups" role="tabpanel">
-        <div class="scrollcontent">
-          <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-        </div>
-      </b-collapse>
-      <b-button v-b-toggle.clientgroup block class="text-left border-0" variant="outline-primary">
-        {{ $t('Client Groups') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
-      </b-button>
-      <b-collapse id="clientgroup" accordion="quickpanelgroups" role="tabpanel">
-        <div class="scrollcontent">
-          <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-        </div>
-      </b-collapse>
-      <b-button v-b-toggle.productgroup block class="text-left border-0" variant="outline-primary">
-        {{ $t('Product Groups') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
-      </b-button>
-      <b-collapse id="productgroup" accordion="quickpanelgroups" role="tabpanel">
-        <div class="scrollcontent">
-          <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-        </div>
-      </b-collapse> -->
       <b-row class="text-smaller mt-2 mb-2">
         <b>{{ $t('Quick Actions') }} </b>
       </b-row>
