@@ -113,9 +113,11 @@
   --dropdown-hover: var(--hover);
   --nav-tab-hover: var(--hover);
   --page-link-hover: var(--hover);
-  --treeselect-hover: var(--test-hover);
   --table-hover: var(--hover);
   --color-hover: 155, 155, 155, .1; /**?????**/
+
+  /* highlighted component */
+  --highlight: var(--test-hover);
 
 
   /** Dark DONE: **/
@@ -552,7 +554,7 @@ tbody .col-rowactions :not(div).btn {
 }
 .treeselect .vue-treeselect__menu .vue-treeselect__option--highlight {
   color: var(--color);
-  background-color: var(--treeselect-hover);
+  background-color: var(--highlight);
 }
 .treeselect.vue-treeselect--single .vue-treeselect__option--selected{
   color: var(--light);

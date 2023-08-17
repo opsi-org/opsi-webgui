@@ -2317,7 +2317,7 @@ textarea.form-control{
   z-index:1
 }
 .btn:not(.disabled):not(.border-0),.btn:not(.border-0){
-  border:1px solid var(--b-page_item-active) !important
+  border:1px solid var(--border) !important
 }
 .btn:disabled,.btn.disabled{
   color:var(--fg-page_item-disabled) !important;
@@ -3216,7 +3216,7 @@ select option:checked{
   z-index:3;
   color:var(--fg-page_item-active);
   background-color:var(--bg-page_item-active);
-  border-color:var(--b-page_item-active)
+  border-color:var(--border)
 }
 .page-item.disabled .page-link{
   background-color:var(--bg-page_item-disabled);
@@ -4584,7 +4584,7 @@ a.bg-dark:focus,a.bg-dark:hover,button.bg-dark:focus,button.bg-dark:hover{
   background-color:var(--bg-transparent) !important
 }
 .border{
-  border:1px solid var(--b-page_item-active) !important
+  border:1px solid var(--border) !important
 }
 .border-top{
   border-top:1px solid var(--bt-border) !important
