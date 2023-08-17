@@ -1,5 +1,5 @@
 <template>
-  <b-tabs justified small lazy>
+  <b-tabs justified small lazy class="QPTabs">
     <b-tab>
       <template #title>
         <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
@@ -91,3 +91,21 @@ export default class VQuickSelections extends Vue {
   @selections.Getter public selectionProducts!: Array<string>
 }
 </script>
+<style>
+.QPTabs .nav-tabs .nav-link{
+  color:var(--color);
+  background-color:var(--background);
+  border:1px solid var(--border);
+  padding:0.2rem;
+}
+.QPTabs .nav-tabs .nav-link:hover{
+  color: var(--color);
+  background-color: var(--highlight);
+  border:1px solid var(--border);
+}
+.QPTabs .nav-tabs .nav-link.active{
+  color: var(--color);
+  background-color: var(--highlight);
+  border:1px solid var(--border);
+}
+</style>
