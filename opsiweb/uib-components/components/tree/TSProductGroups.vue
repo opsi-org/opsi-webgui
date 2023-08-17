@@ -4,6 +4,7 @@
     :class="classes"
     :type="type"
     :always-open="open"
+    :text="$t('treeselect.prodGroups')"
     data-testid="TSProductGroups"
     :text-no-result="$t('treeselect.noresult')"
     :selection-default="selectionProducts"
@@ -13,7 +14,6 @@
     :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
     @change="changeSelection"
   />
-  <!-- :text="$t('treeselect.prodGroups')" -->
 </template>
 
 <script lang="ts">
