@@ -20,17 +20,19 @@
         <b>{{ $t('Quick Actions') }} </b>
       </b-row>
       <b-row>
-        <b-col>
-          <ButtonBTNEvent event="ondemand" :with-text="true" classes="outline-primary border" />
-        </b-col>
-        <b-col>
-          <ModalMProductActions :label="'label.prodquickaction'" />
-        </b-col>
+        <b-col> <ButtonBTNEvent event="ondemand" :with-text="true" classes="outline-primary border" /> </b-col>
+        <b-col> <ModalMProductActions :label="'label.prodquickaction'" /> </b-col>
       </b-row>
       <b-row class="text-smaller mt-2 mb-2">
         <b>{{ $t('Settings') }} </b>
       </b-row>
-      <ViewVQuickSettings />
+      <b-row>
+        <b-col> <DropdownDDLang v-once /> </b-col>
+        <b-col> <DropdownDDTheme v-once /> </b-col>
+        <b-col cols="6">
+          <CheckboxCBQuickSave />
+        </b-col>
+      </b-row>
     </b-container>
     <template #footer>
       <div class="text-center p-3">
