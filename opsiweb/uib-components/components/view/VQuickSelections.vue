@@ -5,45 +5,51 @@
         <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
       </template>
       <div class="scrollcontent">
-        <GridGFormItem :label="$t('title.depots')" variant="longlabel" labelclass="depots">
+        <GridGFormItem :label="$t('title.depots')" variant="longlabel">
           <template #value>
-            <b-form-textarea
-              v-if="selectionDepots.length>0"
-              rows="1"
-              max-rows="10"
-              size="sm"
-              no-resize
-              plaintext
-              :value="[...selectionDepots].sort().join('\n')"
-            />
+            <div v-if="selectionDepots.length>0" class="d-flex flex-nowrap">
+              <b-form-textarea
+                rows="1"
+                max-rows="10"
+                size="sm"
+                no-resize
+                plaintext
+                :value="[...selectionDepots].sort().join('\n')"
+              />
+              <ButtonBTNClearSelection class="float-right" :clearselection="clearSelection('servers')" :show-label="false" />
+            </div>
             <span v-else>{{ $t('empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem :label="$t('title.clients')" variant="longlabel" labelclass="clients">
           <template #value>
-            <b-form-textarea
-              v-if="selectionClients.length>0"
-              rows="1"
-              max-rows="16"
-              size="sm"
-              no-resize
-              plaintext
-              :value="[...selectionClients].sort().join('\n')"
-            />
+            <div v-if="selectionClients.length>0" class="d-flex flex-nowrap">
+              <b-form-textarea
+                rows="1"
+                max-rows="16"
+                size="sm"
+                no-resize
+                plaintext
+                :value="[...selectionClients].sort().join('\n')"
+              />
+              <ButtonBTNClearSelection class="float-right" :clearselection="clearSelection('clients')" :show-label="false" />
+            </div>
             <span v-else>{{ $t('empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem :label="$t('title.products')" variant="longlabel" labelclass="products">
           <template #value>
-            <b-form-textarea
-              v-if="selectionProducts.length>0"
-              rows="1"
-              max-rows="16"
-              size="sm"
-              no-resize
-              plaintext
-              :value="[...selectionProducts].sort().join('\n')"
-            />
+            <div v-if="selectionProducts.length>0" class="d-flex flex-nowrap">
+              <b-form-textarea
+                rows="1"
+                max-rows="16"
+                size="sm"
+                no-resize
+                plaintext
+                :value="[...selectionProducts].sort().join('\n')"
+              />
+              <ButtonBTNClearSelection class="float-right" :clearselection="clearSelection('products')" :show-label="false" />
+            </div>
             <span v-else>{{ $t('empty') }}</span>
           </template>
         </GridGFormItem>
@@ -89,6 +95,13 @@ export default class VQuickSelections extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
+  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+
+  clearSelection (store: string) {
+    return store
+  }
 }
 </script>
 <style>
