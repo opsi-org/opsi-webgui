@@ -51,7 +51,7 @@
     </b-tab>
     <b-tab>
       <template #title>
-        <b-icon :icon="icon.server" /> {{ selectionDepots.length }}
+        <b-icon :icon="icon.server" :title="$t('title.depots')" /> {{ selectionDepots.length }}
       </template>
       <div class="scrollcontent">
         <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
@@ -59,7 +59,7 @@
     </b-tab>
     <b-tab active>
       <template #title>
-        <b-icon :icon="icon.client" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
+        <b-icon :icon="icon.client" :title="$t('treeselect.clientGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
       </template>
       <div class="scrollcontent">
         <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
@@ -67,7 +67,7 @@
     </b-tab>
     <b-tab>
       <template #title>
-        <b-icon :icon="icon.product" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionProducts.length }}
+        <b-icon :icon="icon.product" :title="$t('treeselect.prodGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionProducts.length }}
       </template>
       <div class="scrollcontent">
         <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
