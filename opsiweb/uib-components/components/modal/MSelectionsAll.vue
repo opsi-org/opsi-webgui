@@ -2,14 +2,13 @@
   <div data-testid="MSelectionsAll">
     <b-button
       data-testid="MSelectionsAllButton"
-      variant="outline-primary border-0"
-      class="global_topbar_button"
+      variant="outline-primary"
       size="sm"
       tabindex="0"
       :title="withText ? '' : $t('title.selectedElements')"
       @click="show = !show"
     >
-      <b-icon :icon="icon.info" /> <span v-if="withText"> {{ $t('title.selectedElements') }}</span>
+      <b-icon :icon="icon.info" /> <span v-if="withText"> {{ $t('title.viewselection') }}</span>
     </b-button>
 
     <b-modal

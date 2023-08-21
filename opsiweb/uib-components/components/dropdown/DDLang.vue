@@ -1,13 +1,12 @@
 <template>
   <b-dropdown
-    id="language"
+    id="quicksettingsDD"
     data-testid="DropdownDDLang"
     :aria-label="$t('button.lang.tooltip')"
     :title="$t('button.lang.tooltip')"
-    variant="primary border-0"
-    class="global_topbar_button"
+    :variant="footer? 'primary border-0' : 'outline-primary'"
     size="sm"
-    :dropup="dropup"
+    :dropup="footer"
   >
     <template #button-content>
       <span style="text-transform:uppercase;"> <b-icon :icon="icon.language" /> {{ language }} </span>
@@ -35,7 +34,7 @@ export default class DDLang extends Vue {
   $i18n:any
   $mq:any
 
-  @Prop({ default: false }) dropup!: boolean
+  @Prop({ default: false }) footer!: boolean
 
   languages: Array<string> = []
 
@@ -58,18 +57,3 @@ export default class DDLang extends Vue {
   }
 }
 </script>
-
-<style>
-#language .dropdown-toggle::after{
-  display:none;
-}
-#language .selected,
-#language .selected > a.dropdown-item,
-#language .selected:hover {
-  color: var(--light) !important;
-  background-color: var(--primary) !important;
-}
-#language .selected > a.dropdown-item:hover {
-  background-color: var(--primary-dark) !important;
-}
-</style>

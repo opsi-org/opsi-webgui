@@ -17,70 +17,21 @@
           <b-icon font-scale="1.5" :icon="icon.navmenu" />
         </b-button>
       </template>
+      <template #quickpanel>
+        <b-button
+          :pressed.sync="showQuickPanel"
+          :title="showQuickPanel ? $t('label.hideQP'): $t('label.showQP')"
+          size="sm"
+          class="border-0 mr-1"
+          variant="outline-primary"
+        >
+          <b-icon :icon="icon.quickpanel" />
+        </b-button>
+      </template>
     </BarBTop>
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
-    <b-sidebar
-      id="quickpanel"
-      right
-      :visible="showQuickPanel"
-      no-header
-      :backdrop="$mq == 'mobile'"
-      :bg-variant="$mq == 'mobile'? 'dark' : 'sidebar-bg'"
-      :text-variant="$mq == 'mobile'? 'color' : 'sidebar-text'"
-      no-close-on-route-change
-      @hidden="showQuickPanel = false"
-    >
-      <b-button
-        :pressed.sync="showQuickPanel"
-        :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
-        size="sm"
-        class="mt-3 border-0 mr-3 float-right"
-        variant="outline-primary"
-      >
-        <b-icon :icon="icon.quickpanel" />
-      </b-button>
-      <b-container class="mt-5">
-        <b-row class="text-small mb-2">
-          <b>{{ $t('Quick Selections') }} </b>
-        </b-row>
-
-        <b-button v-b-toggle.depots block class="text-left border-0 p-0" variant="outline-primary">
-          {{ $t('Servers') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
-        </b-button>
-        <b-collapse id="depots" accordion="quickpanelgroups" role="tabpanel">
-          <div class="scrollcontent">
-            <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-          </div>
-        </b-collapse>
-        <b-button v-b-toggle.clientgroup block class="text-left border-0 p-0" variant="outline-primary">
-          {{ $t('Client Groups') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
-        </b-button>
-        <b-collapse id="clientgroup" visible accordion="quickpanelgroups" role="tabpanel">
-          <div class="scrollcontent">
-            <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-          </div>
-        </b-collapse>
-        <b-button v-b-toggle.productgroup block class="text-left border-0 p-0" variant="outline-primary">
-          {{ $t('Product Groups') }} <b-icon class="float-right" font-scale="0.9" :icon="icon.arrowFillDown" />
-        </b-button>
-        <b-collapse id="productgroup" accordion="quickpanelgroups" role="tabpanel">
-          <div class="scrollcontent">
-            <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
-          </div>
-        </b-collapse>
-      </b-container>
-    </b-sidebar>
+    <BarBQuickPanel :show-quick-panel="showQuickPanel" />
     <div class="main_content">
-      <b-button
-        v-if="!showQuickPanel"
-        :pressed.sync="showQuickPanel"
-        :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
-        size="sm"
-        class="mt-1 border-0 float-right"
-        variant="outline-primary"
-      >
-        <b-icon :icon="icon.quickpanel" />
-      </b-button>
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
@@ -116,6 +67,8 @@ export default class LayoutDefault extends Vue {
   wsInit: any // mixin
   wsBus: any // mixin
   getOpsiConfigServer:any
+  clientAlwaysOpen: boolean = false
+  productAlwaysOpen: boolean = false
 
   @config.Getter public config!: IObjectString2Boolean
   @config.Mutation public setConfig!: (obj: IObjectString2Boolean) => void
@@ -243,16 +196,5 @@ export default class LayoutDefault extends Vue {
 }
 :not(.mobile).QPwithSBcollapsed .main_content{
   width: calc(100% - 470px) !important;
-}
-#quickpanel {
-  top: calc(var(--height-navbar) - 2px) !important;
-  width: 400px;
-  height: 100% !important;
-}
-.sidebar-bg {
-  background-color: var(--background) !important;
-}
-.sidebar-text{
-  color: var(--color) !important;
 }
 </style>

@@ -9,7 +9,7 @@
     >
       <b-container fluid>
         <span class="text-small">{{ $t('uib') }}</span>
-        <DropdownDDLang :dropup="true" />
+        <DropdownDDLang :footer="true" />
         <span class="text-small BAuthFooter-version">
           {{ $t('label.version') }} {{ $config.packageVersion }}
         </span>
