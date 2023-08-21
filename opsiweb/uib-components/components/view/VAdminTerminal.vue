@@ -120,7 +120,6 @@ export default class VAdminTerminal extends Vue {
   }
 
   init () {
-    // this.wsWait(2000)
     if (this.mbTerminal) {
       this.mbTerminal.dispose()
     }
@@ -131,25 +130,12 @@ export default class VAdminTerminal extends Vue {
       disableStdin: false,
       cursorBlink: true,
       scrollback: 1000,
-      // allowProposedApi: true,
-      // cols: 80,
-
-      // disableStdin: false,
-      // cursorStyle: 'underline'
-      // rendererType: 'canvas', // Tipo de representación
-      // rows: 35,
-      // theme: 'light',
       theme: {
-        // foreground: 'yellow',
         background: '#060101',
         cursor: 'help'
       }
     })
-    // this.mbTerminal.skipResizeEvent = false
-
     this.mbTerminal.terminalChannel = this.terminalChannel
-
-    // this.mbTerminal.open(document.getElementById('xterm'))
     const searchAddon = new SearchAddon()
     this.mbTerminal.loadAddon(searchAddon)
     const webLinksAddon = new WebLinksAddon()
@@ -174,17 +160,6 @@ export default class VAdminTerminal extends Vue {
         this.mbTerminal.fitAddon.fit()
       }
     })
-
-    // const terminal = this.$refs.terminal as any
-    // terminal.ondragenter = function (event) {
-    //   return false
-    // }
-    // terminal.ondragover = function (event) {
-    //   event.preventDefault()
-    // }
-    // terminal.ondragleave = function (event) {
-    //   return false
-    // }
   }
 }
 </script>
@@ -199,23 +174,4 @@ export default class VAdminTerminal extends Vue {
   width:100%;
   height:100%;
 }
-/* .console {
-  min-height: 300px;
-  min-width: 300px;
-  font-family: monospace;
-  text-align: left;
-  overflow-y: auto;
-}
-.console.dark {
-  background-color: black;
-  color: #fff;
-}
-.console.light {
-  background-color: white;
-  color: black;
-}
-
-.console > .consolerow {
-  margin: 0px;
-} */
 </style>

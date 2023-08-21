@@ -331,9 +331,6 @@ export default class VClientCreation extends Vue {
   overflow-x: hidden;
   padding-left: 10px;
 }
-.VClientCreation .valcol {
-  /* display: flex; */
-}
 .valid-none.is-valid {
   background-image: unset !important;
   border-color: var(--b-input_component) !important;

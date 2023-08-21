@@ -14,7 +14,6 @@
     :selection-default="selectionDepots"
     :editable="false"
     :is-list="true"
-    :icon-prop="icon.server"
     :fetch-data="fetchDepotData"
     @change="changeSelection"
   />

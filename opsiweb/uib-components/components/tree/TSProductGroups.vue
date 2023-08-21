@@ -8,7 +8,6 @@
     data-testid="TSProductGroups"
     :text-no-result="$t('treeselect.noresult')"
     :selection-default="selectionProducts"
-    :icon-prop="icon.product"
     :fetch-data="fetchData"
     :disable-root-objects="false"
     :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"

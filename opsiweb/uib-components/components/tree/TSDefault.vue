@@ -1,26 +1,5 @@
 <template>
   <b-input-group data-testid="TSDefault" size="sm" class="TreeWrapper border">
-    <!-- <div v-if="iconProp" class="p-1">
-      <b-iconstack font-scale="1">
-        <b-icon stacked :icon="iconProp" variant="transparent" />
-        <b-icon v-if="$fetchState.pending" stacked :icon="icon.refetch" animation="spin" scale="2" />
-      </b-iconstack>
-    </div>
-    <ModalMSelections
-      v-if="(multi && showSelectionCount===true)"
-      :id="id"
-      :type="type"
-      :selections="((type==='propertyvalues')?selectionWrapper : selectionDefault)"
-    >
-      <template #clear>
-        <ButtonBTNClearSelection
-          v-if="(id == 'HostGroups' && multi && !treeselectSearchQueryFilled)"
-          class="BTN-before-list"
-          :disabled="(selection.length <= 0)"
-          :clearselection="clearSelected"
-        />
-      </template>
-    </ModalMSelections> -->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
@@ -151,7 +130,6 @@ export default class TSDefault extends Vue {
   @Prop({}) textNoResult!: string
   @Prop({}) validate!: Function
   @Prop({}) validateDescription!: string
-  @Prop({}) iconProp!: string
   @Prop({ default: 'id' }) valueFormat!: string
   @Prop({ default: 'LEAF_PRIORITY' }) valueConsistsOf!: string
   @Prop({ default: '' }) placeholder?: string
