@@ -1,53 +1,27 @@
 <template>
   <b-dropdown
-    v-if="navbar"
-    data-testid="DropdownDDTheme"
-    :aria-label="$t('form.theme')"
-    variant="primary border-0"
-    size="sm"
-    class="global_topbar_button"
-    no-caret
-    :title="$t('button.theme.tooltip')"
-  >
-    <template #button-content>
-      <b-icon v-if="themeicon" :icon="themeicon" />
-      {{ ($mq=='mobile') ? theme.title :'' }}
-    </template>
-    <b-dropdown-item
-      v-for="t in themes"
-      :key="t.rel"
-      :disable="t.title==theme.title"
-      :class="{selected: t.title == theme.title}"
-      @click="theme = t;"
-    >
-      <b-icon v-if="t.icon" :icon="t.icon" />
-      {{ t.title }}
-    </b-dropdown-item>
-  </b-dropdown>
-
-  <b-dropdown
-    v-else
+    id="quicksettingsDD"
     data-testid="DropdownDDTheme"
     :text="theme.title"
-    class="settingstheme"
+    :title="$t('button.theme.tooltip')"
     size="sm"
     variant="outline-primary"
     no-caret
-    dropright
   >
     <template #button-content>
       <b-icon v-if="themeicon" :icon="themeicon" />
-      {{ theme.title }}
+      <span class="text-capitalize">{{ theme.title }}</span>
     </template>
     <b-dropdown-item
       v-for="t in themes"
       :key="t.rel"
+      :class="{ selected: t.title==theme.title }"
       :disable="t.title==theme.title"
       variant="transparent"
       @click="theme = t;"
     >
       <b-icon v-if="t.icon" :icon="t.icon" />
-      {{ t.title }}
+      <span class="text-capitalize">{{ t.title }}</span>
     </b-dropdown-item>
   </b-dropdown>
 </template>
@@ -106,22 +80,3 @@ export default class DDTheme extends Vue {
   }
 }
 </script>
-
-<style>
-.settingstheme {
-  width: var(--component-width) !important;
-}
-#theme .dropdown-toggle::after{
-  display:none;
-}
-
-#theme .selected,
-#theme .selected > a.dropdown-item,
-#theme .selected:hover {
-  color: var(--light) !important;
-  background-color: var(--primary) !important;
-}
-#theme .selected > a.dropdown-item:hover {
-  background-color: var(--primary-dark) !important;
-}
-</style>

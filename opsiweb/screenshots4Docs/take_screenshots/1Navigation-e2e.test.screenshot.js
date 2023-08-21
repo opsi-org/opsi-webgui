@@ -35,7 +35,7 @@ test.beforeEach(async ({ page, context }) => {
 })
 
 test.afterEach(async ({ page }) => {
-  await apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+  apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
   await page.click('[data-testid="ButtonBTNLogout"]')
   page.setDefaultTimeout(55555)
   await expect(page).toHaveURL('/addons/webgui/app/login')

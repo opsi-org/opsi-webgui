@@ -13,7 +13,7 @@
       <b-col
         id="parentcol"
         class="pl-0"
-        :cols="$route.path.includes('clients/products/config') && parentId === 'tableclients' && expandClients && !treeopened ? 4 : null"
+        :cols="$route.path.includes('clients/products/config') && parentId === 'tableclients' && expandClients ? 4 : null"
         :class="{'d-none' : showchild && $mq === 'mobile' || $route.path.includes('clients/products/config') && parentId === 'tableclients' && !expandClients ,
                  column2visible: showchild}"
       >
@@ -36,7 +36,6 @@ export default class GTwoColumnLayout extends Vue {
   expandClients: boolean = false
   @Prop({ default: 'default' }) parentId!: string
   @Prop({ }) showchild!: string
-  @Prop({ default: false }) treeopened!: string
 
   @settings.Getter public twoColumnLayoutCollapsed!: Array<string>
   @settings.Mutation public setColumnLayoutCollapsed!: (obj: object) => void

@@ -2,7 +2,6 @@
   <div data-testid="MTrackChanges" class="MTrackChanges">
     <b-button
       v-if="!quicksave && (changesProducts.filter((o) => o.user === username).length!==0 || changesHostParam.filter((o) => o.user === username).length!==0)"
-      class="global_topbar_button"
       :title="$t('button.track.changes')"
       variant="primary border-0"
       size="sm"

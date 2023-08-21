@@ -3,6 +3,7 @@
     v-if="fetchDepotData"
     v-bind="$props"
     id="Depots"
+    :text="$t('title.depots')"
     :class="classes"
     :type="type"
     :always-open="open"
@@ -17,7 +18,6 @@
     :fetch-data="fetchDepotData"
     @change="changeSelection"
   />
-  <!-- :text="$t('title.depots')" -->
 </template>
 
 <script lang="ts">

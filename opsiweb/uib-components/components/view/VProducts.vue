@@ -2,86 +2,52 @@
   <div data-testid="VProducts" class="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
-        <LazyBarBPageHeader
-          v-if="tableloaded"
-          :title="$t('title.products')"
-          :tableid="id"
-          :table-info.sync="tableInfo"
-          :is-loading-parent="isLoading"
-          :fetch="$fetch"
-          navbartype="collapse"
-          :childopened="secondColumnOpened"
-          :closeroute="child? '/clients/' : null"
-          :treeview="showTreeView"
-        >
-          <template #right>
-            <ModalMProductActions />
-          </template>
-
-          <template #expandProdGroup>
-            <b-button
-              variant="outline-primary"
-              size="sm"
-              class="border-0"
-              :title="showTreeView? $t('Minimize Product Groups'): $t('Maximize Product Groups')"
-              :pressed.sync="showTreeView"
-            >
-              <b-icon :icon="showTreeView? 'box-arrow-left' : 'arrow-down-left'" />
-            </b-button>
-          </template>
-        </LazyBarBPageHeader>
-        <b-row>
-          <b-col v-if="showTreeView" class="VProductGroupsExpanded" data-testid="VProductGroupsExpanded">
-            <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_fullpage" />
-          </b-col>
-          <b-col>
-            <b-tabs class="products_horizontaltabs" small lazy>
-              <b-tab disabled>
-                <template #title>
-                  <small> <b class="count">
-                    {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
-                  </b> </small>
-                </template>
-              </b-tab>
-              <b-tab active>
-                <template #title>
-                  <span class="localboot"> {{ $t('title.localboot') + ' (' + localboot + ')' }} </span>
-                </template>
-                <TableTProductsLocalboot
-                  ref="ref-products-localboot"
-                  :parent-id="id"
-                  :is-loading="isLoading"
-                  :table-info.sync="tableInfo"
-                  :totallocalboot.sync="localboot"
-                  :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
-                  :filter-query="tableInfo.filterQuery"
-                  :rowident="rowId"
-                  :route-redirect-with="routeRedirectWith"
-                  :child="child"
-                  @fetch-products="fetchProducts"
-                />
-              </b-tab>
-              <b-tab>
-                <template #title>
-                  <span class="netboot"> {{ $t('title.netboot') + ' (' + totalnetboot+ ')' }} </span>
-                </template>
-                <TableTProductsNetboot
-                  ref="ref-products-netboot"
-                  :parent-id="id"
-                  :is-loading="isLoading"
-                  :table-info="tableInfo"
-                  :totalnetboot.sync="netboot"
-                  :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
-                  :filter-query="tableInfo.filterQuery"
-                  :rowident="rowId"
-                  :route-redirect-with="routeRedirectWith"
-                  :child="child"
-                  @fetch-products="fetchProducts"
-                />
-              </b-tab>
-            </b-tabs>
-          </b-col>
-        </b-row>
+        <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.products')" :closeroute="child? '/clients/' : null" />
+        <b-tabs class="products_horizontaltabs" small lazy>
+          <b-tab disabled>
+            <template #title>
+              <small> <b class="count">
+                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
+              </b> </small>
+            </template>
+          </b-tab>
+          <b-tab active>
+            <template #title>
+              <span class="localboot"> {{ $t('title.localboot') + ' (' + localboot + ')' }} </span>
+            </template>
+            <TableTProductsLocalboot
+              ref="ref-products-localboot"
+              :parent-id="id"
+              :is-loading="isLoading"
+              :table-info.sync="tableInfo"
+              :totallocalboot.sync="localboot"
+              :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
+              :filter-query="tableInfo.filterQuery"
+              :rowident="rowId"
+              :route-redirect-with="routeRedirectWith"
+              :child="child"
+              @fetch-products="fetchProducts"
+            />
+          </b-tab>
+          <b-tab>
+            <template #title>
+              <span class="netboot"> {{ $t('title.netboot') + ' (' + totalnetboot+ ')' }} </span>
+            </template>
+            <TableTProductsNetboot
+              ref="ref-products-netboot"
+              :parent-id="id"
+              :is-loading="isLoading"
+              :table-info="tableInfo"
+              :totalnetboot.sync="netboot"
+              :sort="{sortBy:tableInfo.sortBy, sortDesc:tableInfo.sortDesc}"
+              :filter-query="tableInfo.filterQuery"
+              :rowident="rowId"
+              :route-redirect-with="routeRedirectWith"
+              :child="child"
+              @fetch-products="fetchProducts"
+            />
+          </b-tab>
+        </b-tabs>
       </template>
       <template #child>
         <NuxtChild :id="rowId" :as-child="true" />
@@ -116,7 +82,6 @@ export default class VProducts extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-  showTreeView: boolean = false
   sortdesc: boolean = false
   rowId: string = ''
   isLoading: boolean = false
@@ -207,6 +172,7 @@ export default class VProducts extends Vue {
 
   async fetch () {
     await this.getNetbootProductsCount()
+    this.updateColumnVisibility()
   }
 
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {

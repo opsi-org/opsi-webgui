@@ -4,6 +4,7 @@
     :class="classes"
     :type="type"
     :always-open="open"
+    :text="$t('treeselect.clientGroups')"
     data-testid="TSHostGroups"
     :store="{selection:selectionClients, pushSelection:pushToSelectionClients, delSelection: delFromSelectionClients}"
     :text-no-result="$t('treeselect.noresult')"
@@ -16,7 +17,6 @@
     :disable-root-objects="true"
     @change="changeSelection"
   />
-  <!-- :text="$t('treeselect.clientGroups')" -->
 </template>
 
 <script lang="ts">

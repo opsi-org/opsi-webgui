@@ -113,9 +113,11 @@
   --dropdown-hover: var(--hover);
   --nav-tab-hover: var(--hover);
   --page-link-hover: var(--hover);
-  --treeselect-hover: var(--test-hover);
   --table-hover: var(--hover);
   --color-hover: 155, 155, 155, .1; /**?????**/
+
+  /* highlighted component */
+  --highlight: var(--test-hover);
 
 
   /** Dark DONE: **/
@@ -253,17 +255,6 @@ body .mobile .topbar_content .navbar > * {
   border-top: none !important;
   border-bottom: none !important;
   background-color: transparent !important;
-}
-.global_topbar_button{
-  /* margin-top: 0 !important; */
-  min-height: 100% !important;
-  min-width: 45px !important;
-  text-align: center !important;
-}
-.mobile .global_topbar_button {
-  height: var(--component-height) !important;
-  min-height: var(--min-height-button) !important;
-  min-width: 100% !important;
 }
 .form-control.focus {
   border-color: var(--b-input_component-focus);
@@ -563,7 +554,7 @@ tbody .col-rowactions :not(div).btn {
 }
 .treeselect .vue-treeselect__menu .vue-treeselect__option--highlight {
   color: var(--color);
-  background-color: var(--treeselect-hover);
+  background-color: var(--highlight);
 }
 .treeselect.vue-treeselect--single .vue-treeselect__option--selected{
   color: var(--light);
@@ -627,6 +618,9 @@ tbody .col-rowactions :not(div).btn {
 .text-small  {
   font-size: var(--text-small)!important;
 }
+.componentwidth {
+  width: var(--component-width) !important;
+}
 div.scrollValue {
   max-height: 300px;
   overflow-x: hidden;
@@ -637,4 +631,20 @@ div.scrollValue {
 }
 .componentwrapper {
   max-width: var(--wrapper-width)!important;
+}
+
+#quicksettingsDD {
+  width: 70px;
+}
+#quicksettingsDD .dropdown-toggle::after{
+  display:none;
+}
+#quicksettingsDD .selected,
+#quicksettingsDD .selected > a.dropdown-item,
+#quicksettingsDD .selected:hover {
+  color: var(--light) !important;
+  background-color: var(--primary) !important;
+}
+#quicksettingsDD .selected > a.dropdown-item:hover {
+  background-color: var(--primary-dark) !important;
 }

@@ -1,6 +1,6 @@
 <template>
   <b-input-group data-testid="TSDefault" size="sm" class="TreeWrapper border">
-    <div v-if="iconProp" class="p-1">
+    <!-- <div v-if="iconProp" class="p-1">
       <b-iconstack font-scale="1">
         <b-icon stacked :icon="iconProp" variant="transparent" />
         <b-icon v-if="$fetchState.pending" stacked :icon="icon.refetch" animation="spin" scale="2" />
@@ -20,7 +20,7 @@
           :clearselection="clearSelected"
         />
       </template>
-    </ModalMSelections>
+    </ModalMSelections> -->
     <LazyTreeTSDefaultWithAdding
       v-if="options"
       :id="`treeselect-${id}`"
