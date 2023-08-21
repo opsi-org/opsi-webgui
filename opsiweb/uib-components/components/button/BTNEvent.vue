@@ -122,8 +122,7 @@ export default class BTNEvent extends Vue {
         params: {
           method: 'showPopup',
           params: ['Dummy text']
-        },
-        responseVisualization: this.showResultOndemand
+        }
       },
       ondemand: {
         tooltip: 'button.event.ondemand.tooltip',
@@ -134,8 +133,7 @@ export default class BTNEvent extends Vue {
           method: 'fireEvent',
           params: ['on_demand'],
           client_ids: this.selectionClients
-        },
-        responseVisualization: this.showResultOndemand
+        }
       },
       reboot: {
         tooltip: 'button.event.reboot.tooltip',
@@ -146,8 +144,7 @@ export default class BTNEvent extends Vue {
           method: 'reboot',
           params: [],
           client_ids: this.selectionClients
-        },
-        responseVisualization: this.showResultOndemand
+        }
       }
     }
   }
@@ -175,11 +172,8 @@ export default class BTNEvent extends Vue {
     await this.$axios.$post('/api/command/opsiclientd_rpc', data.params)
       .then((response) => {
         ref.alert(this.$t('message.info.event'), 'info', response)
-        // data.responseVisualization(ref, response)
         this.callEventSended()
       }).catch((error) => {
-        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        // ref.alert(this.$t('message.error.event') as string + ' "' + this.event + '"', 'danger', detailedError || '')
         // eslint-disable-next-line no-console
         console.error(error)
         this.callEventSended()
@@ -201,21 +195,6 @@ export default class BTNEvent extends Vue {
   callEventSended () {
     this.isLoading = false
     if (this.updateLoading !== undefined) { this.updateLoading([]) }
-  }
-
-  showResultOndemand (ref:any, response:any) {
-    const data:any = {}
-    for (const k in response) {
-      if (response[k].error) {
-        data[k] = { error: this.$t('message.error.title') }
-      } else {
-        data[k] = { result: this.$t('message.success.title') }
-      }
-    }
-    // eslint-disable-next-line no-console
-    console.error('Response: ', data)
-    ref.set('object', data)
-    ref.alert(this.$t('message.info.event') as string + ' "' + this.event + '"', 'info')
   }
 }
 </script>

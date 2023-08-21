@@ -11,7 +11,6 @@
     :validate="() => true"
     :validate-description="''"
     :selection-default="selectionClients"
-    :icon-prop="icon.client"
     :fetch-data="fetchHostGroupsData"
     :fetch-children="fetchChildren"
     :disable-root-objects="true"
