@@ -20,7 +20,7 @@
       <template #quickpanel>
         <b-button
           :pressed.sync="showQuickPanel"
-          :title="showQuickPanel ? $t('Hide Quick Panel'): $t('Show Quick Panel')"
+          :title="showQuickPanel ? $t('label.hideQP'): $t('label.showQP')"
           size="sm"
           class="border-0 mr-1"
           variant="outline-primary"

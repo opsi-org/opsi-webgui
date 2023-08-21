@@ -13,18 +13,18 @@
   >
     <b-container>
       <b-row class="text-smaller mt-2 mb-2">
-        <b>{{ $t('Quick Selections') }} </b>
+        <b>{{ $t('label.quickselect') }} </b>
       </b-row>
       <ViewVQuickSelections />
       <b-row class="text-smaller mt-2 mb-2">
-        <b>{{ $t('Quick Actions') }} </b>
+        <b>{{ $t('label.quickaction') }} </b>
       </b-row>
       <b-row>
         <b-col> <ButtonBTNEvent event="ondemand" :with-text="true" classes="outline-primary border" /> </b-col>
         <b-col> <ModalMProductActions :label="'label.prodquickaction'" /> </b-col>
       </b-row>
       <b-row class="text-smaller mt-2 mb-2">
-        <b>{{ $t('Settings') }} </b>
+        <b>{{ $t('title.settings') }} </b>
       </b-row>
       <b-row>
         <b-col> <DropdownDDLang v-once /> </b-col>
