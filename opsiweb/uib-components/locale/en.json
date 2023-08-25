@@ -171,6 +171,7 @@
   "table.fields.reachablility": "Reachability Check",
   "table.fields.checkreachable": "Check the Client Reachability",
   "button.reachable": "Check reachability for the selected clients",
+  "label.reachable": "Reachability Status",
   "table.name.client": "Client name",
   "table.name.domain": "Domain name",
   "table.details.productproperty.defaults":"Product default",

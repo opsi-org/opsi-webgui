@@ -99,6 +99,9 @@
           <template #head(reachable)>
             <ModalMClientReachable />
           </template>
+          <template #cell(reachable)="row">
+            <ViewVClientReachable :id="row.item.clientId" />
+          </template>
 
           <template #cell(uefi)="row">
             <b-icon v-if="row.item.uefi" :icon="icon.check" />
