@@ -1,47 +1,37 @@
 <template>
-  <div data-testid="MClientreachable">
-    <b-button variant="outline-primary" size="sm" :title="$t('button.reachable')" :disabled="selectionClients.length <= 0" @click="checkReachable">
+  <div data-testid="VClientreachable">
+    <OverlayOLoading :is-loading="isLoading" />
+    <AlertAAlert ref="CheckAlert" />
+    <template v-if="reachability">
+      <b-icon v-if="reachability.toString() === 'true'" :icon="icon.check" />
+      <b-icon v-else :icon="icon.x" />
+    </template>
+    <b-button v-else variant="outline-primary" :title="$t('table.fields.checkreachable')" size="sm" @click="checkReachable">
       <b-icon :icon="icon.clientReachable" />
     </b-button>
-    <b-modal
-      id="clientreachability"
-      data-testid="MClientReachableModal"
-      :title="$t('label.reachable')"
-      centered
-      scrollable
-      hide-footer
-      no-fade
-    >
-      <AlertAAlert ref="CheckAlert" />
-      <OverlayOLoading :is-loading="isLoading" />
-      <pre v-if="reachability">{{ prettyJSON(reachability) }}</pre>
-    </b-modal>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
-const selections = namespace('selections')
 
 @Component({ mixins: [Icons] })
-export default class MClientReachable extends Vue {
+export default class VClientReachable extends Vue {
   icon: any
   $axios: any
   $t: any
+  @Prop({ }) id!: string
   reachability: any = null
   isLoading:boolean = false
-
-  @selections.Getter public selectionClients!: Array<string>
 
   async checkReachable () {
     this.isLoading = true
     const params: any = {}
-    params.selectedClients = JSON.stringify(this.selectionClients)
+    params.selectedClients = JSON.stringify([this.id])
     await this.$axios.$get('/api/opsidata/clients/reachable', { params })
       .then((response) => {
-        this.reachability = response
-        this.$bvModal.show('clientreachability')
+        this.reachability = Object.values(response)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.CheckAlert as any)

@@ -171,6 +171,7 @@
   "table.fields.reachablility": "Erreichbarkeitsprüfung",
   "table.fields.checkreachable": "Überprüfen die Client-Erreichbarkeit",
   "button.reachable": "Überprüfen Sie die Erreichbarkeit für die ausgewählten Clients",
+  "label.reachable": "Erreichbarkeitsstatus",
   "table.name.client": "Clientname",
   "table.name.domain": "Domainname",
   "table.details.productproperty.defaults":"Produkt Default",
