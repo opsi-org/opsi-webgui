@@ -36,3 +36,19 @@ pull-binaries:
     version: *project_version
     branch: development
     server-url: http://binaryindex.uib.gmbh
+
+transifex:
+  upload_resources:
+    - organization: opsi-org
+      project: opsiorg
+      resource_name: en.json
+      resource_file: opsiweb/uib-components/locale
+  download_translations:
+    - organization: opsi-org
+      project: opsiorg
+      resource_name: en.json
+      install_dir: opsiweb/uib-components/locale
+      languages:
+        - de
+        - fr
+
