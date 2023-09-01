@@ -477,6 +477,22 @@ build:addon:
       - webgui
     expire_in: 3 day
 
+build:transifex:
+  stage: build
+  dependencies:
+    - build:static:app
+  script:
+    - *install_tools
+    - ./opsi-dev-cli transifex download-translations
+  only:
+    - tags
+    - main
+  artifacts:
+    name: "opsi-webgui-locale"
+    paths:
+      - webgui
+    expire_in: 3 day
+
 #########################################################################
 ######################################################################### publish
 #########################################################################
