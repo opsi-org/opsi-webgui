@@ -41,12 +41,12 @@ transifex:
   upload_resources:
     - organization: opsi-org
       project: opsiorg
-      resource_name: en.json
-      resource_file: opsiweb/uib-components/locale
+      resource_name: webgui.json
+      resource_file: opsiweb/uib-components/locale/webgui_en.json
   download_translations:
     - organization: opsi-org
       project: opsiorg
-      resource_name: en.json
+      resource_name: webgui.json
       install_dir: opsiweb/uib-components/locale
       languages:
         - de
