@@ -53,6 +53,7 @@
   "message.session.expiresInMinutes": "Auto Logout in {min}m {s}s",
   "message.session.expiresInMinutesDetails": "Automatic Logout in {min} minutes und {s} seconds.",
   "message.session.expiresInMinutesOnly": "Automatically log out in {min} minutes.",
+  "note.quicksave": "NOTE: This feature is currently available for Host Parameters and Product Properties.",
   "description.version": "version:",
   "menu.open-sidemenu.sr-only":"Open sidemenu",
   "menu.open-topmenu.sr-only":"Open topmenu",
