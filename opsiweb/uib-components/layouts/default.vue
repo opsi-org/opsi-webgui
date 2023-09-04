@@ -19,6 +19,7 @@
       </template>
       <template #quickpanel>
         <b-button
+          data-testid="btnQuickPanel"
           :pressed.sync="showQuickPanel"
           :title="showQuickPanel ? $t('label.hideQP'): $t('label.showQP')"
           size="sm"

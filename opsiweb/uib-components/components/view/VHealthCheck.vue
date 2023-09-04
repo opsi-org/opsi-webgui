@@ -17,7 +17,7 @@
     </BarBPageHeader>
     <DivDScrollResult>
       <span v-for="health, i in healthcheckdata" :key="i" :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }">
-        <GridGFormItem value-more="true" :formclass="'mainitem ' + ((health.partial_results.length != 0)? 'collapsable' : '')">
+        <GridGFormItem value-more="true" :formclass="'mainitem ' + ((health.partial_results.length != 0)? 'collapsable' : '')" variant="shortlabel">
           <template #label>
             <div class=""> <!-- d-inline-block -->
               <template v-if="health.partial_results.length != 0">
@@ -45,7 +45,7 @@
         <b-collapse :id="'collapse-'+health.check_id" :visible="expandHCD || filter!==''">
           <!-- Collapse content -->
           <span v-for="(data, index) in health.partial_results" :key="index">
-            <GridGFormItem value-more="true" formclass="none" :valuedetails="data.message">
+            <GridGFormItem value-more="true" formclass="none" :valuedetails="data.message"  variant="shortlabel">
               <template #label>
                 <span :style="'width: 34px; min-height: 1px; float: left;'" />
                 <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" :variant="getVariant(data.check_status)">

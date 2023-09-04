@@ -39,7 +39,7 @@ export default class GFormItem extends Vue {
   @Prop({ }) value?: string
   @Prop({ }) valueMore?: boolean
   @Prop({ }) valuedetails?: string
-  @Prop({ default: 'shortlabel' }) variant?: string
+  @Prop({ default: 'longlabel' }) variant?: string // shortlabel
   @Prop({ default: 'mb-2 container' }) formclass?: any
 }
 </script>

@@ -1,10 +1,10 @@
 <template>
   <div data-testid="VAdmin" class="VAdmin">
     <b-row class="mt-4 mb-2 text-small">
-      <b>{{ $t('title.clients') }}</b>
+      <b class="titleclients">{{ $t('title.clients') }}</b>
     </b-row>
     <template v-if="blockedClients.length > 1">
-      <GridGFormItem :label="$t('label.blockedclients.select')">
+      <GridGFormItem :label="$t('label.blockedclients.select')" variant="longlabel">
         <template #value>
           <b-input-group>
             <b-form-select :options="blockedClients" />
@@ -16,7 +16,7 @@
           </b-input-group>
         </template>
       </GridGFormItem>
-      <GridGFormItem :label="$t('label.blockedclients')">
+      <GridGFormItem :label="$t('label.blockedclients')" variant="longlabel">
         <template #value>
           <b-button variant="outiline-primary" block size="sm" @click="unblockAllClients()">
             {{ $t('label.unblock.all') }}
@@ -30,10 +30,10 @@
     </AlertAAlertLocal>
 
     <b-row class="mt-4 mb-2 text-small">
-      <b>{{ $t('title.products') }} </b>
+      <b class="titleproducts">{{ $t('title.products') }} </b>
     </b-row>
     <template v-if="lockedProducts.length > 1">
-      <GridGFormItem :label="$t('label.lockedproducts.select')">
+      <GridGFormItem :label="$t('label.lockedproducts.select')" variant="longlabel">
         <template #value>
           <b-input-group>
             <b-form-select :options="lockedProducts" />
@@ -45,7 +45,7 @@
           </b-input-group>
         </template>
       </GridGFormItem>
-      <GridGFormItem :label="$t('label.lockedproducts')">
+      <GridGFormItem :label="$t('label.lockedproducts')" variant="longlabel">
         <template #value>
           <b-button variant="outiline-primary" block size="sm" @click="unlockAllProducts()">
             {{ $t('label.unlock.all') }}
