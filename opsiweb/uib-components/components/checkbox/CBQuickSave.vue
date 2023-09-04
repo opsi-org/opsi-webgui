@@ -31,6 +31,7 @@
         <span v-for="item, index in helpSavemode" :key="index">
           <GridGFormItem :label="item.label" :value="item.description" variant="longvalue" />
         </span>
+        <span class="text-small">{{ $t('note.quicksave') }}</span>
       </b-tooltip>
     </div>
   </div>
