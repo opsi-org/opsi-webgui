@@ -87,7 +87,7 @@
           <template #head(actionResult_failed)>
             <div :title="$t('table.fields.actionResultFailed')">
               <b-icon :icon="icon.product" />
-              <b-icon :icon="icon. productsFailedActionResult" class="rounded-circle" variant="danger" />
+              <b-icon :icon="icon.productsFailedActionResult" class="rounded-circle" variant="danger" />
             </div>
           </template>
           <template #head(installationStatus_unknown)>
@@ -435,5 +435,8 @@ export default class VClients extends Vue {
 .tableheader_products:focus {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
+}
+.b-table-row-selected .btn {
+color: var(--primary-foreground) !important;
 }
 </style>

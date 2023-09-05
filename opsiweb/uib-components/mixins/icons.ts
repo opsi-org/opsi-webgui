@@ -50,6 +50,7 @@ import { Component, Vue } from 'nuxt-property-decorator'
     reboot: 'bootstrap-reboot',
     productInstallationStatusUnknown: 'question',
     productActionResult: 'hourglass-bottom',
+    productsFailedActionResult: 'exclamation',
     productActionResultSuccessful: 'check',
     productsOutdated: 'cloud-arrow-down',
     sort: 'sort-up',

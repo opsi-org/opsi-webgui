@@ -10,10 +10,10 @@
       class="text-center bg-primary mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
-      <IconIOpsiLogo v-once :light="true" class="mb-2" height="33" />
-      <h3 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
+      <IconIOpsiLogo v-once :light="true" :short="false" class="mb-2" height="73" />
+      <!-- <h3 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
         {{ $t('title.project') }}
-      </h3>
+      </h3> -->
       <div @keyup.enter="doLogin">
         <b-form class="mt-1">
           <b-input-group>
