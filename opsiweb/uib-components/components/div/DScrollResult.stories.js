@@ -5,7 +5,7 @@ export default {
 
 const DefaultVisibleTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<DivDScrollResult style="max-height: 100px !important">
+  template: `<DivDScrollResult style="max-height: 50px !important">
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis nisi sem, placerat nec felis eu, facilisis pulvinar neque. Nullam at ligula tellus. Phasellus consequat accumsan nulla porta molestie. Praesent mollis dignissim nisl, vel vestibulum metus tristique vel. Duis sed ultrices metus. Pellentesque rhoncus tempus massa ac mattis. Phasellus fermentum, risus sit amet cursus venenatis, metus lorem lacinia nisl, vitae porta nulla quam rutrum odio. Vivamus mattis lectus vitae risus aliquam, et accumsan eros mollis. Fusce massa dui, molestie eu tortor eget, luctus rutrum lorem. Pellentesque varius justo lacus, eget vestibulum metus porta vitae. Mauris aliquam purus imperdiet quam faucibus, non luctus magna pretium. Vivamus ligula leo, auctor non massa a, auctor sagittis quam. Aliquam erat volutpat. In turpis lacus, scelerisque eget consectetur a, mollis in dolor. Mauris hendrerit dui in felis elementum, eget porttitor libero hendrerit.
 
       Curabitur venenatis hendrerit quam, ut dictum ex consectetur in. Pellentesque id metus ac turpis ornare cursus. Sed faucibus dolor ligula, vitae gravida libero pulvinar eu. In venenatis dolor felis, eu commodo velit luctus nec. Maecenas a elit aliquet, fringilla sapien sit amet, sagittis mi. Integer nec faucibus lacus. Sed mollis sit amet arcu nec eleifend.
