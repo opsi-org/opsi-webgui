@@ -9,7 +9,7 @@
       <slot name="mobilemenu" />
     </b-navbar-nav>
     <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
-      <IconIOpsiLogo v-once :light="true" class="mt-1" height="40" />
+      <IconIOpsiLogo v-once :light="true" class="mt-1" height="48" />
       <!-- <span class="ml-1 topbar_title webgui_title"> -->
         <!-- {{ $t('title.project') }} -->
       <!-- </span> -->

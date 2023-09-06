@@ -38,7 +38,7 @@ export default class BCountdowntimer extends Vue {
 
   mounted () {
     this.first_notification_showed = false
-    this.refAlert = (this.$root.$children[1].$refs.expiringAlert as any) || (this.$root.$children[2].$refs.expiringAlert as any)
+    this.refAlert = (this.$root.$children[1]?.$refs?.expiringAlert as any) || (this.$root.$children[2]?.$refs?.expiringAlert as any)
 
     this.notifyInMilliSec = ((this.isAuthenticated) ? 5 : -1) * 60000
     if (!this.sessionEndTime) {
@@ -83,7 +83,7 @@ export default class BCountdowntimer extends Vue {
   }
 
   initRef (time: any) {
-    this.refAlert.alert(this.$t('message.session.expiresInMinutesDetails', time), 'warning')
+    this.refAlert?.alert(this.$t('message.session.expiresInMinutesDetails', time), 'warning')
   }
 
   getText (t) {
