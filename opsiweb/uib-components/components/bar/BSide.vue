@@ -16,7 +16,7 @@
     <NavNSidebar :expanded="attributes.expanded" />
     <template #footer>
       <DivDCountdowntimer :small="!attributes.expanded" />
-      <span v-once class="ml-1 text-small topbar_version"> v{{ $config.packageVersion }} </span>
+      <span v-once class="ml-1 text-small topbar_version"> {{ $t('v') }}{{ $config.packageVersion }} </span>
       <b-button
         v-if="$mq === 'desktop'"
         variant="primary"
