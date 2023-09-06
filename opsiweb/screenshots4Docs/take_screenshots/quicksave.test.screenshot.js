@@ -3,9 +3,9 @@ const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story
 const en = require('../../uib-components/locale/en.json')
 const de = require('../../uib-components/locale/de.json')
 test('Quick Save', async ({ page }) => {
-  await callStoryId(page, 'view-v-settings-local-specific', 'v-settings-local-specific')
-  await (new Promise(resolve => setTimeout(resolve, 1000)))
-  await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, en['form.quicksave'])
+  await callStoryId(page, 'checkbox-c-b-quick-save', 'cb-quick-save')
+  await (new Promise(resolve => setTimeout(resolve, 3000)))
+  await page.evaluate((val) => { document.querySelector('label>.text-small').innerHTML = val }, en['form.quicksave'])
   await page.screenshot({
     path: './screenshots/en/opsi-webgui_quicksave.png',
     clip: {
@@ -15,7 +15,7 @@ test('Quick Save', async ({ page }) => {
       height: 60
     }
   })
-  await page.evaluate((val) => { document.querySelector('.quicksave').innerHTML = val }, de['form.quicksave'])
+  await page.evaluate((val) => { document.querySelector('label>.text-small').innerHTML = val }, de['form.quicksave'])
   await page.screenshot({
     path: './screenshots/de/opsi-webgui_quicksave.png',
     clip: {
