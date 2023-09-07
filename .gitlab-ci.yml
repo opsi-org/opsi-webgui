@@ -487,6 +487,7 @@ build:transifex:
   only:
     - tags
     - main
+    - 659-transifex-automation
   artifacts:
     name: "opsi-webgui-locale"
     paths:
