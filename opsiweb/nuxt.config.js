@@ -6,8 +6,8 @@ import pkg from './package.json'
 import delib from './uib-components/locale/webgui_de.json'
 import enlib from './uib-components/locale/webgui_en.json'
 
-import enui from './locale/en.json'
 import deui from './locale/de.json'
+import enui from './locale/en.json'
 
 const de = { ...delib, ...deui } // merge language files from components and local one
 const en = { ...enlib, ...enui } // have to be nested to avoid overwriting sections

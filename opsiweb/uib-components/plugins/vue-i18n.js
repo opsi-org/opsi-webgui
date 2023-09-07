@@ -9,7 +9,7 @@ export default ({ app }) => {
     silentTranslationWarn: process.env.NODE_ENV === 'production',
     fallbackLocale: 'en',
     messages: {
-      en: require('~/locale/en.json')
+      en: require('~/locale/webgui_en.json')
     }
   })
 }
