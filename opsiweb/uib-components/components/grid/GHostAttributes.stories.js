@@ -24,7 +24,7 @@ export default {
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: `<GridGHostAttributes id="${cid}"/>`,
+  template: `<GridGHostAttributes id="${cid}" type="clients"/>`,
   store: customstores({
     'config-app': {
       namespaced: true,
