@@ -1,12 +1,12 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test.describe('Client Deletion', () => {
   test('Button', async ({ page }) => {
     await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
-    const component = await page.locator('[data-testid="MDeleteClient"]')
+    const component = page.locator('[data-testid="MDeleteClient"]')
     await page.setViewportSize({ width: 140, height: 40 })
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.clientdeletion').innerHTML = val }, en['button.delete'])
@@ -19,7 +19,7 @@ test.describe('Client Deletion', () => {
     await callStoryId(page, 'modal-m-delete-client', 'm-delete-client')
     await page.click('[data-testid="MDeleteClient"] .btn')
     await page.setViewportSize({ width: 750, height: 200 })
-    const component = await page.locator('[data-testid="MDeleteClientModal"] .modal-content')
+    const component = page.locator('[data-testid="MDeleteClientModal"] .modal-content')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['title.deleteClient'])
     await page.evaluate((val) => { document.querySelector('.confirm').innerHTML = val.replace('{client}', 'testclient.domain.local') }, en['message.confirm.deleteClient'])

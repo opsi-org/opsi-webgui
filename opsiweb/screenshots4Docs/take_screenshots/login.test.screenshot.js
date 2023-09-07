@@ -1,11 +1,11 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test('Login', async ({ page }) => {
   await callStoryId(page, 'form-f-login', 'f-login')
-  const component = await page.locator('[data-testid="FLogin"]')
+  const component = page.locator('[data-testid="FLogin"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   // await component.evaluate(() => { document.querySelector('.projectTitle').innerHTML = 'opsi-webgui' })
   await page.evaluate((val) => { document.querySelector('[data-testid="login_configserver"]').placeholder = val }, 'testconfigserver.uib.local')

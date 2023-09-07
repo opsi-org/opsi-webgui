@@ -1,13 +1,14 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
+
 test('Selections', async ({ page }) => {
   await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
   await page.setViewportSize({ width: 750, height: 400 })
   await page.click('[data-testid="MSelectionsAll"] .btn')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="MSelectionsModal"] .modal-content')
+  const component = page.locator('[data-testid="MSelectionsModal"] .modal-content')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['title.selectedElements'])
   await page.evaluate((val) => { document.querySelector('.depots').innerHTML = val }, en['title.depots'])

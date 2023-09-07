@@ -1,12 +1,12 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test.describe('Table', () => {
   test('Filter', async ({ page }) => {
     await callStoryId(page, 'input-i-filter', 'i-filter')
-    const component = await page.locator('[data-testid="IFilter"]')
+    const component = page.locator('[data-testid="IFilter"]')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.setViewportSize({ width: 220, height: 340 })
     await component.type('Filter ID')
@@ -34,7 +34,7 @@ test.describe('Table', () => {
 
   test('Refresh', async ({ page }) => {
     await callStoryId(page, 'button-btn-refetch', 'btn-refetch')
-    const component = await page.locator('[data-testid="BTNRefetch"]')
+    const component = page.locator('[data-testid="BTNRefetch"]')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.setViewportSize({ width: 220, height: 340 })
     await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Refresh')

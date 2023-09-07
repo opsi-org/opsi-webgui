@@ -1,13 +1,13 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test('opsi admin', async ({ page }) => {
   await callStoryId(page, 'view-v-admin', 'v-admin')
   // await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VAdmin"]')
+  const component = page.locator('[data-testid="VAdmin"]')
   await page.evaluate((val) => { document.querySelector('.titleclients').innerHTML = val }, en['title.clients'])
   await page.evaluate((val) => { document.querySelector('.titleproducts').innerHTML = val }, en['title.products'])
   await component.screenshot({ path: './screenshots/en/opsi-webgui_opsisystem_admin.png' })
@@ -20,7 +20,7 @@ test('opsi terminal', async ({ page }) => {
   await callStoryId(page, 'view-v-admin-terminal', 'v-admin-terminal')
   // await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VAdminTerminal"]')
+  const component = page.locator('[data-testid="VAdminTerminal"]')
   // wss://localhost:4447/messagebus/v1?
   const cursor = '<span class="xterm-cursor xterm-cursor-blink xterm-cursor-block"> </span>'
 
@@ -44,7 +44,7 @@ test('opsi healthcheck', async ({ page }) => {
   await callStoryId(page, 'view-v-server-health', 'v-server-health')
   // await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VServerHealthCheck"]')
+  const component = page.locator('[data-testid="VServerHealthCheck"]')
 
   await page.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, en['title.healthcheck'])
   await page.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, en['title.diagnostics'])
@@ -59,7 +59,7 @@ test('opsi diagnostics', async ({ page }) => {
   await callStoryId(page, 'view-v-server-health', 'v-server-health')
   await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VServerHealthCheck"]')
+  const component = page.locator('[data-testid="VServerHealthCheck"]')
 
   await component.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, en['title.healthcheck'])
   await component.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, en['title.diagnostics'])
@@ -85,7 +85,7 @@ test('OPSI Modules', async ({ page }) => {
   await callStoryId(page, 'view-v-modules', 'v-modules')
   // await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VModules"]')
+  const component = page.locator('[data-testid="VModules"]')
   // await page.evaluate((val) => { document.querySelector('.localspecific').innerHTML = val }, en['form.general'])
   // await page.evaluate((val) => { document.querySelector('.opsispecific').innerHTML = val }, en['form.opsi'])
   await page.evaluate((val) => { document.querySelector('.modules').innerHTML = val }, en['form.modules.available'])

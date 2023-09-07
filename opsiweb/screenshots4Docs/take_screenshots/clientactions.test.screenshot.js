@@ -1,12 +1,12 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test.describe('Client Actions', () => {
   test('Button', async ({ page }) => {
     await callStoryId(page, 'dropdown-dd-client-actions', 'dd-client-actions')
-    const component = await page.locator('[data-testid="DDClientActions"]')
+    const component = page.locator('[data-testid="DDClientActions"]')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await component.screenshot({ path: './screenshots/en/opsi-webgui_buttonclientactions.png' })
     await component.screenshot({ path: './screenshots/de/opsi-webgui_buttonclientactions.png' })

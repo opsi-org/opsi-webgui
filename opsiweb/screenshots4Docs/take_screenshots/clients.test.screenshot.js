@@ -1,11 +1,11 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test('Clients', async ({ page }) => {
   await callStoryId(page, 'view-v-clients', 'v-clients')
-  const component = await page.locator('[data-testid="VClients"]')
+  const component = page.locator('[data-testid="VClients"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, en['title.clients'])
   // await page.evaluate((val) => { document.getElementById('treeselect-Depots').innerHTML = val }, en['title.depots'])

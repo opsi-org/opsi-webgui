@@ -1,11 +1,11 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 test.describe('Track Changes', () => {
   test('Button', async ({ page }) => {
     await callStoryId(page, 'modal-m-track-changes', 'm-track-changes')
-    const component = await page.locator('[data-testid="MTrackChanges"]')
+    const component = page.locator('[data-testid="MTrackChanges"]')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.btnlabel').innerHTML = val }, en['button.track.changes'])
     await component.screenshot({ path: './screenshots/en/opsi-webgui_buttontrackchanges.png' })
@@ -15,7 +15,7 @@ test.describe('Track Changes', () => {
   test('Modal', async ({ page }) => {
     await callStoryId(page, 'modal-m-track-changes', 'm-track-changes')
     await page.click('[data-testid="MTrackChanges"] .btn')
-    const component = await page.locator('[data-testid="MTrackChangesModal"] .modal-content')
+    const component = page.locator('[data-testid="MTrackChangesModal"] .modal-content')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['button.track.changes'])
     await page.evaluate((val) => { document.querySelector('.filterchanges').placeholder = val }, en['table.filterBy.DepotsClients'])

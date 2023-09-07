@@ -1,12 +1,12 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test.describe('Client Deploy Agent', () => {
   test('Button', async ({ page }) => {
     await callStoryId(page, 'modal-m-deploy-client-agent', 'm-deploy-client-agent')
-    const component = await page.locator('[data-testid="MDeployClientAgent"]')
+    const component = page.locator('[data-testid="MDeployClientAgent"]')
     await page.setViewportSize({ width: 200, height: 40 })
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.clientagent').innerHTML = val }, en['label.clientagent'])
@@ -18,7 +18,7 @@ test.describe('Client Deploy Agent', () => {
     await callStoryId(page, 'modal-m-deploy-client-agent', 'm-deploy-client-agent')
     await page.click('[data-testid="MDeployClientAgent"] .btn')
     await page.setViewportSize({ width: 750, height: 450 })
-    const component = await page.locator('[data-testid="MDeployClientAgentModal"] .modal-content')
+    const component = page.locator('[data-testid="MDeployClientAgentModal"] .modal-content')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.modal-header').innerHTML = val }, en['label.clientagent'])
     // await page.evaluate((val) => { document.querySelector('.clientId').innerHTML = val }, 'Client ID: client1.domain.local')

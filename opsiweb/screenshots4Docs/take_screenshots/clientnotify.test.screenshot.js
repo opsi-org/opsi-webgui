@@ -1,12 +1,12 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
 
 test.describe('Client Notify', () => {
   test('Button', async ({ page }) => {
     await callStoryId(page, 'button-btn-event', 'btn-event-notify')
-    const component = await page.locator('[data-testid="BTNEvent"]')
+    const component = page.locator('[data-testid="BTNEvent"]')
     await page.setViewportSize({ width: 140, height: 40 })
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.eventlabel').innerHTML = val }, en['button.event.showpopup'])
@@ -19,7 +19,7 @@ test.describe('Client Notify', () => {
     await callStoryId(page, 'button-btn-event', 'btn-event-notify')
     await page.click('[data-testid="BTNEvent"] .btn')
     await page.setViewportSize({ width: 750, height: 350 })
-    const component = await page.locator('[data-testid="BTNEventModal"] .modal-content')
+    const component = page.locator('[data-testid="BTNEventModal"] .modal-content')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.evaluate((val) => { document.querySelector('.modal-title').innerHTML = val }, en['button.event.showpopup'])
     await page.evaluate((val) => { document.querySelector('.textarea').value = val }, en['button.event.showpopup.message'])

@@ -1,7 +1,8 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/webgui_en.json')
+const de = require('../../uib-components/locale/webgui_de.json')
+
 test('Product Groups', async ({ page }) => {
   await callStoryId(page, 'tree-ts-product-groups', 'ts-product-group')
   await page.click('[data-testid="TSProductGroups"]')
