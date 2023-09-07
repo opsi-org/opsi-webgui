@@ -6,7 +6,14 @@
       <b-icon v-if="reachability.toString() === 'true'" :icon="icon.check" />
       <b-icon v-else :icon="icon.x" />
     </template>
-    <b-button v-else variant="outline-primary" :title="$t('table.fields.checkreachable')" size="sm" @click="checkReachable">
+    <b-button
+      v-else
+      :title="$t('table.fields.checkreachable')"
+      variant="outline-primary"
+      size="sm"
+      class="sm"
+      @click="checkReachable"
+    >
       <b-icon :icon="icon.clientReachable" />
     </b-button>
   </div>

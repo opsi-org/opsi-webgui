@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VAdminTerminal" class="VAdminTerminal">
-    <GridGFormItem :label="$t('table.fields.terminalId')">
+    <GridGFormItem :label="$t('table.fields.terminalId')" labelclass="lblTerminalId">
       <template #value>
         <b-input-group>
           <b-form-input id="terminalId" v-model="terminalId" size="sm" :aria-label="$t('table.fields.terminalId')" type="text" />
@@ -12,7 +12,7 @@
         </b-input-group>
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.terminalChannel')">
+    <GridGFormItem :label="$t('table.fields.terminalChannel')" labelclass="lblTerminalChannel">
       <template #value>
         <b-input-group>
           <b-form-input id="terminalChannel" v-model="terminalChannel" size="sm" :aria-label="$t('table.fields.terminalChannel')" type="text" />

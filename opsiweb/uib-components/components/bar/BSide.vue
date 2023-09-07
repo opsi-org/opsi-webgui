@@ -16,6 +16,7 @@
     <NavNSidebar :expanded="attributes.expanded" />
     <template #footer>
       <DivDCountdowntimer :small="!attributes.expanded" />
+      <span v-once class="ml-1 text-small topbar_version"> {{ $t('v') }}{{ $config.packageVersion }} </span>
       <b-button
         v-if="$mq === 'desktop'"
         variant="primary"
@@ -40,6 +41,7 @@ import { Icons } from '../../mixins/icons'
 
 @Component({ mixins: [Icons] })
 export default class BSide extends Vue {
+  $config:any
   $mq:any
   icon:any
   @Prop({ }) attributes!: ISidebarAttributes

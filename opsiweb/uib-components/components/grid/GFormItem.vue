@@ -1,6 +1,6 @@
 <template>
   <b-row data-testid="GFormItem" :class="formclass" class="GFormItem p-0 pt-1">
-    <b-col :sm="variant === 'longlabel' ? 5 : (variant === 'longvalue' ? 3 : 2)" class="firstcol d-inline pl-4 text-small text-sm-left " :class="labelclass">
+    <b-col :sm="variant === 'longlabel' ? 5 : (variant === 'longvalue' ? 3 : 2)" :class="'firstcol d-inline pl-4 text-small text-sm-left ' + labelclass">
       <slot name="label" />
       {{ label }}
     </b-col>

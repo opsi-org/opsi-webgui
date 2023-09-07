@@ -3,7 +3,7 @@ import { data, mock } from '../../.utils/storybook/mock'
 
 const result = [
   {
-    productId: 'activate-win',
+    productId: 'prod1',
     name: 'Windows Activation',
     description: 'Tries to activate this Windows installation',
     selectedDepots: ['as-tp.uib.local'],
@@ -21,7 +21,7 @@ const result = [
     selected: 0
   },
   {
-    productId: 'config-win-base',
+    productId: 'prod2',
     name: 'Windows Customizing',
     description: 'Anpassung von Windows XP / Vista / Win7 Einstellungen',
     selectedDepots: ['as-tp.uib.local'],
@@ -39,7 +39,7 @@ const result = [
     selected: 0
   },
   {
-    productId: 'config-win10',
+    productId: 'prod3',
     name: 'Configure Windows 10',
     description:
       'Configure various Windows 10 settings like lockscreen, hibernationboot, telemetry sending and update behavior.',

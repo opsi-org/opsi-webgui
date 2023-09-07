@@ -8,11 +8,12 @@ test('Clients', async ({ page }) => {
   const component = await page.locator('[data-testid="VClients"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, en['title.clients'])
-  await page.evaluate((val) => { document.getElementById('treeselect-Depots').innerHTML = val }, en['title.depots'])
-  await page.evaluate((val) => { document.getElementById('treeselect-HostGroups').innerHTML = val }, en['treeselect.clientGroups'])
-  await page.evaluate((val) => { document.querySelector('.tableheader_products').innerHTML = val }, en['title.products'])
+  // await page.evaluate((val) => { document.getElementById('treeselect-Depots').innerHTML = val }, en['title.depots'])
   await component.evaluate(() => { document.querySelector('.count').innerHTML = '0/5' })
   await component.evaluate(() => { document.querySelector('.filter').placeholder = 'Filter ID' })
+
+  // await page.evaluate((val) => { document.getElementById('treeselect-HostGroups').innerHTML = val }, en['treeselect.clientGroups'])
+  await page.evaluate((val) => { document.querySelector('.tableheader_products').innerHTML = val }, en['title.products'])
   await page.screenshot({
     path: './screenshots/en/opsi-webgui_clients.png',
     clip: {
@@ -22,7 +23,7 @@ test('Clients', async ({ page }) => {
       height: 460
     }
   })
-  await page.evaluate((val) => { document.getElementById('treeselect-HostGroups').innerHTML = val }, de['treeselect.clientGroups'])
+  // await page.evaluate((val) => { document.getElementById('treeselect-HostGroups').innerHTML = val }, de['treeselect.clientGroups'])
   await page.evaluate((val) => { document.querySelector('.tableheader_products').innerHTML = val }, de['title.products'])
   await page.screenshot({
     path: './screenshots/de/opsi-webgui_clients.png',
