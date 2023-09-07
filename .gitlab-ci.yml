@@ -246,6 +246,9 @@ test:accessibility:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
+  only:
+    - main
+    - tags
   artifacts:
     name: "opsi-webgui-test-result-accessibility"
     when: on_failure
