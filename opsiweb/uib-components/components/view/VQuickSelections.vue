@@ -1,6 +1,6 @@
 <template>
   <b-tabs justified small lazy class="QPTabs">
-    <b-tab>
+    <b-tab id="qp-tab-selection">
       <template #title>
         <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
       </template>
@@ -49,7 +49,7 @@
         </GridGFormItem>
       </div>
     </b-tab>
-    <b-tab>
+    <b-tab id="qp-tab-depots">
       <template #title>
         <b-icon :icon="icon.server" :title="$t('title.depots')" /> {{ selectionDepots.length }}
       </template>
@@ -57,7 +57,7 @@
         <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
-    <b-tab active>
+    <b-tab active id="qp-tab-clients">
       <template #title>
         <b-icon :icon="icon.client" :title="$t('treeselect.clientGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
       </template>
@@ -65,7 +65,7 @@
         <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
-    <b-tab>
+    <b-tab id="qp-tab-products">
       <template #title>
         <b-icon :icon="icon.product" :title="$t('treeselect.prodGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionProducts.length }}
       </template>
