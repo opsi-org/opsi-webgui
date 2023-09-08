@@ -76,7 +76,29 @@ module.exports.data = {
         }}
       }
     },
-    hosts: {"groups":{"groups":{"id":"groups;None","type":"HostGroup","text":"groups","parent":null,"allowed":true,"children":null},"clientdirectory":{"id":"clientdirectory;None","type":"HostGroup","text":"clientdirectory","parent":null,"allowed":true,"children":null},"clientlist":{"id":"clientlist;None","type":"HostGroup","text":"clientlist","parent":null,"hasAnySelection":false,"allowed":true,"children":null}}},
+    hosts: {"groups":{
+      "groups":
+        {"id":"groups;None","type":"HostGroup","text":"groups","parent":null,"allowed":true,"children":null},
+      "clientdirectory":
+        {"id":"clientdirectory;None","type":"HostGroup","text":"clientdirectory","parent":null,"allowed":true,"children":null},
+      "clientlist":{"id":"clientlist;None","type":"HostGroup","text":"clientlist","parent":null,"hasAnySelection":false,"allowed":true,"children":null}
+      }},
+
+
+    hostgroups: {
+      groups: { id: 'groups;None', type: 'HostGroup', text: 'groups', parent: null, children: [
+        { id: 'groups;TestGroup1', type: 'HostGroup', text: 'TestGroup1', parent: 'groups', children: [], allowed: true },
+        { id: 'groups;TestGroup2', type: 'HostGroup', text: 'TestGroup2', parent: 'groups', children: [], allowed: true },
+        { id: 'groups;TestGroup3', type: 'HostGroup', text: 'TestGroup3', parent: 'groups', children: [], allowed: true },
+      ], allowed: true },
+      clientdirectory: { id: 'clientdirectory;None', type: 'HostGroup', text: 'clientdirectory', parent: null, children: [
+        { id: 'clientdirectory;ClientDirGroup1', type: 'HostGroup', text: 'ClientDirGroup1', parent: 'clientdirectory', children: [], allowed: true },
+        { id: 'clientdirectory;ClientDirGroup2', type: 'HostGroup', text: 'ClientDirGroup2', parent: 'clientdirectory', children: [], allowed: true },
+        { id: 'clientdirectory;ClientDirGroup3', type: 'HostGroup', text: 'ClientDirGroup3', parent: 'clientdirectory', children: [], allowed: true }
+
+      ], allowed: true },
+      clientlist: { id: 'clientlist;None', type: 'HostGroup', text: 'clientlist', parent: null, children: null, hasAnySelection: true, allowed: true }
+    },
   },
 
   products: [
