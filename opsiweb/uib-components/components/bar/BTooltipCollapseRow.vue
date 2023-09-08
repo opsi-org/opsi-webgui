@@ -42,7 +42,7 @@ export default class BTooltipCollapseRow extends Vue {
 .BarBTooltipCollapseRow {
   list-style: none !important;
 }
-.navbar {
+.BarBTooltipCollapseRow.navbar {
   z-index: inherit !important;
 }
 .BarBTooltipCollapse .collapse{

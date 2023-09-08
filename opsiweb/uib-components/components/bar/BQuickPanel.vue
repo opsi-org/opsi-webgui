@@ -5,13 +5,13 @@
     :visible="showQuickPanel"
     no-header
     :backdrop="$mq == 'mobile'"
-    :bg-variant="$mq == 'mobile'? 'primary' : 'sidebar-bg'"
-    :text-variant="$mq == 'mobile'? 'color' : 'sidebar-text'"
+    bg-variant="background"
+    text-variant="color"
     shadow
     no-close-on-route-change
-    @hidden="showQuickPanel = false"
+    @hidden="$emit('update:showQuickPanel', false)"
   >
-    <b-container>
+    <b-card class="quickpanel_container">
       <b-row class="text-smaller mt-2 mb-2">
         <b>{{ $t('label.quickselect') }} </b>
       </b-row>
@@ -33,11 +33,11 @@
           <CheckboxCBQuickSave />
         </b-col>
       </b-row>
-    </b-container>
+    </b-card>
     <template #footer>
-      <div class="text-center p-3">
+      <b-card class="text-center p-3">
         <ButtonBTNLogout v-once />
-      </div>
+      </b-card>
     </template>
   </b-sidebar>
 </template>
@@ -55,6 +55,9 @@ export default class BQuickPanel extends Vue {
 </script>
 
 <style>
+.quickpanel_container {
+  height: 100% !important;
+}
 #quickpanel {
   top: calc(var(--height-navbar) - 2px) !important;
   width: 400px;
@@ -62,11 +65,5 @@ export default class BQuickPanel extends Vue {
 }
 #quickpanel .b-sidebar-footer {
   margin-bottom: 70px;
-}
-.sidebar-bg {
-  background-color: var(--background) !important;
-}
-.sidebar-text{
-  color: var(--color) !important;
 }
 </style>

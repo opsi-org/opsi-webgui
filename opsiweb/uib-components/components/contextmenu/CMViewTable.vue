@@ -143,7 +143,7 @@ export default class CMViewTable extends Vue {
   padding: 0px;
   position: fixed;
   min-width: 250px;
-  z-index: 200;
+  z-index: 1035;
 }
 #right-click-menu .dropdown-menu {
   border-color: var(--b-context_menu);
