@@ -115,7 +115,7 @@ def user_configuration() -> JSONResponse:
 				"depot_access": False,
 				"host_group_access": False,
 				"product_group_access": False,
-				"client_creation": False,
+				"client_creation": True,
 			},
 		}
 	)
