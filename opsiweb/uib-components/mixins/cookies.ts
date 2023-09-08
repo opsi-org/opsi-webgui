@@ -7,11 +7,21 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
 @Component export class Cookies extends Vue {
   // @changes.Mutation public delFromChangesProducts!: (s: object) => void
   // @errors.Mutation public pushToErrorsProducts!: (s: object) => void
+  existsCookie (key: string) {
+    return Cookie.get(key)
+  }
+
   isCookie (key: string, value:any, defaultValue = '') {
     let v = Cookie.get(key)
     console.log('iscookie', key, v, value, defaultValue, v === value)
     if (!v) { v = defaultValue }
     return v === value
+  }
+
+  getCookie (key: string, keyitem:string, defaultResult = '') {
+    const v = Cookie.get(key)
+    if (!v) { return defaultResult }
+    return JSON.parse(v as unknown as any)
   }
 
   getKeyCookie (key: string, keyitem:string, defaultResult = '') {
@@ -32,6 +42,5 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
   setCookie (key:string, value:any, options = undefined) {
     Cookie.set(key, value, options)
     let v = Cookie.get(key)
-    console.log('setcookie', key, v)
   }
 }

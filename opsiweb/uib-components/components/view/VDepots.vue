@@ -53,7 +53,7 @@
           <template #rowactions="row">
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
-              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
+              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile') ? $t('title.config') : ''"
               :icon="icon.settings"
               to="/depots/config"
               :ident="row.item.ident"
@@ -79,17 +79,20 @@ import QueueNested from '../../.utils/utils/QueueNested'
 import { Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { Client } from '../../mixins/get'
+import { Cookies } from '../../mixins/cookies'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
-@Component({ mixins: [Icons, Synchronization, Client] })
+@Component({ mixins: [Icons, Synchronization, Client, Cookies] })
 export default class VDepots extends Vue {
   icon: any
   syncSort: any
+  includesCookie!: any // mixin cookies
+  getKeyCookie!: any
   $axios: any
   $fetch: any
   $mq: any
-  $t: any
+  $t!: any
   $route: any
   $router: any
   getClientToDepot:any
@@ -106,27 +109,27 @@ export default class VDepots extends Vue {
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+      visible: this.includesCookie('column_' + this.id, 'selected', true)
     },
     depotId: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.id') as string, key: 'depotId', _fixed: true, sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('depotId') : true
+      visible: this.includesCookie('column_' + this.id, 'depotId', true)
     },
     description: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('description') : false
+      visible: this.includesCookie('column_' + this.id, 'description', false)
     },
     type: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.type') as string, key: 'type', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('type') : true
+      visible: this.includesCookie('column_' + this.id, 'type', true)
     },
     ip: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.ip') as string, key: 'ip', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ip') : false
+      visible: this.includesCookie('column_' + this.id, 'ip', false)
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
+      visible: this.includesCookie('column_' + this.id, 'rowactions', false),
       class: 'col-rowactions'
     }
   }
@@ -137,8 +140,8 @@ export default class VDepots extends Vue {
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 20,
-    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'depotId',
-    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
+    sortBy: this.getKeyCookie('sorting_' + this.id, 'sortBy', 'depotId'),
+    sortDesc: this.getKeyCookie('sorting_' + this.id, 'sortDesc', false),
     filterQuery: ''
   }
 

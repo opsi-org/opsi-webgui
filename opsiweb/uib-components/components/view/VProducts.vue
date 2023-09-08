@@ -70,13 +70,14 @@ const selections = namespace('selections')
 export default class VProducts extends Vue {
   // Cookie: any
   isCookie: any
-  includesCookie: any
-  getKeyCookie: any
+  includesCookie!: any
+  getKeyCookie!: any
+  setCookie: any
   icon: any
   $mq: any
   $route:any
   $router:any
-  $t:any
+  $t!:any
   $axios: any
   getClientToDepot:any
 
@@ -166,9 +167,6 @@ export default class VProducts extends Vue {
     if (this.secondColumnOpened && !this.child) {
       this.$router.push('/products/')
     }
-    // if (!this.tableInfo.sortBy) {
-    //   this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
-    // }
     if (this.sortby) {
       this.tableInfo.sortBy = this.sortby
       this.tableInfo.sortDesc = true
@@ -224,7 +222,7 @@ export default class VProducts extends Vue {
         visibleItems[h.key] = h.visible || false
       }
     })
-    Cookie.set('column_' + this.id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
+    this.setCookie('column_' + this.id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
   }
 
   async triggerFetch () {

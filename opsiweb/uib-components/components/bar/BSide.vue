@@ -37,12 +37,16 @@
 import Cookie from 'js-cookie'
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
+import { Cookies } from '../../mixins/cookies'
 import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Cookies] })
 export default class BSide extends Vue {
   $config:any
   $mq:any
+  getKeyCookie: any
+  setCookie: any
+  existsCookie: any
   icon:any
   @Prop({ }) attributes!: ISidebarAttributes
   @Prop({ default: false }) alwaysVisible!: boolean
@@ -57,7 +61,7 @@ export default class BSide extends Vue {
 
   @Watch('attributes', { deep: true }) attributesChanged () {
     if (this.$mq !== 'mobile' && !this.alwaysVisible) {
-      Cookie.set('menu_attributes_desktop', JSON.stringify(this.attributes), { expires: 365 })
+      this.setCookie('menu_attributes_desktop', JSON.stringify(this.attributes), { expires: 365 })
     }
   }
 
@@ -66,8 +70,8 @@ export default class BSide extends Vue {
       this.attributes.visible = this.alwaysVisible
       this.attributes.expanded = true
     } else {
-      if (!this.alwaysVisible && Cookie.get('menu_attributes_desktop')) {
-        this.attributes.expanded = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any).expanded
+      if (!this.alwaysVisible && this.existsCookie('menu_attributes_desktop')) {
+        this.attributes.expanded = this.getKeyCookie('menu_attributes_desktop', 'expanded', true)
       }
       this.attributes.visible = true
     }
