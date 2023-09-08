@@ -56,6 +56,7 @@
         />
         <ButtonBTNReset
           v-if="!isOrigin"
+          :w100="true"
           class="BTN-before-list"
           :action="resetSelected"
         />
@@ -161,6 +162,10 @@ export default class TSDefault extends Vue {
   @cache.Getter public opsiconfigserver!: Array<string>
 
   async fetch () {
+    await this._fetch() // Workaround, cause $fetch sometimes not triggered/executed in selectionChanged-method
+  }
+
+  async _fetch () {
     this.$fetchState.pending = true
     this.data = await this.fetchData()
     this.updateLocalFromParent()
@@ -170,7 +175,7 @@ export default class TSDefault extends Vue {
   }
 
   @Watch('selectionDefault', { deep: true }) async selectionChanged () {
-    await this.$fetch()
+    await this._fetch() // Workaround... cause $fetch sometimes not executed....
   }
 
   get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }

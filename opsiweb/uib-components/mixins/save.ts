@@ -54,6 +54,7 @@ const errors = namespace('errors')
 @Component export class SaveProductProperties extends Vue {
   @changes.Mutation public delFromChangesProducts!: (s: object) => void
   @errors.Mutation public pushToErrorsProducts!: (s: object) => void
+
   async saveProdProperties (id: string, change: object, deleteitem:any, showalert:boolean) {
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$post(`/api/opsidata/products/${id}/properties`, change)
@@ -61,8 +62,10 @@ const errors = namespace('errors')
         if (deleteitem) {
           this.delFromChangesProducts(deleteitem)
         } else {
+          // ref.alert(this.$t('message.success.trackChanges.save') + ' (' + id + ': ' + JSON.stringify(change) + ')', 'success')
           ref.alert(this.$t('message.success.trackChanges.save'), 'success')
           this.$emit('refetch', true)
+          // this.$nuxt.refresh()
         }
       }).catch((error) => {
         if (showalert) {

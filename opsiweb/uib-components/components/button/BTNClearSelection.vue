@@ -4,7 +4,7 @@
     :aria-label="$t('table.selection.clear')"
     :title="showLabel? '' : $t('table.selection.clear')"
     variant="outline-primary"
-    class="ml-0 border-0"
+    class="ml-0 border-0 w-100"
     size="sm"
     @click="clearselection"
   >

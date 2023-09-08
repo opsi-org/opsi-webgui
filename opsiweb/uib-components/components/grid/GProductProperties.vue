@@ -64,6 +64,7 @@
           <GridCellGCProductPropertyValue
             :clients2depots="fetchedDataClients2Depots"
             :row-item="item"
+            :is-loading="isLoading"
             @change="handleChange"
           />
         </template>

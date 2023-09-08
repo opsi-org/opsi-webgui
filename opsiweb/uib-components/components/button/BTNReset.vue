@@ -5,6 +5,7 @@
     :title="label? '' : $t('button.reset')"
     variant="outline-primary"
     class="reset"
+    :class="{'w-100': w100}"
     size="sm"
     @click="action"
   >
@@ -21,6 +22,7 @@ import { Icons } from '../../mixins/icons'
 export default class BTNReset extends Vue {
   icon:any
   @Prop({}) label?: string
+  @Prop({}) w100?: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) action!: Function
 }
 </script>
