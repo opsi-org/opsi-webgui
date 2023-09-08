@@ -96,7 +96,7 @@ export default class BSide extends Vue {
 #sidemenu .b-sidebar-footer {
   border-top: 1px solid var(--light) !important;
   background-color: var(--primary);
-  z-index: 100;
+  z-index: 1;
   height: auto;
   display: inline;
   float: right;
