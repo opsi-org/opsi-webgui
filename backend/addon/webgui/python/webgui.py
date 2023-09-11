@@ -228,15 +228,23 @@ async def get_app_state(request: Request) -> RESTResponse:
 
 @webgui_router.post("/api/backup/restore")
 @rest_api
-async def create_backup(
+async def restore_backup(
 	file_id: Annotated[str, Body()],
 	config_files: Annotated[bool, Body()] = False,
+	redis_data: Annotated[bool, Body()] = False,
 	server_id: Annotated[str, Body(examples=["backup", "local", "new-id.test.local"])] = "backup",
 	password: Annotated[str, Body()] | None = None,
 ) -> RESTResponse:
 	logger.devel(file_id)
 	logger.devel(server_id)
-	await run_in_threadpool(backend.service_restoreBackup, file_id, config_files, server_id, password)
+	await run_in_threadpool(
+		backend.service_restoreBackup,
+		file_id,
+		config_files=config_files,
+		redis_data=redis_data,
+		server_id=server_id,
+		password=password,
+	)
 	return RESTResponse(
 		data="Backup restored",
 	)
@@ -244,12 +252,15 @@ async def create_backup(
 
 @webgui_router.post("/api/backup/create")
 @rest_api
-async def restorebackup(
+async def create_backup(
 	config_files: Annotated[bool, Body()] = True,
+	redis_data: Annotated[bool, Body()] = False,
 	maintenance_mode: Annotated[bool, Body()] = True,
 	password: Annotated[str, Body()] | None = None,
 ) -> RESTResponse:
-	backup_file = await run_in_threadpool(backend.service_createBackup, config_files, maintenance_mode, password)
+	backup_file = await run_in_threadpool(
+		backend.service_createBackup, config_files=config_files, redis_data=redis_data, maintenance_mode=maintenance_mode, password=password
+	)
 	return RESTResponse(data=backup_file)
 
 
