@@ -63,7 +63,7 @@
         <b-button
           v-if="editable && treeselectSearchQueryFilled"
           variant="outline-primary"
-          class="BTN-before-list border-0"
+          class="BTN-before-list border-0 w-100"
           :title="$t('button.tsdefault.add.tooltip')"
           @click="triggerSelection()"
         >
@@ -205,7 +205,11 @@ export default class TSDefault extends Vue {
   }
 
   triggerSelection () {
-    const treeselectComponent = this.$refs[`id-select-${this.id}`] as any
+    // placeholder class vue-treeselect__input
+    // const treeselectComponent = this.$refs[`id-select-${this.id}`] as any
+    const tid = `treeselect-${this.id}`
+    const treeselectComponent = this.$refs[tid] as any
+    // console.log('treeselcomp', tid, treeselectComponent)
     if (treeselectComponent) {
       treeselectComponent?.select()
     } else {
@@ -287,7 +291,7 @@ export default class TSDefault extends Vue {
       isNew: node.isNew ?? false,
       hasAnySelection: node.hasAnySelection ?? false,
       isDisabled: (node.isDisabled === true) || (node.id === this.$t('values.mixed')) || false,
-      label: node.text ? node.text.replace(/_+$/, '') : node.id,
+      label: node?.text && node.text.replace ? node.text.replace(/_+$/, '') : node.id,
       children: node.children
         ? this.getChildren(node).sort(function (a: Group, b: Group) {
           if (a.text < b.text) { return -1 }
@@ -401,5 +405,11 @@ export default class TSDefault extends Vue {
   display: block;
   color:var(--color);
   padding: 0%;
+}
+.TreeWrapper>.search-filled .vue-treeselect__placeholder {
+  top: -10px;
+}
+.TreeWrapper>.search-filled .vue-treeselect__input {
+  color: var(--general-fg-disabled) !important;
 }
 </style>
