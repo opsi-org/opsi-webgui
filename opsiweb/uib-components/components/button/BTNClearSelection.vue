@@ -4,7 +4,8 @@
     :aria-label="$t('table.selection.clear')"
     :title="showLabel? '' : $t('table.selection.clear')"
     variant="outline-primary"
-    class="ml-0 border-0 w-100"
+    class="ml-0 border-0"
+    :class="short !== false ? '' : 'w-100'"
     size="sm"
     @click="clearselection"
   >
@@ -23,6 +24,7 @@ export default class BTNClearSelection extends Vue {
   icon:any
   @Prop({}) label?: string
   @Prop({ default: true }) showLabel?: boolean
+  @Prop({ default: false }) short?: boolean
   @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
 }
 </script>

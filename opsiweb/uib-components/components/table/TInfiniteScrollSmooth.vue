@@ -73,7 +73,7 @@
             <b v-if="rowident !== 'productId'" class="count">
               {{ $t('count/all', {count:selection.length, all:totalItems||0}) }}
             </b>
-            <ButtonBTNClearSelection :disabled="selection.length<1" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
+            <ButtonBTNClearSelection :disabled="selection.length<1" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" short />
           </small>
         </template>
         <template #cell(rowactions)="row">
