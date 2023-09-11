@@ -64,7 +64,7 @@ interface SideBarAttr {
 @Component({ mixins: [MBus, Configserver, Icons, Cookies] })
 export default class LayoutDefault extends Vue {
   icon:any
-  getCookie!:any
+  getParsedCookie!:any
   setCookie:any
   $t: any
   $mq!: any
@@ -85,9 +85,7 @@ export default class LayoutDefault extends Vue {
 
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
 
-  showQuickPanel:boolean = false
-
-  created () { this.showQuickPanel = this.getCookie('quickpanel', false) }
+  showQuickPanel:boolean = this.getParsedCookie('quickpanel', false)
 
   showQuickPanelChanged (val) {
     this.setCookie('quickpanel', val)

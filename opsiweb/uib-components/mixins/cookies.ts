@@ -46,5 +46,6 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
     let opt:any = options
     if (opt === undefined) { opt = { expires: 365 } }
     Cookie.set(key, value, opt)
+    console.log('store cookie', key, value)
   }
 }
