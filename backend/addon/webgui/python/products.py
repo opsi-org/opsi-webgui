@@ -1303,3 +1303,59 @@ def unlock_all_products() -> RESTResponse:
 def get_locked_products_list() -> RESTResponse:
 	locked_products = backend.getProductLocks_hash()  # pylint: disable=no-member
 	return RESTResponse(locked_products)
+
+
+@product_router.get("/api/opsidata/products/installation-status", response_model=List[str])
+@rest_api
+def installation_status(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Get products installationStatus
+	"""
+
+	with mysql.session() as session:
+		try:
+			query = select(text("poc.installationStatus")).select_from(text("PRODUCT_ON_CLIENT AS poc")).distinct()
+
+			result = session.execute(query)
+			result = result.fetchall()
+
+			installation_status_list = [dict(row).get("installationStatus") for row in result]
+
+		except Exception as err:  # pylint: disable=broad-except
+			if isinstance(err, OpsiApiException):
+				raise err
+			logger.error("Could not get installationStatus.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not get installationStatus.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+	return RESTResponse(data=installation_status_list)
+
+
+@product_router.get("/api/opsidata/products/action-result", response_model=List[str])
+@rest_api
+def action_result(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	Get products actionResult
+	"""
+
+	with mysql.session() as session:
+		try:
+			query = select(text("poc.actionResult")).select_from(text("PRODUCT_ON_CLIENT AS poc")).distinct()
+
+			result = session.execute(query)
+			result = result.fetchall()
+
+			action_result_list = [dict(row).get("actionResult") for row in result]
+
+		except Exception as err:  # pylint: disable=broad-except
+			if isinstance(err, OpsiApiException):
+				raise err
+			logger.error("Could not get actionResult.")
+			logger.error(err)
+			raise OpsiApiException(
+				message="Could not get actionResult.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+	return RESTResponse(data=action_result_list)
