@@ -12,7 +12,7 @@
             <treeselect
               v-model="selectedvalue"
               class="treeselect_notstored treeselect treeselect_fullpage"
-              :placeholder="$t('Filter')"
+              :placeholder="$t('treeselect.search')"
               always-open
               :default-expand-level="1"
               :normalizer="normalizer"
@@ -78,7 +78,7 @@
                   </template>
                   <template v-else>
                     <b-icon :icon="icon.client" />
-                    {{ node.label }}
+                    {{ node.id }}
                     <div class="float-right">
                       <b-button
                         class="border-0"
@@ -105,8 +105,9 @@
             </treeselect>
           </b-col>
           <b-col v-if="action && selectedvalue">
-            <span class="text-small"><b> {{ title + $t(' - ') }}</b><i>{{ selectedvalue.text }}</i></span>
+            <span class="text-small"><b> {{ title + $t('title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
+              <!-- closing right side -->
               <b-icon :icon="icon.x" />
             </b-button>
             <br><br>
@@ -130,9 +131,9 @@
             </template>
             <template v-else-if="action == 'addSubgroup'">
               <b-form>
-                <b-form-input v-model="subgroup.groupId" size="sm" :placeholder="$t('group.subgroupname')" />
-                <b-form-input v-model="subgroup.description" size="sm" :placeholder="$t('table.fields.description')" />
-                <b-form-input v-model="subgroup.notes" size="sm" :placeholder="$t('table.fields.notes')" />
+                <b-form-input v-model="subgroup.groupId" size="sm" :placeholder="$t('group.subgroupname')" trim @keydown.enter.prevent="createSubGroup" />
+                <b-form-input v-model="subgroup.description" size="sm" :placeholder="$t('table.fields.description')" trim @keydown.enter.prevent="createSubGroup" />
+                <b-form-input v-model="subgroup.notes" size="sm" :placeholder="$t('table.fields.notes')" trim @keydown.enter.prevent="createSubGroup" />
                 <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
                   {{ $t("button.create") }}
                 </b-button>
@@ -209,7 +210,7 @@ export default class VGroups extends Vue {
   $fetch: any
   $t: any
   $mq: any
-  group: Array<object> = []
+  group: Array<object>|undefined = undefined
   selectedvalue: any = null
   clientIds: Array<string> = []
   selectedClients: Array<string> = []
@@ -275,9 +276,10 @@ export default class VGroups extends Vue {
   }
 
   async fetchGroups () {
+    this.group = undefined
     const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
+    // await new Promise(r => setTimeout(r, 10000))
     this.group = Object.values(result)
-    console.log("action", this.action)
     this.showChild(this.action)
   }
 
@@ -285,6 +287,12 @@ export default class VGroups extends Vue {
     this.action = selectedAction
     const groupaction = 'group.' + this.action
     this.title = this.$t(groupaction)
+  }
+
+  afterAsync () {
+    // triggers soft refresh of ui
+    this.subgroup.groupId = this.subgroup.groupId + 'x'
+    this.subgroup.groupId = this.subgroup.groupId.slice(0, -1)
   }
 
   async removeClientFromGroup () {
@@ -300,7 +308,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    // this.action = ''
+    this.afterAsync()
   }
 
   async copyClientToGroups () {
@@ -310,7 +318,7 @@ export default class VGroups extends Vue {
     const client = this.selectedvalue.text
     await this.addClientToListOfGroups(client, groupsList)
     await this.fetchGroups()
-    this.action = ''
+    this.afterAsync()
   }
 
   async fetchClients () {
@@ -329,7 +337,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
 
   async createSubGroup () {
@@ -345,9 +353,9 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
-///////////////////////
+
   async updateGroup () {
     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
     await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
@@ -355,14 +363,13 @@ export default class VGroups extends Vue {
         const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
         ref.alert(response, 'success')
         await this.fetchGroups()
-        // showChild(action)
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    // this.action = ''
+    this.afterAsync()
   }
 
   async deleteGroup () {
@@ -377,7 +384,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    // this.action = ''
+    this.afterAsync()
   }
 
   async removeClientAssignments () {
@@ -392,7 +399,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    // this.action = ''
+    this.afterAsync()
   }
 }
 </script>
