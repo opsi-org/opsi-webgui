@@ -102,15 +102,39 @@ interface QuickAction {
     action_result: null
   }
 
-  conditn_InstStatus: Array<string> = [
-    'Installed',
-    'Unknown'
-  ]
+  conditn_InstStatus!: Array<string>
+  conditn_ActionResult!: Array<string>
 
-  conditn_ActionResult: Array<string> = [
-    'Successful',
-    'Failed'
-  ]
+  async fetch () {
+    this.isLoading = true
+    await this.fetchActionResults()
+    await this.fetchInstallationStates()
+    this.isLoading = false
+  }
+
+  async fetchActionResults () {
+    await this.$axios.$get('/api/opsidata/products/action-result')
+      .then((result) => {
+        this.conditn_ActionResult = result
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$refs.prodQuickActionAlert as any)
+        ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        this.conditn_ActionResult = ['Successful', 'Failed']
+      })
+  }
+
+  async fetchInstallationStates () {
+    await this.$axios.$get('/api/opsidata/products/action-result')
+      .then((result) => {
+        this.conditn_InstStatus = result
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$refs.prodQuickActionAlert as any)
+        ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        this.conditn_InstStatus = ['Installed', 'Unknown']
+      })
+  }
 
   async executeAction () {
     const ref = (this.$refs.prodQuickActionAlert as any)
