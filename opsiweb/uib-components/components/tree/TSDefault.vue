@@ -86,7 +86,9 @@
             <b> {{ node.label }} </b>
           </template>
           <template v-else>
-            {{ node.label ? node.label : node.id }}
+            {{ node.label }}
+            <!-- label need to be set! otherwise search and other functionalities are broken -->
+            <!-- {{ node.label ? node.label : node.id }} -->
           </template>
         </div>
       </div>
@@ -205,11 +207,8 @@ export default class TSDefault extends Vue {
   }
 
   triggerSelection () {
-    // placeholder class vue-treeselect__input
-    // const treeselectComponent = this.$refs[`id-select-${this.id}`] as any
     const tid = `treeselect-${this.id}`
     const treeselectComponent = this.$refs[tid] as any
-    // console.log('treeselcomp', tid, treeselectComponent)
     if (treeselectComponent) {
       treeselectComponent?.select()
     } else {
@@ -281,7 +280,7 @@ export default class TSDefault extends Vue {
       }
     }
 
-    this.normalizerWithChildren(node)
+    return this.normalizerWithChildren(node)
   }
 
   normalizerWithChildren (node) {
