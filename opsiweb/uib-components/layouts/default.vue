@@ -31,7 +31,7 @@
       </template>
     </BarBTop>
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
-    <BarBQuickPanel :show-quick-panel="showQuickPanel" />
+    <BarBQuickPanel :show-quick-panel.sync="showQuickPanel" />
     <div class="main_content">
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
