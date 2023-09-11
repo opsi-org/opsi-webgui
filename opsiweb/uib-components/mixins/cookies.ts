@@ -21,6 +21,12 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
   getCookie (key: string, defaultResult = '') {
     const v = Cookie.get(key)
     if (!v) { return defaultResult }
+    return v as unknown as any
+  }
+
+  getParsedCookie (key: string, defaultResult = '') {
+    const v = Cookie.get(key)
+    if (!v) { return defaultResult }
     const r = JSON.parse(v as unknown as any)
     return r
   }

@@ -61,7 +61,6 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
 import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '../../.utils/types/ttable'
@@ -75,7 +74,7 @@ const settings = namespace('settings')
 export default class DDTableColumnVisibility extends BDropdown {
   icon:any
   $mq:any
-  getCookie: any
+  getParsedCookie: any
   setCookie: any
   existsCookie: any
   onOver:any
@@ -99,7 +98,7 @@ export default class DDTableColumnVisibility extends BDropdown {
   created () { this.init() }
   init () {
     if (this.existsCookie('column_' + this.viewId)) {
-      this.columnVisibilityList = this.getCookie('column_' + this.viewId)
+      this.columnVisibilityList = this.getParsedCookie('column_' + this.viewId)
     } else {
       Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
         if (h._majorKey) {
