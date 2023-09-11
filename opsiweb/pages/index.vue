@@ -1,7 +1,18 @@
 <template>
   <b-card class="text-center">
-    <IconIOpsiLogo height="60%" />
-    <h1>  {{ $t("title.project") }} </h1>
+    <IconIOpsiLogo
+      height="40%"
+      :short="false"
+      :light="true"
+    />
+    <h1 class="title">
+      {{ $t("title.project") }}
+    </h1>
+    <IconIUibLogo
+      height="20%"
+      :short="false"
+      :light="true"
+    />
   </b-card>
 </template>
 

@@ -1,16 +1,14 @@
 <template>
   <img
     v-if="short"
-    data-testid="IconIOpsiLogo"
-    src="../../assets/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer.png"
-    :alt="translatedLabel"
+    data-testid="IconIUibLogo"
+    src="../../assets/images/UIB_1704_2023_UIB_Schriftzug_quer.png"
     :class="{opsilogo_light: light, [classes]: true}"
   >
   <img
     v-else
-    data-testid="IconIOpsiLogo"
-    src="../../assets/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer.png"
-    :alt="translatedLabel"
+    data-testid="IconIUibLogo"
+    src="../../assets/images/UIB_1704_2023_UIB_Logo_quer.png"
     :class="{opsilogo_light: light, [classes]: true}"
   >
 </template>
@@ -23,12 +21,6 @@ export default class IOpsiLogo extends Vue {
   @Prop({ default: true }) short!: boolean
   @Prop({ default: false }) light!: boolean
   @Prop({ default: '' }) classes!: string
-  $t: any
-  translatedLabel: string = ''
-
-  mounted () {
-    this.translatedLabel = this.$t('button.reload.app')
-  }
 }
 </script>
 

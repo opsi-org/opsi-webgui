@@ -126,7 +126,12 @@
   /* --table-border */
   /* --table-hover */
 }
-
+h1.title {
+  font-family: var(--font-family-logo);
+}
+.mobile * {
+  font-size: large;
+}
 .table {
   --bs-table-border-color: var(--general-fg);
   /* --bs-table-striped-bg: #c5d7f2; */
