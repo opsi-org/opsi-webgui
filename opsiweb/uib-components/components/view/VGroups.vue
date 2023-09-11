@@ -277,6 +277,8 @@ export default class VGroups extends Vue {
   async fetchGroups () {
     const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
     this.group = Object.values(result)
+    console.log("action", this.action)
+    this.showChild(this.action)
   }
 
   showChild (selectedAction: string) {
@@ -298,7 +300,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    // this.action = ''
   }
 
   async copyClientToGroups () {
@@ -345,7 +347,7 @@ export default class VGroups extends Vue {
       })
     this.action = ''
   }
-
+///////////////////////
   async updateGroup () {
     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
     await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
@@ -353,13 +355,14 @@ export default class VGroups extends Vue {
         const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
         ref.alert(response, 'success')
         await this.fetchGroups()
+        // showChild(action)
       })
       .catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    // this.action = ''
   }
 
   async deleteGroup () {
@@ -374,7 +377,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    // this.action = ''
   }
 
   async removeClientAssignments () {
@@ -389,12 +392,13 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    // this.action = ''
   }
 }
 </script>
 <style>
 .groupstabs .tab-content {
   height: 82vh;
+  margin: 10px;
 }
 </style>

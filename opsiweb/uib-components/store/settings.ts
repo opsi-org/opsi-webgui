@@ -2,6 +2,7 @@ import Cookie from 'js-cookie'
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 import { ITheme } from '../.utils/types/tsettings'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
+import { Cookies } from '../mixins/cookies'
 interface IColumnLayoutCollaped {
   parentId: string,
   value: boolean
@@ -47,7 +48,9 @@ export default class Settings extends VuexModule {
 
   @VuexMutation public setLanguage (lang: string) {
     this._language = lang
-    Cookie.set('Language', this._language, { expires: 365 })
+    // Cookie.set('Language', this._language, { expires: 365 })
+    console.log(Cookies)
+    Cookies.options.methods.setCookie('Language', this._language)
   }
 
   @VuexMutation public setQuicksave (isQuickSave: boolean) {

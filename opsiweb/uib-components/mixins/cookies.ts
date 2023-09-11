@@ -18,10 +18,12 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
     return v === value
   }
 
-  getCookie (key: string, keyitem:string, defaultResult = '') {
+  getCookie (key: string, defaultResult = '') {
     const v = Cookie.get(key)
     if (!v) { return defaultResult }
-    return JSON.parse(v as unknown as any)
+    const r = JSON.parse(v as unknown as any)
+    console.log('get cookie', key, r)
+    return r
   }
 
   getKeyCookie (key: string, keyitem:string, defaultResult = '') {
@@ -35,12 +37,9 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
     return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult
   }
 
-  // getCookie (key: string, defaultValue="") {
-  //   return Cookie.get('last_tab_products', 'Localboot')
-  //   // Cookie.set('last_tab_products', 'Localboot')
-  // }
-  setCookie (key:string, value:any, options = undefined) {
-    Cookie.set(key, value, options)
-    let v = Cookie.get(key)
+  setCookie (key:string, value:string, options = undefined) {
+    let opt:any = options
+    if (opt === undefined) { opt = { expires: 365 } }
+    Cookie.set(key, value, opt)
   }
 }

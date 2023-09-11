@@ -9,7 +9,7 @@
     text-variant="color"
     shadow
     no-close-on-route-change
-    @hidden="$emit('update:showQuickPanel', false)"
+    @hidden="$emit('change', false)"
   >
     <b-card class="quickpanel_container">
       <b-row class="text-smaller mt-2 mb-2">
