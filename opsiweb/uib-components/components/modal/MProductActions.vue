@@ -80,7 +80,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { MBus } from '../../mixins/messagebus'
 
 interface QuickAction {
   action: any,
@@ -89,12 +90,18 @@ interface QuickAction {
   action_result: any
 }
 
-@Component export default class MProductActions extends Vue {
+@Component({ mixins: [MBus] }) export default class MProductActions extends Vue {
+  wsBusMsg: any // mixin // store
   $t: any
+  $fetch: any
   $axios: any
+
   @Prop({ default: 'label.quickaction' }) label?: string
+
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
+  conditn_InstStatus!: Array<string>
+  conditn_ActionResult!: Array<string>
   quickaction: QuickAction = {
     action: null,
     outdated: false,
@@ -102,8 +109,15 @@ interface QuickAction {
     action_result: null
   }
 
-  conditn_InstStatus!: Array<string>
-  conditn_ActionResult!: Array<string>
+  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
+    const msg = this.wsBusMsg // todo deepCopy
+    if (msg &&
+      ['event:productOnClient_created', 'event:productOnClient_updated'].includes(msg.channel) &&
+      msg.data.productType === 'LocalbootProduct'
+    ) {
+      this.$fetch()
+    }
+  }
 
   async fetch () {
     this.isLoading = true

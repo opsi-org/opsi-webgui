@@ -57,7 +57,6 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { Client } from '../../mixins/get'
 import { Icons } from '../../mixins/icons'
