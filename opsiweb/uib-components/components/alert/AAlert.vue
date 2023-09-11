@@ -24,11 +24,11 @@
         <b-button
           v-if="moreDetails.length>1"
           :title="showMore? $t('button.collapse'): $t('button.expand')"
-          size="sm"
-          variant="alertdetails"
-          class="float-right border-0 p-0 pb-2"
+          :variant="alertVariant"
+          class="float-right border-0 p-0 pb-2 btn-alertdetails"
           :pressed.sync="showMore"
-        >
+          >
+          <!-- Makes the button primary (even if variant is danger) size="sm" -->
           <b-icon :icon="showMore ? icon.arrowUp : icon.arrowDown" />
         </b-button>
         <template v-if="showMore">
