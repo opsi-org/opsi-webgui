@@ -1,5 +1,5 @@
 import Cookie from 'js-cookie'
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, Vue } from 'nuxt-property-decorator'
 
 // const changes = namespace('changes')
 // const errors = namespace('errors')
@@ -46,6 +46,5 @@ import { Component, namespace, Vue } from 'nuxt-property-decorator'
     let opt:any = options
     if (opt === undefined) { opt = { expires: 365 } }
     Cookie.set(key, value, opt)
-    console.log('store cookie', key, value)
   }
 }
