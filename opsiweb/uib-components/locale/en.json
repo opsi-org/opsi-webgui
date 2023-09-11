@@ -9,6 +9,7 @@
   "empty": "--",
   "title.delimiter": " - ",
 
+  "alt.uiblogo": "uib logo",
   "message.loading": "Loading",
   "message.info.event": "EVENT INFO: ",
   "message.success.title": "Success",

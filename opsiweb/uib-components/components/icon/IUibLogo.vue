@@ -3,12 +3,14 @@
     v-if="short"
     data-testid="IconIUibLogo"
     src="../../assets/images/UIB_1704_2023_UIB_Schriftzug_quer.png"
+    :alt="$t('alt.uiblogo')"
     :class="{opsilogo_light: light, [classes]: true}"
   >
   <img
     v-else
     data-testid="IconIUibLogo"
     src="../../assets/images/UIB_1704_2023_UIB_Logo_quer.png"
+    :alt="$t('alt.uiblogo')"
     :class="{opsilogo_light: light, [classes]: true}"
   >
 </template>
