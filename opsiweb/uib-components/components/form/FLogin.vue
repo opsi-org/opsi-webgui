@@ -158,8 +158,3 @@ export default class FLogin extends Vue {
   }
 }
 </script>
-<style>
-::-ms-reveal {
-  filter: invert(100%);
-}
-</style>

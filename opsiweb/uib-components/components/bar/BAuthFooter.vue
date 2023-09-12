@@ -5,7 +5,7 @@
       fixed="bottom"
       data-testid="BarBAuthFooter"
       variant="primary"
-      :class="{auth_footer: $mq === 'desktop', auth_footer_wrap: $mq === 'mobile'}"
+      :class="{auth_footer: $mq !== 'mobile', auth_footer_wrap: $mq === 'mobile'}"
     >
       <b-container fluid>
         <span class="text-small">{{ $t('uib') }}</span>

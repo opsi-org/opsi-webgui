@@ -19,8 +19,8 @@
       />
       <IconIReadOnly />
     </b-navbar-brand>
-    <BarBBreadcrumbRow v-if="$mq == 'desktop'" class="ml-2" />
-    <b-navbar-nav small :class="$mq == 'desktop' ? 'ml-auto' : ''">
+    <BarBBreadcrumbRow v-if="$mq !== 'mobile'" class="ml-2" />
+    <b-navbar-nav small :class="$mq !== 'mobile' ? 'ml-auto' : ''">
       <ModalMTrackChanges class="mr-1" />
       <slot name="quickpanel" />
     </b-navbar-nav>

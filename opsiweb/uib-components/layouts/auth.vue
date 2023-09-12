@@ -15,6 +15,7 @@ const settings = namespace('settings')
 export default class LayoutAuth extends Vue {
   $i18n: any
   themeclass!: string
+  CONST_LIGHT!: string
   @settings.Getter public language!: string
 
   beforeMount () {
@@ -35,10 +36,10 @@ export default class LayoutAuth extends Vue {
 
         // { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Montserrat:400,500,800' },
         // { rel: 'preload', as: 'font', type: 'css', href: '/fonts/montserrat-alt1/fonts/webfonts/Montserrat-Alt1.css' },
-        { rel: 'stylesheet', href: (this.colortheme) ? 'themes/opsi.css' : '' },
+        { rel: 'stylesheet', href: (this.themeclass) ? 'themes/opsi.css' : '' },
         { rel: 'stylesheet', href: 'css/colors-all.css' },
         { rel: 'stylesheet', href: 'css/custom.css' },
-        { rel: 'stylesheet', href: (this.colortheme && this.colortheme.title === 'light') ? 'css/colors-light.css' : 'css/colors-dark.css' }
+        { rel: 'stylesheet', href: (this.themeclass === this.CONST_LIGHT) ? 'css/colors-light.css' : 'css/colors-dark.css' }
       ]
 
     }

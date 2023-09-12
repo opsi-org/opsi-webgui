@@ -9,7 +9,7 @@
     text-variant="light"
     :class="{sidemenu_small: !attributes.expanded}"
     :backdrop="$mq == 'mobile'"
-    :no-close-on-route-change="$mq == 'desktop'"
+    :no-close-on-route-change="$mq !== 'mobile'"
     :visible="attributes.visible"
     @hidden="$emit('update:sidebarshown', false)"
   >
@@ -18,7 +18,7 @@
       <DivDCountdowntimer :small="!attributes.expanded" />
       <span v-once class="ml-1 text-small topbar_version"> {{ $t('v') }}{{ $config.packageVersion }} </span>
       <b-button
-        v-if="$mq === 'desktop'"
+        v-if="$mq !== 'mobile'"
         variant="primary"
         size="sm"
         class="border-0 float-right"
@@ -43,7 +43,7 @@ import { Icons } from '../../mixins/icons'
 @Component({ mixins: [Icons, Cookies] })
 export default class BSide extends Vue {
   $config:any
-  $mq:any
+  $mq!:any
   getKeyCookie: any
   setCookie: any
   existsCookie: any
@@ -66,7 +66,7 @@ export default class BSide extends Vue {
   }
 
   updateAttributes () {
-    if ((this as any).$mq === 'mobile') {
+    if (this.$mq === 'mobile') {
       this.attributes.visible = this.alwaysVisible
       this.attributes.expanded = true
     } else {
