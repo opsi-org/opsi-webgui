@@ -223,9 +223,17 @@ body .mobile .topbar_content .navbar > * {
 [class$="fg-green"] { color: var(--green) !important;}
 [class$="fg-blue"] { color: var(--blue) !important;}
 [class$="fg-grey"] { color: var(--gray) !important;}
+
 .btn, .dropdown-item, .treeselect{
   min-height: var(--min-height-button) !important;
   min-width: var(--min-height-button) !important;
+  font-size: var(--text-small);
+}
+.mobile .btn, .mobile .dropdown-item, .mobile .treeselect{
+  font-size: medium;
+}
+.desktop .btn, .desktop .dropdown-item, .desktop .treeselect{
+  /* font-size: medium; */
   font-size: var(--text-small);
 }
 .form-control-sm, .custom-select-sm{

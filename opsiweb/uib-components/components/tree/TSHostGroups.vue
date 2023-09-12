@@ -1,5 +1,7 @@
 <template>
+  <IconILoading v-if="isLoading" :small="true" />
   <TreeTSDefaultGroups
+    v-else
     :id="id"
     :class="classes"
     :type="type"
@@ -34,6 +36,7 @@ export default class TSHostGroups extends Vue {
   $axios: any
   $fetch: any
   id: string = 'HostGroups'
+  isLoading: boolean = true
   @Prop({ default: false }) open!: boolean
   @Prop({ }) classes!: any
   @Prop({ default: 'treeselect_short' }) type!: string
@@ -72,14 +75,18 @@ export default class TSHostGroups extends Vue {
   }
 
   async fetch () { // clientlist
+    this.isLoading = true
     this.clientlistGroups = []
     const resultclients = await this.getClientIdList(this.selectionDepots)
     resultclients.forEach((c) => { this.clientlistGroups.push({ id: c + ';clientlist', text: c, type: 'ObjectToGroup', isDisabled: false }) })
+    this.isLoading = false
   }
 
   async fetchHostGroupsData () {
+    // this.isLoading = true
     const result = (await this.$axios.$get(`/api/opsidata/hosts/groups-dynamic?selectedDepots=[${this.selectionDepots}]&selectedClients=[${this.selectionClients}]&parentGroup=root`)).groups
     if (result === undefined) {
+      this.isLoading = false
       throw new Error(this.id + ' No root host-groups found')
     }
     if (result.clientlist) {
@@ -88,10 +95,12 @@ export default class TSHostGroups extends Vue {
     }
     const values = Object.values(result)
     await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
+    // this.isLoading = false
     return values
   }
 
   async fetchChildren (parentNode) {
+    // this.isLoading = true
     if (parentNode.text === 'clientlist' && parentNode.parent == null) {
       if (!parentNode.children) {
         parentNode.children = this.clientlistGroups
@@ -101,9 +110,11 @@ export default class TSHostGroups extends Vue {
       if (result !== null) {
         const values = Object.values(result)
         await this.asyncForEach(values, async (c:any) => { await this.loadChilds(c) })
+        // this.isLoading = false
         return values
       }
     }
+    // this.isLoading = false
   }
 
   async loadChilds (node) {

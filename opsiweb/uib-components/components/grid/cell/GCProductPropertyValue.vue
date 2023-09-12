@@ -1,8 +1,7 @@
 <template>
-  <b-form-row class="GCProductPropertyValue_Container justify-content-md-center">
+  <b-form-row class="GCProductPropertyValue_Container">
     <b-col
-      class="GCProductPropertyValue_Value"
-      :class="{'d-none': rowItem.propertyId.includes('password') && !showValue}"
+      class="GCProductPropertyValue_Value justify-content-md-center"
       @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${selectedValues}` : () => {} } "
     >
       <b-form-checkbox
@@ -21,6 +20,7 @@
         v-else
         :id="'PropertyValue-' + rowItem.propertyId"
         type="propertyvalues"
+        :class="{'d-none': rowItem.propertyId.includes('password') && !showValue}"
         :disabled="config?.read_only"
         :text="undefined"
         :show-selection-count="(selectedValues.length > 1 || !isOrigin)"
@@ -34,8 +34,8 @@
         @change="selectionChanged"
       />
     </b-col>
-    <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn" cols="*">
-      <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
+    <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn d-flex justify-content-end mr-1">
+      <b-button :pressed.sync="showValue" size="md" variant="outline-primary">
         <b-icon :icon="showValue ? icon.valueShow : icon.valueHide" />
       </b-button>
     </b-col>
@@ -287,5 +287,8 @@ export default class GCProductPropertyValue extends Vue {
 <style>
 .GCProductPropertyValue_ValueBool {
   display:inline-block !important;
+}
+.GCProductPropertyValue_ShowBtn {
+  max-width: fit-content !important;
 }
 </style>

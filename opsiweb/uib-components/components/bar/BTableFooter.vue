@@ -3,7 +3,7 @@
     toggleable="sm"
     data-testid="BTableFooter"
     variant="outline-primary"
-    :class="{footer: $mq === 'desktop', footer_wrap: $mq === 'mobile'}"
+    :class="{footer: $mq !== 'mobile', footer_wrap: $mq === 'mobile'}"
   >
     <b-navbar-nav class="ml-auto" small>
       <b-pagination
