@@ -131,9 +131,30 @@
             </template>
             <template v-else-if="action == 'addSubgroup'">
               <b-form>
-                <b-form-input v-model="subgroup.groupId" size="sm" :placeholder="$t('group.subgroupname')" trim @keydown.enter.prevent="createSubGroup" />
-                <b-form-input v-model="subgroup.description" size="sm" :placeholder="$t('table.fields.description')" trim @keydown.enter.prevent="createSubGroup" />
-                <b-form-input v-model="subgroup.notes" size="sm" :placeholder="$t('table.fields.notes')" trim @keydown.enter.prevent="createSubGroup" />
+                <b-form-input
+                  v-model="subgroup.groupId"
+                  size="sm"
+                  trim
+                  :placeholder="$t('group.subgroupname')"
+                  :state="subgroup.groupId.length < 255"
+                  @keydown.enter.prevent="createSubGroup"
+                />
+                <b-form-input
+                  v-model="subgroup.description"
+                  size="sm"
+                  trim
+                  :placeholder="$t('table.fields.description')"
+                  :state="subgroup.description.length < 100"
+                  @keydown.enter.prevent="createSubGroup"
+                />
+                <b-form-input
+                  v-model="subgroup.notes"
+                  size="sm"
+                  trim
+                  :placeholder="$t('table.fields.notes')"
+                  :state="subgroup.notes.length < 500"
+                  @keydown.enter.prevent="createSubGroup"
+                />
                 <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
                   {{ $t("button.create") }}
                 </b-button>
@@ -148,8 +169,18 @@
                   :options="group"
                   :normalizer="normalizerUpdateGroup"
                 />
-                <b-form-input v-model="updategroup.description" size="sm" :placeholder="$t('table.fields.description')" />
-                <b-form-input v-model="updategroup.notes" size="sm" :placeholder="$t('table.fields.notes')" />
+                <b-form-input
+                  v-model="updategroup.description"
+                  size="sm"
+                  :placeholder="$t('table.fields.description')"
+                  :state="updategroup.description.length < 100"
+                />
+                <b-form-input
+                  v-model="updategroup.notes"
+                  size="sm"
+                  :placeholder="$t('table.fields.notes')"
+                  :state="updategroup.notes.length < 500"
+                />
                 <b-button class="float-right" size="sm" variant="success" data-testid="updateGroup" @click="updateGroup">
                   {{ $t("button.update") }}
                 </b-button>
@@ -227,7 +258,7 @@ export default class VGroups extends Vue {
     notes: ''
   }
 
-  updategroup: any = {
+  updategroup = {
     parent: '',
     description: '',
     notes: ''
