@@ -1,7 +1,7 @@
 <template>
-  <b-form-row class="GCProductPropertyValue_Container justify-content-md-center">
+  <b-form-row class="GCProductPropertyValue_Container">
     <b-col
-      class="GCProductPropertyValue_Value"
+      class="GCProductPropertyValue_Value justify-content-md-center"
       :class="{'d-none': rowItem.propertyId.includes('password') && !showValue}"
       @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${selectedValues}` : () => {} } "
     >
@@ -34,7 +34,7 @@
         @change="selectionChanged"
       />
     </b-col>
-    <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn" cols="*">
+    <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn d-flex justify-content-start" cols="*">
       <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
         <b-icon :icon="showValue ? icon.valueShow : icon.valueHide" />
       </b-button>
