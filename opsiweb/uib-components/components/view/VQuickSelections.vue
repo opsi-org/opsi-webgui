@@ -57,7 +57,7 @@
         <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
-    <b-tab active id="qp-tab-clients">
+    <b-tab id="qp-tab-clients" active>
       <template #title>
         <b-icon :icon="icon.client" :title="$t('treeselect.clientGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
       </template>
