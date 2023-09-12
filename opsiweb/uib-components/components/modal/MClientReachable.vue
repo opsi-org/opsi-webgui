@@ -1,6 +1,7 @@
 <template>
   <div data-testid="MClientreachable">
-    <b-button variant="outline-primary" size="sm" :title="$t('button.reachable')" :disabled="selectionClients.length <= 0" @click="checkReachable">
+    <IconILoading v-if="isLoading" :small="true" />
+    <b-button v-else variant="outline-primary" size="sm" :title="$t('button.reachable')" :disabled="selectionClients.length <= 0" @click="checkReachable">
       <b-icon :icon="icon.clientReachable" />
     </b-button>
     <b-modal
@@ -12,8 +13,6 @@
       hide-footer
       no-fade
     >
-      <AlertAAlert ref="CheckAlert" />
-      <OverlayOLoading :is-loading="isLoading" />
       <pre v-if="reachability">{{ prettyJSON(reachability) }}</pre>
     </b-modal>
   </div>
@@ -44,7 +43,7 @@ export default class MClientReachable extends Vue {
         this.$bvModal.show('clientreachability')
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.CheckAlert as any)
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.title') + this.$t('table.fields.reachablility'), 'danger', detailedError)
       })
     this.isLoading = false

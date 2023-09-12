@@ -1,17 +1,15 @@
 <template>
   <div data-testid="VClientreachable">
     <OverlayOLoading :is-loading="isLoading" />
-    <AlertAAlert ref="CheckAlert" />
-    <template v-if="reachability">
+    <span v-if="reachability" class="ml-2">
       <b-icon v-if="reachability.toString() === 'true'" :icon="icon.check" />
       <b-icon v-else :icon="icon.x" />
-    </template>
+    </span>
     <b-button
       v-else
       :title="$t('table.fields.checkreachable')"
       variant="outline-primary"
       size="sm"
-      class="sm"
       @click="checkReachable"
     >
       <b-icon :icon="icon.clientReachable" />
@@ -41,7 +39,7 @@ export default class VClientReachable extends Vue {
         this.reachability = Object.values(response)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.CheckAlert as any)
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
         ref.alert(this.$t('message.error.title') + this.$t('table.fields.reachablility'), 'danger', detailedError)
       })
     this.isLoading = false
