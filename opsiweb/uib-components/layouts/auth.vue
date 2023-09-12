@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="themeclass">
     <AlertAAlert ref="authAlert" data-testid="authAlert" />
     <Nuxt />
     <BarBAuthFooter v-once class="footer_content" />
@@ -8,11 +8,13 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Settings } from '../mixins/settings'
 const settings = namespace('settings')
 
-@Component
+@Component({ mixins: [Settings] })
 export default class LayoutAuth extends Vue {
-  @settings.Getter public colortheme!: any
+  $i18n: any
+  themeclass!: string
   @settings.Getter public language!: string
 
   beforeMount () {

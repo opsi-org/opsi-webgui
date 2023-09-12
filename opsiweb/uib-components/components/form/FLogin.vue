@@ -10,7 +10,7 @@
       class="text-center bg-primary mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
-      <IconIOpsiLogo v-once :light="true" :short="false" class="mb-2" height="73" />
+      <IconIOpsiLogo v-once :light="true" :short="false" class="mb-2" classes="w-100" />
       <!-- <h3 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
         {{ $t('title.project') }}
       </h3> -->
@@ -158,3 +158,8 @@ export default class FLogin extends Vue {
   }
 }
 </script>
+<style>
+::-ms-reveal {
+  filter: invert(100%);
+}
+</style>
