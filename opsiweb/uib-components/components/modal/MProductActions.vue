@@ -90,7 +90,8 @@ interface QuickAction {
   action_result: any
 }
 
-@Component({ mixins: [MBus] }) export default class MProductActions extends Vue {
+@Component({ mixins: [MBus] })
+export default class MProductActions extends Vue {
   wsBusMsg: any // mixin // store
   $t: any
   $fetch: any
@@ -101,7 +102,9 @@ interface QuickAction {
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   conditn_InstStatus!: Array<string>
+  conditn_InstStatus_defaults: Array<string|null> = [null, 'installed', 'unknown']
   conditn_ActionResult!: Array<string>
+  conditn_ActionResult_default: Array<string> = ['failed', 'successful']
   quickaction: QuickAction = {
     action: null,
     outdated: false,
@@ -112,8 +115,8 @@ interface QuickAction {
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg // todo deepCopy
     if (msg &&
-      ['event:productOnClient_created', 'event:productOnClient_updated'].includes(msg.channel) &&
-      msg.data.productType === 'LocalbootProduct'
+      ['event:productOnClient_created', 'event:productOnClient_updated'].includes(msg.channel)
+      // && msg.data.productType === 'LocalbootProduct'
     ) {
       this.$fetch()
     }
@@ -139,7 +142,7 @@ interface QuickAction {
   }
 
   async fetchInstallationStates () {
-    await this.$axios.$get('/api/opsidata/products/action-result')
+    await this.$axios.$get('/api/opsidata/products/installation-status')
       .then((result) => {
         this.conditn_InstStatus = result
       }).catch((error) => {
