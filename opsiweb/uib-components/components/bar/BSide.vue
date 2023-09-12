@@ -3,7 +3,7 @@
     v-if="attributes.visible"
     id="sidemenu"
     data-testid="BarBSide"
-    :aria-label="$t('labelaria,sidemenu')"
+    :aria-label="$t('labelaria.sidemenu')"
     no-header
     bg-variant="primary"
     text-variant="light"
