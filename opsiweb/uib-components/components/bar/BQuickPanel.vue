@@ -20,8 +20,8 @@
         <b>{{ $t('label.quickaction') }} </b>
       </b-row>
       <b-row>
-        <b-col> <ButtonBTNEvent event="ondemand" :with-text="true" classes="outline-primary border" /> </b-col>
-        <b-col> <ModalMProductActions :label="'label.prodquickaction'" /> </b-col>
+        <b-col> <ButtonBTNEvent v-if="showQuickPanel" event="ondemand" :with-text="true" classes="outline-primary border" /> </b-col>
+        <b-col> <LazyModalMProductActions v-if="showQuickPanel" :label="'label.prodquickaction'" /> </b-col>
       </b-row>
       <b-row class="text-smaller mt-2 mb-2">
         <b>{{ $t('title.settings') }} </b>
