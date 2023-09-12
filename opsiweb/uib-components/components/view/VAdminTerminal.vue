@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VAdminTerminal" class="VAdminTerminal">
-    <GridGFormItem :label="$t('table.fields.terminalId')" labelclass="lblTerminalId">
+    <GridGFormItem :label="$t('table.fields.terminalId')" labelclass="lblTerminalId" variant="longvalue">
       <template #value>
         <b-input-group>
           <b-form-input id="terminalId" v-model="terminalId" size="sm" :aria-label="$t('table.fields.terminalId')" type="text" />
@@ -12,7 +12,7 @@
         </b-input-group>
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.terminalChannel')" labelclass="lblTerminalChannel">
+    <GridGFormItem :label="$t('table.fields.terminalChannel')" labelclass="lblTerminalChannel" variant="longvalue">
       <template #value>
         <b-input-group>
           <b-form-input id="terminalChannel" v-model="terminalChannel" size="sm" :aria-label="$t('table.fields.terminalChannel')" type="text" />
@@ -24,7 +24,7 @@
         </b-input-group>
       </template>
     </GridGFormItem>
-    <GridGFormItem>
+    <GridGFormItem variant="longvalue">
       <template #value>
         <b-button variant="primary" size="sm" block @click="init">
           {{ $t('button.reconnect') }}
