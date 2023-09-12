@@ -1,7 +1,14 @@
 <template>
   <div data-testid="MClientreachable">
     <IconILoading v-if="isLoading" :small="true" />
-    <b-button v-else variant="outline-primary" size="sm" :title="$t('button.reachable')" :disabled="selectionClients.length <= 0" @click="checkReachable">
+    <b-button
+      v-else
+      variant="outline-primary"
+      size="sm"
+      :title="$t('button.reachable')"
+      :disabled="selectionClients.length <= 0"
+      @click="checkReachable"
+    >
       <b-icon :icon="icon.clientReachable" />
     </b-button>
     <b-modal
