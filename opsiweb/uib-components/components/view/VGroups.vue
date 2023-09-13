@@ -136,7 +136,7 @@
                   size="sm"
                   trim
                   :placeholder="$t('group.subgroupname')"
-                  :state="subgroup.groupId.length < 255"
+                  :state="subgroup.groupId.length > 0 && subgroup.groupId.length < 255"
                   @keydown.enter.prevent="createSubGroup"
                 />
                 <b-form-input
@@ -144,7 +144,7 @@
                   size="sm"
                   trim
                   :placeholder="$t('table.fields.description')"
-                  :state="subgroup.description.length < 100"
+                  :state="subgroup.description.length >= 0 && subgroup.description.length < 100"
                   @keydown.enter.prevent="createSubGroup"
                 />
                 <b-form-input
@@ -152,7 +152,7 @@
                   size="sm"
                   trim
                   :placeholder="$t('table.fields.notes')"
-                  :state="subgroup.notes.length < 500"
+                  :state="subgroup.notes.length >= 0 && subgroup.notes.length < 500"
                   @keydown.enter.prevent="createSubGroup"
                 />
                 <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
@@ -173,13 +173,13 @@
                   v-model="updategroup.description"
                   size="sm"
                   :placeholder="$t('table.fields.description')"
-                  :state="updategroup.description.length < 100"
+                  :state="updategroup.description.length >= 0 && updategroup.description.length < 100"
                 />
                 <b-form-input
                   v-model="updategroup.notes"
                   size="sm"
                   :placeholder="$t('table.fields.notes')"
-                  :state="updategroup.notes.length < 500"
+                  :state="updategroup.notes.length >= 0 && updategroup.notes.length < 500"
                 />
                 <b-button class="float-right" size="sm" variant="success" data-testid="updateGroup" @click="updateGroup">
                   {{ $t("button.update") }}
