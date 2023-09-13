@@ -10,8 +10,8 @@
       class="text-center bg-primary mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
-      <IconIOpsiLogo v-once :light="themeclass !== CONST_LIGHT" :short="false" class="mb-2" classes="w-100" />
-      <!-- <h3 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
+      <IconIOpsiLogo :light="themeclass !== CONST_LIGHT" :short="false" class="mb-2" classes="w-100" />
+      <!-- <h3 data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
         {{ $t('title.project') }}
       </h3> -->
       <div @keyup.enter="doLogin">
