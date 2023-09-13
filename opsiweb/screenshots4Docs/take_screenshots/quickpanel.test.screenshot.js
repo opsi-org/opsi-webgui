@@ -4,6 +4,24 @@ const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story
 // const de = require('../../uib-components/locale/de.json')
 
 test.describe('Quick Panel', () => {
+  test('', async ({ page }) => {
+    await page.unroute('**/api/**')
+    await page.route('**/api/**', (route) => {
+      console.log('ROUTE NOT MOCKED: \t\t', route._parent._initializer.url)
+      route.abort()
+    })
+    await callStoryId(page, 'bar-b-quick-panel', 'b-quick-panel')
+    await (new Promise(resolve => setTimeout(resolve, 1000)))
+    // await page.evaluate((val) => { document.querySelector('label>.text-small').innerHTML = val }, en['form.quicksave'])
+    const comp = page.locator('#quickpanel')
+    await comp.screenshot({ path: './screenshots/en/opsi-webgui_quickpanel.png' })
+
+    await page.click('[data-testid="DropdownDDLang"]')
+    await page.click('[data-testid="DropdownDDLang-Item-de"]')
+    // const component = page.locator('[data-testid="DropdownDDLang"]')
+    await comp.screenshot({ path: './screenshots/de/opsi-webgui_quickpanel.png' })
+  })
+
   test('tab depots', async ({ page }) => {
     await page.unroute('**/api/**')
     await page.route('**/api/**', (route) => {
