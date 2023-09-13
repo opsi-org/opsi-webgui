@@ -17,20 +17,32 @@ const mockData = async ({ page }) => {
   apiMock(page, '**/api/opsidata/hosts/groups?**', { groups: data.groups.groups, clientdirectory: data.groups.clientdirectory })
   apiMock(page, '**/api/opsidata/hosts/groups-dynamic?**', { groups: {} })
   apiMock(page, '**/api/opsidata/depots/products?**', [])
-  apiMock(page, '**/api/opsidata/depot_ids', data.depotIds)
+  apiMock(page, '**/api/opsidata/depot_ids', [...data.depotIds, 'foooooooo'])
   apiMock(page, '**/api/opsidata/depots/clients?**', data.clientIds)
   apiMock(page, '**/api/opsidata/depots/clients?selectedDepots=[' + data.selectedClientDepot + ']', data.clientIds)
   apiMock(page, '**/api/opsidata/depots?**', data.depotObjs)
   apiMock(page, '**/api/opsidata/servers?**', data.serverAttribute)
   apiMock(page, '**/api/opsidata/clients?**', data.clientObj)
   apiMock(page, '**/api/opsidata/groups-dynamic**', { groups: data.groups })
+  apiMock(page, '**/api/opsidata/products/installation-status', [null, 'successful', 'failed', 'unknown'])
+  apiMock(page, '**/api/opsidata/products/action-result', [null, 'failed', 'successful'])
 
   apiMock(page, '**/api/opsidata/clientsdepots?**', { selectedClient: data.selectedClientDepot })
   apiMock(page, '**/api/opsidata/products**', data.clientProducts, { 'access-control-expose-headers': 'x-total-count', 'x-total-count': data.clientProducts.length })
+  apiMock(page, '**/api/opsidata/products/groups**', { groups: data.groups.procutgroups })
   // apiMock(page, '**/api/opsidata/products/count?**&type=LocalbootProduct', clientProducts.length)
   apiMock(page, '**/api/opsidata/products/count**', 24)
   apiMock(page, '**/api/auth/login', { result: 'Login success' })
   apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
+
+
+// mock.onGet('/api/opsidata/depot_ids**').reply(200, data.depotIds)
+// mock.onGet('/api/opsidata/depots/clients**').reply(200, data.clientIds)
+// mock.onGet('/api/opsidata/depots/clients**').reply(200, data.clientIds)
+// mock.onGet('/api/opsidata/products/groups**').reply(200, { groups: data.groups.procutgroups })
+// mock.onGet('/api/opsidata/products/action-result').reply(200, [])
+// mock.onGet('/api/opsidata/products/installation-status').reply(200, [])
+// mock.onGet('/api/opsidata/hosts/groups-dynamic**').reply(200, { groups: data.groups.hostgroups })
 }
 // ///////////////////////////////////////////////////////////////////////////////////
 test.beforeEach(async ({ page, context }) => {

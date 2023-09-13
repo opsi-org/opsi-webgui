@@ -18,6 +18,12 @@ export default {
     }
   },
   methods: {
+    getMenu: function getMenu () {
+      // Workaround: with storybook §ref.menu is undefined...
+      const ref = this.appendToBody ? this.$refs?.portal?.portalTarget : this
+      const $menu = ref?.$refs?.menu?.$refs?.menu
+      return $menu && $menu.nodeName !== '#comment' ? $menu : null
+    },
     overridesFindValue () {
       if (this.$refs.control) {
         const childRefs = this.$refs.control.$refs

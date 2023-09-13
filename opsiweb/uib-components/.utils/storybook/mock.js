@@ -74,6 +74,70 @@ module.exports.data = {
           product1:{ id:'product1;group2', type:'ObjectToGroup', text:'product1', parent:'group2'},
           product2:{ id:'product2;group2', type:'ObjectToGroup', text:'product2', parent:'group2'}
         }}
+      },
+    },
+    productgroups: {
+      "groups": {
+        "group1": {
+          "id": "group1",
+          "type": "ProductGroup",
+          "text": "group1",
+          "parent": "root",
+          "children": {
+            "hwaudit": {
+              "id": "hwaudit;group1",
+              "type": "ObjectToGroup",
+              "text": "hwaudit",
+              "parent": "group1"
+            }
+          }
+        },
+        "group2": {
+          "id": "group2",
+          "type": "ProductGroup",
+          "text": "group2",
+          "parent": "root",
+          "children": {
+            "hwaudit": {
+              "id": "hwaudit;group2",
+              "type": "ObjectToGroup",
+              "text": "hwaudit",
+              "parent": "group2"
+            },
+            "swaudit": {
+              "id": "swaudit;group2",
+              "type": "ObjectToGroup",
+              "text": "swaudit",
+              "parent": "group2"
+            }
+          }
+        },
+        "group3": {
+          "id": "group3",
+          "type": "ProductGroup",
+          "text": "group3",
+          "parent": "root",
+          "children": {
+            "firefox": {
+              "id": "firefox;group3",
+              "type": "ObjectToGroup",
+              "text": "firefox",
+              "parent": "group3"
+            },
+            "chrome": {
+              "id": "chrome;group3",
+              "type": "ObjectToGroup",
+              "text": "chrome",
+              "parent": "group3"
+            },
+            "edge": {
+              "id": "edge;group3",
+              "type": "ObjectToGroup",
+              "text": "edge",
+              "parent": "group3"
+            }
+          }
+        }
       }
     },
     hosts: {"groups":{
