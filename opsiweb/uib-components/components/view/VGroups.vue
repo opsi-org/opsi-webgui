@@ -164,6 +164,7 @@
               <b-form>
                 <treeselect
                   v-model="updategroupparent"
+                  class="treeselect_notstored treeselect"
                   :placeholder="$t('group.parent')"
                   value-format="object"
                   :options="group"
