@@ -7,7 +7,7 @@ export default {
 }
 
 const PrimaryTemplate = () => ({
-  template: '<ViewVClientsLog id="client1" :testdata="mytestdata" />',
+  template: '<ViewVClientsLog id="client1" :testdata="mytestdata" :as-child="false" />',
   computed: {
     mytestdata () {
       return ['null',
