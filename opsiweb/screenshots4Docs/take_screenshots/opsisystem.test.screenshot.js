@@ -53,7 +53,6 @@ test('opsi healthcheck', async ({ page }) => {
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.screenshot({ path: './screenshots/en/opsi-webgui_opsisystem_diagnostics.png' })
 
-
   await page.click('.nav-tabs .nav-link:not(.active)')
   await page.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, de['title.healthcheck'])
   await page.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, de['title.diagnostics'])
@@ -61,7 +60,6 @@ test('opsi healthcheck', async ({ page }) => {
   await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.screenshot({ path: './screenshots/de/opsi-webgui_opsisystem_diagnostics.png' })
-
 })
 
 // test('opsi diagnostics', async ({ page }) => {
