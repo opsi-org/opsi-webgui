@@ -5,7 +5,6 @@ const de = require('../../uib-components/locale/de.json')
 
 test('Products', async ({ page }) => {
   await callStoryId(page, 'view-v-products', 'v-products')
-  const component = await page.locator('[data-testid="VProducts"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, en['title.products'])
 
