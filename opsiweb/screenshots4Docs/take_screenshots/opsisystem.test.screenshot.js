@@ -49,26 +49,36 @@ test('opsi healthcheck', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, en['title.healthcheck'])
   await page.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, en['title.diagnostics'])
   await component.screenshot({ path: './screenshots/en/opsi-webgui_opsisystem_healthcheck.png' })
+  await page.click('.nav-tabs .nav-link:not(.active)')
+  await (new Promise(resolve => setTimeout(resolve, 1000)))
+  await page.screenshot({ path: './screenshots/en/opsi-webgui_opsisystem_diagnostics.png' })
 
+
+  await page.click('.nav-tabs .nav-link:not(.active)')
   await page.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, de['title.healthcheck'])
   await page.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, de['title.diagnostics'])
   await component.screenshot({ path: './screenshots/de/opsi-webgui_opsisystem_healthcheck.png' })
-})
-
-test('opsi diagnostics', async ({ page }) => {
-  await callStoryId(page, 'view-v-server-health', 'v-server-health')
   await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VServerHealthCheck"]')
-
-  await component.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, en['title.healthcheck'])
-  await component.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, en['title.diagnostics'])
-
-  await page.screenshot({ path: './screenshots/en/opsi-webgui_opsisystem_diagnostics.png' })
-  await component.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, de['title.healthcheck'])
-  await component.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, de['title.diagnostics'])
   await page.screenshot({ path: './screenshots/de/opsi-webgui_opsisystem_diagnostics.png' })
+
 })
+
+// test('opsi diagnostics', async ({ page }) => {
+//   await callStoryId(page, 'view-v-server-health', 'v-server-health')
+//   await page.click('.nav-tabs .nav-link:not(.active)')
+//   await (new Promise(resolve => setTimeout(resolve, 1000)))
+//   const component = await page.locator('[data-testid="VServerHealthCheck"]')
+
+//   await component.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, en['title.healthcheck'])
+//   await component.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, en['title.diagnostics'])
+
+//   await (new Promise(resolve => setTimeout(resolve, 1000)))
+//   await page.screenshot({ path: './screenshots/en/opsi-webgui_opsisystem_diagnostics.png' })
+//   await component.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, de['title.healthcheck'])
+//   await component.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, de['title.diagnostics'])
+//   await page.screenshot({ path: './screenshots/de/opsi-webgui_opsisystem_diagnostics.png' })
+// })
 
 // test('opsi V Server Health', async ({ page }) => {
 //   await callStoryId(page, 'view-v-server-health', 'v-server-health')

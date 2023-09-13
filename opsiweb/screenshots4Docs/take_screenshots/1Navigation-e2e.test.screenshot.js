@@ -10,7 +10,7 @@ const mockData = async ({ page }) => {
     route.abort()
   })
   apiMock(page, '**/api/user/opsiserver', { result: data.depotIds[0] })
-  apiMock(page, '**/api/user/configuration', { user: 'adminuser', configuration: { read_only: false, depot_access: false, host_group_access: false, product_group_access: false, client_creation: false } })
+  apiMock(page, '**/api/user/configuration', { user: 'adminuser', configuration: { read_only: false, depot_access: false, host_group_access: false, product_group_access: false, client_creation: true } })
   apiMock(page, '**/api/opsidata/hosts/groups/id', ['clientdirectory', 'testgroup', 'test'])
 
   apiMock(page, '**/api/opsidata/hosts?**', data.hostObjAttributes)
@@ -34,7 +34,6 @@ const mockData = async ({ page }) => {
   apiMock(page, '**/api/opsidata/products/count**', 24)
   apiMock(page, '**/api/auth/login', { result: 'Login success' })
   apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
-
 
 // mock.onGet('/api/opsidata/depot_ids**').reply(200, data.depotIds)
 // mock.onGet('/api/opsidata/depots/clients**').reply(200, data.clientIds)

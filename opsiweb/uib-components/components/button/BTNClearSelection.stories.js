@@ -6,7 +6,7 @@ export default {
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<ButtonBTNClearSelection />'
+  template: '<ButtonBTNClearSelection short />'
 })
 
 // named export Primary to create respective story
