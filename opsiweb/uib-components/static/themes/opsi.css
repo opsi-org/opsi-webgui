@@ -4003,13 +4003,14 @@ a.close.disabled{
   z-index:1040;
   width:100vw;
   height:100vh;
-  background-color:var(--bg-modal_backdrop) !important
+  background-color:var(--background) !important;
+  opacity:0.9;
 }
 .modal-backdrop.fade{
   opacity:0
 }
 .modal-backdrop.show{
-  opacity:0.5
+  opacity:0.9
 }
 .modal-header{
   display:flex;
