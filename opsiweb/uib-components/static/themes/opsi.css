@@ -1533,7 +1533,7 @@ pre code{
   box-shadow:0 0 0 0.2rem var(--s-form_control_focus)
 }
 .form-control::placeholder{
-  color:var(--fg-form_control);
+  color:var(--placeholder);
   opacity:1
 }
 .form-control:disabled,.form-control[readonly]{
