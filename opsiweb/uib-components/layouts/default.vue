@@ -50,6 +50,7 @@ import { Icons } from '../mixins/icons'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
 import { Cookies } from '../mixins/cookies'
+import { SettingsLanguage } from '../mixins/settings'
 
 const settings = namespace('settings')
 const changes = namespace('changes')
@@ -61,7 +62,7 @@ interface SideBarAttr {
     expanded: boolean
 }
 
-@Component({ mixins: [MBus, Configserver, Icons, Cookies] })
+@Component({ mixins: [MBus, Configserver, Icons, Cookies, SettingsLanguage] })
 export default class LayoutDefault extends Vue {
   icon:any
   getParsedCookie!:any
@@ -85,7 +86,7 @@ export default class LayoutDefault extends Vue {
 
   sidebarAttr: SideBarAttr = { visible: true, expanded: true }
 
-  showQuickPanel:boolean = this.getParsedCookie('quickpanel', false)
+  showQuickPanel:boolean = this.$mq === 'mobile' ? false : this.getParsedCookie('quickpanel', false)
 
   showQuickPanelChanged (val) {
     this.setCookie('quickpanel', val)

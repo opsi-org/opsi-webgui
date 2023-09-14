@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VProductProperty">
-    <BarBPageHeader :title="$t('title.config') + ' - '" :subtitle="id" :closeroute="closeroute" />
+    <BarBPageHeader :title="$t('title.config') + '' + $t('title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <div class="mb-3 text-small">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
