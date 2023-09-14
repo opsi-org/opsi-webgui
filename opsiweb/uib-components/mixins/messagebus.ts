@@ -196,7 +196,7 @@ const mbus = namespace('messagebus')
     console.warn('MessageBus:', text, data)
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     // const ref = (this.$refs.alertConfigurationError as any)
-    ref.alert(`MessageBus: ${stringtext}`, 'warning', text)
+    ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
   }
 
   _setBus (bus: WebSocket, setBusLastMsgMethod: any) {
