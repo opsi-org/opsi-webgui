@@ -170,7 +170,7 @@ h1.title {
 .table tr .selected>.btn {
   color: var(--fg-table-selected) !important;
 }
-.table tr:hover .btn {
+.table tbody tr:hover .btn {
   color: var(--fg-table-hover-hover) !important;
 }
 .table tr:hover .selected.btn,

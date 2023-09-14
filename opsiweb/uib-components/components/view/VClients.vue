@@ -97,10 +97,10 @@
             </div>
           </template>
           <template #head(reachable)>
-            <ModalMClientReachable />
+            <ModalMClientReachable classes="hover" />
           </template>
           <template #cell(reachable)="row">
-            <ViewVClientReachable :id="row.item.clientId" />
+            <ViewVClientReachable :id="row.item.clientId" :classes="{'row-selected': selectionClients.includes(row.item.clientId)}" />
           </template>
 
           <template #cell(uefi)="row">
@@ -112,6 +112,7 @@
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
+              :class="{'row-selected': selectionClients.includes(row.item.clientId)}"
               :title="$t('button.show.products')"
               @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
             >
@@ -125,7 +126,7 @@
               size="sm"
               class="btn-client-statistic"
               :title="$t('button.show.products')"
-              :class="selectionClients.includes(row.item.clientId)? 'selected' : ''"
+              :class="selectionClients.includes(row.item.clientId)? 'selected row-selected' : ''"
               :disabled="row.item.actionResult_failed == 0"
               @click="sortProductTable(row.item.clientId, 'actionResult', false)"
             >
@@ -138,6 +139,7 @@
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
+              :class="{'row-selected': selectionClients.includes(row.item.clientId)}"
               :title="$t('button.show.products')"
               @click="sortProductTable(row.item.clientId, 'installationStatus', false)"
             >
@@ -181,7 +183,6 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { MBus } from '../../mixins/messagebus'
@@ -439,7 +440,9 @@ export default class VClients extends Vue {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
 }
-.b-table-row-selected .btn {
+.b-table-row-selected .btn,
+.row-selected.btn,
+.row-selected>.btn {
 color: var(--primary-foreground) !important;
 }
 </style>

@@ -7,6 +7,7 @@
     </span>
     <b-button
       v-else
+      :class="classes"
       :title="$t('table.fields.checkreachable')"
       variant="outline-primary"
       size="sm"
@@ -27,6 +28,7 @@ export default class VClientReachable extends Vue {
   $axios: any
   $t: any
   @Prop({ }) id!: string
+  @Prop({ default: '' }) classes!: string
   reachability: any = null
   isLoading:boolean = false
 
