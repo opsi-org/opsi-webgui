@@ -14,9 +14,12 @@
         short
         light
         white
-        height="40"
+        height="36"
         :classes="classes"
       />
+      <span class="text-smaller ml-2">
+        {{ $t('webGUI') }} {{ $config.packageVersion }}
+      </span>
       <IconIReadOnly />
     </b-navbar-brand>
     <BarBBreadcrumbRow v-if="$mq !== 'mobile'" class="ml-2" />
