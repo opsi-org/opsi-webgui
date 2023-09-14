@@ -117,7 +117,8 @@
   --color-hover: 155, 155, 155, .1; /**?????**/
 
   /* highlighted component */
-  --highlight: var(--test-hover);
+  --highlight: var(--highlight);
+  --placeholder: var(--placeholder);
 
 
   /** Dark DONE: **/

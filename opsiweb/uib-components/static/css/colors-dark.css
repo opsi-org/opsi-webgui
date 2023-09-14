@@ -20,8 +20,8 @@
   --opsi-base-foreground: #E1E1E1;
   --opsi-base-background: #3f3f3e; /*updated*/
   --border: #4b4b49;
-
-  --test-hover:#4b4b49; /* current hovering styles are very loud*/
+  --placeholder: #b2b2b2;
+  --highlight:#4b4b49;
 
   /*--general-realy-dark: #545453;  /*new*/
   --general-opsi-grey-dark: #4b4b49; /*updated*/
