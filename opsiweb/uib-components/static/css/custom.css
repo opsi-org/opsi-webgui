@@ -276,7 +276,7 @@ body .mobile .topbar_content .navbar > * {
 .navbar > .btn:hover {
   color: var(--primary-foreground) !important;
 }
-tr.b-table-row-selected > td > .btn,
+/* tr.b-table-row-selected > td > .btn, */
 tr:hover > td > .btn {
   color: var(--primary-foreground) !important;
 }

@@ -440,7 +440,7 @@ export default class VClients extends Vue {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
 }
-.b-table-row-selected .btn,
+/* .b-table-row-selected .btn, */
 .row-selected.btn,
 .row-selected>.btn {
 color: var(--primary-foreground) !important;
