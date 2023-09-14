@@ -386,7 +386,7 @@ export default class VClients extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        ref?.alert(detailedError, 'danger')
         this.error = this.$t('message.error.defaulttext') as string
         this.error += JSON.stringify(error.message)
         this.isLoading = false
