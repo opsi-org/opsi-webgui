@@ -1,6 +1,6 @@
 <template>
   <b-tabs justified small lazy class="QPTabs">
-    <b-tab id="qp-tab-selection">
+    <b-tab id="qp-tab-selection" active>
       <template #title>
         <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
       </template>
@@ -57,7 +57,7 @@
         <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
-    <b-tab id="qp-tab-clients" active>
+    <b-tab id="qp-tab-clients">
       <template #title>
         <b-icon :icon="icon.client" :title="$t('treeselect.clientGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
       </template>
