@@ -114,7 +114,7 @@
               class="btn-client-statistic"
               :class="{'row-selected': selectionClients.includes(row.item.clientId)}"
               :title="$t('button.show.products')"
-              @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
+              @click="sortProductTable(row.item.clientId, 'version', false)"
             >
               {{ row.item.version_outdated }}
             </b-button>

@@ -1,4 +1,5 @@
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { IObjectString2String } from '~/.utils/types/tgeneral'
 
 const cache = namespace('data-cache')
 
@@ -23,7 +24,7 @@ const cache = namespace('data-cache')
   }
 }
 @Component export class Client extends Vue {
-  fetchedDataClients2Depots: any
+  fetchedDataClients2Depots: IObjectString2String = {}
 
   async getClientIdList (selectedDepots: Array<string>) {
     const result = (await this.$axios.$get(`/api/opsidata/depots/clients?selectedDepots=[${selectedDepots}]`)).sort()

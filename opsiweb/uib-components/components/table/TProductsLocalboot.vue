@@ -184,6 +184,8 @@ export default class TProductsLocalboot extends Vue {
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoading!: boolean
+  @Prop() fetchedDataClients2Depots!: IObjectString2String
+
   wsBusMsg: any // mixin // store
   icon: any
   syncSort: any
@@ -203,7 +205,6 @@ export default class TProductsLocalboot extends Vue {
   totalpages: number = 0
   error: string = ''
   action: string = ''
-  fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
   tableData: ITableData = {
     type: 'LocalbootProduct',
