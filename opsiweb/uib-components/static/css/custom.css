@@ -574,6 +574,10 @@ tbody .col-rowactions :not(div).btn {
   color: var(--light);
   background-color: var(--primary);
 }
+.treeselect .vue-treeselect__placeholder {
+  display: block;
+  color:var(--placeholder);
+}
 
 .treeselect_fullpage .vue-treeselect__menu {
   min-height: 77vh;

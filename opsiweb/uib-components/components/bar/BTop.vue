@@ -8,15 +8,18 @@
     <b-navbar-nav v-if="$mq === 'mobile'" small>
       <slot name="mobilemenu" />
     </b-navbar-nav>
-    <b-navbar-brand class="d-inline-flex " href="/addons/webgui/app/clients/">
+    <b-navbar-brand class="d-inline-flex ml-1" href="/addons/webgui/app/clients/">
       <IconIOpsiLogo
         v-once
         short
         light
         white
-        height="40"
+        height="36"
         :classes="classes"
       />
+      <span class="text-smaller ml-2">
+        {{ $config.packageVersion }}
+      </span>
       <IconIReadOnly />
     </b-navbar-brand>
     <BarBBreadcrumbRow v-if="$mq !== 'mobile'" class="ml-2" />

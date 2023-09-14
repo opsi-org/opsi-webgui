@@ -1533,7 +1533,7 @@ pre code{
   box-shadow:0 0 0 0.2rem var(--s-form_control_focus)
 }
 .form-control::placeholder{
-  color:var(--fg-form_control);
+  color:var(--placeholder);
   opacity:1
 }
 .form-control:disabled,.form-control[readonly]{
@@ -2516,9 +2516,9 @@ textarea.form-control{
   opacity:0
 }
 .custom-control-input:checked ~ .custom-control-label::before{
-  color:var(--fg-custom_control-checked);
-  border-color:var(--b-custom_control-checked);
-  background-color:var(--highlight)
+  color:var(--color);
+  border-color:var(--primary);
+  background-color:var(--primary)
 }
 .custom-control-input:focus ~ .custom-control-label::before{
   box-shadow:0 0 0 0.2rem var(--s-custom_control-focus)
@@ -2616,8 +2616,9 @@ textarea.form-control{
   }
 }
 .custom-switch .custom-control-input:checked ~ .custom-control-label::after{
-  background-color:var(--bg-custom_switch);
-  transform:translateX(0.75rem)
+  color:var(--color);
+  border-color:var(--background);
+  background-color:var(--background)
 }
 .custom-switch .custom-control-input:disabled:checked ~ .custom-control-label::before{
   background-color:var(--bg-custom_item-checked-disabled)
@@ -4002,13 +4003,14 @@ a.close.disabled{
   z-index:1040;
   width:100vw;
   height:100vh;
-  background-color:var(--bg-modal_backdrop) !important
+  background-color:var(--background) !important;
+  opacity:0.9;
 }
 .modal-backdrop.fade{
   opacity:0
 }
 .modal-backdrop.show{
-  opacity:0.5
+  opacity:0.9
 }
 .modal-header{
   display:flex;
