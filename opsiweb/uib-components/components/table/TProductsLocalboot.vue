@@ -263,7 +263,7 @@ export default class TProductsLocalboot extends Vue {
   }
 
   async selectionChanged () {
-    this.fetchedDataClients2Depots = {}
+    // this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     await this.fetchPageOne()
   }
