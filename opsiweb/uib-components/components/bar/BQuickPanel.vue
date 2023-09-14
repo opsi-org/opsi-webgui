@@ -8,7 +8,6 @@
     bg-variant="background"
     text-variant="color"
     shadow
-    lazy
     no-close-on-route-change
     @hidden="$emit('change', false)"
   >
