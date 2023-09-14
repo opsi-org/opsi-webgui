@@ -8,6 +8,7 @@
   "colon": ":",
   "empty": "--",
   "title.delimiter": " - ",
+  "versionmarker": "v",
 
   "alt.uiblogo": "uib logo",
   "message.loading": "Loading",
@@ -319,6 +320,7 @@
   "form.clientGroups": "Client groups",
   "form.productGroups": "Product groups",
   "form.tooltip.actionRequest": "Set actionRequest for all selected products",
+  "form.clientId": "Client ID",
   "form.username": "Username",
   "form.password": "Password",
   "form.theme": "Theme",
