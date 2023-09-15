@@ -403,7 +403,6 @@ export default class TSDefault extends Vue {
 .TreeWrapper .vue-treeselect__placeholder {
   display: block;
   color:var(--color);
-  padding: 0%;
 }
 .TreeWrapper>.search-filled .vue-treeselect__placeholder {
   top: -10px;
