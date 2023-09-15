@@ -242,6 +242,7 @@
   "button.expand": "Expand",
   "button.collapse": "Collapse",
   "button.refresh": "Refresh {id}",
+  "button.deselect": "Deselect item",
   "button.reset": "Reset",
   "button.resetAll": "Reset all",
   "button.restore": "Restore",

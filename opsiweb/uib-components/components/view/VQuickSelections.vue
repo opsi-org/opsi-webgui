@@ -5,45 +5,72 @@
         <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
       </template>
       <div class="scrollcontent">
-        <GridGFormItem :label="$t('title.depots')" variant="longlabel">
+        <GridGFormItem variant="longvalue">
+          <template #label>
+            <p>{{ $t('title.depots') }}</p>
+          </template>
           <template #value>
-            <b-form-textarea
-              v-if="selectionDepots.length>0"
-              rows="1"
-              max-rows="10"
-              size="sm"
-              no-resize
-              plaintext
-              :value="[...selectionDepots].sort().join('\n')"
-            />
+            <b-list-group v-if="selectionDepots.length>0" flush>
+              <b-list-group-item v-for="c in [...selectionDepots].sort()" :key="c" class="modal-client-p text-small">
+                {{ c }}
+                <ButtonBTNSmallRow
+                  v-if="selectionDepots.length > 1"
+                  :title="$t('button.deselect')"
+                  show-close
+                  @click="delFromSelectionDepots(c)"
+                />
+              </b-list-group-item>
+            </b-list-group>
             <span v-else>{{ $t('empty') }}</span>
           </template>
         </GridGFormItem>
-        <GridGFormItem :label="$t('title.clients')" variant="longlabel" labelclass="clients">
-          <template #value>
-            <b-form-textarea
-              v-if="selectionClients.length>0"
-              rows="1"
-              max-rows="10"
-              size="sm"
-              no-resize
-              plaintext
-              :value="[...selectionClients].sort().join('\n')"
+        <GridGFormItem variant="longvalue" labelclass="clients">
+          <template #label>
+            <ButtonBTNSmallRow
+              v-if="selectionClients.length > 0"
+              :title="$t('button.deselect')"
+              show-close
+              @click="setSelectionClients([])"
             />
+            <p>{{ $t('title.clients') }}</p>
+          </template>
+          <template #value>
+            <b-list-group v-if="selectionClients.length>0" flush>
+              <b-list-group-item v-for="c in [...selectionClients].sort()" :key="c" class="modal-client-p text-small">
+                {{ c }}
+                <ButtonBTNSmallRow
+                  v-if="selectionClients.length > 0"
+                  :title="$t('button.deselect')"
+                  show-close
+                  @click="delFromSelectionClients(c)"
+                />
+              </b-list-group-item>
+            </b-list-group>
             <span v-else>{{ $t('empty') }}</span>
           </template>
         </GridGFormItem>
-        <GridGFormItem :label="$t('title.products')" variant="longlabel" labelclass="products">
-          <template #value>
-            <b-form-textarea
-              v-if="selectionProducts.length>0"
-              rows="1"
-              max-rows="10"
-              size="sm"
-              no-resize
-              plaintext
-              :value="[...selectionProducts].sort().join('\n')"
+        <GridGFormItem variant="longvalue" labelclass="products">
+          <template #label>
+            <ButtonBTNSmallRow
+              v-if="selectionProducts.length > 0"
+              :title="$t('button.deselect')"
+              show-close
+              @click="setSelectionProducts([])"
             />
+            <p>{{ $t('title.products') }}</p>
+          </template>
+          <template #value>
+            <b-list-group v-if="selectionProducts.length>0" flush>
+              <b-list-group-item v-for="c in [...selectionProducts].sort()" :key="c" class="modal-client-p text-small">
+                {{ c }}
+                <ButtonBTNSmallRow
+                  v-if="selectionProducts.length > 0"
+                  :title="$t('button.deselect')"
+                  show-close
+                  @click="delFromSelectionProducts(c)"
+                />
+              </b-list-group-item>
+            </b-list-group>
             <span v-else>{{ $t('empty') }}</span>
           </template>
         </GridGFormItem>
@@ -85,13 +112,22 @@ const selections = namespace('selections')
 export default class VQuickSelections extends Vue {
   icon:any
   $mq:any
-
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>
+  @selections.Mutation public delFromSelectionDepots!: (s: string) => void
+  @selections.Mutation public delFromSelectionClients!: (s: string) => void
+  @selections.Mutation public delFromSelectionProducts!: (s: string) => void
+  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
 }
 </script>
 <style>
+.QPTabs .scrollcontent {
+  max-height: 500px !important;
+  /* max-height: 50% !important; */
+}
 .QPTabs .nav-tabs .nav-link{
   color:var(--color);
   background-color:var(--background);
@@ -107,5 +143,9 @@ export default class VQuickSelections extends Vue {
   color: var(--color);
   background-color: var(--highlight);
   border:1px solid var(--border);
+}
+
+.QPTabs #qp-tab-selection .GFormItem .firstcol {
+  min-width: 110px !important;
 }
 </style>

@@ -13,7 +13,14 @@
   >
     <b-card class="quickpanel_container">
       <b-row class="text-smaller mt-2 mb-2">
-        <b>{{ $t('label.quickselect') }} </b>
+        <b>{{ $t('label.quickselect') }}
+          <ButtonBTNSmallRow
+            v-if="selectionDepots.length > 0"
+            :title="$t('button.reset')"
+            show-reset
+            @click="setSelectionDepots([opsiconfigserver])"
+          />
+        </b>
       </b-row>
       <ViewVQuickSelections />
       <b-row class="text-smaller mt-2 mb-2">
@@ -43,14 +50,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
+const cache = namespace('data-cache')
+const selections = namespace('selections')
 
 @Component({ mixins: [Icons] })
 export default class BQuickPanel extends Vue {
   $mq: any
   icon:any
   @Prop({ default: false }) showQuickPanel!: boolean
+  @cache.Getter public opsiconfigserver!: string
+  @selections.Getter public selectionDepots!: Array<string>
+  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
 }
 </script>
 

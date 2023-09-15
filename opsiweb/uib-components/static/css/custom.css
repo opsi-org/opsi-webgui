@@ -225,7 +225,7 @@ body .mobile .topbar_content .navbar > * {
 [class$="fg-blue"] { color: var(--blue) !important;}
 [class$="fg-grey"] { color: var(--gray) !important;}
 
-.btn, .dropdown-item, .treeselect{
+.btn:not(.small), .dropdown-item, .treeselect{
   min-height: var(--min-height-button) !important;
   min-width: var(--min-height-button) !important;
   font-size: var(--text-small);
@@ -286,10 +286,10 @@ tr:hover > td > .btn:hover {
 }
 .btn, .btn:hover {
   /* color: var(--color); */
-  color: var(--general-fg);
   background-color: transparent;
+  color: var(--general-fg);
 }
-.btn:hover {
+.btn:not(.small):hover {
   /* color: var(--color); */
   color: var(--primary-foreground) !important;
   background-color: var(--primary-dark) !important;
@@ -307,7 +307,7 @@ tbody .col-rowactions :not(div).btn {
   display: block;
   width: 100%;
 }
-.btn-sm.active, .btn:hover {
+.btn-sm:not(.small).active, .btn:not(.small):hover {
   color: var(--primary-foreground) !important;
   background-color: var(--primary-dark) !important;
   border-color: var(--bg-page_item-disabled) !important;
