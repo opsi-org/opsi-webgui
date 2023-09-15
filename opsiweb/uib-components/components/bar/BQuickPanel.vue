@@ -16,7 +16,7 @@
         <b>{{ $t('label.quickselect') }}
           <ButtonBTNSmallRow
             v-if="selectionDepots.length > 0"
-            :title="$t('button.reset')"
+            :title="$t('button.resetAll')"
             show-reset
             @click="setSelectionDepots([opsiconfigserver])"
           />

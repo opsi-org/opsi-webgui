@@ -22,7 +22,7 @@
       </span>
       <IconIReadOnly />
     </b-navbar-brand>
-    <BarBBreadcrumbRow v-if="$mq !== 'mobile'" class="ml-2" />
+    <BarBBreadcrumbRow v-if="$mq !== 'mobile'" class="ml-3" />
     <b-navbar-nav small :class="$mq !== 'mobile' ? 'ml-auto' : ''">
       <ModalMTrackChanges class="mr-1" />
       <slot name="quickpanel" />

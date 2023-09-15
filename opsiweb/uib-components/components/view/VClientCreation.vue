@@ -288,7 +288,7 @@ export default class VClientCreation extends Vue {
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      ref.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
+      ref?.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
       return
     }
     const request = {
@@ -309,6 +309,7 @@ export default class VClientCreation extends Vue {
         if (this.netbootproduct) {
           await this.setupNetbootProduct()
         }
+        this.clientIds.push(this.newClient.hostId)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
