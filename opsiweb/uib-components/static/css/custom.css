@@ -575,7 +575,6 @@ tbody .col-rowactions :not(div).btn {
   background-color: var(--primary);
 }
 .treeselect .vue-treeselect__placeholder {
-  display: block;
   color:var(--placeholder);
 }
 
