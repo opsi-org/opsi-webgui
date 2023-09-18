@@ -214,7 +214,7 @@ test:accessibility:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
   dependencies:
-    - init:playwright
+    - init2:playwright
   script:
     - cd opsiweb
     - PORT=8888 nohup npm run dev > .dev.log &
@@ -314,7 +314,7 @@ test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
-    - init:playwright
+    - init2:playwright
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
