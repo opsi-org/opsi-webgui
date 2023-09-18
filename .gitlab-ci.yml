@@ -186,7 +186,7 @@ init2:playwright:
       - opsiweb/package.json
       - opsiweb/node_modules/
       - opsiweb/uib-components/
-      - ms-playwright/
+      - ./ms-playwright/
     expire_in: 1 day
 
 #########################################################################
