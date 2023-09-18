@@ -16,7 +16,7 @@ variables:
   shopt -s expand_aliases
 
 .prepare_playwright: &prepare_playwright |
-  cp -r $TMP_PLAYWRIGHT_BROWSER_PATH $PLAYWRIGHT_BROWSER_PATH
+  cp -r $TMP_PLAYWRIGHT_BROWSERS_PATH $PLAYWRIGHT_BROWSERS_PATH
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -235,7 +235,6 @@ test:accessibility:
     - cd opsiweb
     - PORT=8888 nohup npm run dev > .dev.log &
     - sleep 60
-    - echo $PLAYWRIGHT_BROWSERS_PATH
     - npm run gittest:all:accessibility || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
