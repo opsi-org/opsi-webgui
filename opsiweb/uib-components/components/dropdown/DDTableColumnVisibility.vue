@@ -192,7 +192,7 @@ export default class DDTableColumnVisibility extends BDropdown {
 <style>
 .DropdownDDTableColumnVisibilityWrapper .selectedColumn .dropdown-item {
   color: var(--light) !important;
-  background-color: var(--primary) !important;
+  background-color: var(--primary-dark) !important;
 }
 .DropdownDDTableColumnVisibilityWrapper .rightmenu .dropdown-menu {
   right: 0 !important;

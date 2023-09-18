@@ -660,7 +660,7 @@ div.scrollValue {
 #quicksettingsDD .selected > a.dropdown-item,
 #quicksettingsDD .selected:hover {
   color: var(--light) !important;
-  background-color: var(--primary) !important;
+  background-color: var(--primary-dark) !important;
 }
 #quicksettingsDD .selected > a.dropdown-item:hover {
   background-color: var(--primary-dark) !important;
