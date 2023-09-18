@@ -2,7 +2,7 @@ image: node:lts
 
 stages:
   - init
-  # - init2
+  - init2
   - test
   # - test-components
   - build
@@ -168,6 +168,8 @@ init:npm:production:
 init2:playwright:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: init2
+  only:
+    - main
   dependencies:
     - init:npm
   script:
