@@ -19,7 +19,8 @@ stages:
 
 .start_storybook: &start_storybook |
   PORT=3003 nohup npm run story > .storybook.log &
-.start_webgui: &start_storybook |
+
+.start_webgui: &start_webgui |
   PORT=8888 nohup npm run dev > .dev.log &
 
 .install_tools: &install_tools |
