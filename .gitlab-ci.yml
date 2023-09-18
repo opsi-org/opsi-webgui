@@ -9,14 +9,18 @@ stages:
   - publish
   - release
 
-variables:
-  TMP_PLAYWRIGHT_BROWSERS_PATH: ".$PLAYWRIGHT_BROWSERS_PATH"
-
 .define_globals: &define_globals |
   shopt -s expand_aliases
 
-.prepare_playwright: &prepare_playwright |
-  cp -rf $TMP_PLAYWRIGHT_BROWSERS_PATH $PLAYWRIGHT_BROWSERS_PATH
+.install_playwright: &install_playwright |
+  ls -lah uib-components
+  npm i -D @playwright/test
+  npx playwright install --with-deps chromium
+
+.start_storybook: &start_storybook |
+  PORT=3003 nohup npm run story > .storybook.log &
+.start_webgui: &start_storybook |
+  PORT=8888 nohup npm run dev > .dev.log &
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -24,6 +28,7 @@ variables:
   apt -y install debhelper osc zip
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
+
 
 .prepare_backend_tests: &prepare_backend_tests |
   apt update
@@ -120,6 +125,7 @@ variables:
   fi
 
 .get_changed_files: &get_changed_files |
+  cd uib-components
   changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
@@ -127,6 +133,7 @@ variables:
   testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
+  cd ..
 
 #########################################################################
 ######################################################################### init
@@ -162,38 +169,6 @@ init:npm:production:
       - opsiweb/uib-components/
     expire_in: 1 day
 
-#########################################################################
-######################################################################### init2 playwright
-#########################################################################
-init2:playwright:
-  image: mcr.microsoft.com/playwright:v1.38.0-jammy
-  stage: init2
-  only:
-    - main
-  dependencies:
-    - init:npm
-  script:
-    # - TMP_PLAYWRIGHT_BROWSERS_PATH=$(pwd)$PLAYWRIGHT_BROWSERS_PATH &&
-    - TMP_PLAYWRIGHT_BROWSERS_PATH=.$PLAYWRIGHT_BROWSERS_PATH
-    - echo $PLAYWRIGHT_BROWSERS_PATH
-    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - mkdir $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - cd opsiweb
-    - ls -lah uib-components
-    - npm i -D @playwright/test
-    - npx playwright install --with-deps chromium
-    - cp -r $PLAYWRIGHT_BROWSERS_PATH $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - echo $PLAYWRIGHT_BROWSERS_PATH
-    - ls -lah $PLAYWRIGHT_BROWSERS_PATH
-    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - ls -lah $TMP_PLAYWRIGHT_BROWSERS_PATH
-  artifacts:
-    paths:
-      - opsiweb/package.json
-      - opsiweb/node_modules/
-      - opsiweb/uib-components/
-      - ./ms-playwright/
-    expire_in: 1 day
 
 #########################################################################
 ######################################################################### test
@@ -232,17 +207,10 @@ test:accessibility:
   stage: test
   dependencies:
     - init:npm
-  script:
-    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - TMP_PLAYWRIGHT_BROWSERS_PATH=.$PLAYWRIGHT_BROWSERS_PATH
-    - echo $PLAYWRIGHT_BROWSERS_PATH
-    - ls -lah $PLAYWRIGHT_BROWSERS_PATH
-    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - ls -lah $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - *prepare_playwright
+  before_script:
     - cd opsiweb
-    - PORT=8888 nohup npm run dev > .dev.log &
-    - sleep 60
+    - *start_webgui
+  script:
     - npm run gittest:all:accessibility || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
@@ -256,7 +224,6 @@ test:accessibility:
     reports:
       junit: opsiweb/test-result-pw-reporter-accessibility.xml
     expire_in: 1 day
-
 test:usecase:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
@@ -264,16 +231,9 @@ test:usecase:
     - init:npm
   before_script:
     - cd opsiweb
-    - ls -lah uib-components
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install --with-deps chromium
-    - PORT=8888 nohup npm run dev > .dev.log &
+    - *install_playwright
   script:
-    # - echo $PLAYWRIGHT_BROWSERS_PATH
-    # - ls -lah $PLAYWRIGHT_BROWSERS_PATH
-    # - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
-    # - ls -lah $TMP_PLAYWRIGHT_BROWSERS_PATH
     - npm run test:all:usecase || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
@@ -306,20 +266,15 @@ test:components:changes:
       - opsiweb/pages/*
       - opsiweb/components/*
       - opsiweb/uib-components/*
-  script:
+  before_script:
     - cd opsiweb
     - *define_globals
+    - *install_playwright
+  script:
     # get changed files (in comparison to main branch)
-    - cd uib-components
-    - *get_changed_files
-    - cd ..
-    - echo "$testfilesUnique"
-    # install and start services
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
+    - *get_changed_files && echo "$testfilesUnique"
+    - *start_storybook
+    - *start_webgui
     - sleep 120
     # run tests
     - npm run test:all:components $testfilesUnique || exit_code=$?
@@ -341,18 +296,17 @@ test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
-    - init2:playwright
+    - init:npm
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
-  script:
+  before_script:
     - cd opsiweb
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
+    - *install_playwright
+    - *start_storybook
+    - *start_webgui
+  script:
     - sleep 60
     - npm run test:all:components || exit_code=$?
     - npm run test:all:delete-empty-results
