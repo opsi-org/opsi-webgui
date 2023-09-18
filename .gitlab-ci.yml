@@ -313,7 +313,7 @@ test:components:
     - *start_webgui
     - sleep 60
   script:
-    - npm run test:all:components | tee .tmpRESULT || exit_code=$?
+    - npm run test:all:components || exit_code=$? | tee .tmpRESULT
     - cat .tmpRESULT
   after_script:
     - cd opsiweb
