@@ -161,6 +161,7 @@ init:npm:production:
 ######################################################################### init2 playwright
 #########################################################################
 init2:playwright:
+  image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: init2
   dependencies:
     - init:npm
