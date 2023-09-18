@@ -2,7 +2,7 @@ image: node:lts
 
 stages:
   - init
-  - init2
+  # - init2
   - test
   # - test-components
   - build
@@ -228,6 +228,8 @@ test:lint:
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
+  except:
+    - cicd
   dependencies:
     - init2:playwright
   script:
@@ -260,18 +262,18 @@ test:usecase:
   stage: test
   dependencies:
     - init:npm
-  script:
-    - echo $PLAYWRIGHT_BROWSERS_PATH
-    - ls -lah $PLAYWRIGHT_BROWSERS_PATH
-    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
-    - ls -lah $TMP_PLAYWRIGHT_BROWSERS_PATH
+  before_script:
     - cd opsiweb
     - ls -lah uib-components
     - *define_globals
     - npm i -D @playwright/test
-    - npx playwright install
+    - npx playwright install --with-deps chromium
     - PORT=8888 nohup npm run dev > .dev.log &
-    - sleep 60
+  script:
+    # - echo $PLAYWRIGHT_BROWSERS_PATH
+    # - ls -lah $PLAYWRIGHT_BROWSERS_PATH
+    # - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
+    # - ls -lah $TMP_PLAYWRIGHT_BROWSERS_PATH
     - npm run test:all:usecase || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
