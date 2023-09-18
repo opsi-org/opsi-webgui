@@ -169,7 +169,8 @@ init2:playwright:
     - ls -lah uib-components
     - npm i -D @playwright/test
     - npx playwright install --with-deps chromium
-    # - npm i -D @axe-core/playwright
+    # - @axe-core/playwright
+    - npm i -D @axe-core/playwright
   artifacts:
     paths:
       - opsiweb/package.json
