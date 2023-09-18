@@ -30,7 +30,7 @@ stages:
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
-
+\[.*[✘|✓].*\] \› uib-components\/components\/*
 .prepare_backend_tests: &prepare_backend_tests |
   apt update
   echo "install stuff"
@@ -238,6 +238,7 @@ test:usecase:
     - *install_playwright
     - *start_webgui
   script:
+    # - npm run test:all:usecase || exit_code=$?
     - npm run test:all:usecase || exit_code=$?
   after_script:
     - npm run test:all:delete-empty-results
@@ -313,9 +314,43 @@ test:components:
     - *start_webgui
     - sleep 60
   script:
-    - npm run test:all:components || exit_code=$?
+    - npm run test:all:components > .tmpResult || exit_code=$?
     # - TODO: calculate percentage of successfull / runned tests
   after_script:
+    - scripts/playwright_coverage.sh .tmpRESULT
+    - npm run test:all:delete-empty-results
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: "opsi-webgui-test-result-components"
+    when: on_failure
+    paths:
+      - ./**/*/test-results/
+      - opsiweb/.storybook.log
+      - opsiweb/.dev.log
+    reports:
+      junit: ./opsiweb/test-result-pw-reporter-components.xml
+    expire_in: 3 day
+test:components2:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:npm
+  only:
+    - main # cause in main we test all files, but only chromium browser
+    - tags
+  before_script:
+    - cd opsiweb
+    - *define_globals
+    - *install_playwright
+    - *start_storybook
+    - *start_webgui
+    - sleep 60
+  script:
+    - (npm run test:all:components || exit_code=$?) > .tmpResult
+    # - TODO: calculate percentage of successfull / runned tests
+  after_script:
+    - scripts/playwright_coverage.sh .tmpRESULT
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
