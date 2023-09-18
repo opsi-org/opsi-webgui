@@ -331,6 +331,7 @@ test:components:
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 3 day
+
 test:components2:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
@@ -349,11 +350,12 @@ test:components2:
     - sleep 60
   script:
     - npm run test:all:components > .tmpResult
-    - exit_code=$PIPESTATUS
     - cat .tmpRESULT
+    - exit_code=$PIPESTATUS
     # - TODO: calculate percentage of successfull / runned tests
   after_script:
-    - scripts/playwright_coverage.sh .tmpRESULT
+    - pwd
+    - bash scripts/playwright_coverage.sh .tmpRESULT
     - npm run test:all:delete-empty-results
     - exit $exit_code
   coverage: /^TESTED_FILES\s*:\s*([^%]+)/
