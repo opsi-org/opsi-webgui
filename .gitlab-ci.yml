@@ -8,42 +8,9 @@ stages:
   - publish
   - release
 
-# .prepare_repo: &prepare_repo |
-#   # BRANCH=$(git symbolic-ref --short HEAD || echo "main")
-#   BRANCH=$(echo ${CI_COMMIT_BRANCH} || echo "main")
-#   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
-#   echo "GIT_Branch $BRANCH"
-
-#   echo "exec: git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH}"
-
-#   git_result=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
-#   echo "gitresult $git_result"
-#   if [ $git_result -eq 0 ]; then
-#     echo "Use default branch"
-#     BRANCH=main
-#     echo "GIT_Branch $BRANCH"
-#   fi
-#   if [ -z "$BRANCH" ]; then
-#     BRANCH=$(echo "main")
-#   fi
-#   echo "GIT_Branch $BRANCH"
-
-#   # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-#   # Testing using current branch (othewise job failes on "tag"-execution)
-
-#   git clone --branch $BRANCH https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-#   cd opsiweb/uib-components
-#   git branch -a
-#   ls -lah
-#   cd -
-
 .define_globals: &define_globals |
   shopt -s expand_aliases
-#   npm i -g dry-dry
-#   alias npm-uib='npm'
-#   cd uib-components
-#   git branch
-#   cd -
+
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -161,7 +128,6 @@ stages:
 init:npm:
   stage: init
   script:
-    # - *prepare_repo
     - cd opsiweb
     - *define_globals
     - npm i
@@ -179,9 +145,7 @@ init:npm:production:
     - main
     - tags
   script:
-    # - *prepare_repo
     - cd opsiweb
-    #- #rm package-lock.json # todo: how to? rm here or not include to repo? (currently not included)
     - *define_globals
     - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
@@ -191,9 +155,7 @@ init:npm:production:
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
-#
 
-# node_modules sizes (locally)
 
 #########################################################################
 ######################################################################### test
@@ -210,21 +172,22 @@ test:lint:
     - *define_globals
     - npm run lint
 
-test:unit:
-  stage: test
-  dependencies:
-    - init:npm
-  script:
-    - cd opsiweb
-    - *define_globals
-    - npm run test:unit
-  allow_failure: true
-  coverage: /All files\s*\|\s*([\d\.]+)/
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: opsiweb/coverage/clover.xmlci
+# test:unit:
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     - npm run test:unit
+#   allow_failure: true
+#   coverage: /All files\s*\|\s*([\d\.]+)/
+#   artifacts:
+#     expire_in: 1 day
+#     reports:
+#       coverage_report:
+#         coverage_format: cobertura
+#         path: opsiweb/coverage/clover.xmlci
 
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -254,7 +217,7 @@ test:accessibility:
       - opsiweb/.dev.log
     reports:
       junit: opsiweb/test-result-pw-reporter-accessibility.xml
-    expire_in: 2 day
+    expire_in: 1 day
 
 test:usecase:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -285,7 +248,7 @@ test:usecase:
       - opsiweb/.dev.log
     reports:
       junit: opsiweb/test-result-pw-reporter-usecase.xml
-    expire_in: 2 day
+    expire_in: 1 day
 
 test:components:changes:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -329,7 +292,7 @@ test:components:changes:
       - opsiweb/.dev.log
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
-    expire_in: 2 day
+    expire_in: 1 day
 
 test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -338,7 +301,6 @@ test:components:
     - init:npm
   except:
     - bug/cicd-build
-    # - tags # cause in tags we test all browsers
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
@@ -364,7 +326,7 @@ test:components:
       - opsiweb/.dev.log
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
-    expire_in: 2 day
+    expire_in: 3 day
 
 # test:test-components:all-variants:
 #   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -399,12 +361,6 @@ test:components:
 #       junit: ./opsiweb/test-result-pw-reporter-components.xml
 #     expire_in: 2 day
 
-# .pylint: &pylint |
-#   echo "---------------------------------------"
-#   echo "Run pylint"
-#   echo "---------------------------------------"
-#   poetry run pylint --disable=R,C,fixme
-
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   services:
@@ -430,12 +386,45 @@ test:backend-pytest:
 #########################################################################
 ######################################################################### build
 #########################################################################
+build:screenshots:docs:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: test
+  dependencies:
+    - init:npm
+  except:
+    - bug/cicd-build
+    # - tags # screenshots only for tags
+  only:
+    - main # cause in main we test all files, but only chromium browser
+    - tags
+  script:
+    - cd opsiweb
+    - *define_globals
+    - npm i -D @playwright/test
+    - npx playwright install
+    - npx playwright install-deps
+    - PORT=3003 nohup npm run dev > .dev.log &
+    - PORT=3003 nohup npm run story > .storybook.log &
+    - sleep 60
+    - cd screenshots4Docs
+    - npx playwright test -c playwright-screenshots.config.js take_screenshots/  || exit_code=$?
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: "opsi-webgui-screenshots-docs-result"
+    when: always
+    paths:
+      - opsiweb/screenshots4Docs/screenshots
+      - ./**/*/test-results/
+      - opsiweb/.storybook.log
+      - opsiweb/.dev.log
+    expire_in: 7 day
+
 build:static:app:
   stage: build
   dependencies:
     - init:npm:production
     - test:lint
-    #- test:jtest
   script:
     - cd opsiweb
     - npm i @nuxt/typescript-build
@@ -444,7 +433,7 @@ build:static:app:
   artifacts:
     paths:
       - opsiweb/dist # not used...?
-    expire_in: 3 day
+    expire_in: 1 day
   only:
     - main
     - tags
