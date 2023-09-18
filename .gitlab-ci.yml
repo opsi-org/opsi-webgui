@@ -249,7 +249,7 @@ test:accessibility:
     expire_in: 1 day
 
 test:usecase:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
   dependencies:
     - init:npm
