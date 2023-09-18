@@ -178,12 +178,13 @@ test:lint:
   stage: test
   dependencies:
     - init:npm
-  script:
+  before_script:
     - cd opsiweb
     - ls -lah .
     - ls -lah node_modules/
     - npm --version
     - *define_globals
+  script:
     - npm run lint
 
 # test:unit:
@@ -213,6 +214,7 @@ test:accessibility:
     - *start_webgui
   script:
     - npm run gittest:all:accessibility || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -234,8 +236,10 @@ test:usecase:
     - cd opsiweb
     - *define_globals
     - *install_playwright
+    - *start_webgui
   script:
     - npm run test:all:usecase || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -271,15 +275,14 @@ test:components:changes:
     - cd opsiweb
     - *define_globals
     - *install_playwright
-  script:
-    # get changed files (in comparison to main branch)
     - *get_changed_files
     - echo "$testfilesUnique"
     - *start_storybook
     - *start_webgui
     - sleep 120
-    # run tests
+  script:
     - npm run test:all:components $testfilesUnique || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -308,9 +311,11 @@ test:components:
     - *install_playwright
     - *start_storybook
     - *start_webgui
-  script:
     - sleep 60
+  script:
     - npm run test:all:components || exit_code=$?
+    - # TODO: calculate percentage of successfull / runned tests
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -396,17 +401,16 @@ build:screenshots:docs:
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
-  script:
+  before_script:
     - cd opsiweb
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
-    - sleep 60
+    - *install_playwright
+    - *start_storybook
+    - *start_webgui
+  script:
     - cd screenshots4Docs
     - npx playwright test -c playwright-screenshots.config.js take_screenshots/  || exit_code=$?
+  after_script:
     - exit $exit_code
   allow_failure: true
   artifacts:
