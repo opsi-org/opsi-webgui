@@ -313,7 +313,7 @@ test:components:
     - *start_webgui
     - sleep 60
   script:
-    - npm run test:all:components > .tmpResult || exit_code=$?
+    - npm run test:all:components > .tmpRESULT || exit_code=$?
     - cat .tmpRESULT
   after_script:
     - pwd
@@ -349,7 +349,7 @@ test:components2:
     - *start_webgui
     - sleep 60
   script:
-    - npm run test:all:components > .tmpResult
+    - npm run test:all:components > .tmpRESULT
     - cat .tmpRESULT
     - exit_code=$PIPESTATUS
     # - TODO: calculate percentage of successfull / runned tests
@@ -365,6 +365,7 @@ test:components2:
     when: on_failure
     paths:
       - ./**/*/test-results/
+      - opsiweb/.tmpRESULT
       - opsiweb/.storybook.log
       - opsiweb/.dev.log
     reports:
