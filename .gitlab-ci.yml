@@ -167,17 +167,22 @@ init2:playwright:
     - init:npm
   script:
     - cd opsiweb
+    - echo pwd
+    - echo $GIT_DIR
+    - echo $HOME
     - ls -lah uib-components
     - npm i -D @playwright/test
     - npx playwright install --with-deps chromium
     # - @axe-core/playwright
     # - npm i -D @axe-core/playwright
+    - echo $PLAYWRIGHT_BROWSERS_PATH
+    - ls -lah $PLAYWRIGHT_BROWSERS_PATH
   artifacts:
     paths:
       - opsiweb/package.json
       - opsiweb/node_modules/
       - opsiweb/uib-components/
-      - /ms-playwright/
+      - $PLAYWRIGHT_BROWSERS_PATH
     expire_in: 1 day
 
 #########################################################################
