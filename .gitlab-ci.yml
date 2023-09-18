@@ -314,7 +314,7 @@ test:components:
     - sleep 60
   script:
     - npm run test:all:components || exit_code=$?
-    - # TODO: calculate percentage of successfull / runned tests
+    # - TODO: calculate percentage of successfull / runned tests
   after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
