@@ -181,7 +181,10 @@ init2:playwright:
     - npm i -D @playwright/test
     - npx playwright install --with-deps chromium
     - cp -r $PLAYWRIGHT_BROWSERS_PATH $TMP_PLAYWRIGHT_BROWSERS_PATH
-
+    - echo $PLAYWRIGHT_BROWSERS_PATH
+    - ls -lah $PLAYWRIGHT_BROWSERS_PATH
+    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
+    - ls -lah $TMP_PLAYWRIGHT_BROWSERS_PATH
   artifacts:
     paths:
       - opsiweb/package.json
@@ -264,6 +267,8 @@ test:usecase:
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - ls -lah $PLAYWRIGHT_BROWSERS_PATH
+    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
+    - ls -lah $TMP_PLAYWRIGHT_BROWSERS_PATH
     - npm run test:all:usecase || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
