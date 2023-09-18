@@ -6,6 +6,7 @@ grep -w '\[.*✓.*\] \› uib-components\/components\/*' $1  > .tmp_RESULTFILE_
 grep -w '\[.*✘.*\] \› uib-components\/components\/*' $1  > .tmp_RESULTFILE_FAILED
 RES_NAMES_SUCC=$(cat .tmp_RESULTFILE_SUCCESS | cut -d ' ' -f 8 | cut -d ':' -f 1 | tr " " "\n" )
 RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | cut -d ' ' -f 8 | cut -d ':' -f 1 | tr " " "\n" )
+rm .tmp_RESULTFILE_FAILED .tmp_RESULTFILE_SUCCESS
 # echo "-----SUCCESS"
 # echo $RES_NAMES_SUCC | tr " " "\n"
 # echo "-----FAIL"
@@ -47,7 +48,7 @@ echo "number components: $NUM_FILES"
 # echo "----------------------- ALL-we: "
 cat .tmp_RESULT_FILESFOUND | cut -d '.' -f 1 > .tmp_X_RESULT_FILEIDS_FOUND
 # cat .tmp_X_RESULT_FILEIDS_FOUND
-
+rm .tmp_RESULT_FILESFOUND
 
 
 COLOR_RED="\033[31m"
