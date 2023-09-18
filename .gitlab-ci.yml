@@ -228,10 +228,8 @@ test:lint:
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
-  except:
-    - cicd
   dependencies:
-    - init2:playwright
+    - init:npm
   script:
     - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
     - TMP_PLAYWRIGHT_BROWSERS_PATH=.$PLAYWRIGHT_BROWSERS_PATH
