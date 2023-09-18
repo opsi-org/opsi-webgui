@@ -169,7 +169,7 @@ init2:playwright:
     - ls -lah uib-components
     - npm i -D @playwright/test
     - npx playwright install --with-deps chromium
-    - npm i -D @axe-core/playwright
+    # - npm i -D @axe-core/playwright
   artifacts:
     paths:
       - opsiweb/package.json
@@ -220,7 +220,7 @@ test:accessibility:
     - PORT=8888 nohup npm run dev > .dev.log &
     - sleep 60
     - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm run test:all:accessibility || exit_code=$?
+    - npm run gittest:all:accessibility || exit_code=$?
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
