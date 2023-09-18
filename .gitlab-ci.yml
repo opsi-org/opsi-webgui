@@ -272,7 +272,8 @@ test:components:changes:
     - *install_playwright
   script:
     # get changed files (in comparison to main branch)
-    - *get_changed_files && echo "$testfilesUnique"
+    - *get_changed_files
+    - echo "$testfilesUnique"
     - *start_storybook
     - *start_webgui
     - sleep 120
