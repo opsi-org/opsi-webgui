@@ -316,7 +316,7 @@ test:components:
     - npm run test:all:components | tee .tmpRESULT || exit_code=$?
     - cat .tmpRESULT
   after_script:
-    - pwd
+    - cd opsiweb
     - scripts/playwright_coverage.sh .tmpRESULT
     - npm run test:all:delete-empty-results
     - exit $exit_code
