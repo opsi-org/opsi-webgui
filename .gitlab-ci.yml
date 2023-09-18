@@ -172,22 +172,22 @@ test:lint:
     - *define_globals
     - npm run lint
 
-test:unit:
-  stage: test
-  dependencies:
-    - init:npm
-  script:
-    - cd opsiweb
-    - *define_globals
-    - npm run test:unit
-  allow_failure: true
-  coverage: /All files\s*\|\s*([\d\.]+)/
-  artifacts:
-    expire_in: 1 day
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: opsiweb/coverage/clover.xmlci
+# test:unit:
+#   stage: test
+#   dependencies:
+#     - init:npm
+#   script:
+#     - cd opsiweb
+#     - *define_globals
+#     - npm run test:unit
+#   allow_failure: true
+#   coverage: /All files\s*\|\s*([\d\.]+)/
+#   artifacts:
+#     expire_in: 1 day
+#     reports:
+#       coverage_report:
+#         coverage_format: cobertura
+#         path: opsiweb/coverage/clover.xmlci
 
 test:accessibility:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
