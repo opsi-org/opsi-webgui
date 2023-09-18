@@ -30,7 +30,6 @@ stages:
   wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
   tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 
-\[.*[✘|✓].*\] \› uib-components\/components\/*
 .prepare_backend_tests: &prepare_backend_tests |
   apt update
   echo "install stuff"
@@ -306,6 +305,7 @@ test:components:
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
+    - cicd
   before_script:
     - cd opsiweb
     - *define_globals
@@ -339,6 +339,7 @@ test:components2:
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
+    - cicd
   before_script:
     - cd opsiweb
     - *define_globals
