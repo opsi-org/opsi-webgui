@@ -10,14 +10,12 @@ stages:
   - release
 
 variables:
-  TMP_PLAYWRIGHT_BROWSERS_PATH: $(pwd)$PLAYWRIGHT_BROWSERS_PATH
+  TMP_PLAYWRIGHT_BROWSERS_PATH: ".$PLAYWRIGHT_BROWSERS_PATH"
 
 .define_globals: &define_globals |
   shopt -s expand_aliases
 
 .prepare_playwright: &prepare_playwright |
-  # TMP_PLAYWRIGHT_BROWSERS_PATH=$(pwd)/ms-playwright &&
-  echo $TMP_PLAYWRIGHT_BROWSERS_PATH
   cp -r $TMP_PLAYWRIGHT_BROWSER_PATH $PLAYWRIGHT_BROWSER_PATH
 
 .install_tools: &install_tools |
@@ -176,8 +174,6 @@ init2:playwright:
     # - TMP_PLAYWRIGHT_BROWSERS_PATH=$(pwd)$PLAYWRIGHT_BROWSERS_PATH &&
     - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
     - cd opsiweb
-    - echo $GIT_DIR
-    - echo $HOME
     - ls -lah uib-components
     - npm i -D @playwright/test
     - npx playwright install --with-deps chromium
@@ -185,6 +181,7 @@ init2:playwright:
     # - npm i -D @axe-core/playwright
     - echo $PLAYWRIGHT_BROWSERS_PATH
     - ls -lah $PLAYWRIGHT_BROWSERS_PATH
+    - echo $TMP_PLAYWRIGHT_BROWSERS_PATH
     - cp -r $PLAYWRIGHT_BROWSERS_PATH $TMP_PLAYWRIGHT_BROWSERS_PATH
 
   artifacts:
