@@ -649,7 +649,9 @@ div.scrollValue {
 .componentwrapper {
   max-width: var(--wrapper-width)!important;
 }
-
+.input-group:focus-within {
+  outline: 1px solid var(--primary);
+}
 #quicksettingsDD {
   width: 70px;
 }
