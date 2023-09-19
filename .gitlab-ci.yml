@@ -1,6 +1,7 @@
 image: node:lts
 
 stages:
+  - upload
   - init
   - test
   # - test-components
@@ -244,7 +245,6 @@ test:usecase:
   only:
     - main
     - tags
-    - cicd
   artifacts:
     name: "opsi-webgui-test-result-usecase"
     when: on_failure
@@ -303,7 +303,6 @@ test:components:
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
-    - cicd
   before_script:
     - cd opsiweb
     - *define_globals
@@ -396,8 +395,6 @@ build:screenshots:docs:
   stage: test
   dependencies:
     - init:npm
-  except:
-    - cicd
     # - tags # screenshots only for tags
   only:
     - main # cause in main we test all files, but only chromium browser
@@ -426,8 +423,6 @@ build:screenshots:docs:
 
 build:static:app:
   stage: build
-  except:
-    - cicd
   dependencies:
     - init:npm:production
     - test:lint
@@ -471,6 +466,23 @@ build:addon:
     paths:
       - webgui
     expire_in: 3 day
+
+#########################################################################
+######################################################################### create tag
+#########################################################################
+
+upload:gittag:
+  stage: upload
+  dependencies:
+    - build:static:app
+  script:
+    - pwd # git tag with changelog as msg
+    - VERSION_YML=$(cat opsi-dev-tool.yml | grep "version: &project_version " | awk -F "project_version " '{print $2}')
+    - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
+    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; fi
+    #- git tag -a
+  when: manual
+  only: cicd
 
 #########################################################################
 ######################################################################### publish
