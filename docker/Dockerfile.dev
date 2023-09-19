@@ -59,7 +59,11 @@ RUN apt-get update \
 		redis-tools \
 		redis-server \
 		redis-timeseries \
-		opsi-server-expert
+		opsi-server-expert \
+		debhelper osc zip
+
+RUN wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.14.1.tar.gz
+RUN tar -xf opsi-dev-tools_linux_x64_1.14.1.tar.gz
 
 RUN useradd --create-home --home-dir /home/adminuser -s /bin/bash adminuser \
 	&& echo "adminuser:adminuser" | chpasswd \
