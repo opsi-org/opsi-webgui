@@ -477,16 +477,25 @@ build:addon:
   VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
   if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
 
+.prepare_tag: &prepare_tag |
+  if git show-ref --tags tag1 --quiet; then echo "Tag '$VERSION_YML' already exists."; else echo "Tag not yet exists $VERSION_YML"; fi
+  # if git show-ref --tags tag1 --quiet; then echo "Tag '$VERSION_YML' already exists."; exit 2; else echo "Tag not yet exists $VERSION_YML"; fi
+
 upload:gittag:
   stage: upload
   # dependencies:
   #   - build:static:app
   script:
-    - pwd # git tag with changelog as msg
+    # - *install_tools
     - *compare_versions
+    - *prepare_tag
+    - opsi-dev-cli -l 5 changelog from-git output
+    - ls -lah output
+    - cat output/changelog
     #- git tag -a
-  when: manual
-  only:
+  # when: manual # triggered manually
+  when: always # triggered manually
+  only: # visible in this branches: (main!)
     - cicd
 
 #########################################################################
