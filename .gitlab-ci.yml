@@ -501,7 +501,7 @@ publish:obs_ext:
   artifacts:
     name: "opsi-webgui-changelogs"
     paths:
-      - changelog
+      - output
     expire_in: 1 day
   # Copy to experimental
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
