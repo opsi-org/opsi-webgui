@@ -12,7 +12,7 @@ npm_command=$3
 file_prepattern_new=$4
 
 set -e
-source $HOME/.bashrc
+# source $HOME/.bashrc
 
 
 if [[ ${file} == "null" ]]; then
