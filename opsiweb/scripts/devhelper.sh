@@ -17,8 +17,6 @@ set -e
 seedfile() {
    mkdir -p "$(dirname "$1")"
    touch "$1"
-   pwd
-   echo "########## file created" > $1
 }
 
 if [[ ${file} == "null" ]]; then
@@ -39,7 +37,6 @@ if [[ ${file} == "all" ]]; then
     exit 0
 fi
 if [[ ${file} == "all-changed" ]]; then
-    echo "- try to get changed filenames "
     cd /workspace/opsiweb/uib-components
     BRANCH="$(git rev-parse --abbrev-ref HEAD)"
     changedFiles=""
@@ -64,7 +61,7 @@ if [[ ${file} == "all-changed" ]]; then
     # echo "$basenamesWithSlash"
     testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n'| awk '!a[$0]++' | tr '\n' ' '  | tr '/' ' ' )
     cd ..
-    echo "uniquetestfiles:$testfilesUnique"
+    # echo "uniquetestfiles:$testfilesUnique"
     PI=""
     if [[ "$5" != 0 ]]; then
         seedfile $5
