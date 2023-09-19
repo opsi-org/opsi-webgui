@@ -1,4 +1,5 @@
 <template>
+  <!-- test -->
   <!-- <custom-block-licence>
   -*- coding: utf-8 -*-
 
