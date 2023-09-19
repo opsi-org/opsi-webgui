@@ -478,8 +478,8 @@ build:addon:
 
 upload:gittag:
   stage: upload
-  dependencies:
-    - build:static:app
+  # dependencies:
+  #   - build:static:app
   script:
     - pwd # git tag with changelog as msg
     - *compare_versions
