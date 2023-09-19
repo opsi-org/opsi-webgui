@@ -79,7 +79,7 @@
   --primary-foreground-disabled: var(--general-fg-disabled);
   --secondary-foreground: var(--white);
   --ok-foreground: var(--white);
-  --warning-foreground: var(--white);
+  --warning-foreground: black;
   --error-foreground: var(--white);
 
   /***** COLORS *****/
@@ -333,9 +333,9 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_secondary-hover) !important;
 }
 .btn-success {
-  color: var(--fg-btn_success);
-  background-color: var(--bg-btn_success) !important;
-  border-color: var(--b-btn_success) !important;
+  color:white !important;
+  background-color:var(--log-notice) !important;
+  border-color:white !important;
 }
 .btn-success:hover {
   color: var(--fg-btn_success-hover);
@@ -343,9 +343,9 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_success-hover) !important;
 }
 .btn-danger {
-  color: var(--fg-btn_danger);
-  background-color: var(--bg-btn_danger) !important;
-  border-color: var(--b-btn_danger) !important;
+  color:var(--danger-foreground) !important;
+  background-color:var(--danger) !important;
+  border-color:var(--danger) !important;
 }
 .btn-danger:hover {
   color: var(--fg-btn_danger-hover);
@@ -353,12 +353,9 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_danger-hover) !important;
 }
 .btn-warning {
-  /* color: #212529;
+  color: var(--warning-foreground);
   background-color: var(--warning) !important;
-  border-color: var(--warning) !important; */
-  color: var(--fg-btn_warning);
-  background-color: var(--bg-btn_warning) !important;
-  border-color: var(--b-btn_warning) !important;
+  border-color: var(--warning-foreground) !important;
 }
 .btn-warning:hover {
   /* color: #212529;
@@ -369,9 +366,13 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_warning-hover) !important;
 }
 .btn-info {
-  color: var(--fg-btn_info);
+  color:white !important;
+  background-color:var(--log-essential) !important;
+  border-color:white !important;
+
+  /* color: var(--fg-btn_info);
   background-color: var(--bg-btn_info) !important;
-  border-color: var(--b-btn_info) !important;
+  border-color: var(--b-btn_info) !important; */
   /* color: var(--btn-fg);
   background-color: var(--info) !important;
   border-color: var(--info) !important; */

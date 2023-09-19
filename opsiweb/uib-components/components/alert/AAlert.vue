@@ -79,8 +79,8 @@ export default class AAlert extends BAlert {
   padding-top: 0px;
   padding-bottom: 0px;
 }
-.alertdetails {
+/* .alertdetails {
   color: var(--color);
   background-color: var(--background);
-}
+} */
 </style>
