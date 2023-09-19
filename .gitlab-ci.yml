@@ -321,7 +321,7 @@ test:components:
     - scripts/playwright_coverage.sh .tmpRESULT
     - npm run test:all:delete-empty-results
   allow_failure: true
-  coverage: /^TESTED_FILES\s*:\s*([^%]+)/
+  coverage: /TESTED_FILES\s*:\s*([^%]+)/
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
