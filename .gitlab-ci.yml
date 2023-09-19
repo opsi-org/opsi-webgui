@@ -222,7 +222,7 @@ test:accessibility:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-accessibility.xml
+      junit: opsiweb/.config/test-result-pw-reporter-accessibility.xml
     expire_in: 1 day
 test:usecase:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
@@ -252,7 +252,7 @@ test:usecase:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-usecase.xml
+      junit: opsiweb/.config/test-result-pw-reporter-usecase.xml
     expire_in: 1 day
 
 test:components:changes:
@@ -292,7 +292,7 @@ test:components:changes:
       - opsiweb/.storybook.log
       - opsiweb/.dev.log
     reports:
-      junit: ./opsiweb/test-result-pw-reporter-components.xml
+      junit: ./opsiweb/.config/test-result-pw-reporter-components.xml
     expire_in: 1 day
 
 test:components:
