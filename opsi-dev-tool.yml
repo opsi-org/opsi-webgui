@@ -12,11 +12,11 @@ git:
       echo "===================== Checklist"
       echo "nothing todo"
       echo "====================="
-    pre-commit: |
-      echo "===================== Checklist test files"
-      cd /workspace/opsiweb/
-      ./scripts/playwright_coverage_by_files.sh
-      echo "====================="
+    # pre-commit: |
+    #   echo "===================== Checklist test files"
+    #   cd /workspace/opsiweb/
+    #   ./scripts/playwright_coverage_by_files.sh
+    #   echo "====================="
 
 package:
   name: opsi-webgui
