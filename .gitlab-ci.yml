@@ -471,15 +471,18 @@ build:addon:
 ######################################################################### create tag
 #########################################################################
 
+.compare_versions: &compare_versions |
+  VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
+  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
+  if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; fi
+
 upload:gittag:
   stage: upload
   dependencies:
     - build:static:app
   script:
     - pwd # git tag with changelog as msg
-    - VERSION_YML=$(cat opsi-dev-tool.yml | grep "version: &project_version " | awk -F "project_version " '{print $2}')
-    - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
-    - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; fi
+    - *compare_versions
     #- git tag -a
   when: manual
   only: cicd
