@@ -433,9 +433,12 @@ def build_group_tree(current_group: dict, groups: list[dict], processed: list) -
 		if not current_group.get("children"):
 			current_group["children"] = {}
 		current_group["children"].update(children)
-	# else:
-	# 	if current_group["type"] == "HostGroup":
-	# 		current_group["children"] = None
+
+	if current_group.get("children"):
+		for child in current_group["children"].values():
+			# Correct id for webgui
+			child["id"] = f'{child["id"]};{current_group["id"]}'
+
 	return current_group
 
 
