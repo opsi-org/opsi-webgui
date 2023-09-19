@@ -39,17 +39,24 @@ if [ "$1" ]; then
     echo "--------------------------------- FAILED TESTS"
     # grep -w '\[.*✓.*\] \› uib-components\/components\/*' $1  > .tmp_RESULTFILE_SUCCESS
     grep -w '\[.*✘.*\] \› uib-components\/components\/*' $1  > .tmp_RESULTFILE_FAILED
-    # RES_NAMES_SUCC=$(cat .tmp_RESULTFILE_SUCCESS | cut -d ' ' -f 8 | cut -d ' ' -f 5 | tr " " "\n" )
-    # RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | cut -d ' ' -f 8 | cut -d ':' -f 1 | tr " " "\n" )
-    RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | cut -d ' ' -f 8 | tr " " "\n" )
-    rm -f .tmp_RESULTFILE_FAILED #.tmp_RESULTFILE_SUCCESS
+    # RES_NAMES_SUCC=$(cat .tmp_RESULTFILE_SUCCESS | cut -d ' ' -f8 | cut -d ' ' -f 5 | tr " " "\n" )
+    # RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | cut -d ' ' -f8 | cut -d ':' -f 1 | tr " " "\n" )
+    # RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | tr "✘" "\n" )
+    # RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | cut -d ']' -f 2 | tr " " "\n" )
+    # RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | awk -F ' ' '{print $8}' | tr " " "\n" )
+
+    # RES_NAMES_FAIL=$(cat .tmp_RESULTFILE_FAILED | tr " " "\n" )
     printf $COLOR_RED
-    echo $RES_NAMES_FAIL | tr " " "\n"
+    # echo $RES_NAMES_FAIL | tr "✘" "\n"
+    cat .tmp_RESULTFILE_FAILED | sort
+    echo ""
     printf $COLOR_NORMAL
     printf "for details run: "
     printf $COLOR_BLUE
     printf "cat $(pwd)/$1\n"
     printf $COLOR_NORMAL
+
+    rm -f .tmp_RESULTFILE_FAILED #.tmp_RESULTFILE_SUCCESS
 fi
 
 # grep -w '\[.*[✘|✓].*\] \› uib-components\/components\/*' RESULTFILE
