@@ -478,15 +478,15 @@ build:addon:
   if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
 
 .prepare_tag: &prepare_tag |
-  if git show-ref --tags tag1 --quiet; then echo "Tag '$VERSION_YML' already exists."; else echo "Tag not yet exists $VERSION_YML"; fi
-  # if git show-ref --tags tag1 --quiet; then echo "Tag '$VERSION_YML' already exists."; exit 2; else echo "Tag not yet exists $VERSION_YML"; fi
+  if git show-ref --tags $VERSION_YML --quiet; then echo "Tag '$VERSION_YML' already exists."; else echo "Tag not yet exists $VERSION_YML"; fi
+  # if git show-ref --tags $VERSION_YML --quiet; then echo "Tag '$VERSION_YML' already exists."; exit 2; else echo "Tag not yet exists $VERSION_YML"; fi
 
 upload:gittag:
   stage: upload
   # dependencies:
   #   - build:static:app
   script:
-    # - *install_tools
+    - *install_tools
     - *compare_versions
     - *prepare_tag
     - opsi-dev-cli -l 5 changelog from-git output
