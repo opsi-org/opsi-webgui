@@ -11,6 +11,15 @@ stages:
 .define_globals: &define_globals |
   shopt -s expand_aliases
 
+.install_playwright: &install_playwright |
+  npm i -D @playwright/test
+  npx playwright install --with-deps chromium
+
+.start_storybook: &start_storybook |
+  PORT=3003 nohup npm run story > .storybook.log &
+
+.start_webgui: &start_webgui |
+  PORT=8888 nohup npm run dev > .dev.log &
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -114,6 +123,7 @@ stages:
   fi
 
 .get_changed_files: &get_changed_files |
+  cd uib-components
   changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
@@ -121,6 +131,7 @@ stages:
   testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
+  cd ..
 
 #########################################################################
 ######################################################################### init
@@ -164,48 +175,43 @@ test:lint:
   stage: test
   dependencies:
     - init:npm
-  script:
+  before_script:
     - cd opsiweb
     - ls -lah .
     - ls -lah node_modules/
     - npm --version
     - *define_globals
+  script:
     - npm run lint
 
 # test:unit:
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   script:
-#     - cd opsiweb
-#     - *define_globals
-#     - npm run test:unit
-#   allow_failure: true
-#   coverage: /All files\s*\|\s*([\d\.]+)/
-#   artifacts:
-#     expire_in: 1 day
-#     reports:
-#       coverage_report:
-#         coverage_format: cobertura
-#         path: opsiweb/coverage/clover.xmlci
+  #   stage: test
+  #   dependencies:
+  #     - init:npm
+  #   script:
+  #     - cd opsiweb
+  #     - *define_globals
+  #     - npm run test:unit
+  #   allow_failure: true
+  #   coverage: /All files\s*\|\s*([\d\.]+)/
+  #   artifacts:
+  #     expire_in: 1 day
+  #     reports:
+  #       coverage_report:
+  #         coverage_format: cobertura
+  #         path: opsiweb/coverage/clover.xmlci
 
 test:accessibility:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
-  except:
   dependencies:
     - init:npm
-  script:
+  before_script:
     - cd opsiweb
-    - ls -lah uib-components
-    - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install --with-deps chromium
-    - npm i -D @axe-core/playwright
-    - PORT=8888 nohup npm run dev > .dev.log &
-    - sleep 60
-    - echo $PLAYWRIGHT_BROWSERS_PATH
-    - npm run test:all:accessibility || exit_code=$?
+    - *start_webgui
+  script:
+    - npm run gittest:all:accessibility || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -218,28 +224,27 @@ test:accessibility:
     reports:
       junit: opsiweb/test-result-pw-reporter-accessibility.xml
     expire_in: 1 day
-
 test:usecase:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
   dependencies:
     - init:npm
-  script:
+  before_script:
     - cd opsiweb
-    - ls -lah uib-components
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install
-    - PORT=8888 nohup npm run dev > .dev.log &
-    - sleep 60
-    - echo $PLAYWRIGHT_BROWSERS_PATH
+    - *install_playwright
+    - *start_webgui
+  script:
+    # - npm run test:all:usecase || exit_code=$?
     - npm run test:all:usecase || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
   only:
     - main
     - tags
+    - cicd
   artifacts:
     name: "opsi-webgui-test-result-usecase"
     when: on_failure
@@ -256,6 +261,7 @@ test:components:changes:
   dependencies:
     - init:npm
   except:
+    - cicd
     - tags # cause in tags we test all browsers (and all files)
     - main # cause in main we test all files
   only:
@@ -263,23 +269,18 @@ test:components:changes:
       - opsiweb/pages/*
       - opsiweb/components/*
       - opsiweb/uib-components/*
-  script:
+  before_script:
     - cd opsiweb
     - *define_globals
-    # get changed files (in comparison to main branch)
-    - cd uib-components
+    - *install_playwright
     - *get_changed_files
-    - cd ..
     - echo "$testfilesUnique"
-    # install and start services
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
+    - *start_storybook
+    - *start_webgui
     - sleep 120
-    # run tests
+  script:
     - npm run test:all:components $testfilesUnique || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -299,24 +300,28 @@ test:components:
   stage: test
   dependencies:
     - init:npm
-  except:
-    - bug/cicd-build
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
-  script:
+    - cicd
+  before_script:
     - cd opsiweb
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
+    - *install_playwright
+    - *start_storybook
+    - *start_webgui
     - sleep 60
-    - npm run test:all:components || exit_code=$?
-    - npm run test:all:delete-empty-results
+  script:
+    - npm run test:all:components | tee .tmpRESULT
+    - exit_code=${PIPESTATUS[0]}
+    - cat .tmpRESULT
     - exit $exit_code
+  after_script:
+    - cd opsiweb
+    - scripts/playwright_coverage.sh .tmpRESULT
+    - npm run test:all:delete-empty-results
   allow_failure: true
+  coverage: /^TESTED_FILES\s*:\s*([^%]+)/
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
@@ -324,45 +329,48 @@ test:components:
       - ./**/*/test-results/
       - opsiweb/.storybook.log
       - opsiweb/.dev.log
+      - opsiweb/.tmpRESULT
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 3 day
 
 # test:test-components:all-variants:
-#   image: mcr.microsoft.com/playwright:v1.15.2-focal
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   except:
-#     - bug/cicd-build
-#   only:
-#     - tags # cause in tags we test each file and browser
-#   script:
-#     - cd opsiweb
-#     #- *define_globals
-#     - npm i -D @playwright/test
-#     - npx playwright install
-#     - npx playwright install-deps
-#     - PORT=3003 nohup npm run dev > .dev.log &
-#     - PORT=3003 nohup npm run story > .storybook.log &
-#     - sleep 60
-#     - npm run test:all:components-devices || exit_code=$?
-#     - npm run test:all:delete-empty-results
-#     - exit $exit_code
-#   # allow_failure: true
-#   artifacts:
-#     name: "opsi-webgui-test-result-components"
-#     when: on_failure
-#     paths:
-#       - ./**/*/test-results/
-#       - opsiweb/.storybook.log
-#       - opsiweb/.dev.log
-#     reports:
-#       junit: ./opsiweb/test-result-pw-reporter-components.xml
-#     expire_in: 2 day
+  #   image: mcr.microsoft.com/playwright:v1.15.2-focal
+  #   stage: test
+  #   dependencies:
+  #     - init:npm
+  #   except:
+  #     - cicd
+  #   only:
+  #     - tags # cause in tags we test each file and browser
+  #   script:
+  #     - cd opsiweb
+  #     #- *define_globals
+  #     - npm i -D @playwright/test
+  #     - npx playwright install
+  #     - npx playwright install-deps
+  #     - PORT=3003 nohup npm run dev > .dev.log &
+  #     - PORT=3003 nohup npm run story > .storybook.log &
+  #     - sleep 60
+  #     - npm run test:all:components-devices || exit_code=$?
+  #     - npm run test:all:delete-empty-results
+  #     - exit $exit_code
+  #   # allow_failure: true
+  #   artifacts:
+  #     name: "opsi-webgui-test-result-components"
+  #     when: on_failure
+  #     paths:
+  #       - ./**/*/test-results/
+  #       - opsiweb/.storybook.log
+  #       - opsiweb/.dev.log
+  #     reports:
+  #       junit: ./opsiweb/test-result-pw-reporter-components.xml
+  #     expire_in: 2 day
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  except:
+    - cicd
   services:
     - name: mysql:latest
       command:
@@ -392,22 +400,21 @@ build:screenshots:docs:
   dependencies:
     - init:npm
   except:
-    - bug/cicd-build
+    - cicd
     # - tags # screenshots only for tags
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
-  script:
+  before_script:
     - cd opsiweb
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
-    - sleep 60
+    - *install_playwright
+    - *start_storybook
+    - *start_webgui
+  script:
     - cd screenshots4Docs
     - npx playwright test -c playwright-screenshots.config.js take_screenshots/  || exit_code=$?
+  after_script:
     - exit $exit_code
   allow_failure: true
   artifacts:
@@ -422,6 +429,8 @@ build:screenshots:docs:
 
 build:static:app:
   stage: build
+  except:
+    - cicd
   dependencies:
     - init:npm:production
     - test:lint
@@ -486,8 +495,16 @@ publish:obs_ext:
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
+    - opsi-dev-cli -l 5 changelog from-git output
+    # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+    # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
   only:
     - tags
+  artifacts:
+    name: "opsi-webgui-changelogs"
+    paths:
+      - changelog
+    expire_in: 1 day
   # Copy to experimental
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
@@ -505,41 +522,41 @@ publish:binary-index:
     - tags
 
 # release:experimental:
-#   stage: release
-#   when: manual
-#   before_script:
-#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-#     - mkdir -p ~/.ssh
-#     - eval $(ssh-agent -s)
-#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-#   dependencies:
-#     - publish:obs_ext
-#     - publish:binary-index
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l debug --binary-pull
-#     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
-#   only:
-#     - tags
-#publish:obs_int:
-#  stage: publish
-#  dependencies:
-#    - build:static:app
-#  script:
-#    - *install_tools
-#    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-#  only:
-#    - tags
+  #   stage: release
+  #   when: manual
+  #   before_script:
+  #     - "which ssh-agent || (apt update && apt -y install openssh-client)"
+  #     - mkdir -p ~/.ssh
+  #     - eval $(ssh-agent -s)
+  #     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+  #   dependencies:
+  #     - publish:obs_ext
+  #     - publish:binary-index
+  #   script:
+  #     - *install_tools
+  #     - ./opsi-dev-tool -l debug --binary-pull
+  #     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+  #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+  #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
+  #   only:
+  #     - tags
+  #publish:obs_int:
+  #  stage: publish
+  #  dependencies:
+  #    - build:static:app
+  #  script:
+  #    - *install_tools
+  #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+  #  only:
+  #    - tags
 
 # publish:obs_ext:
-#   stage: publish
-#   dependencies:
-#     - build:static:app
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
-#   when: manual
-#   only:
-#    - tags
+  #   stage: publish
+  #   dependencies:
+  #     - build:static:app
+  #   script:
+  #     - *install_tools
+  #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
+  #   when: manual
+  #   only:
+  #    - tags
