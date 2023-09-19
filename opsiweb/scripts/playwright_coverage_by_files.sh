@@ -48,7 +48,7 @@ if [ "$1" ]; then
     printf $COLOR_NORMAL
     printf "for details run: "
     printf $COLOR_BLUE
-    printf "cat $1\n"
+    printf "cat $(pwd)$1\n"
     printf $COLOR_NORMAL
 fi
 
