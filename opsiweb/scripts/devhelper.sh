@@ -1,5 +1,6 @@
 
 #!/bin/bash
+
 # $1: filename                      e.g. BAuthFooter.stories.js
 # $2: filename-full-extension       e.g. .stories.js
 # $3: test-full-extension           e.g. .test.component.js
@@ -11,8 +12,6 @@ npm_command=$3
 file_prepattern_new=$4
 
 set -e
-# import bash-aliases to be able to use npm -uib
-shopt -s expand_aliases
 source $HOME/.bashrc
 
 
