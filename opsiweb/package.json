@@ -50,6 +50,7 @@
     "test:all:unit": "jest --config .config/.jest.config.js  ./ ",
     "test:all:usecase": "playwright test -c .config/playwright-all-usecases.config.js --project=Chromium-Desktop",
     "test:all:accessibility": "playwright test -c .config/playwright-all-accessibility.config.js --project=Chromium-Desktop",
+    "gittest:all:accessibility": "playwright test -c .config/playwright-all-accessibility.config.js --project=Chromium-Desktop --shard=$CI_NODE_INDEX/$CI_NODE_TOTAL",
     "test:components:precommit": "playwright test -c .config/playwright-all-components.config.js --project=Chromium-Desktop",
     "test:all:components": "playwright test -c .config/playwright-all-components.config.js --project=Chromium-Desktop",
     "test:all:components-devices": "playwright test -c .config/playwright-all-components.config.js ",
@@ -81,6 +82,7 @@
     "xterm-addon-web-links": "0.8.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.7.3",
     "@babel/eslint-parser": "^7.22.5",
     "@babel/preset-typescript": "^7.22.5",
     "@intlify/eslint-plugin-vue-i18n": "^2.0.0",
@@ -89,7 +91,7 @@
     "@nuxtjs/eslint-config-typescript": "^9.x.x",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/storybook": "^4.3.0",
-    "@playwright/test": "^1.37.1",
+    "@playwright/test": "^1.38.0",
     "@types/jest": "^29.x.x",
     "@types/js-cookie": "^3.x.x",
     "@types/webpack-env": "^1.x.x",
