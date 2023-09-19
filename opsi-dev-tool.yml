@@ -9,14 +9,17 @@ project:
 git:
   hooks:
     pre-push: |
-      echo "===================== Checklist"
-      echo "nothing todo"
-      echo "====================="
-    # pre-commit: |
-    #   echo "===================== Checklist test files"
-    #   cd /workspace/opsiweb/
-    #   ./scripts/playwright_coverage_by_files.sh
-    #   echo "====================="
+      cd /workspace/opsiweb/
+      echo "> Test Changed files"
+      bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components / > .tmpRESULT_CHANGED 2>> .tmpRESULT_CHANGED || exit_code=$?
+      # exit_code=${PIPESTATUS}
+      echo "====================================================== Check test files"
+      bash ./scripts/playwright_coverage_by_files.sh .tmpRESULT_CHANGED
+      # rm .tmpRESULT_CHANGED
+      echo "======================================================"
+      echo ""
+      cd ..
+      exit $exit_code
 
 package:
   name: opsi-webgui

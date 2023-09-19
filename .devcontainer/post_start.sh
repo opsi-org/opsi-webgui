@@ -47,7 +47,11 @@ chown -R opsiconfd /workspace/backend
 
 service opsiconfd restart
 
-echo "========================================== Dev tools githook"
+echo "========================================== Install playwright"
+cd /workspace/opsiweb/scripts
+./install.sh
+
+echo "========================================== Activate devtool git-hook"
 pwd
 # pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
 opsi-dev-tool --self-install
@@ -56,5 +60,3 @@ echo "=========================================="
 # ./opsi-dev-tools git-hooks --install
 
 # su - node <<SHT
-cd /workspace/opsiweb/scripts
-./install.sh
