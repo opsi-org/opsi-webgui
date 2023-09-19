@@ -210,7 +210,7 @@ test:accessibility:
     - cd opsiweb
     - *start_webgui
   script:
-    - npm run gittest:all:accessibility || exit_code=$?
+    - npm run test:all:accessibility || exit_code=$?
   after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
@@ -369,8 +369,6 @@ test:components:
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
-  except:
-    - cicd
   services:
     - name: mysql:latest
       command:

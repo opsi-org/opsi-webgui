@@ -50,7 +50,7 @@
     "test:all:unit": "jest --config .config/.jest.config.js  ./ ",
     "test:all:usecase": "playwright test -c .config/playwright-all-usecases.config.js --project=Chromium-Desktop",
     "test:all:accessibility": "playwright test -c .config/playwright-all-accessibility.config.js --project=Chromium-Desktop",
-    "gittest:all:accessibility": "playwright test -c .config/playwright-all-accessibility.config.js --project=Chromium-Desktop --shard=$CI_NODE_INDEX/$CI_NODE_TOTAL",
+    "//gittest:all:accessibility": "playwright test -c .config/playwright-all-accessibility.config.js --project=Chromium-Desktop --shard=$CI_NODE_INDEX/$CI_NODE_TOTAL",
     "test:components:precommit": "playwright test -c .config/playwright-all-components.config.js --project=Chromium-Desktop",
     "test:all:components": "playwright test -c .config/playwright-all-components.config.js --project=Chromium-Desktop",
     "test:all:components-devices": "playwright test -c .config/playwright-all-components.config.js ",
