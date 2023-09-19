@@ -56,10 +56,12 @@ if [[ ${file} == "all-changed" ]]; then
     echo "uniquetestfiles:$testfilesUnique"
     PI=""
     if [[ "$5" != 0 ]]; then
-        PI=" &>> $5"
+        PI=" > $5"
     fi
-    echo "run: npm run $npm_command '$testfilesUnique' $PI"
-    npm run $npm_command $testfilesUnique $PI
+
+    COM="npm run $npm_command ${testfilesUnique} $PI"
+    echo "#run: $COM"
+    eval $COM
     npm run test:all:delete-empty-results
     exit 0
 fi
