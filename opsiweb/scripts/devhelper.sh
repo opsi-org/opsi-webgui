@@ -10,6 +10,7 @@ file_ext_new=$2
 npm_command=$3
 file_prepattern_new=$4
 
+set -e
 # import bash-aliases to be able to use npm -uib
 shopt -s expand_aliases
 source $HOME/.bashrc
@@ -44,10 +45,11 @@ if [[ ${file} == "all-changed" ]]; then
         basenamesWithSlash+="${file_prepattern_new}$val.test.component.js "
     done
     # echo "$basenamesWithSlash"
-    testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n' | awk '!a[$0]++' | tr '\n' ' \/' )
+    testfilesUnique=$(echo $basenamesWithSlash | tr ' ' '\n'| awk '!a[$0]++' | tr '\n' ' '  | tr '/' ' ' )
     cd ..
+    echo "uniquetestfiles:$testfilesUnique"
     echo "run: npm run $npm_command '$testfilesUnique'"
-    npm run $npm_command "$testfilesUnique"
+    npm run $npm_command $testfilesUnique
     npm run test:all:delete-empty-results
     exit 0
 fi
