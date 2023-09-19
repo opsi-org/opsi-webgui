@@ -312,10 +312,9 @@ test:components:
     - *start_webgui
     - sleep 60
   script:
-    # - npm run test:all:components | tee .tmpRESULT
-    # - exit_code=${PIPESTATUS[0]}
-    # - exit $exit_code
-    - exit 0
+    - npm run test:all:components | tee .tmpRESULT
+    - exit_code=${PIPESTATUS[0]}
+    - exit $exit_code
   after_script:
     - cd opsiweb
     - scripts/playwright_coverage.sh .tmpRESULT
