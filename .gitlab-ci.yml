@@ -488,9 +488,12 @@ build:addon:
   # post tag
   curl --request POST \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&message=$MSG"
+    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
+    --data-urlencode "message=$MSG"
+
 .delete_tag: &delete_tag |
   # delete tag
+  echo "$CI_PROJECT_ID"
   curl --request DELETE \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del=$?
@@ -540,7 +543,7 @@ upload:gittag:
     - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*new*\]" > $FILE_TMP
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort > $FILE
     - rm -f $FILE_TMP
-    - printf "Latest changelogs...\n$(cat $FILE)"
+    - printf "Latest changelogs...\n$(cat $FILE)\n"
     - *prepare_msg
     - *push_tag
     - rm $FILE
