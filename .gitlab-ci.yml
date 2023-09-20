@@ -489,6 +489,11 @@ build:addon:
   curl --request POST \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&message=$(cat $FILE)"
+.delete_tag: &delete_tag |
+  # post tag
+  curl --request DELETE \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del=$?
 
 
 .prepare_git: &prepare_git |
@@ -506,6 +511,10 @@ upload:gittag:
     - *prepare_git
     - *install_tools
     - echo "TAGS... $(git tag)" # latest tag
+    - TAG=4.3.14-test
+    - *delete_tag
+    - TAG=4.3.15
+    - *delete_tag
     - TAG=$(git describe --tags --abbrev=0 @^) # latest tag
     - echo "Latest tag... $TAG"
     - *compare_versions
