@@ -484,9 +484,6 @@ build:addon:
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
   echo "Latest tag... '$LTAG'"
-  git log --branches=main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]" | tee $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
-  awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort | tee $FILE
-  rm -f $FILE_TMP
 
 .push_tag: &push_tag |
   # post tag
@@ -539,6 +536,10 @@ upload:gittag:
     - echo ""
     - *compare_versions
     - *prepare_tag
+    - git log --branches=main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]"
+    - git log --branches=main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]" | tee $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
+    - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort | tee $FILE
+    - rm -f $FILE_TMP
     - *push_tag
     - rm $FILE
     - exit 1234
