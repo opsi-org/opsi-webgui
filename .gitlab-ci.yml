@@ -3,8 +3,8 @@ image: node:lts
 stages:
   - init
   - test
-  # - test-components
   - build
+  - upload
   - publish
   - release
 
@@ -133,6 +133,54 @@ stages:
   echo "$testfilesUnique"
   cd ..
 
+
+.compare_versions: &compare_versions |
+  # "compare Versions in: opsi-dev-tool-yml and opsiweb/package.json"
+  VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
+  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
+  if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
+  TAG=$VERSION_YML
+
+.prepare_tag: &prepare_tag |
+  # "prepare tag"
+  if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
+  # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
+  # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+  LTAG=$(git tag --sort=taggerdate | tail -1)
+  echo "Latest tag... '$LTAG'"
+
+.push_tag: &push_tag |
+  # post tag
+  echo "ProjectURL: $CI_API_V4_URL"
+  echo "ProjectID: $CI_PROJECT_ID"
+  echo "ProjectTAG: $TAG"
+  printf "ProjectMSG: \n$(cat $FILE)\n"
+  http_response=$(curl --request POST \
+    -o response.txt \
+    --fail-with-body \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
+    --data-urlencode "message=$(cat $FILE)" )
+
+  echo "$http_response: $(cat response.txt)"
+  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  echo ""
+
+.delete_tag: &delete_tag |
+  # delete tag
+  curl --request DELETE \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
+  echo ""
+  git tag -d $TAG || exit_code_del=$?
+  echo ""
+
+.prepare_git: &prepare_git |
+  # "prepare git"
+  git config --global user.name "${GITLAB_USER_NAME}"
+  git config --global user.email "${GITLAB_USER_EMAIL}"
+  git fetch
+
 #########################################################################
 ######################################################################### init
 #########################################################################
@@ -210,7 +258,7 @@ test:accessibility:
     - cd opsiweb
     - *start_webgui
   script:
-    - npm run gittest:all:accessibility || exit_code=$?
+    - npm run test:all:accessibility || exit_code=$?
   after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
@@ -222,7 +270,7 @@ test:accessibility:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-accessibility.xml
+      junit: opsiweb/.config/test-result-pw-reporter-accessibility.xml
     expire_in: 1 day
 test:usecase:
   image: mcr.microsoft.com/playwright:v1.38.0-jammy
@@ -244,7 +292,6 @@ test:usecase:
   only:
     - main
     - tags
-    - cicd
   artifacts:
     name: "opsi-webgui-test-result-usecase"
     when: on_failure
@@ -252,7 +299,7 @@ test:usecase:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-usecase.xml
+      junit: opsiweb/.config/test-result-pw-reporter-usecase.xml
     expire_in: 1 day
 
 test:components:changes:
@@ -292,7 +339,7 @@ test:components:changes:
       - opsiweb/.storybook.log
       - opsiweb/.dev.log
     reports:
-      junit: ./opsiweb/test-result-pw-reporter-components.xml
+      junit: ./opsiweb/.config/test-result-pw-reporter-components.xml
     expire_in: 1 day
 
 test:components:
@@ -303,7 +350,6 @@ test:components:
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
-    - cicd
   before_script:
     - cd opsiweb
     - *define_globals
@@ -314,14 +360,13 @@ test:components:
   script:
     - npm run test:all:components | tee .tmpRESULT
     - exit_code=${PIPESTATUS[0]}
-    - cat .tmpRESULT
     - exit $exit_code
   after_script:
     - cd opsiweb
     - scripts/playwright_coverage.sh .tmpRESULT
     - npm run test:all:delete-empty-results
   allow_failure: true
-  coverage: /^TESTED_FILES\s*:\s*([^%]+)/
+  coverage: /TESTED FILES\s*:\s*([^%]+)/
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
@@ -369,8 +414,6 @@ test:components:
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
-  except:
-    - cicd
   services:
     - name: mysql:latest
       command:
@@ -396,11 +439,9 @@ test:backend-pytest:
 #########################################################################
 build:screenshots:docs:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
+  stage: build
   dependencies:
     - init:npm
-  except:
-    - cicd
     # - tags # screenshots only for tags
   only:
     - main # cause in main we test all files, but only chromium browser
@@ -429,8 +470,6 @@ build:screenshots:docs:
 
 build:static:app:
   stage: build
-  except:
-    - cicd
   dependencies:
     - init:npm:production
     - test:lint
@@ -442,7 +481,7 @@ build:static:app:
   artifacts:
     paths:
       - opsiweb/dist # not used...?
-    expire_in: 1 day
+    expire_in: 3 day
   only:
     - main
     - tags
@@ -466,6 +505,7 @@ build:addon:
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
+    - zip -r -q opsi-webgui.zip webgui
   only:
     - tags
     - main
@@ -473,11 +513,116 @@ build:addon:
     name: "opsi-webgui"
     paths:
       - webgui
+      - opsi-webgui.zip
     expire_in: 3 day
+
+build:zip:
+  stage: build
+  dependencies:
+    - init:npm:production # doesnt download artifacts from static-app
+    - build:static:app
+  script:
+    - *install_tools
+    - pwd && ls -la opsiweb
+    - cd opsiweb # generate dist
+    - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
+    - *define_globals
+    - npm run generate-nossl
+    - cd .. # copy to addon
+    - mkdir -p backend/addon/webgui/data
+    - mkdir -p backend/addon/webgui/data/app
+    - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
+    - mkdir webgui
+    - cp -r backend/addon/webgui/* webgui/
+    - ls -lah webgui # debug
+    - zip -r -q opsi-webgui.zip webgui
+  only:
+    - tags
+    - main
+  artifacts:
+    name: "opsi-webgui"
+    paths:
+      - opsi-webgui.zip
+    expire_in: 3 day
+
+#########################################################################
+######################################################################### create tag
+#########################################################################
+
+upload:gittag:
+  stage: upload
+  # dependencies:
+  #   - build:static:app
+  script:
+    - FILE=".tmp_changelog"
+    - *prepare_git
+    - *install_tools
+    - echo "all tags... $(git tag)"
+    - echo "delete Tag..."
+    - TAG=4.3.1.1
+    - *delete_tag
+    - TAG=4.3.14-test # on docker 4
+    - *delete_tag
+    - TAG=4.3.15 # on docker 4
+    - *delete_tag
+    - echo ""
+    - *compare_versions
+    - *prepare_tag
+    - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
+    - *push_tag
+    - rm $FILE
+  # when: manual
+  when: manual
+  only: # visible in this branches: (main!)
+    - main
 
 #########################################################################
 ######################################################################### publish
 #########################################################################
+
+.push_release: &push_release |
+  # post release
+  echo "ProjectURL: $CI_API_V4_URL"
+  echo "ProjectID: $CI_PROJECT_ID"
+  LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+  echo "ProjectTAG: $TAG"
+  printf "ProjectMSG: \n$(cat $FILE)\n"
+  http_response=$(curl --request POST \
+    -o response.txt \
+    --fail-with-body \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main&" \
+    --data-urlencode "message=$(cat $FILE)" )
+
+  echo "$http_response: $(cat response.txt)"
+  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  echo ""
+
+upload:git:
+  stage: upload
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: build:zip
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+  script:
+    - echo "Create Release $TAG"
+    - echo $JOB_ID
+  release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+    tag_name: '$CI_COMMIT_TAG'
+    description: '$CI_COMMIT_'
+  release:
+    name: 'Release $TAG'
+    tag_name: '$TAG'
+    ref: '$TAG'
+    description: 'Release $TAG'
+    assets:
+      links:
+        - name: "opsi-webgui"
+          url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
+
+
 publish:obs_int:
   stage: publish
   dependencies:
@@ -495,7 +640,7 @@ publish:obs_ext:
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
-    - opsi-dev-cli -l 5 changelog from-git output
+    # - opsi-dev-cli -l 5 changelog from-git output
     # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
     # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
   only:
@@ -503,7 +648,7 @@ publish:obs_ext:
   artifacts:
     name: "opsi-webgui-changelogs"
     paths:
-      - changelog
+      - output
     expire_in: 1 day
   # Copy to experimental
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
