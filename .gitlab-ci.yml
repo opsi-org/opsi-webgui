@@ -488,7 +488,7 @@ build:addon:
   # post tag
   curl --request POST \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&message=$(cat $FILE)"
+    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&message=\"$(cat $FILE)\""
 .delete_tag: &delete_tag |
   # delete tag
   curl --request DELETE \
@@ -510,9 +510,9 @@ upload:gittag:
     - FILE_TMP=".tmp_cl"
     - *prepare_git
     - *install_tools
-    - echo "TAGS... "
-    - git tag # latest tag
-    - TAG=4.3.14-test
+    - echo "all tags... $(git tag)"
+    - echo "delete Tag..."
+    - TAG=4.3.1.1
     - *delete_tag
     - git tag -d $TAG || exit_code3=$?
     - echo ""
@@ -524,8 +524,8 @@ upload:gittag:
     - *compare_versions
     - *prepare_tag
     - echo "tag  $TAG"
-    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*pub*\]"
-    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*pub*\]" > $FILE_TMP
+    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*new*\]"
+    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*new*\]" > $FILE_TMP
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort > $FILE
     - rm -f $FILE_TMP
