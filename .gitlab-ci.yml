@@ -485,11 +485,13 @@ build:addon:
 
 .push_tag: &push_tag |
   # post tag
+  echo "ProjectURL: $CI_API_V4_URL"
   echo "ProjectID: $CI_PROJECT_ID"
   echo "ProjectTAG: $TAG"
   printf "ProjectMSG: \n$(cat $FILE)\n"
   http_response=$(curl --fail --request POST \
     -o response.txt \
+    --fail-with-body \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
     --data-urlencode "message=$(cat $FILE)" )
