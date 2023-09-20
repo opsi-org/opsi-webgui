@@ -486,10 +486,14 @@ build:addon:
 
 .push_tag: &push_tag |
   # post tag
+  echo "ProjectID: $CI_PROJECT_ID"
+  echo "ProjectTAG: $TAG"
+  printf "ProjectMSG: \n$(cat $FILE)\n"
   curl --request POST \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
+    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
     --data-urlencode "message=$(cat $FILE)"
+  echo ""
 
 .delete_tag: &delete_tag |
   # delete tag
@@ -497,6 +501,7 @@ build:addon:
   curl --request DELETE \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
+  echo ""
 
 
 .prepare_git: &prepare_git |
