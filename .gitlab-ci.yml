@@ -494,7 +494,7 @@ upload:gittag:
     - *compare_versions
     - *prepare_tag
     # - opsi-dev-cli -l 5 changelog from-git output
-    - ./opsi-dev-tool --create-changelog output
+    # - ./opsi-dev-tool --create-changelog output
     - git tag -a $TAG -m $(cat .tmp_changelog_filtered_sorted)
     - rm .tmp_changelog_filtered_sorted
     #- git tag -a
