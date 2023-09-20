@@ -476,10 +476,14 @@ build:addon:
   VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
   VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
   if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
+  TAG=$VERSION_YML
 
 .prepare_tag: &prepare_tag |
-  if git show-ref --tags $VERSION_YML --quiet; then echo "Tag '$VERSION_YML' already exists."; else echo "Tag not yet exists $VERSION_YML"; fi
-  # if git show-ref --tags $VERSION_YML --quiet; then echo "Tag '$VERSION_YML' already exists."; exit 2; else echo "Tag not yet exists $VERSION_YML"; fi
+  if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
+  # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
+  git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > output/changelog-filtered.md
+  awk '{$1=""}1' output/changelog-filtered.md | awk '{$1=$1}1' | sort > output/changelog-filteredsorted.md
+  rm -f output/changelog-filtered.md
 
 upload:gittag:
   stage: upload
@@ -489,9 +493,9 @@ upload:gittag:
     - *install_tools
     - *compare_versions
     - *prepare_tag
-    - opsi-dev-cli -l 5 changelog from-git output
-    - ls -lah output
-    - cat output/changelog
+    # - opsi-dev-cli -l 5 changelog from-git output
+    - ./opsi-dev-tool --create-changelog output
+    - git tag -a $TAG -m $(cat output/changelog-filteredsorted.md)
     #- git tag -a
   # when: manual # triggered manually
   when: always # triggered manually
@@ -501,85 +505,85 @@ upload:gittag:
 #########################################################################
 ######################################################################### publish
 #########################################################################
-publish:obs_int:
-  stage: publish
-  dependencies:
-    - build:static:app
-  script:
-    - *install_tools
-    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
-  only:
-    - tags
-
-publish:obs_ext:
-  stage: publish
-  dependencies:
-    - build:static:app
-  script:
-    - *install_tools
-    - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
-    - opsi-dev-cli -l 5 changelog from-git output
-    # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
-    # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
-  only:
-    - tags
-  artifacts:
-    name: "opsi-webgui-changelogs"
-    paths:
-      - output
-    expire_in: 1 day
-  # Copy to experimental
-  # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
-  # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
-
-publish:binary-index:
-  stage: publish
-  dependencies:
-    - build:addon
-  script:
-    - *install_tools
-    - ls -la
-    - ls -la webgui
-    - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${CI_COMMIT_TAG}
-  only:
-    - tags
-
-# release:experimental:
-  #   stage: release
-  #   when: manual
-  #   before_script:
-  #     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-  #     - mkdir -p ~/.ssh
-  #     - eval $(ssh-agent -s)
-  #     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-  #   dependencies:
-  #     - publish:obs_ext
-  #     - publish:binary-index
-  #   script:
-  #     - *install_tools
-  #     - ./opsi-dev-tool -l debug --binary-pull
-  #     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-  #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-  #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
-  #   only:
-  #     - tags
-  #publish:obs_int:
-  #  stage: publish
-  #  dependencies:
-  #    - build:static:app
-  #  script:
-  #    - *install_tools
-  #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-  #  only:
-  #    - tags
+# publish:obs_int:
+#   stage: publish
+#   dependencies:
+#     - build:static:app
+#   script:
+#     - *install_tools
+#     - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
+#   only:
+#     - tags
 
 # publish:obs_ext:
-  #   stage: publish
-  #   dependencies:
-  #     - build:static:app
-  #   script:
-  #     - *install_tools
-  #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
-  #   when: manual
-  #   only:
-  #    - tags
+#   stage: publish
+#   dependencies:
+#     - build:static:app
+#   script:
+#     - *install_tools
+#     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
+#     # - opsi-dev-cli -l 5 changelog from-git output
+#     # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+#     # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
+#   only:
+#     - tags
+#   artifacts:
+#     name: "opsi-webgui-changelogs"
+#     paths:
+#       - output
+#     expire_in: 1 day
+#   # Copy to experimental
+#   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
+#   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
+
+# publish:binary-index:
+#   stage: publish
+#   dependencies:
+#     - build:addon
+#   script:
+#     - *install_tools
+#     - ls -la
+#     - ls -la webgui
+#     - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${CI_COMMIT_TAG}
+#   only:
+#     - tags
+
+# # release:experimental:
+#   #   stage: release
+#   #   when: manual
+#   #   before_script:
+#   #     - "which ssh-agent || (apt update && apt -y install openssh-client)"
+#   #     - mkdir -p ~/.ssh
+#   #     - eval $(ssh-agent -s)
+#   #     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+#   #   dependencies:
+#   #     - publish:obs_ext
+#   #     - publish:binary-index
+#   #   script:
+#   #     - *install_tools
+#   #     - ./opsi-dev-tool -l debug --binary-pull
+#   #     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+#   #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+#   #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
+#   #   only:
+#   #     - tags
+#   #publish:obs_int:
+#   #  stage: publish
+#   #  dependencies:
+#   #    - build:static:app
+#   #  script:
+#   #    - *install_tools
+#   #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+#   #  only:
+#   #    - tags
+
+# # publish:obs_ext:
+#   #   stage: publish
+#   #   dependencies:
+#   #     - build:static:app
+#   #   script:
+#   #     - *install_tools
+#   #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
+#   #   when: manual
+#   #   only:
+#   #    - tags
