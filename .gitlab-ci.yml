@@ -502,10 +502,11 @@ build:addon:
 
 .delete_tag: &delete_tag |
   # delete tag
-  git tag -d $TAG || exit_code_del=$?
   curl --request DELETE \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
+  echo ""
+  git tag -d $TAG || exit_code_del=$?
   echo ""
 
 .prepare_git: &prepare_git |
