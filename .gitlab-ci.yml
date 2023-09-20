@@ -505,6 +505,8 @@ upload:gittag:
     - FILE_TMP=".tmp_cl"
     - *prepare_git
     - *install_tools
+    - echo "TAGS... $(git tag) # latest tag
+    - exit 1
     - TAG=$(git describe --tags --abbrev=0 @^) # latest tag
     - echo "Latest tag... $TAG"
     - *compare_versions
