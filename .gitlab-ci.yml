@@ -439,7 +439,7 @@ test:backend-pytest:
 #########################################################################
 build:screenshots:docs:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
-  stage: test
+  stage: build
   dependencies:
     - init:npm
     # - tags # screenshots only for tags
@@ -598,8 +598,8 @@ upload:gittag:
   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
   echo ""
 
-publish:git:
-  stage: publish
+upload:git:
+  stage: upload
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
     - job: build:zip
