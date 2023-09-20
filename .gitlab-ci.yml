@@ -506,6 +506,8 @@ upload:gittag:
     - *prepare_git
     - *install_tools
     - echo "TAGS... $(git tag)" # latest tag
+    - git tag -d 4.3.14-test
+    - git tag -d 4.3.15
     - exit 1
     - TAG=$(git describe --tags --abbrev=0 @^) # latest tag
     - echo "Latest tag... $TAG"
