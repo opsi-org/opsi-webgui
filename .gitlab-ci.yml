@@ -499,7 +499,7 @@ upload:gittag:
     - LATEST_TAG=$(git describe --tags --abbrev=0 @^)
     - echo "$LATEST_TAG"
     - echo "$CI_JOB_TOKEN"
-    - git push --tags https://gitlab-ci-token:$TOKEN_SUCHER@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
+    - git push --tags https://$GITLAB_USER_NAME:$TOKEN_SUCHER@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
     - git log --branches=[main] --no-decorate --oneline $LATEST_TAG..@  | grep -e "\[*pub*\]"
     - git log --branches=[main] --no-decorate --oneline $LATEST_TAG..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
     - awk '{$1=""}1' .tmp_changelog_filtered | awk '{$1=$1}1' | sort
@@ -507,7 +507,7 @@ upload:gittag:
     - rm -f .tmp_changelog_filtered
     - cat .tmp_changelog_filtered_sorted
     - git tag -a $TAG -m "$(cat .tmp_changelog_filtered_sorted)"
-    - git push --tags https://gitlab-ci-token:${TOKEN_SUCHER}@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
+    - git push --tags https://$GITLAB_USER_NAME:${TOKEN_SUCHER}@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
     - rm .tmp_changelog_filtered_sorted
     # - opsi-dev-cli -l 5 changelog from-git output
     # - ./opsi-dev-tool --create-changelog output
