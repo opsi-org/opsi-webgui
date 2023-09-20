@@ -481,9 +481,9 @@ build:addon:
 .prepare_tag: &prepare_tag |
   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
-  git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > output/changelog-filtered.md
-  awk '{$1=""}1' output/changelog-filtered.md | awk '{$1=$1}1' | sort > output/changelog-filteredsorted.md
-  rm -f output/changelog-filtered.md
+  git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
+  awk '{$1=""}1' .tmp_changelog_filtered| awk '{$1=$1}1' | sort > .tmp_changelog_filtered_sorted
+  rm -f .tmp_changelog_filtered
 
 upload:gittag:
   stage: upload
@@ -495,7 +495,8 @@ upload:gittag:
     - *prepare_tag
     # - opsi-dev-cli -l 5 changelog from-git output
     - ./opsi-dev-tool --create-changelog output
-    - git tag -a $TAG -m $(cat output/changelog-filteredsorted.md)
+    - git tag -a $TAG -m $(cat .tmp_changelog_filtered_sorted)
+    - rm .tmp_changelog_filtered_sorted
     #- git tag -a
   # when: manual # triggered manually
   when: always # triggered manually
