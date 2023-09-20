@@ -513,8 +513,9 @@ upload:gittag:
     - echo "TAGS... "
     - git tag # latest tag
     - TAG=4.3.14-test
-    - git tag -d $TAG
     - *delete_tag
+    - git tag -d $TAG || exit_code3=$?
+    - echo ""
     # - TAG=4.3.15
     # - git tag -d $TAG
     # - *delete_tag
