@@ -497,7 +497,8 @@ upload:gittag:
     - *compare_versions
     - *prepare_tag
     - git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
-    - awk '{$1=""}1' .tmp_changelog_filtered| awk '{$1=$1}1' | sort > .tmp_changelog_filtered_sorted
+    - awk '{$1=""}1' .tmp_changelog_filtered | awk '{$1=$1}1' | sort
+    - awk '{$1=""}1' .tmp_changelog_filtered | awk '{$1=$1}1' | sort > .tmp_changelog_filtered_sorted
     - rm -f .tmp_changelog_filtered
     - cat .tmp_changelog_filtered_sorted
     - git tag -a $TAG -m "$(cat .tmp_changelog_filtered_sorted)"
