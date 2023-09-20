@@ -482,6 +482,8 @@ build:addon:
   # "prepare tag"
   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
+  curl -X POST --header "JOB-TOKEN: $CI_JOB_TOKEN" --form "tag_name=$TAG" --form "ref=$CI_COMMIT_SHA" "$CI_API_V4_URL/projects/${CI_PROJECT_ID}/releases"
+
 .prepare_git: &prepare_git |
   # "prepare git"
   git config --global user.name "${GITLAB_USER_NAME}"
@@ -499,7 +501,9 @@ upload:gittag:
     - LATEST_TAG=$(git describe --tags --abbrev=0 @^)
     - echo "$LATEST_TAG"
     - echo "$CI_JOB_TOKEN"
-    - git push --tags https://$GITLAB_USER_NAME:$TOKEN_SUCHER@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
+    -
+    - git push --tags https://$GITLAB_USER_NAME:$TOKEN_SUCHER@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main  || exit_code1=$?
+
     - git log --branches=[main] --no-decorate --oneline $LATEST_TAG..@  | grep -e "\[*pub*\]"
     - git log --branches=[main] --no-decorate --oneline $LATEST_TAG..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
     - awk '{$1=""}1' .tmp_changelog_filtered | awk '{$1=$1}1' | sort
