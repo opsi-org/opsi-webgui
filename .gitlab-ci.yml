@@ -542,11 +542,9 @@ upload:gittag:
     # - rm -f $FILE_TMP
     - *push_tag
     - rm $FILE
-    - exit 1234
-  # when: manual # triggered manually
-  when: always # triggered manually
+  when: manual
   only: # visible in this branches: (main!)
-    - cicd
+    - main
 
 #########################################################################
 ######################################################################### publish
