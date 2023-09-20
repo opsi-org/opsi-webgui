@@ -1,6 +1,6 @@
 project:
   name: opsi-webgui
-  version: &project_version 4.3.1.1
+  version: &project_version 4.3.15
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
@@ -9,7 +9,6 @@ project:
 git:
   hooks:
     pre-push: |
-      exit 0
       cd /workspace/opsiweb/
       file=".tmp_prepush_result_changed_files.log"
       echo "> Test Changed files"
