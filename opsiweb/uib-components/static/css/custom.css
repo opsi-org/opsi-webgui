@@ -271,7 +271,8 @@ body .mobile .topbar_content .navbar > * {
   background-color: transparent !important;
 }
 .form-control.focus {
-  border-color: var(--b-input_component-focus);
+  border:1px solid var(--b-input_component-focus);
+  border-radius:0.25rem;
   box-shadow: unset;
 }
 .navbar > .btn:hover {
