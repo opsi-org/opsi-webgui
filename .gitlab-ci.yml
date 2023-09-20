@@ -1,11 +1,11 @@
 image: node:lts
 
 stages:
+  - upload
   - init
   - test
   # - test-components
   - build
-  - upload
   - publish
   - release
 
@@ -539,8 +539,8 @@ build:addon:
 
 upload:gittag:
   stage: upload
-  dependencies:
-    - build:static:app
+  # dependencies:
+  #   - build:static:app
   script:
     - FILE=".tmp_changelog"
     - *prepare_git
