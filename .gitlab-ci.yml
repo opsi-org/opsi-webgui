@@ -472,13 +472,14 @@ build:addon:
 #########################################################################
 
 .compare_versions: &compare_versions |
-  # compare Versions in: opsi-dev-tool-yml and opsiweb/package.json
+  # "compare Versions in: opsi-dev-tool-yml and opsiweb/package.json"
   VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
   VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
   if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
   TAG=$VERSION_YML
 
 .prepare_tag: &prepare_tag |
+  # "prepare tag"
   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
   git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
@@ -486,6 +487,7 @@ build:addon:
   rm -f .tmp_changelog_filtered
 
 .prepare_git: &prepare_git |
+  # "prepare git"
   git config --global user.name "${GITLAB_USER_NAME}"
   git config --global user.email "${GITLAB_USER_EMAIL}"
 
@@ -500,6 +502,7 @@ upload:gittag:
     - *prepare_tag
     # - opsi-dev-cli -l 5 changelog from-git output
     # - ./opsi-dev-tool --create-changelog output
+    - cat .tmp_changelog_filtered_sorted
     - git tag -a $TAG -m "$(cat .tmp_changelog_filtered_sorted)"
     - git push --tags https://gitlab-ci-token:${GITTAG_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
     - rm .tmp_changelog_filtered_sorted
@@ -512,6 +515,16 @@ upload:gittag:
 #########################################################################
 ######################################################################### publish
 #########################################################################
+publish:git:
+  stage: publish
+  # image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+  script:
+    - echo "running release_job"
+  release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+    tag_name: '$CI_COMMIT_TAG'
+    description: '$CI_COMMIT_TAG'
 # publish:obs_int:
 #   stage: publish
 #   dependencies:
