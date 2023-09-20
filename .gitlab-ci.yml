@@ -489,10 +489,12 @@ build:addon:
   echo "ProjectID: $CI_PROJECT_ID"
   echo "ProjectTAG: $TAG"
   printf "ProjectMSG: \n$(cat $FILE)\n"
-  curl --request POST \
+  http_response=$(curl -v --request POST \
+    -o response.txt \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
-    --data-urlencode "message=$(cat $FILE)"
+    --data-urlencode "message=$(cat $FILE)" )
+  if [ $http_response != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
   echo ""
 
 .delete_tag: &delete_tag |
