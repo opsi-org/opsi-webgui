@@ -46,8 +46,8 @@
   --primary-foreground: var(--white);
   --secondary-foreground: var(--light);
   --success-foreground: var(--light);
-  --warning-foreground: var(--light);
-  --danger-foreground: var(--light);
+  --warning-foreground: black;
+  --danger-foreground: white;
 
   --primary-dark: var(--opsi-first-dark);
   --secondary-dark: var(--opsi-second-dark);

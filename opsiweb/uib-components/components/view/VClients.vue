@@ -2,7 +2,7 @@
   <div data-testid="VClients">
     <AlertAAlert ref="sortProductsAlert">
       <template #button>
-        <b-button variant="transparent" size="sm" class="ml-3" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
+        <b-button variant="warning" size="sm" class="float-right border-0 p-0" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
           {{ $t('button.continue') }}
         </b-button>
       </template>

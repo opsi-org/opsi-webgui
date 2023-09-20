@@ -3443,9 +3443,9 @@ a.badge-dark.focus,a.badge-dark:focus{
   color:var(--fg-alert_secondary_link)
 }
 .alert-success{
-  color:var(--fg-alert_success);
-  background-color:var(--bg-alert_success);
-  border-color:var(--b-alert_success)
+  color:white !important;
+  background-color:var(--log-notice) !important;
+  border-color:var(--log-notice) !important;
 }
 .alert-success hr{
   border-top-color:var(--bt-alert_success_hr)
@@ -3454,9 +3454,9 @@ a.badge-dark.focus,a.badge-dark:focus{
   color:var(--fg-alert_success_link)
 }
 .alert-info{
-  color:var(--fg-alert_info);
-  background-color:var(--bg-alert_info);
-  border-color:var(--b-alert_info)
+  color:white !important;
+  background-color:var(--log-essential) !important;
+  border-color:var(--log-essential) !important;
 }
 .alert-info hr{
   border-top-color:var(--bt-alert_info_hr)
@@ -3465,9 +3465,9 @@ a.badge-dark.focus,a.badge-dark:focus{
   color:var(--fg-alert_info_link)
 }
 .alert-warning{
-  color:var(--fg-alert_warning);
-  background-color:var(--bg-alert_warning);
-  border-color:var(--b-alert_warning)
+  color:var(--warning-foreground);
+  background-color:var(--warning);
+  border-color:var(--warning)
 }
 .alert-warning hr{
   border-top-color:var(--bt-alert_warning_hr)
@@ -3476,9 +3476,9 @@ a.badge-dark.focus,a.badge-dark:focus{
   color:var(--fg-alert_warning_link)
 }
 .alert-danger{
-  color:var(--fg-alert_danger);
-  background-color:var(--bg-alert_danger);
-  border-color:var(--b-alert_danger)
+  color:var(--danger-foreground);
+  background-color:var(--danger);
+  border-color:var(--danger)
 }
 .alert-danger hr{
   border-top-color:var(--bt-alert_danger_hr)
