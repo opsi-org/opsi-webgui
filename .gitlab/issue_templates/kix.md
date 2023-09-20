@@ -1,25 +1,7 @@
-### Current behavior
 
 
 
-### Expected correct behavior
-
-
-
-### Steps to reproduce
-
-
-
-### Logs + Screenshots
-
-
-
-### Possible fixes
-
-
-
-### Issue Closure Checklist
-
+# Issue Closure Checklist
 - [ ] Update stories and component tests
 - [ ] Check lint issues with eslint and sonarlint
 - [ ] Check Accessibility using Accessibility Inspector
@@ -28,4 +10,7 @@
 - [ ] Update tests in `/workspace/opsiweb/tests/usecase/`
 - [ ] Update tests in `/workspace/opsiweb/screenshots4Docs/`
 
-/label ~Bug
+# BEFORE CLOSING:
+- [ ] talk with support agent or directly answer the customer if needed
+
+/label ~Support
