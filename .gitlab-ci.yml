@@ -488,10 +488,10 @@ build:addon:
   echo "ProjectID: $CI_PROJECT_ID"
   echo "ProjectTAG: $TAG"
   printf "ProjectMSG: \n$(cat $FILE)\n"
-  http_response=$(curl --request POST \
+  http_response=$(curl --fail --request POST \
     -o response.txt \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
     --data-urlencode "message=$(cat $FILE)" )
   echo "$http_response: $(cat response.txt)"
   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
@@ -502,7 +502,7 @@ build:addon:
   git tag -d $TAG || exit_code_del=$?
   curl --request DELETE \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
   echo ""
 
 .prepare_git: &prepare_git |
@@ -537,7 +537,7 @@ upload:gittag:
     - rm -f $FILE_TMP
     - *push_tag
     - rm $FILE
-    - exit 1
+    - exit 1234
   # when: manual # triggered manually
   when: always # triggered manually
   only: # visible in this branches: (main!)
