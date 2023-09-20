@@ -499,7 +499,7 @@ upload:gittag:
     - LATEST_TAG=$(git describe --tags --abbrev=0 @^)
     - echo "$LATEST_TAG"
     - echo "$CI_JOB_TOKEN"
-    - git push --tags https://gitlab-ci-token:$GITTAG_JOB_TOKEN@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
+    - git push --tags https://gitlab-ci-token:$CI_JOB_TOKEN@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
     - git log --branches=[main] --no-decorate --oneline $LATEST_TAG..@  | grep -e "\[*pub*\]"
     - git log --branches=[main] --no-decorate --oneline $LATEST_TAG..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
     - awk '{$1=""}1' .tmp_changelog_filtered | awk '{$1=$1}1' | sort
