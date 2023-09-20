@@ -134,6 +134,54 @@ stages:
   echo "$testfilesUnique"
   cd ..
 
+
+.compare_versions: &compare_versions |
+  # "compare Versions in: opsi-dev-tool-yml and opsiweb/package.json"
+  VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
+  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
+  if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
+  TAG=$VERSION_YML
+
+.prepare_tag: &prepare_tag |
+  # "prepare tag"
+  if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
+  # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
+  # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+  LTAG=$(git tag --sort=taggerdate | tail -1)
+  echo "Latest tag... '$LTAG'"
+
+.push_tag: &push_tag |
+  # post tag
+  echo "ProjectURL: $CI_API_V4_URL"
+  echo "ProjectID: $CI_PROJECT_ID"
+  echo "ProjectTAG: $TAG"
+  printf "ProjectMSG: \n$(cat $FILE)\n"
+  http_response=$(curl --request POST \
+    -o response.txt \
+    --fail-with-body \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
+    --data-urlencode "message=$(cat $FILE)" )
+
+  echo "$http_response: $(cat response.txt)"
+  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  echo ""
+
+.delete_tag: &delete_tag |
+  # delete tag
+  curl --request DELETE \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
+  echo ""
+  git tag -d $TAG || exit_code_del=$?
+  echo ""
+
+.prepare_git: &prepare_git |
+  # "prepare git"
+  git config --global user.name "${GITLAB_USER_NAME}"
+  git config --global user.email "${GITLAB_USER_EMAIL}"
+  git fetch
+
 #########################################################################
 ######################################################################### init
 #########################################################################
@@ -474,70 +522,6 @@ build:addon:
 ######################################################################### create tag
 #########################################################################
 
-.compare_versions: &compare_versions |
-  # "compare Versions in: opsi-dev-tool-yml and opsiweb/package.json"
-  VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
-  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
-  if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
-  TAG=$VERSION_YML
-
-.prepare_tag: &prepare_tag |
-  # "prepare tag"
-  if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
-  # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
-  # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-  LTAG=$(git tag --sort=taggerdate | tail -1)
-  echo "Latest tag... '$LTAG'"
-
-.push_tag: &push_tag |
-  # post tag
-  echo "ProjectURL: $CI_API_V4_URL"
-  echo "ProjectID: $CI_PROJECT_ID"
-  echo "ProjectTAG: $TAG"
-  printf "ProjectMSG: \n$(cat $FILE)\n"
-  http_response=$(curl --request POST \
-    -o response.txt \
-    --fail-with-body \
-    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
-    --data-urlencode "message=$(cat $FILE)" )
-
-  echo "$http_response: $(cat response.txt)"
-  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-  echo ""
-# .push_release: &push_release |
-#   # post release
-#   echo "ProjectURL: $CI_API_V4_URL"
-#   echo "ProjectID: $CI_PROJECT_ID"
-#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-#   echo "ProjectTAG: $TAG"
-#   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   http_response=$(curl --request POST \
-#     -o response.txt \
-#     --fail-with-body \
-#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main&" \
-#     --data-urlencode "message=$(cat $FILE)" )
-
-#   echo "$http_response: $(cat response.txt)"
-#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-#   echo ""
-
-.delete_tag: &delete_tag |
-  # delete tag
-  curl --request DELETE \
-    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
-  echo ""
-  git tag -d $TAG || exit_code_del=$?
-  echo ""
-
-.prepare_git: &prepare_git |
-  # "prepare git"
-  git config --global user.name "${GITLAB_USER_NAME}"
-  git config --global user.email "${GITLAB_USER_EMAIL}"
-  git fetch
-
 upload:gittag:
   stage: upload
   # dependencies:
@@ -558,112 +542,140 @@ upload:gittag:
     - *compare_versions
     - *prepare_tag
     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
-    # - git log --branches=origin/main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]" | tee $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
-    # - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort | tee $FILE
-    # - rm -f $FILE_TMP
     - *push_tag
     - rm $FILE
-    - exit 1234
   # when: manual
-  when: always
+  when: manual
   only: # visible in this branches: (main!)
     - main
-    - cicd2
 
 #########################################################################
 ######################################################################### publish
 #########################################################################
-# publish:git:
-#   stage: publish
-#   # image: registry.gitlab.com/gitlab-org/release-cli:latest
-#   rules:
-#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
-#   script:
-#     - echo "running release_job"
-#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-#     tag_name: '$CI_COMMIT_TAG'
-#     description: '$CI_COMMIT_TAG'
+
+.push_release: &push_release |
+  # post release
+  echo "ProjectURL: $CI_API_V4_URL"
+  echo "ProjectID: $CI_PROJECT_ID"
+  LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+  echo "ProjectTAG: $TAG"
+  printf "ProjectMSG: \n$(cat $FILE)\n"
+  http_response=$(curl --request POST \
+    -o response.txt \
+    --fail-with-body \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main&" \
+    --data-urlencode "message=$(cat $FILE)" )
+
+  echo "$http_response: $(cat response.txt)"
+  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  echo ""
+publish:git:
+  stage: publish
+  needs:
+    - job: build:static:app
+      artifacts: true
+  only:
+    - tag
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+  script:
+    - echo "Create Release $TAG"
+    - echo $JOB_ID
+  release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+    tag_name: '$CI_COMMIT_TAG'
+    description: '$CI_COMMIT_'
+  release:
+    name: 'Release $TAG'
+    tag_name: '$TAG'
+    ref: '$TAG'
+    description: 'Release $TAG'
+    assets:
+      links:
+        - name: "opsi-webgui"
+          url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
 
 
-# publish:obs_int:
-#   stage: publish
-#   dependencies:
-#     - build:static:app
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
-#   only:
-#     - tags
+publish:obs_int:
+  stage: publish
+  dependencies:
+    - build:static:app
+  script:
+    - *install_tools
+    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
+  only:
+    - tags
+
+publish:obs_ext:
+  stage: publish
+  dependencies:
+    - build:static:app
+  script:
+    - *install_tools
+    - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
+    # - opsi-dev-cli -l 5 changelog from-git output
+    # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+    # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
+  only:
+    - tags
+  artifacts:
+    name: "opsi-webgui-changelogs"
+    paths:
+      - output
+    expire_in: 1 day
+  # Copy to experimental
+  # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
+  # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
+
+publish:binary-index:
+  stage: publish
+  dependencies:
+    - build:addon
+  script:
+    - *install_tools
+    - ls -la
+    - ls -la webgui
+    - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${CI_COMMIT_TAG}
+  only:
+    - tags
+
+# release:experimental:
+  #   stage: release
+  #   when: manual
+  #   before_script:
+  #     - "which ssh-agent || (apt update && apt -y install openssh-client)"
+  #     - mkdir -p ~/.ssh
+  #     - eval $(ssh-agent -s)
+  #     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+  #   dependencies:
+  #     - publish:obs_ext
+  #     - publish:binary-index
+  #   script:
+  #     - *install_tools
+  #     - ./opsi-dev-tool -l debug --binary-pull
+  #     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+  #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+  #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
+  #   only:
+  #     - tags
+  #publish:obs_int:
+  #  stage: publish
+  #  dependencies:
+  #    - build:static:app
+  #  script:
+  #    - *install_tools
+  #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+  #  only:
+  #    - tags
 
 # publish:obs_ext:
-#   stage: publish
-#   dependencies:
-#     - build:static:app
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
-#     # - opsi-dev-cli -l 5 changelog from-git output
-#     # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
-#     # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
-#   only:
-#     - tags
-#   artifacts:
-#     name: "opsi-webgui-changelogs"
-#     paths:
-#       - output
-#     expire_in: 1 day
-#   # Copy to experimental
-#   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
-#   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
-
-# publish:binary-index:
-#   stage: publish
-#   dependencies:
-#     - build:addon
-#   script:
-#     - *install_tools
-#     - ls -la
-#     - ls -la webgui
-#     - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${CI_COMMIT_TAG}
-#   only:
-#     - tags
-
-# # release:experimental:
-#   #   stage: release
-#   #   when: manual
-#   #   before_script:
-#   #     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-#   #     - mkdir -p ~/.ssh
-#   #     - eval $(ssh-agent -s)
-#   #     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-#   #   dependencies:
-#   #     - publish:obs_ext
-#   #     - publish:binary-index
-#   #   script:
-#   #     - *install_tools
-#   #     - ./opsi-dev-tool -l debug --binary-pull
-#   #     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-#   #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-#   #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
-#   #   only:
-#   #     - tags
-#   #publish:obs_int:
-#   #  stage: publish
-#   #  dependencies:
-#   #    - build:static:app
-#   #  script:
-#   #    - *install_tools
-#   #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-#   #  only:
-#   #    - tags
-
-# # publish:obs_ext:
-#   #   stage: publish
-#   #   dependencies:
-#   #     - build:static:app
-#   #   script:
-#   #     - *install_tools
-#   #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
-#   #   when: manual
-#   #   only:
-#   #    - tags
+  #   stage: publish
+  #   dependencies:
+  #     - build:static:app
+  #   script:
+  #     - *install_tools
+  #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
+  #   when: manual
+  #   only:
+  #    - tags
