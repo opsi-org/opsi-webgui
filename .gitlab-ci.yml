@@ -482,10 +482,6 @@ build:addon:
   # "prepare tag"
   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
-  git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
-  awk '{$1=""}1' .tmp_changelog_filtered| awk '{$1=$1}1' | sort > .tmp_changelog_filtered_sorted
-  rm -f .tmp_changelog_filtered
-
 .prepare_git: &prepare_git |
   # "prepare git"
   git config --global user.name "${GITLAB_USER_NAME}"
@@ -500,12 +496,15 @@ upload:gittag:
     - *install_tools
     - *compare_versions
     - *prepare_tag
-    # - opsi-dev-cli -l 5 changelog from-git output
-    # - ./opsi-dev-tool --create-changelog output
+    - git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > .tmp_changelog_filtered
+    - awk '{$1=""}1' .tmp_changelog_filtered| awk '{$1=$1}1' | sort > .tmp_changelog_filtered_sorted
+    - rm -f .tmp_changelog_filtered
     - cat .tmp_changelog_filtered_sorted
     - git tag -a $TAG -m "$(cat .tmp_changelog_filtered_sorted)"
     - git push --tags https://gitlab-ci-token:${GITTAG_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
     - rm .tmp_changelog_filtered_sorted
+    # - opsi-dev-cli -l 5 changelog from-git output
+    # - ./opsi-dev-tool --create-changelog output
     #- git tag -a
   # when: manual # triggered manually
   when: always # triggered manually
