@@ -516,13 +516,13 @@ upload:gittag:
     - *delete_tag
     - TAG=4.3.15
     - *delete_tag
-    - TAG=$(git describe --tags --abbrev=0 @^) # latest tag
-    - echo "Latest tag... $TAG"
+    - LTAG=$(git describe --tags --abbrev=0 @^) # latest tag
+    - echo "Latest tag... $LTAG"
     - *compare_versions
     - *prepare_tag
     - echo "tag  $TAG"
-    - git log --branches=[main] --no-decorate --oneline $TAG..@  | grep -e "\[*pub*\]"
-    - git log --branches=[main] --no-decorate --oneline $TAG..@  | grep -e "\[*pub*\]" > $FILE_TMP
+    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*pub*\]"
+    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*pub*\]" > $FILE_TMP
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort > $FILE
     - rm -f $FILE_TMP
