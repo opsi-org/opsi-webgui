@@ -488,7 +488,7 @@ build:addon:
   # post tag
   curl --request POST \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&message=\"$(cat $FILE)\""
+    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&message=$MSG"
 .delete_tag: &delete_tag |
   # delete tag
   curl --request DELETE \
@@ -500,6 +500,20 @@ build:addon:
   # "prepare git"
   git config --global user.name "${GITLAB_USER_NAME}"
   git config --global user.email "${GITLAB_USER_EMAIL}"
+
+.prepare_msg: &prepare_msg |
+  urlencode() {
+    # urlencode <string>
+    local length="${#1}"
+    for (( i = 0; i < length; i++ )); do
+        local c="${1:i:1}"
+        case $c in
+            [a-zA-Z0-9.~_-]) printf "$c" ;;
+            *) printf '%%%02X' "'$c" ;;
+        esac
+    done
+  }
+  MSG=$(urlencode $(cat $FILE))
 
 upload:gittag:
   stage: upload
@@ -523,22 +537,13 @@ upload:gittag:
     - echo "Latest tag... $LTAG"
     - *compare_versions
     - *prepare_tag
-    - echo "tag  $TAG"
-    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*new*\]"
     - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*new*\]" > $FILE_TMP
-    - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort > $FILE
     - rm -f $FILE_TMP
-    - echo "Latest changelogs..."
-    - cat $FILE
-    - echo "$TAG"
+    - printf "Latest changelogs...\n$(cat $FILE)"
+    - *prepare_msg
     - *push_tag
-    # - git tag -a $TAG -m "$(cat $FILE)"
-    # - git push --tags https://$GITLAB_USER_NAME:${TOKEN_SUCHER}@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
     - rm $FILE
-    # - opsi-dev-cli -l 5 changelog from-git output
-    # - ./opsi-dev-tool --create-changelog output
-    #- git tag -a
   # when: manual # triggered manually
   when: always # triggered manually
   only: # visible in this branches: (main!)
