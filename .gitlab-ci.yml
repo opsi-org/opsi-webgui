@@ -522,7 +522,6 @@ upload:gittag:
   #   - build:static:app
   script:
     - FILE=".tmp_changelog"
-    # - FILE_TMP=".tmp_cl"
     - *prepare_git
     - *install_tools
     - echo "all tags... $(git tag)"
@@ -545,6 +544,7 @@ upload:gittag:
   when: manual
   only: # visible in this branches: (main!)
     - main
+    - cicd2
 
 #########################################################################
 ######################################################################### publish
