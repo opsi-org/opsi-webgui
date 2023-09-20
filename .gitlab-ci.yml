@@ -483,18 +483,17 @@ build:addon:
   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
 
-
 .push_tag: &push_tag |
   # post tag
   echo "ProjectID: $CI_PROJECT_ID"
   echo "ProjectTAG: $TAG"
   printf "ProjectMSG: \n$(cat $FILE)\n"
-  http_response=$(curl -v --request POST \
+  http_response=$(curl --request POST \
     -o response.txt \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
     --data-urlencode "message=$(cat $FILE)" )
-  if [ $http_response != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
   echo ""
 
 .delete_tag: &delete_tag |
@@ -504,7 +503,6 @@ build:addon:
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
   echo ""
-
 
 .prepare_git: &prepare_git |
   # "prepare git"
