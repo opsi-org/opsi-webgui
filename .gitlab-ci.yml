@@ -493,7 +493,7 @@ build:addon:
 
 .delete_tag: &delete_tag |
   # delete tag
-  echo "$CI_PROJECT_ID"
+  git tag -d $TAG || exit_code_del=$?
   curl --request DELETE \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del=$?
@@ -517,16 +517,16 @@ upload:gittag:
     - echo "delete Tag..."
     - TAG=4.3.1.1
     - *delete_tag
-    - git tag -d $TAG || exit_code3=$?
+    - TAG=4.3.15 // on docker 4
+    - *delete_tag
+    - TAG=4.3.14-test // on docker 4
+    - *delete_tag
     - echo ""
-    # - TAG=4.3.15
-    # - git tag -d $TAG
-    # - *delete_tag
     - LTAG=$(git describe --tags --abbrev=0 @^ || git tag) # latest tag
     - echo "Latest tag... $LTAG"
     - *compare_versions
     - *prepare_tag
-    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*new*\]" > $FILE_TMP
+    - git log --branches=[main] --no-decorate --oneline $LTAG..@  | grep -e "\[*new*\]" > $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort > $FILE
     - rm -f $FILE_TMP
     - printf "Latest changelogs...\n$(cat $FILE)\n"
