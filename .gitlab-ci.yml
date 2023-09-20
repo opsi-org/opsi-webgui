@@ -1,11 +1,11 @@
 image: node:lts
 
 stages:
-  - upload
   - init
   - test
   # - test-components
   - build
+  - upload
   - publish
   - release
 
@@ -431,10 +431,13 @@ build:static:app:
     - npm i @nuxt/typescript-build
     - *define_globals
     - npm run generate-nossl
+    - apt install -y zip
+    - zip -r -q opsi-webgui.zip webgui
   artifacts:
     paths:
       - opsiweb/dist # not used...?
-    expire_in: 1 day
+      - opsi-webgui.zip
+    expire_in: 3 day
   only:
     - main
     - tags
@@ -495,12 +498,29 @@ build:addon:
     -o response.txt \
     --fail-with-body \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
     --data-urlencode "message=$(cat $FILE)" )
 
   echo "$http_response: $(cat response.txt)"
   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
   echo ""
+# .push_release: &push_release |
+#   # post release
+#   echo "ProjectURL: $CI_API_V4_URL"
+#   echo "ProjectID: $CI_PROJECT_ID"
+#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+#   echo "ProjectTAG: $TAG"
+#   printf "ProjectMSG: \n$(cat $FILE)\n"
+#   http_response=$(curl --request POST \
+#     -o response.txt \
+#     --fail-with-body \
+#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main&" \
+#     --data-urlencode "message=$(cat $FILE)" )
+
+#   echo "$http_response: $(cat response.txt)"
+#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+#   echo ""
 
 .delete_tag: &delete_tag |
   # delete tag
@@ -515,11 +535,12 @@ build:addon:
   # "prepare git"
   git config --global user.name "${GITLAB_USER_NAME}"
   git config --global user.email "${GITLAB_USER_EMAIL}"
+  git fetch
 
 upload:gittag:
   stage: upload
-  # dependencies:
-  #   - build:static:app
+  dependencies:
+    - build:static:app
   script:
     - FILE=".tmp_changelog"
     - *prepare_git
@@ -535,30 +556,34 @@ upload:gittag:
     - echo ""
     - *compare_versions
     - *prepare_tag
-    - git log --oneline --pretty=format:"%s" $LTAG.. | grep -e "\[*new*\]" | sort | tee $FILE || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
+    - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*new*\]" | sort | tee $FILE || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
     # - git log --branches=origin/main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]" | tee $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
     # - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort | tee $FILE
     # - rm -f $FILE_TMP
     - *push_tag
     - rm $FILE
-  when: manual
+    - exit 1234
+  # when: manual
+  when: always
   only: # visible in this branches: (main!)
     - main
-    - cicd2
+    - cicd
 
 #########################################################################
 ######################################################################### publish
 #########################################################################
-publish:git:
-  stage: publish
-  # image: registry.gitlab.com/gitlab-org/release-cli:latest
-  rules:
-    - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
-  script:
-    - echo "running release_job"
-  release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-    tag_name: '$CI_COMMIT_TAG'
-    description: '$CI_COMMIT_TAG'
+# publish:git:
+#   stage: publish
+#   # image: registry.gitlab.com/gitlab-org/release-cli:latest
+#   rules:
+#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+#   script:
+#     - echo "running release_job"
+#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+#     tag_name: '$CI_COMMIT_TAG'
+#     description: '$CI_COMMIT_TAG'
+
+
 # publish:obs_int:
 #   stage: publish
 #   dependencies:
