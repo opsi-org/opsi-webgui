@@ -536,6 +536,7 @@ upload:gittag:
     - echo ""
     - *compare_versions
     - *prepare_tag
+    - git log --branches=main --no-decorate --oneline
     - git log --branches=main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]"
     - git log --branches=main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]" | tee $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort | tee $FILE
