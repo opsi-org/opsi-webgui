@@ -482,6 +482,7 @@ build:addon:
   # "prepare tag"
   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
+  git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > $FILE_TMP
 
 .push_tag: &push_tag |
   # post tag
@@ -501,14 +502,15 @@ upload:gittag:
   #   - build:static:app
   script:
     - FILE=".tmp_changelog"
+    - FILE_TMP=".tmp_cl"
     - *prepare_git
     - *install_tools
     # - TAG=$(git describe --tags --abbrev=0 @^) # latest tag
     - *compare_versions
     - *prepare_tag
-    - awk '{$1=""}1' .tmp_cl | awk '{$1=$1}1' | sort
-    - awk '{$1=""}1' .tmp_cl | awk '{$1=$1}1' | sort > $FILE
-    - rm -f .tmp_cl
+    - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort
+    - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort > $FILE
+    - rm -f $FILE_TMP
     - cat $FILE
     - echo "$TAG"
     - *push_tag
