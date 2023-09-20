@@ -13,13 +13,13 @@ git:
       file=".tmp_prepush_result_changed_files.log"
       echo "> Test Changed files"
       bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components / $file || exit_code=$?
-      # exit_code=${PIPESTATUS}
       echo "====================================================== Check test files"
       bash ./scripts/playwright_coverage_by_files.sh $file
       # rm $file
       echo "======================================================"
       echo ""
       cd ..
+      echo "exitcode $exit_code"
       exit $exit_code
 
 package:

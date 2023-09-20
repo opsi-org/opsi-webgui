@@ -20,7 +20,7 @@ seedfile() {
 }
 
 if [[ ${file} == "null" ]]; then
-    echo "Invalid testfile '${file}'"
+    echo "> Invalid testfile '${file}'"
     exit -2
 fi
 
@@ -39,18 +39,25 @@ fi
 if [[ ${file} == "all-changed" ]]; then
     cd /workspace/opsiweb/uib-components
     BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+    echo "> branch: $BRANCH"
     changedFiles=""
     if [[ "$BRANCH" == "main" ]]; then
-        changedFiles=$(git diff --stat main origin/main --name-only | grep -i -P 'opsiweb/uib-components')
+        changedFiles=$(git diff --stat main origin/main --name-only | grep -i -P 'opsiweb/uib-components' || exit_code=$?)
     else
-        changedFiles=$(git diff origin/main -r --no-commit-id --name-only)
+        changedFiles=$(git diff origin/main -r --no-commit-id --name-only || exit_code=$?)
     fi
+    echo "> exit_code $exit_code"
+    echo "> changed files 1: $changedFiles"
 
     # get only relevant files for playwright testing
-    changedFiles=$(echo $changedFiles | grep -i -P 'stories.js|test.component.js|test.component.js-snapshots/*|test.unit.js|.vue')
+    changedFiles=$(echo $changedFiles | grep -i -P 'stories.js|test.component.js|test.component.js-snapshots/*|test.unit.js|.vue' || exit_code=$?)
     # test also files where only snapshots where updated (remove ending -snapshots/...)
-    changedFiles=$(echo $changedFiles | tr ' ' '\n' | awk -F "-snapshots/" '{print $1}')
+    changedFiles=$(echo $changedFiles | tr ' ' '\n' | awk -F "-snapshots/" '{print $1}' || exit_code=$?)
 
+    if [[ "$changedFiles" == "" ]]; then
+        echo "> no changed vue/test files found"
+        exit 0;
+    fi
     # get filenames of testfiles
     basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
     # Iterate the string variable using for loop
@@ -69,7 +76,7 @@ if [[ ${file} == "all-changed" ]]; then
     fi
 
     COM="npm run $npm_command ${testfilesUnique} $PI"
-    echo "#run: $COM"
+    echo "> run: $COM"
     eval $COM
     # npm run test:all:delete-empty-results
     exit 0
