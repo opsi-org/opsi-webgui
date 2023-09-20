@@ -478,12 +478,9 @@ build:static:app:
     - npm i @nuxt/typescript-build
     - *define_globals
     - npm run generate-nossl
-    - apt install -y zip
-    - zip -r -q opsi-webgui.zip webgui
   artifacts:
     paths:
       - opsiweb/dist # not used...?
-      - opsi-webgui.zip
     expire_in: 3 day
   only:
     - main
@@ -508,6 +505,7 @@ build:addon:
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
+    - zip -r -q opsi-webgui.zip webgui
   only:
     - tags
     - main
@@ -515,6 +513,36 @@ build:addon:
     name: "opsi-webgui"
     paths:
       - webgui
+      - opsi-webgui.zip
+    expire_in: 3 day
+
+build:zip:
+  stage: build
+  dependencies:
+    - init:npm:production # doesnt download artifacts from static-app
+    - build:static:app
+  script:
+    - *install_tools
+    - pwd && ls -la opsiweb
+    - cd opsiweb # generate dist
+    - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
+    - *define_globals
+    - npm run generate-nossl
+    - cd .. # copy to addon
+    - mkdir -p backend/addon/webgui/data
+    - mkdir -p backend/addon/webgui/data/app
+    - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
+    - mkdir webgui
+    - cp -r backend/addon/webgui/* webgui/
+    - ls -lah webgui # debug
+    - zip -r -q opsi-webgui.zip webgui
+  only:
+    - tags
+    - main
+  artifacts:
+    name: "opsi-webgui"
+    paths:
+      - opsi-webgui.zip
     expire_in: 3 day
 
 #########################################################################
@@ -574,7 +602,7 @@ publish:git:
   stage: publish
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs:
-    - job: build:static:app
+    - job: build:zip
       artifacts: true
   rules:
     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
