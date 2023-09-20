@@ -522,7 +522,7 @@ upload:gittag:
   #   - build:static:app
   script:
     - FILE=".tmp_changelog"
-    - FILE_TMP=".tmp_cl"
+    # - FILE_TMP=".tmp_cl"
     - *prepare_git
     - *install_tools
     - echo "all tags... $(git tag)"
@@ -536,12 +536,10 @@ upload:gittag:
     - echo ""
     - *compare_versions
     - *prepare_tag
-    - git log --no-decorate --oneline
-    - git log --branches=[origin/main] --no-decorate --oneline
-    - git log --branches=origin/main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]"
-    - git log --branches=origin/main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]" | tee $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
-    - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort | tee $FILE
-    - rm -f $FILE_TMP
+    - git log --oneline --pretty=format:"%s" $LTAG.. | grep -e "\[*new*\]" | sort | tee $FILE || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
+    # - git log --branches=origin/main --no-decorate --oneline $LTAG..  | grep -e "\[*new*\]" | tee $FILE_TMP || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
+    # - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort | tee $FILE
+    # - rm -f $FILE_TMP
     - *push_tag
     - rm $FILE
     - exit 1234
