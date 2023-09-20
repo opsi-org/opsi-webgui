@@ -509,6 +509,7 @@ upload:gittag:
     - echo "Latest tag... $TAG"
     - *compare_versions
     - *prepare_tag
+    - git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]"
     - git log --branches=[main] --no-decorate --oneline $(git describe --tags --abbrev=0 @^)..@  | grep -e "\[*pub*\]" > $FILE_TMP
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort
     - awk '{$1=""}1' $FILE_TMP | awk '{$1=$1}1' | sort > $FILE
