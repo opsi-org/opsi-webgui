@@ -493,6 +493,7 @@ build:addon:
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
     --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=cicd&" \
     --data-urlencode "message=$(cat $FILE)" )
+  echo "$http_response: $(cat response.txt)"
   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
   echo ""
 
@@ -536,6 +537,7 @@ upload:gittag:
     - rm -f $FILE_TMP
     - *push_tag
     - rm $FILE
+    - exit 1
   # when: manual # triggered manually
   when: always # triggered manually
   only: # visible in this branches: (main!)
