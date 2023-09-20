@@ -482,13 +482,12 @@ build:addon:
   # "prepare tag"
   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
-  # curl -X POST --header "JOB-TOKEN: $CI_JOB_TOKEN" --form "tag_name=$TAG" --form "ref=$CI_COMMIT_SHA" "$CI_API_V4_URL/projects/${CI_PROJECT_ID}/releases"
 
 .push_tag: &push_tag |
   # post tag
   curl --request POST \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "https://gitlab.uib.gmbh/api/v4/projects/335/repository/tags?tag_name=$TAG&ref=main&message=test"
+    --url "https://gitlab.uib.gmbh/api/v4/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&message=$(cat $FILE)"
 
 
 .prepare_git: &prepare_git |
@@ -501,20 +500,21 @@ upload:gittag:
   # dependencies:
   #   - build:static:app
   script:
+    - FILE=".tmp_changelog"
     - *prepare_git
     - *install_tools
-    - TAG=$(git describe --tags --abbrev=0 @^)
-    - echo "$TAG"
-    - *push_tag
+    # - TAG=$(git describe --tags --abbrev=0 @^) # latest tag
     - *compare_versions
     - *prepare_tag
-    - awk '{$1=""}1' .tmp_changelog_filtered | awk '{$1=$1}1' | sort
-    - awk '{$1=""}1' .tmp_changelog_filtered | awk '{$1=$1}1' | sort > .tmp_changelog_filtered_sorted
-    - rm -f .tmp_changelog_filtered
-    - cat .tmp_changelog_filtered_sorted
-    - git tag -a $TAG -m "$(cat .tmp_changelog_filtered_sorted)"
+    - awk '{$1=""}1' .tmp_cl | awk '{$1=$1}1' | sort
+    - awk '{$1=""}1' .tmp_cl | awk '{$1=$1}1' | sort > $FILE
+    - rm -f .tmp_cl
+    - cat $FILE
+    - echo "$TAG"
+    - *push_tag
+    # - git tag -a $TAG -m "$(cat $FILE)"
     # - git push --tags https://$GITLAB_USER_NAME:${TOKEN_SUCHER}@gitlab.uib.gmbh/uib/opsiweb-ui.git HEAD:main
-    - rm .tmp_changelog_filtered_sorted
+    - rm $FILE
     # - opsi-dev-cli -l 5 changelog from-git output
     # - ./opsi-dev-tool --create-changelog output
     #- git tag -a
