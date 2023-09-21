@@ -78,8 +78,8 @@
                   </template>
                   <template v-else>
                     <b-icon :icon="icon.client" />
-                    {{ node.id }}
-                    <div class="float-right">
+                    {{ node.label }}
+                    <div v-if="node.raw.parent !== 'not_assigned'" class="float-right">
                       <b-button
                         class="border-0"
                         variant="outline-primary"
@@ -90,7 +90,6 @@
                         <b-icon :icon="icon.client" /><b-icon :icon="icon.group" font-scale="0.8" />
                       </b-button>
                       <b-button
-                        v-if="node.parent !== 'not_assigned'"
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
@@ -273,14 +272,12 @@ export default class VGroups extends Vue {
       return {
         id: node.id,
         label: node.text,
-        parent: node.parent,
         children: Object.values(node.children)
       }
     }
     return {
       id: node.id,
       label: node.text,
-      parent: node.parent,
       children: node.type === 'HostGroup' ? [] : undefined
     }
   }
