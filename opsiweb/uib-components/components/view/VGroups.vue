@@ -266,6 +266,9 @@ export default class VGroups extends Vue {
   }
 
   @selections.Getter public selectionDepots!: Array<string>
+  $root: any
+  $refs: any
+  $fetchState: any
 
   normalizer (node: any) {
     if (node.children) {

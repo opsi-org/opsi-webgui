@@ -63,6 +63,7 @@ interface LogRequest {
 export default class VClientLog extends Vue {
   $axios: any
   $t: any
+  $root: any
 
   @Prop({ }) id!: string
   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
