@@ -1,6 +1,7 @@
 <template>
   <b-sidebar
     id="quickpanel"
+    data-testid="BarBQuickPanel"
     right
     :visible="showQuickPanel"
     no-header
