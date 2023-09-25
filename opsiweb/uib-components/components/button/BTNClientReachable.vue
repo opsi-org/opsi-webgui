@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VClientreachable">
+  <div data-testid="BTNClientReachable">
     <OverlayOLoading :is-loading="isLoading" />
     <span v-if="reachability" class="ml-2">
       <b-icon v-if="reachability.toString() === 'true'" :icon="icon.check" />
@@ -23,7 +23,7 @@ import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 
 @Component({ mixins: [Icons] })
-export default class VClientReachable extends Vue {
+export default class BTNClientReachable extends Vue {
   icon: any
   $axios: any
   $t: any

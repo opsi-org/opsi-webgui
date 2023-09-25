@@ -100,7 +100,7 @@
             <ModalMClientReachable classes="hover" />
           </template>
           <template #cell(reachable)="row">
-            <ViewVClientReachable :id="row.item.clientId" :classes="{'row-selected': selectionClients.includes(row.item.clientId)}" />
+            <ButtonBTNClientReachable :id="row.item.clientId" :classes="{'row-selected': selectionClients.includes(row.item.clientId)}" />
           </template>
 
           <template #cell(uefi)="row">
