@@ -305,7 +305,8 @@ export default class VAdminMaintenance extends Vue {
 
   async requestRestore () {
     const host = window.location.hostname
-    this.$axios.setBaseURL('https://' + host + ':4447/addons/webgui')
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
     await this.$axios.$post('/api/backup/restore', this.restorebackup)
       .then(() => {
         const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
@@ -331,7 +332,8 @@ export default class VAdminMaintenance extends Vue {
     formData.append('file', this.file)
 
     const host = window.location.hostname
-    this.$axios.setBaseURL('https://' + host + ':4447')
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    this.$axios.setBaseURL('https://' + host + ':' + port)
 
     await this.$axios.$post('/file-transfer/multipart', formData)
       .then(async (response) => {
@@ -343,7 +345,7 @@ export default class VAdminMaintenance extends Vue {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.$axios.setBaseURL('https://' + host + ':4447/addons/webgui')
+    this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
     this.isLoading = false
   }
 }
