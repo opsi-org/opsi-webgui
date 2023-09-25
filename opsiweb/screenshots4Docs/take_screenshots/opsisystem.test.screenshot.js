@@ -5,10 +5,10 @@ const en = require('../../uib-components/locale/en.json')
 const de = require('../../uib-components/locale/de.json')
 
 test('opsi admin', async ({ page }) => {
-  await callStoryId(page, 'view-v-admin', 'v-admin')
+  await callStoryId(page, 'tabs-t-admin', 't-admin')
   // await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VAdmin"]')
+  const component = await page.locator('[data-testid="TAdmin"]')
   await page.evaluate((val) => { document.querySelector('.titleclients').innerHTML = val }, en['title.clients'])
   await page.evaluate((val) => { document.querySelector('.titleproducts').innerHTML = val }, en['title.products'])
   await component.screenshot({ path: './screenshots/en/opsi-webgui_opsisystem_admin.png' })
@@ -57,10 +57,10 @@ test('opsi terminal', async ({ page }) => {
 })
 
 test('opsi healthcheck', async ({ page }) => {
-  await callStoryId(page, 'view-v-server-health', 'v-server-health')
+  await callStoryId(page, 'tabs-t-server-health', 't-server-health')
   // await page.click('.nav-tabs .nav-link:not(.active)')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
-  const component = await page.locator('[data-testid="VServerHealthCheck"]')
+  const component = await page.locator('[data-testid="TServerHealth"]')
 
   await page.evaluate((val) => { document.querySelector('.nav-link.active').innerHTML = val }, en['title.healthcheck'])
   await page.evaluate((val) => { document.querySelector('.nav-link:not(.active)').innerHTML = val }, en['title.diagnostics'])

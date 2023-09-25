@@ -23,7 +23,7 @@
           />
         </b>
       </b-row>
-      <ViewVQuickSelections />
+      <TabsTQuickSelections />
       <b-row class="text-smaller mt-2 mb-2">
         <b>{{ $t('label.quickaction') }} </b>
       </b-row>

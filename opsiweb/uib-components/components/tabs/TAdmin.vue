@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VAdmin" class="VAdmin">
+  <div data-testid="TAdmin" class="TAdmin">
     <b-tabs small lazy>
       <b-tab :title="$t('form.general')" active>
         <b-row class="mt-4 mb-2 text-small">

@@ -1,5 +1,5 @@
 <template>
-  <b-tabs justified small lazy class="QPTabs">
+  <b-tabs justified small lazy data-testid="TQuickSelections" class="QPTabs">
     <b-tab id="qp-tab-selection" active>
       <template #title>
         <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
@@ -109,7 +109,7 @@ import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
 @Component({ mixins: [Icons] })
-export default class VQuickSelections extends Vue {
+export default class TQuickSelections extends Vue {
   icon:any
   $mq:any
   @selections.Getter public selectionDepots!: Array<string>
