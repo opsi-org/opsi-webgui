@@ -232,10 +232,10 @@ init:transifex:
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
     # - ./opsi-dev-tool -l debug transifex upload-resource opsiweb/uib-components/locale/webgui_en.json
     # - ./opsi-dev-tool transifex download-translations
-    - ./opsi-dev-cli --version
-    - ./opsi-dev-cli transifex --help
+    # - ./opsi-dev-cli --version
+    # - ./opsi-dev-cli transifex --help
     - ./opsi-dev-cli transifex download-translations --help
-    - ./opsi-dev-cli -l debug transifex download-translations opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de #-l fr
+    - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de #-l fr
   only:
     - tags
     - main
