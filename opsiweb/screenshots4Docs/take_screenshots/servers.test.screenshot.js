@@ -1,7 +1,6 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
 const en = require('../../uib-components/locale/opsiweb-ui_en.json')
-const en = require('../../uib-components/locale/opsiweb-ui_en.json')
 let de
 try {
   de = require('../../uib-components/locale/opsiweb-ui_de.json')
