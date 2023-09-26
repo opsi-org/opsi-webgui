@@ -19,13 +19,15 @@
       @click="changeLanguage(lang)"
     >
       <span style="text-transform:uppercase;"> {{ lang }} </span>
-
+      <span>{{ (['en', 'de', 'fr'].includes(lang)) ? '': $t('button.lang.community-created') }}</span>
     </b-dropdown-item>
     <b-dropdown-item
       :data-testid="`DropdownDDLang-Item-contribute`"
-      disabled
+      :title="$t('button.contribute-transifex.tooltip')"
+      href="https://explore.transifex.com/opsi-org/opsiorg/"
+      target="_blank"
     >
-      <span style="text-transform:uppercase;"> {{ $t('button.contribute-transifex') }} </span>
+      <span> {{ $t('button.contribute-transifex') }} </span>
     </b-dropdown-item>
   </b-dropdown>
 </template>
