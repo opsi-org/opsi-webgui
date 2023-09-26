@@ -1,7 +1,7 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/webgui_en.json')
-const de = require('../../uib-components/locale/webgui_de.json')
+const en = require('../../uib-components/locale/opsiweb-ui_en.jsonjsonjson')
+const de = require('../../uib-components/locale/opsiweb-ui_de.jsonjsonjson')
 
 test('Quick Save', async ({ page }) => {
   await callStoryId(page, 'checkbox-c-b-quick-save', 'cb-quick-save')

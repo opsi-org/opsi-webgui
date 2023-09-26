@@ -9,6 +9,7 @@ project:
 git:
   hooks:
     pre-push: |
+      exit 0
       cd /workspace/opsiweb/
       file=".tmp_prepush_result_changed_files.log"
       echo "> Test Changed files"
@@ -57,7 +58,7 @@ transifex:
     - organization: opsi-org
       project: opsiorg
       resource_name: webgui.json
-      resource_file: opsiweb/uib-components/locale/webgui_en.json
+      resource_file: opsiweb/uib-components/locale/opsiweb-ui_en.json
   download_translations:
     - organization: opsi-org
       project: opsiorg

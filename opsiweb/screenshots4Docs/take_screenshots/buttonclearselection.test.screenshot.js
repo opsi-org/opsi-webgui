@@ -1,12 +1,7 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-<<<<<<< HEAD
-const en = require('../../uib-components/locale/webgui_en.json')
-const de = require('../../uib-components/locale/webgui_de.json')
-=======
-// const en = require('../../uib-components/locale/en.json')
-// const de = require('../../uib-components/locale/de.json')
->>>>>>> main
+const en = require('../../uib-components/locale/opsiweb-ui_en.json')
+const de = require('../../uib-components/locale/opsiweb-ui_de.json')
 
 test('Button Clear Selection', async ({ page }) => {
   await callStoryId(page, 'button-btn-clear-selection', 'btn-clear-selection')

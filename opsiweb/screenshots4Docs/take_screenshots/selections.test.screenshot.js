@@ -1,7 +1,7 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/webgui_en.json')
-const de = require('../../uib-components/locale/webgui_de.json')
+const en = require('../../uib-components/locale/opsiweb-ui_en.jsonjson')
+const de = require('../../uib-components/locale/opsiweb-ui_de.jsonjson')
 
 test('Selections', async ({ page }) => {
   await callStoryId(page, 'modal-m-selections-all', 'm-selections-all')
