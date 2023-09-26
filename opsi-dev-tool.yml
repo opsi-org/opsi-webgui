@@ -1,6 +1,6 @@
 project:
   name: opsi-webgui
-  version: &project_version 4.3.15
+  version: &project_version 4.3.16
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
