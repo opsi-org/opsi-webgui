@@ -233,6 +233,8 @@ init:transifex:
     # - ./opsi-dev-tool -l debug transifex upload-resource opsiweb/uib-components/locale/webgui_en.json
     # - ./opsi-dev-tool transifex download-translations
     - ./opsi-dev-cli --version
+    - ./opsi-dev-cli transifex --help
+    - ./opsi-dev-cli transifex download-translations --help
     - ./opsi-dev-cli -l debug transifex download-translations opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de #-l fr
   only:
     - tags
