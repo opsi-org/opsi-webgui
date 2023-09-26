@@ -1,28 +1,29 @@
 <template>
-  <b-form-row class="GCProductPropertyValue_Container justify-content-md-center">
+  <b-form-row class="GCProductPropertyValue_Container">
     <b-col
-      class="GCProductPropertyValue_Value"
-      :class="{'d-none' : rowItem.propertyId.includes('password') && !showValue}"
-      @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${selectedValues}`: () => {} } "
+      class="GCProductPropertyValue_Value justify-content-md-center"
+      @click.middle="() => { (rowItem.editable) ? rowItem.newValue = `${selectedValues}` : () => {} } "
     >
       <b-form-checkbox
         v-if="rowItem.type=='BoolProductProperty'"
-        :class="{'GCProductPropertyValue_ValueBool':true,'value-changed-not-saved': !isOrigin }"
+        :class="{'GCProductPropertyValue_ValueBool': true,'value-changed-not-saved': !isOrigin }"
         :checked="selectedValues[0]"
         :disabled="config?.read_only"
-        :aria-label="rowItem.propertyId + (selectedValues[0]?'checked':'unchecked')"
+        :aria-label="rowItem.propertyId + (selectedValues[0] ? 'checked' : 'unchecked')"
         :indeterminate="visibleValueBoolIndeterminate"
         @change="handleBoolChange"
       >
-        <span style="font-size: 25px;"> {{ isOrigin? '': $t('notOrigin') }} </span>
+        <span style="font-size: 25px;"> {{ isOrigin? '' : $t('notOrigin') }} </span>
       </b-form-checkbox>
+      <IconILoading v-else-if="loading" />
       <TreeTSDefault
         v-else
         :id="'PropertyValue-' + rowItem.propertyId"
         type="propertyvalues"
+        :class="{'d-none': rowItem.propertyId.includes('password') && !showValue}"
         :disabled="config?.read_only"
         :text="undefined"
-        :show-selection-count="selectedValues.length>1 || !isOrigin"
+        :show-selection-count="(selectedValues.length > 1 || !isOrigin)"
         :limit-visible-selection="1"
         :multi="rowItem.multiValue"
         :editable="rowItem.editable"
@@ -33,8 +34,8 @@
         @change="selectionChanged"
       />
     </b-col>
-    <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn" cols="*">
-      <b-button :pressed.sync="showValue" size="sm" variant="outline-primary">
+    <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn d-flex justify-content-end mr-1">
+      <b-button :pressed.sync="showValue" size="md" variant="outline-primary">
         <b-icon :icon="showValue ? icon.valueShow : icon.valueHide" />
       </b-button>
     </b-col>
@@ -64,10 +65,13 @@ const config = namespace('config-app')
 
 @Component({ mixins: [Icons] })
 export default class GCProductPropertyValue extends Vue {
+  console: any
   $t:any
+  $axios:any
   icon:any
   @Prop() rowItem!: IProperty
   @Prop() clients2depots!: IObjectString2String
+  @Prop() isLoading!: boolean
 
   @config.Getter public config!: IObjectString2Boolean
   @selections.Getter public selectionClients!: Array<string>
@@ -76,6 +80,7 @@ export default class GCProductPropertyValue extends Vue {
   @changes.Mutation public deleteFromProdChangesWhere!: (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) => void
   @settings.Getter public quicksave!: boolean
 
+  propIdsToFetchProdIds = ['setup_after_install', 'setup_after_capture', 'additional_packages', 'products_to_exclude', 'products_to_include', 'products_to_install', 'products_to_run_always', 'products_to_uninstall']
   showValue : boolean = false
   changedValue: Array<string>|undefined
   selectedValues!: Array<string|boolean>
@@ -83,15 +88,19 @@ export default class GCProductPropertyValue extends Vue {
   isOrigin: boolean = true
   visibleValueBool!: boolean
   visibleValueBoolIndeterminate!: boolean
+  productIdsForSpecificKeys: Array<string> = []
+  loading: boolean = true
 
   created () {
     this.initSelection()
   }
 
+  async fetch () {
+    await this.fetchProducts()
+  }
+
   initSelection () {
-    // console.log('init selection with changes', this.selectedValues)
     const originalValue = JSON.parse(JSON.stringify(this.selectedValuesOriginal))
-    // console.log('init selection with changes', originalValue)
     if (this.selectionClients.length > 0) {
       this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionClients, 'clientId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionClients, 'clientId')
@@ -99,7 +108,6 @@ export default class GCProductPropertyValue extends Vue {
       this.selectedValues = this.getValuesWithChanges(originalValue, this.selectionDepots, 'depotId')
       this.tooltipChanges = this.updateChangesForTooltip(this.selectionDepots, 'depotId')
     }
-    // console.log('init selection with changes selectedValues', this.selectedValues)
   }
 
   @Watch('showValue', { deep: true }) showValuesChanged () { if (!this.showValue) { this.rowItem._showDetails = this.showValue } }
@@ -127,11 +135,12 @@ export default class GCProductPropertyValue extends Vue {
   }
 
   get allOptionsUnique () {
-    const options = this.uniques([...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues ?? []])
+    const options:Array<string> = this.uniques([...this.productIdsForSpecificKeys, ...this.rowItem.allValues, this.rowItem.newValue, ...this.rowItem.newValues ?? []])
+
     if (this.selectedValuesOriginal.includes(this.$t('values.mixed') as string)) {
       options.push(this.$t('values.mixed') as string)
     }
-    return options.filter(val => val !== null && val !== undefined)
+    return options.filter(val => val !== null && val !== undefined).sort()
   }
 
   get selectedValuesOriginal () {
@@ -175,10 +184,29 @@ export default class GCProductPropertyValue extends Vue {
     this.selectedValuesChanged()
   }
 
+  async fetchProducts () {
+    if (!this.propIdsToFetchProdIds.includes(this.rowItem.propertyId)) {
+      this.loading = false
+      return
+    }
+
+    await this.$axios.$get(`/api/opsidata/products/depots?type=LocalbootProduct&selectedDepots=[${this.selectionDepots}]`)
+      .then((response) => {
+        this.productIdsForSpecificKeys = Object.keys(response)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _tmpJustToRefetch = this.allOptionsUnique
+        this.loading = false
+      }).catch((error) => {
+        this.loading = false
+        // this.errorText.properties = (this as any).$t('message.error.fetch.productProperty')
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
+        ref.alert(detailedError, 'danger')
+      })
+  }
+
   selectionChanged (values: Array<string|boolean>, reset: boolean = false) {
-    // console.log('selectionChanged PPValue ', values, reset)
     if (reset !== true) {
-      // console.log('not reseting - overwrite PPValue ', values, reset)
       this.selectedValues = JSON.parse(JSON.stringify(values))
       this.selectedValuesChanged()
       this.initSelection()
@@ -259,5 +287,8 @@ export default class GCProductPropertyValue extends Vue {
 <style>
 .GCProductPropertyValue_ValueBool {
   display:inline-block !important;
+}
+.GCProductPropertyValue_ShowBtn {
+  max-width: fit-content !important;
 }
 </style>

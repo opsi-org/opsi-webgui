@@ -1,11 +1,26 @@
 project:
   name: opsi-webgui
-  version: &project_version 4.3.13
+  version: &project_version 4.3.15
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
     - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
+git:
+  hooks:
+    pre-push: |
+      cd /workspace/opsiweb/
+      file=".tmp_prepush_result_changed_files.log"
+      echo "> Test Changed files"
+      bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components / $file || exit_code=$?
+      echo "====================================================== Check test files"
+      bash ./scripts/playwright_coverage_by_files.sh $file
+      # rm $file
+      echo "======================================================"
+      echo ""
+      cd ..
+      echo "exitcode $exit_code"
+      exit $exit_code
 
 package:
   name: opsi-webgui

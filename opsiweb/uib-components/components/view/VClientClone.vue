@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VClientClone" class="VClientClone">
-    <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') + ' - '" :subtitle="id" :closeroute="closeroute" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') +''+ $t('title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <GridGFormItem v-if="!asChild" :label="$t('Select a client to clone:')">
       <template #value>
         <slot name="IDSelection" />

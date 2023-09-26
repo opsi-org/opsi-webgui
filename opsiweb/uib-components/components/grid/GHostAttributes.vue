@@ -36,7 +36,8 @@
       <template #value>
         <div class="float-right">
           <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="$fetch">
-            <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
+            <b-icon :icon="icon.reset" />
+            <span class="resetButton">{{ $t('button.reset') }}</span>
           </b-button>
           <b-button
             id="updateButton"
@@ -46,7 +47,8 @@
             size="sm"
             @click="updateAttributes()"
           >
-            <b-icon :icon="icon.check" /> {{ $t('button.save') }}
+            <b-icon :icon="icon.check" />
+            <span class="updateButton">{{ $t('button.save') }}</span>
           </b-button>
         </div>
       </template>

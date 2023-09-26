@@ -521,7 +521,7 @@
   --b-badge: var(--background);
   --bg-stretched_link: rgba(0, 0, 0, 0);
   --bg-table_td_th: var(--general-fg);
-  /* --table-border: #ced4da; */
+  /* --table-border: var(--b-tab_content); */ /* table row border */
   /* --component:#495057; */
 
 }

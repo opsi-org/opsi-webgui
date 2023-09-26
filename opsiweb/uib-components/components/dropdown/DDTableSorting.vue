@@ -80,7 +80,7 @@ export default class DDTableSorting extends BDropdown {
 <style>
 .selectedSort .dropdown-item {
   color: var(--light) !important;
-  background-color: var(--primary) !important;
+  background-color: var(--primary-dark) !important;
 }
 .DDTableSorting  .dropdown-menu li.selectedSort {
   color: var(--light) !important;

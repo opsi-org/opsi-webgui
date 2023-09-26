@@ -10,7 +10,8 @@ export default {
 
 const PrimaryTemplate = (_args, { argTypes }) => ({
   props: Object.keys(argTypes),
-  template: '<ButtonBTNRefetch v-bind="$props" />'
+  // template: '<ButtonBTNRefetch v-bind="$props" />'
+  template: '<ButtonBTNRefetch :is-loading="false" tooltip="TT" :refetch="() => {}" />'
 })
 
 export const BTNRefetch = PrimaryTemplate.bind({})

@@ -74,9 +74,95 @@ module.exports.data = {
           product1:{ id:'product1;group2', type:'ObjectToGroup', text:'product1', parent:'group2'},
           product2:{ id:'product2;group2', type:'ObjectToGroup', text:'product2', parent:'group2'}
         }}
+      },
+    },
+    productgroups: {
+      "groups": {
+        "group1": {
+          "id": "group1",
+          "type": "ProductGroup",
+          "text": "group1",
+          "parent": "root",
+          "children": {
+            "hwaudit": {
+              "id": "hwaudit;group1",
+              "type": "ObjectToGroup",
+              "text": "hwaudit",
+              "parent": "group1"
+            }
+          }
+        },
+        "group2": {
+          "id": "group2",
+          "type": "ProductGroup",
+          "text": "group2",
+          "parent": "root",
+          "children": {
+            "hwaudit": {
+              "id": "hwaudit;group2",
+              "type": "ObjectToGroup",
+              "text": "hwaudit",
+              "parent": "group2"
+            },
+            "swaudit": {
+              "id": "swaudit;group2",
+              "type": "ObjectToGroup",
+              "text": "swaudit",
+              "parent": "group2"
+            }
+          }
+        },
+        "group3": {
+          "id": "group3",
+          "type": "ProductGroup",
+          "text": "group3",
+          "parent": "root",
+          "children": {
+            "firefox": {
+              "id": "firefox;group3",
+              "type": "ObjectToGroup",
+              "text": "firefox",
+              "parent": "group3"
+            },
+            "chrome": {
+              "id": "chrome;group3",
+              "type": "ObjectToGroup",
+              "text": "chrome",
+              "parent": "group3"
+            },
+            "edge": {
+              "id": "edge;group3",
+              "type": "ObjectToGroup",
+              "text": "edge",
+              "parent": "group3"
+            }
+          }
+        }
       }
     },
-    hosts: {"groups":{"groups":{"id":"groups;None","type":"HostGroup","text":"groups","parent":null,"allowed":true,"children":null},"clientdirectory":{"id":"clientdirectory;None","type":"HostGroup","text":"clientdirectory","parent":null,"allowed":true,"children":null},"clientlist":{"id":"clientlist;None","type":"HostGroup","text":"clientlist","parent":null,"hasAnySelection":false,"allowed":true,"children":null}}},
+    hosts: {"groups":{
+      "groups":
+        {"id":"groups;None","type":"HostGroup","text":"groups","parent":null,"allowed":true,"children":null},
+      "clientdirectory":
+        {"id":"clientdirectory;None","type":"HostGroup","text":"clientdirectory","parent":null,"allowed":true,"children":null},
+      "clientlist":{"id":"clientlist;None","type":"HostGroup","text":"clientlist","parent":null,"hasAnySelection":false,"allowed":true,"children":null}
+      }},
+
+
+    hostgroups: {
+      groups: { id: 'groups;None', type: 'HostGroup', text: 'groups', parent: null, children: [
+        { id: 'groups;TestGroup1', type: 'HostGroup', text: 'TestGroup1', parent: 'groups', children: [], allowed: true },
+        { id: 'groups;TestGroup2', type: 'HostGroup', text: 'TestGroup2', parent: 'groups', children: [], allowed: true },
+        { id: 'groups;TestGroup3', type: 'HostGroup', text: 'TestGroup3', parent: 'groups', children: [], allowed: true },
+      ], allowed: true },
+      clientdirectory: { id: 'clientdirectory;None', type: 'HostGroup', text: 'clientdirectory', parent: null, children: [
+        { id: 'clientdirectory;ClientDirGroup1', type: 'HostGroup', text: 'ClientDirGroup1', parent: 'clientdirectory', children: [], allowed: true },
+        { id: 'clientdirectory;ClientDirGroup2', type: 'HostGroup', text: 'ClientDirGroup2', parent: 'clientdirectory', children: [], allowed: true },
+        { id: 'clientdirectory;ClientDirGroup3', type: 'HostGroup', text: 'ClientDirGroup3', parent: 'clientdirectory', children: [], allowed: true }
+
+      ], allowed: true },
+      clientlist: { id: 'clientlist;None', type: 'HostGroup', text: 'clientlist', parent: null, children: null, hasAnySelection: true, allowed: true }
+    },
   },
 
   products: [

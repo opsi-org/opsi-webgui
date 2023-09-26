@@ -20,6 +20,8 @@ test('Client Configuration', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.lastSeen').innerHTML = val }, en['table.fields.lastSeen'])
   await page.evaluate((val) => { document.querySelector('.opsiHostKey').innerHTML = val }, en['table.fields.hostKey'])
   await page.evaluate((val) => { document.querySelector('.oneTimePassword').innerHTML = val }, en['table.fields.otp'])
+  await page.evaluate((val) => { document.querySelector('span.resetButton').innerHTML = val }, en['button.reset'])
+  await page.evaluate((val) => { document.querySelector('span.updateButton').innerHTML = val }, en['button.save'])
   await component.screenshot({ path: './screenshots/en/opsi-webgui_clientconfig.png' })
 
   await page.evaluate((val) => { document.querySelector('.hostattr').innerHTML = val }, de['title.hostattr'])
@@ -32,5 +34,7 @@ test('Client Configuration', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.lastSeen').innerHTML = val }, de['table.fields.lastSeen'])
   await page.evaluate((val) => { document.querySelector('.opsiHostKey').innerHTML = val }, de['table.fields.hostKey'])
   await page.evaluate((val) => { document.querySelector('.oneTimePassword').innerHTML = val }, de['table.fields.otp'])
+  await page.evaluate((val) => { document.querySelector('span.resetButton').innerHTML = val }, de['button.reset'])
+  await page.evaluate((val) => { document.querySelector('span.updateButton').innerHTML = val }, de['button.save'])
   await component.screenshot({ path: './screenshots/de/opsi-webgui_clientconfig.png' })
 })

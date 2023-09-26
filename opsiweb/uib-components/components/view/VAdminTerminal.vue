@@ -1,32 +1,32 @@
 <template>
   <div data-testid="VAdminTerminal" class="VAdminTerminal">
-    <GridGFormItem :label="$t('table.fields.terminalId')" labelclass="lblTerminalId">
+    <GridGFormItem :label="$t('table.fields.terminalId')" labelclass="lblTerminalId" variant="longvalue">
       <template #value>
         <b-input-group>
           <b-form-input id="terminalId" v-model="terminalId" size="sm" :aria-label="$t('table.fields.terminalId')" type="text" />
           <template #append>
-            <b-button variant="primary" size="sm" @click="() => {terminalId = ''}">
+            <b-button class="buttonclear1" variant="primary" size="sm" @click="() => {terminalId = ''}">
               {{ $t("button.clear") }}
             </b-button>
           </template>
         </b-input-group>
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.terminalChannel')" labelclass="lblTerminalChannel">
+    <GridGFormItem :label="$t('table.fields.terminalChannel')" labelclass="lblTerminalChannel" variant="longvalue">
       <template #value>
         <b-input-group>
           <b-form-input id="terminalChannel" v-model="terminalChannel" size="sm" :aria-label="$t('table.fields.terminalChannel')" type="text" />
           <template #append>
-            <b-button variant="primary" size="sm" @click="() => {terminalChannel = terminalChannelDefault}">
+            <b-button class="buttonclear2" variant="primary" size="sm" @click="() => {terminalChannel = terminalChannelDefault}">
               {{ $t("button.clear") }}
             </b-button>
           </template>
         </b-input-group>
       </template>
     </GridGFormItem>
-    <GridGFormItem>
+    <GridGFormItem variant="longvalue">
       <template #value>
-        <b-button variant="primary" size="sm" block @click="init">
+        <b-button class="buttonreconnect" variant="primary" size="sm" block @click="init">
           {{ $t('button.reconnect') }}
         </b-button>
       </template>
@@ -56,6 +56,8 @@ const cache = namespace('data-cache')
 
 @Component({ mixins: [MBus] })
 export default class VAdminTerminal extends Vue {
+  $t: any
+  $refs: any
   @Prop({ }) id!: string
   @Prop({ }) type!: string
   @Prop({ default: false }) 'asChild'!: string
@@ -142,7 +144,7 @@ export default class VAdminTerminal extends Vue {
     this.mbTerminal.loadAddon(webLinksAddon)
     this.mbTerminal.fitAddon = new FitAddon()
     this.mbTerminal.loadAddon(this.mbTerminal.fitAddon)
-    this.mbTerminal.open(this.$refs.terminalcontainer as any)
+    this.mbTerminal.open(this?.$refs?.terminalcontainer as any)
     this.mbTerminal.fitAddon.fit()
 
     this.wsTerminalOpen(this.terminalId, this.mbTerminal)

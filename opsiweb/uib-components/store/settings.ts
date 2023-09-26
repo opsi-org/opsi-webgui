@@ -2,14 +2,15 @@ import Cookie from 'js-cookie'
 import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 import { ITheme } from '../.utils/types/tsettings'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
+import { Cookies } from '../mixins/cookies'
 interface IColumnLayoutCollaped {
   parentId: string,
   value: boolean
 }
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
-  _language: string = Cookie.get('Language') as string || 'en'
-  _quicksave: boolean = Cookie.get('Quicksave') as string === 'true' || (Cookie.get('Quicksave') as string === undefined) || false
+  _language: string = Cookies.options.methods.getCookie('Language') as string || 'en'
+  _quicksave: boolean = Cookies.options.methods.getCookie('Quicksave') as string === 'true' || (Cookie.get('Quicksave') as string === undefined) || false
   colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' }
   _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
   _expiresInterval!: NodeJS.Timeout|undefined
@@ -19,10 +20,10 @@ export default class Settings extends VuexModule {
   get quicksave (): boolean { return this._quicksave }
   get expiresInterval (): NodeJS.Timeout|undefined { return this._expiresInterval }
   get colortheme (): ITheme {
-    if (Cookie.get('theme.title')) {
+    if (Cookies.options.methods.getCookie('theme.title')) {
       const c: ITheme = {
-        rel: Cookie.get('theme.rel') as string,
-        title: Cookie.get('theme.title') as string
+        rel: Cookies.options.methods.getCookie('theme.rel') as string,
+        title: Cookies.options.methods.getCookie('theme.title') as string
       }
       c.timestamp = (JSON.parse(Cookie.get('theme.timestamp') as string)) as number
       if (c.rel !== this.colorthemeobj.rel) {
@@ -47,12 +48,13 @@ export default class Settings extends VuexModule {
 
   @VuexMutation public setLanguage (lang: string) {
     this._language = lang
-    Cookie.set('Language', this._language, { expires: 365 })
+    // Cookie.set('Language', this._language, { expires: 365 })
+    Cookies.options.methods.setCookie('Language', this._language)
   }
 
   @VuexMutation public setQuicksave (isQuickSave: boolean) {
     this._quicksave = isQuickSave
-    Cookie.set('Quicksave', (isQuickSave) ? 'true' : 'false', { expires: 365 })
+    Cookies.options.methods.setCookie('Quicksave', (isQuickSave) ? 'true' : 'false')
   }
 
   @VuexMutation public setColumnLayoutCollapsed (obj: IColumnLayoutCollaped) {
@@ -62,8 +64,8 @@ export default class Settings extends VuexModule {
   @VuexMutation public setColorTheme (newThemeObj: ITheme) {
     this.colorthemeobj = newThemeObj
     this.colorthemeobj.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
-    Cookie.set('theme.title', this.colorthemeobj.title)
-    Cookie.set('theme.timestamp', JSON.stringify(this.colorthemeobj.timestamp))
-    Cookie.set('theme.rel', this.colorthemeobj.rel)
+    Cookies.options.methods.setCookie('theme.title', this.colorthemeobj.title)
+    Cookies.options.methods.setCookie('theme.timestamp', JSON.stringify(this.colorthemeobj.timestamp))
+    Cookies.options.methods.setCookie('theme.rel', this.colorthemeobj.rel)
   }
 }

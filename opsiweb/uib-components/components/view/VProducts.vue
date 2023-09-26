@@ -26,6 +26,7 @@
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
+              :fetched-data-clients2-depots="fetchedDataClients2Depots"
               @fetch-products="fetchProducts"
             />
           </b-tab>
@@ -44,6 +45,7 @@
               :rowident="rowId"
               :route-redirect-with="routeRedirectWith"
               :child="child"
+              :fetched-data-clients2-depots="fetchedDataClients2Depots"
               @fetch-products="fetchProducts"
             />
           </b-tab>
@@ -57,21 +59,27 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
 import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 import { Client } from '../../mixins/get'
 import { Icons } from '../../mixins/icons'
+import { Cookies } from '../../mixins/cookies'
 import { ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-import { IObjectString2Any } from '../../.utils/types/tgeneral'
+import { IObjectString2Any, IObjectString2String } from '../../.utils/types/tgeneral'
 const selections = namespace('selections')
 
-@Component({ mixins: [Client, Icons] })
+@Component({ mixins: [Client, Icons, Cookies] })
 export default class VProducts extends Vue {
+  fetchedDataClients2Depots!: IObjectString2String // mixin Client
+  // Cookie: any
+  isCookie: any
+  includesCookie!: any
+  getKeyCookie!: any
+  setCookie: any
   icon: any
   $mq: any
   $route:any
   $router:any
-  $t:any
+  $t!:any
   $axios: any
   getClientToDepot:any
 
@@ -89,69 +97,70 @@ export default class VProducts extends Vue {
   netboot: string = ''
   totalnetboot: number = 0
   tableloaded: boolean = false
+  activeLocalbootTab: boolean = true
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+      visible: this.includesCookie(`column_${this.id}`, 'selected', true)
     },
     installationStatus: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus') : true
+      visible: this.includesCookie(`column_${this.id}`, 'installationStatus', true)
     },
     actionResult: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionResult') as string, key: 'actionResult', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult') : true
+      visible: this.includesCookie(`column_${this.id}`, 'actionResult', true)
     },
     productId: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.productId') as string, key: 'productId', _fixed: true, sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('productId') : true
+      visible: this.includesCookie(`column_${this.id}`, 'productId', true)
     },
     name: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('name') : false
+      visible: this.includesCookie(`column_${this.id}`, 'name', false)
     },
     description: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('description') : false
+      visible: this.includesCookie(`column_${this.id}`, 'description', false)
     },
     modificationTime: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.modificationTime') as string, key: 'modificationTime', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('modificationTime') : false
+      visible: this.includesCookie(`column_${this.id}`, 'modificationTime', false)
     },
     priority: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.priority') as string, key: 'priority', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('priority') : false
+      visible: this.includesCookie(`column_${this.id}`, 'priority', false)
     },
     // selectedDepots: { // eslint-disable-next-line object-property-newline
     //   label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', disabled: true,
-    //   visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedDepots') : false
+    //   visible: this.includesCookie('column_' + this.id, 'selectedDepots', false)
     // },
     // selectedClients: { // eslint-disable-next-line object-property-newline
     //   label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', disabled: true,
-    //   visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selectedClients') : false
+    //   visible: this.includesCookie('column_' + this.id, 'selectedClients', false)
     // },
     version: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version') : false
+      visible: this.includesCookie('column_' + this.id, 'version', false)
     },
     actionProgress: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionProgress') : false
+      visible: this.includesCookie('column_' + this.id, 'actionProgress', false)
     },
     actionRequest: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionRequest') : false
+      visible: this.includesCookie('column_' + this.id, 'actionRequest', false)
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
+      visible: this.includesCookie('column_' + this.id, 'rowactions', false),
       class: 'col-rowactions'
     }
   }
 
   tableInfo: ITableInfo = {
-    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId',
-    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : this.sortdesc || false,
+    sortBy: this.getKeyCookie(`sorting_${this.id}`, 'sortBy', this.sortby || 'productId'),
+    sortDesc: this.getKeyCookie(`sorting_${this.id}`, 'sortDesc', this.sortdesc || false),
     filterQuery: '',
     headerData: this.headerData
   }
@@ -160,9 +169,6 @@ export default class VProducts extends Vue {
     if (this.secondColumnOpened && !this.child) {
       this.$router.push('/products/')
     }
-    // if (!this.tableInfo.sortBy) {
-    //   this.tableInfo.sortBy = Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : this.sortby || 'productId'
-    // }
     if (this.sortby) {
       this.tableInfo.sortBy = this.sortby
       this.tableInfo.sortDesc = true
@@ -173,6 +179,16 @@ export default class VProducts extends Vue {
   async fetch () {
     await this.getNetbootProductsCount()
     this.updateColumnVisibility()
+  }
+
+  @Watch('sortby', { deep: true }) async sortByChanged () {
+    if (this.sortby) {
+      this.tableInfo.sortBy = this.sortby
+      this.tableInfo.sortDesc = true
+    }
+    this.updateColumnVisibility()
+    await this.triggerFetch()
+    this.headerData[this.sortby].visible = true
   }
 
   @Watch('selectionClients', { deep: true }) selectionClientsChanged () {
@@ -218,7 +234,7 @@ export default class VProducts extends Vue {
         visibleItems[h.key] = h.visible || false
       }
     })
-    Cookie.set('column_' + this.id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
+    this.setCookie('column_' + this.id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
   }
 
   async triggerFetch () {
@@ -292,6 +308,7 @@ export default class VProducts extends Vue {
       params.selected = JSON.stringify(thiss.selectionProducts)
       // params.sortBy = '["selected", "productId"]'
     }
+    console.log('Sort by: ', params)
     return params
   }
 }

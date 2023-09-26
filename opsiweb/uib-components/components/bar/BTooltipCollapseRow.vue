@@ -5,13 +5,13 @@
       data-testid="BarBTooltipCollapseRow"
       class="collapse-navitem BarBTooltipCollapseRow"
     >
-      <b-th class="text-left">
-        <span v-if="collapseable">
+      <b-th class="text-left text-small">
+        <span v-if="collapseable" class="text-small">
           <b-icon :icon="collapsed ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
         </span>
         {{ title }}
       </b-th>
-      <b-th class="text-right">
+      <b-th class="text-right text-small">
         <b-badge :variant="valueVariant">
           {{ value }}
         </b-badge>
@@ -42,7 +42,7 @@ export default class BTooltipCollapseRow extends Vue {
 .BarBTooltipCollapseRow {
   list-style: none !important;
 }
-.navbar {
+.BarBTooltipCollapseRow.navbar {
   z-index: inherit !important;
 }
 .BarBTooltipCollapse .collapse{

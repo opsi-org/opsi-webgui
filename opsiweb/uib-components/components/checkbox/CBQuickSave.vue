@@ -9,6 +9,7 @@
       <span class="text-small">{{ $t('message.error.unsavedChanges') }}</span>
     </AlertAAlertLocal>
     <div v-else class="d-flex flex-nowrap justify-content-center border">
+      <!-- -if="port=='8888'" -->
       <b-form-checkbox
         v-model="localquicksave"
         data-testid="CBQuickSave"
@@ -48,6 +49,7 @@ const changes = namespace('changes')
 @Component({ mixins: [Icons] })
 export default class CBQuickSave extends Vue {
   icon: any
+  window:any
   $t: any
   localquicksave: boolean = false
 
@@ -57,6 +59,7 @@ export default class CBQuickSave extends Vue {
   @changes.Getter public changesProducts!: Array<ChangeObj>
   @changes.Getter public changesHostParam!: Array<ChangeObj>
 
+  get port () { return window.location.port }
   beforeMount () {
     this.localquicksave = this.quicksave
   }

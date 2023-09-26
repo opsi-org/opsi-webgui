@@ -1,5 +1,7 @@
 <template>
+  <IconILoading v-if="isLoading" :small="true" />
   <TreeTSDefaultGroups
+    v-else
     id="ProductGroups"
     :class="classes"
     :type="type"
@@ -27,6 +29,7 @@ export default class TSProductGroups extends Vue {
   @Prop({ default: false }) open!: boolean
   @Prop({ }) classes!: any
   @Prop({ default: 'treeselect_short' }) type!: string
+  isLoading: boolean = false
 
   @selections.Getter public selectionProducts!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
@@ -36,9 +39,11 @@ export default class TSProductGroups extends Vue {
   groups: Array<any>|undefined = undefined
 
   async fetchData () {
+    this.isLoading = true
     if (this.groups === undefined) { // dont refetch
       this.groups = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
     }
+    this.isLoading = false
     return this.groups
   }
 

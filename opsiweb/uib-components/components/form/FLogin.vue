@@ -10,8 +10,8 @@
       class="text-center bg-primary mt-3 mx-auto"
       :style="$mq === 'mobile'? 'width:100%;' : 'width:50%;max-width:400px;' "
     >
-      <IconIOpsiLogo v-once :light="true" :short="false" class="mb-2" height="73" />
-      <!-- <h3 v-once data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
+      <IconIOpsiLogo :light="themeclass !== CONST_LIGHT" :short="false" class="mb-2" classes="w-100" />
+      <!-- <h3 data-testid="login_title" class="d-inline-block text-light projectTitle webgui_title">
         {{ $t('title.project') }}
       </h3> -->
       <div @keyup.enter="doLogin">
@@ -75,6 +75,7 @@
 import { Component, Vue, namespace } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Configserver } from '../../mixins/get'
+import { Settings } from '../../mixins/settings'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
@@ -83,8 +84,10 @@ interface FormUser {
     password: string
 }
 
-@Component({ mixins: [Icons, Configserver] })
+@Component({ mixins: [Icons, Configserver, Settings] })
 export default class FLogin extends Vue {
+  themeclass!: string // mixin Settings
+  CONST_LIGHT!: string // mixin Settings
   icon: any
   $router:any
   $route:any

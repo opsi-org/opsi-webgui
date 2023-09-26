@@ -21,7 +21,7 @@
     >
       <template #producttableheader>
         <DropdownDDProductRequest
-          v-if="(selectionClients.length>0 && selectionProducts.length>0)"
+          v-if="(selectionClients.length > 0 && selectionProducts.length > 0)"
           :action.sync="action"
           :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
@@ -94,7 +94,7 @@
       </template>
       <template #cell(actionProgress)="row">
         <div v-if="row.item.actionProgress == 'mixed'">
-          <small :id="('tooltip_actionprogress_mixed'+row.item.productId)"> {{ row.item.actionProgress }}</small>
+          <small :id="('tooltip_actionprogress_mixed' + row.item.productId)"> {{ row.item.actionProgress }}</small>
           <b-tooltip size="sm" :target="('tooltip_actionprogress_mixed'+row.item.productId)" triggers="hover">
             <b-row v-for="(key, index) in row.item.selectedClients" :key="index">
               <b-col class="d-flex flex-nowrap text-sm-left">
@@ -107,14 +107,14 @@
         </div>
         <small v-else> {{ row.item.actionProgress }} </small>
       </template>
-      <template v-if="selectionClients.length>0 && selectionProducts.length>0" #head(actionRequest)>
+      <template v-if="selectionClients.length > 0 && selectionProducts.length > 0" #head(actionRequest)>
         <DropdownDDProductRequest
           :action.sync="action"
           :title="$t('form.tooltip.actionRequest')"
           :save="saveActionRequests"
         />
       </template>
-      <template v-if="selectionClients.length>0" #cell(actionRequest)="row">
+      <template v-if="selectionClients.length > 0" #cell(actionRequest)="row">
         <DropdownDDProductRequest
           :request="row.item.actionRequest || 'none'"
           :requestoptions="[...row.item.actions]"
@@ -125,7 +125,7 @@
       </template>
       <template #row-details="row">
         <TableTTooltipContent
-          v-if="row.item.depot_version_diff || row.item.client_version_outdated||false"
+          v-if="row.item.depot_version_diff || row.item.client_version_outdated || false"
           type="version"
           :details="row.item.tooltiptext"
           :depot-version-diff="row.item.depot_version_diff"
@@ -134,7 +134,7 @@
       <template #rowactions="row">
         <ButtonBTNRowLinkTo
           :title="$t('title.config')"
-          :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.config'):''"
+          :label="(tableInfo.headerData.rowactions.mergeOnMobile==true && $mq=='mobile') ? $t('title.config') : ''"
           :icon="icon.settings"
           :to="child ? '/clients/products/config' : '/products/config'"
           :ident="row.item.productId"
@@ -175,6 +175,7 @@ export default class TProductsNetboot extends Vue {
   @Prop({ }) sort!: {sortBy:string, sortDesc: boolean}
   @Prop({ }) tableInfo!: ITableInfo
   @Prop({ default: false }) isLoading!: boolean
+  @Prop() fetchedDataClients2Depots!: IObjectString2String
   wsBusMsg: any // mixin // store
   icon: any
   syncSort: any
@@ -193,7 +194,7 @@ export default class TProductsNetboot extends Vue {
   totalpages: number = 0
   error: string = ''
   action: string = ''
-  fetchedDataClients2Depots: IObjectString2String = {}
+  // fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
 
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
@@ -244,7 +245,7 @@ export default class TProductsNetboot extends Vue {
   }
 
   @Watch('selectionDepots', { deep: true }) async selectionDepotsChanged () {
-    this.fetchedDataClients2Depots = {}
+    // this.fetchedDataClients2Depots = {}
     this.fetchOptions.fetchClients2Depots = true
     this.setSelectionProducts([])
     await this.fetchPageOne()

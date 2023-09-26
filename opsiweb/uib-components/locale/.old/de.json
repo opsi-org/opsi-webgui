@@ -7,6 +7,7 @@
   "count/all": "{count}/{all}",
   "colon": ":",
   "empty": "--",
+  "title.delimiter": " - ",
 
   "message.loading": "Wird geladen",
   "message.info.event": "Information zum Event: ",

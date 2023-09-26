@@ -88,7 +88,7 @@
     <GridGFormItem :label="$t('table.fields.clientagent')" variant="longvalue" labelclass="clientagent">
       <template #value>
         <b-form inline>
-          <b-form-checkbox v-model="clientagent" />
+          <b-form-checkbox v-model="clientagent" size="sm" />
           <div :class="{'d-none' : !clientagent}">
             <b-form-input
               id="username"
@@ -126,7 +126,9 @@
         <div class="float-right mt-2">
           <b-button id="resetButton" class="resetButton d-inline" size="sm" variant="primary" @click="resetNewClientForm()">
             <b-icon :icon="icon.reset" class="d-inline" />
-            <div class="resetButtonLabel d-inline">{{ $t('button.reset') }}</div>
+            <div class="resetButtonLabel d-inline">
+              {{ $t('button.reset') }}
+            </div>
           </b-button>
 
           <b-button
@@ -139,7 +141,9 @@
             @click="createOpsiClient()"
           >
             <b-icon :icon="icon.add" class="d-inline" />
-            <div class="addButtonLabel d-inline">{{ $t('button.create') }}</div>
+            <div class="addButtonLabel d-inline">
+              {{ $t('button.create') }}
+            </div>
           </b-button>
         </div>
       </template>
@@ -284,7 +288,7 @@ export default class VClientCreation extends Vue {
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      ref.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
+      ref?.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
       return
     }
     const request = {
@@ -305,6 +309,7 @@ export default class VClientCreation extends Vue {
         if (this.netbootproduct) {
           await this.setupNetbootProduct()
         }
+        this.clientIds.push(this.newClient.hostId)
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)

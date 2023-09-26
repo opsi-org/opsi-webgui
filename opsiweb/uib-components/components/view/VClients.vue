@@ -2,7 +2,7 @@
   <div data-testid="VClients">
     <AlertAAlert ref="sortProductsAlert">
       <template #button>
-        <b-button variant="transparent" size="sm" class="ml-3" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
+        <b-button variant="warning" size="sm" class="float-right border-0 p-0" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
           {{ $t('button.continue') }}
         </b-button>
       </template>
@@ -97,10 +97,10 @@
             </div>
           </template>
           <template #head(reachable)>
-            <ModalMClientReachable />
+            <ModalMClientReachable classes="hover" />
           </template>
           <template #cell(reachable)="row">
-            <ViewVClientReachable :id="row.item.clientId" />
+            <ButtonBTNClientReachable :id="row.item.clientId" :classes="{'row-selected': selectionClients.includes(row.item.clientId)}" />
           </template>
 
           <template #cell(uefi)="row">
@@ -112,8 +112,9 @@
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
+              :class="{'row-selected': selectionClients.includes(row.item.clientId)}"
               :title="$t('button.show.products')"
-              @click="sortProductTable(row.item.clientId, 'clientVersions', false)"
+              @click="sortProductTable(row.item.clientId, 'version', false)"
             >
               {{ row.item.version_outdated }}
             </b-button>
@@ -125,7 +126,7 @@
               size="sm"
               class="btn-client-statistic"
               :title="$t('button.show.products')"
-              :class="selectionClients.includes(row.item.clientId)? 'selected' : ''"
+              :class="selectionClients.includes(row.item.clientId)? 'selected row-selected' : ''"
               :disabled="row.item.actionResult_failed == 0"
               @click="sortProductTable(row.item.clientId, 'actionResult', false)"
             >
@@ -138,6 +139,7 @@
               variant="outline-primary"
               size="sm"
               class="btn-client-statistic"
+              :class="{'row-selected': selectionClients.includes(row.item.clientId)}"
               :title="$t('button.show.products')"
               @click="sortProductTable(row.item.clientId, 'installationStatus', false)"
             >
@@ -181,26 +183,28 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { MBus } from '../../mixins/messagebus'
 import { Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
+import { Cookies } from '../../mixins/cookies'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
 }
 
-@Component({ mixins: [MBus, Icons, Synchronization] })
+@Component({ mixins: [MBus, Icons, Synchronization, Cookies] })
 export default class VClients extends Vue {
   syncSort: any // mixin Synchronization
   icon: any
   wsBusMsg: any // mixin MBus
   wsNotificationInfo: any // mixin MBus
+  includesCookie!: any // mixin cookies
+  getKeyCookie!: any
   $axios: any
-  $t: any
+  $t!: any
   $mq: any
   $fetch:any
   $nuxt:any
@@ -220,7 +224,7 @@ export default class VClients extends Vue {
   headerData: ITableHeaders = {
     selected: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('selected') : true
+      visible: this.includesCookie('column_' + this.id, 'selected', true)
     },
     // class: 'mobileVisibleOnlySelection'
     clientId: { // eslint-disaconfigble-next-line object-property-newline
@@ -228,51 +232,51 @@ export default class VClients extends Vue {
       key: 'clientId',
       _fixed: true,
       sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('clientId') : true
+      visible: this.includesCookie('column_' + this.id, 'clientId', true)
     },
     description: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('description') : false
+      visible: this.includesCookie('column_' + this.id, 'description', false)
     },
     ipAddress: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.ip') as string, key: 'ipAddress', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('ipAddress') : false
+      visible: this.includesCookie('column_' + this.id, 'ipAddress', false)
     },
     macAddress: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.mac') as string, key: 'macAddress', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('macAddress') : false
+      visible: this.includesCookie('column_' + this.id, 'macAddress', false)
     },
     lastSeen: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.lastSeen') as string, key: 'lastSeen', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('lastSeen') : false
+      visible: this.includesCookie('column_' + this.id, 'lastSeen', false)
     },
     uefi: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.uefi') as string, key: 'uefi', sortable: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('uefi') : false
+      visible: this.includesCookie('column_' + this.id, 'uefi', false)
     },
     _majorStats: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false
     },
     version_outdated: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', sortable: true, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('version_outdated') : true
+      visible: this.includesCookie('column_' + this.id, 'version_outdated', true)
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', sortable: true, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('actionResult_failed') : true
+      visible: this.includesCookie('column_' + this.id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.installationStatusUnknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('installationStatus_unknown') : true
+      visible: this.includesCookie('column_' + this.id, 'installationStatus_unknown', true)
     },
     // TODO: Sorting for reachable column
     reachable: { // eslint-disable-next-line object-property-newline
       key: 'reachable', label: this.$t('table.fields.reachable') as string, _fixed: true, sortable: false,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('reachable') : true
+      visible: this.includesCookie('column_' + this.id, 'reachable', true)
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: Cookie.get('column_' + this.id) ? JSON.parse(Cookie.get('column_' + this.id) as unknown as any).includes('rowactions') : false,
+      visible: this.includesCookie('column_' + this.id, 'rowactions, false'),
       class: 'col-rowactions'
     }
   }
@@ -281,8 +285,8 @@ export default class VClients extends Vue {
   tableData: ITableData = {
     pageNumber: 1,
     perPage: 20,
-    sortBy: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortBy : 'clientId',
-    sortDesc: Cookie.get('sorting_' + this.id) ? JSON.parse(Cookie.get('sorting_' + this.id) as unknown as any).sortDesc : false,
+    sortBy: this.getKeyCookie('sorting_' + this.id, 'sortBy', 'clientId'),
+    sortDesc: this.getKeyCookie('sorting_' + this.id, 'sortDesc', false),
     filterQuery: '',
     selected: ''
   }
@@ -382,7 +386,7 @@ export default class VClients extends Vue {
       }).catch((error) => {
         const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
         const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        ref?.alert(detailedError, 'danger')
         this.error = this.$t('message.error.defaulttext') as string
         this.error += JSON.stringify(error.message)
         this.isLoading = false
@@ -436,7 +440,9 @@ export default class VClients extends Vue {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
 }
-.b-table-row-selected .btn {
+/* .b-table-row-selected .btn, */
+.row-selected.btn,
+.row-selected>.btn {
 color: var(--primary-foreground) !important;
 }
 </style>

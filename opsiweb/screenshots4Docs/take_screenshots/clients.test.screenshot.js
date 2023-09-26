@@ -10,7 +10,10 @@ test('Clients', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, en['title.clients'])
   // await page.evaluate((val) => { document.getElementById('treeselect-Depots').innerHTML = val }, en['title.depots'])
   await component.evaluate(() => { document.querySelector('.count').innerHTML = '0/5' })
-  await component.evaluate(() => { document.querySelector('.filter').placeholder = 'Filter ID' })
+
+  await page.evaluate((val) => { document.querySelector('[aria-colindex="2"] > small > b').innerHTML = val }, en['table.fields.id'])
+  await page.evaluate((val) => { document.querySelector('[aria-colindex="7"] > small > b').innerHTML = val }, en['table.fields.rowactions'])
+  await page.evaluate((val) => { document.querySelector('.filter').placeholder = val }, en['table.filter'].replace('{el}', en['table.fields.id']))
 
   // await page.evaluate((val) => { document.getElementById('treeselect-HostGroups').innerHTML = val }, en['treeselect.clientGroups'])
   await page.evaluate((val) => { document.querySelector('.tableheader_products').innerHTML = val }, en['title.products'])
@@ -23,6 +26,11 @@ test('Clients', async ({ page }) => {
       height: 460
     }
   })
+
+  await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, de['title.clients'])
+  await page.evaluate((val) => { document.querySelector('[aria-colindex="2"] > small > b').innerHTML = val }, de['table.fields.id'])
+  await page.evaluate((val) => { document.querySelector('[aria-colindex="7"] > small > b').innerHTML = val }, de['table.fields.rowactions'])
+  await page.evaluate((val) => { document.querySelector('.filter').placeholder = val }, de['table.filter'].replace('{el}', de['table.fields.id']))
   // await page.evaluate((val) => { document.getElementById('treeselect-HostGroups').innerHTML = val }, de['treeselect.clientGroups'])
   await page.evaluate((val) => { document.querySelector('.tableheader_products').innerHTML = val }, de['title.products'])
   await page.screenshot({

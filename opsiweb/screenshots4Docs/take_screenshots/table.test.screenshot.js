@@ -23,6 +23,16 @@ test.describe('Table', () => {
     await page.evaluate((val) => { document.querySelector('.sortDirection').innerHTML = val }, de['button.sort.tablecolumns.sortDirection'])
     await page.screenshot({ path: './screenshots/de/opsi-webgui_table_sort.png' })
   })
+  test('Sort column', async ({ page }) => {
+    await callStoryId(page, 'table-t-infinite-scroll-smooth', 't-infinite-scroll-smooth')
+    await (new Promise(resolve => setTimeout(resolve, 1000)))
+    // await comp.setViewportSize({ width: 50 })
+    await page.evaluate((val) => { document.querySelector('[aria-sort="none"]').innerHTML = val }, '')
+    const comp = await page.locator('[aria-sort="none"]')
+
+    await comp.screenshot({ path: './screenshots/en/opsi-webgui_table_sort_column.png' })
+    await comp.screenshot({ path: './screenshots/de/opsi-webgui_table_sort_column.png' })
+  })
   test('Column Selection', async ({ page }) => {
     await callStoryId(page, 'dropdown-dd-table-column-visibility', 'dd-table-column-visibility')
     await page.click('[data-testid="DropdownDDTableColumnVisibility"] .btn')
@@ -37,9 +47,9 @@ test.describe('Table', () => {
     const component = page.locator('[data-testid="BTNRefetch"]')
     await (new Promise(resolve => setTimeout(resolve, 1000)))
     await page.setViewportSize({ width: 220, height: 340 })
-    await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Refresh')
+    // await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Refresh')
     await component.screenshot({ path: './screenshots/en/opsi-webgui_table_refresh.png' })
-    await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Aktualisierung')
+    // await page.evaluate((val) => { document.querySelector('.refreshlabel').innerHTML = val }, 'Aktualisierung')
     await component.screenshot({ path: './screenshots/de/opsi-webgui_table_refresh.png' })
   })
 })

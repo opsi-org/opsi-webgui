@@ -35,7 +35,7 @@
     >
       <AlertAAlert ref="clientagentAlert" />
 
-      <GridGFormItem :label="$t('Client ID')" variant="longlabel" labelclass="clientId">
+      <GridGFormItem :label="$t('form.clientId')" variant="longlabel" labelclass="clientId">
         <template #value>
           <b-form-input :value="clientId" size="sm" disabled />
         </template>

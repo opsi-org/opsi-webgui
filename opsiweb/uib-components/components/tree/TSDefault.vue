@@ -56,13 +56,14 @@
         />
         <ButtonBTNReset
           v-if="!isOrigin"
+          :w100="true"
           class="BTN-before-list"
           :action="resetSelected"
         />
         <b-button
           v-if="editable && treeselectSearchQueryFilled"
           variant="outline-primary"
-          class="BTN-before-list border-0"
+          class="BTN-before-list border-0 w-100"
           :title="$t('button.tsdefault.add.tooltip')"
           @click="triggerSelection()"
         >
@@ -85,7 +86,9 @@
             <b> {{ node.label }} </b>
           </template>
           <template v-else>
-            {{ node.label ? node.label : node.id }}
+            {{ node.label }}
+            <!-- label need to be set! otherwise search and other functionalities are broken -->
+            <!-- {{ node.label ? node.label : node.id }} -->
           </template>
         </div>
       </div>
@@ -161,6 +164,10 @@ export default class TSDefault extends Vue {
   @cache.Getter public opsiconfigserver!: Array<string>
 
   async fetch () {
+    await this._fetch() // Workaround, cause $fetch sometimes not triggered/executed in selectionChanged-method
+  }
+
+  async _fetch () {
     this.$fetchState.pending = true
     this.data = await this.fetchData()
     this.updateLocalFromParent()
@@ -170,7 +177,7 @@ export default class TSDefault extends Vue {
   }
 
   @Watch('selectionDefault', { deep: true }) async selectionChanged () {
-    await this.$fetch()
+    await this._fetch() // Workaround... cause $fetch sometimes not executed....
   }
 
   get selection () { return this.model[(this.nested) ? 'nested' : 'default'] }
@@ -200,7 +207,8 @@ export default class TSDefault extends Vue {
   }
 
   triggerSelection () {
-    const treeselectComponent = this.$refs[`id-select-${this.id}`] as any
+    const tid = `treeselect-${this.id}`
+    const treeselectComponent = this.$refs[tid] as any
     if (treeselectComponent) {
       treeselectComponent?.select()
     } else {
@@ -272,7 +280,7 @@ export default class TSDefault extends Vue {
       }
     }
 
-    this.normalizerWithChildren(node)
+    return this.normalizerWithChildren(node)
   }
 
   normalizerWithChildren (node) {
@@ -282,7 +290,7 @@ export default class TSDefault extends Vue {
       isNew: node.isNew ?? false,
       hasAnySelection: node.hasAnySelection ?? false,
       isDisabled: (node.isDisabled === true) || (node.id === this.$t('values.mixed')) || false,
-      label: node.text ? node.text.replace(/_+$/, '') : node.id,
+      label: node?.text && node.text.replace ? node.text.replace(/_+$/, '') : node.id,
       children: node.children
         ? this.getChildren(node).sort(function (a: Group, b: Group) {
           if (a.text < b.text) { return -1 }
@@ -395,6 +403,11 @@ export default class TSDefault extends Vue {
 .TreeWrapper .vue-treeselect__placeholder {
   display: block;
   color:var(--color);
-  padding: 0%;
+}
+.TreeWrapper>.search-filled .vue-treeselect__placeholder {
+  top: -10px;
+}
+.TreeWrapper>.search-filled .vue-treeselect__input {
+  color: var(--general-fg-disabled) !important;
 }
 </style>

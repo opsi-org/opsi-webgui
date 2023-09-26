@@ -26,10 +26,13 @@
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
-const settings = namespace('settings')
+import { SettingsLanguage } from '../../mixins/settings'
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, SettingsLanguage] })
 export default class DDLang extends Vue {
+  language!:string // mixin
+  setLanguage!:any // mixin
+
   icon:any
   $i18n:any
   $mq:any
@@ -37,15 +40,6 @@ export default class DDLang extends Vue {
   @Prop({ default: false }) footer!: boolean
 
   languages: Array<string> = []
-
-  @settings.Getter public language!: string
-  @settings.Mutation public setLanguage!: (lang: string) => void
-
-  beforeMount () {
-    if (this.language) {
-      this.$i18n.locale = this.language
-    }
-  }
 
   mounted () {
     this.languages = Object.keys(this.$i18n.messages)

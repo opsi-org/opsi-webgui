@@ -3,22 +3,22 @@
     v-if="attributes.visible"
     id="sidemenu"
     data-testid="BarBSide"
-    :aria-label="$t('labelaria,sidemenu')"
+    :aria-label="$t('labelaria.sidemenu')"
     no-header
     bg-variant="primary"
     text-variant="light"
     :class="{sidemenu_small: !attributes.expanded}"
     :backdrop="$mq == 'mobile'"
-    :no-close-on-route-change="$mq == 'desktop'"
+    :no-close-on-route-change="$mq !== 'mobile'"
     :visible="attributes.visible"
     @hidden="$emit('update:sidebarshown', false)"
   >
     <NavNSidebar :expanded="attributes.expanded" />
     <template #footer>
       <DivDCountdowntimer :small="!attributes.expanded" />
-      <span v-once class="ml-1 text-small topbar_version"> {{ $t('v') }}{{ $config.packageVersion }} </span>
+      <!-- <span v-once class="ml-1 text-small topbar_version"> {{ $t('versionmarker') }}{{ $config.packageVersion }} </span> -->
       <b-button
-        v-if="$mq === 'desktop'"
+        v-if="$mq !== 'mobile'"
         variant="primary"
         size="sm"
         class="border-0 float-right"
@@ -37,12 +37,16 @@
 import Cookie from 'js-cookie'
 import { Component, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { ISidebarAttributes } from '../../.utils/types/tsettings'
+import { Cookies } from '../../mixins/cookies'
 import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Cookies] })
 export default class BSide extends Vue {
   $config:any
-  $mq:any
+  $mq!:any
+  getKeyCookie: any
+  setCookie: any
+  existsCookie: any
   icon:any
   @Prop({ }) attributes!: ISidebarAttributes
   @Prop({ default: false }) alwaysVisible!: boolean
@@ -57,17 +61,17 @@ export default class BSide extends Vue {
 
   @Watch('attributes', { deep: true }) attributesChanged () {
     if (this.$mq !== 'mobile' && !this.alwaysVisible) {
-      Cookie.set('menu_attributes_desktop', JSON.stringify(this.attributes), { expires: 365 })
+      this.setCookie('menu_attributes_desktop', JSON.stringify(this.attributes), { expires: 365 })
     }
   }
 
   updateAttributes () {
-    if ((this as any).$mq === 'mobile') {
+    if (this.$mq === 'mobile') {
       this.attributes.visible = this.alwaysVisible
       this.attributes.expanded = true
     } else {
-      if (!this.alwaysVisible && Cookie.get('menu_attributes_desktop')) {
-        this.attributes.expanded = JSON.parse(Cookie.get('menu_attributes_desktop') as unknown as any).expanded
+      if (!this.alwaysVisible && this.existsCookie('menu_attributes_desktop')) {
+        this.attributes.expanded = this.getKeyCookie('menu_attributes_desktop', 'expanded', true)
       }
       this.attributes.visible = true
     }
@@ -92,7 +96,7 @@ export default class BSide extends Vue {
 #sidemenu .b-sidebar-footer {
   border-top: 1px solid var(--light) !important;
   background-color: var(--primary);
-  z-index: 100;
+  z-index: 1;
   height: auto;
   display: inline;
   float: right;

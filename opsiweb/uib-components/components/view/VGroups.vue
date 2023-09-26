@@ -12,7 +12,7 @@
             <treeselect
               v-model="selectedvalue"
               class="treeselect_notstored treeselect treeselect_fullpage"
-              :placeholder="$t('Filter')"
+              :placeholder="$t('treeselect.search')"
               always-open
               :default-expand-level="1"
               :normalizer="normalizer"
@@ -24,7 +24,7 @@
                   <template v-if="node.isBranch">
                     <b-icon :icon="icon.group" />
                     {{ node.label }}
-                    <div class="float-right">
+                    <div v-if="node.label !== 'not_assigned'" class="float-right">
                       <b-button
                         v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
                         class="border-0"
@@ -79,7 +79,7 @@
                   <template v-else>
                     <b-icon :icon="icon.client" />
                     {{ node.label }}
-                    <div class="float-right">
+                    <div v-if="node.raw.parent !== 'not_assigned'" class="float-right">
                       <b-button
                         class="border-0"
                         variant="outline-primary"
@@ -105,8 +105,9 @@
             </treeselect>
           </b-col>
           <b-col v-if="action && selectedvalue">
-            <span class="text-small"><b> {{ title + $t(' - ') }}</b><i>{{ selectedvalue.text }}</i></span>
+            <span class="text-small"><b> {{ title + $t('title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
+              <!-- closing right side -->
               <b-icon :icon="icon.x" />
             </b-button>
             <br><br>
@@ -130,9 +131,30 @@
             </template>
             <template v-else-if="action == 'addSubgroup'">
               <b-form>
-                <b-form-input v-model="subgroup.groupId" size="sm" :placeholder="$t('group.subgroupname')" />
-                <b-form-input v-model="subgroup.description" size="sm" :placeholder="$t('table.fields.description')" />
-                <b-form-input v-model="subgroup.notes" size="sm" :placeholder="$t('table.fields.notes')" />
+                <b-form-input
+                  v-model="subgroup.groupId"
+                  size="sm"
+                  trim
+                  :placeholder="$t('group.subgroupname')"
+                  :state="subgroup.groupId.length > 0 && subgroup.groupId.length < 255"
+                  @keydown.enter.prevent="createSubGroup"
+                />
+                <b-form-input
+                  v-model="subgroup.description"
+                  size="sm"
+                  trim
+                  :placeholder="$t('table.fields.description')"
+                  :state="subgroup.description.length >= 0 && subgroup.description.length < 100"
+                  @keydown.enter.prevent="createSubGroup"
+                />
+                <b-form-input
+                  v-model="subgroup.notes"
+                  size="sm"
+                  trim
+                  :placeholder="$t('table.fields.notes')"
+                  :state="subgroup.notes.length >= 0 && subgroup.notes.length < 500"
+                  @keydown.enter.prevent="createSubGroup"
+                />
                 <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
                   {{ $t("button.create") }}
                 </b-button>
@@ -142,13 +164,24 @@
               <b-form>
                 <treeselect
                   v-model="updategroupparent"
+                  class="treeselect_notstored treeselect"
                   :placeholder="$t('group.parent')"
                   value-format="object"
                   :options="group"
                   :normalizer="normalizerUpdateGroup"
                 />
-                <b-form-input v-model="updategroup.description" size="sm" :placeholder="$t('table.fields.description')" />
-                <b-form-input v-model="updategroup.notes" size="sm" :placeholder="$t('table.fields.notes')" />
+                <b-form-input
+                  v-model="updategroup.description"
+                  size="sm"
+                  :placeholder="$t('table.fields.description')"
+                  :state="updategroup.description.length >= 0 && updategroup.description.length < 100"
+                />
+                <b-form-input
+                  v-model="updategroup.notes"
+                  size="sm"
+                  :placeholder="$t('table.fields.notes')"
+                  :state="updategroup.notes.length >= 0 && updategroup.notes.length < 500"
+                />
                 <b-button class="float-right" size="sm" variant="success" data-testid="updateGroup" @click="updateGroup">
                   {{ $t("button.update") }}
                 </b-button>
@@ -209,7 +242,7 @@ export default class VGroups extends Vue {
   $fetch: any
   $t: any
   $mq: any
-  group: Array<object> = []
+  group: Array<object>|undefined = undefined
   selectedvalue: any = null
   clientIds: Array<string> = []
   selectedClients: Array<string> = []
@@ -226,13 +259,16 @@ export default class VGroups extends Vue {
     notes: ''
   }
 
-  updategroup: any = {
+  updategroup = {
     parent: '',
     description: '',
     notes: ''
   }
 
   @selections.Getter public selectionDepots!: Array<string>
+  $root: any
+  $refs: any
+  $fetchState: any
 
   normalizer (node: any) {
     if (node.children) {
@@ -275,14 +311,23 @@ export default class VGroups extends Vue {
   }
 
   async fetchGroups () {
+    this.group = undefined
     const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
+    // await new Promise(r => setTimeout(r, 10000))
     this.group = Object.values(result)
+    this.showChild(this.action)
   }
 
   showChild (selectedAction: string) {
     this.action = selectedAction
     const groupaction = 'group.' + this.action
     this.title = this.$t(groupaction)
+  }
+
+  afterAsync () {
+    // triggers soft refresh of ui
+    this.subgroup.groupId = this.subgroup.groupId + 'x'
+    this.subgroup.groupId = this.subgroup.groupId.slice(0, -1)
   }
 
   async removeClientFromGroup () {
@@ -298,7 +343,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
 
   async copyClientToGroups () {
@@ -308,7 +353,7 @@ export default class VGroups extends Vue {
     const client = this.selectedvalue.text
     await this.addClientToListOfGroups(client, groupsList)
     await this.fetchGroups()
-    this.action = ''
+    this.afterAsync()
   }
 
   async fetchClients () {
@@ -327,7 +372,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
 
   async createSubGroup () {
@@ -343,7 +388,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
 
   async updateGroup () {
@@ -359,7 +404,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
 
   async deleteGroup () {
@@ -374,7 +419,7 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
 
   async removeClientAssignments () {
@@ -389,12 +434,13 @@ export default class VGroups extends Vue {
         const ref = (this.$refs.groupAlert as any)
         ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
       })
-    this.action = ''
+    this.afterAsync()
   }
 }
 </script>
 <style>
 .groupstabs .tab-content {
   height: 82vh;
+  margin: 10px;
 }
 </style>

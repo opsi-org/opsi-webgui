@@ -4,31 +4,31 @@
       :id="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       class="TCProductVersionCell_hover text-small"
     >
-      {{ (rowitem.depot_version_diff)? '' : rowitem.depotVersions[0] }}
+      {{ (rowitem.depot_version_diff) ? '' : rowitem.depotVersions[0] }}
       <IconIDetails
         v-if="rowitem.depot_version_diff"
         class="details depot-unequal"
         content="depot-unequal"
-        :variant="(rowitem.depot_version_diff||false)?'warning':''"
+        :variant="(rowitem.depot_version_diff || false) ? 'warning' : ''"
         @click="$emit('details', row, tooltiptext)"
       />
       <IconIDetails
-        v-if="(rowitem.selectedDepots.length != selectionDepots.length)"
-        :variant="(rowitem.selectedDepots.length != selectionDepots.length)?'warning':''"
+        v-if="(rowitem.selectedDepots.length !== selectionDepots.length)"
+        :variant="(rowitem.selectedDepots.length !== selectionDepots.length) ? 'warning' : ''"
         class="details depot-wo-prod"
         content="depot-wo-prod"
       />
 
       <IconIDetails
-        v-if="rowitem.client_version_outdated||false"
-        :variant="(rowitem.client_version_outdated||false) ?'danger':''"
+        v-if="rowitem.client_version_outdated || false"
+        :variant="(rowitem.client_version_outdated || false) ? 'danger' : ''"
         class="details client-outdated"
         content="client-outdated"
         @click="$emit('details', row, tooltiptext)"
       />
     </div>
     <TooltipTTProductCell
-      v-if="rowitem.depot_version_diff || rowitem.client_version_outdated||(rowitem.selectedDepots.length != selectionDepots.length)||false"
+      v-if="rowitem.depot_version_diff || rowitem.client_version_outdated || (rowitem.selectedDepots.length !== selectionDepots.length) || false"
       type="version"
       :target="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       :details="tooltiptext"

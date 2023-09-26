@@ -23,13 +23,13 @@
               >
                 <b-th
                   v-if="clientId!=depotId"
-                  class="text-left"
+                  class="text-left text-small"
                 >
                   {{ clientId }}
                 </b-th>
                 <b-th
                   v-if="clientId!=depotId"
-                  class="text-right"
+                  class="text-right text-small"
                 >
                   <b-badge :variant="(depotClientDetails[depotId]!=clientVersion)?'danger':getVariant(type)">
                     {{ clientVersion }}
@@ -42,7 +42,7 @@
       </b-tbody>
       <b-tbody v-else>
         <b-tr v-for="(v,c) in details" :key="c" :class="`badge_${type}_${c}`">
-          <b-th class="text-left">
+          <b-th class="text-left text-small">
             {{ c }}
           </b-th>
           <b-th class="text-right">
@@ -114,7 +114,7 @@ export default class TTProductCell extends Vue {
   width: 30%;
 }
 .tooltip.b-tooltip {
-  opacity: 0.95 !important;
+  opacity: 1 !important;
 }
 .tt-table,
 .tt-table th {

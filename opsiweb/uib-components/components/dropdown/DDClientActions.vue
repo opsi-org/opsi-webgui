@@ -71,7 +71,10 @@ export default class DDClientActions extends Vue {
 }
 </script>
 <style>
-
+.DDClientActions .dropdown-menu .btn,
+.table tr:hover .DDClientActions .dropdown-menu .btn  {
+  color: var(--primary-foreground) !important;
+}
 .row-selected .color-primary-selected,
 .row-selected .color-primary-selected:hover {
   color: var(--primary-foreground) !important;

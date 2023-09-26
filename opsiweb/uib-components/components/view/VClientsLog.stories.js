@@ -7,7 +7,13 @@ export default {
 }
 
 const PrimaryTemplate = () => ({
-  template: '<ViewVClientsLog id="client1" :testdata="mytestdata" />',
+  template: `
+  <ViewVClientsLog id="client1" :as-child="false" :testdata="mytestdata">
+    <template slot="IDSelection">
+      <TreeTSClientsNotStored :id.sync="id" />
+    </template>
+  </ViewVClientsLog>
+  `,
   computed: {
     mytestdata () {
       return ['null',

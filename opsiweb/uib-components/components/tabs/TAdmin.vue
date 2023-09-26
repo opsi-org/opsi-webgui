@@ -1,61 +1,67 @@
 <template>
-  <div data-testid="VAdmin" class="VAdmin">
-    <b-row class="mt-4 mb-2 text-small">
-      <b class="titleclients">{{ $t('title.clients') }}</b>
-    </b-row>
-    <template v-if="blockedClients.length > 1">
-      <GridGFormItem :label="$t('label.blockedclients.select')" variant="longlabel">
-        <template #value>
-          <b-input-group>
-            <b-form-select :options="blockedClients" />
-            <template #append>
-              <b-button v-model="clientId" variant="outiline-primary" size="sm" @click="unblockClient()">
-                {{ $t('label.unblock') }}
+  <div data-testid="TAdmin" class="TAdmin">
+    <b-tabs small lazy>
+      <b-tab :title="$t('form.general')" active>
+        <b-row class="mt-4 mb-2 text-small">
+          <b class="titleclients">{{ $t('title.clients') }}</b>
+        </b-row>
+        <template v-if="blockedClients.length > 1">
+          <GridGFormItem :label="$t('label.blockedclients.select')" variant="longvalue">
+            <template #value>
+              <b-input-group>
+                <b-form-select :options="blockedClients" />
+                <template #append>
+                  <b-button v-model="clientId" variant="outiline-primary" size="sm" @click="unblockClient()">
+                    {{ $t('label.unblock') }}
+                  </b-button>
+                </template>
+              </b-input-group>
+            </template>
+          </GridGFormItem>
+          <GridGFormItem :label="$t('label.blockedclients')" variant="longvalue">
+            <template #value>
+              <b-button variant="outiline-primary" block size="sm" @click="unblockAllClients()">
+                {{ $t('label.unblock.all') }}
               </b-button>
             </template>
-          </b-input-group>
+          </GridGFormItem>
         </template>
-      </GridGFormItem>
-      <GridGFormItem :label="$t('label.blockedclients')" variant="longlabel">
-        <template #value>
-          <b-button variant="outiline-primary" block size="sm" @click="unblockAllClients()">
-            {{ $t('label.unblock.all') }}
-          </b-button>
-        </template>
-      </GridGFormItem>
-    </template>
+        <span v-else class="text-small ml-2">
+          {{ $t('label.blockedclients.null') }}
+        </span>
 
-    <AlertAAlertLocal v-else show alert-variant="light">
-      {{ $t('label.blockedclients.null') }}
-    </AlertAAlertLocal>
-
-    <b-row class="mt-4 mb-2 text-small">
-      <b class="titleproducts">{{ $t('title.products') }} </b>
-    </b-row>
-    <template v-if="lockedProducts.length > 1">
-      <GridGFormItem :label="$t('label.lockedproducts.select')" variant="longlabel">
-        <template #value>
-          <b-input-group>
-            <b-form-select :options="lockedProducts" />
-            <template #append>
-              <b-button v-model="productId" variant="outiline-primary" size="sm" @click="unlockProduct()">
-                {{ $t('label.unlock') }}
+        <b-row class="mt-4 mb-2 text-small">
+          <b class="titleproducts">{{ $t('title.products') }} </b>
+        </b-row>
+        <template v-if="lockedProducts.length > 1">
+          <GridGFormItem :label="$t('label.lockedproducts.select')" variant="longvalue">
+            <template #value>
+              <b-input-group>
+                <b-form-select :options="lockedProducts" />
+                <template #append>
+                  <b-button v-model="productId" variant="outiline-primary" size="sm" @click="unlockProduct()">
+                    {{ $t('label.unlock') }}
+                  </b-button>
+                </template>
+              </b-input-group>
+            </template>
+          </GridGFormItem>
+          <GridGFormItem :label="$t('label.lockedproducts')" variant="longvalue">
+            <template #value>
+              <b-button variant="outiline-primary" block size="sm" @click="unlockAllProducts()">
+                {{ $t('label.unlock.all') }}
               </b-button>
             </template>
-          </b-input-group>
+          </GridGFormItem>
         </template>
-      </GridGFormItem>
-      <GridGFormItem :label="$t('label.lockedproducts')" variant="longlabel">
-        <template #value>
-          <b-button variant="outiline-primary" block size="sm" @click="unlockAllProducts()">
-            {{ $t('label.unlock.all') }}
-          </b-button>
-        </template>
-      </GridGFormItem>
-    </template>
-    <AlertAAlertLocal v-else show alert-variant="light">
-      {{ $t('label.lockedproducts.null') }}
-    </AlertAAlertLocal>
+        <span v-else show class="text-small ml-2">
+          {{ $t('label.lockedproducts.null') }}
+        </span>
+      </b-tab>
+      <b-tab :title="$t('label.maintenance')">
+        <ViewVAdminMaintenance />
+      </b-tab>
+    </b-tabs>
   </div>
 </template>
 

@@ -20,15 +20,15 @@
   --opsi-base-foreground: #E1E1E1;
   --opsi-base-background: #3f3f3e; /*updated*/
   --border: #4b4b49;
-
-  --test-hover:#4b4b49; /* current hovering styles are very loud*/
+  --placeholder: #b2b2b2;
+  --highlight:#4b4b49;
 
   /*--general-realy-dark: #545453;  /*new*/
   --general-opsi-grey-dark: #4b4b49; /*updated*/
   --general-opsi-grey: #b2b2b2; /*updated*/
   --general-opsi-grey-light: #e4e4e3;
 /* bg: #2b2b2b*/
-  --general-fg-disabled: var(--opsi-general-grey);
+  --general-fg-disabled: var(--opsi-general-grey-light);
   --general-bg-weak: var(--opsi-general-grey-dark);
   --general-bg-light: var(--opsi-first); /*updated*/
 
@@ -46,8 +46,8 @@
   --primary-foreground: var(--white);
   --secondary-foreground: var(--light);
   --success-foreground: var(--light);
-  --warning-foreground: var(--light);
-  --danger-foreground: var(--light);
+  --warning-foreground: black;
+  --danger-foreground: white;
 
   --primary-dark: var(--opsi-first-dark);
   --secondary-dark: var(--opsi-second-dark);

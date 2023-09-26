@@ -3,12 +3,12 @@ mock.onGet('/api/opsidata/server/diagnostic').reply(() => [200, data.diagnostic]
 mock.onGet('/api/opsidata/server/health').reply(() => [200, data.health])
 
 export default {
-  title: 'View/V Server Health',
-  parameters: { docs: { description: { component: 'Healthcheck View' } } }
+  title: 'Tabs/T Server Health',
+  parameters: { docs: { description: { component: 'Tabs for health check and diagnostics' } } }
 }
 
 const PrimaryTemplate = () => ({
-  template: '<ViewVServerHealth />'
+  template: '<TabsTServerHealth />'
 })
 
-export const VServerHealth = PrimaryTemplate.bind({})
+export const TServerHealth = PrimaryTemplate.bind({})

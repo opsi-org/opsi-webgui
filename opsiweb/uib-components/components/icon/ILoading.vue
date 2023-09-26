@@ -4,7 +4,7 @@
     class="ILoading container-fluid"
     :style="'color:(--color, ' + color + ') !important;'"
   >
-    {{ (small)? '': $t('message.loading') }}
+    <span v-if="!small" class="text-small">{{ $t('message.loading') }}</span>
     <b-icon class="loading-icon" :icon="icon.loading" :animation="animation" :title="$t('message.loading')" />
   </div>
 </template>

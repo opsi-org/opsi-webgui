@@ -21,7 +21,7 @@
     />
     <b-button
       variant="transparent"
-      class="border-0 filterclear"
+      class="border-0 filterclear p-0"
       size="sm"
       :title="$t('button.clearFilter')"
       @click="clearFilter"
@@ -59,6 +59,6 @@ export default class IFilter extends BFormInput {
 
 <style>
 .filterclear{
-  width: 30px;
+  width: 20px;
 }
 </style>

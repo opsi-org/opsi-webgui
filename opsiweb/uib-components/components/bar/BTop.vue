@@ -8,12 +8,22 @@
     <b-navbar-nav v-if="$mq === 'mobile'" small>
       <slot name="mobilemenu" />
     </b-navbar-nav>
-    <b-navbar-brand class="d-inline-flex" href="/addons/webgui/app/clients/">
-      <IconIOpsiLogo v-once :light="true" class="mt-1 ml-0 pb-1" height="40" />
+    <b-navbar-brand class="d-inline-flex ml-1" href="/addons/webgui/app/clients/">
+      <IconIOpsiLogo
+        v-once
+        short
+        light
+        white
+        height="36"
+        :classes="classes"
+      />
+      <span class="text-smaller ml-2">
+        {{ $config.packageVersion }}
+      </span>
       <IconIReadOnly />
     </b-navbar-brand>
-    <BarBBreadcrumbRow v-if="$mq == 'desktop'" class="ml-2" />
-    <b-navbar-nav small class="ml-auto">
+    <BarBBreadcrumbRow v-if="$mq !== 'mobile'" class="ml-3" />
+    <b-navbar-nav small :class="$mq !== 'mobile' ? 'ml-auto' : ''">
       <ModalMTrackChanges class="mr-1" />
       <slot name="quickpanel" />
     </b-navbar-nav>
@@ -31,6 +41,8 @@ export default class BTop extends Vue {
   $t:any
   $config:any
   icon:any
+
+  get classes () { return this.$mq !== 'desktop' ? 'pb-1' : 'mt-1 ml-0 pb-1' }
 
   get username () {
     return localStorage.getItem('username')

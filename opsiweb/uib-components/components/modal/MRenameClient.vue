@@ -8,7 +8,7 @@
       :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-rename-' + clientId)"
     >
-      <b-icon :icon="icon.pencil" />  <span> {{ $t('label.rename') }} </span>
+      <b-icon :icon="icon.pencil" />  <span class="rename"> {{ $t('label.rename') }} </span>
     </b-button>
     <div
       v-else
@@ -24,7 +24,7 @@
 
     <b-modal
       :id="'event-modal-rename-' + clientId"
-      :title="$t('title.renameClient') + $t(' - ')+ clientId"
+      :title="$t('title.renameClient') + $t('title.delimiter')+ clientId"
       data-testid="MRenameClientModal"
       centered
       scrollable

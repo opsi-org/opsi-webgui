@@ -330,6 +330,9 @@ def create_client(request: Request, client: Client, depot: str = Body(default=""
 		)
 		headers = {"Location": f"{request.url}/{client.hostId}"}
 
+		if depot:
+			backend.configState_create(configId="clientconfig.depot.id", objectId=client.hostId, values=[depot])
+
 		return RESTResponse(data=client.__dict__, http_status=status.HTTP_201_CREATED, headers=headers)
 
 	except IntegrityError as err:

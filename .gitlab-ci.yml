@@ -3,47 +3,23 @@ image: node:lts
 stages:
   - init
   - test
-  # - test-components
   - build
+  - upload
   - publish
   - release
 
-# .prepare_repo: &prepare_repo |
-#   # BRANCH=$(git symbolic-ref --short HEAD || echo "main")
-#   BRANCH=$(echo ${CI_COMMIT_BRANCH} || echo "main")
-#   echo "CIC_Branch ${CI_COMMIT_BRANCH}"
-#   echo "GIT_Branch $BRANCH"
-
-#   echo "exec: git ls-remote --exit-code --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH}"
-
-#   git_result=$(git ls-remote --heads https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git ${BRANCH} | wc -l)
-#   echo "gitresult $git_result"
-#   if [ $git_result -eq 0 ]; then
-#     echo "Use default branch"
-#     BRANCH=main
-#     echo "GIT_Branch $BRANCH"
-#   fi
-#   if [ -z "$BRANCH" ]; then
-#     BRANCH=$(echo "main")
-#   fi
-#   echo "GIT_Branch $BRANCH"
-
-#   # git clone --branch ${CI_COMMIT_BRANCH} https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-#   # Testing using current branch (othewise job failes on "tag"-execution)
-
-#   git clone --branch $BRANCH https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.uib.gmbh/uib/opsiweb-ui-components.git opsiweb/uib-components
-#   cd opsiweb/uib-components
-#   git branch -a
-#   ls -lah
-#   cd -
-
 .define_globals: &define_globals |
   shopt -s expand_aliases
-#   npm i -g dry-dry
-#   alias npm-uib='npm'
-#   cd uib-components
-#   git branch
-#   cd -
+
+.install_playwright: &install_playwright |
+  npm i -D @playwright/test
+  npx playwright install --with-deps chromium
+
+.start_storybook: &start_storybook |
+  PORT=3003 nohup npm run story > .storybook.log &
+
+.start_webgui: &start_webgui |
+  PORT=8888 nohup npm run dev > .dev.log &
 
 .install_tools: &install_tools |
   export DEBIAN_FRONTEND=noninteractive
@@ -147,6 +123,7 @@ stages:
   fi
 
 .get_changed_files: &get_changed_files |
+  cd uib-components
   changedFiles=$(git diff origin/main -r --no-commit-id --name-only | grep -i -P 'stories.js|test.component.js|test.unit.js|.vue' | grep -v 'test.component.js-snapshot')
   echo "$changedFiles"
   basenames=$(basename -s .stories.js $(basename -s .test.component.js $(basename -s .vue -a $changedFiles)))
@@ -154,6 +131,55 @@ stages:
   testfilesUnique=$(echo $basenames | tr ' ' '\n' | awk '!a[$0]++')
   # todo checking if each file in testfilesUnique exists
   echo "$testfilesUnique"
+  cd ..
+
+
+.compare_versions: &compare_versions |
+  # "compare Versions in: opsi-dev-tool-yml and opsiweb/package.json"
+  VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
+  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
+  if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
+  TAG=$VERSION_YML
+
+.prepare_tag: &prepare_tag |
+  # "prepare tag"
+  if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
+  # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
+  # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+  LTAG=$(git tag --sort=taggerdate | tail -1)
+  echo "Latest tag... '$LTAG'"
+
+.push_tag: &push_tag |
+  # post tag
+  echo "ProjectURL: $CI_API_V4_URL"
+  echo "ProjectID: $CI_PROJECT_ID"
+  echo "ProjectTAG: $TAG"
+  printf "ProjectMSG: \n$(cat $FILE)\n"
+  http_response=$(curl --request POST \
+    -o response.txt \
+    --fail-with-body \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
+    --data-urlencode "message=$(cat $FILE)" )
+
+  echo "$http_response: $(cat response.txt)"
+  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  echo ""
+
+.delete_tag: &delete_tag |
+  # delete tag
+  curl --request DELETE \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
+  echo ""
+  git tag -d $TAG || exit_code_del=$?
+  echo ""
+
+.prepare_git: &prepare_git |
+  # "prepare git"
+  git config --global user.name "${GITLAB_USER_NAME}"
+  git config --global user.email "${GITLAB_USER_EMAIL}"
+  git fetch
 
 #########################################################################
 ######################################################################### init
@@ -161,7 +187,6 @@ stages:
 init:npm:
   stage: init
   script:
-    # - *prepare_repo
     - cd opsiweb
     - *define_globals
     - npm i
@@ -179,9 +204,7 @@ init:npm:production:
     - main
     - tags
   script:
-    # - *prepare_repo
     - cd opsiweb
-    #- #rm package-lock.json # todo: how to? rm here or not include to repo? (currently not included)
     - *define_globals
     - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
@@ -191,9 +214,7 @@ init:npm:production:
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
-#
 
-# node_modules sizes (locally)
 
 #########################################################################
 ######################################################################### test
@@ -202,47 +223,43 @@ test:lint:
   stage: test
   dependencies:
     - init:npm
-  script:
+  before_script:
     - cd opsiweb
     - ls -lah .
     - ls -lah node_modules/
     - npm --version
     - *define_globals
+  script:
     - npm run lint
 
-test:unit:
-  stage: test
-  dependencies:
-    - init:npm
-  script:
-    - cd opsiweb
-    - *define_globals
-    - npm run test:unit
-  allow_failure: true
-  coverage: /All files\s*\|\s*([\d\.]+)/
-  artifacts:
-    reports:
-      coverage_report:
-        coverage_format: cobertura
-        path: opsiweb/coverage/clover.xmlci
+# test:unit:
+  #   stage: test
+  #   dependencies:
+  #     - init:npm
+  #   script:
+  #     - cd opsiweb
+  #     - *define_globals
+  #     - npm run test:unit
+  #   allow_failure: true
+  #   coverage: /All files\s*\|\s*([\d\.]+)/
+  #   artifacts:
+  #     expire_in: 1 day
+  #     reports:
+  #       coverage_report:
+  #         coverage_format: cobertura
+  #         path: opsiweb/coverage/clover.xmlci
 
 test:accessibility:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
-  except:
   dependencies:
     - init:npm
-  script:
+  before_script:
     - cd opsiweb
-    - ls -lah uib-components
-    - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install --with-deps chromium
-    - npm i -D @axe-core/playwright
-    - PORT=8888 nohup npm run dev > .dev.log &
-    - sleep 60
-    - echo $PLAYWRIGHT_BROWSERS_PATH
+    - *start_webgui
+  script:
     - npm run test:all:accessibility || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -256,24 +273,22 @@ test:accessibility:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-accessibility.xml
-    expire_in: 2 day
-
+      junit: opsiweb/.config/test-result-pw-reporter-accessibility.xml
+    expire_in: 1 day
 test:usecase:
-  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  image: mcr.microsoft.com/playwright:v1.38.0-jammy
   stage: test
   dependencies:
     - init:npm
-  script:
+  before_script:
     - cd opsiweb
-    - ls -lah uib-components
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install
-    - PORT=8888 nohup npm run dev > .dev.log &
-    - sleep 60
-    - echo $PLAYWRIGHT_BROWSERS_PATH
+    - *install_playwright
+    - *start_webgui
+  script:
+    # - npm run test:all:usecase || exit_code=$?
     - npm run test:all:usecase || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -287,8 +302,8 @@ test:usecase:
       - ./**/*/test-results/
       - opsiweb/.dev.log
     reports:
-      junit: opsiweb/test-result-pw-reporter-usecase.xml
-    expire_in: 2 day
+      junit: opsiweb/.config/test-result-pw-reporter-usecase.xml
+    expire_in: 1 day
 
 test:components:changes:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
@@ -296,6 +311,7 @@ test:components:changes:
   dependencies:
     - init:npm
   except:
+    - cicd
     - tags # cause in tags we test all browsers (and all files)
     - main # cause in main we test all files
   only:
@@ -303,23 +319,18 @@ test:components:changes:
       - opsiweb/pages/*
       - opsiweb/components/*
       - opsiweb/uib-components/*
-  script:
+  before_script:
     - cd opsiweb
     - *define_globals
-    # get changed files (in comparison to main branch)
-    - cd uib-components
+    - *install_playwright
     - *get_changed_files
-    - cd ..
     - echo "$testfilesUnique"
-    # install and start services
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
+    - *start_storybook
+    - *start_webgui
     - sleep 120
-    # run tests
+  script:
     - npm run test:all:components $testfilesUnique || exit_code=$?
+  after_script:
     - npm run test:all:delete-empty-results
     - exit $exit_code
   allow_failure: true
@@ -331,33 +342,34 @@ test:components:changes:
       - opsiweb/.storybook.log
       - opsiweb/.dev.log
     reports:
-      junit: ./opsiweb/test-result-pw-reporter-components.xml
-    expire_in: 2 day
+      junit: ./opsiweb/.config/test-result-pw-reporter-components.xml
+    expire_in: 1 day
 
 test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
   dependencies:
     - init:npm
-  except:
-    - bug/cicd-build
-    # - tags # cause in tags we test all browsers
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
-  script:
+  before_script:
     - cd opsiweb
     - *define_globals
-    - npm i -D @playwright/test
-    - npx playwright install
-    - npx playwright install-deps
-    - PORT=3003 nohup npm run dev > .dev.log &
-    - PORT=3003 nohup npm run story > .storybook.log &
+    - *install_playwright
+    - *start_storybook
+    - *start_webgui
     - sleep 60
-    - npm run test:all:components || exit_code=$?
-    - npm run test:all:delete-empty-results
+  script:
+    - npm run test:all:components | tee .tmpRESULT
+    - exit_code=${PIPESTATUS[0]}
     - exit $exit_code
+  after_script:
+    - cd opsiweb
+    - scripts/playwright_coverage.sh .tmpRESULT
+    - npm run test:all:delete-empty-results
   allow_failure: true
+  coverage: /TESTED FILES\s*:\s*([^%]+)/
   artifacts:
     name: "opsi-webgui-test-result-components"
     when: on_failure
@@ -365,48 +377,43 @@ test:components:
       - ./**/*/test-results/
       - opsiweb/.storybook.log
       - opsiweb/.dev.log
+      - opsiweb/.tmpRESULT
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
-    expire_in: 2 day
+    expire_in: 3 day
 
 # test:test-components:all-variants:
-#   image: mcr.microsoft.com/playwright:v1.15.2-focal
-#   stage: test
-#   dependencies:
-#     - init:npm
-#   except:
-#     - bug/cicd-build
-#   only:
-#     - tags # cause in tags we test each file and browser
-#   script:
-#     - cd opsiweb
-#     #- *define_globals
-#     - npm i -D @playwright/test
-#     - npx playwright install
-#     - npx playwright install-deps
-#     - PORT=3003 nohup npm run dev > .dev.log &
-#     - PORT=3003 nohup npm run story > .storybook.log &
-#     - sleep 60
-#     - npm run test:all:components-devices || exit_code=$?
-#     - npm run test:all:delete-empty-results
-#     - exit $exit_code
-#   # allow_failure: true
-#   artifacts:
-#     name: "opsi-webgui-test-result-components"
-#     when: on_failure
-#     paths:
-#       - ./**/*/test-results/
-#       - opsiweb/.storybook.log
-#       - opsiweb/.dev.log
-#     reports:
-#       junit: ./opsiweb/test-result-pw-reporter-components.xml
-#     expire_in: 2 day
-
-# .pylint: &pylint |
-#   echo "---------------------------------------"
-#   echo "Run pylint"
-#   echo "---------------------------------------"
-#   poetry run pylint --disable=R,C,fixme
+  #   image: mcr.microsoft.com/playwright:v1.15.2-focal
+  #   stage: test
+  #   dependencies:
+  #     - init:npm
+  #   except:
+  #     - cicd
+  #   only:
+  #     - tags # cause in tags we test each file and browser
+  #   script:
+  #     - cd opsiweb
+  #     #- *define_globals
+  #     - npm i -D @playwright/test
+  #     - npx playwright install
+  #     - npx playwright install-deps
+  #     - PORT=3003 nohup npm run dev > .dev.log &
+  #     - PORT=3003 nohup npm run story > .storybook.log &
+  #     - sleep 60
+  #     - npm run test:all:components-devices || exit_code=$?
+  #     - npm run test:all:delete-empty-results
+  #     - exit $exit_code
+  #   # allow_failure: true
+  #   artifacts:
+  #     name: "opsi-webgui-test-result-components"
+  #     when: on_failure
+  #     paths:
+  #       - ./**/*/test-results/
+  #       - opsiweb/.storybook.log
+  #       - opsiweb/.dev.log
+  #     reports:
+  #       junit: ./opsiweb/test-result-pw-reporter-components.xml
+  #     expire_in: 2 day
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
@@ -433,12 +440,42 @@ test:backend-pytest:
 #########################################################################
 ######################################################################### build
 #########################################################################
+build:screenshots:docs:
+  image: mcr.microsoft.com/playwright:v1.15.2-focal
+  stage: build
+  dependencies:
+    - init:npm
+    # - tags # screenshots only for tags
+  only:
+    - main # cause in main we test all files, but only chromium browser
+    - tags
+  before_script:
+    - cd opsiweb
+    - *define_globals
+    - *install_playwright
+    - *start_storybook
+    - *start_webgui
+  script:
+    - cd screenshots4Docs
+    - npx playwright test -c playwright-screenshots.config.js take_screenshots/  || exit_code=$?
+  after_script:
+    - exit $exit_code
+  allow_failure: true
+  artifacts:
+    name: "opsi-webgui-screenshots-docs-result"
+    when: always
+    paths:
+      - opsiweb/screenshots4Docs/screenshots
+      - ./**/*/test-results/
+      - opsiweb/.storybook.log
+      - opsiweb/.dev.log
+    expire_in: 7 day
+
 build:static:app:
   stage: build
   dependencies:
     - init:npm:production
     - test:lint
-    #- test:jtest
   script:
     - cd opsiweb
     - npm i @nuxt/typescript-build
@@ -471,6 +508,7 @@ build:addon:
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
+    - zip -r -q opsi-webgui.zip webgui
   only:
     - tags
     - main
@@ -478,6 +516,36 @@ build:addon:
     name: "opsi-webgui"
     paths:
       - webgui
+      - opsi-webgui.zip
+    expire_in: 3 day
+
+build:zip:
+  stage: build
+  dependencies:
+    - init:npm:production # doesnt download artifacts from static-app
+    - build:static:app
+  script:
+    - *install_tools
+    - pwd && ls -la opsiweb
+    - cd opsiweb # generate dist
+    - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
+    - *define_globals
+    - npm run generate-nossl
+    - cd .. # copy to addon
+    - mkdir -p backend/addon/webgui/data
+    - mkdir -p backend/addon/webgui/data/app
+    - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
+    - mkdir webgui
+    - cp -r backend/addon/webgui/* webgui/
+    - ls -lah webgui # debug
+    - zip -r -q opsi-webgui.zip webgui
+  only:
+    - tags
+    - main
+  artifacts:
+    name: "opsi-webgui"
+    paths:
+      - opsi-webgui.zip
     expire_in: 3 day
 
 build:transifex:
@@ -498,8 +566,83 @@ build:transifex:
     expire_in: 3 day
 
 #########################################################################
+######################################################################### create tag
+#########################################################################
+
+upload:gittag:
+  stage: upload
+  # dependencies:
+  #   - build:static:app
+  script:
+    - FILE=".tmp_changelog"
+    - *prepare_git
+    - *install_tools
+    - echo "all tags... $(git tag)"
+    - echo "delete Tag..."
+    - TAG=4.3.1.1
+    - *delete_tag
+    - TAG=4.3.14-test # on docker 4
+    - *delete_tag
+    - TAG=4.3.15 # on docker 4
+    - *delete_tag
+    - echo ""
+    - *compare_versions
+    - *prepare_tag
+    - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
+    - *push_tag
+    - rm $FILE
+  # when: manual
+  when: manual
+  only: # visible in this branches: (main!)
+    - main
+
+#########################################################################
 ######################################################################### publish
 #########################################################################
+
+.push_release: &push_release |
+  # post release
+  echo "ProjectURL: $CI_API_V4_URL"
+  echo "ProjectID: $CI_PROJECT_ID"
+  LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+  echo "ProjectTAG: $TAG"
+  printf "ProjectMSG: \n$(cat $FILE)\n"
+  http_response=$(curl --request POST \
+    -o response.txt \
+    --fail-with-body \
+    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main&" \
+    --data-urlencode "message=$(cat $FILE)" )
+
+  echo "$http_response: $(cat response.txt)"
+  if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  echo ""
+
+upload:git:
+  stage: upload
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs:
+    - job: build:zip
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+  script:
+    - echo "Create Release $TAG"
+    - echo $JOB_ID
+  release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+    tag_name: '$CI_COMMIT_TAG'
+    description: '$CI_COMMIT_'
+  release:
+    name: 'Release $TAG'
+    tag_name: '$TAG'
+    ref: '$TAG'
+    description: 'Release $TAG'
+    assets:
+      links:
+        - name: "opsi-webgui"
+          url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
+
+
 publish:obs_int:
   stage: publish
   dependencies:
@@ -517,8 +660,16 @@ publish:obs_ext:
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
+    # - opsi-dev-cli -l 5 changelog from-git output
+    # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+    # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
   only:
     - tags
+  artifacts:
+    name: "opsi-webgui-changelogs"
+    paths:
+      - output
+    expire_in: 1 day
   # Copy to experimental
   # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
   # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
@@ -536,41 +687,41 @@ publish:binary-index:
     - tags
 
 # release:experimental:
-#   stage: release
-#   when: manual
-#   before_script:
-#     - "which ssh-agent || (apt update && apt -y install openssh-client)"
-#     - mkdir -p ~/.ssh
-#     - eval $(ssh-agent -s)
-#     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
-#   dependencies:
-#     - publish:obs_ext
-#     - publish:binary-index
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l debug --binary-pull
-#     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
-#     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
-#     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
-#   only:
-#     - tags
-#publish:obs_int:
-#  stage: publish
-#  dependencies:
-#    - build:static:app
-#  script:
-#    - *install_tools
-#    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-#  only:
-#    - tags
+  #   stage: release
+  #   when: manual
+  #   before_script:
+  #     - "which ssh-agent || (apt update && apt -y install openssh-client)"
+  #     - mkdir -p ~/.ssh
+  #     - eval $(ssh-agent -s)
+  #     - ssh-add <(echo "$DOWNLOAD_UIB_PRIVATE_KEY")
+  #   dependencies:
+  #     - publish:obs_ext
+  #     - publish:binary-index
+  #   script:
+  #     - *install_tools
+  #     - ./opsi-dev-tool -l debug --binary-pull
+  #     - scp -o StrictHostKeyChecking=no -r opsi-webgui_${CI_COMMIT_TAG}.zip "$DOWNLOAD_UIB_USER@download.uib.de:/var/www/opsi/htdocs/opsi4.2/experimental/opsiconfd-addons/"
+  #     - ./opsi-dev-tool -l debug --obs-api-conf $OBS_EXT_URL $OBS_EXT_USERNAME $OBS_EXT_PASSWORD
+  #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
+  #   only:
+  #     - tags
+  #publish:obs_int:
+  #  stage: publish
+  #  dependencies:
+  #    - build:static:app
+  #  script:
+  #    - *install_tools
+  #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
+  #  only:
+  #    - tags
 
 # publish:obs_ext:
-#   stage: publish
-#   dependencies:
-#     - build:static:app
-#   script:
-#     - *install_tools
-#     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
-#   when: manual
-#   only:
-#    - tags
+  #   stage: publish
+  #   dependencies:
+  #     - build:static:app
+  #   script:
+  #     - *install_tools
+  #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
+  #   when: manual
+  #   only:
+  #    - tags

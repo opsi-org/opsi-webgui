@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <BarBPageHeader v-if="asChild" :title="$t('title.log') + ' - '" :subtitle="id" closeroute="/clients/" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + $t('title.delimiter')" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
@@ -43,10 +43,6 @@
             'log-row-7': log.startsWith('[7]'),
             'log-row-8': log.startsWith('[8]'),
             'log-row-9': log.startsWith('[9]'),
-            // 'bg-danger': log.startsWith('[2]'),
-            // 'bg-warning': log.startsWith('[3]'),
-            // 'bg-info': log.startsWith('[4]'),
-            // 'bg-success': log.startsWith('[5]')
           }"
         >
           {{ $t('(content)', {content: index}) }} {{ log }}
@@ -67,6 +63,7 @@ interface LogRequest {
 export default class VClientLog extends Vue {
   $axios: any
   $t: any
+  $root: any
 
   @Prop({ }) id!: string
   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
@@ -158,7 +155,7 @@ export default class VClientLog extends Vue {
 <style>
 .log-row-text {
   font-family: var(--font-family-log);
-  text-align: justify ;
+  text-align: left;
   display:block;
   font-size: var(--font-family-log-size);
 }

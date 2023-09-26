@@ -61,19 +61,22 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
 import { Component, namespace, Prop, Watch } from 'nuxt-property-decorator'
 import { BDropdown } from 'bootstrap-vue'
 import { ITableHeaders } from '../../.utils/types/ttable'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { HoverDropdown } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
+import { Cookies } from '../../mixins/cookies'
 const settings = namespace('settings')
 
-@Component({ mixins: [Icons, HoverDropdown] })
+@Component({ mixins: [Icons, HoverDropdown, Cookies] })
 export default class DDTableColumnVisibility extends BDropdown {
   icon:any
   $mq:any
+  getParsedCookie: any
+  setCookie: any
+  existsCookie: any
   onOver:any
   onLeave:any
   @Prop({ default: 'table' }) tableId!: string
@@ -94,8 +97,8 @@ export default class DDTableColumnVisibility extends BDropdown {
 
   created () { this.init() }
   init () {
-    if (Cookie.get('column_' + this.viewId)) {
-      this.columnVisibilityList = JSON.parse(Cookie.get('column_' + this.viewId) as unknown as any)
+    if (this.existsCookie('column_' + this.viewId)) {
+      this.columnVisibilityList = this.getParsedCookie('column_' + this.viewId)
     } else {
       Object.values(this.headers).filter(k => !k._isMajor).forEach((h) => {
         if (h._majorKey) {
@@ -150,7 +153,7 @@ export default class DDTableColumnVisibility extends BDropdown {
     } else {
       this.columnVisibilityList.push(key)
     }
-    Cookie.set('column_' + this.viewId, JSON.stringify(this.columnVisibilityList), { expires: 365 })
+    this.setCookie('column_' + this.viewId, JSON.stringify(this.columnVisibilityList), { expires: 365 })
   }
 
   setColumnVisibilityModel (tableKey: string|undefined) {
@@ -189,7 +192,7 @@ export default class DDTableColumnVisibility extends BDropdown {
 <style>
 .DropdownDDTableColumnVisibilityWrapper .selectedColumn .dropdown-item {
   color: var(--light) !important;
-  background-color: var(--primary) !important;
+  background-color: var(--primary-dark) !important;
 }
 .DropdownDDTableColumnVisibilityWrapper .rightmenu .dropdown-menu {
   right: 0 !important;

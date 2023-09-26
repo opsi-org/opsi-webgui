@@ -45,7 +45,7 @@
         <b-collapse :id="'collapse-'+health.check_id" :visible="expandHCD || filter!==''">
           <!-- Collapse content -->
           <span v-for="(data, index) in health.partial_results" :key="index">
-            <GridGFormItem value-more="true" formclass="none" :valuedetails="data.message"  variant="shortlabel">
+            <GridGFormItem value-more="true" formclass="none" :valuedetails="data.message" variant="shortlabel">
               <template #label>
                 <span :style="'width: 34px; min-height: 1px; float: left;'" />
                 <b-badge v-if="data.check_status" :style="'min-width: 70px !important;'" :variant="getVariant(data.check_status)">

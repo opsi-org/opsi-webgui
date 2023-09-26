@@ -80,7 +80,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { MBus } from '../../mixins/messagebus'
 
 interface QuickAction {
   action: any,
@@ -89,12 +90,21 @@ interface QuickAction {
   action_result: any
 }
 
-@Component export default class MProductActions extends Vue {
+@Component({ mixins: [MBus] })
+export default class MProductActions extends Vue {
+  wsBusMsg: any // mixin // store
   $t: any
+  $fetch: any
   $axios: any
+
   @Prop({ default: 'label.quickaction' }) label?: string
+
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
+  conditn_InstStatus!: Array<string>
+  conditn_InstStatus_defaults: Array<string|null> = [null, 'installed', 'unknown']
+  conditn_ActionResult!: Array<string>
+  conditn_ActionResult_default: Array<string> = ['failed', 'successful']
   quickaction: QuickAction = {
     action: null,
     outdated: false,
@@ -102,15 +112,46 @@ interface QuickAction {
     action_result: null
   }
 
-  conditn_InstStatus: Array<string> = [
-    'Installed',
-    'Unknown'
-  ]
+  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
+    const msg = this.wsBusMsg // todo deepCopy
+    if (msg &&
+      ['event:productOnClient_created', 'event:productOnClient_updated'].includes(msg.channel)
+      // && msg.data.productType === 'LocalbootProduct'
+    ) {
+      this.$fetch()
+    }
+  }
 
-  conditn_ActionResult: Array<string> = [
-    'Successful',
-    'Failed'
-  ]
+  async fetch () {
+    this.isLoading = true
+    await this.fetchActionResults()
+    await this.fetchInstallationStates()
+    this.isLoading = false
+  }
+
+  async fetchActionResults () {
+    await this.$axios.$get('/api/opsidata/products/action-result')
+      .then((result) => {
+        this.conditn_ActionResult = result
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$refs.prodQuickActionAlert as any)
+        ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        this.conditn_ActionResult = ['Successful', 'Failed']
+      })
+  }
+
+  async fetchInstallationStates () {
+    await this.$axios.$get('/api/opsidata/products/installation-status')
+      .then((result) => {
+        this.conditn_InstStatus = result
+      }).catch((error) => {
+        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        const ref = (this.$refs.prodQuickActionAlert as any)
+        ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        this.conditn_InstStatus = ['Installed', 'Unknown']
+      })
+  }
 
   async executeAction () {
     const ref = (this.$refs.prodQuickActionAlert as any)

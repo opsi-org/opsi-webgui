@@ -18,6 +18,6 @@ test('Product Properties', async ({ page }) => {
   await page.evaluate((val) => { document.querySelector('.property').innerHTML = val }, de['title.properties'])
   await page.evaluate((val) => { document.querySelector('.dependency').innerHTML = val }, de['title.dependencies'])
   await page.evaluate((val) => { document.querySelector('.noClientsSelectedShowDepot').innerHTML = val }, de['message.warning.noClientsSelectedShowDepot'])
-  await page.evaluate((val) => { document.querySelector('.notOnEachDepot').innerHTML = val.replace('{count}', '1').replace('{countall}', '2') }, en['message.warning.notOnEachDepot'])
+  await page.evaluate((val) => { document.querySelector('.notOnEachDepot').innerHTML = val.replace('{count}', '1').replace('{countall}', '2') }, de['message.warning.notOnEachDepot'])
   await component.screenshot({ path: './screenshots/de/opsi-webgui_productprop.png' })
 })

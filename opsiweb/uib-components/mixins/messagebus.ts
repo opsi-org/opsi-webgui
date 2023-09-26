@@ -56,7 +56,8 @@ const mbus = namespace('messagebus')
 
     this.wsNotification('connecting')
     const host = window.location.hostname
-    const url = 'wss://' + host + ':4447/messagebus/v1?'
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    const url = 'wss://' + host + ':' + port + '/messagebus/v1?'
     const _bus = new WebSocket(url)
     this.setBus(_bus)
     if (this.bus === undefined) { throw new Error('MessageBus shouldnt be undefined') }
@@ -196,7 +197,7 @@ const mbus = namespace('messagebus')
     console.warn('MessageBus:', text, data)
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     // const ref = (this.$refs.alertConfigurationError as any)
-    ref.alert(`MessageBus: ${stringtext}`, 'warning', text)
+    ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
   }
 
   _setBus (bus: WebSocket, setBusLastMsgMethod: any) {

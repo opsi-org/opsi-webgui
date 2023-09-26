@@ -79,7 +79,7 @@
   --primary-foreground-disabled: var(--general-fg-disabled);
   --secondary-foreground: var(--white);
   --ok-foreground: var(--white);
-  --warning-foreground: var(--white);
+  --warning-foreground: black;
   --error-foreground: var(--white);
 
   /***** COLORS *****/
@@ -117,7 +117,8 @@
   --color-hover: 155, 155, 155, .1; /**?????**/
 
   /* highlighted component */
-  --highlight: var(--test-hover);
+  --highlight: var(--highlight);
+  --placeholder: var(--placeholder);
 
 
   /** Dark DONE: **/
@@ -126,7 +127,12 @@
   /* --table-border */
   /* --table-hover */
 }
-
+h1.title {
+  font-family: var(--font-family-logo);
+}
+.mobile * {
+  font-size: large;
+}
 .table {
   --bs-table-border-color: var(--general-fg);
   /* --bs-table-striped-bg: #c5d7f2; */
@@ -165,7 +171,7 @@
 .table tr .selected>.btn {
   color: var(--fg-table-selected) !important;
 }
-.table tr:hover .btn {
+.table tbody tr:hover .btn {
   color: var(--fg-table-hover-hover) !important;
 }
 .table tr:hover .selected.btn,
@@ -218,9 +224,17 @@ body .mobile .topbar_content .navbar > * {
 [class$="fg-green"] { color: var(--green) !important;}
 [class$="fg-blue"] { color: var(--blue) !important;}
 [class$="fg-grey"] { color: var(--gray) !important;}
-.btn, .dropdown-item, .treeselect{
+
+.btn:not(.small), .dropdown-item, .treeselect{
   min-height: var(--min-height-button) !important;
   min-width: var(--min-height-button) !important;
+  font-size: var(--text-small);
+}
+.mobile .btn, .mobile .dropdown-item, .mobile .treeselect{
+  font-size: medium;
+}
+.desktop .btn, .desktop .dropdown-item, .desktop .treeselect{
+  /* font-size: medium; */
   font-size: var(--text-small);
 }
 .form-control-sm, .custom-select-sm{
@@ -257,13 +271,14 @@ body .mobile .topbar_content .navbar > * {
   background-color: transparent !important;
 }
 .form-control.focus {
-  border-color: var(--b-input_component-focus);
+  border:1px solid var(--b-input_component-focus);
+  border-radius:0.25rem;
   box-shadow: unset;
 }
 .navbar > .btn:hover {
   color: var(--primary-foreground) !important;
 }
-tr.b-table-row-selected > td > .btn,
+/* tr.b-table-row-selected > td > .btn, */
 tr:hover > td > .btn {
   color: var(--primary-foreground) !important;
 }
@@ -272,10 +287,10 @@ tr:hover > td > .btn:hover {
 }
 .btn, .btn:hover {
   /* color: var(--color); */
-  color: var(--general-fg);
   background-color: transparent;
+  color: var(--general-fg);
 }
-.btn:hover {
+.btn:not(.small):hover {
   /* color: var(--color); */
   color: var(--primary-foreground) !important;
   background-color: var(--primary-dark) !important;
@@ -293,7 +308,7 @@ tbody .col-rowactions :not(div).btn {
   display: block;
   width: 100%;
 }
-.btn-sm.active, .btn:hover {
+.btn-sm:not(.small).active, .btn:not(.small):hover {
   color: var(--primary-foreground) !important;
   background-color: var(--primary-dark) !important;
   border-color: var(--bg-page_item-disabled) !important;
@@ -319,9 +334,9 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_secondary-hover) !important;
 }
 .btn-success {
-  color: var(--fg-btn_success);
-  background-color: var(--bg-btn_success) !important;
-  border-color: var(--b-btn_success) !important;
+  color:white !important;
+  background-color:var(--log-notice) !important;
+  border-color:white !important;
 }
 .btn-success:hover {
   color: var(--fg-btn_success-hover);
@@ -329,9 +344,9 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_success-hover) !important;
 }
 .btn-danger {
-  color: var(--fg-btn_danger);
-  background-color: var(--bg-btn_danger) !important;
-  border-color: var(--b-btn_danger) !important;
+  color:var(--danger-foreground) !important;
+  background-color:var(--danger) !important;
+  border-color:var(--danger) !important;
 }
 .btn-danger:hover {
   color: var(--fg-btn_danger-hover);
@@ -339,12 +354,9 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_danger-hover) !important;
 }
 .btn-warning {
-  /* color: #212529;
+  color: var(--warning-foreground);
   background-color: var(--warning) !important;
-  border-color: var(--warning) !important; */
-  color: var(--fg-btn_warning);
-  background-color: var(--bg-btn_warning) !important;
-  border-color: var(--b-btn_warning) !important;
+  border-color: var(--warning-foreground) !important;
 }
 .btn-warning:hover {
   /* color: #212529;
@@ -355,9 +367,13 @@ tbody .col-rowactions :not(div).btn {
   border-color: var(--b-btn_warning-hover) !important;
 }
 .btn-info {
-  color: var(--fg-btn_info);
+  color:white !important;
+  background-color:var(--log-essential) !important;
+  border-color:white !important;
+
+  /* color: var(--fg-btn_info);
   background-color: var(--bg-btn_info) !important;
-  border-color: var(--b-btn_info) !important;
+  border-color: var(--b-btn_info) !important; */
   /* color: var(--btn-fg);
   background-color: var(--info) !important;
   border-color: var(--info) !important; */
@@ -560,6 +576,9 @@ tbody .col-rowactions :not(div).btn {
   color: var(--light);
   background-color: var(--primary);
 }
+.treeselect .vue-treeselect__placeholder {
+  color:var(--placeholder);
+}
 
 .treeselect_fullpage .vue-treeselect__menu {
   min-height: 77vh;
@@ -632,7 +651,9 @@ div.scrollValue {
 .componentwrapper {
   max-width: var(--wrapper-width)!important;
 }
-
+.input-group:focus-within {
+  outline: 1px solid var(--primary);
+}
 #quicksettingsDD {
   width: 70px;
 }
@@ -643,7 +664,7 @@ div.scrollValue {
 #quicksettingsDD .selected > a.dropdown-item,
 #quicksettingsDD .selected:hover {
   color: var(--light) !important;
-  background-color: var(--primary) !important;
+  background-color: var(--primary-dark) !important;
 }
 #quicksettingsDD .selected > a.dropdown-item:hover {
   background-color: var(--primary-dark) !important;

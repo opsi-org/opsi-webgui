@@ -1,4 +1,5 @@
 <template>
+  <!-- test -->
   <!-- <custom-block-licence>
   -*- coding: utf-8 -*-
 
@@ -24,9 +25,8 @@
         <b-button
           v-if="moreDetails.length>1"
           :title="showMore? $t('button.collapse'): $t('button.expand')"
-          size="sm"
-          variant="alertdetails"
-          class="float-right border-0 p-0 pb-2"
+          :variant="alertVariant"
+          class="float-right border-0 p-0 pb-2 btn-alertdetails"
           :pressed.sync="showMore"
         >
           <b-icon :icon="showMore ? icon.arrowUp : icon.arrowDown" />
@@ -80,8 +80,8 @@ export default class AAlert extends BAlert {
   padding-top: 0px;
   padding-bottom: 0px;
 }
-.alertdetails {
+/* .alertdetails {
   color: var(--color);
   background-color: var(--background);
-}
+} */
 </style>

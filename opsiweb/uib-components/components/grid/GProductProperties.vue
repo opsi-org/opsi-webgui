@@ -25,7 +25,7 @@
       {{ errorText }}
     </p>
     <span v-for="item, index in properties.properties" :key="index">
-      <GridGFormItem variant="longlabel">
+      <GridGFormItem variant="longlabel" :new-row-for-value="$mq !== 'desktop'">
         <template #label>
           <div class="d-inline-flex">
             <GridCellGCProductPropertyId :row="item" :product-versions="properties.productVersions" />
@@ -64,6 +64,7 @@
           <GridCellGCProductPropertyValue
             :clients2depots="fetchedDataClients2Depots"
             :row-item="item"
+            :is-loading="isLoading"
             @change="handleChange"
           />
         </template>
