@@ -230,12 +230,10 @@ init:transifex:
     - ls -lah
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
-    # - ./opsi-dev-tool -l debug transifex upload-resource opsiweb/uib-components/locale/opsiweb-ui_en.json
-    # - ./opsi-dev-tool transifex download-translations
-    # - ./opsi-dev-cli --version
-    # - ./opsi-dev-cli transifex --help
+    - ./opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsiweb-ui_en.json
     - ./opsi-dev-cli transifex download-translations --help
-    - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de #-l fr
+    # - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de #-l fr
+    - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de #-l fr
   only:
     - tags
     - main
@@ -253,6 +251,7 @@ test:lint:
   stage: test
   dependencies:
     - init:npm
+    - init:transifex
   before_script:
     - cd opsiweb
     - ls -lah .
@@ -470,11 +469,12 @@ test:backend-pytest:
 #########################################################################
 ######################################################################### build
 #########################################################################
-build:screenshots:docs:
+build:screenshots:docs: # with transifex
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: build
   dependencies:
     - init:npm
+    - init:transifex
     # - tags # screenshots only for tags
   only:
     - main # cause in main we test all files, but only chromium browser
@@ -501,10 +501,11 @@ build:screenshots:docs:
       - opsiweb/.dev.log
     expire_in: 7 day
 
-build:static:app:
+build:static:app: # with transifex
   stage: build
   dependencies:
     - init:npm:production
+    - init:transifex
     - test:lint
   script:
     - cd opsiweb
@@ -519,10 +520,11 @@ build:static:app:
     - main
     - tags
 
-build:addon:
+build:addon: # with transifex
   stage: build
   dependencies:
     - init:npm:production # doesnt download artifacts from static-app
+    - init:transifex
     - build:static:app
   script:
     - *install_tools
@@ -549,11 +551,12 @@ build:addon:
       - opsi-webgui.zip
     expire_in: 3 day
 
-build:zip:
+build:zip: # with transifex
   stage: build
   dependencies:
     - init:npm:production # doesnt download artifacts from static-app
     - build:static:app
+    - init:transifex
   script:
     - *install_tools
     - pwd && ls -la opsiweb
@@ -572,11 +575,12 @@ build:zip:
   only:
     - tags
     - main
+  when: manual
   artifacts:
     name: "opsi-webgui"
     paths:
       - opsi-webgui.zip
-    expire_in: 3 day
+    expire_in: 7 day
 
 
 
