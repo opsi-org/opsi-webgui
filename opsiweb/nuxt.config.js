@@ -6,18 +6,14 @@ import pkg from './package.json'
 // import * as langFiles from './uib-components/locale/';
 const langs = {}
 
-
 const dir = './uib-components/locale/'
 const fullPath = path.join(__dirname, dir)
 const files = fs.readdirSync(fullPath)
 try {
   // gets all internationalization files, which are located in 'dir'
-  files.forEach( file => {
-    // console.log(file)
-    console.log("lang: ", file)
+  files.forEach((file) => {
     if (/opsiweb-ui_(.*)\.json/.test(file)) {
       const l = file.match(/opsiweb-ui_(.*)\.json/)
-      console.log("Match: ", file, l[1])
       try {
         const json = require(fullPath + '/' + file)
         langs[l[1]] = json
