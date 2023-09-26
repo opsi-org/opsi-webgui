@@ -272,6 +272,10 @@ export default class VGroups extends Vue {
 
   normalizer (node: any) {
     if (node.children) {
+      if (node.children.not_assigned) {
+        node.children.__not_assigned = node.children.not_assigned
+        delete node.children.not_assigned
+      }
       return {
         id: node.id,
         label: node.text,
