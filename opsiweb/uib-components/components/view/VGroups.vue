@@ -279,7 +279,6 @@ export default class VGroups extends Vue {
       return {
         id: node.id,
         label: node.text,
-        // children: Object.values(node.children) // unordered !!
         children: Object.values(Object.keys(node.children).sort().reduce(
           (obj, key) => { obj[key] = node.children[key]; return obj }, {}
         ))
