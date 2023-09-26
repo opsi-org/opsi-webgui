@@ -60,10 +60,15 @@ export default class GHostParam extends Vue {
     if (this.id) {
       let endpoint: any = ''
       if (this.type === 'clients') {
-        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+        // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+        endpoint = `/api/opsidata/config/objects/${this.id}`
+      } else if (this.type === 'depots') {
+        endpoint = `/api/opsidata/config/objects/${this.id}`
       } else {
-        endpoint = '/api/opsidata/config/server'
+        endpoint = '/api/opsidata/config'
+        console.error('default-configs not implemented yet')
       }
+      // endpoint = '/api/opsidata/config/server'
       await this.fetchHostParameters(endpoint)
     }
   }
@@ -100,14 +105,16 @@ export default class GHostParam extends Vue {
       this.isLoading = true
       let url: string = ''
       let request: any = []
-      if (this.type === 'clients') {
-        url = '/api/opsidata/config/clients'
+      if (this.type === 'clients' || this.type === 'depots') { // clients and depots
+        url = '/api/opsidata/config/objects'
         request = {
-          clientIds: [this.id],
+          objectIds: [this.id],
           configs: [change]
         }
+      // } else if (this.type === 'depots') {
       } else {
-        url = '/api/opsidata/config/server'
+        // console.error('default-configs not implemented yet')
+        url = '/api/opsidata/config' // default Value
         request = [change]
       }
       await this.saveParameters(url, request, null, true)

@@ -52,9 +52,9 @@ export default class GCHostParamVal extends Vue {
   }
 
   getlocalvalue () {
-    if (this.type === 'clients') {
-      if (this.row.clients) {
-        const val: any = Object.values(this.row.clients)[0]
+    if (this.type === 'clients' || this.type === 'depots') {
+      if (this.row.objects) {
+        const val: any = Object.values(this.row.objects)[0]
         return val
       } else {
         return this.row.defaultValue
