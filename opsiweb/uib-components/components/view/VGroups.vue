@@ -105,7 +105,7 @@
             </treeselect>
           </b-col>
           <b-col v-if="action && selectedvalue">
-            <span class="text-small"><b> {{ title + $t('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
+            <span class="text-small"><b> {{ title + $t('title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
               <!-- closing right side -->
               <b-icon :icon="icon.x" />
@@ -275,7 +275,10 @@ export default class VGroups extends Vue {
       return {
         id: node.id,
         label: node.text,
-        children: Object.values(node.children)
+        // children: Object.values(node.children) // unordered !!
+        children: Object.values(Object.keys(node.children).sort().reduce(
+          (obj, key) => { obj[key] = node.children[key]; return obj }, {}
+        ))
       }
     }
     return {
