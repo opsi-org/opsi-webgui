@@ -19,6 +19,13 @@
       @click="changeLanguage(lang)"
     >
       <span style="text-transform:uppercase;"> {{ lang }} </span>
+
+    </b-dropdown-item>
+    <b-dropdown-item
+      :data-testid="`DropdownDDLang-Item-contribute`"
+      disabled
+    >
+      <span style="text-transform:uppercase;"> {{ $t('button.contribute-transifex') }} </span>
     </b-dropdown-item>
   </b-dropdown>
 </template>
@@ -36,6 +43,7 @@ export default class DDLang extends Vue {
   icon:any
   $i18n:any
   $mq:any
+  $t:any
 
   @Prop({ default: false }) footer!: boolean
 

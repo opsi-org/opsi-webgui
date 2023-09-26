@@ -7,7 +7,7 @@
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
-                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
+                {{ $t('keep-english.count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
               </b> </small>
             </template>
           </b-tab>

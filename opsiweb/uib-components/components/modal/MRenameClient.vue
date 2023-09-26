@@ -24,7 +24,7 @@
 
     <b-modal
       :id="'event-modal-rename-' + clientId"
-      :title="$t('title.renameClient') + $t('title.delimiter')+ clientId"
+      :title="$t('title.renameClient') + $t('keep-english.title.delimiter')+ clientId"
       data-testid="MRenameClientModal"
       centered
       scrollable

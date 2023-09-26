@@ -8,7 +8,7 @@
     </div>
     <div v-else-if="!errorText && $mq=='mobile'">
       <AlertAAlertLocal show variant="primary">
-        {{ $t('table.fields.clientsIds') + $t('colon') }} {{ selectionClients.length }}
+        {{ $t('table.fields.clientsIds') + $t('keep-english.colon') }} {{ selectionClients.length }}
       </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
@@ -34,24 +34,24 @@
           <b-tooltip :target="`property_${item.propertyId}`" triggers="hover">
             <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${item.propertyId}`" class="text-left">
               <small>
-                {{ $t('table.details.productproperty.defaults') }} <b v-if="item.default!==$t('values.mixed')">{{ $t('[content]', { content: item.details }) }}</b>
+                {{ $t('table.details.productproperty.defaults') }} <b v-if="item.default!==$t('values.mixed')">{{ $t('keep-english.[content]', { content: item.details }) }}</b>
                 <div v-else>
                   <p v-for="v,k in item.defaultDetails" :key="k">
-                    {{ k + $t('colon') }} <b>{{ v }}</b>
+                    {{ k + $t('keep-english.colon') }} <b>{{ v }}</b>
                   </p>
                 </div>
                 <br>
                 <div v-if="item.anyDepotDifferentFromDefault">
                   {{ $t('table.details.productproperty.server') }}
                   <p v-for="v,k in item.depots" :key="k">
-                    {{ k + $t('colon') }} <b>{{ v }}</b>
+                    {{ k + $t('keep-english.colon') }} <b>{{ v }}</b>
                   </p>
                 </div>
                 <br>
                 {{ $t('table.fields.description') }} <b v-if="item.description!=$t('values.mixed')">{{ item.description }}</b>
                 <div v-else>
                   <p v-for="v,k in item.descriptionDetails" :key="k">
-                    {{ k + $t('colon') }} <b>{{ v }}</b>
+                    {{ k + $t('keep-english.colon') }} <b>{{ v }}</b>
                   </p>
                 </div>
                 <br>

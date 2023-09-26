@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VConfig" class="VConfig">
-    <BarBPageHeader v-if="asChild" :title="$t('title.config') + '' + $t('title.delimiter')" :subtitle="id" :closeroute="closeroute" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.config') + '' + $t('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #left>
         <slot name="IDSelection" />

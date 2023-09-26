@@ -105,7 +105,7 @@
             </treeselect>
           </b-col>
           <b-col v-if="action && selectedvalue">
-            <span class="text-small"><b> {{ title + $t('title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
+            <span class="text-small"><b> {{ title + $t('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
               <!-- closing right side -->
               <b-icon :icon="icon.x" />

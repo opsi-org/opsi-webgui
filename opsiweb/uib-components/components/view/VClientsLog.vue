@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + $t('title.delimiter')" :subtitle="id" closeroute="/clients/" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + $t('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
@@ -23,7 +23,7 @@
     <div class="log-row-text" />
     <DivDScrollResult v-if="logResult">
       <div v-if="filteredLog.includes('')">
-        {{ $t('empty') }}
+        {{ $t('keep-english.empty') }}
       </div>
       <div
         v-for="(log, index) in filteredLog"
@@ -45,7 +45,7 @@
             'log-row-9': log.startsWith('[9]'),
           }"
         >
-          {{ $t('(content)', {content: index}) }} {{ log }}
+          {{ $t('keep-english.(content)', {content: index}) }} {{ log }}
         </span>
       </div>
     </DivDScrollResult>

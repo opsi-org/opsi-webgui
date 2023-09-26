@@ -12,9 +12,9 @@
     >
       <template #first>
         <b-form-select-option :value="null" disabled>
-          {{ $t('empty') }}
+          {{ $t('keep-english.empty') }}
           {{ $t('form.logtype') }}
-          {{ $t('empty') }}
+          {{ $t('keep-english.empty') }}
         </b-form-select-option>
       </template>
     </b-form-select>

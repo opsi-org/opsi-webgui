@@ -23,7 +23,7 @@
       </span>
     </LazyDivDScrollResult>
     <DivDScrollResult v-else>
-      {{ $t('empty') }}
+      {{ $t('keep-english.empty') }}
     </DivDScrollResult>
   </div>
 </template>

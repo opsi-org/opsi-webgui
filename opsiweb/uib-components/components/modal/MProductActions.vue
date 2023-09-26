@@ -27,7 +27,7 @@
           <b-form-select v-model="quickaction.installation_status" size="sm" :options="conditn_InstStatus">
             <template #first>
               <b-form-select-option :value="null">
-                {{ $t('empty') }}
+                {{ $t('keep-english.empty') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -38,7 +38,7 @@
           <b-form-select v-model="quickaction.action_result" size="sm" :options="conditn_ActionResult">
             <template #first>
               <b-form-select-option :value="null">
-                {{ $t('empty') }}
+                {{ $t('keep-english.empty') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -57,7 +57,7 @@
           <b-form-select v-model="quickaction.action" size="sm" :options="actions">
             <template #first>
               <b-form-select-option :value="null">
-                {{ $t('empty') }}
+                {{ $t('keep-english.empty') }}
               </b-form-select-option>
             </template>
           </b-form-select>

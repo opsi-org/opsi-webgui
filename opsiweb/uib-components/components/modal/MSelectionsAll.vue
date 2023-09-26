@@ -33,7 +33,7 @@
             plaintext
             :value="[...selectionDepots].sort().join('\n')"
           />
-          <span v-else>{{ $t('empty') }}</span>
+          <span v-else>{{ $t('keep-english.empty') }}</span>
         </template>
       </GridGFormItem>
       <GridGFormItem v-if="showClients" :label="$t('title.clients')" variant="longlabel" labelclass="clients">
@@ -47,7 +47,7 @@
             plaintext
             :value="[...selectionClients].sort().join('\n')"
           />
-          <span v-else>{{ $t('empty') }}</span>
+          <span v-else>{{ $t('keep-english.empty') }}</span>
         </template>
       </GridGFormItem>
     </b-modal>

@@ -42,7 +42,7 @@
       </DivDScrollResult>
     </div>
     <div v-else>
-      {{ $t('empty') }}
+      {{ $t('keep-english.empty') }}
     </div>
   </div>
 </template>

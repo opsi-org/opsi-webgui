@@ -21,7 +21,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('empty') }}</span>
+            <span v-else>{{ $t('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem variant="longvalue" labelclass="clients">
@@ -46,7 +46,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('empty') }}</span>
+            <span v-else>{{ $t('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem variant="longvalue" labelclass="products">
@@ -71,7 +71,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('empty') }}</span>
+            <span v-else>{{ $t('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
       </div>
