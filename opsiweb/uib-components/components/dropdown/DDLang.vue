@@ -24,9 +24,10 @@
     <b-dropdown-item
       :data-testid="`DropdownDDLang-Item-contribute`"
       :title="$t('button.contribute-transifex.tooltip')"
-      href="https://explore.transifex.com/opsi-org/opsiorg/"
+      href="https://app.transifex.com/opsi-org/opsiorg/opsiweb-uijson/"
       target="_blank"
-    >
+      >
+      <!-- href="https://explore.transifex.com/opsi-org/opsiorg/" -->
       <span> {{ $t('button.contribute-transifex') }} </span>
     </b-dropdown-item>
   </b-dropdown>
