@@ -54,12 +54,14 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
+import { MBus } from '../../mixins/messagebus'
 const selections = namespace('selections')
 interface LogRequest {
     selectedClient: string,
     selectedLogType: string
-}
-@Component
+  }
+
+@Component({ mixins: [MBus] })
 export default class VClientLog extends Vue {
   $axios: any
   $t: any
@@ -84,6 +86,23 @@ export default class VClientLog extends Vue {
   @selections.Mutation public XsetSelectionLogClient!: (s: string) => void
   @selections.Mutation public XsetSelectionLogType!: (s: string) => void
   @selections.Mutation public XsetSelectionLogLevel!: (s: number) => void
+
+  wsBusMsg: any // mixin // store
+  wsSubscribeChannel: any
+  channels = ['event:log_updated']
+
+  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+    const msg = this.wsBusMsg
+    // console.log('MessageBus: receive-watch: ', msg)
+    if (msg && this.channels.includes(msg.channel)) { // && msg.type == this.logtype  && msg.objectId == this.id ) {
+      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+      ref.alert(`MessageBus received:  log_updated ${msg.data}`, 'info')
+      console.log('MessageBus log_updated: ', msg)
+      // await this.$fetch()
+    } else {
+      console.log('MessageBus other: ', msg.channel)
+    }
+  }
 
   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
   @Watch('loglevel', { deep: true }) loglevelChanged () {
@@ -113,6 +132,8 @@ export default class VClientLog extends Vue {
 
   mounted () {
     if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
+    // console.log('MessageBus subscribe channel', this.channels)
+    // this.wsSubscribeChannel(this.channels)
   }
 
   filterLog () {
