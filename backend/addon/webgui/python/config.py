@@ -32,6 +32,7 @@ from .utils import bool_value, mysql, parse_client_list, read_only_check, unicod
 conifg_router = APIRouter()
 
 
+@conifg_router.get("/api/opsidata/config")
 @conifg_router.get("/api/opsidata/config/server")
 @rest_api
 def get_server_config(
@@ -303,11 +304,11 @@ class Config(BaseModel):  # pylint: disable=too-few-public-methods
 
 
 class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
-	clientIds: List[str] = []
+	objectIds: List[str] = []
 	configs: List[Config]
 
 
-@conifg_router.post("/api/opsidata/config/server")
+@conifg_router.post("/api/opsidata/config")
 @rest_api
 @read_only_check
 def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
@@ -399,7 +400,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Values for {','.join(ids)} changed.")
 
 
-@conifg_router.post("/api/opsidata/config/clients")
+@conifg_router.post("/api/opsidata/config/objects")
 @rest_api
 @read_only_check
 def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
@@ -410,11 +411,11 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 	"""
 	changes = []
 
-	if not data.clientIds:
+	if not data.objectIds:
 		logger.notice("No configurations were transferred to save. Nothing to do...")
 		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No configurations were transferred to save.")
 
-	for client in data.clientIds:
+	for client in data.objectIds:
 		for config in data.configs:
 			changes.append(f"{client}: {config.configId}")
 			if isinstance(config.value, list):
