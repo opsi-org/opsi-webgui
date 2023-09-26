@@ -25,8 +25,13 @@ stages:
   export DEBIAN_FRONTEND=noninteractive
   apt update
   apt -y install debhelper osc zip
-  wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
-  tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
+  # wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
+  # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
+  curl -o opsi-dev-tools.tar.gz "$OPSIDEVTOOLS_URL_LINUX_X64"
+  tar -xvf opsi-dev-tools.tar.gz
+  cp opsi-dev-tool opsi-dev-cli
+
+
 
 .prepare_backend_tests: &prepare_backend_tests |
   apt update
