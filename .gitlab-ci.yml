@@ -215,6 +215,27 @@ init:npm:production:
       - opsiweb/uib-components/
     expire_in: 1 day
 
+init:transifex:
+  # this step have to be done before building webgui
+  stage: init
+  # dependencies:
+  #   - build:static:app
+  script:
+    - *install_tools
+    - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
+    - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
+    # - ./opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/webgui_en.json
+    # - ./opsi-dev-cli transifex download-translations
+      - ./opsi-dev-cli -l debug transifex download-translations opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
+  only:
+    - tags
+    - main
+    - 659-transifex-automation
+  artifacts:
+    name: "opsi-webgui-locale"
+    paths:
+      - opsiweb/uib-components/locale
+    expire_in: 3 day
 
 #########################################################################
 ######################################################################### test
@@ -548,22 +569,7 @@ build:zip:
       - opsi-webgui.zip
     expire_in: 3 day
 
-build:transifex:
-  stage: build
-  dependencies:
-    - build:static:app
-  script:
-    - *install_tools
-    - ./opsi-dev-cli transifex download-translations
-  only:
-    - tags
-    - main
-    - 659-transifex-automation
-  artifacts:
-    name: "opsi-webgui-locale"
-    paths:
-      - webgui
-    expire_in: 3 day
+
 
 #########################################################################
 ######################################################################### create tag
