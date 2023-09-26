@@ -571,7 +571,6 @@ build:zip: # with transifex
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
-    - zip -r -q opsi-webgui.zip webgui
   only:
     - tags
     - main
@@ -579,7 +578,7 @@ build:zip: # with transifex
   artifacts:
     name: "opsi-webgui"
     paths:
-      - opsi-webgui.zip
+      - webgui
     expire_in: 7 day
 
 
