@@ -10,9 +10,9 @@ git:
   hooks:
     pre-push: |
       BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-      echo "> branch: $BRANCH"
+      echo "> branch:$BRANCH"
+      if [ "$BRANCH" = "nuxt3" ]; then echo "EXIT"; exit 0; fi
       changedFiles=""
-      if [[ "$BRANCH" == "nuxt3" ]]; then exit 0; fi
       cd /workspace/opsiweb/
       file=".tmp_prepush_result_changed_files.log"
       echo "> Test Changed files"
