@@ -7,18 +7,18 @@
       </template>
     </BarBPageHeader>
     <b-tabs small lazy>
-      <b-tab :active="id? true : false" :disabled="!id">
+      <b-tab active :disabled="!(type == 'clients' || type == 'depots')">
+        <template #title>
+          <span data-testid="Parameters" class="hostparam"> {{ id ? $t('title.hostparam') : $t('title.hostparam.defaults') }} </span>
+        </template>
+        <LazyGridGHostParam v-if="type=='depots' || id" :id="id" :type="type" />
+        <div v-else style="height: 70vh;" />
+      </b-tab>
+      <b-tab :disabled="!id">
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
         </template>
         <LazyGridGHostAttributes v-if="id" :id="id" :type="type" />
-        <div v-else style="height: 70vh;" />
-      </b-tab>
-      <b-tab v-if="type == 'clients' || type == 'depots'">
-        <template #title>
-          <span data-testid="Parameters" class="hostparam"> {{ $t('title.hostparam') }} </span>
-        </template>
-        <LazyGridGHostParam v-if="type=='depots' || id" :id="id" :type="type" />
         <div v-else style="height: 70vh;" />
       </b-tab>
     </b-tabs>

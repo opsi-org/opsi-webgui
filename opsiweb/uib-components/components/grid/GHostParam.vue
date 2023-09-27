@@ -25,7 +25,6 @@
     <DivDScrollResult v-else>
       {{ $t('keep-english.empty') }}
     </DivDScrollResult>
-    {{ id }}
   </div>
 </template>
 

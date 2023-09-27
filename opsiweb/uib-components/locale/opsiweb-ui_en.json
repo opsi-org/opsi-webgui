@@ -105,6 +105,7 @@
   "title.renameClient": "Rename Client",
   "title.whatsnew":"What's new ?",
   "title.hostparam": "Parameters",
+  "title.hostparam.defaults": "Parameters (Defaults)",
   "title.groups": "Groups",
   "title.admin": "Admin",
   "title.administration": "System",
