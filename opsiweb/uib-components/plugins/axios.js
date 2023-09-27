@@ -14,19 +14,19 @@ export default function ({ $axios, redirect, store, route }) {
       $axios.setHeader('X-opsi-session-lifetime', expiry)
       store.commit('auth/setSession', expiry)
     }
-    // console.debug('Making request to ', config)
+    // eslint-disable-next-line no-console
+    console.debug('axios request ', config.url)
     return config
   })
-  $axios.onResponse((/* response */) => {
-    // console.debug('Received response from ', response)
+  $axios.onResponse((response) => {
+    // eslint-disable-next-line no-console
+    console.debug('axios response ', response.config.url)
   })
 
   $axios.onError((error) => {
+    // eslint-disable-next-line no-console
+    console.debug('axios error ', error.response.config.url)
     const code = parseInt(error?.response?.status)
-    // if (code === 400) {
-    //   // redirect('/400')
-    // }
-    // else
     if (code === 401) {
       localStorage.removeItem('username')
       store.commit('auth/logout')
