@@ -59,16 +59,12 @@ export default class GHostParam extends Vue {
 
   async fetch () {
     let endpoint: any = ''
-    console.log('config ', this.type, this.id)
     if (this.type === 'clients') {
-      console.log('config clients')
       // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
       endpoint = `/api/opsidata/config/objects/${this.id}`
     } else if (this.type === 'depots' && this.id) {
-      console.log('config depots and id')
       endpoint = `/api/opsidata/config/objects/${this.id}`
     } else if (this.type === 'depots') {
-      console.log('config depots')
       endpoint = '/api/opsidata/config'
     } else {
       // eslint-disable-next-line no-console
@@ -105,7 +101,6 @@ export default class GHostParam extends Vue {
   }
 
   async handleSelection (change: any) {
-
     if (this.quicksave) {
       this.isLoading = true
       let url: string = ''

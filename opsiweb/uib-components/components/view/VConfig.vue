@@ -7,7 +7,7 @@
       </template>
     </BarBPageHeader>
     <b-tabs small lazy>
-      <b-tab :active="id" :disabled="!id">
+      <b-tab :active="id? true : false" :disabled="!id">
         <template #title>
           <span class="hostattr"> {{ $t('title.hostattr') }} </span>
         </template>
