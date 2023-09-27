@@ -6,6 +6,7 @@
       data-testid="TSClientsNotStored"
       class="treeselect_notstored treeselect treeselect_short"
       :options="clientIds"
+      :clearable="emptyAllowed"
       :placeholder="$t('form.client')"
       @input="$emit('update:id', idselection)"
     />
@@ -13,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { Client } from '../../mixins/get'
 const selections = namespace('selections')
 
@@ -23,6 +24,9 @@ export default class TSClientsNotStored extends Vue {
   getClientIdList:any
   clientIds: Array<object> = []
   idselection: string = ''
+
+  @Prop({ default: false }) emptyAllowed!: boolean
+
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
 
