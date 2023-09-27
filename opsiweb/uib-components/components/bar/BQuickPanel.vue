@@ -39,6 +39,7 @@
         <b-col> <DropdownDDTheme v-once /> </b-col>
         <b-col cols="6">
           <CheckboxCBQuickSave />
+          <CheckboxCBMultiselection />
         </b-col>
       </b-row>
     </b-card>

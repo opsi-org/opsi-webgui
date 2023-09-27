@@ -301,6 +301,7 @@ export default class VClients extends Vue {
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
   cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
 
+  @selections.Getter public multiSelection!: boolean
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -420,7 +421,7 @@ export default class VClients extends Vue {
     const ref = (this.$refs.sortProductsAlert as any)
     this.sortProductsByCol = type
     this.sortProductsByClient = clientid
-    if (this.selectionClients.length <= 0 || toContinue || this.selectionClients[0] === clientid) {
+    if (this.selectionClients.length <= 0 || toContinue || this.selectionClients[0] === clientid || this.multiSelection === false) {
       ref.hide()
       this.setSelectionClients([this.sortProductsByClient])
       this.rowId = 'dummy'
