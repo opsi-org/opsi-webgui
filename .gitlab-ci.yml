@@ -574,11 +574,10 @@ build:zip: # with transifex
   only:
     - tags
     - main
-  when: manual
   artifacts:
     name: "opsi-webgui"
     paths:
-      - webgui
+      - webgui/*
     expire_in: 7 day
 
 
