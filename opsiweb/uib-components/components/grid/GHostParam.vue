@@ -16,7 +16,7 @@
             :label="item.configId"
           >
             <template #value>
-              <GridCellGCHostParamValue :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
+              <GridCellGCHostParamValue :id="id" :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
             </template>
           </GridGFormItem>
         </b-collapse>
@@ -25,6 +25,7 @@
     <DivDScrollResult v-else>
       {{ $t('keep-english.empty') }}
     </DivDScrollResult>
+    {{ id }}
   </div>
 </template>
 
@@ -57,20 +58,23 @@ export default class GHostParam extends Vue {
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
   async fetch () {
-    if (this.id) {
-      let endpoint: any = ''
-      if (this.type === 'clients') {
-        // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
-        endpoint = `/api/opsidata/config/objects/${this.id}`
-      } else if (this.type === 'depots') {
-        endpoint = `/api/opsidata/config/objects/${this.id}`
-      } else {
-        endpoint = '/api/opsidata/config'
-        console.error('default-configs not implemented yet')
-      }
-      // endpoint = '/api/opsidata/config/server'
-      await this.fetchHostParameters(endpoint)
+    let endpoint: any = ''
+    console.log('config ', this.type, this.id)
+    if (this.type === 'clients') {
+      console.log('config clients')
+      // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+      endpoint = `/api/opsidata/config/objects/${this.id}`
+    } else if (this.type === 'depots' && this.id) {
+      console.log('config depots and id')
+      endpoint = `/api/opsidata/config/objects/${this.id}`
+    } else if (this.type === 'depots') {
+      console.log('config depots')
+      endpoint = '/api/opsidata/config'
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('not defined')
     }
+    await this.fetchHostParameters(endpoint)
   }
 
   async fetchHostParameters (endpoint) {
@@ -88,8 +92,8 @@ export default class GHostParam extends Vue {
   trackHostParameters (change) {
     const changeObject: Object = {
       user: localStorage.getItem('username'),
-      hostId: this.id,
       type: this.type,
+      hostId: this.id,
       configId: change.configId,
       value: change.value
     }
@@ -101,21 +105,22 @@ export default class GHostParam extends Vue {
   }
 
   async handleSelection (change: any) {
+
     if (this.quicksave) {
       this.isLoading = true
       let url: string = ''
       let request: any = []
-      if (this.type === 'clients' || this.type === 'depots') { // clients and depots
+      if (this.type === 'depots' && !this.id) { // changing default configs
+        url = '/api/opsidata/config'
+        request = [change]
+      } else if (this.type === 'clients' || this.type === 'depots') { // changing clients or depots configs
         url = '/api/opsidata/config/objects'
         request = {
           objectIds: [this.id],
           configs: [change]
         }
-      // } else if (this.type === 'depots') {
       } else {
-        // console.error('default-configs not implemented yet')
-        url = '/api/opsidata/config' // default Value
-        request = [change]
+        console.error('not defined')
       }
       await this.saveParameters(url, request, null, true)
       this.isLoading = false
