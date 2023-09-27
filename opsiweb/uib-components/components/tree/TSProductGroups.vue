@@ -5,6 +5,7 @@
     id="ProductGroups"
     :class="classes"
     :type="type"
+    :show-as-multi="multi"
     :always-open="open"
     :text="$t('treeselect.prodGroups')"
     data-testid="TSProductGroups"
@@ -26,6 +27,7 @@ const selections = namespace('selections')
 export default class TSProductGroups extends Vue {
   icon: any // from mixin
   $axios: any
+  @Prop({ default: true }) multi!: boolean
   @Prop({ default: false }) open!: boolean
   @Prop({ }) classes!: any
   @Prop({ default: 'treeselect_short' }) type!: string
