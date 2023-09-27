@@ -38,10 +38,18 @@
     <b-modal
       id="modal-confirmMultiSelectionChange"
       :title="$t('form.multiselection.modal.title')"
+      :ok-title="$t('button.continue')"
+      :cancel-title="$t('label.cancel')"
+      ok-variant="success"
+      cancel-variant="primary"
       @ok="toggleSelectionMode"
       @hidden="cancelSelectionModeModal"
     >
-      <div class="d-block"> {{ $t('form.multiselection.modal.content') }}</div>
+      <div class="d-block"> {{ $t('form.multiselection.modal.content',
+      {
+        'btn.ok': $t('button.continue'),
+        'btn.cancel': $t('label.cancel'),
+        }) }}</div>
     </b-modal>
   </div>
 </template>
