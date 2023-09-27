@@ -627,7 +627,7 @@ tbody .col-rowactions :not(div).btn {
   --bs-tooltip-bg: var(--bg-tooltip_inner) !important;
   background-color: var(--bs-tooltip-bg) !important;
   color: var(--bs-tooltip-color) !important;
-  border: 1px solid var(--b-bs_tooltip) !important;
+  border: 1px solid var(--b-bs_tooltip-inner) !important;
   padding: 10px;
 }
 
