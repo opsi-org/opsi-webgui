@@ -599,11 +599,10 @@ upload:gittag:
     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
     - *push_tag
     # -o response.txt \
+    - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
     - |
-      curl --request POST \
-        --fail-with-body \
+      curl --request POST --url "$URL"
         --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-        --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main" \
         --data-urlencode "message=$(cat $FILE)"
 
     # - printf "\nRESPONSE:\n $(cat response.txt)"
