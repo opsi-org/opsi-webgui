@@ -545,7 +545,7 @@ build:addon: # with transifex
     - tags
     - main
   artifacts:
-    name: "opsi-webgui"
+    name: "opsi-webgui-with-zip"
     paths:
       - webgui
       - opsi-webgui.zip
@@ -571,13 +571,16 @@ build:zip: # with transifex
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
+    - mv webgui/data .
+    - mv webgui/python .
   only:
     - tags
     - main
   artifacts:
     name: "opsi-webgui"
     paths:
-      - webgui/*
+      - data
+      - python
     expire_in: 7 day
 
 
@@ -644,21 +647,19 @@ upload:git:
   rules:
     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
   script:
-    - echo "Create Release $TAG"
-    - echo $JOB_ID
+    - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
     tag_name: '$CI_COMMIT_TAG'
-    description: '$CI_COMMIT_'
+    description: '$CI_COMMIT_TAG'
   release:
-    name: 'Release $TAG'
-    tag_name: '$TAG'
-    ref: '$TAG'
-    description: 'Release $TAG'
+    name: 'Release $CI_COMMIT_TAG'
+    tag_name: '$CI_COMMIT_TAG'
+    ref: '$CI_COMMIT_TAG'
+    description: 'Release $CI_COMMIT_TAG'
     assets:
       links:
         - name: "opsi-webgui"
           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
-
 
 publish:obs_int:
   stage: publish
