@@ -202,7 +202,6 @@ init:npm:
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
-
 init:npm:production:
   stage: init
   only:
@@ -219,7 +218,6 @@ init:npm:production:
       - opsiweb/node_modules/
       - opsiweb/uib-components/
     expire_in: 1 day
-
 init:transifex:
   # this step have to be done before building webgui
   stage: init
@@ -260,7 +258,6 @@ test:lint:
     - *define_globals
   script:
     - npm run lint
-
 # test:unit:
   #   stage: test
   #   dependencies:
@@ -373,7 +370,6 @@ test:components:changes:
     reports:
       junit: ./opsiweb/.config/test-result-pw-reporter-components.xml
     expire_in: 1 day
-
 test:components:
   image: mcr.microsoft.com/playwright:v1.15.2-focal
   stage: test
@@ -410,7 +406,6 @@ test:components:
     reports:
       junit: ./opsiweb/test-result-pw-reporter-components.xml
     expire_in: 3 day
-
 # test:test-components:all-variants:
   #   image: mcr.microsoft.com/playwright:v1.15.2-focal
   #   stage: test
@@ -608,7 +603,7 @@ upload:gittag:
     - echo ""
     - *compare_versions
     - *prepare_tag
-    - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3
+    - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
     - *push_tag
     - rm $FILE
   # when: manual
