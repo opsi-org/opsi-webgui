@@ -160,7 +160,7 @@ stages:
   echo "ProjectID: $CI_PROJECT_ID"
   echo "ProjectTAG: $TAG"
   printf "ProjectMSG: \n$(cat $FILE)\n"
-  printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
+  printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main\n"
   http_response=$(curl --request POST \
     -o response.txt \
     --fail-with-body \
@@ -168,7 +168,7 @@ stages:
     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main" \
     --data-urlencode "message=$(cat $FILE)" )
 
-  echo "$http_response: $(cat response.txt)"
+  printf "\nRESPONSE:\n$http_response: $(cat response.txt)"
   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
   echo ""
 
@@ -227,7 +227,7 @@ init:transifex:
   script:
     - *install_tools
     - ls -lah
-    - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
+    - TRANSIFEX_MIN_TRANSLATION_RATE=0.5
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
     - ./opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsiweb-ui_en.json
     - ./opsi-dev-cli transifex download-translations --help
@@ -608,6 +608,7 @@ upload:gittag:
     - *push_tag
     - rm $FILE
   # when: manual
+  allow_failure: false
   when: manual
   only: # visible in this branches: (main!)
     - main
