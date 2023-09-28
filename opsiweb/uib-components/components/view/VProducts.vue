@@ -7,7 +7,7 @@
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
-                {{ $t('keep-english.count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
+                {{ t_fixed('keep-english.count/all').replace('count', selectionProducts.length).replace('all', parseInt(localboot) + totalnetboot) }}
               </b> </small>
             </template>
           </b-tab>
@@ -65,9 +65,10 @@ import { Icons } from '../../mixins/icons'
 import { Cookies } from '../../mixins/cookies'
 import { ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { IObjectString2Any, IObjectString2String } from '../../.utils/types/tgeneral'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 
-@Component({ mixins: [Client, Icons, Cookies] })
+@Component({ mixins: [Client, Icons, Strings, Cookies] })
 export default class VProducts extends Vue {
   fetchedDataClients2Depots!: IObjectString2String // mixin Client
   // Cookie: any
@@ -76,6 +77,7 @@ export default class VProducts extends Vue {
   getKeyCookie!: any
   setCookie: any
   icon: any
+  t_fixed: any
   $mq: any
   $route:any
   $router:any

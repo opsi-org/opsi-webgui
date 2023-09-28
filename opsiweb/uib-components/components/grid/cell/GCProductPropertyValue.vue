@@ -13,7 +13,7 @@
         :indeterminate="visibleValueBoolIndeterminate"
         @change="handleBoolChange"
       >
-        <span style="font-size: 25px;"> {{ isOrigin? '' : $t('notOrigin') }} </span>
+        <span style="font-size: 25px;"> {{ isOrigin? '' : t_fixed('notOrigin') }} </span>
       </b-form-checkbox>
       <IconILoading v-else-if="loading" />
       <TreeTSDefault
@@ -58,15 +58,17 @@ import { IProperty } from '../../../.utils/types/ttable'
 import { IObjectString2Boolean, IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
 import { Icons } from '../../../mixins/icons'
+import { Strings } from '../../../mixins/strings'
 const settings = namespace('settings')
 const selections = namespace('selections')
 const changes = namespace('changes')
 const config = namespace('config-app')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Strings] })
 export default class GCProductPropertyValue extends Vue {
   console: any
   $t:any
+  t_fixed:any
   $axios:any
   icon:any
   @Prop() rowItem!: IProperty

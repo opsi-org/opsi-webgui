@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VProductProperty">
-    <BarBPageHeader :title="$t('title.config') + '' + $t('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
+    <BarBPageHeader :title="$t('title.config') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <div class="mb-3 text-small">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
@@ -54,6 +54,7 @@
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { IDepend, IProp } from '../../.utils/types/ttable'
+import { Strings } from '../../mixins/strings'
 
 const selections = namespace('selections')
 const changes = namespace('changes')
@@ -65,8 +66,10 @@ interface IFetchedData {
   dependencies:IDepend,
   properties:IProp
 }
-@Component
+
+@Component({ mixins: [Strings] })
 export default class VProductProperty extends Vue {
+  t_fixed: any
   $fetchState: any
   $axios: any
   // $nuxt: any

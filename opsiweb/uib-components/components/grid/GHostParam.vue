@@ -23,7 +23,7 @@
       </span>
     </LazyDivDScrollResult>
     <DivDScrollResult v-else>
-      {{ $t('keep-english.empty') }}
+      {{ t_fixed('keep-english.empty') }}
     </DivDScrollResult>
   </div>
 </template>
@@ -31,10 +31,11 @@
 <script lang="ts">
 import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { SaveParameters } from '../../mixins/save'
+import { Strings } from '../../mixins/strings'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [SaveParameters] })
+@Component({ mixins: [Strings, SaveParameters] })
 export default class GHostParam extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -47,6 +48,7 @@ export default class GHostParam extends Vue {
   saveParameters:any
   $axios: any
   $t: any
+  t_fixed: any
   $fetch: any
 
   @settings.Getter public quicksave!: boolean

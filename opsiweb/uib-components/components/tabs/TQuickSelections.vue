@@ -21,7 +21,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('keep-english.empty') }}</span>
+            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem variant="longvalue" labelclass="clients">
@@ -46,7 +46,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('keep-english.empty') }}</span>
+            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem variant="longvalue" labelclass="products">
@@ -71,7 +71,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('keep-english.empty') }}</span>
+            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
       </div>
@@ -106,11 +106,13 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Strings] })
 export default class TQuickSelections extends Vue {
   icon:any
+  t_fixed:any
   $mq:any
   @selections.Getter public multiSelection!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>

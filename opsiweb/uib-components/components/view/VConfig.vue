@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VConfig" class="VConfig">
-    <BarBPageHeader v-if="asChild" :title="$t('title.config') + '' + $t('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.config') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <BarBPageHeader v-if="!asChild">
       <template #left>
         <slot name="IDSelection" />
@@ -27,9 +27,12 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { Strings } from '../../mixins/strings'
 const cache = namespace('data-cache')
-@Component
+
+@Component({ mixins: [Strings] })
 export default class VConfig extends Vue {
+  t_fixed: any
   @Prop({ }) id!: string
   @Prop({ }) type!: string
   @Prop({ default: false }) 'asChild'!: string

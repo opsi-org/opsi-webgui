@@ -71,7 +71,7 @@
         <template #head(selected)>
           <small>
             <b v-if="rowident !== 'productId'" class="count">
-              {{ $t('keep-english.count/all', {count:selection.length, all:totalItems||0}) }}
+              {{ t_fixed('keep-english.count/all').replace('count',selection.length).replace('all', totalItems||0) }}
             </b>
             <ButtonBTNClearSelection :disabled="selection.length<1" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" short />
           </small>
@@ -119,11 +119,13 @@ import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Icons } from '../../mixins/icons'
+import { Strings } from '../../mixins/strings'
 const cache = namespace('data-cache')
 //  TODO Fix Scrolling for Netboot
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Strings] })
 export default class TInfiniteScrollSmooth extends Vue {
   icon: any
+  t_fixed: any
   $axios: any
   $mq: any
   @Prop({ }) error!: string

@@ -50,7 +50,7 @@
       </template>
       <template #head(selected)>
         <small v-if="rowident !== 'productId'"> <b class="count">
-          {{ $t('keep-english.count/all', {count:selection.length, all:totalItems||0}) }}
+          {{ t_fixed('keep-english.count/all').replace('count',selection.length).replace('all',totalItems||0) }}
         </b> </small>
         <ButtonBTNClearSelection v-if="selection.length>0" class="clearselection-btn" :clearselection="clearSelected" :show-label="false" />
       </template>
@@ -86,12 +86,14 @@
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ITableHeaders, ITableData, ITableDataItem, ITableRow } from '../../.utils/types/ttable'
 import { Icons } from '../../mixins/icons'
+import { Strings } from '../../mixins/strings'
 const cache = namespace('data-cache')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Strings] })
 export default class TInfiniteScroll extends Vue {
   $t:any
   icon: any
+  t_fixed: any
   $axios: any
   $mq: any
   scrolltop: number = 200

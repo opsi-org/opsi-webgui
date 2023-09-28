@@ -42,7 +42,7 @@
       </DivDScrollResult>
     </div>
     <div v-else>
-      {{ $t('keep-english.empty') }}
+      {{ t_fixed('keep-english.empty') }}
     </div>
   </div>
 </template>
@@ -52,13 +52,15 @@ import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest, SaveProductProperties } from '../../mixins/save'
+import { Strings } from '../../mixins/strings'
 const auth = namespace('auth')
 const changes = namespace('changes')
 const errors = namespace('errors')
 
-@Component({ mixins: [Icons, SaveProductActionRequest, SaveProductProperties] })
+@Component({ mixins: [Icons, Strings, SaveProductActionRequest, SaveProductProperties] })
 export default class GChangesProducts extends Vue {
   icon: any
+  t_fixed: any
   $axios: any
   $mq: any
   $nuxt: any

@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + $t('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
@@ -23,7 +23,7 @@
     <div class="log-row-text" />
     <DivDScrollResult v-if="logResult">
       <div v-if="filteredLog.includes('')">
-        {{ $t('keep-english.empty') }}
+        {{ t_fixed('keep-english.empty') }}
       </div>
       <div
         v-for="(log, index) in filteredLog"
@@ -45,7 +45,7 @@
             'log-row-9': log.startsWith('[9]'),
           }"
         >
-          {{ $t('keep-english.(content)', {content: index}) }} {{ log }}
+          {{ t_fixed('keep-english.(content)').replace('content', index) }} {{ log }}
         </span>
       </div>
     </DivDScrollResult>
@@ -54,16 +54,18 @@
 
 <script lang="ts">
 import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 interface LogRequest {
     selectedClient: string,
     selectedLogType: string
 }
-@Component
+@Component({ mixins: [Strings] })
 export default class VClientLog extends Vue {
   $axios: any
   $t: any
   $root: any
+  t_fixed: any
 
   @Prop({ }) id!: string
   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
