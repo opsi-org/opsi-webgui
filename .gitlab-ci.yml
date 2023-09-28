@@ -160,11 +160,12 @@ stages:
   echo "ProjectID: $CI_PROJECT_ID"
   echo "ProjectTAG: $TAG"
   printf "ProjectMSG: \n$(cat $FILE)\n"
+  printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
   http_response=$(curl --request POST \
     -o response.txt \
     --fail-with-body \
     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main&" \
+    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main" \
     --data-urlencode "message=$(cat $FILE)" )
 
   echo "$http_response: $(cat response.txt)"
