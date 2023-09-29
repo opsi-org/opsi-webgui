@@ -1,12 +1,29 @@
 image: node:lts
 
 stages:
+  - preinit
   - init
   - test
   - build
   - upload
   - publish
   - release
+
+
+sometest:
+  stage: preinit
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  script:
+    - ls -la
+    - ls -la webgui
+    - opsi-dev-cli -l 5 changelog from-git output
+    - cat output/CHANGELOG.md
+    - echo "#----------------"
+    - git log
+    - opsi-dev-cli --dry-run -l 6 binary push webgui --product=opsi-webgui  # Do we really need both?
+    - opsi-dev-cli --dry-run -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
+    - opsi-dev-cli --dry-run release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md
+    - exit 1  # break here
 
 .define_globals: &define_globals |
   shopt -s expand_aliases
@@ -727,9 +744,11 @@ publish:binary-index:
     - ls -la
     - ls -la webgui
     - opsi-dev-cli -l 5 changelog from-git output
-    - opsi-dev-cli -l 6 binary push webgui --product=opsi-webgui  # Do we really need both?
-    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
-    - opsi-dev-cli release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md
+    - cat output/CHANGELOG.md
+    - opsi-dev-cli --dry-run -l 6 binary push webgui --product=opsi-webgui  # Do we really need both?
+    - opsi-dev-cli --dry-run -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
+    - opsi-dev-cli --dry-run release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md
+    - exit 1  # break here
   only:
     - tags
 
