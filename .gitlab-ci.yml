@@ -595,11 +595,12 @@ upload:gittag:
     - *compare_versions
     - *prepare_tag
     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
+    - CHANGELOG_MSG=$(cat $FILE)
     - *push_tag
     - |
       curl --request POST \
         --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-        --data-urlencode "message=$(cat $FILE)" \
+        --data-urlencode "message=$CHANGELOG_MSG" \
         --url "https://gitlab.uib.gmbh/api/v4/projects/335/repository/tags?tag_name=$TAG&ref=main"
     - echo "Git Tag created successfully"
         # --url "$CI_API_V4_URL/projects/335/repository/tags?tag_name=$TAG&ref=main"
