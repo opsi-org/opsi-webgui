@@ -16,7 +16,7 @@ sometest:
   script:
     - mkdir webgui  # dummy
     - opsi-dev-cli -l 5 changelog from-git output
-    - cat output/CHANGELOG.md
+    - cat output/changelog.md
     - echo "#----------------"
     - git log
     - opsi-dev-cli --dry-run -l 6 binary push webgui --product=opsi-webgui  # Do we really need both?
