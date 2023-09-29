@@ -1,7 +1,6 @@
 image: node:lts
 
 stages:
-  - preinit
   - init
   - test
   - build
@@ -9,19 +8,6 @@ stages:
   - publish
   - release
 
-
-sometest:
-  stage: preinit
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
-  script:
-    - mkdir webgui  # dummy
-    - touch opsi-webgui.zip  # dummy
-    - opsi-dev-cli -l 5 changelog from-git output
-    - cat output/changelog.md
-    - opsi-dev-cli --dry-run -l 6 binary push webgui --product=opsi-webgui  # Do we really need both?
-    - opsi-dev-cli --dry-run -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
-    - opsi-dev-cli --dry-run release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md
-    - exit 1  # break here
 
 .define_globals: &define_globals |
   shopt -s expand_aliases
@@ -720,8 +706,8 @@ publish:obs_ext:
   script:
     - opsi-dev-cli -l 5 changelog from-git output
     - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
-    - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
-    - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
+    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+    - opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
   only:
     - tags
   artifacts:
@@ -729,9 +715,7 @@ publish:obs_ext:
     paths:
       - output
     expire_in: 1 day
-  # Copy to experimental
-  # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
-  # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
+  # Copy to experimental via release-tui
 
 publish:binary-index:
   stage: publish
@@ -743,12 +727,11 @@ publish:binary-index:
     - ls -la webgui
     - opsi-dev-cli -l 5 changelog from-git output
     - cat output/CHANGELOG.md
-    - opsi-dev-cli --dry-run -l 6 binary push webgui --product=opsi-webgui  # Do we really need both?
-    - opsi-dev-cli --dry-run -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip
-    - opsi-dev-cli --dry-run release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md
-    - exit 1  # break here
+    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip  # pushing as opsi-webgui.zip now
+    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md
   only:
     - tags
+
 
 # release:experimental:
   #   stage: release
@@ -769,23 +752,3 @@ publish:binary-index:
   #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
   #   only:
   #     - tags
-  #publish:obs_int:
-  #  stage: publish
-  #  dependencies:
-  #    - build:static:app
-  #  script:
-  #    - *install_tools
-  #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-  #  only:
-  #    - tags
-
-# publish:obs_ext:
-  #   stage: publish
-  #   dependencies:
-  #     - build:static:app
-  #   script:
-  #     - *install_tools
-  #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
-  #   when: manual
-  #   only:
-  #    - tags
