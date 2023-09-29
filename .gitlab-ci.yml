@@ -14,8 +14,7 @@ sometest:
   stage: preinit
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
-    - ls -la
-    - ls -la webgui
+    - mkdir webgui  # dummy
     - opsi-dev-cli -l 5 changelog from-git output
     - cat output/CHANGELOG.md
     - echo "#----------------"
