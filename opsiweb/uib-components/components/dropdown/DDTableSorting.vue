@@ -1,9 +1,10 @@
 <template>
   <div
-    @mouseover="incontextmenu ? onOver($refs.sortdropdown) : null"
-    @mouseleave="incontextmenu ? onLeave($refs.sortdropdown) : null"
-    @focusin="incontextmenu ? onOver($refs.sortdropdown) : null"
-    @focusout="incontextmenu ? onLeave($refs.sortdropdown) : null"
+    :class="{ 'incontextmenu': incontextmenu!==false }"
+    @mouseover="incontextmenu!==false ? onOver($refs.sortdropdown) : null"
+    @mouseleave="incontextmenu!==false ? onLeave($refs.sortdropdown) : null"
+    @focusin="incontextmenu!==false ? onOver($refs.sortdropdown) : null"
+    @focusout="incontextmenu!==false ? onLeave($refs.sortdropdown) : null"
   >
     <b-dropdown
       v-bind="$props"
@@ -11,28 +12,28 @@
       size="sm"
       data-testid="DropdownDDTableSorting"
       class="DDTableSorting"
-      :variant="incontextmenu? 'transparent border-0' : 'outline-primary border-0'"
-      :no-caret="!incontextmenu"
+      :variant="incontextmenu!==false? 'transparent border-0' : 'outline-primary border-0'"
+      :no-caret="incontextmenu===false"
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
-      :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu': incontextmenu }"
-      :dropright="incontextmenu"
+      :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu ': incontextmenu!==false }"
+      :dropright="incontextmenu!==false"
     >
       <template #button-content>
         <b-icon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
-        <span v-if="incontextmenu">{{ $t('button.sort.tablecolumns.title') }}</span>
+        <span v-if="incontextmenu!==false">{{ $t('button.sort.tablecolumns.title') }}</span>
       </template>
-      <div class="dropdown-item sortDirection" :tabindex="incontextmenu ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
+      <div class="dropdown-item sortDirection" :class="{'incontextmenu': incontextmenu }" :tabindex="incontextmenu!==false ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
         <b-form-checkbox :aria-label="$t('button.sort.tablecolumns.sortDirection')" :checked="sortDesc">{{ $t('button.sort.tablecolumns.sortDirection') }}</b-form-checkbox>
       </div>
       <b-dropdown-divider />
 
-      <template v-if="incontextmenu">
+      <template v-if="incontextmenu!==false">
         <ul>
           <li
             v-for="header in Object.values(headerData).filter(h=>h.sortable)"
             :key="header.key"
             class="dropdown-item"
-            :class="{'selectedSort': (sortBy==header.key)}"
+            :class="{'selectedSort': (sortBy==header.key), 'incontextmenu': incontextmenu }"
             @keydown="changeSortBy(header.key)"
             @click="changeSortBy(header.key)"
           >
@@ -44,7 +45,7 @@
         <b-dropdown-item
           v-for="header in Object.values(headerData).filter(h=>h.sortable)"
           :key="header.key"
-          :class="{'selectedSort': (sortBy==header.key)}"
+          :class="{'selectedSort': (sortBy==header.key), 'incontextmenu': incontextmenu!==false }"
           @keydown="changeSortBy(header.key)"
           @click="changeSortBy(header.key)"
         >

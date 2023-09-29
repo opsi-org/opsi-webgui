@@ -43,6 +43,7 @@
         <ButtonBTNEvent
           event="ondemand"
           classes="dropdown-item border-0 smaller-text-size"
+          :incontextmenu="true"
           :with-text="true"
         />
         <!-- :update -loading = *"loading = > clientsLoading /= loading" -->
