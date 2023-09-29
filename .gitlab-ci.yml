@@ -514,14 +514,11 @@ build:static:app: # with transifex
   dependencies:
     - init:npm:production
     - init:transifex
-    - init:changelogs
     - test:lint
   script:
     - cd opsiweb
     - npm i @nuxt/typescript-build
     - *define_globals
-    - rm webgui/data/changelog.md
-    - cp -f output/changelog.md webgui/data/.
     - npm run generate-nossl
   artifacts:
     paths:
@@ -551,7 +548,6 @@ build:addon: # with transifex
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
-    - rm webgui/data/changelog.md
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
@@ -585,7 +581,6 @@ build:zip: # with transifex
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
-    - rm webgui/data/changelog.md
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
