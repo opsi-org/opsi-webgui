@@ -603,7 +603,7 @@ upload:gittag:
       curl --request POST \
         --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
         --data-urlencode "message=$(cat $FILE)" \
-        --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
+        --url "$CI_API_V4_URL/projects/335/repository/tags?tag_name=$TAG&ref=main"
     - echo "Git Tag created successfully"
     # -o response.txt \
     # - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
