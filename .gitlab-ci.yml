@@ -243,7 +243,8 @@ init:changelogs:
   script:
     - *install_tools
     - ./opsi-dev-cli -l 5 changelog from-git output
-    # - mv -f output/changelog.md webgui/data/.
+    # - rm webgui/data/changelog.md
+    # - cp -f output/changelog.md webgui/data/.
   only:
     - tags
     - main
@@ -519,7 +520,8 @@ build:static:app: # with transifex
     - cd opsiweb
     - npm i @nuxt/typescript-build
     - *define_globals
-    - mv -f output/changelog.md webgui/data/.
+    - rm webgui/data/changelog.md
+    - cp -f output/changelog.md webgui/data/.
     - npm run generate-nossl
   artifacts:
     paths:
@@ -549,7 +551,8 @@ build:addon: # with transifex
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
-    - mv -f output/changelog.md webgui/data/.
+    - rm webgui/data/changelog.md
+    - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
   only:
@@ -582,7 +585,8 @@ build:zip: # with transifex
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
-    - mv -f output/changelog.md webgui/data/.
+    - rm webgui/data/changelog.md
+    - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
   only:
