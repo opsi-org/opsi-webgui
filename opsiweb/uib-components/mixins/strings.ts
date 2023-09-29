@@ -1,9 +1,9 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 @Component export class Strings extends Vue {
   strings: object = {
-    '.keep-english.(content)': '({content})',
-    '.keep-english.[content]': '[{content}]',
-    'keep-english.count/all': '{count}/{all}',
+    'keep-english.(content)': '(content)',
+    'keep-english.[content]': '[content]',
+    'keep-english.count/all': 'count/all',
     'keep-english.colon': ':',
     'keep-english.empty': '--',
     'keep-english.title.delimiter': ' - ',
