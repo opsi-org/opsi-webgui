@@ -598,10 +598,16 @@ upload:gittag:
     - *prepare_tag
     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
     - *push_tag
+    - git remote add tag-origin https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.uib.gmbh/${CI_PROJECT_PATH} || exit_code=$?
+    # - git remote add tag-origin https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.uib.gmbh/${CI_PROJECT_PATH} || exit_code=$?
+    - git tag -a $TAG -m "$(cat $FILE)"
+    - git push tag-origin $TAG
+    - echo "Git Tag created successfully"
     # -o response.txt \
-    - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
-    - |
-      curl --request POST --header "PRIVATE-TOKEN: $TOKEN_SUCHER"  --data-urlencode "message=$(cat $FILE)"  "$URL"
+    # - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
+    # - echo "$URL"
+    # - |
+    #   curl --request POST --header "PRIVATE-TOKEN: $TOKEN_SUCHER"  --data-urlencode "message=$(cat $FILE)"  "$URL"
 
     # - printf "\nRESPONSE:\n $(cat response.txt)"
     - rm $FILE
