@@ -235,6 +235,24 @@ init:transifex:
     paths:
       - opsiweb/uib-components/locale
     expire_in: 3 day
+init:changelogs:
+  # this step have to be done before building webgui
+  stage: init
+  # dependencies:
+  #   - build:static:app
+  script:
+    - *install_tools
+    - ./opsi-dev-cli -l 5 changelog from-git output
+    # - mv -f output/changelog.md webgui/data/.
+  only:
+    - tags
+    - main
+    - 659-transifex-automation
+  artifacts:
+    name: "opsi-webgui-changelogs"
+    paths:
+      - output
+    expire_in: 1 day
 
 #########################################################################
 ######################################################################### test
@@ -495,11 +513,13 @@ build:static:app: # with transifex
   dependencies:
     - init:npm:production
     - init:transifex
+    - init:changelogs
     - test:lint
   script:
     - cd opsiweb
     - npm i @nuxt/typescript-build
     - *define_globals
+    - mv -f output/changelog.md webgui/data/.
     - npm run generate-nossl
   artifacts:
     paths:
@@ -514,6 +534,7 @@ build:addon: # with transifex
   dependencies:
     - init:npm:production # doesnt download artifacts from static-app
     - init:transifex
+    - init:changelogs
     - build:static:app
   script:
     - *install_tools
@@ -528,6 +549,7 @@ build:addon: # with transifex
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
+    - mv -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
   only:
@@ -546,6 +568,7 @@ build:zip: # with transifex
     - init:npm:production # doesnt download artifacts from static-app
     - build:static:app
     - init:transifex
+    - init:changelogs
   script:
     - *install_tools
     - pwd && ls -la opsiweb
@@ -559,7 +582,9 @@ build:zip: # with transifex
     - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
+    - mv -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
+    - ls -lah webgui/data # debug
   only:
     - tags
     - main
@@ -680,9 +705,9 @@ publish:obs_ext:
   script:
     - *install_tools
     - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
-    # - opsi-dev-cli -l 5 changelog from-git output
-    # - opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
-    # - opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
+    # - ./opsi-dev-cli -l 5 changelog from-git output
+    # - ./opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+    # - ./opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
   only:
     - tags
   artifacts:
