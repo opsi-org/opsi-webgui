@@ -560,17 +560,14 @@ build:zip: # with transifex
     - mkdir webgui
     - cp -r backend/addon/webgui/* webgui/
     - ls -lah webgui # debug
-    - mv webgui/data .
-    - mv webgui/python .
   only:
     - tags
     - main
   artifacts:
     name: "opsi-webgui"
     paths:
-      - data/*
-      - python/*
-    expire_in: 3 day
+      - webgui
+    expire_in: 7 day
 
 
 
