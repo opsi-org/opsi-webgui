@@ -598,7 +598,7 @@ upload:gittag:
     - *prepare_tag
     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
     - *push_tag
-    - git remote add tag-origin https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.uib.gmbh/${CI_PROJECT_PATH} || exit_code=$?
+    - git remote add tag-origin https://oauth2:${TOKEN_SUCHER}@gitlab.uib.gmbh/${CI_PROJECT_PATH} || exit_code=$?
     # - git remote add tag-origin https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.uib.gmbh/${CI_PROJECT_PATH} || exit_code=$?
     - git tag -a $TAG -m "$(cat $FILE)"
     - git push tag-origin $TAG
