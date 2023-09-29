@@ -48,9 +48,9 @@
         :update-loading="loading => clientsLoading = loading"
         :with-text="true"
       />
-      <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu small pl-4 pr-4': incontextmenu!==false}" :incontextmenu="incontextmenu!==false" :client-id="clientId" />
-      <ModalMRenameClient :class="{ 'dropdown-item contextmenu small pl-4 pr-4': incontextmenu!==false }" :incontextmenu="incontextmenu!==false" :client-id="clientId" :refetch="fetch" />
-      <ModalMDeleteClient :class="{ 'dropdown-item contextmenu small pl-4 pr-4': incontextmenu!==false }" :incontextmenu="incontextmenu!==false" :client-id="clientId" :refetch="fetch" />
+      <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu small pl-4 pr-4 pt-2 pb-2': incontextmenu!==false}" :incontextmenu="incontextmenu!==false" :client-id="clientId" />
+      <ModalMRenameClient :class="{ 'dropdown-item contextmenu small pl-4 pr-4 pt-2 pb-2': incontextmenu!==false }" :incontextmenu="incontextmenu!==false" :client-id="clientId" :refetch="fetch" />
+      <ModalMDeleteClient :class="{ 'dropdown-item contextmenu small pl-4 pr-4 pt-2 pb-2': incontextmenu!==false }" :incontextmenu="incontextmenu!==false" :client-id="clientId" :refetch="fetch" />
     </b-dropdown>
   </div>
 </template>

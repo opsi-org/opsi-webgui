@@ -26,7 +26,7 @@
       v-else
       variant="outline-primary"
       size="sm"
-      class="w-100 h-100 text-left border-0 incontextmenu contextmenu pl-4"
+      class="w-100 h-100 text-left border-0 incontextmenu contextmenu pl-4  pt-1 pb-2 "
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       @click="$bvModal.show('event-modal-' + event + '-' + data)"
       @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
