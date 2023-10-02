@@ -8,6 +8,7 @@ stages:
   - publish
   - release
 
+
 .define_globals: &define_globals |
   shopt -s expand_aliases
 
@@ -194,7 +195,6 @@ init:npm:
     paths:
       - opsiweb/package.json
       - opsiweb/node_modules/
-      - opsiweb/uib-components/
     expire_in: 1 day
 init:npm:production:
   stage: init
@@ -210,21 +210,16 @@ init:npm:production:
     paths:
       - opsiweb/package.json
       - opsiweb/node_modules/
-      - opsiweb/uib-components/
     expire_in: 1 day
 init:transifex:
   # this step have to be done before building webgui
   stage: init
-  # dependencies:
-  #   - build:static:app
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
-    - *install_tools
-    - ls -lah
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
-    - ./opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsiweb-ui_en.json
-    - ./opsi-dev-cli transifex download-translations --help
-    - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de # --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE #-l de -l fr
+    - opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsiweb-ui_en.json
+    - opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de # --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE #-l de -l fr
     # - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de #-l fr
   only:
     - tags
@@ -238,17 +233,13 @@ init:transifex:
 init:changelogs:
   # this step have to be done before building webgui
   stage: init
-  # dependencies:
-  #   - build:static:app
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
-    - *install_tools
-    - ./opsi-dev-cli -l 5 changelog from-git output
-    # - rm webgui/data/changelog.md
+    - opsi-dev-cli -l 5 changelog from-git output
     # - cp -f output/changelog.md webgui/data/.
   only:
     - tags
     - main
-    - 659-transifex-automation
   artifacts:
     name: "opsi-webgui-changelogs"
     paths:
@@ -265,9 +256,6 @@ test:lint:
     - init:transifex
   before_script:
     - cd opsiweb
-    - ls -lah .
-    - ls -lah node_modules/
-    - npm --version
     - *define_globals
   script:
     - npm run lint
@@ -325,7 +313,6 @@ test:usecase:
     - *install_playwright
     - *start_webgui
   script:
-    # - npm run test:all:usecase || exit_code=$?
     - npm run test:all:usecase || exit_code=$?
   after_script:
     - npm run test:all:delete-empty-results
@@ -483,7 +470,6 @@ build:screenshots:docs: # with transifex
   dependencies:
     - init:npm
     - init:transifex
-    # - tags # screenshots only for tags
   only:
     - main # cause in main we test all files, but only chromium browser
     - tags
@@ -534,7 +520,7 @@ build:addon: # with transifex
     - init:npm:production # doesnt download artifacts from static-app
     - init:transifex
     - init:changelogs
-    - build:static:app
+    # - build:static:app # already done in this job
   script:
     - *install_tools
     - pwd && ls -la opsiweb
@@ -601,8 +587,6 @@ build:zip: # with transifex
 
 upload:gittag:
   stage: upload
-  # dependencies:
-  #   - build:static:app
   script:
     - FILE=".tmp_changelog"
     - *prepare_git
@@ -647,67 +631,67 @@ upload:gittag:
 #########################################################################
 
 # .push_release: &push_release |
-#   # post release
-#   echo "ProjectURL: $CI_API_V4_URL"
-#   echo "ProjectID: $CI_PROJECT_ID"
-#   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-#   echo "ProjectTAG: $TAG"
-#   printf "ProjectMSG: \n$(cat $FILE)\n"
-#   http_response=$(curl --request POST \
-#     -o response.txt \
-#     --fail-with-body \
-#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
-#     --data-urlencode "message=$(cat $FILE)" )
+  #   # post release
+  #   echo "ProjectURL: $CI_API_V4_URL"
+  #   echo "ProjectID: $CI_PROJECT_ID"
+  #   LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+  #   echo "ProjectTAG: $TAG"
+  #   printf "ProjectMSG: \n$(cat $FILE)\n"
+  #   http_response=$(curl --request POST \
+  #     -o response.txt \
+  #     --fail-with-body \
+  #     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+  #     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/releases?tag_name=$TAG&ref=main" \
+  #     --data-urlencode "message=$(cat $FILE)" )
 
-#   echo "$http_response: $(cat response.txt)"
-#   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-#   echo ""
+  #   echo "$http_response: $(cat response.txt)"
+  #   if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+  #   echo ""
 
 # upload:git:
-#   stage: upload
-#   image: registry.gitlab.com/gitlab-org/release-cli:latest
-#   needs:
-#     - job: build:zip
-#       artifacts: true
-#   rules:
-#     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
-#   script:
-#     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
-#   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
-#     tag_name: '$CI_COMMIT_TAG'
-#     description: '$CI_COMMIT_TAG'
-#   release:
-#     name: 'Release $CI_COMMIT_TAG'
-#     tag_name: '$CI_COMMIT_TAG'
-#     ref: '$CI_COMMIT_TAG'
-#     description: 'Release $CI_COMMIT_TAG'
-#     assets:
-#       links:
-#         - name: "opsi-webgui"
-#           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
+  #   stage: upload
+  #   image: registry.gitlab.com/gitlab-org/release-cli:latest
+  #   needs:
+  #     - job: build:zip
+  #       artifacts: true
+  #   rules:
+  #     - if: $CI_COMMIT_TAG                 # Run this job when a tag is created
+  #   script:
+  #     - echo "Create Release $TAG, $CI_COMMIT_TAG, $JOB_ID"
+  #   release:                               # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+  #     tag_name: '$CI_COMMIT_TAG'
+  #     description: '$CI_COMMIT_TAG'
+  #   release:
+  #     name: 'Release $CI_COMMIT_TAG'
+  #     tag_name: '$CI_COMMIT_TAG'
+  #     ref: '$CI_COMMIT_TAG'
+  #     description: 'Release $CI_COMMIT_TAG'
+  #     assets:
+  #       links:
+  #         - name: "opsi-webgui"
+  #           url: "https://gitlab.com/uib/opsiweb-ui/-/jobs/$JOB_ID/artifacts/download"
 
 publish:obs_int:
   stage: publish
   dependencies:
     - build:static:app
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
-    - *install_tools
-    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
+    - opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.3:development
   only:
     - tags
 
 publish:obs_ext:
   stage: publish
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   dependencies:
     - build:static:app
     - init:changelogs
   script:
-    - *install_tools
-    - ./opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
-    # - ./opsi-dev-cli -l 5 changelog from-git output
-    # - ./opsi-dev-cli release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
-    # - ./opsi-dev-cli release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
+    - opsi-dev-cli -l 5 changelog from-git output
+    - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
+    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
+    - opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
   only:
     - tags
   artifacts:
@@ -715,19 +699,20 @@ publish:obs_ext:
     paths:
       - output
     expire_in: 1 day
-  # Copy to experimental
-  # Local: osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.3:development opsi-webgui home:uibmz:opsi:4.3:experimental
-  # alternative install: http://obs.uib.local:82/home:/uibmz:/opsi:/4.3:/development/Debian_10/
+  # Copy to experimental via release-tui
 
 publish:binary-index:
   stage: publish
   dependencies:
     - build:addon
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
-    - *install_tools
     - ls -la
     - ls -la webgui
-    - ./opsi-dev-tool -l debug --binary-push webgui opsi-webgui linux x64 ${CI_COMMIT_TAG}
+    - opsi-dev-cli -l 5 changelog from-git output
+    - cat output/CHANGELOG.md
+    - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip  # pushing as opsi-webgui.zip now
+    - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
   only:
     - tags
 
@@ -750,23 +735,3 @@ publish:binary-index:
   #     - osc -A https://api.opensuse.org copypac home:uibmz:opsi:4.2:development opsi-webgui home:uibmz:opsi:4.3:experimental
   #   only:
   #     - tags
-  #publish:obs_int:
-  #  stage: publish
-  #  dependencies:
-  #    - build:static:app
-  #  script:
-  #    - *install_tools
-  #    - ./opsi-dev-tool -l debug --obs-update-package https://obs.uib.gmbh home:uibmz:opsi:4.2:development
-  #  only:
-  #    - tags
-
-# publish:obs_ext:
-  #   stage: publish
-  #   dependencies:
-  #     - build:static:app
-  #   script:
-  #     - *install_tools
-  #     - ./opsi-dev-tool -l info --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.2:development
-  #   when: manual
-  #   only:
-  #    - tags
