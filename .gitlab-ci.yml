@@ -286,9 +286,9 @@ test:accessibility:
     - *start_webgui
   script:
     - npm run test:all:accessibility || exit_code=$?
+    - exit $exit_code
   after_script:
     - npm run test:all:delete-empty-results
-    - exit $exit_code
   allow_failure: true
   only:
     - main
@@ -314,9 +314,9 @@ test:usecase:
     - *start_webgui
   script:
     - npm run test:all:usecase || exit_code=$?
+    - exit $exit_code
   after_script:
     - npm run test:all:delete-empty-results
-    - exit $exit_code
   allow_failure: true
   only:
     - main
@@ -356,9 +356,9 @@ test:components:changes:
     - sleep 120
   script:
     - npm run test:all:components $testfilesUnique || exit_code=$?
+    - exit $exit_code
   after_script:
     - npm run test:all:delete-empty-results
-    - exit $exit_code
   allow_failure: true
   artifacts:
     name: "opsi-webgui-test-result-components"
@@ -558,6 +558,7 @@ build:zip: # with transifex
     - *install_tools
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
+    - ls -lah uib-components/locale
     - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
     - *define_globals
     - npm run generate-nossl
