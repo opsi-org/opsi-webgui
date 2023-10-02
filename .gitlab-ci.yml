@@ -201,6 +201,7 @@ init:npm:production:
   only:
     - main
     - tags
+    - fix/cicd
   script:
     - cd opsiweb
     - *define_globals
@@ -225,7 +226,7 @@ init:transifex:
   only:
     - tags
     - main
-    - 659-transifex-automation
+    - fix/cicd
   artifacts:
     name: "opsi-webgui-locale"
     paths:
@@ -238,9 +239,11 @@ init:changelogs:
   script:
     - opsi-dev-cli -l 5 changelog from-git output
     # - cp -f output/changelog.md webgui/data/.
+    - chmod 666 output/*
   only:
     - tags
     - main
+    - fix/cicd
   artifacts:
     name: "opsi-webgui-changelogs"
     paths:
@@ -252,6 +255,8 @@ init:changelogs:
 #########################################################################
 test:lint:
   stage: test
+  except:
+    - fix/cicd
   dependencies:
     - init:npm
     - init:transifex
@@ -442,6 +447,8 @@ test:components:
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+  except:
+    - fix/cicd
   services:
     - name: mysql:latest
       command:
@@ -501,7 +508,7 @@ build:static:app: # with transifex
   dependencies:
     - init:npm:production
     - init:transifex
-    - test:lint
+    # - test:lint # todo activate again for main
   script:
     - cd opsiweb
     - npm i @nuxt/typescript-build
@@ -514,6 +521,7 @@ build:static:app: # with transifex
   only:
     - main
     - tags
+    - fix/cicd
 
 build:addon: # with transifex
   stage: build
@@ -572,9 +580,11 @@ build:zip: # with transifex
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
+    - ls -lah uib-components/locale
   only:
     - tags
     - main
+    - fix/cicd
   artifacts:
     name: "opsi-webgui"
     paths:

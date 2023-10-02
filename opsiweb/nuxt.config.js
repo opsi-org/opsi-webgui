@@ -26,6 +26,7 @@ const env = {
   APIPATH: '/addons/webgui'
 }
 export default {
+  srcDir: '.',
   env: {
     APIPATH: '/addons/webgui'
   },
@@ -112,10 +113,12 @@ export default {
     ['@nuxtjs/i18n', {
       // vueI18nLoader: false,
       locale: 'en',
+      // langDir: 'uib-components/locale',
       vueI18n: {
         fallbackLocale: 'en',
         // messages: { en, de }
-        messages: langs
+        messages: langs,
+        langDir: 'uib-components/locale'
       }
     }],
     ['nuxt-mq', {
