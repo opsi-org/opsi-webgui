@@ -186,6 +186,8 @@ stages:
 #########################################################################
 init:npm:
   stage: init
+  except:
+    - fix/cicd
   script:
     - cd opsiweb
     - *define_globals
@@ -557,6 +559,7 @@ build:addon: # with transifex
     expire_in: 3 day
 
 build:zip: # with transifex
+  image: node:current-slim
   stage: build
   dependencies:
     - init:npm:production # doesnt download artifacts from static-app
@@ -580,7 +583,7 @@ build:zip: # with transifex
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - ls -lah webgui/data # debug
-    - ls -lah uib-components/locale
+    - ls -lah opsiweb/uib-components/locale
   only:
     - tags
     - main
@@ -598,6 +601,7 @@ build:zip: # with transifex
 #########################################################################
 
 upload:gittag:
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   stage: upload
   script:
     - FILE=".tmp_changelog"
