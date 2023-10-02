@@ -221,6 +221,7 @@ init:transifex:
     - opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsiweb-ui_en.json
     - opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de # --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE #-l de -l fr
     # - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de #-l fr
+    - chmod 666 opsiweb/uib-components/locale/*
   only:
     - tags
     - main
