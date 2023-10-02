@@ -155,7 +155,7 @@
 import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
-import { Client } from '../../mixins/get'
+import { Client, Configserver } from '../../mixins/get'
 import { Group, SetUEFI, DeployClientAgent } from '../../mixins/post'
 
 const cache = namespace('data-cache')
@@ -177,7 +177,7 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Icons, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
+@Component({ mixins: [Icons, Configserver, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
 export default class VClientCreation extends Vue {
   getClientIdList:any
   icon: any
@@ -238,6 +238,11 @@ export default class VClientCreation extends Vue {
     return this.clientName.length > 0 && !this.clientIds.includes(this.clientName + this.domainName)
   }
 
+  // async mounted () {
+  //   await this.fetchClients()
+  //   await this.fetchNetbootProducts()
+  // }
+
   async fetch () {
     await this.fetchClients()
     await this.fetchNetbootProducts()
@@ -248,7 +253,12 @@ export default class VClientCreation extends Vue {
   }
 
   async fetchNetbootProducts () {
-    const depot = this.depotId
+    let depot = ''
+    if (this.depotId !== '') {
+      depot = this.depotId
+    } else {
+      depot = this.opsiconfigserver
+    }
     await this.$axios.$get(`/api/opsidata/depots/products?selectedDepots=[${depot}]`)
       .then((response) => {
         this.netbootproductslist = response
