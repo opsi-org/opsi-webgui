@@ -536,6 +536,7 @@ build:addon: # with transifex
     # - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     # - mkdir webgui
     # - cp -r backend/addon/webgui/* webgui/
+    - cd ..
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
