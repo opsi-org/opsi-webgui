@@ -158,7 +158,7 @@ export default class MProductActions extends Vue {
   async executeAction () {
     const ref = (this.$refs.prodQuickActionAlert as any)
     if (this.quickaction.outdated === false && this.quickaction.installation_status === null && this.quickaction.action_result === null) {
-      ref.alert(this.$t('Choose any condition.'), 'danger')
+      ref.alert(this.$t('message.error.condition'), 'danger')
     } else {
       this.isLoading = true
       await this.$axios.$post('/api/opsidata/clients/action', this.quickaction)

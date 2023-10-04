@@ -1,7 +1,7 @@
 <template>
   <div data-testid="VClientClone" class="VClientClone">
     <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') +''+ t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
-    <GridGFormItem v-if="!asChild" :label="$t('Select a client to clone:')">
+    <GridGFormItem v-if="!asChild" :label="$t('label.cloneClient')">
       <template #value>
         <slot name="IDSelection" />
       </template>
