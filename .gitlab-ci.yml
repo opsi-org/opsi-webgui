@@ -601,25 +601,27 @@ upload:gittag:
     - *prepare_git
     - *install_tools
     - echo "all tags... $(git tag)"
-    - echo "delete Tag..."
-    - TAG=4.3.1.1
-    - *delete_tag
-    - TAG=4.3.14-test # on docker 4
-    - *delete_tag
-    - TAG=4.3.15 # on docker 4
-    - *delete_tag
-    - echo ""
+    # - echo "delete Tag..."
+    # - TAG=4.3.1.1
+    # - *delete_tag
+    # - TAG=4.3.14-test # on docker 4
+    # - *delete_tag
+    # - TAG=4.3.15 # on docker 4
+    # - *delete_tag
+    # - echo ""
     - *compare_versions
     - *prepare_tag
     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
     - CHANGELOG_MSG=$(cat $FILE)
     - *push_tag
-    - |
-      curl --request POST \
-        --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-        --data-urlencode "message=$CHANGELOG_MSG" \
-        --url "https://gitlab.uib.gmbh/api/v4/projects/335/repository/tags?tag_name=$TAG&ref=main"
-    - echo "Git Tag created successfully"
+    # - |
+    #   curl --request POST \
+    #     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+    #     --data-urlencode "message=$CHANGELOG_MSG" \
+    #     --url "https://gitlab.uib.gmbh/api/v4/projects/335/repository/tags?tag_name=$TAG&ref=main"
+    # - echo "Git Tag created successfully"
+    - echo "changelog since last tag collected:"
+    - echo "$CHANGELOG_MSG"
         # --url "$CI_API_V4_URL/projects/335/repository/tags?tag_name=$TAG&ref=main"
     # -o response.txt \
     # - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
@@ -631,7 +633,7 @@ upload:gittag:
     - rm $FILE
   # when: manual
   allow_failure: false
-  when: manual
+  when: always
   only: # visible in this branches: (main!)
     - main
 
@@ -694,10 +696,15 @@ publish:obs_ext:
   stage: publish
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   dependencies:
-    - build:static:app
     - init:changelogs
+    - build:addon # todo which is really needed?
+    - build:static:app # todo which is really needed?
   script:
-    - opsi-dev-cli -l 5 changelog from-git output
+    - ls -la
+    - ls -la opsiweb
+    - ls -la webgui
+    - ls -la output
+    # - opsi-dev-cli -l 5 changelog from-git output
     - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
     - opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
@@ -714,12 +721,15 @@ publish:binary-index:
   stage: publish
   dependencies:
     - build:addon
+    - init:changelogs
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
     - ls -la
+    - ls -la opsiweb
     - ls -la webgui
-    - opsi-dev-cli -l 5 changelog from-git output
-    - cat output/CHANGELOG.md
+    - ls -la output
+    # - opsi-dev-cli -l 5 changelog from-git output # done during init
+    - cat output/changelog.md
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip  # pushing as opsi-webgui.zip now
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
   only:

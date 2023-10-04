@@ -12,7 +12,7 @@
         >
           <small><b-icon :icon="expandHCD? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
         </b-button>
-        <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
+        <InputIFilterTChanges :placeholder="$t('input.filter')" :filter.sync="filter" />
       </template>
     </BarBPageHeader>
     <DivDScrollResult>
