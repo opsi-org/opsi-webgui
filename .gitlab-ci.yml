@@ -694,8 +694,9 @@ publish:obs_ext:
   stage: publish
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   dependencies:
-    - build:static:app
     - init:changelogs
+    - build:addon # todo which is really needed?
+    - build:static:app # todo which is really needed?
   script:
     - ls -la
     - ls -la opsiweb
