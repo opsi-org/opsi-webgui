@@ -538,6 +538,7 @@ build:addon: # with transifex
     # - mkdir webgui
     # - cp -r backend/addon/webgui/* webgui/
     # path should be opsiweb/.. again
+    - mv opsiweb/webgui webgui
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
