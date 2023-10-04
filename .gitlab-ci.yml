@@ -726,7 +726,7 @@ publish:binary-index:
     - ls -la webgui
     - ls -la output
     # - opsi-dev-cli -l 5 changelog from-git output # done during init
-    - cat output/CHANGELOG.md
+    - cat output/changelog.md
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip  # pushing as opsi-webgui.zip now
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
   only:
