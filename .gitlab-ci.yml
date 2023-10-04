@@ -1,4 +1,4 @@
-image: node:lts
+image: node:current-slim
 
 stages:
   - init
@@ -186,8 +186,6 @@ stages:
 #########################################################################
 init:npm:
   stage: init
-  except:
-    - fix/cicd
   script:
     - cd opsiweb
     - *define_globals
@@ -203,7 +201,6 @@ init:npm:production:
   only:
     - main
     - tags
-    - fix/cicd
   script:
     - cd opsiweb
     - *define_globals
@@ -228,7 +225,6 @@ init:transifex:
   only:
     - tags
     - main
-    - fix/cicd
   artifacts:
     name: "opsi-webgui-locale"
     paths:
@@ -245,7 +241,6 @@ init:changelogs:
   only:
     - tags
     - main
-    - fix/cicd
   artifacts:
     name: "opsi-webgui-changelogs"
     paths:
@@ -257,8 +252,6 @@ init:changelogs:
 #########################################################################
 test:lint:
   stage: test
-  except:
-    - fix/cicd
   dependencies:
     - init:npm
     - init:transifex
@@ -449,8 +442,6 @@ test:components:
 
 test:backend-pytest:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
-  except:
-    - fix/cicd
   services:
     - name: mysql:latest
       command:
@@ -523,7 +514,6 @@ build:static:app: # with transifex
   only:
     - main
     - tags
-    - fix/cicd
 
 build:addon: # with transifex
   stage: build
@@ -588,7 +578,6 @@ build:zip: # with transifex
   only:
     - tags
     - main
-    - fix/cicd
   artifacts:
     name: "opsi-webgui"
     paths:
