@@ -697,7 +697,11 @@ publish:obs_ext:
     - build:static:app
     - init:changelogs
   script:
-    - opsi-dev-cli -l 5 changelog from-git output
+    - ls -la
+    - ls -la opsiweb
+    - ls -la webgui
+    - ls -la output
+    # - opsi-dev-cli -l 5 changelog from-git output
     - opsi-dev-tool -l debug --obs-update-package https://build.opensuse.org home:uibmz:opsi:4.3:development
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui SERVER_PACKAGE --changelog-file output/changelog.md
     - opsi-dev-cli -l 6 release-service push-repository-state opsi-webgui SERVER_PACKAGE SERVER_PACKAGE-4.3-development
@@ -714,11 +718,14 @@ publish:binary-index:
   stage: publish
   dependencies:
     - build:addon
+    - init:changelogs
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
   script:
     - ls -la
+    - ls -la opsiweb
     - ls -la webgui
-    - opsi-dev-cli -l 5 changelog from-git output
+    - ls -la output
+    # - opsi-dev-cli -l 5 changelog from-git output # done during init
     - cat output/CHANGELOG.md
     - opsi-dev-cli -l 6 binary push opsi-webgui.zip --product=opsi-webgui.zip  # pushing as opsi-webgui.zip now
     - opsi-dev-cli -l 6 release-service register-package-version opsi-webgui.zip TOOL --changelog-file output/changelog.md --files=opsi-webgui.zip
