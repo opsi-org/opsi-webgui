@@ -114,14 +114,14 @@ export default {
     '@nuxtjs/axios',
     ['@nuxtjs/i18n', {
       // vueI18nLoader: false,
-      locale: 'de',
-      locales: Object.keys(langs),
+      locale: 'en',
+      // locales: Object.keys(langs),
       // langDir: 'uib-components/locale',
       vueI18n: {
         fallbackLocale: 'en',
         // messages: { en, de }
-        messages: langs,
-        langDir: 'uib-components/locale'
+        messages: langs
+        // langDir: 'uib-components/locale'
       }
     }],
     ['nuxt-mq', {
