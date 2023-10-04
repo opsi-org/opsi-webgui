@@ -11,11 +11,11 @@
         >
           <small><b-icon :icon="expandAll? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
         </b-button>
-        <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
+        <InputIFilterTChanges :placeholder="$t('input.filter')" :filter.sync="filter" />
       </template>
       <template #right>
         <b-button class="downloadButton" size="sm" variant="outline-primary" @click="downloadHealthData">
-          <b-icon :icon="icon.download" /> {{ $t('Download') }}
+          <b-icon :icon="icon.download" /> {{ $t('button.download') }}
         </b-button>
       </template>
     </BarBPageHeader>
