@@ -81,7 +81,7 @@ const mbus = namespace('messagebus')
         'event:host_disconnected',
         'event:productOnClient_created',
         'event:productOnClient_updated',
-        'event:productOnClient_deleted',
+        'event:productOnClient_deleted'
         // 'event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted'
       ])
     }
