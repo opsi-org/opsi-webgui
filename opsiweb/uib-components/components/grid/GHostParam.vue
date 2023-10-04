@@ -62,24 +62,24 @@ export default class GHostParam extends Vue {
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  // @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-  //   const msg = this.wsBusMsg
-  //   // console.log('MessageBus: receive-watch: ', msg)
-  //   if (msg && this.channels.includes(msg.channel)) { // && msg.data.type === this.logtype && msg.data.object_id === this.id) {
-  //     // const ref = (this.$root.$children[1].$refs.infoAlert as any) || (this.$root.$children[2].$refs.infoAlert as any)
-  //     // const ref = (this.$refs.event_log_updated as any)
-  //     console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
-  //     // ref.alert(`MessageBus received:  log_updated ${JSON.stringify(msg.data)}`, 'info')
-  //     // ref.alert(this.$t('message.info.event.log_updated'), 'info')
-  //     // await this.$fetch()
-  //   } else {
-  //     // console.log('MessageBus [HostParam] received a msg i\'m not interested in', msg.channel, msg.data)
-  //   }
-  // }
+  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+    const msg = this.wsBusMsg
+    // console.log('MessageBus: receive-watch: ', msg)
+    if (msg && this.channels.includes(msg.channel)) { // && msg.data.type === this.logtype && msg.data.object_id === this.id) {
+      // const ref = (this.$root.$children[1].$refs.infoAlert as any) || (this.$root.$children[2].$refs.infoAlert as any)
+      // const ref = (this.$refs.event_log_updated as any)
+      console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
+      // ref.alert(`MessageBus received:  log_updated ${JSON.stringify(msg.data)}`, 'info')
+      // ref.alert(this.$t('message.info.event.log_updated'), 'info')
+      // await this.$fetch()
+    } else {
+      // console.log('MessageBus [HostParam] received a msg i\'m not interested in', msg.channel, msg.data)
+    }
+  }
 
   created () {
-    // console.log('MessageBus subscribe channel', this.channels)
-    // this.wsSubscribeChannel(this.channels)
+    console.log('MessageBus subscribe channel', this.channels)
+    this.wsSubscribeChannel(this.channels)
   }
 
   async fetch () {

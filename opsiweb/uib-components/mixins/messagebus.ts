@@ -82,7 +82,6 @@ const mbus = namespace('messagebus')
         'event:productOnClient_created',
         'event:productOnClient_updated',
         'event:productOnClient_deleted'
-        // 'event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted'
       ])
     }
     this._setBus(this.bus, this.setBusLastMsg)
