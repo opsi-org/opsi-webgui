@@ -32,10 +32,11 @@
 import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { SaveParameters } from '../../mixins/save'
 import { Strings } from '../../mixins/strings'
+import { MBus } from '../../mixins/messagebus'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Strings, SaveParameters] })
+@Component({ mixins: [Strings, SaveParameters, MBus] })
 export default class GHostParam extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -50,6 +51,9 @@ export default class GHostParam extends Vue {
   $t: any
   t_fixed: any
   $fetch: any
+  wsBusMsg: any // mixin messagebus
+  wsSubscribeChannel: any // mixin messagebus
+  channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
 
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesHostParam!: Array<any>
@@ -57,6 +61,26 @@ export default class GHostParam extends Vue {
   @changes.Mutation public delWithIndexChangesHostParam!: (i:number) => void
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
+
+  // @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+  //   const msg = this.wsBusMsg
+  //   // console.log('MessageBus: receive-watch: ', msg)
+  //   if (msg && this.channels.includes(msg.channel)) { // && msg.data.type === this.logtype && msg.data.object_id === this.id) {
+  //     // const ref = (this.$root.$children[1].$refs.infoAlert as any) || (this.$root.$children[2].$refs.infoAlert as any)
+  //     // const ref = (this.$refs.event_log_updated as any)
+  //     console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
+  //     // ref.alert(`MessageBus received:  log_updated ${JSON.stringify(msg.data)}`, 'info')
+  //     // ref.alert(this.$t('message.info.event.log_updated'), 'info')
+  //     // await this.$fetch()
+  //   } else {
+  //     // console.log('MessageBus [HostParam] received a msg i\'m not interested in', msg.channel, msg.data)
+  //   }
+  // }
+
+  created () {
+    // console.log('MessageBus subscribe channel', this.channels)
+    // this.wsSubscribeChannel(this.channels)
+  }
 
   async fetch () {
     let endpoint: any = ''

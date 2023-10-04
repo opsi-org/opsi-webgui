@@ -28,7 +28,7 @@ const mbus = namespace('messagebus')
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
     // triggered before specific Watch method e.g. in VClients, VProductsLocalboot, ...
-    this.wsNotification('Any msg', this.wsBusMsg)
+    // this.wsNotification('(info) received a message "' + this.wsBusMsg.channel + '"', this.wsBusMsg)
     // const msg = this.wsBusMsg
     // let data = ''
     // if (msg.data) { data = String.fromCharCode(...msg.data) }
@@ -81,7 +81,8 @@ const mbus = namespace('messagebus')
         'event:host_disconnected',
         'event:productOnClient_created',
         'event:productOnClient_updated',
-        'event:productOnClient_deleted'
+        'event:productOnClient_deleted',
+        // 'event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted'
       ])
     }
     this._setBus(this.bus, this.setBusLastMsg)
@@ -186,7 +187,7 @@ const mbus = namespace('messagebus')
   }
 
   wsNotification (text: any, data: any = '') {
-    // console.debug('MessageBus:', text, data)
+    console.debug('MessageBus:', text, data)
   }
 
   wsNotificationInfo (text: any, data: any = '') {
