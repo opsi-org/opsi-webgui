@@ -527,10 +527,10 @@ build:addon: # with transifex
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
     - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
-    - *define_globals
-    - npm run generate-nossl
     - cd ..
-    - bash scripts/build_production_local.sh $(pwd)
+    - *define_globals
+    # - npm run generate-nossl
+    - bash opsiweb/scripts/build_production_local.sh $(pwd)
     # - cd .. # copy to addon
     # - mkdir -p backend/addon/webgui/data
     # - mkdir -p backend/addon/webgui/data/app
