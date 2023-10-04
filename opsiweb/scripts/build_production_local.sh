@@ -30,7 +30,7 @@ apt install -y zip
 zip -r -q opsi-webgui.zip webgui
 chown 1000:1000 opsi-webgui.zip
 
-if [ $2 != 0 ] # flag to install addon locally
+if [[ $2 != 0 ]] # flag to install addon locally
 then
     rm -rf /var/lib/opsiconfd/addons/webgui
     # rm -rf ${WORKING_DIR}/opsiweb/dist
