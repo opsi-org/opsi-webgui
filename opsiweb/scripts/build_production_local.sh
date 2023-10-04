@@ -6,7 +6,8 @@
 # wget http://binaryindex.uib.gmbh/development/opsi-dev-tools/linux/x64/opsi-dev-tools_linux_x64_1.0.79.tar.gz
 # tar -xf opsi-dev-tools_linux_x64_1.0.79.tar.gz
 WORKING_DIR=$1
-IN_PIPELINE=$2
+# $2: flag to install addon locally
+
 cd ${WORKING_DIR}/opsiweb/
 rm -rf ${WORKING_DIR}/opsiweb/dist
 echo "WROKING DIR: ${WORKING_DIR}/opsiweb/"
@@ -29,7 +30,7 @@ apt install -y zip
 zip -r -q opsi-webgui.zip webgui
 chown 1000:1000 opsi-webgui.zip
 
-if [ $2 != 0 ]
+if [ $2 != 0 ] # flag to install addon locally
 then
     rm -rf /var/lib/opsiconfd/addons/webgui
     # rm -rf ${WORKING_DIR}/opsiweb/dist

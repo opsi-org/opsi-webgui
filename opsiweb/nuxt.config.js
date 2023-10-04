@@ -9,6 +9,7 @@ const langs = {}
 const dir = './uib-components/locale/'
 const fullPath = path.join(__dirname, dir)
 const files = fs.readdirSync(fullPath)
+console.log('DEBUG: Reading locales')
 try {
   // gets all internationalization files, which are located in 'dir'
   files.forEach((file) => {
@@ -21,6 +22,7 @@ try {
     }
   })
 } catch (error) { console.log(error) }
+console.log('DEBUG: Reading locales done: ', Object.keys(langs))
 
 const env = {
   APIPATH: '/addons/webgui'
@@ -112,7 +114,8 @@ export default {
     '@nuxtjs/axios',
     ['@nuxtjs/i18n', {
       // vueI18nLoader: false,
-      locale: 'en',
+      locale: 'de',
+      locales: Object.keys(langs),
       // langDir: 'uib-components/locale',
       vueI18n: {
         fallbackLocale: 'en',
