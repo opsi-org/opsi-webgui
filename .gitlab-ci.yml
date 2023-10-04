@@ -523,21 +523,21 @@ build:addon: # with transifex
     - init:changelogs
     # - build:static:app # already done in this job
   script:
-    - MPWD=$(pwd)
     - *install_tools
     - pwd && ls -la opsiweb
     - cd opsiweb # generate dist
     - npm i @nuxt/typescript-build  # quick fix, cause this lib cant be found in
     - *define_globals
     - npm run generate-nossl
-    - bash scripts/build_production_local.sh $(pwd)/..
+    - cd ..
+    - bash scripts/build_production_local.sh $(pwd)
     # - cd .. # copy to addon
     # - mkdir -p backend/addon/webgui/data
     # - mkdir -p backend/addon/webgui/data/app
     # - cp -r opsiweb/dist/* backend/addon/webgui/data/app/
     # - mkdir webgui
     # - cp -r backend/addon/webgui/* webgui/
-    - cd "$MPWD"
+    # path should be opsiweb/.. again
     - cp -f output/changelog.md webgui/data/.
     - ls -lah webgui # debug
     - zip -r -q opsi-webgui.zip webgui
