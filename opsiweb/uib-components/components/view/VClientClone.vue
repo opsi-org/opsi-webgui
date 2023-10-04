@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VClientClone" class="VClientClone">
-    <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') +''+ $t('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
+    <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') +''+ t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <GridGFormItem v-if="!asChild" :label="$t('Select a client to clone:')">
       <template #value>
         <slot name="IDSelection" />
@@ -77,9 +77,11 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
-@Component({ mixins: [Icons] })
+import { Strings } from '../../mixins/strings'
+@Component({ mixins: [Icons, Strings] })
 export default class VClientClone extends Vue {
   icon: any
+  t_fixed: any
   @Prop({ }) id!: string
   @Prop({ default: false }) 'asChild'!: string
   @Prop({ default: false }) 'closeroute'!: string

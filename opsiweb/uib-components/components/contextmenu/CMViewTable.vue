@@ -133,6 +133,32 @@ export default class CMViewTable extends Vue {
   min-height: 100%;
 }
 
+#contextmenu-content .incontextmenu > .dropdown > .dropdown-menu > .dropdown-item  {
+  padding: 0;
+  padding-top:5px;
+  background-color: transparent;
+}
+#contextmenu-content .btn-sm:not(.small).active,
+#contextmenu-content .btn:not(.small):hover,
+#contextmenu-content .btn:not(.small):hover {
+  color: var(--general-fg) !important;
+}
+#contextmenu-content .incontextmenu:hover {
+  color: var(--general-fg) !important;
+  background-color: var(--general-bg-weak) !important;
+}
+#contextmenu-content .dropdown-item.contextmenu:hover,
+#contextmenu-content .dropdown.contextmenu:hover {
+  background-color: var(--general-bg-weak) !important;
+}
+#contextmenu-content .dropdown.contextmenu .btn,
+#contextmenu-content .dropdown.contextmenu .btn:hover {
+  background-color: transparent !important;
+}
+/* #contextmenu-content small > *:hover {
+  background-color: var(--general-bg-weak) !important;
+} */
+
 #right-click-menu{
   color: var(--fg-context_menu_titles) !important;
   border: 1px solid var(--b-context_menu) !important;
@@ -154,7 +180,7 @@ export default class CMViewTable extends Vue {
 #right-click-menu .dropdown .btn,
 #right-click-menu .btn,
 #right-click-menu.dropdown-menu {
-  background-color: var(--bg-context_menu) !important;
+  background-color: var(--bg-context_menu) ;
   color: var(--fg-context_menu) ;
 }
 

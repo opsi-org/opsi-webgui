@@ -16,14 +16,14 @@
             :label="item.configId"
           >
             <template #value>
-              <GridCellGCHostParamValue :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
+              <GridCellGCHostParamValue :id="id" :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
             </template>
           </GridGFormItem>
         </b-collapse>
       </span>
     </LazyDivDScrollResult>
     <DivDScrollResult v-else>
-      {{ $t('keep-english.empty') }}
+      {{ t_fixed('keep-english.empty') }}
     </DivDScrollResult>
   </div>
 </template>
@@ -31,10 +31,11 @@
 <script lang="ts">
 import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { SaveParameters } from '../../mixins/save'
+import { Strings } from '../../mixins/strings'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [SaveParameters] })
+@Component({ mixins: [Strings, SaveParameters] })
 export default class GHostParam extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -47,6 +48,7 @@ export default class GHostParam extends Vue {
   saveParameters:any
   $axios: any
   $t: any
+  t_fixed: any
   $fetch: any
 
   @settings.Getter public quicksave!: boolean
@@ -57,15 +59,19 @@ export default class GHostParam extends Vue {
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
   async fetch () {
-    if (this.id) {
-      let endpoint: any = ''
-      if (this.type === 'clients') {
-        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
-      } else {
-        endpoint = '/api/opsidata/config/server'
-      }
-      await this.fetchHostParameters(endpoint)
+    let endpoint: any = ''
+    if (this.type === 'clients') {
+      // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+      endpoint = `/api/opsidata/config/objects/${this.id}`
+    } else if (this.type === 'depots' && this.id) {
+      endpoint = `/api/opsidata/config/objects/${this.id}`
+    } else if (this.type === 'depots') {
+      endpoint = '/api/opsidata/config'
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('not defined')
     }
+    await this.fetchHostParameters(endpoint)
   }
 
   async fetchHostParameters (endpoint) {
@@ -83,8 +89,8 @@ export default class GHostParam extends Vue {
   trackHostParameters (change) {
     const changeObject: Object = {
       user: localStorage.getItem('username'),
-      hostId: this.id,
       type: this.type,
+      hostId: this.id,
       configId: change.configId,
       value: change.value
     }
@@ -100,15 +106,17 @@ export default class GHostParam extends Vue {
       this.isLoading = true
       let url: string = ''
       let request: any = []
-      if (this.type === 'clients') {
-        url = '/api/opsidata/config/clients'
+      if (this.type === 'depots' && !this.id) { // changing default configs
+        url = '/api/opsidata/config'
+        request = [change]
+      } else if (this.type === 'clients' || this.type === 'depots') { // changing clients or depots configs
+        url = '/api/opsidata/config/objects'
         request = {
-          clientIds: [this.id],
+          objectIds: [this.id],
           configs: [change]
         }
       } else {
-        url = '/api/opsidata/config/server'
-        request = [change]
+        console.error('not defined')
       }
       await this.saveParameters(url, request, null, true)
       this.isLoading = false

@@ -23,6 +23,7 @@
       @new-node="addNewValue"
       @input="selectValue"
     />
+
   </div>
 </template>
 
@@ -33,6 +34,7 @@ const config = namespace('config-app')
 
 @Component
 export default class GCHostParamVal extends Vue {
+  @Prop() id!: any
   @Prop() row!: any
   @Prop() type!: string
   @Prop() configtype!: string
@@ -52,9 +54,9 @@ export default class GCHostParamVal extends Vue {
   }
 
   getlocalvalue () {
-    if (this.type === 'clients') {
-      if (this.row.clients) {
-        const val: any = Object.values(this.row.clients)[0]
+    if (this.id && (this.type === 'clients' || this.type === 'depots')) {
+      if (this.row.objects) {
+        const val: any = Object.values(this.row.objects)[0]
         return val
       } else {
         return this.row.defaultValue

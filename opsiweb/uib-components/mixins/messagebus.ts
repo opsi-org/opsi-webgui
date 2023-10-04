@@ -48,6 +48,10 @@ const mbus = namespace('messagebus')
     })
   }
 
+  mounted () {
+    this.wsInit()
+  }
+
   async wsInit (reconnect: boolean = false) {
     if (!reconnect && this.bus !== undefined) {
       this.wsNotification('already connecting/connected')
@@ -182,11 +186,11 @@ const mbus = namespace('messagebus')
   }
 
   wsNotification (text: any, data: any = '') {
-    console.debug('MessageBus:', text, data)
+    // console.debug('MessageBus:', text, data)
   }
 
   wsNotificationInfo (text: any, data: any = '') {
-    console.info('MessageBus:', text, data)
+    // console.debug('MessageBus:', text, data)
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     ref.alert(text, 'info', data)
   }

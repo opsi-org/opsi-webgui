@@ -54,7 +54,7 @@
       </template>
     </GridGFormItem>
     <DivDScrollResult v-else>
-      {{ $t('keep-english.empty') }}
+      {{ t_fixed('keep-english.empty') }}
     </DivDScrollResult>
   </div>
 </template>
@@ -64,8 +64,9 @@ import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { SetUEFI } from '../../mixins/post'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { Strings } from '../../mixins/strings'
 const config = namespace('config-app')
-@Component({ mixins: [Icons, SetUEFI] })
+@Component({ mixins: [Icons, Strings, SetUEFI] })
 export default class GHostAttributes extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -77,6 +78,7 @@ export default class GHostAttributes extends Vue {
   icon: any
   $axios: any
   $t: any
+  t_fixed: any
   $fetch: any
   readOnlyFields: Array<string> = ['hostId', 'type', 'systemUUID', 'created', 'lastSeen']
 

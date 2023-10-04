@@ -21,7 +21,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('keep-english.empty') }}</span>
+            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem variant="longvalue" labelclass="clients">
@@ -46,7 +46,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('keep-english.empty') }}</span>
+            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
         <GridGFormItem variant="longvalue" labelclass="products">
@@ -71,7 +71,7 @@
                 />
               </b-list-group-item>
             </b-list-group>
-            <span v-else>{{ $t('keep-english.empty') }}</span>
+            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
           </template>
         </GridGFormItem>
       </div>
@@ -81,7 +81,7 @@
         <b-icon :icon="icon.server" :title="$t('title.depots')" /> {{ selectionDepots.length }}
       </template>
       <div class="scrollcontent">
-        <TreeTSDepots :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
+        <TreeTSDepots :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
     <b-tab id="qp-tab-clients">
@@ -89,7 +89,7 @@
         <b-icon :icon="icon.client" :title="$t('treeselect.clientGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
       </template>
       <div class="scrollcontent">
-        <TreeTSHostGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
+        <TreeTSHostGroups :open="true" :multi="multiSelection" type="propertyvalues" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
     <b-tab id="qp-tab-products">
@@ -97,7 +97,7 @@
         <b-icon :icon="icon.product" :title="$t('treeselect.prodGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionProducts.length }}
       </template>
       <div class="scrollcontent">
-        <TreeTSProductGroups :open="true" type="propertyvalues" classes="treeselect_quickpanel" />
+        <TreeTSProductGroups :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
   </b-tabs>
@@ -106,12 +106,15 @@
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Strings] })
 export default class TQuickSelections extends Vue {
   icon:any
+  t_fixed:any
   $mq:any
+  @selections.Getter public multiSelection!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionProducts!: Array<string>

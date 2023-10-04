@@ -1,10 +1,11 @@
 <template>
   <div
-    :title="withText == false ? $t(events[event].tooltip) : ''"
     data-testid="BTNEvent"
+    :class="{'incontextmenu': incontextmenu }"
+    :title="withText == false ? $t(events[event].tooltip) : ''"
   >
     <b-button
-      v-if="incontextmenu == false"
+      v-if="incontextmenu === false"
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
@@ -25,7 +26,7 @@
       v-else
       variant="outline-primary"
       size="sm"
-      class="w-100 h-100 text-left border-0"
+      class="w-100 h-100 text-left border-0 incontextmenu contextmenu pl-4  pt-1 pb-2 "
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       @click="$bvModal.show('event-modal-' + event + '-' + data)"
       @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"

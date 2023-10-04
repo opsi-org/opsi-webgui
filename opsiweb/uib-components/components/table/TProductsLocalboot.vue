@@ -42,7 +42,8 @@
       <template #contextcontent-general-1>
         <ButtonBTNEvent
           event="ondemand"
-          classes="dropdown-item border-0 smaller-text-size"
+          classes="dropdown-item border-0 smaller-text-size incontextmenu"
+          :incontextmenu="true"
           :with-text="true"
         />
         <!-- :update -loading = *"loading = > clientsLoading /= loading" -->

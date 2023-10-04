@@ -14,7 +14,7 @@
       v-else
       variant="outline-primary"
       size="sm"
-      class="w-100 h-100 text-left border-0"
+      class="w-100 h-100 text-left border-0 incontextmenu"
       :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-rename-' + clientId)"
       @keypress.enter="$bvModal.show('event-modal-rename-' + clientId)"
@@ -24,7 +24,7 @@
 
     <b-modal
       :id="'event-modal-rename-' + clientId"
-      :title="$t('title.renameClient') + $t('keep-english.title.delimiter')+ clientId"
+      :title="$t('title.renameClient') + t_fixed('keep-english.title.delimiter')+ clientId"
       data-testid="MRenameClientModal"
       centered
       scrollable
@@ -84,14 +84,16 @@ import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Client } from '../../mixins/get'
 import { Icons } from '../../mixins/icons'
+import { Strings } from '../../mixins/strings'
 const cache = namespace('data-cache')
 const config = namespace('config-app')
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons, Client] })
+@Component({ mixins: [Icons, Strings, Client] })
 export default class MRenameClient extends Vue {
   getClientIdList:any
   icon: any
+  t_fixed: any
   show:boolean = false
   $axios: any
   $t: any

@@ -8,7 +8,7 @@
     </div>
     <div v-else-if="!errorText && $mq=='mobile'">
       <AlertAAlertLocal show variant="primary">
-        {{ $t('table.fields.clientsIds') + $t('keep-english.colon') }} {{ selectionClients.length }}
+        {{ $t('table.fields.clientsIds') + t_fixed('keep-english.colon') }} {{ selectionClients.length }}
       </AlertAAlertLocal>
     </div>
     <div v-if="!errorText && Object.values(properties.productVersions).filter(n => n).length !== selectionDepots.length">
@@ -34,24 +34,24 @@
           <b-tooltip :target="`property_${item.propertyId}`" triggers="hover">
             <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${item.propertyId}`" class="text-left">
               <small>
-                {{ $t('table.details.productproperty.defaults') }} <b v-if="item.default!==$t('values.mixed')">{{ $t('keep-english.[content]', { content: item.details }) }}</b>
+                {{ $t('table.details.productproperty.defaults') }} <b v-if="item.default!==$t('values.mixed')">{{ t_fixed('keep-english.[content]').replace('content', item.details) }}</b>
                 <div v-else>
                   <p v-for="v,k in item.defaultDetails" :key="k">
-                    {{ k + $t('keep-english.colon') }} <b>{{ v }}</b>
+                    {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
                   </p>
                 </div>
                 <br>
                 <div v-if="item.anyDepotDifferentFromDefault">
                   {{ $t('table.details.productproperty.server') }}
                   <p v-for="v,k in item.depots" :key="k">
-                    {{ k + $t('keep-english.colon') }} <b>{{ v }}</b>
+                    {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
                   </p>
                 </div>
                 <br>
                 {{ $t('table.fields.description') }} <b v-if="item.description!=$t('values.mixed')">{{ item.description }}</b>
                 <div v-else>
                   <p v-for="v,k in item.descriptionDetails" :key="k">
-                    {{ k + $t('keep-english.colon') }} <b>{{ v }}</b>
+                    {{ k + t_fixed('keep-english.colon') }} <b>{{ v }}</b>
                   </p>
                 </div>
                 <br>
@@ -82,11 +82,12 @@ import { arrayEqual } from '../../.utils/utils/scompares'
 import { Icons } from '../../mixins/icons'
 import { Client } from '../../mixins/get'
 import { SaveProductProperties } from '../../mixins/save'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Icons, SaveProductProperties, Client] })
+@Component({ mixins: [Icons, Strings, SaveProductProperties, Client] })
 export default class GProductProperties extends Vue {
   @Prop({ }) id!: string
   @Prop({ default: '' }) errorText!: string
@@ -98,6 +99,7 @@ export default class GProductProperties extends Vue {
   $nuxt: any
   $mq: any
   $t:any
+  t_fixed: any
   result:Object = {}
   isLoading: boolean = false
   fetchedDataClients2Depots: object = {}

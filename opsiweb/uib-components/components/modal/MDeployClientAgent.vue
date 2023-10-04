@@ -14,7 +14,7 @@
       v-else
       variant="outline-primary"
       size="sm"
-      class="w-100 h-100 text-left border-0"
+      class="w-100 h-100 text-left border-0 incontextmenu"
       :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-deployCA-' + clientId)"
       @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId)"

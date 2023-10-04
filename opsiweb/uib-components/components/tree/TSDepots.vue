@@ -9,7 +9,7 @@
     :always-open="open"
     data-testid="TSDepots"
     :lazy-load="true"
-    :multi="true"
+    :show-as-multi="multi"
     :text-no-result="$t('treeselect.noresult')"
     :selection-default="selectionDepots"
     :editable="false"
@@ -32,6 +32,7 @@ export default class TSDepots extends Vue {
   $axios: any
   getDepotIdList:any
   getClientToDepot:any
+  @Prop({ default: true }) multi!: boolean
   @Prop({ default: false }) open!: boolean
   @Prop({ }) classes!: any
   @Prop({ default: 'treeselect_short' }) type!: string

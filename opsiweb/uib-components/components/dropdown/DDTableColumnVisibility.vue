@@ -1,6 +1,7 @@
 <template>
   <div
     class="DropdownDDTableColumnVisibilityWrapper"
+    :class="{ 'incontextmenu': incontextmenu }"
     @mouseover="incontextmenu ? onOver($refs.columndropdown) : null"
     @mouseleave="incontextmenu ? onLeave($refs.columndropdown) : null"
     @focusin="incontextmenu ? onOver($refs.columndropdown) : null"
@@ -28,7 +29,7 @@
             v-for="header in Object.values(headers).filter(h=>h._fixed!==true && h.key!='_empty_' && h._majorKey==undefined)"
             :key="header.key"
             class="dropdown-item"
-            :class="{'disabled':!header.disabled&&header.disabled!=undefined}"
+            :class="{'disabled':!header.disabled&&header.disabled!=undefined, 'incontextmenu': incontextmenu}"
             :tabindex="incontextmenu ? undefined : 0"
             @keydown.prevent="handleItem(header.key)"
             @click.prevent="handleItem(header.key)"
@@ -49,7 +50,7 @@
           inline
           :class="{
             'selectedColumn':columnVisibilityStates[header.key] || columnVisibilityList.includes(header.key),
-            disabled: header.disabled!=undefined&&header.disabled,
+            disabled: header.disabled!=undefined&&header.disabled, 'incontextmenu': incontextmenu
           }"
           @click.prevent="setColumnVisibilityModel(header.key)"
         >

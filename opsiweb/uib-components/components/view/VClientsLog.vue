@@ -1,6 +1,13 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + $t('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
+    <AlertAAlert ref="event_log_updated">
+      <template #button>
+        <b-button variant="primary" size="sm" class="float-right border-0 p-0" @click="_fetch">
+          {{ $t('button.reload') }}
+        </b-button>
+      </template>
+    </AlertAAlert>
+    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
         <slot v-if="!asChild" name="IDSelection" />
@@ -23,7 +30,7 @@
     <div class="log-row-text" />
     <DivDScrollResult v-if="logResult">
       <div v-if="filteredLog.includes('')">
-        {{ $t('keep-english.empty') }}
+        {{ t_fixed('keep-english.empty') }}
       </div>
       <div
         v-for="(log, index) in filteredLog"
@@ -45,7 +52,7 @@
             'log-row-9': log.startsWith('[9]'),
           }"
         >
-          {{ $t('keep-english.(content)', {content: index}) }} {{ log }}
+          {{ t_fixed('keep-english.(content)').replace('content', index) }} {{ log }}
         </span>
       </div>
     </DivDScrollResult>
@@ -55,17 +62,19 @@
 <script lang="ts">
 import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 interface LogRequest {
-    selectedClient: string,
-    selectedLogType: string
-  }
+  selectedClient: string,
+  selectedLogType: string
+}
 
-@Component({ mixins: [MBus] })
+@Component({ mixins: [MBus, Strings] })
 export default class VClientLog extends Vue {
   $axios: any
   $t: any
   $root: any
+  t_fixed: any
 
   @Prop({ }) id!: string
   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
@@ -94,13 +103,14 @@ export default class VClientLog extends Vue {
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
     const msg = this.wsBusMsg
     // console.log('MessageBus: receive-watch: ', msg)
-    if (msg && this.channels.includes(msg.channel)) { // && msg.type == this.logtype  && msg.objectId == this.id ) {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      ref.alert(`MessageBus received:  log_updated ${msg.data}`, 'info')
-      console.log('MessageBus log_updated: ', msg)
+    if (msg && this.channels.includes(msg.channel) && msg.data.type === this.logtype && msg.data.object_id === this.id) {
+      // const ref = (this.$root.$children[1].$refs.infoAlert as any) || (this.$root.$children[2].$refs.infoAlert as any)
+      const ref = (this.$refs.event_log_updated as any)
+      // ref.alert(`MessageBus received:  log_updated ${JSON.stringify(msg.data)}`, 'info')
+      ref.alert(this.$t('message.info.event.log_updated'), 'info')
       // await this.$fetch()
     } else {
-      console.log('MessageBus other: ', msg.channel)
+      console.log('MessageBus other: ', msg.channel, msg.data)
     }
   }
 
@@ -111,12 +121,12 @@ export default class VClientLog extends Vue {
 
   @Watch('logtype', { deep: true }) async logtypeChanged () {
     this.XsetSelectionLogType(this.logtype)
-    if (this.XselectionLogType && this.id) { await this.getLog(this.id, this.logtype) }
+    if (this.XselectionLogType && this.id) { await this._fetch() }
   }
 
   @Watch('id', { deep: true }) async idChanged () {
     // this.setSelectionLogClient(this.id)
-    if (this.XselectionLogType && this.id) { await this.getLog(this.id, this.logtype) }
+    if (this.XselectionLogType && this.id) { await this._fetch() }
   }
 
   async beforeMount () {
@@ -126,14 +136,20 @@ export default class VClientLog extends Vue {
 
     this.loglevel = this.XselectionLogLevel
     this.logtype = this.XselectionLogType
-    if (this.XselectionLogType && this.id) { await this.getLog(this.id, this.logtype) }
+    if (this.XselectionLogType && this.id) { await this._fetch() }
     if (this.testdata) { this.logResult = this.testdata }
+  }
+
+  async _fetch () {
+    await this.getLog(this.id, this.logtype)
+    const ref = (this.$refs.event_log_updated as any)
+    ref?.hide()
   }
 
   mounted () {
     if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
-    // console.log('MessageBus subscribe channel', this.channels)
-    // this.wsSubscribeChannel(this.channels)
+    console.log('MessageBus subscribe channel', this.channels)
+    this.wsSubscribeChannel(this.channels)
   }
 
   filterLog () {

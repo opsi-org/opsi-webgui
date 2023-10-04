@@ -9,7 +9,7 @@
       :flat="flat"
       :placeholder="placeholderWrapper"
       class="treeselect treeselect_with_wrapper"
-      :class="{ 'disable-roots': disableRootObjects, [type]:true, 'search-filled': treeselectSearchQueryFilled }"
+      :class="{ 'disable-roots': disableRootObjects, [type]:true, 'search-filled': treeselectSearchQueryFilled, 'hide-checkboxes': showAsMulti===false }"
       :searchable="!lazyLoad"
       :editable="editable"
       :loading-text="$t('message.loading')"
@@ -143,6 +143,7 @@ export default class TSDefault extends Vue {
   @Prop({ default: false }) clearable!: boolean
   @Prop({ default: true }) isOrigin!: boolean
   @Prop({ default: false }) multi!: boolean
+  @Prop({ default: undefined }) showAsMulti!: boolean
   @Prop({ default: false }) editable!: boolean
   @Prop({ default: false }) lazyLoad!: boolean
   @Prop({ default: false }) flat!: boolean
@@ -399,6 +400,13 @@ export default class TSDefault extends Vue {
   min-height: var(--min-height-button) !important;
   min-width: var(--min-height-button) !important;
   font-size: var(--text-small);
+}
+.TreeWrapper .hide-checkboxes .vue-treeselect__checkbox-container {
+  display: none;
+}
+.TreeWrapper .hide-checkboxes .vue-treeselect__option.vue-treeselect__option--selected {
+  background-color: var(--primary);
+  color: var(--light) !important;
 }
 .TreeWrapper .vue-treeselect__placeholder {
   display: block;

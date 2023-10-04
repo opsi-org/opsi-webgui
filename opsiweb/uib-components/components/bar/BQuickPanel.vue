@@ -35,16 +35,17 @@
         <b>{{ $t('title.settings') }} </b>
       </b-row>
       <b-row>
-        <b-col> <DropdownDDLang v-once /> </b-col>
-        <b-col> <DropdownDDTheme v-once /> </b-col>
-        <b-col cols="6">
-          <CheckboxCBQuickSave />
-        </b-col>
+        <b-col> <CheckboxCBQuickSave /> </b-col>
+        <b-col> <CheckboxCBMultiselection /> </b-col>
       </b-row>
     </b-card>
     <template #footer>
-      <b-card class="text-center p-3">
-        <ButtonBTNLogout v-once />
+      <b-card class="p-0">
+        <b-row>
+          <b-col> <DropdownDDLang v-once /> </b-col>
+          <b-col> <DropdownDDTheme v-once /> </b-col>
+          <b-col cols="6"> <ButtonBTNLogout v-once /> </b-col>
+        </b-row>
       </b-card>
     </template>
   </b-sidebar>

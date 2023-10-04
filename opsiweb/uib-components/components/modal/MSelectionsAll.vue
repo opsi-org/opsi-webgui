@@ -33,7 +33,7 @@
             plaintext
             :value="[...selectionDepots].sort().join('\n')"
           />
-          <span v-else>{{ $t('keep-english.empty') }}</span>
+          <span v-else>{{ t_fixed('keep-english.empty') }}</span>
         </template>
       </GridGFormItem>
       <GridGFormItem v-if="showClients" :label="$t('title.clients')" variant="longlabel" labelclass="clients">
@@ -47,7 +47,7 @@
             plaintext
             :value="[...selectionClients].sort().join('\n')"
           />
-          <span v-else>{{ $t('keep-english.empty') }}</span>
+          <span v-else>{{ t_fixed('keep-english.empty') }}</span>
         </template>
       </GridGFormItem>
     </b-modal>
@@ -57,14 +57,16 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Strings] })
 export default class MSelectionsAll extends Vue {
   show:boolean = false
   @Prop({ default: true }) showDepots!: boolean
   @Prop({ default: true }) showClients!: boolean
   @Prop({ default: false }) withText!: boolean
+  t_fixed: any
   icon:any
   $mq:any
 

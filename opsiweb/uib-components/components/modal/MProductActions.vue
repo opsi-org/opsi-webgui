@@ -27,7 +27,7 @@
           <b-form-select v-model="quickaction.installation_status" size="sm" :options="conditn_InstStatus">
             <template #first>
               <b-form-select-option :value="null">
-                {{ $t('keep-english.empty') }}
+                {{ t_fixed('keep-english.empty') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -38,7 +38,7 @@
           <b-form-select v-model="quickaction.action_result" size="sm" :options="conditn_ActionResult">
             <template #first>
               <b-form-select-option :value="null">
-                {{ $t('keep-english.empty') }}
+                {{ t_fixed('keep-english.empty') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -57,7 +57,7 @@
           <b-form-select v-model="quickaction.action" size="sm" :options="actions">
             <template #first>
               <b-form-select-option :value="null">
-                {{ $t('keep-english.empty') }}
+                {{ t_fixed('keep-english.empty') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -82,6 +82,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
+import { Strings } from '../../mixins/strings'
 
 interface QuickAction {
   action: any,
@@ -90,9 +91,10 @@ interface QuickAction {
   action_result: any
 }
 
-@Component({ mixins: [MBus] })
+@Component({ mixins: [MBus, Strings] })
 export default class MProductActions extends Vue {
   wsBusMsg: any // mixin // store
+  t_fixed: any // mixin
   $t: any
   $fetch: any
   $axios: any

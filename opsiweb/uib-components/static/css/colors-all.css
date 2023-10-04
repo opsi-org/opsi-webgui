@@ -455,14 +455,15 @@
   --fg-context_menu_titles: var(--fg-context_menu);
 
 
-  --b-bs_tooltip: var(--general-bg);
+  --b-bs_tooltip: var(--general-fg);
   --bt-bs_tooltip: var(--b-bs_tooltip);
   --br-bs_tooltip: var(--b-bs_tooltip);
   --bl-bs_tooltip: var(--b-bs_tooltip);
   --bb-bs_tooltip: var(--b-bs_tooltip);
   --fg-tooltip_inner: var(--general-fg); /* general-fg*/
-  --bg-tooltip_inner: var(--b-bs_tooltip); /*general-bg */
+  --bg-tooltip_inner: var(--general-bg-weak); /*general-bg */
   --bg-tooltip_inner_table: var(--bg-tooltip_inner); /*general-bg */
+  --b-bs_tooltip-inner: unset;
 
 
   --bg-popover: var(--general-fg);
