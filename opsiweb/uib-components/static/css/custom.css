@@ -127,6 +127,9 @@
   /* --table-border */
   /* --table-hover */
 }
+.toast:not(.show) {
+  display: block;
+}
 h1.title {
   font-family: var(--font-family-logo);
 }

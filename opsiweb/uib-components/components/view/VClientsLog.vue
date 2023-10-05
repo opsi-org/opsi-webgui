@@ -1,12 +1,12 @@
 <template>
   <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <AlertAAlert ref="event_log_updated">
+    <!-- <AlertAAlert ref="event_log_updated">
       <template #button>
         <b-button variant="primary" size="sm" class="float-right border-0 p-0" @click="_fetch">
           {{ $t('button.reload') }}
         </b-button>
       </template>
-    </AlertAAlert>
+    </AlertAAlert> -->
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
@@ -63,18 +63,20 @@
 import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
 import { Strings } from '../../mixins/strings'
+import { AlertToast } from '../../mixins/component'
 const selections = namespace('selections')
 interface LogRequest {
   selectedClient: string,
   selectedLogType: string
 }
 
-@Component({ mixins: [MBus, Strings] })
+@Component({ mixins: [AlertToast, MBus, Strings] })
 export default class VClientLog extends Vue {
   $axios: any
   $t: any
   $root: any
   t_fixed: any
+  showToast: any
 
   @Prop({ }) id!: string
   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
@@ -104,11 +106,13 @@ export default class VClientLog extends Vue {
     const msg = this.wsBusMsg
     // console.log('MessageBus: receive-watch: ', msg)
     if (msg && this.channels.includes(msg.channel) && msg.data.type === this.logtype && msg.data.object_id === this.id) {
-      // const ref = (this.$root.$children[1].$refs.infoAlert as any) || (this.$root.$children[2].$refs.infoAlert as any)
-      const ref = (this.$refs.event_log_updated as any)
-      // ref.alert(`MessageBus received:  log_updated ${JSON.stringify(msg.data)}`, 'info')
-      ref.alert(this.$t('message.info.event.log_updated'), 'info')
-      // await this.$fetch()
+      this.showToast({
+        title: this.$t('message.info.event'),
+        content: this.$t('message.info.event.log_updated'),
+        variant: 'info',
+        noAutoHide: true,
+        reload: this._fetch // shows reload button
+      })
     } else {
       console.log('MessageBus other: ', msg.channel, msg.data)
     }

@@ -33,10 +33,11 @@ import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { SaveParameters } from '../../mixins/save'
 import { Strings } from '../../mixins/strings'
 import { MBus } from '../../mixins/messagebus'
+import { AlertToast } from '../../mixins/component'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [Strings, SaveParameters, MBus] })
+@Component({ mixins: [AlertToast, Strings, SaveParameters, MBus] })
 export default class GHostParam extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -52,6 +53,7 @@ export default class GHostParam extends Vue {
   t_fixed: any
   $fetch: any
   wsBusMsg: any // mixin messagebus
+  showToast: any // mixin alerttoast
   wsSubscribeChannel: any // mixin messagebus
   channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
 
@@ -69,6 +71,12 @@ export default class GHostParam extends Vue {
       // const ref = (this.$root.$children[1].$refs.infoAlert as any) || (this.$root.$children[2].$refs.infoAlert as any)
       // const ref = (this.$refs.event_log_updated as any)
       console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
+
+      this.showToast({
+        title: this.$t('message.info.event'),
+        content: this.$t('message.info.event.config_updated', { configId: msg.data.configId }),
+        variant: 'info'
+      })
       // ref.alert(`MessageBus received:  log_updated ${JSON.stringify(msg.data)}`, 'info')
       // ref.alert(this.$t('message.info.event.log_updated'), 'info')
       // await this.$fetch()

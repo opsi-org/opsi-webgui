@@ -186,7 +186,7 @@
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { MBus } from '../../mixins/messagebus'
-import { Synchronization } from '../../mixins/component'
+import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Cookies } from '../../mixins/cookies'
@@ -195,11 +195,12 @@ interface DeleteClient {
   clientid: string
 }
 
-@Component({ mixins: [MBus, Icons, Synchronization, Cookies] })
+@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, Cookies] })
 export default class VClients extends Vue {
   syncSort: any // mixin Synchronization
   icon: any
   wsBusMsg: any // mixin MBus
+  showToast: any // mixin AlertToast
   wsNotificationInfo: any // mixin MBus
   includesCookie!: any // mixin cookies
   getKeyCookie!: any
@@ -309,7 +310,11 @@ export default class VClients extends Vue {
   @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg
     if (msg && msg.channel === 'event:host_created') {
-      this.wsNotificationInfo('MessageBus received event host_created', `${msg.data.id}`)
+      this.showToast({
+        title: this.$t('message.info.event'),
+        content: this.$t('message.info.event.client_updated', { clientId: msg.data.id }),
+        variant: 'info'
+      })
       await this.$fetch()
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
@@ -317,6 +322,7 @@ export default class VClients extends Vue {
       // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       // eslint-disable-next-line no-console
       console.log('message bus host_connected', msg)
+
       // this.cache_pages.
       // await this.$fetch()
     }

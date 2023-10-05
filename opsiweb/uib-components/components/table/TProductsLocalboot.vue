@@ -163,7 +163,7 @@ import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../
 import { ChangeObj } from '../../.utils/types/tchanges'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { MBus } from '../../mixins/messagebus'
-import { Synchronization } from '../../mixins/component'
+import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
 
@@ -175,7 +175,7 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [Icons, MBus, Synchronization, SaveProductActionRequest] })
+@Component({ mixins: [Icons, MBus, Synchronization, SaveProductActionRequest, AlertToast] })
 export default class TProductsLocalboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -188,6 +188,7 @@ export default class TProductsLocalboot extends Vue {
   @Prop() fetchedDataClients2Depots!: IObjectString2String
 
   wsBusMsg: any // mixin // store
+  showToast: any // mixin AlertToast
   icon: any
   syncSort: any
   $axios: any
@@ -240,8 +241,12 @@ export default class TProductsLocalboot extends Vue {
       this.visibleProductIds.includes(msg.data.productId) &&
       this.selectionClients.includes(msg.data.clientId)
     ) {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
+      console.log(`MBUS; ${msg.data.productType}`, msg)
+      this.showToast({
+        title: this.$t('message.info.event'),
+        content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
+        variant: 'info'
+      })
       if (this.quicksave) {
         this.$fetch()
         // if (ref) { ref.hide() }

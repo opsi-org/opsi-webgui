@@ -26,14 +26,14 @@ const mbus = namespace('messagebus')
   //     }
   // }
 
-  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-    // triggered before specific Watch method e.g. in VClients, VProductsLocalboot, ...
-    // this.wsNotification('(info) received a message "' + this.wsBusMsg.channel + '"', this.wsBusMsg)
-    // const msg = this.wsBusMsg
-    // let data = ''
-    // if (msg.data) { data = String.fromCharCode(...msg.data) }
-    // this.wsNotification('MessageBus received "' + msg.type + '": "' + data + '"', msg)
-  }
+  // @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
+  //   // triggered before specific Watch method e.g. in VClients, VProductsLocalboot, ...
+  //   // this.wsNotification('(info) received a message "' + this.wsBusMsg.channel + '"', this.wsBusMsg)
+  //   // const msg = this.wsBusMsg
+  //   // let data = ''
+  //   // if (msg.data) { data = String.fromCharCode(...msg.data) }
+  //   // this.wsNotification('MessageBus received "' + msg.type + '": "' + data + '"', msg)
+  // }
 
   get wsBus () { return this.bus }
 

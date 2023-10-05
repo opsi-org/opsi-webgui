@@ -154,7 +154,7 @@ import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../
 import { ChangeObj } from '../../.utils/types/tchanges'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { MBus } from '../../mixins/messagebus'
-import { Synchronization } from '../../mixins/component'
+import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
 
@@ -166,7 +166,7 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [MBus, Icons, Synchronization, SaveProductActionRequest] })
+@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, SaveProductActionRequest] })
 export default class TProductsNetboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -178,6 +178,7 @@ export default class TProductsNetboot extends Vue {
   @Prop({ default: false }) isLoading!: boolean
   @Prop() fetchedDataClients2Depots!: IObjectString2String
   wsBusMsg: any // mixin // store
+  showToast: any // mixin // alerttoast
   icon: any
   syncSort: any
   $axios: any
@@ -230,8 +231,13 @@ export default class TProductsNetboot extends Vue {
       this.visibleProductIds.includes(msg.data.productId) &&
       this.selectionClients.includes(msg.data.clientId)
     ) {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
+      this.showToast({
+        title: this.$t('message.info.event'),
+        content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
+        variant: 'info'
+      })
+      // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
+      // ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
       if (this.quicksave) {
         this.$fetch()
         // ref.hide()
