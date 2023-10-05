@@ -235,7 +235,7 @@ export default class VClientCreation extends Vue {
   get formvalidation_pw () { return this.form.password !== '' }
 
   get checkValid () {
-    return this.clientName.length > 0 && !this.clientIds.includes(this.clientName + this.domainName)
+    return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domainName)
   }
 
   // async mounted () {
