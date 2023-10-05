@@ -15,7 +15,7 @@ import subprocess
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Optional, Union
-
+from packaging.version import InvalidVersion
 from fastapi import APIRouter, Body, Depends, Request, status
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
 from sqlalchemy import alias, and_, column, delete, select, text, update  # type: ignore[import]
@@ -23,7 +23,7 @@ from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 from sqlalchemy.sql.expression import table  # type: ignore[import]
 from starlette.concurrency import run_in_threadpool
-
+from opsicommon.objects import ProductOnClient
 from opsicommon.exceptions import BackendBadValueError
 from opsiconfd.config import get_configserver_id, config
 from opsiconfd.logging import logger
@@ -703,60 +703,107 @@ def unblock_all_clients(request: Request) -> RESTResponse:  # pylint: disable=un
 
 class ProductAction(BaseModel):  # pylint: disable=too-few-public-methods
 	action: str
-	outdated: bool
+	outdated: bool = False
+	demoMode: bool = False
 	installation_status: str | None
 	action_result: str | None
+	selectedClients: list | None
 
 
 @client_router.post("/api/opsidata/clients/action")
 @rest_api
 @read_only_check
-def set_product_action(request: Request, product_action: ProductAction) -> RESTResponse:  # pylint: disable=unused-argument
+def set_product_action(  # pylint: disable=unused-argument, too-many-branches
+	request: Request, product_action: ProductAction
+) -> RESTResponse:
 	"""
 	Set product action where condition
 	"""
 
-	try:
+	try:  # pylint: disable=too-many-nested-blocks
 		updates: dict = {}
 		poc_list = set()
+		hosts = []
+
+		if product_action.selectedClients:
+			hosts = product_action.selectedClients
 
 		if product_action.installation_status or product_action.action_result:
 			poc_list = set(
 				backend.productOnClient_getObjects(
-					installationStatus=product_action.installation_status, actionResult=product_action.action_result
+					installationStatus=product_action.installation_status, actionResult=product_action.action_result, clientId=hosts
 				)
 			)
 
+		depots = list(_depots_of_clients(hosts).values())
 		if product_action.outdated:
 			depot_versions: dict = {}
-			for pod in backend.productOnDepot_getObjects():
+			for pod in backend.productOnDepot_getObjects(depotId=depots):
 				if not depot_versions.get(pod.depotId):
 					depot_versions[pod.depotId] = {}
 				depot_versions[pod.depotId][pod.productId] = f"{pod.productVersion}-{pod.packageVersion}"
-			result = set(backend.productOnClient_getObjects(installationStatus="installed"))
+			result = set(backend.productOnClient_getObjects(installationStatus="installed", clientId=hosts))
 			for poc in result.difference(poc_list):
-				if not poc.installationStatus == "installed":
+				# print(poc)
+				depot = _depots_of_clients([poc.clientId])[poc.clientId]
+				if not poc.installationStatus == "installed" or not depot_versions.get(depot):
 					continue
-				if version.parse(f"{poc.productVersion}-{poc.packageVersion}") < version.parse(
-					depot_versions[_depots_of_clients([poc.clientId])[poc.clientId]][poc.productId]
-				):
-					logger.info(
-						"Product %s is outeded on client %s (depot is %s)",
-						poc.productId,
-						poc.clientId,
-						_depots_of_clients([poc.clientId][poc.clientId]),
-					)
-					if poc not in poc_list:
-						poc_list.add(poc)
-
+				try:
+					if version.parse(f"{poc.productVersion}-{poc.packageVersion}") < version.parse(depot_versions[depot][poc.productId]):
+						logger.info(
+							"Product %s is outeded on client %s (depot is %s)",
+							poc.productId,
+							poc.clientId,
+							_depots_of_clients([poc.clientId])[poc.clientId],
+						)
+						if poc not in poc_list:
+							poc_list.add(poc)
+				except InvalidVersion:
+					continue
 		for poc in poc_list:
 			poc.actionRequest = product_action.action
 			if poc.clientId not in updates:
 				updates[poc.clientId] = []
 			updates[poc.clientId].append(
-				{"productId": poc.productId, "productVersion": poc.productVersion, "packageVersion": poc.packageVersion}
+				{
+					"productId": poc.productId,
+					"clientId": poc.clientId,
+					"productType": poc.productType,
+					"productVersion": poc.productVersion,
+					"packageVersion": poc.packageVersion,
+					"actionRequest": poc.actionRequest,
+				}
 			)
-		result = backend.productOnClient_updateObjects(poc_list)
+
+		if product_action.installation_status == "not_installed":
+			for host in hosts:
+				depot = _depots_of_clients([host])[host]
+				for prod in result.union(set(backend.productOnDepot_getObjects(depotId=depot))):
+					if host not in updates:
+						updates[host] = []
+					poc_list.add(
+						ProductOnClient(
+							productId=prod.productId,
+							productType=prod.productType,
+							clientId=host,
+							productVersion=prod.productVersion,
+							packageVersion=prod.packageVersion,
+							actionRequest=product_action.action,
+						)
+					)
+					updates[host].append(
+						{
+							"productId": prod.productId,
+							"productType": prod.productType,
+							"clientId": host,
+							"productVersion": prod.productVersion,
+							"packageVersion": prod.packageVersion,
+							"actionRequest": product_action.action,
+						}
+					)
+
+		if not product_action.demoMode:
+			result = backend.productOnClient_updateObjects(poc_list)
 
 		return RESTResponse(http_status=200, data=updates)
 	except Exception as err:  # pylint: disable=broad-except
