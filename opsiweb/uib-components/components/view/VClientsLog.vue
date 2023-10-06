@@ -150,11 +150,11 @@ export default class VClientLog extends Vue {
     ref?.hide()
   }
 
-  mounted () {
-    if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
-    console.log('MessageBus subscribe channel', this.channels)
-    this.wsSubscribeChannel(this.channels)
-  }
+  // mounted () {
+  //   // if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
+  //   // console.log('MessageBus subscribe channel', this.channels)
+  //   // this.wsSubscribeChannel(this.channels) // done in messagebus init
+  // }
 
   filterLog () {
     if (this.filterQuery) {
