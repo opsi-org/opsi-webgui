@@ -65,11 +65,15 @@ import { Icons } from '../../mixins/icons'
 import { SetUEFI } from '../../mixins/post'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Strings } from '../../mixins/strings'
+import { AlertToast } from '../../mixins/component'
 const config = namespace('config-app')
-@Component({ mixins: [Icons, Strings, SetUEFI] })
+
+@Component({ mixins: [Icons, Strings, SetUEFI, AlertToast] })
 export default class GHostAttributes extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
+  showToastSuccess: any // mixin
+  showToastError: any // mixin
   showValue : boolean = false
   hostAttr:any = {}
   isLoading: boolean = false
@@ -86,7 +90,9 @@ export default class GHostAttributes extends Vue {
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  async fetch () {
+  async fetch () { await this._fetch() }
+
+  async _fetch () {
     if (this.id) {
       let endPoint: any = ''
       if (this.type === 'clients') {
@@ -103,10 +109,11 @@ export default class GHostAttributes extends Vue {
       .then((response) => {
         this.hostAttr = response[0]
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.hostAttrErrorAlert as any)
-        ref.alert(detailedError, 'danger')
-        this.errorText = this.$t('message.error.defaulttext') as string
+        this.showToastError(error, this.$t('message.error.defaulttext'))
+        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        // const ref = (this.$refs.hostAttrErrorAlert as any)
+        // ref.alert(detailedError, 'danger')
+        // this.errorText = this.$t('message.error.defaulttext') as string
       })
   }
 
@@ -120,13 +127,11 @@ export default class GHostAttributes extends Vue {
     this.isLoading = true
     await this.$axios.$put(endPoint, attr)
       .then((response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(this.$t('message.success.title'), 'success', response)
+        this.showToastSuccess(this.$t('message.success.save.hostattributes', { host: attr.hostId }))
         this.$fetch()
-      }).catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+      }).catch(async (error) => {
+        this.showToastError(error)
+        await this._fetch()
       })
     this.isLoading = false
   }

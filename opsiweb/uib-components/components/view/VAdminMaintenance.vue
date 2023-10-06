@@ -6,7 +6,7 @@
         <span class="text-capitalize">{{ currentAppState }}</span>
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('label.setappstate')" value-more="true" variant="longvalue">
+    <GridGFormItem :label="$t('label.setappstate')" variant="longvalue">
       <template #value>
         <b-form-radio-group v-model="newAppState.type">
           <b-form-radio value="normal">
@@ -71,7 +71,7 @@
       </template>
     </GridGFormItem>
     <hr>
-    <GridGFormItem :label="$t('label.createbackup')" value-more="true" variant="longvalue">
+    <GridGFormItem :label="$t('label.createbackup')" variant="longvalue">
       <template #value>
         <GridGFormItem :label="$t('label.maintenancemode')">
           <template #value>
@@ -120,7 +120,7 @@
       </template>
     </GridGFormItem>
     <hr>
-    <GridGFormItem :label="$t('label.restorebackup')" value-more="true" variant="longvalue">
+    <GridGFormItem :label="$t('label.restorebackup')" variant="longvalue">
       <template #value>
         <GridGFormItem :label="$t('label.uploadbackup')">
           <template #value>
@@ -201,6 +201,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 
 interface AppState {
@@ -222,8 +223,10 @@ interface RestoreBackup {
   password: string
 }
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class VAdminMaintenance extends Vue {
+  showToastSuccess: any // from mixin AlertToast
+  showToastError: any // from mixin AlertToast
   icon: any
   $axios: any
   $t: any
@@ -248,11 +251,7 @@ export default class VAdminMaintenance extends Vue {
       .then((response) => {
         this.currentAppState = response.type
       })
-      .catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
+      .catch(this.showToastError)
   }
 
   resetAppState () {
@@ -275,9 +274,7 @@ export default class VAdminMaintenance extends Vue {
         this.currentAppState = response.type
       })
       .catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.isLoading = false
   }
@@ -292,13 +289,10 @@ export default class VAdminMaintenance extends Vue {
         document.body.appendChild(downloadLink)
         downloadLink.click()
         document.body.removeChild(downloadLink)
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(this.$t('success.backup.created') as string, 'success')
+        this.showToastSuccess(this.$t('success.backup.created'))
       })
       .catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.isLoading = false
   }
@@ -309,13 +303,10 @@ export default class VAdminMaintenance extends Vue {
     this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
     await this.$axios.$post('/api/backup/restore', this.restorebackup)
       .then(() => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(this.$t('success.backup.restored') as string, 'success')
+        this.showToastSuccess(this.$t('success.backup.restored'))
       })
       .catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
   }
 
@@ -333,17 +324,15 @@ export default class VAdminMaintenance extends Vue {
 
     const host = window.location.hostname
     const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
-    this.$axios.setBaseURL('https://' + host + ':' + port)
 
+    this.$axios.setBaseURL('https://' + host + ':' + port)
     await this.$axios.$post('/file-transfer/multipart', formData)
       .then(async (response) => {
         this.restorebackup.file_id = response.file_id
         await this.requestRestore()
       })
       .catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
     this.isLoading = false

@@ -154,9 +154,7 @@ export default class FLogin extends Vue {
         this.logout()
         this.clearSession()
         this.isLoading = false
-        const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.login') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
   }
 }

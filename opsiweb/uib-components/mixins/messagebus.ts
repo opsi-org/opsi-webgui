@@ -1,8 +1,10 @@
 import { encode, decode } from '@msgpack/msgpack'
 import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
+import { AlertToast } from './component'
 const mbus = namespace('messagebus')
 
-@Component export class MBus extends Vue {
+@Component({ mixins: [AlertToast] }) export class MBus extends Vue {
+  showToastMbus: any // mixin
   uid: string = this.createUUID()
   channels: any // from importing component?
   @mbus.Getter public bus!: WebSocket|undefined
@@ -10,18 +12,20 @@ const mbus = namespace('messagebus')
   @mbus.Mutation public setBus!: (bus: WebSocket|undefined) => void
   @mbus.Mutation public setBusLastMsg!: (obj: any) => void
 
-  // check events / channels and trigger actions in concrete classes
-  // e.g. currently View/VClients.vue
-  // example:
-  // @Component({ mixins: [MBus] })
-  // ....
+  // // check events / channels and trigger actions in concrete classes
+  // // e.g. currently View/VClients.vue
+  // // example:
+  // @Component({ mixins: [MBus, AlertToast] })
+  // // ....
   //  wsBusMsg: any // mixin // store
   //  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
   //     const msg = this.wsBusMsg
   //     console.log('MessageBus: receive-watch: ', msg)
   //     if (msg && msg.channel === 'event:host_created') {
-  //        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-  //        ref.alert(`MessageBus received:  host_created ${msg.data.id}`, 'info')
+  //         this.showToastMbus({
+  //           title: this.$t('message.info.event'),
+  //           content: this.$t('message.info.event.client_updated', { clientId: msg.data.id })
+  //         })
   //        await this.$fetch()
   //     }
   // }
@@ -195,24 +199,22 @@ const mbus = namespace('messagebus')
 
   wsNotificationInfo (text: any, data: any = '') {
     // console.debug('MessageBus:', text, data)
-    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-    ref.alert(text, 'info', data)
+    this.showToastMbus({
+      title: this.$t('message.info.event'),
+      content: text + ' ' + data
+    })
   }
 
   wsNotificationWarn (text: any, data: any = '') {
     const stringtext = JSON.stringify(data)
     // console.debug('MessageBus: ', stringtext)
     console.warn('MessageBus:', text, data)
-    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-    // const ref = (this.$refs.alertConfigurationError as any)
-    ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
-    // TODO
-    // this.showToast({
-    //   title: this.$t('message.error.title'),
-    //   error_data: error.response.data,
-    //   variant: 'danger',
-    //   noAutoHide: true
-    // })
+    // ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
+    this.showToastMbus({
+      title: text,
+      content: stringtext,
+      variant: 'warning'
+    })
   }
 
   _setBus (bus: WebSocket, setBusLastMsgMethod: any) {

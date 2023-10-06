@@ -188,7 +188,8 @@ export default class TProductsLocalboot extends Vue {
   @Prop() fetchedDataClients2Depots!: IObjectString2String
 
   wsBusMsg: any // mixin // store
-  showToast: any // mixin AlertToast
+  showToastMbus: any // mixin AlertToast
+  hideToast: any // from mixin AlertToast
   icon: any
   syncSort: any
   $axios: any
@@ -245,10 +246,9 @@ export default class TProductsLocalboot extends Vue {
       if (!(this.lastChanges.clientIds.includes(msg.data.clientId) && this.lastChanges.productIds.includes(msg.data.productId))) {
         // check if we may cause the event...
         console.log(`MBUS; ${msg.data.productType}`, msg)
-        this.showToast({
+        this.showToastMbus({
           title: this.$t('message.info.event'),
-          content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
-          variant: 'info'
+          content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId })
         })
       }
       if (this.quicksave) {
@@ -305,13 +305,7 @@ export default class TProductsLocalboot extends Vue {
 
   async fetchWrapper () { await this.$fetch() }
   fetch () {
-    try {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      if (ref) { ref.hide() }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.warn('Couldnt find AlertBox for statusAlert')
-    }
+    this.hideToast()
     this.$emit('fetch-products', this)
     // will trigger -> this.setItemsCache(items)
   }

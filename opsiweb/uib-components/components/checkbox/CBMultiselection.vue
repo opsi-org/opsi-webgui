@@ -46,11 +46,10 @@
       @ok="toggleSelectionMode"
       @hidden="cancelSelectionModeModal"
     >
-      <div class="d-block"> {{ $t('form.multiselection.modal.content',
-      {
+      <div class="d-block">{{ $t('form.multiselection.modal.content', {
         'btn.ok': $t('button.continue'),
         'btn.cancel': $t('label.cancel'),
-        }) }}</div>
+      }) }}</div>
     </b-modal>
   </div>
 </template>
@@ -66,6 +65,9 @@ export default class CBMultiselection extends Vue {
   $t: any
 
   @Prop({ default: 'checkbox' }) type!: string
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  @Prop({ default: undefined }) action: Function|undefined
+
   // localMultiSelection:boolean = true
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
@@ -101,6 +103,7 @@ export default class CBMultiselection extends Vue {
       }
     }
     this.setMultiSelection(!this.multiSelection)
+    if (this.action) { this.action() }
   }
 
   showModal () { this.$root.$emit('bv::show::modal', 'modal-confirmMultiSelectionChange', '#btnShow') }

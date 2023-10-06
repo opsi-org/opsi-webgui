@@ -63,6 +63,24 @@
           </b-form-select>
         </template>
       </GridGFormItem>
+      <b-row class="text-small mb-2">
+        <b>{{ $t('label.restrictions') }} </b>
+      </b-row>
+      <GridGFormItem variant="longlabel" :label="$t('form.productaction.radio.label')">
+        <template #value>
+          <b-form-group>
+            <b-form-radio
+              v-model="radioOption"
+              name="server-clients-radio"
+              value="both"
+            >
+              {{ $t('form.productaction.radio.both') }}
+            </b-form-radio>
+            <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="true || selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio>
+            <b-form-radio v-model="radioOption" name="client-radio" value="clients" :disabled="selectionClients.length <= 0">{{ $t('form.productaction.radio.clients') }}</b-form-radio>
+          </b-form-group>
+        </template>
+      </GridGFormItem>
       <GridGFormItem variant="longlabel">
         <template #value>
           <div class="float-right mt-4">
@@ -75,24 +93,36 @@
           </div>
         </template>
       </GridGFormItem>
+      <GridGFormItem variant="longlabel" :label="$t('form.productaction.demoResult')">
+        <template #value>
+          {{ demoResult }}
+        </template>
+      </GridGFormItem>
     </b-modal>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { MBus } from '../../mixins/messagebus'
 import { Strings } from '../../mixins/strings'
+const selections = namespace('selections')
 
 interface QuickAction {
   action: any,
   outdated: boolean,
   installation_status: any,
-  action_result: any
+  action_result: any,
+  selectedClients: undefined | Array<string>,
+  selectedDepots: undefined | Array<string>,
+  demoMode: boolean
 }
 
-@Component({ mixins: [MBus, Strings] })
+@Component({ mixins: [MBus, Strings, AlertToast] })
 export default class MProductActions extends Vue {
+  showToastSuccess: any // mixin
+  showToastError: any // mixin
   wsBusMsg: any // mixin // store
   t_fixed: any // mixin
   $t: any
@@ -101,6 +131,11 @@ export default class MProductActions extends Vue {
 
   @Prop({ default: 'label.quickaction' }) label?: string
 
+  @selections.Getter public selectionClients!: Array<string>
+  @selections.Getter public selectionDepots!: Array<string>
+
+  demoResult: string = '--'
+  radioOption: string = 'both'
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   conditn_InstStatus!: Array<string>
@@ -108,10 +143,27 @@ export default class MProductActions extends Vue {
   conditn_ActionResult!: Array<string>
   conditn_ActionResult_default: Array<string> = ['failed', 'successful']
   quickaction: QuickAction = {
-    action: null,
+    action: 'none',
     outdated: false,
-    installation_status: null,
-    action_result: null
+    installation_status: 'not_installed',
+    action_result: null,
+    selectedClients: undefined,
+    selectedDepots: undefined,
+    demoMode: true
+  }
+
+  @Watch('radioOption', { deep: true }) _radioOptionChanged () {
+    if (this.radioOption === 'both') {
+      delete this.quickaction.selectedClients
+    } else if (this.radioOption === 'server') {
+      this.quickaction.selectedDepots = this.selectionDepots
+    } else if (this.radioOption === 'clients') {
+      this.quickaction.selectedClients = this.selectionClients
+    }
+  }
+
+  @Watch('quickaction', { deep: true }) async _quickactionChanged () {
+    await this.executeAction(true)
   }
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
@@ -136,9 +188,10 @@ export default class MProductActions extends Vue {
       .then((result) => {
         this.conditn_ActionResult = result
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.prodQuickActionAlert as any)
-        ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        // const ref = (this.$refs.prodQuickActionAlert as any)
+        // ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        this.showToastError(error.response.data)
         this.conditn_ActionResult = ['Successful', 'Failed']
       })
   }
@@ -148,28 +201,35 @@ export default class MProductActions extends Vue {
       .then((result) => {
         this.conditn_InstStatus = result
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.prodQuickActionAlert as any)
-        ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+        // const ref = (this.$refs.prodQuickActionAlert as any)
+        // ref?.alert(this.$t('message.error.title'), 'danger', detailedError)
+        this.showToastError(error.response.data)
         this.conditn_InstStatus = ['Installed', 'Unknown']
       })
   }
 
-  async executeAction () {
+  async executeAction (demo = true) {
     const ref = (this.$refs.prodQuickActionAlert as any)
     if (this.quickaction.outdated === false && this.quickaction.installation_status === null && this.quickaction.action_result === null) {
       ref.alert(this.$t('message.error.condition'), 'danger')
-    } else {
-      this.isLoading = true
-      await this.$axios.$post('/api/opsidata/clients/action', this.quickaction)
-        .then(() => {
-          ref.alert(this.$t('message.success.title'), 'success')
-        }).catch((error) => {
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-          ref.alert(this.$t('message.error.title'), 'danger', detailedError)
-        })
-      this.isLoading = false
+      return
     }
+    this.isLoading = true
+    if (this.radioOption === 'clients') {
+      this.quickaction.selectedClients = this.selectionClients
+    }
+    await this.$axios.$post('/api/opsidata/clients/action', { ...this.quickaction, demoMode: demo })
+      .then((result) => {
+        this.demoResult = result
+        if (!demo) {
+          this.showToastSuccess(this.$t('message.success.save.productactions'))
+          this.executeAction(true) // do again to see new values as demo -> should be epty now
+        }
+      }).catch((error) => {
+        this.showToastError(error)
+      })
+    this.isLoading = false
   }
 
   resetForm () {

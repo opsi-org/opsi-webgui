@@ -157,6 +157,7 @@ import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
 import { Client, Configserver } from '../../mixins/get'
 import { Group, SetUEFI, DeployClientAgent } from '../../mixins/post'
+import { AlertToast } from '../../mixins/component'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
@@ -177,8 +178,11 @@ interface FormClientAgent {
     type: string
 }
 
-@Component({ mixins: [Icons, Configserver, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
+@Component({ mixins: [AlertToast, Icons, Configserver, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
 export default class VClientCreation extends Vue {
+  showToastWarning:any // mixin
+  showToastSuccess:any // mixin
+  showToastError:any // mixin
   getClientIdList:any
   icon: any
   $axios: any
@@ -295,10 +299,9 @@ export default class VClientCreation extends Vue {
   async createOpsiClient () {
     this.isLoading = true
     this.newClient.hostId = this.clientName.trim() + this.domain.trim()
-    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     if (this.clientIds.includes(this.newClient.hostId)) {
       this.isLoading = false
-      ref?.alert(this.$t('message.warning.clientExists', { client: this.newClient.hostId }) as string, 'warning')
+      this.showToastWarning(this.$t('message.warning.clientExists', { client: this.newClient.hostId }))
       return
     }
     const request = {
@@ -306,7 +309,7 @@ export default class VClientCreation extends Vue {
     }
     await this.$axios.$post('/api/opsidata/clients', request)
       .then(async () => {
-        ref.alert(this.$t('message.success.createClient', { client: this.newClient.hostId }) as string, 'success')
+        this.showToastSuccess(this.$t('message.warning.createClient', { client: this.newClient.hostId }))
         if (this.uefi) {
           this.setUEFI(this.newClient.hostId, this.uefi.toString())
         }
@@ -321,8 +324,7 @@ export default class VClientCreation extends Vue {
         }
         this.clientIds.push(this.newClient.hostId)
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.createClient') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.isLoading = false
   }

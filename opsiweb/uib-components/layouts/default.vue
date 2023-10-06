@@ -34,6 +34,7 @@
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
     <BarBQuickPanel :show-quick-panel="showQuickPanel" @change="showQuickPanelChanged" />
     <div class="main_content">
+      <!-- Use showToastSuccess or showToastError instead (Readon: tables of pages are jumping) -->
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
@@ -207,5 +208,12 @@ export default class LayoutDefault extends Vue {
 }
 :not(.mobile).QPwithSBcollapsed .main_content{
   width: calc(100% - 470px) !important;
+}
+
+.toast-body .btn,
+.toast-body .btn:hover {
+  color: unset !important;
+  background-color: transparent !important;
+  border-color: unset !important;
 }
 </style>

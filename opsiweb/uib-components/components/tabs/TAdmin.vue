@@ -67,11 +67,14 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { MBus } from '../../mixins/messagebus'
 const cache = namespace('data-cache')
 
-@Component({ mixins: [MBus] })
+@Component({ mixins: [MBus, AlertToast] })
 export default class VAdminTerminal extends Vue {
+  showToastError: any // from mixin AlertToast
+  showToastSuccess: any // from mixin AlertToast
   @Prop({ }) id!: string
   @Prop({ }) type!: string
   @Prop({ default: false }) 'asChild'!: string
@@ -93,72 +96,38 @@ export default class VAdminTerminal extends Vue {
     await this.$axios.$get('/api/opsidata/blocked-clients')
       .then((response) => {
         this.blockedClients = response
-      }).catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(detailedError, 'danger')
-      })
+      }).catch(this.showToastError)
   }
 
   async fetchLockedProducts () {
     await this.$axios.$get('/api/opsidata/locked-products')
       .then((response) => {
         this.lockedProducts = response
-      }).catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(detailedError, 'danger')
-      })
+      }).catch(this.showToastError)
   }
 
   async unblockClient () {
     await this.$axios.$post(`/api/opsidata/clients/${this.clientId}/unblock`)
-      .then((response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
-      })
-      .catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
+      .then((response) => { this.showToastSuccess(response) })
+      .catch(this.showToastError)
   }
 
   async unlockProduct () {
     await this.$axios.$post(`/api/opsidata/products/${this.productId}/unlock`)
-      .then((response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
-      })
-      .catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
+      .then((response) => { this.showToastSuccess(response) })
+      .catch(this.showToastError)
   }
 
   async unblockAllClients () {
     await this.$axios.$post('/api/opsidata/clients/unblock')
-      .then((response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(this.$t('message.success.title'), 'success', response)
-      }).catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
+      .then((response) => { this.showToastSuccess(response) })
+      .catch(this.showToastError)
   }
 
   async unlockAllProducts () {
     await this.$axios.$post('/api/opsidata/products/unlock')
-      .then((response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(this.$t('message.success.title'), 'success', response)
-      }).catch((error) => {
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
-      })
+      .then((response) => { this.showToastSuccess(response) })
+      .catch(this.showToastError)
   }
 }
 </script>

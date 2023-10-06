@@ -178,7 +178,8 @@ export default class TProductsNetboot extends Vue {
   @Prop({ default: false }) isLoading!: boolean
   @Prop() fetchedDataClients2Depots!: IObjectString2String
   wsBusMsg: any // mixin // store
-  showToast: any // mixin // alerttoast
+  showToastMbus: any // mixin // alerttoast
+  hideToast: any // mixin // alerttoast
   icon: any
   syncSort: any
   $axios: any
@@ -234,14 +235,12 @@ export default class TProductsNetboot extends Vue {
     ) {
       if (!(this.lastChanges.clientIds.includes(msg.data.clientId) && this.lastChanges.productIds.includes(msg.data.productId))) {
         // check if we may cause the event...
-        this.showToast({
+        this.showToastMbus({
           title: this.$t('message.info.event'),
           content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
           variant: 'info'
         })
       }
-      // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      // ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
       if (this.quicksave) {
         this.$fetch()
         // ref.hide()
@@ -299,13 +298,7 @@ export default class TProductsNetboot extends Vue {
 
   async fetchWrapper () { await this.$fetch() }
   fetch () {
-    try {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      if (ref) { ref.hide() }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.warn('Couldnt find AlertBox for statusAlert')
-    }
+    this.hideToast()
     this.$emit('fetch-products', this)
   } // will trigger -> this.setItemsCache(items)
 

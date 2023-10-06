@@ -86,6 +86,7 @@ export default class GChangesHostParam extends Vue {
     }
     if (this.errorsHostParam.length !== 0) {
       ref.alert(this.$t('message.error.title'), 'danger', this.errorsHostParam)
+      // this.showToastError(error)
       this.clearErrorsHostParam()
     }
   }

@@ -20,8 +20,10 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
-@Component
+import { AlertToast } from '../../mixins/component'
+@Component({ mixins: [AlertToast] })
 export default class VModules extends Vue {
+  showToastError: any // mixin
   $axios: any
   $t:any
   modules: object = {}
@@ -32,10 +34,7 @@ export default class VModules extends Vue {
       .then((response) => {
         this.modules = response.result
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
-        this.errorText = this.$t('message.error.defaulttext') as string
+        this.showToastError(error)
       })
   }
 }

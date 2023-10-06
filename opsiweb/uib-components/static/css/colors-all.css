@@ -161,7 +161,8 @@
   --bg-custom_control-active: var(--primary);
   --b-custom_control-active: var(--primary-dark);
   --fg-custom_control-disabled: var(--element-disabled);
-  --bg-custom_control-disabled: #e9ecef;
+  /* --bg-custom_control-disabled: #e9ecef; */
+  --bg-custom_control-disabled: var(--general-bg-weak);
   --bg-custom_control_label: var(--general-bg);
   --b-custom_control_label: var(--primary);
   --bg-custom_checkbox-indeterminate: var(--primary);

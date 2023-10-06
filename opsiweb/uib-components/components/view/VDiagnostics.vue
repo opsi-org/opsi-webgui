@@ -47,9 +47,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class VDiagnostics extends Vue {
+  showToastError: any
   icon: any
   $axios: any
   $t:any
@@ -70,9 +72,7 @@ export default class VDiagnostics extends Vue {
         this.onlyDiagnostics = response
         if (this.onlyDiagnostics.length !== 0 && this.onlyDiagnostics.health_check) { delete this.onlyDiagnostics.health_check }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 

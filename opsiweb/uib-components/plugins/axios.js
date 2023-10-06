@@ -25,7 +25,7 @@ export default function ({ $axios, redirect, store, route }) {
 
   $axios.onError((error) => {
     // eslint-disable-next-line no-console
-    console.debug('axios error ', error.response.config.url)
+    console.debug('axios error ', error?.response?.config.url)
     const code = parseInt(error?.response?.status)
     if (code === 401) {
       localStorage.removeItem('username')

@@ -20,10 +20,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class BTNClientReachable extends Vue {
+  showToastError: any // from mixin AlertToast
   icon: any
   $axios: any
   $t: any
@@ -40,9 +42,7 @@ export default class BTNClientReachable extends Vue {
       .then((response) => {
         this.reachability = Object.values(response)
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.title') + this.$t('table.fields.reachablility'), 'danger', detailedError)
+        this.showToastError(error) // this.$t('table.fields.reachablility')
       })
     this.isLoading = false
   }

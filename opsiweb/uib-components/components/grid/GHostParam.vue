@@ -53,7 +53,7 @@ export default class GHostParam extends Vue {
   t_fixed: any
   $fetch: any
   wsBusMsg: any // mixin messagebus
-  showToast: any // mixin alerttoast
+  showToastMbus: any // mixin alerttoast
   wsSubscribeChannel: any // mixin messagebus
   channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
   lastSavedData: any = { objectIds: [], configIds: [] }
@@ -73,10 +73,9 @@ export default class GHostParam extends Vue {
               (this.lastSavedData.objectIds.length === 0 && msg.data.isDefault === true)
             )
       )) {
-        this.showToast({
+        this.showToastMbus({
           title: this.$t('message.info.event'),
-          content: this.$t('message.info.event.config_updated', { configId: msg.data.configId }),
-          variant: 'info'
+          content: this.$t('message.info.event.config_updated', { configId: msg.data.configId })
         })
         await this.$fetch()
       }

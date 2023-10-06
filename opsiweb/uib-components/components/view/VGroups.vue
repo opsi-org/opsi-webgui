@@ -232,9 +232,12 @@ import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Client } from '../../mixins/get'
 import { Group } from '../../mixins/post'
+import { AlertToast } from '../../mixins/component'
 const selections = namespace('selections')
-@Component({ mixins: [Icons, Client, Group] })
+@Component({ mixins: [Icons, Client, Group, AlertToast] })
 export default class VGroups extends Vue {
+  showToastSuccess: any // from mixin AlertToast
+  showToastError: any // from mixin AlertToast
   icon: any
   getClientIdList:any
   $axios: any
@@ -340,14 +343,11 @@ export default class VGroups extends Vue {
     const group = this.selectedvalue.parent
     await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: [group] })
       .then(async (response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
+        this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.afterAsync()
   }
@@ -369,14 +369,11 @@ export default class VGroups extends Vue {
   async addClientsToSelectedGroup () {
     await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
       .then(async (response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
+        this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.afterAsync()
   }
@@ -385,14 +382,11 @@ export default class VGroups extends Vue {
     this.subgroup.parentGroupId = this.selectedvalue.text
     await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
       .then(async (response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
+        this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.afterAsync()
   }
@@ -401,14 +395,11 @@ export default class VGroups extends Vue {
     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
     await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
       .then(async (response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
+        this.showToastSuccess(this.$t('message.success.save.update.group', { group: this.selectedvalue.text }))
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.afterAsync()
   }
@@ -416,14 +407,11 @@ export default class VGroups extends Vue {
   async deleteGroup () {
     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
       .then(async (response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
+        this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.afterAsync()
   }
@@ -431,14 +419,11 @@ export default class VGroups extends Vue {
   async removeClientAssignments () {
     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
       .then(async (response) => {
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(response, 'success')
+        this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
         await this.fetchGroups()
       })
       .catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.groupAlert as any)
-        ref.alert(this.$t('message.error.title') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
     this.afterAsync()
   }

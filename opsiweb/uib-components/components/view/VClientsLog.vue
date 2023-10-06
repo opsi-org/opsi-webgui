@@ -76,7 +76,8 @@ export default class VClientLog extends Vue {
   $t: any
   $root: any
   t_fixed: any
-  showToast: any
+  showToastMbus: any // mixin
+  showToastError: any
 
   @Prop({ }) id!: string
   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
@@ -106,16 +107,10 @@ export default class VClientLog extends Vue {
     const msg = this.wsBusMsg
     // console.log('MessageBus: receive-watch: ', msg)
     if (msg && this.channels.includes(msg.channel) && msg.data.type === this.logtype && msg.data.object_id === this.id) {
-      this.showToast({
+      this.showToastMbus({
         title: this.$t('message.info.event'),
         content: this.$t('message.info.event.log_updated'),
-        variant: 'info',
-        noAutoHide: true,
-        buttons: [{
-          text: this.$t('button.reload') as string,
-          tooltip: this.$t('button.reload.tooltip.clients.removeselection') as string,
-          action: this._fetch // shows reload button
-        }]
+        reloadAction: this._fetch // shows (default) reload button
       })
     } else {
       console.log('MessageBus other: ', msg.channel, msg.data)
@@ -187,10 +182,7 @@ export default class VClientLog extends Vue {
         this.logResult = response.result
         this.filteredLog = this.logResult
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
-        this.errorText = this.$t('message.error.defaulttext') as string
+        this.showToastError(error)
       })
     this.isLoading = false
   }

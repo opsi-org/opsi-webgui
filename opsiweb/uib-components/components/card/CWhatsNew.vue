@@ -20,9 +20,11 @@
 </template>
 <script lang="ts">
 import { Component, Prop, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 
-@Component
+@Component({ mixins: [AlertToast] })
 export default class CChangeLogs extends Vue {
+  showToastError: any // mixin
   @Prop({ default: false }) supportPage!: string
   $t: any
   $axios: any
@@ -30,16 +32,11 @@ export default class CChangeLogs extends Vue {
   $mq: any
 
   async fetch () {
-    let ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
-    if (this.supportPage) {
-      ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-    }
     await this.$axios.$get('/api/opsidata/changelogs')
       .then((response) => {
         this.changelogs = response.split(/\r?\n/)
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 

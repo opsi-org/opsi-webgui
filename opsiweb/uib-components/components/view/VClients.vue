@@ -190,7 +190,6 @@ import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Cookies } from '../../mixins/cookies'
-import CBMultiselection from '../checkbox/CBMultiselection.vue'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
@@ -202,6 +201,8 @@ export default class VClients extends Vue {
   icon: any
   wsBusMsg: any // mixin MBus
   showToast: any // mixin AlertToast
+  showToastMbus: any // mixin AlertToast
+  showToastError: any // mixin AlertToast
   wsNotificationInfo: any // mixin MBus
   includesCookie!: any // mixin cookies
   getKeyCookie!: any
@@ -311,19 +312,15 @@ export default class VClients extends Vue {
   @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg
     if (msg && msg.channel === 'event:host_created') {
-      this.showToast({
+      this.showToastMbus({
         title: this.$t('message.info.event'),
-        content: this.$t('message.info.event.client_updated', { clientId: msg.data.id }),
-        variant: 'info'
+        content: this.$t('message.info.event.client_updated', { clientId: msg.data.id })
       })
       await this.$fetch()
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
-      // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       // eslint-disable-next-line no-console
       console.log('message bus host_connected', msg)
-
       // this.cache_pages.
       // await this.$fetch()
     }
@@ -392,12 +389,7 @@ export default class VClients extends Vue {
           return response.data
         }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref?.alert(detailedError, 'danger')
-        this.error = this.$t('message.error.defaulttext') as string
-        this.error += JSON.stringify(error.message)
-        this.isLoading = false
+        this.showToastError(error)
         return []
       })
   }
@@ -442,12 +434,13 @@ export default class VClients extends Vue {
         noAutoHide: true,
         buttons: [
           {
+            hide: true,
             text: this.$t('button.continue') as string,
             action: () => this.sortProductTable(this.sortProductsByClient, this.sortProductsByCol, true) // shows reload button
           }
         ],
         components: [
-          this.$createElement('CheckboxCBMultiselection', { props: { type: 'button' } })
+          this.$createElement('CheckboxCBMultiselection', { props: { type: 'button', action: () => this.sortProductTable(this.sortProductsByClient, this.sortProductsByCol, true) } })
           // new CBMultiselection({ type: 'button' })
         ]
       })

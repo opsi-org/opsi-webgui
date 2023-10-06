@@ -49,8 +49,8 @@ test.describe('usecase', () => {
       // await page.screenshot({ path: './screenshots/products.png' })
       const row = page.locator('tr:has-text("activate-win")')
       await row.locator('[data-testid="DropdownDDProductRequest"]').selectOption('setup')
-      await expect(page.getByTestId('statusAlert')).toContainText('Product action request has been saved')
-      await expect(page.getByTestId('statusAlert')).toHaveClass('alert alertbar alert-dismissible alert-success')
+      await expect(page.getByTestId('b-toast')).toContainText('Product action request has been saved')
+      // await expect(page.getByTestId('statusAlert')).toHaveClass('alert alertbar alert-dismissible alert-success')
     })
     test('Setup when Quick Save is ON', async ({ page }) => {
       await page.getByText('testclient').click()

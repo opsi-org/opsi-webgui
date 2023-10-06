@@ -86,11 +86,15 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class BTNEvent extends Vue {
+  showToastInfo: any // from mixin AlertToast
+  showToastError: any // from mixin AlertToast
+  showToastInfoList: any // from mixin AlertToast
   $axios: any
   icon: any
   $t: any
@@ -169,12 +173,12 @@ export default class BTNEvent extends Vue {
     if (this.updateLoading !== undefined) {
       this.updateLoading(data.params.client_ids)
     }
-    const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
     await this.$axios.$post('/api/command/opsiclientd_rpc', data.params)
       .then((response) => {
-        ref.alert(this.$t('message.info.event'), 'info', response)
+        this.showToastInfoList(response)
         this.callEventSended()
       }).catch((error) => {
+        this.showToastError(error) // this.$t('table.fields.reachablility')
         // eslint-disable-next-line no-console
         console.error(error)
         this.callEventSended()

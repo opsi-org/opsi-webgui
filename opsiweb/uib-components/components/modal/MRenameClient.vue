@@ -82,6 +82,7 @@
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { AlertToast } from '../../mixins/component'
 import { Client } from '../../mixins/get'
 import { Icons } from '../../mixins/icons'
 import { Strings } from '../../mixins/strings'
@@ -89,8 +90,10 @@ const cache = namespace('data-cache')
 const config = namespace('config-app')
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons, Strings, Client] })
+@Component({ mixins: [Icons, Strings, Client, AlertToast] })
 export default class MRenameClient extends Vue {
+  showToastSuccess: any // from mixin AlertToast
+  showToastError: any // from mixin AlertToast
   getClientIdList:any
   icon: any
   t_fixed: any
@@ -138,9 +141,7 @@ export default class MRenameClient extends Vue {
       .then((response) => {
         this.hostAttr = response[0]
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.renameCLient as any)
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 
@@ -157,13 +158,10 @@ export default class MRenameClient extends Vue {
     await this.$axios.$put(`/api/opsidata/clients/${this.clientId}`, attr)
       .then((response) => {
         this.$bvModal.hide('event-modal-rename-' + this.clientId)
-        const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-        ref.alert(this.$t('message.success.title'), 'success', response)
+        this.showToastSuccess(this.$t('message.success.save.clientrename'))
         this.refetch()
       }).catch((error) => {
-        const ref = (this.$refs.renameCLient as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 }
