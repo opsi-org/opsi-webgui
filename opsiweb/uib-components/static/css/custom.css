@@ -316,6 +316,12 @@ tbody .col-rowactions :not(div).btn {
   background-color: var(--primary-dark) !important;
   border-color: var(--bg-page_item-disabled) !important;
 }
+:not(.toast-body) > .btn,
+:not(.toast-body) >.btn:hover {
+  color: unset !important;
+  background-color: unset !important;
+  border-color: unset !important;
+}
 .btn-primary {
   color: var(--fg-btn);
   background-color: var(--bg-btn) !important;

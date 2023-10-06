@@ -208,6 +208,7 @@ export default class TProductsLocalboot extends Vue {
   error: string = ''
   action: string = ''
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
+  lastChanges: any = { clientIds: [], productIds: [] } // used to check if we caused the last event
   tableData: ITableData = {
     type: 'LocalbootProduct',
     pageNumber: 1,
@@ -241,12 +242,15 @@ export default class TProductsLocalboot extends Vue {
       this.visibleProductIds.includes(msg.data.productId) &&
       this.selectionClients.includes(msg.data.clientId)
     ) {
-      console.log(`MBUS; ${msg.data.productType}`, msg)
-      this.showToast({
-        title: this.$t('message.info.event'),
-        content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
-        variant: 'info'
-      })
+      if (!(this.lastChanges.clientIds.includes(msg.data.clientId) && this.lastChanges.productIds.includes(msg.data.productId))) {
+        // check if we may cause the event...
+        console.log(`MBUS; ${msg.data.productType}`, msg)
+        this.showToast({
+          title: this.$t('message.info.event'),
+          content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
+          variant: 'info'
+        })
+      }
       if (this.quicksave) {
         this.$fetch()
         // if (ref) { ref.hide() }
@@ -334,6 +338,8 @@ export default class TProductsLocalboot extends Vue {
       productIds: [rowitem.productId],
       actionRequest: newrequest
     }
+    this.lastChanges.clientIds = data.clientIds
+    this.lastChanges.productIds = data.productIds
     if (!this.quicksave) {
       for (const c in this.selectionClients) {
         const d: Object = {
@@ -364,6 +370,8 @@ export default class TProductsLocalboot extends Vue {
       productIds: this.selectionProducts,
       actionRequest: this.action
     }
+    this.lastChanges.clientIds = data.clientIds
+    this.lastChanges.productIds = data.productIds
     if (!this.quicksave) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {

@@ -1,12 +1,12 @@
 <template>
   <div data-testid="VClients">
-    <AlertAAlert ref="sortProductsAlert">
+    <!-- <AlertAAlert ref="sortProductsAlert">
       <template #button>
         <b-button variant="warning" size="sm" class="float-right border-0 p-0" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
           {{ $t('button.continue') }}
         </b-button>
       </template>
-    </AlertAAlert>
+    </AlertAAlert> -->
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.clients')">
@@ -190,6 +190,7 @@ import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Cookies } from '../../mixins/cookies'
+import CBMultiselection from '../checkbox/CBMultiselection.vue'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
@@ -424,16 +425,32 @@ export default class VClients extends Vue {
   }
 
   sortProductTable (clientid: string, type: string, toContinue: boolean) {
-    const ref = (this.$refs.sortProductsAlert as any)
+    // const ref = (this.$refs.sortProductsAlert as any)
     this.sortProductsByCol = type
     this.sortProductsByClient = clientid
     if (this.selectionClients.length <= 0 || toContinue || this.selectionClients[0] === clientid || this.multiSelection === false) {
-      ref.hide()
+      // ref.hide()
       this.setSelectionClients([this.sortProductsByClient])
       this.rowId = 'dummy'
       this.$router.push('/clients/products')
     } else {
-      ref.alert(this.$t('message.warning.sortProductsByClient', { client: this.sortProductsByClient }) as string, 'warning')
+      // ref.alert(this.$t('message.warning.sortProductsByClient', { client: this.sortProductsByClient }) as string, 'warning')
+      this.showToast({
+        title: this.$t('message.warning.title'),
+        content: this.$t('message.warning.sortProductsByClient', { client: this.sortProductsByClient }),
+        variant: 'warning',
+        noAutoHide: true,
+        buttons: [
+          {
+            text: this.$t('button.continue') as string,
+            action: () => this.sortProductTable(this.sortProductsByClient, this.sortProductsByCol, true) // shows reload button
+          }
+        ],
+        components: [
+          this.$createElement('CheckboxCBMultiselection', { props: { type: 'button' } })
+          // new CBMultiselection({ type: 'button' })
+        ]
+      })
     }
   }
 }

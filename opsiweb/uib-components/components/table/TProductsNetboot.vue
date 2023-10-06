@@ -198,6 +198,7 @@ export default class TProductsNetboot extends Vue {
   action: string = ''
   // fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
+  lastChanges: any = { clientIds: [], productIds: [] } // used to check if we caused the last event
 
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
   cache_pages: QueueNested = new QueueNested(this.cache_pages_no, 'NetbootQueue')
@@ -231,11 +232,14 @@ export default class TProductsNetboot extends Vue {
       this.visibleProductIds.includes(msg.data.productId) &&
       this.selectionClients.includes(msg.data.clientId)
     ) {
-      this.showToast({
-        title: this.$t('message.info.event'),
-        content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
-        variant: 'info'
-      })
+      if (!(this.lastChanges.clientIds.includes(msg.data.clientId) && this.lastChanges.productIds.includes(msg.data.productId))) {
+        // check if we may cause the event...
+        this.showToast({
+          title: this.$t('message.info.event'),
+          content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
+          variant: 'info'
+        })
+      }
       // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
       // ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
       if (this.quicksave) {
@@ -327,6 +331,8 @@ export default class TProductsNetboot extends Vue {
       productIds: [rowitem.productId],
       actionRequest: newrequest
     }
+    this.lastChanges.clientIds = data.clientIds
+    this.lastChanges.productIds = data.productIds
     if (!this.quicksave) {
       for (const c in this.selectionClients) {
         const d = {
@@ -356,6 +362,8 @@ export default class TProductsNetboot extends Vue {
       productIds: this.selectionProducts,
       actionRequest: this.action
     }
+    this.lastChanges.clientIds = data.clientIds
+    this.lastChanges.productIds = data.productIds
     if (!this.quicksave) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {

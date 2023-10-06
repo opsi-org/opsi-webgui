@@ -8,7 +8,7 @@
     >
       <span class="text-small">{{ $t('message.error.multiSelectedItems') }}</span>
     </AlertAAlertLocal> -->
-    <div class="d-flex flex-nowrap justify-content-center border">
+    <div v-if="type==='checkbox'" class="d-flex flex-nowrap justify-content-center border">
       <b-form-checkbox
         ref="refCBMultiSelectionMode"
         :checked="cbValue"
@@ -35,6 +35,7 @@
         <span class="text-small">{{ $t('note.multiselect') }}</span>
       </b-tooltip>
     </div>
+    <b-button v-else-if="type==='button'" :title="$t('form.multiselection.disable.tootltip')" @click="changeSelectionMode"> {{ $t('form.multiselection.disable') }} </b-button>
     <b-modal
       id="modal-confirmMultiSelectionChange"
       :title="$t('form.multiselection.modal.title')"
@@ -55,15 +56,16 @@
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
 @Component({ mixins: [Icons] })
-export default class CBQuickSave extends Vue {
+export default class CBMultiselection extends Vue {
   icon: any
   $t: any
 
+  @Prop({ default: 'checkbox' }) type!: string
   // localMultiSelection:boolean = true
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>

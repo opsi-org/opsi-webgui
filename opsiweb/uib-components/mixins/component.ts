@@ -4,7 +4,7 @@ import { Cookies } from './cookies'
 
 @Component export class AlertToast extends Vue {
   count:number = 0
-  showToast (obj = { title: '', content: '', variant: 'primary', noAutoHide: false, autoHideDelay: 5000, reload: undefined }) {
+  showToast (obj = { title: '', content: '', variant: 'primary', noAutoHide: false, autoHideDelay: 5000, buttons: undefined, components: undefined, error_data: undefined }) {
     // Use a shorter name for `this.$createElement`
     // Create a ID with a incremented count
     const id = `my-toast-${this.count++}`
@@ -12,22 +12,29 @@ import { Cookies } from './cookies'
     const h = this.$createElement
     const $elements:any = []
     // Create the custom reload button
-    $elements.push(h('p', obj.content))
-    if (obj.reload !== undefined) {
-      const $btn = h('b-button',
-        {
-          class: `btn btn-${obj.variant} text-center`,
-          on: {
-            click: () => {
-              this.$bvToast.hide(id)
-              if (obj.reload !== undefined) { (obj.reload as Function)() }
-            }
-          }
-        },
-        this.$t('button.reload') as string
-      )
-      $elements.push(h('div', { class: 'd-flex justify-content-end' }, [$btn])) // all buttons right alignment
+    $elements.push(h('div', obj.content))
+    if (obj.error_data !== undefined) {
+      const classtitle = (obj.error_data as any).class
+      $elements.push(h('b', classtitle))
+      $elements.push(h('p', (obj.error_data as any).message))
+      // error: JSON.stringify(obj.error_data, null, 2)
+      // $elements.push(h('div', { class: 'd-flex justify-content-end' }, [$btn])) // all buttons right alignment
     }
+    const elements:Array<any> = []
+    if (obj.buttons !== undefined) {
+      for (let i = 0; i < (obj.buttons as Array<any>).length; i++) {
+        elements.push(this._create_button(h, id, obj.variant, obj.buttons[i]))
+      }
+    }
+    if (obj.components !== undefined) {
+      elements.push(h('div', {
+        class: 'd-flex justify-content-end',
+        on: {
+          click: () => { this.$bvToast.hide(id) }
+        }
+      }, obj.components)) // all buttons right alignment
+    }
+    $elements.push(h('div', { class: 'd-flex justify-content-end' }, elements)) // all buttons right alignment
     // const $content = h('div', [$btn])
     // Create the toast
     // this.$bvToast.toast(obj.content, {
@@ -36,10 +43,29 @@ import { Cookies } from './cookies'
       title: `${obj.title}`,
       id,
       variant: obj.variant,
-      // noCloseButton: true
+      solid: true,
       autoHideDelay: obj.autoHideDelay,
-      noAutoHide: obj.noAutoHide
+      noAutoHide: obj.noAutoHide,
+      noCloseButton: !obj.noAutoHide
     })
+  }
+
+  _create_button (h, id:string, variant: string, btnData: any): any {
+    const $btn = h('b-button',
+      {
+        props: { variant: `outline-${variant}`, title: btnData.tooltip },
+        // class: `btn btn-outline-${variant}`,
+        on: {
+          click: () => {
+            if (btnData.hide === undefined || btnData.hide === true) { this.$bvToast.hide(id) }
+            if (btnData.action !== undefined) { (btnData.action as Function)() }
+          }
+        }
+      } as any,
+      btnData.text
+    )
+    // $btn.data?.class = `btn btn-outline-${variant}`
+    return $btn
   }
 }
 

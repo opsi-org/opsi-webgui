@@ -206,6 +206,13 @@ const mbus = namespace('messagebus')
     const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     // const ref = (this.$refs.alertConfigurationError as any)
     ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
+    // TODO
+    // this.showToast({
+    //   title: this.$t('message.error.title'),
+    //   error_data: error.response.data,
+    //   variant: 'danger',
+    //   noAutoHide: true
+    // })
   }
 
   _setBus (bus: WebSocket, setBusLastMsgMethod: any) {

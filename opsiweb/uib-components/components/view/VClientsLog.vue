@@ -111,7 +111,11 @@ export default class VClientLog extends Vue {
         content: this.$t('message.info.event.log_updated'),
         variant: 'info',
         noAutoHide: true,
-        reload: this._fetch // shows reload button
+        buttons: [{
+          text: this.$t('button.reload') as string,
+          tooltip: this.$t('button.reload.tooltip.clients.removeselection') as string,
+          action: this._fetch // shows reload button
+        }]
       })
     } else {
       console.log('MessageBus other: ', msg.channel, msg.data)

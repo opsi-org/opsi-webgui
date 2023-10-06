@@ -3856,6 +3856,9 @@ a.badge-dark.focus,a.badge-dark:focus{
   text-shadow:0 1px 0 var(--fg-basic);
   opacity:0.5
 }
+header.toast-header .close{
+  color:unset !important;
+}
 .close:hover{
   color:var(--fg-close-hover);
   text-decoration:none
