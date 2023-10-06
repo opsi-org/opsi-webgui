@@ -81,7 +81,7 @@ export default class GHostParam extends Vue {
       // ref.alert(this.$t('message.info.event.log_updated'), 'info')
       // await this.$fetch()
     } else {
-      // console.log('MessageBus [HostParam] received a msg i\'m not interested in', msg.channel, msg.data)
+      console.log('MessageBus [HostParam] received a msg i\'m not interested in', msg.channel, msg)
     }
   }
 
