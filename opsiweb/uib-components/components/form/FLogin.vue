@@ -76,6 +76,7 @@ import { Component, Vue, namespace } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Configserver } from '../../mixins/get'
 import { Settings } from '../../mixins/settings'
+import { AlertToast } from '../../mixins/component'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
@@ -84,10 +85,11 @@ interface FormUser {
     password: string
 }
 
-@Component({ mixins: [Icons, Configserver, Settings] })
+@Component({ mixins: [Icons, Configserver, Settings, AlertToast] })
 export default class FLogin extends Vue {
   themeclass!: string // mixin Settings
   CONST_LIGHT!: string // mixin Settings
+  showToastError!: string // mixin
   icon: any
   $router:any
   $route:any
