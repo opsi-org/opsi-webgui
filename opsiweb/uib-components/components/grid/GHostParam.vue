@@ -56,7 +56,7 @@ export default class GHostParam extends Vue {
   showToast: any // mixin alerttoast
   wsSubscribeChannel: any // mixin messagebus
   channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
-
+  lastSavedData: any = { objectIds: [], configIds: [] }
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesHostParam!: Array<any>
   @changes.Mutation public pushToChangesHostParam!: (o: object) => void
@@ -64,30 +64,23 @@ export default class GHostParam extends Vue {
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+  @Watch('wsBusMsg', { deep: true }) async _wsBusMsgObjectChanged2 () {
     const msg = this.wsBusMsg
-    // console.log('MessageBus: receive-watch: ', msg)
-    if (msg && this.channels.includes(msg.channel)) { // && msg.data.type === this.logtype && msg.data.object_id === this.id) {
-      // const ref = (this.$root.$children[1].$refs.infoAlert as any) || (this.$root.$children[2].$refs.infoAlert as any)
-      // const ref = (this.$refs.event_log_updated as any)
-      console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
-
-      this.showToast({
-        title: this.$t('message.info.event'),
-        content: this.$t('message.info.event.config_updated', { configId: msg.data.configId }),
-        variant: 'info'
-      })
-      // ref.alert(`MessageBus received:  log_updated ${JSON.stringify(msg.data)}`, 'info')
-      // ref.alert(this.$t('message.info.event.log_updated'), 'info')
-      // await this.$fetch()
-    } else {
-      console.log('MessageBus [HostParam] received a msg i\'m not interested in', msg.channel, msg)
+    if (msg && this.channels.includes(msg.channel)) {
+      // console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
+      if (!(this.lastSavedData.configIds.includes(msg.data.configId) && // configId matches
+            (this.lastSavedData.objectIds.includes(msg.data.objectId) || // objectId matches
+              (this.lastSavedData.objectIds.length === 0 && msg.data.isDefault === true)
+            )
+      )) {
+        this.showToast({
+          title: this.$t('message.info.event'),
+          content: this.$t('message.info.event.config_updated', { configId: msg.data.configId }),
+          variant: 'info'
+        })
+        await this.$fetch()
+      }
     }
-  }
-
-  created () {
-    console.log('MessageBus subscribe channel', this.channels)
-    this.wsSubscribeChannel(this.channels)
   }
 
   async fetch () {
@@ -141,12 +134,14 @@ export default class GHostParam extends Vue {
       if (this.type === 'depots' && !this.id) { // changing default configs
         url = '/api/opsidata/config'
         request = [change]
+        this.lastSavedData = { objectIds: [], configIds: request.map(k => k.configId) }
       } else if (this.type === 'clients' || this.type === 'depots') { // changing clients or depots configs
         url = '/api/opsidata/config/objects'
         request = {
           objectIds: [this.id],
           configs: [change]
         }
+        this.lastSavedData = { objectIds: request.objectIds || [], configIds: request.configs?.map(k => k.configId) }
       } else {
         console.error('not defined')
       }

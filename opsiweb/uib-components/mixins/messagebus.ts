@@ -4,7 +4,7 @@ const mbus = namespace('messagebus')
 
 @Component export class MBus extends Vue {
   uid: string = this.createUUID()
-
+  channels: any // from importing component?
   @mbus.Getter public bus!: WebSocket|undefined
   @mbus.Getter public wsBusMsg!: any
   @mbus.Mutation public setBus!: (bus: WebSocket|undefined) => void
@@ -48,8 +48,12 @@ const mbus = namespace('messagebus')
     })
   }
 
-  mounted () {
-    this.wsInit()
+  async mounted () {
+    await this.wsInit()
+    if (this.channels) {
+      console.log('MessageBus subscribe channel', this.channels)
+      this.wsSubscribeChannel(this.channels)
+    }
   }
 
   async wsInit (reconnect: boolean = false) {
