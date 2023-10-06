@@ -27,7 +27,7 @@ from opsiconfd.rest import (
 )
 from opsiconfd.backend import get_protected_backend
 
-from .utils import bool_value, mysql, parse_client_list, read_only_check, unicode_value
+from .utils import bool_value, mysql, parse_client_list, read_only_check, unicode_value, backend
 
 conifg_router = APIRouter()
 
@@ -145,7 +145,7 @@ def get_client_config(
 			tmp_config["newValues"] = []
 		config_data[id_prefix].append(tmp_config)
 
-	logger.devel(config_states)
+	logger.debug(config_states)
 	return RESTResponse(data=config_data)
 
 
@@ -371,6 +371,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
 							.values(**values)
 						)
+						backend._send_messagebus_event("config_updated", data=values)  # pylint: disable=protected-access
 					else:
 						stmt = (
 							insert(
@@ -382,8 +383,10 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							.values(**values)
 							.on_duplicate_key_update(**values)
 						)
+						backend._send_messagebus_event("config_created", data=values)  # pylint: disable=protected-access
 					logger.devel(stmt)
 					session.execute(stmt)
+
 				logger.debug("Config %s saved.", config.configId)
 			except Exception as err:  # pylint: disable=broad-except
 				logger.error("Could not save config: %s", err)
@@ -438,6 +441,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 						.where(text(f"objectId = '{client}' AND configId = '{config.configId}'"))
 						.values(**values)
 					)
+					backend._send_messagebus_event("configState_updated", data=values)  # pylint: disable=protected-access
 				else:
 					stmt = (
 						insert(
@@ -448,6 +452,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 						.values(**values)
 						.on_duplicate_key_update(**values)
 					)
+					backend._send_messagebus_event("configState_created", data=values)  # pylint: disable=protected-access
 				session.execute(stmt)
 
 	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Changed the following config states: {', '.join(changes)}")
