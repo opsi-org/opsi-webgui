@@ -89,7 +89,7 @@ interface FormUser {
 export default class FLogin extends Vue {
   themeclass!: string // mixin Settings
   CONST_LIGHT!: string // mixin Settings
-  showToastError!: string // mixin
+  showToastError!: any // mixin
   icon: any
   $router:any
   $route:any
