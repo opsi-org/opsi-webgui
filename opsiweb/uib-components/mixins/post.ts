@@ -1,11 +1,13 @@
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { AlertToast } from './component'
+import { MBus } from './messagebus'
 
 const auth = namespace('auth')
 const selections = namespace('selections')
 const settings = namespace('settings')
 
-@Component export class CallLogout extends Vue {
+@Component({ mixins: [MBus] }) export class CallLogout extends Vue {
+  wsDisconnect: any // mixin
   @auth.Mutation public logout!: () => void
   @auth.Mutation public clearSession!: () => void
   @selections.Mutation public clearAllSelection!: () => void
@@ -14,13 +16,14 @@ const settings = namespace('settings')
   async callLogout () {
     const response = await this.$axios.$post('/api/auth/logout')
     if (response.result === 'logout success') {
+      this.wsDisconnect()
       this.logout()
       this.clearSession()
       this.setExpiresInterval(undefined)
-      this.clearAllSelection()
       if (this.$route.name !== 'login') {
         await this.$router.push({ path: '/login' })
       }
+      this.clearAllSelection()
     }
   }
 }
