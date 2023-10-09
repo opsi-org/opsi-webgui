@@ -87,7 +87,7 @@
             <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="resetForm()">
               {{ $t('button.reset') }}
             </b-button>
-            <b-button variant="success" :disabled="quickaction.action == null" size="sm" @click="executeAction()">
+            <b-button variant="success" :disabled="quickaction.action == null" size="sm" @click="executeAction(false)">
               {{ $t('button.apply') }}
             </b-button>
           </div>
@@ -100,8 +100,8 @@
               <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
                 <b>{{ k }}</b>
               </b-button>
-              <b-collapse :id="k" :visible="true">
-                <span v-for="item, index in sort(poc)" :key="index">
+              <b-collapse :id="k" :visible="false">
+                <span v-for="item, index in sort(demoResult[k])" :key="index">
                   <GridGFormItem
                     value-more="true"
                     :label="item.productId"
@@ -173,7 +173,7 @@ export default class MProductActions extends Vue {
     // } else if (this.radioOption === 'server') {
     //   this.quickaction.selectedDepots = this.selectionDepots
     } else if (this.radioOption === 'clients') {
-      this.quickaction.selectedClients = this.selectionClients
+      this.quickaction.selectedClients = [...this.selectionClients]
     }
   }
 
@@ -191,9 +191,17 @@ export default class MProductActions extends Vue {
     }
   }
 
+  _compareFn (a, b): number {
+    if (a.productType > b.productType) { return -1 }
+    if (a.productType < b.productType) { return 1 }
+    if (a.productId > b.productId) { return 1 }
+    if (a.productId < b.productId) { return -1 }
+    return 0
+  }
+
   sort (listofobj: Array<any>) {
     const poc = [...listofobj]
-    poc.sort((a, b) => a.productId - b.productId)
+    poc.sort(this._compareFn)
     return poc
   }
 
