@@ -26,6 +26,7 @@ mkdir -p webgui
 cp -r ${WORKING_DIR}/backend/addon/webgui/* webgui/
 
 chown 1000:1000 -R webgui
+chown 1000:1000 -R webgui/*
 apt install -y zip
 zip -r -q opsi-webgui.zip webgui
 chown 1000:1000 opsi-webgui.zip
