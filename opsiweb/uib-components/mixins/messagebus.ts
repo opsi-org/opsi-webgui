@@ -1,5 +1,5 @@
 import { encode, decode } from '@msgpack/msgpack'
-import { Component, namespace, Vue, Watch } from 'nuxt-property-decorator'
+import { Component, namespace, Vue } from 'nuxt-property-decorator'
 import { AlertToast } from './component'
 const mbus = namespace('messagebus')
 
@@ -22,10 +22,10 @@ const mbus = namespace('messagebus')
   //     const msg = this.wsBusMsg
   //     console.log('MessageBus: receive-watch: ', msg)
   //     if (msg && msg.channel === 'event:host_created') {
-  //         this.showToastMbus({
-  //           title: this.$t('message.info.event'),
-  //           content: this.$t('message.info.event.client_updated', { clientId: msg.data.id })
-  //         })
+  //         this.showToastMbus(
+  //           this.$t('message.info.event'),
+  //           this.$t('message.info.event.client_updated', { clientId: msg.data.id })
+  //         )
   //        await this.$fetch()
   //     }
   // }
@@ -40,6 +40,7 @@ const mbus = namespace('messagebus')
   // }
 
   get wsBus () { return this.bus }
+  wsDisconnect () { return this.bus?.close() }
 
   createUUID () {
     if (typeof crypto.randomUUID === 'function') {
@@ -199,31 +200,29 @@ const mbus = namespace('messagebus')
 
   wsNotificationInfo (text: any, data: any = '') {
     // console.debug('MessageBus:', text, data)
-    this.showToastMbus({
-      title: this.$t('message.info.event'),
-      content: text + ' ' + data
-    })
+    this.showToastMbus(
+      this.$t('message.info.event'),
+      text + ' ' + data
+    )
   }
 
   wsNotificationWarn (text: any, data: any = '') {
-    const stringtext = JSON.stringify(data)
+    // const stringtext = JSON.stringify(data)
+    this.showToastMbus(text, data)
     // console.debug('MessageBus: ', stringtext)
     console.warn('MessageBus:', text, data)
     // ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
-    this.showToastMbus({
-      title: text,
-      content: stringtext,
-      variant: 'warning'
-    })
   }
 
   _setBus (bus: WebSocket, setBusLastMsgMethod: any) {
     bus.onclose = () => {
-      this.wsNotificationWarn('websocket closed')
+      // this.wsNotificationWarn('Websocket:', 'Connection closed.')
+      console.log('Websocket:', 'Connection closed.')
       this.setBus(undefined)
     }
     bus.onerror = (err:any) => {
-      this.wsNotificationWarn('websocket error ', err)
+      this.wsNotificationWarn('Websocket:', 'Connection error: ' + JSON.stringify(err))
+      // this.wsNotificationWarn('websocket error ', err)
       this.setBus(undefined)
     }
     bus.onmessage = (event) => {
