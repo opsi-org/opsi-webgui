@@ -150,7 +150,7 @@ export default class MProductActions extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
 
   demoResult: any = '--'
-  radioOption: string = 'both'
+  radioOption: string = 'clients'
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   conditn_InstStatus!: Array<string>
@@ -165,6 +165,10 @@ export default class MProductActions extends Vue {
     selectedClients: [],
     // selectedDepots: undefined,
     demoMode: true
+  }
+
+  @Watch('selectionClients', { deep: true }) clientsChanged () {
+    this.executeAction(true)
   }
 
   @Watch('radioOption', { deep: true }) _radioOptionChanged () {
@@ -256,14 +260,12 @@ export default class MProductActions extends Vue {
       ref?.hide()
     }
     this.isLoading = true
-    // if (this.radioOption === 'clients') {
-    //   this.quickaction.selectedClients = this.selectionClients
-    // } else {
-    //   // this.quickaction.selectedClients = []
-    // }
+    if (this.radioOption === 'clients') {
+      params.selectedClients = this.selectionClients
+    }
     await this.$axios.$post('/api/opsidata/clients/action', params)
       .then((result) => {
-        this.demoResult = result
+        this.demoResult = result || ''
         if (!demo) {
           this.showToastSuccess(this.$t('message.success.save.productactions'))
           this.executeAction(true) // do again to see new values as demo -> should be epty now
