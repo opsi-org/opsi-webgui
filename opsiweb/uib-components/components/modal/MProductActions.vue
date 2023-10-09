@@ -76,7 +76,7 @@
             >
               {{ $t('form.productaction.radio.both') }}
             </b-form-radio>
-            <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="true || selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio>
+            <!-- <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="true || selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio> -->
             <b-form-radio v-model="radioOption" name="client-radio" value="clients" :disabled="selectionClients.length <= 0">{{ $t('form.productaction.radio.clients') }}</b-form-radio>
           </b-form-group>
         </template>
@@ -95,7 +95,22 @@
       </GridGFormItem>
       <GridGFormItem variant="longlabel" :label="$t('form.productaction.demoResult')">
         <template #value>
-          {{ demoResult }}
+          <div v-if="demoResult && demoResult != '--'" flush>
+            <div v-for="poc, k in demoResult" :key="k">
+              <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
+                <b>{{ k }}</b>
+              </b-button>
+              <b-collapse :id="k" :visible="true">
+                <span v-for="item, index in sort(poc)" :key="index">
+                  <GridGFormItem
+                    value-more="true"
+                    :label="item.productId"
+                    :value="item.productType"
+                  />
+                </span>
+              </b-collapse>
+            </div>
+          </div>
         </template>
       </GridGFormItem>
     </b-modal>
@@ -115,7 +130,7 @@ interface QuickAction {
   installation_status: any,
   action_result: any,
   selectedClients: undefined | Array<string>,
-  selectedDepots: undefined | Array<string>,
+  // selectedDepots: undefined | Array<string>,
   demoMode: boolean
 }
 
@@ -134,7 +149,7 @@ export default class MProductActions extends Vue {
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
 
-  demoResult: string = '--'
+  demoResult: any = '--'
   radioOption: string = 'both'
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
@@ -147,16 +162,16 @@ export default class MProductActions extends Vue {
     outdated: false,
     installation_status: 'not_installed',
     action_result: null,
-    selectedClients: undefined,
-    selectedDepots: undefined,
+    selectedClients: [],
+    // selectedDepots: undefined,
     demoMode: true
   }
 
   @Watch('radioOption', { deep: true }) _radioOptionChanged () {
     if (this.radioOption === 'both') {
       delete this.quickaction.selectedClients
-    } else if (this.radioOption === 'server') {
-      this.quickaction.selectedDepots = this.selectionDepots
+    // } else if (this.radioOption === 'server') {
+    //   this.quickaction.selectedDepots = this.selectionDepots
     } else if (this.radioOption === 'clients') {
       this.quickaction.selectedClients = this.selectionClients
     }
@@ -174,6 +189,12 @@ export default class MProductActions extends Vue {
     ) {
       this.$fetch()
     }
+  }
+
+  sort (listofobj: Array<any>) {
+    const poc = [...listofobj]
+    poc.sort((a, b) => a.productId - b.productId)
+    return poc
   }
 
   async fetch () {
@@ -216,9 +237,11 @@ export default class MProductActions extends Vue {
       return
     }
     this.isLoading = true
-    if (this.radioOption === 'clients') {
-      this.quickaction.selectedClients = this.selectionClients
-    }
+    // if (this.radioOption === 'clients') {
+    //   this.quickaction.selectedClients = this.selectionClients
+    // } else {
+    //   // this.quickaction.selectedClients = []
+    // }
     await this.$axios.$post('/api/opsidata/clients/action', { ...this.quickaction, demoMode: demo })
       .then((result) => {
         this.demoResult = result
@@ -226,10 +249,12 @@ export default class MProductActions extends Vue {
           this.showToastSuccess(this.$t('message.success.save.productactions'))
           this.executeAction(true) // do again to see new values as demo -> should be epty now
         }
+        this.isLoading = false
       }).catch((error) => {
+        this.demoResult = ''
         this.showToastError(error)
+        this.isLoading = false
       })
-    this.isLoading = false
   }
 
   resetForm () {
