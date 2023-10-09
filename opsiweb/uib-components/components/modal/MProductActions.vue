@@ -27,7 +27,7 @@
           <b-form-select v-model="quickaction.installation_status" size="sm" :options="conditn_InstStatus">
             <template #first>
               <b-form-select-option :value="null">
-                {{ t_fixed('keep-english.empty') }}
+                {{ $t('label.noselection') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -38,17 +38,17 @@
           <b-form-select v-model="quickaction.action_result" size="sm" :options="conditn_ActionResult">
             <template #first>
               <b-form-select-option :value="null">
-                {{ t_fixed('keep-english.empty') }}
+                {{ $t('label.noselection') }}
               </b-form-select-option>
             </template>
           </b-form-select>
         </template>
       </GridGFormItem>
-      <GridGFormItem variant="longlabel" :label="$t('label.pv.outdatedonclient')">
+      <!-- <GridGFormItem variant="longlabel" :label="$t('label.pv.outdatedonclient')">
         <template #value>
           <b-form-checkbox v-model="quickaction.outdated" size="sm" />
         </template>
-      </GridGFormItem>
+      </GridGFormItem> -->
       <b-row class="text-small mb-2">
         <b>{{ $t('label.possibleactions') }} </b>
       </b-row>
@@ -57,7 +57,7 @@
           <b-form-select v-model="quickaction.action" size="sm" :options="actions">
             <template #first>
               <b-form-select-option :value="null">
-                {{ t_fixed('keep-english.empty') }}
+                {{ $t('label.noselection') }}
               </b-form-select-option>
             </template>
           </b-form-select>
@@ -87,7 +87,7 @@
             <b-button id="resetButton" class="resetButton" variant="primary" size="sm" @click="resetForm()">
               {{ $t('button.reset') }}
             </b-button>
-            <b-button variant="success" :disabled="quickaction.action == null" size="sm" @click="executeAction(false)">
+            <b-button variant="success" :disabled="quickaction.action == null || (quickaction.installation_status === null && quickaction.action_result === null)" size="sm" @click="executeAction(false)">
               {{ $t('button.apply') }}
             </b-button>
           </div>
@@ -96,7 +96,7 @@
       <GridGFormItem variant="longlabel" :label="$t('form.productaction.demoResult')">
         <template #value>
           <div v-if="demoResult && demoResult != '--'" flush>
-            <div v-for="poc, k in demoResult" :key="k">
+            <div v-for="k in Object.keys(demoResult).sort()" :key="k">
               <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
                 <b>{{ k }}</b>
               </b-button>
@@ -158,9 +158,9 @@ export default class MProductActions extends Vue {
   conditn_ActionResult!: Array<string>
   conditn_ActionResult_default: Array<string> = ['failed', 'successful']
   quickaction: QuickAction = {
-    action: 'none',
+    action: null,
     outdated: false,
-    installation_status: 'not_installed',
+    installation_status: null,
     action_result: null,
     selectedClients: [],
     // selectedDepots: undefined,
@@ -178,6 +178,9 @@ export default class MProductActions extends Vue {
   }
 
   @Watch('quickaction', { deep: true }) async _quickactionChanged () {
+    if (this.quickaction.action === this.$t('label.noselection')) { this.quickaction.action = null }
+    if (this.quickaction.action_result === this.$t('label.noselection')) { this.quickaction.action_result = null }
+    if (this.quickaction.installation_status === this.$t('label.noselection')) { this.quickaction.installation_status = null }
     await this.executeAction(true)
   }
 
@@ -239,10 +242,18 @@ export default class MProductActions extends Vue {
   }
 
   async executeAction (demo = true) {
+    const params = { ...this.quickaction, demoMode: demo }
     const ref = (this.$refs.prodQuickActionAlert as any)
+
     if (this.quickaction.outdated === false && this.quickaction.installation_status === null && this.quickaction.action_result === null) {
       ref.alert(this.$t('message.error.condition'), 'danger')
       return
+    } else if (this.quickaction.action === null && demo === false) {
+      ref.alert(this.$t('message.error.productquickaction'), 'danger')
+    } else if (this.quickaction.action === null && demo === true) {
+      params.action = 'none'
+    } else {
+      ref?.hide()
     }
     this.isLoading = true
     // if (this.radioOption === 'clients') {
@@ -250,7 +261,7 @@ export default class MProductActions extends Vue {
     // } else {
     //   // this.quickaction.selectedClients = []
     // }
-    await this.$axios.$post('/api/opsidata/clients/action', { ...this.quickaction, demoMode: demo })
+    await this.$axios.$post('/api/opsidata/clients/action', params)
       .then((result) => {
         this.demoResult = result
         if (!demo) {
