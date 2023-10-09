@@ -269,7 +269,7 @@ def _depots_of_clients(clients: list[str] | None) -> dict:
 	with mysql.session() as session:
 		where = text("h.type = 'OpsiClient'")
 		params = {}
-		if clients not in (None, [""]):
+		if clients not in (None, [], [""]):
 			where = text("h.type = 'OpsiClient' AND h.hostId IN :clients")
 			params["clients"] = clients
 
@@ -753,7 +753,7 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 			for poc in result.difference(poc_list):
 				# print(poc)
 				depot = _depots_of_clients([poc.clientId])[poc.clientId]
-				if not poc.installationStatus == "installed" or not depot_versions.get(depot):
+				if poc.installationStatus != "installed" or not depot_versions.get(depot, {}).get(poc.productId):
 					continue
 				try:
 					if version.parse(f"{poc.productVersion}-{poc.packageVersion}") < version.parse(depot_versions[depot][poc.productId]):
