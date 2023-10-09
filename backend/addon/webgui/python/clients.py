@@ -261,30 +261,38 @@ async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-def
 	return RESTResponse(data=result, total=len(result))
 
 
-def _depots_of_clients(clients: list) -> dict:
+
+
+def _depots_of_clients(clients: list[str] | None) -> dict:
 	# TODO check if clients of config server always work
-	params = {}
-	if clients != [""] and clients is not None:
-		params["clients"] = clients
-
+	response = {}
 	with mysql.session() as session:
+		where = text("h.type = 'OpsiClient'")
+		params = {}
+		if clients not in (None, [""]):
+			where = text("h.type = 'OpsiClient' AND h.hostId IN :clients")
+			params["clients"] = clients
+
+		query = select(text("h.hostId")).select_from(table("HOST").alias("h")).where(where)  # type: ignore
+		clients = [ dict(row)["hostId"] for row in session.execute(query, params).fetchall() ]
+
+		if not clients:
+			return response
+
+		configserver_id = get_configserver_id()
+		response = {c: configserver_id for c in clients}
+
 		where = text("cs.configId='clientconfig.depot.id' AND cs.objectId IN :clients")
-
 		query = select(text("cs.objectId AS client, cs.values")).select_from(table("CONFIG_STATE").alias("cs")).where(where)  # type: ignore
+		result = session.execute(query, {"clients": clients}).fetchall()
 
-		result = session.execute(query, params)
-		result = result.fetchall()
-
-		response = {}
 		for row in result:
-			tmp_dict = dict(row)
-			response[tmp_dict.get("client")] = tmp_dict.get("values", [])[2:-2]
-			params["clients"].remove(tmp_dict.get("client", ""))
+			row_dict = dict(row)
+			val = (row_dict["values"] or "").strip('[]"')
+			if val and row_dict["client"] in response:
+				response[row_dict["client"]] = val
 
-		for client in params["clients"]:
-			response[client] = get_configserver_id()
 		return response
-
 
 @client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
 @rest_api
@@ -664,7 +672,6 @@ def blocked_clients(request: Request) -> RESTResponse:  # pylint: disable=unused
 		blocked_client_list = []
 		for key in redis_keys:
 			blocked_client_list.append(ip_address_from_redis_key(key.decode("utf8").split(":")[-1]))
-		logger.devel(blocked_client_list)
 	return RESTResponse(data=blocked_client_list, total=len(blocked_client_list))
 
 
