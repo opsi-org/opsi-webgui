@@ -147,43 +147,64 @@ stages:
   if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
   TAG=$VERSION_YML
 
-.prepare_tag: &prepare_tag |
-  # "prepare tag"
-  if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
-  # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
-  # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
-  LTAG=$(git tag --sort=taggerdate | tail -1)
-  echo "Latest tag... '$LTAG'"
+# .prepare_tag: &prepare_tag |
+#   # "prepare tag"
+#   if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; else echo "Tag not yet exists '$TAG'"; fi
+#   # if git show-ref --tags $TAG --quiet; then echo "Tag '$TAG' already exists."; exit 2; else echo "Tag not yet exists '$TAG'"; fi
+#   # LTAG=$(git describe --tags --abbrev=0 || git tag) # latest tag
+#   LTAG=$(git tag --sort=taggerdate | tail -1)
+#   echo "Latest tag... '$LTAG'"
 
-.push_tag: &push_tag |
-  # post tag
-  echo "ProjectURL: $CI_API_V4_URL"
-  echo "ProjectID: $CI_PROJECT_ID"
-  echo "ProjectTAG: $TAG"
-  printf "ProjectMSG: \n$(cat $FILE)\n"
-  printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main\n"
-  # if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
-  # echo ""
+# .push_tag: &push_tag |
+#   # post tag
+#   echo "ProjectURL: $CI_API_V4_URL"
+#   echo "ProjectID: $CI_PROJECT_ID"
+#   echo "ProjectTAG: $TAG"
+#   printf "ProjectMSG: \n$(cat $FILE)\n"
+#   printf "ProjectURL: $CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main\n"
+#   # if [ "$http_response" != "200" ]; then echo "$http_response: $(cat response.txt)"; exit $http_response; fi
+#   # echo ""
 
-.delete_tag: &delete_tag |
-  # delete tag
-  curl --request DELETE \
-    --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
-  echo ""
-  git tag -d $TAG || exit_code_del=$?
-  echo ""
+# .delete_tag: &delete_tag |
+#   # delete tag
+#   curl --request DELETE \
+#     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+#     --url "$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG" || exit_code_del2=$?
+#   echo ""
+#   git tag -d $TAG || exit_code_del=$?
+#   echo ""
 
-.prepare_git: &prepare_git |
-  # "prepare git"
-  git config --global user.name "${GITLAB_USER_NAME}"
-  git config --global user.email "${GITLAB_USER_EMAIL}"
-  git config --global http.postBuffer 52428800
-  git fetch
+# .prepare_git: &prepare_git |
+#   # "prepare git"
+#   git config --global user.name "${GITLAB_USER_NAME}"
+#   git config --global user.email "${GITLAB_USER_EMAIL}"
+#   git config --global http.postBuffer 52428800
+#   git fetch
 
 #########################################################################
 ######################################################################### init
 #########################################################################
+init:versions:
+  stage: init
+  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 # cause smaller then node...
+  script:
+    - *compare_versions
+
+init:npm:production:
+  stage: init
+  only:
+    - main
+    - tags
+  script:
+    - cd opsiweb
+    - *define_globals
+    - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
+    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
+  artifacts:
+    paths:
+      - opsiweb/package.json
+      - opsiweb/node_modules/
+    expire_in: 1 day
 init:npm:
   stage: init
   script:
@@ -593,49 +614,50 @@ build:zip: # with transifex
 ######################################################################### create tag
 #########################################################################
 
-upload:gittag:
-  image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
-  stage: upload
-  script:
-    - FILE=".tmp_changelog"
-    - *prepare_git
-    - *install_tools
-    - echo "all tags... $(git tag)"
-    # - echo "delete Tag..."
-    # - TAG=4.3.1.1
-    # - *delete_tag
-    # - TAG=4.3.14-test # on docker 4
-    # - *delete_tag
-    # - TAG=4.3.15 # on docker 4
-    # - *delete_tag
-    # - echo ""
-    - *compare_versions
-    - *prepare_tag
-    - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
-    - CHANGELOG_MSG=$(cat $FILE)
-    - *push_tag
-    # - |
-    #   curl --request POST \
-    #     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
-    #     --data-urlencode "message=$CHANGELOG_MSG" \
-    #     --url "https://gitlab.uib.gmbh/api/v4/projects/335/repository/tags?tag_name=$TAG&ref=main"
-    # - echo "Git Tag created successfully"
-    - echo "changelog since last tag collected:"
-    - echo "$CHANGELOG_MSG"
-        # --url "$CI_API_V4_URL/projects/335/repository/tags?tag_name=$TAG&ref=main"
-    # -o response.txt \
-    # - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
-    # - echo "$URL"
-    # - |
-    #   curl --request POST --header "PRIVATE-TOKEN: $TOKEN_SUCHER"  --data-urlencode "message=$(cat $FILE)"  "$URL"
+# upload:gittag:
+#   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11
+#   stage: upload
+#   script:
+#     - FILE=".tmp_changelog"
+#     - *prepare_git
+#     - *install_tools
+#     - echo "all tags... $(git tag)"
+#     # - echo "delete Tag..."
+#     # - TAG=4.3.1.1
+#     # - *delete_tag
+#     # - TAG=4.3.14-test # on docker 4
+#     # - *delete_tag
+#     # - TAG=4.3.15 # on docker 4
+#     # - *delete_tag
+#     # - echo ""
+#     - *compare_versions
+#     - *prepare_tag
+#     - git log --oneline --pretty=format:"%s" ...$LTAG | grep -e "\[*pub*\]" | sort | tee $FILE || (echo "no changelog entries since $LTAG... Add at least one pub message"; exit 3)
+#     - CHANGELOG_MSG=$(cat $FILE)
+#     - *push_tag
+#     # - |
+#     #   curl --request POST \
+#     #     --header "PRIVATE-TOKEN: $TOKEN_SUCHER" \
+#     #     --data-urlencode "message=$CHANGELOG_MSG" \
+#     #     --url "https://gitlab.uib.gmbh/api/v4/projects/335/repository/tags?tag_name=$TAG&ref=main"
+#     # - echo "Git Tag created successfully"
+#     - echo "changelog since last tag collected:"
+#     - echo "$CHANGELOG_MSG"
+#         # --url "$CI_API_V4_URL/projects/335/repository/tags?tag_name=$TAG&ref=main"
+#     # -o response.txt \
+#     # - URL="$CI_API_V4_URL/projects/$CI_PROJECT_ID/repository/tags?tag_name=$TAG&ref=main"
+#     # - echo "$URL"
+#     # - |
+#     #   curl --request POST --header "PRIVATE-TOKEN: $TOKEN_SUCHER"  --data-urlencode "message=$(cat $FILE)"  "$URL"
 
-    # - printf "\nRESPONSE:\n $(cat response.txt)"
-    - rm $FILE
-  # when: manual
-  allow_failure: false
-  when: always
-  only: # visible in this branches: (main!)
-    - main
+#     # - printf "\nRESPONSE:\n $(cat response.txt)"
+#     - rm $FILE
+#   # when: manual
+#   allow_failure: false
+#   when: always
+#   only: # visible in this branches: (main!)
+#     - main
+#     - tag
 
 #########################################################################
 ######################################################################### publish
