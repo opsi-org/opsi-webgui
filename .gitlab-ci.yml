@@ -190,7 +190,7 @@ init:versions:
   script:
     - *compare_versions
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions are equal $VERSION_YML"; fi
-  TAG=$VERSION_YML
+
 init:npm:production:
   stage: init
   only:
