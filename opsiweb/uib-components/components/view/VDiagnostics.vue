@@ -25,16 +25,20 @@
           {{ k }}
         </b-button>
         <b-collapse :id="'collapse-'+k" :visible="expandAll || filter!= ''">
-          <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.toString().includes(filter) }">
-            <GridGFormItem class="ml-2" :label="i" variant="longvalue">
+          <span
+            v-for="value,attribute in diagnostic"
+            :key="attribute"
+            :class="{ 'd-none': !attribute.toString().toLowerCase().includes(filter.toLowerCase()) }"
+          >
+            <GridGFormItem class="ml-2" :label="attribute" variant="longvalue">
               <template #value>
-                <template v-if="typeof val == 'object'">
+                <template v-if="typeof value == 'object'">
                   <div class="scrollValue">
-                    <pre>{{ JSON.stringify(val, null, 4) }}</pre>
+                    <pre>{{ JSON.stringify(value, null, 4) }}</pre>
                   </div>
                 </template>
                 <template v-else>
-                  {{ val }}
+                  {{ value }}
                 </template>
               </template>
             </GridGFormItem>
