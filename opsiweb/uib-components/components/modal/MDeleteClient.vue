@@ -6,7 +6,7 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-delete-' + clientId)"
+      @click="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>
@@ -16,14 +16,14 @@
       size="sm"
       class="w-100 h-100 text-left border-0 incontextmenu"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-delete-' + clientId)"
-      @keypress.enter="$bvModal.show('event-modal-delete-' + clientId)"
+      @click="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
+      @keypress.enter="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </div>
 
     <b-modal
-      :id="'event-modal-delete-' + clientId"
+      :id="'event-modal-delete-' + clientId + '-context-menu-' + incontextmenu"
       :title="$t('title.deleteClient')"
       data-testid="MDeleteClientModal"
       centered
@@ -79,7 +79,7 @@ export default class MDeleteClient extends Vue {
         // ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
         this.showToastSuccess(this.$t('message.success.deleteClient', { client: id }))
         this.delFromSelectionClients(id)
-        this.$bvModal.hide('event-modal-delete-' + this.clientId)
+        this.$bvModal.hide('event-modal-delete-' + this.clientId + '-context-menu-' + this.incontextmenu)
         this.refetch()
       }).catch((error) => {
         // ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)

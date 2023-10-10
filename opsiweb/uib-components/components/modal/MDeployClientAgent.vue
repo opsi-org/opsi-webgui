@@ -6,7 +6,7 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-deployCA-' + clientId)"
+      @click="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </b-button>
@@ -16,14 +16,14 @@
       size="sm"
       class="w-100 h-100 text-left border-0 incontextmenu"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-deployCA-' + clientId)"
-      @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId)"
+      @click="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
+      @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </div>
 
     <b-modal
-      :id="'event-modal-deployCA-' + clientId"
+      :id="'event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu"
       :title="$t('label.clientagent')"
       data-testid="MDeployClientAgentModal"
       centered
@@ -62,7 +62,7 @@
             size="sm"
             class="float-right"
             :disabled="config?.read_only"
-            @click="deployclientagent()"
+            @click="deployopsiclientagent()"
           >
             <span class="deploy"> {{ $t('button.confirm') }} </span>
           </b-button>
@@ -101,12 +101,12 @@ export default class MDeployClientAgent extends Vue {
 
   @config.Getter public config!: IObjectString2Boolean
 
-  async deployclientagent () {
+  async deployopsiclientagent () {
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
     const modal = true
-    await this.deployClientAgent(this.form, modal)
+    await this.deployClientAgent(this.form, modal, this.incontextmenu)
   }
 }
 </script>

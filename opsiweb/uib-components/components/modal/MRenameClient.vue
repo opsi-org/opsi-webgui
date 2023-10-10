@@ -6,7 +6,7 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-rename-' + clientId)"
+      @click="$bvModal.show('event-modal-rename-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.pencil" />  <span class="rename"> {{ $t('label.rename') }} </span>
     </b-button>
@@ -16,14 +16,14 @@
       size="sm"
       class="w-100 h-100 text-left border-0 incontextmenu"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-rename-' + clientId)"
-      @keypress.enter="$bvModal.show('event-modal-rename-' + clientId)"
+      @click="$bvModal.show('event-modal-rename-' + clientId + '-context-menu-' + incontextmenu)"
+      @keypress.enter="$bvModal.show('event-modal-rename-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.pencil" />  <span> {{ $t('label.rename') }} </span>
     </div>
 
     <b-modal
-      :id="'event-modal-rename-' + clientId"
+      :id="'event-modal-rename-' + clientId + '-context-menu-' + incontextmenu"
       :title="$t('title.renameClient') + t_fixed('keep-english.title.delimiter')+ clientId"
       data-testid="MRenameClientModal"
       centered
@@ -157,7 +157,7 @@ export default class MRenameClient extends Vue {
     attr.hostId = this.newId
     await this.$axios.$put(`/api/opsidata/clients/${this.clientId}`, attr)
       .then((response) => {
-        this.$bvModal.hide('event-modal-rename-' + this.clientId)
+        this.$bvModal.hide('event-modal-rename-' + this.clientId + '-context-menu-' + this.incontextmenu)
         this.showToastSuccess(this.$t('message.success.save.clientrename'))
         this.refetch()
       }).catch((error) => {

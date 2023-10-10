@@ -53,13 +53,13 @@ const settings = namespace('settings')
 }
 @Component({ mixins: [AlertToast] }) export class DeployClientAgent extends Vue {
   showToastError: any // mixin
-  async deployClientAgent (data: any, modal:boolean) {
+  async deployClientAgent (data: any, modal:boolean, incontextmenu:boolean) {
     const ref = (this.$refs.clientagentAlert as any)
     await this.$axios.$post('/api/opsidata/clients/deploy', data)
       .then(() => {
         ref.alert(this.$t('message.success.clientagent', { client: data.clientId[0] }) as string, 'success')
         if (modal) {
-          this.$bvModal.hide('event-modal-deployCA-' + data.clientId[0])
+          this.$bvModal.hide('event-modal-deployCA-' + data.clientId[0] + '-context-menu-' + incontextmenu)
         }
       }).catch((error) => {
         this.showToastError(error, this.$t('message.error.clientagent'))

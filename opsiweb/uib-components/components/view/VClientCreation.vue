@@ -273,13 +273,14 @@ export default class VClientCreation extends Vue {
       })
   }
 
-  async deployclientagent () {
+  async deployopsiclientagent () {
     this.form.clients = [this.newClient.hostId]
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
     const modal = false
-    await this.deployClientAgent(this.form, modal)
+    const contextmenu = false
+    await this.deployClientAgent(this.form, modal, contextmenu)
   }
 
   async assignToGroup () {
@@ -317,7 +318,7 @@ export default class VClientCreation extends Vue {
           await this.assignToGroup()
         }
         if (this.clientagent) {
-          await this.deployclientagent()
+          await this.deployopsiclientagent()
         }
         if (this.netbootproduct) {
           await this.setupNetbootProduct()

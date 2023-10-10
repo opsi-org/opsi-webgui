@@ -12,7 +12,7 @@
       <b-icon :icon="icon.clientReachable" />
     </b-button>
     <b-modal
-      id="clientreachability"
+      id="client-reachability"
       data-testid="MClientReachableModal"
       :title="$t('label.reachable')"
       centered
@@ -49,7 +49,7 @@ export default class MClientReachable extends Vue {
     await this.$axios.$get('/api/opsidata/clients/reachable', { params })
       .then((response) => {
         this.reachability = response
-        this.$bvModal.show('clientreachability')
+        this.$bvModal.show('client-reachability')
       }).catch((error) => {
         this.showToastError(error)
       })

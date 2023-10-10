@@ -15,7 +15,7 @@
 
       }"
       size="sm"
-      @click="$bvModal.show('event-modal-' + event + '-' + data + 'context-menu-' + incontextmenu)"
+      @click="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
@@ -28,8 +28,8 @@
       size="sm"
       class="w-100 h-100 text-left border-0 incontextmenu contextmenu pl-4  pt-1 pb-2 "
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
-      @click="$bvModal.show('event-modal-' + event + '-' + data + 'context-menu-' + incontextmenu)"
-      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data + 'context-menu-' + incontextmenu)"
+      @click="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
+      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
@@ -38,7 +38,7 @@
     </div>
 
     <b-modal
-      :id="'event-modal-' + event + '-' + data + 'context-menu-' + incontextmenu"
+      :id="'event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu"
       :title="$t(events[event].titlemodal)"
       data-testid="BTNEventModal"
       centered
@@ -183,7 +183,7 @@ export default class BTNEvent extends Vue {
         console.error(error)
         this.callEventSended()
       })
-    this.$bvModal.hide('event-modal-' + this.event + '-' + this.data + 'context-menu-' + this.incontextmenu)
+    this.$bvModal.hide('event-modal-' + this.event + '-' + this.data + '-context-menu-' + this.incontextmenu)
   }
 
   callEventPrepareData () {
