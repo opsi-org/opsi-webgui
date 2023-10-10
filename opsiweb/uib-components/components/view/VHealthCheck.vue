@@ -16,7 +16,13 @@
       </template>
     </BarBPageHeader>
     <DivDScrollResult>
-      <span v-for="health, i in healthcheckdata" :key="i" :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }">
+      <!-- :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }" -->
+      <span
+        v-for="health, i in healthcheckdata"
+        :key="i"
+        :class="{ 'd-none': !health.check_status.toLowerCase().includes(filter.toLowerCase()) && !health.check_name.toLowerCase().includes(filter.toLowerCase()) }"
+      >
+<!-- { "check_id": "opsi_config", "check_name": "OPSI Configuration", "check_description": "Check opsi configuration state", "check_status": "ok", "message": "No issues found in the opsi configuration.", "details": {}, "upgrade_issue": null, "partial_results": [ { "check_id": "opsi_config:opsiclientd.global.verify_server_cert", "check_name": "OPSI Configuration opsiclientd.global.verify_server_cert", "check_description": "", "check_status": "ok", "message": "Configuration opsiclientd.global.verify_server_cert is set to default.", "details": { "config_id": "opsiclientd.global.verify_server_cert", "deafult_value": [ true ], "value": [ true ] }, "upgrade_issue": null } ] }  -->
         <GridGFormItem value-more="true" :formclass="'mainitem ' + ((health.partial_results.length != 0)? 'collapsable' : '')" variant="shortlabel">
           <template #label>
             <div class=""> <!-- d-inline-block -->
