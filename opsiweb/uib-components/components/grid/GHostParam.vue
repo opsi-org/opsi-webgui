@@ -10,7 +10,7 @@
           <GridGFormItem
             v-for="item,index in v"
             :key="index"
-            :class="{ 'd-none': !item.configId.includes(filter) }"
+            :class="{ 'd-none': !item.configId.includes(filter.toLowerCase()) }"
             class="ml-2 mb-0 mw-50"
             variant="longlabel"
             :label="item.configId"

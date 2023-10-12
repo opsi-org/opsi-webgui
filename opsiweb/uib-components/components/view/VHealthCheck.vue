@@ -1,7 +1,6 @@
 <template>
   <div data-testid="VHealthCheck">
     <OverlayOLoading :is-loading="$fetchState.pending" />
-
     <BarBPageHeader>
       <template #left>
         <b-button
@@ -12,20 +11,19 @@
         >
           <small><b-icon :icon="expandHCD? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
         </b-button>
-        <InputIFilterTChanges :placeholder="$t('input.filter')" :filter.sync="filter" />
+        <InputIFilterTChanges :placeholder="$t('filterBy.Check')" :filter.sync="filter" />
       </template>
     </BarBPageHeader>
     <DivDScrollResult>
-      <!-- :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }" -->
       <span
         v-for="health, i in healthcheckdata"
         :key="i"
-        :class="{ 'd-none': !health.check_status.toLowerCase().includes(filter.toLowerCase()) && !health.check_name.toLowerCase().includes(filter.toLowerCase()) }"
+        :class="{ 'd-none': !health.check_status.toLowerCase().includes(filter.toLowerCase())
+          && !health.check_name.toLowerCase().includes(filter.toLowerCase()) }"
       >
-<!-- { "check_id": "opsi_config", "check_name": "OPSI Configuration", "check_description": "Check opsi configuration state", "check_status": "ok", "message": "No issues found in the opsi configuration.", "details": {}, "upgrade_issue": null, "partial_results": [ { "check_id": "opsi_config:opsiclientd.global.verify_server_cert", "check_name": "OPSI Configuration opsiclientd.global.verify_server_cert", "check_description": "", "check_status": "ok", "message": "Configuration opsiclientd.global.verify_server_cert is set to default.", "details": { "config_id": "opsiclientd.global.verify_server_cert", "deafult_value": [ true ], "value": [ true ] }, "upgrade_issue": null } ] }  -->
         <GridGFormItem value-more="true" :formclass="'mainitem ' + ((health.partial_results.length != 0)? 'collapsable' : '')" variant="shortlabel">
           <template #label>
-            <div class=""> <!-- d-inline-block -->
+            <div>
               <template v-if="health.partial_results.length != 0">
                 <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" size="sm" variant="transparent">
                   <small><b-icon :icon="expandHCD? icon.arrowUp : icon.arrowRight" /></small>
@@ -42,14 +40,13 @@
             </div>
           </template>
           <template #value>
-            <span class="font-weight-bold text-capitalize">{{ health.check_name }}</span>
+            <span class="font-weight-bold">{{ health.check_name }}</span>
           </template>
           <template #valueMore>
-            <span class="font-weight-bold text-capitalize">{{ health.message }}</span>
+            <span class="font-weight-bold">{{ health.message }}</span>
           </template>
         </GridGFormItem>
         <b-collapse :id="'collapse-'+health.check_id" :visible="expandHCD || filter!==''">
-          <!-- Collapse content -->
           <span v-for="(data, index) in health.partial_results" :key="index">
             <GridGFormItem value-more="true" formclass="none" :valuedetails="data.message" variant="shortlabel">
               <template #label>
@@ -60,7 +57,6 @@
                   </div>
                 </b-badge>
               </template>
-
               <template #value>
                 <b v-if="$mq === 'mobile'" class="text-sm-left text-small">{{ data.check_name }}</b>
                 <span v-else class="text-sm-left text-small">{{ data.check_name }}</span>

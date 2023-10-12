@@ -135,6 +135,7 @@
   "table.filterBy.ConfigHost": "Filter by Config ID or Host ID",
   "table.filterBy.Config": "Filter by Config ID",
   "table.filterBy.DepotsClients": "Filter by Server ID or Client ID",
+  "filterBy.Check": "Filter by Check Name or Status",
   "table.showCol": "Show/hide table columns",
   "table.clientDetails": "Client Details:",
   "table.addtnlInfo": "Additional Information:",
