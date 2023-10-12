@@ -127,6 +127,11 @@ export default class TQuickSelections extends Vue {
 }
 </script>
 <style>
+.scrollcontent {
+  min-height: 39vh !important;
+  overflow-x:auto;
+  overflow-y: auto;
+}
 .QPTabs .scrollcontent {
   max-height: 500px !important;
   /* max-height: 50% !important; */

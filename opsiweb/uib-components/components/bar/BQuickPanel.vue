@@ -73,7 +73,7 @@ export default class BQuickPanel extends Vue {
   height: 100% !important;
 }
 #quickpanel {
-  top: calc(var(--height-navbar) - 2px) !important;
+  top: var(--height-navbar)!important;
   width: 400px;
   height: 100% !important;
 }

@@ -168,11 +168,6 @@ export default class LayoutDefault extends Vue {
 </script>
 
 <style>
-.scrollcontent {
-  min-height: 40vh !important;
-  overflow-x:auto;
-  overflow-y: auto;
-}
 .topbar_content {
   z-index: 1000;
   width: 100% !important;
