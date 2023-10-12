@@ -3,7 +3,11 @@
     <AlertAAlert ref="changesHostParamAlert" />
     <b-row>
       <b-col>
-        <InputIFilterTChanges v-if="changesHostParam.filter(o => o.user === username)" :placeholder="$t('table.filterBy.ConfigHost')" :filter.sync="filter" />
+        <InputIFilterTChanges
+          v-if="changesHostParam.filter(o => o.user === username)"
+          :placeholder="$t('table.filterBy.ConfigHost')"
+          :filter.sync="filter"
+        />
       </b-col>
       <b-col cols="auto">
         <ButtonBTNClearChanges hide="trackChangesModal" from="hostparam" />
@@ -14,7 +18,11 @@
       </b-col>
     </b-row>
     <DivDScrollResult>
-      <span v-for="item in changesHostParam.filter(o => o.user === username)" :key="item.configId+item.value" :class="{ 'd-none': !item.configId.includes(filter) && !item.hostId.includes(filter) }">
+      <span
+        v-for="item in changesHostParam.filter(o => o.user === username)"
+        :key="item.configId+item.value"
+        :class="{ 'd-none': !item.configId.includes(filter.toLowerCase()) && !item.hostId.includes(filter.toLowerCase()) }"
+      >
         <GridGFormItem
           value-more="true"
           :label="item.hostId"
