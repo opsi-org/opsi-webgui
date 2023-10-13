@@ -89,6 +89,9 @@
           :save="saveActionRequest"
         />
       </template>
+      <template #cell(modificationTime)="row">
+        <small>{{ date(row.item.modificationTime) }}</small>
+      </template>
       <template #cell(version)="row">
         <TableCellTCProductVersionCell
           v-if="Object.keys(fetchedDataClients2Depots).length == selectionClients.length"
@@ -166,6 +169,7 @@ import { MBus } from '../../mixins/messagebus'
 import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
+import { Format } from '../../mixins/format'
 
 const selections = namespace('selections')
 const settings = namespace('settings')
@@ -175,7 +179,7 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [Icons, MBus, Synchronization, SaveProductActionRequest, AlertToast] })
+@Component({ mixins: [Icons, MBus, Synchronization, SaveProductActionRequest, AlertToast, Format] })
 export default class TProductsLocalboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -191,6 +195,7 @@ export default class TProductsLocalboot extends Vue {
   showToastMbus: any // mixin AlertToast
   hideToast: any // from mixin AlertToast
   icon: any
+  date:any
   syncSort: any
   $axios: any
   $nuxt: any

@@ -44,7 +44,9 @@
         <b-row>
           <b-col> <DropdownDDLang v-once /> </b-col>
           <b-col> <DropdownDDTheme v-once /> </b-col>
-          <b-col cols="6"> <ButtonBTNLogout v-once /> </b-col>
+          <b-col cols="6">
+            <ButtonBTNLogout v-once />
+          </b-col>
         </b-row>
       </b-card>
     </template>

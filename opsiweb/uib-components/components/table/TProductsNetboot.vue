@@ -67,6 +67,9 @@
       <template #head(actionResult)>
         <b-icon :icon="icon.productActionResult" alt="action result" />
       </template>
+      <template #cell(modificationTime)="row">
+        <small>{{ date(row.item.modificationTime) }}</small>
+      </template>
       <template #cell(version)="row">
         <TableCellTCProductVersionCell
           type="depotVersions"
@@ -157,6 +160,7 @@ import { MBus } from '../../mixins/messagebus'
 import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
+import { Format } from '../../mixins/format'
 
 const selections = namespace('selections')
 const settings = namespace('settings')
@@ -166,7 +170,7 @@ interface IFetchOptions {
   fetchClients2Depots:boolean,
 }
 
-@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, SaveProductActionRequest] })
+@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, SaveProductActionRequest, Format] })
 export default class TProductsNetboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -181,6 +185,7 @@ export default class TProductsNetboot extends Vue {
   showToastMbus: any // mixin // alerttoast
   hideToast: any // mixin // alerttoast
   icon: any
+  date:any
   syncSort: any
   $axios: any
   $nuxt: any
