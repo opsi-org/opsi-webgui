@@ -106,6 +106,10 @@
           <template #cell(uefi)="row">
             <b-icon v-if="row.item.uefi" :icon="icon.check" />
           </template>
+          <template #cell(lastSeen)="row">
+            <small>{{ date(row.item.lastSeen) }}</small>
+          </template>
+
           <template #cell(version_outdated)="row">
             <b-button
               v-if="row.item.version_outdated > 0"
@@ -190,15 +194,17 @@ import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Cookies } from '../../mixins/cookies'
+import { Format } from '../../mixins/format'
 const selections = namespace('selections')
 interface DeleteClient {
   clientid: string
 }
 
-@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, Cookies] })
+@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, Cookies, Format] })
 export default class VClients extends Vue {
   syncSort: any // mixin Synchronization
   icon: any
+  date:any
   wsBusMsg: any // mixin MBus
   showToast: any // mixin AlertToast
   showToastMbus: any // mixin AlertToast

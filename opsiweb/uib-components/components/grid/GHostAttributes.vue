@@ -66,12 +66,14 @@ import { SetUEFI } from '../../mixins/post'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Strings } from '../../mixins/strings'
 import { AlertToast } from '../../mixins/component'
+import { Format } from '../../mixins/format'
 const config = namespace('config-app')
 
-@Component({ mixins: [Icons, Strings, SetUEFI, AlertToast] })
+@Component({ mixins: [Icons, Strings, SetUEFI, AlertToast, Format] })
 export default class GHostAttributes extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
+  date: any
   showToastSuccess: any // mixin
   showToastError: any // mixin
   showValue : boolean = false
@@ -115,12 +117,6 @@ export default class GHostAttributes extends Vue {
         // ref.alert(detailedError, 'danger')
         // this.errorText = this.$t('message.error.defaulttext') as string
       })
-  }
-
-  date (value:any) {
-    if (value !== '' || value !== undefined) {
-      return new Date(value).toString()
-    } else { return '' }
   }
 
   async update (attr, endPoint) {
