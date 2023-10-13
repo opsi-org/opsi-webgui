@@ -6,7 +6,7 @@
         <span class="text-capitalize">{{ currentAppState }}</span>
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('label.setappstate')" variant="longvalue">
+    <GridGFormItem :label="$t('label.setappstate')" value-more="true" variant="longvalue">
       <template #value>
         <b-form-radio-group v-model="newAppState.type">
           <b-form-radio value="normal">
