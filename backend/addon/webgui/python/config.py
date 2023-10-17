@@ -138,7 +138,9 @@ def get_client_config(
 		elif config.multiValue:
 			tmp_config["objects"][object_id] = config_states.get(config.id, {})
 		else:
-			tmp_config["objects"][object_id] = config_states.get(config.id) if config_states.get(config.id, {})[0] else ""
+			tmp_config["objects"][object_id] = (
+				config_states.get(config.id) if config_states.get(config.id) and config_states.get(config.id, {})[0] else ""
+			)
 		tmp_config["configId"] = config.id
 		if config.editable:
 			tmp_config["newValue"] = ""
