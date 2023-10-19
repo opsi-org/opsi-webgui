@@ -65,10 +65,12 @@ pull-binaries:
   extract: true
   name: opsi-webgui
   os: linux
-  post-script:
-  - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:"
-    | awk '{print $2}')
-  - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
+  post-script: 'WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep
+    -m 1 "version:" | awk ''{print $2}'')
+
+    zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
+
+    '
   server-type: binaryindex
   server-url: http://binaryindex.uib.gmbh
   version: 4.3.19
