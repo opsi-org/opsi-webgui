@@ -55,7 +55,7 @@ project:
   - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
-  version: 4.3.18
+  version: 4.3.19
   version_files:
     opsiweb/package.json: $.version
 pull-binaries:
@@ -66,7 +66,8 @@ pull-binaries:
   name: opsi-webgui
   os: linux
   post-script:
-  - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $2}')
+  - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:"
+    | awk '{print $2}')
   - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
   server-type: binaryindex
   server-url: http://binaryindex.uib.gmbh
