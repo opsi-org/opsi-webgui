@@ -57,7 +57,7 @@ project:
   name: opsi-webgui
   version: 4.3.18
   version_files:
-    opsiweb/package.json: $.version
+    package.json: $.version
 pull-binaries:
 - architecture: x64
   branch: development
