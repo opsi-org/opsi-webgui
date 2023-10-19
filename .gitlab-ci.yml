@@ -1,6 +1,7 @@
 image: node:current-slim
 
 stages:
+  - check
   - init
   - test
   - build
@@ -184,8 +185,8 @@ stages:
 #########################################################################
 ######################################################################### init
 #########################################################################
-init:versions:
-  stage: init
+check:versions:
+  stage: check
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 # cause smaller then node...
   script:
     - *compare_versions
