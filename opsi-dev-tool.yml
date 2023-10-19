@@ -1,6 +1,8 @@
 project:
   name: opsi-webgui
-  version: &project_version 4.3.18
+  version: 4.3.18
+  version_files:
+    opsiweb/package.json: "$.version"
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
@@ -45,11 +47,11 @@ pull-binaries:
     destination: .
     extract: true
     post-script:
-      - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $3}')
+      - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $2}')
       - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
     os: linux
     architecture: x64
-    version: *project_version
+    version: 4.3.18
     branch: development
     server-url: http://binaryindex.uib.gmbh
 
