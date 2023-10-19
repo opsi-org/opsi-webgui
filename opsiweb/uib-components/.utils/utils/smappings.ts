@@ -20,7 +20,9 @@ export function mapValues2Value (values: Array<string>, objects: Array<string>, 
       return values[0]
     }
     if (objectsorigin.length > 1 && values.length === 1) {
-      if (objects.length !== objectsorigin.length) return 'mixed'
+      if (objects.length !== objectsorigin.length) {
+        return (values[0] === defvalue) ? defvalue : 'mixed'
+      }
       return values[0]
     }
     if (objectsorigin.length === objects.length) {
