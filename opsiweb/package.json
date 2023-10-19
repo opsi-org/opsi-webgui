@@ -91,7 +91,7 @@
     "@nuxtjs/eslint-config-typescript": "^9.x.x",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/storybook": "^4.3.0",
-    "@playwright/test": "^1.38.1",
+    "@playwright/test": "^1.39.0",
     "@types/jest": "^29.x.x",
     "@types/js-cookie": "^3.x.x",
     "@types/webpack-env": "^1.x.x",
