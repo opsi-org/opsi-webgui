@@ -1,72 +1,88 @@
-project:
+git:
+  hooks:
+    pre-push: 'exit 0
+
+      cd /workspace/opsiweb/
+
+      file=".tmp_prepush_result_changed_files.log"
+
+      echo "> Test Changed files"
+
+      bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components
+      / $file || exit_code=$?
+
+      echo "====================================================== Check test files"
+
+      bash ./scripts/playwright_coverage_by_files.sh $file
+
+      # rm $file
+
+      echo "======================================================"
+
+      echo ""
+
+      cd ..
+
+      echo "exitcode $exit_code"
+
+      exit $exit_code
+
+      '
+package:
+  architecture: all
+  depends:
+  - opsiconfd (>= 4.3.0.104)
   name: opsi-webgui
-  version: 4.3.18
-  version_files:
-    opsiweb/package.json: "$.version"
+  postinst_script:
+  - echo "OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'"
+  - exit 0
+  source_script: 'mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
+
+    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
+
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
+
+    ls -la "${SRC}/opsiweb/dist/"
+
+    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
+
+    '
+  type: binary
+project:
   description: opsi webgui
   homepage: http://www.opsi.org
   licenses:
-    - license: AGPL-3.0
+  - license: AGPL-3.0
   maintainer: uib GmbH <info@uib.de>
-git:
-  hooks:
-    pre-push: |
-      exit 0
-      cd /workspace/opsiweb/
-      file=".tmp_prepush_result_changed_files.log"
-      echo "> Test Changed files"
-      bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components / $file || exit_code=$?
-      echo "====================================================== Check test files"
-      bash ./scripts/playwright_coverage_by_files.sh $file
-      # rm $file
-      echo "======================================================"
-      echo ""
-      cd ..
-      echo "exitcode $exit_code"
-      exit $exit_code
-
-package:
   name: opsi-webgui
-  type: binary
-  architecture: all
-  depends:
-    - opsiconfd (>= 4.3.0.104)
-  source_script: |
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
-    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
-    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
-    ls -la "${SRC}/opsiweb/dist/"
-    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
-  postinst_script:
-    - echo "OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'"
-    - exit 0
-
+  version: 4.3.18
+  version_files:
+    opsiweb/package.json: $.version
 pull-binaries:
-  - name: opsi-webgui
-    server-type: binaryindex
-    destination: .
-    extract: true
-    post-script:
-      - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:" | awk '{print $2}')
-      - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
-    os: linux
-    architecture: x64
-    version: 4.3.18
-    branch: development
-    server-url: http://binaryindex.uib.gmbh
-
+- architecture: x64
+  branch: development
+  destination: .
+  extract: true
+  name: opsi-webgui
+  os: linux
+  post-script:
+  - WEBGUI_VERSION=$(grep opsi-dev-tool.yml -A 10 -e "project" | grep -m 1 "version:"
+    | awk '{print $2}')
+  - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
+  server-type: binaryindex
+  server-url: http://binaryindex.uib.gmbh
+  version: 4.3.18
 transifex:
-  upload_resources:
-    - organization: opsi-org
-      project: opsiorg
-      resource_name: webgui.json
-      resource_file: opsiweb/uib-components/locale/opsiweb-ui_en.json
   download_translations:
-    - organization: opsi-org
-      project: opsiorg
-      resource_name: webgui.json
-      install_dir: opsiweb/uib-components/locale
-      languages:
-        - de
-        - fr
-
+  - install_dir: opsiweb/uib-components/locale
+    languages:
+    - de
+    - fr
+    organization: opsi-org
+    project: opsiorg
+    resource_name: webgui.json
+  upload_resources:
+  - organization: opsi-org
+    project: opsiorg
+    resource_file: opsiweb/uib-components/locale/opsiweb-ui_en.json
+    resource_name: webgui.json
