@@ -71,7 +71,7 @@ pull-binaries:
   - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
   server-type: binaryindex
   server-url: http://binaryindex.uib.gmbh
-  version: 4.3.18
+  version: 4.3.19
 transifex:
   download_translations:
   - install_dir: opsiweb/uib-components/locale
