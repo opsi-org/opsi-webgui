@@ -143,7 +143,9 @@ stages:
 
 .compare_versions: &compare_versions |
   # "compare Versions in: opsi-dev-tool-yml and opsiweb/package.json"
-  VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
+  # VERSION_YML=$(cat opsi-dev-tool.yml | grep "project_version " | awk -F "project_version " '{print $2}')
+  VERSION_YML=$(grep opsi-dev-tool.yml -A 10 -e project | grep -m 1 "version:" | awk '{print $2}')
+  VERSION_YML2=$(grep opsi-dev-tool.yml -A 15 -e pull-binaries | grep -m 1 "version: " | awk '{print $2}')
   VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
   # if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions equal: $VERSION_YML"; fi
   TAG=$VERSION_YML
@@ -190,6 +192,7 @@ check:versions:
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 # cause smaller then node...
   script:
     - *compare_versions
+    - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section)"; exit 1; fi
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions are equal $VERSION_YML"; fi
 
 init:npm:production:
