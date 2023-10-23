@@ -10,20 +10,20 @@
           <GridGFormItem
             v-for="item,index in v"
             :key="index"
-            :class="{ 'd-none': !item.configId.includes(filter) }"
+            :class="{ 'd-none': !item.configId.includes(filter.toLowerCase()) }"
             class="ml-2 mb-0 mw-50"
             variant="longlabel"
             :label="item.configId"
           >
             <template #value>
-              <GridCellGCHostParamValue :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
+              <GridCellGCHostParamValue :id="id" :configtype="item.type" :type="type" :row="item" @change="handleSelection" />
             </template>
           </GridGFormItem>
         </b-collapse>
       </span>
     </LazyDivDScrollResult>
     <DivDScrollResult v-else>
-      {{ $t('empty') }}
+      {{ t_fixed('keep-english.empty') }}
     </DivDScrollResult>
   </div>
 </template>
@@ -31,10 +31,13 @@
 <script lang="ts">
 import { Component, Prop, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { SaveParameters } from '../../mixins/save'
+import { Strings } from '../../mixins/strings'
+import { MBus } from '../../mixins/messagebus'
+import { AlertToast } from '../../mixins/component'
 const settings = namespace('settings')
 const changes = namespace('changes')
 
-@Component({ mixins: [SaveParameters] })
+@Component({ mixins: [AlertToast, Strings, SaveParameters, MBus] })
 export default class GHostParam extends Vue {
   @Prop({ }) id!: string
   @Prop({ }) type!: string
@@ -47,8 +50,13 @@ export default class GHostParam extends Vue {
   saveParameters:any
   $axios: any
   $t: any
+  t_fixed: any
   $fetch: any
-
+  wsBusMsg: any // mixin messagebus
+  showToastMbus: any // mixin alerttoast
+  wsSubscribeChannel: any // mixin messagebus
+  channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
+  lastSavedData: any = { objectIds: [], configIds: [] }
   @settings.Getter public quicksave!: boolean
   @changes.Getter public changesHostParam!: Array<any>
   @changes.Mutation public pushToChangesHostParam!: (o: object) => void
@@ -56,16 +64,38 @@ export default class GHostParam extends Vue {
 
   @Watch('id', { deep: true }) idChanged () { this.$fetch() }
 
-  async fetch () {
-    if (this.id) {
-      let endpoint: any = ''
-      if (this.type === 'clients') {
-        endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
-      } else {
-        endpoint = '/api/opsidata/config/server'
+  @Watch('wsBusMsg', { deep: true }) async _wsBusMsgObjectChanged2 () {
+    const msg = this.wsBusMsg
+    if (msg && this.channels.includes(msg.channel)) {
+      // console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
+      if (!(this.lastSavedData.configIds.includes(msg.data.configId) && // configId matches
+            (this.lastSavedData.objectIds.includes(msg.data.objectId) || // objectId matches
+              (this.lastSavedData.objectIds.length === 0 && msg.data.isDefault === true)
+            )
+      )) {
+        this.showToastMbus({
+          title: this.$t('message.info.event'),
+          content: this.$t('message.info.event.config_updated', { configId: msg.data.configId })
+        })
+        await this.$fetch()
       }
-      await this.fetchHostParameters(endpoint)
     }
+  }
+
+  async fetch () {
+    let endpoint: any = ''
+    if (this.type === 'clients') {
+      // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+      endpoint = `/api/opsidata/config/objects/${this.id}`
+    } else if (this.type === 'depots' && this.id) {
+      endpoint = `/api/opsidata/config/objects/${this.id}`
+    } else if (this.type === 'depots') {
+      endpoint = '/api/opsidata/config'
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('not defined')
+    }
+    await this.fetchHostParameters(endpoint)
   }
 
   async fetchHostParameters (endpoint) {
@@ -83,8 +113,8 @@ export default class GHostParam extends Vue {
   trackHostParameters (change) {
     const changeObject: Object = {
       user: localStorage.getItem('username'),
-      hostId: this.id,
       type: this.type,
+      hostId: this.id,
       configId: change.configId,
       value: change.value
     }
@@ -100,15 +130,19 @@ export default class GHostParam extends Vue {
       this.isLoading = true
       let url: string = ''
       let request: any = []
-      if (this.type === 'clients') {
-        url = '/api/opsidata/config/clients'
+      if (this.type === 'depots' && !this.id) { // changing default configs
+        url = '/api/opsidata/config'
+        request = [change]
+        this.lastSavedData = { objectIds: [], configIds: request.map(k => k.configId) }
+      } else if (this.type === 'clients' || this.type === 'depots') { // changing clients or depots configs
+        url = '/api/opsidata/config/objects'
         request = {
-          clientIds: [this.id],
+          objectIds: [this.id],
           configs: [change]
         }
+        this.lastSavedData = { objectIds: request.objectIds || [], configIds: request.configs?.map(k => k.configId) }
       } else {
-        url = '/api/opsidata/config/server'
-        request = [change]
+        console.error('not defined')
       }
       await this.saveParameters(url, request, null, true)
       this.isLoading = false

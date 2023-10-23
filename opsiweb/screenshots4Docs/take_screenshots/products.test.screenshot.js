@@ -1,10 +1,11 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
+const en = require('../../uib-components/locale/opsiweb-ui_en.jsonjson')
+const de = require('../../uib-components/locale/opsiweb-ui_de.json')
 
 test('Products', async ({ page }) => {
   await callStoryId(page, 'view-v-products', 'v-products')
+  // const component = page.locator('[data-testid="VProducts"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, en['title.products'])
 

@@ -3,18 +3,32 @@ import path from 'path'
 import fs from 'fs'
 import pkg from './package.json'
 
-import delib from './uib-components/locale/de.json'
-import enlib from './uib-components/locale/en.json'
+// import * as langFiles from './uib-components/locale/';
+const langs = {}
 
-import enui from './locale/en.json'
-import deui from './locale/de.json'
+const dir = './uib-components/locale/'
+const fullPath = path.join(__dirname, dir)
+const files = fs.readdirSync(fullPath)
+console.log('DEBUG: Reading locales')
+try {
+  // gets all internationalization files, which are located in 'dir'
+  files.forEach((file) => {
+    if (/opsiweb-ui_(.*)\.json/.test(file)) {
+      const l = file.match(/opsiweb-ui_(.*)\.json/)
+      try {
+        const json = require(fullPath + '/' + file)
+        langs[l[1]] = json
+      } catch (error) { console.log('Error reading file ', file, error) }
+    }
+  })
+} catch (error) { console.log(error) }
+console.log('DEBUG: Reading locales done: ', Object.keys(langs))
 
-const de = { ...delib, ...deui } // merge language files from components and local one
-const en = { ...enlib, ...enui } // have to be nested to avoid overwriting sections
 const env = {
   APIPATH: '/addons/webgui'
 }
 export default {
+  srcDir: '.',
   env: {
     APIPATH: '/addons/webgui'
   },
@@ -99,11 +113,10 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     ['@nuxtjs/i18n', {
-      // vueI18nLoader: false,
       locale: 'en',
       vueI18n: {
         fallbackLocale: 'en',
-        messages: { en, de }
+        messages: langs
       }
     }],
     ['nuxt-mq', {

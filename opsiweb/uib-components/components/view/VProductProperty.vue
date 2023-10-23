@@ -1,6 +1,6 @@
 <template>
   <div data-testid="VProductProperty">
-    <BarBPageHeader :title="$t('title.config') + '' + $t('title.delimiter')" :subtitle="id" :closeroute="closeroute" />
+    <BarBPageHeader :title="$t('title.config') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <div class="mb-3 text-small">
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
     </div>
@@ -53,23 +53,19 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { IDepend, IProp } from '../../.utils/types/ttable'
+import { AlertToast } from '../../mixins/component'
+import { Strings } from '../../mixins/strings'
+import { IErrorDepProp, IFetchedData } from '../../.utils/types/tobjects'
 
 const selections = namespace('selections')
 const changes = namespace('changes')
-interface IErrorDepProp {
-  dependencies: string
-  properties: string
-}
-interface IFetchedData {
-  dependencies:IDepend,
-  properties:IProp
-}
-@Component
+
+@Component({ mixins: [Strings, AlertToast] })
 export default class VProductProperty extends Vue {
+  showToastError: any // mixin
+  t_fixed: any
   $fetchState: any
   $axios: any
-  // $nuxt: any
   $fetch: any
   $mq: any
   $t: any
@@ -147,9 +143,7 @@ export default class VProductProperty extends Vue {
       }).catch((error) => {
         this.errorText.properties = (this as any).$t('message.error.fetch.productProperty')
         this.activeTabSet = -3
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 
@@ -163,9 +157,7 @@ export default class VProductProperty extends Vue {
       }).catch((error) => {
         this.errorText.dependencies = (this as any).$t('message.error.fetch.productDependency')
         this.activeTabSet = -3
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 }

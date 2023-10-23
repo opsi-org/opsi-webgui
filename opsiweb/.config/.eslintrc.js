@@ -24,7 +24,7 @@ module.exports = {
   rules: { },
   settings: {
     'vue-i18n': {
-      localeDir: '../uib-components/locale/*.{json}',
+      localeDir: '../uib-components/locale/webgui_*.{json}',
       // localeDir: [
       //   {
       //     pattern: '../uib-components/locale/*.json',

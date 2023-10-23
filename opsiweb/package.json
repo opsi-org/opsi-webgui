@@ -1,6 +1,6 @@
 {
   "name": "webgui",
-  "version": "4.3.15",
+  "version": "4.3.19",
   "private": true,
   "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui",
   "license": "MIT",
@@ -91,7 +91,7 @@
     "@nuxtjs/eslint-config-typescript": "^9.x.x",
     "@nuxtjs/eslint-module": "^3.0.2",
     "@nuxtjs/storybook": "^4.3.0",
-    "@playwright/test": "^1.38.0",
+    "@playwright/test": "^1.39.0",
     "@types/jest": "^29.x.x",
     "@types/js-cookie": "^3.x.x",
     "@types/webpack-env": "^1.x.x",

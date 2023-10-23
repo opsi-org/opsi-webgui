@@ -19,6 +19,16 @@
       @click="changeLanguage(lang)"
     >
       <span style="text-transform:uppercase;"> {{ lang }} </span>
+      <span>{{ (['en', 'de', 'fr'].includes(lang)) ? '': $t('button.lang.community-created') }}</span>
+    </b-dropdown-item>
+    <b-dropdown-item
+      :data-testid="`DropdownDDLang-Item-contribute`"
+      :title="$t('button.contribute-transifex.tooltip')"
+      href="https://app.transifex.com/opsi-org/opsiorg/opsiweb-uijson/"
+      target="_blank"
+      >
+      <!-- href="https://explore.transifex.com/opsi-org/opsiorg/" -->
+      <span> {{ $t('button.contribute-transifex') }} </span>
     </b-dropdown-item>
   </b-dropdown>
 </template>
@@ -36,6 +46,7 @@ export default class DDLang extends Vue {
   icon:any
   $i18n:any
   $mq:any
+  $t:any
 
   @Prop({ default: false }) footer!: boolean
 

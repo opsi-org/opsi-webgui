@@ -94,7 +94,7 @@
   --foreground:var(--general-fg);
   --fg-basic:var(--general-fg);
   --color:var(--general-fg);
-  --element-disabled: var(--light);
+  --element-disabled: var(--general-bg-weak);
 
   /* backgrounds */
   --bg-basic:var(--general-bg);
@@ -126,6 +126,9 @@
 
   /* --table-border */
   /* --table-hover */
+}
+.toast:not(.show) {
+  display: block;
 }
 h1.title {
   font-family: var(--font-family-logo);
@@ -313,6 +316,12 @@ tbody .col-rowactions :not(div).btn {
   background-color: var(--primary-dark) !important;
   border-color: var(--bg-page_item-disabled) !important;
 }
+/* :not(.toast-body) > .btn,
+:not(.toast-body) >.btn:hover {
+  color: unset !important;
+  background-color: unset !important;
+  border-color: unset !important;
+} */
 .btn-primary {
   color: var(--fg-btn);
   background-color: var(--bg-btn) !important;
@@ -627,7 +636,7 @@ tbody .col-rowactions :not(div).btn {
   --bs-tooltip-bg: var(--bg-tooltip_inner) !important;
   background-color: var(--bs-tooltip-bg) !important;
   color: var(--bs-tooltip-color) !important;
-  border: 1px solid var(--b-bs_tooltip) !important;
+  border: 1px solid var(--b-bs_tooltip-inner) !important;
   padding: 10px;
 }
 

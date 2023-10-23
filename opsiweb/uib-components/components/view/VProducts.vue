@@ -7,7 +7,7 @@
           <b-tab disabled>
             <template #title>
               <small> <b class="count">
-                {{ $t('count/all', { count: selectionProducts.length, all: parseInt(localboot) + totalnetboot}) }}
+                {{ t_fixed('keep-english.count/all').replace('count', selectionProducts.length).replace('all', parseInt(localboot) + totalnetboot) }}
               </b> </small>
             </template>
           </b-tab>
@@ -65,17 +65,21 @@ import { Icons } from '../../mixins/icons'
 import { Cookies } from '../../mixins/cookies'
 import { ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { IObjectString2Any, IObjectString2String } from '../../.utils/types/tgeneral'
+import { Strings } from '../../mixins/strings'
+import { AlertToast } from '../../mixins/component'
 const selections = namespace('selections')
 
-@Component({ mixins: [Client, Icons, Cookies] })
+@Component({ mixins: [AlertToast, Client, Icons, Strings, Cookies] })
 export default class VProducts extends Vue {
   fetchedDataClients2Depots!: IObjectString2String // mixin Client
   // Cookie: any
+  showToastError: any // mixin
   isCookie: any
   includesCookie!: any
   getKeyCookie!: any
   setCookie: any
   icon: any
+  t_fixed: any
   $mq: any
   $route:any
   $router:any
@@ -275,9 +279,7 @@ export default class VProducts extends Vue {
           console.error(error)
           thiss.error = thiss.$t('message.error.defaulttext') as string
           thiss.error += (error as IObjectString2Any).message
-          const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-          const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-          ref.alert(detailedError, 'danger')
+          this.showToastError(error)
           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
         })
       thiss.setItemsCache(myitems)
@@ -308,7 +310,6 @@ export default class VProducts extends Vue {
       params.selected = JSON.stringify(thiss.selectionProducts)
       // params.sortBy = '["selected", "productId"]'
     }
-    console.log('Sort by: ', params)
     return params
   }
 }

@@ -12,7 +12,7 @@
       <b-icon :icon="icon.clientReachable" />
     </b-button>
     <b-modal
-      id="clientreachability"
+      id="client-reachability"
       data-testid="MClientReachableModal"
       :title="$t('label.reachable')"
       centered
@@ -27,11 +27,13 @@
 
 <script lang="ts">
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class MClientReachable extends Vue {
+  showToastError: any // from mixin AlertToast
   icon: any
   $axios: any
   $t: any
@@ -47,11 +49,9 @@ export default class MClientReachable extends Vue {
     await this.$axios.$get('/api/opsidata/clients/reachable', { params })
       .then((response) => {
         this.reachability = response
-        this.$bvModal.show('clientreachability')
+        this.$bvModal.show('client-reachability')
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(this.$t('message.error.title') + this.$t('table.fields.reachablility'), 'danger', detailedError)
+        this.showToastError(error)
       })
     this.isLoading = false
   }

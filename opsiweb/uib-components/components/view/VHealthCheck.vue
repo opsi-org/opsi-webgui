@@ -1,7 +1,6 @@
 <template>
   <div data-testid="VHealthCheck">
     <OverlayOLoading :is-loading="$fetchState.pending" />
-
     <BarBPageHeader>
       <template #left>
         <b-button
@@ -12,14 +11,19 @@
         >
           <small><b-icon :icon="expandHCD? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
         </b-button>
-        <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
+        <InputIFilterTChanges :placeholder="$t('filterBy.Check')" :filter.sync="filter" />
       </template>
     </BarBPageHeader>
     <DivDScrollResult>
-      <span v-for="health, i in healthcheckdata" :key="i" :class="{ 'd-none': health.length >= 0 ? !health.check_id.includes(filter) && !health.check_status.includes(filter) : null }">
+      <span
+        v-for="health, i in healthcheckdata"
+        :key="i"
+        :class="{ 'd-none': !health.check_status.toLowerCase().includes(filter.toLowerCase())
+          && !health.check_name.toLowerCase().includes(filter.toLowerCase()) }"
+      >
         <GridGFormItem value-more="true" :formclass="'mainitem ' + ((health.partial_results.length != 0)? 'collapsable' : '')" variant="shortlabel">
           <template #label>
-            <div class=""> <!-- d-inline-block -->
+            <div>
               <template v-if="health.partial_results.length != 0">
                 <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" size="sm" variant="transparent">
                   <small><b-icon :icon="expandHCD? icon.arrowUp : icon.arrowRight" /></small>
@@ -36,14 +40,13 @@
             </div>
           </template>
           <template #value>
-            <span class="font-weight-bold text-capitalize">{{ health.check_name }}</span>
+            <span class="font-weight-bold">{{ health.check_name }}</span>
           </template>
           <template #valueMore>
-            <span class="font-weight-bold text-capitalize">{{ health.message }}</span>
+            <span class="font-weight-bold">{{ health.message }}</span>
           </template>
         </GridGFormItem>
         <b-collapse :id="'collapse-'+health.check_id" :visible="expandHCD || filter!==''">
-          <!-- Collapse content -->
           <span v-for="(data, index) in health.partial_results" :key="index">
             <GridGFormItem value-more="true" formclass="none" :valuedetails="data.message" variant="shortlabel">
               <template #label>
@@ -54,7 +57,6 @@
                   </div>
                 </b-badge>
               </template>
-
               <template #value>
                 <b v-if="$mq === 'mobile'" class="text-sm-left text-small">{{ data.check_name }}</b>
                 <span v-else class="text-sm-left text-small">{{ data.check_name }}</span>
@@ -70,9 +72,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class VHealthCheck extends Vue {
+  showToastError: any // mixin
   icon: any
   $mq: any
   $axios: any
@@ -91,9 +95,7 @@ export default class VHealthCheck extends Vue {
       .then((response) => {
         this.healthcheckdata = response
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 }

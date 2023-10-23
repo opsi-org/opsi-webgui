@@ -1,6 +1,7 @@
 <template>
   <b-sidebar
     id="quickpanel"
+    data-testid="BarBQuickPanel"
     right
     :visible="showQuickPanel"
     no-header
@@ -22,7 +23,7 @@
           />
         </b>
       </b-row>
-      <ViewVQuickSelections />
+      <TabsTQuickSelections />
       <b-row class="text-smaller mt-2 mb-2">
         <b>{{ $t('label.quickaction') }} </b>
       </b-row>
@@ -34,16 +35,19 @@
         <b>{{ $t('title.settings') }} </b>
       </b-row>
       <b-row>
-        <b-col> <DropdownDDLang v-once /> </b-col>
-        <b-col> <DropdownDDTheme v-once /> </b-col>
-        <b-col cols="6">
-          <CheckboxCBQuickSave />
-        </b-col>
+        <b-col> <CheckboxCBQuickSave /> </b-col>
+        <b-col> <CheckboxCBMultiselection /> </b-col>
       </b-row>
     </b-card>
     <template #footer>
-      <b-card class="text-center p-3">
-        <ButtonBTNLogout v-once />
+      <b-card class="p-0">
+        <b-row>
+          <b-col> <DropdownDDLang v-once /> </b-col>
+          <b-col> <DropdownDDTheme v-once /> </b-col>
+          <b-col cols="6">
+            <ButtonBTNLogout v-once />
+          </b-col>
+        </b-row>
       </b-card>
     </template>
   </b-sidebar>
@@ -71,7 +75,7 @@ export default class BQuickPanel extends Vue {
   height: 100% !important;
 }
 #quickpanel {
-  top: calc(var(--height-navbar) - 2px) !important;
+  top: var(--height-navbar)!important;
   width: 400px;
   height: 100% !important;
 }

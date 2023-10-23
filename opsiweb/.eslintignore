@@ -1,6 +1,7 @@
 dist/*
 ./package-dry.json
 ./package.json
+package.json
 ./locale/*.json
 .vscode/*.json
 **/*/tsconfig.json

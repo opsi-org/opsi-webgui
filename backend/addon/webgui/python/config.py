@@ -25,12 +25,14 @@ from opsiconfd.rest import (
 	order_by,
 	rest_api,
 )
+from opsiconfd.backend import get_protected_backend
 
-from .utils import bool_value, mysql, parse_client_list, read_only_check, unicode_value
+from .utils import bool_value, mysql, parse_client_list, read_only_check, unicode_value, backend
 
 conifg_router = APIRouter()
 
 
+@conifg_router.get("/api/opsidata/config")
 @conifg_router.get("/api/opsidata/config/server")
 @rest_api
 def get_server_config(
@@ -107,7 +109,7 @@ def get_server_config(
 		return RESTResponse(data=config_data)
 
 
-@conifg_router.get("/api/opsidata/config/clients/{object_id}")
+@conifg_router.get("/api/opsidata/config/objects/{object_id}")
 @rest_api
 def get_client_config(
 	object_id: str,
@@ -117,68 +119,36 @@ def get_client_config(
 	Get client config data.
 	"""
 
-	params: dict = {}
-	with mysql.session() as session:
-		query = (
-			select(
-				text(  # type: ignore
-					"""
-						cv.configId AS configId,
-						c.description AS description,
-						c.type AS type,
-						cv.value AS defaultValue,
-						(SELECT GROUP_CONCAT(IF(cs.values IS NOT NULL, cs.values, CONFIG_VALUE.value)  SEPARATOR ',')
-							FROM CONFIG_VALUE WHERE CONFIG_VALUE.configId=c.configId AND CONFIG_VALUE.isDefault=1) AS value,
-						(SELECT GROUP_CONCAT(`value`  SEPARATOR ',') FROM CONFIG_VALUE WHERE configId=c.configId) AS possibleValues,
-						c.multiValue AS multiValue,
-						c.editable AS editable,
-						cs.objectId AS objectId
-					"""
-				)
+	backend = get_protected_backend()
+	config_states = backend.configState_getValues(object_ids=object_id).get(object_id, {})
+	configs = backend.config_getObjects()
+
+	config_data: dict = {"general": [], "clientconfig": [], "opsi-script": [], "opsiclientd": [], "software-on-demand": [], "licensing": []}
+	server_configs = ["user", "configed"]
+	for config in configs:
+		id_prefix = config.id.split(".")[0]
+		if id_prefix in server_configs:
+			continue
+		if id_prefix not in config_data:
+			id_prefix = "general"
+		tmp_config = config.to_hash()
+		tmp_config["objects"] = {}
+		if config.getType() == "BoolConfig":
+			tmp_config["objects"][object_id] = bool_value(config_states.get(config.id, {})[0])
+		elif config.multiValue:
+			tmp_config["objects"][object_id] = config_states.get(config.id, {})
+		else:
+			tmp_config["objects"][object_id] = (
+				config_states.get(config.id) if config_states.get(config.id) and config_states.get(config.id, {})[0] else ""
 			)
-			.select_from(table("CONFIG").alias("c"))
-			.join(text("CONFIG_VALUE AS cv"), text("c.configId=cv.configId"))  # type: ignore[arg-type]
-			.join(
-				text("CONFIG_STATE AS cs"),
-				and_(text("c.configId=cs.configId"), text((f"cs.objectId IS NULL OR cs.objectId='{object_id}'"))),
-				isouter=True,
-			)
-			.where(text("cv.isDefault=1"))
-			.group_by(text("c.configId, cs.objectId"))
-		)  # pylint: disable=redefined-outer-name
+		tmp_config["configId"] = config.id
+		if config.editable:
+			tmp_config["newValue"] = ""
+			tmp_config["newValues"] = []
+		config_data[id_prefix].append(tmp_config)
 
-		query = order_by(query, commons)  # type: ignore[assignment,arg-type]
-
-		result = session.execute(query, params)
-		result = result.fetchall()
-		config_data: dict = {"general": [], "clientconfig": [], "opsi-script": [], "opsiclientd": [], "software-on-demand": []}
-		server_configs = ["user", "configed"]
-		count = 0
-		my_list = []
-		for row in result:
-			if row is not None:
-				row_dict = dict(row)
-				id_prefix = row_dict.get("configId", "").split(".")[0]
-				if id_prefix in server_configs:
-					continue
-				if id_prefix not in config_data:
-					id_prefix = "general"
-				if row_dict.get("type") == "BoolConfig":
-					row_dict["value"] = bool_value(row_dict.get("value", ""))
-					row_dict["defaultValue"] = bool_value(row_dict.get("defaultValue", ""))
-					row_dict["possibleValues"] = [bool_value(value) for value in row_dict.get("possibleValues", "").split(",")]
-				else:
-					row_dict["possibleValues"] = row_dict.get("possibleValues", "").split(",")
-				row_dict["multiValue"] = bool(row_dict.get("multiValue", ""))
-				row_dict["editable"] = bool(row_dict.get("editable", ""))
-				count = count + 1
-				my_list.append(row_dict.get("configId", ""))
-				if row_dict.get("editable", False):
-					row_dict["newValue"] = ""
-					row_dict["newValues"] = []
-				config_data[id_prefix].append(row_dict)
-
-		return RESTResponse(data=config_data)
+	logger.debug(config_states)
+	return RESTResponse(data=config_data)
 
 
 @conifg_router.get("/api/opsidata/config/clients")
@@ -187,10 +157,6 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 	selectedClients: List[str] = Depends(parse_client_list),  # pylint: disable=invalid-name
 	commons: dict = Depends(common_query_parameters),
 ) -> RESTResponse:
-	"""
-	Get client config data.
-	"""
-
 	where = text("")
 	params: dict = {"clients": selectedClients, "num_clients": len(selectedClients)}
 	if commons.get("filterQuery"):
@@ -310,7 +276,6 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 					)  # len 1
 					and config.get("value", "") != config.get("defaultValue", "")
 				):
-
 					clients = config.get("clientsWithDiff", "").split(";")
 
 					for idx, client in enumerate(clients):
@@ -331,7 +296,7 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 				count = count + 1
 				configs[id_prefix].append(config)
 
-		return RESTResponse(data=configs)
+	return RESTResponse(data=configs)
 
 
 class Config(BaseModel):  # pylint: disable=too-few-public-methods
@@ -341,11 +306,11 @@ class Config(BaseModel):  # pylint: disable=too-few-public-methods
 
 
 class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
-	clientIds: List[str] = []
+	objectIds: List[str] = []
 	configs: List[Config]
 
 
-@conifg_router.post("/api/opsidata/config/server")
+@conifg_router.post("/api/opsidata/config")
 @rest_api
 @read_only_check
 def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
@@ -408,6 +373,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							.where(text(f"configId = '{config.configId}' AND value = '{value}'"))
 							.values(**values)
 						)
+						backend._send_messagebus_event("config_updated", data=values)  # pylint: disable=protected-access
 					else:
 						stmt = (
 							insert(
@@ -419,8 +385,10 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 							.values(**values)
 							.on_duplicate_key_update(**values)
 						)
+						backend._send_messagebus_event("config_created", data=values)  # pylint: disable=protected-access
 					logger.devel(stmt)
 					session.execute(stmt)
+
 				logger.debug("Config %s saved.", config.configId)
 			except Exception as err:  # pylint: disable=broad-except
 				logger.error("Could not save config: %s", err)
@@ -437,7 +405,7 @@ def save_config(  # pylint: disable=invalid-name, too-many-locals, too-many-stat
 	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Values for {','.join(ids)} changed.")
 
 
-@conifg_router.post("/api/opsidata/config/clients")
+@conifg_router.post("/api/opsidata/config/objects")
 @rest_api
 @read_only_check
 def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-many-statements, too-many-branches, unused-argument
@@ -448,11 +416,11 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 	"""
 	changes = []
 
-	if not data.clientIds:
+	if not data.objectIds:
 		logger.notice("No configurations were transferred to save. Nothing to do...")
 		return RESTErrorResponse(http_status=status.HTTP_400_BAD_REQUEST, message="No configurations were transferred to save.")
 
-	for client in data.clientIds:
+	for client in data.objectIds:
 		for config in data.configs:
 			changes.append(f"{client}: {config.configId}")
 			if isinstance(config.value, list):
@@ -475,6 +443,7 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 						.where(text(f"objectId = '{client}' AND configId = '{config.configId}'"))
 						.values(**values)
 					)
+					backend._send_messagebus_event("configState_updated", data=values)  # pylint: disable=protected-access
 				else:
 					stmt = (
 						insert(
@@ -485,13 +454,13 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 						.values(**values)
 						.on_duplicate_key_update(**values)
 					)
+					backend._send_messagebus_event("configState_created", data=values)  # pylint: disable=protected-access
 				session.execute(stmt)
 
 	return RESTResponse(http_status=status.HTTP_200_OK, data=f"Changed the following config states: {', '.join(changes)}")
 
 
 def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
-
 	with mysql.session() as session:
 		query = (
 			select(
@@ -515,7 +484,6 @@ def get_config_state(object_id: str, config_id: str) -> Union[str, None]:
 
 
 def get_config_value(config_id: str, value: Union[str, List[str], bool]) -> List:
-
 	with mysql.session() as session:
 		query = (
 			select(

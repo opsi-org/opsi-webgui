@@ -1,12 +1,12 @@
 <template>
   <div data-testid="VClients">
-    <AlertAAlert ref="sortProductsAlert">
+    <!-- <AlertAAlert ref="sortProductsAlert">
       <template #button>
         <b-button variant="warning" size="sm" class="float-right border-0 p-0" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
           {{ $t('button.continue') }}
         </b-button>
       </template>
-    </AlertAAlert>
+    </AlertAAlert> -->
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.clients')">
@@ -100,12 +100,16 @@
             <ModalMClientReachable classes="hover" />
           </template>
           <template #cell(reachable)="row">
-            <ViewVClientReachable :id="row.item.clientId" :classes="{'row-selected': selectionClients.includes(row.item.clientId)}" />
+            <ButtonBTNClientReachable :id="row.item.clientId" :classes="{'row-selected': selectionClients.includes(row.item.clientId)}" />
           </template>
 
           <template #cell(uefi)="row">
             <b-icon v-if="row.item.uefi" :icon="icon.check" />
           </template>
+          <template #cell(lastSeen)="row">
+            <small>{{ date(row.item.lastSeen) }}</small>
+          </template>
+
           <template #cell(version_outdated)="row">
             <b-button
               v-if="row.item.version_outdated > 0"
@@ -186,20 +190,23 @@
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { MBus } from '../../mixins/messagebus'
-import { Synchronization } from '../../mixins/component'
+import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Cookies } from '../../mixins/cookies'
+import { Format } from '../../mixins/format'
+import { DeleteClient } from '../../.utils/types/tobjects'
 const selections = namespace('selections')
-interface DeleteClient {
-  clientid: string
-}
 
-@Component({ mixins: [MBus, Icons, Synchronization, Cookies] })
+@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, Cookies, Format] })
 export default class VClients extends Vue {
   syncSort: any // mixin Synchronization
   icon: any
+  date:any
   wsBusMsg: any // mixin MBus
+  showToast: any // mixin AlertToast
+  showToastMbus: any // mixin AlertToast
+  showToastError: any // mixin AlertToast
   wsNotificationInfo: any // mixin MBus
   includesCookie!: any // mixin cookies
   getKeyCookie!: any
@@ -301,6 +308,7 @@ export default class VClients extends Vue {
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
   cache_pages: QueueNested = new QueueNested(this.cache_pages_no)
 
+  @selections.Getter public multiSelection!: boolean
   @selections.Getter public selectionDepots!: Array<string>
   @selections.Getter public selectionClients!: Array<string>
   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
@@ -308,12 +316,13 @@ export default class VClients extends Vue {
   @Watch('wsBusMsg', { deep: true }) async wsBusMsgObjectChanged () {
     const msg = this.wsBusMsg
     if (msg && msg.channel === 'event:host_created') {
-      this.wsNotificationInfo('MessageBus received event host_created', `${msg.data.id}`)
+      this.showToastMbus({
+        title: this.$t('message.info.event'),
+        content: this.$t('message.info.event.client_updated', { clientId: msg.data.id })
+      })
       await this.$fetch()
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
-      // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      // ref.alert(`MessageBus received event ${msg.event}`, 'info', `host: ${msg.data.id}`)
       // eslint-disable-next-line no-console
       console.log('message bus host_connected', msg)
       // this.cache_pages.
@@ -384,12 +393,7 @@ export default class VClients extends Vue {
           return response.data
         }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref?.alert(detailedError, 'danger')
-        this.error = this.$t('message.error.defaulttext') as string
-        this.error += JSON.stringify(error.message)
-        this.isLoading = false
+        this.showToastError(error)
         return []
       })
   }
@@ -417,16 +421,33 @@ export default class VClients extends Vue {
   }
 
   sortProductTable (clientid: string, type: string, toContinue: boolean) {
-    const ref = (this.$refs.sortProductsAlert as any)
+    // const ref = (this.$refs.sortProductsAlert as any)
     this.sortProductsByCol = type
     this.sortProductsByClient = clientid
-    if (this.selectionClients.length <= 0 || toContinue || this.selectionClients[0] === clientid) {
-      ref.hide()
+    if (this.selectionClients.length <= 0 || toContinue || this.selectionClients[0] === clientid || this.multiSelection === false) {
+      // ref.hide()
       this.setSelectionClients([this.sortProductsByClient])
       this.rowId = 'dummy'
       this.$router.push('/clients/products')
     } else {
-      ref.alert(this.$t('message.warning.sortProductsByClient', { client: this.sortProductsByClient }) as string, 'warning')
+      // ref.alert(this.$t('message.warning.sortProductsByClient', { client: this.sortProductsByClient }) as string, 'warning')
+      this.showToast({
+        title: this.$t('message.warning.title'),
+        content: this.$t('message.warning.sortProductsByClient', { client: this.sortProductsByClient }),
+        variant: 'warning',
+        noAutoHide: true,
+        buttons: [
+          {
+            hide: true,
+            text: this.$t('button.continue') as string,
+            action: () => this.sortProductTable(this.sortProductsByClient, this.sortProductsByCol, true) // shows reload button
+          }
+        ],
+        components: [
+          this.$createElement('CheckboxCBMultiselection', { props: { type: 'button', action: () => this.sortProductTable(this.sortProductsByClient, this.sortProductsByCol, true) } })
+          // new CBMultiselection({ type: 'button' })
+        ]
+      })
     }
   }
 }

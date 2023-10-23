@@ -11,11 +11,11 @@
         >
           <small><b-icon :icon="expandAll? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
         </b-button>
-        <InputIFilterTChanges :placeholder="$t('Filter')" :filter.sync="filter" />
+        <InputIFilterTChanges :placeholder="$t('input.filter')" :filter.sync="filter" />
       </template>
       <template #right>
         <b-button class="downloadButton" size="sm" variant="outline-primary" @click="downloadHealthData">
-          <b-icon :icon="icon.download" /> {{ $t('Download') }}
+          <b-icon :icon="icon.download" /> {{ $t('button.download') }}
         </b-button>
       </template>
     </BarBPageHeader>
@@ -25,20 +25,27 @@
           {{ k }}
         </b-button>
         <b-collapse :id="'collapse-'+k" :visible="expandAll || filter!= ''">
-          <span v-for="val,i in diagnostic" :key="i" :class="{ 'd-none': !i.toString().includes(filter) }">
-            <GridGFormItem class="ml-2" :label="i" variant="longvalue">
-              <template #value>
-                <template v-if="typeof val == 'object'">
-                  <div class="scrollValue">
-                    <pre>{{ JSON.stringify(val, null, 4) }}</pre>
-                  </div>
+          <GridGFormItem v-if="Object.keys(diagnostic).length === 0" class="ml-2" :label="$t('---')" variant="longvalue" />
+          <template v-else>
+            <span
+              v-for="value,attribute in diagnostic"
+              :key="attribute"
+              :class="{ 'd-none': !attribute.toString().toLowerCase().includes(filter.toLowerCase()) }"
+            >
+              <GridGFormItem class="ml-2" :label="attribute" variant="longvalue">
+                <template #value>
+                  <template v-if="typeof value == 'object'">
+                    <div class="scrollValue">
+                      <pre>{{ JSON.stringify(value, null, 4) }}</pre>
+                    </div>
+                  </template>
+                  <template v-else>
+                    {{ value }}
+                  </template>
                 </template>
-                <template v-else>
-                  {{ val }}
-                </template>
-              </template>
-            </GridGFormItem>
-          </span>
+              </GridGFormItem>
+            </span>
+          </template>
         </b-collapse>
       </span>
     </DivDScrollResult>
@@ -47,9 +54,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class VDiagnostics extends Vue {
+  showToastError: any
   icon: any
   $axios: any
   $t:any
@@ -70,9 +79,7 @@ export default class VDiagnostics extends Vue {
         this.onlyDiagnostics = response
         if (this.onlyDiagnostics.length !== 0 && this.onlyDiagnostics.health_check) { delete this.onlyDiagnostics.health_check }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 

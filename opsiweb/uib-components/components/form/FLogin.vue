@@ -76,18 +76,18 @@ import { Component, Vue, namespace } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Configserver } from '../../mixins/get'
 import { Settings } from '../../mixins/settings'
+import { AlertToast } from '../../mixins/component'
+import { FormUser } from '../../.utils/types/tobjects'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
-interface FormUser {
-    username: string,
-    password: string
 }
 
-@Component({ mixins: [Icons, Configserver, Settings] })
+@Component({ mixins: [Icons, Configserver, Settings, AlertToast] })
 export default class FLogin extends Vue {
   themeclass!: string // mixin Settings
   CONST_LIGHT!: string // mixin Settings
+  showToastError!: any // mixin
   icon: any
   $router:any
   $route:any
@@ -154,9 +154,7 @@ export default class FLogin extends Vue {
         this.logout()
         this.clearSession()
         this.isLoading = false
-        const ref = (this.$root.$children[1].$refs.authAlert as any) || (this.$root.$children[2].$refs.authAlert as any)
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.login') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
   }
 }

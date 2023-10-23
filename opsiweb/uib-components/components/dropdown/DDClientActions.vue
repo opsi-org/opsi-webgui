@@ -3,53 +3,54 @@
     data-testid="DDClientActions"
     class="DDClientActions"
     :class="{
-      'contextmenu ': incontextmenu!==false,
       'btn btn-outline-primary btn-sm color-primary-selected': incontextmenu===false,
+      'contextmenu incontextmenu': incontextmenu!==false,
     }"
-    @mouseover="incontextmenu ? onOver($refs.actionsdropdown) : null"
-    @mouseleave="incontextmenu ? onLeave($refs.actionsdropdown) : null"
-    @focusin="incontextmenu ? onOver($refs.actionsdropdown) : null"
-    @focusout="incontextmenu ? onLeave($refs.actionsdropdown) : null"
+    @mouseover="incontextmenu!==false ? onOver($refs.actionsdropdown) : null"
+    @mouseleave="incontextmenu!==false ? onLeave($refs.actionsdropdown) : null"
+    @focusin="incontextmenu!==false ? onOver($refs.actionsdropdown) : null"
+    @focusout="incontextmenu!==false ? onLeave($refs.actionsdropdown) : null"
   >
     <b-dropdown
       ref="actionsdropdown"
-      :variant="incontextmenu? 'transparent border-0' : 'outline-primary'"
+      block
       size="sm"
-      :no-caret="!incontextmenu"
-      :class="{ 'dropdown-item contextmenu ': incontextmenu!==false }"
-      :dropright="incontextmenu"
+      :variant="incontextmenu!==false? 'transparent border-0' : 'outline-primary'"
+      :no-caret="incontextmenu===false"
+      :class="{ 'dropdown-item contextmenu incontextmenu': incontextmenu!==false }"
+      :dropright="incontextmenu!==false"
     >
       <template #button-content>
         <b-icon :icon="icon.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected mb-1" />
-        <span v-if="incontextmenu" class="color-primary-selected">{{ $t('button.item-actions') }}</span>
+        <span v-if="incontextmenu!==false" class="color-primary-selected">{{ $t('button.item-actions') }}</span>
       </template>
       <ButtonBTNEvent
-        :class="{ 'dropdown-item contextmenu small': incontextmenu }"
+        :class="{ 'dropdown-item contextmenu small': incontextmenu!==false }"
         event="ondemand"
-        :incontextmenu="incontextmenu"
+        :incontextmenu="incontextmenu!==false"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
         :with-text="true"
       />
       <ButtonBTNEvent
-        :class="{ 'dropdown-item contextmenu small': incontextmenu }"
+        :class="{ 'dropdown-item contextmenu small': incontextmenu!==false }"
         event="showpopup"
-        :incontextmenu="incontextmenu"
+        :incontextmenu="incontextmenu!==false"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
         :with-text="true"
       />
       <ButtonBTNEvent
-        :class="{ 'dropdown-item contextmenu small': incontextmenu }"
+        :class="{ 'dropdown-item contextmenu small': incontextmenu!==false }"
         event="reboot"
-        :incontextmenu="incontextmenu"
+        :incontextmenu="incontextmenu!==false"
         :data="clientId"
         :update-loading="loading => clientsLoading = loading"
         :with-text="true"
       />
-      <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" />
-      <ModalMRenameClient :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" :refetch="fetch" />
-      <ModalMDeleteClient :class="{ 'dropdown-item contextmenu small': incontextmenu }" :incontextmenu="incontextmenu" :client-id="clientId" :refetch="fetch" />
+      <ModalMDeployClientAgent :class="{ 'dropdown-item contextmenu small pl-4 pr-4 pt-2 pb-2': incontextmenu!==false}" :incontextmenu="incontextmenu!==false" :client-id="clientId" />
+      <ModalMRenameClient :class="{ 'dropdown-item contextmenu small pl-4 pr-4 pt-2 pb-2': incontextmenu!==false }" :incontextmenu="incontextmenu!==false" :client-id="clientId" :refetch="fetch" />
+      <ModalMDeleteClient :class="{ 'dropdown-item contextmenu small pl-4 pr-4 pt-2 pb-2': incontextmenu!==false }" :incontextmenu="incontextmenu!==false" :client-id="clientId" :refetch="fetch" />
     </b-dropdown>
   </div>
 </template>

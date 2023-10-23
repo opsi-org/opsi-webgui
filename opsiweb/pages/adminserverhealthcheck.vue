@@ -1,5 +1,5 @@
 <template>
-  <ViewVServerHealth />
+  <TabsTServerHealth />
 </template>
 
 <script lang="ts">

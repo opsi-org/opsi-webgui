@@ -1,9 +1,11 @@
 import { Component, namespace, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from './component'
 import { IObjectString2String } from '~/.utils/types/tgeneral'
 
 const cache = namespace('data-cache')
 
-@Component export class Configserver extends Vue {
+@Component({ mixins: [AlertToast] }) export class Configserver extends Vue {
+  showToastError: any // from mixin AlertToast
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
 
   async getOpsiConfigServer (alertRef: any) {
@@ -11,19 +13,19 @@ const cache = namespace('data-cache')
       .then((response) => {
         this.setOpsiconfigserver(response.result)
       }).catch((error) => {
-        const errorMsg = this.$t('message.error.opsiconfd') as string
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        alertRef.alert(errorMsg, 'danger', detailedError)
+        this.showToastError(error)
       })
   }
 }
 
-@Component export class Depot extends Vue {
+@Component({ mixins: [AlertToast] }) export class Depot extends Vue {
+  showToastError: any // from mixin AlertToast
   async getDepotIdList () {
     return await this.$axios.$get('/api/opsidata/depot_ids')
   }
 }
-@Component export class Client extends Vue {
+@Component({ mixins: [AlertToast] }) export class Client extends Vue {
+  showToastError: any // from mixin AlertToast
   fetchedDataClients2Depots: IObjectString2String = {}
 
   async getClientIdList (selectedDepots: Array<string>) {
@@ -38,6 +40,7 @@ const cache = namespace('data-cache')
       }).catch((error) => {
         this.fetchedDataClients2Depots = {}
         throw new Error(error)
+        // this.showToastError(error)
       })
   }
 }

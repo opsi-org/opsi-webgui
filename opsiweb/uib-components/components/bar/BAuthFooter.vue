@@ -8,7 +8,7 @@
       :class="{auth_footer: $mq !== 'mobile', auth_footer_wrap: $mq === 'mobile'}"
     >
       <b-container fluid>
-        <span class="text-small">{{ $t('uib') }}</span>
+        <span class="text-small">{{ t_fixed('uib') }}</span>
         <DropdownDDLang :footer="true" />
         <span class="text-small BAuthFooter-version">
           {{ $t('label.version') }} {{ $config.packageVersion }}
@@ -20,11 +20,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+import { Strings } from '../../mixins/strings'
 import DropdownDDLang from '../dropdown/DDLang.vue'
-@Component({ components: { DropdownDDLang } })
+
+@Component({ components: { DropdownDDLang }, mixins: [Strings] })
 export default class BAuthFooter extends Vue {
   $mq: any
   $config: any
+  t_fixed: any // mixin
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <ViewVAdmin />
+  <TabsTAdmin />
 </template>
 
 <script lang="ts">

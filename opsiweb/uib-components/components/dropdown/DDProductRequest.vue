@@ -16,7 +16,7 @@
     >
       <template #button-content>
         <span :class="{'value-changed-not-saved' : currentReq != preRequest}">
-          {{ visibleRequest }} {{ (currentReq != preRequest)? $t('notOrigin') : '' }}
+          {{ visibleRequest }} {{ (currentReq != preRequest)? t_fixed('notOrigin') : '' }}
         </span>
       </template>
       <b-dropdown-item
@@ -43,10 +43,13 @@ import { BDropdown } from 'bootstrap-vue'
 import { ITableRowItemProducts } from '../../.utils/types/ttable'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { mapValues2Objects } from '../../.utils/utils/smappings'
+import { Strings } from '../../mixins/strings'
 const selections = namespace('selections')
 const config = namespace('config-app')
-@Component
+
+@Component({ mixins: [Strings] })
 export default class DDProductRequest extends BDropdown {
+  t_fixed: any
   @Prop({ }) rowitem!: ITableRowItemProducts|undefined
   @Prop({ }) rowIsSelected: boolean|undefined
   @Prop({ default: () => { return '---' } }) request!: string

@@ -6,7 +6,7 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-delete-' + clientId)"
+      @click="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>
@@ -14,16 +14,16 @@
       v-else
       variant="outline-primary"
       size="sm"
-      class="w-100 h-100 text-left border-0"
+      class="w-100 h-100 text-left border-0 incontextmenu"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-delete-' + clientId)"
-      @keypress.enter="$bvModal.show('event-modal-delete-' + clientId)"
+      @click="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
+      @keypress.enter="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </div>
 
     <b-modal
-      :id="'event-modal-delete-' + clientId"
+      :id="'event-modal-delete-' + clientId + '-context-menu-' + incontextmenu"
       :title="$t('title.deleteClient')"
       data-testid="MDeleteClientModal"
       centered
@@ -51,12 +51,15 @@
 <script lang="ts">
 import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 const config = namespace('config-app')
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class MDeleteClient extends Vue {
+  showToastSuccess: any // from mixin AlertToast
+  showToastError: any // from mixin AlertToast
   icon: any
   show:boolean = false
   $axios: any
@@ -71,16 +74,16 @@ export default class MDeleteClient extends Vue {
 
   async deleteOpsiClient (ident:string) {
     const id = ident
-    const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
     await this.$axios.$delete('/api/opsidata/clients/' + id)
       .then(() => {
-        ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
+        // ref.alert(this.$t('message.success.deleteClient', { client: id }) as string, 'success')
+        this.showToastSuccess(this.$t('message.success.deleteClient', { client: id }))
         this.delFromSelectionClients(id)
-        this.$bvModal.hide('event-modal-delete-' + this.clientId)
+        this.$bvModal.hide('event-modal-delete-' + this.clientId + '-context-menu-' + this.incontextmenu)
         this.refetch()
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
+        // ref.alert(this.$t('message.error.deleteClient') as string, 'danger', detailedError)
+        this.showToastError(error)
       })
   }
 }

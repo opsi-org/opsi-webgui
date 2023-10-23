@@ -3,10 +3,8 @@ import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 import { ITheme } from '../.utils/types/tsettings'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
 import { Cookies } from '../mixins/cookies'
-interface IColumnLayoutCollaped {
-  parentId: string,
-  value: boolean
-}
+import { IColumnLayoutCollapsed } from '../.utils/types/tobjects'
+
 @Module({ name: 'settings', stateFactory: true, namespaced: true })
 export default class Settings extends VuexModule {
   _language: string = Cookies.options.methods.getCookie('Language') as string || 'en'
@@ -57,7 +55,7 @@ export default class Settings extends VuexModule {
     Cookies.options.methods.setCookie('Quicksave', (isQuickSave) ? 'true' : 'false')
   }
 
-  @VuexMutation public setColumnLayoutCollapsed (obj: IColumnLayoutCollaped) {
+  @VuexMutation public setColumnLayoutCollapsed (obj: IColumnLayoutCollapsed) {
     this._twoColumnLayoutCollapsed[obj.parentId] = obj.value
   }
 

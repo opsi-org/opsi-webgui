@@ -1,10 +1,11 @@
 <template>
   <div
-    :title="withText == false ? $t(events[event].tooltip) : ''"
     data-testid="BTNEvent"
+    :class="{'incontextmenu': incontextmenu }"
+    :title="withText == false ? $t(events[event].tooltip) : ''"
   >
     <b-button
-      v-if="incontextmenu == false"
+      v-if="incontextmenu === false"
       :pressed="isLoading"
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
       :variant="events[event].variant"
@@ -14,7 +15,7 @@
 
       }"
       size="sm"
-      @click="$bvModal.show('event-modal-' + event + '-' + data)"
+      @click="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
@@ -25,10 +26,10 @@
       v-else
       variant="outline-primary"
       size="sm"
-      class="w-100 h-100 text-left border-0"
+      class="w-100 h-100 text-left border-0 incontextmenu contextmenu pl-4  pt-1 pb-2 "
       :disabled="isLoading || (event=='ondemand' && selection.length <= 0)"
-      @click="$bvModal.show('event-modal-' + event + '-' + data)"
-      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data)"
+      @click="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
+      @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
     >
       <b-icon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
@@ -37,7 +38,7 @@
     </div>
 
     <b-modal
-      :id="'event-modal-' + event + '-' + data"
+      :id="'event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu"
       :title="$t(events[event].titlemodal)"
       data-testid="BTNEventModal"
       centered
@@ -85,11 +86,15 @@
 
 <script lang="ts">
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+import { AlertToast } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, AlertToast] })
 export default class BTNEvent extends Vue {
+  showToastInfo: any // from mixin AlertToast
+  showToastError: any // from mixin AlertToast
+  showToastInfoList: any // from mixin AlertToast
   $axios: any
   icon: any
   $t: any
@@ -168,17 +173,17 @@ export default class BTNEvent extends Vue {
     if (this.updateLoading !== undefined) {
       this.updateLoading(data.params.client_ids)
     }
-    const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
     await this.$axios.$post('/api/command/opsiclientd_rpc', data.params)
       .then((response) => {
-        ref.alert(this.$t('message.info.event'), 'info', response)
+        this.showToastInfoList(response)
         this.callEventSended()
       }).catch((error) => {
+        this.showToastError(error) // this.$t('table.fields.reachablility')
         // eslint-disable-next-line no-console
         console.error(error)
         this.callEventSended()
       })
-    this.$bvModal.hide('event-modal-' + this.event + '-' + this.data)
+    this.$bvModal.hide('event-modal-' + this.event + '-' + this.data + '-context-menu-' + this.incontextmenu)
   }
 
   callEventPrepareData () {

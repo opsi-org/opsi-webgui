@@ -34,6 +34,7 @@
     <BarBSide v-once class="sidebar_content" :attributes="sidebarAttr" :sidebarshown.sync="sidebarAttr.visible" />
     <BarBQuickPanel :show-quick-panel="showQuickPanel" @change="showQuickPanelChanged" />
     <div class="main_content">
+      <!-- Use showToastSuccess or showToastError instead (Readon: tables of pages are jumping) -->
       <AlertAAlertAutoDismissible ref="statusAlert" data-testid="statusAlert" />
       <AlertAAlert ref="errorAlert" data-testid="errorAlert" />
       <AlertAAlert ref="expiringAlert" /> <!-- referenced in DivDCountdowntimer, any changes should be checked with expiring-session-behaviour-->
@@ -49,6 +50,7 @@ import { Configserver } from '../mixins/get'
 import { Icons } from '../mixins/icons'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
+import { SideBarAttr } from '../.utils/types/tobjects'
 import { Cookies } from '../mixins/cookies'
 import { SettingsLanguage } from '../mixins/settings'
 
@@ -56,11 +58,6 @@ const settings = namespace('settings')
 const changes = namespace('changes')
 const cache = namespace('data-cache')
 const config = namespace('config-app')
-
-interface SideBarAttr {
-    visible: boolean,
-    expanded: boolean
-}
 
 @Component({ mixins: [MBus, Configserver, Icons, Cookies, SettingsLanguage] })
 export default class LayoutDefault extends Vue {
@@ -167,11 +164,6 @@ export default class LayoutDefault extends Vue {
 </script>
 
 <style>
-.scrollcontent {
-  min-height: 40vh !important;
-  overflow-x:auto;
-  overflow-y: auto;
-}
 .topbar_content {
   z-index: 1000;
   width: 100% !important;
@@ -207,5 +199,12 @@ export default class LayoutDefault extends Vue {
 }
 :not(.mobile).QPwithSBcollapsed .main_content{
   width: calc(100% - 470px) !important;
+}
+
+.toast-body .btn,
+.toast-body .btn:hover {
+  color: unset !important;
+  background-color: transparent !important;
+  border-color: unset !important;
 }
 </style>

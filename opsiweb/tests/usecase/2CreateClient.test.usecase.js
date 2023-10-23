@@ -34,7 +34,7 @@ test.describe('usecase', () => {
     await expect(page).toHaveURL('/addons/webgui/app/clientscreation')
     await page.getByTestId('clientname').fill('testclient')
     await page.getByTestId('addButton').click()
-    await expect(page.getByTestId('statusAlert')).toContainText('has been added succesfully.')
+    await expect(page.getByTestId('b-toast')).toContainText('has been added succesfully.')
     apiMock(page, '**/api/auth/logout', { result: 'logout success' }, 'POST')
     await page.click('[data-testid="ButtonBTNLogout"]')
     page.setDefaultTimeout(55555)

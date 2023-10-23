@@ -44,7 +44,8 @@
       <template #contextcontent-general-1>
         <ButtonBTNEvent
           event="ondemand"
-          classes="dropdown-item border-0 smaller-text-size"
+          classes="dropdown-itemborder-0 smaller-text-size incontextmenu"
+          :incontextmenu="true"
           :with-text="true"
         />
         <!-- :update-loading = *"loading => clientsLoading = loading" -->
@@ -65,6 +66,9 @@
       </template>
       <template #head(actionResult)>
         <b-icon :icon="icon.productActionResult" alt="action result" />
+      </template>
+      <template #cell(modificationTime)="row">
+        <small>{{ date(row.item.modificationTime) }}</small>
       </template>
       <template #cell(version)="row">
         <TableCellTCProductVersionCell
@@ -153,19 +157,17 @@ import { ITableData, ITableInfo, ITableRow, ITableRowItemProducts } from '../../
 import { ChangeObj } from '../../.utils/types/tchanges'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { MBus } from '../../mixins/messagebus'
-import { Synchronization } from '../../mixins/component'
+import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
+import { Format } from '../../mixins/format'
+import { IFetchOptions } from '../../.utils/types/tobjects'
 
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
-interface IFetchOptions {
-  fetchClients:boolean,
-  fetchClients2Depots:boolean,
-}
 
-@Component({ mixins: [MBus, Icons, Synchronization, SaveProductActionRequest] })
+@Component({ mixins: [AlertToast, MBus, Icons, Synchronization, SaveProductActionRequest, Format] })
 export default class TProductsNetboot extends Vue {
   @Prop() parentId!: string
   @Prop() rowident!: string
@@ -177,7 +179,10 @@ export default class TProductsNetboot extends Vue {
   @Prop({ default: false }) isLoading!: boolean
   @Prop() fetchedDataClients2Depots!: IObjectString2String
   wsBusMsg: any // mixin // store
+  showToastMbus: any // mixin // alerttoast
+  hideToast: any // mixin // alerttoast
   icon: any
+  date:any
   syncSort: any
   $axios: any
   $nuxt: any
@@ -196,6 +201,7 @@ export default class TProductsNetboot extends Vue {
   action: string = ''
   // fetchedDataClients2Depots: IObjectString2String = {}
   fetchOptions: IFetchOptions = { fetchClients: true, fetchClients2Depots: true }
+  lastChanges: any = { clientIds: [], productIds: [] } // used to check if we caused the last event
 
   cache_pages_no: number = 2 // number of pages which can be stored in parallel (cache)
   cache_pages: QueueNested = new QueueNested(this.cache_pages_no, 'NetbootQueue')
@@ -229,8 +235,14 @@ export default class TProductsNetboot extends Vue {
       this.visibleProductIds.includes(msg.data.productId) &&
       this.selectionClients.includes(msg.data.clientId)
     ) {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      ref.alert(`MessageBus received:  productOnClientChanged ${msg.data.productId}`, 'info', '', true)
+      if (!(this.lastChanges.clientIds.includes(msg.data.clientId) && this.lastChanges.productIds.includes(msg.data.productId))) {
+        // check if we may cause the event...
+        this.showToastMbus({
+          title: this.$t('message.info.event'),
+          content: this.$t('message.info.event.poc_updated', { productId: msg.data.productId }),
+          variant: 'info'
+        })
+      }
       if (this.quicksave) {
         this.$fetch()
         // ref.hide()
@@ -288,13 +300,7 @@ export default class TProductsNetboot extends Vue {
 
   async fetchWrapper () { await this.$fetch() }
   fetch () {
-    try {
-      const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-      if (ref) { ref.hide() }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.warn('Couldnt find AlertBox for statusAlert')
-    }
+    this.hideToast()
     this.$emit('fetch-products', this)
   } // will trigger -> this.setItemsCache(items)
 
@@ -311,15 +317,13 @@ export default class TProductsNetboot extends Vue {
 
   async saveActionRequest (rowitem: ITableRowItemProducts, newrequest: string) {
     // TODO: saving in database for dropdown in table cell(actionRequest)
-    let orgActionReq = rowitem.actionRequest
-    if (orgActionReq === null) {
-      orgActionReq = 'none'
-    }
     const data = {
       clientIds: this.selectionClients,
       productIds: [rowitem.productId],
       actionRequest: newrequest
     }
+    this.lastChanges.clientIds = data.clientIds
+    this.lastChanges.productIds = data.productIds
     if (!this.quicksave) {
       for (const c in this.selectionClients) {
         const d = {
@@ -332,11 +336,9 @@ export default class TProductsNetboot extends Vue {
         if (objIndex > -1) {
           this.delWithIndexChangesProducts(objIndex)
         }
-        if (orgActionReq !== newrequest) {
-          this.pushToChangesProducts(d)
-        }
+        this.pushToChangesProducts(d)
       }
-    } else if (orgActionReq !== newrequest) {
+    } else {
       const successalert = true
       await this.saveProdActionRequest(data, null, successalert)
       this.fetchOptions.fetchClients = true
@@ -349,6 +351,8 @@ export default class TProductsNetboot extends Vue {
       productIds: this.selectionProducts,
       actionRequest: this.action
     }
+    this.lastChanges.clientIds = data.clientIds
+    this.lastChanges.productIds = data.productIds
     if (!this.quicksave) {
       for (const c in this.selectionClients) {
         for (const p in this.selectionProducts) {

@@ -1,7 +1,7 @@
 <template>
   <b-card class="text-center index-card">
     <h1 class="title">
-      {{ $t("title.project") }}
+      {{ t_fixed("title.project") }}
     </h1>
     <IconIOpsiLogo
       :short="false"
@@ -19,10 +19,12 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 import { Settings } from '../uib-components/mixins/settings'
+import { Strings } from '../uib-components/mixins/strings'
 
-@Component({ mixins: [Settings] })
+@Component({ mixins: [Settings, Strings] })
 export default class PIndex extends Vue {
   $t:any
+  t_fixed:any // mixin string
   CONST_LIGHT!: string
   themeclass!: string
 }

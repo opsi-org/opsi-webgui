@@ -6,7 +6,7 @@
       size="sm"
       class="w-100 h-100 text-left border-0"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-deployCA-' + clientId)"
+      @click="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </b-button>
@@ -14,16 +14,16 @@
       v-else
       variant="outline-primary"
       size="sm"
-      class="w-100 h-100 text-left border-0"
+      class="w-100 h-100 text-left border-0 incontextmenu"
       :disabled="config?.read_only"
-      @click="$bvModal.show('event-modal-deployCA-' + clientId)"
-      @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId)"
+      @click="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
+      @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
     >
       <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </div>
 
     <b-modal
-      :id="'event-modal-deployCA-' + clientId"
+      :id="'event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu"
       :title="$t('label.clientagent')"
       data-testid="MDeployClientAgentModal"
       centered
@@ -62,7 +62,7 @@
             size="sm"
             class="float-right"
             :disabled="config?.read_only"
-            @click="deployclientagent()"
+            @click="deployopsiclientagent()"
           >
             <span class="deploy"> {{ $t('button.confirm') }} </span>
           </b-button>
@@ -77,14 +77,8 @@ import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Icons } from '../../mixins/icons'
 import { DeployClientAgent } from '../../mixins/post'
+import { FormClientAgent } from '../../.utils/types/tobjects'
 const config = namespace('config-app')
-
-interface FormClientAgent {
-    clients: Array<string>,
-    username: string,
-    password: string,
-    type: string
-}
 
 @Component({ mixins: [Icons, DeployClientAgent] })
 export default class MDeployClientAgent extends Vue {
@@ -101,12 +95,12 @@ export default class MDeployClientAgent extends Vue {
 
   @config.Getter public config!: IObjectString2Boolean
 
-  async deployclientagent () {
+  async deployopsiclientagent () {
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
     }
     const modal = true
-    await this.deployClientAgent(this.form, modal)
+    await this.deployClientAgent(this.form, modal, this.incontextmenu)
   }
 }
 </script>

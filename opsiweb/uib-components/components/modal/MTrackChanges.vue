@@ -20,11 +20,11 @@
       @hide="$nuxt.refresh()"
     >
       <b-tabs small lazy>
-        <b-tab :title="$t('Host Parameters')" active>
+        <b-tab :title="$t('title.hostparameters')" active>
           <GridGChangesHostParam v-if="changesHostParam.filter((o) => o.user === username).length!==0" />
           <span v-else>{{ $t("empty") }}</span>
         </b-tab>
-        <b-tab :title="$t('Product Actions and Properties')">
+        <b-tab :title="$t('title.prodactionsprops')">
           <GridGChangesProducts v-if="changesProducts.filter(o => o.user === username).length !== 0" />
           <span v-else>{{ $t("empty") }}</span>
         </b-tab>

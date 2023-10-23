@@ -18,7 +18,8 @@ body{
   line-height:1.5;
   color:var(--fg-basic);
   text-align:left;
-  background-color:var(--bg-basic)
+  background-color:var(--bg-basic);
+  overflow-x: hidden;
 }
 [tabindex="-1"]:focus:not(:focus-visible){
   outline:0 !important
@@ -3855,6 +3856,9 @@ a.badge-dark.focus,a.badge-dark:focus{
   color:var(--fg-close) !important;
   text-shadow:0 1px 0 var(--fg-basic);
   opacity:0.5
+}
+header.toast-header .close{
+  color:unset !important;
 }
 .close:hover{
   color:var(--fg-close-hover);

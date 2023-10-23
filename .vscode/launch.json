@@ -21,7 +21,8 @@
 			// "--dry-save-package-json-to package-merged.json",
 			"runtimeArgs": [
 				"run-script",
-				"dev"
+				"dev",
+				"--trace-warnings"
 			],
 			"outputCapture": "std",
 			"request": "launch",

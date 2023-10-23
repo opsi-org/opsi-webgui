@@ -22,7 +22,12 @@
             <b-icon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
           </b-button>
           <b-collapse :id="k" :visible="filter === '' ? false : true">
-            <span v-for="item, index in changes" :key="index" :class="{ 'd-none': item.clientId && !item.clientId.includes(filter) || item.depotId && !item.depotId.includes(filter)}">
+            <span
+              v-for="item, index in changes"
+              :key="index"
+              :class="{ 'd-none': item.clientId && !item.clientId.includes(filter.toLowerCase())
+                || item.depotId && !item.depotId.includes(filter.toLowerCase())}"
+            >
               <GridGFormItem
                 value-more="true"
                 :label="item.depotId || item.clientId"
@@ -42,7 +47,7 @@
       </DivDScrollResult>
     </div>
     <div v-else>
-      {{ $t('empty') }}
+      {{ t_fixed('keep-english.empty') }}
     </div>
   </div>
 </template>
@@ -52,13 +57,15 @@ import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest, SaveProductProperties } from '../../mixins/save'
+import { Strings } from '../../mixins/strings'
 const auth = namespace('auth')
 const changes = namespace('changes')
 const errors = namespace('errors')
 
-@Component({ mixins: [Icons, SaveProductActionRequest, SaveProductProperties] })
+@Component({ mixins: [Icons, Strings, SaveProductActionRequest, SaveProductProperties] })
 export default class GChangesProducts extends Vue {
   icon: any
+  t_fixed: any
   $axios: any
   $mq: any
   $nuxt: any

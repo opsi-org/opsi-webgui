@@ -1,11 +1,16 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/en.json')
-const de = require('../../uib-components/locale/de.json')
-
+const en = require('../../uib-components/locale/opsiweb-ui_en.json')
+let de
+try {
+  de = require('../../uib-components/locale/opsiweb-ui_de.json')
+} catch (e) {
+  console.error('Translations exist only in pipeline (Will be downloaded from Transifex)')
+  de = {}
+}
 test('Servers', async ({ page }) => {
   await callStoryId(page, 'view-v-depots', 'v-depots')
-  const component = await page.locator('[data-testid="VDepots"]')
+  const component = page.locator('[data-testid="VDepots"]')
   await (new Promise(resolve => setTimeout(resolve, 1000)))
   await page.evaluate(() => { document.querySelector('.count').innerHTML = '1/7' })
   await page.evaluate((val) => { document.querySelector('.tableheader_title').innerHTML = val }, en['title.depots'])

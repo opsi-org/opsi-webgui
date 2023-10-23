@@ -4,7 +4,7 @@
     data-testid="ButtonBTNRowLinkTo"
     :class="{
       'w-100 h-100 text-left d-flex': true,
-      'dropdown-item border-0': incontextmenu,
+      'dropdown-item border-0 incontextmenu': incontextmenu,
       [classes]: true,
     }"
     :title="label ? '' : title"

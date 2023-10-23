@@ -5,6 +5,7 @@
     :id="id"
     :class="classes"
     :type="type"
+    :show-as-multi="multi"
     :always-open="open"
     :text="$t('treeselect.clientGroups')"
     data-testid="TSHostGroups"
@@ -37,6 +38,7 @@ export default class TSHostGroups extends Vue {
   $fetch: any
   id: string = 'HostGroups'
   isLoading: boolean = true
+  @Prop({ default: true }) multi!: boolean
   @Prop({ default: false }) open!: boolean
   @Prop({ }) classes!: any
   @Prop({ default: 'treeselect_short' }) type!: string

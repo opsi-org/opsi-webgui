@@ -71,20 +71,20 @@
 </template>
 
 <script lang="ts">
-import Cookie from 'js-cookie'
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { IObjectString2String } from '../../.utils/types/tgeneral'
 import QueueNested from '../../.utils/utils/QueueNested'
-import { Synchronization } from '../../mixins/component'
+import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { Client } from '../../mixins/get'
 import { Cookies } from '../../mixins/cookies'
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
-@Component({ mixins: [Icons, Synchronization, Client, Cookies] })
+@Component({ mixins: [Icons, Synchronization, Client, Cookies, AlertToast] })
 export default class VDepots extends Vue {
+  showToastError: any // mixin
   icon: any
   syncSort: any
   includesCookie!: any // mixin cookies
@@ -222,10 +222,7 @@ export default class VDepots extends Vue {
           return response.data
         }
       }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
-        this.error = this.$t('message.error.defaulttext') as string
+        this.showToastError(error)
         this.isLoading = false
       })
   }

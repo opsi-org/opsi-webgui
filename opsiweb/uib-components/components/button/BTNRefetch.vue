@@ -6,6 +6,7 @@
     class="BTNRefetch"
     size="sm"
     :class="{
+      'incontextmenu': incontextmenu !== false,
       'border-0': incontextmenu !== false,
       'dropdown-item': incontextmenu !== false,
       'float-right': incontextmenu === false

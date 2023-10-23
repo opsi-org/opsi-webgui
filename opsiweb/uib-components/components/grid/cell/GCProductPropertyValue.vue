@@ -13,7 +13,7 @@
         :indeterminate="visibleValueBoolIndeterminate"
         @change="handleBoolChange"
       >
-        <span style="font-size: 25px;"> {{ isOrigin? '' : $t('notOrigin') }} </span>
+        <span style="font-size: 25px;"> {{ isOrigin? '' : t_fixed('notOrigin') }} </span>
       </b-form-checkbox>
       <IconILoading v-else-if="loading" />
       <TreeTSDefault
@@ -58,15 +58,19 @@ import { IProperty } from '../../../.utils/types/ttable'
 import { IObjectString2Boolean, IObjectString2String } from '../../../.utils/types/tgeneral'
 import { arrayEqual } from '../../../.utils/utils/scompares'
 import { Icons } from '../../../mixins/icons'
+import { Strings } from '../../../mixins/strings'
+import { AlertToast } from '../../../mixins/component'
 const settings = namespace('settings')
 const selections = namespace('selections')
 const changes = namespace('changes')
 const config = namespace('config-app')
 
-@Component({ mixins: [Icons] })
+@Component({ mixins: [Icons, Strings, AlertToast] })
 export default class GCProductPropertyValue extends Vue {
+  showToastError: any // from mixin AlertToast
   console: any
   $t:any
+  t_fixed:any
   $axios:any
   icon:any
   @Prop() rowItem!: IProperty
@@ -198,10 +202,7 @@ export default class GCProductPropertyValue extends Vue {
         this.loading = false
       }).catch((error) => {
         this.loading = false
-        // this.errorText.properties = (this as any).$t('message.error.fetch.productProperty')
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-        ref.alert(detailedError, 'danger')
+        this.showToastError(error)
       })
   }
 
