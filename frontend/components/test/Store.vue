@@ -1,7 +1,7 @@
 <template>
   <div>
     {{  counterStore.counter }}
-      <b-button variant="primary" @click="counterStore.increment()"> increment </b-button>
+      <b-button variant="primary" @click="counterStore.increment()"> BootstrapVue increment </b-button>
   </div>
 </template>
 

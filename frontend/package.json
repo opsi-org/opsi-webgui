@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "clean": "rm -rf node_modules; rm -f package-lock.json;",
+    "clean": "rm -rf node_modules; rm -f package-lock.json; npx nuxt cleanup",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
@@ -12,25 +12,27 @@
     "////nuxt-monaco-editor": "^1.2.3",
     "//monaco-editor": "^0.43.0",
     "//@vue/compat": "^3.3.4",
-    "//@nuxt/devtools": "latest",
-    "//@bootstrap-vue-next/nuxt": "^0.13.3",
-    "//bootstrap": "^5.3.2",
-    "//bootstrap-vue-next": "^0.13.3",
-    "// elementplus currently has a typescriptbug...": ""
+    "//@nuxtjs/color-mode": "^3.3.0 // currently imported by bootstrap-next ? "
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "element-plus": "^2.4.x"
   },
   "devDependencies": {
+    "@nuxt/devtools": "latest",
     "@bootstrap-vue-next/nuxt": "^0.14.10",
+    "@element-plus/nuxt": "^1.0.6",
     "@nuxtjs/i18n": "^8.0.0-rc.4",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.2",
-    "@pinia/nuxt": "^0.4.11",
+    "@pinia/nuxt": "^0.x.x",
     "bootstrap": "^5.3.2",
     "bootstrap-vue-next": "^0.14.10",
-    "nuxt": "^3.7.3",
-    "pinia": "^2.1.6"
+    "npm-check-updates": "^16.14.6",
+    "nuxt": "^3.x.x",
+    "pinia": "^2.1.x",
+    "sass": "^1.69.4"
   },
   "overrides": {
     "vue": "latest"
-  },
-  "dependencies": {
   }
 }

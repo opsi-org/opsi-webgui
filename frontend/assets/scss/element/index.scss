@@ -1,0 +1,29 @@
+// $-colors: (
+//   'primary': (
+//     'base': rgba(107,33,168, 1),
+//     // 'base':  $primary,
+//   ),
+//   'success': (
+//     'base': #67c23a,
+//   ),
+//   'warning': (
+//     'base': #e6a23c,
+//   ),
+//   'danger': (
+//     'base': #f56c6c,
+//   ),
+//   'error': (
+//     'base': #f56c6c,
+//   ),
+//   'info': (
+//     'base': #909399,
+//   ),
+// );
+@use '../bv-colors.scss'; // use colors from bootstrap
+
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  // $colors: $-colors,
+  $colors: bv-colors.$plus-theme-colors
+);
+
+@use './dark.scss';

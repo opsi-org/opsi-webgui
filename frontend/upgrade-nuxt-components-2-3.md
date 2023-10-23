@@ -127,7 +127,68 @@ Add following to nuxt.config.ts
 https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/icons
 ---> element plus icons....
 
+## Element Plus
+### installation and neccessary packages
+https://github.com/element-plus/element-plus-nuxt-starter
 
+```json
+// package.json
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "element-plus": "^2.4.x",
+    ...
+  },
+  "devDependencies": {
+    "@element-plus/nuxt": "^1.0.6",
+    // "@nuxtjs/color-mode": "^3.3.0", // used for theming
+    "sass": "^1.69.4"
+    ...
+  }
+```
+```ts
+// nuxt.config.ts
+  modules: [
+    '@element-plus/nuxt',
+    // '@nuxtjs/color-mode',
+    ...
+  ],
+
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@use "@/assets/scss/element/index.scss" as element;`,
+        },
+      },
+    },
+  },
+  elementPlus: {
+    icon: 'ElIcon',
+    importStyle: 'scss',
+    themes: ['dark'],
+  },
+```
+```
+# .npmrc
+shamefully-hoist=true
+strict-peer-dependencies=false
+shell-emulator=true
+# fix code ERESOLVE \n ERESOLVE could not resolve
+legacy-peer-deps=true
+```
+### Themes and Styling
+* located in assets/scss/...
+* currently element-plus uses colors from bootstrap. so they have same variables 'primary',...
+
+
+<!-- ```js
+// nuxt.config.ts
+
+  // colorMode
+  colorMode: {
+    classSuffix: '',
+  },
+``` -->
 ## General topics
 
 ### Props
@@ -160,7 +221,28 @@ const props = defineProps({
   </div>
 </div>
 
-### paths
+### Computed
+https://vuejs.org/guide/components/props.html#prop-validation
+<div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr;">
+  <div>vue2
+
+```js
+  get value () { return 'foo' }
+  set value (x) { this.x = x }
+```
+  </div>
+  <div>vue3
+
+```js
+const colorMode = computed({
+  get: () => 'foo',
+  set: (x) => { this.x = x}
+});
+```
+  </div>
+</div>
+
+### Paths
 
 <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr;">
   <div>vue2
