@@ -2,6 +2,40 @@
   <div
     data-testid="ILoading"
     class="ILoading container-fluid"
+    :style="'color:(--color, ' + props.color + ') !important;'"
+  >
+  <!-- <br /> small {{ props.small }}
+  <br /> animation {{ props.animation }}
+  <br /> color {{ props.color }}
+  <br /> icon.loading {{ icon.loading }}
+  <br /> -->
+    <span v-if="!props.small" class="text-small">{{ $t('message.loading') }}</span>
+    <b-icon class="loading-icon" :icon="icon.loading" :animation="props.animation" :title="$t('message.loading')" />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useIcons } from '../../composables/mixins/useIcons'
+const icon = useIcons()  // mixin - local => needs to be imported manually
+
+const props = defineProps({
+  small: { type: Boolean, default: false} ,
+  animation: { type: String, default: 'cylon' },
+  color: { type: String, default: 'black' },
+})
+
+</script>
+
+<style scoped>
+.ILoading {
+  max-width: fit-content;
+}
+</style>
+<!-- NUXT 2  was:  -->
+<!-- <template>
+  <div
+    data-testid="ILoading"
+    class="ILoading container-fluid"
     :style="'color:(--color, ' + color + ') !important;'"
   >
     <span v-if="!small" class="text-small">{{ $t('message.loading') }}</span>
@@ -30,4 +64,4 @@ export default class ILoading extends Vue {
 .ILoading {
   max-width: fit-content;
 }
-</style>
+</style> -->

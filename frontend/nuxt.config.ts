@@ -24,12 +24,12 @@ export default defineNuxtConfig({
   // },
   pages: true, // not necessary, will be done auttttomatically
   modules: [
+    // '@element-plus/nuxt',
     '@nuxtjs/i18n',
     '@bootstrap-vue-next/nuxt',
-    ['@pinia/nuxt', // store (alternative to vuex)
-      {
-        autoImports: ['defineStore', 'acceptHMRUpdate'],
-      }],
+
+    // store (alternative to vuex)
+    ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
     '@pinia-plugin-persistedstate/nuxt',
     // 'nuxt-monaco-editor'
   ],
