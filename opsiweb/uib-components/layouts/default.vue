@@ -50,6 +50,7 @@ import { Configserver } from '../mixins/get'
 import { Icons } from '../mixins/icons'
 import { ChangeObj } from '../.utils/types/tchanges'
 import { IObjectString2Boolean } from '../.utils/types/tgeneral'
+import { SideBarAttr } from '../.utils/types/tobjects'
 import { Cookies } from '../mixins/cookies'
 import { SettingsLanguage } from '../mixins/settings'
 
@@ -57,11 +58,6 @@ const settings = namespace('settings')
 const changes = namespace('changes')
 const cache = namespace('data-cache')
 const config = namespace('config-app')
-
-interface SideBarAttr {
-    visible: boolean,
-    expanded: boolean
-}
 
 @Component({ mixins: [MBus, Configserver, Icons, Cookies, SettingsLanguage] })
 export default class LayoutDefault extends Vue {

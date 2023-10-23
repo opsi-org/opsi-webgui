@@ -158,25 +158,10 @@ import { SaveProductActionRequest } from '../../mixins/save'
 import { Client, Configserver } from '../../mixins/get'
 import { Group, SetUEFI, DeployClientAgent } from '../../mixins/post'
 import { AlertToast } from '../../mixins/component'
+import { NewClient, FormClientAgent } from '../../.utils/types/tobjects'
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')
-
-interface NewClient {
-  hostId: string,
-  description: string,
-  inventoryNumber: string,
-  hardwareAddress: string,
-  ipAddress: any,
-  notes: string
-}
-
-interface FormClientAgent {
-    clients: Array<string>,
-    username: string,
-    password: string,
-    type: string
-}
 
 @Component({ mixins: [AlertToast, Icons, Configserver, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
 export default class VClientCreation extends Vue {

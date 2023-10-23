@@ -99,23 +99,9 @@
 <script lang="ts">
 import { Component, namespace, Prop, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
+import { Group, StoreSelection } from '../../.utils/types/tobjects'
 
 const cache = namespace('data-cache')
-
-interface Group {
-  id: string
-  text: string
-  type: string
-  isDisabled?: boolean
-  isNew?: boolean
-  hasAnySelection?: boolean
-  children?: null | Array<any>
-}
-interface StoreSelection {
-  selection: Array<string>
-  pushSelection: Function
-  delSelection: Function
-}
 
 @Component({ mixins: [Icons] })
 export default class TSDefault extends Vue {

@@ -77,12 +77,10 @@ import { Icons } from '../../mixins/icons'
 import { Configserver } from '../../mixins/get'
 import { Settings } from '../../mixins/settings'
 import { AlertToast } from '../../mixins/component'
+import { FormUser } from '../../.utils/types/tobjects'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
-interface FormUser {
-    username: string,
-    password: string
 }
 
 @Component({ mixins: [Icons, Configserver, Settings, AlertToast] })

@@ -64,11 +64,8 @@ import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
 import { Strings } from '../../mixins/strings'
 import { AlertToast } from '../../mixins/component'
+import { LogRequest } from '../../.utils/types/tobjects'
 const selections = namespace('selections')
-interface LogRequest {
-  selectedClient: string,
-  selectedLogType: string
-}
 
 @Component({ mixins: [AlertToast, MBus, Strings] })
 export default class VClientLog extends Vue {

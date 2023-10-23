@@ -195,10 +195,8 @@ import { Icons } from '../../mixins/icons'
 import QueueNested from '../../.utils/utils/QueueNested'
 import { Cookies } from '../../mixins/cookies'
 import { Format } from '../../mixins/format'
+import { DeleteClient } from '../../.utils/types/tobjects'
 const selections = namespace('selections')
-interface DeleteClient {
-  clientid: string
-}
 
 @Component({ mixins: [AlertToast, MBus, Icons, Synchronization, Cookies, Format] })
 export default class VClients extends Vue {

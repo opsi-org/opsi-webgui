@@ -122,17 +122,8 @@ import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { AlertToast } from '../../mixins/component'
 import { MBus } from '../../mixins/messagebus'
 import { Strings } from '../../mixins/strings'
+import { QuickAction } from '../../.utils/types/tobjects'
 const selections = namespace('selections')
-
-interface QuickAction {
-  action: any,
-  outdated: boolean,
-  installation_status: any,
-  action_result: any,
-  selectedClients: undefined | Array<string>,
-  // selectedDepots: undefined | Array<string>,
-  demoMode: boolean
-}
 
 @Component({ mixins: [MBus, Strings, AlertToast] })
 export default class MProductActions extends Vue {

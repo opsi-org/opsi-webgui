@@ -77,14 +77,8 @@ import { Component, Prop, namespace, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Icons } from '../../mixins/icons'
 import { DeployClientAgent } from '../../mixins/post'
+import { FormClientAgent } from '../../.utils/types/tobjects'
 const config = namespace('config-app')
-
-interface FormClientAgent {
-    clients: Array<string>,
-    username: string,
-    password: string,
-    type: string
-}
 
 @Component({ mixins: [Icons, DeployClientAgent] })
 export default class MDeployClientAgent extends Vue {

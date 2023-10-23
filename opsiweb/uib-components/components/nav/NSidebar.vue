@@ -41,16 +41,8 @@
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IObjectString2Boolean } from '../../.utils/types/tgeneral'
 import { Icons } from '../../mixins/icons'
+import { IMenuItem } from '../../.utils/types/tobjects'
 const config = namespace('config-app')
-
-interface IMenuItem {
-  title:string
-  route?: string
-  icon?: string
-  disabled?: boolean
-  submenu?: Array<IMenuItem>
-  menu?: Array<IMenuItem>
-}
 
 @Component({ mixins: [Icons] })
 export default class NSidebar extends Vue {

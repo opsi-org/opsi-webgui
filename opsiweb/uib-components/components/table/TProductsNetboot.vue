@@ -161,14 +161,11 @@ import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { SaveProductActionRequest } from '../../mixins/save'
 import { Format } from '../../mixins/format'
+import { IFetchOptions } from '../../.utils/types/tobjects'
 
 const selections = namespace('selections')
 const settings = namespace('settings')
 const changes = namespace('changes')
-interface IFetchOptions {
-  fetchClients:boolean,
-  fetchClients2Depots:boolean,
-}
 
 @Component({ mixins: [AlertToast, MBus, Icons, Synchronization, SaveProductActionRequest, Format] })
 export default class TProductsNetboot extends Vue {

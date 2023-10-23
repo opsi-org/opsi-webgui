@@ -53,20 +53,12 @@
 <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { ChangeObj } from '../../.utils/types/tchanges'
-import { IDepend, IProp } from '../../.utils/types/ttable'
 import { AlertToast } from '../../mixins/component'
 import { Strings } from '../../mixins/strings'
+import { IErrorDepProp, IFetchedData } from '../../.utils/types/tobjects'
 
 const selections = namespace('selections')
 const changes = namespace('changes')
-interface IErrorDepProp {
-  dependencies: string
-  properties: string
-}
-interface IFetchedData {
-  dependencies:IDepend,
-  properties:IProp
-}
 
 @Component({ mixins: [Strings, AlertToast] })
 export default class VProductProperty extends Vue {
