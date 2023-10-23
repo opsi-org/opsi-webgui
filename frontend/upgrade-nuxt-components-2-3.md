@@ -262,6 +262,11 @@ import { useIcons } from '~/composables/mixins/useIcons'
 * have to use `~/composables/mixins/...`
 
 
+# Further topics
+## performance
+* currently nuxt (vite/nitro) is quiet slowly during startup
+* problems seems to be scss and vite preprocessor option
+* https://github.com/nuxt/nuxt/issues/22116
 
 # markdown helpers
 ## columns:

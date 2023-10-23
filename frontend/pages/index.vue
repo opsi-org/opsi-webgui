@@ -1,21 +1,20 @@
 <template>
-  <div>
-    <b-card class="text-center index-card">
+  <b-card class="text-center index-card">
     <h1 class="title">
       {{ $t("uib") }} <br>
       {{ $t("button.login") }} <br>
     </h1>
 
-    </b-card>
     <TestEPButton />
     <TestStore />
     <TestTheme />
-    <!--
-      <TestI18n />
+    <TestI18n />
+
     <TestMixin />
+    <!--
     <IconILoading animation="cylon" /> -->
       <!-- <IconELILoading animation="cylon" /> -->
-  </div>
+  </b-card>
 </template>
 
 <script setup>
