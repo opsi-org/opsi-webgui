@@ -19,3 +19,6 @@ openssl req -x509 -newkey rsa:4096 -keyout /var/tmp/key.pem -out /var/tmp/cert.p
 chown node:node /var/tmp/*
 chmod 750 /var/tmp/*
 
+npm install -g n
+n lts
+bash
