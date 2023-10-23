@@ -34,9 +34,6 @@ export default defineNuxtConfig({
     // 'nuxt-monaco-editor'
   ],
   css: ['bootstrap/dist/css/bootstrap.min.css'],
-  // i18n: {
-  //   vueI18n: '.config/nuxt-i18n.js' // custom path example
-  // },
   imports: {
     dirs: ['store'],
   },

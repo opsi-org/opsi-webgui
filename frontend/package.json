@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "clean": "rm -rf node_modules; rm -f package-lock.json;",
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
