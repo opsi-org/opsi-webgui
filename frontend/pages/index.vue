@@ -8,11 +8,12 @@
     <TestEPButton />
     <TestStore />
     <TestTheme />
+    <br /> screen: {{  mq.$mq }}
     <TestI18n />
 
     <TestMixin />
     <IconILoading animation="cylon" />
-    <br /> screen: {{  mq.$mq }}
+    <TestFetch />
     <!-- <br /> isPreferredDark: {{  mq.isPreferredDark }} -->
 
       <!-- <IconELILoading animation="cylon" /> -->

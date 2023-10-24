@@ -129,6 +129,33 @@ const colorMode = computed({
   </div>
 </div>
 
+### axios / fetch
+* can use nuxt native method useFetch
+* it needs to be overwritten, if we want to use different baseURL (`useApiFetch` composable)
+* usage in components:
+  ```vue
+  <template>
+    <div ref="target">
+      <p v-if="pending">Fetching...</p>
+      <pre v-else-if="error">Could not load data: {{ error.data }}</pre>
+      <figure v-else>
+        {{data}}
+      </figure>
+    </div>
+  </template>
+
+  <script setup>
+  const { data, error, pending } = await useApiFetch('/user/opsiserver', {
+    method: "GET"
+  })
+  // for fetching urls other then /addons/webgui/api use:
+  const { data, error, pending } = await useApiFetch('/other-path', {
+    method: "GET"
+  }, '/another-prefix')
+  // this will be combined to: localhost:4447/another-prefix/other-path in development mode
+  </script>
+  ```
+
 
 ## Vuex
 https://nuxt.com/docs/migration/configuration#vuex
@@ -179,8 +206,8 @@ export const useCookieStore = defineStore('main', {
 })
 ```
 ## $mq
-* no need for $mq library
-* can use `import { useMediaQuery } from '@vueuse/core'` (already imported)
+* nuxt-mq is deprecated (https://www.npmjs.com/package/nuxt-mq)
+* recommandation: `useMediaQuery` https://vueuse.org/core/useMediaQuery/ (already imported, and composable already created)
 * inside component it looks like:
   ```vue
   <template>

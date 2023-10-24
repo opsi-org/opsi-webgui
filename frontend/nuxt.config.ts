@@ -1,8 +1,9 @@
 
 // @ts-nocheck
+
 // import fs from 'fs'
 // import pkg from './package.json'
-
+// import { defineNuxtConfig } from 'nuxt'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -16,15 +17,19 @@ export default defineNuxtConfig({
   },
   ssr: false,
   devServer: {
-    port: 8887,
+    port: 8888,
     https: { // development
       key: '.config/https/server.key',
       cert: '.config/https/server.crt'
     }
   },
-  // public: {
-  //   APIPATH: '/addons/webgui'
-  // },
+
+  runtimeConfig: {
+    public: {
+      API_PATH: '/addons/webgui/api', // only default value is useApiFetch composable (can be overwritten for specific api calls)
+      NUXT_PUBLIC_API_BASE: (process.env.NODE_ENV === 'production') ? '' : 'https://localhost:4447'
+    },
+  },
   pages: true, // not necessary, will be done auttttomatically
   modules: [
     // '@element-plus/nuxt',
