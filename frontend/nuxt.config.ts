@@ -1,6 +1,9 @@
 
+// @ts-nocheck
 // import fs from 'fs'
 // import pkg from './package.json'
+import Icons from 'unplugin-icons/vite'
+
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -59,6 +62,12 @@ export default defineNuxtConfig({
         },
       },
     },
+    plugins: [
+      Icons({
+        // the feature below is experimental ⬇️
+        autoInstall: true
+      })
+    ]
   },
   css: [
     'bootstrap/dist/css/bootstrap.min.css',

@@ -4,25 +4,18 @@
     class="ILoading container-fluid"
     :style="'color:(--color, ' + props.color + ') !important;'"
   >
-      <MdiAlarmOff />
-  <!-- <br /> small {{ props.small }}
-  <br /> animation {{ props.animation }}
-  <br /> color {{ props.color }}
-  <br /> icon.loading {{ icon.loading }}
-  <br /> -->
     <span v-if="!props.small" class="text-small">{{ $t('message.loading') }}</span>
-    <b-icon class="loading-icon" :icon="icon.loading" :animation="props.animation" :title="$t('message.loading')" />
+    <IconIIcon class="loading-icon" :icon="icon.loading" :title="$t('message.loading')" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useIcons } from '../../composables/mixins/useIcons'
 const icon = useIcons()  // mixin - local => needs to be imported manually
-import MdiAlarmOff from '~icons/mdi/alarm-off'
 
 const props = defineProps({
   small: { type: Boolean, default: false} ,
-  animation: { type: String, default: 'cylon' },
+  animation: { type: String, default: 'cylon' }, // TODO remove... // not used anymore (animation done through icon library / iconname)
   color: { type: String, default: 'black' },
 })
 
