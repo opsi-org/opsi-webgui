@@ -2,7 +2,6 @@
 // @ts-nocheck
 // import fs from 'fs'
 // import pkg from './package.json'
-import Icons from 'unplugin-icons/vite'
 
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -35,14 +34,14 @@ export default defineNuxtConfig({
 
     '@element-plus/nuxt',
     // '@nuxtjs/color-mode',
-    ['unplugin-icons/nuxt', {
-      /* options */
-      scale: 1.2, // Scale of icons against 1em
-      // defaultStyle: '', // Style apply to icons
-      // defaultClass: '', // Class names apply to icons
-      compiler: 'null', // 'vue2', 'vue3', 'jsx', null
-      autoInstall: true,
-    }],
+    // ['unplugin-icons/nuxt', {
+    //   /* options */
+    //   scale: 1.2, // Scale of icons against 1em
+    //   // defaultStyle: '', // Style apply to icons
+    //   // defaultClass: '', // Class names apply to icons
+    //   compiler: 'null', // 'vue2', 'vue3', 'jsx', null
+    //   autoInstall: true,
+    // }],
 
     // store (alternative to vuex)
     ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
@@ -62,12 +61,12 @@ export default defineNuxtConfig({
         },
       },
     },
-    plugins: [
-      Icons({
-        // the feature below is experimental ⬇️
-        autoInstall: true
-      })
-    ]
+    // plugins: [
+    //   Icons({
+    //     // the feature below is experimental ⬇️
+    //     autoInstall: true
+    //   })
+    // ]
   },
   css: [
     'bootstrap/dist/css/bootstrap.min.css',
@@ -75,7 +74,7 @@ export default defineNuxtConfig({
     '~/assets/scss/index.scss'
   ],
   elementPlus: {
-    icon: 'ElIcon',
+    // icon: 'ElIcon',
     importStyle: 'scss',
     themes: ['dark'],
   },

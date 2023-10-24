@@ -12,12 +12,15 @@
 
     <TestMixin />
     <IconILoading animation="cylon" />
+    <br /> screen: {{  mq.$mq }}
+    <!-- <br /> isPreferredDark: {{  mq.isPreferredDark }} -->
 
       <!-- <IconELILoading animation="cylon" /> -->
   </b-card>
 </template>
 
 <script setup>
+const mq = useMQ()
 </script>
 
 <style>

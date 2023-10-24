@@ -12,16 +12,17 @@
     "////nuxt-monaco-editor": "^1.2.3",
     "//monaco-editor": "^0.43.0",
     "//@vue/compat": "^3.3.4",
-    "//@nuxtjs/color-mode": "^3.3.0 // currently imported by bootstrap-next ? "
+    "//@nuxtjs/color-mode": "^3.3.0 // currently imported by bootstrap-next ? ",
+    "//@element-plus/icons-vue": "^2.1.0",
+    "//@iconify/json": "^2.2.132",
+    "//unplugin-icons": "^0.17.1"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
     "element-plus": "^2.4.x"
   },
   "devDependencies": {
     "@bootstrap-vue-next/nuxt": "^0.14.10",
     "@element-plus/nuxt": "^1.0.6",
-    "@iconify/json": "^2.2.132",
     "@iconify/vue": "^4.1.1",
     "@nuxt/devtools": "latest",
     "@nuxtjs/i18n": "^8.0.0-rc.4",
@@ -32,8 +33,7 @@
     "npm-check-updates": "^16.14.6",
     "nuxt": "^3.x.x",
     "pinia": "^2.1.x",
-    "sass": "^1.69.4",
-    "unplugin-icons": "^0.17.1"
+    "sass": "^1.69.4"
   },
   "overrides": {
     "vue": "latest"
