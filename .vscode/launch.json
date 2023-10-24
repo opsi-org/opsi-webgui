@@ -11,7 +11,7 @@
 			"outputCapture": "std",
 			"request": "launch",
 			"type": "node",
-			"auto": true,
+			"auto": false,
 			"cwd": "${workspaceFolder}/opsiweb"
 		},
 		{ // Webgui
@@ -30,7 +30,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true
+			"auto": false
 		},
 		{ // Webgui
 			"name": "webgui3",
@@ -63,7 +63,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true,
+			"auto": false,
             "cwd": "${workspaceFolder}/opsiweb"
 		},
 		// {
