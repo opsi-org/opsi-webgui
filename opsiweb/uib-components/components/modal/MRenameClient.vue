@@ -8,7 +8,7 @@
       :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-rename-' + clientId + '-context-menu-' + incontextmenu)"
     >
-      <b-icon :icon="icon.pencil" />  <span class="rename"> {{ $t('label.rename') }} </span>
+      <IconIIcon :icon="icon.pencil" />  <span class="rename"> {{ $t('label.rename') }} </span>
     </b-button>
     <div
       v-else
@@ -19,7 +19,7 @@
       @click="$bvModal.show('event-modal-rename-' + clientId + '-context-menu-' + incontextmenu)"
       @keypress.enter="$bvModal.show('event-modal-rename-' + clientId + '-context-menu-' + incontextmenu)"
     >
-      <b-icon :icon="icon.pencil" />  <span> {{ $t('label.rename') }} </span>
+      <IconIIcon :icon="icon.pencil" />  <span> {{ $t('label.rename') }} </span>
     </div>
 
     <b-modal
@@ -71,7 +71,7 @@
             :disabled="config?.read_only || !clientName"
             @click="renameOpsiClient()"
           >
-            <b-icon :icon="icon.pencil" />  <span> {{ $t('label.rename') }} </span>
+            <IconIIcon :icon="icon.pencil" />  <span> {{ $t('label.rename') }} </span>
           </b-button>
         </template>
       </GridGFormItem>

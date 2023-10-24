@@ -9,7 +9,7 @@
       :disabled="selectionClients.length <= 0"
       @click="checkReachable"
     >
-      <b-icon :icon="icon.clientReachable" />
+      <IconIIcon :icon="icon.clientReachable" />
     </b-button>
     <b-modal
       id="client-reachability"

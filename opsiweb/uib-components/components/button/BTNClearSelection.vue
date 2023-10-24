@@ -10,7 +10,7 @@
     @click="clearselection"
   >
     <span class="sr-only">{{ $t('table.selection.clear') }}</span>
-    <b-icon :icon="icon.clear" />
+    <IconIIcon :icon="icon.clear" />
     <span v-if="showLabel == true" class="clearButton">{{ label? label: $t('table.selection.clear') }} </span>
   </b-button>
 </template>

@@ -5,7 +5,7 @@
     :style="'color:(--color, ' + color + ') !important;'"
   >
     <span v-if="!small" class="text-small">{{ $t('message.loading') }}</span>
-    <b-icon class="loading-icon" :icon="icon.loading" :animation="animation" :title="$t('message.loading')" />
+    <IconIIcon class="loading-icon" :icon="icon.loading" :animation="animation" :title="$t('message.loading')" />
   </div>
 </template>
 

@@ -4,10 +4,10 @@
       <span class="h6"> {{ t_fixed('unequal') }} </span>
     </b-badge>
     <b-badge v-else-if="text=='successful'" data-testid="TCActionResultBadge" variant="success">
-      <span class="h6"> <b-icon :icon="icon.productActionResultSuccessful" alt="successful" /> </span>
+      <span class="h6"> <IconIIcon :icon="icon.productActionResultSuccessful" alt="successful" /> </span>
     </b-badge>
     <b-badge v-else-if="text=='failed'" data-testid="TCActionResultBadge" variant="danger">
-      <span class="h6"> <b-icon :icon="icon.x" alt="failed" /> </span>
+      <span class="h6"> <IconIIcon :icon="icon.x" alt="failed" /> </span>
     </b-badge>
     <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" data-testid="TCActionResultBadge" variant="transparent">
       <span class="h6"> {{ ($mq=='mobile')? t_fixed('keep-english.empty') : '' }} </span>

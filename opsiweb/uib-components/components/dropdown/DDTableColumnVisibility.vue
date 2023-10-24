@@ -20,7 +20,7 @@
       @show="init"
     >
       <template #button-content>
-        <b-icon data-testid="ITableColumn" :icon="icon.columns" />
+        <IconIIcon data-testid="ITableColumn" :icon="icon.columns" />
         <span v-if="incontextmenu">{{ $t('button.showCol') }}</span>
       </template>
       <template v-if="multiCondition">

@@ -16,7 +16,7 @@
       :disabled="disabled"
     >
       <template #button-content>
-        <b-icon :icon="icon" @click="refresh(route)" />
+        <IconIIcon :icon="icon" @click="refresh(route)" />
       </template>
       <b-dropdown-item disabled>
         {{ $t(title) }}

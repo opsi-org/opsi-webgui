@@ -27,7 +27,7 @@
         :pressed.sync="attributes.expanded"
       >
         <span class="sr-only">{{ attributes.expanded? $t('button.collapse'): $t('button.expand') }}</span>
-        <b-icon :icon="attributes.expanded ? icon.arrowDoubleLeft : icon.arrowDoubleRight" />
+        <IconIIcon :icon="attributes.expanded ? icon.arrowDoubleLeft : icon.arrowDoubleRight" />
       </b-button>
     </template>
   </b-sidebar>

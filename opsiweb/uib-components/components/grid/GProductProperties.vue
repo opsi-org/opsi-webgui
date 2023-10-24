@@ -29,7 +29,7 @@
         <template #label>
           <div class="d-inline-flex">
             <GridCellGCProductPropertyId :row="item" :product-versions="properties.productVersions" />
-            <b-icon :id="`property_${item.propertyId}`" class="mt-1 ml-1" :icon="icon.info" />
+            <IconIIcon :id="`property_${item.propertyId}`" class="mt-1 ml-1" :icon="icon.info" />
           </div>
           <b-tooltip :target="`property_${item.propertyId}`" triggers="hover">
             <b-container :class="`TProductProperties_row_details TProductProperties_row_details_${item.propertyId}`" class="text-left">

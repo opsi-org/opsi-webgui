@@ -9,11 +9,11 @@
   >
     <template v-if="showClose !== false">
       <span class="sr-only">{{ $t('button.deselect') }}</span>
-      <b-icon :icon="icon.x" class="m-0" />
+      <IconIIcon :icon="icon.x" class="m-0" />
     </template>
     <template v-if="showReset !== false">
       <span class="sr-only">{{ $t('button.reset') }}</span>
-      <b-icon :icon="icon.reset" class="m-0" sm />
+      <IconIIcon :icon="icon.reset" class="m-0" sm />
     </template>
   </b-button>
 </template>

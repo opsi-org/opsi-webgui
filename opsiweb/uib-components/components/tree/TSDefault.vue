@@ -67,7 +67,7 @@
           :title="$t('button.tsdefault.add.tooltip')"
           @click="triggerSelection()"
         >
-          <b-icon :icon="icon.add" />
+          <IconIIcon :icon="icon.add" />
           {{ $t('button.tsdefault.add') }}
         </b-button>
       </div>
@@ -80,8 +80,8 @@
         }"
       >
         <div :ref="'tree-item-'+node.id">
-          <b-icon v-if="node.isBranch||false" :icon="icon.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
-          <b-icon v-else :icon="(type === 'products') ? icon.product: (type=='clients') ? icon.client: (type==='depots') ? icon.server:''" />
+          <IconIIcon v-if="node.isBranch||false" :icon="icon.group" :class="(node.raw.hasAnySelection)? 'hasSelection':''" />
+          <IconIIcon v-else :icon="(type === 'products') ? icon.product: (type=='clients') ? icon.client: (type==='depots') ? icon.server:''" />
           <template v-if="type=='depots' && node.label===opsiconfigserver">
             <b> {{ node.label }} </b>
           </template>

@@ -63,10 +63,10 @@
       <template #value>
         <div class="float-right mt-2">
           <b-button id="resetButton" class="resetButton" size="sm" variant="primary">
-            <b-icon :icon="icon.reset" /> {{ $t('button.reset') }}
+            <IconIIcon :icon="icon.reset" /> {{ $t('button.reset') }}
           </b-button>
           <b-button id="addButton" class="addButton" size="sm" variant="success">
-            <b-icon :icon="icon.client" /> {{ $t('title.clone') }}
+            <IconIIcon :icon="icon.client" /> {{ $t('title.clone') }}
           </b-button>
         </div>
       </template>

@@ -2,7 +2,7 @@
   <b-input-group class="border pr-2 componentwrapper">
     <b-dropdown size="sm" no-caret variant="outline-primary border-0">
       <template #button-content>
-        <b-icon :icon="icon.filter" />
+        <IconIIcon :icon="icon.filter" />
       </template>
       <b-dropdown-item active>
         {{ $t('table.fields.id') }}
@@ -26,7 +26,7 @@
       :title="$t('button.clearFilter')"
       @click="clearFilter"
     >
-      <b-icon :class="data.filterQuery? '' : 'd-none'" :icon="icon.x" />
+      <IconIIcon :class="data.filterQuery? '' : 'd-none'" :icon="icon.x" />
     </b-button>
   </b-input-group>
 </template>

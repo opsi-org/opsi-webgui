@@ -52,7 +52,7 @@
             />
             <b-button variant="primary" :pressed.sync="showPassword" size="sm" class="mb-2 text-light">
               <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
-              <b-icon :icon="showPassword ? icon.valueShow : icon.valueHide" />
+              <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
           <b-button
@@ -81,7 +81,6 @@ import { FormUser } from '../../.utils/types/tobjects'
 const auth = namespace('auth')
 const selections = namespace('selections')
 const cache = namespace('data-cache')
-}
 
 @Component({ mixins: [Icons, Configserver, Settings, AlertToast] })
 export default class FLogin extends Vue {

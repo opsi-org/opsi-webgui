@@ -9,7 +9,7 @@
     no-caret
   >
     <template #button-content>
-      <b-icon v-if="themeicon" :icon="themeicon" />
+      <IconIIcon v-if="themeicon" :icon="themeicon" />
       <span class="text-capitalize">{{ theme.title }}</span>
     </template>
     <b-dropdown-item
@@ -20,7 +20,7 @@
       variant="transparent"
       @click="theme = t;"
     >
-      <b-icon v-if="t.icon" :icon="t.icon" />
+      <IconIIcon v-if="t.icon" :icon="t.icon" />
       <span class="text-capitalize">{{ t.title }}</span>
     </b-dropdown-item>
   </b-dropdown>

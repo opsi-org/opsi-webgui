@@ -6,7 +6,7 @@
       variant="light"
       size="sm"
     >
-      <b-icon :icon="icon.help" />
+      <IconIIcon :icon="icon.help" />
     </b-button>
     <TooltipTTTooltip variant="info" :target="id" :triggers="triggers" :tooltip="tooltip" />
   </div>

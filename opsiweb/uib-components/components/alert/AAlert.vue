@@ -29,7 +29,7 @@
           class="float-right border-0 p-0 pb-2 btn-alertdetails"
           :pressed.sync="showMore"
         >
-          <b-icon :icon="showMore ? icon.arrowUp : icon.arrowDown" />
+          <IconIIcon :icon="showMore ? icon.arrowUp : icon.arrowDown" />
         </b-button>
         <template v-if="showMore">
           <div v-if="typeof moreDetails == 'object'" class="scrollValue">

@@ -14,7 +14,7 @@
     :disabled="isLoading==true"
     @click="refetch"
   >
-    <b-icon :icon="icon.refresh" />
+    <IconIIcon :icon="icon.refresh" />
     <template v-if="label && incontextmenu !== false">
       {{ label }}
     </template>

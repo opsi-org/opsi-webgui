@@ -10,7 +10,7 @@
     @click="action"
   >
     <span class="sr-only">{{ $t('button.reset') }}</span>
-    <b-icon :icon="icon.reset" /> <span class="resetButton">{{ label? '' : $t('button.reset') }} </span>
+    <IconIIcon :icon="icon.reset" /> <span class="resetButton">{{ label? '' : $t('button.reset') }} </span>
   </b-button>
 </template>
 

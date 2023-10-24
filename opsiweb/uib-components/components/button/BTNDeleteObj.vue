@@ -8,7 +8,7 @@
     @click="deleteChanges()"
   >
     <span class="sr-only">{{ $t('button.reset') }}</span>
-    <b-icon :icon="icon.reset" />
+    <IconIIcon :icon="icon.reset" />
   </b-button>
 </template>
 

@@ -8,7 +8,7 @@
       :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
     >
-      <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
+      <IconIIcon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </b-button>
     <div
       v-else
@@ -19,7 +19,7 @@
       @click="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
       @keypress.enter="$bvModal.show('event-modal-deployCA-' + clientId + '-context-menu-' + incontextmenu)"
     >
-      <b-icon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
+      <IconIIcon :icon="icon.product" />  <span class="clientagent"> {{ $t('label.clientagent') }} </span>
     </div>
 
     <b-modal

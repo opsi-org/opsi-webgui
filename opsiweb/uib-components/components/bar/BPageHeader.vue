@@ -10,7 +10,7 @@
     <b-navbar-nav class="ml-auto">
       <slot name="right" />
       <b-button v-if="closeroute" size="sm" class="border-0" variant="outline-primary" :to="closeroute">
-        <span class="sr-only">{{ $t('button.close') }}</span> <b-icon :icon="icon.x" />
+        <span class="sr-only">{{ $t('button.close') }}</span> <IconIIcon :icon="icon.x" />
       </b-button>
     </b-navbar-nav>
   </b-navbar>

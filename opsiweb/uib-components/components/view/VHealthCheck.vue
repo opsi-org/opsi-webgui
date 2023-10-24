@@ -9,7 +9,7 @@
           :title="expandHCD? $t('button.collapse') : $t('button.expand')"
           :pressed.sync="expandHCD"
         >
-          <small><b-icon :icon="expandHCD? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
+          <small><IconIIcon :icon="expandHCD? icon.arrowDoubleUp : icon.arrowDoubleDown" /></small>
         </b-button>
         <InputIFilterTChanges :placeholder="$t('filterBy.Check')" :filter.sync="filter" />
       </template>
@@ -26,7 +26,7 @@
             <div>
               <template v-if="health.partial_results.length != 0">
                 <b-button v-b-toggle="'collapse-'+health.check_id" class="border-0" size="sm" variant="transparent">
-                  <small><b-icon :icon="expandHCD? icon.arrowUp : icon.arrowRight" /></small>
+                  <small><IconIIcon :icon="expandHCD? icon.arrowUp : icon.arrowRight" /></small>
                 </b-button>
               </template>
               <template v-else>

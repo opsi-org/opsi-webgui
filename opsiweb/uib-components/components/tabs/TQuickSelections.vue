@@ -2,7 +2,7 @@
   <b-tabs justified small lazy data-testid="TQuickSelections" class="QPTabs">
     <b-tab id="qp-tab-selection" active>
       <template #title>
-        <b-icon :icon="icon.info" :title="$t('title.viewselection')" />
+        <IconIIcon :icon="icon.info" :title="$t('title.viewselection')" />
       </template>
       <div class="scrollcontent">
         <GridGFormItem variant="longvalue">
@@ -78,7 +78,7 @@
     </b-tab>
     <b-tab id="qp-tab-depots">
       <template #title>
-        <b-icon :icon="icon.server" :title="$t('title.depots')" /> {{ selectionDepots.length }}
+        <IconIIcon :icon="icon.server" :title="$t('title.depots')" /> {{ selectionDepots.length }}
       </template>
       <div class="scrollcontent">
         <TreeTSDepots :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />
@@ -86,7 +86,7 @@
     </b-tab>
     <b-tab id="qp-tab-clients">
       <template #title>
-        <b-icon :icon="icon.client" :title="$t('treeselect.clientGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
+        <IconIIcon :icon="icon.client" :title="$t('treeselect.clientGroups')" /><IconIIcon :icon="icon.group" font-scale="0.7" /> {{ selectionClients.length }}
       </template>
       <div class="scrollcontent">
         <TreeTSHostGroups :open="true" :multi="multiSelection" type="propertyvalues" classes="treeselect_quickpanel" />
@@ -94,7 +94,7 @@
     </b-tab>
     <b-tab id="qp-tab-products">
       <template #title>
-        <b-icon :icon="icon.product" :title="$t('treeselect.prodGroups')" /><b-icon :icon="icon.group" font-scale="0.7" /> {{ selectionProducts.length }}
+        <IconIIcon :icon="icon.product" :title="$t('treeselect.prodGroups')" /><IconIIcon :icon="icon.group" font-scale="0.7" /> {{ selectionProducts.length }}
       </template>
       <div class="scrollcontent">
         <TreeTSProductGroups :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />

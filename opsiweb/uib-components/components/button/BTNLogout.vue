@@ -9,7 +9,7 @@
     variant="outline-primary"
     @click="doLogout"
   >
-    <b-icon :icon="icon.logout" />
+    <IconIIcon :icon="icon.logout" />
     {{ $t('button.logout') }}
   </b-button>
 </template>

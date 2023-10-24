@@ -80,20 +80,20 @@
           </template>
           <template #head(version_outdated)>
             <div :title="$t('table.fields.versionOutdated')">
-              <b-icon :icon="icon.product" />
-              <b-icon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
+              <IconIIcon :icon="icon.product" />
+              <IconIIcon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
             </div>
           </template>
           <template #head(actionResult_failed)>
             <div :title="$t('table.fields.actionResultFailed')">
-              <b-icon :icon="icon.product" />
-              <b-icon :icon="icon.productsFailedActionResult" class="rounded-circle" variant="danger" />
+              <IconIIcon :icon="icon.product" />
+              <IconIIcon :icon="icon.productsFailedActionResult" class="rounded-circle" variant="danger" />
             </div>
           </template>
           <template #head(installationStatus_unknown)>
             <div :title="$t('table.fields.installationStatusUnknown')">
-              <b-icon :icon="icon.product" />
-              <b-icon :icon="icon. productInstallationStatusUnknown" class="rounded-circle" variant="primary" />
+              <IconIIcon :icon="icon.product" />
+              <IconIIcon :icon="icon. productInstallationStatusUnknown" class="rounded-circle" variant="primary" />
             </div>
           </template>
           <template #head(reachable)>
@@ -104,7 +104,7 @@
           </template>
 
           <template #cell(uefi)="row">
-            <b-icon v-if="row.item.uefi" :icon="icon.check" />
+            <IconIIcon v-if="row.item.uefi" :icon="icon.check" />
           </template>
           <template #cell(lastSeen)="row">
             <small>{{ date(row.item.lastSeen) }}</small>
