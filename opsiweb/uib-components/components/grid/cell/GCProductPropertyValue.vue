@@ -36,7 +36,7 @@
     </b-col>
     <b-col v-if="rowItem.propertyId.includes('password')" class="GCProductPropertyValue_ShowBtn d-flex justify-content-end mr-1">
       <b-button :pressed.sync="showValue" size="md" variant="outline-primary">
-        <b-icon :icon="showValue ? icon.valueShow : icon.valueHide" />
+        <IconIIcon :icon="showValue ? icon.valueShow : icon.valueHide" />
       </b-button>
     </b-col>
     <b-col v-if="showTooltip" class="GCProductPropertyValue_MixedTT" cols="*">

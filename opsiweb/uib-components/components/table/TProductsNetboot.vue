@@ -62,10 +62,10 @@
         />
       </template>
       <template #head(installationStatus)>
-        <b-icon :icon="icon.product" alt="installation status" />
+        <IconIIcon :icon="icon.product" alt="installation status" />
       </template>
       <template #head(actionResult)>
-        <b-icon :icon="icon.productActionResult" alt="action result" />
+        <IconIIcon :icon="icon.productActionResult" alt="action result" />
       </template>
       <template #cell(modificationTime)="row">
         <small>{{ date(row.item.modificationTime) }}</small>

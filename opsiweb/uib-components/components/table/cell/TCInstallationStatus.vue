@@ -5,12 +5,12 @@
     </b-badge>
     <b-badge v-else-if="text=='installed'" data-testid="TCInstallationStatusBadge" variant="success">
       <span class="h6">
-        <b-icon :icon="icon.client" alt="installed" :title="text" />
+        <IconIIcon :icon="icon.client" alt="installed" :title="text" />
       </span>
     </b-badge>
     <b-badge v-else-if="text=='unknown'" data-testid="TCInstallationStatusBadge" variant="warning" text-variant="dark">
       <span class="h6">
-        <b-icon :icon="icon.productInstallationStatusUnknown" :alt="text" />
+        <IconIIcon :icon="icon.productInstallationStatusUnknown" :alt="text" />
       </span>
     </b-badge>
     <b-badge v-else-if="$mq=='mobile'&&(text=='not_installed'||text==''||text=='none')" data-testid="TCInstallationStatusBadge" variant="transparent">

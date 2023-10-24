@@ -2,8 +2,8 @@
   <div data-testid="BTNClientReachable">
     <OverlayOLoading :is-loading="isLoading" />
     <span v-if="reachability" class="ml-2">
-      <b-icon v-if="reachability.toString() === 'true'" :icon="icon.check" />
-      <b-icon v-else :icon="icon.x" />
+      <IconIIcon v-if="reachability.toString() === 'true'" :icon="icon.check" />
+      <IconIIcon v-else :icon="icon.x" />
     </span>
     <b-button
       v-else
@@ -13,7 +13,7 @@
       size="sm"
       @click="checkReachable"
     >
-      <b-icon :icon="icon.clientReachable" />
+      <IconIIcon :icon="icon.clientReachable" />
     </b-button>
   </div>
 </template>

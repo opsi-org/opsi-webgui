@@ -22,7 +22,7 @@
               <div slot="option-label" slot-scope="{ node }">
                 <div :ref="'tree-item-'+node.id">
                   <template v-if="node.isBranch">
-                    <b-icon :icon="icon.group" />
+                    <IconIIcon :icon="icon.group" />
                     {{ node.label }}
                     <div v-if="node.label !== 'not_assigned'" class="float-right">
                       <b-button
@@ -33,7 +33,7 @@
                         :title="$t('group.editGroup')"
                         @click="showChild('editGroup')"
                       >
-                        <b-icon :icon="icon.pencil" />
+                        <IconIIcon :icon="icon.pencil" />
                       </b-button>
                       <b-button
                         v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
@@ -43,7 +43,7 @@
                         :title="$t('group.deletegroup')"
                         @click="showChild('deletegroup')"
                       >
-                        <b-icon :icon="icon.delete" />
+                        <IconIIcon :icon="icon.delete" />
                       </b-button>
                       <b-button
                         v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
@@ -53,7 +53,7 @@
                         :title="$t('group.deleteOnlyClients')"
                         @click="showChild('deleteOnlyClients')"
                       >
-                        <b-icon :icon="icon.client" /><b-icon font-scale="0.8" :icon="icon.delete" />
+                        <IconIIcon :icon="icon.client" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
                       </b-button>
                       <b-button
                         v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
@@ -63,7 +63,7 @@
                         :title="$t('group.addClientsToGroup')"
                         @click="showChild('addClientsToGroup')"
                       >
-                        <b-icon :icon="icon.client" /><b-icon :icon="icon.add" font-scale="0.8" />
+                        <IconIIcon :icon="icon.client" /><IconIIcon :icon="icon.add" font-scale="0.8" />
                       </b-button>
                       <b-button
                         class="border-0"
@@ -72,12 +72,12 @@
                         :title="$t('group.addSubgroup')"
                         @click="showChild('addSubgroup')"
                       >
-                        <b-icon :icon="icon.group" /><b-icon :icon="icon.add" font-scale="0.8" />
+                        <IconIIcon :icon="icon.group" /><IconIIcon :icon="icon.add" font-scale="0.8" />
                       </b-button>
                     </div>
                   </template>
                   <template v-else>
-                    <b-icon :icon="icon.client" />
+                    <IconIIcon :icon="icon.client" />
                     {{ node.label }}
                     <div v-if="node.raw.parent !== 'not_assigned'" class="float-right">
                       <b-button
@@ -87,7 +87,7 @@
                         :title="$t('group.copyClient')"
                         @click="showChild('copyClient')"
                       >
-                        <b-icon :icon="icon.client" /><b-icon :icon="icon.group" font-scale="0.8" />
+                        <IconIIcon :icon="icon.client" /><IconIIcon :icon="icon.group" font-scale="0.8" />
                       </b-button>
                       <b-button
                         class="border-0"
@@ -96,7 +96,7 @@
                         :title="$t('group.removeClient')"
                         @click="showChild('removeClient')"
                       >
-                        <b-icon :icon="icon.delete" />
+                        <IconIIcon :icon="icon.delete" />
                       </b-button>
                     </div>
                   </template>
@@ -108,7 +108,7 @@
             <span class="text-small"><b> {{ title + $t('title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
               <!-- closing right side -->
-              <b-icon :icon="icon.x" />
+              <IconIIcon :icon="icon.x" />
             </b-button>
             <br><br>
             <template v-if="action == 'addClientsToGroup'">

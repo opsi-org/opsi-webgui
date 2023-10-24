@@ -8,7 +8,7 @@
       :disabled="config?.read_only"
       @click="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
     >
-      <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
+      <IconIIcon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </b-button>
     <div
       v-else
@@ -19,7 +19,7 @@
       @click="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
       @keypress.enter="$bvModal.show('event-modal-delete-' + clientId + '-context-menu-' + incontextmenu)"
     >
-      <b-icon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
+      <IconIIcon :icon="icon.delete" />  <span class="clientdeletion"> {{ $t('label.delete') }} </span>
     </div>
 
     <b-modal
@@ -42,7 +42,7 @@
         :disabled="config?.read_only"
         @click="deleteOpsiClient(clientId)"
       >
-        <b-icon :icon="icon.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
+        <IconIIcon :icon="icon.delete" />  <span class="deletion"> {{ $t('label.delete') }} </span>
       </b-button>
     </b-modal>
   </div>

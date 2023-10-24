@@ -87,8 +87,8 @@
         </template>
         <template #cell(selected)="row">
           <small>
-            <b-icon v-if="selection.includes(row.item[rowident])" :icon="icon.check" class="selectionitem selected" />
-            <b-icon v-else-if="$mq=='mobile'" :icon="icon.dash" class="selectionitem not-selected" />
+            <IconIIcon v-if="selection.includes(row.item[rowident])" :icon="icon.check" class="selectionitem selected" />
+            <IconIIcon v-else-if="$mq=='mobile'" :icon="icon.dash" class="selectionitem not-selected" />
           </small>
           {{ fixRow(row) }}
         </template>

@@ -125,7 +125,7 @@
       <template #value>
         <div class="float-right mt-2">
           <b-button id="resetButton" class="resetButton d-inline" size="sm" variant="primary" @click="resetNewClientForm()">
-            <b-icon :icon="icon.reset" class="d-inline" />
+            <IconIIcon :icon="icon.reset" class="d-inline" />
             <div class="resetButtonLabel d-inline">
               {{ $t('button.reset') }}
             </div>
@@ -140,7 +140,7 @@
             :disabled="!clientName"
             @click="createOpsiClient()"
           >
-            <b-icon :icon="icon.add" class="d-inline" />
+            <IconIIcon :icon="icon.add" class="d-inline" />
             <div class="addButtonLabel d-inline">
               {{ $t('button.create') }}
             </div>

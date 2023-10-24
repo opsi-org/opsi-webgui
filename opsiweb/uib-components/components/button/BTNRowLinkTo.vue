@@ -13,7 +13,7 @@
     :aria-label="title"
     @click="action"
   >
-    <b-icon v-if="icon" :icon="icon" />
+    <IconIIcon v-if="icon" :icon="icon" />
     <span v-if="label && ($mq!=='mobile' || incontextmenu)" class="ml-1 label"> {{ label }} </span>
   </b-button>
 </template>

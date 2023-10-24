@@ -21,7 +21,7 @@
       :dropright="incontextmenu!==false"
     >
       <template #button-content>
-        <b-icon :icon="icon.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected mb-1" />
+        <IconIIcon :icon="icon.menu" :title="$t('button.tablerow.moreoptions')" class="color-primary-selected mb-1" />
         <span v-if="incontextmenu!==false" class="color-primary-selected">{{ $t('button.item-actions') }}</span>
       </template>
       <ButtonBTNEvent

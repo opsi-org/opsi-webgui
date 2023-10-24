@@ -8,7 +8,7 @@
       :title="withText ? '' : $t('title.selectedElements')"
       @click="show = !show"
     >
-      <b-icon :icon="icon.info" /> <span v-if="withText"> {{ $t('title.viewselection') }}</span>
+      <IconIIcon :icon="icon.info" /> <span v-if="withText"> {{ $t('title.viewselection') }}</span>
     </b-button>
 
     <b-modal

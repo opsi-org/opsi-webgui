@@ -14,7 +14,7 @@
       <template #mobilemenu>
         <b-button variant="primary" size="sm" class="h-100 border-0" :pressed.sync="sidebarAttr.visible">
           <span class="sr-only">{{ $t('menu.open-sidemenu.sr-only') }}</span>
-          <b-icon font-scale="1.5" :icon="icon.navmenu" />
+          <IconIIcon font-scale="1.5" :icon="icon.navmenu" />
         </b-button>
       </template>
       <template #quickpanel>
@@ -27,7 +27,7 @@
           variant="outline-primary"
           @click="showQuickPanelChanged(!showQuickPanel)"
         >
-          <b-icon :icon="icon.quickpanel" />
+          <IconIIcon :icon="icon.quickpanel" />
         </b-button>
       </template>
     </BarBTop>

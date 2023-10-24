@@ -7,7 +7,7 @@
       size="sm"
       @click="$bvModal.show('trackChangesModal')"
     >
-      <b-icon :icon="icon.trackChanges" />
+      <IconIIcon :icon="icon.trackChanges" />
       <div class="btnlabel" />
     </b-button>
     <b-modal

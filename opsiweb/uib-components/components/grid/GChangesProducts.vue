@@ -9,7 +9,7 @@
         <b-col cols="auto">
           <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
           <b-button variant="success" :title="$t('button.saveall')" size="sm" @click="saveAll()">
-            <b-icon :icon="icon.check" />
+            <IconIIcon :icon="icon.check" />
             <span class="saveall">{{ $t('button.saveall') }}</span>
           </b-button>
         </b-col>
@@ -19,7 +19,7 @@
         <div v-for="changes, k in groupedById" :key="changes.productId">
           <b-button v-b-toggle="k" block class="text-left collapsebtn border-0" size="sm" variant="outline-primary">
             <b>{{ k }}</b>
-            <b-icon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
+            <IconIIcon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
           </b-button>
           <b-collapse :id="k" :visible="filter === '' ? false : true">
             <span
@@ -37,7 +37,7 @@
                   <ButtonBTNDeleteObj :item="item" from="products" />
                   <b-button class="border-0" variant="outline-primary" size="sm" :title="$t('button.save')" @click="save(item, false)">
                     <span class="sr-only">{{ $t('button.save') }}</span>
-                    <b-icon :icon="icon.check" />
+                    <IconIIcon :icon="icon.check" />
                   </b-button>
                 </template>
               </GridGFormItem>

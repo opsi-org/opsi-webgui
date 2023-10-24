@@ -7,7 +7,7 @@
     variant="outline-primary"
     @click="click"
   >
-    <b-icon :icon="icon.info" />
+    <IconIIcon :icon="icon.info" />
   </b-button>
 </template>
 

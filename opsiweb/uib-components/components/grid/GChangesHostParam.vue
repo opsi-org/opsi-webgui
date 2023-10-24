@@ -12,7 +12,7 @@
       <b-col cols="auto">
         <ButtonBTNClearChanges hide="trackChangesModal" from="hostparam" />
         <b-button variant="success" size="sm" :title="$t('button.saveall')" @click="saveAllHostParam()">
-          <b-icon :icon="icon.check" />
+          <IconIIcon :icon="icon.check" />
           <span class="saveall">{{ $t('button.saveall') }}</span>
         </b-button>
       </b-col>
@@ -33,7 +33,7 @@
             <ButtonBTNDeleteObj :item="item" from="hostparam" />
             <b-button class="border-0" variant="outline-primary" size="sm" :title="$t('button.save')" @click="saveHostParam(item, false)">
               <span class="sr-only">{{ $t('button.save') }}</span>
-              <b-icon :icon="icon.check" />
+              <IconIIcon :icon="icon.check" />
             </b-button>
           </template>
         </GridGFormItem>

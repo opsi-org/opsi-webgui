@@ -19,7 +19,7 @@
       :dropright="incontextmenu!==false"
     >
       <template #button-content>
-        <b-icon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
+        <IconIIcon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
         <span v-if="incontextmenu!==false">{{ $t('button.sort.tablecolumns.title') }}</span>
       </template>
       <div class="dropdown-item sortDirection" :class="{'incontextmenu': incontextmenu }" :tabindex="incontextmenu!==false ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">

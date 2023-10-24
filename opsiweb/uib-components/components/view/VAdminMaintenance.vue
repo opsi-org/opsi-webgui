@@ -100,7 +100,7 @@
               />
               <b-button variant="outline-primary" :pressed.sync="showPasswordCB" size="sm">
                 <span class="sr-only">{{ showPasswordCB? $t('form.password.hide'): $t('form.password.show') }}</span>
-                <b-icon :icon="showPasswordCB ? icon.valueShow : icon.valueHide" />
+                <IconIIcon :icon="showPasswordCB ? icon.valueShow : icon.valueHide" />
               </b-button>
             </b-input-group>
           </template>
@@ -177,7 +177,7 @@
               />
               <b-button variant="outline-primary" :pressed.sync="showPasswordRB" size="sm">
                 <span class="sr-only">{{ showPasswordRB? $t('form.password.hide'): $t('form.password.show') }}</span>
-                <b-icon :icon="showPasswordRB ? icon.valueShow : icon.valueHide" />
+                <IconIIcon :icon="showPasswordRB ? icon.valueShow : icon.valueHide" />
               </b-button>
             </b-input-group>
           </template>

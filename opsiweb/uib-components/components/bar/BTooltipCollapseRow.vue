@@ -7,7 +7,7 @@
     >
       <b-th class="text-left text-small">
         <span v-if="collapseable" class="text-small">
-          <b-icon :icon="collapsed ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
+          <IconIIcon :icon="collapsed ? icon.arrowDoubleDown : icon.arrowDoubleRight" />
         </span>
         {{ title }}
       </b-th>

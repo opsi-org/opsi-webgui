@@ -7,19 +7,19 @@
       size="sm"
     >
       <span v-if="content=='depot-unequal'" class="h6">
-        <span> {{ text ? text: t_fixed('unequal') }}</span> <b-icon :icon="icon.server" />
+        <span> {{ text ? text: t_fixed('unequal') }}</span> <IconIIcon :icon="icon.server" />
       </span>
       <span v-else-if="content=='depot-wo-prod'" class="h6">
-        {{ $t('notOrigin') }} <b-icon :icon="icon.server" />
+        {{ $t('notOrigin') }} <IconIIcon :icon="icon.server" />
       </span>
       <span v-else-if="content=='client-outdated'" class="h6">
-        <span> {{ text ? text: t_fixed('unequal') }}</span> <b-icon :icon="icon.client" />
+        <span> {{ text ? text: t_fixed('unequal') }}</span> <IconIIcon :icon="icon.client" />
       </span>
       <span v-else-if="content=='ppv-client-different'" class="h6">
-        <span> {{ text ? text: t_fixed('unequal') }}</span> <b-icon :icon="icon.client" />
+        <span> {{ text ? text: t_fixed('unequal') }}</span> <IconIIcon :icon="icon.client" />
       </span>
       <span v-else-if="content=='ppid-not-exists-on-depot'" class="h6">
-        {{ t_fixed('unequal') }} <b-icon :icon="icon.server" />
+        {{ t_fixed('unequal') }} <IconIIcon :icon="icon.server" />
       </span>
       <span v-else class="h6">{{ content==='unequal'? t_fixed('unequal'):content }} </span>
     </b-badge>

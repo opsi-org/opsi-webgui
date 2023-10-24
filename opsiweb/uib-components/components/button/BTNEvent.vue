@@ -17,7 +17,7 @@
       size="sm"
       @click="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
     >
-      <b-icon v-if="events[event].icon" :icon="events[event].icon" />
+      <IconIIcon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
       <span class="eventlabel" :class="event"> {{ (withText || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
@@ -31,7 +31,7 @@
       @click="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
       @keypress.enter="$bvModal.show('event-modal-' + event + '-' + data + '-context-menu-' + incontextmenu)"
     >
-      <b-icon v-if="events[event].icon" :icon="events[event].icon" />
+      <IconIIcon v-if="events[event].icon" :icon="events[event].icon" />
       {{ (!isLoading) ? $t(events[event].title) : '' }}
       <span class="eventlabel" :class="event"> {{ (withText || incontextmenu || event=='reboot' || event=='showpopup')? $t(events[event].titlemodal) : '' }} </span>
       <IconILoading v-if="isLoading" :small="true" />
@@ -55,7 +55,7 @@
             @click="selectionClientsDelete.push(c)"
           >
             <span class="sr-only">{{ $t('button.reset') }}</span>
-            <b-icon :icon="icon.x" />
+            <IconIIcon :icon="icon.x" />
           </b-button>
         </b-list-group-item>
       </b-list-group>

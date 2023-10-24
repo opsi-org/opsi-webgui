@@ -7,8 +7,8 @@
       :disabled="disabled"
       @click.prevent="$mq == 'desktop' ? refresh(route) : ''"
     >
-      <b-icon :icon="iconprop" /> {{ $t(title) }}
-      <b-icon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
+      <IconIIcon :icon="iconprop" /> {{ $t(title) }}
+      <IconIIcon :icon="icon.arrowFillDown" class="caret_icon" font-scale="0.8" />
     </b-nav-item>
     <b-collapse :id="'collapse-navitem-'+title" accordion="sidebarAccordion">
       <b-nav vertical>

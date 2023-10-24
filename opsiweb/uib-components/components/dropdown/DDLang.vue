@@ -9,7 +9,7 @@
     :dropup="footer"
   >
     <template #button-content>
-      <span style="text-transform:uppercase;"> <b-icon :icon="icon.language" /> {{ language }} </span>
+      <span style="text-transform:uppercase;"> <IconIIcon :icon="icon.language" /> {{ language }} </span>
     </template>
     <b-dropdown-item
       v-for="(lang, i) in languages"
