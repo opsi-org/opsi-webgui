@@ -135,24 +135,25 @@ const colorMode = computed({
 * usage in components:
   ```vue
   <template>
-    <div ref="target">
-      <p v-if="pending">Fetching...</p>
-      <pre v-else-if="error">Could not load data: {{ error.data }}</pre>
-      <figure v-else>
-        {{data}}
-      </figure>
+    <p v-if="fetchResult.pending">Fetching...</p>
+    <pre v-else-if="fetchResult.error">Could not load data: {{ error.data }}</pre>
+    <div v-else>
+      Result: {{ fetchResult.value.result }} <br />
     </div>
   </template>
 
   <script setup>
-  const { data, error, pending } = await useApiFetch('/user/opsiserver', {
-    method: "GET"
-  })
-  // for fetching urls other then /addons/webgui/api use:
-  const { data, error, pending } = await useApiFetch('/other-path', {
-    method: "GET"
-  }, '/another-prefix')
-  // this will be combined to: localhost:4447/another-prefix/other-path in development mode
+  const fetchResult = ref({});
+  onMounted( async () => {
+    const { data: result } = await $fetch('/user/opsiserver').get().json()
+    // for fetching urls other then /addons/webgui/api use:
+    const { data: result, error, pending } = await useApiFetch('/other-path', {
+      method: "GET"
+    }, '/another-prefix').json()
+    // this will be combined to: localhost:4447/another-prefix/other-path in development mode
+
+    fetchResult.value = result;
+  });
   </script>
   ```
 
