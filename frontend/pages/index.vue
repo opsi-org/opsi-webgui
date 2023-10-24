@@ -11,8 +11,8 @@
     <TestI18n />
 
     <TestMixin />
-    <!--
-    <IconILoading animation="cylon" /> -->
+    <IconILoading animation="cylon" />
+
       <!-- <IconELILoading animation="cylon" /> -->
   </b-card>
 </template>

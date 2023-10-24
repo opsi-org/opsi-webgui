@@ -32,6 +32,14 @@ export default defineNuxtConfig({
 
     '@element-plus/nuxt',
     // '@nuxtjs/color-mode',
+    ['unplugin-icons/nuxt', {
+      /* options */
+      scale: 1.2, // Scale of icons against 1em
+      // defaultStyle: '', // Style apply to icons
+      // defaultClass: '', // Class names apply to icons
+      compiler: 'null', // 'vue2', 'vue3', 'jsx', null
+      autoInstall: true,
+    }],
 
     // store (alternative to vuex)
     ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],

@@ -19,9 +19,10 @@
     "element-plus": "^2.4.x"
   },
   "devDependencies": {
-    "@nuxt/devtools": "latest",
     "@bootstrap-vue-next/nuxt": "^0.14.10",
     "@element-plus/nuxt": "^1.0.6",
+    "@iconify/json": "^2.2.132",
+    "@nuxt/devtools": "latest",
     "@nuxtjs/i18n": "^8.0.0-rc.4",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.2",
     "@pinia/nuxt": "^0.x.x",
@@ -30,7 +31,8 @@
     "npm-check-updates": "^16.14.6",
     "nuxt": "^3.x.x",
     "pinia": "^2.1.x",
-    "sass": "^1.69.4"
+    "sass": "^1.69.4",
+    "unplugin-icons": "^0.17.1"
   },
   "overrides": {
     "vue": "latest"

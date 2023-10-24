@@ -4,6 +4,7 @@
     class="ILoading container-fluid"
     :style="'color:(--color, ' + props.color + ') !important;'"
   >
+      <MdiAlarmOff />
   <!-- <br /> small {{ props.small }}
   <br /> animation {{ props.animation }}
   <br /> color {{ props.color }}
@@ -17,6 +18,7 @@
 <script setup lang="ts">
 import { useIcons } from '../../composables/mixins/useIcons'
 const icon = useIcons()  // mixin - local => needs to be imported manually
+import MdiAlarmOff from '~icons/mdi/alarm-off'
 
 const props = defineProps({
   small: { type: Boolean, default: false} ,

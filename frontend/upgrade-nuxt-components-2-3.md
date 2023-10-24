@@ -125,7 +125,16 @@ Add following to nuxt.config.ts
 
 ### icons are deprecated !!!
 https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/icons
----> element plus icons....
+---> element plus icons.... (small collection)
+---> recommendation: unplugin (large collection, including all bootstrap icons)
+```
+npm i -D unplugin-icons #unplugin-vue-components @vue/compiler-sfc
+npm i -D @iconify/json # all icon sets are allowed
+```
+https://icon-sets.iconify.design/
+
+import MdiAlarmOff from '~icons/mdi/alarm-off'
+
 
 ## Element Plus
 ### installation and neccessary packages
