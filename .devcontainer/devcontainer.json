@@ -34,7 +34,9 @@
 				"shardulm94.trailing-spaces",
 				"octref.vetur",
 				"SonarSource.sonarlint-vscode",
-				"Vue.volar"
+				"Vue.volar",
+				"wejectchan.vue3-snippets-for-vscode",
+				"bradlc.vscode-tailwindcss"
 			]
 		}
 	}
