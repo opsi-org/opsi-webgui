@@ -1,36 +1,17 @@
 <template>
-
-    <!--
-      <el-header>Header</el-header>
-      <el-main>Main</el-main> -->
-      <el-footer>
-        <span class="text-small">{{ staticStrings.t_fixed('uib') }}</span>
-        <DropdownDDLang :footer="true" />
-        <!-- <TestTheme /> -->
-        <span class="text-small BAuthFooter-version">
-          {{ $t('label.version') }} {{ $config.packageVersion }}
-        </span>
-
-        <el-dropdown class="m-4" type="primary">
-          <el-button type="primary" plain>
-            Dropdown List<el-icon class="el-icon--right"><arrow-down /></el-icon>
-          </el-button>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item>Action 1</el-dropdown-item>
-              <el-dropdown-item>Action 2</el-dropdown-item>
-              <el-dropdown-item>Action 3</el-dropdown-item>
-              <el-dropdown-item>Action 4</el-dropdown-item>
-              <el-dropdown-item>Action 5</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-        <button>button hello</button>
-        <button class="">button class? hello</button>
-        <b-button>bbutton hello</b-button>
-        <el-button>elbutton with outline (default)</el-button>
-        <el-button :style="'outline: none'">Elbutton none outline (style)</el-button>
-        <el-button class="">elbutton with class</el-button>
+      <el-footer class="bg-secondary p-0 max-h-10">
+        <el-row class="row-bg bg-primary ml-0 h-100 pl-2 pr-2" justify="space-between">
+          <el-col :span="3" class="flex items-stretch">
+            <el-text class="text-xs">{{ staticStrings.t_fixed('uib') }}</el-text>
+          </el-col>
+          <el-col :span="3" class="flex justify-center">
+            <DropdownDDLang :footer="true" />
+          </el-col>
+          <el-col :span="4" class="flex justify-end space-x-1">
+            <el-text class="text-xs">{{ $t('label.version') }}</el-text>
+            <el-text class="text-xs">{{ $config.public.packageVersion }}</el-text>
+          </el-col>
+        </el-row>
       </el-footer>
   <!-- </div>
   <div class="fixed-bottom"> -->

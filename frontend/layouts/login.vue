@@ -1,9 +1,22 @@
 
 <template>
   <div class="common-layout">
-    <el-container>
+    <el-container class="h-screen">
       <el-header>Header: A different structure for specific pages</el-header>
-      <el-main class="maxheight"> <slot /> </el-main>
+      <el-main>
+        <TestTheme />
+        <b-button variant="primary">bbutton hello</b-button>
+        <el-button>elbutton with outline (default)</el-button>
+        <el-button type="primary">elbutton with type</el-button>
+
+        <h1 class="text-3xl font-bold underline">
+          Hello world! with tailwind
+        </h1>
+        <h1 class="">
+          Hello world! withoout tailwind
+        </h1>
+        <slot />
+      </el-main>
       <!-- <el-main class="justify-center"> <slot /> </el-main> -->
       <BarElBAuthFooter v-once class="footer_content" />
     </el-container>
@@ -16,9 +29,4 @@
 </script>
 
 <style scoped>
-.maxheight {
-  height: calc(100vh - 250px);
-  /* min-height: 700px;
-  height: 100%; */
-}
 </style>

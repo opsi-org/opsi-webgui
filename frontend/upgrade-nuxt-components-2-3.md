@@ -249,10 +249,10 @@ Add following to nuxt.config.ts
 
 ### icons are deprecated in bootstrap next
  // https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs/icons
-Options:
-* element plus icons.... (small collection)
-* recommendation: unplugin (large collection, including all bootstrap icons)
-* https://icon-sets.iconify.design/ (used by unplugin-icons, only needs one npm library, to be able to use a lot of libraries)
+Possible options:
+* using element plus icons: small collection :(
+* recommendation from bootstrap-next unplugin-icons: large collection, including all bootstrap icons
+* https://icon-sets.iconify.design/ : used by unplugin-icons, only needs one npm library, to be able to use a lot of libraries
 
 
 We will use: iconify same as before just other iconnames (cause bigger collection)
@@ -311,7 +311,17 @@ https://github.com/element-plus/element-plus-nuxt-starter
 ### Themes and Styling
 * located in assets/scss/...
 * currently element-plus uses colors from bootstrap. so they have same variables 'primary',...
+* element-plus does not really has predefined classes (like justify-center, p-1, m-1, ...) -> we will use tailwind css.
+* element plus does not support `variant="primary"` instead it uses `type="primary"` (they are configured to use the same colors currently for primary, secondary,...) See `assets/scss/vs-colors.scss`
 
+## Tailwind
+We need tailwind for utility classes, cause we wanna replace bootstrapvue. ElementPlus does not support css classes like d-none / hidden, text-xs, ...
+```bash
+npm install -D tailwindcss
+```
+Full documentation about all utility classes: https://tailwindcss.com/docs/aspect-ratio
+
+Hint: variant="primary" is used in bootstrap, type="primary" for elementplus. tailwind css does not know primary, secondary..... It has its own color palette with blue, red, yellow e.g. class="text-red-900" or class="bg-yellow-400"
 
 # Further topics
 ## performance

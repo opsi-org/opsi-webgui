@@ -1,5 +1,4 @@
 <template>
-  <div>
     <!-- <form>
       Langs: {{  $i18n.availableLocales }}
       <label for="locale-select">{{ $t('language') }}: </label>
@@ -15,12 +14,16 @@
       data-testid="DropdownDDLang"
       :aria-label="$t('button.lang.tooltip')"
       :title="$t('button.lang.tooltip')"
-      :variant="footer? 'primary border-0' : 'outline-primary'"
+      :class="footer? 'border-0 ' : ''"
+      :variant="footer? 'primary' : 'outline-primary'"
       size="sm"
       :dropup="footer"
     >
       <template #button-content>
-        <span style="text-transform:uppercase;"> <IconIIcon :icon="icon.language" /> {{ $i18n.locale }} </span>
+        <span class="inline-flex min-w-max">
+          <IconIIcon :icon="icon.language" class=""/>
+          <span v-if="footer !== false" class="text-xs uppercase pl-1 ">{{ $i18n.locale }}</span>
+        </span>
       </template>
       <b-dropdown-item
         v-for="(lang, i) in $i18n.availableLocales"
@@ -41,7 +44,6 @@
         <span> {{ $t('button.contribute-transifex') }} </span>
       </b-dropdown-item>
     </b-dropdown>
-  </div>
 </template>
 
 <script setup>

@@ -5,7 +5,7 @@
 // import pkg from './package.json'
 // import { defineNuxtConfig } from 'nuxt'
 import pkg from './package.json'
-
+console.log(pkg.version)
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -40,6 +40,7 @@ export default defineNuxtConfig({
     '@bootstrap-vue-next/nuxt',
 
     '@element-plus/nuxt',
+    '@nuxtjs/tailwindcss',
     // '@nuxtjs/color-mode',
     // ['unplugin-icons/nuxt', {
     //   /* options */
@@ -56,6 +57,15 @@ export default defineNuxtConfig({
     // 'nuxt-monaco-editor'
   ],
 
+  // tailwindcss: {
+    // cssPath: '~/assets/css/tailwind.css',
+    // configPath: 'tailwind.config',
+    // exposeConfig: false,
+    // exposeLevel: 2,
+    // config: {},
+    // injectPosition: 'first',
+    // viewer: true,
+  // },
   // // colorMode
   // colorMode: {
   //   classSuffix: '',

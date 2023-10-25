@@ -1,15 +1,11 @@
 <template>
-  <div ref="target">
-    <form>
-      <label for="locale-select">{{ $t('theme') }} ({{ color }}): </label>
+      <!-- <label for="locale-select">{{ $t('theme') }} ({{ color }}): </label>
       <select id="locale-select" v-model="color">
         <option value="light">light</option>
         <option value="dark">dark</option>
-      </select>
+      </select> -->
       <el-switch v-model="colorMode" inline-prompt active-text="dark" inactive-text="light" size="large"></el-switch>
       <!-- <b-icon :icon="icon.loading" /> -->
-    </form>
-  </div>
 </template>
 
 <script setup>
