@@ -67,11 +67,16 @@ export const useNotification = () => {
     if (_error?.response?.data && !_title) {
       title = t('message.error.serverresponse.title', { error: _error.response.data.class })
     }
+    let error = _error?.response?.data || _error
+    console.log(error)
     return showToast({
       title: title || _title || t('message.error.title'),
       variant: 'error',
-      noAutoHide: true, // will be hidden by next error message
-      error_data: _error?.response?.data || { message: t('message.error.unknown') }
+      autoHideDelay: 15000,
+      noAutoHide: false, // will be hidden by next error message
+      // noAutoHide: true, // will be hidden by next error message
+      // autoHideDelay: true, // will be hidden by next error message
+      error_data: error || { message: t('message.error.unknown') }
     })
   }
 

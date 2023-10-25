@@ -89,7 +89,11 @@ const showPassword = ref(false)
 
 const opsiconfigserver = ref('<could not get opsiconfigserver id>');
 onMounted( async () => {
-  const { data } = await useAPI('/user/opsiserver').get().json()
+  const { data, error } = await useAPI('/user/opsiserver').get().json()
+  if (error.value) {
+    notificationError(error)
+    return
+  }
   opsiconfigserver.value = data?.value?.result
 });
 
@@ -105,12 +109,23 @@ function toggleShowPassword () {
   showPassword.value = !showPassword.value
 }
 
-function doLogin () {
-  const error = { response: { data: {class: 'mydummyerror', details: 'some details', message: 'msg'}} }
+async function doLogin () {
+  if (!validUsername || !validPassword) return
 
-  // const appContext = getCurrentInstance().appContext
-  // getCurrentInstance().appContext.app
-  notificationError(error, 'not')
+  const User = new FormData()
+  User.append('username', form.value.username)
+  User.append('password', form.value.password)
+  const { data, error } = await useAPI('/auth/login', { method: 'POST', body: User}).json()
+  // const { data, error } = await useAPI('/auth/login').post(User).json()
+  if (data?.value?.result == 'Login success') {
+    // TODO
+    notificationSuccess('fine. TODO: Next step is to redirect to another page with default layout')
+    return
+  }
+  const errordata = { response: { data: {class: 'AuthenticationError', details: 'some details', message: error.value}} }
+  notificationError(error.value.data, 'AuthenticationError')
+  // console.log(error)
+  // TODO: get message of error (body) correcty
 }
 </script>
 
