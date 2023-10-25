@@ -57,8 +57,8 @@
             size="sm"
             class="mt-1 border-light login text-light"
             block
-            >
-            <!-- @click="doLogin" -->
+            @click="doLogin"
+          >
             {{ $t('button.login') }}
           </b-button>
         </b-form>
@@ -68,9 +68,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="js">
+import { getCurrentInstance } from "vue";
 import { useIcons } from "../../composables/mixins/useIcons"
 import { useStrings } from "../../composables/mixins/useStrings"
+import { useNotification } from "../../composables/mixins/useNotification"
+// import { ElNotification } from "element-plus"
+const notificationSuccess = useNotification().success
+const notificationError = useNotification().error
+// notificationError('It works', 'not')
 // const color = useColorMode();
 const settings = useSettingsStore()
 
@@ -100,6 +106,11 @@ function toggleShowPassword () {
 }
 
 function doLogin () {
+  const error = { response: { data: {class: 'mydummyerror', details: 'some details', message: 'msg'}} }
+
+  // const appContext = getCurrentInstance().appContext
+  // getCurrentInstance().appContext.app
+  notificationError(error, 'not')
 }
 </script>
 

@@ -1,3 +1,58 @@
+# TODO (order more or less important, because of dependencies)
+- [ ] TODO ! test building process...
+- [ ] packages:
+  - [x] i18n
+  - [x] store (Example: useSettingsStore in store/settingsstore)
+  - [x] componentslib + icons
+  * msgpack
+  * cookies
+  - [x] axios/requests (example in form/FLogin or test/Fetch)
+  * xterm
+  * playwright
+  * storybook
+- [ ] WIP *layout*
+- [ ] mixins
+  - [x] icons
+  - [x] icons
+  - [ ] WIP components: ~~notifications~~, ....
+- [ ] utils
+- [ ] store
+- [ ] components
+  - [ ] WIP *general vue3*
+    - [ ] WIP *general components*
+    - [ ] messagebus
+    - [ ] treeselect rebuild
+  - [ ] use elementplus everywhere
+- [ ] WIP *pages*
+  - [x] login page
+  - [ ] index page
+  - [ ] clients
+  - [ ] clients-clone
+  - [ ] clients-config
+  - [ ] clients-creation
+  - [ ] clients-log
+  - [ ] clients-products
+  - [ ] depots
+  - [ ] depots-config
+  - [ ] products
+  - [ ] products-config
+  - [ ] admin
+  - [ ] admin-modules
+  - [ ] admin-terminal
+  - [ ] admin-healthcheck
+  - [ ] support
+- [ ] themes
+- [ ] screenshot tests
+
+
+
+
+# important links:
+* https://vuejs.org/guide/components/props.html#props-declaration
+* https://element-plus.org/en-US/
+* https://tailwindcss.com/docs/
+* https://localhost:8888/addons/webgui/app/_tailwind/
+
 # how to Upgrade nuxt parts
 
 ## Paths
