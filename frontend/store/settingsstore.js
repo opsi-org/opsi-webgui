@@ -5,6 +5,9 @@ export const useSettingsStore = defineStore('settings', {
   state: () => ({
     theme: 'light',
   }),
+  getters: {
+    isLight() { return this.theme === 'light' }
+  },
   actions: {
     changeTheme(t) {
       // `this` is the store instance

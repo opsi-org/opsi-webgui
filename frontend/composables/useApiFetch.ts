@@ -1,7 +1,7 @@
 import { useFetch } from "@vueuse/core"
 
 // wrap useFetch with configuration needed to talk to our API
-export const $fetch  = (path, options:any = {}, prePath = undefined) => {
+export const useAPI  = (path, options:any = {}, prePath = undefined) => {
   const config = useRuntimeConfig()
   options.baseURL = config.public.NUXT_PUBLIC_API_BASE
   const p = config.public.API_PATH // '/addons/webgui/api
@@ -10,8 +10,6 @@ export const $fetch  = (path, options:any = {}, prePath = undefined) => {
   //    -> path = '/filetransfer'
   //       prepath = ''
   const fullPath = (options.baseURL + basePath + path) // remove duplicate '/'
-
-  console.log('HELLO')
 
   // modify options as needed
   // if (path !== p + '/user/opsiserver') {

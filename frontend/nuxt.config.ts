@@ -1,11 +1,10 @@
 
 // @ts-nocheck
-
 // import fs from 'fs'
 // import pkg from './package.json'
 // import { defineNuxtConfig } from 'nuxt'
 import pkg from './package.json'
-console.log(pkg.version)
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
@@ -24,7 +23,16 @@ export default defineNuxtConfig({
       cert: '.config/https/server.crt'
     }
   },
+  app: {
+    baseURL: '/addons/webgui/app'
+  },
 
+  // alias: {
+  //   'assets': fileURLToPath(new URL('./assets', import.meta.url)),
+  //   // 'images': fileURLToPath(new URL('./assets/images', import.meta.url)),
+  //   // 'style': fileURLToPath(new URL('./assets/style', import.meta.url)),
+  //   // 'data': fileURLToPath(new URL('./assets/other/data', import.meta.url))
+  // },
   runtimeConfig: {
     public: {
       packageVersion: pkg.version,

@@ -68,7 +68,7 @@ Mixins do not exists in vue3 anymore. So we need to change them to composables. 
 
 ## Component methods:
 
-### Props
+### Props / Emits
 https://vuejs.org/guide/components/props.html#prop-validation
 <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr;">
   <div>vue2
@@ -97,6 +97,20 @@ const props = defineProps({
 ```
   </div>
 </div>
+
+```vue
+<script setup>
+defineProps(['modelValue'])
+defineEmits(['update:modelValue'])
+</script>
+
+<template>
+  <input
+    :value="modelValue"
+    @input="$emit('update:modelValue', $event.target.value)"
+  />
+</template>
+```
 
 ### watch:
 ```js
@@ -157,6 +171,12 @@ const colorMode = computed({
   </script>
   ```
 
+
+
+### images
+* images are now located in public folder
+* Todo: clean up
+* accessable by `<img src="/images/...">`
 
 ## Vuex
 https://nuxt.com/docs/migration/configuration#vuex
@@ -222,14 +242,28 @@ export const useCookieStore = defineStore('main', {
 
 
 ## i18n
-* installation and neccessary packages
-
+### installation and neccessary packages
 ```json
   "devDependencies": {
     "@nuxtjs/i18n": "^8.0.0-rc.4",
     ...
   }
 ```
+### usage in template
+out of the box
+### usage in script setup
+```vue
+<script setup lang="ts">
+const { t } = useI18n()
+const translatedLabel = ref(t('button.reload.app'))
+// or:
+// const translatedLabel = ref('')
+// translatedLabel.value = t('button.reload.app')
+...
+</script>
+```
+
+
 ## Bootstrap Vue
 ### installation and neccessary packages
 https://bootstrap-vue-next.github.io/bootstrap-vue-next/docs#installation-nuxt-js-3
@@ -314,6 +348,28 @@ https://github.com/element-plus/element-plus-nuxt-starter
 * element-plus does not really has predefined classes (like justify-center, p-1, m-1, ...) -> we will use tailwind css.
 * element plus does not support `variant="primary"` instead it uses `type="primary"` (they are configured to use the same colors currently for primary, secondary,...) See `assets/scss/vs-colors.scss`
 
+Attention: make sure to use only elementplus and tailwind classes. not bootstrap-vue
+
+To check which theme we are using currently there are several options:
+* javascript:
+```vue
+<template>
+  <el-button :type="settings.theme === 'light' ? 'primary' : 'secondary'" />
+  <el-button :type="settings.isLight ? 'primary' : 'secondary'" />
+  <!-- or through css -->
+  <el-button class="thisisnotprimary-itsgreen" type="primary" />
+  <el-button class="thisisnotprimary-itsred" type="primary" />
+</template>
+<script setup lang="ts">
+const settings = useSettingsStore()
+</script>
+<style>
+webgui-theme-light .thisisnotprimary-itsgreen { background-color: green; }
+webgui-theme-dark .thisisnotprimary-itsgreen { background-color: green; }
+/* or */
+body[data-bs-theme="light"] .thisisnotprimary-itsred { background-color: red; }
+</style>
+```
 ## Tailwind
 We need tailwind for utility classes, cause we wanna replace bootstrapvue. ElementPlus does not support css classes like d-none / hidden, text-xs, ...
 ```bash
