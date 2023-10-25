@@ -1,10 +1,13 @@
-import { useMediaQuery } from '@vueuse/core'
+import { useColorMode, useMediaQuery } from '@vueuse/core'
 import { computed } from 'vue'
 
 export const useMQ = () => {
   const isPreferredDark = useMediaQuery('(prefers-color-scheme: dark)')
   const _isLargeScreen = useMediaQuery('(min-width: 1024px)')
   const _isMediumScreen = useMediaQuery('(min-width: 768px)')
+
+  const color = useColorMode()
+  color.value = isPreferredDark ? 'dark' : 'light'
 
   const $mq = computed({
     get: () => {

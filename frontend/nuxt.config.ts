@@ -4,6 +4,7 @@
 // import fs from 'fs'
 // import pkg from './package.json'
 // import { defineNuxtConfig } from 'nuxt'
+import pkg from './package.json'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -26,6 +27,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      packageVersion: pkg.version,
       API_PATH: '/addons/webgui/api', // only default value is useApiFetch composable (can be overwritten for specific api calls)
       NUXT_PUBLIC_API_BASE: (process.env.NODE_ENV === 'production') ? '' : 'https://localhost:4447'
     },
@@ -58,6 +60,11 @@ export default defineNuxtConfig({
   // colorMode: {
   //   classSuffix: '',
   // },
+
+  // vueuse
+  vueuse: {
+    ssrHandlers: true,
+  },
   vite: {
     css: {
       preprocessorOptions: {
@@ -74,8 +81,7 @@ export default defineNuxtConfig({
     // ]
   },
   css: [
-    'bootstrap/dist/css/bootstrap.min.css',
-    // '~/assets/scss/bv-colors.scss',
+    // 'bootstrap/dist/css/bootstrap.min.css',
     '~/assets/scss/index.scss'
   ],
   elementPlus: {
