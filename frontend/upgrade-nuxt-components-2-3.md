@@ -239,6 +239,7 @@ const colorMode = computed({
     )
     // this will be combined to: localhost:4447/another-prefix/other-path in development mode
 
+    // show error / data
     if (error) {
       useNotification().error(error)
       fetchError.value = error;
