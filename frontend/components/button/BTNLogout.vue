@@ -14,50 +14,40 @@
   </b-button>
 </template>
 
-<script setup lang="js">
-import { useIcons } from '@/composables/mixins/useIcons'
-import { useNotification } from '~/composables/mixins/useNotification'
-// import { Component, Prop, Vue } from 'nuxt-property-decorator'
-// import { CallLogout } from '../../mixins/post'
-// import { Icons } from '../../mixins/icons'
-// const mq = useMQ()
+<script lang="ts" setup>
+import { useAPI } from '../../composables/useApiFetch' // actually autoimported
+import { useAuthStore } from '../../store/authsstore' // actually autoimported
+import { useIcons } from '../../composables/mixins/useIcons'
+import { useNotification } from '../../composables/mixins/useNotification'
+import { useRoute, useRouter } from 'nuxt/app' // actually autoimported
 const icon = useIcons()
 const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
 
-const authStore = useAuthStore()
-// @Component({ mixins: [Icons, CallLogout] })
-// export default class BTNLogout extends Vue {
-  // @Prop({ default: false }) abortClick!: boolean
-  const props = defineProps({
-    abortClick: { type: Boolean, default: false}
-  })
-  // callLogout: any
-  // icon: any
-  // $axios:any
-  // $mq: any
+const authStore = useAuthStore() // autho imported
+const props = defineProps({
+  abortClick: { type: Boolean, default: false}
+})
 
-  async function doLogout () {
-    if (props.abortClick) { return }
-    // await this.callLogout()
+async function doLogout () {
+  if (props.abortClick) { return }
 
-    const { data, error } = await useAPI('/auth/logout').post().json()
-    if (error.value) {
-      console.log("error", error.value)
-      notificationError(error.value, 'error'); return
-    }
-    notificationSuccess('ok')
-
-    // TODO wsDisconnect()
-    authStore.logout()
-    authStore.clearSession()
-    // authStore.setExpiresInterval(undefined)
-    // fetchResult.value = data;
-
-    if (useRoute().name !== 'login') {
-      await useRouter().push({ path: '/login' })
-    }
-    // TODO clearAllSelection()
+  // await this.callLogout()
+  const { data, error } = await useAPI('/auth/logout').post().json()
+  if (error.value) {
+    console.log("error", error.value)
+    notificationError(error.value, 'error'); return
   }
-// }
+  notificationSuccess('ok')
+
+  // TODO wsDisconnect()
+  authStore.logout()
+  authStore.clearSession()
+  // authStore.setExpiresInterval(undefined)
+
+  if (useRoute().name !== 'login') {
+    await useRouter().push({ path: '/login' })
+  }
+  // TODO clearAllSelection()
+}
 </script>
