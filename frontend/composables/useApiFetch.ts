@@ -1,5 +1,5 @@
 import { useFetch } from "@vueuse/core"
-import type { UseFetchOptions } from "nuxt/app"
+import { useRuntimeConfig, type UseFetchOptions } from "nuxt/app"
 
 const urlsWithoutAuthentication = [
   '/auth/logout',
@@ -8,8 +8,8 @@ const urlsWithoutAuthentication = [
 
 export function useAPI<T> (url: string, opts: UseFetchOptions<T> = {}, prePath: string|undefined = undefined) {
   const config = useRuntimeConfig()
-  const baseUrl = config.public.NUXT_PUBLIC_API_BASE
-  const basePath = prePath ?? config.public.API_PATH
+  const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE as string
+  const basePath: string = prePath ?? config.public.API_PATH as string
   // // prePath could be '', e.g. for localhost:4447/filetransfer
   // //    -> path = '/filetransfer'
   // //       prepath = ''
