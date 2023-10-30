@@ -56,6 +56,10 @@
 
 # how to Upgrade nuxt parts
 
+## Interfaces / Types
+* located at `types/`
+* import using: `import type { ITableHeaders, ITableData } from '@/types/ttable'`
+
 ## Paths
 <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr;">
   <div>vue2
