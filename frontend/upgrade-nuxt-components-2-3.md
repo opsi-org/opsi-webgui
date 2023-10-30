@@ -251,7 +251,47 @@ Nuxt no longer provides a Vuex integration. Instead, the official Vue recommenda
 const counterStore = useCounterStore()
 ```
 * store file
+```typescript
+// with setup syntax
+import { useCookie } from 'nuxt/app'
+import { defineStore } from 'pinia'
+import { computed } from 'vue'
+const expirySec = 60 * 30 // Default=30min
+
+export const useAuthStore = defineStore('auth', () => {
+  // need to return the states / getters/ actions in the end of the setup
+
+  // states (here used as local vars)
+  const myusername: string = localStorage.getItem('username') as string
+  const sessionexpiry: Number = expirySec // sec
+  const sessionendTime: string = ''
+
+  // getter
+  const sessionEndTime = computed(() => sessionendTime)
+  const sessionExpiry = computed(() => { return sessionexpiry })
+  ...
+
+  // actions
+  function login (username: string) {
+    this.myusername = username
+    localStorage.setItem('username', username)
+  }
+  function logout () {
+    localStorage.removeItem('username')
+    this.myusername = ''
+  }
+  // ....
+
+  return {
+    /* states - currently no exported states*/
+    /* getters */ sessionEndTime, sessionExpiry, ...
+    /* actions */, login, logout, ...
+  }
+}, { persist: true } as any)
+```
+
 ```javascript
+// without setup-syntax
 export const useCounterStore = defineStore('main', {
   persist: true, // optional
   state: () => ({

@@ -7,4 +7,5 @@
 
 <script setup>
 const counterStore = useMainStore()
+// better example: useAuthStore()
 </script>

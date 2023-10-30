@@ -69,7 +69,6 @@
 </template>
 
 <script setup lang="js">
-import { getCurrentInstance } from "vue";
 import { useIcons } from "../../composables/mixins/useIcons"
 import { useStrings } from "../../composables/mixins/useStrings"
 import { useNotification } from "../../composables/mixins/useNotification"
@@ -79,6 +78,9 @@ const notificationError = useNotification().error
 // notificationError('It works', 'not')
 // const color = useColorMode();
 const settings = useSettingsStore()
+const authStore = useAuthStore()
+
+// const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username'))
 
 const route = useRoute()
 const router = useRouter()
@@ -124,13 +126,14 @@ async function doLogin () {
 
   const { data, error } = await useAPI('/auth/login').post(User).json()
   if (data?.value?.result == 'Login success') {
-    // TODO
-    notificationSuccess('fine. TODO: Next step is to redirect to another page with default layout')
-
-    if (route.name === 'login') {
-      router.push({ path: '/clients/' })
+    notificationSuccess('Successfull. Redirect to clients')
+    console.log("login successful")
+    authStore.login(form.value.username)
+    authStore.setSession()
+    if (useRoute().name === 'login') {
+      useRouter().push({ path: '/clients' })
     } else {
-      router.back()
+      useRouter().back()
     }
     return
   }
