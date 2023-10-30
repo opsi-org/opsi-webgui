@@ -7,7 +7,7 @@
   - [x] cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
   - [x] axios/requests (example in form/FLogin or test/Fetch)
   * msgpack
-  * xterm
+  * xterm // adminTerminal
   * playwright
   * storybook
 - [ ] WIP *layout*
@@ -51,6 +51,7 @@
 * https://vuejs.org/guide/components/props.html#props-declaration
 * https://element-plus.org/en-US/
 * https://tailwindcss.com/docs/
+* https://icon-sets.iconify.design/
 * https://localhost:8888/addons/webgui/app/_tailwind/
 
 # how to Upgrade nuxt parts
@@ -227,10 +228,10 @@ const colorMode = computed({
   const fetchResult = ref({});
   onMounted( async () => {
     // usually this is enough:
-    const { data: result } = await $fetch('/user/opsiserver').get().json()
+    const { data: result } = await useAPI('/user/opsiserver').get().json()
 
     // for fetching urls other then /addons/webgui/api use:
-    const { data: result, error, pending } = await useApiFetch(
+    const { data: result, error, pending } = await useAPI(
       '/other-path',
       { method: "GET" },
       '/another-prefix'

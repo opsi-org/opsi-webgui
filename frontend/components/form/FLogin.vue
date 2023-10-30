@@ -68,7 +68,7 @@
   </div>
 </template>
 
-<script setup lang="js">
+<script setup>
 import { useIcons } from "../../composables/mixins/useIcons"
 import { useStrings } from "../../composables/mixins/useStrings"
 import { useNotification } from "../../composables/mixins/useNotification"
