@@ -64,7 +64,7 @@
 ```
   </div>
   <div>vue3
-
+(works only if `lang='js'`)
 ```js
 import { useIcons } from '~/composables/mixins/useIcons'
 ```
@@ -109,7 +109,7 @@ Mixins do not exists in vue3 anymore. So we need to change them to composables. 
       count.value--;
     }
 
-    return { count, increment, decrement };
+    return { increment, decrement }; // export only if accessed
   }
   ```
 
@@ -122,6 +122,12 @@ Mixins do not exists in vue3 anymore. So we need to change them to composables. 
 
 
 ## Component methods:
+* as before:
+```js
+onMounted( async () => {
+  ....
+})
+```
 
 ### Props / Emits
 https://vuejs.org/guide/components/props.html#prop-validation
@@ -149,6 +155,11 @@ const props = defineProps({
   //   }
   // },
 })
+// access:
+console.log(props.small)
+// or
+console.log($attrs.class)
+// difference? maybe if class is not defined in 'defineProps'. Todo: check
 ```
   </div>
 </div>
@@ -169,6 +180,7 @@ defineEmits(['update:modelValue'])
 
 ### watch:
 ```js
+// const settings = useSettingsStore()
 const theme = ref(settings.theme) // settings.theme is here just the initial value
 
 watch(theme, (newTheme, oldTheme) => {
@@ -214,11 +226,15 @@ const colorMode = computed({
   <script setup>
   const fetchResult = ref({});
   onMounted( async () => {
+    // usually this is enough:
     const { data: result } = await $fetch('/user/opsiserver').get().json()
+
     // for fetching urls other then /addons/webgui/api use:
-    const { data: result, error, pending } = await useApiFetch('/other-path', {
-      method: "GET"
-    }, '/another-prefix').json()
+    const { data: result, error, pending } = await useApiFetch(
+      '/other-path',
+      { method: "GET" },
+      '/another-prefix'
+    ).json()
     // this will be combined to: localhost:4447/another-prefix/other-path in development mode
 
     fetchResult.value = result;
@@ -250,7 +266,7 @@ Nuxt no longer provides a Vuex integration. Instead, the official Vue recommenda
 ```javascript
 const counterStore = useCounterStore()
 ```
-* store file
+* store file with `setup` syntax
 ```typescript
 // with setup syntax
 import { useCookie } from 'nuxt/app'
@@ -290,6 +306,7 @@ export const useAuthStore = defineStore('auth', () => {
 }, { persist: true } as any)
 ```
 
+* store file without `setup` syntax
 ```javascript
 // without setup-syntax
 export const useCounterStore = defineStore('main', {
@@ -305,21 +322,25 @@ export const useCounterStore = defineStore('main', {
   },
 })
 ```
-* store file for COOKIES
+* store file for cookies
+NOTE: NOT NEEDED! use: `useCookie('someCookie')`  at loast for reading
 ```javascript
 
-export const useCookieStore = defineStore('main', {
-  state: () => {
-    return {
-      someCookie: 'hello pinia',
-    }
-  },
-  persist: {
-    storage: persistedState.cookiesWithOptions({
-      sameSite: 'strict', // optional
-    }),
-  },
-})
+const counter = useCookie('counter')
+counter.value = counter.value || Math.round(Math.random() * 1000)
+
+// export const useCookieStore = defineStore('main', {
+//   state: () => {
+//     return {
+//       someCookie: 'hello pinia',
+//     }
+//   },
+//   persist: {
+//     storage: persistedState.cookiesWithOptions({
+//       sameSite: 'strict', // optional
+//     }),
+//   },
+// })
 ```
 ## $mq
 * nuxt-mq is deprecated (https://www.npmjs.com/package/nuxt-mq)

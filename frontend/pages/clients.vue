@@ -43,9 +43,4 @@ onMounted( async () => {
 </script>
 
 <style>
-/* .theme-light {}
-.theme-dark {
-  background-color: rgb(56, 56, 56);
-  color: blue;
-} */
 </style>
