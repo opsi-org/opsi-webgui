@@ -1,16 +1,25 @@
 <template>
-  <p v-if="fetchResult.pending">Fetching...</p>
-  <pre v-else-if="fetchResult.error">Could not load data: {{ error.data }}</pre>
+  <pre v-if="fetchError">Could not load data</pre>
+  <p v-else-if="fetchResult === undefined">Fetching...</p>
   <div v-else>
-    Result: {{ typeof fetchResult }} <br />
-    Result: {{ fetchResult }} <br />
+    Result-Type: {{ typeof fetchResult }} <br />
+    Result-Data: {{ fetchResult }} <br />
   </div>
 </template>
 
 <script setup>
-const fetchResult = ref({});
+import { useNotification } from '~/composables/mixins/useNotification';
+
+const fetchResult = ref(undefined);
+const fetchError = ref(false);
+
 onMounted( async () => {
-  const { data } = await useAPI('/user/opsiserver').get().json()
+  const { data, error } = await useApiGET('/user/opsiserver')
+  if (error) {
+    useNotification().error(error)
+    fetchError.value = error;
+    return
+  }
   fetchResult.value = data;
 });
 </script>

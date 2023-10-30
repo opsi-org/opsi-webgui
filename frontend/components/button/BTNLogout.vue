@@ -15,11 +15,9 @@
 </template>
 
 <script setup>
-import { useAPI } from '../../composables/useApiFetch' // actually autoimported
-import { useAuthStore } from '../../store/authsstore' // actually autoimported
-import { useIcons } from '../../composables/mixins/useIcons'
+import { useIcons } from '@/composables/mixins/useIcons'
 import { useNotification } from '../../composables/mixins/useNotification'
-import { useRoute, useRouter } from 'nuxt/app' // actually autoimported
+// import { useRoute, useRouter } from 'nuxt/app' // actually autoimported
 const icon = useIcons()
 const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
@@ -33,13 +31,14 @@ async function doLogout () {
   if (props.abortClick) { return }
 
   // await this.callLogout()
-  const { data, error } = await useAPI('/auth/logout').post().json()
-  if (error.value) {
-    console.log("error", error.value)
-    notificationError(error.value, 'error'); return
+  const { data, error } = await useApiPOST('/auth/logout')
+  if (error) {
+    console.log("error", error)
+    notificationError(error)
+    return
   }
-  notificationSuccess('ok')
 
+  // notificationSuccess('ok')
   // TODO wsDisconnect()
   authStore.logout()
   authStore.clearSession()

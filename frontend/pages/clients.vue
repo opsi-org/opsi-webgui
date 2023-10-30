@@ -28,14 +28,10 @@ const mq = useMQ()
 const authStore = useAuthStore()
 const fetchResult = ref({});
 onMounted( async () => {
-  const { data, error } = await useAPI('/user/configuration').get().json()
-  // console.error('error', error.value)
-  if (error.value == 'Unauthorized') {
-    console.error('FORBIDDEN')
-    authStore.logout()
-    authStore.clearSession()
-    // authStore.setExpiresInterval(undefined)
-    await useRouter().push({ path: '/login' })
+  // const { data, error } = await useAPI('/user/configuration').get().json()
+  const { data ,error } = await useApiGET('/user/configuration')
+  if (error) {
+    notificationError(error)
     return
   }
   fetchResult.value = data;

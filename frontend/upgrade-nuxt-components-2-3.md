@@ -217,28 +217,54 @@ const colorMode = computed({
 * usage in components:
   ```vue
   <template>
-    <p v-if="fetchResult.pending">Fetching...</p>
-    <pre v-else-if="fetchResult.error">Could not load data: {{ error.data }}</pre>
+    <pre v-if="fetchError">Could not load data</pre>
+    <div v-else-if="fetchResult === undefined"> loading.. </div>
     <div v-else>
-      Result: {{ fetchResult.value.result }} <br />
+      Result: {{ fetchResult }} <br />
     </div>
   </template>
 
   <script setup>
-  const fetchResult = ref({});
+  import { useNotification } from '~/composables/mixins/useNotification';
+  const fetchResult = ref(undefined);
+  const fetchError = ref(false);
   onMounted( async () => {
     // usually this is enough:
-    const { data: result } = await useAPI('/user/opsiserver').get().json()
+    const { data, error } = await useApiGet('/user/opsiserver')
 
     // for fetching urls other then /addons/webgui/api use:
-    const { data: result, error, pending } = await useAPI(
-      '/other-path',
-      { method: "GET" },
-      '/another-prefix'
-    ).json()
+    const { data, error } = await useApiGet(
+      '/other-path', // url
+      '/another-prefix' // prePath
+    )
     // this will be combined to: localhost:4447/another-prefix/other-path in development mode
 
-    fetchResult.value = result;
+    if (error) {
+      useNotification().error(error)
+      fetchError.value = error;
+      return
+    }
+    fetchResult.value = data;
+
+
+    // General ApiMethod params:
+    //GET: (required:) url, (optional:) prePath, opts
+    //POST: (required:) url, (optional:) body, prePath, opts
+    //PUT, DELETE,...  TODO: add to useApiFetch
+
+    // Types of params:
+    //    url: string,
+    //    body:any=undefined,
+    //    prePath: string|undefined = undefined,
+    //    opts: UseFetchOptions<any> = {}
+
+    // examples:
+    const { data, error } = await useApiGet('/user/opsiserver') // /addons/webgui/api/user/opsiserver
+    const { data, error } = await useApiGet('/get-file', '/filetransfer') // /filetransfer/get-file
+
+    const { data, error } = await useApiPOST('/auth/login')
+    const { data, error } = await useApiPOST('/auth/login', User)
+    const { data, error } = await useApiPOST('/upload', file, '/filetransfer')
   });
   </script>
   ```

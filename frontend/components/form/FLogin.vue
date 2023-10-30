@@ -96,9 +96,8 @@ const showPassword = ref(false)
 
 const opsiconfigserver = ref('<could not get opsiconfigserver id>');
 onMounted( async () => {
-  const { data, error } = await useAPI('/user/opsiserver').get().json()
-  if (error.value) {
-
+  const { data, error } = await useApiGET('/user/opsiserver')
+  if (error) {
     const errordata = { response: { data: {class: '', details: '', message: t('message.error.opsiconfd')}} }
     notificationError(errordata, t('message.error.login'))
     return
@@ -126,7 +125,11 @@ async function doLogin () {
   User.append('password', form.value.password)
 
 
-  const { data, error } = await useAPI('/auth/login').post(User).json()
+  const { data, error } = await useApiPOST('/auth/login', User)
+  if (error) {
+    notificationError(error)
+    return
+  }
   if (data?.value?.result == 'Login success') {
     notificationSuccess('Successfull. Redirect to clients')
     console.log("login successful")
@@ -137,12 +140,10 @@ async function doLogin () {
     } else {
       useRouter().back()
     }
-    return
   }
 
   // body not readable if error is 403...
-  const errordata = { response: { data: {class: 'AuthenticationError', message: error.value}} }
-  notificationError(errordata)
+  // const errordata = { response: { data: {class: 'AuthenticationError', message: error.value}} }
 }
 </script>
 

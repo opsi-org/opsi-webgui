@@ -12,16 +12,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username'))
 
   if (isA && to.name === 'login') {
-    console.log('middleware: isAuthenticated. navigate to defaultpage')
     return navigateTo(config.public.BASE_PAGE)
   } else if (!isA && to.name !== 'login') {
-    console.log('middleware: not isAuthenticated. navigate to login')
     //TODO: useSelectionStore
     // store.dispatch('selections/clearAllSelection')
     return navigateTo('/login')
   }
-  console.log('middleware from->to:', from.name , to.name)
-  console.log('middleware isAuth:', isA)
   // In a real app you would probably not redirect every route to `/`
   // however it is important to check `to.path` before redirecting or you
   // might get an infinite redirect loop
