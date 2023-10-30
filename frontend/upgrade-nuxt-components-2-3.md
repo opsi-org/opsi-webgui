@@ -4,9 +4,9 @@
   - [x] i18n
   - [x] store (Example: useSettingsStore in store/settingsstore)
   - [x] componentslib + icons
-  * msgpack
-  * cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
+  - [x] cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
   - [x] axios/requests (example in form/FLogin or test/Fetch)
+  * msgpack
   * xterm
   * playwright
   * storybook
@@ -16,7 +16,7 @@
   - [x] icons
   - [ ] WIP components: ~~notifications~~, ....
 - [ ] utils
-- [ ] store
+- [ ] WIP store
 - [ ] components
   - [ ] WIP *general vue3*
     - [ ] WIP *general components*
