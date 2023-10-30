@@ -1,8 +1,9 @@
 import { abortNavigation, defineNuxtRouteMiddleware, navigateTo, useCookie } from "nuxt/app"
-import { useAuthStore } from "../store/authsstore"
+// import { useAuthStore } from "../store/authsstore"
+
 
 export default defineNuxtRouteMiddleware((to, from) => {
-  console.log('Middleware test...')
+  const config = useRuntimeConfig()
   if (to.params.id === '1') {
     console.log('no idea what happend here', to.name, from.name)
     return abortNavigation()
@@ -12,7 +13,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
   if (isA && to.name === 'login') {
     console.log('middleware: isAuthenticated. navigate to defaultpage')
-    return navigateTo('/clients')
+    return navigateTo(config.public.BASE_PAGE)
   } else if (!isA && to.name !== 'login') {
     console.log('middleware: not isAuthenticated. navigate to login')
     //TODO: useSelectionStore

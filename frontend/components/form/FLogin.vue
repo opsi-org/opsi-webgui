@@ -80,6 +80,8 @@ const notificationError = useNotification().error
 const settings = useSettingsStore()
 const authStore = useAuthStore()
 
+const config = useRuntimeConfig()
+// const basePage = config.public.BASE_PAGE
 // const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username'))
 
 const route = useRoute()
@@ -131,7 +133,7 @@ async function doLogin () {
     authStore.login(form.value.username)
     authStore.setSession()
     if (useRoute().name === 'login') {
-      useRouter().push({ path: '/clients' })
+      useRouter().push({ path: config.public.BASE_PAGE })
     } else {
       useRouter().back()
     }

@@ -14,7 +14,7 @@
   </b-button>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { useAPI } from '../../composables/useApiFetch' // actually autoimported
 import { useAuthStore } from '../../store/authsstore' // actually autoimported
 import { useIcons } from '../../composables/mixins/useIcons'
