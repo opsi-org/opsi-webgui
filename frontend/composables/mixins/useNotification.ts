@@ -2,9 +2,9 @@ import { ref, h, getCurrentInstance } from "vue";
 import { ElNotification } from 'element-plus'
 
 export const useNotification = () => {
-  const { t } = useI18n();
+  const { t } = useI18n()
   const appContext = getCurrentInstance()?.appContext
-  const settings = useSettingsStore()
+  // const settings = useSettingsStore()
 
   const count = ref(0)
   const _default_options = {
