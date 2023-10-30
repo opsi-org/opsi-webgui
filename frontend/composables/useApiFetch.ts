@@ -69,11 +69,12 @@ const useAPI2 = async (
 }
 
 const useApiGET = async (url: string, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, undefined, opts, prePath)
+const useApiGETBody = async (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, body, opts, prePath)
 const useApiPOST = async (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('POST', url, body, opts, prePath)
 // const useApiPUT = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('PUT', url, body, opts, prePath)
 // const useApiDELETE = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('DELETE', url, body, opts, prePath)
 
-export { useApiGET, useApiPOST }
+export { useApiGET, useApiGETBody, useApiPOST }
 
 
 // export function useAPI<T> (url: string, opts: UseFetchOptions<T> = {}, prePath: string|undefined = undefined) {
