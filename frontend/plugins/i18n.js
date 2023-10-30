@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n'
-import en from '../locale/en.json'
-import de from '../locale/de.json'
+import en from '../locale/opsiweb-ui_de.json'
+import de from '../locale/opsiweb-ui_en.json'
 
 export default defineNuxtPlugin(({ vueApp }) => {
   const i18n = createI18n({
