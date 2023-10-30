@@ -9,4 +9,5 @@
 
 <script setup>
 const settings = useSettingsStore()
+const color = useColorMode();
 </script>

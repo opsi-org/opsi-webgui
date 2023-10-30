@@ -80,9 +80,12 @@ const notificationError = useNotification().error
 // const color = useColorMode();
 const settings = useSettingsStore()
 
+const route = useRoute()
+const router = useRouter()
 const staticStrings = useStrings()
 const mq = useMQ()
 const icon = useIcons()
+const { t } = useI18n()
 
 const form = ref({ username: '', password: '' })
 const showPassword = ref(false)
@@ -91,7 +94,9 @@ const opsiconfigserver = ref('<could not get opsiconfigserver id>');
 onMounted( async () => {
   const { data, error } = await useAPI('/user/opsiserver').get().json()
   if (error.value) {
-    notificationError(error)
+
+    const errordata = { response: { data: {class: '', details: '', message: t('message.error.opsiconfd')}} }
+    notificationError(errordata, t('message.error.login'))
     return
   }
   opsiconfigserver.value = data?.value?.result
@@ -115,17 +120,24 @@ async function doLogin () {
   const User = new FormData()
   User.append('username', form.value.username)
   User.append('password', form.value.password)
-  const { data, error } = await useAPI('/auth/login', { method: 'POST', body: User}).json()
-  // const { data, error } = await useAPI('/auth/login').post(User).json()
+
+
+  const { data, error } = await useAPI('/auth/login').post(User).json()
   if (data?.value?.result == 'Login success') {
     // TODO
     notificationSuccess('fine. TODO: Next step is to redirect to another page with default layout')
+
+    if (route.name === 'login') {
+      router.push({ path: '/clients/' })
+    } else {
+      router.back()
+    }
     return
   }
-  const errordata = { response: { data: {class: 'AuthenticationError', details: 'some details', message: error.value}} }
-  notificationError(error.value.data, 'AuthenticationError')
-  // console.log(error)
-  // TODO: get message of error (body) correcty
+
+  // body not readable if error is 403...
+  const errordata = { response: { data: {class: 'AuthenticationError', message: error.value}} }
+  notificationError(errordata)
 }
 </script>
 

@@ -5,7 +5,7 @@
   - [x] store (Example: useSettingsStore in store/settingsstore)
   - [x] componentslib + icons
   * msgpack
-  * cookies
+  * cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
   - [x] axios/requests (example in form/FLogin or test/Fetch)
   * xterm
   * playwright

@@ -3,7 +3,7 @@ import { ElNotification } from 'element-plus'
 
 export const useNotification = () => {
   const { t } = useI18n();
-  const appContext = getCurrentInstance().appContext
+  const appContext = getCurrentInstance()?.appContext
   const settings = useSettingsStore()
 
   const count = ref(0)
@@ -72,7 +72,7 @@ export const useNotification = () => {
     return showToast({
       title: title || _title || t('message.error.title'),
       variant: 'error',
-      autoHideDelay: 15000,
+      autoHideDelay: 30000,
       noAutoHide: false, // will be hidden by next error message
       // noAutoHide: true, // will be hidden by next error message
       // autoHideDelay: true, // will be hidden by next error message
