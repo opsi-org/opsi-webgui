@@ -6,14 +6,12 @@
   - [x] componentslib + icons
   - [x] cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
   - [x] axios/requests (example in form/FLogin or test/Fetch)
-  * msgpack
+  - [x] msgpack
   * xterm // adminTerminal
   * playwright
   * storybook
 - [ ] WIP *layout*
-- [ ] mixins
-  - [x] icons
-  - [ ] WIP components: ~~notifications~~, ....
+- [x] mixins
 - [ ] utils
 - [x] store
 - [ ] components
