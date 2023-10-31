@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 
 
-export const useCacheStore = defineStore('data-cache', () => {
+export const storeCache = defineStore('data-cache', () => {
   // need to return the states / getters/ actions in the end of the setup
   // states
   let _opsiconfigserver: string = ''

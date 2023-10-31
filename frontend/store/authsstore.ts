@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 const expirySec = 60 * 30 // Default=30min
 
-export const useAuthStore = defineStore('auth', () => {
+export const storeAuth = defineStore('auth', () => {
   // need to return the states / getters/ actions in the end of the setup
   // states
   let _myusername: string = localStorage.getItem('username') as string

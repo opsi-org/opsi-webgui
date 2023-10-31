@@ -1,0 +1,38 @@
+import { defineStore } from 'pinia'
+import { computed } from 'vue'
+
+
+export const storeErrors = defineStore('errors', () => {
+  // need to return the states / getters/ actions in the end of the setup
+  // states
+  let _errorsProducts: Array<any> = []
+  let _errorsHostParam: Array<any> = []
+
+  // getter
+  const errorsProducts = computed(() => _errorsProducts)
+  const errorsHostParam = computed(() => _errorsHostParam)
+
+  // actions
+
+  function pushToErrorsProducts (obj: object) {
+    _errorsProducts.push(obj)
+  }
+
+  function clearErrorsProducts () {
+    _errorsProducts = []
+  }
+
+  function pushToErrorsHostParam (obj: object) {
+    _errorsHostParam.push(obj)
+  }
+
+  function clearErrorsHostParam () {
+    _errorsHostParam = []
+  }
+
+  return {
+    /* states */
+    /* getters */ errorsProducts, errorsHostParam
+    /* actions */ , pushToErrorsProducts, clearErrorsProducts, pushToErrorsHostParam, clearErrorsHostParam
+  }
+}, { persist: true } as any)
