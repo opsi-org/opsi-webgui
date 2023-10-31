@@ -1,71 +1,24 @@
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
+// import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
+import type { IObjectString2Boolean } from '@/types/tgeneral'
 
-
-export const storeChanges = defineStore('changes', () => {
+export const storeChanges = defineStore('config-app', () => {
   // need to return the states / getters/ actions in the end of the setup
   // states
-  let _changesProducts: Array<any> = []
-  let _changesHostParam: Array<any> = []
+  let _config: IObjectString2Boolean|undefined = undefined
 
   // getter
-  const changesProducts = computed(() => _changesProducts)
-  const changesHostParam = computed(() => _changesHostParam)
+  const config = computed(() => _config)
 
   // actions
-  function pushToChangesProducts (obj: object) {
-    _changesProducts.push(obj)
+  function setConfig (obj: IObjectString2Boolean) {
+    _config = obj
   }
 
-  function delWithIndexChangesProducts (index: number) {
-    _changesProducts.splice(index, 1)
-  }
-
-  function delFromChangesProducts (obj: object) {
-    _changesProducts.splice(_changesProducts.indexOf(obj), 1)
-  }
-
-  function deleteFromProdChangesWhere (hostKV: Array<any>, objectKV:Array<any>, additionalKV: Array<any>) {
-    let removeItems = _changesProducts.filter(item => item.user === localStorage.getItem('username'))
-    // filter by hosts
-    removeItems = removeItems.filter(item => hostKV[1].includes(item[hostKV[0]]))
-    // filter by e.g. productId
-    if (objectKV) { removeItems = removeItems.filter(item => item[objectKV[0]] === hostKV[1]) }
-    // filter by e.g. propertyId
-    if (additionalKV) { removeItems = removeItems.filter(item => item[additionalKV[0]] === additionalKV[1]) }
-
-    // remove filtered elements
-    removeItems.forEach(f => _changesProducts.splice(_changesProducts.findIndex(item => item === f), 1))
-  }
-
-  function deleteAllProductChanges () {
-    // _changesProducts.splice(0, _changesProducts.length)
-    const removeItems = _changesProducts.filter(item => item.user === localStorage.getItem('username'))
-    removeItems.forEach(f => _changesProducts.splice(_changesProducts.findIndex(item => item.user === f.user), 1))
-  }
-
-  function pushToChangesHostParam (obj: object) {
-    _changesHostParam.push(obj)
-  }
-
-  function delWithIndexChangesHostParam (index: number) {
-    _changesHostParam.splice(index, 1)
-  }
-
-  function delFromChangesHostParam (obj: object) {
-    _changesHostParam.splice(_changesHostParam.indexOf(obj), 1)
-  }
-
-  function deleteAllChangesHostParam () {
-    // _changesProducts.splice(0, _changesProducts.length)
-    const removeItems = _changesHostParam.filter(item => item.user === localStorage.getItem('username'))
-    removeItems.forEach(f => _changesHostParam.splice(_changesHostParam.findIndex(item => item.user === f.user), 1))
-  }
   return {
     /* states */
-    /* getters */ changesProducts, changesHostParam
-    /* actions */
-      , pushToChangesProducts, delWithIndexChangesProducts, delFromChangesProducts, deleteFromProdChangesWhere, deleteAllProductChanges
-      , pushToChangesHostParam, delWithIndexChangesHostParam, delFromChangesHostParam, deleteAllChangesHostParam
+    /* getters */ config
+    /* actions */, setConfig
   }
 }, { persist: true } as any)
