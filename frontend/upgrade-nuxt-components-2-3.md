@@ -13,10 +13,9 @@
 - [ ] WIP *layout*
 - [ ] mixins
   - [x] icons
-  - [x] icons
   - [ ] WIP components: ~~notifications~~, ....
 - [ ] utils
-- [ ] WIP store
+- [x] store
 - [ ] components
   - [ ] WIP *general vue3*
     - [ ] WIP *general components*
@@ -307,7 +306,7 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 const expirySec = 60 * 30 // Default=30min
 
-export const useAuthStore = defineStore('auth', () => {
+export const storeAuth = defineStore('auth', () => {
   // need to return the states / getters/ actions in the end of the setup
 
   // states (here used as local vars)
@@ -342,7 +341,7 @@ export const useAuthStore = defineStore('auth', () => {
 * store file without `setup` syntax
 ```javascript
 // without setup-syntax
-export const useCounterStore = defineStore('main', {
+export const storeCounter = defineStore('counter', {
   persist: true, // optional
   state: () => ({
     counter: 0,
@@ -510,7 +509,7 @@ To check which theme we are using currently there are several options:
   <el-button class="thisisnotprimary-itsred" type="primary" />
 </template>
 <script setup lang="ts">
-const settings = useSettingsStore()
+const settings = storeSettings() // from settingsStore
 </script>
 <style>
 webgui-theme-light .thisisnotprimary-itsgreen { background-color: green; }
