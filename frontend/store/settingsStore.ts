@@ -4,6 +4,7 @@ import { computed } from 'vue'
 import type { ITheme } from '@/types/tsettings'
 import type { IObjectString2Boolean } from '@/types/tgeneral'
 import type { IColumnLayoutCollapsed } from '@/types/tobjects'
+import { useIcons } from '~/composables/mixins/useIcons'
 
 export const storeSettings = defineStore('settings', () => {
   // need to return the states / getters/ actions in the end of the setup
@@ -11,7 +12,7 @@ export const storeSettings = defineStore('settings', () => {
   const _theme = 'light'
   let _language: string = useCookie('Language').value || 'en'
   let _quicksave: boolean = useCookie('Quicksave').value === 'true' || (useCookie('Quicksave').value === undefined) || false
-  let colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: 'sun' }
+  let colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: useIcons().themelight }
   let _twoColumnLayoutCollapsed: IObjectString2Boolean = { tabledepots: false, tableclients: false }
   let _expiresInterval!: NodeJS.Timeout|undefined
 
@@ -75,6 +76,17 @@ export const storeSettings = defineStore('settings', () => {
     useCookie('theme.rel').value = colorthemeobj.rel
   }
 
+  function changeTheme(t:string) {
+      // `this` is the store instance
+    const _colorthemeobj = { title: 'light', rel: 'themes/opsi-light.css', icon: useIcons().themelight }
+    if (t==='dark'){
+      _colorthemeobj.title = t
+      _colorthemeobj.rel = 'themes/opsi-dark.css'
+      _colorthemeobj.icon = useIcons().themedark
+    }
+    setColorTheme(_colorthemeobj)
+  }
+
   return {
     /* states */
     /* getters */ isLight,
@@ -87,7 +99,8 @@ export const storeSettings = defineStore('settings', () => {
                     setLanguage,
                     setQuicksave,
                     setColumnLayoutCollapsed,
-                    setColorTheme
+                    setColorTheme,
+                    changeTheme
   }
 }, { persist: true } as any)
 
