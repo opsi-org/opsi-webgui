@@ -1,24 +1,28 @@
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
 
-const settings = namespace('settings')
+export const useSettingsLanguage = () => {
+  const settings = storeSettings()
+  const language = settings.language
+  const setLanguage = settings.setLanguage
 
-@Component export class SettingsLanguage extends Vue {
-  @settings.Getter public language!: string
-  @settings.Mutation public setLanguage!: (lang: string) => void
-
-  beforeMount () {
-    if (this.language) {
-      this.$i18n.locale = this.language
+  onBeforeMount (()=> {
+    if (language) {
+      // $i18n.locale = language
+      const { locale } = useI18n()
+      locale.value = language
     }
-  }
+  })
+  return {language, setLanguage}
 }
-@Component export class Settings extends Vue {
-  @settings.Getter public colortheme!: any
 
-  CONST_LIGHT = 'theme-light'
-  CONST_DARK = 'theme-dark'
+export const useSettings = () => {
+  const settings = storeSettings()
+  const colortheme = settings.colortheme
 
-  get themeclass (): string {
-    return (this.colortheme && this.colortheme.title === 'light') ? this.CONST_LIGHT : this.CONST_DARK
+  const CONST_LIGHT = 'theme-light'
+  const CONST_DARK = 'theme-dark'
+
+  function themeclass (): string {
+    return (colortheme && colortheme.title === 'light') ? CONST_LIGHT : CONST_DARK
   }
+  return { colortheme, CONST_DARK, CONST_LIGHT, themeclass}
 }

@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { useNotification } from '~/composables/mixins/useComponents';
+import { useNotification } from '~/composables/mixins/useComponent';
 
 const fetchResult = ref(undefined);
 const fetchError = ref(false);
