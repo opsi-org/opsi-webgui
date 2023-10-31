@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-const settings = useSettingsStore()
+const settings = storeSettings()
 </script>
 
 <style scoped>

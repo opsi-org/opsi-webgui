@@ -8,6 +8,6 @@
 </template>
 
 <script setup>
-const settings = useSettingsStore()
+const settings = storeSettings()
 const color = useColorMode();
 </script>

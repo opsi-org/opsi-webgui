@@ -2,7 +2,7 @@
 - [ ] TODO ! test building process...
 - [ ] packages:
   - [x] i18n
-  - [x] store (Example: useSettingsStore in store/settingsstore)
+  - [x] store (Example: storeSettings in store/settingsStore)
   - [x] componentslib + icons
   - [x] cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
   - [x] axios/requests (example in form/FLogin or test/Fetch)
@@ -185,7 +185,7 @@ defineEmits(['update:modelValue'])
 
 ### watch:
 ```js
-// const settings = useSettingsStore()
+// const settings = storeSettings()
 const theme = ref(settings.theme) // settings.theme is here just the initial value
 
 watch(theme, (newTheme, oldTheme) => {

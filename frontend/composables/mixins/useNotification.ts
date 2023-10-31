@@ -4,7 +4,7 @@ import { ElNotification } from 'element-plus'
 export const useNotification = () => {
   const { t } = useI18n()
   const appContext = getCurrentInstance()?.appContext
-  // const settings = useSettingsStore()
+  // const settings = storeSettings()
 
   const count = ref(0)
   const _default_options = {
