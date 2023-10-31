@@ -2,7 +2,7 @@
 // import { AlertToast } from './component'
 import type { IObjectString2String } from '@/types/tgeneral'
 import { useNotification } from './useNotification'
-import { useCacheStore } from '@/store/datacachestore'
+import { storeCache } from '@/store/datacacheStore'
 
 export const useConfigserver = () => {
   const { t } = useI18n()
@@ -14,8 +14,8 @@ export const useConfigserver = () => {
       useNotification().error(errordata, t('message.error.login'))
       return
     }
-    useCacheStore().setOpsiconfigserver(data.value.result)
-    return useCacheStore().opsiconfigserver
+    storeCache().setOpsiconfigserver(data.value.result)
+    return storeCache().opsiconfigserver
   }
 
   return { getOpsiConfigServer }

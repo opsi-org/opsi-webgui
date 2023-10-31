@@ -7,7 +7,7 @@ import { useIcons } from '~/composables/mixins/useIcons';
 
 const color = useColorMode();
 const icon = useIcons()
-const settings = useSettingsStore()
+const settings = storeSettings()
 const theme = ref(settings.theme)
 color.preference = settings.theme
 color.value = settings.theme

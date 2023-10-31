@@ -25,7 +25,7 @@
 <script setup>
 const mq = useMQ()
 // user/configuration
-const authStore = useAuthStore()
+const authStore = storeAuth()
 const fetchResult = ref({});
 onMounted( async () => {
   // const { data, error } = await useAPI('/user/configuration').get().json()

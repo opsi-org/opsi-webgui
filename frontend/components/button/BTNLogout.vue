@@ -22,7 +22,7 @@ const icon = useIcons()
 const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
 
-const authStore = useAuthStore() // autho imported
+const authStore = storeAuth() // autho imported
 const props = defineProps({
   abortClick: { type: Boolean, default: false}
 })

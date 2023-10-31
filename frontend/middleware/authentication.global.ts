@@ -1,5 +1,5 @@
 import { abortNavigation, defineNuxtRouteMiddleware, navigateTo, useCookie } from "nuxt/app"
-// import { useAuthStore } from "../store/authsstore"
+// import { storeAuth } from "../store/authsstore"
 
 
 export default defineNuxtRouteMiddleware((to, from) => {
@@ -8,7 +8,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     console.log('no idea what happend here', to.name, from.name)
     return abortNavigation()
   }
-  // const isA:Boolean = useAuthStore().isAuthenticated // has old values in store...
+  // const isA:Boolean = storeAuth().isAuthenticated // has old values in store...
   const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username'))
 
   if (isA && to.name === 'login') {

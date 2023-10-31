@@ -6,6 +6,6 @@
 </template>
 
 <script setup>
-const counterStore = useMainStore()
-// better example: useAuthStore()
+const counterStore = useMainStore() // from testStore
+// better example: storeAuth()
 </script>

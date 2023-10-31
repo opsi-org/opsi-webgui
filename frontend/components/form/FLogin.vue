@@ -9,7 +9,7 @@
         class="text-center bg-primary mx-auto"
         :class="mq.$mq === 'mobile'? 'w-full;' : 'w-1/2; max-w-md' "
     >
-      <IconIOpsiLogo :light="!settings.isLight" :short="false" class="mb-2" classes="w-full" />
+      <IconIOpsiLogo :light="!storeSettings().isLight" :short="false" class="mb-2" classes="w-full" />
       <div @keyup.enter="doLogin">
         <b-form class="mt-1">
           <b-input-group>
@@ -78,8 +78,8 @@ const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
 // notificationError('It works', 'not')
 // const color = useColorMode();
-const settings = useSettingsStore()
-const authStore = useAuthStore()
+// const settings = storeSettings()
+// const authStore = storeAuth()
 
 const config = useRuntimeConfig()
 // const basePage = config.public.BASE_PAGE
@@ -126,8 +126,8 @@ async function doLogin () {
   if (data?.value?.result == 'Login success') {
     notificationSuccess('Successfull. Redirect to clients')
     console.log("login successful")
-    authStore.login(form.value.username)
-    authStore.setSession()
+    storeAuth().login(form.value.username)
+    storeAuth().setSession()
     if (useRoute().name === 'login') {
       useRouter().push({ path: config.public.BASE_PAGE })
     } else {
