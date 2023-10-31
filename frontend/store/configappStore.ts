@@ -3,7 +3,7 @@ import { computed } from 'vue'
 // import { Module, VuexModule, VuexMutation } from 'nuxt-property-decorator'
 import type { IObjectString2Boolean } from '@/types/tgeneral'
 
-export const storeChanges = defineStore('config-app', () => {
+export const storeConfigapp = defineStore('config-app', () => {
   // need to return the states / getters/ actions in the end of the setup
   // states
   let _config: IObjectString2Boolean|undefined = undefined
