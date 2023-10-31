@@ -1,50 +1,52 @@
-import Cookie from 'js-cookie'
-import { Component, Vue } from 'nuxt-property-decorator'
+// import Cookie from 'js-cookie'
+// import { Component, Vue } from 'nuxt-property-decorator'
 
 // const changes = namespace('changes')
 // const errors = namespace('errors')
 
-@Component export class Cookies extends Vue {
-  static options: any
+// @Component export class Cookies extends Vue {
+export const useCookies = () => {
+  // let options: any
   // @changes.Mutation public delFromChangesProducts!: (s: object) => void
   // @errors.Mutation public pushToErrorsProducts!: (s: object) => void
-  existsCookie (key: string) {
-    return Cookie.get(key)
+  function existsCookie (key: string) {
+    return useCookie(key).value
   }
 
-  isCookie (key: string, value:any, defaultValue = undefined) {
-    let v = Cookie.get(key)
+  function isCookie (key: string, value:any, defaultValue = undefined) {
+    let v = useCookie(key).value
     if (!v) { v = defaultValue }
     return v === value
   }
 
-  getCookie (key: string, defaultResult = '') {
-    const v = Cookie.get(key)
+  function getCookie (key: string, defaultResult = '') {
+    const v = useCookie(key).value
     if (!v) { return defaultResult }
     return v as unknown as any
   }
 
-  getParsedCookie (key: string, defaultResult = '') {
-    const v = Cookie.get(key)
+  function getParsedCookie (key: string, defaultResult = '') {
+    const v = useCookie(key).value
     if (!v) { return defaultResult }
     const r = JSON.parse(v as unknown as any)
     return r
   }
 
-  getKeyCookie (key: string, keyitem:string, defaultResult = '') {
-    const v = Cookie.get(key)
+  function getKeyCookie (key: string, keyitem:string, defaultResult = '') {
+    const v = useCookie(key).value
     if (!v) { return defaultResult }
     return JSON.parse(v as unknown as any)[keyitem]
   }
 
-  includesCookie (key:string, value:string|number|boolean, defaultResult: boolean) {
-    const v = Cookie.get(key)
+  function includesCookie (key:string, value:string|number|boolean, defaultResult: boolean) {
+    const v = useCookie(key).value
     return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult
   }
 
-  setCookie (key:string, value:string, options = undefined) {
+  function setCookie (key:string, value:string, options = undefined) {
     let opt:any = options
     if (opt === undefined) { opt = { expires: 365 } }
-    Cookie.set(key, value, opt)
+    useCookie(key, opt).value = value
   }
+  return { existsCookie, isCookie, getCookie, getParsedCookie, getKeyCookie, includesCookie, setCookie }
 }
