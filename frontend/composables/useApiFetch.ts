@@ -30,6 +30,7 @@ const useAPI2 = async (
   }
 
   let callresponse = ref<any>(undefined);
+  let callheaders: any = {};
   let callerror: any = null;
 
 
@@ -54,6 +55,8 @@ const useAPI2 = async (
       return
     }
     callresponse.value = JSON.parse(res.json().data.value)
+    // callheader.value = JSON.parse(res.json().data.value)
+    console.log(res.json())
   }
 
   await useFetch(baseUrl + basePath + url, {
@@ -63,9 +66,10 @@ const useAPI2 = async (
     headers,
     body,
     ...opts
-  } as any).then(onResponse,onResponseError).catch(err => console.log('intern error', err))
+  } as any).then(onResponse,onResponseError)
+           .catch((err:any) => console.log('intern error', err))
 
-  return { data: callresponse, error: callerror }
+  return { data: callresponse, error: callerror, headers: callheaders }
 }
 
 const useApiGET = async (url: string, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, undefined, opts, prePath)
