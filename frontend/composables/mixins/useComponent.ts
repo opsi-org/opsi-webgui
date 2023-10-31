@@ -1,9 +1,15 @@
-import { Component, Vue } from 'nuxt-property-decorator'
-import { Cookies } from './cookies'
+// import { Component, Vue } from 'nuxt-property-decorator'
+// import { Cookies } from './cookies'
+import { ElNotification } from 'element-plus'
 
-@Component export class AlertToast extends Vue {
-  count:number = 0
-  default_options = {
+
+const useNotification = () => {
+  const { t } = useI18n()
+  const appContext = getCurrentInstance()?.appContext
+  // const settings = storeSettings()
+
+  const count = ref(0)
+  const _default_options = {
     title: '',
     content: '',
     variant: 'primary',
@@ -15,46 +21,42 @@ import { Cookies } from './cookies'
     hideLastErrorToast: true
   }
 
-  showToastSuccess (content: string = '') {
-    // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-    // ref.alert(this.$t('message.success.title'), 'success', response)
-    return this.showToast({
-      title: this.$t('message.success.title') as string,
+  function success (content: string = '') {
+    return showToast({
+      title: t('message.success.title'),
       content: content || '', // may wanna have a default
       variant: 'success',
       autoHideDelay: 3000
     })
   }
 
-  showToastWarning (content: string = '') {
-    return this.showToast({
-      title: this.$t('message.warning.title') as string,
+  function warning (content: string = '') {
+    return showToast({
+      title: t('message.warning.title'),
       content: content || '', // may wanna have a default
       variant: 'warning'
     })
   }
 
-  showToastInfo (content: string = '') {
-    // const ref = (this.$root.$children[1].$refs.statusAlert as any) || (this.$root.$children[2].$refs.statusAlert as any)
-    // ref.alert(this.$t('message.success.title'), 'success', response)
-    return this.showToast({
-      title: this.$t('message.info.event') as string,
+  function info (content: string = '') {
+    return showToast({
+      title: t('message.info.event'),
       content: content || '', // may wanna have a default
       variant: 'info',
       noAutoHide: true
     })
   }
 
-  showToastMbus (title: string, content: string, reloadAction:any = false) {
+  function infoMbus (title: string, content: string, reloadAction:any = false) {
     const obj:any = {}
     if (reloadAction !== false) {
       obj.buttons = [{
-        text: this.$t('button.reload') as string,
-        tooltip: this.$t('button.reload.tooltip.clients.removeselection') as string,
+        text: t('button.reload'),
+        tooltip: t('button.reload.tooltip.clients.removeselection'),
         action: reloadAction // shows reload button
       }]
     }
-    return this.showToast({
+    return showToast({
       title,
       content,
       variant: 'info',
@@ -62,23 +64,25 @@ import { Cookies } from './cookies'
     })
   }
 
-  showToastError (_error: any, _title: any = undefined) {
-    // const ref = (this.$root.$children[1].$refs.errorAlert as any) || (this.$root.$children[2].$refs.errorAlert as any)
-    // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-    // ref.alert(this.$t('message.error.title'), 'danger', detailedError)
+  function error (_error: any, _title: any = undefined) {
     let title
     if (_error?.response?.data && !_title) {
-      title = this.$t('message.error.serverresponse.title', { error: _error.response.data.class })
+      title = t('message.error.serverresponse.title', { error: _error.response.data.class })
     }
-    return this.showToast({
-      title: title || _title || this.$t('message.error.title'),
-      variant: 'danger',
-      noAutoHide: true, // will be hidden by next error message
-      error_data: _error?.response?.data || { message: this.$t('message.error.unknown') }
+    let error = _error?.response?.data || _error
+    console.log(error)
+    return showToast({
+      title: title || _title || t('message.error.title'),
+      variant: 'error',
+      autoHideDelay: 30000,
+      noAutoHide: false, // will be hidden by next error message
+      // noAutoHide: true, // will be hidden by next error message
+      // autoHideDelay: true, // will be hidden by next error message
+      error_data: error || { message: t('message.error.unknown') }
     })
   }
 
-  showToastInfoList (response: any) {
+  function infoList (response: any) {
     /* response structure:
     {
         "test-101.uib.local": {
@@ -93,7 +97,6 @@ import { Cookies } from './cookies'
     */
     const $elements:any = []
     const $rows:any = []
-    const h = this.$createElement
     const keys = Object.keys(response)
     for (const k in keys) {
       const $key = h('b', keys[k])
@@ -107,26 +110,25 @@ import { Cookies } from './cookies'
     }
     $elements.push(h('b-list-group', $rows))
 
-    return this.showToast({
-      title: this.$t('message.info.event'),
-      variant: 'info',
+    return showToast({
+      title: t('message.info.event'),
+      type: 'info',
       noAutoHide: true, // will be hidden by next error message
       components: $elements,
       hideLastErrorToast: true
     })
   }
 
-  showToast (_obj: any) {
-    const obj = { ...this.default_options, ..._obj } // overwright defaults
+  function showToast (_obj: any) {
+    const obj = { ..._default_options, ..._obj } // overwright defaults
     // if (obj.hideLastErrorToast) { this.hideToast() }
 
-    const h = this.$createElement
     const $elements:any = []
-    const vid = `my-toast-${this.count++}`
+    const vid = `my-toast-${count.value++}`
     $elements.push(h('div', obj.content))
     if (obj.error_data !== undefined) {
       // Construct toast to be displayed on errors (will hide all toasts before)
-      const e = obj.error_data as any
+      const e = obj.error_data
       if (!obj.title.includes(e.class)) { $elements.push(h('b', e.class)) }
       $elements.push(h('p', e.message))
       if (e.details) {
@@ -134,7 +136,7 @@ import { Cookies } from './cookies'
           props: {
             details: e.details,
             variant: obj.variant,
-            buttonText: this.$t('message.error.buttton.details')
+            buttonText: t('message.error.buttton.details')
           }
         })
         $elements.push(h('div', { class: '' }, [btnDetails]))
@@ -145,7 +147,7 @@ import { Cookies } from './cookies'
     if (obj.buttons !== undefined) {
       // Create right aligned buttons if defined
       for (let i = 0; i < (obj.buttons as Array<any>).length; i++) {
-        elements.push(this._create_button(h, vid, obj.variant, obj.buttons[i]))
+        elements.push(_create_button(h, vid, obj.variant, obj.buttons[i]))
       }
     }
     if (obj.components !== undefined) {
@@ -153,36 +155,60 @@ import { Cookies } from './cookies'
       elements.push(h('div', {
         class: 'd-flex justify-content-end',
         on: {
-          click: () => { this.hideToast() }
+          click: () => { hideToast() }
         }
       }, obj.components))
     }
     $elements.push(h('div', { class: 'd-flex justify-content-end' }, elements)) // all elements are right aligned
+    // const _showToast = (BToast?.methods as any).showToast
+    // const _showToast: any = $bvToast.showToast
 
-    this.$bvToast.toast($elements, {
+    const message = h('div', $elements)
+    const data = {
+  // setTimeout(() =>
+  // {
+  //   // The timeout seems to be need, otherwise _bv__toast is undefined.
+  //   // const bvToast = instance.ctx._bv__toast as BvToast;
+  //   const _showToast: any = instance.ctx._bv__toast.showToast
+  //   _showToast($elements, {
       title: `${obj.title}`,
-      vid,
-      variant: obj.variant,
-      solid: true,
-      autoHideDelay: obj.autoHideDelay,
-      noAutoHide: obj.noAutoHide,
-      noCloseButton: !obj.noAutoHide
-    })
+      message,
+  //     vid,
+      type: obj.variant,
+  //     solid: true,
+      duration: obj.noAutoHide ? 0 : obj.autoHideDelay,
+      showClose: obj.noAutoHide,
+
+      // current workaround, cause colors are not inherits
+      // customClass: settings.isLight ? 'bg-light text-black' : 'bg-dark text-dark'
+      // customClass: 'bg-inherit text-inherit'
+      // --el-notification-title-color
+      // --el-notification-content-color
+
+      //     autoHideDelay: obj.autoHideDelay,'
+      //     noAutoHide: obj.noAutoHide,
+      //     noCloseButton: !obj.noAutoHide
+    }
+    ElNotification(data, appContext)
     return vid
   }
 
-  hideToast (vid: string|undefined = undefined) {
-    this.$bvToast.hide(vid)
+  function hideToast (vid: string|undefined = undefined) {
+    // const _hide = (BToast?.methods as any).hide
+    // const _hide = $bvToast.hide
+    // const _hide: any = instance.ctx._bv__toast.hide
+    // _hide(vid)
+    ElNotification.closeAll()
   }
 
-  _create_button (h, id:string, variant: string, btnData: any): any {
+  function _create_button (h: any, id:string, variant: string, btnData: any): any {
     const $btn = h('b-button',
       {
         props: { variant: `outline-${variant}`, title: btnData.tooltip },
         // class: `btn btn-outline-${variant}`,
         on: {
           click: () => {
-            if (btnData.hide === undefined || btnData.hide === true) { this.hideToast() }
+            if (btnData.hide === undefined || btnData.hide === true) { hideToast() }
             if (btnData.action !== undefined) { (btnData.action as Function)() }
           }
         }
@@ -192,36 +218,56 @@ import { Cookies } from './cookies'
     // $btn.data?.class = `btn btn-outline-${variant}`
     return $btn
   }
-}
 
-@Component export class HoverDropdown extends Vue {
-  onOver (ref) {
+  return {
+    error,
+    success,
+    info,
+    infoMbus,
+    infoList,
+    warning
+  }
+}
+const useAlertToast = useNotification
+export { useNotification, useAlertToast }
+
+
+
+export const useHoverDropdown = () => {
+  function onOver (ref: any) {
     if (ref) {
       ref.visible = true
     }
   }
-
-  onLeave (ref) {
+  function onLeave (ref: any) {
     if (ref) {
       ref.visible = false
     }
   }
+  return {onOver, onLeave}
 }
 
-@Component({ mixins: [Cookies] }) export class Synchronization extends Vue {
-  setCookie: any
-  syncSort (fromSort, toSort, emitToSort, id) {
+
+export const useSynchronization = () => {
+  // TODO check if useCookies is needed instead of useCookie
+  // setCookie: any
+  function syncSort (fromSort: any, toSort: any, emitToSort: any, id: any) {
+    const sortingCookie = useCookie('sorting_' + id)
+
     if (fromSort.filterQuery && toSort.filterQuery !== fromSort.filterQuery) {
       toSort.filterQuery = fromSort.filterQuery
     }
     if (fromSort.sortBy && toSort.sortBy !== fromSort.sortBy) {
       toSort.sortBy = fromSort.sortBy
-      this.setCookie('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
+      sortingCookie.value = JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc })
+      // this.setCookie('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
     }
     if (fromSort.sortDesc !== undefined && toSort.sortDesc !== fromSort.sortDesc) {
       toSort.sortDesc = fromSort.sortDesc
-      this.setCookie('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
+      sortingCookie.value = JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc })
+      // this.setCookie('sorting_' + id, JSON.stringify({ sortBy: toSort.sortBy, sortDesc: toSort.sortDesc }), { expires: 365 })
     }
-    if (emitToSort) { this.$emit('update:sort', toSort) }
+    if (emitToSort) { emitToSort('update:sort', toSort) }
+    // if (emitToSort) { this.$emit('update:sort', toSort) }
   }
 }

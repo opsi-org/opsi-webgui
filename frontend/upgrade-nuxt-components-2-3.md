@@ -229,7 +229,7 @@ const colorMode = computed({
   </template>
 
   <script setup>
-  import { useNotification } from '~/composables/mixins/useNotification';
+  import { useNotification } from '~/composables/mixins/useComponents';
   const fetchResult = ref(undefined);
   const fetchError = ref(false);
   onMounted( async () => {
