@@ -16,9 +16,14 @@
     "//@nuxtjs/color-mode": "^3.3.0 // currently imported by bootstrap-next ? ",
     "//@element-plus/icons-vue": "^2.1.0",
     "//@iconify/json": "^2.2.132",
-    "//unplugin-icons": "^0.17.1"
+    "//unplugin-icons": "^0.17.1",
+    "//xterm": "^5.2.x",
+    "//xterm-addon-fit": "0.7.0",
+    "//xterm-addon-search": "0.12.0",
+    "//xterm-addon-web-links": "0.8.0"
   },
   "dependencies": {
+    "@msgpack/msgpack": "^3.0.0-beta2",
     "element-plus": "^2.4.x"
   },
   "devDependencies": {

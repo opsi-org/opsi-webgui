@@ -1,16 +1,25 @@
 import { encode, decode } from '@msgpack/msgpack'
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { AlertToast } from './component'
-const mbus = namespace('messagebus')
+import { useNotification } from './useComponent'
 
-@Component({ mixins: [AlertToast] }) export class MBus extends Vue {
-  showToastMbus: any // mixin
-  uid: string = this.createUUID()
-  channels: any // from importing component?
-  @mbus.Getter public bus!: WebSocket|undefined
-  @mbus.Getter public wsBusMsg!: any
-  @mbus.Mutation public setBus!: (bus: WebSocket|undefined) => void
-  @mbus.Mutation public setBusLastMsg!: (obj: any) => void
+// import { Component, namespace, Vue } from 'nuxt-property-decorator'
+// import { AlertToast } from './component'
+// const mbus = namespace('messagebus')
+
+export const useMBus = () => {
+  // @Component({ mixins: [AlertToast] }) export class MBus extends Vue {
+  // showToastMbus: any // mixin
+  const { t } = useI18n()
+  const showToastMbus = useNotification().infoMbus
+  const uid: string = createUUID()
+  let channels: any // from importing component?
+  const bus = storeMBus().bus
+  const wsBusMsg = storeMBus().wsBusMsg
+  const setBus = storeMBus().setBus
+  const setBusLastMsg = storeMBus().setBusLastMsg
+  // @mbus.Getter public bus!: WebSocket|undefined
+  // @mbus.Getter public wsBusMsg!: any
+  // @mbus.Mutation public setBus!: (bus: WebSocket|undefined) => void
+  // @mbus.Mutation public setBusLastMsg!: (obj: any) => void
 
   // // check events / channels and trigger actions in concrete classes
   // // e.g. currently View/VClients.vue
@@ -19,30 +28,31 @@ const mbus = namespace('messagebus')
   // // ....
   //  wsBusMsg: any // mixin // store
   //  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-  //     const msg = this.wsBusMsg
+  //     const msg = wsBusMsg
   //     console.log('MessageBus: receive-watch: ', msg)
   //     if (msg && msg.channel === 'event:host_created') {
-  //         this.showToastMbus(
-  //           this.$t('message.info.event'),
-  //           this.$t('message.info.event.client_updated', { clientId: msg.data.id })
+  //         showToastMbus(
+  //           $t('message.info.event'),
+  //           $t('message.info.event.client_updated', { clientId: msg.data.id })
   //         )
-  //        await this.$fetch()
+  //        await $fetch()
   //     }
   // }
 
   // @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
   //   // triggered before specific Watch method e.g. in VClients, VProductsLocalboot, ...
-  //   // this.wsNotification('(info) received a message "' + this.wsBusMsg.channel + '"', this.wsBusMsg)
-  //   // const msg = this.wsBusMsg
+  //   // wsNotification('(info) received a message "' + wsBusMsg.channel + '"', wsBusMsg)
+  //   // const msg = wsBusMsg
   //   // let data = ''
   //   // if (msg.data) { data = String.fromCharCode(...msg.data) }
-  //   // this.wsNotification('MessageBus received "' + msg.type + '": "' + data + '"', msg)
+  //   // wsNotification('MessageBus received "' + msg.type + '": "' + data + '"', msg)
   // }
+  const wsbus = computed(()=> bus)
+  // get wsBus () { return bus }
 
-  get wsBus () { return this.bus }
-  wsDisconnect () { return this.bus?.close() }
+  function wsDisconnect () { return bus?.close() }
 
-  createUUID () {
+  function createUUID () {
     if (typeof crypto.randomUUID === 'function') {
       return crypto.randomUUID()
     }
@@ -53,31 +63,31 @@ const mbus = namespace('messagebus')
     })
   }
 
-  async mounted () {
-    await this.wsInit()
-    if (this.channels) {
-      console.log('MessageBus subscribe channel', this.channels)
-      this.wsSubscribeChannel(this.channels)
+  onMounted (async () => {
+    await wsInit()
+    if (channels) {
+      console.log('MessageBus subscribe channel', channels)
+      wsSubscribeChannel(channels)
     }
-  }
+  })
 
-  async wsInit (reconnect: boolean = false) {
-    if (!reconnect && this.bus !== undefined) {
-      this.wsNotification('already connecting/connected')
+  async function wsInit (reconnect: boolean = false) {
+    if (!reconnect && bus !== undefined) {
+      wsNotification('already connecting/connected')
       return
     }
 
-    this.wsNotification('connecting')
+    wsNotification('connecting')
     const host = window.location.hostname
     const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
     const url = 'wss://' + host + ':' + port + '/messagebus/v1?'
     const _bus = new WebSocket(url)
-    this.setBus(_bus)
-    if (this.bus === undefined) { throw new Error('MessageBus shouldnt be undefined') }
-    this.bus.binaryType = 'arraybuffer'
-    this.bus.onopen = () => {
-      this.wsNotification('websocket opened')
-      this.wsSubscribeChannel([
+    setBus(_bus)
+    if (bus === undefined) { throw new Error('MessageBus shouldnt be undefined') }
+    bus.binaryType = 'arraybuffer'
+    bus.onopen = () => {
+      wsNotification('websocket opened')
+      wsSubscribeChannel([
         '@',
         '$',
         'event:app_state_changed',
@@ -93,86 +103,86 @@ const mbus = namespace('messagebus')
         'event:productOnClient_deleted'
       ])
     }
-    this._setBus(this.bus, this.setBusLastMsg)
+    _setBus(bus, setBusLastMsg)
     // console.debug('MessageBus: connected')
-    await this.wsWait(1000)
+    await wsWait(1000)
   }
 
-  wsWait (milliseconds) {
+  function wsWait (milliseconds: number) {
     return new Promise((resolve) => {
       setTimeout(resolve, milliseconds)
     })
   }
 
-  wsSend (msg: any) { // obj == function with param 'message'
-    if (this.bus === undefined) { return }
-    this._waitForSocketConnection(this.bus, () => {
-      if (this.bus === undefined) { return }
-      this.bus.send(encode(msg))
+  function wsSend (msg: any) { // obj == function with param 'message'
+    if (bus === undefined) { return }
+    _waitForSocketConnection(bus, () => {
+      if (bus === undefined) { return }
+      bus.send(encode(msg))
     })
   }
 
-  wsSubscribeChannel (channels: Array<string>) {
+  function wsSubscribeChannel (channels: Array<string>) {
     // console.log('subscribe channels ', channels)
-    this.wsNotification('subscribe: ', channels)
-    const message = this.wsCreateMsgTemplate()
+    wsNotification('subscribe: ', channels)
+    const message = wsCreateMsgTemplate()
     message.type = 'channel_subscription_request'
     message.channel = 'service:messagebus'
     message.operation = 'add'
     message.channels = channels
-    this.wsSend(message)
+    wsSend(message)
   }
 
-  async wsTerminalOpen (uid:string, terminal) {
+  async function wsTerminalOpen (uid:string, terminal: any) {
     if (uid) {
       terminal.terminalId = uid
-    } else { terminal.terminalId = this.createUUID() }
+    } else { terminal.terminalId = createUUID() }
     terminal.terminalChannel = 'service:config:terminal'
     terminal.terminalSessionChannel = 'session:' + uid
-    this.wsSubscribeChannel([terminal.terminalSessionChannel])
-    await this.wsWait(2000)
-    const message = this.wsCreateMsgTemplate()
+    wsSubscribeChannel([terminal.terminalSessionChannel])
+    await wsWait(2000)
+    const message = wsCreateMsgTemplate()
     message.type = 'terminal_open_request'
     message.terminal_id = terminal.terminalId
     message.channel = terminal.terminalChannel
     message.back_channel = terminal.terminalSessionChannel
     message.cols = terminal.cols
     message.rows = terminal.rows
-    this.wsSend(message)
+    wsSend(message)
   }
 
-  wsTerminalClose (terminal) {
-    const message = this.wsCreateMsgTemplate()
+  function wsTerminalClose (terminal: any) {
+    const message = wsCreateMsgTemplate()
     message.type = 'terminal_close_request'
     message.channel = terminal.terminalChannel
     message.terminal_id = terminal.terminalId
-    this.wsSend(message)
+    wsSend(message)
   }
 
-  wsTerminalSend (msg: any, terminal:any) { // obj == function with param 'message'
-    if (this.bus === undefined) { return }
+  function wsTerminalSend (msg: any, terminal:any) { // obj == function with param 'message'
+    if (bus === undefined) { return }
     // console.debug('MessageBus: send: ', msg)
-    this._waitForSocketConnection(this.bus, () => {
-      this._wsTerminalSend(msg, terminal)
+    _waitForSocketConnection(bus, () => {
+      _wsTerminalSend(msg, terminal)
     })
   }
 
-  _wsTerminalSend (msg:any, terminal: any) {
-    if (this.bus === undefined) { return }
+  function _wsTerminalSend (msg:any, terminal: any) {
+    if (bus === undefined) { return }
     const utf8Encode = new TextEncoder()
-    const message = this.wsCreateMsgTemplate()
+    const message = wsCreateMsgTemplate()
     message.type = 'terminal_data_write'
     message.channel = terminal.terminalChannel
     message.terminal_id = terminal.terminalId
     message.data = utf8Encode.encode(msg)
-    this.wsSend(message)
+    wsSend(message)
     // console.log('send: ', message)
   }
 
-  wsTerminalResize (rows: any, cols: any, terminal: any) {
-    if (this.bus === undefined) { return }
+  function wsTerminalResize (rows: any, cols: any, terminal: any) {
+    if (bus === undefined) { return }
 
-    const message = this.wsCreateMsgTemplate()
+    const message = wsCreateMsgTemplate()
     message.type = 'terminal_resize_request'
     message.channel = terminal.terminalChannel
     message.terminal_id = terminal.terminalId
@@ -180,72 +190,91 @@ const mbus = namespace('messagebus')
     message.rows = rows
     message.cols = cols
 
-    this.wsSend(message)
+    wsSend(message)
   }
 
-  wsCreateMsgTemplate (): any {
+  function wsCreateMsgTemplate (): any {
     return {
       type: 'xxx',
       channel: 'yyy',
       sender: '@',
-      id: this.createUUID(),
+      id: createUUID(),
       created: Date.now(),
       expires: Date.now() + 10000
     }
   }
 
-  wsNotification (text: any, data: any = '') {
+  function wsNotification (text: any, data: any = '') {
     console.debug('MessageBus:', text, data)
   }
 
-  wsNotificationInfo (text: any, data: any = '') {
+  function wsNotificationInfo (text: any, data: any = '') {
     // console.debug('MessageBus:', text, data)
-    this.showToastMbus(
-      this.$t('message.info.event'),
+    showToastMbus(
+      t('message.info.event'),
       text + ' ' + data
     )
   }
 
-  wsNotificationWarn (text: any, data: any = '') {
+  function wsNotificationWarn (text: any, data: any = '') {
     // const stringtext = JSON.stringify(data)
-    this.showToastMbus(text, data)
+    showToastMbus(text, data)
     // console.debug('MessageBus: ', stringtext)
     console.warn('MessageBus:', text, data)
     // ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
   }
 
-  _setBus (bus: WebSocket, setBusLastMsgMethod: any) {
+  function _setBus (bus: WebSocket, setBusLastMsgMethod: any) {
     bus.onclose = () => {
-      // this.wsNotificationWarn('Websocket:', 'Connection closed.')
+      // wsNotificationWarn('Websocket:', 'Connection closed.')
       console.log('Websocket:', 'Connection closed.')
-      this.setBus(undefined)
+      setBus(undefined)
     }
     bus.onerror = (err:any) => {
-      this.wsNotificationWarn('Websocket:', 'Connection error: ' + JSON.stringify(err))
-      // this.wsNotificationWarn('websocket error ', err)
-      this.setBus(undefined)
+      wsNotificationWarn('Websocket:', 'Connection error: ' + JSON.stringify(err))
+      // wsNotificationWarn('websocket error ', err)
+      setBus(undefined)
     }
     bus.onmessage = (event) => {
       const message:any = decode(event.data)
       const msgIsValid = message.expires > Date.now() // new Date().getTime()
       if (!msgIsValid) {
-        this.wsNotification('Message is expired', message)
+        wsNotification('Message is expired', message)
         return
       }
-      // this.setBusLastMsg(message)
+      // setBusLastMsg(message)
       setBusLastMsgMethod(message)
-      // this.wsNotification('received: ' + JSON.stringify(message))
+      // wsNotification('received: ' + JSON.stringify(message))
     }
   }
 
   // Make the function wait until the connection is made...
-  _waitForSocketConnection (socket, callback) {
+  function _waitForSocketConnection (socket: any, callback: any) {
     setTimeout(() => {
       if (socket.readyState === 1) {
         if (callback != null) { callback() }
       } else {
-        this._waitForSocketConnection(socket, callback)
+        _waitForSocketConnection(socket, callback)
       }
     }, 5) // wait 5 milisecond for the connection...
+  }
+
+  return {
+    // wsbus,
+    // wsBusMsg,
+    // wsInit,
+    // wsWait,
+    // wsSend,
+    // wsTerminalResize,
+    // wsTerminalSend,
+    // wsTerminalClose,
+    // wsTerminalOpen,
+    // wsSubscribeChannel,
+    wsDisconnect,
+
+    // wsNotification,
+    // wsNotificationWarn,
+    // wsNotificationInfo,
+    // wsCreateMsgTemplate,
   }
 }
