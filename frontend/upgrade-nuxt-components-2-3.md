@@ -152,6 +152,7 @@ const props = defineProps({
   small: { type: Boolean, default: false} ,
   animation: { type: String, default: 'cylon' },
   color: { type: String, default: 'black' },
+  headerData: { type: Object as PropType<ITableHeader>, default: () => { /* default */ }},
   // // if an object is passed, default argument has to be a function. example:
   // propE: {
   //   type: Object,
