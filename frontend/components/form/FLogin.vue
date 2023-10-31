@@ -71,7 +71,7 @@
 <script setup>
 import { useIcons } from "../../composables/mixins/useIcons"
 import { useStrings } from "../../composables/mixins/useStrings"
-import { useNotification } from "../../composables/mixins/useComponents"
+import { useNotification } from "../../composables/mixins/useComponent"
 import {useConfigserver} from '@/composables/mixins/useGet'
 // import { ElNotification } from "element-plus"
 const notificationSuccess = useNotification().success

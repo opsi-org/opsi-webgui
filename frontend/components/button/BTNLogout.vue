@@ -16,7 +16,7 @@
 
 <script setup>
 import { useIcons } from '@/composables/mixins/useIcons'
-import { useNotification } from '../../composables/mixins/useComponents'
+import { useNotification } from '../../composables/mixins/useComponent'
 // import { useRoute, useRouter } from 'nuxt/app' // actually autoimported
 const icon = useIcons()
 const notificationSuccess = useNotification().success

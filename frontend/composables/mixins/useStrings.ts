@@ -1,6 +1,6 @@
-import { Component, Vue } from 'nuxt-property-decorator'
-@Component export class Strings extends Vue {
-  strings: object = {
+
+export const useStrings = () => {
+  const strings: {[key:string]: string} = {
     'keep-english.(content)': '(content)',
     'keep-english.[content]': '[content]',
     'keep-english.count/all': 'count/all',
@@ -13,5 +13,6 @@ import { Component, Vue } from 'nuxt-property-decorator'
     notOrigin: '*'
   }
 
-  t_fixed (key: string) { return this.strings[key] }
-}
+  function t_fixed (key: string) { return strings[key] }
+  return { strings, t_fixed }
+ }
