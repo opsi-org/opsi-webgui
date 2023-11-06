@@ -43,9 +43,15 @@
       "name": "opsi-webgui",
       "os": "linux",
       "post-script": [
-        "WEBGUI_VERSION=\"$(grep opsi-dev-tool.yml -A 10 -e project | grep -m 1 version)\"",
-        "WEBGUI_VERSION=$(echo $WEBGUI_VERSION  | awk '{print $2}')",
-        "zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui"
+        "WEBGUI_VERSION=$(grep $FILE -A 20 -e project | grep -m 1 \"version\" )",
+        "echo \"webgui-version row $WEBGUI_VERSION\"",
+        "WEBGUI_VERSION=$(echo $WEBGUI_VERSION | awk '{print $2}')",
+        "echo \"webgui-version row-value $WEBGUI_VERSION\"",
+        "WEBGUI_VERSION=$(echo $WEBGUI_VERSION | sed -e s/\"//g | sed -e s/,//g)",
+        "zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui",
+        "echo \"Did this work ? If so, remove row exit1\"",
+        "ls -lah",
+        "exit 1"
       ],
       "server-type": "binaryindex",
       "server-url": "http://binaryindex.uib.gmbh",
