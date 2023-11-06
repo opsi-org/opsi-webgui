@@ -535,7 +535,7 @@ class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
 	clients: List[str]
 	username: str
 	password: str
-	type: str = Field("windows", regex="^(windows)$|^(linux)$|^(macos)$")
+	type: str = Field("windows", pattern="^(windows)$|^(linux)$|^(macos)$")
 
 
 @client_router.post("/api/opsidata/clients/deploy")
