@@ -56,8 +56,10 @@ project:
   maintainer: uib GmbH <info@uib.de>
   name: opsi-webgui
   version: 4.3.19
+  allow_tag_delete: False
   version_files:
     opsiweb/package.json: $.version
+    opsi-dev-tool.yml: pull-binaries[0].version
 pull-binaries:
 - architecture: x64
   branch: development
