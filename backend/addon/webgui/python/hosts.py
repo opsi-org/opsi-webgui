@@ -32,6 +32,8 @@ from opsiconfd.rest import (
 from .utils import (
 	backend,
 	build_tree,
+	filter_depot_access,
+	get_allowd_host_groups,
 	get_allowed_clients,
 	get_allowed_objects,
 	get_username,
@@ -167,6 +169,7 @@ class HostGroup(BaseModel):  # pylint: disable=too-few-public-methods
 
 @host_router.post("/api/opsidata/hosts/groups")
 @rest_api
+@read_only_check
 def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	request: Request, group: HostGroup
 ) -> RESTResponse:
@@ -221,6 +224,7 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 @host_router.post("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
+@read_only_check
 def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	request: Request,  # pylint: disable=unused-argument
 	group: str,
@@ -254,6 +258,7 @@ def add_clients_host_group(  # pylint: disable=invalid-name, too-many-locals, to
 
 @host_router.delete("/api/opsidata/hosts/groups/{group}/clients")
 @rest_api
+@read_only_check
 def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	request: Request, group: str  # pylint: disable=unused-argument
 ) -> RESTResponse:
@@ -282,6 +287,7 @@ def get_sub_groups(group: str) -> list:
 
 @host_router.delete("/api/opsidata/hosts/groups/{group}")
 @rest_api
+@read_only_check
 def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	request: Request, group: str  # pylint: disable=unused-argument
 ) -> RESTResponse:
@@ -302,6 +308,7 @@ def delete_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 
 @host_router.put("/api/opsidata/hosts/groups/{group}")
 @rest_api
+@read_only_check
 def update_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
 	group: str, parent: str = Body(default=None), description: str = Body(default=None), note: str = Body(default=None)
 ) -> RESTResponse:
@@ -333,6 +340,8 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	"""
 	Get host groups as tree.
 	"""
+
+	allowed =  get_allowd_host_groups(get_username())
 
 	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
@@ -383,7 +392,7 @@ def get_host_groups(  # pylint: disable=invalid-name, too-many-locals, too-many-
 	all_groups: dict = {}
 	processed: list[str] = []
 	root_group = {"id": "groups", "type": "HostGroup", "text": "groups", "parent": None}
-	all_groups = read_groups(result, root_group, [], True)
+	all_groups = read_groups(result, root_group, [], allowed, True)
 
 	host_groups = build_group_tree(root_group, list(all_groups.values()), processed)
 
@@ -422,6 +431,7 @@ def build_group_tree(current_group: dict, groups: list[dict], processed: list) -
 	if not processed:
 		processed = []
 	processed.append(current_group["id"])
+
 	children = {}
 	for group in groups:
 		if group["parent"] == current_group["id"]:  # or (group["parent"] is None and current_group["id"] == "groups"):
@@ -454,7 +464,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 	Get host groups as tree.
 	If a parent group (parentGroup) is given only child groups will be returned.
 	"""
-	allowed = get_allowed_objects()
+	allowed =  get_allowd_host_groups(get_username())
 
 	params = {"parent": "", "depots": []}
 	if selectedDepots == [] or selectedDepots is None:
@@ -525,7 +535,7 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 			result = session.execute(query, params)
 			result = result.fetchall()
 
-			all_groups = read_groups(result, root_group, selectedClients, withClients)
+			all_groups = read_groups(result, root_group, selectedClients, allowed, withClients)
 
 		elif parentGroup == "root":
 			all_groups = {
@@ -574,10 +584,10 @@ def get_host_groups_dynamic(  # pylint: disable=invalid-name, too-many-locals, t
 					all_groups[parent_group]["hasAnySelection"] = True
 				elif "groups" in all_groups:
 					all_groups["groups"]["hasAnySelection"] = True
-			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"], default_expanded=True)
+			host_groups = build_tree(root_group, list(all_groups.values()), allowed, default_expanded=True)
 
 		else:
-			host_groups = build_tree(root_group, list(all_groups.values()), allowed["host_groups"], default_expanded=True)
+			host_groups = build_tree(root_group, list(all_groups.values()), allowed, default_expanded=True)
 
 		if parentGroup == "clientdirectory":
 			not_assigned = {
@@ -720,12 +730,14 @@ def find_parent(group: str) -> str | None:
 
 
 def read_groups(
-	raw_groups: List, root_group: dict, selectedClients: List, withClients: bool = True  # pylint: disable=invalid-name
+	raw_groups: List, root_group: dict, selectedClients: List,  allowed: List[str], withClients: bool = True  # pylint: disable=invalid-name
 ) -> dict:
 	if not isinstance(selectedClients, list) and withClients:
 		selectedClients = []
 	all_groups = {}
 	for row in raw_groups:
+		if not row["group_id"] in allowed + ["clientdirectory"]:
+			continue
 		if not row["group_id"] in all_groups:
 			all_groups[row["group_id"]] = {
 				"id": row["group_id"],
