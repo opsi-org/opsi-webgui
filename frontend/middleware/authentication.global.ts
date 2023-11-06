@@ -11,9 +11,14 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // const isA:Boolean = storeAuth().isAuthenticated // has old values in store...
   const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username'))
 
+  console.log('try basepage is', config.public.BASE_PAGE)
+  console.log('try isAuthenticated', isA)
+  console.log('try to.name', to.name)
   if (isA && to.name === 'login') {
-    return navigateTo(config.public.BASE_PAGE)
+    console.log('try redirect to basepage')
+    return navigateTo('' + config.public.BASE_PAGE)
   } else if (!isA && to.name !== 'login') {
+    console.log('try redirect to login')
     //TODO: useSelectionStore
     // store.dispatch('selections/clearAllSelection')
     return navigateTo('/login')

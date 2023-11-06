@@ -6,6 +6,7 @@
     </h1>
 
     <TestEPButton />
+    <br />
     <TestStore />
     <TestTheme />
     <br /> screen: {{  mq.$mq }}
@@ -17,12 +18,15 @@
     If data visible login worked : {{ fetchResult }}
     <!-- <br /> isPreferredDark: {{  mq.isPreferredDark }} -->
 
-      <!-- <IconELILoading animation="cylon" /> -->
-      <ButtonBTNLogout />
+    <!-- <IconELILoading animation="cylon" /> -->
+
+    <ButtonBTNLogout />
   </b-card>
 </template>
 
 <script setup>
+import { useNotification } from '~/composables/mixins/useComponent';
+
 const mq = useMQ()
 // user/configuration
 const authStore = storeAuth()
@@ -31,7 +35,7 @@ onMounted( async () => {
   // const { data, error } = await useAPI('/user/configuration').get().json()
   const { data ,error } = await useApiGET('/user/configuration')
   if (error) {
-    notificationError(error)
+    useNotification().error(error)
     return
   }
   fetchResult.value = data;
