@@ -192,16 +192,16 @@ check:versions:
   stage: check
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 # cause smaller then node...
   script:
-    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "\"version\":" | awk '{print $2}' | sed -e "s/\"//g" | sed -e "s/,//g")
-    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version\":" | awk '{print $2}' | sed -e "s/,//g")
+    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "\"version\"" | awk '{print $2}' | sed -e "s/\"//g" | sed -e "s/,//g")
+    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
     - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\" " | awk '{print $2}' | sed -e "s/,//g")
-    - # *compare_versions
     - TAG=$$VERSION_YML
     - echo $VERSION_YML2
     - echo $VERSION_JSN
     - echo TAG
     - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section)"; exit 1; fi
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions are equal $VERSION_YML"; fi
+    - # *compare_versions
 
 init:npm:production:
   stage: init
@@ -225,21 +225,6 @@ init:npm:
     - *define_globals
     - npm i
     - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed: 674M; CICD: 801M)
-  artifacts:
-    paths:
-      - opsiweb/package.json
-      - opsiweb/node_modules/
-    expire_in: 1 day
-init:npm:production:
-  stage: init
-  only:
-    - main
-    - tags
-  script:
-    - cd opsiweb
-    - *define_globals
-    - npm --production --only=prod i # Todo: whats the difference between --production and --only=prod
-    - du -h --max-depth=0 node_modules # just for checking node_modules size (locally computed 251M; CICD: 360M)
   artifacts:
     paths:
       - opsiweb/package.json
