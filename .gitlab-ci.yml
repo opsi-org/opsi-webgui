@@ -142,10 +142,13 @@ stages:
 
 
 .compare_versions: &compare_versions |
-  VERSION_YML=$(grep opsi-dev-tool.yml -A 10 -e project | grep -m 1 "version:" | awk '{print $2}')
-  VERSION_YML2=$(grep opsi-dev-tool.yml -A 15 -e pull-binaries | grep -m 1 "version: " | awk '{print $2}')
-  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\": " | awk -F "\"" '{print $4}')
-  TAG=$VERSION_YML
+  VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "\"version\":" | awk '{print $2}' | sed -e "s/\"//g" | sed -e "s/,//g")
+  VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version\":" | awk '{print $2}' | sed -e "s/,//g")
+  VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\" " | awk '{print $2}' | sed -e "s/,//g")
+  TAG=$$VERSION_YML
+  echo $VERSION_YML2
+  echo $VERSION_JSN
+  echo TAG
   
 
 # .prepare_tag: &prepare_tag |
@@ -189,8 +192,11 @@ check:versions:
   stage: check
   image: docker.uib.gmbh/opsi/dev/pybuilder:uib-python-3.11 # cause smaller then node...
   script:
-    - *compare_versions
-    - echo $VERSION_YML
+    - VERSION_YML=$(grep opsi-dev-tool.yml -A 20 -e project | grep -m 1 "\"version\":" | awk '{print $2}' | sed -e "s/\"//g" | sed -e "s/,//g")
+    - VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version\":" | awk '{print $2}' | sed -e "s/,//g")
+    - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\" " | awk '{print $2}' | sed -e "s/,//g")
+    - # *compare_versions
+    - TAG=$$VERSION_YML
     - echo $VERSION_YML2
     - echo $VERSION_JSN
     - echo TAG
