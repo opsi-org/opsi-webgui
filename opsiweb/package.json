@@ -1,6 +1,6 @@
 {
   "name": "webgui",
-  "version": "4.3.19",
+  "version": "4.3.20",
   "private": true,
   "repository": "https://gitlab.uib.gmbh/uib/opsiweb-ui",
   "license": "MIT",
@@ -11,6 +11,8 @@
   ],
   "description": "uib opsiweb",
   "scripts": {
+    "//git-helpers": "",
+    "git-tag-clean": "cd /workspace && git tag -l | xargs git tag -d && git fetch --tags && cd -",
     "//project-handling": "",
     "createpackagejson": "echo 'build'",
     "build": "npm i",
