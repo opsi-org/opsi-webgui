@@ -196,9 +196,10 @@ check:versions:
     - VERSION_YML2=$(grep opsi-dev-tool.yml -A 20 -e pull-binaries | grep -m 1 "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
     - VERSION_JSN=$(cat opsiweb/package.json | grep "\"version\"" | awk '{print $2}' | sed -e "s/,//g")
     - TAG=$VERSION_YML
+    - echo $VERSION_YML
     - echo $VERSION_YML2
     - echo $VERSION_JSN
-    - echo TAG
+    - echo $TAG
     - if [ "$VERSION_YML" != "$VERSION_YML2" ]; then echo "Versions in opsi-dev-tool-yml doesnt match (project and pull-binaries section)"; exit 1; fi
     - if [ "$VERSION_YML" != "$VERSION_JSN" ]; then echo "Versions do not match for opsi-dev-tool-yml and opsiweb/package.json"; exit 1; else echo "Versions are equal $VERSION_YML"; fi
 
