@@ -11,6 +11,8 @@
   ],
   "description": "uib opsiweb",
   "scripts": {
+    "//git-helpers": "",
+    "git-tag-clean": "git tag -l | xargs git tag -d && git fetch --tags",
     "//project-handling": "",
     "createpackagejson": "echo 'build'",
     "build": "npm i",
