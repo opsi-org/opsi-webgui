@@ -14,7 +14,7 @@ import os
 import subprocess
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 from packaging.version import InvalidVersion
 from fastapi import APIRouter, Body, Depends, Request, status
 from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
@@ -71,7 +71,7 @@ class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 
 class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
-	type: str = Field("OpsiClient", const=True)
+	type: Literal["OpsiClient"]
 	opsiHostKey: Optional[str]
 	description: Optional[str]
 	notes: Optional[str]
@@ -535,7 +535,7 @@ class ClientDeployData(BaseModel):  # pylint: disable=too-few-public-methods
 	clients: List[str]
 	username: str
 	password: str
-	type: str = Field("windows", regex="^(windows)$|^(linux)$|^(macos)$")
+	type: str = Field("windows", pattern="^(windows)$|^(linux)$|^(macos)$")
 
 
 @client_router.post("/api/opsidata/clients/deploy")
