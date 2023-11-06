@@ -15,8 +15,8 @@
   </el-footer>
 </template>
 
-<script setup>
-import { useStrings } from "../../composables/mixins/useStrings"
+<script setup lang="ts">
+import { useStrings } from "@/composables/mixins/useStrings"
 const staticStrings = useStrings()
 const $config = useRuntimeConfig()
 const mq = useMQ()
