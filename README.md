@@ -1,7 +1,16 @@
-# opsi-webgui
+# Official opsi-webgui
+This is the source of the official opsi-webgui for the open source client management solution opsi.
+
 The opsi-webgui is a web-based graphical user interface for managing the opsi system. It simplifies the deployment and management tasks, without installing an application on your device. With opsi-webgui, you can configure the opsi-servers, set up new opsi-clients, deploy products, inspect logs from any device with a web browser and more.
 
-For further information about technology, the installation or the usage checkout opsi docs https://docs.opsi.org/opsi-docs-en/4.3/gui/webgui.html
+For further information about the webgui technology, installation or the usage checkout opsi docs https://docs.opsi.org/opsi-docs-en/4.3/gui/webgui.html
+
+Further links:
+* https://docs.opsi.org
+* https://opsi.org/ https://opsi.org/de/blog/
+* https://www.uib.de/
+* LinkedIn: uib GmbH
+* Twitter/X: @opsi_org @uibDE
 
 ## Quick installation guide (Production)
 This project espacially the devcontainer is not for production usage. To install the webgui from official sources see this chapter.
