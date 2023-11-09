@@ -71,7 +71,7 @@ class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 
 class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
-	type: Literal["OpsiClient"]
+	type: Literal["OpsiClient"] = "OpsiClient"
 	opsiHostKey: Optional[str]
 	description: Optional[str]
 	notes: Optional[str]
