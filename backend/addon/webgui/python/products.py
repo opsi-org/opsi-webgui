@@ -534,7 +534,6 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
 		for row in result:
 			if row is not None:
 				product = dict(row)
-				logger.devel(product)
 				if not products.get(product["productId"]):
 					products[product["productId"]] = [product["depotId"]]
 				else:
