@@ -800,7 +800,7 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 				pp.editable AS editable,
 				GROUP_CONCAT(ppv.value SEPARATOR ';') AS `values`,
 				(SELECT GROUP_CONCAT(`value` SEPARATOR ',') FROM PRODUCT_PROPERTY_VALUE WHERE propertyId = pp.propertyId AND productId = pp.productId AND productVersion = pp.productVersion AND packageVersion = pp.packageVersion AND (isDefault = 1 OR ppv.isDefault is NULL)) AS `defaultDetails`,
-				GROUP_CONCAT(pod.depotId SEPARATOR ',') AS depots
+				GROUP_CONCAT(DISTINCT(pod.depotId) SEPARATOR ',') AS depots
 			"""
 					)
 				)
@@ -840,6 +840,7 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 					if not data["properties"].get(property["propertyId"]):
 						data["properties"][property["propertyId"]] = {}
 					_depots = list(set(property["depots"].split(",")))
+					defaults = property["defaultDetails"]
 					property["depots"] = {}
 					property["clients"] = {}
 					property["allValues"] = set()
@@ -850,6 +851,7 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 					property["defaultDetails"] = {}
 					property["possibleValues"] = {}
 
+
 					for depot in _depots:
 						property["versionDetails"][depot] = property["version"]
 						property["descriptionDetails"][depot] = property["description"]
@@ -858,15 +860,15 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 
 						if property["type"] == "BoolProductProperty":
 							property["allValues"].update([bool_value(value) for value in property["values"].split(",")])
-							if isinstance(property["defaultDetails"], dict):
-								property["defaultDetails"][depot] = [bool_value(property.get("defaultDetails", {}).get(depot))]
+							if isinstance(defaults, dict):
+								property["defaultDetails"][depot] = [bool_value(defaults.get(depot))]
 
 							else:
-								property["defaultDetails"][depot] = [bool_value(property["defaultDetails"])]
+								property["defaultDetails"][depot] = [bool_value(defaults)]
 							property["possibleValues"][depot] = [bool_value(value) for value in property["values"].split(",")]
 						else:
 							property["allValues"].update(unicode_value(property["values"]))
-							property["defaultDetails"][depot] = unicode_value(property["defaultDetails"])
+							property["defaultDetails"][depot] = unicode_value(defaults)
 							property["possibleValues"][depot] = unicode_value(property["values"])
 
 						query = (
