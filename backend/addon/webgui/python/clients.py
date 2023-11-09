@@ -71,17 +71,17 @@ class ClientList(BaseModel):  # pylint: disable=too-few-public-methods
 
 class Client(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
-	type: Literal["OpsiClient"] = "OpsiClient"
-	opsiHostKey: Optional[str]
-	description: Optional[str]
-	notes: Optional[str]
-	hardwareAddress: Optional[str]
-	ipAddress: Optional[Union[IPv4Address, IPv6Address]]
+	type: Optional[Literal["OpsiClient"]] = "OpsiClient"
+	opsiHostKey: Optional[str] = None
+	description: Optional[str] = None
+	notes: Optional[str] = None
+	hardwareAddress: Optional[str] = None
+	ipAddress: Optional[Union[IPv4Address, IPv6Address]] = None
 	inventoryNumber: Optional[str] = ""
 	systemUUID: Optional[str] = ""
-	oneTimePassword: Optional[str]
-	created: Optional[datetime]
-	lastSeen: Optional[datetime]
+	oneTimePassword: Optional[str] = None
+	created: Optional[datetime] = None
+	lastSeen: Optional[datetime] = None
 
 
 @client_router.get("/api/opsidata/clients", response_model=List[ClientList])
@@ -512,7 +512,7 @@ def set_uefi(request: Request, clientid: str, uefi: bool = Body(default=True)) -
 class OpsiclientdRPC(BaseModel):  # pylint: disable=too-few-public-methods
 	client_ids: List[str]
 	method: str
-	params: Optional[List[Any]]
+	params: Optional[List[Any]] = None
 
 
 @client_router.post("/api/command/opsiclientd_rpc", response_model=Dict[str, Dict[str, Any]])

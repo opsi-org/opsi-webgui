@@ -729,16 +729,16 @@ class Property(BaseModel):  # pylint: disable=too-few-public-methods
 	productId: str
 	propertyId: str
 	type: Optional[str] = "UnicodeProductProperty"
-	version: Optional[str]
-	versionDetails: Optional[dict]
+	version: Optional[str] = None
+	versionDetails: Optional[dict]  = None
 	allValues: Optional[List[str]] = ["value1"]
 	possibleValues: Optional[List[str]] = ["value1"]
 	editable: Optional[bool] = True
 	editableDetails: Optional[dict] = {}
-	multiValue: Optional[bool]
-	multiValueDetails: Optional[dict]
-	description: Optional[str]
-	descriptionDetails: Optional[dict]
+	multiValue: Optional[bool]  = None
+	multiValueDetails: Optional[dict]  = None
+	description: Optional[str]  = None
+	descriptionDetails: Optional[dict]  = None
 	default: Optional[List[str]] = ["value1"]
 	depots: Optional[dict] = {"depot1": ["value1"]}
 	clients: Optional[dict] = {"client1": ["value1"]}

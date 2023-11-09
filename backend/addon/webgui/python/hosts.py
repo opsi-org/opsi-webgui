@@ -52,28 +52,28 @@ host_router = APIRouter()
 
 class Host(BaseModel):  # pylint: disable=too-few-public-methods
 	hostId: str
-	opsiHostKey: Optional[str]
-	type: Optional[str]
-	inventoryNumber: Optional[str]
-	systemUUID: Optional[str]
-	description: Optional[str]
-	notes: Optional[str]
-	hardwareAddress: Optional[str]
-	ipAddress: Optional[str]
+	opsiHostKey: Optional[str] = None
+	type: Optional[str] = None
+	inventoryNumber: Optional[str] = None
+	systemUUID: Optional[str] = None
+	description: Optional[str] = None
+	notes: Optional[str] = None
+	hardwareAddress: Optional[str] = None
+	ipAddress: Optional[str] = None
 
 
 class Server(Host):  # pylint: disable=too-few-public-methods
-	depotLocalUrl: Optional[str]
-	depotRemoteUrl: Optional[str]
-	depotWebdavUrl: Optional[str]
-	repositoryLocalUrl: Optional[str]
-	repositoryRemoteUrl: Optional[str]
-	workbenchLocalUrl: Optional[str]
-	workbenchRemoteUrl: Optional[str]
-	networkAddress: Optional[str]
-	maxBandwidth: Optional[int]
-	isMasterDepot: Optional[bool]
-	masterDepotId: Optional[str]
+	depotLocalUrl: Optional[str] = None
+	depotRemoteUrl: Optional[str] = None
+	depotWebdavUrl: Optional[str] = None
+	repositoryLocalUrl: Optional[str] = None
+	repositoryRemoteUrl: Optional[str] = None
+	workbenchLocalUrl: Optional[str] = None
+	workbenchRemoteUrl: Optional[str] = None
+	networkAddress: Optional[str] = None
+	maxBandwidth: Optional[int] = None
+	isMasterDepot: Optional[bool] = None
+	masterDepotId: Optional[str] = None
 
 
 class Client(Host):  # pylint: disable=too-few-public-methods
