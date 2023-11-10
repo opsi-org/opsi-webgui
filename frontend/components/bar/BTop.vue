@@ -8,9 +8,7 @@
     </el-menu-item>
     <div class="flex-grow" />
     <el-menu-item index="1">
-      <el-checkbox-button>
-        Open Quick Panel
-      </el-checkbox-button>
+      <ButtonBTNLogout />
     </el-menu-item>
   </el-menu>
 </template>
@@ -20,5 +18,4 @@ const mq = useMQ()
 </script>
 
 <style scoped>
-
 </style>

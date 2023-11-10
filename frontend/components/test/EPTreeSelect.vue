@@ -1,8 +1,9 @@
 <template>
   <div>
-    <el-tree-select
+    <el-tree
     v-model="value"
-    :data="data"
+    :data="group"
+    :default-expanded-keys="['groups']"
     :render-after-expand="false"
     show-checkbox
   />
@@ -11,6 +12,63 @@
 
 <script setup>
 const value = ref()
+const group = [
+  {
+    id: 'groups',
+    label: 'groups',
+    type: 'HostGroup',
+    children: [
+      {
+        id: 'testgroup1;groups',
+        label: 'testgroup1',
+        type: 'HostGroup',
+        children: [
+          {
+            id: 'client1.uib.local;testgroup1',
+            label: 'client1.uib.local',
+            type: 'ObjectToGroup'
+          }
+        ]
+      },
+      {
+        id: 'testgroup2;groups',
+        label: 'testgroup2',
+        type: 'HostGroup',
+        children: [
+          {
+            id: 'client1.uib.local;testgroup2',
+            label: 'client1.uib.local',
+            type: 'ObjectToGroup'
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'clientdirectory',
+    label: 'clientdirectory',
+    type: 'HostGroup',
+    children: [
+      {
+        id: 'group1;clientdirectory',
+        label: 'group1',
+        type: 'HostGroup',
+        children: [
+          {
+            id: 'client1.uib.local;group1',
+            label: 'client1.uib.local',
+            type: 'ObjectToGroup'
+          },
+          {
+            id: 'client2.uib.local;group1',
+            label: 'client2.uib.local',
+            type: 'ObjectToGroup'
+          }
+        ]
+      }
+    ]
+  }
+]
 const data = [
   {
     value: '1',

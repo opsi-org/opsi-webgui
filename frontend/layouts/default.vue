@@ -7,8 +7,11 @@
       <el-col :span="3">
         <BarBSide />
       </el-col>
-      <el-col :span="21">
+      <el-col :span="17">
         <slot />
+      </el-col>
+      <el-col :span="4">
+        <BarBQuickPanel />
       </el-col>
     </el-row>
     after slot
