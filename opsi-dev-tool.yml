@@ -28,7 +28,7 @@
     ],
     "maintainer": "uib GmbH <info@uib.de>",
     "name": "opsi-webgui",
-    "version": "4.3.20",
+    "version": "4.3.21",
     "version_files": {
       "opsi-dev-tool.yml": "pull-binaries[0].version",
       "opsiweb/package.json": "$.version"
@@ -55,7 +55,7 @@
       ],
       "server-type": "binaryindex",
       "server-url": "http://binaryindex.uib.gmbh",
-      "version": "4.3.20"
+      "version": "4.3.21"
     }
   ],
   "transifex": {
