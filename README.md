@@ -20,8 +20,8 @@ This project espacially the devcontainer is not for production usage. To install
 * restart opsiconfd: `sudo systemctl restart opsiconfd`
 * checkout https://YOUROPSISERVER:4447/addons/webgui/app
 
-### Instalation using Zip 
-* get zip from https://download.uib.de/opsi4.3/stable/opsiconfd-addons/ 
+### Installation using Zip
+* get zip from https://download.uib.de/opsi4.3/stable/opsiconfd-addons/
 * upload zip through https://YOUROPSISERVER:4447/admin/#addons
 * checkout https://YOUROPSISERVER:4447/addons/webgui/app
 
