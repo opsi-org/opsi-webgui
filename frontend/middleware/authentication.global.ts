@@ -3,6 +3,11 @@ import { abortNavigation, defineNuxtRouteMiddleware, navigateTo, useCookie } fro
 
 
 export default defineNuxtRouteMiddleware((to, from) => {
+  if (window.location.port === '6006' || window.location.port === '3000') {
+    console.log('access from storybook')
+    return
+  }
+
   const config = useRuntimeConfig()
   if (to.params.id === '1') {
     console.log('no idea what happend here', to.name, from.name)

@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf node_modules; rm -f package-lock.json; npx nuxt cleanup",
     "build": "nuxt build",
-    "dev": "PORT=$WEBGUI_DEV_PORT nuxt dev",
+    "dev": "PORT=$WEBGUI_DEV_PORT NODE_ENV=development nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -20,7 +20,10 @@
     "//xterm": "^5.2.x",
     "//xterm-addon-fit": "0.7.0",
     "//xterm-addon-search": "0.12.0",
-    "//xterm-addon-web-links": "0.8.0"
+    "//xterm-addon-web-links": "0.8.0",
+    "story:dev": "NODE_ENV=development histoire dev",
+    "story:build": "NODE_ENV=development histoire build",
+    "story:preview": "NODE_ENV=development histoire preview"
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.0.0-beta2",
@@ -29,6 +32,8 @@
   "devDependencies": {
     "@bootstrap-vue-next/nuxt": "^0.14.10",
     "@element-plus/nuxt": "^1.0.6",
+    "@histoire/plugin-nuxt": "^0.17.5",
+    "@histoire/plugin-vue": "^0.17.5",
     "@iconify/vue": "^4.1.1",
     "@nuxt/devtools": "latest",
     "@nuxtjs/i18n": "^8.0.0-rc.4",
@@ -36,10 +41,12 @@
     "@nuxtjs/tailwindcss": "^6.8.0",
     "@pinia-plugin-persistedstate/nuxt": "^1.1.2",
     "@pinia/nuxt": "^0.x.x",
+    "@vitejs/plugin-vue": "^4.5.0",
     "bootstrap": "^5.3.2",
     "bootstrap-vue-next": "^0.14.10",
+    "histoire": "^0.17.5",
     "npm-check-updates": "^16.14.6",
-    "nuxt": "^3.x.x",
+    "nuxt": "^3.8.1",
     "pinia": "^2.1.x",
     "sass": "^1.69.4"
   },

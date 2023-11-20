@@ -5,6 +5,8 @@
     data-testid="ButtonBTNLogout"
     :title="$t('button.logout')"
     size="sm"
+    class="inline-flex"
+    style="display: inline-flex;"
     block
     variant="outline-primary"
     @click="doLogout"

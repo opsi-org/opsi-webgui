@@ -9,4 +9,9 @@
   //     // "bootstrap-vue",
   //   ]
   // }
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue"
+  ]
 }
