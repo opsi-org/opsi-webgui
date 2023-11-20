@@ -49,27 +49,7 @@ RUN git config --global user.email "${DEV_GIT_EMAIL}"
 RUN npm install -g n
 RUN n lts
 
-# WORKDIR /workspace
+WORKDIR /workspace/
 # USER ${DEV_USER}
 USER root
-# 	&& (getent group opsifileadmins || groupadd opsifileadmins) \
-# 	&& (getent group opsiadmin || groupadd opsiadmin) \
-# 	&& (getent passwd opsiconfd || useradd --system -g opsifileadmins -d /var/lib/opsi -s /bin/bash opsiconfd) \
-# 	&& (getent passwd adminuser || useradd --create-home --home-dir /home/adminuser -s /bin/bash adminuser) \
-# 	&& echo "adminuser:adminuser" | chpasswd \
-# 	&& adduser adminuser opsifileadmins \
-# 	&& adduser adminuser opsiadmin \
-# 	&& echo "${DEV_USER}:adminuser" | chpasswd \
-# 	&& adduser ${DEV_USER} opsifileadmins \
-# 	&& adduser ${DEV_USER} opsiadmin \
-# 	&& adduser ${DEV_USER} sudo \
-# 	&& adduser ${DEV_USER} shadow \
-# 	&& chown -R ${DEV_USER}:${DEV_USER} /home/${DEV_USER}/ \
-# 	&& echo "${DEV_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-# 	&& cp -r /root/.bash* /home/adminuser/ \
-# 	&& cp -r /root/.bash* /home/${DEV_USER}/ \
-# 	&& chmod g+rw -R . \
-# 	&& chmod +x /*entrypoint.sh \
-# 	&& mkdir tftpboot \
-# 	&& chown -R $DEV_USER /workspace
 CMD ["/usr/bin/zsh"]

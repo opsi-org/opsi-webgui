@@ -21,6 +21,12 @@ tar -xf opsi-dev-tools_linux_x64_1.16.3.tar.gz
 rm -f opsi-dev-tools_linux_x64_1.16.3.tar.gz opsi-dev-tools_linux_x64_1.16.3.tar.gz.1
 rm -f opsi-dev-tool
 
+echo "========================================== Install webgui dependencies"
+
+cd /workspace/frontend/
+npm i
+npx nuxi clean
+
 # pwd
 # # pip3 install --trusted-host pypi.uib.gmbh --index-url http://pypi.uib.gmbh:8080/simple opsi-dev-tools
 # cd /workspace

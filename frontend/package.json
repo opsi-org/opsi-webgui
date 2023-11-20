@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf node_modules; rm -f package-lock.json; npx nuxt cleanup",
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "PORT=$WEBGUI_DEV_PORT nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
