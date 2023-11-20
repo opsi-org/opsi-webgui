@@ -2,8 +2,10 @@
 	"name": "opsiweb",
 	"dockerComposeFile": ["./docker-compose.yml"],
 	"service": "opsiweb_dev",
+	"runServices": ["opsiweb_dev", "opsi-server", "mysql", "redis", "grafana"],
 	"workspaceFolder": "/workspace",
 	"postCreateCommand": "/workspace/.devcontainer/post_create.sh",
+	// "initializeCommand": "docker volume rm opsiweb-ui_devcontainer_opsi_data",
 	// "forwardPorts": [
 	// 	"opsiweb_dev:8888",
 	// 	"opsi-server:4447",
@@ -37,7 +39,7 @@
 				"shardulm94.trailing-spaces",
 				// "octref.vetur",
 				// "SonarSource.sonarlint-vscode",
-				// "Vue.volar",
+				"Vue.volar",
 				"wejectchan.vue3-snippets-for-vscode",
 				"bradlc.vscode-tailwindcss"
 			]
