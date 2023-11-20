@@ -534,7 +534,6 @@ def products_on_depot(  # pylint: disable=too-many-locals, too-many-branches, to
 		for row in result:
 			if row is not None:
 				product = dict(row)
-				logger.devel(product)
 				if not products.get(product["productId"]):
 					products[product["productId"]] = [product["depotId"]]
 				else:
@@ -729,16 +728,16 @@ class Property(BaseModel):  # pylint: disable=too-few-public-methods
 	productId: str
 	propertyId: str
 	type: Optional[str] = "UnicodeProductProperty"
-	version: Optional[str]
-	versionDetails: Optional[dict]
+	version: Optional[str] = None
+	versionDetails: Optional[dict]  = None
 	allValues: Optional[List[str]] = ["value1"]
 	possibleValues: Optional[List[str]] = ["value1"]
 	editable: Optional[bool] = True
 	editableDetails: Optional[dict] = {}
-	multiValue: Optional[bool]
-	multiValueDetails: Optional[dict]
-	description: Optional[str]
-	descriptionDetails: Optional[dict]
+	multiValue: Optional[bool]  = None
+	multiValueDetails: Optional[dict]  = None
+	description: Optional[str]  = None
+	descriptionDetails: Optional[dict]  = None
 	default: Optional[List[str]] = ["value1"]
 	depots: Optional[dict] = {"depot1": ["value1"]}
 	clients: Optional[dict] = {"client1": ["value1"]}
@@ -801,7 +800,7 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 				pp.editable AS editable,
 				GROUP_CONCAT(ppv.value SEPARATOR ';') AS `values`,
 				(SELECT GROUP_CONCAT(`value` SEPARATOR ',') FROM PRODUCT_PROPERTY_VALUE WHERE propertyId = pp.propertyId AND productId = pp.productId AND productVersion = pp.productVersion AND packageVersion = pp.packageVersion AND (isDefault = 1 OR ppv.isDefault is NULL)) AS `defaultDetails`,
-				GROUP_CONCAT(pod.depotId SEPARATOR ',') AS depots
+				GROUP_CONCAT(DISTINCT(pod.depotId) SEPARATOR ',') AS depots
 			"""
 					)
 				)
@@ -841,6 +840,7 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 					if not data["properties"].get(property["propertyId"]):
 						data["properties"][property["propertyId"]] = {}
 					_depots = list(set(property["depots"].split(",")))
+					defaults = property["defaultDetails"]
 					property["depots"] = {}
 					property["clients"] = {}
 					property["allValues"] = set()
@@ -851,6 +851,7 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 					property["defaultDetails"] = {}
 					property["possibleValues"] = {}
 
+
 					for depot in _depots:
 						property["versionDetails"][depot] = property["version"]
 						property["descriptionDetails"][depot] = property["description"]
@@ -859,15 +860,15 @@ def product_properties(  # pylint: disable=too-many-locals, too-many-branches, t
 
 						if property["type"] == "BoolProductProperty":
 							property["allValues"].update([bool_value(value) for value in property["values"].split(",")])
-							if isinstance(property["defaultDetails"], dict):
-								property["defaultDetails"][depot] = [bool_value(property.get("defaultDetails", {}).get(depot))]
+							if isinstance(defaults, dict):
+								property["defaultDetails"][depot] = [bool_value(defaults.get(depot))]
 
 							else:
-								property["defaultDetails"][depot] = [bool_value(property["defaultDetails"])]
+								property["defaultDetails"][depot] = [bool_value(defaults)]
 							property["possibleValues"][depot] = [bool_value(value) for value in property["values"].split(",")]
 						else:
 							property["allValues"].update(unicode_value(property["values"]))
-							property["defaultDetails"][depot] = unicode_value(property["defaultDetails"])
+							property["defaultDetails"][depot] = unicode_value(defaults)
 							property["possibleValues"][depot] = unicode_value(property["values"])
 
 						query = (
