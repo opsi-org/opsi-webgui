@@ -1,0 +1,35 @@
+version: '3.8'
+
+include:
+  - path: ./opsi-docker/opsi-server/docker-compose-env.yml
+    env_file:
+      - .devcontainer/opsi-docker/opsi-server/opsi-server.env
+      - .devcontainer/.env
+      # - opsi-docker/opsi-server/opsi-server.env
+      # - .env
+
+services:
+  opsiweb_dev:
+    env_file:
+      - .env # needs to be in same directory !
+    build:
+      context: ..
+      args:
+        HOSTNAME: ${HOSTNAME}
+        DEV_USER: ${DEV_USER}
+        DEV_GIT_EMAIL: ${DEV_GIT_EMAIL}
+        DEV_GIT_NAME: ${DEV_GIT_NAME}
+      dockerfile: .devcontainer/Dockerfile
+      # no_cache: true
+    depends_on: # created in include part
+      - opsi-server
+    ports:
+      - ${WEBGUI_DEV_PORT:-8888}:8888
+    hostname: ${HOSTNAME}
+    domainname: ${DOMAINNAME}
+    volumes: # /var/lib/opsiconfd/addons/ = /data/opsiconfd/addons/
+      - opsi_data:/data
+      - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
+      - ..:/workspace
+    working_dir: /workspace
+    entrypoint: ["/docker-entrypoint.sh"]

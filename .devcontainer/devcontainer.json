@@ -1,19 +1,21 @@
 {
 	"name": "opsiweb",
-	"dockerComposeFile": "../docker/docker-compose.yml",
+	"dockerComposeFile": ["./docker-compose.yml"],
 	"service": "opsiweb_dev",
+	// "dockerComposeFile": ["./opsi-docker/opsi-server/docker-compose-env.yml"],
+	// "service": "opsi-server",
+	// "runArgs": ["$(buildargs.sh ../.env)"],
+	// "runArgs": ["--env-file=../.env", "--progress=plain", "--no-cache"],
 	"workspaceFolder": "/workspace",
-	"forwardPorts": [8888, 3003, 4447, 3000],
-	// "postStartCommand": "npm install && PORT=8888 bash",
+	// "workspaceFolder": "/",
+	// "forwardPorts": [8888],
+	// "forwardPorts": [8888, 3003, 4447, 3000],
 	"postCreateCommand": "/workspace/.devcontainer/post_create.sh",
-	"postStartCommand": "/workspace/.devcontainer/post_start.sh",
-	// "postAttachCommand": "opsiconfd --workers=1 --log-level-stderr=5",
-	// "remoteEnv": {
-	// 	"PLAYWRIGHT_BROWSERS_PATH":".playwright/browsers/",
-	// 	"PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
-	// },
-	// "remoteUser": "echo $(id -u $(whoami))",
-	// "remoteUser": "1000",
+	// "postStartCommand": "/workspace/.devcontainer/post_start.sh",
+	// "remoteUser": "${env:DEV_USER}",
+	"settings": {
+		"terminal.integrated.shell.linux": "/usr/bin/zsh"
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -34,7 +36,9 @@
 				"shardulm94.trailing-spaces",
 				"octref.vetur",
 				"SonarSource.sonarlint-vscode",
-				"Vue.volar"
+				"Vue.volar",
+				"wejectchan.vue3-snippets-for-vscode",
+				"bradlc.vscode-tailwindcss"
 			]
 		}
 	}

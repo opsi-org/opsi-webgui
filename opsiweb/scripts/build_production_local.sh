@@ -33,9 +33,10 @@ chown 1000:1000 opsi-webgui.zip
 
 if [[ $2 != 0 ]] # flag to install addon locally
 then
-    rm -rf /var/lib/opsiconfd/addons/webgui
-    # rm -rf ${WORKING_DIR}/opsiweb/dist
-    mv -f webgui/ /var/lib/opsiconfd/addons/.
+    # rm -rf /var/lib/opsiconfd/addons/webgui
+    # mv -f webgui/ /var/lib/opsiconfd/addons/.
+    rm -rf /data/opsiconfd/addons/webgui
+    mv -f webgui/ /data/opsiconfd/addons/.
 
     git restore ${WORKING_DIR}/backend/addon/webgui/data/app/README.md
     echo ".....$2"

@@ -1,19 +1,19 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-		{ // opsiconfd
-			"name": "opsiconfd",
-			"runtimeExecutable": "opsiconfd",
-			"runtimeArgs": [
-				"--workers=1",
-				"--log-level-stderr=5"
-			],
-			"outputCapture": "std",
-			"request": "launch",
-			"type": "node",
-			"auto": true,
-			"cwd": "${workspaceFolder}/opsiweb"
-		},
+		// { // opsiconfd
+		// 	"name": "opsiconfd",
+		// 	"runtimeExecutable": "opsiconfd",
+		// 	"runtimeArgs": [
+		// 		"--workers=1",
+		// 		"--log-level-stderr=5"
+		// 	],
+		// 	"outputCapture": "std",
+		// 	"request": "launch",
+		// 	"type": "node",
+		// 	"auto": true,
+		// 	"cwd": "${workspaceFolder}/opsiweb"
+		// },
 		{ // Webgui
 			"name": "webgui",
 			"cwd": "${workspaceFolder}/opsiweb",
