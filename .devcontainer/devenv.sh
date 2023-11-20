@@ -17,6 +17,7 @@ echo DEV_GIT_EMAIL=$GITEMAIL >> $ENVFILE
 
 
 echo "################# env for opsi-server" >> $ENVFILE
+echo DOCKER_IMAGE_OPSI_SERVER=uibmz/opsi-server:4.3-development >> $ENVFILE
 echo RESTART_POLICY=no >> $ENVFILE
 
 echo HOSTNAME=$(hostname -f) >> $ENVFILE
