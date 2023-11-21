@@ -24,7 +24,7 @@ services:
     depends_on: # created in include part
       - opsi-server
     ports:
-      - ${WEBGUI_DEV_PORT:-8888}:8888
+      - "${WEBGUI_DEV_PORT}:8888"
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
     volumes: # /var/lib/opsiconfd/addons/ = /data/opsiconfd/addons/

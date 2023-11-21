@@ -14,7 +14,7 @@
     "//project-handling": "",
     "createpackagejson": "echo 'build'",
     "build": "npm i",
-    "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt .",
+    "dev": "PORT=8888 NODE_ENV=development NODE_OPTIONS=--inspect nuxt . --hostname 0.0.0.0",
     "clean": "rm -rf node_modules uib-components/node_modules; rm -f package-lock.json uib-components/package-lock.json",
     "clean:all": "rm -rf node_modules uib-components/node_modules ./node_modules .nuxt ./.nuxt .nuxt-storybook ./.nuxt-storybook test-results ./test-results uib-components/test-results ./dist ; rm -f package.json package-lock.json package-merged.json uib-components/package-lock.json test-result-pw-reporter-* ;",
     "buildclean": "npm run clean && npm run build",

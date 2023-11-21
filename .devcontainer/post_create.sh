@@ -7,6 +7,12 @@ tar -xf opsi-dev-tools_linux_x64_1.16.3.tar.gz
 rm -f opsi-dev-tools_linux_x64_1.16.3.tar.gz opsi-dev-tools_linux_x64_1.16.3.tar.gz.1
 rm -f opsi-dev-tool
 
+
+
+echo "========================================== Install webgui dependencies"
+cd /workspace/opsiweb/
+npm i
+
 # # Setup mariadb server
 # id
 # service mysql restart
