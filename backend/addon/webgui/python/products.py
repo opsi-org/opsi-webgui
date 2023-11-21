@@ -1502,7 +1502,7 @@ def create_product_group(  # pylint: disable=invalid-name, too-many-locals, too-
 	"""
 
 	values = vars(group)
-	values["type"] = "HostGroup"
+	values["type"] = "ProductGroup"
 
 	if group.parentGroupId == "groups":
 		group.parentGroupId = None
