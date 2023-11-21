@@ -1,3 +1,4 @@
+.devcontainer/opsi-docker/
 *.backup
 *.tmp*
 *_tmp*
