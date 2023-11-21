@@ -15,7 +15,7 @@ from operator import and_
 from typing import Callable, List, Optional, Union
 
 from fastapi import Query, status
-from sqlalchemy import select, text  # type: ignore[import]
+from sqlalchemy import and_, column, insert, or_, select, table, text, union, update  # type: ignore[import]
 
 # from OPSI.Backend.MySQL import MySQL, MySQLBackend
 from opsiconfd import contextvar_client_session
@@ -339,3 +339,26 @@ def unicode_config(value: str, multi_value: bool = False, delimiter: str = ";") 
 			return ""
 		return value
 	return ""
+
+
+def get_sub_groups(group: str) -> list:
+	result = set()
+	groups = [g.id for g in backend.group_getObjects(parentGroupId=group)]
+	result.update(groups)
+	for subgroup in groups:
+		result.update(get_sub_groups(subgroup))
+
+	return result
+
+
+def get_groups_ids(type: str) -> list[str]:
+	groups = []
+	with mysql.session() as session:
+		query = select(text("g.groupId AS group_id")).select_from(table("GROUP").alias("g")).where(text("g.type = :type"))  # type: ignore[arg-type,attr-defined]
+		result = session.execute(query, params={"type": type})
+		result = result.fetchall()
+
+		for row in result:
+			if row:
+				groups.append(dict(row).get("group_id", ""))
+		return groups

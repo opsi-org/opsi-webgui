@@ -195,8 +195,23 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 						CONCAT(poc.productVersion, '-', poc.packageVersion) != CONCAT(pod.productVersion, '-', pod.packageVersion)
 				WHERE
 					poc.clientId = hd.clientId AND
-					pod.depotId = hd.depotId
+					pod.depotId = hd.depotId AND
+					pod.productType = 'LocalbootProduct'
 			) AS version_outdated,
+			(
+				SELECT
+					COUNT(*)
+				FROM
+					PRODUCT_ON_DEPOT AS pod
+				JOIN
+					PRODUCT_ON_CLIENT AS poc ON
+						pod.productId = poc.productId AND
+						CONCAT(poc.productVersion, '-', poc.packageVersion) != CONCAT(pod.productVersion, '-', pod.packageVersion)
+				WHERE
+					poc.clientId = hd.clientId AND
+					pod.depotId = hd.depotId AND
+					pod.productType = 'NetbootProduct'
+			) AS version_outdated_netboot,
 			(
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.installationStatus = 'unknown'
