@@ -12,12 +12,13 @@ import json
 from functools import lru_cache
 from typing import Dict, List, Optional, Tuple, Union
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Body, Depends, Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel  # pylint: disable=no-name-in-module
 from sqlalchemy import alias, and_, column, select, text  # type: ignore[import]
 from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 from sqlalchemy.sql.expression import table, update  # type: ignore[import]
+from sqlalchemy.exc import IntegrityError  # type: ignore[import]
 
 from opsiconfd.config import get_configserver_id
 
@@ -34,12 +35,14 @@ from opsiconfd.rest import (
 
 from .depots import get_depots
 from .utils import (
+	get_groups_ids,
 	backend,
 	bool_value,
 	filter_depot_access,
 	get_allowd_product_groups,
 	get_allowed_products,
 	get_depot_of_client,
+	get_sub_groups,
 	get_username,
 	merge_dicts,
 	mysql,
@@ -652,71 +655,6 @@ def save_poduct_on_client(  # pylint: disable=too-many-locals, too-many-statemen
 		return RESTErrorResponse(message="Could not create ProductOnClient.", http_status=status.HTTP_400_BAD_REQUEST, details=err)
 
 	return RESTResponse(http_status=http_status, data=result_data)
-
-
-@product_router.get("/api/opsidata/products/groups")
-@rest_api
-def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
-	"""
-	Get all product groups as a tree of groups.
-	"""
-
-	allowed = get_allowd_product_groups(get_username())
-
-	params: dict = {}
-	where = text("g.`type` = 'ProductGroup'")
-
-	with mysql.session() as session:
-		query = (
-			select(
-				text(
-					"""
-			g.parentGroupId AS parent_id,
-			g.groupId AS group_id,
-			og.objectId AS object_id
-		"""
-				)
-			)
-			.select_from(text("`GROUP` AS g"))
-			.join(text("OBJECT_TO_GROUP AS og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
-			.where(where)
-		)
-
-		result = session.execute(query, params)
-		result = result.fetchall()
-		root_group = {"id": "root", "type": "ProductGroup", "text": "root", "parent": None}
-		all_groups = {}
-		for row in result:
-			if user_register() and product_group_access_configured(get_username()):
-				if row["group_id"] not in allowed:
-					continue
-			if row["group_id"] not in all_groups:
-				all_groups[row["group_id"]] = {
-					"id": row["group_id"],
-					"type": "ProductGroup",
-					"text": row["group_id"],
-					"parent": row["parent_id"] or root_group["id"],
-				}
-			if row["object_id"]:
-				if "children" not in all_groups[row["group_id"]]:
-					all_groups[row["group_id"]]["children"] = {}
-				if row.group_id == row.parent_id:
-					if not row["object_id"] in all_groups:
-						all_groups[row["object_id"]] = {
-							"id": f'{row["object_id"]};{row["parent_id"]}',
-							"type": "ProductGroup",
-							"text": row["object_id"],
-							"parent": row["parent_id"] or root_group["id"],
-						}
-				else:
-					all_groups[row["group_id"]]["children"][row["object_id"]] = {
-						"id": f'{row["object_id"]};{row["group_id"]}',
-						"type": "ObjectToGroup",
-						"text": row["object_id"],
-						"parent": row["group_id"],
-					}
-
-		return RESTResponse(data={"groups": all_groups})
 
 
 @product_router.get("/api/opsidata/producticons")
@@ -1360,3 +1298,249 @@ def action_result(request: Request) -> RESTResponse:  # pylint: disable=unused-a
 			) from err
 
 	return RESTResponse(data=action_result_list)
+
+
+@product_router.get("/api/opsidata/products/groups")
+@rest_api
+def get_product_groups() -> RESTResponse:  # pylint: disable=too-many-locals
+	"""
+	Get all product groups as a tree of groups.
+	"""
+
+	allowed = get_allowd_product_groups(get_username())
+
+	params: dict = {}
+	where = text("g.`type` = 'ProductGroup'")
+
+	with mysql.session() as session:
+		query = (
+			select(
+				text(
+					"""
+			g.parentGroupId AS parent_id,
+			g.groupId AS group_id,
+			og.objectId AS object_id
+		"""
+				)
+			)
+			.select_from(text("`GROUP` AS g"))
+			.join(text("OBJECT_TO_GROUP AS og"), text("og.groupType = g.`type` AND og.groupId = g.groupId"), isouter=True)
+			.where(where)
+		)
+
+		result = session.execute(query, params)
+		result = result.fetchall()
+		root_group = {"id": "root", "type": "ProductGroup", "text": "root", "parent": None}
+		all_groups = {}
+		for row in result:
+			if user_register() and product_group_access_configured(get_username()):
+				if row["group_id"] not in allowed:
+					continue
+			if row["group_id"] not in all_groups:
+				all_groups[row["group_id"]] = {
+					"id": row["group_id"],
+					"type": "ProductGroup",
+					"text": row["group_id"],
+					"parent": row["parent_id"] or root_group["id"],
+				}
+			if row["object_id"]:
+				if "children" not in all_groups[row["group_id"]]:
+					all_groups[row["group_id"]]["children"] = {}
+				if row.group_id == row.parent_id:
+					if not row["object_id"] in all_groups:
+						all_groups[row["object_id"]] = {
+							"id": f'{row["object_id"]};{row["parent_id"]}',
+							"type": "ProductGroup",
+							"text": row["object_id"],
+							"parent": row["parent_id"] or root_group["id"],
+						}
+				else:
+					all_groups[row["group_id"]]["children"][row["object_id"]] = {
+						"id": f'{row["object_id"]};{row["group_id"]}',
+						"type": "ObjectToGroup",
+						"text": row["object_id"],
+						"parent": row["group_id"],
+					}
+
+		return RESTResponse(data={"groups": all_groups})
+
+
+@product_router.get("/api/opsidata/products/groups/{group}")
+@rest_api
+@read_only_check
+def delete_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str  # pylint: disable=unused-argument
+) -> RESTResponse:
+	"""
+	Delete product group
+	"""
+	try:
+		subgroups = get_sub_groups(group)
+		for grp in subgroups:
+			backend.group_delete(grp)
+		backend.group_delete(group)
+	except Exception as error:  # pylint: disable=broad-exception-caught
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
+
+	return RESTResponse(data=f"Deleted group {group}.")
+
+
+@product_router.put("/api/opsidata/products/groups/{group}")
+@rest_api
+@read_only_check
+def update_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	group: str, parent: str = Body(default=None), description: str = Body(default=None), note: str = Body(default=None)
+) -> RESTResponse:
+	"""
+	Update product group
+	"""
+	values = {"id": group, "type": "ProductGroup"}
+	if parent:
+		values["parentGroupId"] = parent
+	if description:
+		values["description"] = description
+	if note:
+		values["note"] = note
+
+	try:
+		backend.group_updateObject(values)
+	except Exception as error:  # pylint: disable=broad-exception-caught
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not update group {group}.", details=error)
+
+	return RESTResponse(data=f"Updated group: {values}")
+
+
+@product_router.delete("/api/opsidata/products/groups/{group}/products")
+@rest_api
+@read_only_check
+def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str  # pylint: disable=unused-argument
+) -> RESTResponse:
+	"""
+	Remove products from product group
+	"""
+
+	try:
+		backend.objectToGroup_delete(groupType="ProductGroup", objectId="*", groupId=group)
+	except Exception as error:  # pylint: disable=broad-exception-caught
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not delete products from group {group}.", details=error)
+
+	return RESTResponse(data=f"Removed products from {group}.")
+
+
+@product_router.delete("/api/opsidata/products/groups/{group}/{product}")
+@rest_api
+@read_only_check
+def rm_product_from_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: str, product: str  # pylint: disable=unused-argument
+) -> RESTResponse:
+	"""
+	Remove product from product group
+	"""
+
+	try:
+		backend.objectToGroup_delete(groupType="ProductGroup", objectId=product, groupId=group)
+	except Exception as error:  # pylint: disable=broad-exception-caught
+		logger.error(error)
+		return RESTErrorResponse(message=f"Could not delete product '{product}' from group '{group}'.", details=error)
+
+	return RESTResponse(data=f"Removed product {product} from {group}.")
+
+
+@product_router.post("/api/opsidata/products/groups/{group}/products")
+@rest_api
+@read_only_check
+def add_products_host_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request,  # pylint: disable=unused-argument
+	group: str,
+	products: List[str] = Body(default=None),
+) -> RESTResponse:
+	"""
+	Add products to product group
+	"""
+	with mysql.session() as session:
+		try:
+			values = {
+				"groupType": "ProductGroup",
+				"groupId": group,
+			}
+
+			for product in products:
+				values["objectId"] = product
+				query = insert(table("OBJECT_TO_GROUP", column("groupType"), column("groupId"), column("objectId"))).values(values)
+				session.execute(query)
+
+			return RESTResponse(data=products, http_status=status.HTTP_201_CREATED)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not add product '%s' to group object.", product)
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message=f"Could not add product '{product}' to group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
+
+
+class ProductGroup(BaseModel):  # pylint: disable=too-few-public-methods
+	groupId: str
+	parentGroupId: Optional[str] = None
+	description: Optional[str] = None
+	notes: Optional[str] = None
+
+
+@product_router.post("/api/opsidata/products/groups")
+@rest_api
+@read_only_check
+def create_product_group(  # pylint: disable=invalid-name, too-many-locals, too-many-branches, too-many-statements
+	request: Request, group: ProductGroup
+) -> RESTResponse:
+	"""
+	Create product groups
+	"""
+
+	values = vars(group)
+	values["type"] = "HostGroup"
+
+	if group.parentGroupId == "groups":
+		group.parentGroupId = None
+	if group.parentGroupId:
+		groups = get_groups_ids("ProductGroup")
+		if group.parentGroupId not in groups:
+			return RESTErrorResponse(
+				message=f"Could not create group... Parent group '{group.parentGroupId}' does not exist.",
+				http_status=status.HTTP_400_BAD_REQUEST,
+			)
+
+	with mysql.session() as session:
+		try:
+			query = insert(
+				table(
+					"GROUP", column("type"), *[column(key) for key in vars(group).keys()]
+				)  # pylint: disable=consider-iterating-dictionary
+			).values(values)
+			session.execute(query)
+
+			headers = {"Location": f"{request.url}/{group.groupId}"}
+
+			return RESTResponse(data=values, http_status=status.HTTP_201_CREATED, headers=headers)
+
+		except IntegrityError as err:
+			logger.error("Could not create group object.")
+			logger.error(err)
+			session.rollback()
+			return RESTErrorResponse(
+				message=f"Could not create group object. Group '{group.groupId}' already exists",
+				http_status=status.HTTP_409_CONFLICT,
+				details=err,
+			)
+
+		except Exception as err:  # pylint: disable=broad-except
+			logger.error("Could not create group object.")
+			logger.error(err)
+			session.rollback()
+			raise OpsiApiException(
+				message="Could not create group object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
+			) from err
