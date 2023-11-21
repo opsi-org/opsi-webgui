@@ -715,7 +715,7 @@ def read_groups(
 		selectedClients = []
 	all_groups = {}
 	for row in raw_groups:
-		if not row["group_id"] in allowed + ["clientdirectory"]:
+		if allowed and not row["group_id"] in allowed + ["clientdirectory"]:
 			continue
 		if not row["group_id"] in all_groups:
 			all_groups[row["group_id"]] = {
