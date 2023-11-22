@@ -27,7 +27,7 @@ services:
       - "${WEBGUI_DEV_PORT}:8888"
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
-    tty: true
+    # tty: true
     volumes: # /var/lib/opsiconfd/addons/ = /data/opsiconfd/addons/
       - opsi_data:/data
       # - ../backend/addon:/data/opsiconfd/addons

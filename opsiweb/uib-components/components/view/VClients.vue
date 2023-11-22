@@ -120,18 +120,7 @@
               :title="$t('button.show.products')"
               @click="sortProductTable(row.item.clientId, 'version', false)"
             >
-              L:{{ row.item.version_outdated }}
-            </b-button>
-            <b-button
-              v-if="row.item.version_outdated_netboot > 0"
-              variant="outline-primary"
-              size="sm"
-              class="btn-client-statistic"
-              :class="{'row-selected': selectionClients.includes(row.item.clientId)}"
-              :title="$t('button.show.products')"
-              @click="sortProductTable(row.item.clientId, 'version', false)"
-            >
-              N:{{ row.item.version_outdated_netboot }}
+              {{ row.item.version_outdated }}
             </b-button>
           </template>
           <template #cell(actionResult_failed)="row">
