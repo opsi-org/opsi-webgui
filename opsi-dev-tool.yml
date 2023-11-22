@@ -68,7 +68,7 @@
         ],
         "organization": "opsi-org",
         "project": "opsiorg",
-        "resource_name": "webgui.json"
+        "resource_name": "opsi-webgui.json"
       }
     ],
     "upload_resources": [
@@ -76,7 +76,7 @@
         "organization": "opsi-org",
         "project": "opsiorg",
         "resource_file": "opsiweb/uib-components/locale/opsiweb-ui_en.json",
-        "resource_name": "webgui.json"
+        "resource_name": "opsi-webgui.json"
       }
     ]
   }
