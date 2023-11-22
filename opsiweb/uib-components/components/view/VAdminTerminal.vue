@@ -52,12 +52,15 @@ import { WebLinksAddon } from 'xterm-addon-web-links'
 
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
+import { AlertToast } from '../../mixins/component'
 const cache = namespace('data-cache')
 
-@Component({ mixins: [MBus] })
+@Component({ mixins: [MBus, AlertToast] })
 export default class VAdminTerminal extends Vue {
   $t: any
   $refs: any
+  $axios: any
+  showToastError: any
   @Prop({ }) id!: string
   @Prop({ }) type!: string
   @Prop({ default: false }) 'asChild'!: string
@@ -76,7 +79,8 @@ export default class VAdminTerminal extends Vue {
   terminalId: string = ''
   terminalChannelDefault = 'service:config:terminal'
   terminalChannel = this.terminalChannelDefault
-  isLoading: boolean
+  isLoading: boolean = true
+  isDisabled: boolean|undefined = undefined
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChangedTerminal () {
     const msg = this.wsBusMsg
@@ -97,29 +101,27 @@ export default class VAdminTerminal extends Vue {
     }
   }
 
-  // async _fetch () {
-  //   this.isLoading = true
+  async _fetchIsDisabled () {
+    this.isLoading = true
+    return await this.$axios.get('/api/opsidata/server/disabled-features')
+      .then((response) => {
+        if (response.data === null) {
+          this.isLoading = false
+          return []
+        } else {
+          this.isLoading = false
+          return response.data.includes('terminal')
+        }
+      }).catch((error) => {
+        this.showToastError(error)
+        this.isLoading = false
+      })
+  }
 
-  //   return await this.$axios.get('/api/opsidata/server/disabled-features')
-  //     .then((response) => {
-  //       this.totalItems = response.headers['x-total-count']
-  //       this.totalpages = Math.ceil(this.totalItems / params.perPage)
-  //       this.tableloaded = true
-  //       if (response.data === null) {
-  //         this.isLoading = false
-  //         return []
-  //       } else {
-  //         this.isLoading = false
-  //         return response.data
-  //       }
-  //     }).catch((error) => {
-  //       this.showToastError(error)
-  //       this.isLoading = false
-  //     })
-  // }
-
-  created () {
-    if (this.wsBus === undefined) {
+  async created () {
+    while (this.isDisabled === undefined) { await new Promise(resolve => setTimeout(resolve, 100)) }
+    this.isDisabled = await this._fetchIsDisabled()
+    if (!this.isDisabled && this.wsBus === undefined) {
       this.wsInit()
     }
   }
