@@ -24,7 +24,7 @@
     <b-dropdown-item
       :data-testid="`DropdownDDLang-Item-contribute`"
       :title="$t('button.contribute-transifex.tooltip')"
-      href="https://app.transifex.com/opsi-org/opsiorg/opsiweb-uijson/"
+      href="https://app.transifex.com/opsi-org/opsiorg/opsi-webguijson/"
       target="_blank"
       >
       <!-- href="https://explore.transifex.com/opsi-org/opsiorg/" -->
