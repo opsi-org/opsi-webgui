@@ -30,12 +30,14 @@ from opsiconfd.rest import (
 )
 
 from .utils import (
+	get_groups_ids,
 	backend,
 	build_tree,
 	filter_depot_access,
 	get_allowd_host_groups,
 	get_allowed_clients,
 	get_allowed_objects,
+	get_sub_groups,
 	get_username,
 	host_group_access_configured,
 	mysql,
@@ -183,7 +185,7 @@ def create_host_group(  # pylint: disable=invalid-name, too-many-locals, too-man
 	if group.parentGroupId == "groups":
 		group.parentGroupId = None
 	if group.parentGroupId:
-		groups = _get_host_groups_ids()
+		groups = get_groups_ids("HostGroup")
 		if group.parentGroupId not in groups:
 			return RESTErrorResponse(
 				message=f"Could not create group... Parent group '{group.parentGroupId}' does not exist.",
@@ -273,16 +275,6 @@ def rm_clients_from_host_group(  # pylint: disable=invalid-name, too-many-locals
 		return RESTErrorResponse(message=f"Could not delete group {group}.", details=error)
 
 	return RESTResponse(data=f"Removed all clients from {group}.")
-
-
-def get_sub_groups(group: str) -> list:
-	result = set()
-	groups = [g.id for g in backend.group_getObjects(parentGroupId=group)]
-	result.update(groups)
-	for subgroup in groups:
-		result.update(get_sub_groups(subgroup))
-
-	return result
 
 
 @host_router.delete("/api/opsidata/hosts/groups/{group}")
@@ -685,26 +677,13 @@ def group_get_all_clients(group: str, depots: List = [get_configserver_id]) -> L
 	return sorted(list(all_clients - clients))
 
 
-def _get_host_groups_ids() -> list[str]:
-	groups = []
-	with mysql.session() as session:
-		query = select(text("g.groupId AS group_id")).select_from(table("GROUP").alias("g"))  # type: ignore[arg-type,attr-defined]
-		result = session.execute(query)
-		result = result.fetchall()
-
-		for row in result:
-			if row:
-				groups.append(dict(row).get("group_id", ""))
-		return groups
-
-
 @host_router.get("/api/opsidata/hosts/groups/id")
 @rest_api
 def get_host_group_ids() -> RESTResponse:
 	"""
 	Get ids of all host groups
 	"""
-	groups = _get_host_groups_ids()
+	groups = get_groups_ids("HostGroup")
 	return RESTResponse(data=groups)
 
 
@@ -736,7 +715,7 @@ def read_groups(
 		selectedClients = []
 	all_groups = {}
 	for row in raw_groups:
-		if not row["group_id"] in allowed + ["clientdirectory"]:
+		if allowed and not row["group_id"] in allowed + ["clientdirectory"]:
 			continue
 		if not row["group_id"] in all_groups:
 			all_groups[row["group_id"]] = {

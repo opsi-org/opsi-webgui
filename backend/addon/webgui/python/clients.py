@@ -8,26 +8,19 @@
 webgui client methods
 """
 
-from opsiconfd.redis import ip_address_from_redis_key, redis_client
-from packaging import version
 import os
 import subprocess
 from datetime import date, datetime
 from ipaddress import IPv4Address, IPv6Address
 from typing import Any, Dict, List, Literal, Optional, Union
-from packaging.version import InvalidVersion
+
 from fastapi import APIRouter, Body, Depends, Request, status
-from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
-from sqlalchemy import alias, and_, column, delete, select, text, update  # type: ignore[import]
-from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
-from sqlalchemy.exc import IntegrityError  # type: ignore[import]
-from sqlalchemy.sql.expression import table  # type: ignore[import]
-from starlette.concurrency import run_in_threadpool
-from opsicommon.objects import ProductOnClient
 from opsicommon.exceptions import BackendBadValueError
-from opsiconfd.config import get_configserver_id, config
+from opsicommon.objects import ProductOnClient
+from opsiconfd.application.admininterface import _unblock_all_clients, _unblock_client
+from opsiconfd.config import config, get_configserver_id
 from opsiconfd.logging import logger
-from opsiconfd.application.admininterface import _unblock_client, _unblock_all_clients
+from opsiconfd.redis import ip_address_from_redis_key, redis_client
 from opsiconfd.rest import (
 	OpsiApiException,
 	RESTErrorResponse,
@@ -37,6 +30,14 @@ from opsiconfd.rest import (
 	pagination,
 	rest_api,
 )
+from packaging import version
+from packaging.version import InvalidVersion
+from pydantic import BaseModel, Field  # pylint: disable=no-name-in-module
+from sqlalchemy import alias, and_, column, delete, select, text, update  # type: ignore[import]
+from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
+from sqlalchemy.exc import IntegrityError  # type: ignore[import]
+from sqlalchemy.sql.expression import table  # type: ignore[import]
+from starlette.concurrency import run_in_threadpool
 
 from .utils import (
 	backend,
@@ -195,8 +196,23 @@ async def clients(  # pylint: disable=too-many-branches, dangerous-default-value
 						CONCAT(poc.productVersion, '-', poc.packageVersion) != CONCAT(pod.productVersion, '-', pod.packageVersion)
 				WHERE
 					poc.clientId = hd.clientId AND
-					pod.depotId = hd.depotId
+					pod.depotId = hd.depotId AND
+					pod.productType = 'LocalbootProduct'
 			) AS version_outdated,
+			(
+				SELECT
+					COUNT(*)
+				FROM
+					PRODUCT_ON_DEPOT AS pod
+				JOIN
+					PRODUCT_ON_CLIENT AS poc ON
+						pod.productId = poc.productId AND
+						CONCAT(poc.productVersion, '-', poc.packageVersion) != CONCAT(pod.productVersion, '-', pod.packageVersion)
+				WHERE
+					poc.clientId = hd.clientId AND
+					pod.depotId = hd.depotId AND
+					pod.productType = 'NetbootProduct'
+			) AS version_outdated_netboot,
 			(
 				SELECT COUNT(*) FROM PRODUCT_ON_CLIENT AS poc
 				WHERE poc.clientId = hd.clientId AND poc.installationStatus = 'unknown'
@@ -261,8 +277,6 @@ async def reachable_clients(  # pylint: disable=too-many-branches, dangerous-def
 	return RESTResponse(data=result, total=len(result))
 
 
-
-
 def _depots_of_clients(clients: list[str] | None) -> dict:
 	# TODO check if clients of config server always work
 	response = {}
@@ -274,7 +288,7 @@ def _depots_of_clients(clients: list[str] | None) -> dict:
 			params["clients"] = clients
 
 		query = select(text("h.hostId")).select_from(table("HOST").alias("h")).where(where)  # type: ignore
-		clients = [ dict(row)["hostId"] for row in session.execute(query, params).fetchall() ]
+		clients = [dict(row)["hostId"] for row in session.execute(query, params).fetchall()]
 
 		if not clients:
 			return response
@@ -293,6 +307,7 @@ def _depots_of_clients(clients: list[str] | None) -> dict:
 				response[row_dict["client"]] = val
 
 		return response
+
 
 @client_router.get("/api/opsidata/clientsdepots", response_model=Dict[str, str])
 @rest_api
@@ -522,9 +537,7 @@ async def opsiclientd_rpc(request: Request, data: OpsiclientdRPC) -> RESTRespons
 	Run RPC on opsiclientd
 	"""
 	try:
-		result = await backend.hostControl_opsiclientdRpc(
-			method=data.method, params=data.params or [], hostIds=data.client_ids
-		)  # pylint: disable=no-member
+		result = await backend.hostControl_opsiclientdRpc(method=data.method, params=data.params or [], hostIds=data.client_ids)  # pylint: disable=no-member
 	except Exception as err:  # pylint: disable=broad-except
 		logger.error("Failed to execute opsiclientd rpc: %s", err)
 		raise OpsiApiException(message="Failed to execute opsiclientd rpc.", http_status=status.HTTP_400_BAD_REQUEST, error=err) from err
@@ -589,7 +602,9 @@ def set_depot(client: str, depot: str) -> None:
 @rest_api
 @read_only_check
 def add_client_to_groups(
-	request: Request, clientid: str, groups: List[str] = Body(default=None)  # pylint: disable=unused-argument
+	request: Request,
+	clientid: str,
+	groups: List[str] = Body(default=None),  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Add client to a list of groups.
@@ -613,7 +628,9 @@ def add_client_to_groups(
 @rest_api
 @read_only_check
 def rm_client_from_groups(
-	request: Request, clientid: str, groups: List[str] = Body(default=None)  # pylint: disable=unused-argument
+	request: Request,
+	clientid: str,
+	groups: List[str] = Body(default=None),  # pylint: disable=unused-argument
 ) -> RESTResponse:
 	"""
 	Remove client from a list of groups.

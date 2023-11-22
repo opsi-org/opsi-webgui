@@ -1,7 +1,7 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/opsiweb-ui_en.json')
-const de = require('../../uib-components/locale/opsiweb-ui_de.jsonjsonjsonjson')
+const en = require('../../uib-components/locale/opsi-webgui_en.json')
+const de = require('../../uib-components/locale/opsi-webgui_de.jsonjsonjsonjson')
 
 test.describe('Client On Demand', () => {
   test('Button with label', async ({ page }) => {

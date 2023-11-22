@@ -28,7 +28,7 @@
     ],
     "maintainer": "uib GmbH <info@uib.de>",
     "name": "opsi-webgui",
-    "version": "4.3.21",
+    "version": "4.3.22",
     "version_files": {
       "opsi-dev-tool.yml": "pull-binaries[0].version",
       "opsiweb/package.json": "$.version"
@@ -53,7 +53,7 @@
       ],
       "server-type": "binaryindex",
       "server-url": "http://binaryindex.uib.gmbh",
-      "version": "4.3.21"
+      "version": "4.3.22"
     }
   ],
   "transifex": {
@@ -66,15 +66,15 @@
         ],
         "organization": "opsi-org",
         "project": "opsiorg",
-        "resource_name": "webgui.json"
+        "resource_name": "opsi-webgui.json"
       }
     ],
     "upload_resources": [
       {
         "organization": "opsi-org",
         "project": "opsiorg",
-        "resource_file": "opsiweb/uib-components/locale/opsiweb-ui_en.json",
-        "resource_name": "webgui.json"
+        "resource_file": "opsiweb/uib-components/locale/opsi-webgui_en.json",
+        "resource_name": "opsi-webgui.json"
       }
     ]
   }

@@ -44,11 +44,11 @@
           </b-form-select>
         </template>
       </GridGFormItem>
-      <!-- <GridGFormItem variant="longlabel" :label="$t('label.pv.outdatedonclient')">
+      <GridGFormItem variant="longlabel" :label="$t('label.pv.outdatedonclient')">
         <template #value>
           <b-form-checkbox v-model="quickaction.outdated" size="sm" />
         </template>
-      </GridGFormItem> -->
+      </GridGFormItem>
       <b-row class="text-small mb-2">
         <b>{{ $t('label.possibleactions') }} </b>
       </b-row>
@@ -76,7 +76,7 @@
             >
               {{ $t('form.productaction.radio.both') }}
             </b-form-radio>
-            <!-- <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="true || selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio> -->
+            <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio>
             <b-form-radio v-model="radioOption" name="client-radio" value="clients" :disabled="selectionClients.length <= 0">{{ $t('form.productaction.radio.clients') }}</b-form-radio>
           </b-form-group>
         </template>
@@ -153,7 +153,8 @@ export default class MProductActions extends Vue {
     outdated: false,
     installation_status: null,
     action_result: null,
-    selectedClients: [],
+    selectedClients: null,
+    selectedDepots: null,
     // selectedDepots: undefined,
     demoMode: true
   }
@@ -165,8 +166,8 @@ export default class MProductActions extends Vue {
   @Watch('radioOption', { deep: true }) _radioOptionChanged () {
     if (this.radioOption === 'both') {
       delete this.quickaction.selectedClients
-    // } else if (this.radioOption === 'server') {
-    //   this.quickaction.selectedDepots = this.selectionDepots
+    } else if (this.radioOption === 'server') {
+      this.quickaction.selectedDepots = this.selectionDepots
     } else if (this.radioOption === 'clients') {
       this.quickaction.selectedClients = [...this.selectionClients]
     }
@@ -239,9 +240,10 @@ export default class MProductActions extends Vue {
   async executeAction (demo = true) {
     const params = { ...this.quickaction, demoMode: demo }
     const ref = (this.$refs.prodQuickActionAlert as any)
-
+    console.log(params)
     if (this.quickaction.outdated === false && this.quickaction.installation_status === null && this.quickaction.action_result === null) {
       ref.alert(this.$t('message.error.condition'), 'danger')
+      this.demoResult = undefined
       return
     } else if (this.quickaction.action === null && demo === false) {
       ref.alert(this.$t('message.error.productquickaction'), 'danger')
@@ -253,6 +255,8 @@ export default class MProductActions extends Vue {
     this.isLoading = true
     if (this.radioOption === 'clients') {
       params.selectedClients = this.selectionClients
+    } else {
+      params.selectedClients = null
     }
     await this.$axios.$post('/api/opsidata/clients/action', params)
       .then((result) => {

@@ -1,7 +1,7 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/opsiweb-ui_en.json')
-const de = require('../../uib-components/locale/opsiweb-ui_de.jsonjsonjsonjsonjson')
+const en = require('../../uib-components/locale/opsi-webgui_en.json')
+const de = require('../../uib-components/locale/opsi-webgui_de.jsonjsonjsonjsonjson')
 
 test('Client Configuration', async ({ page }) => {
   await callStoryId(page, 'view-v-config', 'v-config-clients')

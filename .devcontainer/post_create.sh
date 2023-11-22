@@ -7,6 +7,20 @@ tar -xf opsi-dev-tools_linux_x64_1.16.3.tar.gz
 rm -f opsi-dev-tools_linux_x64_1.16.3.tar.gz opsi-dev-tools_linux_x64_1.16.3.tar.gz.1
 rm -f opsi-dev-tool
 
+
+
+echo "========================================== Install webgui dependencies"
+cd /workspace/opsiweb/
+npm i
+echo "========================================== Link webgui backend"
+
+# rm -rf /data/opsiconfd/addons/webgui
+# ln -s /workspace/backend/addon/webgui /data/opsiconfd/addons/
+# chown pwuser:pwuser /data/opsiconfd/addons/webgui
+# ln -s $OPSI_ADDON_DIRS /data/opsiconfd/addons
+# cp -r $WEBGUI_ADDONS_DIR /data/opsiconfd/addons/webgui
+
+
 # # Setup mariadb server
 # id
 # service mysql restart

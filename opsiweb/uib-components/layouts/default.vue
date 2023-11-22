@@ -153,7 +153,12 @@ export default class LayoutDefault extends Vue {
   async checkConfig () {
     try {
       const response = (await this.$axios.$get('/api/user/configuration')).configuration
-      this.setConfig(response)
+      const forbiddenList = (await this.$axios.get('/api/opsidata/server/disabled-features')).data
+      const _config = { ...response }
+      forbiddenList.forEach((forbElem:string) => {
+        _config[forbElem + '.forbidden'] = true
+      })
+      this.setConfig(_config)
     } catch (error: any) {
       const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
       const ref = (this.$refs.errorAlert as any)

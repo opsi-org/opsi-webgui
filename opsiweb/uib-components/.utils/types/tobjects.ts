@@ -100,8 +100,8 @@ export interface QuickAction {
   outdated: boolean,
   installation_status: any,
   action_result: any,
-  selectedClients: undefined | Array<string>,
-  // selectedDepots: undefined | Array<string>,
+  selectedClients: undefined | null | Array<string>,
+  selectedDepots: undefined | null | Array<string>,
   demoMode: boolean
 }
 

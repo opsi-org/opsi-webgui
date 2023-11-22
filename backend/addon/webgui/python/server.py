@@ -12,6 +12,7 @@ from fastapi import APIRouter, Request, status
 
 
 from opsiconfd.logging import logger
+from opsiconfd.config import config
 from opsiconfd.rest import (
 	OpsiApiException,
 	RESTResponse,
@@ -65,3 +66,14 @@ def get_diagnostic_data(request: Request) -> RESTResponse:  # pylint: disable=un
 		) from err
 
 	return RESTResponse(http_status=200, data=diagnostic_data)
+
+
+@server_router.get("/api/opsidata/server/disabled-features")
+@rest_api
+def get_server_disabled_freatures(request: Request) -> RESTResponse:  # pylint: disable=unused-argument
+	"""
+	get disabled server features
+	"""
+
+	return RESTResponse(http_status=200, data=config.disabled_features)
+

@@ -1,15 +1,23 @@
-[tool.black]
-line-length = 140
-target-version = ['py310']
-use-tabs = true
-
-[tool.isort]
-profile = "black"
-indent = "\t"
-known_first_party = ["opsiconfd", "OPSI"]
-
 [tool.mypy]
 disallow_untyped_calls = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
+follow_imports = "silent"
+
+[tool.ruff]
+line-length = 140
+ignore = [ "F401", "E402", "F811"]
+
+[tool.ruff.format]
+indent-style = "tab"
+
+[tool.pylint.MASTER]
+load-plugins = "pylint_pydantic"
+
+[tool.pylint.BASIC]
+no-docstring-rgx = ".*"
+
+[tool.pylint.FORMAT]
+indent-string = "\t"
+max-line-length = 140
 
