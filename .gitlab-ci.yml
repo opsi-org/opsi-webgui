@@ -149,7 +149,7 @@ stages:
   echo $VERSION_YML2
   echo $VERSION_JSN
   echo TAG
-  
+
 
 # .prepare_tag: &prepare_tag |
 #   # "prepare tag"
@@ -237,9 +237,8 @@ init:transifex:
   script:
     - TRANSIFEX_MIN_TRANSLATION_RATE=0.0
     - '[ "$CI_COMMIT_TAG" = "" ] || TRANSIFEX_MIN_TRANSLATION_RATE=1.0'
-    - opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsiweb-ui_en.json
-    - opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de -l fr --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE #-l de -l fr
-    # - ./opsi-dev-cli -l debug transifex download-translations opsiweb-ui.json opsiweb/uib-components/locale/ -l de #-l fr
+    - opsi-dev-cli -l debug transifex upload-resource opsiweb/uib-components/locale/opsi-webgui_en.json
+    - opsi-dev-cli -l debug transifex download-translations opsi-webgui.json opsiweb/uib-components/locale/ --min-review-rate $TRANSIFEX_MIN_TRANSLATION_RATE -l de -l fr
     - chmod 666 opsiweb/uib-components/locale/*
   only:
     - tags

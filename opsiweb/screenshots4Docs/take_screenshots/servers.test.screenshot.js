@@ -1,9 +1,9 @@
 const { test } = require('@playwright/test')
 const { callStoryId } = require('../../uib-components/.utils/playwright/pw-story-call')
-const en = require('../../uib-components/locale/opsiweb-ui_en.json')
+const en = require('../../uib-components/locale/opsi-webgui_en.json')
 let de
 try {
-  de = require('../../uib-components/locale/opsiweb-ui_de.json')
+  de = require('../../uib-components/locale/opsi-webgui_de.json')
 } catch (e) {
   console.error('Translations exist only in pipeline (Will be downloaded from Transifex)')
   de = {}

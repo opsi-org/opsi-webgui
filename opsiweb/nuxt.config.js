@@ -13,8 +13,8 @@ console.log('DEBUG: Reading locales')
 try {
   // gets all internationalization files, which are located in 'dir'
   files.forEach((file) => {
-    if (/opsiweb-ui_(.*)\.json/.test(file)) {
-      const l = file.match(/opsiweb-ui_(.*)\.json/)
+    if (/opsi-webgui_(.*)\.json/.test(file)) {
+      const l = file.match(/opsi-webgui_(.*)\.json/)
       try {
         const json = require(fullPath + '/' + file)
         langs[l[1]] = json

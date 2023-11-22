@@ -76,6 +76,7 @@ export default class VAdminTerminal extends Vue {
   terminalId: string = ''
   terminalChannelDefault = 'service:config:terminal'
   terminalChannel = this.terminalChannelDefault
+  isLoading: boolean
 
   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChangedTerminal () {
     const msg = this.wsBusMsg
@@ -95,6 +96,27 @@ export default class VAdminTerminal extends Vue {
       this.mbTerminal.writeln('> # Terminal closed')
     }
   }
+
+  // async _fetch () {
+  //   this.isLoading = true
+
+  //   return await this.$axios.get('/api/opsidata/server/disabled-features')
+  //     .then((response) => {
+  //       this.totalItems = response.headers['x-total-count']
+  //       this.totalpages = Math.ceil(this.totalItems / params.perPage)
+  //       this.tableloaded = true
+  //       if (response.data === null) {
+  //         this.isLoading = false
+  //         return []
+  //       } else {
+  //         this.isLoading = false
+  //         return response.data
+  //       }
+  //     }).catch((error) => {
+  //       this.showToastError(error)
+  //       this.isLoading = false
+  //     })
+  // }
 
   created () {
     if (this.wsBus === undefined) {
