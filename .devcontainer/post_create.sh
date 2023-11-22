@@ -10,7 +10,7 @@ rm -f opsi-dev-tool
 
 
 echo "========================================== Install webgui dependencies"
-cd /workspace/opsiweb/
+cd /workspace/frontend/
 npm i
 echo "========================================== Link webgui backend"
 
@@ -18,8 +18,12 @@ echo "========================================== Link webgui backend"
 # ln -s /workspace/backend/addon/webgui /data/opsiconfd/addons/
 # chown pwuser:pwuser /data/opsiconfd/addons/webgui
 # ln -s $OPSI_ADDON_DIRS /data/opsiconfd/addons
-# cp -r $WEBGUI_ADDONS_DIR /data/opsiconfd/addons/webgui
+cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
 
+
+#https://stackoverflow.com/questions/49544215/it-is-possible-to-run-a-command-inside-a-docker-container-from-another-container
+alias opsiconfdrestart="docker exec -u root opsiweb-ui_devcontainer-opsi-server-1 supervisorctl reload"
+echo "alias opsiconfdrestart='docker exec -u root opsiweb-ui_devcontainer-opsi-server-1 supervisorctl reload'" >> ~./bash_aliases
 
 # # Setup mariadb server
 # id

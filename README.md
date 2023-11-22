@@ -34,22 +34,23 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
 * Requirements: Docker, VisualStudioCode with 'Remote - Container' extension
 
 ### Build devcontainer
-* **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsiweb-ui.git`
+* **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsi-webgui.git`
+* **Checkout submodule**
+  * GitHub: `cd opsi-webgui && git clone https://github.com/opsi-org/opsi-docker.git .devcontainer/opsi-docker`
+  * GitLab: `cd opsi-webgui && git clone git@gitlab.uib.gmbh:uib/opsi-docker.git .devcontainer/opsi-docker`
+  * Alternative (in future): `cd opsi-webgui && git submodule update --init --recursive`
 * **run `.devcontainer/devenv.sh`** in terminal (from Workspace-folder!)
   * check if .env-file contains your fqdn (like 'HOST.YOUR.DOMAIN')
   * if it only contains 'HOST': edit your local /etc/hosts file to contain `127.0.0.1       host.your.domain host localhost` and run devenv.sh again
 * **Reopen** the project in remote-container (as vscode suggests)
   (Hint: Strg + Shift + P opens command palette; search for: `(rebuild and) reopen in container` )
-    > the container starts automaticly the complete develepment enviroment including webgui(nuxt), storybook and playwright
-    > but currently NOT opsiconfd! (see next steps)
-* optional: import backend (e.g `opsi-backup restore --new-server-id=host.uib.local backend/opsibackup/opsi.bak` or with task)
-  The backend will be overwritten by a rebuild of the container.
+    > the container starts automaticly the complete develepment enviroment including webgui(nuxt), opsiconfd, storybook/histoire and playwright
 
 ### Start applications
-* At least two applications should start automaticly (visible in 'Run and Debug' or 'debug console'): opsiconfd, webgui
+* At least two applications should start automaticly (visible in 'Run and Debug' or 'debug console'): webgui and opsiconfd
   If it is not the case the following commands can be run in the terminal inside the container (every command in own terminal):
-  * opsiconfd: `opsiconfd l5`
-  * webgui: `cd /workspace/opsiweb/ && npm run dev`
+  * opsiconfd: `opsiconfdrestart`
+  * webgui: `cd /workspace/frontend/ && npm run dev` or use Run&Debug section and start webgui3
 * Accept certificate of opsiconfd: `https://localhost:4447/admin`
 * Open: `https://localhost:8888/` for webgui
 

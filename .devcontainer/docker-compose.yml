@@ -29,8 +29,8 @@ services:
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
     volumes: # /var/lib/opsiconfd/addons/ = /data/opsiconfd/addons/
+      - /var/run/docker.sock:/var/run/docker.sock
       - opsi_data:/data
-      - ../backend/addon/webgui:/data/opsiconfd/addons/webgui2
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
       # - ../backend/addon/webgui/changelogs:/opsi_addons
       # - ../backend/addon/webgui/changelogs:/data/opsiconfd/addons/.
