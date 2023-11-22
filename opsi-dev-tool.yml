@@ -7,7 +7,7 @@
   "package": {
     "architecture": "all",
     "depends": [
-      "opsiconfd (>= 4.3.0.104)"
+      "opsiconfd (>= 4.3.1.0)"
     ],
     "name": "opsi-webgui",
     "postinst_script": [
