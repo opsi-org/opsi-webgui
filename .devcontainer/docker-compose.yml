@@ -27,12 +27,11 @@ services:
       - "${WEBGUI_DEV_PORT}:8888"
     hostname: ${HOSTNAME}
     domainname: ${DOMAINNAME}
+    tty: true
     volumes: # /var/lib/opsiconfd/addons/ = /data/opsiconfd/addons/
       - opsi_data:/data
-      - ../backend/addon/webgui:/data/opsiconfd/addons/webgui2
+      # - ../backend/addon:/data/opsiconfd/addons
       - ./files/docker-entrypoint.sh:/docker-entrypoint.sh
-      # - ../backend/addon/webgui/changelogs:/opsi_addons
-      # - ../backend/addon/webgui/changelogs:/data/opsiconfd/addons/.
       - ..:/workspace
     working_dir: /workspace
     entrypoint: ["/docker-entrypoint.sh"]

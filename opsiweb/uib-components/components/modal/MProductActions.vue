@@ -73,11 +73,12 @@
               v-model="radioOption"
               name="server-clients-radio"
               value="both"
+              disabled
             >
               {{ $t('form.productaction.radio.both') }}
             </b-form-radio>
-            <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio>
-            <b-form-radio v-model="radioOption" name="client-radio" value="clients" :disabled="selectionClients.length <= 0">{{ $t('form.productaction.radio.clients') }}</b-form-radio>
+            <!-- <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio> -->
+            <!-- <b-form-radio v-model="radioOption" name="client-radio" value="clients" :disabled="selectionClients.length <= 0">{{ $t('form.productaction.radio.clients') }}</b-form-radio> -->
           </b-form-group>
         </template>
       </GridGFormItem>
@@ -141,7 +142,7 @@ export default class MProductActions extends Vue {
   @selections.Getter public selectionDepots!: Array<string>
 
   demoResult: any = '--'
-  radioOption: string = 'clients'
+  radioOption: string = 'both' // (this.selectionClients?.length <= 0) ? 'both' : 'clients'
   isLoading: boolean = false
   actions: Array<string> = ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
   conditn_InstStatus!: Array<string>
@@ -160,16 +161,20 @@ export default class MProductActions extends Vue {
   }
 
   @Watch('selectionClients', { deep: true }) clientsChanged () {
+    // this.radioOption = (this.selectionClients?.length <= 0) ? 'both' : 'clients'
     this.executeAction(true)
   }
 
   @Watch('radioOption', { deep: true }) _radioOptionChanged () {
     if (this.radioOption === 'both') {
-      delete this.quickaction.selectedClients
+      this.quickaction.selectedClients = undefined
+      this.quickaction.selectedDepots = undefined
     } else if (this.radioOption === 'server') {
       this.quickaction.selectedDepots = this.selectionDepots
+      this.quickaction.selectedClients = undefined
     } else if (this.radioOption === 'clients') {
       this.quickaction.selectedClients = [...this.selectionClients]
+      this.quickaction.selectedDepots = undefined
     }
   }
 
@@ -208,6 +213,7 @@ export default class MProductActions extends Vue {
     this.isLoading = true
     await this.fetchActionResults()
     await this.fetchInstallationStates()
+    // this.radioOption = (this.selectionClients?.length <= 0) ? 'both' : 'clients'
     this.isLoading = false
   }
 
@@ -242,11 +248,11 @@ export default class MProductActions extends Vue {
     const ref = (this.$refs.prodQuickActionAlert as any)
     console.log(params)
     if (this.quickaction.outdated === false && this.quickaction.installation_status === null && this.quickaction.action_result === null) {
-      ref.alert(this.$t('message.error.condition'), 'danger')
+      ref?.alert(this.$t('message.error.condition'), 'danger')
       this.demoResult = undefined
       return
     } else if (this.quickaction.action === null && demo === false) {
-      ref.alert(this.$t('message.error.productquickaction'), 'danger')
+      ref?.alert(this.$t('message.error.productquickaction'), 'danger')
     } else if (this.quickaction.action === null && demo === true) {
       params.action = 'none'
     } else {

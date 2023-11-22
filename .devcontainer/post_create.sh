@@ -14,11 +14,11 @@ cd /workspace/opsiweb/
 npm i
 echo "========================================== Link webgui backend"
 
-# rm -rf /data/opsiconfd/addons/webgui
+rm -rf /data/opsiconfd/addons/webgui
 # ln -s /workspace/backend/addon/webgui /data/opsiconfd/addons/
 # chown pwuser:pwuser /data/opsiconfd/addons/webgui
 # ln -s $OPSI_ADDON_DIRS /data/opsiconfd/addons
-# cp -r $WEBGUI_ADDONS_DIR /data/opsiconfd/addons/webgui
+cp -r $WEBGUI_ADDON_DIR /data/opsiconfd/addons/.
 
 
 # # Setup mariadb server
