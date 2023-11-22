@@ -1,5 +1,6 @@
 <template>
-  <b-card class="text-center index-card">
+  <!-- <b-card class="text-center index-card"> -->
+    <div class="">
     <h1 class="title">
       {{ $t("uib") }} <br>
       {{ $t("button.login") }} <br>
@@ -21,7 +22,8 @@
     <!-- <IconELILoading animation="cylon" /> -->
 
     <ButtonBTNLogout />
-  </b-card>
+  </div>
+  <!-- </b-card> -->
 </template>
 
 <script setup>

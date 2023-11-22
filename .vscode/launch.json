@@ -79,7 +79,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": false,
+			"auto": true,
             "cwd": "${workspaceFolder}/frontend"
 		},
 		// {

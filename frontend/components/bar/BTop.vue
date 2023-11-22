@@ -1,10 +1,10 @@
 <template>
  <el-menu
-    class="el-menu-demo"
     mode="horizontal"
   >
     <el-menu-item index="0">
-      <img src="../../assets/images/opsi.png" alt="OPSI Logo">
+      <!-- <img src="../../assets/images/opsi.png" alt="OPSI Logo"> -->
+      <IconIOpsiLogo class="max-h-full h-full"/>
     </el-menu-item>
     <div class="flex-grow" />
     <el-menu-item index="1">
@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-const mq = useMQ()
+// const mq = useMQ()
 </script>
 
 <style scoped>

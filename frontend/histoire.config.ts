@@ -8,6 +8,10 @@ export default defineConfig({
     HstNuxt(),
   ],
   setupFile: 'histoire-setup.ts',
+  tree: {
+    file: (file) => [...file.path.split('/').slice(1, -1), file.title],
+    order: 'asc',
+  },
   vite: {
     server: {
       host: '0.0.0.0',

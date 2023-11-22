@@ -1,6 +1,6 @@
 <template>
   <Story>
-    <ButtonBTNLogout :abort-click="true" />
+    <BarBAuthFooter />
   </Story>
 </template>
 

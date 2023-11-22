@@ -1,7 +1,7 @@
 <!-- Meow.story.vue -->
 <template>
   <Story
-    :layout="{ type: 'single', iframe: false }"
+    :layout="{ type: 'grid', width: '100%' }"
   >
     <Variant title="ElementPlus-Color">
       <el-button type="primary">TEST EL</el-button>
