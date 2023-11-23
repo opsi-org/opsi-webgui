@@ -729,9 +729,9 @@ class ProductAction(BaseModel):  # pylint: disable=too-few-public-methods
 	action: str
 	outdated: bool = False
 	demoMode: bool = False
-	installation_status: str | None
-	action_result: str | None
-	selectedClients: list | None
+	installation_status: Optional[str]
+	action_result: Optional[str]
+	selectedClients: Optional[list]
 
 
 @client_router.post("/api/opsidata/clients/action")
@@ -760,6 +760,7 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 			)
 
 		depots = list(_depots_of_clients(hosts).values())
+		result = {}
 		if product_action.outdated:
 			depot_versions: dict = {}
 			for pod in backend.productOnDepot_getObjects(depotId=depots):
@@ -784,6 +785,8 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 							poc_list.add(poc)
 				except InvalidVersion:
 					continue
+		else:
+			result = set(backend.productOnClient_getObjects(installationStatus="installed", clientId=hosts))
 		for poc in poc_list:
 			poc.actionRequest = product_action.action
 			if poc.clientId not in updates:
