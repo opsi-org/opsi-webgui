@@ -1,9 +1,11 @@
 export const useIcons = () => {
+  // All available icons: https://icon-sets.iconify.design
+  // prefered urrently: bootstrap icons
   const icon = {
     server: 'bi:server',
     client: 'bi:laptop',
     product: 'bi:box-seam',
-    group: 'bi:diagram2',
+    group: 'bi:diagram-2',
     admin: 'bi:tools',
     support: 'bi:headset',
     settings: 'bi:gear',
@@ -44,7 +46,7 @@ export const useIcons = () => {
     arrowFillUp: 'bi:caret-up',
     arrowFillDown: 'bi:caret-down-fill',
     log: 'bi:file-earmark-text',
-    clientReachable: 'bi:link45deg',
+    clientReachable: 'bi:link-45deg',
     ondemand: 'bi:collection-play',
     message: 'bi:envelope',
     reboot: 'bi:bootstrap-reboot',
@@ -55,16 +57,18 @@ export const useIcons = () => {
     productsOutdated: 'bi:cloud-arrow-down',
     sort: 'bi:sort-up',
     sortDesc: 'bi:sort-down',
-    columns: 'bi:grid3x3',
+    columns: 'bi:grid-3x3',
     filter: 'bi:funnel',
     clear: 'bi:brush',
     refresh: 'bi:arrow-repeat',
-    _stackedIcons: {
-      readonly: [
-        { icon: 'bi:pencil', scale: '0.55' },
-        { icon: 'bi:slash-circle', attr: { 'flip-h': true, variant: 'danger' } }
-      ]
-    }
+    // // stackedIcons used??
+    readonly: 'material-symbols-light:edit-off-outline',
+    // _stackedIcons: {
+    //   readonly: [
+    //     { icon: 'bi:pencil', scale: '0.55' },
+    //     { icon: 'bi:slash-circle', attr: { 'flip-h': true, variant: 'danger' } }
+    //   ]
+    // }
   }
   return { ...icon }
  }

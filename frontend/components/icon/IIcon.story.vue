@@ -1,3 +1,4 @@
+
 <template>
   <Story :layout="{ type: 'grid' }">
     <Variant v-for="v,k in icons" :title="'' + k">
