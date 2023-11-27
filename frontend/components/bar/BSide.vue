@@ -1,49 +1,10 @@
 <template>
-  <!-- <b-sidebar
-    id="sidemenu"
-    visible
-  >
-    <b-nav vertical>
-      <span v-for="item in navItems" :key="item.title">
-        <template v-if="item.submenu">
-          <b-nav-item
-            :data-testid="'NIItem-'+item.title"
-            v-b-toggle="'collapse-navitem-'+item.title"
-            :title="$t(item.title)" class="NItem-nav-item"
-            :to="item.route"
-          >
-              {{ $t(item.title) }} collapse
-          </b-nav-item>
-          <b-collapse :id="'collapse-navitem-'+item.title" accordion="sidebarAccordion">
-            <b-nav vertical>
-              <b-nav-item
-                v-for="sub in item.submenu"
-                :key="sub.title"
-                :data-testid="'NICollapsible-submenu-'+item.title+sub.title"
-                :to="sub.route"
-              >
-                  {{ $t(sub.title) }}
-              </b-nav-item>
-            </b-nav>
-          </b-collapse>
-        </template>
-        <template v-else>
-          <b-nav-item :data-testid="'NIItem-'+item.title" :title="$t(item.title)" class="NItem-nav-item" :to="item.route">
-              {{ $t(item.title) }}
-          </b-nav-item>
-        </template>
-      </span>
-    </b-nav>
-  </b-sidebar> -->
-
-  <!-- <div class="h-full grid grid-cols-1 content-between"> -->
-  <el-menu router :collapse="isCollapse" default-active="3" class="overflow-hidden">
+  <el-menu router :collapse="isCollapse" default-active="3" class="overflow-hidden max-w-fit">
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
+        <!-- menus with children -->
         <el-sub-menu :index="item.index" :to="item.route">
-
           <template #title>
-            <!-- <el-icon><location /></el-icon> -->
             <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
           </template>
@@ -51,7 +12,6 @@
           <!-- sub menus -->
           <span v-for="sub in item.submenu" :key="sub.title" :to="item.route">
             <el-menu-item :index="sub.index" :disabled="sub.disabled">
-              <!-- <IconIIcon v-if="sub.icon " :icon="sub.icon"/> -->
               <span>{{ $t(sub.title) }}</span>
             </el-menu-item>
           </span>
@@ -59,12 +19,10 @@
         </el-sub-menu>
       </template>
       <template v-else>
+        <!-- menus without children -->
         <el-menu-item :index="item.route" :to="item.route">
-
           <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
-          <!-- <IconIIcon v-if="item.icon" :icon="item.icon"/>
-          <span>{{ $t(item.title) }}</span> -->
         </el-menu-item>
       </template>
     </span>
@@ -75,17 +33,9 @@
         {{ isCollapse ? 'Expand' : 'Collapse' }}
     </el-checkbox-button>
   </div>
-<!-- </div> -->
 </template>
 
 <script setup lang="ts">
-
-import {
-  Document,
-  Menu as IconMenu,
-  Location,
-  Setting,
-} from '@element-plus/icons-vue'
 import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const configStore = storeConfigapp()
@@ -132,18 +82,8 @@ const navItems = [
     ]
   },
   { index: '6', title: 'title.support', icon: icons.support, route: '/support' }
-  // { title: 'Index page', icon: 'collection-fill', route: '/' }
 ]
 </script>
 
 <style scoped>
-#sidemenu {
-  top: calc(var(--height-navbar) - 2px) !important;
-  width: 200px;
-  height: 100% !important;
-}
-
-.el-menu {
-  /* min-height: 100% !important; */
-}
 </style>

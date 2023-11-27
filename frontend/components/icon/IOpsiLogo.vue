@@ -41,7 +41,6 @@ const imageUrl = computed({
 })
 </script>
 
-
 <style>
 .opsilogo_white {
   filter: saturate(0) brightness(5) !important;

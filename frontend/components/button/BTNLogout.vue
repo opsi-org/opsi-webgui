@@ -19,9 +19,7 @@
 <script setup>
 import { useIcons } from '@/composables/mixins/useIcons'
 import { useNotification } from '../../composables/mixins/useComponent'
-// import { useRoute, useRouter } from 'nuxt/app' // actually autoimported
 const icon = useIcons()
-const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
 
 const authStore = storeAuth() // autho imported
@@ -32,7 +30,6 @@ const props = defineProps({
 async function doLogout () {
   if (props.abortClick) { return }
 
-  // await this.callLogout()
   const { data, error } = await useApiPOST('/auth/logout')
   if (error.response.data.message === 'Unauthorized') {
 
@@ -42,7 +39,6 @@ async function doLogout () {
     return
   }
 
-  // notificationSuccess('ok')
   // TODO wsDisconnect()
   authStore.logout()
   authStore.clearSession()

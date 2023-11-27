@@ -11,11 +11,11 @@
 
 <script setup lang="ts">
 import { useIcons } from '../../composables/mixins/useIcons'
-const icon = useIcons()  // mixin - local => needs to be imported manually
+const icon = useIcons()
 
 const props = defineProps({
   small: { type: Boolean, default: false} ,
-  animation: { type: String, default: 'cylon' }, // TODO remove... // not used anymore (animation done through icon library / iconname)
+  animation: { type: String, default: 'cylon' },
   color: { type: String, default: 'black' },
 })
 

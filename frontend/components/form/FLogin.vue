@@ -70,32 +70,19 @@
 
 <script setup>
 import { useIcons } from "../../composables/mixins/useIcons"
-import { useStrings } from "../../composables/mixins/useStrings"
 import { useNotification } from "../../composables/mixins/useComponent"
 import { useConfigserver } from '@/composables/mixins/useGet'
-// import { ElNotification } from "element-plus"
 const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
-// notificationError('It works', 'not')
-// const color = useColorMode();
-// const settings = storeSettings()
-// const authStore = storeAuth()
 
 const config = useRuntimeConfig()
-// const basePage = config.public.BASE_PAGE
-// const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username'))
-
-const route = useRoute()
-const router = useRouter()
-const staticStrings = useStrings()
 const mq = useMQ()
 const icon = useIcons()
-const { t } = useI18n()
 
 const form = ref({ username: '', password: '' })
 const showPassword = ref(false)
 
-const opsiconfigserver = ref('<could not get opsiconfigserver id>');
+const opsiconfigserver = ref('');
 
 onMounted( async () => {
   opsiconfigserver.value = await useConfigserver().getOpsiConfigServer()

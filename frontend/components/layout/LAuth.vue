@@ -6,8 +6,6 @@
     </el-main>
     <BarBAuthFooter v-once/>
   </el-container>
-  <!-- <div class="common-layout">
-  </div> -->
 </template>
 
 <script setup lang="ts">

@@ -38,9 +38,12 @@ $dark: $gray-800 !default;
 
 // This table defines the theme colors (variant names)
 $plus-theme-colors: (
+    'white': $light,
+    'black': $dark,
     'primary': ('base':  $primary),
     'success': ('base': $success),
     'warning': ('base': $warning),
     'danger': ('base': $danger),
     'error': ('base': $danger),
-    'info': ('base': $info),) !default;
+    'info': ('base': $info)
+) !default;

@@ -1,14 +1,4 @@
 <template>
-    <!-- <form>
-      Langs: {{  $i18n.availableLocales }}
-      <label for="locale-select">{{ $t('language') }}: </label>
-      <select id="locale-select" v-model="$i18n.locale">
-        <option value="en">en</option>
-        <option value="de">de</option>
-        <option value="es">es</option>
-      </select>
-    </form> -->
-
     <b-dropdown
       id="quicksettingsDD"
       data-testid="DropdownDDLang"
@@ -49,8 +39,6 @@
 <script setup>
 import { useIcons } from "../../composables/mixins/useIcons"
 const icon = useIcons()
-// const languages = $i18n.availableLocales
-// const language = $i18n.locale
 
 const props = defineProps({
   footer: { type: Boolean, default: false}
