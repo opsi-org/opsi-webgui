@@ -9,6 +9,10 @@
   //     // "bootstrap-vue",
   //   ]
   // }
+
+  "compilerOptions": {
+    "types": ["element-plus/global"]
+  },
   "include": [
     "env.d.ts",
     "src/**/*",

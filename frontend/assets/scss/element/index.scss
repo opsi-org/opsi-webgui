@@ -1,32 +1,7 @@
-// $-colors: (
-//   'primary': (
-//     'base': rgba(107,33,168, 1),
-//     // 'base':  $primary,
-//   ),
-//   'success': (
-//     'base': #67c23a,
-//   ),
-//   'warning': (
-//     'base': #e6a23c,
-//   ),
-//   'danger': (
-//     'base': #f56c6c,
-//   ),
-//   'error': (
-//     'base': #f56c6c,
-//   ),
-//   'info': (
-//     'base': #909399,
-//   ),
-// );
-// @use "element-plus/dist/index.css";
 
-// @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
-@use '../bv-colors.scss'; // use colors from bootstrap
-// @use 'element-plus/theme-chalk/src/common/var.scss';
+@use '../colors.scss' as colors; // use general opsi colors
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
-  // $colors: $-colors,
-  $colors: bv-colors.$plus-theme-colors
+  $colors: colors.$plus-theme-colors
 );
 
 @use './dark.scss';

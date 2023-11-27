@@ -41,7 +41,8 @@
 				// "SonarSource.sonarlint-vscode",
 				"Vue.volar",
 				"wejectchan.vue3-snippets-for-vscode",
-				"bradlc.vscode-tailwindcss"
+				"bradlc.vscode-tailwindcss",
+				"antfu.iconify"
 			]
 		}
 	}

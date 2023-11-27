@@ -92,21 +92,17 @@ export default defineNuxtConfig({
         },
       },
     },
-    // plugins: [
-    //   Icons({
-    //     // the feature below is experimental ⬇️
-    //     autoInstall: true
-    //   })
-    // ]
   },
   css: [
-    // 'bootstrap/dist/css/bootstrap.min.css',
-    '~/assets/scss/index.scss'
+    '~/assets/scss/index.scss', // ep import colors
+    '~/assets/scss/bv-colors.scss' // bv import colors
   ],
   elementPlus: {
-    // icon: 'ElIcon',
-    importStyle: 'scss',
-    themes: ['dark'],
+    // useSource: true,
+    icon: false,
+    importStyle: "scss",
+    themes: ['dark'], // from docs: "import style css or sass(scss) with components, disable automatically import styles with false."
+    defaultLocale: 'de',
   },
   imports: {
     dirs: ['store'],

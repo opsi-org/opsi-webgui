@@ -1,7 +1,7 @@
 import { defineConfig } from 'histoire'
 import { HstVue } from '@histoire/plugin-vue'
 import { HstNuxt } from '@histoire/plugin-nuxt'
-
+// import './assets/scss/bv-colors.scss'
 export default defineConfig({
   plugins: [
     HstVue(),

@@ -1,8 +1,6 @@
-// // @use import 'element-plus/theme-chalk/dark/css-vars.css'
-// // @forward 'element-plus/theme-chalk/dark/css-vars.css' with (
-// @forward 'element-plus/theme-chalk/src/dark/var.scss' with (
-//   $bg-color: (
-//     'page': #0a0a0a,
-//     'overlay': #1d1e1f,
-//   )
-// );
+@forward 'element-plus/theme-chalk/src/dark/var.scss' with (
+  $bg-color: (
+    'page': #0a0a0a,
+    'overlay': #1d1e1f,
+  )
+);
