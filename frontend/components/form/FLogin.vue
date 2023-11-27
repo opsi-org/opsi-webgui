@@ -72,7 +72,7 @@
 import { useIcons } from "../../composables/mixins/useIcons"
 import { useStrings } from "../../composables/mixins/useStrings"
 import { useNotification } from "../../composables/mixins/useComponent"
-import {useConfigserver} from '@/composables/mixins/useGet'
+import { useConfigserver } from '@/composables/mixins/useGet'
 // import { ElNotification } from "element-plus"
 const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
@@ -94,10 +94,13 @@ const { t } = useI18n()
 
 const form = ref({ username: '', password: '' })
 const showPassword = ref(false)
-useConfigserver().getOpsiConfigServer()
 
 const opsiconfigserver = ref('<could not get opsiconfigserver id>');
-opsiconfigserver.value = await useConfigserver().getOpsiConfigServer()
+
+onMounted( async () => {
+  opsiconfigserver.value = await useConfigserver().getOpsiConfigServer()
+})
+
 
 const validUsername = computed({
   get:  () => (form.username !== '') ?  null : false

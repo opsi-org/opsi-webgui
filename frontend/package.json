@@ -32,8 +32,8 @@
   "devDependencies": {
     "@bootstrap-vue-next/nuxt": "^0.14.10",
     "@element-plus/nuxt": "^1.0.6",
-    "@histoire/plugin-nuxt": "^0.17.5",
-    "@histoire/plugin-vue": "^0.17.5",
+    "@histoire/plugin-nuxt": "0.17.6",
+    "@histoire/plugin-vue": "0.17.6",
     "@iconify/vue": "^4.1.1",
     "@nuxt/devtools": "latest",
     "@nuxtjs/i18n": "^8.0.0-rc.4",
@@ -44,10 +44,10 @@
     "@vitejs/plugin-vue": "^4.5.0",
     "bootstrap": "^5.3.2",
     "bootstrap-vue-next": "^0.14.10",
-    "histoire": "^0.17.5",
+    "histoire": "0.17.6",
     "npm-check-updates": "^16.14.6",
     "nuxt": "^3.8.2",
-    "pinia": "^2.1.x",
+    "pinia": "2.1.6",
     "sass": "^1.69.4"
   },
   "overrides": {

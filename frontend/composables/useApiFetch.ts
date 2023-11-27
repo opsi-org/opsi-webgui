@@ -56,7 +56,6 @@ const useAPI2 = async (
     }
     callresponse.value = JSON.parse(res.json().data.value)
     // callheader.value = JSON.parse(res.json().data.value)
-    console.log(res.json())
   }
 
   await useFetch(baseUrl + basePath + url, {

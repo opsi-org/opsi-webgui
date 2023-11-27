@@ -7,6 +7,7 @@ export default defineConfig({
     HstVue(),
     HstNuxt(),
   ],
+  collectMaxThreads: 2, // 8 threads takes longer..
   setupFile: 'histoire-setup.ts',
   tree: {
     file: (file) => [...file.path.split('/').slice(1, -1), file.title],
@@ -14,7 +15,19 @@ export default defineConfig({
   },
   vite: {
     server: {
-      host: '0.0.0.0',
+      host: '0.0.0.0', // of histoire
+      port: '6006',
+      https: { // development
+        key: '.config/https/server.key',
+        cert: '.config/https/server.crt'
+      },
+      proxy: {
+        "/addons/webgui/api": {
+          target: "https://localhost:4447/",
+          // changeOrigin: true,
+          // rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
     },
     css:{
       preprocessorOptions: {
