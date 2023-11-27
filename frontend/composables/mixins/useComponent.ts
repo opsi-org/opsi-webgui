@@ -189,7 +189,8 @@ const useNotification = () => {
       //     noAutoHide: obj.noAutoHide,
       //     noCloseButton: !obj.noAutoHide
     }
-    ElNotification(data, appContext)
+    ElNotification(data)
+    // ElNotification(data, appContext)
     return vid
   }
 

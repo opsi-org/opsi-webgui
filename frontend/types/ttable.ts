@@ -1,4 +1,4 @@
-import { IObjectString2ObjectString2String, IObjectString2String, IObjectString2StringOrUndefined } from './tgeneral'
+import type { IObjectString2ObjectString2String, IObjectString2String, IObjectString2StringOrUndefined } from './tgeneral'
 
 export interface ITableDataItem {
   ident: string

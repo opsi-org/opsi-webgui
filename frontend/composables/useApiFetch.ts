@@ -44,8 +44,8 @@ const useAPI2 = async (
     callerror = errordata
 
     if (res.statusCode.value === 401) {
-      useAuthStore().logout()
-      useAuthStore().clearSession()
+      storeAuth().logout()
+      storeAuth().clearSession()
       await useRouter().push({ path: '/login' })
     }
   }
@@ -66,7 +66,7 @@ const useAPI2 = async (
     body,
     ...opts
   } as any).then(onResponse,onResponseError)
-           .catch((err:any) => console.log('intern error', err))
+          //  .catch((err:any) => console.log('intern error', err))
 
   return { data: callresponse, error: callerror, headers: callheaders }
 }

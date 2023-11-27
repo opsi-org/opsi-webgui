@@ -23,27 +23,38 @@
 		"vscode": {
 			// cleaning up. only install the ones which are really needed/useful
 			"extensions": [
-				// "dbaeumer.vscode-eslint",
-				"gruntfuggly.todo-tree",
-				"fooxly.workspace",
-				"esbenp.prettier-vscode",
-				"lokalise.i18n-ally",
-				// "orta.vscode-jest",
-				"philfontaine.autolaunch",
-				// "ms-playwright.playwright",
-				// "eamodio.gitlens",
-				// "misterj.vue-volar-extention-pack",
-				// "johnsoncodehk.vscode-typescript-vue-plugin",
-				// "pucelle.run-on-save",
-				"seunlanlege.action-buttons",
-				// "sakamoto66.vscode-playwright-test-runner",
-				"shardulm94.trailing-spaces",
+				////////// Vue/Nuxt3
 				// "octref.vetur",
-				// "SonarSource.sonarlint-vscode",
 				"Vue.volar",
+				// "Vue.vscode-typescript-vue-plugin",
+				// "misterj.vue-volar-extention-pack",
 				"wejectchan.vue3-snippets-for-vscode",
+				// "johnsoncodehk.vscode-typescript-vue-plugin",
+
+				////////// helpers for other libs
+				"lokalise.i18n-ally",
 				"bradlc.vscode-tailwindcss",
-				"antfu.iconify"
+				"antfu.iconify",
+				// "orta.vscode-jest",
+				// "ms-playwright.playwright",
+				// "sakamoto66.vscode-playwright-test-runner",
+
+				////////// linter
+				// "SonarSource.sonarlint-vscode",
+				// "dbaeumer.vscode-eslint",
+
+				////////// container and building app
+				"fooxly.workspace",
+				"philfontaine.autolaunch",
+				// "pucelle.run-on-save",
+
+				////////// helpers
+				"gruntfuggly.todo-tree",
+				"esbenp.prettier-vscode",
+				"shardulm94.trailing-spaces",
+				"seunlanlege.action-buttons",
+				// "eamodio.gitlens",
+
 			]
 		}
 	}

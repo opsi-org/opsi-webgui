@@ -11,11 +11,32 @@
   // }
 
   "compilerOptions": {
-    "types": ["element-plus/global"]
+    "outDir": "./dist",
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "strict": true,
+    "noEmit": false, // was true
+    "skipLibCheck": true,
+    "ignoreDeprecations": "5.0",
+    "suppressImplicitAnyIndexErrors": true,
+    "types": [
+      "@pinia/nuxt",
+      "@nuxtjs/i18n",
+      "@nuxtjs/tailwindcss",
+      "element-plus/global",
+      "@bootstrap-vue-next/nuxt",
+      "@iconify/vue"
+    ]
+
   },
-  "include": [
-    "env.d.ts",
-    "src/**/*",
-    "src/**/*.vue"
-  ]
+  // "include": [
+  //   "env.d.ts",
+  //   "src/**/*",
+  //   "src/**/*.vue",
+  //   ".nuxt/",
+  //   "components/**/*.vue",
+  //   "composables/**/*.vue",
+  //   "layouts/**/*.vue",
+  //   "plugins/**/*.vue",
+  // ]
 }

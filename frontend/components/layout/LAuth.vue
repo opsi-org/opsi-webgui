@@ -1,5 +1,5 @@
 <template>
-  <el-container class="h-screen" :class="'webgui-theme-'+settings.theme">
+  <el-container class="h-screen" :class="'webgui-theme-'+settings.colortheme">
     <el-header/> <!-- do not remove header -->
     <el-main>
       <slot />

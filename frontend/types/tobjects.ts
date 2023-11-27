@@ -1,4 +1,4 @@
-import { IDepend, IProp } from "./ttable"
+import type { IDepend, IProp } from "./ttable"
 
 export interface NewClient {
   hostId: string,

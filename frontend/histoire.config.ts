@@ -16,7 +16,7 @@ export default defineConfig({
   vite: {
     server: {
       host: '0.0.0.0', // of histoire
-      port: '6006',
+      port: 6006,
       https: { // development
         key: '.config/https/server.key',
         cert: '.config/https/server.crt'

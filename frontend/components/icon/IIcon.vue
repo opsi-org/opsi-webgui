@@ -1,5 +1,5 @@
 <template>
-  <Icon v-bind="$attrs" class="mr-1 ml-1"/>
+  <Icon v-bind="$attrs as any" class="mr-1 ml-1"/>
 </template>
 
 <script setup lang="ts">

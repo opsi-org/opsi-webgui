@@ -31,13 +31,15 @@ const props = defineProps({
   height: { type: String, default: ''},
 })
 
-const imageUrl = computed({
+const imageUrl = computed<string>({
   get:  () => {
     if (props.short && props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer.png'
     if (props.short && !props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer_neg.png'
     if (!props.short && props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer.png'
     if (!props.short && !props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer_neg.png'
-  }
+    return ''
+  },
+  set: (_v) => {}
 })
 </script>
 

@@ -7,7 +7,7 @@ export default class QueueNested {
   title: string = 'DefaultQueue'
   scrollDirection: 'none'|'up'|'down' = 'none'
 
-  constructor(max, title='DefaultQueue') {
+  constructor(max:number, title='DefaultQueue') {
     // console.log(this.title, 'Queue constructor')
     this.elements = []
     this.max_elements = max
