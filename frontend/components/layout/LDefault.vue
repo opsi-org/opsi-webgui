@@ -3,18 +3,20 @@
     <el-container class="h-screen w-screen">
       <el-header class="min-w-screen max-h-10 p-0"><BarBTop class="max-h-full max-w-full"/></el-header>
 
-      <el-container class=" h-screen max-h-screen overflow-hidden">
-        <el-aside width="150px">
+      <el-container class="h-screen max-h-screen overflow-hidden">
+        <el-aside class="max-w-fit">
         <!-- <el-aside width="150px" class="resize-x"> -->
           <el-scrollbar>
             <BarBSide/>
           </el-scrollbar>
         </el-aside>
+
         <el-main>
           <el-scrollbar>
             <slot />
           </el-scrollbar>
         </el-main>
+
         <el-aside width="200px"><BarBQuickPanel /></el-aside>
         <!-- <el-aside width="150px" class="resize-x" ><BarBQuickPanel /></el-aside> -->
       </el-container>

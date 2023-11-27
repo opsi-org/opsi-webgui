@@ -1,5 +1,5 @@
 <template>
-  <Icon v-bind="$attrs" />
+  <Icon v-bind="$attrs" class="mr-1 ml-1"/>
   <!-- <Icon v-if="!isStackedIcon" v-bind="$attrs" />
   <div v-else>not supported now</div> -->
 </template>
