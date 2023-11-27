@@ -21,6 +21,7 @@
 	"settings": { "terminal.integrated.shell.linux": "/usr/bin/zsh" },
 	"customizations": {
 		"vscode": {
+			// cleaning up. only install the ones which are really needed/useful
 			"extensions": [
 				// "dbaeumer.vscode-eslint",
 				"gruntfuggly.todo-tree",
