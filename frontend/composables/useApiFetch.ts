@@ -20,7 +20,13 @@ const useAPI2 = async (
   //    -> path = '/filetransfer'
   //       prepath = ''
 
-  let headers: any = { ...opts?.headers, }
+  let headers: any = {
+    ...opts?.headers,
+    // "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    // Accept: 'application/json'
+    // Accept: 'application/json, text/plain, */*',
+
+  }
 
   if (!urlsWithoutAuthentication.includes(url)) {
     const expiry = 3600 // TOD O: get from store
@@ -58,21 +64,34 @@ const useAPI2 = async (
     // callheader.value = JSON.parse(res.json().data.value)
   }
 
-  await useFetch(baseUrl + basePath + url, {
+  let fullURL = baseUrl + basePath + url
+  let fullBody = body
+  if (method === 'GET' && body != undefined) {
+    fullURL = _getURLwithParams(fullURL, body)
+    fullBody = undefined
+  }
+  console.log(method, fullURL, fullBody)
+  await useFetch(fullURL, {
     baseURL: baseUrl,
     credentials: 'include',
     method,
     headers,
-    body,
+    body: fullBody,
     ...opts
   } as any).then(onResponse,onResponseError)
           //  .catch((err:any) => console.log('intern error', err))
 
   return { data: callresponse, error: callerror, headers: callheaders }
 }
+const _getURLwithParams = (url: string, params: any) => {
+  const _url = new URL(url);
+  _url.search = new URLSearchParams(params).toString();
+  console.log('GET URL WITH SEARCH PARAMS IS', _url)
+  return _url.toString()
+}
 
 const useApiGET = async (url: string, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, undefined, opts, prePath)
-const useApiGETBody = async (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, body, opts, prePath)
+const useApiGETBody = async (url: string, params:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, params, opts, prePath)
 const useApiPOST = async (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('POST', url, body, opts, prePath)
 // const useApiPUT = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('PUT', url, body, opts, prePath)
 // const useApiDELETE = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('DELETE', url, body, opts, prePath)

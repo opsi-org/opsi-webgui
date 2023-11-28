@@ -31,7 +31,7 @@ async function doLogout () {
   if (props.abortClick) { return }
 
   const { data, error } = await useApiPOST('/auth/logout')
-  if (error.response.data.message === 'Unauthorized') {
+  if (error?.response?.data?.message === 'Unauthorized') {
 
   } else if (error) {
     console.log("error", error.response.data.message)
