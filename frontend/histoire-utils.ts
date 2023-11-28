@@ -1,0 +1,42 @@
+
+
+const loggedIn = ref(false)
+export async function logout()  {
+  if (!loggedIn.value) return
+  const { data, error } = await useApiPOST('/auth/logout')
+  if (error.response.data.message === 'Unauthorized') {
+
+  } else if (error) {
+    console.log("error", error.response.data.message)
+  } else {
+    loggedIn.value = false
+    console.log('logged out')
+    // TODO wsDisconnect()
+    storeAuth().logout()
+    storeAuth().clearSession()
+    // authStore.setExpiresInterval(undefined)
+  }
+}
+
+// async function login({ app, story, variant }) {
+export async function loginlogout({ app }: any) {
+  if (loggedIn.value) return
+  console.log('APP INSTANCE', app)
+  const _unmount = app.unmount
+  app.unmount = async () => {
+    await logout()
+    _unmount()
+  }
+  const User = new FormData()
+  User.append('username', 'adminuser')
+  User.append('password', 'adminuser')
+  const { data, error } = await useApiPOST('/auth/login', User)
+  if (error) {
+    console.error('error', error)
+  } else if (data?.value?.result == 'Login success') {
+    loggedIn.value = true
+    console.log("login successful")
+    storeAuth().login('adminuser')
+    storeAuth().setSession()
+  }
+}
