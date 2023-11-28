@@ -1,12 +1,31 @@
 // import { Component, Vue } from 'nuxt-property-decorator'
 // import { Cookies } from './cookies'
 import { ElNotification } from 'element-plus'
+const _getI18nInComposable = () => {
+  // only 'const {t} = useI18n()" not works for story
+  let t = (k: string) => { return k}
+  let _t = undefined
+  try {
+    const t = useI18n({ useScope: 'global'}).t
+    if (t != undefined) _t = t
+  } catch (error) {
+    console.warn(error)
+  }
+  if (_t !== undefined) t = _t
+  console.log('use81n.  t  ', t)
+  return t
+}
+export const useI18nFromComposable = () => {
+  // setup
+  const t = _getI18nInComposable()
+  return {
+    f: () => {return t('message.info.event')}
+  }
+}
 
-
-const useNotification = () => {
-  const { t } = useI18n()
-  const appContext = getCurrentInstance()?.appContext
-  // const settings = storeSettings()
+const _useNotification = (t: any) => {
+  // const t = useNuxtApp().$i18n.t
+  // const appContext = getCurrentInstance()?.appContext
 
   const count = ref(0)
   const _default_options = {
@@ -229,10 +248,16 @@ const useNotification = () => {
     warning
   }
 }
-const useAlertToast = useNotification
-export { useNotification, useAlertToast }
-
-
+export function useNotification() {
+  // const { t } = useI18n()
+  const t = _getI18nInComposable()
+  return _useNotification(t)
+}
+export const useAlertToast = () => {
+  // const { t } = useI18n()
+  const t = _getI18nInComposable()
+  return _useNotification(t)
+}
 
 export const useHoverDropdown = () => {
   function onOver (ref: any) {
