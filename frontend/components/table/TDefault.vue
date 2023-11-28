@@ -4,13 +4,11 @@
   <pre>
     {{ fetchResult }}
   </pre>
-  {{  useI18nFromComposable().f() }}
 </template>
 
 
 <script lang="ts" setup>
-// import {  } from '@/utils/types/tbackendmethods'
-import { useNotification, useI18nFromComposable } from '~/composables/mixins/useComponent';
+import { useNotification } from '~/composables/mixins/useComponent';
 // const tableData = ref<>()
 const fetchResult = ref<any>()
 onMounted(async ()=>{

@@ -17,6 +17,7 @@
     "strict": true,
     "noEmit": false, // was true
     "skipLibCheck": true,
+    "resolveJsonModule": true, // locales
     "ignoreDeprecations": "5.0",
     "suppressImplicitAnyIndexErrors": true,
     "types": [

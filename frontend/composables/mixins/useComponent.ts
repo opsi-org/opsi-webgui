@@ -15,13 +15,6 @@ const _getI18nInComposable = () => {
   console.log('use81n.  t  ', t)
   return t
 }
-export const useI18nFromComposable = () => {
-  // setup
-  const t = _getI18nInComposable()
-  return {
-    f: () => {return t('message.info.event')}
-  }
-}
 
 const _useNotification = (t: any) => {
   // const t = useNuxtApp().$i18n.t
