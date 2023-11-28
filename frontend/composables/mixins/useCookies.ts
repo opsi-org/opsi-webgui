@@ -19,7 +19,7 @@ export const useCookies = () => {
     return v === value
   }
 
-  function getCookie (key: string, defaultResult = '') {
+  function getCookie (key: string, defaultResult:any = '') {
     const v = useCookie(key).value
     if (!v) { return defaultResult }
     return v as unknown as any
@@ -27,26 +27,44 @@ export const useCookies = () => {
 
   function getParsedCookie (key: string, defaultResult = '') {
     const v = useCookie(key).value
-    if (!v) { return defaultResult }
-    const r = JSON.parse(v as unknown as any)
-    return r
+    if (v === undefined) { return defaultResult }
+    console.log('found cookie', key, v)
+    return v
+    // const r = JSON.parse(v as unknown as any)
+    // return r
   }
 
   function getKeyCookie (key: string, keyitem:string, defaultResult = '') {
     const v = useCookie(key).value
-    if (!v) { return defaultResult }
-    return JSON.parse(v as unknown as any)[keyitem]
+    if (v === undefined || v === null) { return defaultResult }
+    return v[keyitem]
+    // return JSON.parse(v as unknown as any)[keyitem]
   }
 
   function includesCookie (key:string, value:string|number|boolean, defaultResult: boolean) {
-    const v = useCookie(key).value
-    return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult
+    const v: Array<any> = useCookie(key).value
+    if (v === undefined || v === null) { return defaultResult }
+    return (v).includes(value)
+    // return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult
   }
 
-  function setCookie (key:string, value:string, options = undefined) {
+  function setCookie (key:string, value:any, options:any = undefined) {
     let opt:any = options
-    if (opt === undefined) { opt = { expires: 365 } }
-    useCookie(key, opt).value = value
+    // https://nuxt.com/docs/api/composables/use-cookie#options
+    if (opt === undefined) { opt = { maxAge: 365 } }
+    if (opt.expires !== undefined) {
+      opt.maxAge = opt.expires
+      opt.expires = undefined
+    }
+    const keyCookie = useCookie(key, opt)
+    console.log('Cookie description was   ', keyCookie.value)
+    console.log('Cookie description should', value)
+    if (value.value === undefined)
+      keyCookie.value = value
+    else
+      keyCookie.value = value.value
+    // const _keyCookie = useCookie(key, opt)
+    console.log('Cookie description is    ', keyCookie.value)
   }
   return { existsCookie, isCookie, getCookie, getParsedCookie, getKeyCookie, includesCookie, setCookie }
 }

@@ -182,6 +182,7 @@ defineEmits(['update:modelValue'])
 ```
 
 ### watch:
+* simple ref watching
 ```js
 // const settings = storeSettings()
 const theme = ref(settings.theme) // settings.theme is here just the initial value
@@ -190,7 +191,16 @@ watch(theme, (newTheme, oldTheme) => {
   settings.changeTheme(newTheme)
 });
 ```
+* prop watching
+```ts
 
+const props = defineProps({
+  sortBy: { type: String, default: ''},
+  // ....
+})
+
+watch(() => props.sortBy, () => { .... })
+```
 
 ### Computed
 https://vuejs.org/guide/components/props.html#prop-validation

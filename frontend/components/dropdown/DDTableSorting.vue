@@ -1,25 +1,25 @@
 <template>
   <div
     :class="{ 'incontextmenu': incontextmenu!==false }"
-    @mouseover="incontextmenu!==false ? onOver($refs.sortdropdown) : null"
-    @mouseleave="incontextmenu!==false ? onLeave($refs.sortdropdown) : null"
-    @focusin="incontextmenu!==false ? onOver($refs.sortdropdown) : null"
-    @focusout="incontextmenu!==false ? onLeave($refs.sortdropdown) : null"
+    @mouseover="incontextmenu!==false ? useHoverDropdown().onOver($refs.sortdropdown) : null"
+    @mouseleave="incontextmenu!==false ? useHoverDropdown().onLeave($refs.sortdropdown) : null"
+    @focusin="incontextmenu!==false ? useHoverDropdown().onOver($refs.sortdropdown) : null"
+    @focusout="incontextmenu!==false ? useHoverDropdown().onLeave($refs.sortdropdown) : null"
   >
     <b-dropdown
       v-bind="$props"
       ref="sortdropdown"
       size="sm"
       data-testid="DropdownDDTableSorting"
-      class="DDTableSorting"
-      :variant="incontextmenu!==false? 'transparent border-0' : 'outline-primary border-0'"
+      class="DDTableSorting border-0"
+      :variant="incontextmenu!==false? undefined : 'outline-primary'"
       :no-caret="incontextmenu===false"
       :title="incontextmenu ? '' : $t('button.sort.tablecolumns')"
       :class="{ 'rightmenu': $mq == 'mobile', 'dropdown-item contextmenu ': incontextmenu!==false }"
       :dropright="incontextmenu!==false"
     >
       <template #button-content>
-        <IconIIcon :icon="(sortDesc)? icon.sortDesc: icon.sort" />
+        <IconIIcon :icon="(sortDesc)? icons.sortDesc: icons.sort" />
         <span v-if="incontextmenu!==false">{{ $t('button.sort.tablecolumns.title') }}</span>
       </template>
       <div class="dropdown-item sortDirection" :class="{'incontextmenu': incontextmenu }" :tabindex="incontextmenu!==false ? undefined : 0" @keydown.prevent="changeSortDirection()" @click.prevent="changeSortDirection()">
@@ -30,7 +30,7 @@
       <template v-if="incontextmenu!==false">
         <ul>
           <li
-            v-for="header in Object.values(headerData).filter(h=>h.sortable)"
+            v-for="header in Object.values(headerData).filter((h:any)=>h.sortable)"
             :key="header.key"
             class="dropdown-item"
             :class="{'selectedSort': (sortBy==header.key), 'incontextmenu': incontextmenu }"
@@ -56,26 +56,36 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop } from 'nuxt-property-decorator'
-import { BDropdown } from 'bootstrap-vue'
-import { ITableHeader } from '../../.utils/types/ttable'
-import { HoverDropdown } from '../../mixins/component'
-import { Icons } from '../../mixins/icons'
+<script setup lang="ts">
+// import { Component, Prop } from 'nuxt-property-decorator'
+// import { BDropdown } from 'bootstrap-vue'
+import { useHoverDropdown } from '~/composables/mixins/useComponent'
+import { useIcons } from '~/composables/mixins/useIcons'
+import type { ITableHeader } from '~/types/ttable'
+import type { PropType } from 'vue';
+const icons = useIcons()
 
-@Component({ mixins: [Icons, HoverDropdown] })
-export default class DDTableSorting extends BDropdown {
-  @Prop({ default: '' }) sortBy!: string
-  @Prop({ default: false }) sortDesc!: boolean
-  @Prop({ default: false }) incontextmenu!: boolean
-  @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeader
-  $mq:any
-  icon: any
-  onOver:any
-  onLeave:any
+// const hoverDropdown
+// @Component({ mixins: [Icons, HoverDropdown] })
+// export default class DDTableSorting extends BDropdown {
+const props = defineProps({
+  sortBy: { type: String, default: ''},
+  sortDesc: { type: Boolean, default: false},
+  incontextmenu: { type: Boolean, default: false},
+  headerData: { type: Object as PropType<ITableHeader>, default: () => {}},
+})
+const $emit = defineEmits(['update:sortDesc', 'update:sortBy'])
+  // @Prop({ default: '' }) sortBy!: string
+  // @Prop({ default: false }) sortDesc!: boolean
+  // @Prop({ default: false }) incontextmenu!: boolean
+  // @Prop({ default: () => { return () => { /* default */ } } }) headerData!: ITableHeader
+  // $mq:any
+  // icon: any
+  // onOver:any
+  // onLeave:any
 
-  changeSortDirection () { this.$emit('update:sortDesc', (!this.sortDesc)) }
-  changeSortBy (key:string) { this.$emit('update:sortBy', key) }
+function changeSortDirection () { $emit('update:sortDesc', (!props.sortDesc)) }
+function changeSortBy (key:string) { $emit('update:sortBy', key) }
 }
 </script>
 <style>
