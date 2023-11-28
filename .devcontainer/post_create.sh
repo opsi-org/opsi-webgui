@@ -23,8 +23,9 @@ cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
 
 #https://stackoverflow.com/questions/49544215/it-is-possible-to-run-a-command-inside-a-docker-container-from-another-container
 alias opsiconfdrestart="docker exec -u root opsiweb-ui_devcontainer-opsi-server-1 supervisorctl reload"
-echo "alias opsiconfdrestart='docker exec -u root opsiweb-ui_devcontainer-opsi-server-1 supervisorctl reload'" >> ~./bash_aliases
-
+echo "alias opsiconfdrestart='docker exec -u root opsiweb-ui_devcontainer-opsi-server-1 supervisorctl reload'" > ~/.bash_aliases
+echo "alias opsiconfdrestart='docker exec -u root opsiweb-ui_devcontainer-opsi-server-1 supervisorctl reload'" >> ~/.zshrc
+zsh
 # # Setup mariadb server
 # id
 # service mysql restart
