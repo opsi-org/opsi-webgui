@@ -1,76 +1,209 @@
 <template>
-  <div data-testid="VDepots">
-    <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
-      <template #parent>
-        <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.depots')" />
-        <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
-        <TableTInfiniteScrollSmooth
-          :id="id"
-          :ref="id"
-          :primary-key="id"
-          rowident="depotId"
-          :error="error"
-          :is-loading="isLoading"
-          :table-data="tableData"
-          :header-data="headerData"
-          :cache_pages="cache_pages"
-          :total-items="totalItems"
-          :totalpages="totalpages"
-          :selection="selectionDepots"
-          :setselection="setSelectionDepots"
-          :fetchitems="_fetch"
-          :items="items"
-        >
-          <template #contextcontent-specific-1="{itemkey}">
-            <ButtonBTNRowLinkTo
-              :title="$t('title.config')"
-              :label="$t('title.config')"
-              :icon="icon.settings"
-              to="/depots/config"
-              :ident="itemkey"
-              :pressed="isRouteActive"
-              :incontextmenu="true"
-              :click="routeRedirectWith"
-            />
-          </template>
-          <template #contextcontent-general-1>
-            <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
-            <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
-            <ButtonBTNRefetch
-              :is-loading="isLoading"
-              :tooltip="$t('button.refresh', {id: id})"
-              :label="$t('button.refresh', {id: ''})"
-              incontextmenu
-              :refetch="_fetch"
-            />
-          </template>
-          <template #cell(depotId)="row">
-            <small>
-              <b v-if="row.item.depotId==opsiconfigserver">{{ row.item.depotId }}</b>
-              {{ (row.item.depotId!=opsiconfigserver) ? row.item.depotId:'' }}
-            </small>
-          </template>
-          <template #rowactions="row">
-            <ButtonBTNRowLinkTo
-              :title="$t('title.config')"
-              :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile') ? $t('title.config') : ''"
-              :icon="icon.settings"
-              to="/depots/config"
-              :ident="row.item.ident"
-              :pressed="isRouteActive"
-              :click="routeRedirectWith"
-            />
-          </template>
-        </TableTInfiniteScrollSmooth>
-      </template>
-      <template #child>
-        <NuxtChild :id="rowId" :as-child="true" />
-      </template>
-    </GridGTwoColumnLayout>
+  <div>
+
+  <el-text>{{ $t('title.depots') }}</el-text>
+  <el-button :type="'danger'">Danger</el-button>
+  <TableTDefault
+    v-if="fetchedData.length > 0"
+    :id="id"
+    :columns="columns"
+    :data="fetchedData"
+    :sort-by="tableData.sortBy"
+  ></TableTDefault>
+<!-- <div data-testid="VDepots">
+  <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
+    <template #parent>
+      <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.depots')" />
+      <BarBTableHeader :tableid="id" :table-data="tableData" :table-info.sync="tableInfo" :is-loading-parent="isLoading" :fetch="$fetch" />
+      <TableTInfiniteScrollSmooth
+        :id="id"
+        :ref="id"
+        :primary-key="id"
+        rowident="depotId"
+        :error="error"
+        :is-loading="isLoading"
+        :table-data="tableData"
+        :header-data="headerData"
+        :cache_pages="cache_pages"
+        :total-items="totalItems"
+        :totalpages="totalpages"
+        :selection="selectionDepots"
+        :setselection="setSelectionDepots"
+        :fetchitems="_fetch"
+        :items="items"
+      >
+        <template #contextcontent-specific-1="{itemkey}">
+          <ButtonBTNRowLinkTo
+            :title="$t('title.config')"
+            :label="$t('title.config')"
+            :icon="icon.settings"
+            to="/depots/config"
+            :ident="itemkey"
+            :pressed="isRouteActive"
+            :incontextmenu="true"
+            :click="routeRedirectWith"
+          />
+        </template>
+        <template #contextcontent-general-1>
+          <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
+          <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
+          <ButtonBTNRefetch
+            :is-loading="isLoading"
+            :tooltip="$t('button.refresh', {id: id})"
+            :label="$t('button.refresh', {id: ''})"
+            incontextmenu
+            :refetch="_fetch"
+          />
+        </template>
+        <template #cell(depotId)="row">
+          <small>
+            <b v-if="row.item.depotId==opsiconfigserver">{{ row.item.depotId }}</b>
+            {{ (row.item.depotId!=opsiconfigserver) ? row.item.depotId:'' }}
+          </small>
+        </template>
+        <template #rowactions="row">
+          <ButtonBTNRowLinkTo
+            :title="$t('title.config')"
+            :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile') ? $t('title.config') : ''"
+            :icon="icon.settings"
+            to="/depots/config"
+            :ident="row.item.ident"
+            :pressed="isRouteActive"
+            :click="routeRedirectWith"
+          />
+        </template>
+      </TableTInfiniteScrollSmooth>
+    </template>
+    <template #child>
+      <NuxtChild :id="rowId" :as-child="true" />
+    </template>
+  </GridGTwoColumnLayout>
+</div> -->
+
+<pre>
+    {{ fetchedData }}
+  </pre>
   </div>
 </template>
+<script setup lang="tsx">
 
-<script lang="ts">
+// import {
+//   ElButton,
+//   ElIcon,
+//   ElTag,
+//   ElTooltip,
+//   TableV2FixedDir,
+// } from 'element-plus'
+import { useNotification } from '~/composables/mixins/useComponent';
+
+import type { ITableHeaderRow } from '~/types/ttableV3'
+// import { TableV2FixedDir } from 'element-plus';
+
+import { useCookies } from '~/composables/mixins/useCookies'
+import { TableV2FixedDir } from 'element-plus';
+const cookies = useCookies()
+const $t = useI18n().t
+
+const id = "server"
+const columns = reactive<ITableHeaderRow>({
+    selected: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.selection'),
+      key: 'selected',
+      dataKey: 'selected',
+      fixed: true,
+      sortable: true,
+      width: 50,
+      maxWidth: 50,
+      hidden: !cookies.includesCookie('column_' + id, 'selected', true)
+    },
+    depotId: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.id'),
+      key: 'depotId',
+      dataKey: 'depotId',
+      fixed: true,
+      sortable: true,
+      width: 150,
+      maxWidth: 350,
+      // cellRenderer: ({ cellData: depotId }) => <ElTag>{depotId}</ElTag>,
+      hidden: !cookies.includesCookie('column_' + id, 'depotId', true)
+    },
+    description: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.description'),
+      key: 'description',
+      dataKey: 'description',
+      sortable: true,
+      width: 150,
+      hidden: !cookies.includesCookie('column_' + id, 'description', false)
+    },
+    type: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.type'),
+      key: 'type',
+      dataKey: 'type',
+      sortable: true,
+      width: 140,
+      maxWidth: 300,
+      hidden: !cookies.includesCookie('column_' + id, 'type', true)
+    },
+    ip: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.ip'),
+      key: 'ip',
+      dataKey: 'ip',
+      sortable: true,
+      width: 100,
+      maxWidth: 150,
+      hidden: !cookies.includesCookie('column_' + id, 'ip', false)
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      key: 'rowactions',
+      dataKey: 'rowactions',
+      title: $t('table.fields.rowactions'),
+      fixed: TableV2FixedDir.RIGHT,
+      width: 100,
+      maxWidth: 100,
+      hidden: false,
+      class: 'col-rowactions',
+      // cellRenderer: () => <ElButton type="danger">Delete</ElButton>,
+      // cellRenderer: () => (
+      //   <>
+      //     <ElButton size="small">Edit</ElButton>
+      //     <ElButton size="small" type="danger">Delete</ElButton>
+      //   </>
+      // ),
+      // align: 'center'
+    }
+})
+const fetchedData = ref<Array<any>>([])
+
+const tableData = {
+  pageNumber: 1,
+  perPage: 20,
+  sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+  sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+  filterQuery: ''
+}
+onMounted(async ()=> fetchedData.value = await _fetch())
+
+async function _fetch() {
+  const params = { ...tableData, selected: '' }
+
+  if (params.sortBy === '') { params.sortBy = 'depotId' }
+  if (params.sortBy === 'selected') {
+    params.sortDesc = true
+    params.selected = JSON.stringify([])
+  }
+  const {data, error} = await useApiGETBody('/opsidata/depots', params)
+  '/api/opsidata/depots'
+  if (error) {
+    console.log(error)
+    useNotification().error(error)
+    return
+  }
+  console.log('Fetchresult data', data)
+  console.log('Fetchresult data2', fetchedData.value)
+  return data.value;
+
+}
+/**
 import { Component, Vue, Watch, namespace } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { IObjectString2String } from '../../.utils/types/tgeneral'
@@ -245,4 +378,5 @@ export default class VDepots extends Vue {
     return this.$route.path.includes('config') || this.$route.path.includes('log') || this.$route.path.includes('healthcheck')
   }
 }
+*/
 </script>

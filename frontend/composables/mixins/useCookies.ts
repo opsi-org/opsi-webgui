@@ -25,7 +25,7 @@ export const useCookies = () => {
     return v as unknown as any
   }
 
-  function getParsedCookie (key: string, defaultResult = '') {
+  function getParsedCookie (key: string, defaultResult = ''):any {
     const v = useCookie(key).value
     if (v === undefined) { return defaultResult }
     console.log('found cookie', key, v)
@@ -41,8 +41,8 @@ export const useCookies = () => {
     // return JSON.parse(v as unknown as any)[keyitem]
   }
 
-  function includesCookie (key:string, value:string|number|boolean, defaultResult: boolean) {
-    const v: Array<any> = useCookie(key).value
+  function includesCookie (key:string, value:string|number|boolean, defaultResult: boolean):any {
+    const v: Array<any> = useCookie(key).value as any
     if (v === undefined || v === null) { return defaultResult }
     return (v).includes(value)
     // return v ? JSON.parse(v as unknown as any).includes(value) : defaultResult

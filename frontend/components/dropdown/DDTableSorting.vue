@@ -86,7 +86,7 @@ const $emit = defineEmits(['update:sortDesc', 'update:sortBy'])
 
 function changeSortDirection () { $emit('update:sortDesc', (!props.sortDesc)) }
 function changeSortBy (key:string) { $emit('update:sortBy', key) }
-}
+
 </script>
 <style>
 .selectedSort .dropdown-item {

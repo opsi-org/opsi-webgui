@@ -13,7 +13,7 @@
     <!-- collapse-tags-tooltip -->
   <template #prefix>
     <el-text>
-      <IconIIcon data-testid="ITableColumn" :icon="icons.columns" class="w-5 h-5"/>
+      <IconIIcon data-testid="ITableColumn" :icon="icons.columns" class="w-4 h-4"/>
     </el-text>
   </template>
 
@@ -86,8 +86,8 @@
     </b-dropdown>
   </div> -->
   <br />
-  <el-text>{{ _headers.description }}</el-text>
-  <br />
+  <!-- <el-text>{{ _headers.description }}</el-text> -->
+  <!-- <br /> -->
 </template>
 
 <script setup lang="ts">
@@ -121,8 +121,11 @@ const headerValues = computed<Array<ITableHeaderCell>>( () => {
   return Object.values(_headers)
 })
 const multiCondition = computed(() => {
-  if (props.multi===undefined) return true
-  return props.multi ?? (mq.$mq.value === 'mobile' || settings.twoColumnLayoutCollapsed[viewId])
+  return true
+  // if (props.multi===undefined) return true
+  // if (props.multi)
+  //   return mq.$mq.value === 'mobile' || settings.twoColumnLayoutCollapsed[viewId]
+  // return true
 })
 
 const columnVisibilityList = reactive<Array<string>>([])
@@ -133,7 +136,7 @@ const headerWrapper = computed<Array<any>>(() => {
     h.key!='_empty_' &&
     h._majorKey==undefined
   // ).map((v,i) => ({ value: v.key, label: v.title, disabled: false}))
-  ).map((v,i) => ({ value: v.key, label: v.title, disabled: v.fixed}))
+  ).map((v,i) => ({ value: v.key, label: v.title, disabled: v.fixed != undefined}))
 })
 
 const columnVisibilityListWrapper = ref<Array<string>>([])
