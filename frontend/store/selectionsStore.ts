@@ -116,6 +116,12 @@ export const storeSelections = defineStore('selections', () => {
   function toggleSelectionDepots (item: string) {
     toggleSelectionValue(_selectionDepots, item)
   }
+  function toggleSelectionClients (item: string) {
+    toggleSelectionValue(_selectionClients, item)
+  }
+  function toggleSelectionProducts (item: string) {
+    toggleSelectionValue(_selectionProducts, item)
+  }
   function toggleSelectionValue (selection: Array<string>, item: string){
     if(!selection.includes(item)){
       selection.push(item);
@@ -157,9 +163,11 @@ export const storeSelections = defineStore('selections', () => {
                     setSelectionClients,
                     pushToSelectionClients,
                     delFromSelectionClients,
+                    toggleSelectionClients,
                     setSelectionProducts,
                     pushToSelectionProducts,
                     delFromSelectionProducts,
+                    toggleSelectionProducts,
                     toggleSelectionValue,
                     clearSelectionDepots,
                     clearSelectionClients,

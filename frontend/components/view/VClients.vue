@@ -1,12 +1,21 @@
 <template>
+
+  <el-text>{{ $t('title.clients') }}</el-text><br />
+  <el-text>Client Selection: {{ storeSelections().selectionClients }}</el-text> <br />
+    <TableTDefault
+      v-if="fetchedData.length > 0"
+      :id="id"
+      :columns="columns"
+      :data="fetchedData"
+      :sort-by="tableData.sortBy"
+      @selection-changed="(id) => storeSelections().toggleSelectionClients(id)"
+      @selection-clear="storeSelections().clearSelectionClients"
+    >
+
+    </TableTDefault>
+  <!--
+
   <div data-testid="VClients">
-    <!-- <AlertAAlert ref="sortProductsAlert">
-      <template #button>
-        <b-button variant="warning" size="sm" class="float-right border-0 p-0" @click="sortProductTable(sortProductsByClient, sortProductsByCol, true)">
-          {{ $t('button.continue') }}
-        </b-button>
-      </template>
-    </AlertAAlert> -->
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tableclients">
       <template #parent>
         <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.clients')">
@@ -42,8 +51,8 @@
           :setselection="setSelectionClients"
           :fetchitems="_fetch"
         >
-          <!-- row actions: -->
           <template #contextcontent-1="{itemkey}">
+            <!- row actions --
             <DropdownDDClientActions :client-id="itemkey" :fetch="$fetch" :incontextmenu="true" />
             <ButtonBTNRowLinkTo
               :title="$t('title.config')"
@@ -66,7 +75,7 @@
               :click="routeRedirectWith"
             />
           </template>
-          <!-- table actions: -->
+          <!- table actions: --
           <template #contextcontent-general-1>
             <DropdownDDTableSorting :table-id="id" :incontextmenu="true" v-bind.sync="tableInfo" />
             <DropdownDDTableColumnVisibility :table-id="id" :headers.sync="tableInfo.headerData" :sort-by="tableInfo.sortBy" :multi="true" :incontextmenu="true" />
@@ -184,9 +193,210 @@
       </template>
     </GridGTwoColumnLayout>
   </div>
+  -->
 </template>
 
-<script lang="ts">
+<script setup lang="tsx">
+
+import { useNotification } from '~/composables/mixins/useComponent';
+
+import type { ITableHeaderRow } from '~/types/ttableV3'
+
+import { useCookies } from '~/composables/mixins/useCookies'
+import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+const storeSelection = storeSelections()
+const cookies = useCookies()
+const $t = useI18n().t
+
+const id = "clients"
+
+const columns = reactive<ITableHeaderRow>({
+    selected: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.selection'),
+      key: 'selected',
+      dataKey: 'selected',
+      fixed: true,
+      sortable: true,
+      width: 50,
+      maxWidth: 50,
+      hidden: !cookies.includesCookie('column_' + id, 'selected', true)
+    },
+    // class: 'mobileVisibleOnlySelection'
+    clientId: { // eslint-disaconfigble-next-line object-property-newline
+      title: $t('table.fields.id'),
+      key: 'clientId',
+      dataKey: 'clientId',
+      fixed: true,
+      width: 200,
+      sortable: true,
+      cellRenderer: ({ cellData: clientId }) => <el-text>{clientId}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'clientId', true)
+    },
+    description: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.description'),
+       key: 'description',
+       dataKey: 'description',
+       sortable: true,
+      width: 200,
+      cellRenderer: ({ cellData: description }) => <el-text>{description}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'description', false)
+    },
+    ipAddress: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.ip'),
+      key: 'ipAddress',
+      dataKey: 'ipAddress',
+      sortable: true,
+      width: 100,
+      cellRenderer: ({ cellData: ipAddress }) => <el-text>{ipAddress}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'ipAddress', false)
+    },
+    macAddress: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.mac'),
+      key: 'macAddress',
+      dataKey: 'macAddress',
+      sortable: true,
+      width: 100,
+      cellRenderer: ({ cellData: macAddress }) => <el-text>{macAddress}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'macAddress', false)
+    },
+    lastSeen: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.lastSeen'),
+      key: 'lastSeen',
+      dataKey: 'lastSeen',
+      sortable: true,
+      width: 100,
+      cellRenderer: ({ cellData: lastSeen }) => <el-text>{lastSeen}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'lastSeen', false)
+    },
+    uefi: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.uefi'),
+      key: 'uefi',
+      dataKey: 'uefi',
+      sortable: true,
+      width: 50,
+      cellRenderer: ({ cellData: uefi }) => <el-text>{uefi}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'uefi', false)
+    },
+    _majorStats: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.stats'),
+      key: '_majorStats',
+      dataKey: '_majorStats',
+      width: 50,
+      // _isMajor: true,
+      hideen: true
+    },
+    version_outdated: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.versionOutdated'),
+       key: 'version_outdated',
+       dataKey: 'version_outdated',
+      //  _majorKey: '_majorStats',
+       sortable: true, fixed: true,
+      width: 50,
+      cellRenderer: ({ cellData: version_outdated }) => <el-text>{version_outdated}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
+    },
+    actionResult_failed: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.actionResultFailed'),
+       key: 'actionResult_failed',
+       dataKey: 'actionResult_failed',
+      //  _majorKey: '_majorStats',
+       sortable: true, fixed: true,
+       width: 50,
+      cellRenderer: ({ cellData: actionResult_failed }) => <el-text>{actionResult_failed}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
+    },
+    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.installationStatusUnknown'),
+       key: 'installationStatus_unknown',
+       dataKey: 'installationStatus_unknown',
+      //  _majorKey: '_majorStats',
+       sortable: true,
+       fixed: true,
+      width: 50,
+      cellRenderer: ({ cellData: installationStatus_unknown }) => <el-text>{installationStatus_unknown}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
+    },
+    // TODO: Sorting for reachable column
+    reachable: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.reachable'),
+      key: 'reachable',
+      dataKey: 'reachable',
+       fixed: true,
+       sortable: false,
+      width: 50,
+      cellRenderer: ({ cellData: reachable }) => <el-text>{reachable}</el-text>,
+      hidden: !cookies.includesCookie('column_' + id, 'reachable', true)
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.rowactions'),
+      key: 'rowactions',
+      dataKey: 'rowactions',
+      fixed: TableV2FixedDir.RIGHT,
+      width: 50,
+      hidden: !cookies.includesCookie('column_' + id, 'rowactions', false),
+      class: 'col-rowactions'
+    }
+})
+const fetchedData = ref<Array<any>>([])
+
+const handleChange = (id:string) => {
+  console.log('handleSelectionChange', id)
+  storeSelections().toggleSelectionDepots(id)
+}
+const tableData = {
+  pageNumber: 1,
+  perPage: 20,
+  sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+  sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+  filterQuery: ''
+}
+onMounted(async ()=> fetchedData.value = await _fetch())
+
+async function _fetch() {
+  const params:any = { ...tableData }
+    params.selectedDepots = JSON.stringify(storeSelections().selectionDepots)
+    params.selectedClients = JSON.stringify(storeSelections().selectionClients)
+    if (params.sortBy === '') { params.sortBy = 'clientId' }
+    if (params.sortBy === 'selected') {
+      params.sortDesc = true
+      params.selected = JSON.stringify(storeSelections().selectionClients)
+    }
+    // return await this.$axios.get('/api/opsidata/clients', { params })
+    //   .then((response) => {
+    //     this.totalItems = response.headers['x-total-count']
+    //     this.totalpages = Math.ceil(this.totalItems / params.perPage)
+    //     this.isLoading = false
+    //     this.tableloaded = true
+    //     if (response.data === null) {
+    //       return []
+    //     } else {
+    //       return response.data
+    //     }
+    //   }).catch((error) => {
+    //     this.showToastError(error)
+    //     return []
+    //  })
+  const {data, error} = await useApiGETBody('/opsidata/clients', params)
+
+  if (error) {
+    console.log(error)
+    useNotification().error(error)
+    return
+  }
+
+  // this.totalItems = response.headers['x-total-count']
+  // this.totalpages = Math.ceil(this.totalItems / params.perPage)
+  // this.isLoading = false
+  // this.tableloaded = true
+  // if (response.data === null) {
+  //   return []
+  // } else {
+  //   return response.data
+  // }
+  console.log('DATA', data.value.length)
+  return data.value;
+}
+/**
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
 import { ITableData, ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
 import { MBus } from '../../mixins/messagebus'
@@ -229,63 +439,7 @@ export default class VClients extends Vue {
   error: string = ''
   tableloaded: boolean = false
   headerData: ITableHeaders = {
-    selected: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'selected', true)
-    },
-    // class: 'mobileVisibleOnlySelection'
-    clientId: { // eslint-disaconfigble-next-line object-property-newline
-      label: this.$t('table.fields.id') as string,
-      key: 'clientId',
-      _fixed: true,
-      sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'clientId', true)
-    },
-    description: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'description', false)
-    },
-    ipAddress: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.ip') as string, key: 'ipAddress', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'ipAddress', false)
-    },
-    macAddress: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.mac') as string, key: 'macAddress', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'macAddress', false)
-    },
-    lastSeen: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.lastSeen') as string, key: 'lastSeen', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'lastSeen', false)
-    },
-    uefi: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.uefi') as string, key: 'uefi', sortable: true,
-      visible: this.includesCookie('column_' + this.id, 'uefi', false)
-    },
-    _majorStats: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.stats') as string, key: '_majorStats', _isMajor: true, visible: false
-    },
-    version_outdated: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.versionOutdated') as string, key: 'version_outdated', _majorKey: '_majorStats', sortable: true, _fixed: true,
-      visible: this.includesCookie('column_' + this.id, 'version_outdated', true)
-    },
-    actionResult_failed: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.actionResultFailed') as string, key: 'actionResult_failed', _majorKey: '_majorStats', sortable: true, _fixed: true,
-      visible: this.includesCookie('column_' + this.id, 'actionResult_failed', true)
-    },
-    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
-      label: this.$t('table.fields.installationStatusUnknown') as string, key: 'installationStatus_unknown', _majorKey: '_majorStats', sortable: true, _fixed: true,
-      visible: this.includesCookie('column_' + this.id, 'installationStatus_unknown', true)
-    },
-    // TODO: Sorting for reachable column
-    reachable: { // eslint-disable-next-line object-property-newline
-      key: 'reachable', label: this.$t('table.fields.reachable') as string, _fixed: true, sortable: false,
-      visible: this.includesCookie('column_' + this.id, 'reachable', true)
-    },
-    rowactions: { // eslint-disable-next-line object-property-newline
-      key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-      visible: this.includesCookie('column_' + this.id, 'rowactions, false'),
-      class: 'col-rowactions'
-    }
+
   }
 
   deleteClient: DeleteClient = { clientid: '' }
@@ -451,9 +605,11 @@ export default class VClients extends Vue {
     }
   }
 }
+*/
 </script>
 
-<style>
+<style scoped>
+/*
 .tableheader_products:hover {
   background-color: var(--bg-btn-hover) !important;
 }
@@ -461,9 +617,9 @@ export default class VClients extends Vue {
   background-color: var(--bg-btn-hover) !important;
   border: var(--bg-btn-hover) !important;
 }
-/* .b-table-row-selected .btn, */
 .row-selected.btn,
 .row-selected>.btn {
 color: var(--primary-foreground) !important;
 }
+*/
 </style>
