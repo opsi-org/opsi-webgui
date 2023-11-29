@@ -2,16 +2,19 @@
   <b-button
     data-testid="BTNClearSelection"
     :aria-label="$t('table.selection.clear')"
-    :title="showLabel? '' : $t('table.selection.clear')"
+    :title="props.showLabel? '' : $t('table.selection.clear')"
     variant="outline-primary"
     class="ml-0 border-0"
-    :class="short !== false ? '' : 'w-100'"
+    :class="props.short !== false ? '' : 'w-100'"
     size="sm"
-    @click="clearselection"
-  >
+    @click="click"
+    >
+    <!-- @click="clearselection" -->
     <span class="sr-only">{{ $t('table.selection.clear') }}</span>
     <IconIIcon :icon="icons.clear" />
-    <span v-if="showLabel == true" class="clearButton">{{ label? label: $t('table.selection.clear') }} </span>
+    <span v-if="props.showLabel == true" class="clearButton">
+      {{ props.label? props.label: $t('table.selection.clear') }}
+    </span>
   </b-button>
 </template>
 
@@ -32,11 +35,15 @@ const icons = useIcons()
   // @Prop({ default: false }) short?: boolean
   // @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
 // }
-const click = (value: MouseEvent) : any => { }
+// const click = (value: MouseEvent) : any => { console.log('hallo') }
+const click = (e) => {
+  $emit('clearselection')
+}
+const $emit = defineEmits(['clearselection'])
 const props = defineProps({
   label: { type: String, default: '' },
   showLabel: { type: Boolean, default: false },
   short: { type: Boolean, default: true },
-  clearselection: { type: Object as PropType<typeof click>, default: (ev: MouseEvent) => {}}
+  // clearselection: { type: Object as PropType<typeof click>, default: (ev: MouseEvent) => {}}
 })
 </script>

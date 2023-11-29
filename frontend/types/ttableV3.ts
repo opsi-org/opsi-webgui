@@ -1,6 +1,6 @@
 // import type { IObjectString2ObjectString2String, IObjectString2String, IObjectString2StringOrUndefined } from './tgeneral'
 
-import type { Column } from 'element-plus'
+import type { CheckboxValueType, Column } from 'element-plus'
 
 export type ITableHeaderCell = Column<any>
 
@@ -8,6 +8,11 @@ export interface ITableHeaderRow {
   [key: string]: ITableHeaderCell
 }
 
+export type ISelectionCellProps = {
+  value: boolean
+  intermediate?: boolean
+  onChange: (value: CheckboxValueType) => void
+}
 // export interface ITableHeader {
 //   label: string,
 //   key: string,

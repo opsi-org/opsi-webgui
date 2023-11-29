@@ -3,9 +3,7 @@ import {loginlogout} from '~/histoire-utils'
 </script>
 
 <template>
-  <Story
-    :setup-app="loginlogout"
-  >
+  <Story :setup-app="loginlogout">
     <ViewVServer />
     <!-- {{  logout() }} -->
   </Story>

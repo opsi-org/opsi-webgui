@@ -6,9 +6,9 @@ export const storeSelections = defineStore('selections', () => {
   // need to return the states / getters/ actions in the end of the setup
   // states
   let _multiSelection: boolean = useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true
-  let _selectionDepots: Array<string> = []
-  let _selectionClients: Array<string> = []
-  let _selectionProducts: Array<string> = []
+  let _selectionDepots: Array<string> = reactive([])
+  let _selectionClients: Array<string> = reactive([])
+  let _selectionProducts: Array<string> = reactive([])
 
   let _selectionLogClient: string = ''
   let _selectionLogType: string = 'instlog'
@@ -113,11 +113,29 @@ export const storeSelections = defineStore('selections', () => {
       _selectionProducts.splice(index, 1)
     }
   }
-
+  function toggleSelectionDepots (item: string) {
+    toggleSelectionValue(_selectionDepots, item)
+  }
+  function toggleSelectionValue (selection: Array<string>, item: string){
+    if(!selection.includes(item)){
+      selection.push(item);
+    }else{
+      selection.splice(selection.indexOf(item), 1);  //deleting
+    }
+  }
+  function clearSelectionDepots () {
+    _selectionDepots.length = 0
+  }
+  function clearSelectionClients () {
+    _selectionClients.length = 0
+  }
+  function clearSelectionProducts () {
+    _selectionProducts.length = 0
+  }
   function clearAllSelection () {
-    _selectionDepots = []
-    _selectionClients = []
-    _selectionProducts = []
+    clearSelectionDepots()
+    clearSelectionClients()
+    clearSelectionProducts()
   }
   return {
     /* states */
@@ -135,12 +153,17 @@ export const storeSelections = defineStore('selections', () => {
                     setSelectionDepots,
                     pushToSelectionDepots,
                     delFromSelectionDepots,
+                    toggleSelectionDepots,
                     setSelectionClients,
                     pushToSelectionClients,
                     delFromSelectionClients,
                     setSelectionProducts,
                     pushToSelectionProducts,
                     delFromSelectionProducts,
+                    toggleSelectionValue,
+                    clearSelectionDepots,
+                    clearSelectionClients,
+                    clearSelectionProducts,
                     clearAllSelection
   }
 }, { persist: true } as any)

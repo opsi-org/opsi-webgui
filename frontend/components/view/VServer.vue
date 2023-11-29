@@ -1,15 +1,19 @@
 <template>
   <div>
+    <el-text>{{ $t('title.depots') }}</el-text><br />
+    <!-- <el-button :type="'danger'">Danger</el-button> -->
+    <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
+    <TableTDefault
+      v-if="fetchedData.length > 0"
+      :id="id"
+      :columns="columns"
+      :data="fetchedData"
+      :sort-by="tableData.sortBy"
+      @selection-changed="(id) => storeSelection.toggleSelectionDepots(id)"
+      @selection-clear="storeSelection.clearSelectionDepots"
+    >
 
-  <el-text>{{ $t('title.depots') }}</el-text>
-  <el-button :type="'danger'">Danger</el-button>
-  <TableTDefault
-    v-if="fetchedData.length > 0"
-    :id="id"
-    :columns="columns"
-    :data="fetchedData"
-    :sort-by="tableData.sortBy"
-  ></TableTDefault>
+    </TableTDefault>
 <!-- <div data-testid="VDepots">
   <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
     <template #parent>
@@ -86,25 +90,21 @@
   </div>
 </template>
 <script setup lang="tsx">
+// tsx used to create components inside ts code (see columns[...].cellRenderer)
 
-// import {
-//   ElButton,
-//   ElIcon,
-//   ElTag,
-//   ElTooltip,
-//   TableV2FixedDir,
-// } from 'element-plus'
 import { useNotification } from '~/composables/mixins/useComponent';
+import { useConfigserver } from '~/composables/mixins/useGet';
 
 import type { ITableHeaderRow } from '~/types/ttableV3'
-// import { TableV2FixedDir } from 'element-plus';
 
 import { useCookies } from '~/composables/mixins/useCookies'
-import { TableV2FixedDir } from 'element-plus';
+import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+const storeSelection = storeSelections()
 const cookies = useCookies()
 const $t = useI18n().t
 
 const id = "server"
+
 const columns = reactive<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
@@ -124,7 +124,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 150,
       maxWidth: 350,
-      // cellRenderer: ({ cellData: depotId }) => <ElTag>{depotId}</ElTag>,
+      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'depotId', true)
     },
     description: { // eslint-disable-next-line object-property-newline
@@ -133,6 +133,7 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'description',
       sortable: true,
       width: 150,
+      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'description', false)
     },
     type: { // eslint-disable-next-line object-property-newline
@@ -142,6 +143,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 140,
       maxWidth: 300,
+      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'type', true)
     },
     ip: { // eslint-disable-next-line object-property-newline
@@ -151,6 +153,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 100,
       maxWidth: 150,
+      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'ip', false)
     },
     rowactions: { // eslint-disable-next-line object-property-newline
@@ -158,22 +161,26 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'rowactions',
       title: $t('table.fields.rowactions'),
       fixed: TableV2FixedDir.RIGHT,
-      width: 100,
-      maxWidth: 100,
+      width: 150,
+      maxWidth: 150,
       hidden: false,
       class: 'col-rowactions',
-      // cellRenderer: () => <ElButton type="danger">Delete</ElButton>,
-      // cellRenderer: () => (
-      //   <>
-      //     <ElButton size="small">Edit</ElButton>
-      //     <ElButton size="small" type="danger">Delete</ElButton>
-      //   </>
-      // ),
+      // cellRenderer: () => <el-button type="danger">Delete</el-button>,
+      cellRenderer: () => (
+        <>
+          <el-button size="small">Edit</el-button>
+          <el-button size="small" type="danger">Delete</el-button>
+        </>
+      ),
       // align: 'center'
     }
 })
 const fetchedData = ref<Array<any>>([])
 
+const handleChange = (id:string) => {
+  console.log('handleSelectionChange', id)
+  storeSelection.toggleSelectionDepots(id)
+}
 const tableData = {
   pageNumber: 1,
   perPage: 20,
@@ -200,6 +207,26 @@ async function _fetch() {
   }
   console.log('Fetchresult data', data)
   console.log('Fetchresult data2', fetchedData.value)
+  const opsiconfigserver = storeCache().opsiconfigserver
+  if (opsiconfigserver){
+    console.log('Fetchresult set configserver from store')
+    storeSelection.pushToSelectionDepots(opsiconfigserver)
+  } else{
+    console.log('Fetchresult set configserver from result')
+    storeSelection.pushToSelectionDepots(data.value[0].depotId)
+  }
+  console.log('Fetchresult configserver', opsiconfigserver)
+  console.log('Fetchresult selection', storeSelection.selectionDepots)
+  for (const dId of storeSelection.selectionDepots) {
+    data.value.filter((row:any) => {
+      console.log('FilterSelected', row.depotId, dId)
+      return row.depotId === dId
+    }).forEach((row:any) => {
+      console.log('ChangeSelected of row', row.depotId);
+      row.selected = true
+    })
+  }
+  console.log('DATA', data.value)
   return data.value;
 
 }

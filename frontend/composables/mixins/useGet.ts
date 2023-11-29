@@ -7,7 +7,7 @@ import { storeCache } from '@/store/datacacheStore'
 export const useConfigserver = () => {
   const { t } = useI18n()
 
-  async function getOpsiConfigServer (alertRef: any) {
+  async function getOpsiConfigServer (alertRef: any = undefined) {
     const { data, error } = await useApiGET('/user/opsiserver')
     if (error) {
       const errordata = { response: { data: {class: '', details: '', message: t('message.error.opsiconfd')}} }
