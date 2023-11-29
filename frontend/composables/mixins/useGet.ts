@@ -3,9 +3,10 @@
 import type { IObjectString2String } from '@/types/tgeneral'
 import { useNotification } from './useComponent'
 import { storeCache } from '@/store/datacacheStore'
+import { _getI18nInComposable } from './helper-i18n'
 
 export const useConfigserver = () => {
-  const { t } = useI18n()
+  const t = _getI18nInComposable()
 
   async function getOpsiConfigServer (alertRef: any = undefined) {
     const { data, error } = await useApiGET('/user/opsiserver')
