@@ -1,17 +1,17 @@
 <template>
-  <el-menu router :collapse="isCollapse" default-active="3" class="overflow-hidden max-w-fit">
+  <el-menu router :default-active="useRouter().currentRoute.value.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-fit">
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
         <!-- menus with children -->
-        <el-sub-menu index="/clients/" :to="item.route">
+        <el-sub-menu :index="item.route" :route="item.route">
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
           </template>
 
           <!-- sub menus -->
-          <span v-for="sub in item.submenu" :key="sub.title" :to="item.route">
-            <el-menu-item :disabled="sub.disabled">
+          <span v-for="sub in item.submenu" :key="sub.title" >
+            <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route">
               <span>{{ $t(sub.title) }}</span>
             </el-menu-item>
           </span>
@@ -20,7 +20,7 @@
       </template>
       <template v-else>
         <!-- menus without children -->
-        <el-menu-item :index="item.route" :to="item.route">
+        <el-menu-item :index="item.route" :route="item.route">
           <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
         </el-menu-item>
