@@ -3,7 +3,7 @@
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
         <!-- menus with children -->
-        <el-sub-menu :index="item.index" :to="item.route">
+        <el-sub-menu index="/clients/" :to="item.route">
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
@@ -11,7 +11,7 @@
 
           <!-- sub menus -->
           <span v-for="sub in item.submenu" :key="sub.title" :to="item.route">
-            <el-menu-item :index="sub.index" :disabled="sub.disabled">
+            <el-menu-item :disabled="sub.disabled">
               <span>{{ $t(sub.title) }}</span>
             </el-menu-item>
           </span>
@@ -41,47 +41,51 @@ const icons = useIcons()
 const configStore = storeConfigapp()
 const mq = useMQ()
 const isCollapse = ref(false)
-const navItems = [
+interface INavItem {
+  title: string
+  route: string
+  icon?: string
+  disabled?: boolean
+  submenu?: Array<INavItem>
+}
+const navItems:Array<INavItem> = [
   {
-    index: '1',
     title: 'title.depots',
     route: '/depots/',
     icon: icons.server,
     submenu: [
-      { index: '1-1', title: 'title.allDepots', route: '/depots/'},
-      { index: '1-2', title: 'title.config', route: '/depotsconfig'}
+      { title: 'title.allDepots', route: '/depots/'},
+      { title: 'title.config', route: '/depotsconfig'}
     ]
   },
   {
-    index: '2',
     title: 'title.clients',
     route: '/clients/',
     icon: icons.client,
     submenu: [
-      { index: '2-1', title: 'title.allClients', route: '/clients/'},
-      { index: '2-2', title: 'title.addNew', route: '/clientscreation', disabled: !configStore.config?.client_creation },
+      { title: 'title.allClients', route: '/clients/'},
+      { title: 'title.addNew', route: '/clientscreation', disabled: !configStore.config?.client_creation },
       // TODO: Display clone client when backend is ready
       // { title: 'title.clone', route: '/clientsclone' },
-      { index: '2-3', title: 'title.config', route: '/clientsconfig' },
-      { index: '2-4', title: 'title.log', route: '/clientslog' }
+      { title: 'title.config', route: '/clientsconfig' },
+      { title: 'title.log', route: '/clientslog' }
     ]
   },
-  { index: '3', title: 'title.products', icon: icons.product, route: '/products/' },
-  { index: '4', title: 'title.groups', icon: icons.group, route: '/groups/' },
+  { title: 'title.products', icon: icons.product, route: '/products/' },
+  { title: 'title.groups', icon: icons.group, route: '/groups/' },
 
   {
-    index: '5',
     title: 'title.administration',
     route: (configStore.config && configStore.config['terminal.forbidden'] === true) ? '/admin' : '/adminterminal',
     icon: icons.admin,
     submenu: [
-      { index: '5-1', title: 'title.adminterminal', route: '/adminterminal', disabled: (configStore.config && configStore.config['terminal.forbidden'] === true) },
-      { index: '5-2', title: 'title.healthcheck', route: '/adminserverhealthcheck' },
-      { index: '5-3', title: 'title.admin', route: '/admin' },
-      { index: '5-4', title: 'form.modules', route: '/adminmodules' }
+      { title: 'title.adminterminal', route: '/adminterminal', disabled: (configStore.config && configStore.config['terminal.forbidden'] === true) },
+      { title: 'title.healthcheck', route: '/adminserverhealthcheck' },
+      { title: 'title.admin', route: '/admin' },
+      { title: 'form.modules', route: '/adminmodules' }
     ]
   },
-  { index: '6', title: 'title.support', icon: icons.support, route: '/support' }
+  { title: 'title.support', icon: icons.support, route: '/support' }
 ]
 </script>
 
