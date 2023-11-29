@@ -1,0 +1,42 @@
+<template>
+  <b-button
+    data-testid="BTNClearSelection"
+    :aria-label="$t('table.selection.clear')"
+    :title="showLabel? '' : $t('table.selection.clear')"
+    variant="outline-primary"
+    class="ml-0 border-0"
+    :class="short !== false ? '' : 'w-100'"
+    size="sm"
+    @click="clearselection"
+  >
+    <span class="sr-only">{{ $t('table.selection.clear') }}</span>
+    <IconIIcon :icon="icons.clear" />
+    <span v-if="showLabel == true" class="clearButton">{{ label? label: $t('table.selection.clear') }} </span>
+  </b-button>
+</template>
+
+<script setup lang="ts">
+// import { Component, Prop, Vue } from 'nuxt-property-decorator'
+
+import type { PropType } from 'vue';
+import { useIcons } from '~/composables/mixins/useIcons';
+
+// import { Icons } from '../../mixins/icons'
+const icons = useIcons()
+
+// @Component({ mixins: [Icons] })
+// export default class BTNClearSelection extends Vue {
+  // icon:any
+  // @Prop({}) label?: string
+  // @Prop({ default: true }) showLabel?: boolean
+  // @Prop({ default: false }) short?: boolean
+  // @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
+// }
+const click = (value: MouseEvent) : any => { }
+const props = defineProps({
+  label: { type: String, default: '' },
+  showLabel: { type: Boolean, default: false },
+  short: { type: Boolean, default: true },
+  clearselection: { type: Object as PropType<typeof click>, default: (ev: MouseEvent) => {}}
+})
+</script>
