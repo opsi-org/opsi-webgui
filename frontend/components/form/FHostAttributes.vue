@@ -1,11 +1,14 @@
 <template>
-  <el-form label-width="200px">
-    <div v-for="(value, label, index) in fetchedData[0]" :key="index">
-      <el-form-item :label="label.toString()">
-        <el-input :value="value" />
-      </el-form-item>
-    </div>
-  </el-form>
+  <div>
+    <SelectSServers />
+    <el-form label-width="200px">
+      <div v-for="(value, label, index) in fetchedData[0]" :key="index">
+        <el-form-item :label="label.toString()">
+          <el-input :value="value" />
+        </el-form-item>
+      </div>
+    </el-form>
+  </div>
 </template>
 
 <script setup lang="tsx">
