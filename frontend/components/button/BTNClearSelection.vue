@@ -36,7 +36,7 @@ const icons = useIcons()
   // @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
 // }
 // const click = (value: MouseEvent) : any => { console.log('hallo') }
-const click = (e: any) => {
+const click = () => {
   $emit('clearselection')
 }
 const $emit = defineEmits(['clearselection'])
