@@ -1,8 +1,13 @@
 <template>
-  <div>
-    {{ fetchedData }}
-  </div>
+  <el-form label-width="200px">
+    <div v-for="(value, label, index) in fetchedData[0]" :key="index">
+      <el-form-item :label="label.toString()">
+        <el-input :value="value" />
+      </el-form-item>
+    </div>
+  </el-form>
 </template>
+
 <script setup lang="tsx">
 import { useNotification } from '~/composables/mixins/useComponent';
 const $t = useI18n().t
