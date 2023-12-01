@@ -1,8 +1,6 @@
 <template>
   <div>
-    <pre>
-      {{ fetchedData }}
-    </pre>
+    {{ fetchedData }}
   </div>
 </template>
 <script setup lang="tsx">
@@ -16,8 +14,7 @@ const props = defineProps({
 onMounted(async ()=> await fetch())
 
 async function fetch() {
-  const {data, error} = await useApiGETBody(`/api/opsidata/servers?servers=[${props.id}]`)
-  '/api/opsidata/depots'
+  const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${props.id}]`)
   if (error) {
     console.log(error)
     useNotification().error(error)
