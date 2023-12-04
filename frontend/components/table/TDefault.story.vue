@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {loginlogout} from '~/histoire-utils'
+import {loginlogout} from '~/histoire/histoire-utils'
 import type { ITableHeaderRow } from '~/types/ttableV3';
 
 const columns = ref<ITableHeaderRow>({
@@ -12,10 +12,33 @@ const data = ref<Array<any>>([
   {column1: 'row2-column1', column2: 'row2-column2', column3: 'row2-column3'},
   {column1: 'row3-column1', column2: 'row3-column2', column3: 'row3-column3'},
 ])
+
 </script>
 
 <template>
-  <Story :setup-app="loginlogout">
-    <TableTDefault id="tableId" :columns="columns" :data="data"/>
+  <Story :setup-app="loginlogout"
+    :layout="{ type: 'grid', width: '100%' }"
+  >
+    <!-- <Variant title="mobile"
+      :meta="{ wrapperMobile: true }">
+      <TableTDefault
+        id="tableId"
+        :columns="columns"
+        :data="data"
+        :sort-by="undefined"
+        @selection-changed="(id) => {}"
+        @selection-clear="() => { }"
+      />
+    </Variant> -->
+    <Variant title="desktop">
+      <TableTDefault
+        id="tableId"
+        :columns="columns"
+        :data="data"
+        :sort-by="undefined"
+        @selection-changed="(id) => {}"
+        @selection-clear="() => { }"
+      />
+    </Variant>
   </Story>
 </template>

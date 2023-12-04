@@ -1,19 +1,23 @@
 <template>
-  <DropdownDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+  <!-- {{  useMQ().$mq }}
+  <TableTDefaultMobile v-if="useMQ().$mq.value === 'mobile'" v-bind="props"/>
+  <div v-else> -->
+    <DropdownDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
 
-  <div class="h-screen w-screen">
-    <el-auto-resizer>
-      <template #default="{ height, width }">
-        <el-table-v2
+    <div class="h-screen w-screen">
+      <el-auto-resizer>
+        <template #default="{ height, width }">
+          <el-table-v2
           :columns="Object.values(wrappedColumns)"
           :data="props.data"
           :width="width"
           :height="height"
           fixed
-        />
-      </template>
-    </el-auto-resizer>
-  </div>
+          />
+        </template>
+      </el-auto-resizer>
+    </div>
+  <!-- </div> -->
 </template>
 
 
@@ -34,9 +38,16 @@ const props = defineProps({
 const $emit = defineEmits(['selection-changed', 'selection-clear'])
 const wrappedColumns = computed<ITableHeaderRow>( () => {
 // onMounted(() => {
+  console.log('add wrapped columns')
+  console.log('props.columns', props.columns)
+  console.log('props.columns.selected', props.columns.selected)
   if (props.columns == undefined) return {}
-  if (props.columns.selected == undefined) return {}
+
   const _columns = {...props.columns}
+
+  if (props.columns.selected === undefined) {
+    return _columns
+  }
 
   _columns.selected.headerCellRenderer = () => {
     const _data = unref(props.data)
@@ -52,11 +63,6 @@ const wrappedColumns = computed<ITableHeaderRow>( () => {
     return (
       <buttonBTNClearSelection onClearselection={clearSelection}/>
     )
-      // <SelectionCell
-      //   value={allSelected}
-      //   intermediate={containsChecked && !allSelected}
-      //   onChange={onChange}
-      // />
   }
 
   _columns.selected.cellRenderer = ({ rowData }) => {

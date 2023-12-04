@@ -3,8 +3,9 @@ import { computed } from 'vue'
 
 export const useMQ = () => {
   const isPreferredDark = useMediaQuery('(prefers-color-scheme: dark)')
-  const _isLargeScreen = useMediaQuery('(min-width: 1024px)')
-  const _isMediumScreen = useMediaQuery('(min-width: 768px)')
+  const _isLargeScreen = useMediaQuery('(min-width: 1000px)')
+  const _isMediumScreen = useMediaQuery('(min-width: 767.98px)')
+  // on update isMediumScreen Width. also update histoire/histoire-wrapper-mobile.vue .mobile-wrapper class. Make sure that the with of the class is smaller isMediumScreen min-width
 
   const color = useColorMode()
   color.value = isPreferredDark ? 'dark' : 'light'
@@ -21,3 +22,14 @@ export const useMQ = () => {
   });
   return { $mq, isPreferredDark }
  }
+
+//  ['nuxt-mq', {
+//   // Default breakpoint for SSR
+//   // defaultBreakpoint: 'mobile',
+//   breakpoints: {
+//     // mobile: 850, // should also be updated in Bar/BTop.vue on change!
+//     mobile: 767.98, // then compatible with bootstrap breakpoint 'md'
+//     tablet: 1000,
+//     desktop: Infinity
+//   }
+// }]

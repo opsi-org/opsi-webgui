@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { loginlogout } from '~/histoire-utils'
+import { loginlogout } from '~/histoire/histoire-utils'
 import { useConfigserver } from '~/composables/mixins/useGet'
 
 async function init(data: any) {

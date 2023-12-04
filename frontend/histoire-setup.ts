@@ -3,7 +3,7 @@ import 'assets/css/tailwind.css'
 import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-
+import WrapperGlobal from './histoire/histoire-wrapper-mobile.vue'
 import en from './locale/opsiweb-ui_en.json'
 import { createI18n } from "vue-i18n";
 // function setupApp ({ app, story, variant }) {
@@ -16,8 +16,10 @@ import { createI18n } from "vue-i18n";
 //   }))
 // }
 
-export const setupVue3 = defineSetupVue3(({app}) => {
+export const setupVue3 = defineSetupVue3(({app, addWrapper}) => {
  // Vue plugin
+
+  addWrapper(WrapperGlobal)
   const pinia = createPinia()
   pinia.use(piniaPluginPersistedstate);
   app.use(pinia)

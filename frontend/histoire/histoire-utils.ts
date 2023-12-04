@@ -31,7 +31,7 @@ export async function loginlogout({ app }: any) {
   User.append('username', 'adminuser')
   User.append('password', 'adminuser')
   const { data, error } = await useApiPOST('/auth/login', User)
-  if (error) {
+  if (error !== undefined && error !== null) {
     console.error('error', error)
   } else if (data?.value?.result == 'Login success') {
     loggedIn.value = true

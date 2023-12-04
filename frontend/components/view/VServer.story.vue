@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {loginlogout} from '~/histoire-utils'
+import {loginlogout} from '~/histoire/histoire-utils'
 </script>
 
 <template>
