@@ -125,7 +125,6 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 150,
       maxWidth: 350,
-      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'depotId', true)
     },
     description: { // eslint-disable-next-line object-property-newline
@@ -134,7 +133,6 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'description',
       sortable: true,
       width: 150,
-      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'description', false)
     },
     type: { // eslint-disable-next-line object-property-newline
@@ -144,7 +142,6 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 140,
       maxWidth: 300,
-      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'type', true)
     },
     ip: { // eslint-disable-next-line object-property-newline
@@ -154,7 +151,6 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 100,
       maxWidth: 150,
-      cellRenderer: ({ cellData: depotId }) => <el-text>{depotId}</el-text>,
       hidden: !cookies.includesCookie('column_' + id, 'ip', false)
     },
     rowactions: { // eslint-disable-next-line object-property-newline
@@ -166,7 +162,6 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 150,
       hidden: false,
       class: 'col-rowactions',
-      // cellRenderer: () => <el-button type="danger">Delete</el-button>,
       cellRenderer: () => (
         <>
           <el-button size="small">Edit</el-button>

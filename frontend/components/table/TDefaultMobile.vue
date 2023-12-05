@@ -5,8 +5,8 @@
         <template #title>
           <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="row" :colData="wrappedColumns['selected']" />
 
-          <CellRenderer v-if="wrappedColumns[props.rowId].cellRenderer" :rowId="props.rowId" :rowData="row" :colData="wrappedColumns[props.rowId]" />
-          <el-text v-else> {{row[props.rowId]}} </el-text>
+          <el-text v-if="!wrappedColumns[props.rowId].cellRenderer"> {{row[props.rowId]}} </el-text>
+          <CellRenderer v-else :rowId="props.rowId" :rowData="row" :colData="wrappedColumns[props.rowId]" />
         </template>
 
         <Details :rowData="row" :colData="wrappedColumns[props.rowId]" />
