@@ -4,11 +4,12 @@
   <el-text>Client Selection: {{ storeSelections().selectionClients }}</el-text> <br />
     <TableTDefault
       v-if="fetchedData.length > 0"
+      row-id="clientId"
       :id="id"
       :columns="columns"
       :data="fetchedData"
       :sort-by="tableData.sortBy"
-      @selection-changed="(id) => storeSelections().toggleSelectionClients(id)"
+      @selection-changed="(id: string) => storeSelections().toggleSelectionClients(id)"
       @selection-clear="storeSelections().clearSelectionClients"
     >
 

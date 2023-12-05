@@ -29,7 +29,12 @@ export const storeSettings = defineStore('settings', () => {
         title: useCookie('theme.title').value as string
       }
       // TODO realy needed?
-      c.timestamp = (JSON.parse(useCookie('theme.timestamp').value || '')) as number
+      try{
+        c.timestamp = (JSON.parse(useCookie('theme.timestamp').value || '')) as number
+      } catch (e) {
+        c.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
+        console.warn(e)
+      }
       if (c.rel !== colorthemeobj.rel) {
         if (!colorthemeobj.timestamp) {
           return c

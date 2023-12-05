@@ -5,11 +5,12 @@
     <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
     <TableTDefault
       v-if="fetchedData.length > 0"
+      row-id="depotId"
       :id="id"
       :columns="columns"
       :data="fetchedData"
       :sort-by="tableData.sortBy"
-      @selection-changed="(id) => storeSelection.toggleSelectionDepots(id)"
+      @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
       @selection-clear="storeSelection.clearSelectionDepots"
     >
 
