@@ -19,10 +19,10 @@ export default class QueueNested {
 
   enqueueHead(pnr:number, element: Array<any>) {
     this.first_page_number = pnr
-    let elements = [...this.elements]
-    elements.unshift(element); // add new page to front
-    if (elements.length > this.max_elements){
-      elements.length = this.max_elements // cut tail if more pages as capacity
+    // let elements = [...this.elements]
+    this.elements.unshift(element); // add new page to front
+    if (this.elements.length > this.max_elements){
+      this.elements.length = this.max_elements // cut tail if more pages as capacity
       this.last_page_number = this.last_page_number - 1
     }
 
@@ -30,20 +30,20 @@ export default class QueueNested {
       this.last_page_number = this.totalPages
     }
 
-    this.elements = elements
+    // this.elements = elements
     // console.debug(this.title, 'Queue enqueueHead page_numbers', this.first_page_number, this.last_page_number)
   }
   enqueueTail(pnr: number, element: Array<any>) {
-    let elements = [...this.elements]
+    // let elements = [...this.elements]
     this.last_page_number = pnr
 
-    elements.push(element)
-    if (elements.length > this.max_elements) {
-      elements.shift()
+    this.elements.push(element)
+    if (this.elements.length > this.max_elements) {
+      this.elements.shift()
       this.first_page_number = this.first_page_number + 1
       if (this.first_page_number <= 0) this.first_page_number = 0
     }
-    this.elements = elements
+    // this.elements = elements
 
     // console.debug(this.title, 'Queue enqueueTail page_numbers', this.first_page_number, this.last_page_number)
   }
@@ -55,6 +55,27 @@ export default class QueueNested {
     this.elements = [element]
     // console.debug(this.title, 'Queue set page_numbers', this.first_page_number, this.last_page_number)
   }
+  // init(pnr:number, elements: Array<any>) {
+  //   if (!elements) return
+  //   this.first_page_number = pnr
+  //   this.last_page_number = pnr
+  //   this.elements = elements
+  //   // console.debug(this.title, 'Queue set page_numbers', this.first_page_number, this.last_page_number)
+  // }
+  // push (pnr:number, elements: Array<any>) {
+  //   if (!elements) return
+  //   if (pnr == this.first_page_number-1) {
+  //     this.enqueueHead(pnr, element)
+  //   } else if (pnr == this.last_page_number+1) {
+  //     this.enqueueTail(pnr, element)
+  //   } else {
+  //     this.first_page_number = pnr
+  //     this.last_page_number = pnr
+  //     this.elements.length = 0
+  //     this.elements.push(element)
+  //     // console.debug(this.title, 'Queue setAuto page_numbers', this.first_page_number, this.last_page_number)
+  //   }
+  // }
   setAuto (pnr:number, element: Array<any>) {
     if (!element) return
     if (pnr == this.first_page_number-1) {

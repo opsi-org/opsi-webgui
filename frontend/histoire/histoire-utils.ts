@@ -4,9 +4,9 @@ const loggedIn = ref(false)
 export async function logout()  {
   if (!loggedIn.value) return
   const { data, error } = await useApiPOST('/auth/logout')
-  if (error.response.data.message === 'Unauthorized') {
+  if (error?.response.data.message === 'Unauthorized') {
 
-  } else if (error) {
+  } else if (error !== undefined && error !== null) {
     console.log("error", error.response.data.message)
   } else {
     loggedIn.value = false

@@ -8,11 +8,22 @@ export default defineConfig({
     HstNuxt(),
   ],
   collectMaxThreads: 2, // 8 threads takes longer..
+  // setupFile: './histoire/histoire-setup.ts',
   setupFile: 'histoire-setup.ts',
   tree: {
     file: (file) => [...file.path.split('/').slice(1, -1), file.title],
     order: 'asc',
   },
+  // defaultStoryProps: {
+  //   // icon: 'carbon:assembly-reference',
+  //   // iconColor: '#00c5a5',
+  //   // layout: {
+  //   //   type: 'grid',
+  //   //   width: 300,
+  //   // },
+  //   // responsiveDisabled: true,
+  //   // autoPropsDisabled: true,
+  // },
   vite: {
     server: {
       host: '0.0.0.0', // of histoire

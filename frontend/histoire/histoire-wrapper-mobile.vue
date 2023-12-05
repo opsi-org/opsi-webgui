@@ -11,9 +11,6 @@ onMounted(()=> {
     props.variant.setupApp = ({}) => {
       window.resizeTo(200,200)
     }
-  // window.resizeTo(200, 300);
-  // if (hasWrapper()) {
-  // }
 })
 
 function hasWrapper () {
@@ -34,9 +31,8 @@ function hasWrapper () {
 <style scoped>
 .mobile-wrapper {
   max-width: 600px; /** mobile width from tailwind */
-  /* width: 500px; */
-  border: 1px solid red;
-  overflow: hidden;
-  container: 200;
+}
+.no-mobile-wrapper {
+  min-width: 800px;
 }
 </style>

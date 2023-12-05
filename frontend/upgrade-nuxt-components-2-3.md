@@ -9,7 +9,7 @@
   - [x] msgpack
   * xterm // adminTerminal
   * playwright
-  * storybook
+  - [x] storybook
 - [ ] WIP *layout*
 - [x] mixins
 - [ ] utils
@@ -42,9 +42,8 @@
 - [ ] screenshot tests
 
 
-
-
 # important links:
+* https://learnvue.co/LearnVue-Vue-3-Cheatsheet.pdf
 * https://vuejs.org/guide/components/props.html#props-declaration
 * https://element-plus.org/en-US/
 * https://tailwindcss.com/docs/
