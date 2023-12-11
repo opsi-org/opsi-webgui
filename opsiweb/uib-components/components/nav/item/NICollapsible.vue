@@ -3,7 +3,7 @@
     <b-nav-item
       v-b-toggle="'collapse-navitem-'+title"
       :data-testid="'NICollapsible-'+title"
-      :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
+      :class="{checkactive: submenu.some(x => x.route === $route.path)}"
       :disabled="disabled"
       @click.prevent="$mq == 'desktop' ? refresh(route) : ''"
     >
@@ -16,8 +16,8 @@
           v-for="sub in submenu"
           :key="sub.title"
           :data-testid="'NICollapsible-submenu-'+title+sub.title"
-          :disabled="sub.disabled"
-          :class="{checkactive: $route.path.includes(sub.route)}"
+          :disabled="sub.disabled === true"
+          :class="{checkactive: $route.path === sub.route}"
           class="pl-3"
           @click.prevent="refresh(sub.route)"
         >

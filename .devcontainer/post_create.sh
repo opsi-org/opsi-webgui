@@ -14,7 +14,7 @@ cd /workspace/frontend/
 npm i
 echo "========================================== Link webgui backend"
 
-# rm -rf /data/opsiconfd/addons/webgui
+rm -rf /data/opsiconfd/addons/webgui
 # ln -s /workspace/backend/addon/webgui /data/opsiconfd/addons/
 # chown pwuser:pwuser /data/opsiconfd/addons/webgui
 # ln -s $OPSI_ADDON_DIRS /data/opsiconfd/addons

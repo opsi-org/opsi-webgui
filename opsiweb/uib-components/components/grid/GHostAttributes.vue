@@ -112,10 +112,6 @@ export default class GHostAttributes extends Vue {
         this.hostAttr = response[0]
       }).catch((error) => {
         this.showToastError(error, this.$t('message.error.defaulttext'))
-        // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        // const ref = (this.$refs.hostAttrErrorAlert as any)
-        // ref.alert(detailedError, 'danger')
-        // this.errorText = this.$t('message.error.defaulttext') as string
       })
   }
 

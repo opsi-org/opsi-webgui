@@ -13,7 +13,7 @@
       block
       dropright
       no-caret
-      :disabled="disabled"
+      :disabled="disabled == true"
     >
       <template #button-content>
         <IconIIcon :icon="icon" @click="refresh(route)" />
@@ -27,9 +27,9 @@
         :key="sub.title"
       >
         <b-dropdown-item
-          :class="{checkactive: $route.path.includes(sub.route)}"
-          :style="(sub.disabled)? 'pointer-events: none;':''"
-          :disabled="sub.disabled"
+          :class="{checkactive: $route.path.includes(route.slice(0, -1))}"
+          :style="(sub.disabled === true)? 'pointer-events: none;':''"
+          :disabled="sub.disabled === true"
           @click="refresh(sub.route)"
         >
           {{ $t(sub.title) }}
