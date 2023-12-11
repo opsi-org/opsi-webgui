@@ -21,7 +21,8 @@ export const generateColumns = (length = 10, prefix = 'column-', props?: any) =>
 export  const generateData = (
   columns: ReturnType<typeof generateColumns>,
   length = 200,
-  prefix = 'row-'
+  prefix = 'row-',
+  startIndex = 0
 ) =>
   Array.from({ length }).map((_, rowIndex) => {
     return Object.values(columns).reduce(
@@ -29,11 +30,11 @@ export  const generateData = (
         if (column.dataKey == 'selected')
           rowData[column.dataKey] = false
         else
-          rowData[column.dataKey] = `Row ${rowIndex} - Col ${columnIndex}`
+          rowData[column.dataKey] = `Row ${startIndex}${rowIndex} - Col ${columnIndex}`
         return rowData
       },
       {
-        id: `${prefix}${rowIndex}`,
+        id: `${prefix}${startIndex}${rowIndex}`,
         parentId: null,
       }
     )

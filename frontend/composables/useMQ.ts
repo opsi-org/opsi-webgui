@@ -9,7 +9,9 @@ export const useMQ = () => {
 
   const color = useColorMode()
   color.value = isPreferredDark ? 'dark' : 'light'
-
+  const isMobile = computed(()=>{
+    return $mq.value === 'mobile' ? true : false
+  })
   const $mq = computed({
     get: () => {
       // order importend !
@@ -20,7 +22,7 @@ export const useMQ = () => {
     },
     set: (x) => { console.error('Forbidden to set $mq.') }
   });
-  return { $mq, isPreferredDark }
+  return { $mq, isPreferredDark, isMobile }
  }
 
 //  ['nuxt-mq', {

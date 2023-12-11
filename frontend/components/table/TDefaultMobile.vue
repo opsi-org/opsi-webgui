@@ -13,23 +13,17 @@
 
       </el-collapse-item>
     </el-collapse>
-  <pre>
-    <!-- {{ wrappedColumns }} -->
-    <!-- {{ wrappedData }} -->
-  </pre>
 </template>
 
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
-import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
+import type { ITableHeaderRow } from '~/types/ttableV3'
 import {type CheckboxValueType, type Column } from 'element-plus';
-import type { FunctionalComponent } from 'vue';
 
 const activeRowIndex = ref<number>()
 const CellRenderer = ({key, rowData, colData}: any) => {
-  console.log('cellrenderer', key, rowData, colData)
   if (colData.cellRenderer)
     return colData.cellRenderer({rowData})
   return <el-text>{ key }</el-text>
@@ -37,6 +31,7 @@ const CellRenderer = ({key, rowData, colData}: any) => {
 
 const Details = ({rowData, colData}: any) => {
   const data: Array<any> = []
+  const _width = {'width': '100%'}
   Object.keys(wrappedColumns.value)
     .filter(cId => wrappedColumns.value[cId].hidden
               && !wrappedColumns.value[cId].fixed)
@@ -47,7 +42,7 @@ const Details = ({rowData, colData}: any) => {
         lazy={true}
         data={data}
         size="small"
-        style="width: 100%"
+        style={_width}
       >
         <el-table-column prop="id" label="id" width="100">
         </el-table-column>
@@ -57,10 +52,8 @@ const Details = ({rowData, colData}: any) => {
               const rowKey = scope.row.id
               const rowValue = scope.row.value
               const renderer = wrappedColumns.value[rowKey].cellRenderer
-              {/* console.log(rowKey, rowValue, renderer) */}
               if (renderer !== undefined)
                 return renderer({ rowData } as any)
-                {/* return <CellRenderer rowData={rowData} colData={colData} /> */}
               return <el-text>{ rowValue }</el-text>
             }
           }}
@@ -74,7 +67,8 @@ const props = defineProps({
   rowId: { type: String, default: 'depotId'},
   data: { type: Array<any>, required:true},
   id: { type: String, default: 'depots' },
-  sortBy: { type: String, default: 'selection'}
+  sortBy: { type: String, default: 'selection'},
+  fetch: {type: Function, default: (p:any) => {} }
 })
 const $emit = defineEmits(['selection-changed', 'selection-clear'])
 const wrappedColumns = ref<ITableHeaderRow>({})
@@ -91,40 +85,17 @@ function updateColumns() {
   Object.values(_columns)
     .map(c => {
       if (!c.fixed) c.hidden = true
-
-      // if (c.cellRenderer === undefined)
-      //   c.cellRenderer = ({rowData}: any) => {
-      //     if (rowData)
-      //       return <el-text> {rowData[c.dataKey || c.key]}</el-text>
-      //     return <el-text />
-      // }
     } )
 
   if (props.columns.selected === undefined) {
     return _columns
   }
-  // _columns.selected.headerCellRenderer = () => {
-  //   const clearSelection = (event:any) => {
-  //     $emit('selection-clear')
-  //     props.data.map((row:any) => {
-  //       row.selected = false
-  //       return row
-  //     })
-  //   }
-  //   return (
-  //     <buttonBTNClearSelection onClearselection={clearSelection}/>
-  //   )
-  // }
   _columns.selected.cellRenderer = ({ rowData }) => {
     const onChange = (value: CheckboxValueType) => {
 
       rowData.selected = value
-      $emit('selection-changed', rowData.depotId)
+      $emit('selection-changed', rowData)
     }
-      // onChangeSelf={onChange}
-      // onChangeStop={onChange}
-      // onChangeStopPrevent={onChange}
-      // onChangePrevent={onChange}
     return <el-checkbox
       onChange={onChange}
       modelValue={rowData.selected}
@@ -132,7 +103,6 @@ function updateColumns() {
       class="pr-3"
     />
   }
-  // <SelectionCell value={rowData.selected} onChange={onChange} class="mr-2"/>
   return _columns
 }
 function updateData() {
@@ -141,20 +111,6 @@ function updateData() {
   return _data
 }
 
-
-const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
-  value,
-  intermediate = false,
-  onChange,
-}) => {
-  return (
-    <el-checkbox
-      onChange={onChange}
-      modelValue={value}
-      indeterminate={intermediate}
-    />
-  )
-}
 </script>
 
 <style scoped>

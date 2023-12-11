@@ -254,6 +254,42 @@ export const useHoverDropdown = () => {
 }
 
 
+
+import debounce from 'lodash/debounce'
+export const useScrollListener = (refComponent: Ref<HTMLElement|undefined>, handleScroll = (...args: any[]) => {}) => {
+  // const handleDebouncedScroll = debounce(handleScroll, 100)
+  let resizeObserver: any = null
+  onMounted(() => {
+    if (refComponent.value == undefined) {
+      console.error('mount. component for scroll listener undefined')
+      return
+    }
+
+    resizeObserver = new ResizeObserver(onResize)
+    resizeObserver.observe(refComponent.value)
+    // // handleDebouncedScroll = debounce(handleScroll, 100);
+    // refComponent.value.addEventListener('scroll', handleDebouncedScroll);
+  })
+
+  function onResize() {
+    const h = refComponent.value?.clientHeight + 'px'
+    console.log('RESIZE', h)
+  }
+  onUnmounted(() => {
+    if (resizeObserver !== null)
+    resizeObserver.unobserve(refComponent)
+    // if (refComponent.value == undefined) {
+    //   console.error('unmount. component for scroll listener undefined')
+    //   return
+    // }
+    // // I switched the example from `destroyed` to `beforeDestroy`
+    // // to exercise your mind a bit. This lifecycle method works too.
+    // refComponent.value.removeEventListener('scroll', handleDebouncedScroll);
+  })
+  // return {handleDebouncedScroll}
+}
+
+
 export const useSynchronization = () => {
   // TODO check if useCookies is needed instead of useCookie
   // setCookie: any

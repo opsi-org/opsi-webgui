@@ -1,7 +1,6 @@
 <template>
   <DropdownDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
-
-  <div class="h-screen w-screen" :class="{small: props.small !== false}">
+  <div class="h-96 w-full" :class="{small: props.small !== false}">
     <el-auto-resizer>
       <template #default="{ height, width }">
         <el-table-v2
@@ -16,10 +15,6 @@
       </template>
     </el-auto-resizer>
   </div>
-  <pre>
-    <!-- {{ wrappedColumns }} -->
-    <!-- {{ wrappedData }} -->
-  </pre>
 </template>
 
 
@@ -45,21 +40,10 @@ onMounted(()=>{
   wrappedData.value = updateData()
 })
 
-const CellRenderer = ({key, rowData, colData, cells }: any) => {
-  console.log('cellrenderer', key, rowData, colData)
-  if (colData.cellRenderer)
-    return colData.cellRenderer({rowData})
-  // return <el-text>{ key }</el-text>
-  return cells
-  // return <el-text>{ rowData[key] }</el-text>
-}
-
 function updateColumns() {
   if (props.columns == undefined) return {}
 
   const _columns: ITableHeaderRow = {...props.columns}
-
-
   Object.values(_columns)
     .map(c => {
       if (c.cellRenderer === undefined)
