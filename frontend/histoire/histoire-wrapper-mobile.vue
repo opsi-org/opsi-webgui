@@ -45,6 +45,6 @@ const hasWrapper = computed(()=> {
   max-width: var(--width-desktop) !important;
   min-width: var(--width-desktop) !important;
   width: var(--width-desktop) !important;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 </style>

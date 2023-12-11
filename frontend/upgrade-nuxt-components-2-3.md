@@ -46,6 +46,7 @@
 * https://learnvue.co/LearnVue-Vue-3-Cheatsheet.pdf
 * https://vuejs.org/guide/components/props.html#props-declaration
 * https://element-plus.org/en-US/
+* https://element-plus-interactive-docs.netlify.app/story/src-components-data-collapse-collapse-story-vue?variantId=src-components-data-collapse-collapse-story-vue-0
 * https://tailwindcss.com/docs/
 * https://icon-sets.iconify.design/
 * https://localhost:8888/addons/webgui/app/_tailwind/

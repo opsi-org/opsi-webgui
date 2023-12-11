@@ -8,8 +8,7 @@
           <el-text v-if="!wrappedColumns[props.rowId].cellRenderer"> {{row[props.rowId]}} </el-text>
           <CellRenderer v-else :rowId="props.rowId" :rowData="row" :colData="wrappedColumns[props.rowId]" />
         </template>
-
-        <Details :rowData="row" :colData="wrappedColumns[props.rowId]" />
+        <Details v-if="activeRowIndex === index" :rowData="row" :colData="wrappedColumns[props.rowId]" />
 
       </el-collapse-item>
     </el-collapse>
@@ -30,6 +29,7 @@ const CellRenderer = ({key, rowData, colData}: any) => {
 }
 
 const Details = ({rowData, colData}: any) => {
+  console.log('load details')
   const data: Array<any> = []
   const _width = {'width': '100%'}
   Object.keys(wrappedColumns.value)
