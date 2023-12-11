@@ -1,7 +1,8 @@
 <script setup lang="tsx">
 import {loginlogout} from '~/histoire/histoire-utils'
-import {generateColumns, generateData} from '~/histoire/histoire-utils-data'
+import {generateColumns, generateData, generateNumbers} from '~/histoire/histoire-utils-data'
 import TDefault from './TDefault.vue'
+const itemsLength = 100
 
 const _columns = generateColumns(4)
 const columns: any = {
@@ -12,11 +13,19 @@ const columns: any = {
         title: `selected`,
         fixed: true,
         width: 50},
-  ..._columns
+  ..._columns,
+  nr: {key: 'nr',
+        id: 'nr',
+        parentId: null,
+        dataKey: 'nr',
+        title: `nr`,
+        itemOf: generateNumbers(itemsLength),
+        cellRenderer: ({rowData}: any) => {return <el-tag>{rowData.nr}</el-tag>},
+        width: 50},
 }
 columns['column-0'].fixed = true
 columns['column-1'].hidden = true
-const data = generateData(columns, 100)
+const data = generateData(columns, itemsLength)
 const mylog = (s:any)=> console.log(s)
 const MyTDefault = ({ isMobile }: any) => {
   return <TDefault
