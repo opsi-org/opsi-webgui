@@ -19,7 +19,7 @@
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
 import type { ITableHeaderRow } from '~/types/ttableV3'
-import {type CheckboxValueType, type Column } from 'element-plus';
+import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus';
 import { useUtilsData } from '~/composables/mixins/useUtilsData'
 const tableStore = storeTablesettings()
 
@@ -33,18 +33,28 @@ const Details = ({rowData, colData}: any) => {
   console.log('load details')
   const _width = {'width': '100%'}
   const data: Array<any> = []
-    tableStore.columns[props.id].map((cId:string)=>{
+  const _fixedRightLast: Array<any> = []
+  Object.values(wrappedColumns.value).forEach((colInfo) =>{
+    const cId = colInfo.key
+    const visible = tableStore.columns[props.id].includes(cId)
+    if (!visible) {
+      return
+    }
+
     if (cId.startsWith('_')) {
       // column is a major column / collapseable / with children e.g. Statistics
       const major: any = { id: cId, value: '', children:[]}
       Object.values(wrappedColumns.value).filter(e => e._majorKey === cId).map(
         (e:any) => major.children.push({ id: e.dataKey, value: rowData[e.dataKey]}) )
       data.push(major)
-    }else {
+    } else if (colInfo.fixed === TableV2FixedDir.RIGHT){
+      _fixedRightLast.push({ id: cId, value: rowData[cId]})
+    } else {
       data.push({ id: cId, value: rowData[cId]})
     }
   })
-    return <div class="mx-3">
+  data.push(..._fixedRightLast)
+  return <div class="mx-3">
       <el-table
         show-header={false}
         lazy={true}
