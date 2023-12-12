@@ -220,6 +220,7 @@ const columns = reactive<ITableHeaderRow>({
       title: $t('table.fields.selection'),
       key: 'selected',
       dataKey: 'selected',
+      class: 'col-selected',
       sortable: true,
       width: 50,
       maxWidth: 50,
@@ -231,50 +232,62 @@ const columns = reactive<ITableHeaderRow>({
       title: $t('table.fields.id'),
       key: 'clientId',
       dataKey: 'clientId',
+      class: 'col-clientId',
       fixed: true,
       width: 200,
       sortable: true,
-      hidden: cookies.includesCookie('column_' + id, 'clientId', true)
+      // hidden: cookies.includesCookie('column_' + id, 'clientId', true)
+      hidden: false
     },
     description: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.description'),
       key: 'description',
       dataKey: 'description',
+      class: 'col-description',
       sortable: true,
       width: 200,
-      hidden: cookies.includesCookie('column_' + id, 'description', false)
+      hidden: true
+      // hidden: cookies.includesCookie('column_' + id, 'description', false)
     },
     ipAddress: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.ip'),
       key: 'ipAddress',
       dataKey: 'ipAddress',
+      class: 'col-ipAddress',
       sortable: true,
       width: 100,
-      hidden: cookies.includesCookie('column_' + id, 'ipAddress', false)
+      hidden: true
+      // hidden: cookies.includesCookie('column_' + id, 'ipAddress', false)
     },
     macAddress: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.mac'),
       key: 'macAddress',
       dataKey: 'macAddress',
+      class: 'col-macAddress',
       sortable: true,
       width: 100,
-      hidden: cookies.includesCookie('column_' + id, 'macAddress', false)
+      hidden: true
+      // hidden: cookies.includesCookie('column_' + id, 'macAddress', false)
     },
     lastSeen: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.lastSeen'),
       key: 'lastSeen',
       dataKey: 'lastSeen',
+      class: 'col-lastSeen',
       sortable: true,
       width: 100,
-      hidden: cookies.includesCookie('column_' + id, 'lastSeen', false)
+      hidden: true
+      // hidden: cookies.includesCookie('column_' + id, 'lastSeen', false)
     },
     uefi: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.uefi'),
       key: 'uefi',
       dataKey: 'uefi',
+      class: 'col-uefi',
       sortable: true,
       width: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'uefi', false),
+      hidden: true,
+      // hidden: !cookies.includesCookie('column_' + id, 'uefi', false),
         // onChange={onChange}
       cellRenderer: ({rowData}:any) =>
         <el-checkbox
@@ -287,6 +300,7 @@ const columns = reactive<ITableHeaderRow>({
       title: $t('table.fields.stats'),
       key: '_majorStats',
       dataKey: '_majorStats',
+      class: 'col-_majorStats',
       width: 50,
       _isMajor: true,
       hidden: true
@@ -296,36 +310,43 @@ const columns = reactive<ITableHeaderRow>({
       key: 'version_outdated',
       dataKey: 'version_outdated',
       _majorKey: '_majorStats',
+      class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
+      hidden: true
+      // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionResultFailed'),
       key: 'actionResult_failed',
       dataKey: 'actionResult_failed',
       _majorKey: '_majorStats',
+      class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
+      hidden: true
+      // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.installationStatusUnknown'),
       key: 'installationStatus_unknown',
       dataKey: 'installationStatus_unknown',
       _majorKey: '_majorStats',
+      class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
+      hidden: true
+      // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
     },
     // TODO: Sorting for reachable column
     reachable: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.reachable'),
       key: 'reachable',
       dataKey: 'reachable',
+      class: 'col-reachable',
       sortable: false,
       width: 50,
-      hidden: false
+      hidden: true
       // hidden: !cookies.includesCookie('column_' + id, 'reachable', true)
     },
     rowactions: { // eslint-disable-next-line object-property-newline

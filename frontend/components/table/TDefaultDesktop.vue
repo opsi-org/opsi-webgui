@@ -15,6 +15,8 @@
       </template>
     </el-auto-resizer>
   </div>
+  <el-text><pre>{{ tableStore.columns[props.id] }}</pre></el-text>
+  <el-text><pre>{{ Object.values(wrappedColumns) }}</pre></el-text>
 </template>
 
 
@@ -25,6 +27,7 @@ import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
 import {type CheckboxValueType, type Column } from 'element-plus';
 import type { FunctionalComponent } from 'vue';
 
+const tableStore = storeTablesettings()
 const props = defineProps({
   columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   data: { type: Array<any>, required:true},
@@ -39,6 +42,23 @@ onMounted(()=>{
   wrappedColumns.value = updateColumns()
   wrappedData.value = updateData()
 })
+
+watch(()=>tableStore.columns[props.id], ()=>{
+  // show or hide major-children
+  Object.values(wrappedColumns.value)
+    .filter((e:any) => e.dataKey.startsWith('_')) // only majors
+    .map((e:any)=> {
+      const majorKey = e.dataKey
+      const children = Object.values(wrappedColumns.value).filter(e => e._majorKey === majorKey).map(e => e.dataKey as string)
+      const visible = tableStore.columns[props.id].includes(e.dataKey)
+      if (visible){ // is major visible? // show major.chilrden
+        wrappedColumns.value[majorKey].hidden = true
+        children.map((cId:string)=> wrappedColumns.value[cId].hidden = false)
+      } else { // hide mahor.chilrden
+        children.map((cId:string)=> wrappedColumns.value[cId].hidden = true)
+      }
+    })
+}, { deep: true})
 
 function updateColumns() {
   if (props.columns == undefined) return {}
