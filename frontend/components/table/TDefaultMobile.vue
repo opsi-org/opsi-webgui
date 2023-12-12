@@ -20,6 +20,8 @@
 
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import {type CheckboxValueType, type Column } from 'element-plus';
+import { useUtilsData } from '~/composables/mixins/useUtilsData'
+const tableStore = storeTablesettings()
 
 const activeRowIndex = ref<number>()
 const CellRenderer = ({key, rowData, colData}: any) => {
@@ -27,31 +29,50 @@ const CellRenderer = ({key, rowData, colData}: any) => {
     return colData.cellRenderer({rowData})
   return <el-text>{ key }</el-text>
 }
-
 const Details = ({rowData, colData}: any) => {
   console.log('load details')
-  const data: Array<any> = []
   const _width = {'width': '100%'}
-  Object.keys(wrappedColumns.value)
-    .filter(cId => wrappedColumns.value[cId].hidden
-              && !wrappedColumns.value[cId].fixed)
-    .map(cId => { data.push({ id: cId, value: rowData[cId]})})
+  const data: Array<any> = []
+    tableStore.columns[props.id].map((cId:string)=>{
+    if (cId.startsWith('_')) {
+      // column is a major column / collapseable / with children e.g. Statistics
+      const major: any = { id: cId, value: '', children:[]}
+      Object.values(wrappedColumns.value).filter(e => e._majorKey === cId).map(
+        (e:any) => major.children.push({ id: e.dataKey, value: rowData[e.dataKey]}) )
+      data.push(major)
+    }else {
+      data.push({ id: cId, value: rowData[cId]})
+    }
+  })
     return <div class="mx-3">
       <el-table
         show-header={false}
         lazy={true}
         data={data}
         size="small"
+        row-key="id"
         style={_width}
+        default-expand-all
       >
-        <el-table-column prop="id" label="id" width="100">
+        <el-table-column prop="id" label="id">
+          {{
+            default: (scope: any) => {
+              const rowKey = scope.row.id
+              return <el-text>{ wrappedColumns.value[rowKey].title }</el-text>
+            }
+          }}
+
         </el-table-column>
         <el-table-column prop="value" label="value">
           {{
             default: (scope: any) => {
               const rowKey = scope.row.id
+              if (rowKey.startsWith('_')) return
               const rowValue = scope.row.value
-              const renderer = wrappedColumns.value[rowKey].cellRenderer
+              const colInfo = wrappedColumns.value[rowKey]
+              console.log('colInfo', colInfo, rowKey, rowValue)
+
+              const renderer = colInfo.cellRenderer
               if (renderer !== undefined)
                 return renderer({ rowData } as any)
               return <el-text>{ rowValue }</el-text>
@@ -78,6 +99,14 @@ onMounted(()=>{
   wrappedData.value = updateData()
 })
 
+const visibleColumns = reactive<Array<string>>([])
+
+watch(()=>tableStore.columns[props.id], ()=>{
+  console.log('WRAPPED CHANGED')
+  const curRow = activeRowIndex.value
+  activeRowIndex.value = undefined
+  activeRowIndex.value = curRow
+})
 function updateColumns() {
   if (props.columns == undefined) return {}
 

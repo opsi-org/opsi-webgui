@@ -17,10 +17,13 @@ async function init(data: any) {
   console.log('inside store', store)
 }
 </script>
-
 <template>
   <Story :setup-app="init">
-    <ViewVClients />
-    <!-- {{  logout() }} -->
+    <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
+      <ViewVClients :is-mobile="true"/>
+    </Variant>
+    <Variant title="desktop" responsive-disabled>
+      <ViewVClients :is-mobile="false"/>
+    </Variant>
   </Story>
 </template>

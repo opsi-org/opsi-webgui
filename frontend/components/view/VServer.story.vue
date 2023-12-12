@@ -2,9 +2,20 @@
 import {loginlogout} from '~/histoire/histoire-utils'
 </script>
 
-<template>
+<!-- <template>
   <Story :setup-app="loginlogout">
     <ViewVServer />
-    <!-- {{  logout() }} -->
+  </Story>
+</template> -->
+
+
+<template>
+  <Story :setup-app="loginlogout">
+    <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
+      <ViewVServer :isMobile="true"/>
+    </Variant>
+    <Variant title="desktop" responsive-disabled>
+      <ViewVServer :isMobile="false"/>
+    </Variant>
   </Story>
 </template>

@@ -11,6 +11,7 @@
       :data="fetchedData"
       :sort-by="tableData.sortBy"
       @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
+      :is-mobile="props.isMobile"
       @selection-clear="storeSelection.clearSelectionDepots"
     >
 
@@ -105,7 +106,9 @@ const cookies = useCookies()
 const $t = useI18n().t
 
 const id = "server"
-
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+})
 const columns = reactive<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
@@ -162,9 +165,9 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 150,
       hidden: false,
       class: 'col-rowactions',
-      cellRenderer: () => (
+      cellRenderer: ({rowData}) => (
         <>
-          <el-button size="small">Edit</el-button>
+          <el-button size="small">Edit {rowData.depotId}</el-button>
           <el-button size="small" type="danger">Delete</el-button>
         </>
       ),

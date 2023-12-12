@@ -1,6 +1,7 @@
 <template>
+  <el-text>{{ tableId }}</el-text>
   <el-select-v2
-    v-model="columnVisibilityListWrapper"
+    v-model="tableStore.columns[props.tableId]"
     :options="headerWrapper"
     :multiple="multiCondition"
     :max-collapse-tags="0"
@@ -25,6 +26,9 @@
     </template>
   <!-- <template #default>option</template> -->
   </el-select-v2>
+  <!-- <el-text><pre>{{ tableStore.columns[props.tableId] }}</pre></el-text> -->
+  <!-- <el-text><pre>{{ headerWrapper.map(v=>v.value) }}</pre></el-text> -->
+  <!-- <el-text><pre>{{ _headers }}</pre></el-text> -->
   <!-- <div
     class="DropdownDDTableColumnVisibilityWrapper"
     :class="{ 'incontextmenu': props.incontextmenu }"
@@ -91,18 +95,16 @@
 </template>
 
 <script setup lang="ts">
-
-import { useHoverDropdown } from '~/composables/mixins/useComponent'
 import { useIcons } from '~/composables/mixins/useIcons'
+import { useUtilsData } from '~/composables/mixins/useUtilsData'
 import { useCookies } from '~/composables/mixins/useCookies'
 import type { ITableHeaderRow, ITableHeaderCell } from '~/types/ttableV3'
-import type { IObjectString2Boolean } from '~/types/tgeneral'
 import type { PropType } from 'vue';
-import { head } from 'lodash'
 const icons = useIcons()
 const cookies = useCookies()
 const mq = useMQ()
 
+const tableStore = storeTablesettings()
 const settings = storeSettings()
 
 const props = defineProps({
@@ -134,12 +136,13 @@ const headerWrapper = computed<Array<any>>(() => {
   return headerValues.value.filter((h:ITableHeaderCell)=>
     // h.fixed!==true &&
     h.key!='_empty_' &&
-    h._majorKey==undefined
+    (h._majorKey===undefined ||
+    h._isMajor!==undefined)
   // ).map((v,i) => ({ value: v.key, label: v.title, disabled: false}))
   ).map((v,i) => ({ value: v.key, label: v.title, disabled: v.fixed != undefined}))
 })
 
-const columnVisibilityListWrapper = ref<Array<string>>([])
+// const columnVisibilityListWrapper = ref<Array<string>>([])
 // const columnVisibilityListWrapper = computed<Ref<Array<string>>>( () => {
 //   return ref(columnVisibilityList)
 // })
@@ -147,11 +150,12 @@ const columnVisibilityListWrapper = ref<Array<string>>([])
 onMounted(() => { init() })
 
 function init () {
-  if (cookies.existsCookie('column_' + viewId)) {
-    // columnVisibilityList = cookies.getParsedCookie('column_' + viewId)
-    columnVisibilityList.length = 0
-    columnVisibilityList.push(...cookies.getParsedCookie('column_' + viewId))
-  } else {
+  // if (cookies.existsCookie('column_' + viewId)) {
+  //   // columnVisibilityList = cookies.getParsedCookie('column_' + viewId)
+  //   columnVisibilityList.length = 0
+  //   columnVisibilityList.push(...cookies.getParsedCookie('column_' + viewId))
+  // } else
+  {
     // Object.values(_headers).filter(k => !k._isMajor).forEach((h) => {
     //   if (h._majorKey) {
     //     columnVisibilityStates[_headers[h._majorKey].key] = !h.hidden || true
@@ -161,12 +165,20 @@ function init () {
     // })
 
     columnVisibilityList.length = 0
-
-    columnVisibilityList.push(...headerWrapper.value.map((_v:any) => _v.value))
+    const ids = useUtilsData().getVisibleColumnIds(Object.values(_headers))
+    console.log('headers', ids)
+    columnVisibilityList.push(...ids)
+    // columnVisibilityList.push(...headerWrapper.value.map((_v:any) => _v.value))
+    // columnVisibilityList.push(...Object.values(_headers.value)
+    //   // .filter(_v=>(
+    //   //   _v.fixed === false || _v.fixed === undefined
+    //   // ))
+    //   .map((v:any) => v.key))
     // columnVisibilityList.push(...Object.keys(columnVisibilityStates).filter(k => columnVisibilityStates[k]))
     // columnVisibilityList = Object.keys(columnVisibilityStates).filter(k => columnVisibilityStates[k])
   }
-  columnVisibilityListWrapper.value = columnVisibilityList
+  // columnVisibilityListWrapper.value = columnVisibilityList
+  tableStore.setColumns(props.tableId, columnVisibilityList)
 }
 
 watch(_headers, () => {
@@ -227,7 +239,8 @@ function handleItem (key: Array<string>) {
 
   _headers[_key].hidden = hiddenNow
   console.log('description hidden is  ', _headers[_key].hidden)
-  columnVisibilityListWrapper.value = columnVisibilityList
+  // columnVisibilityListWrapper.value = columnVisibilityList
+  tableStore.setColumns(props.tableId, columnVisibilityList)
 
   $emit('update:headers', _headers)
   // init()

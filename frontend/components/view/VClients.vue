@@ -9,6 +9,7 @@
       :columns="columns"
       :data="fetchedData"
       :sort-by="tableData.sortBy"
+      :is-mobile="isMobile"
       @selection-changed="(id: string) => storeSelections().toggleSelectionClients(id)"
       @selection-clear="storeSelections().clearSelectionClients"
     >
@@ -211,16 +212,19 @@ const $t = useI18n().t
 
 const id = "clients"
 
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+})
 const columns = reactive<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
       key: 'selected',
       dataKey: 'selected',
-      fixed: true,
       sortable: true,
       width: 50,
       maxWidth: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'selected', true)
+      fixed: true, // always visible
+      // hidden: cookies.includesCookie('column_' + id, 'selected', true)
     },
     // class: 'mobileVisibleOnlySelection'
     clientId: { // eslint-disaconfigble-next-line object-property-newline
@@ -230,15 +234,15 @@ const columns = reactive<ITableHeaderRow>({
       fixed: true,
       width: 200,
       sortable: true,
-      hidden: !cookies.includesCookie('column_' + id, 'clientId', true)
+      hidden: cookies.includesCookie('column_' + id, 'clientId', true)
     },
     description: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.description'),
-       key: 'description',
-       dataKey: 'description',
-       sortable: true,
+      key: 'description',
+      dataKey: 'description',
+      sortable: true,
       width: 200,
-      hidden: !cookies.includesCookie('column_' + id, 'description', false)
+      hidden: cookies.includesCookie('column_' + id, 'description', false)
     },
     ipAddress: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.ip'),
@@ -246,7 +250,7 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'ipAddress',
       sortable: true,
       width: 100,
-      hidden: !cookies.includesCookie('column_' + id, 'ipAddress', false)
+      hidden: cookies.includesCookie('column_' + id, 'ipAddress', false)
     },
     macAddress: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.mac'),
@@ -254,7 +258,7 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'macAddress',
       sortable: true,
       width: 100,
-      hidden: !cookies.includesCookie('column_' + id, 'macAddress', false)
+      hidden: cookies.includesCookie('column_' + id, 'macAddress', false)
     },
     lastSeen: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.lastSeen'),
@@ -262,7 +266,7 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'lastSeen',
       sortable: true,
       width: 100,
-      hidden: !cookies.includesCookie('column_' + id, 'lastSeen', false)
+      hidden: cookies.includesCookie('column_' + id, 'lastSeen', false)
     },
     uefi: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.uefi'),
@@ -270,41 +274,47 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'uefi',
       sortable: true,
       width: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'uefi', false)
+      hidden: !cookies.includesCookie('column_' + id, 'uefi', false),
+        // onChange={onChange}
+      cellRenderer: ({rowData}:any) =>
+        <el-checkbox
+          modelValue={rowData.uefi}
+          indeterminate={false}
+          class="pr-3"
+        />
     },
     _majorStats: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.stats'),
       key: '_majorStats',
       dataKey: '_majorStats',
       width: 50,
-      // _isMajor: true,
-      hideen: true
+      _isMajor: true,
+      hidden: true
     },
     version_outdated: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.versionOutdated'),
-       key: 'version_outdated',
-       dataKey: 'version_outdated',
-      //  _majorKey: '_majorStats',
-       sortable: true, fixed: true,
+      key: 'version_outdated',
+      dataKey: 'version_outdated',
+      _majorKey: '_majorStats',
+      sortable: true,
       width: 50,
       hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionResultFailed'),
-       key: 'actionResult_failed',
-       dataKey: 'actionResult_failed',
-      //  _majorKey: '_majorStats',
-       sortable: true, fixed: true,
-       width: 50,
+      key: 'actionResult_failed',
+      dataKey: 'actionResult_failed',
+      _majorKey: '_majorStats',
+      sortable: true,
+      width: 50,
       hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.installationStatusUnknown'),
-       key: 'installationStatus_unknown',
-       dataKey: 'installationStatus_unknown',
-      //  _majorKey: '_majorStats',
-       sortable: true,
-       fixed: true,
+      key: 'installationStatus_unknown',
+      dataKey: 'installationStatus_unknown',
+      _majorKey: '_majorStats',
+      sortable: true,
       width: 50,
       hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
     },
@@ -313,19 +323,21 @@ const columns = reactive<ITableHeaderRow>({
       title: $t('table.fields.reachable'),
       key: 'reachable',
       dataKey: 'reachable',
-       fixed: true,
-       sortable: false,
+      sortable: false,
       width: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'reachable', true)
+      hidden: false
+      // hidden: !cookies.includesCookie('column_' + id, 'reachable', true)
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.rowactions'),
       key: 'rowactions',
       dataKey: 'rowactions',
       fixed: TableV2FixedDir.RIGHT,
-      width: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'rowactions', false),
-      class: 'col-rowactions'
+      width: 150,
+      hidden: false,
+      // hidden: !cookies.includesCookie('column_' + id, 'rowactions', false),
+      class: 'col-rowactions',
+      cellRenderer: ({rowData}: any) => <el-button type="primary">Edit {rowData.clientId}</el-button>
     }
 })
 const fetchedData = ref<Array<any>>([])
