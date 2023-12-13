@@ -74,4 +74,5 @@ export const useClient = () => {
     fetchedDataClients2Depots = data.value
     // return data.value.sort()
   }
+  return { getClientIdList, getClientToDepot, fetchedDataClients2Depots }
 }

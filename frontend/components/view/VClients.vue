@@ -215,12 +215,14 @@ import type { ITableHeaderRow } from '~/types/ttableV3'
 
 import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+import { useIcons } from '~/composables/mixins/useIcons';
 const storeSelection = storeSelections()
 const cookies = useCookies()
 const $t = useI18n().t
-
+const icons = useIcons()
 const id = "clients"
 
+const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
 })
@@ -367,7 +369,17 @@ const columns = reactive<ITableHeaderRow>({
       hidden: false,
       // hidden: !cookies.includesCookie('column_' + id, 'rowactions', false),
       class: 'col-rowactions',
-      cellRenderer: ({rowData}: any) => <el-button type="primary">Edit {rowData.clientId}</el-button>
+      // cellRenderer: ({rowData}: any) => <el-button type="primary">Edit {rowData.clientId}</el-button>
+      cellRenderer: ({rowData}) => {
+        const change = ()=>emit('change', rowData.clientId)
+        return (
+        <>
+          <el-button size="small" onClick={change}>
+            <IconIIcon icon={icons.settings} />
+            {/* {rowData.depotId} */}
+          </el-button>
+        </>
+      )},
     }
 })
 const fetchedData = ref<Array<any>>([])

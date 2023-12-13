@@ -2,7 +2,13 @@
 export default {
   content: [],
   theme: {
-    extend: {},
+    extend: {
+      maxWidth: {
+      '1/1': '100%',
+      '1/2': '50%',
+      '1/3': '33%',
+      }
+    },
   },
   plugins: [],
 }

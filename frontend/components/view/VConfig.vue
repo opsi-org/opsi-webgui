@@ -1,17 +1,20 @@
 
 <template>
+  <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
+  <el-text v-else> <h3>{{ currentId }}</h3></el-text>
 
-  <SelectSServers :id="currentId" @change="setId" />
   <el-tabs v-model="activeName" class="demo-tabs">
     <el-tab-pane
       :label="currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')"
       name="config"
       active :disabled="!(type == 'clients' || type == 'depots')"
     >
-        Config of {{ currentId }}
+        <el-text>Config of {{ type }} {{ currentId }}</el-text>
       </el-tab-pane>
     <el-tab-pane :label="$t('title.hostattr')" name="attr">
-      <FormFHostAttributes :id="currentId" />
+      <el-scrollbar >
+        <FormFHostAttributes :id="currentId" :type="type"/>
+      </el-scrollbar>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -21,7 +24,8 @@ const activeName = ref('attr')
 const currentId = ref<string|undefined>('')
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'depots' }
+  type: { type: String, default: 'depots' },
+  isChild: { type: Boolean, default: false }
 })
 watch(()=>props.id, ()=>{
   currentId.value = props.id

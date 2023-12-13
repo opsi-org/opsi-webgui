@@ -40,7 +40,8 @@ export default defineConfig({
     },
     favicon: './public/images/UIB_1704_2023_OPSI_Logo_Bildmarke_nur_Biene_quer.png',
     // defaultColorScheme: 'dark',
-    darkClass: 'webgui-theme-dark dark',
+    // darkClass: 'webgui-theme-dark dark', // not whitespaces allowed
+    darkClass: 'dark',
     // storeColorScheme: true
     // colors: {
     //   gray: defaultColors.zinc,

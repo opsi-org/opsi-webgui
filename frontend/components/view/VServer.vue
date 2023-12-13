@@ -110,11 +110,14 @@ import type { ITableHeaderRow } from '~/types/ttableV3'
 
 import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+import { useIcons } from '~/composables/mixins/useIcons';
 const storeSelection = storeSelections()
 const cookies = useCookies()
+const icons = useIcons()
 const $t = useI18n().t
 
 const id = "server"
+const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
 })
@@ -178,13 +181,26 @@ const columns = reactive<ITableHeaderRow>({
       fixed: TableV2FixedDir.RIGHT,
       hidden: false,
       class: 'col-rowactions',
-      cellRenderer: ({rowData}) => (
+      cellRenderer: ({rowData}) => {
+        const change = ()=>emit('change', rowData.depotId)
+        return (
         <>
-          <el-button size="small">Edit {rowData.depotId}</el-button>
-          <el-button size="small" type="danger">Delete</el-button>
+          <el-button size="small" onClick={change}>
+            <IconIIcon icon={icons.settings} />
+            {/* {rowData.depotId} */}
+          </el-button>
         </>
-      ),
-      // align: 'center'
+      )},
+      // <el-button size="small" type="danger">Delete</el-button>
+      // <ButtonBTNRowLinkTo
+      //       :title="$t('title.config')"
+      //       :label="(headerData.rowactions.mergeOnMobile==true && $mq=='mobile') ? $t('title.config') : ''"
+      //       :icon="icon.settings"
+      //       to="/depots/config"
+      //       :ident="row.item.ident"
+      //       :pressed="isRouteActive"
+      //       :click="routeRedirectWith"
+      //     />
     }
 })
 const fetchedData = ref<Array<any>>([])
@@ -230,9 +246,11 @@ async function _fetch() {
   if (opsiconfigserver){
     console.log('Fetchresult set configserver from store')
     storeSelection.pushToSelectionDepots(opsiconfigserver)
+    emit('change', opsiconfigserver)
   } else{
     console.log('Fetchresult set configserver from result')
     storeSelection.pushToSelectionDepots(data.value[0].depotId)
+    emit('change', data.value[0].depotId)
   }
   console.log('Fetchresult configserver', opsiconfigserver)
   console.log('Fetchresult selection', storeSelection.selectionDepots)

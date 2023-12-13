@@ -22,7 +22,7 @@ async function init(data: any) {
 <template>
   <Story :setup-app="init">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <SelectSServers :id="selection" @change="(s:string)=>{console.log(s)}"/>
+      <SelectSHosts :id="selection" @change="(s:string)=>{console.log(s)}"/>
     </Variant>
   </Story>
 </template>
