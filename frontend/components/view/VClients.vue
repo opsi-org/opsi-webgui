@@ -2,6 +2,15 @@
 
   <el-text>{{ $t('title.clients') }}</el-text><br />
   <el-text>Client Selection: {{ storeSelections().selectionClients }}</el-text> <br />
+      <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
+  <InputIFilter
+      :data="tableData"
+      :filterable-columns="Object.values(columns)"
+      @update="(v)=> {
+        tableData.filterColumns = v.cols
+        tableData.filterQuery = v.vals
+      }"
+    />
     <TableTDefault
       v-if="fetchedData.length > 0"
       row-id="clientId"
@@ -367,14 +376,21 @@ const handleChange = (id:string) => {
   console.log('handleSelectionChange', id)
   storeSelections().toggleSelectionDepots(id)
 }
-const tableData = {
+const tableData = reactive({
   pageNumber: 1,
   perPage: 20,
   sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  filterQuery: ''
-}
+  filterQuery: '',
+  filterColumns: ['clientId', 'description']
+})
 onMounted(async ()=> fetchedData.value = await _fetch())
+
+watch(()=> tableData, async ()=>{
+  console.log('tableData changed', tableData)
+  fetchedData.value = []
+  fetchedData.value = await _fetch()
+}, { deep: true})
 
 async function _fetch() {
   const params:any = { ...tableData }

@@ -39,7 +39,7 @@
       <template #prepend>
         <el-select-v2
           v-model="filterValue"
-          :options="props.filterableColumns.map((v,i) => ({ value: v.key, label: v.title }))"
+          :options="props.filterableColumns.map((v,i) => ({ value: v.key, label: v.title, disabled: disableColumnSelection }))"
           class="w-full h-full"
           type="primary"
           :multiple="true"
@@ -53,10 +53,10 @@
           <!-- <el-option v-for="col,i in props.filterableColumns" :label="col.key" :value="col.key" /> -->
 
           <template #default="{ item }">
-              <span class="w-fit">{{ item.label }}</span>
-              <!-- <span style="color: var(--el-text-color-secondary); font-size: 13px">
-                {{ item.value }}
-              </span> -->
+            <div class="inline">
+              <IconIIcon class="inline" :icon="icon.check" v-if="filterValue.includes(item.value)"/>
+              <span class="w-fit inline">{{ item.label }}</span>
+            </div>
             </template>
         </el-select-v2>
       </template>
@@ -72,6 +72,7 @@
 <script setup lang="ts">
 import type { ITableData, ITableInfo } from '~/types/ttable'
 import { useIcons } from '@/composables/mixins/useIcons'
+import { useUtilsEvents } from '@/composables/mixins/useUtils'
 import type { ITableHeaderRow } from '~/types/ttableV3';
 // import { Component, Prop, Ref } from 'nuxt-property-decorator'
 // import { BFormInput } from 'bootstrap-vue'
@@ -95,9 +96,14 @@ const props = defineProps({
   data: { type: Object as PropType<ITableData>, required: true},
   filterableColumns: { type: Object as PropType<Array<ITableHeaderRow>>, required: true},
   additionalTitle: { type: String, default: ''},
+  disableColumnSelection: {type: Boolean, default: true}
 })
 const emits = defineEmits(['update'])
+const debounceEvent = useUtilsEvents().debounce(()=>{
+  emits('update', {cols: filterValue, vals: filterQueryValue.value})
+}, 300)
 onMounted(()=>{
+
   if (IFilter.value) {
     IFilter.value.focus()
   }
@@ -111,10 +117,12 @@ onMounted(()=>{
   }
 })
 watch(filterValue, ()=>{
-  emits('update', {cols: filterValue, vals: filterQueryValue.value})
+  // emits('update', {cols: filterValue, vals: filterQueryValue.value})
+  debounceEvent()
 })
 watch(filterQueryValue, ()=>{
-  emits('update', {cols: filterValue, vals: filterQueryValue.value})
+  debounceEvent()
+  // emits('update', {cols: filterValue, vals: filterQueryValue.value})
 })
 
 const filterableColumns = computed(()=> {
@@ -123,7 +131,8 @@ const filterableColumns = computed(()=> {
   return []
 })
 function clearFilter () {
-  props.data.filterQuery = ''
+  filterQueryValue.value = ''
+  debounceEvent()
 }
 // }
 </script>

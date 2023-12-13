@@ -3,9 +3,10 @@
     <el-text>{{ $t('title.depots') }}</el-text><br />
     <!-- <el-button :type="'danger'">Danger</el-button> -->
     <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
+    <!-- :filterable-columns="[columns['depotId']]" -->
     <InputIFilter
       :data="tableData"
-      :filterable-columns="[columns['depotId']]"
+      :filterable-columns="Object.values(columns)"
       @update="(v)=> {
         tableData.filterColumns = v.cols
         tableData.filterQuery = v.vals
