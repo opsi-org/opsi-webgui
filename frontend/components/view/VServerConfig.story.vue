@@ -23,23 +23,23 @@ function changeId (id:string) {
 </script>
 <template>
   <Story :setup-app="init">
-    <!-- <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <LayoutLPageContent>
-        <slot name="default">
-          <ViewVClients :is-mobile="true"/>
-        </slot>
-        <slot name="default">
-          <ViewVConfig :is-mobile="true"/>
-        </slot>
+    <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
+      <LayoutLPageContent :is-mobile="true">
+        <template #default>
+          <ViewVServer :is-mobile="true" @change="changeId"/>
+        </template>
+        <template #page1>
+          <ViewVConfig :is-mobile="true" :is-child="true" :id="selectedServer" type="depots"/>
+        </template>
       </LayoutLPageContent>
-    </Variant> -->
+    </Variant>
     <Variant title="desktop" responsive-disabled>
-      <LayoutLPageContent>
+      <LayoutLPageContent :is-mobile="false">
         <template #default>
           <ViewVServer :is-mobile="false" @change="changeId"/>
         </template>
         <template #page1>
-          <ViewVConfig :is-child="true" :id="selectedServer" type="depots"/>
+          <ViewVConfig :is-mobile="false" :is-child="true" :id="selectedServer" type="depots"/>
         </template>
       </LayoutLPageContent>
     </Variant>

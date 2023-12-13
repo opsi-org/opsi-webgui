@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form label-width="200px">
+    <el-form label-width="200px" class="w-full">
       <div v-for="(value, label, index) in fetchedData[0]" :key="index">
         <el-form-item :label="label.toString()">
           <el-input :value="value" />

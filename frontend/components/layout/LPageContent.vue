@@ -1,25 +1,36 @@
 <template>
-  <el-row class="">
+  <el-row class="relative">
     <el-col
-      :span="24 / Object.keys($slots).length"
-      class="border resize-x"
-      :class="'max-width-1/'+Object.keys($slots).length"
+      :span="props.isMobile ? 24 : 24 / Object.keys($slots).length"
+      class="border resize-x "
+      :class="{
+        ['max-width-1/'+Object.keys($slots).length]: !props.isMobile,
+        'hidden': props.isMobile && Object.keys($slots).length > 1,
+        // 'absolut top-0 left-0 bg-orange-300': props.isMobile
+      }"
     >
       <slot :name="Object.keys($slots)[0]"/>
     </el-col>
     <el-col
       v-if="Object.keys($slots).length > 1"
-      :span="24 / Object.keys($slots).length"
+      :span="props.isMobile ? 24 : 24 / Object.keys($slots).length"
       class="border resize-x"
-      :class="'max-width-1/'+Object.keys($slots).length"
+      :class="{
+        ['max-width-1/'+Object.keys($slots).length]: !props.isMobile,
+        'hidden': props.isMobile && Object.keys($slots).length > 2,
+        // 'absolut top-0 left-0 bg-orange-600': props.isMobile
+      }"
     >
       <slot :name="Object.keys($slots)[1]"/>
     </el-col>
     <el-col
       v-if="Object.keys($slots).length > 2"
-      :span="24 / Object.keys($slots).length"
+      :span="props.isMobile ? 24 : 24 / Object.keys($slots).length"
       class="border resize-x"
-      :class="'max-width-1/'+Object.keys($slots).length"
+      :class="{
+        ['max-width-1/'+Object.keys($slots).length]: !props.isMobile,
+        // 'absolut top-0 left-0 bg-orange-800': props.isMobile
+      }"
     >
       <slot :name="Object.keys($slots)[2]"/>
     </el-col>
@@ -39,8 +50,13 @@
 </template>
 
 <script setup lang="ts">
+
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+})
 onMounted(()=>{
 })
+
 </script>
 
 

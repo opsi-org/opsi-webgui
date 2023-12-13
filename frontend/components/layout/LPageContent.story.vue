@@ -3,13 +3,13 @@
     :layout="{ type: 'grid', width: '100%'}"
   >
     <Variant title="mobile-default" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <LayoutLPageContent >
+      <LayoutLPageContent :is-mobile="true">
         <el-text> Some content </el-text>
       </LayoutLPageContent>
     </Variant>
 
     <Variant title="mobile-two cols" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <LayoutLPageContent>
+      <LayoutLPageContent  :is-mobile="true">
         <template #default>
           <el-text> Some content </el-text>
         </template>
@@ -19,7 +19,7 @@
       </LayoutLPageContent>
     </Variant>
     <Variant title="mobile-three cols" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <LayoutLPageContent >
+      <LayoutLPageContent :is-mobile="true" >
         <template #default>
           <el-text> Some content </el-text>
         </template>
