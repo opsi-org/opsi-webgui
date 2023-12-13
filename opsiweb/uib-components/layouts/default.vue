@@ -21,7 +21,7 @@
         <b-button
           data-testid="btnQuickPanel"
           :pressed="showQuickPanel"
-          :title="showQuickPanel ? $t('label.hideQP'): $t('label.showQP')"
+          :title="showQuickPanel ? $t('label.hide', {item: 'Quick Panel'}) : $t('label.show', {item: 'Quick Panel'})"
           size="sm"
           class="border-0 mr-1"
           variant="outline-primary"

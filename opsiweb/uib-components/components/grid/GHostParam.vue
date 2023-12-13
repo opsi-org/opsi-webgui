@@ -2,7 +2,7 @@
   <div data-testid="GHostParam">
     <OverlayOLoading :is-loading="(isLoading || $fetchState.pending)" />
     <AlertAAlert ref="hostParamErrorAlert" />
-    <LazyInputIFilterTChanges v-if="hostParam.value" :placeholder="$t('table.filterBy.Config')" :filter.sync="filter" />
+    <LazyInputIFilterTChanges v-if="hostParam.value" :placeholder="$t('filterBy.Config')" :filter.sync="filter" />
     <LazyDivDScrollResult v-if="hostParam.value" :key="hostParam.id">
       <span v-for="v,k in hostParam.value" :key="k">
         <b-button v-b-toggle="'collapse-'+k" class="text-left font-weight-bold border-0" size="sm" block variant="outline-primary">{{ k }}</b-button>

@@ -32,7 +32,6 @@
         <span v-for="item, index in helpModes" :key="index">
           <GridGFormItem :label="item.label" :value="item.description" variant="longvalue" />
         </span>
-        <span class="text-small">{{ $t('note.multiselect') }}</span>
       </b-tooltip>
     </div>
     <b-button v-else-if="type==='button'" :title="$t('form.multiselection.disable.tootltip')" @click="changeSelectionMode"> {{ $t('form.multiselection.disable') }} </b-button>

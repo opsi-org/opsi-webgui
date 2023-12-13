@@ -295,7 +295,7 @@ export default class VClientCreation extends Vue {
     }
     await this.$axios.$post('/api/opsidata/clients', request)
       .then(async () => {
-        this.showToastSuccess(this.$t('message.warning.createClient', { client: this.newClient.hostId }))
+        this.showToastSuccess(this.$t('message.success.createClient', { client: this.newClient.hostId }))
         if (this.uefi) {
           this.setUEFI(this.newClient.hostId, this.uefi.toString())
         }
