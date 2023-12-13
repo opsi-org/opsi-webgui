@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SelectSServers />
+    <SelectSServers :id="props.id" @change="fetch"/>
     <el-form label-width="200px">
       <div v-for="(value, label, index) in fetchedData[0]" :key="index">
         <el-form-item :label="label.toString()">
@@ -11,24 +11,27 @@
   </div>
 </template>
 
-<script setup lang="tsx">
+<script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 const $t = useI18n().t
 let fetchedData = ref<Array<any>>([])
 const props = defineProps({
-  id: { type: String, default: 'notejeena.uib.local' }
+  id: { type: String, default: undefined }
 })
 
-onMounted(async ()=> await fetch())
+onMounted(async ()=> {
+  if (props.id)
+    await fetch(props.id)
+})
 
-async function fetch() {
-  const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${props.id}]`)
+async function fetch(id:string) {
+  const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${id}]`)
   if (error) {
     console.log(error)
     useNotification().error(error)
     return
   }
-  console.log('Fetchresult data', data)
-  fetchedData = data
+  console.log('Fetchresult data', data.value)
+  fetchedData.value = data.value
 }
 </script>

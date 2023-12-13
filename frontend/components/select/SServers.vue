@@ -15,9 +15,18 @@ import { useDepot } from '~/composables/mixins/useGet';
 const $t = useI18n().t
 let fetchedData = ref<Array<any>>([])
 const value = ref('')
-
-onMounted(async ()=> await fetch())
-
+const props = defineProps({
+  id: { type: String, default: undefined }
+})
+const emit = defineEmits(['change'])
+onMounted(async ()=> {
+  await fetch()
+  if (props.id)
+  value.value = props.id
+})
+watch(()=>value.value, ()=>{
+  emit('change', value.value)
+})
 async function fetch() {
   const {data, error} = await useDepot().getDepotIdList()
   fetchedData = data

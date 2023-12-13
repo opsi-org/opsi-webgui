@@ -1,4 +1,3 @@
-
 <template>
   <Story>
     <LayoutLDefault>
