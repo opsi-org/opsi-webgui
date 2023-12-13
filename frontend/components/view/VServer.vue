@@ -186,7 +186,7 @@ const columns = reactive<ITableHeaderRow>({
         return (
         <>
           <el-button size="small" onClick={change}>
-            <IconIIcon icon={icons.settings} />
+            <iconIIcon icon={icons.settings} />
             {/* {rowData.depotId} */}
           </el-button>
         </>
