@@ -378,7 +378,7 @@ const handleChange = (id:string) => {
 }
 const tableData = reactive({
   pageNumber: 1,
-  perPage: 20,
+  perPage: 1000,
   sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
