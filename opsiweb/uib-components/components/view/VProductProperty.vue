@@ -21,7 +21,7 @@
         :disabled="tabPropertiesDisabled"
       >
         <template #title>
-          <span class="property"> {{ $t('title.properties') + ((!$fetchState.pending && tabPropertiesDisabled)? ' '+ $t('title.propertiesEmpty'):'') }} </span>
+          <span class="property"> {{ $t('title.properties') + ((!$fetchState.pending && tabPropertiesDisabled)? ' '+ $t('title.Empty'):'') }} </span>
         </template>
         <br>
         <DivDScrollResult>
@@ -39,7 +39,7 @@
         :active="activeTab===1"
       >
         <template #title>
-          <span class="dependency"> {{ $t('title.dependencies') + ((!$fetchState.pending && tabDependenciesDisabled)? ' '+ $t('title.dependenciesEmpty'):'') }} </span>
+          <span class="dependency"> {{ $t('title.dependencies') + ((!$fetchState.pending && tabDependenciesDisabled)? ' '+ $t('title.Empty'):'') }} </span>
         </template>
         <br>
         <DivDScrollResult>

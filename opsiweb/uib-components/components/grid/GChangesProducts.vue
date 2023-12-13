@@ -4,7 +4,7 @@
     <div v-if="changesProducts.filter(o => o.user === username).length>0" data-testid="TChanges" class="TChanges">
       <b-row>
         <b-col>
-          <InputIFilterTChanges :placeholder="$t('table.filterBy.DepotsClients')" :filter.sync="filter" />
+          <InputIFilterTChanges :placeholder="$t('filterBy.DepotsClients')" :filter.sync="filter" />
         </b-col>
         <b-col cols="auto">
           <ButtonBTNClearChanges hide="trackChangesModal" from="products" />
