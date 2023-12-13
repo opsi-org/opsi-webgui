@@ -47,6 +47,7 @@ export interface ITableData {
   sortBy: string,
   sortDesc: boolean,
   filterQuery: string,
+  filterColumns?: Array<string>,
   type?: string,
   selected?: string,
   selectedDepots?: string,
@@ -75,7 +76,7 @@ export interface ITableInfo {
   sortBy: string,
   sortDesc: boolean,
   filterQuery?: string,
-  headerData: ITableHeaders
+  headerData?: ITableHeaders
 }
 
 export interface IProperty {

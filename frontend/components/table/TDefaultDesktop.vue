@@ -15,8 +15,6 @@
       </template>
     </el-auto-resizer>
   </div>
-  <el-text><pre>{{ tableStore.columns[props.id] }}</pre></el-text>
-  <el-text><pre>{{ Object.values(wrappedColumns) }}</pre></el-text>
 </template>
 
 

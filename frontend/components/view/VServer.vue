@@ -3,6 +3,14 @@
     <el-text>{{ $t('title.depots') }}</el-text><br />
     <!-- <el-button :type="'danger'">Danger</el-button> -->
     <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
+    <InputIFilter
+      :data="tableData"
+      :filterable-columns="[columns['depotId']]"
+      @update="(v)=> {
+        tableData.filterColumns = v.cols
+        tableData.filterQuery = v.vals
+      }"
+    />
     <TableTDefault
       v-if="fetchedData.length > 0"
       row-id="depotId"
@@ -114,21 +122,22 @@ const columns = reactive<ITableHeaderRow>({
       title: $t('table.fields.selection'),
       key: 'selected',
       dataKey: 'selected',
-      fixed: true,
       sortable: true,
       width: 50,
       maxWidth: 50,
-      hidden: !cookies.includesCookie('column_' + id, 'selected', true)
+      fixed: true,
+      hidden: false
+      // hidden: !cookies.includesCookie('column_' + id, 'selected', true)
     },
     depotId: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.id'),
       key: 'depotId',
       dataKey: 'depotId',
-      fixed: true,
       sortable: true,
       width: 150,
       maxWidth: 350,
-      hidden: !cookies.includesCookie('column_' + id, 'depotId', true)
+      fixed: true,
+      hidden: false
     },
     description: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.description'),
@@ -136,7 +145,8 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'description',
       sortable: true,
       width: 150,
-      hidden: !cookies.includesCookie('column_' + id, 'description', false)
+      hidden: false
+      // hidden: !cookies.includesCookie('column_' + id, 'description', false)
     },
     type: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.type'),
@@ -145,7 +155,8 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 140,
       maxWidth: 300,
-      hidden: !cookies.includesCookie('column_' + id, 'type', true)
+      hidden: false
+      // hidden: !cookies.includesCookie('column_' + id, 'type', true)
     },
     ip: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.ip'),
@@ -154,15 +165,16 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 100,
       maxWidth: 150,
-      hidden: !cookies.includesCookie('column_' + id, 'ip', false)
+      // hidden: !cookies.includesCookie('column_' + id, 'ip', false)
+      hidden: false
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions',
       dataKey: 'rowactions',
       title: $t('table.fields.rowactions'),
-      fixed: TableV2FixedDir.RIGHT,
       width: 150,
       maxWidth: 150,
+      fixed: TableV2FixedDir.RIGHT,
       hidden: false,
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => (
@@ -180,14 +192,21 @@ const handleChange = (id:string) => {
   console.log('handleSelectionChange', id)
   storeSelection.toggleSelectionDepots(id)
 }
-const tableData = {
+const tableData = reactive({
   pageNumber: 1,
   perPage: 20,
   sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  filterQuery: ''
-}
+  filterQuery: '',
+  filterColumns: ['depotId']
+})
 onMounted(async ()=> fetchedData.value = await _fetch())
+
+watch(()=> tableData, async ()=>{
+  console.log('tableData changed', tableData)
+  fetchedData.value = []
+  fetchedData.value = await _fetch()
+}, { deep: true})
 
 async function _fetch() {
   const params = { ...tableData, selected: '' }

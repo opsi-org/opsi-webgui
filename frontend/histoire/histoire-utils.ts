@@ -27,6 +27,11 @@ export async function loginlogout({ app }: any) {
     await logout()
     _unmount()
   }
+  // console.log('ENV', process.env)
+  // console.log('ENV', process.env.OPSI_ADMIN_PASSWORD)
+  // const publicEnvVar = import.meta.env;
+  // console.log('ENV2', publicEnvVar)
+  // console.log('ENV2', publicEnvVar.OPSI_ADMIN_PASSWORD)
   const User = new FormData()
   User.append('username', 'adminuser')
   User.append('password', 'adminuser')

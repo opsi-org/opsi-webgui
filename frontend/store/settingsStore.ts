@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed } from 'vue'
+import { useDark, useToggle } from '@vueuse/core'
 
 import type { ITheme } from '@/types/tsettings'
 import type { IObjectString2Boolean } from '@/types/tgeneral'
@@ -84,7 +85,13 @@ export const storeSettings = defineStore('settings', () => {
   function changeTheme(t:string) {
       // `this` is the store instance
     const _colorthemeobj = { title: 'light', rel: 'themes/opsi-light.css', icon: useIcons().themelight }
+    // const color = useColorMode() // bootstrap
+    const isDark = useDark()
+    // color.preference ='light'
+    useToggle(isDark)
+
     if (t==='dark'){
+      // color.value = 'dark'
       _colorthemeobj.title = t
       _colorthemeobj.rel = 'themes/opsi-dark.css'
       _colorthemeobj.icon = useIcons().themedark

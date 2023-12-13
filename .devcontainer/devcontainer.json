@@ -23,38 +23,18 @@
 		"vscode": {
 			// cleaning up. only install the ones which are really needed/useful
 			"extensions": [
-				////////// Vue/Nuxt3
-				// "octref.vetur",
 				"Vue.volar",
-				// "Vue.vscode-typescript-vue-plugin",
-				// "misterj.vue-volar-extention-pack",
 				"wejectchan.vue3-snippets-for-vscode",
-				// "johnsoncodehk.vscode-typescript-vue-plugin",
-
-				////////// helpers for other libs
 				"lokalise.i18n-ally",
 				"bradlc.vscode-tailwindcss",
 				"antfu.iconify",
-				// "orta.vscode-jest",
-				// "ms-playwright.playwright",
-				// "sakamoto66.vscode-playwright-test-runner",
-
-				////////// linter
-				// "SonarSource.sonarlint-vscode",
-				// "dbaeumer.vscode-eslint",
-
-				////////// container and building app
 				"fooxly.workspace",
 				"philfontaine.autolaunch",
-				// "pucelle.run-on-save",
-
-				////////// helpers
 				"gruntfuggly.todo-tree",
 				"esbenp.prettier-vscode",
 				"shardulm94.trailing-spaces",
 				"seunlanlege.action-buttons",
-				// "eamodio.gitlens",
-
+				"anseki.vscode-color"
 			]
 		}
 	}
