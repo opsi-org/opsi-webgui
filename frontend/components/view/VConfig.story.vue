@@ -19,10 +19,15 @@ async function init(data: any) {
   console.log('inside store', store)
 }
 </script>
+
+
 <template>
   <Story :setup-app="init">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <SelectSServers :id="selection" @change="(s:string)=>{console.log(s)}"/>
+      <ViewVConfig type="depots" :id="selection"/>
     </Variant>
+    <!-- <Variant title="desktop" responsive-disabled>
+      <ViewVConfig :isMobile="false"/>
+    </Variant> -->
   </Story>
 </template>

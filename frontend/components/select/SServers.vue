@@ -18,14 +18,15 @@ const value = ref('')
 const props = defineProps({
   id: { type: String, default: undefined }
 })
-const emit = defineEmits(['change'])
+const emit = defineEmits(['update:value'])
 onMounted(async ()=> {
   await fetch()
   if (props.id)
   value.value = props.id
 })
 watch(()=>value.value, ()=>{
-  emit('change', value.value)
+  // emit('change', value.value)
+  emit('update:value', value.value)
 })
 async function fetch() {
   const {data, error} = await useDepot().getDepotIdList()

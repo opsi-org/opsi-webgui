@@ -1,5 +1,4 @@
 
-
 const loggedIn = ref(false)
 export async function logout()  {
   if (!loggedIn.value) return

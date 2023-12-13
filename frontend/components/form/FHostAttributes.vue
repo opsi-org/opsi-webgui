@@ -1,6 +1,5 @@
 <template>
   <div>
-    <SelectSServers :id="props.id" @change="fetch"/>
     <el-form label-width="200px">
       <div v-for="(value, label, index) in fetchedData[0]" :key="index">
         <el-form-item :label="label.toString()">
@@ -22,6 +21,10 @@ const props = defineProps({
 onMounted(async ()=> {
   if (props.id)
     await fetch(props.id)
+})
+watch(()=>props.id, ()=>{
+  if (props.id)
+    fetch(props.id)
 })
 
 async function fetch(id:string) {
