@@ -1,5 +1,5 @@
 <template>
-  <el-menu router :default-active="useRouter().currentRoute.value.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-fit">
+  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-fit">
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
         <!-- menus with children -->
