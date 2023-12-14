@@ -6,11 +6,13 @@ import type { ITheme } from '@/types/tsettings'
 import type { IObjectString2Boolean } from '@/types/tgeneral'
 import type { IColumnLayoutCollapsed } from '@/types/tobjects'
 import { useIcons } from '~/composables/mixins/useIcons'
+import _ from 'lodash'
 
 export const storeSettings = defineStore('settings', () => {
   // need to return the states / getters/ actions in the end of the setup
   // states
-  const _theme = 'light'
+  let _isMobile = useMQ().isMobile.value
+  const _theme = ref(document.querySelector('html')?.classList.contains('dark') ? 'dark' : document.querySelector('html')?.classList.contains('htw-dark') ? 'dark' : 'light')
   let _language: string = useCookie('Language').value || 'en'
   let _quicksave: boolean = useCookie('Quicksave').value === 'true' || (useCookie('Quicksave').value === undefined) || false
   let colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: useIcons().themelight }
@@ -19,34 +21,36 @@ export const storeSettings = defineStore('settings', () => {
 
   // getter
   const twoColumnLayoutCollapsed = computed(() => _twoColumnLayoutCollapsed)
+  const isMobile = computed(() => _isMobile)
   const language = computed(() => _language)
   const quicksave = computed(() => _quicksave)
   const expiresInterval = computed(() => _expiresInterval)
-  const isLight = computed(() => colorthemeobj.title === 'light')
+  const isLight = computed(() => _theme.value === 'light')
+  // const isLight = computed(() => colorthemeobj.title === 'light')
   const colortheme = computed(() => {
-    if (useCookie('theme.title')) {
-      const c: ITheme = {
-        rel: useCookie('theme.rel').value as string,
-        title: useCookie('theme.title').value as string
-      }
-      // TODO realy needed?
-      try{
-        c.timestamp = (JSON.parse(useCookie('theme.timestamp').value || '')) as number
-      } catch (e) {
-        c.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
-        console.warn(e)
-      }
-      if (c.rel !== colorthemeobj.rel) {
-        if (!colorthemeobj.timestamp) {
-          return c
-        }
-        if (new Date(new Date(c.timestamp).toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime() - colorthemeobj.timestamp < 0) {
-          return c
-        }
-        return colorthemeobj
-      }
-    }
-    return colorthemeobj
+    return _theme.value
+    // if (useCookie('theme.title')) {
+    //   const c: ITheme = {
+    //     rel: useCookie('theme.rel').value as string,
+    //     title: useCookie('theme.title').value as string
+    //   }
+    //   try{
+    //     c.timestamp = (JSON.parse(useCookie('theme.timestamp').value || '')) as number
+    //   } catch (e) {
+    //     c.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
+    //     console.warn(e)
+    //   }
+    //   if (c.rel !== colorthemeobj.rel) {
+    //     if (!colorthemeobj.timestamp) {
+    //       return c
+    //     }
+    //     if (new Date(new Date(c.timestamp).toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime() - colorthemeobj.timestamp < 0) {
+    //       return c
+    //     }
+    //     return colorthemeobj
+    //   }
+    // }
+    // return colorthemeobj
   })
 
   // actions
@@ -69,20 +73,26 @@ export const storeSettings = defineStore('settings', () => {
     _quicksave = isQuickSave
     useCookie('Quicksave').value = (isQuickSave) ? 'true' : 'false'
   }
+  function setIsMobile (isMobile: boolean) {
+    // only for testing purpose
+    _isMobile = isMobile
+  }
 
   function setColumnLayoutCollapsed (obj: IColumnLayoutCollapsed) {
     _twoColumnLayoutCollapsed[obj.parentId] = obj.value
   }
 
   function setColorTheme (newThemeObj: ITheme) {
-    colorthemeobj = newThemeObj
-    colorthemeobj.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
-    useCookie('theme.title').value = colorthemeobj.title
-    useCookie('theme.timestamp').value = JSON.stringify(colorthemeobj.timestamp)
-    useCookie('theme.rel').value = colorthemeobj.rel
+    _theme.value = newThemeObj.title
+    // colorthemeobj = newThemeObj
+    // colorthemeobj.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
+    // useCookie('theme.title').value = colorthemeobj.title
+    // useCookie('theme.timestamp').value = JSON.stringify(colorthemeobj.timestamp)
+    // useCookie('theme.rel').value = colorthemeobj.rel
   }
 
   function changeTheme(t:string) {
+    _theme.value = t
       // `this` is the store instance
     const _colorthemeobj = { title: 'light', rel: 'themes/opsi-light.css', icon: useIcons().themelight }
     // const color = useColorMode() // bootstrap
@@ -101,7 +111,8 @@ export const storeSettings = defineStore('settings', () => {
 
   return {
     /* states */
-    /* getters */ isLight,
+    /* getters */ isMobile,
+                  isLight,
                   twoColumnLayoutCollapsed,
                   language,
                   quicksave,
@@ -112,7 +123,8 @@ export const storeSettings = defineStore('settings', () => {
                     setQuicksave,
                     setColumnLayoutCollapsed,
                     setColorTheme,
-                    changeTheme
+                    changeTheme,
+                    setIsMobile, // only for testing purpose
   }
 }, { persist: true } as any)
 

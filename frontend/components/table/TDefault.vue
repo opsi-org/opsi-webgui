@@ -1,6 +1,6 @@
 <template>
   <TableTDefaultMobile
-    v-if="props.isMobile"
+    v-if="isMobileWrapper"
     v-bind="propsMobile"
     @selection-changed="(v) => $emit('selection-changed', v)" />
   <TableTDefaultDesktop
@@ -14,7 +14,6 @@
 
 <script setup lang="ts">
 import type { ITableHeaderRow } from '~/types/ttableV3';
-const mq = useMQ()
 const props = defineProps({
   columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   data: { type: Array<any>, required:true},
@@ -23,6 +22,7 @@ const props = defineProps({
   sortBy: { type: String, default: 'selection'},
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
 })
+const isMobileWrapper = ref<boolean>(props.isMobile)
 const propsMobile = computed (()=>{
   // add keys which are not used by child
   return (({ isMobile, ...rest }) => rest)(props);

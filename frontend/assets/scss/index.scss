@@ -1,13 +1,39 @@
 html,
 body,
 #app {
+  background: unset !important;
   margin: 0;
   padding: 0;
 }
+body {
+  background-color: unset !important;
+  color: unset !important;
+}
+html,
+body[data-bs-theme="light"] {
+  --el-bg-color: #FFFFFF;
+  --bs-body-bg: var(--el-bg-color);
+  --bg-color: var(--el-bg-color);
+  --fg-color: #000000;
 
-html.dark {
-  background: #222;
-  color: white;
+  --el-text-color-primary: #000000;
+  // --el-text-color-regular: #000000;
+  --el-menu-text-color: #000000;
+  background: var(--bg-color) !important;
+  color: var(--fg-color) !important;
+}
+// html.dark {
+html.dark,
+body[data-bs-theme="dark"] {
+  --el-bg-color: #3f3f3e;
+  --bs-body-bg: var(--el-bg-color);
+  --bg-color: var(--el-bg-color);
+  // --fg-color: var(--el-text-color-primary);
+  --fg-color: #E1E1E1;
+  --el-text-color-primary: #E1E1E1;
+  // --el-text-color-regular: #CFD3DC;
+  background: var(--bg-color) !important;
+  color: var(--fg-color) !important;
 }
 
 a {

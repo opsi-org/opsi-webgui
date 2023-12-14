@@ -1,9 +1,9 @@
 <template>
-  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-fit">
+  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-full">
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
         <!-- menus with children -->
-        <el-sub-menu :index="item.route" :route="item.route">
+        <el-sub-menu :index="item.route" :route="item.route" :expand-open-icon="''" :expand-close-icon="''">
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
@@ -28,7 +28,7 @@
     </span>
 
   </el-menu>
-  <div class="absolute inset-x-0 bottom-0">
+  <div v-if="!storeSettings().isMobile" class="absolute inset-x-0 bottom-0">
     <el-checkbox-button v-model="isCollapse">
         {{ isCollapse ? 'Expand' : 'Collapse' }}
     </el-checkbox-button>
@@ -48,6 +48,7 @@ interface INavItem {
   disabled?: boolean
   submenu?: Array<INavItem>
 }
+const emit = defineEmits(['changeSmall'])
 const navItems:Array<INavItem> = [
   {
     title: 'title.depots',
@@ -87,6 +88,9 @@ const navItems:Array<INavItem> = [
   },
   { title: 'title.support', icon: icons.support, route: '/support' }
 ]
+watch(isCollapse, (val) => {
+  emit('changeSmall', val)
+})
 </script>
 
 <style scoped>

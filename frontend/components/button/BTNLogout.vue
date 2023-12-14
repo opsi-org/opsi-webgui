@@ -1,5 +1,14 @@
 <template>
+
+  <el-menu-item
+    v-if="props.isMenuItem" type="text"
+    @click="doLogout"
+  >
+    <IconIIcon :icon="icon.logout" />
+    {{$t('button.logout')}}
+  </el-menu-item>
   <b-button
+    v-else
     ref="btn-logout"
     v-bind="props"
     data-testid="ButtonBTNLogout"
@@ -24,7 +33,8 @@ const notificationError = useNotification().error
 
 const authStore = storeAuth() // autho imported
 const props = defineProps({
-  abortClick: { type: Boolean, default: false}
+  abortClick: { type: Boolean, default: false},
+  isMenuItem: { type: Boolean, default: false}
 })
 
 async function doLogout () {
