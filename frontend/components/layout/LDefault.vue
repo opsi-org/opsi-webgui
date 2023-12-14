@@ -7,8 +7,8 @@
       <el-header class="min-w-screen max-h-10 p-0">
         <BarBTop
           class="max-h-full max-w-full"
-          @toggle-left="()=>leftSideVisible = !leftSideVisible"
-          @toggle-right="()=>rightSideVisible = !rightSideVisible"
+          @toggle-left="()=>toggleSide('left')"
+          @toggle-right="()=>toggleSide('right')"
         />
       </el-header>
 
@@ -20,23 +20,18 @@
           v-if="!settings.isMobile || leftSideVisible"
           class=""
           :class="{
-            // 'w-60': !settings.isMobile && !leftSideIsSmall,
-            // 'w-16': !settings.isMobile && leftSideIsSmall,
-            'absolute z-20 grid border-1 w-screen border-black': settings.isMobile
+            'absolute z-20 grid w-screen': settings.isMobile
             }"
         >
           <div
             :class="{
               'hidden': !settings.isMobile,
-              'absolute bg-color opacity-70 z-10 border-1 border-blue-500 w-screen h-full': settings.isMobile
+              'absolute bg-color opacity-70 z-10 w-screen h-full': settings.isMobile
               }"
-            @click.self="()=>{
-              leftSideVisible = !leftSideVisible
-              rightSideVisible = false
-            }"
+            @click.self="toggleSide('left')"
           ></div>
           <el-scrollbar :class="{
-            'border-green-500 border-solid border-2': true,
+            'border-1': true,
             'w-48': !settings.isMobile && !leftSideIsSmall,
             'w-16': !settings.isMobile && leftSideIsSmall,
             'w-2/3 max-w-full z-40 bg-color opacity-100': settings.isMobile,
@@ -55,24 +50,21 @@
 
 
         <el-aside
-          v-if="rightSideVisible || !settings.isMobile"
+          v-if="rightSideVisible"
           :class="{
             'w-60': !settings.isMobile,
-            'absolute right-0 z-20 w-screen max-w-screen grid': settings.isMobile
+            'absolute right-0 z-20 grid': settings.isMobile
             }"
         >
           <div
             :class="{
               'hidden': !settings.isMobile,
-              'absolute bg-color left-0 opacity-70 z-30 border-1 border-red-500 w-screen h-screen max-w-screen': settings.isMobile
+              'absolute bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': settings.isMobile
             }"
-            @click.self="()=>{
-              rightSideVisible = !rightSideVisible
-              leftSideVisible = false
-            }"
+            @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
-            'right-0 opacity-100 justify-self-end border-blue-500 border-solid border-2': true,
+            'right-0 opacity-100 justify-self-end border-1': true,
             'w-80': !settings.isMobile,
             'max-w-full bg-color z-30': settings.isMobile,
             }">
@@ -91,6 +83,16 @@ const settings = storeSettings()
 const leftSideIsSmall = ref<boolean>(false)
 const leftSideVisible = ref<boolean>(!settings.isMobile)
 const rightSideVisible = ref<boolean>(!settings.isMobile)
+
+const toggleSide = async (side: string) => {
+  if (side === 'left') {
+    rightSideVisible.value = false
+    leftSideVisible.value = !leftSideVisible.value
+  } else if (side === 'right') {
+    leftSideVisible.value = false
+    rightSideVisible.value = !rightSideVisible.value
+  }
+}
 </script>
 
 
@@ -103,12 +105,17 @@ const rightSideVisible = ref<boolean>(!settings.isMobile)
   position: relative;
 }
 .el-aside {
-  --height: calc(100% - 40px);
+  --height: calc(100% - 0px);
   min-height: var(--height);
   height: var(--height);
   max-height: var(--height);
 }
 .is-mobile .el-aside {
+  --height: calc(100% - 40px);
+  min-height: var(--height);
+  height: var(--height);
+  max-height: var(--height);
+
   width: 100vw !important;
 }
 :not(.is-mobile) .el-aside {

@@ -5,7 +5,6 @@
     @click="doLogout"
   >
     <IconIIcon :icon="icon.logout" />
-    {{$t('button.logout')}}
   </el-menu-item>
   <b-button
     v-else
