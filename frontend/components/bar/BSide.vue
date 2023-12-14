@@ -1,12 +1,16 @@
 <template>
-  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-full">
+  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-full"
+  >
+  <!-- :class="{collapse: !isCollapse}" -->
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
         <!-- menus with children -->
-        <el-sub-menu :index="item.route" :route="item.route" :expand-open-icon="''" :expand-close-icon="''">
+        <el-sub-menu :index="item.route" :route="item.route" :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''">
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
+            <!-- <div class="flex-grow" />
+            <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
           </template>
 
           <!-- sub menus -->
@@ -94,4 +98,8 @@ watch(isCollapse, (val) => {
 </script>
 
 <style scoped>
+  .el-menu--collapse >>> .el-sub-menu__icon-arrow {
+    /* display: none !important; */
+    margin-right: -10px !important;
+  }
 </style>
