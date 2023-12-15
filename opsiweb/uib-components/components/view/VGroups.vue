@@ -50,8 +50,8 @@
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
-                        :title="$t('group.deleteOnlyClients')"
-                        @click="showChild('deleteOnlyClients')"
+                        :title="$t('group.deleteOnlyAssignments', {type: 'Clients'})"
+                        @click="showChild('deleteOnlyAssignments')"
                       >
                         <IconIIcon :icon="icon.client" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
                       </b-button>
@@ -60,8 +60,8 @@
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
-                        :title="$t('group.addClientsToGroup')"
-                        @click="showChild('addClientsToGroup')"
+                        :title="$t('group.addToGroup', {type: 'Clients'})"
+                        @click="showChild('addToGroup')"
                       >
                         <IconIIcon :icon="icon.client" /><IconIIcon :icon="icon.add" font-scale="0.8" />
                       </b-button>
@@ -105,13 +105,13 @@
             </treeselect>
           </b-col>
           <b-col v-if="action && selectedvalue">
-            <span class="text-small"><b> {{ title + $t('title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
+            <span class="text-small"><b> {{ title + t_fixed('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
               <!-- closing right side -->
               <IconIIcon :icon="icon.x" />
             </b-button>
             <br><br>
-            <template v-if="action == 'addClientsToGroup'">
+            <template v-if="action == 'addToGroup'">
               <b-form-select
                 v-model="selectedClients"
                 multiple
@@ -187,14 +187,14 @@
                 </b-button>
               </b-form>
             </template>
-            <template v-else-if="action == 'deleteOnlyClients'">
-              <small> {{ $t('group.deleteOnlyClients.confirm') }}</small>
+            <template v-else-if="action == 'deleteOnlyAssignments'">
+              <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'client'}) }}</small>
               <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" size="sm" @click="removeClientAssignments">
                 {{ $t("group.remove") }}
               </b-button>
             </template>
             <template v-else-if="action == 'deletegroup'">
-              <small> {{ $t('group.deletegroup.confirm') }}</small>
+              <small> {{ $t('group.deletegroup.confirm', {type: 'client'}) }}</small>
               <b-button class="float-right" size="sm" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
                 {{ $t("label.delete") }}
               </b-button>
@@ -223,6 +223,12 @@
           </b-col>
         </b-row>
       </b-tab>
+      <b-tab>
+        <template #title>
+          <span> {{ $t("treeselect.prodGroups") }} </span>
+        </template>
+        <ViewVProdGroupActions />
+      </b-tab>
     </b-tabs>
   </div>
 </template>
@@ -232,13 +238,15 @@ import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 import { Client } from '../../mixins/get'
 import { Group } from '../../mixins/post'
+import { Strings } from '../../mixins/strings'
 import { AlertToast } from '../../mixins/component'
 const selections = namespace('selections')
-@Component({ mixins: [Icons, Client, Group, AlertToast] })
+@Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
 export default class VGroups extends Vue {
   showToastSuccess: any // from mixin AlertToast
   showToastError: any // from mixin AlertToast
   icon: any
+  t_fixed: any
   getClientIdList:any
   $axios: any
   node: any
