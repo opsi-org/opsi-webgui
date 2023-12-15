@@ -124,7 +124,8 @@ export default class LayoutDefault extends Vue {
   }
 
   confirmToSaveChanges () {
-    if (this.changesProducts.filter(o => o.user === this.username).length !== 0 || this.changesHostParam.filter(o => o.user === this.username).length !== 0) {
+    if (this.changesProducts.filter(o => o.user === this.username).length !== 0 ||
+    this.changesHostParam.filter(o => o.user === this.username).length !== 0) {
       return true
     } else {
       return null
