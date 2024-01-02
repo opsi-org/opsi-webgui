@@ -22,7 +22,7 @@ export const useSettings = () => {
   const CONST_DARK = 'theme-dark'
 
   function themeclass (): string {
-    return (colortheme === 'light') ? CONST_LIGHT : CONST_DARK
+    return (colortheme.title === 'light') ? CONST_LIGHT : CONST_DARK
     // return (colortheme && colortheme.title === 'light') ? CONST_LIGHT : CONST_DARK
   }
   return { colortheme, CONST_DARK, CONST_LIGHT, themeclass}

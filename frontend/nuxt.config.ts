@@ -7,7 +7,7 @@ import pkg from './package.json'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   webpack: {
     loaders: {
       vue: {
@@ -75,7 +75,13 @@ export default defineNuxtConfig({
     '@pinia-plugin-persistedstate/nuxt',
     // 'nuxt-monaco-editor'
   ],
-
+  piniaPersistedstate: {
+    // cookieOptions: {
+    //   sameSite: 'strict',
+    // },
+    storage: 'localStorage',
+    debug: true,
+  },
   tailwindcss: {
     // cssPath: '~/assets/css/tailwind.css',
     // configPath: 'tailwind.config',

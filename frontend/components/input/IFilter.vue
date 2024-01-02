@@ -39,7 +39,7 @@
       <template #prepend>
         <el-select-v2
           v-model="filterValue"
-          :options="props.filterableColumns.map((v,i) => ({ value: v.key, label: v.title, disabled: disableColumnSelection }))"
+          :options="props.filterableColumns.map((v: any) => ({ value: v.key, label: v.title, disabled: disableColumnSelection }))"
           class="w-full h-full"
           type="primary"
           :multiple="true"

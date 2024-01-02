@@ -63,7 +63,7 @@ const data = {
       <InputIFilter
         :data="data.tableInfo"
         :filterable-columns="Object.values(columns)"
-        @update="(v)=> {
+        @update="(v:any)=> {
           data.tableInfo.filterColumns = v.cols
           data.tableInfo.filterQuery = v.vals
         }"
@@ -75,7 +75,7 @@ const data = {
       <InputIFilter
         :data="data.tableInfo"
         :filterable-columns="Object.values(columns)"
-        @update="(v)=> {
+        @update="(v:any)=> {
           data.tableInfo.filterColumns = v.cols
           data.tableInfo.filterQuery = v.vals
         }"

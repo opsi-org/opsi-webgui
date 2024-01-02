@@ -1,12 +1,12 @@
 <template>
 
   <el-text>{{ $t('title.clients') }}</el-text><br />
-  <el-text>Client Selection: {{ storeSelections().selectionClients }}</el-text> <br />
+  <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
   <InputIFilter
       :data="tableData"
       :filterable-columns="Object.values(columns)"
-      @update="(v)=> {
+      @update="(v: any)=> {
         tableData.filterColumns = v.cols
         tableData.filterQuery = v.vals
       }"
@@ -19,8 +19,8 @@
       :data="fetchedData"
       :sort-by="tableData.sortBy"
       :is-mobile="isMobile"
-      @selection-changed="(id: string) => storeSelections().toggleSelectionClients(id)"
-      @selection-clear="storeSelections().clearSelectionClients"
+      @selection-changed="(id: string) => storeSelection.toggleSelectionClients(id)"
+      @selection-clear="storeSelection.clearSelectionClients"
     >
 
     </TableTDefault>
@@ -217,6 +217,8 @@ import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
 const storeSelection = storeSelections()
+const datacache = storeCache()
+console.log('datacache', datacache.opsiconfigserver)
 const cookies = useCookies()
 const $t = useI18n().t
 const icons = useIcons()
@@ -386,7 +388,7 @@ const fetchedData = ref<Array<any>>([])
 
 const handleChange = (id:string) => {
   console.log('handleSelectionChange', id)
-  storeSelections().toggleSelectionDepots(id)
+  storeSelection.toggleSelectionDepots(id)
 }
 const tableData = reactive({
   pageNumber: 1,
@@ -406,12 +408,15 @@ watch(()=> tableData, async ()=>{
 
 async function _fetch() {
   const params:any = { ...tableData }
-    params.selectedDepots = JSON.stringify(storeSelections().selectionDepots)
-    params.selectedClients = JSON.stringify(storeSelections().selectionClients)
+  console.log('datacache server', datacache.opsiconfigserver)
+  params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
+  console.log('params.selectedDepots', params.selectedDepots)
+    params.selectedClients = JSON.stringify(storeSelection.selectionClients)
+    console.log('params.selectedClients', params.selectedClients)
     if (params.sortBy === '') { params.sortBy = 'clientId' }
     if (params.sortBy === 'selected') {
       params.sortDesc = true
-      params.selected = JSON.stringify(storeSelections().selectionClients)
+      params.selected = JSON.stringify(storeSelection.selectionClients)
     }
     // return await this.$axios.get('/api/opsidata/clients', { params })
     //   .then((response) => {

@@ -36,7 +36,7 @@
             'w-16': !settings.isMobile && leftSideIsSmall,
             'w-2/3 max-w-full z-40 bg-color opacity-100': settings.isMobile,
           }">
-            <BarBSide @change-small="(v) => leftSideIsSmall = v"/>
+            <BarBSide @change-small="(v: any) => leftSideIsSmall = v"/>
           </el-scrollbar>
         </el-aside>
 
@@ -78,11 +78,18 @@
 
 <script setup lang="ts">
 const color = useColorMode();
-
 const settings = storeSettings()
 const leftSideIsSmall = ref<boolean>(false)
 const leftSideVisible = ref<boolean>(!settings.isMobile)
 const rightSideVisible = ref<boolean>(!settings.isMobile)
+
+const cache = storeCache()
+const { opsiconfigserver } = storeToRefs(cache)
+console.log('store opsiconfigserver changed0', opsiconfigserver.value)
+watch(()=>opsiconfigserver, (newVal, oldVal) => {
+    // localStorage.setItem('opsiconfigserver', newVal)
+    console.log('store opsiconfigserver changed1', newVal)
+  }, {deep: true})
 
 const toggleSide = async (side: string) => {
   if (side === 'left') {

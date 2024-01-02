@@ -104,9 +104,9 @@ export const useDeployClientAgent = () => {
       return
     }
 
-    clientagentAlert.value.alert(t('message.success.clientagent', { client: data.clientId[0] }), 'success')
+    clientagentAlert.value.alert(t('message.success.clientagent', { client: data.value.clientId[0] }), 'success')
     if (modal) {
-      const { hide } = useModal('event-modal-deployCA-' + data.clientId[0] + '-context-menu-' + incontextmenu)
+      const { hide } = useModal('event-modal-deployCA-' + data.value.clientId[0] + '-context-menu-' + incontextmenu)
       hide ()
       // $bvModal.hide('event-modal-deployCA-' + data.clientId[0] + '-context-menu-' + incontextmenu)
     }

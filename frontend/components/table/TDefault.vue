@@ -2,12 +2,12 @@
   <TableTDefaultMobile
     v-if="isMobileWrapper"
     v-bind="propsMobile"
-    @selection-changed="(v) => $emit('selection-changed', v)" />
+    @selection-changed="(v: any) => $emit('selection-changed', v)" />
   <TableTDefaultDesktop
     v-else
     v-bind="propsDesktop"
-    @selection-changed="(v) => $emit('selection-changed', v)"
-    @selection-clear="(v) => $emit('selection-clear', v)"
+    @selection-changed="(v: any) => $emit('selection-changed', v)"
+    @selection-clear="(v: any) => $emit('selection-clear', v)"
     />
 </template>
 

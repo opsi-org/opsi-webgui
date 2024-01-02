@@ -28,7 +28,8 @@
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.0.0-beta2",
-    "element-plus": "^2.4.x"
+    "element-plus": "^2.4.x",
+    "nuxt": "^3.9.0"
   },
   "devDependencies": {
     "@bootstrap-vue-next/nuxt": "^0.14.10",
@@ -36,7 +37,6 @@
     "@histoire/plugin-nuxt": "0.17.6",
     "@histoire/plugin-vue": "0.17.6",
     "@iconify/vue": "^4.1.1",
-    "@nuxt/devtools": "latest",
     "@nuxtjs/i18n": "^8.0.0-rc.4",
     "@nuxtjs/storybook": "7.0.0",
     "@nuxtjs/tailwindcss": "^6.8.0",
@@ -47,7 +47,6 @@
     "bootstrap-vue-next": "^0.14.10",
     "histoire": "0.17.6",
     "npm-check-updates": "^16.14.6",
-    "nuxt": "^3.8.2",
     "pinia": "2.1.6",
     "sass": "^1.69.4",
     "typescript": "^5.3.2",

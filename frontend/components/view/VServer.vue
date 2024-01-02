@@ -7,7 +7,7 @@
     <InputIFilter
       :data="tableData"
       :filterable-columns="Object.values(columns)"
-      @update="(v)=> {
+      @update="(v: any)=> {
         tableData.filterColumns = v.cols
         tableData.filterQuery = v.vals
       }"
@@ -176,8 +176,8 @@ const columns = reactive<ITableHeaderRow>({
       key: 'rowactions',
       dataKey: 'rowactions',
       title: $t('table.fields.rowactions'),
-      width: 150,
-      maxWidth: 150,
+      width: 60,
+      maxWidth: 100,
       fixed: TableV2FixedDir.RIGHT,
       hidden: false,
       class: 'col-rowactions',

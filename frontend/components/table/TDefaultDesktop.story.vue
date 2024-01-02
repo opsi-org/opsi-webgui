@@ -24,7 +24,7 @@ const data = generateData(columns, 100)
         :data="data"
         rowId="column-0"
         :sort-by="undefined"
-        @selection-changed="(id) => {}"
+        @selection-changed="(id: any) => {}"
         @selection-clear="() => { }"
       />
   </Story>

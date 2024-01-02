@@ -7,30 +7,54 @@ interface Columns {
   // products: Array<string>, // or split local /netboot?
 }
 
-export const storeTablesettings = defineStore('tablesettings', () => {
-  // let _multiSelection: boolean = useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true
-  const _columns: Columns = reactive({
-    clients: [],
-    depots: [],
-    products: [],
-  })
 
-  // getter
-  const columns = computed(() => _columns)
-  // actions
+export const storeTablesettings = defineStore('tablesettings', {
+  persist: true,
+  state: () => ({
+    _columns: {
+      clients: [],
+      depots: [],
+      products: [],
+    } as Columns,
+  }),
+  getters: {
+    columns: ({ _columns }) => _columns,
+  },
+  actions: {
+    setColumns (tabletype:string, value:Array<string>) {
+      this._columns[tabletype] = value
+    },
+  },
+})
 
-  // function setMultiSelection (isMultiSelection: boolean) {
-  //   _multiSelection = isMultiSelection
-  //   // Cookies.options.methods.setCookie('MultiSelection', (isMultiSelection) ? 'true' : 'false')
-  //   useCookie('MultiSelection').value = (isMultiSelection) ? 'true' : 'false'
-  // }
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(storeTablesettings, import.meta.hot));
+}
 
-  function setColumns (tabletype:string, value:Array<string>) {
-    _columns[tabletype] = value
-  }
-  return {
-    /* states */
-    /* getters */ columns
-    /* actions */ , setColumns,
-  }
-}, { persist: true } as any)
+// export const storeTablesettings = defineStore('tablesettings', () => {
+//   // let _multiSelection: boolean = useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true
+//   const _columns: Columns = reactive({
+//     clients: [],
+//     depots: [],
+//     products: [],
+//   })
+
+//   // getter
+//   const columns = computed(() => _columns)
+//   // actions
+
+//   // function setMultiSelection (isMultiSelection: boolean) {
+//   //   _multiSelection = isMultiSelection
+//   //   // Cookies.options.methods.setCookie('MultiSelection', (isMultiSelection) ? 'true' : 'false')
+//   //   useCookie('MultiSelection').value = (isMultiSelection) ? 'true' : 'false'
+//   // }
+
+//   function setColumns (tabletype:string, value:Array<string>) {
+//     _columns[tabletype] = value
+//   }
+//   return {
+//     /* states */
+//     /* getters */ columns
+//     /* actions */ , setColumns,
+//   }
+// }, { persist: true } as any)

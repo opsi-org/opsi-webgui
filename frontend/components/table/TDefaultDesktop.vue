@@ -124,4 +124,8 @@ const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
 </script>
 
 <style scoped>
+:deep([data-key="rowactions"]) {
+  /* width: 40px !important; */
+  /* background-color: aqua !important; */
+}
 </style>
