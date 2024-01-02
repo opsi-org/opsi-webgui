@@ -30,7 +30,7 @@ watch(()=>props.id, ()=>{
 })
 
 async function fetch(id:string) {
-  if (props.type === 'depots'){
+  if (props.type === 'depots' && id){
     const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${id}]`)
     if (error) {
       console.log(error)

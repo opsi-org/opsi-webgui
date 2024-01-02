@@ -1,3 +1,3 @@
 <template>
-  <FormFHostAttributes />
+  <ViewVConfig type="depots" />
 </template>
