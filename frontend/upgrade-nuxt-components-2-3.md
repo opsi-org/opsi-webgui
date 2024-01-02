@@ -307,6 +307,9 @@ Nuxt no longer provides a Vuex integration. Instead, the official Vue recommenda
 const counterStore = useCounterStore()
 ```
 * store file with `setup` syntax
+
+NOTE: This seems to be broken if want to persist state... Better use options syntax
+
 ```typescript
 // with setup syntax
 import { useCookie } from 'nuxt/app'
@@ -346,7 +349,7 @@ export const storeAuth = defineStore('auth', () => {
 }, { persist: true } as any)
 ```
 
-* store file without `setup` syntax
+* store file with options syntax / without `setup` syntax
 ```javascript
 // without setup-syntax
 export const storeCounter = defineStore('counter', {
