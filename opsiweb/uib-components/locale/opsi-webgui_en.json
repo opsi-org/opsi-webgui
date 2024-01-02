@@ -294,7 +294,7 @@
   "treeselect.selectioncount": "Selected {type}",
   "group.add": "Add",
   "group.addToGroup": "Add {type}",
-  "group.selectClients": "Select Clients",
+  "group.selectItems": "Select {type}",
   "group.addSubgroup": "Create Subgroup",
   "group.subgroupname": "Subgroup Name",
   "group.editGroup": "Edit Group",

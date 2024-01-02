@@ -129,7 +129,7 @@
           >
             <template #first>
               <b-form-select-option :value="null" disabled>
-                {{ $t('group.selectProducts') }}
+                {{ $t('group.selectItems', {type: 'Products'}) }}
               </b-form-select-option>
             </template>
           </b-form-select>
