@@ -14,10 +14,11 @@
           :aria-label="$t('table.name.client')"
           type="text"
           :state="checkValid"
+          trim
           required
         />
         <b-form-invalid-feedback :state="checkValid">
-          <span v-if="clientIds.includes(clientName + domainName)"> {{ $t('message.formvalid.clientExists') }} </span>
+          <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
         </b-form-invalid-feedback>
       </template>
       <template #valueMore>
@@ -28,6 +29,7 @@
           class="domainName"
           :aria-label="$t('table.name.domain')"
           type="text"
+          trim
           required
         />
       </template>
@@ -224,7 +226,7 @@ export default class VClientCreation extends Vue {
   get formvalidation_pw () { return this.form.password !== '' }
 
   get checkValid () {
-    return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domainName)
+    return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domain)
   }
 
   // async mounted () {
@@ -284,12 +286,7 @@ export default class VClientCreation extends Vue {
 
   async createOpsiClient () {
     this.isLoading = true
-    this.newClient.hostId = this.clientName.trim() + this.domain.trim()
-    if (this.clientIds.includes(this.newClient.hostId)) {
-      this.isLoading = false
-      this.showToastWarning(this.$t('message.warning.clientExists', { client: this.newClient.hostId }))
-      return
-    }
+    this.newClient.hostId = this.clientName + this.domain
     const request = {
       client: this.newClient, depot: this.depotId
     }
