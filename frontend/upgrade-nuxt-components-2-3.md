@@ -305,7 +305,10 @@ Nuxt no longer provides a Vuex integration. Instead, the official Vue recommenda
 * component
 ```javascript
 const counterStore = useCounterStore()
+// use `storeToRefs(...)` if reactivity is needed (usually)
+const { counter } = storeToRefs(counterStore)
 ```
+
 * store file with `setup` syntax
 
 NOTE: This seems to be broken if want to persist state... Better use options syntax

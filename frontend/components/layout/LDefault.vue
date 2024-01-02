@@ -31,12 +31,12 @@
             @click.self="toggleSide('left')"
           ></div>
           <el-scrollbar :class="{
-            'border-1': true,
+            'border-r': true,
             'w-48': !settings.isMobile && !leftSideIsSmall,
             'w-16': !settings.isMobile && leftSideIsSmall,
             'w-2/3 max-w-full z-40 bg-color opacity-100': settings.isMobile,
           }">
-            <BarBSide @change-small="(v: any) => leftSideIsSmall = v"/>
+            <BarBSide @change-small="setLeftCollapse"/>
           </el-scrollbar>
         </el-aside>
 
@@ -79,18 +79,38 @@
 <script setup lang="ts">
 const color = useColorMode();
 const settings = storeSettings()
+const { isMobile } = storeToRefs(settings)
 const leftSideIsSmall = ref<boolean>(false)
-const leftSideVisible = ref<boolean>(!settings.isMobile)
-const rightSideVisible = ref<boolean>(!settings.isMobile)
+const leftSideVisible = ref<boolean>(!isMobile)
+const rightSideVisible = ref<boolean>(!isMobile)
+const mq = useMQ()
+// const cache = storeCache()
+// const { opsiconfigserver } = storeToRefs(cache)
+watch(()=> mq.$mq.value, (newVal, oldVal) => {
+  console.log('mq changed', newVal)
+  if (mq.$mq.value === 'mobile') {
+    settings.setIsMobile(true)
+  } else {
+    settings.setIsMobile(false)
+  }
+})
 
-const cache = storeCache()
-const { opsiconfigserver } = storeToRefs(cache)
-console.log('store opsiconfigserver changed0', opsiconfigserver.value)
-watch(()=>opsiconfigserver, (newVal, oldVal) => {
-    // localStorage.setItem('opsiconfigserver', newVal)
-    console.log('store opsiconfigserver changed1', newVal)
-  }, {deep: true})
+onMounted(()=>{
+  leftSideIsSmall.value = false
+  if (settings.menuCollapsed) {
+    leftSideIsSmall.value = true
+  }
 
+  rightSideVisible.value = false
+  if (settings.quickpanelOpened) {
+    rightSideVisible.value = true
+  }
+})
+const setLeftCollapse = (v: boolean) => {
+  leftSideIsSmall.value = v
+  settings.setMenuCollapsed(v)
+  // (v: any) => leftSideIsSmall = v
+}
 const toggleSide = async (side: string) => {
   if (side === 'left') {
     rightSideVisible.value = false
@@ -98,6 +118,7 @@ const toggleSide = async (side: string) => {
   } else if (side === 'right') {
     leftSideVisible.value = false
     rightSideVisible.value = !rightSideVisible.value
+    settings.setQuickpanelOpened(rightSideVisible.value)
   }
 }
 </script>
@@ -130,5 +151,8 @@ const toggleSide = async (side: string) => {
 }
 .el-main {
   padding: 0;
+}
+.border-r{
+  border-color: var(--el-border-color)
 }
 </style>

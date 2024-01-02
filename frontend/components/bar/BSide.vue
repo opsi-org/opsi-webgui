@@ -1,5 +1,5 @@
 <template>
-  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="overflow-hidden max-w-full"
+  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="el-menu-mywrapper overflow-hidden max-w-full"
   >
   <!-- :class="{collapse: !isCollapse}" -->
     <span v-for="item in navItems" :key="item.title">
@@ -32,9 +32,9 @@
     </span>
 
   </el-menu>
-  <div v-if="!storeSettings().isMobile" class="absolute inset-x-0 bottom-0">
-    <el-checkbox-button v-model="isCollapse">
-        {{ isCollapse ? 'Expand' : 'Collapse' }}
+  <div v-if="!isMobile" class="menu-footer absolute inset-x-0 bottom-0 w-full">
+    <el-checkbox-button v-model="isCollapse" class="w-full" type="">
+        {{ isCollapse ? '>>' : 'Collapse' }}
     </el-checkbox-button>
   </div>
 </template>
@@ -43,8 +43,10 @@
 import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const configStore = storeConfigapp()
+const settings = storeSettings()
+const { isMobile, menuCollapsed } = storeToRefs(settings)
 const mq = useMQ()
-const isCollapse = ref(false)
+const isCollapse = ref(menuCollapsed.value)
 interface INavItem {
   title: string
   route: string
@@ -93,6 +95,7 @@ const navItems:Array<INavItem> = [
   { title: 'title.support', icon: icons.support, route: '/support' }
 ]
 watch(isCollapse, (val) => {
+  console.log('change isCollapse', val)
   emit('changeSmall', val)
 })
 </script>
@@ -101,5 +104,18 @@ watch(isCollapse, (val) => {
   .el-menu--collapse >>> .el-sub-menu__icon-arrow {
     /* display: none !important; */
     margin-right: -10px !important;
+  }
+  .menu-footer >>> .el-checkbox-button__inner{
+    width: 100% !important;
+    background-color: var(--el-checkbox-button-bg-color);
+    border: 0px;
+    border-top: 1px solid var(--el-menu-border-color);
+    /* border-top: 1px solid var(--el-checkbox-button-checked-text-color); */
+  }
+
+  /* .el-aside >>> */
+  .el-menu-mywrapper  {
+    border: 0 !important;
+    /* border-color: green !important; */
   }
 </style>

@@ -14,6 +14,8 @@ export const storeSettings = defineStore('settings', {
     _theme: document.querySelector('html')?.classList.contains('dark') ? 'dark' : document.querySelector('html')?.classList.contains('htw-dark') ? 'dark' : 'light',
     _language: useCookie('Language').value || 'en',
     _quicksave: useCookie('Quicksave').value === 'true' || (useCookie('Quicksave').value === undefined) || false,
+    _quickpanelOpened: useCookie('QuickpanelOpened').value === 'true' || (useCookie('QuickpanelOpened').value === undefined) || true as boolean,
+    _menuCollapsed: useCookie('MenuCollapsed').value === 'true' || (useCookie('MenuCollapsed').value === undefined) || true as boolean,
     _twoColumnLayoutCollapsed: { tabledepots: false, tableclients: false },
     _expiresInterval: undefined as NodeJS.Timeout|undefined,
   }),
@@ -22,6 +24,8 @@ export const storeSettings = defineStore('settings', {
     isMobile: (state: any) => state._isMobile,
     language: (state: any) => state._language,
     quicksave: (state: any) => state._quicksave,
+    quickpanelOpened: (state: any) => state._quickpanelOpened,
+    menuCollapsed: (state: any) => state._menuCollapsed,
     expiresInterval: (state: any) => state._expiresInterval,
     isLight: (state: any) => state._theme.value === 'light',
     colortheme: (state: any) => {
@@ -66,6 +70,15 @@ export const storeSettings = defineStore('settings', {
     setQuicksave (isQuickSave: boolean) {
       this._quicksave = isQuickSave
       useCookie('Quicksave').value = (isQuickSave) ? 'true' : 'false'
+    },
+    setQuickpanelOpened (isQuickpanelOpened: boolean) {
+      this._quickpanelOpened = isQuickpanelOpened
+      useCookie('QuickpanelOpened').value = (isQuickpanelOpened) ? 'true' : 'false'
+    },
+    setMenuCollapsed (isMenuCollapsed: boolean) {
+      this._menuCollapsed = isMenuCollapsed
+      useCookie('MenuCollapsed').value = (isMenuCollapsed) ? 'true' : 'false'
+      console.log('setMenuCollapsed', isMenuCollapsed)
     },
     setIsMobile (isMobile: boolean) {
       // only for testing purpose
