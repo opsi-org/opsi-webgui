@@ -14,9 +14,20 @@
         </el-table-v2>
       </template>
     </el-auto-resizer>
+    <el-pagination
+      v-model:page-size="perPage"
+      v-model:current-page="pageNumber"
+      :total="total"
+      layout="sizes, prev, pager, next"
+      :page-sizes="[1, 5, 10, 20, 50, 100]"
+      :small="true"
+      :background="true"
+      :hide-on-single-page="false"
+      @current-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, pageNumber: v})}"
+      @size-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, perPage: v, pageNumber: 1})}"
+      />
   </div>
 </template>
-
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
@@ -28,18 +39,26 @@ import type { FunctionalComponent } from 'vue';
 const tableStore = storeTablesettings()
 const props = defineProps({
   columns: { type: Object as PropType<ITableHeaderRow>, required:true},
-  data: { type: Array<any>, required:true},
+  data: { type: Array<any>, required: true },
+  tableData: { type: Object, required: true },
+  totalItems: { type: Number, required: true },
   id: { type: String, default: 'depots' },
   sortBy: { type: String, default: 'selection'},
   small: { type: Boolean, default: true }
 })
-const $emit = defineEmits(['selection-changed', 'selection-clear'])
+const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed'])
 const wrappedColumns = ref<ITableHeaderRow>({})
 const wrappedData = ref<Array<any>>([])
 onMounted(()=>{
   wrappedColumns.value = updateColumns()
   wrappedData.value = updateData()
 })
+const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
+const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
+const total = ref(props.totalItems)
+console.log('total pagenumber', pageNumber.value)
+pageNumber.value = props.tableData.pageNumber
+console.log('total pagenumber', pageNumber.value )
 
 watch(()=>tableStore.columns[props.id], ()=>{
   // show or hide major-children
@@ -105,9 +124,6 @@ function updateData() {
   return _data
 }
 
-
-
-
 const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
   value,
   intermediate = false,
@@ -123,9 +139,10 @@ const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
 }
 </script>
 
+
 <style scoped>
-:deep([data-key="rowactions"]) {
+/* :deep([data-key="rowactions"]) { */
   /* width: 40px !important; */
   /* background-color: aqua !important; */
-}
+/* } */
 </style>

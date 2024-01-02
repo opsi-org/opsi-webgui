@@ -61,6 +61,8 @@ const useAPI2 = async (
       return
     }
     callresponse.value = JSON.parse(res.json().data.value)
+    // console.log("RESU", )
+    callheaders = Object.fromEntries(res.json().response.value.headers)
     // callheader.value = JSON.parse(res.json().data.value)
   }
 

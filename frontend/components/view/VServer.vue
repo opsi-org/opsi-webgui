@@ -13,7 +13,7 @@
       }"
     />
     <TableTDefault
-      v-if="fetchedData.length > 0"
+      v-if="fetchedData.length > 0 && totalItems > 0"
       row-id="depotId"
       :id="id"
       :columns="columns"
@@ -21,7 +21,10 @@
       :sort-by="tableData.sortBy"
       @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
       :is-mobile="props.isMobile"
+      :table-data="tableData"
+      :total-items="totalItems"
       @selection-clear="storeSelection.clearSelectionDepots"
+      @tabledata-changed="(v: any) => {updateTableData(v)}"
     >
 
     </TableTDefault>
@@ -204,42 +207,48 @@ const columns = reactive<ITableHeaderRow>({
     }
 })
 const fetchedData = ref<Array<any>>([])
+const totalItems = ref<number>(0)
 
 const handleChange = (id:string) => {
   console.log('handleSelectionChange', id)
   storeSelection.toggleSelectionDepots(id)
 }
-const tableData = reactive({
+const tableData = ref({
   pageNumber: 1,
-  perPage: 20,
+  perPage: 1,
   sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
   filterColumns: ['depotId']
 })
-onMounted(async ()=> fetchedData.value = await _fetch())
+function updateTableData (v: typeof tableData.value) {
+  console.log('tabledata changed total', v)
+  tableData.value = reactive(v)
+}
+// onMounted(async ()=> fetchedData.value = await _fetch())
 
-watch(()=> tableData, async ()=>{
+watch(()=> tableData.value, async ()=>{
   console.log('tableData changed', tableData)
   fetchedData.value = []
   fetchedData.value = await _fetch()
 }, { deep: true})
 
 async function _fetch() {
-  const params = { ...tableData, selected: '' }
+  const params = { ...tableData.value, selected: '' }
 
   if (params.sortBy === '') { params.sortBy = 'depotId' }
   if (params.sortBy === 'selected') {
     params.sortDesc = true
     params.selected = JSON.stringify([])
   }
-  const {data, error} = await useApiGETBody('/opsidata/depots', params)
+  const {data, error, headers } = await useApiGETBody('/opsidata/depots', params)
   '/api/opsidata/depots'
   if (error) {
     console.log(error)
     useNotification().error(error)
     return
   }
+  totalItems.value = parseInt(headers['x-total-count'])
   console.log('Fetchresult data', data)
   console.log('Fetchresult data2', fetchedData.value)
   const opsiconfigserver = storeCache().opsiconfigserver

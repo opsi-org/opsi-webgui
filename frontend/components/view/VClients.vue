@@ -12,15 +12,18 @@
       }"
     />
     <TableTDefault
-      v-if="fetchedData.length > 0"
+      v-if="fetchedData.length > 0 && totalItems > 0"
       row-id="clientId"
       :id="id"
       :columns="columns"
       :data="fetchedData"
+      :table-data="tableData"
+      :total-items="totalItems"
       :sort-by="tableData.sortBy"
       :is-mobile="isMobile"
       @selection-changed="(id: string) => storeSelection.toggleSelectionClients(id)"
       @selection-clear="storeSelection.clearSelectionClients"
+      @tabledata-changed="(v: any) => {updateTableData(v)}"
     >
 
     </TableTDefault>
@@ -385,29 +388,33 @@ const columns = reactive<ITableHeaderRow>({
     }
 })
 const fetchedData = ref<Array<any>>([])
-
+const totalItems = ref<number>(0)
 const handleChange = (id:string) => {
   console.log('handleSelectionChange', id)
   storeSelection.toggleSelectionDepots(id)
 }
-const tableData = reactive({
+const tableData = ref({
   pageNumber: 1,
-  perPage: 1000,
+  perPage: 5,
   sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
   filterColumns: ['clientId', 'description']
 })
-onMounted(async ()=> fetchedData.value = await _fetch())
+function updateTableData (v: typeof tableData.value) {
+  console.log('tabledata changed total', v)
+  tableData.value = reactive(v)
+}
+// onMounted(async ()=> fetchedData.value = await _fetch())
 
-watch(()=> tableData, async ()=>{
+watch(()=> tableData.value, async ()=>{
   console.log('tableData changed', tableData)
   fetchedData.value = []
   fetchedData.value = await _fetch()
 }, { deep: true})
 
 async function _fetch() {
-  const params:any = { ...tableData }
+  const params:any = { ...tableData.value }
   console.log('datacache server', datacache.opsiconfigserver)
   params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
   console.log('params.selectedDepots', params.selectedDepots)
@@ -433,15 +440,17 @@ async function _fetch() {
     //     this.showToastError(error)
     //     return []
     //  })
-  const {data, error} = await useApiGETBody('/opsidata/clients', params)
+  const {data, error, headers} = await useApiGETBody('/opsidata/clients', params)
 
   if (error) {
     console.log(error)
     useNotification().error(error)
     return
   }
-
-  // this.totalItems = response.headers['x-total-count']
+  // console.log('data', data)
+  console.log('headers2', headers)
+  totalItems.value = parseInt(headers['x-total-count'])
+  console.log('headers2.x-total-count', totalItems.value)
   // this.totalpages = Math.ceil(this.totalItems / params.perPage)
   // this.isLoading = false
   // this.tableloaded = true
