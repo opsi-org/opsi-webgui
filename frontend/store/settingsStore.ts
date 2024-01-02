@@ -35,17 +35,18 @@ export const storeSettings = defineStore('settings', {
           rel: useCookie('theme.rel').value as string,
           title: useCookie('theme.title').value as string
         }
-        try{
-          c.timestamp = (JSON.parse(useCookie('theme.timestamp').value || '')) as number
-        } catch (e) {
-          c.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
-          console.warn(e)
-        }
+
+          let t = useCookie('theme.timestamp').value
+          if (t === undefined) t = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime().toString()
+          c.timestamp = (JSON.parse(t || '')) as number
+          // c.timestamp = (JSON.parse(useCookie('theme.timestamp').value || '')) as number
+
         if (c.rel !== colorthemeobj.rel) {
           if (!colorthemeobj.timestamp) {
             return c
           }
-          if (new Date(new Date(c.timestamp).toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime() - colorthemeobj.timestamp < 0) {
+          if (c.timestamp - colorthemeobj.timestamp < 0) {
+          // if (new Date(new Date(c.timestamp).toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime() - colorthemeobj.timestamp < 0) {
             return c
           }
           return colorthemeobj
