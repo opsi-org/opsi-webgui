@@ -77,13 +77,18 @@
 </template>
 
 <script setup lang="ts">
+import { useNotification } from '~/composables/mixins/useComponent';
+
 const color = useColorMode();
 const settings = storeSettings()
+const configapp = storeConfigapp()
+const { config } = storeToRefs(configapp)
 const { isMobile } = storeToRefs(settings)
 const leftSideIsSmall = ref<boolean>(false)
 const leftSideVisible = ref<boolean>(!isMobile)
 const rightSideVisible = ref<boolean>(!isMobile)
 const mq = useMQ()
+
 // const cache = storeCache()
 // const { opsiconfigserver } = storeToRefs(cache)
 watch(()=> mq.$mq.value, (newVal, oldVal) => {
@@ -95,7 +100,7 @@ watch(()=> mq.$mq.value, (newVal, oldVal) => {
   }
 })
 
-onMounted(()=>{
+onMounted(async ()=>{
   leftSideIsSmall.value = false
   if (settings.menuCollapsed) {
     leftSideIsSmall.value = true
@@ -105,6 +110,8 @@ onMounted(()=>{
   if (settings.quickpanelOpened) {
     rightSideVisible.value = true
   }
+
+  await checkConfig()
 })
 const setLeftCollapse = (v: boolean) => {
   leftSideIsSmall.value = v
@@ -120,6 +127,43 @@ const toggleSide = async (side: string) => {
     rightSideVisible.value = !rightSideVisible.value
     settings.setQuickpanelOpened(rightSideVisible.value)
   }
+}
+
+
+async function checkConfig () {
+  const config = await useApiGET('/user/configuration')
+  if (config.error) {
+    console.log(config.error)
+    useNotification().error(config.error)
+    return
+  }
+  const forbidden = await useApiGET('/opsidata/server/disabled-features')
+  if (forbidden.error) {
+    console.log(forbidden.error)
+    useNotification().error(forbidden.error)
+    return
+  }
+  const _config = { ...config.data.value.configuration }
+  console.log('forbidden', forbidden.data.value)
+  forbidden.data.value.forEach((forbElem:string) => {
+    _config[forbElem + '.forbidden'] = true
+  })
+  configapp.setConfig(_config)
+
+  //   try {
+  //     const response = (await this.$axios.$get('/api/user/configuration')).configuration
+  //     const forbiddenList = (await this.$axios.get('/api/opsidata/server/disabled-features')).data
+  //     const _config = { ...response }
+  //     forbiddenList.forEach((forbElem:string) => {
+  //       _config[forbElem + '.forbidden'] = true
+  //     })
+  //     this.setConfig(_config)
+  //   } catch (error: any) {
+  //     const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
+  //     const ref = (this.$refs.errorAlert as any)
+  //     ref.alert(detailedError, 'danger')
+  //   }
+  // }
 }
 </script>
 

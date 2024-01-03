@@ -42,7 +42,7 @@
 <script setup lang="ts">
 import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
-const configStore = storeConfigapp()
+const {config} = storeToRefs(storeConfigapp())
 const settings = storeSettings()
 const { isMobile, menuCollapsed } = storeToRefs(settings)
 const mq = useMQ()
@@ -55,7 +55,9 @@ interface INavItem {
   submenu?: Array<INavItem>
 }
 const emit = defineEmits(['changeSmall'])
-const navItems:Array<INavItem> = [
+const navItems = computed<Array<INavItem>>(() =>
+// const navItems:Array<INavItem> =
+  [
   {
     title: 'title.depots',
     route: '/depots/',
@@ -71,7 +73,7 @@ const navItems:Array<INavItem> = [
     icon: icons.client,
     submenu: [
       { title: 'title.allClients', route: '/clients/'},
-      { title: 'title.addNew', route: '/clientscreation', disabled: !configStore.config?.client_creation },
+      { title: 'title.addNew', route: '/clientscreation', disabled: !config.value?.client_creation },
       // TODO: Display clone client when backend is ready
       // { title: 'title.clone', route: '/clientsclone' },
       { title: 'title.config', route: '/clientsconfig' },
@@ -83,10 +85,10 @@ const navItems:Array<INavItem> = [
 
   {
     title: 'title.administration',
-    route: (configStore.config && configStore.config['terminal.forbidden'] === true) ? '/admin' : '/adminterminal',
+    route: (config.value?.['terminal.forbidden'] === true) ? '/admin' : '/adminterminal',
     icon: icons.admin,
     submenu: [
-      { title: 'title.adminterminal', route: '/adminterminal', disabled: (configStore.config && configStore.config['terminal.forbidden'] === true) },
+      { title: 'title.adminterminal', route: '/adminterminal', disabled: (config.value?.['terminal.forbidden'] === true) },
       { title: 'title.healthcheck', route: '/adminserverhealthcheck' },
       { title: 'title.admin', route: '/admin' },
       { title: 'form.modules', route: '/adminmodules' }
@@ -94,6 +96,8 @@ const navItems:Array<INavItem> = [
   },
   { title: 'title.support', icon: icons.support, route: '/support' }
 ]
+)
+
 watch(isCollapse, (val) => {
   console.log('change isCollapse', val)
   emit('changeSmall', val)

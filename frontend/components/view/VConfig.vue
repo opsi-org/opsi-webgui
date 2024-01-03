@@ -11,7 +11,7 @@
         <!-- <el-text>Config of {{ type }} {{ currentId }}</el-text> -->
         <FormFHostParameter v-if="activeName==='config'" :id="currentId" :type="type"/>
       </el-tab-pane>
-    <el-tab-pane :label="$t('title.hostattr')" name="attr">
+    <el-tab-pane :label="$t('title.hostattr')" name="attr" :disabled="isIdEmpty">
       <el-scrollbar >
         <FormFHostAttributes :id="currentId" :type="type"/>
       </el-scrollbar>
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-const activeName = ref('attr')
+const activeName = ref('config')
 const currentId = ref<string|undefined>('')
 const props = defineProps({
   id: { type: String, default: undefined },
@@ -29,6 +29,12 @@ const props = defineProps({
 })
 watch(()=>props.id, ()=>{
   currentId.value = props.id
+  if (isIdEmpty.value && activeName.value !== 'config') {
+    activeName.value = 'config'
+  }
+})
+const isIdEmpty = computed(()=> {
+  return currentId.value === ''
 })
 function setId(id:string) {
   currentId.value = id
