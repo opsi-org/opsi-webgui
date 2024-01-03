@@ -14,8 +14,8 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient, useDepot } from '~/composables/mixins/useGet';
 const $t = useI18n().t
 const storeSel = storeSelections()
-let fetchedData = ref<Array<any>>([])
-const value = ref('')
+const fetchedData = ref<Array<any>>([])
+const value = ref<string|undefined>()
 const props = defineProps({
   id: { type: String, default: undefined },
   type: { type: String, default: 'depots' }
@@ -23,8 +23,8 @@ const props = defineProps({
 const emit = defineEmits(['update:value'])
 onMounted(async ()=> {
   await fetch()
-  if (props.id)
-    value.value = props.id
+  // if (props.id)
+  value.value = props.id
 })
 watch(()=>value.value, ()=>{
   // emit('change', value.value)
@@ -38,7 +38,7 @@ async function fetch() {
       useNotification().error(error)
       return
     }
-    fetchedData = data
+    fetchedData.value = data.value
   } else if (props.type === 'clients') {
     const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
     if (error) {
@@ -46,7 +46,7 @@ async function fetch() {
       useNotification().error(error)
       return
     }
-    fetchedData = data
+    fetchedData.value = data.value
   }
 }
 </script>

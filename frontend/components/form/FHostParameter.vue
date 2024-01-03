@@ -1,5 +1,6 @@
 <template>
-  <el-collapse v-model="activeNames" @change="handleChange"
+  <IconILoading v-if="isLoading" :small="true" />
+  <el-collapse v-else v-model="activeNames" @change="handleChange"
     class="mr-3 ml-3">
     <el-collapse-item v-for="(items, topic, index) in fetchedData" :title="(topic.toString())" :name="index.toString()">
       <FormrowFRItems :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
@@ -9,8 +10,8 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
-import { useClient } from '~/composables/mixins/useGet';
 const $t = useI18n().t
+const isLoading = ref(true)
 const fetchedData = ref<any>({})
 const activeNames = ref<string[]>([])
 const props = defineProps({
@@ -22,6 +23,8 @@ function handleChange (val: any) {
   activeNames.value = val
 }
 function changeItem (item: any, val: any, index: number) {
+  if (!item) return
+  if (!val) return
   console.log('changeItem', item, val, index)
   // fetchedData.value[item] = v
   item.value = val
@@ -62,33 +65,35 @@ watch(()=>props.id, async ()=>{
 // }
 
 async function fetch () {
-    let endpoint: any = ''
-    if (props.type === 'clients') {
-      // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
-      endpoint = `/opsidata/config/objects/${props.id}`
-    } else if (props.type === 'depots' && props.id) {
-      endpoint = `/opsidata/config/objects/${props.id}`
-    } else if (props.type === 'depots') {
-      endpoint = '/opsidata/config'
-    } else {
-      // eslint-disable-next-line no-console
-      console.error('not defined')
-    }
-    await fetchHostParameters(endpoint)
+  isLoading.value = true
+  let endpoint: any = ''
+  if (props.type === 'clients') {
+    // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
+    endpoint = `/opsidata/config/objects/${props.id}`
+  } else if (props.type === 'depots' && props.id) {
+    endpoint = `/opsidata/config/objects/${props.id}`
+  } else if (props.type === 'depots') {
+    endpoint = '/opsidata/config'
+  } else {
+    // eslint-disable-next-line no-console
+    console.error('not defined')
   }
+  await fetchHostParameters(endpoint)
+  isLoading.value = false
+}
 
-  async function fetchHostParameters (endpoint: string) {
-    const {data, error} = await useApiGETBody(endpoint)
-    if (error) {
-      console.log(error)
-      useNotification().error(error)
-      return
-    }
-    console.log('Fetchresult data', data.value)
-    fetchedData.value = data.value
-
-    // await this.$axios.$get(endpoint)
-    //   .then((response) => {
-    //     this.hostParam = { id: this.id, value: response }
+async function fetchHostParameters (endpoint: string) {
+  const {data, error} = await useApiGETBody(endpoint)
+  if (error) {
+    console.log(error)
+    useNotification().error(error)
+    return
   }
+  console.log('Fetchresult data', data.value)
+  fetchedData.value = data.value
+
+  // await this.$axios.$get(endpoint)
+  //   .then((response) => {
+  //     this.hostParam = { id: this.id, value: response }
+}
 </script>
