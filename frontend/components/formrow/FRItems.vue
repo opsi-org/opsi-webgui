@@ -7,13 +7,13 @@
 >
     <!-- :key="index" -->
     <FormrowFRItem
-      v-for="(item, index) in props.items"
+      v-for="(item, index) in props.items.sort((a,b)=>{return a[props.idKey].localeCompare(b[props.idKey])})"
       :item="item"
       :id-key="props.idKey"
       :bool-type-key="props.boolTypeKey"
       :bool-type-value="props.boolTypeValue"
       :replace-in-id="props.replaceInId"
-      @change="(v: any) => {change(item[props.idKey], v, index) }"
+      @change="(v: any) => {change(item, v, index) }"
     />
   </el-form>
 </template>
