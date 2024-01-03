@@ -30,7 +30,7 @@
         :no-match-text="$t('treeselect.noResultTextEditable')"
         placeholder=""
         class="w-full"
-        :tag-type="undefined"
+        tag-type=""
         >
         <!-- suffix-icon="el-icon-arrow-down" -->
         <!-- style="width: 240px" -->

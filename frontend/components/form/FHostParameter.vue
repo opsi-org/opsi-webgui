@@ -1,30 +1,10 @@
 <template>
-  <!-- <div>
-    <el-form label-width="200px" class="w-full">
-      <div v-for="(value, label, index) in fetchedData[0]" :key="index">
-        <el-form-item :label="label.toString()">
-          <el-input :value="value" />
-        </el-form-item>
-      </div>
-    </el-form>
-  </div> -->
-
   <el-collapse v-model="activeNames" @change="handleChange"
     class="mr-3 ml-3">
     <el-collapse-item v-for="(items, topic, index) in fetchedData" :title="(topic.toString())" :name="index.toString()">
-      <!-- {{ topic  }} -->
       <FormrowFRItems :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
     </el-collapse-item>
-    <!--
-    <el-collapse-item :title="'general'" :name="'0'">
-        <FormrowFRItems :items="fetchedData.general" />
-    </el-collapse-item>
-
-    <el-collapse-item :title="'configed'" :name="'1'">
-      <FormrowFRItems :items="fetchedData.configed" />
-    </el-collapse-item> -->
   </el-collapse>
-  {{fetchedData}}
 </template>
 
 <script setup lang="ts">
@@ -51,7 +31,7 @@ function changeItem (item: any, val: any, index: number) {
 }
 
 onMounted(async ()=> {
-await fetch()
+  await fetch()
 })
 watch(()=>props.id, async ()=>{
   if (props.id)
