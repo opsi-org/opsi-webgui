@@ -55,16 +55,18 @@ interface INavItem {
   submenu?: Array<INavItem>
 }
 const emit = defineEmits(['changeSmall'])
+const { selectionDepots } = storeSelections()
 const navItems = computed<Array<INavItem>>(() =>
 // const navItems:Array<INavItem> =
   [
   {
     title: 'title.depots',
-    route: '/depots/',
+    route: '/servers/',
     icon: icons.server,
     submenu: [
-      { title: 'title.allDepots', route: '/depots/'},
-      { title: 'title.config', route: '/depotsconfig'}
+      { title: 'title.allDepots', route: '/servers/'},
+      { title: 'title.config', route: '/servers/config/'}
+      // { title: 'title.config', route: '/depotsconfig'}
     ]
   },
   {
