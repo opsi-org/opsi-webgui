@@ -1,7 +1,8 @@
 
 <template>
-  <Story :layout="{ type: 'grid' }">
-    <Variant v-for="v,k in items" :title="'' + k">
+  <Story :layout="{ type: 'grid', width: '50%' }">
+  <!-- <Story> -->
+    <Variant v-for="v,k in items" :title="'' + k" :meta="{ wrapperMobile: true }" responsive-disabled>
       <IconIConfigState :item="v"/>
     </Variant>
   </Story>
@@ -9,7 +10,7 @@
 
 <script lang="ts" setup>
 const items = {
-  'isConfig-bool': {
+  'isConfig-bool-always-equal': {
     configId: 'isConfig-bool',
     description: 'isConfig-bool',
     type: 'BoolConfig',
@@ -17,9 +18,9 @@ const items = {
     value: true,
     editable: true,
     multiValue: false,
-    anyObjDiff: false,
+    anyObjDiff: false, // this value is only for debugging purposes. will not be given by the server
   },
-  'isConfig-unicode': {
+  'isConfig-unicode-always-equal': {
     configId: 'isConfig-unicode',
     description: 'isConfig-unicode',
     type: 'UnicodeConfig',
@@ -27,7 +28,7 @@ const items = {
     value: 'a',
     editable: true,
     multiValue: false,
-    anyObjDiff: false,
+    anyObjDiff: false, // this value is only for debugging purposes. will not be given by the server
   },
 
   'isState-bool-equal': {
@@ -36,13 +37,13 @@ const items = {
     type: 'BoolConfig',
     possibleValues: [true, false],
     // value: true,
-    defaultValues: true,
+    defaultValues: [true],
     objects: {
       '1': true,
       '2': true,
       '3': true,
     },
-    anyObjDiff: false,
+    anyObjDiff: false, // this value is only for debugging purposes. will not be given by the server
     editable: false,
     multiValue: false,
   },
@@ -52,8 +53,8 @@ const items = {
     type: 'BoolConfig',
     possibleValues: [true, false],
     // value: true,
-    defaultValues: false,
-    anyObjDiff: true,
+    defaultValues: [false],
+    anyObjDiff: true, // this value is only for debugging purposes. will not be given by the server
     objects: {
       '1': true,
       '2': true,
@@ -62,5 +63,55 @@ const items = {
     editable: false,
     multiValue: false,
   },
+
+  'isState-unicode-equal': {
+    configId: 'isState-unicode-equal',
+    description: 'isState-unicode-equal',
+    type: 'UnicodeConfig',
+    possibleValues: ['a', 'b', 'c'],
+    // value: 'a',
+    defaultValues: ['a'],
+    anyObjDiff: false, // this value is only for debugging purposes. will not be given by the server
+    objects: {
+      '1': ['a'],
+      '2': ['a'],
+      '3': ['a'],
+    },
+    editable: false,
+    multiValue: false,
+  },
+  'isState-unicode-unequal': {
+    configId: 'isState-unicode-unequal',
+    description: 'isState-unicode-unequal',
+    type: 'UnicodeConfig',
+    possibleValues: ['a', 'b', 'c'],
+    // value: 'a',
+    defaultValues: ['b'],
+    anyObjDiff: true, // this value is only for debugging purposes. will not be given by the server
+    objects: {
+      '1': ['a'],
+      '2': ['a'],
+      '3': ['a'],
+    },
+    editable: false,
+    multiValue: false,
+  },
+
+  'isConfig-mixed-unicode-unequal': {
+    configId: 'isConfig-mixed-unicode',
+    description: 'isConfig-mixed-unicode',
+    type: 'UnicodeConfig',
+    possibleValues: ['a', 'b', 'c'],
+    defaultValues: ['a'],
+    editable: true,
+    multiValue: true,
+    anyObjDiff: true, // this value is only for debugging purposes. will not be given by the server
+    objects: {
+      '1': ['a'],
+      '2': ['b'],
+      '3': ['a'],
+    },
+  },
+
 }
 </script>
