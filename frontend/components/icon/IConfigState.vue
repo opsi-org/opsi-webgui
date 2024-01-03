@@ -1,5 +1,5 @@
 <template>
-  <el-text v-if="anyObjectDifferentFromDefault"><slot name="default" />*</el-text>
+  <el-text v-if="anyObjectDifferentFromDefault"><i><slot name="default" />*</i></el-text>
   <el-text v-else> <slot name="default" /></el-text>
 
   <el-text v-if="props.item.anyObjDiff && props.item.anyObjDiff !== anyObjectDifferentFromDefault">
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from '@iconify/vue';
+// import { Icon } from '@iconify/vue';
 const props = defineProps({
   item: { type: Object, required: true },
 
@@ -30,11 +30,9 @@ const anyObjectDifferentFromDefault = computed(()=>{
 
     const defVal = props.item[props.defaultKey][0] // false
 
-    const objsVals: Array<any> = Object.values(props.item.objects) // [false]
-    // const objVals: Array<any> = objsVals[0]
-    const objVal0: boolean|string|number|undefined = objsVals[0] // false
-    console.log('anyObjectDifferentFromDefault', objVal0, defVal)
-    if (objVal0 === defVal) {
+    const objsVals: Array<any> = Object.values(props.item.objects)
+    const objVal: boolean|string|number|undefined = objsVals[0]
+    if (objVal === defVal) {
       return false
     }
     return true

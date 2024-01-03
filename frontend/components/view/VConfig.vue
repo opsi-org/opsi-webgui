@@ -2,7 +2,6 @@
 <template>
   <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
   <el-text v-else> <h3>{{ currentId }}</h3></el-text>
-  {{ currentId }}
   <el-tabs v-model="activeName" class="demo-tabs">
     <el-tab-pane
       :label="currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')"

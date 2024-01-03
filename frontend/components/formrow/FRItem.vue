@@ -10,7 +10,7 @@
       >
       <template #default>
         <el-text class="truncate">
-          <IconIConfigState v-if="props.item.objects" :item="props.item" >
+          <IconIConfigState :item="props.item" >
             {{ transformId(props.item[props.idKey]) }}
           </IconIConfigState>
         </el-text>
@@ -20,9 +20,13 @@
           <div class="min-w-48">
             <b>{{props.item[props.idKey]}} <br /></b>
             {{props.item.description}} <br /> <br />
-            <p><b>Default Values:</b>  <pre>{{ props.item.defaultValues }} </pre></p>
-            <p v-if="props.item.value"><b>Current Value:</b> <pre>{{ props.item.value }}</pre> </p>
-            <p v-if="props.item.objects"><b>Objects:</b> <pre>{{ props.item.objects }} </pre></p>
+            <p v-if="props.item.value !== undefined"><b>Config Value/s:</b> <pre>{{ props.item.value }}</pre> </p>
+            <p v-if="props.item.defaultValues !== undefined"><b>Default Value/s:</b>  <pre>{{ props.item.defaultValues }} </pre></p>
+            <p v-if="props.item.objects !== undefined"><b>Object Value/s:</b> <pre>{{ props.item.objects }} </pre></p>
+
+            <!-- <pre>
+              {{ props.item }}
+            </pre> -->
           </div>
         </template>
       </el-tooltip>
@@ -45,26 +49,26 @@
         placeholder=""
         class="w-full"
         tag-type=""
-        >
+      >
         <!-- suffix-icon="el-icon-arrow-down" -->
         <!-- style="width: 240px" -->
         <template #default>
-          <!-- <el-tooltip
+          <el-tooltip
+            v-for="pVal in props.item.possibleValues"
             class="box-item"
             effect="dark"
             :content="pVal"
             :show-after="1000"
             placement="top-start"
-            > -->
+          >
             <el-option
-            v-for="pVal in props.item.possibleValues"
               class="max-w-96"
               :key="pVal"
               :label="pVal"
               :value="pVal"
               >
             </el-option>
-          <!-- </el-tooltip> -->
+          </el-tooltip>
         </template>
         <template #header v-if="props.item.editable">
           <el-text> {{ $t('treeselect.searchOrAdd') }} </el-text>
@@ -97,15 +101,16 @@ const props = defineProps({
 })
 
 const setInitialValue = () => {
-  console.log('setInitialValue', props.item)
+  /**
+  * return the value/s which are visible initially
+  * if there is no value, but objects, return the first object (if they are equal, otherwise return 'mixed')
+  * if there is no value and no objects, throw an error
+  */
+
   if (itemValue.value !== undefined) return
-  console.log('itemValue is undefined', props.item)
   if (itemValue.value === undefined && props.item.objects && Object.keys(props.item.objects).length > 0) {
-    console.log('itemValue is undefined and objects found', props.item.objects)
     const objectValueStrings: Array<string> = []
     if (props.item.multiValue) {
-      // itemValue.value = []
-      // sort
       const objectValues: Array<Array<any>> = Object.values(props.item.objects)
 
       objectValues.forEach((value: any, index: number, wholearray: any[])=> {
@@ -144,17 +149,16 @@ const setInitialValue = () => {
   }
   throw new Error('itemValue is undefined and no objects found', props.item)
 }
+
 const itemValue = ref(props.item.value)
 setInitialValue()
 
-// const possibleValues = ref(props.item.possibleValues)
 watch(()=>props.item.value, ()=>{
   itemValue.value = props.item.value
 })
 
 watch(()=>itemValue.value, ()=>{
   $emit('change', itemValue.value)
-  // tmp.value = itemValue.value
 })
 
 const transformId = (id: string) => {

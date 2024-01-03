@@ -1,6 +1,7 @@
 <template>
-  <IconILoading v-if="isLoading" :small="true" />
-  <el-collapse v-else v-model="activeNames" @change="handleChange"
+  <br />
+  <IconILoading v-if="isLoading" />
+  <el-collapse v-else v-model="activeNames" @change="handleCollapseValueChange"
     class="mr-3 ml-3">
     <el-collapse-item v-for="(items, topic, index) in fetchedData" :title="(topic.toString())" :name="index.toString()">
       <FormrowFRItems :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
@@ -19,7 +20,7 @@ const props = defineProps({
   type: { type: String, default: 'depots' }
 })
 
-function handleChange (val: any) {
+function handleCollapseValueChange (val: any) {
   activeNames.value = val
 }
 function changeItem (item: any, val: any, index: number) {
@@ -31,14 +32,15 @@ function changeItem (item: any, val: any, index: number) {
   if (!item.possibleValues.includes(val)) {
     item.possibleValues.push(val)
   }
+
+  // TODO: Save to backend or add to changes
 }
 
 onMounted(async ()=> {
   await fetch()
 })
 watch(()=>props.id, async ()=>{
-  if (props.id)
-    await fetch()
+  await fetch()
 })
 
 // async function fetch(id:string) {
