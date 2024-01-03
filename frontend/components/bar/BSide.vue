@@ -65,7 +65,7 @@ const navItems = computed<Array<INavItem>>(() =>
     icon: icons.server,
     submenu: [
       { title: 'title.allDepots', route: '/servers/'},
-      { title: 'title.config', route: '/servers/config/'}
+      { title: 'title.config', route: '/servers/config'}
       // { title: 'title.config', route: '/depotsconfig'}
     ]
   },

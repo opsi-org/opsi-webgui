@@ -1,5 +1,6 @@
 <template>
   <div>
+{{route.params.id}}, {{ _routeId }}, {{ rowactionConfigChecked }} <br />
     <el-text>{{ $t('title.depots') }}</el-text><br />
     <!-- <el-button :type="'danger'">Danger</el-button> -->
     <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
@@ -99,8 +100,8 @@
 </div> -->
 
 <pre>
-    {{ fetchedData }}
-  </pre>
+  {{ fetchedData }}
+</pre>
   </div>
 </template>
 <script setup lang="tsx">
@@ -108,12 +109,26 @@
 
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useConfigserver } from '~/composables/mixins/useGet';
-
 import type { ITableHeaderRow } from '~/types/ttableV3'
 
 import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
+const route = useRoute()
+
+const _routeId = route.params.id || ['']
+const _routeLength = _routeId.length
+const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
+watch(()=>route.params.id, ()=>{
+  console.log('route.params.id', route.params.id)
+  const routeLength = route.params.id?.length || 1
+  const id = route.params.id?.[route.params.id?.length - 1] || ''
+
+  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+
+  rowactionConfigChecked.value[id] = true
+}, {deep: true})
+
 const storeSelection = storeSelections()
 const cookies = useCookies()
 const icons = useIcons()
@@ -122,7 +137,7 @@ const $t = useI18n().t
 const id = "server"
 const emit = defineEmits(['change'])
 const props = defineProps({
-  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
 })
 const columns = reactive<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
@@ -179,21 +194,29 @@ const columns = reactive<ITableHeaderRow>({
       key: 'rowactions',
       dataKey: 'rowactions',
       title: $t('table.fields.rowactions'),
-      width: 60,
-      maxWidth: 100,
+      width: 160,
+      maxWidth: 160,
       fixed: TableV2FixedDir.RIGHT,
       hidden: false,
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => {
-        const change = ()=>emit('change', rowData.depotId)
+        const change = ()=>{
+          emit('change', rowData.depotId)
+          Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+          rowactionConfigChecked.value[rowData.depotId] = true
+          useRouter().push('/servers/config/' + rowData.depotId)
+        }
         return (
         <>
-          <el-button size="small" onClick={change}>
-            <iconIIcon icon={icons.settings} />
-            {/* {rowData.depotId} */}
-          </el-button>
+          <el-checkbox-button
+            v-model={rowactionConfigChecked.value[rowData.depotId]}
+            onChange={change}
+          ><iconIIcon icon={icons.settings} /></el-checkbox-button>
         </>
       )},
+          //<el-button size="small" onClick={change}>
+          //  <iconIIcon icon={icons.settings} />
+          //</el-button>
       // <el-button size="small" type="danger">Delete</el-button>
       // <ButtonBTNRowLinkTo
       //       :title="$t('title.config')"
@@ -215,7 +238,7 @@ const handleChange = (id:string) => {
 }
 const tableData = ref({
   pageNumber: 1,
-  perPage: 1,
+  perPage: 5,
   sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
@@ -225,7 +248,6 @@ function updateTableData (v: typeof tableData.value) {
   console.log('tabledata changed total', v)
   tableData.value = reactive(v)
 }
-// onMounted(async ()=> fetchedData.value = await _fetch())
 
 watch(()=> tableData.value, async ()=>{
   console.log('tableData changed', tableData)
