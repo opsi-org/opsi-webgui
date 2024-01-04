@@ -3,6 +3,7 @@
     {{ route.params.id }}
     {{ id }}
     {{ productsType }}
+    {{ configType }}
     <el-button class="float-right" @click="useRouter().push('/products/' + productsType)">X</el-button>
     <!-- <ViewVConfig v-if="splitType === 'config'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/> -->
     <ViewVConfigProduct :type="type" :id="id"/>
@@ -39,4 +40,15 @@ function setSplitTypeFromParam() {
   productsType.value = _id
   console.log('route.params.id split', route.params.id, productsType.value)
 }
+const configType = computed(()=> {
+  if (route.params.id?.length === 1) {
+    return 'properties'
+  }
+  const _id = route.params.id?.[1] || ''
+  if (['config', 'log'].includes(_id)) {
+    return _id
+  }
+  return 'properties'
+})
+
 </script>
