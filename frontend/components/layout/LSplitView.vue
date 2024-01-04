@@ -1,6 +1,6 @@
 <template>
 
-  <el-container>
+  <el-container class="pagecontent">
     <el-main v-if="props.page0Condition"
       :class="classfirstcol"
       class="mt-1"
@@ -39,6 +39,9 @@ onMounted(()=>{
 </script>
 
 <style scoped>
+.pagecontent {
+  height: calc(100vh - 50px) !important;
+}
 .el-main {
   padding: 0px !important;
   /* border: 1px solid #ddd; */
