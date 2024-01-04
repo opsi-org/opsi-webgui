@@ -82,7 +82,7 @@ const navItems = computed<Array<INavItem>>(() =>
       { title: 'title.log', route: '/clientslog' }
     ]
   },
-  { title: 'title.products', icon: icons.product, route: '/products/' },
+  { title: 'title.products', icon: icons.product, route: '/products/LocalbootProduct' },
   { title: 'title.groups', icon: icons.group, route: '/groups/' },
 
   {

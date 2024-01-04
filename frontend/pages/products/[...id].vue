@@ -3,8 +3,9 @@
     {{ route.params.id }}
     {{ id }}
     {{ productsType }}
-    <el-button class="float-right" @click="useRouter().push('/products/')">X</el-button>
+    <el-button class="float-right" @click="useRouter().push('/products/' + productsType)">X</el-button>
     <!-- <ViewVConfig v-if="splitType === 'config'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/> -->
+    <ViewVConfigProduct :type="type" :id="id"/>
   </div>
 </template>
 
