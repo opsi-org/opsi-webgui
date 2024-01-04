@@ -2,16 +2,31 @@
   <el-text>{{ $t('title.depots') }}</el-text><br />
   <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
   <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
-  {{ fetchedData.localboot.length }}, total {{ totalItems }}
+  {{ fetchedData[currentType].length }}, total {{ totalItems }}
+  <div>
+    <el-checkbox-button
+        v-model="productsTypeChecked.LocalbootProduct"
+        @change="changeProductsType('LocalbootProduct')"
+      >LocalbootProduct</el-checkbox-button>
+    <el-checkbox-button
+        v-model="productsTypeChecked.NetbootProduct"
+        @change="changeProductsType('NetbootProduct')"
+      >NetbootProduct</el-checkbox-button>
+    <el-checkbox-button
+        disabled
+        v-model="productsTypeChecked.Product"
+        @change="changeProductsType('Product')"
+      >Product</el-checkbox-button>
+  </div>
   <TableTDefault
-      v-if="fetchedData.localboot.length > 0 && totalItems > 0"
+      v-if="fetchedData[currentType].length > 0 && totalItems > 0"
       row-id="productId"
       :id="id"
       :columns="columns"
-      :data="fetchedData.localboot"
-      :table-data="tableData.localboot"
+      :data="fetchedData[currentType]"
+      :table-data="tableData[currentType]"
       :total-items="totalItems"
-      :sort-by="tableData.localboot.sortBy"
+      :sort-by="tableData[currentType].sortBy"
       :is-mobile="isMobile"
       @selection-changed="(id: string) => storeSelection.toggleSelectionProducts(id)"
       @selection-clear="storeSelection.clearSelectionProducts"
@@ -105,7 +120,17 @@ watch(()=>route.params.id, ()=>{
   rowactionConfigChecked.value[id] = true
 }, {deep: true})
 
-
+const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
+const changeProductsType = (type: string)=>{
+  Object.keys(productsTypeChecked.value).forEach(k => productsTypeChecked.value[k] = false)
+  productsTypeChecked.value[type] = true
+}
+const currentType = computed(()=>{
+  if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
+  if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
+  if (productsTypeChecked.value.Product) return 'Product'
+  return 'LocalbootProduct'
+})
 // import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 // import { Client } from '../../mixins/get'
 // import { Icons } from '../../mixins/icons'
@@ -326,8 +351,8 @@ const columns = reactive<ITableHeaderRow>({
 
 
 const fetchedData = ref({
-  localboot: [] as Array<any>,
-  netboot: [] as Array<any>
+  LocalbootProduct: [] as Array<any>,
+  NetbootProduct: [] as Array<any>
 })
 const totalItems = ref<number>(0)
 // const handleChange = (id:string) => {
@@ -336,7 +361,8 @@ const totalItems = ref<number>(0)
 // }
 
 const tableData = ref({
-  'localboot': {
+  'LocalbootProduct': {
+    type: 'LocalbootProduct',
     pageNumber: 1,
     perPage: 5,
     sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
@@ -344,7 +370,17 @@ const tableData = ref({
     filterQuery: '',
     filterColumns: ['productId', 'description']
   },
-  'netboot': {
+  'NetbootProduct': {
+    type: 'NetbootProduct',
+    pageNumber: 1,
+    perPage: 5,
+    sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+    sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    filterQuery: '',
+    filterColumns: ['productId', 'description']
+  },
+  'Product': {
+    type: 'Product',
     pageNumber: 1,
     perPage: 5,
     sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
@@ -354,16 +390,16 @@ const tableData = ref({
   }
 })
 
-function updateTableData (type:string, v: typeof tableData.value.localboot) {
+function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
   console.log('tabledata changed total', v)
   tableData.value[type] = reactive(v)
 }
 
-onMounted(async ()=> fetchedData.value.localboot = await _fetch('localboot'))
-watch(()=> tableData.value.localboot, async ()=>{
+onMounted(async ()=> fetchedData.value[currentType.value] = await _fetch(currentType.value))
+watch(()=> tableData.value[currentType.value], async ()=>{
   console.log('tableData changed', tableData)
-  fetchedData.value.localboot = []
-  fetchedData.value.localboot = await _fetch('localboot')
+  fetchedData.value[currentType.value] = []
+  fetchedData.value[currentType.value] = await _fetch(currentType.value)
 }, { deep: true})
 
 //   tableInfo: ITableInfo = {
