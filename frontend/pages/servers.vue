@@ -8,7 +8,7 @@
       <br />
       <ViewVServer />
     </el-main>
-    <el-aside v-if="route.params.id?.length > 0" :width="width" >
+    <el-aside v-if="route.params.id?.length > 0" :width="width" class="mr-5">
     <!-- <el-main v-if="route.params.id.length > 0"> -->
       <NuxtPage />
     </el-aside>

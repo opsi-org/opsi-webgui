@@ -227,6 +227,22 @@ const $t = useI18n().t
 const icons = useIcons()
 const id = "clients"
 
+
+const route = useRoute()
+const _routeId = route.params.id || ['']
+const _routeLength = _routeId.length
+const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
+watch(()=>route.params.id, ()=>{
+  console.log('route.params.id', route.params.id)
+  const routeLength = route.params.id?.length || 1
+  const id = route.params.id?.[routeLength - 1] || ''
+
+  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+
+  rowactionConfigChecked.value[id] = true
+}, {deep: true})
+
+
 const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
@@ -376,16 +392,25 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-rowactions',
       // cellRenderer: ({rowData}: any) => <el-button type="primary">Edit {rowData.clientId}</el-button>
       cellRenderer: ({rowData}) => {
-        const change = ()=>emit('change', rowData.clientId)
+        const change = ()=>{
+          emit('change', rowData.clientId)
+          Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+          rowactionConfigChecked.value[rowData.clientId] = true
+          useRouter().push('/clients/config/' + rowData.clientId)
+        }
         return (
         <>
-          <el-button size="small" onClick={change}>
-            <iconIIcon icon={icons.settings} />
-            {/* {rowData.depotId} */}
-          </el-button>
+          <el-checkbox-button
+            v-model={rowactionConfigChecked.value[rowData.clientId]}
+            onChange={change}
+          ><iconIIcon icon={icons.settings} /></el-checkbox-button>
         </>
       )},
     }
+    // <el-button size="small" onClick={change}>
+    //   <iconIIcon icon={icons.settings} />
+    //   {/* {rowData.depotId} */}
+    // </el-button>
 })
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
