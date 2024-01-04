@@ -5,8 +5,8 @@
     </el-menu-item>
 
     <div class="flex-grow" />
-    <el-menu-item index="1">
-      <IconIOpsiLogo class="max-h-full h-full"/>
+    <el-menu-item index="1" @click="useRouter().push('/clients/')">
+      <IconIOpsiLogo class="max-h-full h-full" />
     </el-menu-item>
 
     <div class="flex-grow" />
@@ -27,7 +27,7 @@
   </el-menu>
 
  <el-menu v-else mode="horizontal" :ellipsis="false">
-    <el-menu-item index="0">
+    <el-menu-item index="0" @click="useRouter().push('/clients/')">
       <IconIOpsiLogo class="max-h-full h-full"/>
     </el-menu-item>
 

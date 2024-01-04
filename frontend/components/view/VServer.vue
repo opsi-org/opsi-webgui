@@ -1,6 +1,5 @@
 <template>
   <div>
-{{route.params.id}}, {{ _routeId }}, {{ rowactionConfigChecked }} <br />
     <el-text>{{ $t('title.depots') }}</el-text><br />
     <!-- <el-button :type="'danger'">Danger</el-button> -->
     <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />

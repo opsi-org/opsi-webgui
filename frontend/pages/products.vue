@@ -1,5 +1,4 @@
 <template>
-
   <LayoutLSplitView
     :is-mobile="true"
     :page0-condition="(!(route.params.id?.length == 1 && route.params.id[0] == 'config'))"
@@ -7,7 +6,7 @@
     :width="width"
   >
     <template #default>
-      <ViewVClients />
+      <ViewVProducts />
     </template>
     <template #page1>
       <NuxtPage />

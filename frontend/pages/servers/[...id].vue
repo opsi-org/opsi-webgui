@@ -1,11 +1,5 @@
 <template>
   <div>
-      <!-- META: {{ route.meta.title  }} <br /> -->
-      Only server: {{route.name}} <br />
-      Ids: {{route.params.id}} <br />
-      Id: {{id}} <br />
-      splitType: {{splitType}} <br />
-      <br />
     <el-button class="float-right" @click="useRouter().push('/servers/')">X</el-button>
     <ViewVConfig v-if="splitType === 'config'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
   </div>

@@ -1,5 +1,4 @@
 <template>
-
   <el-text>{{ $t('title.clients') }}</el-text><br />
   <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
