@@ -1,8 +1,9 @@
 <template>
+  {{ filteredPath }}
   <LayoutLSplitView
     :is-mobile="true"
-    :page0-condition="(!(route.params.id?.length == 1 && route.params.id[0] == 'config'))"
-    :page1-condition="route.params.id?.length > 0"
+    :page0-condition="filteredPath.length >= 1"
+    :page1-condition="filteredPath.length > 1"
     :width="width"
   >
     <template #default>
@@ -17,7 +18,12 @@
 <script setup lang="ts">
 const route = useRoute()
 const width = computed(()=> {
-  const routeLength = route.params.id?.length || 1
-  return (100/routeLength)  + '%'
+  // const routeLength = filteredPath.value.length || 1
+  // return (100/routeLength)  + '%'
+  return '50%'
+})
+const filteredPath = computed(()=> {
+  const path = route.params.id as Array<string>
+  return path?.filter((p: string)=> ![''].includes(p)) || []
 })
 </script>

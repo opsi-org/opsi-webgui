@@ -120,17 +120,6 @@ watch(()=>route.params.id, ()=>{
   rowactionConfigChecked.value[id] = true
 }, {deep: true})
 
-const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
-const changeProductsType = (type: string)=>{
-  Object.keys(productsTypeChecked.value).forEach(k => productsTypeChecked.value[k] = false)
-  productsTypeChecked.value[type] = true
-}
-const currentType = computed(()=>{
-  if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
-  if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
-  if (productsTypeChecked.value.Product) return 'Product'
-  return 'LocalbootProduct'
-})
 // import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 // import { Client } from '../../mixins/get'
 // import { Icons } from '../../mixins/icons'
@@ -161,7 +150,8 @@ const currentType = computed(()=>{
 
 const emit = defineEmits(['change'])
 const props = defineProps({
-  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
+  productType: { type: String, default: 'LocalbootProduct' },
 })
 //   @Prop() child!: boolean
 //   @Prop({}) id!: string
@@ -335,7 +325,7 @@ const columns = reactive<ITableHeaderRow>({
           emit('change', rowData.productId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.productId] = true
-          useRouter().push('/products/config/' + rowData.productId)
+          useRouter().push(`/products/${currentType.value}/config/${rowData.productId}`)
         }
         return (
         <>
@@ -349,6 +339,23 @@ const columns = reactive<ITableHeaderRow>({
   }
 )
 
+const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
+const changeProductsType = (type: string)=>{
+  useRouter().push('/products/' + type + '/')
+  Object.keys(productsTypeChecked.value).forEach(k => productsTypeChecked.value[k] = false)
+  productsTypeChecked.value[type] = true
+
+}
+const currentType = computed(()=>{
+  if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
+  if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
+  if (productsTypeChecked.value.Product) return 'Product'
+  return 'LocalbootProduct'
+})
+if (props.productType) changeProductsType(props.productType)
+watch(()=>props.productType, (v)=>{
+  changeProductsType(v)
+})
 
 const fetchedData = ref({
   LocalbootProduct: [] as Array<any>,
