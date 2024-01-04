@@ -43,6 +43,7 @@ const props = defineProps({
   tableData: { type: Object, required: true },
   totalItems: { type: Number, required: true },
   id: { type: String, default: 'depots' },
+  rowId: { type: String, default: 'depotId' },
   sortBy: { type: String, default: 'selection'},
   small: { type: Boolean, default: true }
 })
@@ -112,7 +113,8 @@ function updateColumns() {
   _columns.selected.cellRenderer = ({ rowData }) => {
     const onChange = (value: CheckboxValueType) => {
       rowData.selected = value
-      $emit('selection-changed', rowData.depotId)
+      console.log('selection changed', props.rowId, rowData[props.rowId])
+      $emit('selection-changed', rowData[props.rowId])
     }
     return <SelectionCell value={rowData.selected} onChange={onChange} />
   }

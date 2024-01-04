@@ -20,7 +20,7 @@
       :total-items="totalItems"
       :sort-by="tableData.sortBy"
       :is-mobile="isMobile"
-      @selection-changed="(id: string) => storeSelection.toggleSelectionClients(id)"
+      @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionClients(id)}"
       @selection-clear="storeSelection.clearSelectionClients"
       @tabledata-changed="(v: any) => {updateTableData(v)}"
     >
@@ -413,10 +413,10 @@ const columns = reactive<ITableHeaderRow>({
 })
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
-const handleChange = (id:string) => {
-  console.log('handleSelectionChange', id)
-  storeSelection.toggleSelectionDepots(id)
-}
+// const handleChange = (id:string) => {
+//   console.log('handleSelectionChange', id)
+//   storeSelection.toggleSelectionDepots(id)
+// }
 const tableData = ref({
   pageNumber: 1,
   perPage: 5,

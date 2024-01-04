@@ -1,5 +1,24 @@
 <template>
-  Products
+  <el-text>{{ $t('title.depots') }}</el-text><br />
+  <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
+  <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
+  {{ fetchedData.localboot.length }}, total {{ totalItems }}
+  <TableTDefault
+      v-if="fetchedData.localboot.length > 0 && totalItems > 0"
+      row-id="productId"
+      :id="id"
+      :columns="columns"
+      :data="fetchedData.localboot"
+      :table-data="tableData.localboot"
+      :total-items="totalItems"
+      :sort-by="tableData.localboot.sortBy"
+      :is-mobile="isMobile"
+      @selection-changed="(id: string) => storeSelection.toggleSelectionProducts(id)"
+      @selection-clear="storeSelection.clearSelectionProducts"
+      @tabledata-changed="(v: any) => {updateTableData('localboot', v)}"
+    >
+
+    </TableTDefault>
   <!-- <div data-testid="VProducts" class="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">
       <template #parent>
@@ -59,7 +78,34 @@
   </div> -->
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
+
+import { useNotification } from '~/composables/mixins/useComponent';
+
+import type { ITableHeaderRow } from '~/types/ttableV3'
+
+import { useCookies } from '~/composables/mixins/useCookies'
+import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+import { useIcons } from '~/composables/mixins/useIcons';
+const cookies = useCookies()
+const $t = useI18n().t
+const icons = useIcons()
+const id = "products"
+
+
+const route = useRoute()
+const _routeId = route.params.id || ['']
+const _routeLength = _routeId.length
+const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
+watch(()=>route.params.id, ()=>{
+  console.log('route.params.id', route.params.id)
+  const routeLength = route.params.id?.length || 1
+  const id = route.params.id?.[routeLength - 1] || ''
+  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+  rowactionConfigChecked.value[id] = true
+}, {deep: true})
+
+
 // import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
 // import { Client } from '../../mixins/get'
 // import { Icons } from '../../mixins/icons'
@@ -88,13 +134,23 @@
 //   $axios: any
 //   getClientToDepot:any
 
+const emit = defineEmits(['change'])
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+})
 //   @Prop() child!: boolean
 //   @Prop({}) id!: string
 //   @Prop({}) sortby!: string
+// const datacache = storeCache()
+// console.log('datacache', datacache.opsiconfigserver)
+
+const storeSelection = storeSelections()
+const { selectionDepots, selectionClients, selectionProducts } = storeSelection
 //   @selections.Getter public selectionDepots!: Array<string>
 //   @selections.Getter public selectionClients!: Array<string>
 //   @selections.Getter public selectionProducts!: Array<string>
 //   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+
 //   sortdesc: boolean = false
 //   rowId: string = ''
 //   isLoading: boolean = false
@@ -103,69 +159,216 @@
 //   totalnetboot: number = 0
 //   tableloaded: boolean = false
 //   activeLocalbootTab: boolean = true
-//   headerData: ITableHeaders = {
-//     selected: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.selection') as string, key: 'selected', _fixed: true, sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'selected', true)
-//     },
-//     installationStatus: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.instStatus') as string, key: 'installationStatus', sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'installationStatus', true)
-//     },
-//     actionResult: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.actionResult') as string, key: 'actionResult', sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'actionResult', true)
-//     },
-//     productId: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.productId') as string, key: 'productId', _fixed: true, sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'productId', true)
-//     },
-//     name: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.name') as string, key: 'name', sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'name', false)
-//     },
-//     description: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'description', false)
-//     },
-//     modificationTime: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.modificationTime') as string, key: 'modificationTime', sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'modificationTime', false)
-//     },
-//     priority: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.priority') as string, key: 'priority', sortable: true,
-//       visible: this.includesCookie(`column_${this.id}`, 'priority', false)
-//     },
-//     // selectedDepots: { // eslint-disable-next-line object-property-newline
-//     //   label: this.$t('table.fields.depotIds') as string, key: 'selectedDepots', disabled: true,
-//     //   visible: this.includesCookie('column_' + this.id, 'selectedDepots', false)
-//     // },
-//     // selectedClients: { // eslint-disable-next-line object-property-newline
-//     //   label: this.$t('table.fields.clientsIds') as string, key: 'selectedClients', disabled: true,
-//     //   visible: this.includesCookie('column_' + this.id, 'selectedClients', false)
-//     // },
-//     version: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.version') as string, key: 'version', sortable: true,
-//       visible: this.includesCookie('column_' + this.id, 'version', false)
-//     },
-//     actionProgress: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.actionProgress') as string, key: 'actionProgress', sortable: true,
-//       visible: this.includesCookie('column_' + this.id, 'actionProgress', false)
-//     },
-//     actionRequest: { // eslint-disable-next-line object-property-newline
-//       label: this.$t('table.fields.actionRequest') as string, key: 'actionRequest', sortable: true,
-//       visible: this.includesCookie('column_' + this.id, 'actionRequest', false)
-//     },
-//     rowactions: { // eslint-disable-next-line object-property-newline
-//       key: 'rowactions', label: this.$t('table.fields.rowactions') as string, _fixed: true,
-//       visible: this.includesCookie('column_' + this.id, 'rowactions', false),
-//       class: 'col-rowactions'
-//     }
-//   }
+  // headerData: ITableHeaders = {
+const columns = reactive<ITableHeaderRow>({
+  selected: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.selection'),
+      key: 'selected',
+      dataKey: 'selected',
+      class: 'col-selected',
+      sortable: true,
+      width: 50,
+      maxWidth: 50,
+      fixed: true, // always visible
+      // hidden: cookies.includesCookie('column_' + id, 'selected', true)
+    },
+    installationStatus: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.instStatus'),
+      key: 'installationStatus',
+      dataKey: 'installationStatus',
+      class: 'col-installationStatus',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie(`column_${id}`, 'installationStatus', true)
+      hidden: false
+    },
+    actionResult: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.actionResult'),
+      key: 'actionResult',
+      dataKey: 'actionResult',
+      class: 'col-actionResult',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
+      hidden: false
+    },
+    productId: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.productId'),
+      fixed: true,
+      key: 'productId',
+      dataKey: 'productId',
+      class: 'col-productId',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie(`column_${id}`, 'productId', true)
+      hidden: false
+    },
+    name: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.name'),
+      key: 'name',
+      dataKey: 'name',
+      class: 'col-name',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie(`column_${id}`, 'name', false)
+      hidden: false
+    },
+    description: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.description'),
+      key: 'description',
+      dataKey: 'description',
+      class: 'col-description',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie(`column_${id}`, 'description', false)
+      hidden: false
+    },
+    modificationTime: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.modificationTime'),
+      key: 'modificationTime',
+      dataKey: 'modificationTime',
+      class: 'col-modificationTime',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie(`column_${id}`, 'modificationTime', false)
+      hidden: false
+    },
+    priority: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.priority'),
+      key: 'priority',
+      dataKey: 'priority',
+      class: 'col-priority',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie(`column_${id}`, 'priority', false)
+      hidden: false
+    },
+    // selectedDepots: { // eslint-disable-next-line object-property-newline
+    //   title: $t('table.fields.depotIds') as string, key: 'selectedDepots', dise,
+    //   title: $t('table.fields.depotIds') as string, dataKey: 'selectedDepots', dise,
+    //   title: $t('table.fields.depotIds') as string, class: 'col-selectedDepots', dise,
+    //   visible: this.includesCookie('column_' + id, 'selectedDepots', false)
+    // },
+    // selectedClients: { // eslint-disable-next-line object-property-newline
+    //   title: $t('table.fields.clientsIds') as string, key: 'selectedClients', dise,
+    //   title: $t('table.fields.clientsIds') as string, dataKey: 'selectedClients', dise,
+    //   title: $t('table.fields.clientsIds') as string, class: 'col-selectedClients', dise,
+    //   visible: this.includesCookie('column_' + id, 'selectedClients', false)
+    // },
+    version: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.version'),
+      key: 'version',
+      dataKey: 'version',
+      class: 'col-version',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie('column_' + id, 'version', false)
+      hidden: false
+    },
+    actionProgress: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.actionProgress'),
+      key: 'actionProgress',
+      dataKey: 'actionProgress',
+      class: 'col-actionProgress',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie('column_' + id, 'actionProgress', false)
+      hidden: false
+    },
+    actionRequest: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.actionRequest'),
+      key: 'actionRequest',
+      dataKey: 'actionRequest',
+      class: 'col-actionRequest',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      // visible: this.includesCookie('column_' + id, 'actionRequest', false)
+      hidden: false
+    },
+    rowactions: { // eslint-disable-next-line object-property-newline
+      key: 'rowactions',
+      dataKey: 'rowactions',
+      class: 'col-rowactions',
+      width: 200,
+      maxWidth: 200,
+      title: $t('table.fields.rowactions'),
+      fixed: TableV2FixedDir.RIGHT,
+      // visible: this.includesCookie('column_' + id, 'rowactions', false),
+      hidden: false,
+      cellRenderer: ({rowData}) => {
+        const change = ()=>{
+          emit('change', rowData.productId)
+          Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+          rowactionConfigChecked.value[rowData.productId] = true
+          useRouter().push('/products/config/' + rowData.productId)
+        }
+        return (
+        <>
+          <el-checkbox-button
+            v-model={rowactionConfigChecked.value[rowData.productId]}
+            onChange={change}
+          ><iconIIcon icon={icons.settings} /></el-checkbox-button>
+        </>
+      )},
+    }
+  }
+)
+
+
+const fetchedData = ref({
+  localboot: [] as Array<any>,
+  netboot: [] as Array<any>
+})
+const totalItems = ref<number>(0)
+// const handleChange = (id:string) => {
+//   console.log('handleSelectionChange', id)
+//   storeSelection.toggleSelectionDepots(id)
+// }
+
+const tableData = ref({
+  'localboot': {
+    pageNumber: 1,
+    perPage: 5,
+    sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+    sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    filterQuery: '',
+    filterColumns: ['productId', 'description']
+  },
+  'netboot': {
+    pageNumber: 1,
+    perPage: 5,
+    sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+    sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    filterQuery: '',
+    filterColumns: ['productId', 'description']
+  }
+})
+
+function updateTableData (type:string, v: typeof tableData.value.localboot) {
+  console.log('tabledata changed total', v)
+  tableData.value[type] = reactive(v)
+}
+
+onMounted(async ()=> fetchedData.value.localboot = await _fetch('localboot'))
+watch(()=> tableData.value.localboot, async ()=>{
+  console.log('tableData changed', tableData)
+  fetchedData.value.localboot = []
+  fetchedData.value.localboot = await _fetch('localboot')
+}, { deep: true})
 
 //   tableInfo: ITableInfo = {
-//     sortBy: this.getKeyCookie(`sorting_${this.id}`, 'sortBy', this.sortby || 'productId'),
-//     sortDesc: this.getKeyCookie(`sorting_${this.id}`, 'sortDesc', this.sortdesc || false),
+//     sortBy: this.getKeyCookie(`sorting_${id}`, 'sortBy', this.sortby || 'productId'),
+//     sortDesc: this.getKeyCookie(`sorting_${id}`, 'sortDesc', this.sortdesc || false),
 //     filterQuery: '',
 //     headerData: this.headerData
 //   }
@@ -239,7 +442,7 @@
 //         visibleItems[h.key] = h.visible || false
 //       }
 //     })
-//     this.setCookie('column_' + this.id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
+//     this.setCookie('column_' + id, JSON.stringify(Object.keys(visibleItems).filter(k => visibleItems[k])), { expires: 365 })
 //   }
 
 //   async triggerFetch () {
@@ -254,66 +457,75 @@
 //   async waitBeforeFetch () {
 //     // await new Promise(resolve => setTimeout(resolve, 5))
 //   }
+async function _fetch(type: string) {
+  const params = fetchProductsPrepareParams(type)
+  const {data, error, headers} = await useApiGETBody('/opsidata/products', params)
+  if (error) {
+    console.error(error)
+    useNotification().error(error)
+    return []
+  }
+  totalItems.value = parseInt(headers['x-total-count'])
+  return data.value
+}
+  // async function fetchProducts (thiss) {
+  //   thiss.isLoadingTable = true // have to be "thiss" -> overwise sorting breaks - whyever
+  //   await this.waitBeforeFetch() // needed for messagebus timing problem
+  //   if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
+  //     await this.getClientToDepot(thiss.selectionClients)
+  //     thiss.fetchOptions.fetchClients2Depots = false
+  //   }
 
-//   async fetchProducts (thiss) {
-//     thiss.isLoadingTable = true // have to be "thiss" -> overwise sorting breaks - whyever
-//     await this.waitBeforeFetch() // needed for messagebus timing problem
-//     if (thiss.fetchOptions.fetchClients2Depots && thiss.selectionClients.length > 0) {
-//       await this.getClientToDepot(thiss.selectionClients)
-//       thiss.fetchOptions.fetchClients2Depots = false
-//     }
+  //   if (thiss.fetchOptions.fetchClients) {
+  //     const params = this.fetchProductsPrepareParams(thiss)
+  //     const myitems = await thiss.$axios.get('/api/opsidata/products', { params })
+  //       .then((response) => {
+  //         thiss.totalItems = response.headers['x-total-count'] || 0
+  //         thiss.$emit('update:total' + thiss.id, thiss.totalItems)
+  //         thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
+  //         thiss.items = response.data || []
+  //         thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
+  //         const items = response.data || []
+  //         this.tableloaded = true
+  //         return items
+  //       }).catch((error) => {
+  //         // eslint-disable-next-line no-console
+  //         console.error(error)
+  //         thiss.error = thiss.$t('message.error.defaulttext') as string
+  //         thiss.error += (error as IObjectString2Any).message
+  //         this.showToastError(error)
+  //         thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
+  //       })
+  //     thiss.setItemsCache(myitems)
+  //     return myitems
+  //   }
+  // }
 
-//     if (thiss.fetchOptions.fetchClients) {
-//       const params = this.fetchProductsPrepareParams(thiss)
-//       const myitems = await thiss.$axios.get('/api/opsidata/products', { params })
-//         .then((response) => {
-//           thiss.totalItems = response.headers['x-total-count'] || 0
-//           thiss.$emit('update:total' + thiss.id, thiss.totalItems)
-//           thiss.totalpages = Math.ceil(thiss.totalItems / params.perPage)
-//           thiss.items = response.data || []
-//           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
-//           const items = response.data || []
-//           this.tableloaded = true
-//           return items
-//         }).catch((error) => {
-//           // eslint-disable-next-line no-console
-//           console.error(error)
-//           thiss.error = thiss.$t('message.error.defaulttext') as string
-//           thiss.error += (error as IObjectString2Any).message
-//           this.showToastError(error)
-//           thiss.isLoadingTable = false // have to be "thiss" -> overwise sorting breaks - whyever
-//         })
-//       thiss.setItemsCache(myitems)
-//       return myitems
-//     }
-//   }
-
-//   fetchProductsPrepareParams (thiss) {
-//     const params = { ...thiss.tableData }
-//     params.selectedDepots = JSON.stringify(thiss.selectionDepots)
-//     params.selectedClients = JSON.stringify(thiss.selectionClients)
-//     if (params.sortBy === 'installationStatus') {
-//       params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
-//     } else if (params.sortBy === 'actionResult') {
-//       params.sortBy = '["actionResultErrorLevel", "actionResult"]'
-//     } else if (params.sortBy === 'depotVersions') {
-//       params.sortBy = 'depot_version_diff'
-//     } else if (params.sortBy === 'clientVersions') {
-//       params.sortBy = 'client_version_outdated'
-//     } else if (params.sortBy === 'desc') {
-//       params.sortBy = 'description'
-//     } else if (params.sortBy === '') {
-//       params.sortBy = 'productId'
-//     } else if (params.sortBy === 'version') {
-//       params.sortBy = '["client_version_outdated", "depot_version_diff", "not_on_all_depots" ]'
-//     } else if (params.sortBy === 'selected') {
-//       params.sortDesc = true
-//       params.selected = JSON.stringify(thiss.selectionProducts)
-//       // params.sortBy = '["selected", "productId"]'
-//     }
-//     return params
-//   }
-// }
+function fetchProductsPrepareParams (type: string) {
+  const params = { ...tableData.value[type] }
+  params.selectedDepots = JSON.stringify(selectionDepots)
+  params.selectedClients = JSON.stringify(selectionClients)
+  if (params.sortBy === 'installationStatus') {
+    params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
+  } else if (params.sortBy === 'actionResult') {
+    params.sortBy = '["actionResultErrorLevel", "actionResult"]'
+  } else if (params.sortBy === 'depotVersions') {
+    params.sortBy = 'depot_version_diff'
+  } else if (params.sortBy === 'clientVersions') {
+    params.sortBy = 'client_version_outdated'
+  } else if (params.sortBy === 'desc') {
+    params.sortBy = 'description'
+  } else if (params.sortBy === '') {
+    params.sortBy = 'productId'
+  } else if (params.sortBy === 'version') {
+    params.sortBy = '["client_version_outdated", "depot_version_diff", "not_on_all_depots" ]'
+  } else if (params.sortBy === 'selected') {
+    params.sortDesc = true
+    params.selected = JSON.stringify(selectionProducts)
+    // params.sortBy = '["selected", "productId"]'
+  }
+  return params
+}
 </script>
 
 <style>
