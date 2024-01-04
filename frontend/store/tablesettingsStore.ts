@@ -11,6 +11,11 @@ interface Columns {
 export const storeTablesettings = defineStore('tablesettings', {
   persist: true,
   state: () => ({
+    _configLastSelected: {
+      clients: '',
+      depots: '',
+      products: '',
+    },
     _columns: {
       clients: [],
       depots: [],
@@ -19,10 +24,14 @@ export const storeTablesettings = defineStore('tablesettings', {
   }),
   getters: {
     columns: ({ _columns }) => _columns,
+    configLastSelected: ({ _configLastSelected }) => _configLastSelected,
   },
   actions: {
     setColumns (tabletype:string, value:Array<string>) {
       this._columns[tabletype] = value
+    },
+    setConfigLastSelected (tabletype:string, value:string) {
+      this._configLastSelected[tabletype] = value
     },
   },
 })

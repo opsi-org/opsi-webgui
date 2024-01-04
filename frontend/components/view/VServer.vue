@@ -122,7 +122,7 @@ const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
 watch(()=>route.params.id, ()=>{
   console.log('route.params.id', route.params.id)
   const routeLength = route.params.id?.length || 1
-  const id = route.params.id?.[route.params.id?.length - 1] || ''
+  const id = route.params.id?.[routeLength - 1] || ''
 
   Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
 
