@@ -1,13 +1,6 @@
 <template>
-  <div>
-    <!-- <AlertAAlertLocal
-      v-if="(selectionDepots.length>1 || selectionClients.length > 1 || selectionProducts.length > 1) && !multiSelection"
-      show
-      variant="warning"
-      class="multiselectionwarning"
-    >
-      <span class="text-small">{{ $t('message.error.multiSelectedItems') }}</span>
-    </AlertAAlertLocal> -->
+  Checkbox Multiselection
+  <!-- <div>
     <div v-if="type==='checkbox'" class="d-flex flex-nowrap justify-content-center border">
       <b-form-checkbox
         ref="refCBMultiSelectionMode"
@@ -51,10 +44,11 @@
         'btn.cancel': $t('label.cancel'),
       }) }}</div>
     </b-modal>
-  </div>
+  </div> -->
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+/*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { Icons } from '../../mixins/icons'
 const selections = namespace('selections')
@@ -124,9 +118,10 @@ export default class CBMultiselection extends Vue {
     ]
   }
 }
+*/
 </script>
 <style>
-.quickpanelwarning {
+/* .quickpanelwarning {
   line-height: 0.9;
-}
+} */
 </style>
