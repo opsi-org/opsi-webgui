@@ -4,7 +4,8 @@ import { defineStore } from 'pinia'
 export const storeSelections = defineStore('selections', {
   persist: true,
   state: () => ({
-    _multiSelection: (useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true) as boolean,
+    // _multiSelection: useCookie('MultiSelection', { default: () => false }),
+    // _multiSelection: (useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true) as boolean,
     _selectionDepots: reactive( (localStorage.getItem('selectionDepots') ? JSON.parse(localStorage.getItem('selectionDepots') as string) : []) as Array<string>),
     _selectionClients: reactive([] as Array<string>),
     _selectionProducts: reactive([] as Array<string>),
@@ -13,7 +14,8 @@ export const storeSelections = defineStore('selections', {
     _selectionLogLevel: 5
   }),
   getters: {
-    multiSelection: (state: any) => state._multiSelection,
+    // multiSelection: (state: any) => state._multiSelection,
+    multiSelection: (state: any) => useCookie('MultiSelection', { default: () => false }).value,
     selectionDepots: (state: any) => state._selectionDepots,
     selectionClients: (state: any) => state._selectionClients,
     selectionProducts: (state: any) => state._selectionProducts,
@@ -23,7 +25,7 @@ export const storeSelections = defineStore('selections', {
   },
   actions: {
     setMultiSelection (isMultiSelection: boolean) {
-      this._multiSelection = isMultiSelection
+      // this._multiSelection = isMultiSelection
       // Cookies.options.methods.setCookie('MultiSelection', (isMultiSelection) ? 'true' : 'false')
       useCookie('MultiSelection').value = (isMultiSelection) ? 'true' : 'false'
     },
@@ -31,7 +33,7 @@ export const storeSelections = defineStore('selections', {
     XsetSelectionLogType (s: string) { this._selectionLogType = s },
     XsetSelectionLogLevel (s: number) { this._selectionLogLevel = s },
     setSelectionDepots (s: Array<string>) {
-      if (this._multiSelection === false && s.length > 1) {
+      if (this.multiSelection === false && s.length > 1) {
         this._selectionDepots = reactive([s[s.length - 1]])
       } else {
         this._selectionDepots = reactive([...s])
@@ -41,7 +43,7 @@ export const storeSelections = defineStore('selections', {
     pushToSelectionDepots (s: string) {
       const index = this._selectionDepots.indexOf(s)
       if (index === -1) {
-        if (this._multiSelection === false) {
+        if (this.multiSelection === false) {
           this._selectionDepots = [s]
         } else {
           this._selectionDepots.push(s)
@@ -57,7 +59,7 @@ export const storeSelections = defineStore('selections', {
     },
 
     setSelectionClients (s: Array<string>) {
-      if (this._multiSelection === false && s.length > 1) {
+      if (this.multiSelection === false && s.length > 1) {
         this._selectionClients = [s[s.length - 1]]
       } else {
         this._selectionClients = s
@@ -68,7 +70,7 @@ export const storeSelections = defineStore('selections', {
       const index = this._selectionClients.indexOf(s)
       if (index === -1) {
         // _selectionClients.push(s)
-        if (this._multiSelection === false) {
+        if (this.multiSelection === false) {
           this._selectionClients = [s]
         } else {
           this._selectionClients.push(s)
@@ -84,7 +86,7 @@ export const storeSelections = defineStore('selections', {
     },
 
     setSelectionProducts (s: Array<string>) {
-      if (this._multiSelection === false && s.length > 1) {
+      if (this.multiSelection === false && s.length > 1) {
         this._selectionProducts = [s[s.length - 1]]
       } else {
         this._selectionProducts = s
@@ -94,7 +96,7 @@ export const storeSelections = defineStore('selections', {
     pushToSelectionProducts (s: string) {
       const index = this._selectionProducts.indexOf(s)
       if (index === -1) {
-        if (this._multiSelection === false) {
+        if (this.multiSelection === false) {
           this._selectionProducts = [s]
         } else {
           this._selectionProducts.push(s)

@@ -10,6 +10,8 @@
           :width="width"
           :height="height"
           fixed
+          :row-event-handlers="rowEventHandlers"
+          @scroll="onScroll"
         >
         </el-table-v2>
       </template>
@@ -31,11 +33,12 @@
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
-
+import TableV2 from 'element-plus';
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
-import {type CheckboxValueType, type Column } from 'element-plus';
+import {type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus';
 import type { FunctionalComponent } from 'vue';
 
+const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
 const props = defineProps({
   columns: { type: Object as PropType<ITableHeaderRow>, required:true},
@@ -60,6 +63,7 @@ const total = ref(props.totalItems)
 console.log('total pagenumber', pageNumber.value)
 pageNumber.value = props.tableData.pageNumber
 console.log('total pagenumber', pageNumber.value )
+const lastSelectedItemForSingleselect = ref<any>(undefined)
 
 watch(()=>tableStore.columns[props.id], ()=>{
   // show or hide major-children
@@ -125,19 +129,62 @@ function updateData() {
   const _data = props.data
   return _data
 }
+const onScroll = (event: any) => {
+  console.log('scroll', event)
+}
+// const rowEventHandlers = (handlers: any) =>{
+//   console.log('row event', handlers)
+// }
+const rowEventHandlers: RowEventHandlers = {
+  onClick: (params: RowEventHandlerParams) => {
+    console.log('row click', params.rowIndex, params.rowKey, params.rowData, params.event)
+    if (selectionStore.multiSelection === false) {
+      if (lastSelectedItemForSingleselect.value !== undefined) {
+        lastSelectedItemForSingleselect.value.selected = false
+      }
+      lastSelectedItemForSingleselect.value = params.rowData
+      params.rowData.selected = true
+      $emit('selection-changed', params.rowKey)
+    }
+    else {
+      params.rowData.selected = params.rowData.selected === true ? false : true
+    }
 
+    // $emit('selection-changed', )
+  },
+  onDblclick: (params: RowEventHandlerParams) => {
+    console.log('row dblclick', params.rowKey, params.event)
+    // $emit('selection-changed', )
+  },
+}
 const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
   value,
   intermediate = false,
   onChange,
 }) => {
-  return (
-    <el-checkbox
-      onChange={onChange}
-      modelValue={value}
-      indeterminate={intermediate}
-    />
-  )
+  if (selectionStore.multiSelection === true) {
+    return (
+      <el-checkbox
+        onChange={onChange}
+        modelValue={value}
+        indeterminate={intermediate}
+      />
+    )
+  } else {
+    //<el-text>{value}</el-text>
+    const label = computed(()=> value === true? 'x' : '')
+    return (
+      <>
+      <el-text>{label.value}</el-text>
+      {/* <el-checkox-button
+        onChange={onChange}
+        modelValue={value}
+        indeterminate={intermediate}
+        label={label}
+      /> */}
+      </>
+    )
+  }
 }
 </script>
 

@@ -1,7 +1,5 @@
 <template>
-  <b-sidebar
-    right
-    visible
+  <div
   >
     Quick Select
     <el-tabs v-model="activeTab">
@@ -12,10 +10,11 @@
       </el-tab-pane>
       <el-tab-pane label="Product Groups" name="prod">Product Group</el-tab-pane>
     </el-tabs>
-    Settings
+    Settings <br/>
     <FormitemDDTheme />
-    <TestI18n />
-  </b-sidebar>
+    <FormitemDDLang />
+    <FormitemCBMultiselection />
+  </div>
 </template>
 
 <script setup lang="ts">
