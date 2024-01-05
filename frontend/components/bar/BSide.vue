@@ -107,11 +107,13 @@ watch(isCollapse, (val) => {
 </script>
 
 <style scoped>
-  .el-menu--collapse >>> .el-sub-menu__icon-arrow {
+  :deep(.el-sub-menu__icon-arrow) {
+  /* .el-menu--collapse >>> .el-sub-menu__icon-arrow { */
     /* display: none !important; */
     margin-right: -10px !important;
   }
-  .menu-footer >>> .el-checkbox-button__inner{
+  :deep(.el-checkbox-button__inner) {
+  /* .menu-footer >>> .el-checkbox-button__inner{ */
     width: 100% !important;
     background-color: var(--el-checkbox-button-bg-color);
     border: 0px;
