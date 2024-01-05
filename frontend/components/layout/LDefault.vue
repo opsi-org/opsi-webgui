@@ -13,9 +13,6 @@
       </el-header>
 
       <el-container class="h-screen max-h-screen overflow-hidden">
-        <!-- initially set correct colorTheme -->
-        <div class="hidden"><TestTheme/></div>
-
         <el-aside
           v-if="!settings.isMobile || leftSideVisible"
           class=""

@@ -7,7 +7,7 @@
 
     <TestEPButton />
     <TestStore />
-    <TestTheme />
+    <DropdownDDTheme />
     <br /> screen: {{  mq.$mq }}
     <TestI18n />
 

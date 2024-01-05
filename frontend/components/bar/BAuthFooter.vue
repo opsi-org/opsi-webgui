@@ -5,7 +5,7 @@
         <el-text class="text-xs">{{ staticStrings.t_fixed('uib') }}</el-text>
       </el-col>
       <el-col :span="3" class="flex justify-center">
-        <DropdownDDLang :footer="true" /><TestTheme />
+        <DropdownDDLang :footer="true" /><DropdownDDTheme />
       </el-col>
       <el-col :span="4" class="flex justify-end space-x-1">
         <el-text class="text-xs">{{ $t('label.version') }}</el-text>
