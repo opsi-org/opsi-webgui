@@ -1,7 +1,7 @@
 <template>
   <Story>
     <Variant  :meta="{ wrapperMobile: true }" responsive-disabled>
-      <DropdownDDTheme />
+      <FormitemDDTheme />
     </Variant>
   </Story>
 </template>

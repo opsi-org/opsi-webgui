@@ -13,7 +13,7 @@
       <el-tab-pane label="Product Groups" name="prod">Product Group</el-tab-pane>
     </el-tabs>
     Settings
-    <DropdownDDTheme />
+    <FormitemDDTheme />
     <TestI18n />
   </b-sidebar>
 </template>

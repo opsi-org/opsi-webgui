@@ -1,5 +1,5 @@
 <template>
-  <DropdownDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+  <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
   <div class="h-96 w-full" :class="{small: props.small !== false}">
     <el-auto-resizer>
       <template #default="{ height, width }">

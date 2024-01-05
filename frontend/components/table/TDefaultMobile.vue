@@ -1,5 +1,5 @@
 <template>
-    <DropdownDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+    <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
     <el-collapse v-model="activeRowIndex" accordion>
       <el-collapse-item v-for="row, index in wrappedData" :name="index">
         <template #title>
