@@ -1,8 +1,8 @@
 <template>
   <div :class="{
-    [`webgui-theme-${color}`]: true,
     'is-mobile': settings.isMobile
   }" >
+  <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">
       <el-header class="min-w-screen max-h-10 p-0">
         <BarBTop
@@ -79,8 +79,10 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 
-const color = useColorMode();
+// const color = useColorMode();
+
 const settings = storeSettings()
+// const { colormode } = storeToRefs(settings)
 const configapp = storeConfigapp()
 const { config } = storeToRefs(configapp)
 const { isMobile } = storeToRefs(settings)
@@ -101,6 +103,9 @@ watch(()=> mq.$mq.value, (newVal, oldVal) => {
 })
 
 onMounted(async ()=>{
+  settings.initColormode()
+  await checkConfig()
+
   leftSideIsSmall.value = false
   if (settings.menuCollapsed) {
     leftSideIsSmall.value = true
@@ -111,7 +116,6 @@ onMounted(async ()=>{
     rightSideVisible.value = true
   }
 
-  await checkConfig()
 })
 const setLeftCollapse = (v: boolean) => {
   leftSideIsSmall.value = v
@@ -128,7 +132,6 @@ const toggleSide = async (side: string) => {
     settings.setQuickpanelOpened(rightSideVisible.value)
   }
 }
-
 
 async function checkConfig () {
   const config = await useApiGET('/user/configuration')

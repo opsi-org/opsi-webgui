@@ -10,7 +10,8 @@ function initDesktop(data: any) {
 }
 const getTheme = () => {
   const settings = storeSettings()
-  return settings.colortheme
+  // return settings.colortheme
+  return settings.colormode
 }
 const getThemeDoc = () => {
   return document.querySelector('html')?.classList.contains('dark') ? 'dark' : document.querySelector('html')?.classList.contains('htw-dark') ? 'dark' : 'light'

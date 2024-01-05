@@ -1,4 +1,5 @@
-import { useColorMode, useMediaQuery } from '@vueuse/core'
+// import { useColorMode, useMediaQuery } from '@vueuse/core'
+import { useMediaQuery } from '@vueuse/core'
 import { computed } from 'vue'
 
 export const useMQ = () => {
@@ -7,8 +8,6 @@ export const useMQ = () => {
   const _isMediumScreen = useMediaQuery('(min-width: 767.98px)')
   // on update isMediumScreen Width. also update histoire/histoire-wrapper-mobile.vue .mobile-wrapper class. Make sure that the with of the class is smaller isMediumScreen min-width
 
-  const color = useColorMode()
-  color.value = isPreferredDark ? 'dark' : 'light'
   const isMobile = computed(()=>{
     return $mq.value === 'mobile' ? true : false
   })

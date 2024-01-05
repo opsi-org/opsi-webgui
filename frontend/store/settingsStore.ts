@@ -7,11 +7,12 @@ import type { IObjectString2Boolean } from '@/types/tgeneral'
 import type { IColumnLayoutCollapsed } from '@/types/tobjects'
 import { useIcons } from '~/composables/mixins/useIcons'
 import _ from 'lodash'
+
+
 export const storeSettings = defineStore('settings', {
   persist: true,
   state: () => ({
     _isMobile: useMQ().isMobile.value as boolean,
-    _theme: document.querySelector('html')?.classList.contains('dark') ? 'dark' : document.querySelector('html')?.classList.contains('htw-dark') ? 'dark' : 'light',
     _language: useCookie('Language').value || 'en',
     _quicksave: useCookie('Quicksave').value === 'true' || (useCookie('Quicksave').value === undefined) || false,
     _quickpanelOpened: useCookie('QuickpanelOpened').value === 'true' || (useCookie('QuickpanelOpened').value === undefined) || true as boolean,
@@ -27,33 +28,24 @@ export const storeSettings = defineStore('settings', {
     quickpanelOpened: (state: any) => state._quickpanelOpened,
     menuCollapsed: (state: any) => state._menuCollapsed,
     expiresInterval: (state: any) => state._expiresInterval,
-    isLight: (state: any) => state._theme.value === 'light',
-    colortheme: (state: any) => {
-      let colorthemeobj: ITheme = { title: 'light', rel: 'themes/opsi-light.css', icon: useIcons().themelight }
-      if (useCookie('theme.title')) {
-        const c: ITheme = {
-          rel: useCookie('theme.rel').value as string,
-          title: useCookie('theme.title').value as string
-        }
-
-          let t = useCookie('theme.timestamp').value
-          if (t === undefined) t = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime().toString()
-          c.timestamp = (JSON.parse(t || '')) as number
-          // c.timestamp = (JSON.parse(useCookie('theme.timestamp').value || '')) as number
-
-        if (c.rel !== colorthemeobj.rel) {
-          if (!colorthemeobj.timestamp) {
-            return c
-          }
-          if (c.timestamp - colorthemeobj.timestamp < 0) {
-          // if (new Date(new Date(c.timestamp).toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime() - colorthemeobj.timestamp < 0) {
-            return c
-          }
-          return colorthemeobj
-        }
+    colormodeCookie: (state: any) => useCookie('colormode').value,
+    colormode: (getter: any) => {
+      // check if specific colormode for webgui is set
+      // if colormode is auto, use bt-mode as default (and set ep-mode to this)
+      // if colormode is not auto (specific), set bt and ep to colormode
+      const _colormode = getter.colormodeCookie
+      if (_colormode === undefined || _colormode === 'auto') {
+        // specific mode is not set. so return current bootstrap mode
+        return useColorMode().value // current bootstrap mode
       }
-      return colorthemeobj
+      return _colormode as 'light'|'dark'|'auto'
     },
+    isLight: (getter: any) => {
+      if (getter.colormode === 'auto') {
+        return useColorMode().value === 'light'
+      }
+      return getter.colormode === 'light'
+    }
   },
   actions: {
     setExpiresInterval (int: NodeJS.Timeout|undefined) {
@@ -88,31 +80,33 @@ export const storeSettings = defineStore('settings', {
     setColumnLayoutCollapsed (obj: IColumnLayoutCollapsed) {
       this._twoColumnLayoutCollapsed[obj.parentId] = obj.value
     },
-    setColorTheme (newThemeObj: ITheme) {
-      this._theme = newThemeObj.title
-      // colorthemeobj = newThemeObj
-      // colorthemeobj.timestamp = new Date(new Date().toLocaleString(['en-EN'], { timeZone: 'Europe/Berlin' })).getTime()
-      // useCookie('theme.title').value = colorthemeobj.title
-      // useCookie('theme.timestamp').value = JSON.stringify(colorthemeobj.timestamp)
-      // useCookie('theme.rel').value = colorthemeobj.rel
+    initColormode () { // init colormode without saving as cookie
+      const colormode = this.colormode // getter:
+      // if colormode is auto use bt-mode as default (and set ep-mode to this)
+      // if colormode is not auto set bt and ep to colormode
+      this.setColormode(colormode, false)
     },
-    changeTheme(t:string) {
-      this._theme = t
-        // `this` is the store instance
-      const _colorthemeobj = { title: 'light', rel: 'themes/opsi-light.css', icon: useIcons().themelight }
-      // const color = useColorMode() // bootstrap
-      const isDark = useDark()
-      // color.preference ='light'
-      useToggle(isDark)
+    setColormode (colormode: 'light'|'dark'|'auto', saveCookie = true) {
+      console.log('color setColormode new mode', colormode, 'saveAsCookie', saveCookie)
+      if (saveCookie)
+        useCookie('colormode').value = colormode
 
-      if (t==='dark'){
-        // color.value = 'dark'
-        _colorthemeobj.title = t
-        _colorthemeobj.rel = 'themes/opsi-dark.css'
-        _colorthemeobj.icon = useIcons().themedark
-      }
-      this.setColorTheme(_colorthemeobj)
+      const color_bt = useColorMode() // bootstrap
+      color_bt.value = colormode // set bootstrap colormode to given colormode
+
+      const color_ep_isDark = useDark() // element plus
+      color_ep_isDark.value = color_bt.value === 'dark' // set elementplus colormode to same as bootstrap
     },
+    toggleTheme() {
+      let _mode = this.colormode
+      console.log('color toggleTheme current', _mode)
+      if (_mode === 'auto') {
+        _mode = useColorMode().value // current bootstrap mode
+      }
+      const newMode = (_mode === 'light') ? 'dark' : 'light'
+      console.log('color toggleTheme current', newMode)
+      this.setColormode(newMode)
+    }
   },
 })
 

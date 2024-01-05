@@ -9,12 +9,16 @@ body {
   background-color: unset !important;
   color: unset !important;
 }
-html,
+html, html.light,
 body[data-bs-theme="light"] {
   --el-bg-color: #FFFFFF;
   --bs-body-bg: var(--el-bg-color);
   --bg-color: var(--el-bg-color);
+  // --el-fill-color: #aaaaaa;
+  // --el-fill-color-light: var(--el-fill-color);
+
   --fg-color: #000000;
+  --el-text-color-regular: #000000;
 
   --el-text-color-primary: #000000;
   // --el-text-color-regular: #000000;
