@@ -188,6 +188,15 @@
               :pressed="isRouteActive"
               :click="routeRedirectWith"
             />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.clone')"
+              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.clone') : '')"
+              :icon="icon.client"
+              to="/clients/clone"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
             <DropdownDDClientActions :client-id="row.item.clientId" :fetch="$fetch" />
           </template>
           <template
