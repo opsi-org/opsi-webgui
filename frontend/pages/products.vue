@@ -1,5 +1,4 @@
 <template>
-  {{ filteredPath }}
   <LayoutLSplitView
     :is-mobile="true"
     :page0-condition="filteredPath.length >= 1"
