@@ -1,5 +1,5 @@
 <template>
- <el-menu v-if="settings.isMobile" mode="horizontal">
+ <el-menu v-if="settings.isMobile" mode="horizontal" class="border-0">
     <el-menu-item index="0" @click="()=>emit('toggleLeft')">
       <IconIIcon :icon="icons.navmenu" />
     </el-menu-item>
@@ -21,6 +21,7 @@
         QuickPanel
         <IconIIcon :icon="icons.navmenu" />
       </el-menu-item>
+
       <ButtonBTNLogout index="3" :is-menu-item="true"/>
       <!-- <IconIIcon :icon="icons.menu" /> -->
     <!-- </el-sub-menu> -->
@@ -49,4 +50,8 @@ const icons = useIcons()
 </script>
 
 <style scoped>
+.el-menu-item,
+.el-menu-item.is-active {
+  color: var(--fg-color) !important;
+}
 </style>

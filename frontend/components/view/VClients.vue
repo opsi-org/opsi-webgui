@@ -391,18 +391,27 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-rowactions',
       // cellRenderer: ({rowData}: any) => <el-button type="primary">Edit {rowData.clientId}</el-button>
       cellRenderer: ({rowData}) => {
-        const change = ()=>{
+        const change = (e: Event)=>{
+          e.stopPropagation()
+          // e.preventDefault() // not working
+
           emit('change', rowData.clientId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.clientId] = true
           useRouter().push('/clients/config/' + rowData.clientId)
+          console.log('change rowConfig', rowData.clientId, e)
         }
         return (
         <>
-          <el-checkbox-button
+            {/* v-model={rowactionConfigChecked.value[rowData.clientId]} */}
+          <el-button
+            onClick={change}
+            active
+          ><iconIIcon icon={icons.settings} /></el-button>
+          {/* <el-checkbox-button
             v-model={rowactionConfigChecked.value[rowData.clientId]}
             onChange={change}
-          ><iconIIcon icon={icons.settings} /></el-checkbox-button>
+          ><iconIIcon icon={icons.settings} /></el-checkbox-button> */}
         </>
       )},
     }

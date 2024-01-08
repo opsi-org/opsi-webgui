@@ -1,5 +1,5 @@
 <template>
-  <div
+  <div class="quickpanel"
   >
     Quick Select
     <el-tabs v-model="activeTab">
@@ -23,3 +23,10 @@ const mq = useMQ()
 const activeTab = ref('client')
 </script>
 
+<style>
+/* .el-tabs__item.is-active {
+  color: var(--fg-color) !important;
+  background-color: var(--bg-color) !important;
+  border-color: var(--border-color) !important;
+} */
+</style>

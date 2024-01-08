@@ -137,6 +137,8 @@ const onScroll = (event: any) => {
 // }
 const rowEventHandlers: RowEventHandlers = {
   onClick: (params: RowEventHandlerParams) => {
+    // params.event.preventDefault()
+    params.event.preventDefault()
     console.log('row click', params.rowIndex, params.rowKey, params.rowData, params.event)
     if (selectionStore.multiSelection === false) {
       if (lastSelectedItemForSingleselect.value !== undefined) {

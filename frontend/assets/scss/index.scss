@@ -9,6 +9,27 @@ body {
   background-color: unset !important;
   color: unset !important;
 }
+
+html {
+  --opsi-general-red: #cb1e58;
+  --opsi-general-blue: #3f5aa6;
+  --opsi-general-blue-dark: #2d4178;
+  --opsi-general-lighter: #e4e4e3;
+  --opsi-general-light: #b2b2b2;
+  --opsi-general-dark: #4b4b49;
+  --opsi-general-darker: #3f3f3e;
+
+  --opsi-log-secret: #D500F9;
+  --opsi-log-trace: #8B8B8B;
+  --opsi-log-debug: #565656;
+  --opsi-log-info: #212121;
+  --opsi-log-notice: #009605;
+  --opsi-log-warning: #FF9100;
+  --opsi-log-error: #E51D3B;
+  --opsi-log-critical: #E20066;
+  --opsi-log-essential: #2979FF;
+}
+
 html, html.light,
 body[data-bs-theme="light"] {
   --el-bg-color: #FFFFFF;

@@ -28,7 +28,7 @@
             @click.self="toggleSide('left')"
           ></div>
           <el-scrollbar :class="{
-            'border-r': true,
+            ' border-0 border-r': true,
             'w-48': !settings.isMobile && !leftSideIsSmall,
             'w-16': !settings.isMobile && leftSideIsSmall,
             'w-2/3 max-w-full z-40 bg-color opacity-100': settings.isMobile,
@@ -61,7 +61,7 @@
             @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
-            'right-0 opacity-100 justify-self-end border-1': true,
+            'right-0 opacity-100 justify-self-end border-0': true,
             'w-80': !settings.isMobile,
             'max-w-full bg-color z-30': settings.isMobile,
             }">
@@ -169,18 +169,25 @@ async function checkConfig () {
 
 
 <style scoped>
+
 .bg-color {
   background-color: var(--bg-color) !important;
   color: var(--fg-color) !important;
 }
 .el-header {
   position: relative;
+  height: calc(var(--el-header-height) + 1px);
+  background-color: var(--opsi-general-blue);
+  --el-color: green;
 }
 .el-aside {
   --height: calc(100% - 0px);
   min-height: var(--height);
   height: var(--height);
   max-height: var(--height);
+
+  background-color: var(--opsi-general-blue);
+  border: 0px;
 }
 .is-mobile .el-aside {
   --height: calc(100% - 40px);
