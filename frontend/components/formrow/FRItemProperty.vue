@@ -10,9 +10,14 @@
         popper-class="max-h-96 max-w-96 overflow-scroll"
       >
       <template #default>
-        <el-text class="truncate">
+        <el-text class="truncate mt-3">
           <IconIConfigState :item="props.item" >
-            {{ transformId(props.item[props.idKey]) }}
+            <p :class="{
+              italic: props.item.anyClientDifferentFromDepot,
+              bold: props.item.anyDepotDifferentFromDefault,
+            }">
+              {{ transformId(props.item[props.idKey]) }}
+            </p>
           </IconIConfigState>
         </el-text>
       </template>

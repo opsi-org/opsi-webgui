@@ -1,17 +1,22 @@
 <template>
   <h5>{{  $t('title.properties') }}</h5>
   <h6>Id: {{ props.id }}</h6>
-  <h7>Version: {{ fetchedData.properties.productVersions || fetchedData.dependencies.productVersions }}</h7> <br />
+  <h7>Version: {{ getVersion(fetchedData.properties, fetchedData.properties.productVersions || fetchedData.dependencies.productVersions) }}</h7> <br />
   <!-- TODO: render description and advice as markdown -->
   <b>Description: {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}</b> <br />
   <b>Advice: {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }}</b> <br />
 
+
+  <el-alert v-if="selectionClients.length <= 0" :title="$t('message.warning.noClientsSelectedShowDepot')" type="warning" />
+    <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).length !== selectionDepots.length" :title="$t('message.warning.notOnEachDepot', {count:Object.values(fetchedData.properties.productVersions).filter(n => n).length, countall:selectionDepots.length})" type="warning" />
+    <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).some((v)=>v!=Object.values(fetchedData.properties.productVersions).filter(n => n)[0])" :title="$t('message.warning.differentProductVersions')" type="warning" />
   <el-tabs v-model="activeName" class="demo-tabs">
     <el-tab-pane
       :label="$t('title.prodproperties')"
       name="properties"
       active
     >
+
       <ViewVConfigProductProperty :properties="fetchedData.properties" />
       {{errorText.properties}}
       </el-tab-pane>
@@ -26,6 +31,7 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
+import { useUtils } from '~/composables/mixins/useUtils';
 import type { IErrorDepProp, IFetchedData } from '~/types/tobjects';
 
 const tableSettings = storeTablesettings()
@@ -102,5 +108,17 @@ async function fetchDependencies () {
     return
   }
   fetchedData.value.dependencies = data.value
+}
+
+
+function getVersion (item: any, versions: any) {
+  const hasVersionValue = Object.keys(versions).length > 0
+  const allVersionEqual = useUtils().isEqual(Object.values(versions))
+  if (allVersionEqual && hasVersionValue) {
+    return Object.values(versions)[0]
+  } else if (hasVersionValue) {
+    return 'mixed'
+  }
+  return 'undefined'
 }
 </script>
