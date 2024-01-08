@@ -2,6 +2,7 @@
   <el-text>{{ $t('title.depots') }}</el-text><br />
   <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
   <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
+  <el-text>Product Selection: {{ storeSelection.selectionProducts }}</el-text> <br />
   {{ fetchedData[currentType].length }}, total {{ totalItems }}
   <div>
     <el-checkbox-button
@@ -377,7 +378,7 @@ const tableData = ref({
   'LocalbootProduct': {
     type: 'LocalbootProduct',
     pageNumber: 1,
-    perPage: 5,
+    perPage: 25,
     sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
     sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
     filterQuery: '',
@@ -403,9 +404,11 @@ const tableData = ref({
   }
 })
 
-function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
+async function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
   console.log('tabledata changed total', v)
   tableData.value[type] = reactive(v)
+  fetchedData.value[currentType.value] = []
+  fetchedData.value[currentType.value] = await _fetch(currentType.value)
 }
 
 onMounted(async ()=> fetchedData.value[currentType.value] = await _fetch(currentType.value))

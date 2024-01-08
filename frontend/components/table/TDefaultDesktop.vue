@@ -146,12 +146,11 @@ const rowEventHandlers: RowEventHandlers = {
       }
       lastSelectedItemForSingleselect.value = params.rowData
       params.rowData.selected = true
-      $emit('selection-changed', params.rowKey)
     }
     else {
       params.rowData.selected = params.rowData.selected === true ? false : true
     }
-
+    $emit('selection-changed', params.rowData[props.rowId])
     // $emit('selection-changed', )
   },
   onDblclick: (params: RowEventHandlerParams) => {

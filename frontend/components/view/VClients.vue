@@ -397,7 +397,7 @@ const columns = reactive<ITableHeaderRow>({
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.clientId] = true
           useRouter().push('/clients/config/' + rowData.clientId)
-          console.log('change rowConfig', rowData.clientId, e)
+          console.log('change rowConfig', rowData, e)
         }
         return (
         <>

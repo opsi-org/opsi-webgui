@@ -146,11 +146,15 @@ export interface IDepend {
   productVersions: IObjectString2StringOrUndefined
   productDescription: string
   productDescriptionDetails: IObjectString2String
+  productAdvice: string
+  productAdviceDetails: IObjectString2String
 }
 
 export interface IProp {
   properties: IProperties
   productVersions: IObjectString2StringOrUndefined
   productDescription: string
-  productDescriptionDetails: IObjectString2String
+  productDescriptionDetails: IObjectString2String,
+  productAdvice: string
+  productAdviceDetails: IObjectString2String
 }

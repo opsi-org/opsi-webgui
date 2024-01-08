@@ -12,9 +12,12 @@ export const useUtils = () => {
     }
     return arr
   }
+  const isEqual = (arr: any[]) => {
+    if (arr.length === 0) return true
+    return arr.every( v => v === arr[0] )
+  }
 
-
-  return { addOrRemoveListItem }
+  return { addOrRemoveListItem, isEqual }
 }
 export const useUtilsEvents = () => {
 

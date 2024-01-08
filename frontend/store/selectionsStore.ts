@@ -110,19 +110,34 @@ export const storeSelections = defineStore('selections', {
         this._selectionProducts.splice(index, 1)
       }
     },
-    toggleSelectionDepots (item: string) {
-      this.toggleSelectionValue(this._selectionDepots, item)
+    toggleSelectionDepots (item: string, checkMulti: Boolean = true) {
+      if (checkMulti)
+      this.toggleSelectionValueAndCheck(this._selectionDepots, item)
+      else this.toggleSelectionValue(this._selectionDepots, item)
     },
-    toggleSelectionClients (item: string) {
-      this.toggleSelectionValue(this._selectionClients, item)
+    toggleSelectionClients (item: string, checkMulti: Boolean = true) {
+      if (checkMulti)
+      this.toggleSelectionValueAndCheck(this._selectionClients, item)
+      else this.toggleSelectionValue(this._selectionClients, item)
     },
-    toggleSelectionProducts (item: string) {
-      this.toggleSelectionValue(this._selectionProducts, item)
+    toggleSelectionProducts (item: string, checkMulti: Boolean = true) {
+      if (checkMulti)
+      this.toggleSelectionValueAndCheck(this._selectionProducts, item)
+      else this.toggleSelectionValue(this._selectionProducts, item)
     },
     toggleSelectionValue (selection: Array<string>, item: string){
       if(!selection.includes(item)){
         selection.push(item);
       }else{
+        selection.splice(selection.indexOf(item), 1);  //deleting
+      }
+    },
+    toggleSelectionValueAndCheck(selection: Array<string>, item: string) {
+      if(!selection.includes(item)){
+        if (!this.multiSelection) selection.length = 0
+        selection.push(item);
+      } else {
+        if (!this.multiSelection) selection.length = 0
         selection.splice(selection.indexOf(item), 1);  //deleting
       }
     },

@@ -1,28 +1,25 @@
 <template>
   <h5>{{  $t('title.properties') }}</h5>
   <h6>Id: {{ props.id }}</h6>
+  <h7>Version: {{ fetchedData.properties.productVersions || fetchedData.dependencies.productVersions }}</h7> <br />
+  <!-- TODO: render description and advice as markdown -->
+  <b>Description: {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}</b> <br />
+  <b>Advice: {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }}</b> <br />
+
   <el-tabs v-model="activeName" class="demo-tabs">
     <el-tab-pane
       :label="$t('title.prodproperties')"
       name="properties"
       active
-      >
-      <!-- :disabled="!(type == 'clients' || type == 'depots')" -->
-        <!-- <FormFHostParameter v-if="activeName==='config'" :id="id" :type="type"/> -->
-        <h6>Properties</h6>
-        <pre>{{ fetchedData.properties }}</pre>
-
-        {{errorText.properties}}
-      </el-tab-pane>
-    <el-tab-pane :label="$t('title.dependencies')" name="dependencies"
     >
-    <!-- :disabled="isIdEmpty" -->
-    <h6>Dependencies</h6>
-    <pre>{{ fetchedData.dependencies }}</pre>
-      <!-- <el-scrollbar >
-        <FormFHostAttributes :id="id" :type="type"/>
-      </el-scrollbar> -->
-      {{ errorText.dependencies  }}
+      <ViewVConfigProductProperty :properties="fetchedData.properties" />
+      {{errorText.properties}}
+      </el-tab-pane>
+    <el-tab-pane :label="$t('title.dependencies') + ' ' + (fetchedData.dependencies.dependencies?.length > 0 ? '': $t('title.dependenciesEmpty'))" name="dependencies"
+      :disabled="fetchedData.dependencies.dependencies?.length <= 0">
+      <ViewVConfigProductDependencies :dependencies="fetchedData.dependencies" />
+    <!-- <FormrowFRItemsText /> -->
+    {{ errorText.dependencies  }}
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -51,8 +48,8 @@ watch(()=> activeName.value, (val)=>{
 
 
 const fetchedData = ref<IFetchedData>({
-    dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {} },
-    properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {} }
+    dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} },
+    properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} }
   })
 
 const dataSelection = storeSelections()
@@ -70,8 +67,8 @@ watch(()=>props.id, async ()=>{
 
 async function fetch(){
   fetchedData.value = {
-      dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {} },
-      properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {} }
+      dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} },
+      properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} }
     }
   errorText.value = { dependencies: '', properties: '' }
 
