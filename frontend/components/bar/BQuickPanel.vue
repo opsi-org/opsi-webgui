@@ -11,9 +11,12 @@
       <el-tab-pane label="Product Groups" name="prod">Product Group</el-tab-pane>
     </el-tabs>
     Settings <br/>
-    <FormitemDDTheme />
-    <FormitemDDLang />
     <FormitemCBMultiselection />
+    <div class="menu-footer absolute inset-x-0 bottom-4 w-full flex justify-evenly">
+      <FormitemDDTheme />
+      <FormitemDDLang />
+      <ButtonBTNLogout />
+    </div>
   </div>
 </template>
 
