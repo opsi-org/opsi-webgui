@@ -321,7 +321,8 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie('column_' + id, 'rowactions', false),
       hidden: false,
       cellRenderer: ({rowData}) => {
-        const change = ()=>{
+        const change = (e: Event)=>{
+          e.stopPropagation()
           emit('change', rowData.productId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.productId] = true
@@ -329,12 +330,17 @@ const columns = reactive<ITableHeaderRow>({
         }
         return (
         <>
-          <el-checkbox-button
-            v-model={rowactionConfigChecked.value[rowData.productId]}
-            onChange={change}
-          ><iconIIcon icon={icons.settings} /></el-checkbox-button>
+          <buttonBTNRowLink
+            is-pressed={rowactionConfigChecked.value[rowData.productId]}
+            icon={icons.settings}
+            onClick={change}
+          />
         </>
       )},
+          // <el-button
+          //   onClick={change}
+          //   class={classes.value}
+          // ><iconIIcon icon={icons.settings} /></el-button>
     }
   }
 )

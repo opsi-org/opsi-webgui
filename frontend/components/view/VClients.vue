@@ -393,8 +393,6 @@ const columns = reactive<ITableHeaderRow>({
       cellRenderer: ({rowData}) => {
         const change = (e: Event)=>{
           e.stopPropagation()
-          // e.preventDefault() // not working
-
           emit('change', rowData.clientId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.clientId] = true
@@ -403,15 +401,11 @@ const columns = reactive<ITableHeaderRow>({
         }
         return (
         <>
-            {/* v-model={rowactionConfigChecked.value[rowData.clientId]} */}
-          <el-button
+          <buttonBTNRowLink
+            is-pressed={rowactionConfigChecked.value[rowData.clientId]}
+            icon={icons.settings}
             onClick={change}
-            active
-          ><iconIIcon icon={icons.settings} /></el-button>
-          {/* <el-checkbox-button
-            v-model={rowactionConfigChecked.value[rowData.clientId]}
-            onChange={change}
-          ><iconIIcon icon={icons.settings} /></el-checkbox-button> */}
+          />
         </>
       )},
     }

@@ -199,20 +199,32 @@ const columns = reactive<ITableHeaderRow>({
       hidden: false,
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => {
-        const change = ()=>{
+        const change = (e: Event)=>{
+          e.stopPropagation()
           emit('change', rowData.depotId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.depotId] = true
           useRouter().push('/servers/config/' + rowData.depotId)
         }
+
+        const classes = computed(()=> {
+          return {
+            'pressed': rowactionConfigChecked.value[rowData.clientId]
+          }
+        })
         return (
         <>
-          <el-checkbox-button
-            v-model={rowactionConfigChecked.value[rowData.depotId]}
-            onChange={change}
-          ><iconIIcon icon={icons.settings} /></el-checkbox-button>
+          <buttonBTNRowLink
+            is-pressed={rowactionConfigChecked.value[rowData.depotId]}
+            icon={icons.settings}
+            onClick={change}
+          />
         </>
       )},
+          // <el-checkbox-button
+          //   v-model={rowactionConfigChecked.value[rowData.depotId]}
+          //   onChange={change}
+          // ><iconIIcon icon={icons.settings} /></el-checkbox-button>
           //<el-button size="small" onClick={change}>
           //  <iconIIcon icon={icons.settings} />
           //</el-button>

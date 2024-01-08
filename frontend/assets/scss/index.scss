@@ -65,3 +65,9 @@ a {
   font-weight: 400;
   color: var(--el-color-primary);
 }
+button.pressed {
+  color: var(--el-button-hover-text-color);
+  border-color: var(--el-button-hover-border-color);
+  background-color: var(--el-button-hover-bg-color);
+  outline: none;
+}
