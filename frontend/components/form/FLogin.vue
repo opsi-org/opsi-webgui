@@ -107,7 +107,6 @@ async function doLogin () {
   User.append('username', form.value.username)
   User.append('password', form.value.password)
 
-
   const { data, error } = await useApiPOST('/auth/login', User)
   if (error) {
     notificationError(error)

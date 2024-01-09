@@ -9,22 +9,19 @@
       all-values-key="allValues"
       @change-item="changeItem"
       />
-      <!-- replaceInId: { type: String, default: undefined }, -->
-      <el-text>=============================</el-text> <br />
-      <el-text>=============================</el-text> <br />
-      <el-text>=============================</el-text> <br />
     <pre>{{ Object.values(props.properties.properties) }}</pre>
   </div>
 </template>
 
 <script setup lang="ts">
 const $t = useI18n().t
-
+const emit = defineEmits(['change-property'])
 const props = defineProps({
   properties: { type: Object as PropType<any>, required: true },
 })
 
-function changeItem(item: any, v: any, index: number) {
-  console.log('changeItem', item, v, index)
+function changeItem(item: any, v: any, visibleVal: any) {
+  console.log('changeItem', item, v, visibleVal)
+  emit('change-property', item, v, visibleVal)
 }
 </script>

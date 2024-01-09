@@ -1,7 +1,8 @@
 import { useNotification } from './useComponent'
+import { _getI18nInComposable } from './helper-i18n'
 
 export const useSaveParameters = () => {
-  const { t } = useI18n()
+  const t = _getI18nInComposable()
   const delFromChangesHostParam = storeChanges().delFromChangesHostParam
   const pushToErrorsHostParam = storeErrors().pushToErrorsHostParam
 
@@ -50,7 +51,7 @@ export const useSaveParameters = () => {
 }
 
 export const useSaveProductActionRequest = () => {
-  const { t } = useI18n()
+  const t = _getI18nInComposable()
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
 
@@ -100,11 +101,11 @@ export const useSaveProductActionRequest = () => {
 }
 
 
-export const useSaveProductProperties = () => {
-  const { t } = useI18n()
+export const useSaveProductProperties = (refetch: Function = (b: any)=>{}) => {
+  const t = _getI18nInComposable()
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
-  const $emit = defineEmits(['refetch'])
+  // const $emit = defineEmits(['refetch'])
   async function saveProdProperties (id: string, change: any, deleteitem:any, showalert:boolean) {
     const { data, error } = await useApiPOST(`/opsidata/products/${id}/properties`, change)
     if (error) {
@@ -122,7 +123,8 @@ export const useSaveProductProperties = () => {
     if (deleteitem) {
       delFromChangesProducts(deleteitem)
     } else {
-      $emit('refetch', true)
+      // $emit('refetch', true)
+      refetch(true)
       useNotification().success(t('message.success.save.productproperty', { id: Object.keys(change.properties) }))
     }
 

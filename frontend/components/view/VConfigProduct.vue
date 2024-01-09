@@ -8,16 +8,21 @@
 
 
   <el-alert v-if="selectionClients.length <= 0" :title="$t('message.warning.noClientsSelectedShowDepot')" type="warning" />
-    <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).length !== selectionDepots.length" :title="$t('message.warning.notOnEachDepot', {count:Object.values(fetchedData.properties.productVersions).filter(n => n).length, countall:selectionDepots.length})" type="warning" />
-    <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).some((v)=>v!=Object.values(fetchedData.properties.productVersions).filter(n => n)[0])" :title="$t('message.warning.differentProductVersions')" type="warning" />
-  <el-tabs v-model="activeName" class="demo-tabs">
+  <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).length !== selectionDepots.length" :title="$t('message.warning.notOnEachDepot', {count:Object.values(fetchedData.properties.productVersions).filter(n => n).length, countall:selectionDepots.length})" type="warning" />
+  <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).some((v)=>v!=Object.values(fetchedData.properties.productVersions).filter(n => n)[0])" :title="$t('message.warning.differentProductVersions')" type="warning" />
+
+  <IconILoading v-if="isLoading"  />
+  <el-tabs v-else v-model="activeName" class="demo-tabs">
     <el-tab-pane
       :label="$t('title.prodproperties')"
       name="properties"
       active
     >
 
-      <ViewVConfigProductProperty :properties="fetchedData.properties" />
+      <ViewVConfigProductProperty
+        :properties="fetchedData.properties"
+        @change-property="changeProperty"
+        />
       {{errorText.properties}}
       </el-tab-pane>
     <el-tab-pane :label="$t('title.dependencies') + ' ' + (fetchedData.dependencies.dependencies?.length > 0 ? '': $t('title.dependenciesEmpty'))" name="dependencies"
@@ -31,9 +36,12 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
+import { useSaveProductProperties } from '~/composables/mixins/useSave';
 import { useUtils } from '~/composables/mixins/useUtils';
 import type { IErrorDepProp, IFetchedData } from '~/types/tobjects';
 
+const isLoading = ref(true)
+const settings = storeSettings()
 const tableSettings = storeTablesettings()
 const { configLastSelected } = storeToRefs(tableSettings)
 
@@ -72,6 +80,7 @@ watch(()=>props.id, async ()=>{
 })
 
 async function fetch(){
+  isLoading.value = true
   fetchedData.value = {
       dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} },
       properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} }
@@ -80,6 +89,7 @@ async function fetch(){
 
   await fetchProperties()
   await fetchDependencies()
+  isLoading.value = false
 }
 async function fetchProperties (refetch: boolean = false) {
   const { data, error } = await useApiGETBody(`/opsidata/products/${props.id}/properties`, {
@@ -110,6 +120,36 @@ async function fetchDependencies () {
   fetchedData.value.dependencies = data.value
 }
 
+async function changeProperty (item: any, values: any, visibleValue: any) {
+  if (!settings.quicksave) {
+    // TODO
+    return
+  }
+  const data: any = {
+    properties: { [item.propertyId]: values },
+    // depotIds: undefined,
+    // clientIds: undefined
+  }
+  if (selectionClients.value.length > 0) {
+    data.clientIds = [...selectionClients.value]
+  } else {
+    data.depotIds = [...selectionDepots.value]
+  }
+
+  console.log('changeProperty ', item.productId, item.propertyId)
+  console.log('changeProperty new value', values)
+  console.log('changeProperty old value', visibleValue)
+  console.log('changeProperty params', data)
+  if (visibleValue === values) {
+    console.log('visibleValue === values', visibleValue, values)
+    return
+  }
+  else if (values === '' && visibleValue === undefined) {
+    console.log('values === "" && visibleValue === undefined', visibleValue, values)
+    return
+  }
+  await useSaveProductProperties().saveProdProperties(item.productId, data as Object, false, true)
+}
 
 function getVersion (item: any, versions: any) {
   const hasVersionValue = Object.keys(versions).length > 0

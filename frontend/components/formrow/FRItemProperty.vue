@@ -162,11 +162,13 @@ watch(()=>props.item.value, ()=>{
 })
 
 watch(()=>itemValue.value, ()=>{
-  $emit('change', itemValue.value)
+  $emit('change', itemValue.value, getVisibleValue(props.item))
 })
 function getVisibleValue (item: any) {
   const hasClientValue = Object.keys(item.clients).length > 0
   if (item.allClientValuesEqual && hasClientValue) {
+    if (item.multiValue)
+      return Object.values(item.clients)[0]
     return (Object.values(item.clients)[0] as Array<any>)[0]
   } else if (hasClientValue) {
     return 'mixed'
@@ -175,12 +177,16 @@ function getVisibleValue (item: any) {
   const hasDepotValue = Object.keys(item.depots).length > 0
   const allDepotsEqual = useUtils().isEqual(Object.values(item.depots))
   if (allDepotsEqual && hasDepotValue) {
+    if (item.multiValue)
+      return Object.values(item.depots)[0]
     return (Object.values(item.depots)[0] as Array<any>)[0]
   } else if (hasClientValue) {
     return 'mixed'
   }
 
   // const hasDefaultValue = Object.keys(item.defaultValues).length > 0
+  if (item.multiValue)
+    return Object.values(item.default)
   return Object.values(item.default)[0]
 }
 const transformId = (id: string) => {

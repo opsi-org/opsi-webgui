@@ -27,7 +27,7 @@
       :bool-type-value="props.boolTypeValue"
       :all-values-key="props.allValuesKey"
       :replace-in-id="props.replaceInId"
-      @change="(v: any) => {change(item, v, index) }"
+      @change="(v: any, vVal: any) => {change(item, v, vVal) }"
     />
   </el-form>
 </template>

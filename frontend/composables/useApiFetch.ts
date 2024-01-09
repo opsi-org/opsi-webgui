@@ -9,7 +9,7 @@ const urlsWithoutAuthentication = [
 const useAPI2 = async (
     method: string,
     url: string,
-    body: any = undefined,
+    body: FormData | Object | undefined = undefined,
     opts: UseFetchOptions<any> = {},
     prePath: string | undefined = undefined
 ) => {
@@ -68,6 +68,14 @@ const useAPI2 = async (
 
   let fullURL = baseUrl + basePath + url
   let fullBody = body
+  if (method !== 'GET' && body != undefined && url !== '/auth/login') {
+    if (headers['Content-Type'] === undefined)
+      headers['Content-Type'] = 'application/json'
+    if (headers['Accept'] === undefined)
+      headers['Accept'] = 'application/json, text/plain, */*'
+
+    fullBody = JSON.stringify(body)
+  }
   if (method === 'GET' && body != undefined) {
     fullURL = _getURLwithParams(fullURL, body)
     fullBody = undefined
