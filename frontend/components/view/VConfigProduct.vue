@@ -41,6 +41,7 @@ import { useUtils } from '~/composables/mixins/useUtils';
 import type { IErrorDepProp, IFetchedData } from '~/types/tobjects';
 
 const isLoading = ref(true)
+const changes = storeChanges()
 const settings = storeSettings()
 const tableSettings = storeTablesettings()
 const { configLastSelected } = storeToRefs(tableSettings)
@@ -120,9 +121,13 @@ async function fetchDependencies () {
   fetchedData.value.dependencies = data.value
 }
 
-async function changeProperty (item: any, values: any, visibleValue: any) {
+async function changeProperty (item: any, values: any, originValue: any) {
   if (!settings.quicksave) {
-    // TODO
+    if (selectionClients.value.length > 0) {
+        handleTrackingChanges(item.productId, selectionClients.value, 'clientId', item.propertyId, values, originValue)
+      } else {
+        handleTrackingChanges(item.productId, selectionDepots.value, 'depotId', item.propertyId, values, originValue)
+      }
     return
   }
   const data: any = {
@@ -138,18 +143,39 @@ async function changeProperty (item: any, values: any, visibleValue: any) {
 
   console.log('changeProperty ', item.productId, item.propertyId)
   console.log('changeProperty new value', values)
-  console.log('changeProperty old value', visibleValue)
+  console.log('changeProperty old value', originValue)
   console.log('changeProperty params', data)
-  if (visibleValue === values) {
-    console.log('visibleValue === values', visibleValue, values)
+  if (originValue === values) {
+    console.log('originValue === values', originValue, values)
     return
   }
-  else if (values === '' && visibleValue === undefined) {
-    console.log('values === "" && visibleValue === undefined', visibleValue, values)
+  else if (values === '' && originValue === undefined) {
+    console.log('values === "" && originValue === undefined', originValue, values)
     return
   }
   await useSaveProductProperties().saveProdProperties(item.productId, data as Object, false, true)
-}
+
+
+function handleTrackingChanges (productId:string, hosts:Array<string>, key:string, propertyId:string, value: any, orgValue: any) {
+    for (const h in hosts) {
+      const changeObject: Object = {
+        user: localStorage.getItem('username'),
+        [key]: hosts[h],
+        productId: productId,
+        property: propertyId,
+        propertyValue: value
+      }
+      const objIndex = changes.changesProducts.findIndex(item => item[key] === hosts[h] && item.productId === productId && item.property === propertyId)
+      if (objIndex > -1) {
+        changes.delWithIndexChangesProducts(objIndex)
+      }
+      // if (!arrayEqual(value, orgValues)) {
+      if (value === orgValue)
+        changes.pushToChangesProducts(changeObject)
+      }
+    }
+  }
+
 
 function getVersion (item: any, versions: any) {
   const hasVersionValue = Object.keys(versions).length > 0
