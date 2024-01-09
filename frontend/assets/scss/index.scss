@@ -66,8 +66,9 @@ a {
   color: var(--el-color-primary);
 }
 button.pressed {
-  color: var(--el-button-hover-text-color);
-  border-color: var(--el-button-hover-border-color);
-  background-color: var(--el-button-hover-bg-color);
+  // color: var(--el-button-hover-text-color);
+  border-color: var(--opsi-general-blue);
+  // background-color: var(--el-button-hover-bg-color);
+  background-color: var(--opsi-general-blue);
   outline: none;
 }
