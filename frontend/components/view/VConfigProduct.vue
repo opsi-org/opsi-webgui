@@ -165,13 +165,18 @@ function handleTrackingChanges (productId:string, hosts:Array<string>, key:strin
         property: propertyId,
         propertyValue: value
       }
-      const objIndex = changes.changesProducts.findIndex(item => item[key] === hosts[h] && item.productId === productId && item.property === propertyId)
+      const objIndex = changes.changesProducts.findIndex((item:any) => item[key] === hosts[h] && item.productId === productId && item.property === propertyId)
       if (objIndex > -1) {
         changes.delWithIndexChangesProducts(objIndex)
       }
       // if (!arrayEqual(value, orgValues)) {
-      if (value === orgValue)
-        changes.pushToChangesProducts(changeObject)
+        console.log('CHANGESprops pushToChangesProducts value', value)
+        console.log('CHANGESprops pushToChangesProducts orgValue', orgValue)
+        console.log('CHANGESprops pushToChangesProducts if unequal', changeObject)
+        if (value !== orgValue) {
+          console.log('CHANGESprops pushToChangesProducts push', changeObject)
+          changes.pushToChangesProducts(changeObject)
+        }
       }
     }
   }
