@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import {loginlogout} from '~/histoire/histoire-utils'
-import {generateColumns, generateData, generateNumbers} from '~/histoire/histoire-utils-data'
+import {generateColumns, generateData, generateNumbers, generateTableData} from '~/histoire/histoire-utils-data'
 import TDefault from './TDefault.vue'
 const itemsLength = 100
 
@@ -27,11 +27,17 @@ columns['column-0'].fixed = true
 columns['column-1'].hidden = true
 const data = generateData(columns, itemsLength)
 const mylog = (s:any)=> console.log(s)
+const tableData = generateTableData('column-0')
+const totalItems = data.length
+
 const MyTDefault = ({ isMobile }: any) => {
   return <TDefault
         id={'tableId-' + isMobile?'mobile':'desktop'}
+        tableData={tableData}
+        totalItems={totalItems}
         columns={columns}
         data={data}
+
         sort-by={undefined}
         rowId="column-0"
         isMobile={isMobile}
@@ -39,6 +45,7 @@ const MyTDefault = ({ isMobile }: any) => {
         onSelection-clear={()=>mylog('clear')}
     />
 }
+
 </script>
 
 <template>

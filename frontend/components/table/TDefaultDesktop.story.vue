@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {loginlogout} from '~/histoire/histoire-utils'
-import {generateColumns, generateData} from '~/histoire/histoire-utils-data'
+import {generateColumns, generateData, generateTableData} from '~/histoire/histoire-utils-data'
 // import type { ITableHeaderRow } from '~/types/ttableV3';
 const selected = {
   key: 'selected',
@@ -14,6 +14,9 @@ const columns: any = { selected, ...generateColumns(4) }
 columns['column-0'].fixed = true
 columns['column-1'].hidden = true
 const data = generateData(columns, 100)
+
+const tableData = generateTableData('column-0')
+const totalItems = data.length
 </script>
 
 <template>
@@ -22,6 +25,9 @@ const data = generateData(columns, 100)
         id="tableId"
         :columns="columns"
         :data="data"
+        :table-data="tableData"
+        :total-items="totalItems"
+
         rowId="column-0"
         :sort-by="undefined"
         @selection-changed="(id: any) => {}"

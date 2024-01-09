@@ -46,3 +46,15 @@ export const generateNumbers = (length = 200) => {
   Array.from({ length }).map((x,i) => l2.push(Math.floor(Math.random() * 101)));
   return l2
 }
+
+export const generateTableData = (rowKey: string) => {
+  return {
+    type: 'LocalbootProduct', // optional
+    pageNumber: 1,
+    perPage: 25,
+    sortBy: rowKey, // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+    sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    filterQuery: '',
+    filterColumns: [rowKey]
+  }
+}

@@ -17,7 +17,8 @@ import type { ITableHeaderRow } from '~/types/ttableV3';
 const props = defineProps({
   columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   data: { type: Array<any>, required:true},
-  tableData: { type: Object },
+  tableData: { type: Object, required:true },
+  totalItems: { type: Number, required:true },
   id: { type: String, default: 'depots' },
   rowId: { type: String, default: 'depotId'},
   sortBy: { type: String, default: 'selection'},
