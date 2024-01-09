@@ -2,7 +2,7 @@
   <div data-testid="VClientClone" class="VClientClone">
     <OverlayOLoading :is-loading="isLoading" />
     <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') +''+ t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
-    <GridGFormItem v-if="!asChild" :label="$t('table.fields.sourceclient')">
+    <GridGFormItem v-if="!asChild" :label="$t('table.fields.sourceclient')" variant="longvalue">
       <template #value>
         <slot name="IDSelection" />
       </template>
@@ -12,7 +12,7 @@
         <b>{{ category }} </b>
       </b-row>
       <span v-for="val,param,i in options" :key="i">
-        <GridGFormItem :label="param" labelclass="text-capitalize">
+        <GridGFormItem :label="param" labelclass="text-capitalize" variant="longvalue">
           <template #value>
             <div v-if="param.toString() === 'hostId'" class="d-flex flex-nowrap">
               <b-form-input
@@ -25,7 +25,7 @@
                 :state="checkValid"
                 required
               />
-              <b-form-invalid-feedback :state="checkValid">
+              <b-form-invalid-feedback :state="checkValid" class="w-25">
                 <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
               </b-form-invalid-feedback>
               <b-form-input
@@ -52,7 +52,7 @@
         </GridGFormItem>
       </span>
     </span>
-    <GridGFormItem>
+    <GridGFormItem variant="longvalue">
       <template #value>
         <div class="float-right mt-2">
           <b-button id="resetButton" class="resetButton" size="sm" variant="primary" @click="resetForm()">
