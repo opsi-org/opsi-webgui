@@ -3,7 +3,14 @@
   >
     Quick Select
     <el-tabs v-model="activeTab">
-      <el-tab-pane label="All Selections" name="sel">All Selections</el-tab-pane>
+      <el-tab-pane label="All Selections" name="sel">
+        <template #label>
+          <span class="custom-tabs-label">
+            <IconIIcon icon="laptop"/>
+          </span>
+        </template>
+        All Selections
+      </el-tab-pane>
       <el-tab-pane label="Servers" name="server">Servers</el-tab-pane>
       <el-tab-pane label="Client Groups" name="client">
         <TestEPTreeSelect />
@@ -15,7 +22,7 @@
     <div class="menu-footer absolute inset-x-0 bottom-4 w-full flex justify-evenly">
       <FormitemDDTheme />
       <FormitemDDLang />
-      <ButtonBTNLogout />
+      <!-- <ButtonBTNLogout /> -->
     </div>
   </div>
 </template>

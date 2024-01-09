@@ -1,6 +1,6 @@
 <template>
 
-  <el-menu-item
+  <!-- <el-menu-item
     v-if="props.isMenuItem" type="text"
     @click="doLogout"
   >
@@ -21,7 +21,20 @@
   >
     <IconIIcon :icon="icon.logout" />
     {{ $t('button.logout') }}
-  </b-button>
+  </b-button> -->
+  <el-popconfirm
+    title="Logout of opsi-webgui?"
+    confirm-button-text="Logout"
+    cancel-button-text="Cancel"
+    @confirm="doLogout"
+  >
+    <template #reference>
+      <el-button>
+        <IconIIcon :icon="icon.logout" />
+        <!-- {{ $t('button.logout') }} -->
+      </el-button>
+    </template>
+  </el-popconfirm>
 </template>
 
 <script setup>
