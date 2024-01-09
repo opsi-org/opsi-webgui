@@ -22,7 +22,7 @@
         <IconIIcon :icon="icons.navmenu" />
       </el-menu-item>
 
-      <ButtonBTNLogout index="3" :is-menu-item="true"/>
+      <!-- <ButtonBTNLogout index="3" :is-menu-item="true"/> -->
       <!-- <IconIIcon :icon="icons.menu" /> -->
     <!-- </el-sub-menu> -->
   </el-menu>
@@ -37,7 +37,7 @@
     <el-menu-item index="1" type="text" @click="()=>emit('toggleRight')">
       <IconIIcon :icon="icons.navmenu" />
     </el-menu-item>
-    <ButtonBTNLogout index="2" :is-menu-item="true"/>
+    <!-- <ButtonBTNLogout index="2" :is-menu-item="true"/> -->
   </el-menu>
 </template>
 
