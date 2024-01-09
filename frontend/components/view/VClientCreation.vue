@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
     <AlertAAlert ref="clientagentAlert" />
@@ -343,4 +343,4 @@ export default class VClientCreation extends Vue {
   border-color: var(--b-input_component-focus) !important;
   box-shadow: unset !important;
 }
-</style>
+</style> -->

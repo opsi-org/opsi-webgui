@@ -1,12 +1,5 @@
 <template>
-  <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <!-- <AlertAAlert ref="event_log_updated">
-      <template #button>
-        <b-button variant="primary" size="sm" class="float-right border-0 p-0" @click="_fetch">
-          {{ $t('button.reload') }}
-        </b-button>
-      </template>
-    </AlertAAlert> -->
+  <!-- <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
       <template #left>
@@ -56,134 +49,125 @@
         </span>
       </div>
     </DivDScrollResult>
-  </div>
+  </div> -->
 </template>
 
-<script lang="ts">
-import { Component, Prop, Watch, Vue, namespace } from 'nuxt-property-decorator'
-import { MBus } from '../../mixins/messagebus'
-import { Strings } from '../../mixins/strings'
-import { AlertToast } from '../../mixins/component'
-import { LogRequest } from '../../.utils/types/tobjects'
-const selections = namespace('selections')
+<script setup lang="ts">
+// import { MBus } from '~/composables/mixins/messagebus'
+// import { Strings } from '~/composables/mixins/strings'
+// import { AlertToast } from '~/composables/mixins/component'
+// import { LogRequest } from '~/composables/mixins/tobjects'
+// const storeSel = storeSelections()
 
-@Component({ mixins: [AlertToast, MBus, Strings] })
-export default class VClientLog extends Vue {
-  $axios: any
-  $t: any
-  $root: any
-  t_fixed: any
-  showToastMbus: any // mixin
-  showToastError: any
 
-  @Prop({ }) id!: string
-  @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
-  @Prop({ default: false }) 'asChild'!: string
+//   $axios: any
+//   $t: any
+//   $root: any
+//   t_fixed: any
+//   showToastMbus: any // mixin
+//   showToastError: any
 
-  logtype: string = 'instlog'
-  loglevel: number = 5
-  isLoading: boolean = false
-  logResult: Array<string> = []
-  filteredLog: Array<string> = []
-  filterQuery: string = ''
-  logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
-  errorText: string = ''
+//   @Prop({ }) id!: string
+//   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
+//   @Prop({ default: false }) 'asChild'!: string
 
-  @selections.Getter public XselectionLogClient!: string
-  @selections.Getter public XselectionLogType!: string
-  @selections.Getter public XselectionLogLevel!: number
-  @selections.Mutation public XsetSelectionLogClient!: (s: string) => void
-  @selections.Mutation public XsetSelectionLogType!: (s: string) => void
-  @selections.Mutation public XsetSelectionLogLevel!: (s: number) => void
+//   logtype: string = 'instlog'
+//   loglevel: number = 5
+//   isLoading: boolean = false
+//   logResult: Array<string> = []
+//   filteredLog: Array<string> = []
+//   filterQuery: string = ''
+//   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
+//   errorText: string = ''
 
-  wsBusMsg: any // mixin // store
-  wsSubscribeChannel: any
-  channels = ['event:log_updated']
+//   @selections.Getter public XselectionLogClient!: string
+//   @selections.Getter public XselectionLogType!: string
+//   @selections.Getter public XselectionLogLevel!: number
+//   @selections.Mutation public XsetSelectionLogClient!: (s: string) => void
+//   @selections.Mutation public XsetSelectionLogType!: (s: string) => void
+//   @selections.Mutation public XsetSelectionLogLevel!: (s: number) => void
 
-  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-    const msg = this.wsBusMsg
-    // console.log('MessageBus: receive-watch: ', msg)
-    if (msg && this.channels.includes(msg.channel) && msg.data.type === this.logtype && msg.data.object_id === this.id) {
-      this.showToastMbus({
-        title: this.$t('message.info.event'),
-        content: this.$t('message.info.event.log_updated'),
-        reloadAction: this._fetch // shows (default) reload button
-      })
-    } else {
-      console.log('MessageBus other: ', msg.channel, msg.data)
-    }
-  }
+//   wsBusMsg: any // mixin // store
+//   wsSubscribeChannel: any
+//   channels = ['event:log_updated']
 
-  @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
-  @Watch('loglevel', { deep: true }) loglevelChanged () {
-    this.XsetSelectionLogLevel(this.loglevel)
-  }
+//   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
+//     const msg = this.wsBusMsg
+//     // console.log('MessageBus: receive-watch: ', msg)
+//     if (msg && this.channels.includes(msg.channel) && msg.data.type === this.logtype && msg.data.object_id === this.id) {
+//       this.showToastMbus({
+//         title: this.$t('message.info.event'),
+//         content: this.$t('message.info.event.log_updated'),
+//         reloadAction: this._fetch // shows (default) reload button
+//       })
+//     } else {
+//       console.log('MessageBus other: ', msg.channel, msg.data)
+//     }
+//   }
 
-  @Watch('logtype', { deep: true }) async logtypeChanged () {
-    this.XsetSelectionLogType(this.logtype)
-    if (this.XselectionLogType && this.id) { await this._fetch() }
-  }
+//   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
+//   @Watch('loglevel', { deep: true }) loglevelChanged () {
+//     this.XsetSelectionLogLevel(this.loglevel)
+//   }
 
-  @Watch('id', { deep: true }) async idChanged () {
-    // this.setSelectionLogClient(this.id)
-    if (this.XselectionLogType && this.id) { await this._fetch() }
-  }
+//   @Watch('logtype', { deep: true }) async logtypeChanged () {
+//     this.XsetSelectionLogType(this.logtype)
+//     if (this.XselectionLogType && this.id) { await this._fetch() }
+//   }
 
-  async beforeMount () {
-    // eslint-disable-next-line brace-style
-    if (this.id) { this.XsetSelectionLogClient(this.id) }
-    else if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
+//   @Watch('id', { deep: true }) async idChanged () {
+//     // this.setSelectionLogClient(this.id)
+//     if (this.XselectionLogType && this.id) { await this._fetch() }
+//   }
 
-    this.loglevel = this.XselectionLogLevel
-    this.logtype = this.XselectionLogType
-    if (this.XselectionLogType && this.id) { await this._fetch() }
-    if (this.testdata) { this.logResult = this.testdata }
-  }
+//   async beforeMount () {
+//     // eslint-disable-next-line brace-style
+//     if (this.id) { this.XsetSelectionLogClient(this.id) }
+//     else if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
 
-  async _fetch () {
-    await this.getLog(this.id, this.logtype)
-    const ref = (this.$refs.event_log_updated as any)
-    ref?.hide()
-  }
+//     this.loglevel = this.XselectionLogLevel
+//     this.logtype = this.XselectionLogType
+//     if (this.XselectionLogType && this.id) { await this._fetch() }
+//     if (this.testdata) { this.logResult = this.testdata }
+//   }
 
-  // mounted () {
-  //   // if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
-  //   // console.log('MessageBus subscribe channel', this.channels)
-  //   // this.wsSubscribeChannel(this.channels) // done in messagebus init
-  // }
+//   async _fetch () {
+//     await this.getLog(this.id, this.logtype)
+//     const ref = (this.$refs.event_log_updated as any)
+//     ref?.hide()
+//   }
 
-  filterLog () {
-    if (this.filterQuery) {
-      this.filteredLog = this.logResult.filter(log =>
-        log.toLowerCase().includes(this.filterQuery.toLowerCase())
-      )
-    } else {
-      this.filteredLog = this.logResult
-    }
-  }
+//   filterLog () {
+//     if (this.filterQuery) {
+//       this.filteredLog = this.logResult.filter(log =>
+//         log.toLowerCase().includes(this.filterQuery.toLowerCase())
+//       )
+//     } else {
+//       this.filteredLog = this.logResult
+//     }
+//   }
 
-  isLoglevelSmaller (logrow:string, loglevel:number) {
-    // match charakters in beginning with [<=loglevel] or not [0-9]
-    const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
-    const result = RegExp(rxSelf2).exec(logrow)
-    return !!result
-  }
+//   isLoglevelSmaller (logrow:string, loglevel:number) {
+//     // match charakters in beginning with [<=loglevel] or not [0-9]
+//     const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
+//     const result = RegExp(rxSelf2).exec(logrow)
+//     return !!result
+//   }
 
-  async getLog (id: string, logtype: string) {
-    this.isLoading = true
-    this.logrequest.selectedClient = id
-    this.logrequest.selectedLogType = logtype
-    const params = this.logrequest
-    await this.$axios.$get('/api/opsidata/log', { params })
-      .then((response) => {
-        this.logResult = response.result
-        this.filteredLog = this.logResult
-      }).catch((error) => {
-        this.showToastError(error)
-      })
-    this.isLoading = false
-  }
-}
+//   async getLog (id: string, logtype: string) {
+//     this.isLoading = true
+//     this.logrequest.selectedClient = id
+//     this.logrequest.selectedLogType = logtype
+//     const params = this.logrequest
+//     await this.$axios.$get('/api/opsidata/log', { params })
+//       .then((response) => {
+//         this.logResult = response.result
+//         this.filteredLog = this.logResult
+//       }).catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.isLoading = false
+//   }
 </script>
 
 <style>
