@@ -19,6 +19,14 @@
     </el-tabs>
     Settings <br/>
     <FormitemCBMultiselection />
+    <FormitemCBQuicksave />
+    <el-scrollbar v-if="changes.changesHostParam" class="max-h-48 overflow-scroll">
+      <pre> {{ changes.changesHostParam }}</pre>
+    </el-scrollbar>
+    <el-scrollbar v-if="changes.changesProducts" class="max-h-48 overflow-scroll">
+      <pre> {{ changes.changesProducts }}</pre>
+    </el-scrollbar>
+
     <div class="menu-footer absolute inset-x-0 bottom-4 w-full flex justify-evenly">
       <FormitemDDTheme />
       <FormitemDDLang />
@@ -28,9 +36,11 @@
 </template>
 
 <script setup lang="ts">
+const changes = storeChanges()
 const mq = useMQ()
 
 const activeTab = ref('client')
+
 </script>
 
 <style>
