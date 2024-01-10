@@ -1,18 +1,27 @@
 <template>
-  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="isCollapse" class="el-menu-mywrapper overflow-hidden max-w-full"
+  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="!isMobile && isCollapse" class="el-menu-mywrapper overflow-hidden max-w-full"
   >
   <!-- :class="{collapse: !isCollapse}" -->
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
         <!-- menus with children -->
-        <el-sub-menu :index="item.route" :route="item.route" :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" :class="{
-          'el-menu-item is-active': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
-        }">
+        <el-sub-menu :index="item.route" :route="item.route"
+        class=""
+        >
+        <!-- :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" -->
           <template #title>
-            <IconIIcon v-if="item.icon" :icon="item.icon"/>
-            <span v-if="!isCollapse">{{ $t(item.title) }}</span>
-            <!-- <div class="flex-grow" />
-            <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
+            <div
+            :class="{
+              'contents': true,
+              'selected': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
+            }"
+            >
+
+              <IconIIcon v-if="item.icon" :icon="item.icon"/>
+              <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
+              <!-- <div class="flex-grow" />
+                <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
+              </div>
           </template>
 
           <!-- sub menus -->
@@ -28,7 +37,7 @@
         <!-- menus without children -->
         <el-menu-item :index="item.route" :route="item.route">
           <IconIIcon v-if="item.icon" :icon="item.icon"/>
-            <span v-if="!isCollapse">{{ $t(item.title) }}</span>
+            <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
         </el-menu-item>
       </template>
     </span>
@@ -83,7 +92,7 @@ const navItems = computed<Array<INavItem>>(() =>
       { title: 'title.addNew', route: '/clientscreation', disabled: !config.value?.client_creation },
       // TODO: Display clone client when backend is ready
       // { title: 'title.clone', route: '/clientsclone' },
-      { title: 'title.config', route: '/clientsconfig' },
+      { title: 'title.config', route: '/clients/config' },
       { title: 'title.log', route: '/clientslog' }
     ]
   },
@@ -113,11 +122,21 @@ watch(isCollapse, (val) => {
 </script>
 
 <style scoped>
+.contents {
+  display: contents !important;
+}
+.selected {
+  color: var(--el-color-primary);
+  color: var(--el-menu-active-color);
+}
 :deep(.el-menu-item.is-active path) {
   color: var(--el-color-primary) !important;
   color: var(--el-menu-active-color) !important;
 }
-  :deep(.el-sub-menu__icon-arrow) {
+/* :deep(.el-sub-menu__icon-arrow) {
+color: white !important;
+} */
+:deep(.el-sub-menu__icon-arrow) {
   /* .el-menu--collapse >>> .el-sub-menu__icon-arrow { */
     /* display: none !important; */
     margin-right: -10px !important;
