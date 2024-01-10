@@ -10,6 +10,12 @@
         tableData.filterQuery = v.vals
       }"
     />
+    <ButtonBTNRowLink
+      :is-pressed="useRouter().currentRoute.value.path.includes('/clients/products/')"
+      :icon="icons.product"
+      @click="useRouter().push('/clients/products/LocalbootProduct')"
+    > Products </ButtonBTNRowLink>
+
     <TableTDefault
       v-if="fetchedData.length > 0 && totalItems > 0"
       row-id="clientId"
@@ -396,7 +402,7 @@ const columns = reactive<ITableHeaderRow>({
           emit('change', rowData.clientId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.clientId] = true
-          useRouter().push('/clients/config/' + rowData.clientId)
+          useRouter().push('/clients/client/config/' + rowData.clientId)
           console.log('change rowConfig', rowData, e)
         }
         return (

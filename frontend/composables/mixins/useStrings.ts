@@ -15,4 +15,4 @@ export const useStrings = () => {
 
   function t_fixed (key: string) { return strings[key] }
   return { strings, t_fixed }
- }
+}

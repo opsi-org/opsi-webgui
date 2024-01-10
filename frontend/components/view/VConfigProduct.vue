@@ -79,6 +79,10 @@ watch(()=>props.id, async ()=>{
   console.log('PROPERTIES props.id', props.id)
   await fetch()
 })
+onMounted(async ()=>{
+  if (props.isChild) await fetch()
+  // otherwise fetch already called
+})
 
 async function fetch(){
   isLoading.value = true

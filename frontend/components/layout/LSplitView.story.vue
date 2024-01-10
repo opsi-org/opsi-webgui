@@ -9,6 +9,7 @@ const views = ref({
       page2Condition: false, // optional
       width: '100%',
       classlastcol: '',
+      classcontainer: '',
     }
   },
   2: {
@@ -20,6 +21,7 @@ const views = ref({
       page2Condition: false,
       width: '50%',
       classlastcol: '',
+      classcontainer: '',
     }
   },
   3: {
@@ -32,6 +34,43 @@ const views = ref({
       page2Condition: true,
       width: '33%',
       classlastcol: '',
+      classcontainer: '',
+    }
+  },
+  4: {
+    title: 'desktop-default',
+    props: {
+      isMobile: false,
+      page0Condition: true,
+      page1Condition: false,
+      page2Condition: false,
+      width: '0%',
+      classlastcol: '',
+      classcontainer: '',
+    }
+  },
+  5: {
+    title: 'desktop-two cols',
+    props: {
+      isMobile: false,
+      page0Condition: true,
+      page1Condition: true,
+      page2Condition: false,
+      width: '50%',
+      classlastcol: '',
+      classcontainer: '',
+    }
+  },
+  6: {
+    title: 'desktop-three cols',
+    props: {
+      isMobile: false,
+      page0Condition: true,
+      page1Condition: true,
+      page2Condition: true,
+      width: '33%',
+      classlastcol: '',
+      classcontainer: '',
     }
   },
 })
@@ -50,6 +89,7 @@ const views = ref({
         :page2-condition="v.props.page2Condition || false"
         :width="v.props.width"
         :classlastcol="v.props.classlastcol"
+        :classcontainer="v.props.classcontainer"
       >
         <template #default>
           <el-text> Some content main </el-text>

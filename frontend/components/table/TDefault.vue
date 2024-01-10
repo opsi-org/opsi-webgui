@@ -25,6 +25,9 @@ const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
 })
 const isMobileWrapper = ref<boolean>(props.isMobile)
+watch(()=>useMQ().isMobile.value, (val)=>{
+  isMobileWrapper.value = val
+})
 const propsMobile = computed (()=>{
   // add keys which are not used by child
   return (({ isMobile, ...rest }) => rest)(props);

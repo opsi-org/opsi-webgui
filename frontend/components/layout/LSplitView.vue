@@ -1,25 +1,42 @@
 <template>
-
-  <el-container class="pagecontent">
-    <el-main v-if="props.page0Condition"
-      :class="classfirstcol"
-      class="mt-1"
+  <div>
+  <el-container
+    :class="{
+      [classcontainer]: true,
+      // 'border-red-500 border-1': true
+      // 'max-w-screen': isMobile
+      }"
+    >
+    <el-main v-if="page0Condition"
+      class="col"
+      :class="{
+        [props.classfirstcol]: !isMobile,
+        [props.classeachcol]: true
+      }"
       >
       <slot />
     </el-main>
-    <el-aside v-if="props.page1Condition" :width="width"
-      :class="{[props.classlastcol]: !props.page2Condition}"
-      class="mt-1"
+    <el-aside v-if="page1Condition" :width="width"
+      class="col"
+      :class="{
+        [props.classeachcol]: true,
+        [props.classlastcol]: !isMobile && !page2Condition
+      }"
       >
       <slot name="page1" />
     </el-aside>
-    <el-aside v-if="props.page2Condition"
+    <el-aside v-if="page2Condition"
       :width="width"
-      :class="props.classlastcol"
-      class="mt-1">
+      class="col"
+      :class="{
+        [props.classlastcol]: !isMobile,
+        [props.classeachcol]: true
+      }"
+    >
       <slot name="page2" />
     </el-aside>
   </el-container>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -30,20 +47,52 @@ const props = defineProps({
   page1Condition: { type: Boolean, default: false },
   page2Condition: { type: Boolean, default: false },
   width: { type: String, default: '0%' },
+  classeachcol: { type: String, default: 'mt-1' },
   classfirstcol: { type: String, default: 'ml-5 mr-5' },
   classlastcol: { type: String, default: 'mr-5' },
+  classcontainer: { type: String, default: 'pagecontent' },
 })
 onMounted(()=>{
+})
+const width = computed(()=> {
+  if (props.isMobile) {
+    return '100%' // for mobile we overlap pages
+  }
+  return props.width
+})
+const page0Condition = computed(()=> {
+  if (props.isMobile && (page1Condition.value || page2Condition.value))
+    return false
+  return props.page0Condition
+})
+const page1Condition = computed(()=> {
+  if (props.isMobile && page2Condition.value)
+    return false
+  return props.page1Condition
+})
+const page2Condition = computed(()=> {
+  return props.page2Condition
 })
 
 </script>
 
 <style scoped>
 .pagecontent {
-  height: calc(100vh - 50px) !important;
+  max-height: calc(100vh - 65px) !important;
+}
+.is-mobile .pagecontent {
+  max-height: calc(100vh - 70px) !important;
+}
+.is-mobile .pagecontent,
+.is-mobile .pagecontent .col {
+  max-width: calc(100vw - 0px) !important;
+  height: calc(100vh - 70px) !important;
+  max-height: calc(100vh - 70px) !important;
 }
 .el-main {
   padding: 0px !important;
+  max-height: calc(100vh - 70px) !important;
+  /* max-height: calc(100vh - 60px); */
   /* border: 1px solid #ddd; */
   /* resize: horizontal; */
 }

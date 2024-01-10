@@ -1,5 +1,6 @@
 <template>
   <div>
+    Id: {{ props.id }}, {{ props.type }}
     <el-form label-width="200px" class="w-full">
       <div v-for="(value, label, index) in fetchedData[0]" :key="index">
         <el-form-item :label="label.toString()">
@@ -17,7 +18,8 @@ const $t = useI18n().t
 let fetchedData = ref<Array<any>>([])
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'depots' }
+  type: { type: String, default: 'depots' },
+  isChild: {type: Boolean, default: false }
 })
 
 onMounted(async ()=> {

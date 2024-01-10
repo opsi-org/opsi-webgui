@@ -9,11 +9,11 @@
       active :disabled="!(type == 'clients' || type == 'depots')"
     >
         <!-- <el-text>Config of {{ type }} {{ currentId }}</el-text> -->
-        <FormFHostParameter v-if="activeName==='config'" :id="currentId" :type="type"/>
+        <FormFHostParameter v-if="activeName==='config'" :id="currentId" :type="type" :is-child="props.isChild"/>
       </el-tab-pane>
     <el-tab-pane :label="$t('title.hostattr')" name="attr" :disabled="isIdEmpty">
       <el-scrollbar >
-        <FormFHostAttributes :id="currentId" :type="type"/>
+        <FormFHostAttributes :id="currentId" :type="type" :is-child="props.isChild"/>
       </el-scrollbar>
     </el-tab-pane>
   </el-tabs>

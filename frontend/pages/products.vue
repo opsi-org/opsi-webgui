@@ -1,12 +1,15 @@
 <template>
   <LayoutLSplitView
-    :is-mobile="true"
-    :page0-condition="filteredPath.length >= 1"
-    :page1-condition="filteredPath.length > 1"
-    :width="width"
+    :is-mobile="isMobile"
+    :page0-condition="routeNameSettings?.page0Condition"
+    :page1-condition="routeNameSettings?.page1Condition"
+    :width="routeNameSettings?.width"
+    :classeachcol="isMobile ? 'm-1': 'm-1 h-full'"
   >
     <template #default>
-      <ViewVProducts />
+      <ViewVProducts v-if="path[0] === 'products'"
+        :product-type="(route.params.producttype as string)" :is-child="false"
+      />
     </template>
     <template #page1>
       <NuxtPage />
@@ -15,14 +18,18 @@
 </template>
 
 <script setup lang="ts">
+import { usePageHelper } from '~/composables/mixins/usePageHelper';
+
 const route = useRoute()
-const width = computed(()=> {
-  // const routeLength = filteredPath.value.length || 1
-  // return (100/routeLength)  + '%'
-  return '50%'
+const {path, productSettings } = usePageHelper()
+const routeNameSettings =  computed(()=> {
+  const s = productSettings[route.name as string || '']
+  if (s === undefined )
+    throw new Error('route name not found: ' + (route.name as string))
+  return s
 })
-const filteredPath = computed(()=> {
-  const path = route.params.id as Array<string>
-  return path?.filter((p: string)=> ![''].includes(p)) || []
+
+const isMobile = computed(()=> {
+  return useMQ().isMobile.value
 })
 </script>

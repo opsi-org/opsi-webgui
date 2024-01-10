@@ -153,6 +153,7 @@ const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
   productType: { type: String, default: 'LocalbootProduct' },
+  isChild: { type: Boolean, default: false },
 })
 //   @Prop() child!: boolean
 //   @Prop({}) id!: string
@@ -327,7 +328,11 @@ const columns = reactive<ITableHeaderRow>({
           emit('change', rowData.productId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.productId] = true
-          useRouter().push(`/products/${currentType.value}/config/${rowData.productId}`)
+          if (props.isChild) {
+            useRouter().push(`/clients/products/${currentType.value}/config/${rowData.productId}`)
+          } else {
+            useRouter().push(`/products/${currentType.value}/config/${rowData.productId}`)
+          }
         }
         return (
         <>
@@ -348,7 +353,13 @@ const columns = reactive<ITableHeaderRow>({
 
 const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
 const changeProductsType = (type: string)=>{
-  useRouter().push('/products/' + type + '/')
+
+  console.log('route.params.id changeProductsType', type)
+  if (props.isChild) {
+    useRouter().push('/clients/products/' + type + '/')
+  } else {
+    useRouter().push('/products/' + type + '/')
+  }
   Object.keys(productsTypeChecked.value).forEach(k => productsTypeChecked.value[k] = false)
   productsTypeChecked.value[type] = true
 
@@ -359,7 +370,7 @@ const currentType = computed(()=>{
   if (productsTypeChecked.value.Product) return 'Product'
   return 'LocalbootProduct'
 })
-if (props.productType) changeProductsType(props.productType)
+if (props.productType && props.productType !== currentType.value) changeProductsType(props.productType)
 watch(()=>props.productType, (v)=>{
   changeProductsType(v)
 })

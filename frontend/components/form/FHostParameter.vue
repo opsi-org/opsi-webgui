@@ -17,7 +17,8 @@ const fetchedData = ref<any>({})
 const activeNames = ref<string[]>([])
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'depots' }
+  type: { type: String, default: 'depots' },
+  isChild: {type: Boolean, default: false}
 })
 
 function handleCollapseValueChange (val: any) {
