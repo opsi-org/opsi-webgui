@@ -8,7 +8,7 @@
       }"
     >
     <el-main v-if="page0Condition"
-      class="col"
+      class="mycol"
       :class="{
         [props.classfirstcol]: !isMobile,
         [props.classeachcol]: true
@@ -17,7 +17,7 @@
       <slot />
     </el-main>
     <el-aside v-if="page1Condition" :width="width"
-      class="col"
+      class="mycol"
       :class="{
         [props.classeachcol]: true,
         [props.classlastcol]: !isMobile && !page2Condition
@@ -27,7 +27,7 @@
     </el-aside>
     <el-aside v-if="page2Condition"
       :width="width"
-      class="col"
+      class="mycol"
       :class="{
         [props.classlastcol]: !isMobile,
         [props.classeachcol]: true
@@ -84,14 +84,15 @@ const page2Condition = computed(()=> {
   max-height: calc(100vh - 70px) !important;
 }
 .is-mobile .pagecontent,
-.is-mobile .pagecontent .col {
+.is-mobile .pagecontent .mycol {
   max-width: calc(100vw - 0px) !important;
   height: calc(100vh - 70px) !important;
   max-height: calc(100vh - 70px) !important;
 }
 .el-main {
   padding: 0px !important;
-  max-height: calc(100vh - 70px) !important;
+  height: calc(100vh - 60px) !important;
+  max-height: calc(100vh - 60px) !important;
   /* max-height: calc(100vh - 60px); */
   /* border: 1px solid #ddd; */
   /* resize: horizontal; */

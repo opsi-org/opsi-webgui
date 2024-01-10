@@ -24,17 +24,12 @@ export const usePageHelper = () => {
     page1Condition: true,
     width: undefined
   }
-  // clientSettings['clients-products-type-id'] = {
-  //   page0Condition: true,
-  //   page1Condition: true,
-  //   width: undefined
-  // }
-
   clientSettings['clients-products-producttype-pagetype-id'] = {
     page0Condition: true,
     page1Condition: true,
     width: undefined
   }
+
 
   const productSettings = {}
   productSettings['products-producttype'] = {

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <LayoutLSplitView
+
+    <NuxtPage v-if="path[2] === 'config'"/>
+    <!-- <LayoutLSplitView
     :is-mobile="isMobile"
     :page0-condition="path[2] === 'config'"
     :page1-condition="false"
@@ -12,7 +14,7 @@
     </template>
     <template #page1>
     </template>
-  </LayoutLSplitView>
+  </LayoutLSplitView> -->
   </div>
 </template>
 <script setup lang="ts">
