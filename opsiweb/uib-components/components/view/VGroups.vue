@@ -50,7 +50,7 @@
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
-                        :title="$t('group.deleteOnlyAssignments', {type: 'Clients'})"
+                        :title="$t('group.deleteOnlyAssignments', {type: $t('title.clients')})"
                         @click="showChild('deleteOnlyAssignments')"
                       >
                         <IconIIcon :icon="icon.client" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
@@ -60,7 +60,7 @@
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
-                        :title="$t('group.addToGroup', {type: 'Clients'})"
+                        :title="$t('group.addToGroup', {type: $t('title.clients')})"
                         @click="showChild('addToGroup')"
                       >
                         <IconIIcon :icon="icon.client" /><IconIIcon :icon="icon.add" font-scale="0.8" />
@@ -121,7 +121,7 @@
               >
                 <template #first>
                   <b-form-select-option :value="null" disabled>
-                    {{ $t('group.selectItems', {type: 'Clients'}) }}
+                    {{ $t('group.selectItems', {type: $t('title.clients')}) }}
                   </b-form-select-option>
                 </template>
               </b-form-select>
