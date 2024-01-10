@@ -5,7 +5,9 @@
     <span v-for="item in navItems" :key="item.title">
       <template v-if="item.submenu">
         <!-- menus with children -->
-        <el-sub-menu :index="item.route" :route="item.route" :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''">
+        <el-sub-menu :index="item.route" :route="item.route" :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" :class="{
+          'el-menu-item is-active': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
+        }">
           <template #title>
             <IconIIcon v-if="item.icon" :icon="item.icon"/>
             <span v-if="!isCollapse">{{ $t(item.title) }}</span>
@@ -50,6 +52,7 @@ const isCollapse = ref(menuCollapsed.value)
 interface INavItem {
   title: string
   route: string
+  routeSubpath?: string
   icon?: string
   disabled?: boolean
   submenu?: Array<INavItem>
@@ -61,6 +64,7 @@ const navItems = computed<Array<INavItem>>(() =>
   [
   {
     title: 'title.depots',
+    routeSubpath: '/servers/',
     route: '/servers/',
     icon: icons.server,
     submenu: [
@@ -72,6 +76,7 @@ const navItems = computed<Array<INavItem>>(() =>
   {
     title: 'title.clients',
     route: '/clients/',
+    routeSubpath: '/clients/',
     icon: icons.client,
     submenu: [
       { title: 'title.allClients', route: '/clients/'},
@@ -88,6 +93,7 @@ const navItems = computed<Array<INavItem>>(() =>
   {
     title: 'title.administration',
     route: (config.value?.['terminal.forbidden'] === true) ? '/admin' : '/adminterminal',
+    routeSubpath: '/admin',
     icon: icons.admin,
     submenu: [
       { title: 'title.adminterminal', route: '/adminterminal', disabled: (config.value?.['terminal.forbidden'] === true) },
@@ -107,6 +113,10 @@ watch(isCollapse, (val) => {
 </script>
 
 <style scoped>
+:deep(.el-menu-item.is-active path) {
+  color: var(--el-color-primary) !important;
+  color: var(--el-menu-active-color) !important;
+}
   :deep(.el-sub-menu__icon-arrow) {
   /* .el-menu--collapse >>> .el-sub-menu__icon-arrow { */
     /* display: none !important; */
