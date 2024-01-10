@@ -4,7 +4,11 @@
     <AlertAAlert ref="hostAttrErrorAlert" />
     <DivDScrollResult>
       <div v-for="(value, label, index) in hostAttr" :key="index">
-        <GridGFormItem :label="label" :labelclass="label + ' ' + (label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize')" variant="longvalue">
+        <GridGFormItem
+          :label="$t('table.fields.' + label)"
+          :labelclass="label + ' ' + (label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize')"
+          variant="longvalue"
+        >
           <template #value>
             <b-form-input
               v-if="label.toString() === 'created' || label.toString() === 'lastSeen'"

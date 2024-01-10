@@ -9,12 +9,12 @@
     </GridGFormItem>
     <span v-for="options,category,index in cloneclient" :key="index">
       <b-row class="text-capitalize text-small mt-3 mb-2 pl-1">
-        <b>{{ category }} </b>
+        <b>{{ $t('title.' + category) }} </b>
       </b-row>
-      <span v-for="val,param,i in options" :key="i">
-        <GridGFormItem :label="param" labelclass="text-capitalize" variant="longvalue">
+      <span v-for="val,label,i in options" :key="i">
+        <GridGFormItem :label="$t('table.fields.' + label)" labelclass="text-capitalize" variant="longvalue">
           <template #value>
-            <div v-if="param.toString() === 'hostId'" class="d-flex flex-nowrap">
+            <div v-if="label.toString() === 'hostId'" class="d-flex flex-nowrap">
               <b-form-input
                 id="clientname"
                 v-model="clientName"
@@ -39,13 +39,19 @@
                 required
               />
             </div>
-            <b-form-checkbox v-else-if="typeof val == 'boolean'" :id="param" v-model="cloneclient[category][param.toString()]" size="sm" :aria-label="param" />
+            <b-form-checkbox
+              v-else-if="typeof val == 'boolean'"
+              :id="label"
+              v-model="cloneclient[category][label.toString()]"
+              size="sm"
+              :aria-label="$t('table.fields.' + label)"
+            />
             <b-form-input
               v-else
-              :id="param"
-              v-model="cloneclient[category][param.toString()]"
+              :id="label"
+              v-model="cloneclient[category][label.toString()]"
               size="sm"
-              :aria-label="param"
+              :aria-label="$t('table.fields.' + label)"
               type="text"
             />
           </template>

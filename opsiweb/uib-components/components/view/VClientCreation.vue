@@ -41,7 +41,7 @@
       <GridGFormItem
         v-for="(value, label, index) in newClient"
         :key="index"
-        :label="label"
+        :label="$t('table.fields.' + label)"
         :labelclass="'text-capitalize ' + label"
         variant="longvalue"
         :class="label.toString() === 'hostId' ? 'd-none' : ''"
