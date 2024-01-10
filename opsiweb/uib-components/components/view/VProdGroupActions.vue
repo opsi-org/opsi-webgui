@@ -54,7 +54,7 @@
                 >
                   <IconIIcon :icon="icon.product" /><IconIIcon :icon="icon.add" font-scale="0.8" />
                 </b-button>
-                <b-button
+                <!-- <b-button
                   class="border-0"
                   variant="outline-primary"
                   size="sm"
@@ -62,7 +62,7 @@
                   @click="showChild('addSubgroup')"
                 >
                   <IconIIcon :icon="icon.group" /><IconIIcon :icon="icon.add" font-scale="0.8" />
-                </b-button>
+                </b-button> -->
               </div>
             </template>
             <template v-else>
@@ -88,7 +88,7 @@
           <IconIIcon :icon="icon.x" />
         </b-button>
         <br><br>
-        <template v-if="action == 'addSubgroup'">
+        <!-- <template v-if="action == 'addSubgroup'">
           <b-form>
             <b-form-input
               v-model="subgroup.groupId"
@@ -118,7 +118,7 @@
               {{ $t("button.create") }}
             </b-button>
           </b-form>
-        </template>
+        </template> -->
         <template v-if="action == 'addToGroup'">
           <b-form-select
             v-model="selectedProducts"
