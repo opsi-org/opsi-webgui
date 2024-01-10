@@ -40,7 +40,7 @@
                   class="border-0"
                   variant="outline-primary"
                   size="sm"
-                  :title="$t('group.deleteOnlyAssignments', {type: 'Products'})"
+                  :title="$t('group.deleteOnlyAssignments', {type: $t('table.fields.products')})"
                   @click="showChild('deleteOnlyAssignments')"
                 >
                   <IconIIcon :icon="icon.product" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
@@ -49,7 +49,7 @@
                   class="border-0"
                   variant="outline-primary"
                   size="sm"
-                  :title="$t('group.addToGroup', {type: 'Products'})"
+                  :title="$t('group.addToGroup', {type: $t('table.fields.products')})"
                   @click="showChild('addToGroup')"
                 >
                   <IconIIcon :icon="icon.product" /><IconIIcon :icon="icon.add" font-scale="0.8" />
@@ -129,7 +129,7 @@
           >
             <template #first>
               <b-form-select-option :value="null" disabled>
-                {{ $t('group.selectItems', {type: 'Products'}) }}
+                {{ $t('group.selectItems', {type: $t('table.fields.products')}) }}
               </b-form-select-option>
             </template>
           </b-form-select>
