@@ -33,7 +33,8 @@ const _useNotification = (t: any) => {
     return showToast({
       title: t('message.warning.title'),
       content: content || '', // may wanna have a default
-      variant: 'warning'
+      variant: 'warning',
+      autoHideDelay: 10000
     })
   }
 
@@ -42,7 +43,8 @@ const _useNotification = (t: any) => {
       title: t('message.info.event'),
       content: content || '', // may wanna have a default
       variant: 'info',
-      noAutoHide: true
+      // noAutoHide: true
+      autoHideDelay: 10000
     })
   }
 
