@@ -204,7 +204,8 @@ const columns = reactive<ITableHeaderRow>({
           emit('change', rowData.depotId)
           Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
           rowactionConfigChecked.value[rowData.depotId] = true
-          useRouter().push('/servers/config/' + rowData.depotId)
+          // useRouter().push('/servers/config/' + rowData.depotId)
+          useRouter().push('/servers/server/config/' + rowData.depotId)
         }
 
         const classes = computed(()=> {

@@ -97,7 +97,7 @@ const props = defineProps({
   columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   rowId: { type: String, default: 'depotId'},
   data: { type: Array<any>, required:true},
-  id: { type: String, default: 'depots' },
+  id: { type: String, default: 'servers' },
   sortBy: { type: String, default: 'selection'},
   fetch: {type: Function, default: (p:any) => {} }
 })

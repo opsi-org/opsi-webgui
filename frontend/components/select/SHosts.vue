@@ -7,6 +7,7 @@
       :value="item"
     />
   </el-select>
+  {{ useRoute().name }}
 </template>
 
 <script setup lang="tsx">
@@ -18,7 +19,7 @@ const fetchedData = ref<Array<any>>([])
 const value = ref<string|undefined>()
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'depots' }
+  type: { type: String, default: 'servers' }
 })
 const emit = defineEmits(['update:value'])
 onMounted(async ()=> {
@@ -27,26 +28,36 @@ onMounted(async ()=> {
   value.value = props.id
 })
 watch(()=>value.value, ()=>{
-  // emit('change', value.value)
+  const pathArr = useRoute().path.split('/').filter(v => v !== '')
+  switch (useRoute().name) {
+    case 'clients-config':
+      useRouter().push({name: 'clients-config-id', params: {id: value.value as string}})
+      break;
+    case 'servers-config':
+      useRouter().push({name: 'servers-config-id', params: {id: value.value as string}})
+      break;
+    case 'clients-config-id':
+      useRouter().push({name: 'clients-config-id', params: {id: value.value as string}})
+      break;
+    case 'servers-config-id':
+      useRouter().push({name: 'servers-config-id', params: {id: value.value as string}})
+      break;
+
+    default:
+      break;
+  }
+
   emit('update:value', value.value)
 })
 async function fetch() {
-  if (props.type === 'depots'){
-    const {data, error} = await useDepot().getDepotIdList()
-    if (error) {
-      console.log(error)
-      useNotification().error(error)
-      return
-    }
-    fetchedData.value = data.value
+  if (props.type === 'servers'){
+    const dataSorted = await useDepot().getDepotIdList()
+    fetchedData.value = dataSorted
   } else if (props.type === 'clients') {
-    const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
-    if (error) {
-      console.log(error)
-      useNotification().error(error)
-      return
-    }
-    fetchedData.value = data.value
+    console.log('shosts fetch clients')
+    const dataSorted = await useClient().getClientIdList(storeSel.selectionDepots)
+    console.log('shosts fetch clients', dataSorted)
+    fetchedData.value = dataSorted
   }
 }
 </script>

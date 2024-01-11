@@ -1,3 +1,3 @@
 <template>
-  <ViewVConfig type="depots" />
+  <ViewVConfig type="servers" />
 </template>

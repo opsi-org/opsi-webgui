@@ -24,7 +24,7 @@ async function init(data: any) {
 <template>
   <Story :setup-app="init">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <ViewVConfig type="depots" :id="selection"/>
+      <ViewVConfig type="servers" :id="selection"/>
     </Variant>
     <!-- <Variant title="desktop" responsive-disabled>
       <ViewVConfig :isMobile="false"/>

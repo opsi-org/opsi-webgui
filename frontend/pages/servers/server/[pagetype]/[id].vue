@@ -1,15 +1,15 @@
 <template>
   <div>
     <div v-if="pagetype === 'config'">
-      <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
+      <el-button class="float-right" @click="useRouter().push(`/${type}/`)">X</el-button>
       <ViewVConfig  :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
     </div>
     <div v-else-if="pagetype === 'logs'">
       <div> LOGS </div>
     </div>
-    <div v-else-if="pagetype === 'clone'">
+    <!-- <div v-else-if="pagetype === 'clone'">
       <div> LOGS </div>
-    </div>
+    </div> -->
     <div v-else>
       idk
     </div>

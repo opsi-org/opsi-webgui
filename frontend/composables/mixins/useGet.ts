@@ -28,7 +28,12 @@ export const useDepot = () => {
 //     return await this.$axios.$get('/api/opsidata/depot_ids')
 //   }
   async function getDepotIdList () {
-    return await useApiGET('/opsidata/depot_ids')
+    const {data, error} = await useApiGET('/opsidata/depot_ids')
+    if (error) {
+      useNotification().error(error)
+      return
+    }
+    return data.value.sort()
     // const { data, error } = await useApiGET('/opsidata/depot_ids')
     // if (error) {
     //   useNotification().error(error)

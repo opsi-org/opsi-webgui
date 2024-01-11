@@ -1,6 +1,7 @@
 <template>
   <br />
-  <IconILoading v-if="isLoading" />
+  <el-alert v-if="!(props.type ===  'servers' || props.id)" type="warning"> Please select item</el-alert>
+  <IconILoading v-else-if="isLoading" />
   <el-collapse v-else v-model="activeNames" @change="handleCollapseValueChange"
     class="mr-3 ml-3">
     <el-collapse-item v-for="(items, topic, index) in fetchedData" :title="(topic.toString())" :name="index.toString()">
@@ -17,7 +18,7 @@ const fetchedData = ref<any>({})
 const activeNames = ref<string[]>([])
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'depots' },
+  type: { type: String, default: 'servers' },
   isChild: {type: Boolean, default: false}
 })
 
@@ -38,10 +39,12 @@ function changeItem (item: any, val: any, index: number) {
 }
 
 onMounted(async ()=> {
+  if (props.type ===  'servers' || props.id)
   await fetch()
 })
 watch(()=>props.id, async ()=>{
-  await fetch()
+  if (props.type ===  'servers' || props.id)
+    await fetch()
 })
 
 // async function fetch(id:string) {
@@ -73,9 +76,9 @@ async function fetch () {
   if (props.type === 'clients') {
     // endpoint = `/api/opsidata/config/clients?selectedClients=[${this.id}]`
     endpoint = `/opsidata/config/objects/${props.id}`
-  } else if (props.type === 'depots' && props.id) {
+  } else if (props.type === 'servers' && props.id) {
     endpoint = `/opsidata/config/objects/${props.id}`
-  } else if (props.type === 'depots') {
+  } else if (props.type === 'servers') {
     endpoint = '/opsidata/config'
   } else {
     // eslint-disable-next-line no-console

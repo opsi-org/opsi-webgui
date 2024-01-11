@@ -6,7 +6,7 @@
     <el-tab-pane
       :label="currentId ? $t('title.hostparam') : $t('title.hostparam.defaults')"
       name="config"
-      active :disabled="!(type == 'clients' || type == 'depots')"
+      active :disabled="!(type == 'clients' || type == 'servers')"
     >
         <!-- <el-text>Config of {{ type }} {{ currentId }}</el-text> -->
         <FormFHostParameter v-if="activeName==='config'" :id="currentId" :type="type" :is-child="props.isChild"/>
@@ -26,12 +26,12 @@ const { configLastSelected } = storeToRefs(tableSettings)
 const currentId = ref<string|undefined>('')
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'depots' },
+  type: { type: String, default: 'servers' },
   isChild: { type: Boolean, default: false }
 })
 console.log('props.id0', props.id)
 currentId.value = props.id
-const activeName = ref(props.isChild ? configLastSelected.value[props.type] || 'attr' : 'config')
+const activeName = ref(configLastSelected.value[props.type] || (props.isChild? 'config':'attr'))
 
 watch(()=>props.id, ()=>{
   console.log('props.id1', props.id)
@@ -41,10 +41,10 @@ watch(()=>props.id, ()=>{
   }
 })
 watch(()=> activeName.value, (val)=>{
-  if (props.isChild){
-    // store last selected tab if used as child
-    tableSettings.setConfigLastSelected(props.type, activeName.value)
-  }
+tableSettings.setConfigLastSelected(props.type, activeName.value)
+  // if (props.isChild){
+  //   // store last selected tab if used as child
+  // }
 })
 
 const isIdEmpty = computed(()=> {

@@ -1,7 +1,7 @@
 <template>
   <div>
-    Id: {{ props.id }}, {{ props.type }}
-    <el-form label-width="200px" class="w-full">
+    <el-alert v-if="!props.id" type="warning"> Please select item</el-alert>
+    <el-form v-else label-width="200px" class="w-full">
       <div v-for="(value, label, index) in fetchedData[0]" :key="index">
         <el-form-item :label="label.toString()">
           <el-input :value="value" />
@@ -18,7 +18,7 @@ const $t = useI18n().t
 let fetchedData = ref<Array<any>>([])
 const props = defineProps({
   id: { type: String, default: undefined },
-  type: { type: String, default: 'depots' },
+  type: { type: String, default: 'servers' },
   isChild: {type: Boolean, default: false }
 })
 
@@ -32,7 +32,7 @@ watch(()=>props.id, ()=>{
 })
 
 async function fetch(id:string) {
-  if (props.type === 'depots' && id){
+  if (props.type === 'servers' && id){
     const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${id}]`)
     if (error) {
       console.log(error)

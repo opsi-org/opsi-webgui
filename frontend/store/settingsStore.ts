@@ -86,17 +86,6 @@ export const storeSettings = defineStore('settings', {
       // if colormode is not auto set bt and ep to colormode
       this.setColormode(colormode, false)
     },
-    setColormode (colormode: 'light'|'dark'|'auto', saveCookie = true) {
-      console.log('color setColormode new mode', colormode, 'saveAsCookie', saveCookie)
-      if (saveCookie)
-        useCookie('colormode').value = colormode
-
-      const color_bt = useColorMode() // bootstrap
-      color_bt.value = colormode // set bootstrap colormode to given colormode
-
-      const color_ep_isDark = useDark() // element plus
-      color_ep_isDark.value = color_bt.value === 'dark' // set elementplus colormode to same as bootstrap
-    },
     toggleTheme() {
       let _mode = this.colormode
       console.log('color toggleTheme current', _mode)
@@ -106,7 +95,20 @@ export const storeSettings = defineStore('settings', {
       const newMode = (_mode === 'light') ? 'dark' : 'light'
       console.log('color toggleTheme current', newMode)
       this.setColormode(newMode)
-    }
+    },
+    setColormode (colormode: 'light'|'dark'|'auto', saveCookie = true) {
+      console.log('color setColormode new mode', colormode, 'saveAsCookie', saveCookie)
+      if (saveCookie) {
+        console.log('color setColormode saveAsCookie', saveCookie)
+        useCookie('colormode').value = colormode
+      }
+
+      const color_bt = useColorMode() // bootstrap
+      color_bt.value = colormode // set bootstrap colormode to given colormode
+
+      const color_ep_isDark = useDark() // element plus
+      color_ep_isDark.value = color_bt.value === 'dark' // set elementplus colormode to same as bootstrap
+    },
   },
 })
 

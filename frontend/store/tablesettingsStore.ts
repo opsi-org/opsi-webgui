@@ -3,7 +3,7 @@ import { computed } from 'vue'
 
 interface Columns {
   clients: Array<string>,
-  depots: Array<string>,
+  servers: Array<string>,
   // products: Array<string>, // or split local /netboot?
 }
 
@@ -13,12 +13,12 @@ export const storeTablesettings = defineStore('tablesettings', {
   state: () => ({
     _configLastSelected: {
       clients: '',
-      depots: '',
+      servers: '',
       products: '',
     },
     _columns: {
       clients: [],
-      depots: [],
+      servers: [],
       products: [],
     } as Columns,
   }),
