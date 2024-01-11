@@ -4,31 +4,40 @@ import { computed } from 'vue'
 interface Columns {
   clients: Array<string>,
   servers: Array<string>,
-  // products: Array<string>, // or split local /netboot?
+  products: Array<string>, // or split local /netboot?
 }
 
 
 export const storeTablesettings = defineStore('tablesettings', {
-  persist: true,
+  persist: {
+    debug: true,
+  },
   state: () => ({
     _configLastSelected: {
       clients: '',
       servers: '',
       products: '',
     },
-    _columns: {
-      clients: [],
-      servers: [],
-      products: [],
+    _visibleColumns: { // visible columns (beside fixed)
+      // servers: ['sel', 'depotId', 'description', 'type', 'ip', 'rowactions'], // all columns
+      servers: ['sel', 'depotId', 'description', 'type', 'rowactions'],
+      // clients: ['sel', 'clientId', 'description', 'ipAddress', 'macAddress', 'lastSeen', 'uefi', '_majorStats', 'reachable', 'rowactions'], // all columns
+      clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
+      // products: ['sel', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'rowactions'], // all columns
+      products: ['sel', 'productId', 'installationStatus', 'actionResult', 'version', 'actionRequest', 'rowactions'],
     } as Columns,
   }),
   getters: {
-    columns: ({ _columns }) => _columns,
+    // columns: ({ _visibleColumns }) => _visibleColumns,
+    // serversColumns: ({ _visibleColumns }) => useCookie('servers_columns', { default: undefined }).value || _visibleColumns.servers,
+    serversColumns: ({ _visibleColumns }) => _visibleColumns.servers,
+    clientsColumns: ({ _visibleColumns }) => _visibleColumns.clients,
+    productsColumns: ({ _visibleColumns }) => _visibleColumns.products,
     configLastSelected: ({ _configLastSelected }) => _configLastSelected,
   },
   actions: {
     setColumns (tabletype:string, value:Array<string>) {
-      this._columns[tabletype] = value
+      this._visibleColumns[tabletype] = value
     },
     setConfigLastSelected (tabletype:string, value:string) {
       this._configLastSelected[tabletype] = value

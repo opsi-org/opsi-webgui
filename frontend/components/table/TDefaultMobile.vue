@@ -36,7 +36,8 @@ const Details = ({rowData, colData}: any) => {
   const _fixedRightLast: Array<any> = []
   Object.values(wrappedColumns.value).forEach((colInfo) =>{
     const cId = colInfo.key
-    const visible = tableStore.columns[props.id].includes(cId)
+    // const visible = tableStore.columns[props.id].includes(cId)
+    const visible = tableStore[props.id + 'Columns'].includes(cId)
     if (!visible) {
       return
     }
@@ -111,7 +112,8 @@ onMounted(()=>{
 
 const visibleColumns = reactive<Array<string>>([])
 
-watch(()=>tableStore.columns[props.id], ()=>{
+watch(()=>tableStore[props.id + 'Columns'], ()=>{
+// watch(()=>tableStore.columns[props.id], ()=>{
   console.log('WRAPPED CHANGED')
   const curRow = activeRowIndex.value
   activeRowIndex.value = undefined

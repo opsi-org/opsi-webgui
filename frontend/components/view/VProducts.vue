@@ -204,7 +204,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'installationStatus', true)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('installationStatus')
     },
     actionResult: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionResult'),
@@ -215,7 +215,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('actionResult')
     },
     productId: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.productId'),
@@ -238,7 +238,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'name', false)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('name')
     },
     description: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.description'),
@@ -249,7 +249,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'description', false)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('description')
     },
     modificationTime: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.modificationTime'),
@@ -260,7 +260,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'modificationTime', false)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('modificationTime')
     },
     priority: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.priority'),
@@ -271,7 +271,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'priority', false)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('priority')
     },
     // selectedDepots: { // eslint-disable-next-line object-property-newline
     //   title: $t('table.fields.depotIds') as string, key: 'selectedDepots', dise,
@@ -294,7 +294,14 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'version', false)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('version'),
+      cellRenderer: ({rowData}) => {
+        return (
+          <>
+            <el-text v-if={!rowData.depot_version_diff}>{Object.values(rowData.depotVersions)[0]}</el-text>
+          </>
+        )
+      }
     },
     actionProgress: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionProgress'),
@@ -305,7 +312,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionProgress', false)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('actionProgress')
     },
     actionRequest: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionRequest'),
@@ -316,7 +323,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionRequest', false)
-      hidden: false
+      hidden: !storeTablesettings().productsColumns.includes('actionRequest'),
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions',
@@ -381,6 +388,19 @@ watch(()=>props.productType, (v)=>{
   changeProductsType(v)
 })
 
+setColumnVisibilityDependOnClients()
+watch(()=>selectionClients, setColumnVisibilityDependOnClients, { deep: true })
+function setColumnVisibilityDependOnClients () {
+  let b = true
+  console.log('selectionClients', selectionClients)
+  if (selectionClients.length > 0) {
+    b = false
+  }
+  columns.installationStatus.hidden = b
+  columns.actionResult.hidden = b
+  columns.actionRequest.hidden = b
+  columns.actionProgress.hidden = b
+}
 const fetchedData = ref({
   LocalbootProduct: [] as Array<any>,
   NetbootProduct: [] as Array<any>

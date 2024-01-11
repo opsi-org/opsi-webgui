@@ -288,7 +288,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-description',
       sortable: true,
       width: 200,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('description')
       // hidden: cookies.includesCookie('column_' + id, 'description', false)
     },
     ipAddress: { // eslint-disable-next-line object-property-newline
@@ -298,7 +298,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-ipAddress',
       sortable: true,
       width: 100,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('ipAddress')
       // hidden: cookies.includesCookie('column_' + id, 'ipAddress', false)
     },
     macAddress: { // eslint-disable-next-line object-property-newline
@@ -308,7 +308,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-macAddress',
       sortable: true,
       width: 100,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('macAddress')
       // hidden: cookies.includesCookie('column_' + id, 'macAddress', false)
     },
     lastSeen: { // eslint-disable-next-line object-property-newline
@@ -318,7 +318,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-lastSeen',
       sortable: true,
       width: 100,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('lastSeen')
       // hidden: cookies.includesCookie('column_' + id, 'lastSeen', false)
     },
     uefi: { // eslint-disable-next-line object-property-newline
@@ -328,7 +328,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-uefi',
       sortable: true,
       width: 50,
-      hidden: true,
+      hidden: !storeTablesettings().clientsColumns.includes('uefi'),
       // hidden: !cookies.includesCookie('column_' + id, 'uefi', false),
         // onChange={onChange}
       cellRenderer: ({rowData}:any) =>
@@ -345,7 +345,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-_majorStats',
       width: 50,
       _isMajor: true,
-      hidden: true
+      hidden: true // this is a dummy column for grouping
     },
     version_outdated: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.versionOutdated'),
@@ -355,7 +355,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
@@ -366,7 +366,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
@@ -377,7 +377,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
     },
     // TODO: Sorting for reachable column
@@ -388,7 +388,7 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-reachable',
       sortable: false,
       width: 50,
-      hidden: true
+      hidden: !storeTablesettings().clientsColumns.includes('reachable')
       // hidden: !cookies.includesCookie('column_' + id, 'reachable', true)
     },
     rowactions: { // eslint-disable-next-line object-property-newline

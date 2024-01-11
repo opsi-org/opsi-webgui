@@ -104,7 +104,9 @@
 </div> -->
 
 <pre>
-  {{ fetchedData }}
+  <!-- {{ fetchedData }} -->
+  {{ storeTablesettings().serversColumns }}
+  {{storeTablesettings().serversColumns.includes('ip')}}
 </pre>
   </div>
 </template>
@@ -138,7 +140,7 @@ const cookies = useCookies()
 const icons = useIcons()
 const $t = useI18n().t
 
-const id = "server"
+const id = "servers"
 const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
@@ -171,7 +173,7 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'description',
       sortable: true,
       width: 150,
-      hidden: false
+      hidden: !storeTablesettings().serversColumns.includes('description')
       // hidden: !cookies.includesCookie('column_' + id, 'description', false)
     },
     type: { // eslint-disable-next-line object-property-newline
@@ -181,7 +183,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       width: 140,
       maxWidth: 300,
-      hidden: false
+      hidden: !storeTablesettings().serversColumns.includes('type')
       // hidden: !cookies.includesCookie('column_' + id, 'type', true)
     },
     ip: { // eslint-disable-next-line object-property-newline
@@ -192,7 +194,7 @@ const columns = reactive<ITableHeaderRow>({
       width: 100,
       maxWidth: 150,
       // hidden: !cookies.includesCookie('column_' + id, 'ip', false)
-      hidden: false
+      hidden: !storeTablesettings().serversColumns.includes('ip')
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions',

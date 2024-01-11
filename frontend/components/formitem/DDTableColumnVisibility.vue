@@ -1,7 +1,7 @@
 <template>
   <el-text>{{ tableId }}</el-text>
   <el-select-v2
-    v-model="tableStore.columns[props.tableId]"
+    v-model="columnVisibilityList"
     :options="headerWrapper"
     :multiple="multiCondition"
     :max-collapse-tags="0"
@@ -115,6 +115,8 @@ const props = defineProps({
   multi: { type: Boolean as PropType<Boolean|undefined>, default: undefined},
   headers: { type: Object as PropType<ITableHeaderRow>, default: () => {}},
 })
+
+
 const _headers = reactive({ ...props.headers })
 const $emit = defineEmits(['update:headers'])
 const viewId = ((props.tableId === 'Localboot') || (props.tableId === 'Netboot')) ? 'products' : props.tableId
@@ -165,8 +167,11 @@ function init () {
     // })
 
     columnVisibilityList.length = 0
+    const columnHidden = {}
+    Object.values(_headers).forEach((item: any) => columnHidden[item.key] = item.hidden)
+    console.log('description columnHidden', columnHidden)
     const ids = useUtilsData().getVisibleColumnIds(Object.values(_headers))
-    console.log('headers', ids)
+    console.log('description headers', ids)
     columnVisibilityList.push(...ids)
     // columnVisibilityList.push(...headerWrapper.value.map((_v:any) => _v.value))
     // columnVisibilityList.push(...Object.values(_headers.value)
@@ -178,7 +183,7 @@ function init () {
     // columnVisibilityList = Object.keys(columnVisibilityStates).filter(k => columnVisibilityStates[k])
   }
   // columnVisibilityListWrapper.value = columnVisibilityList
-  tableStore.setColumns(props.tableId, columnVisibilityList)
+  // tableStore.setColumns(props.tableId, columnVisibilityList)
 }
 
 watch(_headers, () => {
@@ -206,8 +211,8 @@ watch(_headers, () => {
 // })
 
 function handleItem (key: Array<string>) {
-  console.log("hallo ? description handleItem oldSelection ", columnVisibilityList)
-  console.log("hallo ? description handleItem newSelection ", key)
+  console.log("visibility handleItem oldSelection ", columnVisibilityList)
+  console.log("visibility handleItem newSelection ", key)
 
   let symDifference = columnVisibilityList.filter(x => !key.includes(x))
                         .concat(key.filter(x => !columnVisibilityList.includes(x)));
@@ -215,12 +220,12 @@ function handleItem (key: Array<string>) {
   if (symDifference.length == 1) {
     _key = symDifference[0]
   } else console.error('this shouldnt happen')
-  console.log("description key is: ", _key)
-  console.log("description was visible", columnVisibilityList.includes(_key))
+  console.log("visibility handleItem key is: ", _key)
+  console.log("visibility handleItem was visible", columnVisibilityList.includes(_key))
   const hiddenNow = !key.includes(_key)
   columnVisibilityList.length = 0
   columnVisibilityList.push(...key) // for e-select-v2 its a list
-  console.log("description  is visible", columnVisibilityList.includes(_key))
+  console.log("visibility handleItem  is visible", columnVisibilityList.includes(_key))
 
   // if (columnVisibilityList.includes(key)) {
   //   // columnVisibilityList = columnVisibilityList.filter(s => s !== key)
@@ -234,12 +239,14 @@ function handleItem (key: Array<string>) {
   // }
   // console.log("description is  visible", columnVisibilityList.includes(key))
 
-  cookies.setCookie('column_' + viewId, columnVisibilityList)
-  console.log('description hidden was ', _headers[_key].hidden)
+  // cookies.setCookie('column_' + viewId, columnVisibilityList)
+  console.log('visibility handleItem hidden was ', _headers[_key].hidden)
 
   _headers[_key].hidden = hiddenNow
-  console.log('description hidden is  ', _headers[_key].hidden)
+  console.log('visibility handleItem hidden is  ', _headers[_key].hidden)
   // columnVisibilityListWrapper.value = columnVisibilityList
+
+  console.log('visibility handleItem updateStore ', columnVisibilityList)
   tableStore.setColumns(props.tableId, columnVisibilityList)
 
   $emit('update:headers', _headers)
