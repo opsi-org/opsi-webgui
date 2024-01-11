@@ -109,11 +109,13 @@ import type { ITableHeaderRow } from '~/types/ttableV3'
 import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
+import { useClient } from '~/composables/mixins/useGet';
+import type { ITableRow } from '~/types/ttable';
+import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
 const cookies = useCookies()
 const $t = useI18n().t
 const icons = useIcons()
 const id = "products"
-
 
 const route = useRoute()
 const _routeId = route.params.id || ['']
@@ -168,7 +170,9 @@ const props = defineProps({
 // console.log('datacache', datacache.opsiconfigserver)
 
 const storeSelection = storeSelections()
-const { selectionDepots, selectionClients, selectionProducts } = storeSelection
+const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(storeSelection)
+
+const fetchedDataClients2Depots = ref(await useClient().getClientToDepot(selectionClients.value))
 //   @selections.Getter public selectionDepots!: Array<string>
 //   @selections.Getter public selectionClients!: Array<string>
 //   @selections.Getter public selectionProducts!: Array<string>
@@ -298,7 +302,14 @@ const columns = reactive<ITableHeaderRow>({
       cellRenderer: ({rowData}) => {
         return (
           <>
-            <el-text v-if={!rowData.depot_version_diff}>{Object.values(rowData.depotVersions)[0]}</el-text>
+            {/* <el-text v-if={!rowData.depot_version_diff}>{Object.values(rowData.depotVersions)[0]}</el-text> */}
+            <tablecellTCProductVersionCell
+              v-if={Object.keys(fetchedDataClients2Depots).length == selectionClients.value.length}
+              type="depotVersions"
+              row={rowData}
+              clients2depots={fetchedDataClients2Depots}
+              onDetails={toggleDetailsTooltip}
+            />
           </>
         )
       }
@@ -389,11 +400,16 @@ watch(()=>props.productType, (v)=>{
 })
 
 setColumnVisibilityDependOnClients()
-watch(()=>selectionClients, setColumnVisibilityDependOnClients, { deep: true })
+watch(()=>selectionClients.value, async () => {
+  setColumnVisibilityDependOnClients()
+  console.log('selectionClients changed', selectionClients.value)
+  fetchedDataClients2Depots.value = await useClient().getClientToDepot(selectionClients.value)
+}, { deep: true })
+
 function setColumnVisibilityDependOnClients () {
   let b = true
-  console.log('selectionClients', selectionClients)
-  if (selectionClients.length > 0) {
+  console.log('selectionClients', selectionClients.value)
+  if (selectionClients.value.length > 0) {
     b = false
   }
   columns.installationStatus.hidden = b
@@ -455,6 +471,11 @@ watch(()=> tableData.value[currentType.value], async ()=>{
   fetchedData.value[currentType.value] = await _fetch(currentType.value)
 }, { deep: true})
 
+function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
+    // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
+    // row.toggleDetails()
+    console.log('TOGGLE ROW', row, tooltiptext)
+  }
 //   tableInfo: ITableInfo = {
 //     sortBy: this.getKeyCookie(`sorting_${id}`, 'sortBy', this.sortby || 'productId'),
 //     sortDesc: this.getKeyCookie(`sorting_${id}`, 'sortDesc', this.sortdesc || false),
@@ -592,8 +613,8 @@ async function _fetch(type: string) {
 
 function fetchProductsPrepareParams (type: string) {
   const params = { ...tableData.value[type] }
-  params.selectedDepots = JSON.stringify(selectionDepots)
-  params.selectedClients = JSON.stringify(selectionClients)
+  params.selectedDepots = JSON.stringify(selectionDepots.value)
+  params.selectedClients = JSON.stringify(selectionClients.value)
   if (params.sortBy === 'installationStatus') {
     params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
   } else if (params.sortBy === 'actionResult') {

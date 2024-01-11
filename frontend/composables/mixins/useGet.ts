@@ -70,13 +70,14 @@ export const useClient = () => {
 //         // this.showToastError(error)
 //       })
 
-    const { data, error } = await useApiGET(`/api/opsidata/clientsdepots?selectedClients=[${selectedClients}]`)
+    const { data, error } = await useApiGET(`/opsidata/clientsdepots?selectedClients=[${selectedClients}]`)
     if (error) {
       useNotification().error(error)
       throw new Error(error)
       return
     }
     fetchedDataClients2Depots = data.value
+    return data.value
     // return data.value.sort()
   }
   return { getClientIdList, getClientToDepot, fetchedDataClients2Depots }
