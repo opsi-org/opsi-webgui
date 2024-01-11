@@ -1,6 +1,6 @@
 <template>
   <div data-testid="TCProductVersionCell" class="d-inline-block">
-    <div
+    <!-- <div
       :id="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       class="TCProductVersionCell_hover text-small"
     >
@@ -34,10 +34,12 @@
       :details="tooltiptext"
       :depot-version-diff="rowitem.depot_version_diff"
     />
+  -->
   </div>
 </template>
 
 <script lang="ts">
+/*
 import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 import { IObjectString2String, IObjectString2ObjectString2String } from '../../../.utils/types/tgeneral'
 import { ITableRow, ITableRowItemProducts } from '../../../.utils/types/ttable'
@@ -75,11 +77,11 @@ export default class TCProductVersionCell extends Vue {
     }
     return tt
   }
-}
+} */
 </script>
 
 <style scoped>
-.version_outdated {
+/* .version_outdated {
   color:red
 }
 .TCProductVersionCell_hover {
@@ -93,5 +95,5 @@ export default class TCProductVersionCell extends Vue {
 }
 .TCProductVersionCell_hover > .details.client-outdated{
   float: right;
-}
+} */
 </style>
