@@ -29,6 +29,7 @@
         console.log('sort table', id, 'by', key, 'desc', isDesc)
         tableData.sortBy = key
         tableData.sortDesc = isDesc
+        storeTablesettings().setSortColumn(id, key, isDesc)
       }"
     >
 
@@ -106,7 +107,7 @@
 <pre>
   <!-- {{ fetchedData }} -->
   {{ storeTablesettings().serversColumns }}
-  {{storeTablesettings().serversColumns.includes('ip')}}
+  {{storeTablesettings().serversSorting}}
 </pre>
   </div>
 </template>
@@ -251,15 +252,17 @@ const columns = reactive<ITableHeaderRow>({
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
 
-const handleChange = (id:string) => {
-  console.log('handleSelectionChange', id)
-  storeSelection.toggleSelectionDepots(id)
-}
+// const handleChange = (id:string) => {
+//   console.log('handleSelectionChange', id)
+//   storeSelection.toggleSelectionDepots(id)
+// }
 const tableData = ref({
   pageNumber: 1,
   perPage: 5,
-  sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-  sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+  // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+  sortBy: storeTablesettings().serversSorting.column,
+  // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+  sortDesc: storeTablesettings().serversSorting.isDesc,
   filterQuery: '',
   filterColumns: ['depotId']
 })

@@ -25,6 +25,9 @@ export const storeAuth = defineStore('auth', {
     },
     logout () {
       localStorage.removeItem('username')
+      localStorage.removeItem('selections')
+      localStorage.removeItem('tablesettings')
+      localStorage.removeItem('data-cache')
       this._myusername = ''
     },
     setExpiredMin (m: number) {

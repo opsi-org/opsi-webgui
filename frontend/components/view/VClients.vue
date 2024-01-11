@@ -33,6 +33,7 @@
         console.log('sort table', id, 'by', key, 'desc', isDesc)
         tableData.sortBy = key
         tableData.sortDesc = isDesc
+        storeTablesettings().setSortColumn(id, key, isDesc)
       }"
     >
 
@@ -229,6 +230,7 @@ import type { ITableHeaderRow } from '~/types/ttableV3'
 import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
+import { useConfigserver } from '~/composables/mixins/useGet';
 const storeSelection = storeSelections()
 const datacache = storeCache()
 console.log('datacache', datacache.opsiconfigserver)
@@ -237,6 +239,18 @@ const $t = useI18n().t
 const icons = useIcons()
 const id = "clients"
 
+await initServer()
+async function initServer() {
+  if (storeSelection.selectionDepots.length === 0) {
+    const server = await useConfigserver().getOpsiConfigServer()
+    if (server)
+      storeSelection.setSelectionDepots([server])
+    else {
+      console.log('no server selected')
+      useNotification().error('no server selected')
+    }
+  }
+}
 
 const route = useRoute()
 const _routeId = route.params.id || ['']
@@ -434,8 +448,10 @@ const totalItems = ref<number>(0)
 const tableData = ref({
   pageNumber: 1,
   perPage: 5,
-  sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-  sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+  // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+  sortBy: storeTablesettings().clientsSorting.column,
+  sortDesc: storeTablesettings().clientsSorting.isDesc,
+  // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
   filterColumns: ['clientId', 'description']
 })

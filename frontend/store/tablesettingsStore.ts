@@ -1,12 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
-
-interface Columns {
-  clients: Array<string>,
-  servers: Array<string>,
-  products: Array<string>, // or split local /netboot?
-}
-
 
 export const storeTablesettings = defineStore('tablesettings', {
   persist: {
@@ -25,19 +17,29 @@ export const storeTablesettings = defineStore('tablesettings', {
       clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
       // products: ['sel', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'rowactions'], // all columns
       products: ['sel', 'productId', 'installationStatus', 'actionResult', 'version', 'actionRequest', 'rowactions'],
-    } as Columns,
+    },
+    _sortColumns: {
+      servers: { column: 'depotId', isDesc: false },
+      clients: { column: 'clientId', isDesc: false },
+      products: { column: 'productId', isDesc: false },
+    }
   }),
   getters: {
-    // columns: ({ _visibleColumns }) => _visibleColumns,
-    // serversColumns: ({ _visibleColumns }) => useCookie('servers_columns', { default: undefined }).value || _visibleColumns.servers,
     serversColumns: ({ _visibleColumns }) => _visibleColumns.servers,
     clientsColumns: ({ _visibleColumns }) => _visibleColumns.clients,
     productsColumns: ({ _visibleColumns }) => _visibleColumns.products,
+    serversSorting: ({ _sortColumns }) => _sortColumns.servers,
+    clientsSorting: ({ _sortColumns }) => _sortColumns.clients,
+    productsSorting: ({ _sortColumns }) => _sortColumns.products,
+
     configLastSelected: ({ _configLastSelected }) => _configLastSelected,
   },
   actions: {
     setColumns (tabletype:string, value:Array<string>) {
       this._visibleColumns[tabletype] = value
+    },
+    setSortColumn (tabletype:string, column:string, isDesc:boolean) {
+      this._sortColumns[tabletype] = { column, isDesc }
     },
     setConfigLastSelected (tabletype:string, value:string) {
       this._configLastSelected[tabletype] = value

@@ -37,6 +37,7 @@
         console.log('sort table', currentType, 'by', key, 'desc', isDesc)
         tableData[currentType].sortBy = key
         tableData[currentType].sortDesc = isDesc
+        storeTablesettings().setSortColumn(id, key, isDesc)
       }"
     >
 
@@ -432,8 +433,10 @@ const tableData = ref({
     type: 'LocalbootProduct',
     pageNumber: 1,
     perPage: 25,
-    sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-    sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+    sortBy: storeTablesettings().productsSorting.column,
+    sortDesc: storeTablesettings().productsSorting.isDesc,
+    // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
     filterQuery: '',
     filterColumns: ['productId', 'description']
   },
@@ -441,8 +444,8 @@ const tableData = ref({
     type: 'NetbootProduct',
     pageNumber: 1,
     perPage: 5,
-    sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-    sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    sortBy: storeTablesettings().productsSorting.column,
+    sortDesc: storeTablesettings().productsSorting.isDesc,
     filterQuery: '',
     filterColumns: ['productId', 'description']
   },
@@ -450,8 +453,8 @@ const tableData = ref({
     type: 'Product',
     pageNumber: 1,
     perPage: 5,
-    sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-    sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    sortBy: storeTablesettings().productsSorting.column,
+    sortDesc: storeTablesettings().productsSorting.isDesc,
     filterQuery: '',
     filterColumns: ['productId', 'description']
   }
