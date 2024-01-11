@@ -1,5 +1,18 @@
 import { IDepend, IProp } from "./ttable"
 
+export interface CloneClient {
+  target: {
+    hostId: string,
+    ipAddress: string,
+    hardwareAddress: string,
+    systemUUID: string
+  },
+  options: {
+    configs: boolean,
+    products: boolean,
+    productPropeties: boolean
+  }
+}
 export interface NewClient {
   hostId: string,
   description: string,

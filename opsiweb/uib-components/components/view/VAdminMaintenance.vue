@@ -99,7 +99,7 @@
                 size="sm"
               />
               <b-button variant="outline-primary" :pressed.sync="showPasswordCB" size="sm">
-                <span class="sr-only">{{ showPasswordCB? $t('form.password.hide'): $t('form.password.show') }}</span>
+                <span class="sr-only">{{ showPasswordCB? $t('label.hide', {item: 'Password'}) : $t('label.show', {item: 'Password'}) }}</span>
                 <IconIIcon :icon="showPasswordCB ? icon.valueShow : icon.valueHide" />
               </b-button>
             </b-input-group>
@@ -176,7 +176,7 @@
                 size="sm"
               />
               <b-button variant="outline-primary" :pressed.sync="showPasswordRB" size="sm">
-                <span class="sr-only">{{ showPasswordRB? $t('form.password.hide'): $t('form.password.show') }}</span>
+                <span class="sr-only">{{ showPasswordRB? $t('label.hide', {item: 'Password'}) : $t('label.show', {item: 'Password'}) }}</span>
                 <IconIIcon :icon="showPasswordRB ? icon.valueShow : icon.valueHide" />
               </b-button>
             </b-input-group>

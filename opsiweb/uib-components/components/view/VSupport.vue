@@ -38,7 +38,7 @@ export default class VSupport extends Vue {
         link: 'https://forum.opsi.org/index.php'
       },
       {
-        title: 'supportPage.support.title',
+        title: 'title.support',
         description: 'supportPage.support.description',
         buttonname: 'supportPage.support.button',
         link: this.$i18n.locale === 'en' ? 'https://www.uib.de/en/support-training/support' : 'https://www.uib.de/de/support-schulung/support'

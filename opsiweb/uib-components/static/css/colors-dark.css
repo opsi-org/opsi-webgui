@@ -60,18 +60,16 @@
 
 
 
-  /* borders durchgehen */
-  /* shadow box order so durchgehen */
-
-  --log-secret: #D500F9;
-  --log-trace: #8B8B8B;
-  --log-debug: #C0C0C0;
-  --log-info: #F5F5F5;
-  --log-notice: #009605;
-  --log-warning: #FF9100;
-  --log-error: #E51D3B;
-  --log-critical: #E20066;
-  --log-essential: #2979FF;
+ /* The comments below suggest the closest accessible text color if it does not conform to WCAG guidelines. */
+  --log-secret: #D500F9;      /* AA: #EC7EFF, AAA: #F6C1FF */
+  --log-trace: #8B8B8B;       /* AA: #AAAAAA, AAA: #D3D3D3 */
+  --log-debug: #C0C0C0;       /* AA: Passed, AAA: #D3D3D3 */
+  --log-info: #F5F5F5;        /* Passes both AA and AAA */
+  --log-notice: #009605;      /* AA: #00C507, AAA: #00F408 */
+  --log-warning: #FF9100;     /* AA: Passed, AAA: #FFCA83 */
+  --log-error: #E51D3B;       /* AA: #F28C9B, AAA: #F8C6CD */
+  --log-critical: #E20066;    /* AA: #FF7FB9, AAA: #FFC2DE */
+  --log-essential: #2979FF;   /* AA: #77AAFF, AAA: #BAD4FF */
 
   /**???***/
   --log-secondary: #212121;

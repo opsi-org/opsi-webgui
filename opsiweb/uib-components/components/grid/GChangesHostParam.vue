@@ -5,7 +5,7 @@
       <b-col>
         <InputIFilterTChanges
           v-if="changesHostParam.filter(o => o.user === username)"
-          :placeholder="$t('table.filterBy.ConfigHost')"
+          :placeholder="$t('filterBy.ConfigHost')"
           :filter.sync="filter"
         />
       </b-col>
