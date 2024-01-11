@@ -79,7 +79,6 @@ const navItems = computed<Array<INavItem>>(() =>
     submenu: [
       { title: 'title.allDepots', route: '/servers/'},
       { title: 'title.config', route: '/servers/config'}
-      // { title: 'title.config', route: '/depotsconfig'}
     ]
   },
   {
@@ -91,7 +90,7 @@ const navItems = computed<Array<INavItem>>(() =>
       { title: 'title.allClients', route: '/clients/'},
       { title: 'title.addNew', route: '/clientscreation', disabled: !config.value?.client_creation },
       // TODO: Display clone client when backend is ready
-      // { title: 'title.clone', route: '/clientsclone' },
+      // { title: 'title.clone', route: '/clients/clone' },
       { title: 'title.config', route: '/clients/config' },
       { title: 'title.log', route: '/clientslog' }
     ]
