@@ -1,3 +1,25 @@
+<template>
+  <el-form :model="newClient" label-width="200px">
+    <div v-for="(value, label, index) in newClient">
+      <el-form-item :label="$t('table.fields.' + label)">
+        <el-input v-model="newClient[label.toString()]" />
+      </el-form-item>
+    </div>
+  </el-form>
+</template>
+<script setup lang="ts">
+import { reactive } from 'vue'
+const newClient = reactive({
+  hostId: '',
+  description: '',
+  inventoryNumber: '',
+  hardwareAddress: '',
+  ipAddress: null,
+  notes: ''
+})
+</script>
+
+
 <!-- <template>
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
