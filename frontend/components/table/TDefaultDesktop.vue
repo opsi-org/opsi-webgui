@@ -5,6 +5,7 @@
       <template #default="{ height, width }">
         <el-table-v2
           v-if="Object.values(wrappedColumns).length > 0"
+          v-model:sort-state="sortState"
           :columns="Object.values(wrappedColumns)"
           :data="wrappedData"
           :width="width"
@@ -12,6 +13,7 @@
           fixed
           :row-event-handlers="rowEventHandlers"
           @scroll="onScroll"
+          @column-sort="onSort"
         >
         </el-table-v2>
       </template>
@@ -33,9 +35,9 @@
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
-import TableV2 from 'element-plus';
+import type { SortBy, SortState } from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
-import {type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus';
+import {TableV2SortOrder, type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus';
 import type { FunctionalComponent } from 'vue';
 
 const selectionStore = storeSelections()
@@ -50,7 +52,7 @@ const props = defineProps({
   sortBy: { type: String, default: 'selection'},
   small: { type: Boolean, default: true }
 })
-const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed'])
+const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed'])
 const wrappedColumns = ref<ITableHeaderRow>({})
 const wrappedData = ref<Array<any>>([])
 onMounted(()=>{
@@ -64,6 +66,15 @@ console.log('total pagenumber', pageNumber.value)
 pageNumber.value = props.tableData.pageNumber
 console.log('total pagenumber', pageNumber.value )
 const lastSelectedItemForSingleselect = ref<any>(undefined)
+
+const sortState = ref<SortState>({
+  [props.sortBy]: TableV2SortOrder.DESC
+})
+const onSort = ({ key, order }: SortBy) => {
+  sortState.value[key] = order
+  $emit('sort-changed', key, order === TableV2SortOrder.DESC)
+  // data.value = data.value.reverse()
+}
 
 watch(()=>tableStore.columns[props.id], ()=>{
   // show or hide major-children

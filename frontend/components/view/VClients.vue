@@ -29,6 +29,11 @@
       @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionClients(id)}"
       @selection-clear="storeSelection.clearSelectionClients"
       @tabledata-changed="(v: any) => {updateTableData(v)}"
+      @sort-changed="(key: string, isDesc: boolean) => {
+        console.log('sort table', id, 'by', key, 'desc', isDesc)
+        tableData.sortBy = key
+        tableData.sortDesc = isDesc
+      }"
     >
 
     </TableTDefault>

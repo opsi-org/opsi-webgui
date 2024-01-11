@@ -32,6 +32,12 @@
       @selection-changed="(id: string) => storeSelection.toggleSelectionProducts(id)"
       @selection-clear="storeSelection.clearSelectionProducts"
       @tabledata-changed="(v: any) => {updateTableData('localboot', v)}"
+
+      @sort-changed="(key: string, isDesc: boolean) => {
+        console.log('sort table', currentType, 'by', key, 'desc', isDesc)
+        tableData[currentType].sortBy = key
+        tableData[currentType].sortDesc = isDesc
+      }"
     >
 
     </TableTDefault>

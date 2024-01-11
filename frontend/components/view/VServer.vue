@@ -25,6 +25,11 @@
       @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
       @selection-clear="storeSelection.clearSelectionDepots"
       @tabledata-changed="(v: any) => {updateTableData(v)}"
+      @sort-changed="(key: string, isDesc: boolean) => {
+        console.log('sort table', id, 'by', key, 'desc', isDesc)
+        tableData.sortBy = key
+        tableData.sortDesc = isDesc
+      }"
     >
 
     </TableTDefault>
@@ -155,7 +160,7 @@ const columns = reactive<ITableHeaderRow>({
       key: 'depotId',
       dataKey: 'depotId',
       sortable: true,
-      width: 150,
+      width: 250,
       maxWidth: 350,
       fixed: true,
       hidden: false
