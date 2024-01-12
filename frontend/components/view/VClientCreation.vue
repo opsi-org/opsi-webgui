@@ -1,10 +1,36 @@
 <template>
-  <el-form :model="newClient" label-width="200px">
+  <!-- <el-form :model="newClient" label-width="200px">
     <div v-for="(value, label, index) in newClient">
       <el-form-item :label="$t('table.fields.' + label)">
         <el-input v-model="newClient[label.toString()]" />
       </el-form-item>
     </div>
+  </el-form>
+  <el-row>
+    <b class="initsetup">{{ $t('title.initsetup') }} </b>
+  </el-row>
+  <el-form :model="clientAgent" :inline="true" label-position="top">
+    <div v-for="(value, label, index) in clientAgent">
+      <el-form-item :label="$t('table.fields.' + label)">
+        <el-input v-model="clientAgent[label.toString()]" />
+      </el-form-item>
+    </div>
+  </el-form> -->
+  <el-form label-width="200px">
+    <div v-for="options,category,index in createclient" :key="index">
+      <el-row>
+        <b>{{ $t('title.' + category) }} </b>
+      </el-row>
+      <div v-for="(value, label, index) in options">
+        <el-form-item :label="$t('table.fields.' + label)">
+          <el-input v-model="createclient[category][label]" />
+        </el-form-item>
+      </div>
+    </div>
+    <el-form-item>
+      <el-button> {{ $t('button.reset') }}</el-button>
+      <el-button type="primary">{{ $t('button.create') }}</el-button>
+    </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
@@ -16,6 +42,33 @@ const newClient = reactive({
   hardwareAddress: '',
   ipAddress: null,
   notes: ''
+})
+const clientAgent = reactive({
+  clients: [],
+  username: '',
+  password: '',
+  type: 'windows'
+})
+const createclient = reactive({
+  hostId: '',
+  basics: {
+    description: '',
+    inventoryNumber: '',
+    hardwareAddress: '',
+    ipAddress: null,
+    notes: ''
+  },
+  assignments: {
+    depot: [],
+    group: []
+  },
+  initialsetup: {
+    netbootProduct: [],
+    opsiClientAgent: false
+  },
+  settings: {
+    uefi: false
+  }
 })
 </script>
 
