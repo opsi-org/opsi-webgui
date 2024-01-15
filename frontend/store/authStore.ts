@@ -7,28 +7,36 @@ const expirySec = 60 * 30 // Default=30min
 
 export const storeAuth = defineStore('auth', {
   persist: true,
-  state: () => ({
-    _myusername: localStorage.getItem('username') as string,
+  state: () => ({ // the state objects are stored in localStorage
+    _username: "",
     _sessionexpiry: expirySec, // sec
     _sessionendTime: '',
   }),
   getters: {
     sessionEndTime: ({ _sessionendTime }) => _sessionendTime,
     sessionExpiry: ({ _sessionexpiry }) => _sessionexpiry,
-    username: ({ _myusername }) => _myusername,
-    isAuthenticated: ({ _myusername }) => Boolean(useCookie('opsiconfd-session') && _myusername),
+    username: ({ _username }) => _username,
+    isAuthenticated: ({ _username }) => Boolean(useCookie('opsiconfd-session') && _username),
   },
   actions: {
-    login (username: string) {
-      this._myusername = username
-      localStorage.setItem('username', username)
+    $reset () {
+      this._username = ''
+      this._sessionendTime = ''
+    },
+    login (_username: string) {
+      this._username = _username
+      // localStorage.setItem('_username', _username)
     },
     logout () {
-      localStorage.removeItem('username')
-      localStorage.removeItem('selections')
-      localStorage.removeItem('tablesettings')
-      localStorage.removeItem('data-cache')
-      this._myusername = ''
+      console.log('logout')
+      this.$reset()
+      storeTablesettings().$reset()
+
+      // localStorage.removeItem('_username')
+      // localStorage.removeItem('tablesettings')
+      // localStorage.removeItem('data-cache')
+      // storeTablesettings().$hydrate()
+      this._username = ''
     },
     setExpiredMin (m: number) {
       this._sessionexpiry = m
@@ -54,24 +62,24 @@ if (import.meta.hot) {
 // export const storeAuth = defineStore('auth', () => {
 //   // need to return the states / getters/ actions in the end of the setup
 //   // states
-//   let _myusername: string = localStorage.getItem('username') as string
+//   let _username: string = localStorage.getItem('_username') as string
 //   let _sessionexpiry: number = expirySec // sec
 //   let _sessionendTime: string = ''
 
 //   // getter
 //   const sessionEndTime = computed(() => _sessionendTime)
 //   const sessionExpiry = computed(() => { return _sessionexpiry })
-//   const username = computed(() => { return _myusername })
-//   const isAuthenticated = computed(() => { return Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username')) })
+//   const _username = computed(() => { return _username })
+//   const isAuthenticated = computed(() => { return Boolean(useCookie('opsiconfd-session') && localStorage.getItem('_username')) })
 
 //   // actions
-//   function login (username: string) {
-//     _myusername = username
-//     localStorage.setItem('username', username)
+//   function login (_username: string) {
+//     _username = _username
+//     localStorage.setItem('_username', _username)
 //   }
 //   function logout () {
-//     localStorage.removeItem('username')
-//     _myusername = ''
+//     localStorage.removeItem('_username')
+//     _username = ''
 //   }
 
 //   function setExpiredMin (m: number) {
@@ -93,7 +101,7 @@ if (import.meta.hot) {
 
 //   return {
 //     /* states */
-//     /* getters */ sessionEndTime, sessionExpiry, username, isAuthenticated
+//     /* getters */ sessionEndTime, sessionExpiry, _username, isAuthenticated
 //     /* actions */, login, logout, setExpiredMin, setSession, clearSession
 //   }
 // }, { persist: true } as any)

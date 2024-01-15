@@ -75,10 +75,11 @@ export default defineNuxtConfig({
     '@pinia-plugin-persistedstate/nuxt',
     // 'nuxt-monaco-editor'
   ],
-  piniaPersistedstate: {
+  piniaPersistedState: {
     // cookieOptions: {
     //   sameSite: 'strict',
     // },
+    key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
     debug: true,
   },

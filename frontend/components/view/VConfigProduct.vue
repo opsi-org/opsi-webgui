@@ -163,7 +163,8 @@ async function changeProperty (item: any, values: any, originValue: any) {
 function handleTrackingChanges (productId:string, hosts:Array<string>, key:string, propertyId:string, value: any, orgValue: any) {
     for (const h in hosts) {
       const changeObject: Object = {
-        user: localStorage.getItem('username'),
+        user: storeAuth().username,
+        // user: localStorage.getItem('username'),
         [key]: hosts[h],
         productId: productId,
         property: propertyId,

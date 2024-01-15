@@ -1,28 +1,26 @@
 import { defineStore } from 'pinia'
+const _data_configLastSelected = { clients: '', servers: '', products: '' }
+const _data_visibleColumns = {
+  // servers: ['sel', 'depotId', 'description', 'type', 'ip', 'rowactions'], // all columns
+  servers: ['sel', 'depotId', 'description', 'type', 'rowactions'],
+  // clients: ['sel', 'clientId', 'description', 'ipAddress', 'macAddress', 'lastSeen', 'uefi', '_majorStats', 'reachable', 'rowactions'], // all columns
+  clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
+  // products: ['sel', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'rowactions'], // all columns
+  products: ['sel', 'productId', 'installationStatus', 'actionResult', 'version', 'actionRequest', 'rowactions'],
+}
+const _data_sortColumns = {
+  servers: { column: 'depotId', isDesc: false },
+  clients: { column: 'clientId', isDesc: false },
+  products: { column: 'productId', isDesc: false },
+}
+const deepCp = (obj:any) => JSON.parse(JSON.stringify(obj))
 
 export const storeTablesettings = defineStore('tablesettings', {
-  persist: {
-    debug: true,
-  },
-  state: () => ({
-    _configLastSelected: {
-      clients: '',
-      servers: '',
-      products: '',
-    },
-    _visibleColumns: { // visible columns (beside fixed)
-      // servers: ['sel', 'depotId', 'description', 'type', 'ip', 'rowactions'], // all columns
-      servers: ['sel', 'depotId', 'description', 'type', 'rowactions'],
-      // clients: ['sel', 'clientId', 'description', 'ipAddress', 'macAddress', 'lastSeen', 'uefi', '_majorStats', 'reachable', 'rowactions'], // all columns
-      clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
-      // products: ['sel', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'rowactions'], // all columns
-      products: ['sel', 'productId', 'installationStatus', 'actionResult', 'version', 'actionRequest', 'rowactions'],
-    },
-    _sortColumns: {
-      servers: { column: 'depotId', isDesc: false },
-      clients: { column: 'clientId', isDesc: false },
-      products: { column: 'productId', isDesc: false },
-    }
+  persist: true,
+  state: () => ({ // the state objects are stored in localStorage
+    _configLastSelected: deepCp(_data_configLastSelected),
+    _visibleColumns: deepCp(_data_visibleColumns),
+    _sortColumns: deepCp(_data_sortColumns),
   }),
   getters: {
     serversColumns: ({ _visibleColumns }) => _visibleColumns.servers,
@@ -35,6 +33,11 @@ export const storeTablesettings = defineStore('tablesettings', {
     configLastSelected: ({ _configLastSelected }) => _configLastSelected,
   },
   actions: {
+    $reset () {
+      this._configLastSelected = deepCp(_data_configLastSelected)
+      this._visibleColumns = deepCp(_data_visibleColumns)
+      this._sortColumns = deepCp(_data_sortColumns)
+    },
     setColumns (tabletype:string, value:Array<string>) {
       this._visibleColumns[tabletype] = value
     },
