@@ -267,18 +267,11 @@ const $t = useI18n().t
 const icons = useIcons()
 const id = "clients"
 
-await initServer()
-async function initServer() {
-  if (storeSelection.selectionDepots.length === 0) {
-    const server = await useConfigserver().getOpsiConfigServer()
-    if (server)
-      storeSelection.setSelectionDepots([server])
-    else {
-      console.log('no server selected')
-      useNotification().error('no server selected')
-    }
-  }
-}
+// await initServer()
+// async function initServer() {
+//   await useConfigserver(true) // init selectiondepots with configserver
+// }
+await useConfigserver(true) // init selectiondepots with configserver
 
 const route = useRoute()
 const _routeId = route.params.id || ['']

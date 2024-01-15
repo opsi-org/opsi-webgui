@@ -2,25 +2,17 @@
 import { loginlogout } from '~/histoire/histoire-utils'
 import { useConfigserver } from '~/composables/mixins/useGet'
 
+const store = ref({
+  selectionDepots: [] as Array<string>,
+  selectionClients: [] as Array<string>
+})
 async function init(data: any) {
   await loginlogout(data)
-  const selection = await useConfigserver().getOpsiConfigServer()
-  if (selection){
-    console.log('opsiserver', selection)
-    storeSelections().pushToSelectionDepots(selection)
-  } else {
-    console.log('could find opsiserver')
-  }
-  // const store = storeCache().opsiconfigserver
-  // console.log('inside store', store)
-  const store = storeSelections().selectionDepots
-  console.log('inside store', store)
+  await useConfigserver(true, store)
 }
 
-
-const selectedClient = ref('')
 function changeId (id:string) {
-  selectedClient.value = id
+  store.value.selectionClients = [id]
 }
 </script>
 <template>
@@ -41,7 +33,7 @@ function changeId (id:string) {
           <ViewVClients :is-mobile="false" @change="changeId"/>
         </template>
         <template #page1>
-          <ViewVConfig :is-child="true"  :id="selectedClient" type="clients" />
+          <ViewVConfig :is-child="true"  :id="store.selectionClients[0]" type="clients" />
         </template>
       </LayoutLPageContent>
     </Variant>

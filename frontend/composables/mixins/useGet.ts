@@ -5,8 +5,25 @@ import { useNotification } from './useComponent'
 import { storeCache } from '@/store/datacacheStore'
 import { _getI18nInComposable } from './helper-i18n'
 
-export const useConfigserver = () => {
+export const useConfigserver = async (init: boolean = false, _store:any=undefined) => {
   const t = _getI18nInComposable()
+  const storeSelection = storeSelections()
+
+  if (init) await initServer()
+
+  async function initServer() {
+    if (storeSelection.selectionDepots.length === 0) {
+      const server = await getOpsiConfigServer()
+      if (server){
+        if (_store) _store.selectedDepots = [server]
+        else storeSelection.setSelectionDepots([server])
+      }
+      else {
+        console.log('no server selected')
+        useNotification().error('no server selected')
+      }
+    }
+  }
 
   async function getOpsiConfigServer (alertRef: any = undefined) {
     const { data, error } = await useApiGET('/user/opsiserver')
