@@ -100,14 +100,14 @@ const navItems = computed<Array<INavItem>>(() =>
 
   {
     title: 'title.administration',
-    route: (config.value?.['terminal.forbidden'] === true) ? '/admin' : '/adminterminal',
+    route: (config.value?.['terminal.forbidden'] === true) ? '/admin/' : '/admin/terminal',
     routeSubpath: '/admin',
     icon: icons.admin,
     submenu: [
-      { title: 'title.adminterminal', route: '/adminterminal', disabled: (config.value?.['terminal.forbidden'] === true) },
-      { title: 'title.healthcheck', route: '/adminserverhealthcheck' },
-      { title: 'title.admin', route: '/admin' },
-      { title: 'form.modules', route: '/adminmodules' }
+      { title: 'title.adminterminal', route: '/admin/terminal', disabled: (config.value?.['terminal.forbidden'] === true) },
+      { title: 'title.healthcheck', route: '/admin/healthcheck' },
+      { title: 'title.admin', route: '/admin/' },
+      { title: 'form.modules', route: '/admin/modules' }
     ]
   },
   { title: 'title.support', icon: icons.support, route: '/support' }

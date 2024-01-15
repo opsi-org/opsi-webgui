@@ -1,5 +1,6 @@
 <template>
-  <div data-testid="VAdminTerminal" class="VAdminTerminal">
+  Terminal
+  <!-- <div data-testid="VAdminTerminal" class="VAdminTerminal">
     <GridGFormItem :label="$t('table.fields.terminalId')" labelclass="lblTerminalId" variant="longvalue">
       <template #value>
         <b-input-group>
@@ -34,22 +35,23 @@
     <div ref="terminalcontainer" class="terminalContainer">
       <div id="terminal" ref="terminal" />
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
 
 import 'xterm/css/xterm.css'
 import 'xterm/lib/xterm.js'
-import { Terminal } from 'xterm'
-// eslint-disable-next-line import/named
-import { FitAddon } from 'xterm-addon-fit'
-// eslint-disable-next-line import/named
-import { SearchAddon } from 'xterm-addon-search'
-// eslint-disable-next-line import/named
-import { WebLinksAddon } from 'xterm-addon-web-links'
-// SearchAddon, FitAddon, WebLinksAddon
+// import { Terminal } from 'xterm'
+// // eslint-disable-next-line import/named
+// import { FitAddon } from 'xterm-addon-fit'
+// // eslint-disable-next-line import/named
+// import { SearchAddon } from 'xterm-addon-search'
+// // eslint-disable-next-line import/named
+// import { WebLinksAddon } from 'xterm-addon-web-links'
+// // SearchAddon, FitAddon, WebLinksAddon
 
+/*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
 import { AlertToast } from '../../mixins/component'
@@ -187,7 +189,7 @@ export default class VAdminTerminal extends Vue {
       }
     })
   }
-}
+} */
 </script>
 
 <style>
