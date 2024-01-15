@@ -1,4 +1,7 @@
 <template>
+  useMQ().isMobile {{ useMQ().isMobile }} <br />
+  isMobileWrapper {{ isMobileWrapper }} <br />
+  props.isMobile {{ props.isMobile }} <br />
     <TableTDefaultMobile
       v-if="isMobileWrapper"
       v-bind="propsMobile"
@@ -25,9 +28,9 @@ const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
 })
 const isMobileWrapper = ref<boolean>(props.isMobile)
-watch(()=>useMQ().isMobile.value, (val)=>{
-  isMobileWrapper.value = val
-})
+watch(()=>useMQ().isMobile, (val)=>{
+  isMobileWrapper.value = useMQ().isMobile.value
+}, {deep: true})
 const propsMobile = computed (()=>{
   // add keys which are not used by child
   return (({ isMobile, ...rest }) => rest)(props);
