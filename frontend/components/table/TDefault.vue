@@ -1,7 +1,4 @@
 <template>
-  useMQ().isMobile {{ useMQ().isMobile }} <br />
-  isMobileWrapper {{ isMobileWrapper }} <br />
-  props.isMobile {{ props.isMobile }} <br />
     <TableTDefaultMobile
       v-if="isMobileWrapper"
       v-bind="propsMobile"
