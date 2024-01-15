@@ -4,7 +4,11 @@
     <AlertAAlert ref="hostAttrErrorAlert" />
     <DivDScrollResult>
       <div v-for="(value, label, index) in hostAttr" :key="index">
-        <GridGFormItem :label="label" :labelclass="label + ' ' + (label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize')" variant="longvalue">
+        <GridGFormItem
+          :label="$t('table.fields.' + label)"
+          :labelclass="label + ' ' + (label.toString() === 'uefi' ? 'text-uppercase' : 'text-capitalize')"
+          variant="longvalue"
+        >
           <template #value>
             <b-form-input
               v-if="label.toString() === 'created' || label.toString() === 'lastSeen'"
@@ -15,7 +19,7 @@
             />
             <b-input-group v-else-if="label.toString() === 'opsiHostKey'">
               <b-button :pressed.sync="showValue" size="sm" class="border-0" variant="outline-primary">
-                <span class="sr-only">{{ showValue? $t('form.hostkey.hide'): $t('form.hostkey.show') }}</span>
+                <span class="sr-only">{{ showValue? $t('label.hide', {item: 'opsiHostKey'}) : $t('label.show', {item: 'opsiHostKey'}) }}</span>
                 <IconIIcon :icon="showValue ? icon.valueShow : icon.valueHide" />
               </b-button>
               <b-form-input id="hostKey" v-model="hostAttr[label.toString()]" size="sm" :class="{'d-none' : !showValue, [label]: true}" />

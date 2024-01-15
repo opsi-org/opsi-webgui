@@ -1,3 +1,78 @@
+<template>
+  <!-- <el-form :model="newClient" label-width="200px">
+    <div v-for="(value, label, index) in newClient">
+      <el-form-item :label="$t('table.fields.' + label)">
+        <el-input v-model="newClient[label.toString()]" />
+      </el-form-item>
+    </div>
+  </el-form>
+  <el-row>
+    <b class="initsetup">{{ $t('title.initsetup') }} </b>
+  </el-row>
+  <el-form :model="clientAgent" :inline="true" label-position="top">
+    <div v-for="(value, label, index) in clientAgent">
+      <el-form-item :label="$t('table.fields.' + label)">
+        <el-input v-model="clientAgent[label.toString()]" />
+      </el-form-item>
+    </div>
+  </el-form> -->
+  <el-form label-width="200px">
+    <div v-for="options,category,index in createclient" :key="index">
+      <el-row>
+        <b>{{ $t('title.' + category) }} </b>
+      </el-row>
+      <div v-for="(value, label, index) in options">
+        <el-form-item :label="$t('table.fields.' + label)">
+          <el-input v-model="createclient[category][label]" />
+        </el-form-item>
+      </div>
+    </div>
+    <el-form-item>
+      <el-button> {{ $t('button.reset') }}</el-button>
+      <el-button type="primary">{{ $t('button.create') }}</el-button>
+    </el-form-item>
+  </el-form>
+</template>
+<script setup lang="ts">
+import { reactive } from 'vue'
+const newClient = reactive({
+  hostId: '',
+  description: '',
+  inventoryNumber: '',
+  hardwareAddress: '',
+  ipAddress: null,
+  notes: ''
+})
+const clientAgent = reactive({
+  clients: [],
+  username: '',
+  password: '',
+  type: 'windows'
+})
+const createclient = reactive({
+  hostId: '',
+  basics: {
+    description: '',
+    inventoryNumber: '',
+    hardwareAddress: '',
+    ipAddress: null,
+    notes: ''
+  },
+  assignments: {
+    depot: [],
+    group: []
+  },
+  initialsetup: {
+    netbootProduct: [],
+    opsiClientAgent: false
+  },
+  settings: {
+    uefi: false
+  }
+})
+</script>
+
+
 <!-- <template>
   <div data-testid="VClientCreation" class="VClientCreation">
     <AlertAAlert ref="newClientAlert" />
@@ -14,10 +89,11 @@
           :aria-label="$t('table.name.client')"
           type="text"
           :state="checkValid"
+          trim
           required
         />
         <b-form-invalid-feedback :state="checkValid">
-          <span v-if="clientIds.includes(clientName + domainName)"> {{ $t('message.formvalid.clientExists') }} </span>
+          <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
         </b-form-invalid-feedback>
       </template>
       <template #valueMore>
@@ -28,6 +104,7 @@
           class="domainName"
           :aria-label="$t('table.name.domain')"
           type="text"
+          trim
           required
         />
       </template>
@@ -39,7 +116,7 @@
       <GridGFormItem
         v-for="(value, label, index) in newClient"
         :key="index"
-        :label="label"
+        :label="$t('table.fields.' + label)"
         :labelclass="'text-capitalize ' + label"
         variant="longvalue"
         :class="label.toString() === 'hostId' ? 'd-none' : ''"
@@ -224,7 +301,7 @@ export default class VClientCreation extends Vue {
   get formvalidation_pw () { return this.form.password !== '' }
 
   get checkValid () {
-    return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domainName)
+    return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domain)
   }
 
   // async mounted () {
@@ -284,18 +361,13 @@ export default class VClientCreation extends Vue {
 
   async createOpsiClient () {
     this.isLoading = true
-    this.newClient.hostId = this.clientName.trim() + this.domain.trim()
-    if (this.clientIds.includes(this.newClient.hostId)) {
-      this.isLoading = false
-      this.showToastWarning(this.$t('message.warning.clientExists', { client: this.newClient.hostId }))
-      return
-    }
+    this.newClient.hostId = this.clientName + this.domain
     const request = {
       client: this.newClient, depot: this.depotId
     }
     await this.$axios.$post('/api/opsidata/clients', request)
       .then(async () => {
-        this.showToastSuccess(this.$t('message.warning.createClient', { client: this.newClient.hostId }))
+        this.showToastSuccess(this.$t('message.success.createClient', { client: this.newClient.hostId }))
         if (this.uefi) {
           this.setUEFI(this.newClient.hostId, this.uefi.toString())
         }

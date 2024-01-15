@@ -113,8 +113,14 @@
             />
           </template>
           <template #head(version_outdated)>
-            <div :title="$t('table.fields.versionOutdated')">
-              <IconIIcon :icon="icon.product" />
+            <div :title="$t('table.fields.versionOutdated') + $t(' ') + $t('table.fields.localbootproduct')">
+              <IconIIcon :icon="icon.product" /> <small>{{ $t('title.localboot') }}</small>
+              <IconIIcon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
+            </div>
+          </template>
+          <template #head(version_outdated_netboot)>
+            <div :title="$t('table.fields.versionOutdated') + $t(' ') + $t('table.fields.netbootproduct')">
+              <IconIIcon :icon="icon.product" /> <small>{{ $t('title.netboot') }}</small>
               <IconIIcon font-scale="1.2" :icon="icon.productsOutdated" style="color: var(--warning);" />
             </div>
           </template>
@@ -155,6 +161,19 @@
               @click="sortProductTable(row.item.clientId, 'version', false)"
             >
               {{ row.item.version_outdated }}
+            </b-button>
+          </template>
+          <template #cell(version_outdated_netboot)="row">
+            <b-button
+              v-if="row.item.version_outdated_netboot > 0"
+              variant="outline-primary"
+              size="sm"
+              class="btn-client-statistic"
+              :class="{'row-selected': selectionClients.includes(row.item.clientId)}"
+              :title="$t('button.show.products')"
+              @click="sortProductTable(row.item.clientId, 'version', false)"
+            >
+              {{ row.item.version_outdated_netboot }}
             </b-button>
           </template>
           <template #cell(actionResult_failed)="row">
@@ -199,6 +218,15 @@
               :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.log') : '')"
               :icon="icon.log"
               to="/clients/log"
+              :ident="row.item.ident"
+              :pressed="isRouteActive"
+              :click="routeRedirectWith"
+            />
+            <ButtonBTNRowLinkTo
+              :title="$t('title.clone')"
+              :label="((headerData.rowactions.mergeOnMobile==true && $mq=='mobile')? $t('title.clone') : '')"
+              :icon="icon.client"
+              to="/clients/clone"
               :ident="row.item.ident"
               :pressed="isRouteActive"
               :click="routeRedirectWith"
@@ -364,6 +392,17 @@ const columns = reactive<ITableHeaderRow>({
     version_outdated: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.versionOutdated'),
       key: 'version_outdated',
+      dataKey: 'version_outdated',
+      _majorKey: '_majorStats',
+      class: 'col-_majorStats',
+      sortable: true,
+      width: 50,
+      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
+      // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
+    },
+    version_outdated_netboot: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.versionOutdated'),
+      key: 'version_outdated_netboot',
       dataKey: 'version_outdated',
       _majorKey: '_majorStats',
       class: 'col-_majorStats',
@@ -559,7 +598,6 @@ export default class VClients extends Vue {
   error: string = ''
   tableloaded: boolean = false
   headerData: ITableHeaders = {
-
   }
 
   deleteClient: DeleteClient = { clientid: '' }

@@ -54,13 +54,14 @@
   --light-dark: #b9bbbd;
   --dark-dark: #181a1d;
 
-  --log-secret: #D500F9;
-  --log-trace: #8B8B8B;
-  --log-debug: #565656;
-  --log-info: #212121;
-  --log-notice: #009605;
-  --log-warning: #FF9100;
-  --log-error: #E51D3B;
-  --log-critical: #E20066;
-  --log-essential: #2979FF;
+  /* The comments below suggest the closest accessible text color if it does not conform to WCAG guidelines. */
+  --log-secret: #D500F9;     /* AA: #C800EA, AAA: #9900B2 */
+  --log-trace: #8B8B8B;      /* AA: #767676, AAA: #595959 */
+  --log-debug: #565656;      /* Passes both AA and AAA */
+  --log-info: #212121;       /* Passes both AA and AAA */
+  --log-notice: #009605;     /* AA: #008A05, AAA: #006803 */
+  --log-warning: #FF9100;    /* AA: #AF6400, AAA: #844B00 */
+  --log-error: #E51D3B;      /* AA: Passed, AAA: #B0142C */
+  --log-critical: #E20066;   /* AA: Passed, AAA: #B10050 */
+  --log-essential: #2979FF;  /* AA: #166DFF, AAA: #004DCF */
 }
