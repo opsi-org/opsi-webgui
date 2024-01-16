@@ -1,15 +1,12 @@
 <template>
-  <!-- <ViewVClientsLog :id.sync="id" :as-child="false">
-    <template slot="IDSelection">
+  <ViewVClientsLog :id.sync="id" :as-child="false">
+    <!-- <template slot="IDSelection">
       <TreeTSClientsNotStored :id.sync="id" />
-    </template>
-  </ViewVClientsLog> -->
+    </template> -->
+  </ViewVClientsLog>
 </template>
 
-<script lang="ts">
-// import { Component, Vue } from 'nuxt-property-decorator'
-// @Component
-// export default class PClientsLog extends Vue {
-//   id: string = ''
-// }
+<script setup lang="ts">
+const id = computed(()=>useRoute().params.id as string || undefined)
 </script>
+
