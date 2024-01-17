@@ -24,7 +24,7 @@
         </template>
         <template v-else>
           <NavItemNIItem
-            :class="{checkactive: $route.path.includes(menuitem.route)}"
+            :class="{checkactive: $route.path.startsWith(menuitem.route)}"
             :expanded="expanded"
             :title="menuitem.title"
             :disabled="menuitem.disabled === true"

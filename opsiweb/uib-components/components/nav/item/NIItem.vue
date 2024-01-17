@@ -21,7 +21,7 @@ export default class NIItem extends Vue {
   @Prop({ }) icon!: string
   @Prop({ }) route!: string
   refresh (route) {
-    if (this.$route.path.includes(route)) {
+    if (this.$route.path === route) {
       this.$nuxt.refresh()
     } else {
       this.$router.push({ path: route })
