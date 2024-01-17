@@ -39,6 +39,12 @@ watch(()=>value.value, ()=>{
     case 'clients-config-id':
       useRouter().push({name: 'clients-config-id', params: {id: value.value as string}})
       break;
+    case 'clients-logs':
+      useRouter().push({name: 'clients-logs-id', params: {id: value.value as string}})
+      break;
+    case 'clients-logs-id':
+      useRouter().push({name: 'clients-logs-id', params: {id: value.value as string}})
+      break;
     case 'servers-config-id':
       useRouter().push({name: 'servers-config-id', params: {id: value.value as string}})
       break;

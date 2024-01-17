@@ -2,7 +2,7 @@
   <div>
     <el-form :model="logrequest" :inline="true" label-position="top">
       <el-form-item label="ID">
-        <SelectSHosts v-if="props.isChild === false" type="clients" />
+        <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
       </el-form-item>
       <el-form-item :label="$t('form.logtype')">
         <el-input v-model="logrequest.selectedLogType" />
@@ -69,10 +69,14 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 let fetchedData = ref<Array<any>>([])
+const currentId = ref<string|undefined>('')
 const props = defineProps({
   id: { type: String, default: undefined },
-  isChild: {type: Boolean, default: false }
+  type: { type: String, default: 'servers' },
+  isChild: { type: Boolean, default: false }
 })
+console.log('props.id0', props.id)
+currentId.value = props.id
 const logrequest = { selectedClient: '', selectedLogType: 'instlog' }
 const loglevel = 5
 onMounted(async ()=> {
@@ -92,6 +96,12 @@ async function fetch(id:string) {
     return
   }
   fetchedData.value = data.value
+}
+const isIdEmpty = computed(()=> {
+  return currentId.value === ''
+})
+function setId(id:string) {
+  currentId.value = id
 }
 // import { MBus } from '~/composables/mixins/messagebus'
 // import { Strings } from '~/composables/mixins/strings'

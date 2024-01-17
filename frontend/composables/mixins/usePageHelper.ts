@@ -41,6 +41,11 @@ export const usePageHelper = () => {
     page1Condition: true,
     width: '100%'
   }
+  clientSettings['clients-logs-id'] = {
+    page0Condition: false,
+    page1Condition: true,
+    width: '100%'
+  }
   clientSettings['clients-client-pagetype-id'] = {
     page0Condition: true,
     page1Condition: true,
