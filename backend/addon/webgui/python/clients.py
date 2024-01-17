@@ -729,9 +729,9 @@ class ProductAction(BaseModel):  # pylint: disable=too-few-public-methods
 	action: str
 	outdated: bool = False
 	demoMode: bool = False
-	installation_status: str | None
-	action_result: str | None
-	selectedClients: list | None
+	installation_status: Optional[str]
+	action_result: Optional[str]
+	selectedClients: Optional[list]
 
 
 @client_router.post("/api/opsidata/clients/action")
@@ -760,6 +760,7 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 			)
 
 		depots = list(_depots_of_clients(hosts).values())
+		result = {}
 		if product_action.outdated:
 			depot_versions: dict = {}
 			for pod in backend.productOnDepot_getObjects(depotId=depots):
@@ -784,6 +785,8 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 							poc_list.add(poc)
 				except InvalidVersion:
 					continue
+		else:
+			result = set(backend.productOnClient_getObjects(installationStatus="installed", clientId=hosts))
 		for poc in poc_list:
 			poc.actionRequest = product_action.action
 			if poc.clientId not in updates:
@@ -837,4 +840,77 @@ def set_product_action(  # pylint: disable=unused-argument, too-many-branches
 			message="Could not set product action.",
 			http_status=status.HTTP_500_INTERNAL_SERVER_ERROR,
 			error=err,
+		) from err
+
+
+class Target(BaseModel):  # pylint: disable=too-few-public-methods
+	hostId: str
+	ipAddress: str | None = None
+	hardwareAddress: str | None = None
+	systemUUID: str | None = None
+
+
+class CloneOptions(BaseModel):  # pylint: disable=too-few-public-methods
+	configs: bool = False
+	products: bool = False
+	productPropeties: bool = False
+
+
+@client_router.post("/api/opsidata/clients/{client_id}/clone")
+@rest_api
+@read_only_check
+@check_client_creation_rights
+def clone_client(request: Request, client_id: str, target: Target, options: CloneOptions) -> RESTResponse:  # pylint: disable=too-many-locals
+	"""
+	Clone OPSI-Client.
+	"""
+
+	try:
+		clients = backend.host_getObjects(id=client_id, type="OpsiClient")
+		if not clients:
+			logger.error("Could not clone client object.")
+			raise OpsiApiException(
+				message=f"Could not clone client object. Client '{client_id}' does not exist.",
+				http_status=status.HTTP_404_NOT_FOUND,
+			)
+
+		if backend.host_getIdents(id=target.hostId, type="OpsiClient"):
+			raise OpsiApiException(
+				message=f"Could not clone client object. Client '{target.hostId}' already exists.",
+				http_status=status.HTTP_409_CONFLICT,
+			)
+
+		client = clients[0]
+		client.id = target.hostId
+		client.ipAddress = target.ipAddress
+		client.hardwareAddress = target.hardwareAddress
+		client.systemUUID = target.systemUUID
+		client.opsiHostKey = None
+
+		backend.host_createObjects(client)
+
+		if options.products:
+			poc_list = backend.productOnClient_getObjects(clientId=client_id)
+			for poc in poc_list:
+				poc.clientId = target.hostId
+
+			backend.productOnClient_createObjects(poc_list)
+
+		if options.configs:
+			configs = backend.configState_getObjects(objectId=client_id)
+			for conf in configs:
+				conf.objectId = target.hostId
+			backend.configState_createObjects(configs)
+
+		if options.productPropeties:
+			pps_list = backend.productPropertyState_getObjects(objectId=client_id)
+			for pps in pps_list:
+				pps.objectId = target.hostId
+			backend.productPropertyState_createObjects(pps_list)
+
+	except Exception as err:  # pylint: disable=broad-except
+		logger.error("Could not clone client object.")
+		logger.error(err)
+		raise OpsiApiException(
+			message="Could not clone client object.", http_status=status.HTTP_500_INTERNAL_SERVER_ERROR, error=err
 		) from err

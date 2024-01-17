@@ -19,7 +19,6 @@ from starlette.types import Receive, Send
 
 from opsicommon.exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
-from opsiconfd.backend import get_protected_backend as get_client_backend
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
 from opsiconfd.utils import remove_route_path

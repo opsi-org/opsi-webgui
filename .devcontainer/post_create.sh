@@ -18,7 +18,7 @@ rm -rf /data/opsiconfd/addons/webgui
 # ln -s /workspace/backend/addon/webgui /data/opsiconfd/addons/
 # chown pwuser:pwuser /data/opsiconfd/addons/webgui
 # ln -s $OPSI_ADDON_DIRS /data/opsiconfd/addons
-cp -r $WEBGUI_ADDON_DIR /data/opsiconfd/addons/.
+cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
 
 
 # # Setup mariadb server

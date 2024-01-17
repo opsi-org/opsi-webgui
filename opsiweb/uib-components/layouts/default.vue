@@ -21,7 +21,7 @@
         <b-button
           data-testid="btnQuickPanel"
           :pressed="showQuickPanel"
-          :title="showQuickPanel ? $t('label.hideQP'): $t('label.showQP')"
+          :title="showQuickPanel ? $t('label.hide', {item: 'Quick Panel'}) : $t('label.show', {item: 'Quick Panel'})"
           size="sm"
           class="border-0 mr-1"
           variant="outline-primary"
@@ -124,7 +124,8 @@ export default class LayoutDefault extends Vue {
   }
 
   confirmToSaveChanges () {
-    if (this.changesProducts.filter(o => o.user === this.username).length !== 0 || this.changesHostParam.filter(o => o.user === this.username).length !== 0) {
+    if (this.changesProducts.filter(o => o.user === this.username).length !== 0 ||
+    this.changesHostParam.filter(o => o.user === this.username).length !== 0) {
       return true
     } else {
       return null

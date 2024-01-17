@@ -7,15 +7,16 @@
           <NavItemNICollapsible
             v-if="expanded"
             :title="menuitem.title"
-            :disabled="menuitem.disabled"
+            :disabled="menuitem.disabled === true"
             :iconprop="menuitem.icon"
             :route="menuitem.route"
             :submenu="menuitem.submenu"
           />
+          <!-- if menu collapsed: -->
           <NavItemNIDropdownHoverable
             v-else
             :title="menuitem.title"
-            :disabled="menuitem.disabled"
+            :disabled="menuitem.disabled === true"
             :icon="menuitem.icon"
             :route="menuitem.route"
             :submenu="menuitem.submenu"
@@ -26,7 +27,7 @@
             :class="{checkactive: $route.path.includes(menuitem.route)}"
             :expanded="expanded"
             :title="menuitem.title"
-            :disabled="menuitem.disabled"
+            :disabled="menuitem.disabled === true"
             :icon="menuitem.icon"
             :route="menuitem.route"
           />
@@ -51,7 +52,7 @@ export default class NSidebar extends Vue {
   icon: any // from mixin
   @Prop({ }) expanded!: boolean
   @config.Getter public config!: IObjectString2Boolean
-
+  // get defaultAdminPage () { return (this.config && this.config['terminal.forbidden'] === true) ? '/admin' : '/adminterminal' } // seems not to work correctly.. click is not executed
   get navItems (): Array<IMenuItem> {
     return [
       // {
@@ -79,8 +80,7 @@ export default class NSidebar extends Vue {
             submenu: [
               { title: 'title.allClients', route: '/clients/' },
               { title: 'title.addNew', route: '/clientscreation', disabled: !this.config?.client_creation },
-              // TODO: Display clone client when backend is ready
-              // { title: 'title.clone', route: '/clientsclone' },
+              { title: 'title.clone', route: '/clientsclone' },
               { title: 'title.config', route: '/clientsconfig' },
               { title: 'title.log', route: '/clientslog' }
             ]
@@ -94,12 +94,14 @@ export default class NSidebar extends Vue {
         menu: [
           {
             title: 'title.administration',
-            route: (this.config && this.config['terminal.forbidden'] === true) ? '/admin' : '/adminterminal',
+            route: '/adminmaintenance',
+            // route: (this.config && this.config['terminal.forbidden'] === true) ? '/admin' : '/adminterminal',
+            // route: this.defaultAdminPage,
             icon: this.icon.admin,
             submenu: [
               { title: 'title.adminterminal', route: '/adminterminal', disabled: (this.config && this.config['terminal.forbidden'] === true) },
               { title: 'title.healthcheck', route: '/adminserverhealthcheck' },
-              { title: 'title.admin', route: '/admin' },
+              { title: 'title.admin', route: '/adminmaintenance' },
               { title: 'form.modules', route: '/adminmodules' }
             ]
           },

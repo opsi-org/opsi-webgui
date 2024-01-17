@@ -51,7 +51,7 @@
               class="mb-2 password"
             />
             <b-button variant="primary" :pressed.sync="showPassword" size="sm" class="mb-2 text-light">
-              <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
+              <span class="sr-only">{{ showPassword? $t('label.hide', {item: 'Password'}) : $t('label.show', {item: 'Password'}) }}</span>
               <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
