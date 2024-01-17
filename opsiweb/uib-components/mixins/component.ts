@@ -158,7 +158,7 @@ import { Cookies } from './cookies'
     if (obj.components !== undefined) {
       // Create right aligned custom components if defined
       elements.push(h('div', {
-        class: 'd-flex justify-content-end',
+        class: 'd-block',
         on: {
           click: () => { this.hideToast() }
         }
