@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-loading="loading">
     <el-form :model="logrequest" :inline="true" label-position="top">
       <el-form-item label="ID">
         <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
@@ -77,6 +77,7 @@ const props = defineProps({
 })
 console.log('props.id0', props.id)
 currentId.value = props.id
+const loading = ref(false)
 const logrequest = { selectedClient: '', selectedLogType: 'instlog' }
 const loglevel = 5
 onMounted(async ()=> {
@@ -88,14 +89,17 @@ watch(()=>props.id, ()=>{
     fetch(props.id)
 })
 async function fetch(id:string) {
+  loading.value = true
   logrequest.selectedClient = id
   const {data, error} = await useApiGETBody('/api/opsidata/log', logrequest )
   if (error) {
     console.log(error)
     useNotification().error(error)
+    loading.value = false
     return
   }
   fetchedData.value = data.value
+  loading.value = false
 }
 const isIdEmpty = computed(()=> {
   return currentId.value === ''
