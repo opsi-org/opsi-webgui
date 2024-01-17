@@ -12,7 +12,7 @@
         <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.clients')">
           <template #right>
             <ButtonBTNRowLinkTo
-              v-if="$mq == 'desktop'"
+              v-if="$mq !== 'mobile'"
               :title="(secondColumnOpened || $mq=='mobile'? $t('button.show.products') : '')"
               :label="((secondColumnOpened) ? '' : $t('title.products'))"
               :icon="icon.product"
