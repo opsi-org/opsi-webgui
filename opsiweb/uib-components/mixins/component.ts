@@ -45,7 +45,11 @@ import { Cookies } from './cookies'
     })
   }
 
-  showToastMbus (title: string, content: string, reloadAction:any = false) {
+  showToastMbus (obj: any = { title: '', content: '', reloadAction: false }) {
+    return this.showToastMbus2(obj.title, obj.content, obj.reloadAction)
+  }
+
+  showToastMbus2 (title: string, content: string, reloadAction:any = false) {
     const obj:any = {}
     if (reloadAction !== false) {
       obj.buttons = [{
@@ -117,7 +121,10 @@ import { Cookies } from './cookies'
   }
 
   showToast (_obj: any) {
+    console.log('showToastInfo objdef', this.default_options)
+    console.log('showToastInfo _obj  ', _obj)
     const obj = { ...this.default_options, ..._obj } // overwright defaults
+    console.log('showToastInfo obj   ', obj)
     // if (obj.hideLastErrorToast) { this.hideToast() }
 
     const h = this.$createElement
