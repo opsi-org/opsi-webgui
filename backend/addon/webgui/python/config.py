@@ -13,10 +13,7 @@ import json
 from typing import List, Optional, Union
 
 from fastapi import APIRouter, Depends, Request, status
-from pydantic import BaseModel  # pylint: disable=no-name-in-module
-from sqlalchemy import and_, column, select, table, text, update  # type: ignore[import]
-from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
-
+from opsiconfd.backend import get_protected_backend
 from opsiconfd.logging import logger
 from opsiconfd.rest import (
 	RESTErrorResponse,
@@ -25,9 +22,11 @@ from opsiconfd.rest import (
 	order_by,
 	rest_api,
 )
-from opsiconfd.backend import get_protected_backend
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from sqlalchemy import and_, column, select, table, text, update  # type: ignore[import]
+from sqlalchemy.dialects.mysql import insert  # type: ignore[import]
 
-from .utils import bool_value, mysql, parse_client_list, read_only_check, unicode_value, backend
+from .utils import backend, bool_value, mysql, parse_client_list, read_only_check, unicode_value
 
 conifg_router = APIRouter()
 
@@ -301,8 +300,8 @@ def get_client_configs(  # pylint: disable=too-many-locals,too-many-branches,too
 
 class Config(BaseModel):  # pylint: disable=too-few-public-methods
 	configId: str
-	description: Optional[str]
-	value: Optional[Union[str, List[str], bool]]
+	description: str | None = None
+	value: Union[str, List[str], bool] | None = None
 
 
 class ConfigStates(BaseModel):  # pylint: disable=too-few-public-methods
@@ -437,7 +436,8 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 					stmt = (
 						update(
 							table(
-								"CONFIG_STATE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+								"CONFIG_STATE",
+								*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
 							)
 						)
 						.where(text(f"objectId = '{client}' AND configId = '{config.configId}'"))
@@ -448,7 +448,8 @@ def save_config_state(  # pylint: disable=invalid-name, too-many-locals, too-man
 					stmt = (
 						insert(
 							table(
-								"CONFIG_STATE", *[column(name) for name in values.keys()]  # pylint: disable=consider-iterating-dictionary
+								"CONFIG_STATE",
+								*[column(name) for name in values.keys()],  # pylint: disable=consider-iterating-dictionary
 							)
 						)
 						.values(**values)
