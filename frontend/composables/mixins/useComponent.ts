@@ -14,6 +14,7 @@ const _useNotification = (t: any) => {
     variant: 'primary',
     noAutoHide: false,
     autoHideDelay: 5000,
+    showClose: true,
     buttons: undefined,
     components: undefined,
     error_data: undefined,
@@ -178,7 +179,7 @@ const _useNotification = (t: any) => {
       type: obj.variant,
   //     solid: true,
       duration: obj.noAutoHide ? 0 : obj.autoHideDelay,
-      showClose: obj.noAutoHide,
+      // showClose: obj.noAutoHide,
 
       // current workaround, cause colors are not inherits
       // customClass: settings.isLight ? 'bg-light text-black' : 'bg-dark text-dark'
