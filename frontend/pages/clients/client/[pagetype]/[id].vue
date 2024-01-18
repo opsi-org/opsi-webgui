@@ -5,10 +5,10 @@
       <ViewVConfig  :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
     </div>
     <div v-else-if="pagetype === 'logs'">
-      <div> LOGS </div>
+      <div> LOGS (split view)</div>
     </div>
     <div v-else-if="pagetype === 'clone'">
-      <div> LOGS </div>
+      <div> CLONE (split view)</div>
     </div>
     <div v-else>
       idk

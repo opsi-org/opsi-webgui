@@ -41,7 +41,22 @@ export const usePageHelper = () => {
     page1Condition: true,
     width: '100%'
   }
+  clientSettings['clients-create'] = {
+    page0Condition: false,
+    page1Condition: true,
+    width: '100%'
+  }
+  clientSettings['clients-clone'] = {
+    page0Condition: false,
+    page1Condition: true,
+    width: '100%'
+  }
   clientSettings['clients-logs-id'] = {
+    page0Condition: false,
+    page1Condition: true,
+    width: '100%'
+  }
+  clientSettings['clients-clone-id'] = {
     page0Condition: false,
     page1Condition: true,
     width: '100%'
