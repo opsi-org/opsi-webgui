@@ -85,7 +85,8 @@ const showPassword = ref(false)
 const opsiconfigserver = ref('');
 
 onMounted( async () => {
-  opsiconfigserver.value = await useConfigserver().getOpsiConfigServer()
+  const useServerGet = await useConfigserver(true)
+  opsiconfigserver.value = await useServerGet.getOpsiConfigServer()
 })
 
 
