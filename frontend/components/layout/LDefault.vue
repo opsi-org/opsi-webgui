@@ -12,7 +12,17 @@
         />
       </el-header>
 
-      <el-container class="h-screen max-h-screen overflow-hidden">
+      <el-container
+       class="h-screen max-h-screen overflow-hidden"
+       :class="{
+        'is-mobile': settings.isMobile,
+        'is-not-mobile': !settings.isMobile,
+        'leftVisible': leftSideVisible,
+        'leftSmall': leftSideIsSmall,
+        'left-collapsed': !settings.isMobile && leftSideIsSmall,
+        'left-opened': !settings.isMobile && !leftSideIsSmall,
+       }"
+      >
         <el-aside
           v-if="!settings.isMobile || leftSideVisible"
           class=""
@@ -37,8 +47,13 @@
           </el-scrollbar>
         </el-aside>
 
-        <el-main class="w-screen z-0">
-          <el-scrollbar>
+        <el-main class="z-0 p-2">
+          <el-scrollbar
+          always
+            class="p-0 m-0"
+            wrap-class="p-0 m-0"
+            view-class="p-0 m-0"
+          >
             <slot />
           </el-scrollbar>
         </el-main>
@@ -81,7 +96,7 @@ import { useNotification } from '~/composables/mixins/useComponent';
 const settings = storeSettings()
 // const { colormode } = storeToRefs(settings)
 const configapp = storeConfigapp()
-const { config } = storeToRefs(configapp)
+// const { config,  } = storeToRefs(configapp)
 const { isMobile } = storeToRefs(settings)
 const leftSideIsSmall = ref<boolean>(false)
 const leftSideVisible = ref<boolean>(!isMobile)
@@ -131,10 +146,10 @@ const toggleSide = async (side: string) => {
 }
 
 async function checkConfig () {
-  const config = await useApiGET('/user/configuration')
-  if (config.error) {
-    console.log(config.error)
-    useNotification().error(config.error)
+  const result = await useApiGET('/user/configuration')
+  if (result.error) {
+    console.log(result.error)
+    useNotification().error(result.error)
     return
   }
   const forbidden = await useApiGET('/opsidata/server/disabled-features')
@@ -143,7 +158,7 @@ async function checkConfig () {
     useNotification().error(forbidden.error)
     return
   }
-  const _config = { ...config.data.value.configuration }
+  const _config = { ...result.data.value.configuration }
   console.log('forbidden', forbidden.data.value)
   forbidden.data.value.forEach((forbElem:string) => {
     _config[forbElem + '.forbidden'] = true
@@ -201,7 +216,14 @@ async function checkConfig () {
   width: fit-content;
 }
 .el-main {
-  padding: 0;
+}
+.left-opened .el-main {
+  width: calc(100vw - 240px);
+}
+.left-collapsed .el-main {
+  width: calc(100vw - 62px);
+  min-width: calc(100vw - 62px);
+  max-width: calc(100vw - 62px);
 }
 .border-r{
   border-color: var(--el-border-color)

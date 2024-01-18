@@ -4,8 +4,9 @@
     :page0-condition="routeNameSettings?.page0Condition"
     :page1-condition="routeNameSettings?.page1Condition"
     :width="routeNameSettings?.width || width"
-    :classeachcol="isMobile ? 'm-1': 'm-1 h-full'"
+    classeachcol=""
     >
+    <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->
     <!-- classlastcol="mt-0 mb-0" -->
     <template #default>
       <el-button class="float-right" v-if="routeNameSettings?.page1Condition" @click="toggleClientstableVisibility">{{'v'}}</el-button>

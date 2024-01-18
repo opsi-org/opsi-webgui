@@ -47,9 +47,12 @@ const props = defineProps({
   page1Condition: { type: Boolean, default: false },
   page2Condition: { type: Boolean, default: false },
   width: { type: String, default: '0%' },
-  classeachcol: { type: String, default: 'mt-1' },
-  classfirstcol: { type: String, default: 'ml-5 mr-5' },
-  classlastcol: { type: String, default: 'mr-5' },
+  // classeachcol: { type: String, default: 'mt-1' },
+  classeachcol: { type: String, default: '' },
+  classfirstcol: { type: String, default: '' },
+  // classfirstcol: { type: String, default: 'ml-5 mr-5' },
+  classlastcol: { type: String, default: '' },
+  // classlastcol: { type: String, default: 'mr-5' },
   classcontainer: { type: String, default: 'pagecontent' },
 })
 onMounted(()=>{
@@ -79,13 +82,15 @@ const page2Condition = computed(()=> {
 <style scoped>
 .pagecontent {
   max-height: calc(100vh - 65px) !important;
+  max-width: calc(100vw - 90px) !important;
+  max-width: 100% !important;
 }
 .is-mobile .pagecontent {
-  max-height: calc(100vh - 70px) !important;
+  /* max-height: calc(100vh - 70px) !important; */
 }
 .is-mobile .pagecontent,
 .is-mobile .pagecontent .mycol {
-  max-width: calc(100vw - 0px) !important;
+  /* max-width: calc(100vw - 0px) !important; */
   height: calc(100vh - 70px) !important;
   max-height: calc(100vh - 70px) !important;
 }
