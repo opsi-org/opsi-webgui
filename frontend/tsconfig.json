@@ -27,7 +27,8 @@
       "@nuxtjs/tailwindcss",
       "element-plus/global",
       "@bootstrap-vue-next/nuxt",
-      "@iconify/vue"
+      "@iconify/vue",
+      "xterm", "xterm-addon-fit", "xterm-addon-search", "xterm-addon-web-links",
     ]
 
   },

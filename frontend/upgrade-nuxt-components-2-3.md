@@ -7,7 +7,7 @@
   - [x] cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
   - [x] axios/requests (example in form/FLogin or test/Fetch)
   - [x] msgpack
-  * xterm // adminTerminal
+  - [x] xterm // adminTerminal
   * playwright
   - [x] storybook
 - [ ] WIP *layout*

@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { computed } from 'vue'
 
 export const storeMBus = defineStore('mbus', {
   persist: true,
@@ -14,6 +13,11 @@ export const storeMBus = defineStore('mbus', {
     wsBusMsg: ({ _bus_last_msg }) => _bus_last_msg,
   },
   actions: {
+    $reset () {
+      this._bus = undefined
+      this._busterminal = undefined
+      this._bus_last_msg = undefined
+    },
     setBus (bus: WebSocket|undefined) {
       this._bus = bus
     },

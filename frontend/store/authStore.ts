@@ -30,6 +30,7 @@ export const storeAuth = defineStore('auth', {
     logout () {
       console.log('logout')
       this.$reset()
+      storeMBus().$reset()
       storeTablesettings().$reset()
 
       // localStorage.removeItem('_username')
