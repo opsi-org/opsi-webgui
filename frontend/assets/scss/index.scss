@@ -72,3 +72,7 @@ button.pressed {
   background-color: var(--opsi-general-blue);
   outline: none;
 }
+
+.el-input , .el-checkbox__input {
+  border: var(--fg-color) solid 1px;
+}

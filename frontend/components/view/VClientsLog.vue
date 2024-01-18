@@ -1,4 +1,18 @@
 <template>
+  <div v-loading="loading">
+    <el-form :model="logrequest" :inline="true" label-position="top">
+      <el-form-item label="ID">
+        <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
+      </el-form-item>
+      <el-form-item :label="$t('form.logtype')">
+        <el-input v-model="logrequest.selectedLogType" />
+      </el-form-item>
+      <el-form-item :label="$t('button.change.loglevel')">
+          <el-slider v-model="loglevel" show-stops :max="8" />
+        </el-form-item>
+    </el-form>
+    {{ fetchedData }}
+  </div>
   <!-- <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
     <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
     <BarBPageHeader>
@@ -53,6 +67,46 @@
 </template>
 
 <script setup lang="ts">
+import { useNotification } from '~/composables/mixins/useComponent';
+let fetchedData = ref<Array<any>>([])
+const currentId = ref<string|undefined>('')
+const props = defineProps({
+  id: { type: String, default: undefined },
+  type: { type: String, default: 'servers' },
+  isChild: { type: Boolean, default: false }
+})
+console.log('props.id0', props.id)
+currentId.value = props.id
+const loading = ref(false)
+const logrequest = { selectedClient: '', selectedLogType: 'instlog' }
+const loglevel = 5
+onMounted(async ()=> {
+  if (props.id)
+    await fetch(props.id)
+})
+watch(()=>props.id, ()=>{
+  if (props.id)
+    fetch(props.id)
+})
+async function fetch(id:string) {
+  loading.value = true
+  logrequest.selectedClient = id
+  const {data, error} = await useApiGETBody('/api/opsidata/log', logrequest )
+  if (error) {
+    console.log(error)
+    useNotification().error(error)
+    loading.value = false
+    return
+  }
+  fetchedData.value = data.value
+  loading.value = false
+}
+const isIdEmpty = computed(()=> {
+  return currentId.value === ''
+})
+function setId(id:string) {
+  currentId.value = id
+}
 // import { MBus } from '~/composables/mixins/messagebus'
 // import { Strings } from '~/composables/mixins/strings'
 // import { AlertToast } from '~/composables/mixins/component'

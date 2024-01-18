@@ -23,7 +23,21 @@
       </el-row>
       <div v-for="(value, label, index) in options">
         <el-form-item :label="$t('table.fields.' + label)">
-          <el-input v-model="createclient[category][label]" />
+          <el-checkbox v-if="typeof value == 'boolean'" v-model="createclient[category][label]" />
+          <el-input v-else v-model="createclient[category][label]" />
+          <el-form
+            v-if="label === 'opsiClientAgent'"
+            :class="{'d-none' : !createclient.initialsetup.opsiClientAgent}"
+            :model="clientAgent"
+            :inline="true"
+            label-position="top"
+          >
+            <div v-for="(value, label, index) in clientAgent">
+              <el-form-item :label="$t('table.fields.' + label)">
+                <el-input v-model="clientAgent[label.toString()]" />
+              </el-form-item>
+            </div>
+          </el-form>
         </el-form-item>
       </div>
     </div>

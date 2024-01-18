@@ -92,7 +92,7 @@ const navItems = computed<Array<INavItem>>(() =>
       // TODO: Display clone client when backend is ready
       // { title: 'title.clone', route: '/clients/clone' },
       { title: 'title.config', route: '/clients/config' },
-      { title: 'title.log', route: '/clientslog' }
+      { title: 'title.log', route: '/clients/logs' }
     ]
   },
   { title: 'title.products', icon: icons.product, route: '/products/LocalbootProduct' },
