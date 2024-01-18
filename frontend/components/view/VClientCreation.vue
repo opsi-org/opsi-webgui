@@ -17,17 +17,17 @@
     </div>
   </el-form> -->
   <el-form label-width="200px">
-    <div v-for="options,category,index in createclient" :key="index">
+    <div v-for="options,category,index in createClient" :key="index">
       <el-row>
         <b>{{ $t('title.' + category) }} </b>
       </el-row>
       <div v-for="(value, label, index) in options">
         <el-form-item :label="$t('table.fields.' + label)">
-          <el-checkbox v-if="typeof value == 'boolean'" v-model="createclient[category][label]" />
-          <el-input v-else v-model="createclient[category][label]" />
+          <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
+          <el-input v-else v-model="createClient[category][label]" />
           <el-form
             v-if="label === 'opsiClientAgent'"
-            :class="{'d-none' : !createclient.initialsetup.opsiClientAgent}"
+            :class="{'d-none' : !createClient.initialSetup.opsiClientAgent}"
             :model="clientAgent"
             :inline="true"
             label-position="top"
@@ -42,7 +42,7 @@
       </div>
     </div>
     <el-form-item>
-      <el-button> {{ $t('button.reset') }}</el-button>
+      <el-button @click="resetForm()"> {{ $t('button.reset') }}</el-button>
       <el-button type="primary">{{ $t('button.create') }}</el-button>
     </el-form-item>
   </el-form>
@@ -63,7 +63,7 @@ const clientAgent = reactive({
   password: '',
   type: 'windows'
 })
-const createclient = reactive({
+const createClient = reactive({
   hostId: '',
   basics: {
     description: '',
@@ -76,7 +76,7 @@ const createclient = reactive({
     depot: [],
     group: []
   },
-  initialsetup: {
+  initialSetup: {
     netbootProduct: [],
     opsiClientAgent: false
   },
@@ -84,6 +84,35 @@ const createclient = reactive({
     uefi: false
   }
 })
+function resetForm () {
+  Object.assign(createClient, {
+    hostId: '',
+    basics: {
+      description: '',
+      inventoryNumber: '',
+      hardwareAddress: '',
+      ipAddress: null,
+      notes: ''
+    },
+    assignments: {
+      depot: [],
+      group: []
+    },
+    initialSetup: {
+      netbootProduct: [],
+      opsiClientAgent: false
+    },
+    settings: {
+      uefi: false
+    }
+  })
+  Object.assign(clientAgent, {
+    clients: [],
+    username: '',
+    password: '',
+    type: 'windows'
+  })
+}
 </script>
 
 
