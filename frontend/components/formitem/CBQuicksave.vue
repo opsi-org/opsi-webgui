@@ -117,7 +117,7 @@ const hideModal = () => {
 }
 
 </script>
-<style>
+<style scoped>
 /* .quickpanelwarning {
   line-height: 0.9;
 } */

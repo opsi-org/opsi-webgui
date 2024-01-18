@@ -187,7 +187,7 @@ const helpModes = computed(()=> {
     ]
 })
 </script>
-<style>
+<style scoped>
 /* .quickpanelwarning {
   line-height: 0.9;
 } */

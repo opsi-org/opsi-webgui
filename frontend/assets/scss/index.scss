@@ -76,3 +76,10 @@ button.pressed {
 .el-input , .el-checkbox__input {
   border: var(--fg-color) solid 1px;
 }
+
+.el-popper, .el-vl__window  {
+  // width: 500px !important;
+  width: fit-content;
+  min-width: 200px;
+  max-width: 400px;
+}

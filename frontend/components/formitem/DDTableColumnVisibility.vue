@@ -291,18 +291,24 @@ function handleItem (key: Array<string>) {
 // }
 </script>
 
-<style>
-.el-select-v2__selection {
-  display: none;
+<style scoped>
+.el-select {
+  width: max-content;
 }
-.el-vl__window.el-select-dropdown__list {
+:deep(.el-vl__window.el-select-dropdown__list) {
   width: 150px !important;
 }
-.el-select-v2__suffix{
-  display: none !important;
-}
-.el-select-v2__wrapper{
+:deep(.el-select-v2__wrapper) {
   padding: 5px !important;
+}
+
+:deep(.el-select__selection),
+:deep(.el-select__placeholder),
+:deep(.el-select__suffix),
+:deep(.el-select-v2__selection),
+:deep(.el-select-v2__placeholder),
+:deep(.el-select-v2__suffix) {
+  display: none !important;
 }
 /* .DropdownDDTableColumnVisibilityWrapper .selectedColumn .dropdown-item {
   color: var(--light) !important;

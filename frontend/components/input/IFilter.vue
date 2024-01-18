@@ -141,6 +141,10 @@ function clearFilter () {
 .filterclear{
   width: 20px;
 }
+/* .el-select {
+  min-width: 60px ;
+  padding: 0;
+} */
 :deep(.el-select-v2__wrapper) {
   height: 100% !important;
 }
@@ -151,10 +155,15 @@ function clearFilter () {
 :deep(.el-input-group__prepend) {
   padding: 0 !important;
   border: 0px !important;
+  max-width: 45px;
+  min-width: 45px;
 }
 :deep(.el-select-v2__selection),
 :deep(.el-select-v2__placeholder),
-:deep(.el-select-v2__suffix) {
+:deep(.el-select-v2__suffix),
+:deep(.el-select__selection),
+:deep(.el-select__placeholder),
+:deep(.el-select__suffix) {
   display: none !important;
 }
 :deep(.el-input-group__append),
