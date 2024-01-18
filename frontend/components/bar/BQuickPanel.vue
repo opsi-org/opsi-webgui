@@ -43,7 +43,7 @@ const activeTab = ref('client')
 
 </script>
 
-<style>
+<style scoped>
 /* .el-tabs__item.is-active {
   color: var(--fg-color) !important;
   background-color: var(--bg-color) !important;

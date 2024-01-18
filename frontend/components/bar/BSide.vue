@@ -88,9 +88,9 @@ const navItems = computed<Array<INavItem>>(() =>
     icon: icons.client,
     submenu: [
       { title: 'title.allClients', route: '/clients/'},
-      { title: 'title.addNew', route: '/clientscreation', disabled: !config.value?.client_creation },
+      { title: 'title.addNew', route: '/clients/create', disabled: !config.value?.client_creation },
       // TODO: Display clone client when backend is ready
-      // { title: 'title.clone', route: '/clients/clone' },
+      { title: 'title.clone', route: '/clients/clone' },
       { title: 'title.config', route: '/clients/config' },
       { title: 'title.log', route: '/clients/logs' }
     ]
