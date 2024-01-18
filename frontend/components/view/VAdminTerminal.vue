@@ -1,12 +1,16 @@
 <template>
   <div>
     <h3>Terminal</h3>
+    <IconILoading v-if="isLoading === undefined" />
     <FormFTerminalSettings
+      v-else
       v-model:terminalId="terminalId"
       v-model:terminalChannel="terminalChannel"
+      :disabled="isDisabled"
       @click-connect="connect"
       @click-disconnect="disconnect"
     />
+
   </div>
   <!-- <div data-testid="VAdminTerminal" class="VAdminTerminal">
     <GridGFormItem :label="$t('table.fields.terminalId')" labelclass="lblTerminalId" variant="longvalue">
@@ -40,7 +44,8 @@
         </b-button>
       </template>
     </GridGFormItem>-->
-    <div ref="terminalcontainer"
+    <el-alert v-if="isDisabled" title="Terminal is disabled" type="warning" class="m-2 min-h-10" show-icon />
+    <div v-else ref="terminalcontainer"
       class="m-2 max-w-full min-h-3/4 maxheight-top "
       >
       <!-- class="terminalContainer border-red-500 border-1 w-" -->
@@ -65,6 +70,7 @@ import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 // eslint-disable-next-line import/named
 import { WebLinksAddon } from 'xterm-addon-web-links'
+import { useNotification } from '~/composables/mixins/useComponent';
 // SearchAddon, FitAddon, WebLinksAddon
 
 /*
@@ -128,9 +134,19 @@ function _wsBusMsgObjectChangedTerminal () {
     console.log('> # Terminal closed')
   }
 }
-/*
-  async _fetchIsDisabled () {
-    this.isLoading = true
+
+async function _fetchIsDisabled () {
+    isLoading.value = true
+    const {data, error} = await useApiGET('/opsidata/server/disabled-features')
+    if (error) {
+      useNotification().error(error)
+      isLoading.value = false
+      return []
+    }
+    isLoading.value = false
+    // return true
+    return data.value.includes('terminal')
+    /*
     return await this.$axios.get('/api/opsidata/server/disabled-features')
       .then((response) => {
         if (response.data === null) {
@@ -144,8 +160,8 @@ function _wsBusMsgObjectChangedTerminal () {
         this.showToastError(error)
         this.isLoading = false
       })
-  }
-*/
+    */
+}
 /*
 async created () {
     while (this.isDisabled === undefined) { await new Promise(resolve => setTimeout(resolve, 100)) }
@@ -162,6 +178,13 @@ onMounted(async () => {
       console.log('VAdminTerminal MessageBus: wait for wsBus')
       setTimeout(resolve, 100)
     })
+  }
+  isDisabled.value = await _fetchIsDisabled()
+  waitForRefNot (isDisabled, undefined)
+  if (isDisabled.value) {
+    console.log('VAdminTerminal MessageBus: terminal disabled')
+    useNotification().warning('Terminal is disabled')
+    return
   }
   console.log('VAdminTerminal MessageBus: wsBus ready. connect to terminal...')
   // connect()
@@ -181,8 +204,10 @@ function listenScreenResize () {
 }
 
 function updateTerminalSize () {
-  mbTerminal.value.skipResizeEvent = false
-  mbTerminal.value.fitAddon.fit()
+  if (mbTerminal.value && mbTerminal.value.fitAddon) {
+    mbTerminal.value.skipResizeEvent = false
+    mbTerminal.value.fitAddon.fit()
+  }
 }
 
 function disconnect () {
@@ -197,6 +222,10 @@ function disconnect () {
 }
 
 function connect () {
+  waitForRefNot (isDisabled, undefined)
+  if (isDisabled.value) {
+    return
+  }
   console.group('VAdminTerminal MessageBus connect')
   if (mbTerminal && mbTerminal.value) {
     try {
@@ -250,6 +279,16 @@ function connect () {
     }
   })
   console.groupEnd()
+}
+
+function waitForRefNot (el: any, valueNot: any) {
+  while (el === valueNot) {
+    console.log('VAdminTerminal MessageBus: wait for disabled-check')
+    setTimeout(() => {
+      console.log('VAdminTerminal MessageBus: wait for disabled-check')
+    }, 100)
+  }
+  return el
 }
 </script>
 

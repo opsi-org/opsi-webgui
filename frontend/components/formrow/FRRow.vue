@@ -12,9 +12,9 @@
     <template #default>
       <!-- {{ itemValue }} -->
       <slot name="value" >
-        <el-checkbox v-if="props.type === 'checkbox'" v-model="modelBool" :label="modelBool || ''"/>
-        <el-input v-else-if="props.type === 'input'" v-model="(modelValue as string)" @input="(x) => $emit('update:modelValue', x)"/>
-        <el-button v-else-if="props.type === 'button'" type="primary" @click="$emit('click')">{{props.text}}</el-button>
+        <el-checkbox v-if="props.type === 'checkbox'" :disabled="disabled" v-model="modelBool" :label="modelBool || ''"/>
+        <el-input v-else-if="props.type === 'input'" :disabled="disabled" v-model="(modelValue as string)" @input="(x) => $emit('update:modelValue', x)"/>
+        <el-button v-else-if="props.type === 'button'" :disabled="disabled" type="primary" @click="$emit('click')">{{props.text}}</el-button>
       </slot>
     </template>
   </el-form-item>
@@ -32,6 +32,7 @@ const props = defineProps({
   modelValue: { type: String, default: '' },
   text: { type: String, default: '' },
   dataType: { type: String, default: 'string' },
+  disabled: { type: Boolean, default: false },
 })
 const modelBool = computed({
   get: () => props.modelValue === 'true',
