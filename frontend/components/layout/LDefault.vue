@@ -49,7 +49,6 @@
 
         <el-main class="z-0 p-2">
           <el-scrollbar
-          always
             class="p-0 m-0"
             wrap-class="p-0 m-0"
             view-class="p-0 m-0"
