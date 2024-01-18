@@ -212,6 +212,11 @@ function updateTerminalSize () {
 
 function disconnect () {
   console.group('VAdminTerminal MessageBus disconnect')
+  if (mbTerminal.value === undefined) {
+    console.log('VAdminTerminal MessageBus: no terminal to disconnect')
+    console.groupEnd()
+    return
+  }
   ws.wsTerminalClose(mbTerminal.value)
   terminalId.value = terminalIdDefault
   terminalChannel.value = terminalChannelDefault
