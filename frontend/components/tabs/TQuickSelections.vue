@@ -1,4 +1,19 @@
 <template>
+  <el-tabs>
+    <el-tab-pane label="All Selections" name="sel">
+      <template #label>
+        <span class="custom-tabs-label">
+          <IconIIcon icon="laptop"/>
+        </span>
+      </template>
+      All Selections
+    </el-tab-pane>
+    <el-tab-pane label="Servers" name="server">Servers</el-tab-pane>
+    <el-tab-pane label="Client Groups" name="client">
+      <TestEPTreeSelect />
+    </el-tab-pane>
+    <el-tab-pane label="Product Groups" name="prod">Product Group</el-tab-pane>
+  </el-tabs>
   <!-- <b-tabs justified small lazy data-testid="TQuickSelections" class="QPTabs">
     <b-tab id="qp-tab-selection" active>
       <template #title>

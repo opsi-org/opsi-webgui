@@ -1,23 +1,8 @@
 <template>
-  <div class="quickpanel"
-  >
-    Quick Select
-    <el-tabs v-model="activeTab">
-      <el-tab-pane label="All Selections" name="sel">
-        <template #label>
-          <span class="custom-tabs-label">
-            <IconIIcon icon="laptop"/>
-          </span>
-        </template>
-        All Selections
-      </el-tab-pane>
-      <el-tab-pane label="Servers" name="server">Servers</el-tab-pane>
-      <el-tab-pane label="Client Groups" name="client">
-        <TestEPTreeSelect />
-      </el-tab-pane>
-      <el-tab-pane label="Product Groups" name="prod">Product Group</el-tab-pane>
-    </el-tabs>
-    Settings <br/>
+  <div class="quickpanel">
+    <el-text tag="b" size="small"> {{$t('label.quickselect')}}</el-text><br>
+    <TabsTQuickSelections />
+    <el-text tag="b" size="small"> {{$t('label.quickaction')}}</el-text><br>
     <FormitemCBMultiselection />
     <FormitemCBQuicksave />
     <el-scrollbar v-if="changes.changesHostParam" class="max-h-48 overflow-scroll">
@@ -27,26 +12,94 @@
       <pre> {{ changes.changesProducts }}</pre>
     </el-scrollbar>
 
-    <div class="menu-footer absolute inset-x-0 bottom-4 w-full flex justify-evenly">
+    <!-- <div class="menu-footer absolute inset-x-0 bottom-4 w-full flex justify-evenly"> -->
+      <el-text tag="b" size="small"> {{$t('title.settings')}}</el-text><br>
       <FormitemDDTheme />
       <FormitemDDLang />
-      <!-- <ButtonBTNLogout /> -->
-    </div>
+    <!-- </div> -->
   </div>
+  <!-- <b-sidebar
+    id="quickpanel"
+    data-testid="BarBQuickPanel"
+    right
+    :visible="showQuickPanel"
+    no-header
+    :backdrop="$mq == 'mobile'"
+    bg-variant="background"
+    text-variant="color"
+    shadow
+    no-close-on-route-change
+    @hidden="$emit('change', false)"
+  >
+    <b-card class="quickpanel_container">
+      <b-row class="text-smaller mt-2 mb-2">
+        <b>{{ $t('label.quickselect') }}
+          <ButtonBTNSmallRow
+            v-if="selectionDepots.length > 0"
+            :title="$t('button.resetAll')"
+            show-reset
+            @click="setSelectionDepots([opsiconfigserver])"
+          />
+        </b>
+      </b-row>
+      <TabsTQuickSelections />
+      <b-row class="text-smaller mt-2 mb-2">
+        <b>{{ $t('label.quickaction') }} </b>
+      </b-row>
+      <b-row>
+        <b-col> <ButtonBTNEvent event="ondemand" :with-text="true" classes="outline-primary border" /> </b-col>
+        <b-col> <LazyModalMProductActions v-if="showQuickPanel" :label="'label.prodquickaction'" /> </b-col>
+      </b-row>
+      <b-row class="text-smaller mt-2 mb-2">
+        <b>{{ $t('title.settings') }} </b>
+      </b-row>
+      <b-row>
+        <b-col> <CheckboxCBQuickSave /> </b-col>
+        <b-col> <CheckboxCBMultiselection /> </b-col>
+      </b-row>
+    </b-card>
+    <template #footer>
+      <b-card class="p-0">
+        <b-row>
+          <b-col> <DropdownDDLang v-once /> </b-col>
+          <b-col> <DropdownDDTheme v-once /> </b-col>
+          <b-col cols="6">
+            <ButtonBTNLogout v-once />
+          </b-col>
+        </b-row>
+      </b-card>
+    </template>
+  </b-sidebar> -->
 </template>
 
 <script setup lang="ts">
 const changes = storeChanges()
-const mq = useMQ()
+// import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+// import { Icons } from '../../mixins/icons'
+// const cache = namespace('data-cache')
+// const selections = namespace('selections')
 
-const activeTab = ref('client')
-
+// @Component({ mixins: [Icons] })
+// export default class BQuickPanel extends Vue {
+//   $mq: any
+//   icon:any
+//   @Prop({ default: false }) showQuickPanel!: boolean
+//   @cache.Getter public opsiconfigserver!: string
+//   @selections.Getter public selectionDepots!: Array<string>
+//   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+// }
 </script>
 
-<style scoped>
-/* .el-tabs__item.is-active {
-  color: var(--fg-color) !important;
-  background-color: var(--bg-color) !important;
-  border-color: var(--border-color) !important;
-} */
+<style>
+.quickpanel_container {
+  height: 100% !important;
+}
+#quickpanel {
+  top: var(--height-navbar)!important;
+  width: 400px;
+  height: 100% !important;
+}
+#quickpanel .b-sidebar-footer {
+  margin-bottom: 70px;
+}
 </style>
