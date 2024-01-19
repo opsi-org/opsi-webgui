@@ -1,19 +1,34 @@
 <template>
-  <el-tabs>
-    <el-tab-pane label="All Selections" name="sel">
+  <el-tabs v-model="activeName" class="quickselection">
+    <el-tab-pane name="sel">
       <template #label>
-        <span class="custom-tabs-label">
-          <IconIIcon icon="laptop"/>
-        </span>
+        <IconIIcon :icon="icons.info" :title="$t('title.viewselection')" />
       </template>
-      All Selections
+      <FormFAllSelections />
     </el-tab-pane>
-    <el-tab-pane label="Servers" name="server">Servers</el-tab-pane>
-    <el-tab-pane label="Client Groups" name="client">
+    <el-tab-pane name="server">
+      <template #label>
+        <IconIIcon :icon="icons.server" :title="$t('title.depots')" />
+        <!-- {{ selectionDepots.length }} -->
+      </template>
+      Server
+    </el-tab-pane>
+    <el-tab-pane name="client">
+      <template #label>
+        <IconIIcon :icon="icons.client" :title="$t('treeselect.clientGroups')" /><IconIIcon :icon="icons.group" />
+        <!-- {{ selectionClients.length }} -->
+      </template>
       <TestEPTreeSelect />
     </el-tab-pane>
-    <el-tab-pane label="Product Groups" name="prod">Product Group</el-tab-pane>
+    <el-tab-pane name="prod">
+      <template #label>
+        <IconIIcon :icon="icons.product" :title="$t('treeselect.prodGroups')" /><IconIIcon :icon="icons.group" />
+        <!-- {{ selectionProducts.length }} -->
+      </template>
+      Product Group
+    </el-tab-pane>
   </el-tabs>
+
   <!-- <b-tabs justified small lazy data-testid="TQuickSelections" class="QPTabs">
     <b-tab id="qp-tab-selection" active>
       <template #title>
@@ -119,6 +134,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import {useIcons} from '../../composables/mixins/useIcons'
+const icons = useIcons()
+const activeName = ref('sel')
 // import { Component, namespace, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
 // import { Strings } from '../../mixins/strings'
@@ -142,14 +161,20 @@
 // }
 </script>
 <style>
-.scrollcontent {
-  min-height: 39vh !important;
+.quickselection .el-tabs__content{
+  min-height: 30vh !important;
+  overflow-x:auto;
+  overflow-y: auto;
+}
+
+
+/* .scrollcontent {
+  min-height: 30vh !important;
   overflow-x:auto;
   overflow-y: auto;
 }
 .QPTabs .scrollcontent {
   max-height: 500px !important;
-  /* max-height: 50% !important; */
 }
 .QPTabs .nav-tabs .nav-link{
   color:var(--color);
@@ -170,5 +195,5 @@
 
 .QPTabs #qp-tab-selection .GFormItem .firstcol {
   min-width: 110px !important;
-}
+} */
 </style>
