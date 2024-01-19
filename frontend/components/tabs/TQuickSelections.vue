@@ -11,7 +11,7 @@
         <IconIIcon :icon="icons.server" :title="$t('title.depots')" />
         <el-text size="small">{{ selections.selectionDepots.length }}</el-text>
       </template>
-      Server
+      <TreeTDepots />
     </el-tab-pane>
     <el-tab-pane name="client">
       <template #label>
