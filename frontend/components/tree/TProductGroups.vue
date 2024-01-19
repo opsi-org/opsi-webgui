@@ -1,4 +1,10 @@
 <template>
+  <!-- <el-tree
+    :data="productGroup"
+    :render-after-expand="false"
+    show-checkbox
+  /> -->
+  {{ productGroup }}
   <!-- <IconILoading v-if="isLoading" :small="true" />
   <TreeTSDefaultGroups
     v-else
@@ -19,6 +25,23 @@
 </template>
 
 <script setup lang="ts">
+import { useNotification } from '~/composables/mixins/useComponent';
+let productGroup = {}
+const storeSelection = storeSelections()
+onMounted(async ()=> {
+  await fetch()
+})
+async function fetch() {
+  const {data, error } = await useApiGETBody(`/api/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  '/api/opsidata/depots'
+  if (error) {
+    console.log(error)
+    useNotification().error(error)
+    return
+  }
+  productGroup = data
+  // productGroup.value = Object.values(data?.groups)
+}
 // import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
 // const selections = namespace('selections')
