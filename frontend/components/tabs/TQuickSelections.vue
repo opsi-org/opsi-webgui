@@ -9,21 +9,21 @@
     <el-tab-pane name="server">
       <template #label>
         <IconIIcon :icon="icons.server" :title="$t('title.depots')" />
-        <!-- {{ selectionDepots.length }} -->
+        <el-text size="small">{{ selections.selectionDepots.length }}</el-text>
       </template>
       Server
     </el-tab-pane>
     <el-tab-pane name="client">
       <template #label>
-        <IconIIcon :icon="icons.client" :title="$t('treeselect.clientGroups')" /><IconIIcon :icon="icons.group" />
-        <!-- {{ selectionClients.length }} -->
+        <IconIIcon :icon="icons.client" :title="$t('treeselect.clientGroups')" /><IconIIcon :icon="icons.group" class="mt-2" />
+        <el-text size="small">{{ selections.selectionClients.length }}</el-text>
       </template>
       <TestEPTreeSelect />
     </el-tab-pane>
     <el-tab-pane name="prod">
       <template #label>
-        <IconIIcon :icon="icons.product" :title="$t('treeselect.prodGroups')" /><IconIIcon :icon="icons.group" />
-        <!-- {{ selectionProducts.length }} -->
+        <IconIIcon :icon="icons.product" :title="$t('treeselect.prodGroups')" /><IconIIcon :icon="icons.group" class="mt-2" />
+        <el-text size="small">{{ selections.selectionProducts.length }}</el-text>
       </template>
       Product Group
     </el-tab-pane>
@@ -138,6 +138,7 @@ import { ref } from 'vue'
 import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const activeName = ref('sel')
+const selections = storeSelections()
 // import { Component, namespace, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
 // import { Strings } from '../../mixins/strings'

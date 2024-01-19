@@ -1,5 +1,5 @@
 <template>
-  <Icon v-bind="$attrs as any" :class="props.class" />
+  <Icon v-bind="$attrs as any" :class="props.class"/>
 </template>
 
 <script setup lang="ts">
