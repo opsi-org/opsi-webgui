@@ -304,13 +304,14 @@ function waitForRefNot (el: any, valueNot: any) {
 }
 */
 .maxheight-top {
-  height: calc(100vh - 270px);
+  height: calc(100vh - 290px);
 }
 .is-mobile .maxheight-top {
   height: calc(100vh - 310px);
 }
 :deep(#terminal)
 {
+  border: 1px solid red !important;
   width:100%;
   height:100%;
 }

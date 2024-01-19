@@ -15,16 +15,20 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'nuxt-property-decorator'
-
-@Component
-export default class CSupport extends Vue {
-  @Prop({ }) item!: any
-  $mq: any
-}
+<script setup lang="ts">
+// import { Component, Prop, Vue } from 'nuxt-property-decorator'
+// const $t = useI18n().t
+// @Component
+// export default class CSupport extends Vue {
+  // @Prop({ }) item!: any
+  const props = defineProps({
+    item: { type: Object, required: true }
+  })
+  // $mq: any
+  const $mq = useMQ().$mq
+// }
 </script>
-<style>
+<style scoped>
 .smallcard .card-title {
   font-weight: bold;
   font-size: 11px;
