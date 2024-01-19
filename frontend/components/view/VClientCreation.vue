@@ -1,21 +1,4 @@
 <template>
-  <!-- <el-form :model="newClient" label-width="200px">
-    <div v-for="(value, label, index) in newClient">
-      <el-form-item :label="$t('table.fields.' + label)">
-        <el-input v-model="newClient[label.toString()]" />
-      </el-form-item>
-    </div>
-  </el-form>
-  <el-row>
-    <b class="initsetup">{{ $t('title.initsetup') }} </b>
-  </el-row>
-  <el-form :model="clientAgent" :inline="true" label-position="top">
-    <div v-for="(value, label, index) in clientAgent">
-      <el-form-item :label="$t('table.fields.' + label)">
-        <el-input v-model="clientAgent[label.toString()]" />
-      </el-form-item>
-    </div>
-  </el-form> -->
   <el-form label-width="200px">
     <div v-for="options,category,index in createClient" :key="index">
       <el-row>
@@ -23,21 +6,28 @@
       </el-row>
       <div v-for="(value, label, index) in options">
         <el-form-item :label="$t('table.fields.' + label)">
-          <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
-          <el-input v-else v-model="createClient[category][label]" />
           <el-form
             v-if="label === 'opsiClientAgent'"
-            :class="{'d-none' : !createClient.initialSetup.opsiClientAgent}"
-            :model="clientAgent"
             :inline="true"
             label-position="top"
           >
-            <div v-for="(value, label, index) in clientAgent">
-              <el-form-item :label="$t('table.fields.' + label)">
-                <el-input v-model="clientAgent[label.toString()]" />
+            <div v-for="(value, label, index) in createClient.initialSetup.opsiClientAgent">
+              <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
+              <el-form-item v-else  :label="$t('table.fields.' + label)" :class="{'d-none' : !createClient.initialSetup.opsiClientAgent.setup}">
+                <el-input v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
               </el-form-item>
             </div>
           </el-form>
+          <el-select v-else-if="label === 'depot'" filterable>
+            <el-option
+              v-for="item in depotIDList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+          <el-checkbox v-else-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
+          <el-input v-else v-model="createClient[category][label]" />
         </el-form-item>
       </div>
     </div>
@@ -48,24 +38,12 @@
   </el-form>
 </template>
 <script setup lang="ts">
-import { reactive } from 'vue'
-const newClient = reactive({
-  hostId: '',
-  description: '',
-  inventoryNumber: '',
-  hardwareAddress: '',
-  ipAddress: null,
-  notes: ''
-})
-const clientAgent = reactive({
-  clients: [],
-  username: '',
-  password: '',
-  type: 'windows'
-})
+import { reactive, ref } from 'vue'
+import { useDepot } from '~/composables/mixins/useGet';
+const depotIDList = ref<Array<any>>([])
 const createClient = reactive({
-  hostId: '',
   basics: {
+    hostId: '',
     description: '',
     inventoryNumber: '',
     hardwareAddress: '',
@@ -78,12 +56,24 @@ const createClient = reactive({
   },
   initialSetup: {
     netbootProduct: [],
-    opsiClientAgent: false
+    opsiClientAgent: {
+      setup: false,
+      clients: [],
+      username: '',
+      password: '',
+      type: 'windows'
+    }
   },
   settings: {
     uefi: false
   }
 })
+onMounted(async ()=> {
+  await fetch()
+})
+async function fetch() {
+  depotIDList.value = await useDepot().getDepotIdList()
+}
 function resetForm () {
   Object.assign(createClient, {
     hostId: '',
@@ -100,17 +90,17 @@ function resetForm () {
     },
     initialSetup: {
       netbootProduct: [],
-      opsiClientAgent: false
+      opsiClientAgent: {
+        setup: false,
+        clients: [],
+        username: '',
+        password: '',
+        type: 'windows'
+      }
     },
     settings: {
       uefi: false
     }
-  })
-  Object.assign(clientAgent, {
-    clients: [],
-    username: '',
-    password: '',
-    type: 'windows'
   })
 }
 </script>
