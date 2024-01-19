@@ -1,5 +1,5 @@
 <template>
-  <div class="VGroups" data-testid="VGroups">
+  <!-- <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <b-tabs small class="groupstabs">
@@ -107,7 +107,6 @@
           <b-col v-if="action && selectedvalue">
             <span class="text-small"><b> {{ title + t_fixed('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
-              <!-- closing right side -->
               <IconIIcon :icon="icon.x" />
             </b-button>
             <br><br>
@@ -230,212 +229,210 @@
         <ViewVProdGroupActions />
       </b-tab>
     </b-tabs>
-  </div>
+  </div> -->
 </template>
 
-<script lang="ts">
-import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { Icons } from '../../mixins/icons'
-import { Client } from '../../mixins/get'
-import { Group } from '../../mixins/post'
-import { Strings } from '../../mixins/strings'
-import { AlertToast } from '../../mixins/component'
-const selections = namespace('selections')
-@Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
-export default class VGroups extends Vue {
-  showToastSuccess: any // from mixin AlertToast
-  showToastError: any // from mixin AlertToast
-  icon: any
-  t_fixed: any
-  getClientIdList:any
-  $axios: any
-  node: any
-  $fetch: any
-  $t: any
-  $mq: any
-  group: Array<object>|undefined = undefined
-  selectedvalue: any = null
-  clientIds: Array<string> = []
-  selectedClients: Array<string> = []
-  updategroupparent: any = null
-  selectedGroups: Array<any> = []
-  selectedGroupsRemove: any = null
-  addClientToListOfGroups: any
-  action: string = ''
-  title: string = ''
-  subgroup: any = {
-    parentGroupId: '',
-    groupId: '',
-    description: '',
-    notes: ''
-  }
+<script setup lang="ts">
+// import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
+// import { Icons } from '../../mixins/icons'
+// import { Client } from '../../mixins/get'
+// import { Group } from '../../mixins/post'
+// import { Strings } from '../../mixins/strings'
+// import { AlertToast } from '../../mixins/component'
+// const selections = namespace('selections')
+// @Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
+// export default class VGroups extends Vue {
+//   showToastSuccess: any // from mixin AlertToast
+//   showToastError: any // from mixin AlertToast
+//   icon: any
+//   t_fixed: any
+//   getClientIdList:any
+//   $axios: any
+//   node: any
+//   $fetch: any
+//   $t: any
+//   $mq: any
+//   group: Array<object>|undefined = undefined
+//   selectedvalue: any = null
+//   clientIds: Array<string> = []
+//   selectedClients: Array<string> = []
+//   updategroupparent: any = null
+//   selectedGroups: Array<any> = []
+//   selectedGroupsRemove: any = null
+//   addClientToListOfGroups: any
+//   action: string = ''
+//   title: string = ''
+//   subgroup: any = {
+//     parentGroupId: '',
+//     groupId: '',
+//     description: '',
+//     notes: ''
+//   }
 
-  updategroup = {
-    parent: '',
-    description: '',
-    notes: ''
-  }
+//   updategroup = {
+//     parent: '',
+//     description: '',
+//     notes: ''
+//   }
 
-  @selections.Getter public selectionDepots!: Array<string>
-  $root: any
-  $refs: any
-  $fetchState: any
+//   @selections.Getter public selectionDepots!: Array<string>
+//   $root: any
+//   $refs: any
+//   $fetchState: any
 
-  normalizer (node: any) {
-    if (node.children) {
-      if (node.children.not_assigned) {
-        node.children.__not_assigned = node.children.not_assigned
-        delete node.children.not_assigned
-      }
-      return {
-        id: node.id,
-        label: node.text,
-        children: Object.values(Object.keys(node.children).sort().reduce(
-          (obj, key) => { obj[key] = node.children[key]; return obj }, {}
-        ))
-      }
-    }
-    return {
-      id: node.id,
-      label: node.text,
-      children: node.type === 'HostGroup' ? [] : undefined
-    }
-  }
+//   normalizer (node: any) {
+//     if (node.children) {
+//       if (node.children.not_assigned) {
+//         node.children.__not_assigned = node.children.not_assigned
+//         delete node.children.not_assigned
+//       }
+//       return {
+//         id: node.id,
+//         label: node.text,
+//         children: Object.values(Object.keys(node.children).sort().reduce(
+//           (obj, key) => { obj[key] = node.children[key]; return obj }, {}
+//         ))
+//       }
+//     }
+//     return {
+//       id: node.id,
+//       label: node.text,
+//       children: node.type === 'HostGroup' ? [] : undefined
+//     }
+//   }
 
-  normalizerUpdateGroup (node: any) {
-    if (node.children) {
-      return {
-        id: node.id,
-        label: node.text,
-        children: Object.values(node.children)
-      }
-    }
-    return {
-      id: node.id,
-      label: node.text,
-      isDisabled: node.type === 'ObjectToGroup',
-      children: node.type === 'HostGroup' ? [] : undefined
-    }
-  }
+//   normalizerUpdateGroup (node: any) {
+//     if (node.children) {
+//       return {
+//         id: node.id,
+//         label: node.text,
+//         children: Object.values(node.children)
+//       }
+//     }
+//     return {
+//       id: node.id,
+//       label: node.text,
+//       isDisabled: node.type === 'ObjectToGroup',
+//       children: node.type === 'HostGroup' ? [] : undefined
+//     }
+//   }
 
-  @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
-    await this.fetchGroups()
-  }
+//   @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
+//     await this.fetchGroups()
+//   }
 
-  async fetch () {
-    await this.fetchGroups()
-    await this.fetchClients()
-  }
+//   async fetch () {
+//     await this.fetchGroups()
+//     await this.fetchClients()
+//   }
 
-  async fetchGroups () {
-    this.group = undefined
-    const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
-    // await new Promise(r => setTimeout(r, 10000))
-    this.group = Object.values(result)
-    this.showChild(this.action)
-  }
+//   async fetchGroups () {
+//     this.group = undefined
+//     const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
+//     this.group = Object.values(result)
+//     this.showChild(this.action)
+//   }
 
-  showChild (selectedAction: string) {
-    this.action = selectedAction
-    const groupaction = 'group.' + this.action
-    this.title = this.$t(groupaction)
-  }
+//   showChild (selectedAction: string) {
+//     this.action = selectedAction
+//     const groupaction = 'group.' + this.action
+//     this.title = this.$t(groupaction)
+//   }
 
-  afterAsync () {
-    // triggers soft refresh of ui
-    this.subgroup.groupId = this.subgroup.groupId + 'x'
-    this.subgroup.groupId = this.subgroup.groupId.slice(0, -1)
-  }
+//   afterAsync () {
+//     this.subgroup.groupId = this.subgroup.groupId + 'x'
+//     this.subgroup.groupId = this.subgroup.groupId.slice(0, -1)
+//   }
 
-  async removeClientFromGroup () {
-    const group = this.selectedvalue.parent
-    await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: [group] })
-      .then(async (response) => {
-        this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
-        await this.fetchGroups()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.afterAsync()
-  }
+//   async removeClientFromGroup () {
+//     const group = this.selectedvalue.parent
+//     await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: [group] })
+//       .then(async (response) => {
+//         this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
+//         await this.fetchGroups()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.afterAsync()
+//   }
 
-  async copyClientToGroups () {
-    const groupsList = this.selectedGroups.map(function (item) {
-      return item.text
-    })
-    const client = this.selectedvalue.text
-    await this.addClientToListOfGroups(client, groupsList)
-    await this.fetchGroups()
-    this.afterAsync()
-  }
+//   async copyClientToGroups () {
+//     const groupsList = this.selectedGroups.map(function (item) {
+//       return item.text
+//     })
+//     const client = this.selectedvalue.text
+//     await this.addClientToListOfGroups(client, groupsList)
+//     await this.fetchGroups()
+//     this.afterAsync()
+//   }
 
-  async fetchClients () {
-    this.clientIds = await this.getClientIdList(this.selectionDepots)
-  }
+//   async fetchClients () {
+//     this.clientIds = await this.getClientIdList(this.selectionDepots)
+//   }
 
-  async addClientsToSelectedGroup () {
-    await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
-      .then(async (response) => {
-        this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
-        await this.fetchGroups()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.afterAsync()
-  }
+//   async addClientsToSelectedGroup () {
+//     await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
+//       .then(async (response) => {
+//         this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
+//         await this.fetchGroups()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.afterAsync()
+//   }
 
-  async createSubGroup () {
-    this.subgroup.parentGroupId = this.selectedvalue.text
-    await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
-      .then(async (response) => {
-        this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
-        await this.fetchGroups()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.afterAsync()
-  }
+//   async createSubGroup () {
+//     this.subgroup.parentGroupId = this.selectedvalue.text
+//     await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
+//       .then(async (response) => {
+//         this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
+//         await this.fetchGroups()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.afterAsync()
+//   }
 
-  async updateGroup () {
-    this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
-    await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
-      .then(async (response) => {
-        this.showToastSuccess(this.$t('message.success.save.update.group', { group: this.selectedvalue.text }))
-        await this.fetchGroups()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.afterAsync()
-  }
+//   async updateGroup () {
+//     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
+//     await this.$axios.$put(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`, this.updategroup)
+//       .then(async (response) => {
+//         this.showToastSuccess(this.$t('message.success.save.update.group', { group: this.selectedvalue.text }))
+//         await this.fetchGroups()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.afterAsync()
+//   }
 
-  async deleteGroup () {
-    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
-      .then(async (response) => {
-        this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
-        await this.fetchGroups()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.afterAsync()
-  }
+//   async deleteGroup () {
+//     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
+//       .then(async (response) => {
+//         this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
+//         await this.fetchGroups()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.afterAsync()
+//   }
 
-  async removeClientAssignments () {
-    await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
-      .then(async (response) => {
-        this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
-        await this.fetchGroups()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.afterAsync()
-  }
-}
+//   async removeClientAssignments () {
+//     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
+//       .then(async (response) => {
+//         this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
+//         await this.fetchGroups()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.afterAsync()
+//   }
+// }
 </script>
 <style>
 .groupstabs .tab-content {

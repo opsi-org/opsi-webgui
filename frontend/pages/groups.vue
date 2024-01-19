@@ -1,5 +1,5 @@
 <template>
-  <ViewVGroups />
+  <TabsTGroups />
 </template>
 
 <script setup lang="ts">
