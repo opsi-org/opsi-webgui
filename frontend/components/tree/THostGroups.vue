@@ -21,7 +21,7 @@
   /> -->
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // import { Component, namespace, Watch, Prop, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
 // import { Client } from '../../mixins/get'
