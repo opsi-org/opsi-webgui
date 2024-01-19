@@ -1,5 +1,5 @@
 <template>
-  <ViewVClientCreation />
+  <FormFCreateClient />
 </template>
 
 <script setup>
