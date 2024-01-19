@@ -1,5 +1,5 @@
 <template>
-  <b-tabs justified small lazy data-testid="TQuickSelections" class="QPTabs">
+  <!-- <b-tabs justified small lazy data-testid="TQuickSelections" class="QPTabs">
     <b-tab id="qp-tab-selection" active>
       <template #title>
         <IconIIcon :icon="icon.info" :title="$t('title.viewselection')" />
@@ -100,31 +100,31 @@
         <TreeTSProductGroups :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />
       </div>
     </b-tab>
-  </b-tabs>
+  </b-tabs> -->
 </template>
 
-<script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { Icons } from '../../mixins/icons'
-import { Strings } from '../../mixins/strings'
-const selections = namespace('selections')
+<script setup lang="ts">
+// import { Component, namespace, Vue } from 'nuxt-property-decorator'
+// import { Icons } from '../../mixins/icons'
+// import { Strings } from '../../mixins/strings'
+// const selections = namespace('selections')
 
-@Component({ mixins: [Icons, Strings] })
-export default class TQuickSelections extends Vue {
-  icon:any
-  t_fixed:any
-  $mq:any
-  @selections.Getter public multiSelection!: Array<string>
-  @selections.Getter public selectionDepots!: Array<string>
-  @selections.Getter public selectionClients!: Array<string>
-  @selections.Getter public selectionProducts!: Array<string>
-  @selections.Mutation public delFromSelectionDepots!: (s: string) => void
-  @selections.Mutation public delFromSelectionClients!: (s: string) => void
-  @selections.Mutation public delFromSelectionProducts!: (s: string) => void
-  @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
-  @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
-  @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-}
+// @Component({ mixins: [Icons, Strings] })
+// export default class TQuickSelections extends Vue {
+//   icon:any
+//   t_fixed:any
+//   $mq:any
+//   @selections.Getter public multiSelection!: Array<string>
+//   @selections.Getter public selectionDepots!: Array<string>
+//   @selections.Getter public selectionClients!: Array<string>
+//   @selections.Getter public selectionProducts!: Array<string>
+//   @selections.Mutation public delFromSelectionDepots!: (s: string) => void
+//   @selections.Mutation public delFromSelectionClients!: (s: string) => void
+//   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
+//   @selections.Mutation public setSelectionDepots!: (s: Array<string>) => void
+//   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
+//   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+// }
 </script>
 <style>
 .scrollcontent {
