@@ -1,11 +1,9 @@
 <template>
-  <el-card>
-    <el-checkbox-group>
-      <div v-for="item in depotIDList" :key="item">
-        <el-checkbox :label="item" />
-      </div>
-    </el-checkbox-group>
-  </el-card>
+  <el-checkbox-group>
+    <div v-for="item in depotIDList" :key="item">
+      <el-checkbox size="small" :label="item" />
+    </div>
+  </el-checkbox-group>
   <!-- <LazyTreeTSDefault
     v-if="fetchDepotData"
     v-bind="$props"
