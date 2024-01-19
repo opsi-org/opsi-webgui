@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VClientClone" class="VClientClone">
+  <!-- <div data-testid="VClientClone" class="VClientClone">
     <OverlayOLoading :is-loading="isLoading" />
     <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') +''+ t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
     <GridGFormItem v-if="!asChild" :label="$t('table.fields.sourceclient')" variant="longvalue">
@@ -70,105 +70,105 @@
         </div>
       </template>
     </GridGFormItem>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { Icons } from '../../mixins/icons'
-import { Strings } from '../../mixins/strings'
-import { Client } from '../../mixins/get'
-import { AlertToast } from '../../mixins/component'
-import { CloneClient } from '../../.utils/types/tobjects'
-const selections = namespace('selections')
-@Component({ mixins: [Icons, Strings, AlertToast, Client] })
-export default class VClientClone extends Vue {
-  showToastWarning:any // mixin
-  showToastSuccess: any // from mixin AlertToast
-  showToastError: any // from mixin AlertToast
-  getClientIdList:any
-  icon: any
-  t_fixed: any
-  $axios:any
-  $t:any
+// import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+// import { Icons } from '../../mixins/icons'
+// import { Strings } from '../../mixins/strings'
+// import { Client } from '../../mixins/get'
+// import { AlertToast } from '../../mixins/component'
+// import { CloneClient } from '../../.utils/types/tobjects'
+// const selections = namespace('selections')
+// @Component({ mixins: [Icons, Strings, AlertToast, Client] })
+// export default class VClientClone extends Vue {
+//   showToastWarning:any // mixin
+//   showToastSuccess: any // from mixin AlertToast
+//   showToastError: any // from mixin AlertToast
+//   getClientIdList:any
+//   icon: any
+//   t_fixed: any
+//   $axios:any
+//   $t:any
 
-  @Prop({ }) id!: string
-  @Prop({ default: false }) 'asChild'!: string
-  @Prop({ default: false }) 'closeroute'!: string
+//   @Prop({ }) id!: string
+//   @Prop({ default: false }) 'asChild'!: string
+//   @Prop({ default: false }) 'closeroute'!: string
 
-  @selections.Getter public selectionDepots!: Array<string>
+//   @selections.Getter public selectionDepots!: Array<string>
 
-  clientName: string = ''
-  domain: string = ''
-  isLoading: boolean = false
-  clientIds: Array<string> = []
+//   clientName: string = ''
+//   domain: string = ''
+//   isLoading: boolean = false
+//   clientIds: Array<string> = []
 
-  cloneclient: CloneClient = {
-    target: {
-      hostId: '',
-      ipAddress: '',
-      hardwareAddress: '',
-      systemUUID: ''
-    },
-    options: {
-      configs: false,
-      products: false,
-      productPropeties: false
-    }
-  }
+//   cloneclient: CloneClient = {
+//     target: {
+//       hostId: '',
+//       ipAddress: '',
+//       hardwareAddress: '',
+//       systemUUID: ''
+//     },
+//     options: {
+//       configs: false,
+//       products: false,
+//       productPropeties: false
+//     }
+//   }
 
-  get domainName () {
-    const result = this.id.substring(this.id.indexOf('.'))
-    this.domain = result
-    return result
-  }
+//   get domainName () {
+//     const result = this.id.substring(this.id.indexOf('.'))
+//     this.domain = result
+//     return result
+//   }
 
-  set domainName (val: string) {
-    this.domain = val
-  }
+//   set domainName (val: string) {
+//     this.domain = val
+//   }
 
-  get checkValid () {
-    return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domain)
-  }
+//   get checkValid () {
+//     return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domain)
+//   }
 
-  async fetch () {
-    await this.fetchClients()
-  }
+//   async fetch () {
+//     await this.fetchClients()
+//   }
 
-  async fetchClients () {
-    this.clientIds = await this.getClientIdList(this.selectionDepots)
-  }
+//   async fetchClients () {
+//     this.clientIds = await this.getClientIdList(this.selectionDepots)
+//   }
 
-  async cloneClient () {
-    this.isLoading = true
-    this.cloneclient.target.hostId = this.clientName + this.domain
-    await this.$axios.$post(`/api/opsidata/clients/${this.id}/clone`, this.cloneclient)
-      .then((response) => {
-        this.showToastSuccess(response)
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.isLoading = false
-  }
+//   async cloneClient () {
+//     this.isLoading = true
+//     this.cloneclient.target.hostId = this.clientName + this.domain
+//     await this.$axios.$post(`/api/opsidata/clients/${this.id}/clone`, this.cloneclient)
+//       .then((response) => {
+//         this.showToastSuccess(response)
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.isLoading = false
+//   }
 
-  resetForm () {
-    this.clientName = ''
-    this.cloneclient = {
-      target: {
-        hostId: '',
-        ipAddress: '',
-        hardwareAddress: '',
-        systemUUID: ''
-      },
-      options: {
-        configs: false,
-        products: false,
-        productPropeties: false
-      }
-    } as CloneClient
-  }
-}
+//   resetForm () {
+//     this.clientName = ''
+//     this.cloneclient = {
+//       target: {
+//         hostId: '',
+//         ipAddress: '',
+//         hardwareAddress: '',
+//         systemUUID: ''
+//       },
+//       options: {
+//         configs: false,
+//         products: false,
+//         productPropeties: false
+//       }
+//     } as CloneClient
+//   }
+// }
 </script>
 
 <style>
