@@ -19,6 +19,7 @@
         <el-text size="small">{{ selections.selectionClients.length }}</el-text>
       </template>
       <TestEPTreeSelect />
+      <TreeTHostGroups />
     </el-tab-pane>
     <el-tab-pane name="prod">
       <template #label>
@@ -26,6 +27,7 @@
         <el-text size="small">{{ selections.selectionProducts.length }}</el-text>
       </template>
       Product Group
+      <TreeTProductGroups />
     </el-tab-pane>
   </el-tabs>
 
