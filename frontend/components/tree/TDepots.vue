@@ -1,4 +1,11 @@
 <template>
+  <el-card>
+    <el-checkbox-group>
+      <div v-for="item in depotIDList" :key="item">
+        <el-checkbox :label="item" />
+      </div>
+    </el-checkbox-group>
+  </el-card>
   <!-- <LazyTreeTSDefault
     v-if="fetchDepotData"
     v-bind="$props"
@@ -20,22 +27,18 @@
 </template>
 
 <script setup lang="ts">
-// import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
-// import { Icons } from '../../mixins/icons'
-// import { Depot, Client } from '../../mixins/get'
-// import { IObjectString2String } from '../../.utils/types/tgeneral'
-// const selections = namespace('selections')
-
-// @Component({ mixins: [Icons, Depot, Client] })
+import { ref } from 'vue'
+import { useDepot } from '~/composables/mixins/useGet';
+const options = ref<Array<any>>([])
+const depotIDList = ref<Array<any>>([])
+// const data:any = []
+onMounted(async ()=> {
+  await fetch()
+})
+async function fetch() {
+  depotIDList.value = await useDepot().getDepotIdList()
+}
 // export default class TSDepots extends Vue {
-//   icon: any // from mixin
-//   $axios: any
-//   getDepotIdList:any
-//   getClientToDepot:any
-//   @Prop({ default: true }) multi!: boolean
-//   @Prop({ default: false }) open!: boolean
-//   @Prop({ }) classes!: any
-//   @Prop({ default: 'treeselect_short' }) type!: string
 //   @selections.Getter public selectionDepots!: Array<string>
 //   @selections.Getter public selectionClients!: Array<string>
 //   @selections.Mutation public setSelectionClients!: (s: Array<string>) => void
