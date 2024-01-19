@@ -17,7 +17,7 @@
             }"
             >
 
-              <IconIIcon v-if="item.icon" :icon="item.icon"/>
+              <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
               <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
               <!-- <div class="flex-grow" />
                 <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
@@ -36,7 +36,7 @@
       <template v-else>
         <!-- menus without children -->
         <el-menu-item :index="item.route" :route="item.route">
-          <IconIIcon v-if="item.icon" :icon="item.icon"/>
+          <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
             <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
         </el-menu-item>
       </template>
