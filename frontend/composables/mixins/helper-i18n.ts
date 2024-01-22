@@ -6,7 +6,7 @@ export const _getI18nInComposable = () => {
     const t = useI18n({ useScope: 'global'}).t
     if (t != undefined) _t = t
   } catch (error) {
-    console.warn(error)
+    console.debug('its ok...', error)
   }
   if (_t !== undefined) t = _t
   console.debug('use81n.  t  ', t)
