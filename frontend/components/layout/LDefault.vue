@@ -11,7 +11,6 @@
           @toggle-right="()=>toggleSide('right')"
         />
       </el-header>
-
       <el-container
        class="h-screen max-h-screen overflow-hidden"
        :class="{
@@ -63,6 +62,7 @@
 
         <el-aside
           v-if="rightSideVisible"
+          class="border"
           :class="{
             'right-opened': !settings.isMobile && rightSideVisible,
             'w-60': !settings.isMobile,
@@ -77,7 +77,7 @@
             @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
-            'right-0 opacity-100 justify-self-end bg-color border-0': true,
+            'right-0 opacity-100 justify-self-end bg-color border-0 p-2': true,
             'w-80': !settings.isMobile,
             'max-w-full z-30': settings.isMobile,
             }">
