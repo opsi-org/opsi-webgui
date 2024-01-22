@@ -44,7 +44,7 @@
         </b-button>
       </template>
     </GridGFormItem>-->
-    <el-alert v-if="isDisabled" title="Terminal is disabled" type="warning" class="m-2 min-h-10" show-icon />
+    <el-alert v-if="isDisabled" :title="$t('message.warning.terminal.disabled')" type="warning" class="m-2 min-h-10" show-icon />
     <div v-else ref="terminalcontainer"
       class="m-2 max-w-full min-h-3/4 maxheight-top "
       >
@@ -58,20 +58,15 @@
 </template>
 
 <script setup lang="ts">
-
 import 'xterm/css/xterm.css'
 import 'xterm/lib/xterm.js'
 import { useConfigserver } from '~/composables/mixins/useGet';
+import { useNotification } from '~/composables/mixins/useComponent';
 import { useMBus } from '~/composables/mixins/useMessagebus';
 import { Terminal, type ITerminalOptions } from 'xterm'
-// // eslint-disable-next-line import/named
 import { FitAddon } from 'xterm-addon-fit'
-// eslint-disable-next-line import/named
 import { SearchAddon } from 'xterm-addon-search'
-// eslint-disable-next-line import/named
 import { WebLinksAddon } from 'xterm-addon-web-links'
-import { useNotification } from '~/composables/mixins/useComponent';
-// SearchAddon, FitAddon, WebLinksAddon
 
 /*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
@@ -172,6 +167,7 @@ async created () {
   }
 */
 onMounted(async () => {
+  console.log('VAdminTerminal MessageBus: onMounted')
   while (ws.wsBus.value === undefined) {
     console.log('VAdminTerminal MessageBus: wait for wsBus')
     await new Promise(resolve => {
@@ -193,7 +189,11 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  disconnect()
+  try {
+    disconnect()
+  } catch (e) {
+    console.warn('unmounted...', e)
+  }
 })
 function listenScreenResize () {
   window.addEventListener('resize', () => {
@@ -211,7 +211,7 @@ function updateTerminalSize () {
 }
 
 function disconnect () {
-  console.group('VAdminTerminal MessageBus disconnect')
+  console.group('VAdminTerminal MessageBus try disconnect')
   if (mbTerminal.value === undefined) {
     console.log('VAdminTerminal MessageBus: no terminal to disconnect')
     console.groupEnd()
@@ -227,6 +227,7 @@ function disconnect () {
 }
 
 function connect () {
+  console.log('VAdminTerminal MessageBus try connect')
   waitForRefNot (isDisabled, undefined)
   if (isDisabled.value) {
     return
