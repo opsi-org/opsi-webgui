@@ -8,15 +8,17 @@
           <IconIIcon :icon="icons.x"  @click="storeSelection['clearSelection'+category]" />
         </el-button>
       </template>
-      <ul direction="vertical">
-        <li v-for="item in storeSelection['selection'+category]" :key="item">
-          {{ item }}
-          <el-button size="small">
-            <span class="sr-only">{{ $t('button.deselect') }}</span>
-            <IconIIcon :icon="icons.x" @click="storeSelection['delFromSelection'+category]" />
-          </el-button>
-        </li>
-      </ul>
+      <el-scrollbar max-height="250px">
+        <ul direction="vertical">
+          <li v-for="item in storeSelection['selection'+category]" :key="item">
+            {{ item }}
+            <el-button size="small">
+              <span class="sr-only">{{ $t('button.deselect') }}</span>
+              <IconIIcon :icon="icons.x" @click="storeSelection['delFromSelection'+category]" />
+            </el-button>
+          </li>
+        </ul>
+      </el-scrollbar>
     </el-form-item>
   </el-form>
 </template>
