@@ -1,37 +1,43 @@
 <template>
-  <!-- <el-tree
-    :data="productGroup"
-    :render-after-expand="false"
+  <IconILoading v-if="isLoading" />
+  <el-button @click="setCheckedKeys">set by key</el-button>
+  <el-button @click="resetChecked();storeSelection.clearSelectionProducts"> {{$t('table.selection.clear')}}</el-button>
+  <el-tree
+    ref="prodGroupRef"
+    :data="fetchedData"
+    :props="defaultProps"
     show-checkbox
-  /> -->
-  {{ productGroup }}
-  <!-- <IconILoading v-if="isLoading" :small="true" />
-  <TreeTSDefaultGroups
-    v-else
-    id="ProductGroups"
-    :class="classes"
-    :type="type"
+    node-key="text"
+    default-expand-all
+    highlight-current
+    @check-change="handleCheckChange" />
+  <!-- <TreeTSDefaultGroups
     :show-as-multi="multi"
-    :always-open="open"
-    :text="$t('treeselect.prodGroups')"
-    data-testid="TSProductGroups"
-    :text-no-result="$t('treeselect.noresult')"
-    :selection-default="selectionProducts"
-    :fetch-data="fetchData"
-    :disable-root-objects="false"
     :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
     @change="changeSelection"
-  /> -->
+  />  -->
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { ElTree } from 'element-plus'
 import { useNotification } from '~/composables/mixins/useComponent';
-let productGroup = {}
+const isLoading = ref(false)
+interface Tree {
+  name: string
+}
+const prodGroupRef = ref<InstanceType<typeof ElTree>>()
+const defaultProps = {
+  label: 'text',
+  children: 'children'
+}
+const fetchedData = ref<any>({})
 const storeSelection = storeSelections()
 onMounted(async ()=> {
   await fetch()
 })
 async function fetch() {
+  isLoading.value = true
   const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   '/api/opsidata/depots'
   if (error) {
@@ -39,38 +45,40 @@ async function fetch() {
     useNotification().error(error)
     return
   }
-  productGroup = data
-  // productGroup.value = Object.values(data?.groups)
+  fetchedData.value = Object.entries(data?.value?.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children)}))
+  isLoading.value = false
+
+  // TODO: Backend: change groups data structure
+  // needed structure is [
+  //   {
+  //     "id":"software-on-demand",
+  //     "type":"ProductGroup",
+  //     "text":"software-on-demand",
+  //     "parent":"root",
+  //     "children": [
+  //       {"id":"jedit;software-on-demand","type":"ObjectToGroup","text":"jedit","parent":"software-on-demand"},
+  //       {"id":"nextcloud;software-on-demand","type":"ObjectToGroup","text":"nextcloud","parent":"software-on-demand"},
+  //       {"id":"swaudit;software-on-demand","type":"ObjectToGroup","text":"swaudit","parent":"software-on-demand"}
+  //     ]
+  //   }
+  // ]
+
 }
-// import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-// import { Icons } from '../../mixins/icons'
-// const selections = namespace('selections')
+const setCheckedKeys = () => {
+  prodGroupRef.value!.setCheckedKeys(['jedit'], true)
+}
 
-// @Component({ mixins: [Icons] })
-// export default class TSProductGroups extends Vue {
-//   icon: any // from mixin
-//   $axios: any
-//   @Prop({ default: true }) multi!: boolean
-//   @Prop({ default: false }) open!: boolean
-//   @Prop({ }) classes!: any
-//   @Prop({ default: 'treeselect_short' }) type!: string
-//   isLoading: boolean = false
+const resetChecked = () => {
+  prodGroupRef.value!.setCheckedKeys([], false)
+}
 
-//   @selections.Getter public selectionProducts!: Array<string>
-//   @selections.Getter public selectionDepots!: Array<string>
-//   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
-//   @selections.Mutation public pushToSelectionProducts!: (s: string) => void
-//   @selections.Mutation public delFromSelectionProducts!: (s: string) => void
-//   groups: Array<any>|undefined = undefined
-
-//   async fetchData () {
-//     this.isLoading = true
-//     if (this.groups === undefined) { // dont refetch
-//       this.groups = Object.values((await this.$axios.$get(`/api/opsidata/products/groups?selectedProducts=${this.selectionProducts}`)).groups)
-//     }
-//     this.isLoading = false
-//     return this.groups
-//   }
+const handleCheckChange = (
+  data: Tree,
+  checked: boolean
+) => {
+  console.log('Data',JSON.stringify(data)),
+  console.log('checked',JSON.stringify(checked))
+}
 
 //   changeSelection (selection: Event) {
 //     if (selection === undefined) { return }

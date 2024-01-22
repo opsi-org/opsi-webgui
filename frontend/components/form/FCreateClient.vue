@@ -41,6 +41,7 @@
 import { reactive, ref } from 'vue'
 import { useDepot } from '~/composables/mixins/useGet';
 const depotIDList = ref<Array<any>>([])
+  // TODO: Backend: change createClient data structure
 const createClient = reactive({
   basics: {
     hostId: '',
