@@ -32,7 +32,7 @@ onMounted(async ()=> {
   await fetch()
 })
 async function fetch() {
-  const {data, error } = await useApiGETBody(`/api/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   '/api/opsidata/depots'
   if (error) {
     console.log(error)

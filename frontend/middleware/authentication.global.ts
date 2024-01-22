@@ -15,7 +15,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   }
   // const isA:Boolean = storeAuth().isAuthenticated // has old values in store...
   const isA = Boolean(useCookie('opsiconfd-session') && storeAuth().username)
-  // const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('username'))
+  // const isA = Boolean(useCookie('opsiconfd-session') && localStorage.getItem('auth.username'))
 
   console.log('try basepage is', config.public.BASE_PAGE)
   console.log('try isAuthenticated', isA)
