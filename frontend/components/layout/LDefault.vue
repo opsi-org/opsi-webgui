@@ -77,9 +77,9 @@
             @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
-            'right-0 opacity-100 justify-self-end border-0': true,
+            'right-0 opacity-100 justify-self-end bg-color border-0': true,
             'w-80': !settings.isMobile,
-            'max-w-full bg-color z-30': settings.isMobile,
+            'max-w-full z-30': settings.isMobile,
             }">
             <BarBQuickPanel />
           </el-scrollbar>
