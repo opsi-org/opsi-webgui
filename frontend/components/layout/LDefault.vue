@@ -21,6 +21,7 @@
         // 'leftSmall': leftSideIsSmall,
         'left-collapsed': !settings.isMobile && leftSideIsSmall,
         'left-opened': !settings.isMobile && !leftSideIsSmall,
+        'right-opened': !settings.isMobile && rightSideVisible,
        }"
       >
         <el-aside
@@ -49,7 +50,6 @@
 
         <el-main class="z-0 p-2">
           <el-scrollbar
-
             class="p-0 m-0"
             wrap-class="p-0 m-0"
             view-class="p-0 m-0"
@@ -64,6 +64,7 @@
         <el-aside
           v-if="rightSideVisible"
           :class="{
+            'right-opened': !settings.isMobile && rightSideVisible,
             'w-60': !settings.isMobile,
             'absolute right-0 z-20 grid': settings.isMobile
             }"
@@ -221,10 +222,24 @@ async function checkConfig () {
   width: calc(100vw - 240px);
 }
 .left-collapsed .el-main {
+  /* border: 1px solid green; */
   width: calc(100vw - 62px);
   min-width: calc(100vw - 62px);
   max-width: calc(100vw - 62px);
 }
+.right-opened .el-main {
+  /* border: 1px solid blue; */
+  width: calc(100vw - 350px);
+  min-width: calc(100vw - 350px);
+  max-width: calc(100vw - 350px);
+}
+.left-opened.right-opened .el-main {
+  /* border: 1px solid red; */
+  width: calc(100vw - 500px);
+  min-width: calc(100vw - 500px);
+  max-width: calc(100vw - 500px);
+}
+
 .border-r{
   border-color: var(--el-border-color)
 }
