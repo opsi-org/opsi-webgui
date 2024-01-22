@@ -15,10 +15,10 @@
       <el-container
        class="h-screen max-h-screen overflow-hidden"
        :class="{
-        'is-mobile': settings.isMobile,
-        'is-not-mobile': !settings.isMobile,
-        'leftVisible': leftSideVisible,
-        'leftSmall': leftSideIsSmall,
+        // 'is-mobile': settings.isMobile,
+        // 'is-not-mobile': !settings.isMobile,
+        // 'leftVisible': leftSideVisible,
+        // 'leftSmall': leftSideIsSmall,
         'left-collapsed': !settings.isMobile && leftSideIsSmall,
         'left-opened': !settings.isMobile && !leftSideIsSmall,
        }"
@@ -49,12 +49,14 @@
 
         <el-main class="z-0 p-2">
           <el-scrollbar
-            class="p-0 m-0"
+
+            class="p-0 m-0 hidden"
             wrap-class="p-0 m-0"
             view-class="p-0 m-0"
           >
-            <slot />
+            <!-- <slot /> -->
           </el-scrollbar>
+          <slot />
         </el-main>
 
 
