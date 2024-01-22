@@ -23,13 +23,16 @@
     {{ $t('button.logout') }}
   </b-button> -->
   <el-popconfirm
-    title="Logout of opsi-webgui?"
-    confirm-button-text="Logout"
-    cancel-button-text="Cancel"
+    :title="$t('button.logout.confirm')"
+    :confirm-button-text="$t('button.logout.confirm')"
+    :cancel-button-text="$t('button.logout.cancel')"
     @confirm="doLogout"
   >
     <template #reference>
-      <el-button>
+      <el-button
+        class="h-full max-h-full min-h-full border-0 rounded-none"
+        style="--el-border-radius-base: 0px"
+        >
         <IconIIcon :icon="icon.logout" />
         <!-- {{ $t('button.logout') }} -->
       </el-button>
