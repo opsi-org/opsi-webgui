@@ -68,6 +68,7 @@ export const useMBus = () => {
   function wsDisconnect () {
     console.log('MessageBus: disconnect')
     const _ws: WebSocket = wsBus.value as WebSocket
+    if (_ws === undefined) { return }
     _ws.close()
     setBus(undefined)
   }
