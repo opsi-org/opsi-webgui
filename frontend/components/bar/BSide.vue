@@ -1,5 +1,9 @@
 <template>
-  <el-menu router :default-active="useRouter().currentRoute.value?.fullPath" :collapse="!isMobile && isCollapse" class="el-menu-mywrapper overflow-hidden max-w-full"
+  <el-menu router
+    :default-active="useRouter().currentRoute.value?.fullPath"
+    :collapse="!isMobile && isCollapse"
+    class="el-menu-mywrapper overflow-hidden max-w-full"
+    style="--el-menu-icon-width: 244px;"
   >
   <!-- :class="{collapse: !isCollapse}" -->
     <span v-for="item in navItems" :key="item.title">
@@ -16,9 +20,9 @@
               'selected': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
             }"
             >
-
               <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
               <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
+              <div class="min-w-full"></div>
               <!-- <div class="flex-grow" />
                 <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
               </div>
@@ -114,7 +118,7 @@ const navItems = computed<Array<INavItem>>(() =>
 ]
 )
 
-watch(isCollapse, (val) => {
+watch(isCollapse, (val: boolean) => {
   console.log('change isCollapse', val)
   emit('changeSmall', val)
 })
@@ -123,6 +127,7 @@ watch(isCollapse, (val) => {
 <style scoped>
 .contents {
   display: contents !important;
+  /* max-width: 100px !important; */
 }
 .selected {
   color: var(--el-color-primary);
@@ -153,5 +158,19 @@ color: white !important;
   .el-menu-mywrapper  {
     border: 0 !important;
     /* border-color: green !important; */
+  }
+  :deep(.iconify) {
+    min-width: 40px;
+  }
+  :deep(.el-sub-menu__title) {
+    max-width: 100% !important;
+    padding: 5px !important;
+    text-align: left;
+  }
+  .el-menu > span > .el-menu-item {
+    padding-left: 50px !important;
+  }
+  .el-menu-mywrapper > span > .el-menu-item {
+    padding-left: 5px !important;
   }
 </style>

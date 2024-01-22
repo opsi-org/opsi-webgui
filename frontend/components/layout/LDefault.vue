@@ -1,6 +1,7 @@
 <template>
   <div :class="{
-    'is-mobile': settings.isMobile
+    'is-mobile': settings.isMobile,
+    'is-not-mobile': !settings.isMobile,
   }" >
   <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">
@@ -25,7 +26,7 @@
       >
         <el-aside
           v-if="!settings.isMobile || leftSideVisible"
-          class=""
+          class="el-aside-left"
           :class="{
             'absolute z-20 grid w-screen': settings.isMobile
             }"
@@ -33,15 +34,17 @@
           <div
             :class="{
               'hidden': !settings.isMobile,
-              'absolute bg-color opacity-70 z-10 w-screen h-full': settings.isMobile
+              'fixed bg-color opacity-70 z-10 w-screen h-full': settings.isMobile,
+              'border-1 border-red-500': true,
               }"
             @click.self="toggleSide('left')"
           ></div>
           <el-scrollbar :class="{
-            ' border-0 border-r': true,
-            'w-48': !settings.isMobile && !leftSideIsSmall,
+            'border-0 border-r': true,
+            // 'w-48': !settings.isMobile && !leftSideIsSmall,
+            'max-w-full': true,
             'w-16': !settings.isMobile && leftSideIsSmall,
-            'w-2/3 max-w-full z-40 bg-color opacity-100': settings.isMobile,
+            ' z-40 bg-color opacity-100': settings.isMobile,
           }">
             <BarBSide @change-small="setLeftCollapse"/>
           </el-scrollbar>
@@ -64,7 +67,7 @@
           v-if="rightSideVisible"
           class="border"
           :class="{
-            'right-opened': !settings.isMobile && rightSideVisible,
+            'el-aside-right': true,
             'w-60': !settings.isMobile,
             'absolute right-0 z-20 grid': settings.isMobile
             }"
@@ -205,17 +208,38 @@ async function checkConfig () {
   background-color: var(--opsi-general-blue);
   border: 0px;
 }
+.is-not-mobile .left-opened .el-aside-left>.el-scrollbar {
+  max-width: 100%;
+}
+.is-not-mobile .left-opened .el-aside-left {
+  --width: 20%;
+  max-width: var(--width); /* fallback */
+  width: var(--width); /* fallback */
+  /* max-width: calc(100vw - 85%); */
+  /* min-width: 200px; */
+}
+.is-not-mobile .left-collapsed .el-aside-left>.el-scrollbar,
+.is-not-mobile .left-collapsed .el-aside-left {
+  max-width: 65px;
+  min-width: 65px;
+}
+/* .left-collapsed :deep(.el-menu-item) {
+  padding: 5px;
+} */
+/* .is-mobile .el-aside-left {
+  max-width: 400px;
+} */
 .is-mobile .el-aside {
   --height: calc(100% - 40px);
   min-height: var(--height);
   height: var(--height);
   max-height: var(--height);
 
-  width: 100vw !important;
+  /* width: 100vw !important; */
 }
-:not(.is-mobile) .el-aside {
+/* .is-not-mobile .el-aside {
   width: fit-content;
-}
+} */
 .el-main {
 }
 .left-opened .el-main {
