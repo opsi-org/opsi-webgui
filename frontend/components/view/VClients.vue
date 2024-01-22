@@ -13,9 +13,8 @@
     <ButtonBTNRowLink
       :is-pressed="useRouter().currentRoute.value.path.includes('/clients/products/')"
       :icon="icons.product"
-      @click="useRouter().push('/clients/products/LocalbootProduct')"
+      @click="openLink('/clients/products/LocalbootProduct')"
     > Products </ButtonBTNRowLink>
-
     <TableTDefault
       v-if="fetchedData.length > 0 && totalItems > 0"
       row-id="clientId"
@@ -273,6 +272,11 @@ const id = "clients"
 // }
 await useConfigserver(true) // init selectiondepots with configserver
 
+
+function openLink(link: string) {
+  useRouter().push(link)
+}
+
 const route = useRoute()
 const _routeId = route.params.id || ['']
 const _routeLength = _routeId.length
@@ -292,7 +296,7 @@ const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
 })
-const columns = reactive<ITableHeaderRow>({
+const columns = ref<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
       key: 'selected',
@@ -448,20 +452,20 @@ const columns = reactive<ITableHeaderRow>({
       class: 'col-rowactions',
       // cellRenderer: ({rowData}: any) => <el-button type="primary">Edit {rowData.clientId}</el-button>
       cellRenderer: ({rowData}) => {
-        const change = (e: Event)=>{
-          e.stopPropagation()
-          emit('change', rowData.clientId)
-          Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-          rowactionConfigChecked.value[rowData.clientId] = true
-          useRouter().push('/clients/client/config/' + rowData.clientId)
-          console.log('change rowConfig', rowData, e)
-        }
+        // const change = (e: Event)=>{
+        //   e.stopPropagation()
+        //   emit('change', rowData.clientId)
+        //   Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+        //   rowactionConfigChecked.value[rowData.clientId] = true
+        //   useRouter().push('/clients/client/config/' + rowData.clientId)
+        //   console.log('change rowConfig', rowData, e)
+        // }
         return (
         <>
           <buttonBTNRowLink
             is-pressed={rowactionConfigChecked.value[rowData.clientId]}
             icon={icons.settings}
-            onClick={change}
+            onClick={(e: Event) => changeRowLink(e, rowData.clientId)}
           />
         </>
       )},
@@ -471,6 +475,14 @@ const columns = reactive<ITableHeaderRow>({
     //   {/* {rowData.depotId} */}
     // </el-button>
 })
+function changeRowLink(e:Event, id: string) {
+  e.stopPropagation()
+  emit('change', id)
+  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+  rowactionConfigChecked.value[id] = true
+  useRouter().push('/clients/client/config/' + id)
+  console.log('change rowConfig', id, e)
+}
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
 // const handleChange = (id:string) => {
