@@ -166,7 +166,6 @@ const selections = storeSelections()
 <style>
 .quickselection .el-tabs__content{
   min-height: 30vh !important;
-  overflow-x:auto;
   overflow-y: auto;
 }
 
