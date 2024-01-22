@@ -1,17 +1,23 @@
 <template>
-  <div data-testid="CardCSupport">
-    <b-card :title="$t(item.title)" :class="{smallcard: $mq=='mobile', normalcard: $mq=='desktop'}">
-      <b-row>
-        <b-col md="8">
-          <p :class="{smallText: $mq=='mobile', normalText: $mq=='desktop'}">
-            {{ $t(item.description) }}
-          </p>
-        </b-col>
-        <b-col md="4">
-          <a class="btn btn-outline-primary btn-sm border" :class="{smallText: $mq=='mobile', normalText: $mq=='desktop'}" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</a>
-        </b-col>
-      </b-row>
-    </b-card>
+  <div data-testid="CardCSupport"
+      class="h-full min-h-full"
+      >
+    <!-- :class="{smallcard: $mq=='mobile', normalcard: $mq=='desktop'}" -->
+    <el-card
+      shadow="never"
+      body-class="border-0 m-1 max-h-50 max-w-full h-full min-hfull"
+      style="--el-card-padding: 10px;"
+      class="h-full min-h-full"
+      >
+      <template #header>
+        <h5>{{ $t(item.title) }}  <br /></h5>
+      </template>
+
+      <p :class="{smallText: $mq=='mobile', normalText: $mq=='desktop'}">
+        {{ $t(item.description) }}
+      </p>
+      <el-link type="primary" :href="item.link" target="_blank">{{ $t(item.buttonname) }}</el-link>
+    </el-card>
   </div>
 </template>
 
@@ -29,18 +35,13 @@
 // }
 </script>
 <style scoped>
-.smallcard .card-title {
+
+.el-card__header {
   font-weight: bold;
   font-size: 11px;
 }
-.smallText {
-  font-size: 11px;
-}
-.normalcard .card-title {
+.el-card__body {
   font-weight: bold;
   font-size: 14px;
-}
-.normalText {
-  font-size: 13px;
 }
 </style>

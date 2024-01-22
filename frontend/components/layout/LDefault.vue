@@ -5,7 +5,7 @@
   }" >
   <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">
-      <el-header class="min-w-screen max-h-10 p-0">
+      <el-header class="min-w-screen max-h-10 p-0 m-0 border-0">
         <BarBTop
           class="max-h-full max-w-full"
           @toggle-left="()=>toggleSide('left')"
@@ -35,11 +35,12 @@
             :class="{
               'hidden': !settings.isMobile,
               'fixed bg-color opacity-70 z-10 w-screen h-full': settings.isMobile,
-              'border-1 border-red-500': true,
               }"
             @click.self="toggleSide('left')"
           ></div>
-          <el-scrollbar :class="{
+          <el-scrollbar
+            style="border-right: 1px solid var(--el-border-color)"
+            :class="{
             'border-0 border-r': true,
             // 'w-48': !settings.isMobile && !leftSideIsSmall,
             'max-w-full': true,
@@ -65,23 +66,24 @@
 
         <el-aside
           v-if="rightSideVisible"
-          class="border"
+          style="border-left: 1px solid var(--el-border-color)"
+          class="border-l"
           :class="{
             'el-aside-right': true,
-            'w-60': !settings.isMobile,
+            'p-0 w-full': !settings.isMobile,
             'absolute right-0 z-20 grid': settings.isMobile
             }"
         >
           <div
             :class="{
               'hidden': !settings.isMobile,
-              'absolute bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': settings.isMobile
+              'fixed bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': settings.isMobile
             }"
             @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
-            'right-0 opacity-100 justify-self-end bg-color border-0 p-2': true,
-            'w-80': !settings.isMobile,
+            'w-full max-w-full right-0 opacity-100 justify-self-end bg-color border-0 p-2': true,
+            // 'w-80': !settings.isMobile,
             'max-w-full z-30': settings.isMobile,
             }">
             <BarBQuickPanel />
@@ -199,72 +201,61 @@ async function checkConfig () {
   background-color: var(--opsi-general-blue);
   --el-color: green;
 }
+
+
+.el-aside>.el-scrollbar {
+  --width: 100%;
+  max-width: var(--width);
+  min-width: var(--width);
+}
 .el-aside {
-  --height: calc(100% - 0px);
-  min-height: var(--height);
-  height: var(--height);
-  max-height: var(--height);
+  --height: 100%;
+  --minus-height: 0px;
+  min-height: calc(var(--height) - var(--minus-height));
+  height: calc(var(--height) - var(--minus-height));
+  max-height: calc(var(--height) - var(--minus-height));
 
   background-color: var(--opsi-general-blue);
-  border: 0px;
+  --width: 100%; /* fallback */
+  --minus-width: 0px; /* fallback */
+  width: calc(var(--width) - var(--minus-width));
+  min-width: calc(var(--width) - var(--minus-width));
+  max-width: calc(var(--width) - var(--minus-width));
 }
-.is-not-mobile .left-opened .el-aside-left>.el-scrollbar {
-  max-width: 100%;
+.el-aside-left { /*mobile*/
+  --width: 200px;
 }
-.is-not-mobile .left-opened .el-aside-left {
-  --width: 20%;
-  max-width: var(--width); /* fallback */
-  width: var(--width); /* fallback */
-  /* max-width: calc(100vw - 85%); */
-  /* min-width: 200px; */
-}
-.is-not-mobile .left-collapsed .el-aside-left>.el-scrollbar,
-.is-not-mobile .left-collapsed .el-aside-left {
-  max-width: 65px;
-  min-width: 65px;
-}
-/* .left-collapsed :deep(.el-menu-item) {
-  padding: 5px;
-} */
-/* .is-mobile .el-aside-left {
-  max-width: 400px;
-} */
-.is-mobile .el-aside {
-  --height: calc(100% - 40px);
-  min-height: var(--height);
-  height: var(--height);
-  max-height: var(--height);
 
-  /* width: 100vw !important; */
+
+.is-mobile {
+  .el-aside { --minus-height: 40px; }
+  .el-aside-left { --width: 60%; }
+  .el-aside-right { --width: 70%; }
 }
-/* .is-not-mobile .el-aside {
-  width: fit-content;
-} */
+.is-not-mobile {
+  .left-opened .el-aside-left { --width: 20%; }
+  .left-collapsed .el-aside-left {
+    --width: 65px;
+  }
+}
+
+/* .is-not-mobile .left-collapsed .el-aside-left>.el-scrollbar, */
+.el-aside-right { --width: 285px; }
+
+
 .el-main {
+  --minus-width: 0px; /* will be overwritten */
+  --main-width: 100vw;
+  width: calc(var(--main-width) - var(--minus-width));
+  min-width: calc(var(--main-width) - var(--minus-width));
+  max-width: calc(var(--main-width) - var(--minus-width));
 }
-.left-opened .el-main {
-  width: calc(100vw - 240px);
-}
-.left-collapsed .el-main {
-  /* border: 1px solid green; */
-  width: calc(100vw - 62px);
-  min-width: calc(100vw - 62px);
-  max-width: calc(100vw - 62px);
-}
-.right-opened .el-main {
-  /* border: 1px solid blue; */
-  width: calc(100vw - 350px);
-  min-width: calc(100vw - 350px);
-  max-width: calc(100vw - 350px);
-}
-.left-opened.right-opened .el-main {
-  /* border: 1px solid red; */
-  width: calc(100vw - 500px);
-  min-width: calc(100vw - 500px);
-  max-width: calc(100vw - 500px);
-}
+.left-opened:not(.right-opened) .el-main { --minus-width: 200px; }
+.left-opened.right-opened .el-main { --minus-width: 500px; }
+.left-collapsed.right-opened .el-main { --minus-width: 350px; }
+.left-collapsed:not(.right-opened) .el-main { --minus-width: 70px; }
 
-.border-r{
+.border-r {
   border-color: var(--el-border-color)
 }
 </style>

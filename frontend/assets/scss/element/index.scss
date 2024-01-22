@@ -3,6 +3,7 @@
 
 
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  // --el-card-bg-color: #3f3f3e !important
   // overwrite whats needed
   $colors: colors.$plus-theme-colors,
   // $bg-color:(
@@ -10,6 +11,9 @@
   //   'page': #f2f3f5,
   //   'overlay': #ffffff,
   // ),
+  $card: (
+    'bg-color': #3f3f3e,
+  ),
   $border-color: (
     '': #dcdfe600,
     // 'light': #e4e7ed,

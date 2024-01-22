@@ -22,7 +22,7 @@ IFilter.args = {
 
 import { loginlogout } from '~/histoire/histoire-utils';
 import {generateColumns, generateNumbers} from '~/histoire/histoire-utils-data'
-import TTheme from '~/components/test/Theme.vue'
+// import TTheme from '~/components/test/Theme.vue'
 const _columns = generateColumns(4)
 const columns: any = {
   selected: {key: 'selected',
@@ -71,7 +71,7 @@ const data = {
     </Variant>
 
     <Variant title="desktop" responsive-disabled>
-      <TTheme />
+      <!-- <TTheme /> -->
       <InputIFilter
         :data="data.tableInfo"
         :filterable-columns="Object.values(columns)"
