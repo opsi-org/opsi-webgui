@@ -1,11 +1,12 @@
 <template>
   <div data-testid="VSupport" class="w-100 min-w-1/1">
     <!-- CurrentVersion: {{ $config.public.packageVersion }} -->
-    <div class="w-100 flex justify-between mb-1">
+    <div class="grid grid-cols-2 content-stretch mb-2 items-stretch">
       <div v-for="(item,i) in supportItems" :key="item.title"
         :class="{
-          'ml-0 mr-1': i === 0,
-          'mr-0 ml-1': i === supportItems.length - 1,
+          'ml-0 mr-0': i === 0,
+          'mr-0 ml-0': i === supportItems.length - 1,
+          'w-full': true
         }"
         >
         <CardCSupport :item="item" />

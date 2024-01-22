@@ -5,7 +5,7 @@
   }" >
   <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">
-      <el-header class="min-w-screen max-h-10 p-0">
+      <el-header class="min-w-screen max-h-10 p-0 m-0 border-0">
         <BarBTop
           class="max-h-full max-w-full"
           @toggle-left="()=>toggleSide('left')"
@@ -38,7 +38,9 @@
               }"
             @click.self="toggleSide('left')"
           ></div>
-          <el-scrollbar :class="{
+          <el-scrollbar
+            style="border-right: 1px solid var(--el-border-color)"
+            :class="{
             'border-0 border-r': true,
             // 'w-48': !settings.isMobile && !leftSideIsSmall,
             'max-w-full': true,
@@ -64,7 +66,8 @@
 
         <el-aside
           v-if="rightSideVisible"
-          class="border-l border-gray-600"
+          style="border-left: 1px solid var(--el-border-color)"
+          class="border-l"
           :class="{
             'el-aside-right': true,
             'p-0 w-full': !settings.isMobile,

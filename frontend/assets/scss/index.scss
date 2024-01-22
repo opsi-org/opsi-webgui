@@ -53,9 +53,11 @@ body[data-bs-theme="dark"] {
   --el-bg-color: #3f3f3e;
   --bs-body-bg: var(--el-bg-color);
   --bg-color: var(--el-bg-color);
+  --el-bg-color-overlay: #4b4b49 !important;
   // --fg-color: var(--el-text-color-primary);
   --fg-color: #E1E1E1;
   --el-text-color-primary: #E1E1E1;
+
   // --el-text-color-regular: #CFD3DC;
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
