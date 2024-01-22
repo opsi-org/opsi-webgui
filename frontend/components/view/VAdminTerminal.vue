@@ -283,6 +283,15 @@ function connect () {
       // if (r) mbTerminal.value.fitAddon.fit()
     }
   })
+
+  // Why does html tag has visible scroll bar ?
+  // => After connecting with terminal a div apears with 50000 width. this causes scrollbar to appear. We hide the horizontal scrollbar here (hopefully temporary:
+  const elHtml = document.getElementsByTagName('html')[0]
+  console.log('element to hide', elHtml)
+  if (elHtml) {
+    elHtml.style['overflow-x'] = 'hidden'
+  }
+
   console.groupEnd()
 }
 
