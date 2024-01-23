@@ -43,12 +43,12 @@
   </el-popconfirm>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useIcons } from '@/composables/mixins/useIcons'
 import { useNotification } from '../../composables/mixins/useComponent'
-const isMobile = useMQ().isMobile
+const isMobile = ref(useMQ().isMobile.value)
 watch(() => useMQ().isMobile, () => {
-  isMobile.value = useMQ().isMobile
+  isMobile.value = useMQ().isMobile.value
 })
 const icon = useIcons()
 const notificationError = useNotification().error

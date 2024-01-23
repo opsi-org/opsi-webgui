@@ -16,7 +16,8 @@
       <el-text tag="b" size="small"> {{$t('title.settings')}}</el-text><br>
       <FormitemDDTheme />
       <FormitemDDLang />
-      <ButtonBTNLogout v-if="$mq.isMobile" />
+      <br />
+      <ButtonBTNLogout v-if="useMQ().isMobile.value" />
     <!-- </div> -->
   </div>
   <!-- <b-sidebar
@@ -75,7 +76,6 @@
 
 <script setup lang="ts">
 const changes = storeChanges()
-const $mq = useMQ()
 // import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
 // const cache = namespace('data-cache')
