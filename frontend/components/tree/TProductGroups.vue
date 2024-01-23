@@ -1,5 +1,7 @@
 <template>
   <IconILoading v-if="isLoading" />
+  <el-button @click="getCheckedNodes">get by node</el-button>
+  <el-button @click="getCheckedKeys">get by key</el-button>
   <el-button @click="syncSelection">Sync Selection</el-button>
   <el-button @click="clearSelection"> {{$t('table.selection.clear')}}</el-button>
   <el-tree
@@ -40,7 +42,6 @@ async function fetch() {
   isLoading.value = true
   const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
-    console.log(error)
     useNotification().error(error)
     isLoading.value = false
     return
@@ -67,7 +68,7 @@ async function fetch() {
 
 }
 const syncSelection = () => {
-  prodGroupRef.value!.setCheckedKeys(storeSelection.selectionProducts, true)
+  prodGroupRef.value!.setCheckedKeys(storeSelection.selectionProducts, false)
 }
 
 const clearSelection = () => {
@@ -75,6 +76,12 @@ const clearSelection = () => {
   storeSelection.clearSelectionProducts()
 }
 
+const getCheckedNodes = () => {
+  console.log(JSON.stringify(prodGroupRef.value!.getCheckedNodes(false, false)))
+}
+const getCheckedKeys = () => {
+  console.log(JSON.stringify(prodGroupRef.value!.getCheckedKeys(false)))
+}
 const handleCheckChange = (
   data: Tree,
   checked: boolean
