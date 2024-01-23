@@ -20,6 +20,10 @@ export const callStoryIdMock = async (page, fullId, id, path, result) => {
   await apiMock(page, path, result)
 }
 // export const callStoryId = (page, fullId, id) => this.callStory(page, `iframe.html?id=${fullId}--${id}&args=&viewMode=story'`)
+export const callStory2Id = async (page, folder, filename, variantId) => {
+  const x = `https://localhost:6006/__sandbox.html?storyId=components-${folder}-${filename}&variantId=components-${folder}-${filename}-${variantId}`
+  await page.goto(x)
+}
 export const callStoryId = async (page, fullId, id) => await page.goto(`http://localhost:3003/iframe.html?viewMode=story&id=${fullId}--${id}&args=`)
 // export const callStory = (page, path) => page.goto(`http://localhost:3003/${path}`)
 export const callStory = (page, path) => page.goto(`http://localhost:3003/?path=${path}`)

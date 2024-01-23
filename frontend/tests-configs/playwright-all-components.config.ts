@@ -8,7 +8,7 @@ const config = {
   // testDir: '../../../../', // /workspace/opsiweb
   // timeout: 1000 * 15, // 1ms * x sec
   testDir: '../', // /workspace/opsiweb/uib-components
-  testMatch: '*.test.component.js',
+  testMatch: '*.test.component.*(js|ts)',
   fullyParallel: true,
   reporter: [
     ['list'],
@@ -22,5 +22,5 @@ const config = {
   timeout: 5 * 60 * 1000
 }
 
-module.exports = config
-export default {config}
+// module.exports = config
+export default config

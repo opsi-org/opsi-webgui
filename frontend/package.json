@@ -25,7 +25,8 @@
     "story:dev": "NODE_ENV=development histoire dev",
     "story:build": "NODE_ENV=development histoire build",
     "story:preview": "NODE_ENV=development histoire preview",
-    "pwtest:usecase": "playwright test -c tests-configs/playwright-all-usecases.config.ts"
+    "pwtest:usecase": "playwright test -c tests-configs/playwright-all-usecases.config.ts",
+    "pwtest:components": "playwright test -c tests-configs/playwright-all-components.config.ts"
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.0.0-beta2",
