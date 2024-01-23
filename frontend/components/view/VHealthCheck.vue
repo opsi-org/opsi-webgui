@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VHealthCheck">
+  <!-- <div data-testid="VHealthCheck">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <BarBPageHeader>
       <template #left>
@@ -67,36 +67,36 @@
         <br>
       </span>
     </DivDScrollResult>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { AlertToast } from '../../mixins/component'
-import { Icons } from '../../mixins/icons'
-@Component({ mixins: [Icons, AlertToast] })
-export default class VHealthCheck extends Vue {
-  showToastError: any // mixin
-  icon: any
-  $mq: any
-  $axios: any
-  $t:any
+// import { Component, Vue } from 'nuxt-property-decorator'
+// import { AlertToast } from '../../mixins/component'
+// import { Icons } from '../../mixins/icons'
+// @Component({ mixins: [Icons, AlertToast] })
+// export default class VHealthCheck extends Vue {
+//   showToastError: any // mixin
+//   icon: any
+//   $mq: any
+//   $axios: any
+//   $t:any
 
-  healthcheckdata: Array<any> = []
-  filter: string = ''
-  expandHCD: boolean = false
+//   healthcheckdata: Array<any> = []
+//   filter: string = ''
+//   expandHCD: boolean = false
 
-  getVariant (status: any) {
-    if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
-  }
+//   getVariant (status: any) {
+//     if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
+//   }
 
-  async fetch () {
-    await this.$axios.$get('/api/opsidata/server/health')
-      .then((response) => {
-        this.healthcheckdata = response
-      }).catch((error) => {
-        this.showToastError(error)
-      })
-  }
-}
+//   async fetch () {
+//     await this.$axios.$get('/api/opsidata/server/health')
+//       .then((response) => {
+//         this.healthcheckdata = response
+//       }).catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
+// }
 </script>

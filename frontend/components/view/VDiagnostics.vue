@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VDiagnostics">
+  <!-- <div data-testid="VDiagnostics">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <BarBPageHeader>
       <template #left>
@@ -49,50 +49,50 @@
         </b-collapse>
       </span>
     </DivDScrollResult>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { AlertToast } from '../../mixins/component'
-import { Icons } from '../../mixins/icons'
-@Component({ mixins: [Icons, AlertToast] })
-export default class VDiagnostics extends Vue {
-  showToastError: any
-  icon: any
-  $axios: any
-  $t:any
+// import { Component, Vue } from 'nuxt-property-decorator'
+// import { AlertToast } from '../../mixins/component'
+// import { Icons } from '../../mixins/icons'
+// @Component({ mixins: [Icons, AlertToast] })
+// export default class VDiagnostics extends Vue {
+//   showToastError: any
+//   icon: any
+//   $axios: any
+//   $t:any
 
-  diagnosticdata: Array<any> = []
-  onlyDiagnostics: any = []
-  filter: string = ''
-  expandAll: boolean = false
+//   diagnosticdata: Array<any> = []
+//   onlyDiagnostics: any = []
+//   filter: string = ''
+//   expandAll: boolean = false
 
-  async fetch () {
-    await this.fetchDiagnosticData()
-  }
+//   async fetch () {
+//     await this.fetchDiagnosticData()
+//   }
 
-  async fetchDiagnosticData () {
-    await this.$axios.$get('/api/opsidata/server/diagnostic')
-      .then((response) => {
-        this.diagnosticdata = response
-        this.onlyDiagnostics = response
-        if (this.onlyDiagnostics.length !== 0 && this.onlyDiagnostics.health_check) { delete this.onlyDiagnostics.health_check }
-      }).catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async fetchDiagnosticData () {
+//     await this.$axios.$get('/api/opsidata/server/diagnostic')
+//       .then((response) => {
+//         this.diagnosticdata = response
+//         this.onlyDiagnostics = response
+//         if (this.onlyDiagnostics.length !== 0 && this.onlyDiagnostics.health_check) { delete this.onlyDiagnostics.health_check }
+//       }).catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  downloadHealthData () {
-    const text = JSON.stringify(this.diagnosticdata, null, 2)
-    const filename = 'server_diagnostics.json'
-    const element = document.createElement('a')
-    element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text))
-    element.setAttribute('download', filename)
-    element.style.display = 'none'
-    document.body.appendChild(element)
-    element.click()
-    document.body.removeChild(element)
-  }
-}
+//   downloadHealthData () {
+//     const text = JSON.stringify(this.diagnosticdata, null, 2)
+//     const filename = 'server_diagnostics.json'
+//     const element = document.createElement('a')
+//     element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text))
+//     element.setAttribute('download', filename)
+//     element.style.display = 'none'
+//     document.body.appendChild(element)
+//     element.click()
+//     document.body.removeChild(element)
+//   }
+// }
 </script>
