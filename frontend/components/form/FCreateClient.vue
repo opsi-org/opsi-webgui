@@ -14,7 +14,7 @@
             <div v-for="(value, label, index) in createClient.initialSetup.opsiClientAgent">
               <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
               <el-form-item v-else  :label="$t('table.fields.' + label)" :class="{'d-none' : !createClient.initialSetup.opsiClientAgent.setup}">
-                <el-input v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
+                <el-input v-model="createClient.initialSetup.opsiClientAgent[label.toString()]"/>
               </el-form-item>
             </div>
           </el-form>
@@ -27,19 +27,21 @@
             />
           </el-select>
           <el-checkbox v-else-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
-          <el-input v-else v-model="createClient[category][label]" />
+          <el-input v-else v-model="createClient[category][label]" :id="label"/>
         </el-form-item>
       </div>
     </div>
     <el-form-item>
       <el-button @click="resetForm()"> {{ $t('button.reset') }}</el-button>
-      <el-button type="primary">{{ $t('button.create') }}</el-button>
+      <el-button data-testid="clientCreate_addButton" type="primary" @click="createClientBtn">{{ $t('button.create') }}</el-button>
     </el-form-item>
   </el-form>
 </template>
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import { useNotification } from '~/composables/mixins/useComponent';
 import { useDepot } from '~/composables/mixins/useGet';
+const $t = useI18n().t
 const depotIDList = ref<Array<any>>([])
   // TODO: Backend: change createClient data structure
 const createClient = reactive({
@@ -103,6 +105,10 @@ function resetForm () {
       uefi: false
     }
   })
+}
+
+function createClientBtn() {
+  useNotification().success($t('message.success.createClient', { client: createClient.basics.hostId }))
 }
 </script>
 
