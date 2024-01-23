@@ -26,9 +26,9 @@
               <template v-else>
                 <el-button :aria-label="$t('group.editGroup')"> <IconIIcon :icon="icons.pencil" /> </el-button>
                   <el-button :aria-label="$t('group.deletegroup')"> <IconIIcon :icon="icons.delete" /> </el-button>
-                  <el-button :aria-label="$t('group.deleteOnlyAssignments')"><IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.delete" /></el-button>
-                  <el-button :aria-label="$t('group.addToGroup')"> <IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.add" /> </el-button>
-                  <el-button :aria-label="$t('group.addSubgroup')"> <IconIIcon :icon="icons.group" /> <IconIIcon :icon="icons.add" /></el-button>
+                  <el-button :aria-label="$t('group.deleteOnlyAssignments')"><IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.delete" class="mt-2" /></el-button>
+                  <el-button :aria-label="$t('group.addToGroup')"> <IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.add" class="mt-2" /> </el-button>
+                  <el-button :aria-label="$t('group.addSubgroup')"> <IconIIcon :icon="icons.group" /> <IconIIcon :icon="icons.add" class="mt-2" /></el-button>
               </template>
             </template>
           </el-tree>
