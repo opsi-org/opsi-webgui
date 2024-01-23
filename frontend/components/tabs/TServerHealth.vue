@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="TServerHealth">
+  <!-- <div data-testid="TServerHealth">
     <b-tabs small lazy>
       <b-tab :title="$t('title.healthcheck')" active>
         <ViewVHealthCheck />
@@ -8,13 +8,13 @@
         <ViewVDiagnostics />
       </b-tab>
     </b-tabs>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { Icons } from '../../mixins/icons'
-@Component({ mixins: [Icons] })
-export default class TServerHealth extends Vue {
-}
+// import { Component, Vue } from 'nuxt-property-decorator'
+// import { Icons } from '../../mixins/icons'
+// @Component({ mixins: [Icons] })
+// export default class TServerHealth extends Vue {
+// }
 </script>
