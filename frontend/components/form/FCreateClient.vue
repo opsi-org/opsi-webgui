@@ -27,7 +27,7 @@
             />
           </el-select>
           <el-checkbox v-else-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
-          <el-input v-else v-model="createClient[category][label]" :id="label"/>
+          <el-input v-else v-model="createClient[category][label]" :data-testid="label"/>
         </el-form-item>
       </div>
     </div>
