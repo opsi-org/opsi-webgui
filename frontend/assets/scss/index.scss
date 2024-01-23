@@ -56,7 +56,7 @@ body[data-bs-theme="light"] {
   }
 
   .text-on-primary {
-    --el-text-color-regular: var(--el-bg-color);
+    --el-text-color-regular: var(--opsi-genral-white);
     color: var(--el-text-color-regular);
   }
 }

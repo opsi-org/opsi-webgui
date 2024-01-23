@@ -33,7 +33,7 @@
           <!-- sub menus -->
           <span v-for="sub in item.submenu" :key="sub.title" >
             <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route"
-            :data-testid="'NSidebar-' + item.title" class="text-on-primary">
+            :data-testid="'NICollapsible-submenu-' + sub.title" class="text-on-primary">
               <span class="text-on-primary">{{ $t(sub.title) }}</span>
             </el-menu-item>
           </span>
@@ -42,7 +42,8 @@
       </template>
       <template v-else>
         <!-- menus without children -->
-        <el-menu-item :index="item.route" :route="item.route" class="text-on-primary">
+        <el-menu-item :index="item.route" :route="item.route" class="text-on-primary"
+        :data-testid="'NSidebar-' + item.title">
           <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
             <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
         </el-menu-item>
