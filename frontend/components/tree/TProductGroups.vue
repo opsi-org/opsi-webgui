@@ -39,13 +39,15 @@ onMounted(async ()=> {
 async function fetch() {
   isLoading.value = true
   const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
-  '/api/opsidata/depots'
   if (error) {
     console.log(error)
     useNotification().error(error)
+    isLoading.value = false
     return
   }
-  fetchedData.value = Object.entries(data?.value?.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children)}))
+  fetchedData.value = data.value.groups ?
+                        Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
+                        : []
   isLoading.value = false
 
   // TODO: Backend: change groups data structure
