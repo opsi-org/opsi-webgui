@@ -1,7 +1,7 @@
 <template>
   <IconILoading v-if="isLoading" />
-  <el-button @click="setCheckedKeys">set by key</el-button>
-  <el-button @click="resetChecked();storeSelection.clearSelectionProducts"> {{$t('table.selection.clear')}}</el-button>
+  <el-button @click="syncSelection">Sync Selection</el-button>
+  <el-button @click="clearSelection"> {{$t('table.selection.clear')}}</el-button>
   <el-tree
     ref="prodGroupRef"
     :data="fetchedData"
@@ -66,12 +66,13 @@ async function fetch() {
   // ]
 
 }
-const setCheckedKeys = () => {
-  prodGroupRef.value!.setCheckedKeys(['jedit'], true)
+const syncSelection = () => {
+  prodGroupRef.value!.setCheckedKeys(storeSelection.selectionProducts, true)
 }
 
-const resetChecked = () => {
+const clearSelection = () => {
   prodGroupRef.value!.setCheckedKeys([], false)
+  storeSelection.clearSelectionProducts()
 }
 
 const handleCheckChange = (
