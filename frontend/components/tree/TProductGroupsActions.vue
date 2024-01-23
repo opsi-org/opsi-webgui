@@ -1,5 +1,5 @@
 <template>
-  <div class="VGroups" data-testid="VGroups">
+  <!-- <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
     <b-row>
@@ -53,7 +53,7 @@
                   @click="showChild('addToGroup')"
                 >
                   <IconIIcon :icon="icon.product" /><IconIIcon :icon="icon.add" font-scale="0.8" />
-                </b-button>
+                </b-button> -->
                 <!-- <b-button
                   class="border-0"
                   variant="outline-primary"
@@ -63,7 +63,7 @@
                 >
                   <IconIIcon :icon="icon.group" /><IconIIcon :icon="icon.add" font-scale="0.8" />
                 </b-button> -->
-              </div>
+              <!-- </div>
             </template>
             <template v-else>
               {{ node.label }}
@@ -87,7 +87,7 @@
         <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
           <IconIIcon :icon="icon.x" />
         </b-button>
-        <br><br>
+        <br><br> -->
         <!-- <template v-if="action == 'addSubgroup'">
           <b-form>
             <b-form-input
@@ -119,7 +119,7 @@
             </b-button>
           </b-form>
         </template> -->
-        <template v-if="action == 'addToGroup'">
+        <!-- <template v-if="action == 'addToGroup'">
           <b-form-select
             v-model="selectedProducts"
             multiple
@@ -184,179 +184,179 @@
         </template>
       </b-col>
     </b-row>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
-import { Component, namespace, Vue } from 'nuxt-property-decorator'
-import { Icons } from '../../mixins/icons'
-import { Client } from '../../mixins/get'
-import { Group } from '../../mixins/post'
-import { Strings } from '../../mixins/strings'
-import { AlertToast } from '../../mixins/component'
-const selections = namespace('selections')
-@Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
-export default class VGroups extends Vue {
-  showToastSuccess: any // from mixin AlertToast
-  showToastError: any // from mixin AlertToast
-  icon:any
-  t_fixed: any
-  $t:any
-  $axios: any
-  node: any
-  action: string = ''
-  title: string = ''
-  productIds: Array<string> = []
-  selectedProducts: Array<string> = []
-  group: Array<object>|undefined = undefined
-  updategroupparent: any = null
-  selectedvalue: any = null
-  subgroup: any = {
-    parentGroupId: '',
-    groupId: '',
-    description: '',
-    notes: ''
-  }
+// import { Component, namespace, Vue } from 'nuxt-property-decorator'
+// import { Icons } from '../../mixins/icons'
+// import { Client } from '../../mixins/get'
+// import { Group } from '../../mixins/post'
+// import { Strings } from '../../mixins/strings'
+// import { AlertToast } from '../../mixins/component'
+// const selections = namespace('selections')
+// @Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
+// export default class VGroups extends Vue {
+//   showToastSuccess: any // from mixin AlertToast
+//   showToastError: any // from mixin AlertToast
+//   icon:any
+//   t_fixed: any
+//   $t:any
+//   $axios: any
+//   node: any
+//   action: string = ''
+//   title: string = ''
+//   productIds: Array<string> = []
+//   selectedProducts: Array<string> = []
+//   group: Array<object>|undefined = undefined
+//   updategroupparent: any = null
+//   selectedvalue: any = null
+//   subgroup: any = {
+//     parentGroupId: '',
+//     groupId: '',
+//     description: '',
+//     notes: ''
+//   }
 
-  updategroup = {
-    parent: '',
-    description: '',
-    notes: ''
-  }
+//   updategroup = {
+//     parent: '',
+//     description: '',
+//     notes: ''
+//   }
 
-  @selections.Getter public selectionDepots!: Array<string>
+//   @selections.Getter public selectionDepots!: Array<string>
 
-  normalizer (node: any) {
-    if (node.children) {
-      return {
-        id: node.id,
-        label: node.text,
-        children: node.children ? Object.values(node.children) : {}
-      }
-    }
-    return {
-      id: node.id,
-      label: node.text,
-      children: node.type === 'ProductGroup' ? [] : undefined
-    }
-  }
+//   normalizer (node: any) {
+//     if (node.children) {
+//       return {
+//         id: node.id,
+//         label: node.text,
+//         children: node.children ? Object.values(node.children) : {}
+//       }
+//     }
+//     return {
+//       id: node.id,
+//       label: node.text,
+//       children: node.type === 'ProductGroup' ? [] : undefined
+//     }
+//   }
 
-  normalizerUpdateGroup (node: any) {
-    return {
-      id: node.id,
-      label: node.text,
-      isDisabled: node.type === 'ObjectToGroup',
-      children: node.children ? Object.values(node.children) : {}
-    }
-  }
+//   normalizerUpdateGroup (node: any) {
+//     return {
+//       id: node.id,
+//       label: node.text,
+//       isDisabled: node.type === 'ObjectToGroup',
+//       children: node.children ? Object.values(node.children) : {}
+//     }
+//   }
 
-  async fetch () {
-    await this.fetchGroups()
-    await this.fetchProducts()
-  }
+//   async fetch () {
+//     await this.fetchGroups()
+//     await this.fetchProducts()
+//   }
 
-  async reloadGroup () {
-    this.action = ''
-    await this.fetchGroups()
-    this.selectedvalue = null
-  }
+//   async reloadGroup () {
+//     this.action = ''
+//     await this.fetchGroups()
+//     this.selectedvalue = null
+//   }
 
-  async fetchProducts () {
-    await this.$axios.$get(`/api/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${this.selectionDepots}`)
-      .then((response) => {
-        this.productIds = response.map(function (item) {
-          return item.productId
-        })
-      }).catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async fetchProducts () {
+//     await this.$axios.$get(`/api/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${this.selectionDepots}`)
+//       .then((response) => {
+//         this.productIds = response.map(function (item) {
+//           return item.productId
+//         })
+//       }).catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  async fetchGroups () {
-    this.group = undefined
-    const result = await this.$axios.$get('/api/opsidata/products/groups')
-    this.group = Object.values(result?.groups)
-  }
+//   async fetchGroups () {
+//     this.group = undefined
+//     const result = await this.$axios.$get('/api/opsidata/products/groups')
+//     this.group = Object.values(result?.groups)
+//   }
 
-  showChild (selectedAction: string) {
-    this.action = selectedAction
-    const groupaction = 'group.' + this.action
-    this.title = this.$t(groupaction)
-  }
+//   showChild (selectedAction: string) {
+//     this.action = selectedAction
+//     const groupaction = 'group.' + this.action
+//     this.title = this.$t(groupaction)
+//   }
 
-  async createSubGroup () {
-    this.subgroup.parentGroupId = this.selectedvalue.text
-    await this.$axios.$post('/api/opsidata/products/groups', this.subgroup)
-      .then(async () => {
-        this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
-        await this.reloadGroup()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async createSubGroup () {
+//     this.subgroup.parentGroupId = this.selectedvalue.text
+//     await this.$axios.$post('/api/opsidata/products/groups', this.subgroup)
+//       .then(async () => {
+//         this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
+//         await this.reloadGroup()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  async updateGroup () {
-    this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
-    await this.$axios.$put(`/api/opsidata/products/groups/${this.selectedvalue.text}`, this.updategroup)
-      .then(async () => {
-        this.showToastSuccess(this.$t('message.success.save.update.group', { group: this.selectedvalue.text }))
-        await this.reloadGroup()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async updateGroup () {
+//     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
+//     await this.$axios.$put(`/api/opsidata/products/groups/${this.selectedvalue.text}`, this.updategroup)
+//       .then(async () => {
+//         this.showToastSuccess(this.$t('message.success.save.update.group', { group: this.selectedvalue.text }))
+//         await this.reloadGroup()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  async addProducts () {
-    await this.$axios.$post(`/api/opsidata/products/groups/${this.selectedvalue.text}/products`, this.selectedProducts)
-      .then(async () => {
-        this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
-        await this.reloadGroup()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async addProducts () {
+//     await this.$axios.$post(`/api/opsidata/products/groups/${this.selectedvalue.text}/products`, this.selectedProducts)
+//       .then(async () => {
+//         this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
+//         await this.reloadGroup()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  async deleteGroup () {
-    await this.$axios.$get(`/api/opsidata/products/groups/${this.selectedvalue.text}`)
-      .then(async () => {
-        this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
-        await this.reloadGroup()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async deleteGroup () {
+//     await this.$axios.$get(`/api/opsidata/products/groups/${this.selectedvalue.text}`)
+//       .then(async () => {
+//         this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
+//         await this.reloadGroup()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  async removeAllProducts () {
-    await this.$axios.$delete(`/api/opsidata/products/groups/${this.selectedvalue.text}/products`)
-      .then(async () => {
-        this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
-        await this.reloadGroup()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async removeAllProducts () {
+//     await this.$axios.$delete(`/api/opsidata/products/groups/${this.selectedvalue.text}/products`)
+//       .then(async () => {
+//         this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
+//         await this.reloadGroup()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  async removeSelectedProduct () {
-    const group = this.selectedvalue.parent
-    await this.$axios.$delete(`/api/opsidata/products/groups/${group}/${this.selectedvalue.text}`)
-      .then(async () => {
-        this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
-        await this.reloadGroup()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-  }
-}
+//   async removeSelectedProduct () {
+//     const group = this.selectedvalue.parent
+//     await this.$axios.$delete(`/api/opsidata/products/groups/${group}/${this.selectedvalue.text}`)
+//       .then(async () => {
+//         this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
+//         await this.reloadGroup()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
+// }
 </script>
 <style>
-.groupstabs .tab-content {
+/* .groupstabs .tab-content {
   height: 82vh;
   margin: 10px;
-}
+} */
 </style>
