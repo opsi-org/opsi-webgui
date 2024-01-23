@@ -48,7 +48,7 @@ const useAPI2 = async (
       // details: ''
     }}}
     callerror = errordata
-
+    console.log('onResponseError', errordata)
     if (res.statusCode.value === 401) {
       storeAuth().logout()
       storeAuth().clearSession()

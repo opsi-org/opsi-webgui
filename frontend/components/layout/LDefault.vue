@@ -1,7 +1,7 @@
 <template>
   <div :class="{
-    'is-mobile': settings.isMobile,
-    'is-not-mobile': !settings.isMobile,
+    'is-mobile': useMQ().isMobile.value,
+    'is-not-mobile': !useMQ().isMobile.value,
   }" >
   <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">
@@ -15,26 +15,26 @@
       <el-container
        class="h-screen max-h-screen overflow-hidden"
        :class="{
-        // 'is-mobile': settings.isMobile,
-        // 'is-not-mobile': !settings.isMobile,
+        // 'is-mobile': useMQ().isMobile.value,
+        // 'is-not-mobile': !useMQ().isMobile.value,
         // 'leftVisible': leftSideVisible,
         // 'leftSmall': leftSideIsSmall,
-        'left-collapsed': !settings.isMobile && leftSideIsSmall,
-        'left-opened': !settings.isMobile && !leftSideIsSmall,
-        'right-opened': !settings.isMobile && rightSideVisible,
+        'left-collapsed': !useMQ().isMobile.value && leftSideIsSmall,
+        'left-opened': !useMQ().isMobile.value && !leftSideIsSmall,
+        'right-opened': !useMQ().isMobile.value && rightSideVisible,
        }"
       >
         <el-aside
-          v-if="!settings.isMobile || leftSideVisible"
+          v-if="!useMQ().isMobile.value || leftSideVisible"
           class="el-aside-left"
           :class="{
-            'absolute z-20 grid w-screen': settings.isMobile
+            'absolute z-20 grid w-screen': useMQ().isMobile.value
             }"
         >
           <div
             :class="{
-              'hidden': !settings.isMobile,
-              'fixed bg-color opacity-70 z-10 w-screen h-full': settings.isMobile,
+              'hidden': !useMQ().isMobile.value,
+              'fixed bg-color opacity-70 z-10 w-screen h-full': useMQ().isMobile.value,
               }"
             @click.self="toggleSide('left')"
           ></div>
@@ -42,10 +42,10 @@
             style="border-right: 1px solid var(--el-border-color)"
             :class="{
             'border-0 border-r': true,
-            // 'w-48': !settings.isMobile && !leftSideIsSmall,
+            // 'w-48': !useMQ().isMobile.value && !leftSideIsSmall,
             'max-w-full': true,
-            'w-16': !settings.isMobile && leftSideIsSmall,
-            ' z-40 bg-color opacity-100': settings.isMobile,
+            'w-16': !useMQ().isMobile.value && leftSideIsSmall,
+            ' z-40 bg-color opacity-100': useMQ().isMobile.value,
           }">
             <BarBSide @change-small="setLeftCollapse"/>
           </el-scrollbar>
@@ -70,21 +70,21 @@
           class="border-l"
           :class="{
             'el-aside-right': true,
-            'p-0 w-full': !settings.isMobile,
-            'absolute right-0 z-20 grid': settings.isMobile
+            'p-0 w-full': !useMQ().isMobile.value,
+            'absolute right-0 z-20 grid': useMQ().isMobile.value
             }"
         >
           <div
             :class="{
-              'hidden': !settings.isMobile,
-              'fixed bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': settings.isMobile
+              'hidden': !useMQ().isMobile.value,
+              'fixed bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': useMQ().isMobile.value
             }"
             @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
             'w-full max-w-full right-0 opacity-100 justify-self-end bg-color border-0 p-2': true,
-            // 'w-80': !settings.isMobile,
-            'max-w-full z-30': settings.isMobile,
+            // 'w-80': !useMQ().isMobile.value,
+            'max-w-full z-30': useMQ().isMobile.value,
             }">
             <BarBQuickPanel />
           </el-scrollbar>

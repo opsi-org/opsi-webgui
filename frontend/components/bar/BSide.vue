@@ -10,18 +10,19 @@
       <template v-if="item.submenu">
         <!-- menus with children -->
         <el-sub-menu :index="item.route" :route="item.route"
-        class=""
+        popper-class="text-on-primary"
         >
         <!-- :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" -->
           <template #title>
             <div
+            class="text-on-primary"
             :class="{
               'contents': true,
               'selected': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
             }"
             >
-              <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
-              <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
+              <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1"/>
+              <span v-if="isMobile || !isCollapse" >{{ $t(item.title) }}</span>
               <div class="min-w-full"></div>
               <!-- <div class="flex-grow" />
                 <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
@@ -30,8 +31,8 @@
 
           <!-- sub menus -->
           <span v-for="sub in item.submenu" :key="sub.title" >
-            <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route">
-              <span>{{ $t(sub.title) }}</span>
+            <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route" class="text-on-primary">
+              <span class="text-on-primary">{{ $t(sub.title) }}</span>
             </el-menu-item>
           </span>
 
@@ -39,7 +40,7 @@
       </template>
       <template v-else>
         <!-- menus without children -->
-        <el-menu-item :index="item.route" :route="item.route">
+        <el-menu-item :index="item.route" :route="item.route" class="text-on-primary">
           <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
             <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
         </el-menu-item>
@@ -47,8 +48,8 @@
     </span>
 
   </el-menu>
-  <div v-if="!isMobile" class="menu-footer absolute inset-x-0 bottom-0 w-full">
-    <el-checkbox-button v-model="isCollapse" class="w-full" type="">
+  <div v-if="!isMobile" class="menu-footer absolute inset-x-0 bottom-0 w-full text-on-primary">
+    <el-checkbox-button v-model="isCollapse" class="w-full text-on-primary" type="">
         {{ isCollapse ? '>>' : 'Collapse' }}
     </el-checkbox-button>
   </div>
@@ -140,11 +141,16 @@ watch(isCollapse, (val: boolean) => {
 /* :deep(.el-sub-menu__icon-arrow) {
 color: white !important;
 } */
-:deep(.el-sub-menu__icon-arrow) {
+
+  :deep(.el-sub-menu__icon-arrow) {
   /* .el-menu--collapse >>> .el-sub-menu__icon-arrow { */
     /* display: none !important; */
     margin-right: -10px !important;
+
+    --el-text-color-regular: var(--el-bg-color);
+    color: var(--el-text-color-regular);
   }
+
   :deep(.el-checkbox-button__inner) {
   /* .menu-footer >>> .el-checkbox-button__inner{ */
     width: 100% !important;

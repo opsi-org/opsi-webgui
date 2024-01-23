@@ -4,30 +4,32 @@
     <h1 class="sr-only">
       {{ $t('button.login') }}
     </h1>
-    <b-card
+    <el-card
         data-testid="FLogin"
         class="text-center bg-primary mx-auto"
         :class="mq.$mq === 'mobile'? 'w-full;' : 'w-1/2; max-w-md' "
     >
       <IconIOpsiLogo :light="!storeSettings().isLight" :short="false" class="mb-2" classes="w-full" />
       <div @keyup.enter="doLogin">
-        <b-form class="mt-1">
-          <b-input-group>
-            <b-form-input
+        <el-form class="mt-1">
+          <el-form-item class="mb-1">
+            <el-input
               id="configserver"
               data-testid="login_configserver"
               v-model="opsiconfigserver"
               :aria-label="$t('title.configserver')"
+              disabled
               readonly
               size="sm"
               class="mb-2"
               :placeholder="opsiconfigserver"
             />
-          </b-input-group>
-          <b-input-group>
-            <b-form-input
+          </el-form-item>
+          <el-form-item class="mb-1">
+            <el-input
               id="username"
               v-model="form.username"
+              :disabled="isLoading"
               data-testid="login_username"
               :aria-label="$t('form.username')"
               :placeholder="$t('form.username')"
@@ -35,38 +37,47 @@
               size="sm"
               class="mb-2 username"
             />
-          </b-input-group>
-          <b-input-group>
-            <b-form-input
-              id="password"
-              v-model="form.password"
-              data-testid="login_password"
-              :aria-label="$t('form.password')"
-              :placeholder="$t('form.password')"
-              :state="validPassword"
-              :type="showPassword? 'text': 'password'"
-              size="sm"
-              class="mb-2 password"
-            />
-            <b-button variant="primary" @click="toggleShowPassword" size="sm" class="mb-2 text-light">
-              <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
-              <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
-            </b-button>
-          </b-input-group>
-          <b-button
+          </el-form-item>
+          <el-form-item class="mb-1">
+              <el-input
+                id="password"
+                v-model="form.password"
+                :disabled="isLoading"
+                data-testid="login_password"
+                :aria-label="$t('form.password')"
+                :placeholder="$t('form.password')"
+                :state="validPassword"
+                :type="showPassword? 'text': 'password'"
+                size="sm"
+                class="mb-2 password"
+              >
+
+              <template #append>
+                <el-button @click="toggleShowPassword" type="primary" class="pr-2"
+                style="--el-button-border-color: var(--el-text-color-regular);"
+                :disabled="isLoading">
+                  <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
+                  <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
+                </el-button>
+              </template>
+            </el-input>
+          </el-form-item>
+
+          <IconILoading v-if="isLoading"> </IconILoading>
+          <el-button
+            v-else
             data-testid="btn-login"
-            variant="primary"
-            size="sm"
-            class="mt-1 border-light login text-light"
+            type="primary"
+            class="mt-2 login"
             block
+            style="--el-button-border-color: var(--el-text-color-regular);"
             @click="doLogin"
           >
             {{ $t('button.login') }}
-          </b-button>
-        </b-form>
+          </el-button>
+        </el-form>
       </div>
-      <!-- <TestFetch /> -->
-    </b-card>
+    </el-card>
   </div>
 </template>
 
@@ -103,9 +114,10 @@ function toggleShowPassword () {
   showPassword.value = !showPassword.value
 }
 
+const isLoading = ref(false)
 async function doLogin () {
   if (!validUsername || !validPassword) return
-
+  isLoading.value = true
   const User = new FormData()
   User.append('username', form.value.username)
   User.append('password', form.value.password)
@@ -113,6 +125,7 @@ async function doLogin () {
   const { data, error } = await useApiPOST('/auth/login', User)
   if (error) {
     notificationError(error)
+    isLoading.value = false
     return
   }
   if (data?.value?.result == 'Login success') {
@@ -125,6 +138,7 @@ async function doLogin () {
     } else {
       useRouter().back()
     }
+    isLoading.value = false
   }
 
   // body not readable if error is 403...
@@ -133,4 +147,24 @@ async function doLogin () {
 </script>
 
 <style scoped>
+
+:deep(.el-input-group__append) {
+  --el-fill-color-light: transparent;
+  --el-color-info: var(--el-input-text-color);
+}
+
+.ILoading {
+  --el-input-text-color: #E1E1E1;
+  color: var(--el-input-text-color);
+}
+.el-input.is-disabled {
+  --el-input-text-color: #E1E1E1;
+  background-color: var(--el-input-text-color);
+  /* color: var(--el-text-regular); */
+}
+.el-input {
+  --el-text-color-regular: #e1e1e1;
+  border: 1px solid var(--el-input-text-color);
+  color: var(--el-input-text-color);
+}
 </style>
