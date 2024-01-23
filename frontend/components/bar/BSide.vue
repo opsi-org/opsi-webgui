@@ -121,7 +121,6 @@ const navItems = computed<Array<INavItem>>(() =>
   { title: 'title.support', icon: icons.support, route: '/support' }
 ]
 )
-
 watch(isCollapse, (val: boolean) => {
   console.log('change isCollapse', val)
   emit('changeSmall', val)

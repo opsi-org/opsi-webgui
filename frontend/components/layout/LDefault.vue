@@ -119,6 +119,10 @@ watch(()=> useMQ().$mq.value, (newVal, oldVal) => {
   }
 })
 
+watch(useRouter().currentRoute, () => {
+  if (useMQ().isMobile.value) { toggleSide('left') }
+})
+
 onMounted(async ()=>{
   settings.initColormode()
   await checkConfig()
