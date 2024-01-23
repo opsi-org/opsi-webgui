@@ -19,7 +19,7 @@
       class="grid"
     > -->
 
-      <el-menu-item index="2" type="text" @click="()=>emit('toggleRight')">
+      <el-menu-item index="2" type="text" @click="()=>emit('toggleRight')" data-testid="menu-quickpanel">
         <IconIIcon :icon="icons.quickpanel" />
         <!-- <div class="flex-grow" /> -->
         <!-- <p class="ml-1">QuickPanel</p> -->
@@ -37,8 +37,8 @@
 
     <div class="flex-grow" />
 
-    <el-menu-item index="1" type="text" @click="()=>emit('toggleRight')">
-      <IconIIcon :icon="icons.navmenu" />
+    <el-menu-item index="1" type="text" @click="()=>emit('toggleRight')" data-testid="menu-quickpanel">
+      <IconIIcon :icon="icons.quickpanel" />
     </el-menu-item>
     <ButtonBTNLogout index="2" :is-menu-item="true"/>
   </el-menu>

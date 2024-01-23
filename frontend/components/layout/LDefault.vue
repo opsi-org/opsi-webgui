@@ -1,7 +1,7 @@
 <template>
   <div :class="{
-    'is-mobile': settings.isMobile,
-    'is-not-mobile': !settings.isMobile,
+    'is-mobile': useMQ().isMobile.value,
+    'is-not-mobile': !useMQ().isMobile.value,
   }" >
   <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">

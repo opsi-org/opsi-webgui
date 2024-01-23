@@ -23,4 +23,11 @@ const mq = useMQ()
 
 </script>
 <style scoped>
+
+
+html.light .el-text,
+body[data-bs-theme="light"] .el-text {
+  --el-text-color-regular: var(--el-bg-color);
+  color: var(--el-text-color-regular);
+}
 </style>
