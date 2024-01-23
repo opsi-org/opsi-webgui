@@ -155,13 +155,13 @@ async function checkConfig () {
   const result = await useApiGET('/user/configuration')
   if (result.error) {
     console.log(result.error)
-    useNotification().error(result.error)
+    useNotification().error(result.error, 'Error fetching Configuration')
     return
   }
   const forbidden = await useApiGET('/opsidata/server/disabled-features')
   if (forbidden.error) {
     console.log(forbidden.error)
-    useNotification().error(forbidden.error)
+    useNotification().error(forbidden.error, 'Error fetching forbidden features')
     return
   }
   const _config = { ...result.data.value.configuration }

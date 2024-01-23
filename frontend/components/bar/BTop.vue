@@ -1,5 +1,6 @@
 <template>
- <el-menu v-if="settings.isMobile" mode="horizontal" class="border-0">
+ <el-menu v-if="settings.isMobile" mode="horizontal" class="border-0"
+    :ellipsis="false">
     <el-menu-item index="0" @click="()=>emit('toggleLeft')">
       <IconIIcon :icon="icons.navmenu" />
     </el-menu-item>
@@ -17,12 +18,14 @@
     <!-- <el-sub-menu index="2"
       class="grid"
     > -->
+
       <el-menu-item index="2" type="text" @click="()=>emit('toggleRight')">
-        QuickPanel
-        <IconIIcon :icon="icons.navmenu" />
+        <IconIIcon :icon="icons.quickpanel" />
+        <!-- <div class="flex-grow" /> -->
+        <!-- <p class="ml-1">QuickPanel</p> -->
       </el-menu-item>
 
-      <ButtonBTNLogout index="3" :is-menu-item="true"/>
+      <!-- <ButtonBTNLogout index="3" :is-menu-item="true"/> -->
       <!-- <IconIIcon :icon="icons.menu" /> -->
     <!-- </el-sub-menu> -->
   </el-menu>
