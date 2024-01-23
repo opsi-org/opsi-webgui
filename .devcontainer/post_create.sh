@@ -12,6 +12,10 @@ rm -f opsi-dev-tool
 echo "========================================== Install webgui dependencies"
 cd /workspace/frontend/
 npm i
+
+npm i -D @playwright/test
+npx playwright install
+npx playwright install-deps
 echo "========================================== Link webgui backend"
 
 rm -rf /data/opsiconfd/addons/webgui

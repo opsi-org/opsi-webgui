@@ -1,0 +1,10 @@
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="10.364609">
+<testsuite name="2CreateClient.test.usecase.js" timestamp="2024-01-23T16:10:39.674Z" hostname="Chromium-Desktop" tests="1" failures="0" skipped="0" time="9.467" errors="0">
+<testcase name="usecase › Create Client" classname="2CreateClient.test.usecase.js" time="9.467">
+</testcase>
+</testsuite>
+<testsuite name="2CreateClient.test.usecase.js" timestamp="2024-01-23T16:10:39.674Z" hostname="Chromium-Mobile" tests="1" failures="0" skipped="0" time="9.397" errors="0">
+<testcase name="usecase › Create Client" classname="2CreateClient.test.usecase.js" time="9.397">
+</testcase>
+</testsuite>
+</testsuites>
