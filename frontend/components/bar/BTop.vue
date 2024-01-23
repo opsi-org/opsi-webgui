@@ -1,5 +1,5 @@
 <template>
- <el-menu v-if="settings.isMobile" mode="horizontal" class="border-0"
+ <el-menu v-if="useMQ().isMobile.value" mode="horizontal" class="border-0"
     :ellipsis="false">
     <el-menu-item index="0" @click="()=>emit('toggleLeft')">
       <IconIIcon :icon="icons.navmenu" />
