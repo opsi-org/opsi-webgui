@@ -191,8 +191,9 @@ async function checkConfig () {
 <style scoped>
 
 .bg-color {
-  background-color: var(--bg-color) !important;
-  color: var(--fg-color) !important;
+  /* background-color: var(--bg-color) !important; */
+  /* color: var(--fg-color) !important; */
+
 }
 .el-header {
   position: relative;

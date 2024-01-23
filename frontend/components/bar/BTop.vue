@@ -1,7 +1,7 @@
 <template>
- <el-menu v-if="useMQ().isMobile.value" mode="horizontal" class="border-0 text-on-primary"
+ <el-menu v-if="useMQ().isMobile.value" mode="horizontal" class="border-0"
     :ellipsis="false">
-    <el-menu-item index="0" @click="()=>emit('toggleLeft')">
+    <el-menu-item index="0" @click="()=>emit('toggleLeft')" data-testid="menu_routes">
       <IconIIcon :icon="icons.navmenu" class="text-on-primary"/>
     </el-menu-item>
 

@@ -11,6 +11,7 @@ body {
 }
 
 html {
+  --opsi-genral-white: #E1E1E1;
   --opsi-general-red: #cb1e58;
   --opsi-general-blue: #3f5aa6;
   --opsi-general-blue-dark: #2d4178;
@@ -55,8 +56,8 @@ body[data-bs-theme="light"] {
   }
 
   .text-on-primary {
-  --el-text-color-regular: var(--el-bg-color);
-  color: var(--el-text-color-regular);
+    --el-text-color-regular: var(--el-bg-color);
+    color: var(--el-text-color-regular);
   }
 }
 // html.dark {
@@ -67,14 +68,19 @@ body[data-bs-theme="dark"] {
   --bg-color: var(--el-bg-color);
   --el-bg-color-overlay: #4b4b49 !important;
   // --fg-color: var(--el-text-color-primary);
-  --fg-color: #E1E1E1;
-  --el-text-color-primary: #E1E1E1;
-  --el-input-text-color: #E1E1E1;
+  --fg-color: var(--opsi-genral-white);
+  --el-text-color-primary: var(--opsi-genral-white);
+  --el-input-text-color: var(--opsi-genral-white);
 
   --el-notification-content-color: var(--el-text-color-regular);
   // --el-text-color-regular: #CFD3DC;
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
+
+  .text-on-primary {
+    --el-text-color-regular: var(--opsi-genral-white);
+    color: var(--el-text-color-regular);
+  }
 }
 
 

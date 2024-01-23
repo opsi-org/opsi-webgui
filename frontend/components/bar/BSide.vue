@@ -11,6 +11,7 @@
         <!-- menus with children -->
         <el-sub-menu :index="item.route" :route="item.route"
         popper-class="text-on-primary"
+        :data-testid="'NSidebar-' + item.title"
         >
         <!-- :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" -->
           <template #title>
@@ -31,7 +32,8 @@
 
           <!-- sub menus -->
           <span v-for="sub in item.submenu" :key="sub.title" >
-            <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route" class="text-on-primary">
+            <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route"
+            :data-testid="'NSidebar-' + item.title" class="text-on-primary">
               <span class="text-on-primary">{{ $t(sub.title) }}</span>
             </el-menu-item>
           </span>
@@ -147,7 +149,7 @@ color: white !important;
     /* display: none !important; */
     margin-right: -10px !important;
 
-    --el-text-color-regular: var(--el-bg-color);
+    --el-text-color-regular: var(--opsi-genral-white);
     color: var(--el-text-color-regular);
   }
 
