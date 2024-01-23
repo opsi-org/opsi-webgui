@@ -53,6 +53,11 @@ body[data-bs-theme="light"] {
     --el-notification-content-color: var(--el-text-color-primary);
     color: var(--el-notification-content-color);
   }
+
+  .text-on-primary {
+  --el-text-color-regular: var(--el-bg-color);
+  color: var(--el-text-color-regular);
+  }
 }
 // html.dark {
 html.dark,
