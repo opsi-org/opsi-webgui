@@ -1,4 +1,41 @@
 <template>
+  <el-tabs>
+    <el-tab-pane :label="$t('treeselect.clientGroups')">
+      <el-tree
+        :data="fetchedClientData"
+        :props="defaultProps"
+        highlight-current
+        />
+    </el-tab-pane>
+    <el-tab-pane :label="$t('treeselect.prodGroups')">
+      <el-row>
+        <el-col>
+          <!-- <IconILoading v-if="isLoading" /> -->
+          <el-tree
+            :data="fetchedData"
+            :props="defaultProps"
+            highlight-current
+          >
+            <template #default="{ node, data }">
+              {{ node.label }}
+              <template v-if="data.type == 'ObjectToGroup'">
+                <div class="float-right">
+                  <el-button :aria-label="$t('group.removeProduct')"> <IconIIcon :icon="icons.delete" /> </el-button>
+                </div>
+              </template>
+              <template v-else>
+                <el-button :aria-label="$t('group.editGroup')"> <IconIIcon :icon="icons.pencil" /> </el-button>
+                  <el-button :aria-label="$t('group.deletegroup')"> <IconIIcon :icon="icons.delete" /> </el-button>
+                  <el-button :aria-label="$t('group.deleteOnlyAssignments')"><IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.delete" /></el-button>
+                  <el-button :aria-label="$t('group.addToGroup')"> <IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.add" /> </el-button>
+                  <el-button :aria-label="$t('group.addSubgroup')"> <IconIIcon :icon="icons.group" /> <IconIIcon :icon="icons.add" /></el-button>
+              </template>
+            </template>
+          </el-tree>
+        </el-col>
+      </el-row>
+    </el-tab-pane>
+  </el-tabs>
   <!-- <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
@@ -222,36 +259,59 @@
           </b-col>
         </b-row>
       </b-tab>
-      <b-tab>
-        <template #title>
-          <span> {{ $t("treeselect.prodGroups") }} </span>
-        </template>
-        <ViewVProdGroupActions />
-      </b-tab>
     </b-tabs>
   </div> -->
 </template>
 
 <script setup lang="ts">
-// import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-// import { Icons } from '../../mixins/icons'
-// import { Client } from '../../mixins/get'
-// import { Group } from '../../mixins/post'
-// import { Strings } from '../../mixins/strings'
-// import { AlertToast } from '../../mixins/component'
-// const selections = namespace('selections')
+import { ref } from 'vue'
+import { useNotification } from '~/composables/mixins/useComponent';
+import {useIcons} from '../../composables/mixins/useIcons'
+const icons = useIcons()
+const isLoading = ref(false)
+const defaultProps = {
+  label: 'text',
+  children: 'children'
+}
+const fetchedData = ref<any>({})
+const fetchedClientData = ref<any>({})
+const storeSelection = storeSelections()
+onMounted(async ()=> {
+  await fetch()
+  await fetchClients()
+})
+async function fetch() {
+  isLoading.value = true
+  const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  if (error) {
+    useNotification().error(error)
+    isLoading.value = false
+    return
+  }
+  fetchedData.value = data.value.groups ?
+                        Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
+                        : []
+  isLoading.value = false
+}
+async function fetchClients() {
+  // isLoading.value = true
+  const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
+  if (error) {
+    useNotification().error(error)
+    // isLoading.value = false
+    return
+  }
+
+  fetchedClientData.value = data.value  ?
+                              Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
+                                children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
+                                ({ ...objA, children: Object.values(objA.children || {})}))}))
+                              : []
+  // isLoading.value = false
+}
+
 // @Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
 // export default class VGroups extends Vue {
-//   showToastSuccess: any // from mixin AlertToast
-//   showToastError: any // from mixin AlertToast
-//   icon: any
-//   t_fixed: any
-//   getClientIdList:any
-//   $axios: any
-//   node: any
-//   $fetch: any
-//   $t: any
-//   $mq: any
 //   group: Array<object>|undefined = undefined
 //   selectedvalue: any = null
 //   clientIds: Array<string> = []
@@ -435,8 +495,8 @@
 // }
 </script>
 <style>
-.groupstabs .tab-content {
+/* .groupstabs .tab-content {
   height: 82vh;
   margin: 10px;
-}
+} */
 </style>
