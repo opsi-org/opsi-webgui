@@ -26,88 +26,11 @@
         <IconIIcon :icon="icons.product" :title="$t('treeselect.prodGroups')" /><IconIIcon :icon="icons.group" class="mt-2" />
         <el-text size="small">{{ selections.selectionProducts.length }}</el-text>
       </template>
-      Product Group
       <TreeTProductGroups />
     </el-tab-pane>
   </el-tabs>
 
   <!-- <b-tabs justified small lazy data-testid="TQuickSelections" class="QPTabs">
-    <b-tab id="qp-tab-selection" active>
-      <template #title>
-        <IconIIcon :icon="icon.info" :title="$t('title.viewselection')" />
-      </template>
-      <div class="scrollcontent">
-        <GridGFormItem variant="longvalue">
-          <template #label>
-            <p>{{ $t('title.depots') }}</p>
-          </template>
-          <template #value>
-            <b-list-group v-if="selectionDepots.length>0" flush>
-              <b-list-group-item v-for="c in [...selectionDepots].sort()" :key="c" class="modal-client-p text-small">
-                {{ c }}
-                <ButtonBTNSmallRow
-                  v-if="selectionDepots.length > 1"
-                  :title="$t('button.deselect')"
-                  show-close
-                  @click="delFromSelectionDepots(c)"
-                />
-              </b-list-group-item>
-            </b-list-group>
-            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
-          </template>
-        </GridGFormItem>
-        <GridGFormItem variant="longvalue" labelclass="clients">
-          <template #label>
-            <ButtonBTNSmallRow
-              v-if="selectionClients.length > 0"
-              :title="$t('button.deselect')"
-              show-close
-              @click="setSelectionClients([])"
-            />
-            <p>{{ $t('title.clients') }}</p>
-          </template>
-          <template #value>
-            <b-list-group v-if="selectionClients.length>0" flush>
-              <b-list-group-item v-for="c in [...selectionClients].sort()" :key="c" class="modal-client-p text-small">
-                {{ c }}
-                <ButtonBTNSmallRow
-                  v-if="selectionClients.length > 0"
-                  :title="$t('button.deselect')"
-                  show-close
-                  @click="delFromSelectionClients(c)"
-                />
-              </b-list-group-item>
-            </b-list-group>
-            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
-          </template>
-        </GridGFormItem>
-        <GridGFormItem variant="longvalue" labelclass="products">
-          <template #label>
-            <ButtonBTNSmallRow
-              v-if="selectionProducts.length > 0"
-              :title="$t('button.deselect')"
-              show-close
-              @click="setSelectionProducts([])"
-            />
-            <p>{{ $t('title.products') }}</p>
-          </template>
-          <template #value>
-            <b-list-group v-if="selectionProducts.length>0" flush>
-              <b-list-group-item v-for="c in [...selectionProducts].sort()" :key="c" class="modal-client-p text-small">
-                {{ c }}
-                <ButtonBTNSmallRow
-                  v-if="selectionProducts.length > 0"
-                  :title="$t('button.deselect')"
-                  show-close
-                  @click="delFromSelectionProducts(c)"
-                />
-              </b-list-group-item>
-            </b-list-group>
-            <span v-else>{{ t_fixed('keep-english.empty') }}</span>
-          </template>
-        </GridGFormItem>
-      </div>
-    </b-tab>
     <b-tab id="qp-tab-depots">
       <template #title>
         <IconIIcon :icon="icon.server" :title="$t('title.depots')" /> {{ selectionDepots.length }}
