@@ -542,7 +542,7 @@ async function _fetch() {
 
   if (error) {
     console.log(error)
-    useNotification().error(error)
+    useNotification().error(error, 'Error fetching clients')
     return
   }
   // console.log('data', data)

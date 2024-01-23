@@ -28,6 +28,7 @@
             <b-form-input
               id="username"
               v-model="form.username"
+              data-testid="login_username"
               :aria-label="$t('form.username')"
               :placeholder="$t('form.username')"
               :state="validUsername"
@@ -39,6 +40,7 @@
             <b-form-input
               id="password"
               v-model="form.password"
+              data-testid="login_password"
               :aria-label="$t('form.password')"
               :placeholder="$t('form.password')"
               :state="validPassword"

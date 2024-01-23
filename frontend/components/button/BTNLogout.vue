@@ -26,23 +26,30 @@
     :title="$t('button.logout.confirm')"
     :confirm-button-text="$t('button.logout.confirm')"
     :cancel-button-text="$t('button.logout.cancel')"
+    id="ButtonBTNLogout-ConfirmID"
+    ref="ButtonBTNLogout-ConfirmRef"
     @confirm="doLogout"
   >
     <template #reference>
       <el-button
+        data-testid="ButtonBTNLogout"
         class="h-full max-h-full min-h-full border-0 rounded-none"
         style="--el-border-radius-base: 0px"
         >
         <IconIIcon :icon="icon.logout" />
-        <!-- {{ $t('button.logout') }} -->
+        <p v-if="isMobile" class="pt-3 ml-1">{{ $t('button.logout') }}</p>
       </el-button>
     </template>
   </el-popconfirm>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useIcons } from '@/composables/mixins/useIcons'
 import { useNotification } from '../../composables/mixins/useComponent'
+const isMobile = ref(useMQ().isMobile.value)
+watch(() => useMQ().isMobile, () => {
+  isMobile.value = useMQ().isMobile.value
+})
 const icon = useIcons()
 const notificationError = useNotification().error
 

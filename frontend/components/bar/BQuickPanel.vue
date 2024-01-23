@@ -16,6 +16,8 @@
       <el-text tag="b" size="small"> {{$t('title.settings')}}</el-text><br>
       <FormitemDDTheme />
       <FormitemDDLang />
+      <br />
+      <ButtonBTNLogout v-if="useMQ().isMobile.value" />
     <!-- </div> -->
   </div>
   <!-- <b-sidebar

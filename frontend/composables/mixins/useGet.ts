@@ -47,7 +47,7 @@ export const useDepot = () => {
   async function getDepotIdList () {
     const {data, error} = await useApiGET('/opsidata/depot_ids')
     if (error) {
-      useNotification().error(error)
+      useNotification().error(error, 'Error fetching server ids')
       return
     }
     return data.value.sort()

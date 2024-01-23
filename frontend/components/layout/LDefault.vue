@@ -103,17 +103,16 @@ const settings = storeSettings()
 // const { colormode } = storeToRefs(settings)
 const configapp = storeConfigapp()
 // const { config,  } = storeToRefs(configapp)
-const { isMobile } = storeToRefs(settings)
+// const { isMobile } = storeToRefs(settings)
 const leftSideIsSmall = ref<boolean>(false)
-const leftSideVisible = ref<boolean>(!isMobile)
-const rightSideVisible = ref<boolean>(!isMobile)
-const mq = useMQ()
+const leftSideVisible = ref<boolean>(!useMQ().isMobile.value)
+const rightSideVisible = ref<boolean>(!useMQ().isMobile.value)
 
 // const cache = storeCache()
 // const { opsiconfigserver } = storeToRefs(cache)
-watch(()=> mq.$mq.value, (newVal, oldVal) => {
+watch(()=> useMQ().$mq.value, (newVal, oldVal) => {
   console.log('mq changed', newVal)
-  if (mq.$mq.value === 'mobile') {
+  if (useMQ().$mq.value === 'mobile') {
     settings.setIsMobile(true)
   } else {
     settings.setIsMobile(false)
@@ -125,12 +124,12 @@ onMounted(async ()=>{
   await checkConfig()
 
   leftSideIsSmall.value = false
-  if (settings.menuCollapsed) {
+  if (settings.menuCollapsed && !useMQ().isMobile.value) {
     leftSideIsSmall.value = true
   }
 
   rightSideVisible.value = false
-  if (settings.quickpanelOpened) {
+  if (settings.quickpanelOpened && !useMQ().isMobile.value) {
     rightSideVisible.value = true
   }
 
@@ -155,13 +154,13 @@ async function checkConfig () {
   const result = await useApiGET('/user/configuration')
   if (result.error) {
     console.log(result.error)
-    useNotification().error(result.error)
+    useNotification().error(result.error, 'Error fetching Configuration')
     return
   }
   const forbidden = await useApiGET('/opsidata/server/disabled-features')
   if (forbidden.error) {
     console.log(forbidden.error)
-    useNotification().error(forbidden.error)
+    useNotification().error(forbidden.error, 'Error fetching forbidden features')
     return
   }
   const _config = { ...result.data.value.configuration }
