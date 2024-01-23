@@ -31,14 +31,6 @@
             'absolute z-20 grid w-screen': useMQ().isMobile.value
             }"
         >
-            leftSideIsSmall {{ leftSideIsSmall }} <br />
-            leftSideVisible {{ leftSideVisible }} <br />
-            rightSideVisible {{ rightSideVisible }} <br />
-            useMQ().isMobile.value {{ useMQ().isMobile.value }} <br />
-            settings.menuCollapsed (left) {{ settings.menuCollapsed }} <br />
-            settings.quickpanelOpened (right) {{ settings.quickpanelOpened }} <br />
-            settings.isMobile {{ settings.isMobile }} <br />
-
           <div
             :class="{
               'hidden': !useMQ().isMobile.value,
