@@ -3,7 +3,7 @@
     <el-header style="height: 32px">
       <el-button class="float-right" @click="downloadHealthData"><IconIIcon :icon="icons.download" /> {{ $t('button.download') }}</el-button>
     </el-header>
-    <el-tabs>
+    <el-tabs lazy>
       <el-tab-pane :label="$t('title.healthcheck')">
         <TableTHealthCheck :data="fetchedData.health_check" />
       </el-tab-pane>
