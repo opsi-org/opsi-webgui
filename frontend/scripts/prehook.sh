@@ -4,6 +4,7 @@ echo "====================================================== Check test files"
 cd /workspace/frontend
 bash ./frontend/scripts/playwright_coverage_by_files.sh $file
 # rm $file
+
 echo "======================================================"
 echo ""
 cd ..
