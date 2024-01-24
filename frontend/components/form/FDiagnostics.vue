@@ -1,5 +1,5 @@
 <template>
-  <el-form label-width="250px">
+  <el-form label-width="250px" class="diagnostics-form">
     <div v-for="values, category in data">
       <template v-if="values && Object.keys(values).length !== 0">
         <el-text tag="b"> {{ category }} </el-text><br>
@@ -28,5 +28,15 @@ div.scrollValue {
   max-height: 400px;
   overflow-x: hidden;
   overflow-y: auto;
+}
+.diagnostics-form .el-form-item {
+  margin-bottom: 7px;
+}
+.diagnostics-form .el-form-item__label{
+  height: 30px;
+  line-height: 30px;
+}
+.diagnostics-form .el-form-item__content {
+  line-height: 30px;
 }
 </style>
