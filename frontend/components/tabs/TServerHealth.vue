@@ -26,7 +26,7 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane :label="$t('title.diagnostics')">
-      <el-form label-width="200px" size="small">
+      <el-form label-width="200px">
         <div v-for="values, category in {...fetchedData, health_check: void(0)}">
           <template v-if="values && Object.keys(values).length !== 0">
             <el-text tag="b"> {{ category }} </el-text><br>
