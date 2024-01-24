@@ -16,7 +16,7 @@ export const use = {
 
 export const projects = [
   { name: 'Chromium-Desktop', use: { browserName: 'chromium', ...devices['Desktop Chrome'] } },
-  { name: 'Chromium-Mobile', use: { browserName: 'chromium', ...devices['Galaxy S8'] } }
+  // { name: 'Chromium-Mobile', use: { browserName: 'chromium', ...devices['Galaxy S8'] } }
   // { name: 'Firefox-Desktop', use: { browserName: 'firefox', ...devices['Desktop Firefox'] } },
   // { name: 'Firefox-Mobile', use: { browserName: 'firefox', ...devices['Nexus 6'] } },
   // { name: 'WebKit-Desktop', use: { browserName: 'webkit', ...devices['Desktop Safari'] } },
