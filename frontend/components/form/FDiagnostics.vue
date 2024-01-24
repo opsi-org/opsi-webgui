@@ -1,5 +1,5 @@
 <template>
-  <el-form label-width="200px">
+  <el-form label-width="250px">
     <div v-for="values, category in data">
       <template v-if="values && Object.keys(values).length !== 0">
         <el-text tag="b"> {{ category }} </el-text><br>
