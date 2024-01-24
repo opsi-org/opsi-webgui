@@ -7,9 +7,20 @@
     <el-tab-pane :label="$t('title.healthcheck')">
       <!-- {{ fetchedData.health_check }} -->
       <el-table :data="fetchedData.health_check">
-        <el-table-column prop="check_name" label="Check Name" width="180" />
-        <el-table-column prop="check_description" label="Description" width="180" />
-        <el-table-column prop="check_status" label="Status" />
+        <el-table-column type="expand">
+          <template #default="props">
+              <el-table :data="props.row.partial_results" :show-header="false">
+                <el-table-column width="48" />
+                <el-table-column prop="check_status" label="Status" width="100" />
+                <el-table-column prop="check_name" label="Check Name" width="300" />
+                <el-table-column prop="message" label="Message" />
+              </el-table>
+          </template>
+        </el-table-column>
+        <el-table-column prop="check_status" label="Status" width="100" />
+        <el-table-column prop="check_name" label="Check Name" width="300" />
+        <el-table-column prop="message" label="Message" />
+        <!-- <el-table-column prop="partial_results" label="Partial Results" /> -->
       </el-table>
     </el-tab-pane>
     <el-tab-pane :label="$t('title.diagnostics')">
