@@ -1,6 +1,7 @@
 <template>
   <el-button
     :class="{pressed: props.isPressed}"
+    data-testid="BTNRowLink"
     @click="emit('onClick')"
   >
     <iconIIcon :icon="props.icon" />

@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="CardCSupport"
+  <div data-testid="CSupport"
       class="h-full min-h-full"
       >
     <!-- :class="{smallcard: $mq=='mobile', normalcard: $mq=='desktop'}" -->

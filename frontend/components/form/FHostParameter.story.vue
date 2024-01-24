@@ -11,7 +11,11 @@ async function init(data: any) {
 <template>
   <Story :setup-app="init">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <FormFHostParameter :id="store.selectionDepot[0]"/>
+      <FormFHostParameter :id="store.selectionDepots[0]"/>
     </Variant>
+    <Variant title="desktop" responsive-disabled>
+      <FormFHostParameter :id="store.selectionDepots[0]"/>
+    </Variant>
+    <!-- TODO: Add more Variants with (dummy) data -->
   </Story>
 </template>

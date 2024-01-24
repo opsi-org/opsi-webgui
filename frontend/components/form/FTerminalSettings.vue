@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isMobile" class="m-2">
+  <div v-if="isMobile" class="m-2" data-testid="FTerminalSettings">
     <FormrowFRRow :disabled="disabled" class="block" :label="$t('table.fields.terminalId')" type="input" data-type="string" v-model="modelTerminalId" />
     <FormrowFRRow :disabled="disabled" class="block" :label="$t('table.fields.terminalChannel')" type="input" data-type="string" v-model="modelTerminalChannel" />
     <FormrowFRRow>
@@ -8,8 +8,8 @@
           <el-button :disabled="disabled" type="primary" @click="emit('click-disconnect')"> $t('button.disconnect')</el-button>
         </template>
       </FormrowFRRow>
-    </div>
-    <el-form v-else class="p-2">
+  </div>
+  <el-form v-else class="p-2" data-testid="FTerminalSettings">
       <FormrowFRRow :disabled="disabled" label-width="200px" :label="$t('table.fields.terminalId')" type="input" data-type="string" v-model="modelTerminalId" />
       <FormrowFRRow :disabled="disabled" label-width="200px" :label="$t('table.fields.terminalChannel')" type="input" data-type="string" v-model="modelTerminalChannel" />
       <FormrowFRRow label-width="200px">

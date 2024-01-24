@@ -1,13 +1,16 @@
 <template>
-  <br />
-  <el-alert v-if="!(props.type ===  'servers' || props.id)" type="warning"> Please select item</el-alert>
-  <IconILoading v-else-if="isLoading" />
-  <el-collapse v-else v-model="activeNames" @change="handleCollapseValueChange"
-    class="mr-3 ml-3">
-    <el-collapse-item v-for="(items, topic, index) in fetchedData" :title="(topic.toString())" :name="index.toString()">
-      <FormrowFRItems :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
-    </el-collapse-item>
-  </el-collapse>
+  <div data-testid="FHostParameter">
+    <br />
+    <el-alert v-if="!(props.type ===  'servers' || props.id)" type="warning"> Please select item</el-alert>
+    <IconILoading v-else-if="isLoading" />
+    <el-collapse v-else v-model="activeNames" @change="handleCollapseValueChange"
+      class="mr-3 ml-3">
+      <el-alert v-if="Object.keys(fetchedData).length === 0" type="warning"> No data found</el-alert>
+      <el-collapse-item v-else v-for="(items, topic, index) in fetchedData" :title="(topic.toString())" :name="index.toString()">
+        <FormrowFRItems :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
+      </el-collapse-item>
+    </el-collapse>
+  </div>
 </template>
 
 <script setup lang="ts">

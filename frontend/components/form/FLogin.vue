@@ -1,11 +1,10 @@
 <template>
 
-  <div role="main">
+  <div role="main" data-testid="FLogin">
     <h1 class="sr-only">
       {{ $t('button.login') }}
     </h1>
     <el-card
-        data-testid="FLogin"
         class="text-center bg-primary mx-auto"
         :class="mq.$mq === 'mobile'? 'w-full;' : 'w-1/2; max-w-md' "
     >
