@@ -6,7 +6,7 @@ tar -xf opsi-dev-tools_linux_x64_1.16.3.tar.gz
 ./opsi-dev-tool --self-install
 rm -f opsi-dev-tools_linux_x64_1.16.3.tar.gz opsi-dev-tools_linux_x64_1.16.3.tar.gz.1
 rm -f opsi-dev-tool
-
+opsi-dev-tool git-hooks --install
 
 
 echo "========================================== Install webgui dependencies"
