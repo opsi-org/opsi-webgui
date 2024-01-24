@@ -31,7 +31,7 @@ html {
   --opsi-log-essential: #2979FF;
 }
 
-html, html.light,
+html.light, html:not(.light):not(.dark),
 body[data-bs-theme="light"] {
   --el-bg-color: #FFFFFF;
   --bs-body-bg: var(--el-bg-color);

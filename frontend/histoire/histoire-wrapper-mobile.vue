@@ -34,14 +34,14 @@ const hasWrapper = computed(()=> {
 
 <style scoped>
 .mobile-wrapper {
-  --width-desktop: 400px; /** mobile width from tailwind */
+  --width-desktop: 370px; /** mobile width from tailwind */
   max-width: var(--width-desktop) !important;
   min-width: var(--width-desktop) !important;
   width: var(--width-desktop) !important;
   /* border: 1px solid blue; */
 }
 .no-mobile-wrapper {
-  --width-desktop: 800px;
+  --width-desktop: 900px;
   max-width: var(--width-desktop) !important;
   min-width: var(--width-desktop) !important;
   width: var(--width-desktop) !important;

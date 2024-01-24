@@ -1,5 +1,7 @@
 
 import './assets/css/tailwind.css'
+import './assets/scss/index.scss'
+
 import { defineSetupVue3 } from '@histoire/plugin-vue';
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';

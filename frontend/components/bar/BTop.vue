@@ -1,5 +1,6 @@
 <template>
  <el-menu v-if="useMQ().isMobile.value" mode="horizontal" class="border-0"
+  data-testid="BTop"
     :ellipsis="false">
     <el-menu-item index="0" @click="()=>emit('toggleLeft')" data-testid="menu_routes">
       <IconIIcon :icon="icons.navmenu" class="text-on-primary"/>
@@ -30,7 +31,8 @@
     <!-- </el-sub-menu> -->
   </el-menu>
 
- <el-menu v-else mode="horizontal" :ellipsis="false" class="text-on-primary">
+ <el-menu v-else mode="horizontal" :ellipsis="false" class="text-on-primary"
+  data-testid="BTop">
     <el-menu-item index="0" @click="useRouter().push('/clients/')">
       <IconIOpsiLogo class="max-h-full h-full"/>
     </el-menu-item>

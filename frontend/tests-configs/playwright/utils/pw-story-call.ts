@@ -66,6 +66,7 @@ export const simpleScreenshotTest = async (
 
         // Find the main content of the variant
         const storySelector = options.cssClassVariantContent || _cssClassVariantContent
+        await new Promise(resolve => setTimeout(resolve, 1000));
         await page.waitForSelector(storySelector)
         let element = await page.locator(storySelector)
 

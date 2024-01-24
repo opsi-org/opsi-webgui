@@ -1,61 +1,65 @@
 <template>
-  <el-menu router
-    :default-active="useRouter().currentRoute.value?.fullPath"
-    :collapse="!isMobile && isCollapse"
-    class="el-menu-mywrapper overflow-hidden max-w-full"
-    data-testid="BSide"
-    style="--el-menu-icon-width: 244px;"
+  <div data-testid="BSide"
+
   >
-  <!-- :class="{collapse: !isCollapse}" -->
-    <span v-for="item in navItems" :key="item.title">
-      <template v-if="item.submenu">
-        <!-- menus with children -->
-        <el-sub-menu :index="item.route" :route="item.route"
-        popper-class="text-on-primary"
-        :data-testid="'NSidebar-' + item.title"
-        >
-        <!-- :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" -->
-          <template #title>
-            <div
-            class="text-on-primary"
-            :class="{
-              'contents': true,
-              'selected': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
-            }"
-            >
-              <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1"/>
-              <span v-if="isMobile || !isCollapse" >{{ $t(item.title) }}</span>
-              <div class="min-w-full"></div>
-              <!-- <div class="flex-grow" />
-                <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
-              </div>
-          </template>
+    <el-menu router
+      :default-active="useRouter().currentRoute.value?.fullPath"
+      :collapse="!useMQ().isMobile.value && isCollapse"
+      class="el-menu-mywrapper overflow-hidden max-w-full"
+      :class="{'max-height-side': !useMQ().isMobile.value }"
+      style="--el-menu-icon-width: 244px;"
+      type="primary"
+    >
+    <!-- :class="{collapse: !isCollapse}" -->
+      <span v-for="item in navItems" :key="item.title">
+        <template v-if="item.submenu">
+          <!-- menus with children -->
+          <el-sub-menu :index="item.route" :route="item.route"
+          popper-class="text-on-primary"
+          :data-testid="'NSidebar-' + item.title"
+          >
+          <!-- :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" -->
+            <template #title>
+              <div
+              class="text-on-primary"
+              :class="{
+                'contents': true,
+                'selected': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
+              }"
+              >
+                <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1"/>
+                <span v-if="useMQ().isMobile.value || !isCollapse" >{{ $t(item.title) }}</span>
+                <div class="min-w-full"></div>
+                <!-- <div class="flex-grow" />
+                  <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
+                </div>
+            </template>
 
-          <!-- sub menus -->
-          <span v-for="sub in item.submenu" :key="sub.title" >
-            <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route"
-            :data-testid="'NICollapsible-submenu-' + sub.title" class="text-on-primary">
-              <span class="text-on-primary">{{ $t(sub.title) }}</span>
-            </el-menu-item>
-          </span>
+            <!-- sub menus -->
+            <span v-for="sub in item.submenu" :key="sub.title" >
+              <el-menu-item :disabled="sub.disabled" :index="sub.route" :route="sub.route"
+              :data-testid="'NICollapsible-submenu-' + sub.title" class="text-on-primary">
+                <span class="text-on-primary">{{ $t(sub.title) }}</span>
+              </el-menu-item>
+            </span>
 
-        </el-sub-menu>
-      </template>
-      <template v-else>
-        <!-- menus without children -->
-        <el-menu-item :index="item.route" :route="item.route" class="text-on-primary"
-        :data-testid="'NSidebar-' + item.title">
-          <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
-            <span v-if="isMobile || !isCollapse">{{ $t(item.title) }}</span>
-        </el-menu-item>
-      </template>
-    </span>
-
-  </el-menu>
-  <div v-if="!isMobile" class="menu-footer absolute inset-x-0 bottom-0 w-full text-on-primary">
-    <el-checkbox-button v-model="isCollapse" class="w-full text-on-primary" type="">
-        {{ isCollapse ? '>>' : 'Collapse' }}
-    </el-checkbox-button>
+          </el-sub-menu>
+        </template>
+        <template v-else>
+          <!-- menus without children -->
+          <el-menu-item :index="item.route" :route="item.route" class="text-on-primary"
+          :data-testid="'NSidebar-' + item.title">
+            <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
+              <span v-if="useMQ().isMobile.value || !isCollapse">{{ $t(item.title) }}</span>
+          </el-menu-item>
+        </template>
+      </span>
+    </el-menu>
+    <div v-if="!useMQ().isMobile.value" class="menu-footer relative inset-x-0 bottom-0 w-full text-on-primary">
+      <el-checkbox-button v-model="isCollapse" class="w-full text-on-primary" type="">
+          {{ isCollapse ? '>>' : 'Collapse' }}
+      </el-checkbox-button>
+    </div>
   </div>
 </template>
 
@@ -64,7 +68,7 @@ import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const {config} = storeToRefs(storeConfigapp())
 const settings = storeSettings()
-const { isMobile, menuCollapsed } = storeToRefs(settings)
+const { menuCollapsed } = storeToRefs(settings)
 const mq = useMQ()
 const isCollapse = ref(menuCollapsed.value)
 interface INavItem {
@@ -136,6 +140,10 @@ watch(isCollapse, (val: boolean) => {
 .selected {
   color: var(--el-color-primary);
   color: var(--el-menu-active-color);
+}
+
+.max-height-side {
+  height: calc(100vh - 70px);
 }
 :deep(.el-menu-item.is-active path) {
   color: var(--el-color-primary) !important;
