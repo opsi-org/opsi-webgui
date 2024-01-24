@@ -5,26 +5,17 @@
   </el-header>
   <el-tabs>
     <el-tab-pane :label="$t('title.healthcheck')">
-      <!-- {{ fetchedData.health_check }} -->
       <el-table :data="fetchedData.health_check" row-key="check_id" :tree-props="{ children: 'partial_results' }">
-        <!-- <el-table-column type="expand">
-          <template #default="props">
-              <el-table :data="props.row.partial_results" :show-header="false">
-                <el-table-column width="48" />
-                <el-table-column prop="check_status" label="Status" width="100" />
-                <el-table-column prop="check_name" label="Check Name" width="300" />
-                <el-table-column prop="message" label="Message" />
-              </el-table>
+        <el-table-column prop="check_status" label="Status" width="150">
+          <template #default="scope">
+            <el-button :type="getType(scope.row.check_status)" class="text-uppercase" size="small">{{ scope.row.check_status }}</el-button>
           </template>
-        </el-table-column> -->
-        <el-table-column prop="check_status" label="Status" width="100" />
-        <el-table-column prop="check_name" label="Check Name" width="300" />
+        </el-table-column>
+        <el-table-column prop="check_name" label="Check Name" width="450" />
         <el-table-column prop="message" label="Message" />
-        <!-- <el-table-column prop="partial_results" label="Partial Results" /> -->
       </el-table>
     </el-tab-pane>
     <el-tab-pane :label="$t('title.diagnostics')">
-      <!-- {{ {...fetchedData, health_check: void(0)} }} -->
       <pre>{{ JSON.stringify({...fetchedData, health_check: void(0)}, null, 2) }}</pre>
     </el-tab-pane>
   </el-tabs>
@@ -36,8 +27,7 @@ import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const isLoading = ref(false)
 let fetchedData = ref<any>([])
-// let healthCheck: any[] = []
-// let diagnostics: any[] = []
+let colorType = ref<any>('')
 
 onMounted(async ()=> {
   await fetch()
@@ -54,8 +44,10 @@ async function fetch() {
   }
   fetchedData.value = data?.value
   isLoading.value = false
-  // healthCheck = data?.value?.health_check
-  // diagnostics = {...data?.value, health_check: void(0)}
+}
+
+function getType (status: any) {
+  if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
 }
 
 function downloadHealthData () {
