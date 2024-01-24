@@ -1,6 +1,8 @@
 <template>
-  <IconILoading v-if="isLoading" />
-
+  <el-header style="height: 32px">
+    <IconILoading v-if="isLoading" />
+    <el-button class="float-right" @click="downloadHealthData"><IconIIcon :icon="icons.download" /> {{ $t('button.download') }}</el-button>
+  </el-header>
   <el-tabs>
     <el-tab-pane :label="$t('title.healthcheck')">
       <!-- {{ fetchedData.health_check }} -->
@@ -43,5 +45,17 @@ async function fetch() {
   isLoading.value = false
   // healthCheck = data?.value?.health_check
   // diagnostics = {...data?.value, health_check: void(0)}
+}
+
+function downloadHealthData () {
+  const text = JSON.stringify(fetchedData.value, null, 2)
+  const filename = 'server_diagnostics.json'
+  const element = document.createElement('a')
+  element.setAttribute('href', 'data:application/json;charset=utf-8,' + encodeURIComponent(text))
+  element.setAttribute('download', filename)
+  element.style.display = 'none'
+  document.body.appendChild(element)
+  element.click()
+  document.body.removeChild(element)
 }
 </script>
