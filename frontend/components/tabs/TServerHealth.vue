@@ -26,23 +26,7 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane :label="$t('title.diagnostics')">
-      <el-form label-width="200px">
-        <div v-for="values, category in {...fetchedData, health_check: void(0)}">
-          <template v-if="values && Object.keys(values).length !== 0">
-            <el-text tag="b"> {{ category }} </el-text><br>
-            <el-form-item v-for="v, k in values" :label="k.toString()">
-                <template v-if="typeof v == 'object'">
-                  <div class="scrollValue">
-                    <pre>{{ JSON.stringify(v, null, 2) }}</pre>
-                  </div>
-                </template>
-                <template v-else>
-                  {{ v }}
-                </template>
-            </el-form-item>
-          </template>
-        </div>
-      </el-form>
+      <FormFDiagnostics :data="{...fetchedData, health_check: void(0)}" />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -91,10 +75,3 @@ function downloadHealthData () {
   document.body.removeChild(element)
 }
 </script>
-<style>
-div.scrollValue {
-  max-height: 400px;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-</style>
