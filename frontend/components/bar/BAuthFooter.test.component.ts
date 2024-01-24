@@ -11,7 +11,6 @@ test.describe('snapshot', () => {
         if (version) version.innerHTML = 'x.x.x'
       })
     }
-
     await simpleScreenshotTest(page, 'bar', 'bauthfooter-story-vue', 'BAuthFooter','BarBAuthFooter', afterDataTestidFound)
   })
 })
