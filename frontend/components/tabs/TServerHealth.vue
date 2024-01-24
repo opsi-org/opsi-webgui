@@ -5,7 +5,7 @@
   </el-header>
   <el-tabs>
     <el-tab-pane :label="$t('title.healthcheck')">
-      <TableTHealthCheck :data="fetchedData" />
+      <TableTHealthCheck :data="fetchedData.health_check" />
     </el-tab-pane>
     <el-tab-pane :label="$t('title.diagnostics')">
       <FormFDiagnostics :data="{...fetchedData, health_check: void(0)}" />

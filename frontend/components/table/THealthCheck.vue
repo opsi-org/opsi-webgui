@@ -1,5 +1,5 @@
 <template>
-  <el-table :data="data.health_check" row-key="check_id" :tree-props="{ children: 'partial_results' }">
+  <el-table :data="data" row-key="check_id" :tree-props="{ children: 'partial_results' }">
     <el-table-column
       prop="check_status"
       label="Status"
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  data: { type: Object, required: true }
+  data: { type: Array, required: true }
 })
 const filterStatus = (value: string, row: any) => {
   return row.check_status === value
