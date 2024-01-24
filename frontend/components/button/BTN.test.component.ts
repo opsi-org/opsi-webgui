@@ -1,16 +1,20 @@
 // const { test, expect } = require('@playwright/test')
-import { test } from '@playwright/test'
+import { test, type Page } from '@playwright/test'
 import { simpleScreenshotTest } from '../../tests-configs/playwright/utils/pw-story-call.ts'
 
+const folder = 'button'
+const filename = 'BTN'
 
 test.describe('snapshot', () => {
-  test('btn-variants', async ({ page }) => {
-    await simpleScreenshotTest(page, 'button', 'btn-story-vue', 'BTN')
+  test(folder + '/' + filename + '', async ({ page }) => {
+    // const afterDataTestidFound = async (p: Page, el: any) => {
+    //   await el.evaluate(() => {
+    //     const version = document.querySelector('.BAuthFooter-version')
+    //     if (version) version.innerHTML = 'x.x.x'
+    //   })
+    // }
+    await simpleScreenshotTest(page, folder, filename.toLocaleLowerCase() + '-story-vue', filename,undefined,
+      // afterDataTestidFound
+    )
   })
-  // test('bauthfooter-variant', async ({ page }) => {
-  //   await simpleScreenshotTest(page, 'bar', 'bauthfooter-story-vue', 'BAuthFooter','BarBAuthFooter')
-  // })
-  // test('btnlogout-variant', async ({ page }) => {
-  //   await simpleScreenshotTest(page, 'button', 'btnlogout-story-vue', 'BTNLogout', 'ButtonBTNLogout')
-  // })
 })

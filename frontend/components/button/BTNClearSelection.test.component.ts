@@ -3,7 +3,7 @@ import { test, type Page } from '@playwright/test'
 import { simpleScreenshotTest } from '../../tests-configs/playwright/utils/pw-story-call.ts'
 
 const folder = 'button'
-const filename = 'BTNLogout'
+const filename = 'BTNClearSelection'
 
 test.describe('snapshot', () => {
   test(folder + '/' + filename + '', async ({ page }) => {

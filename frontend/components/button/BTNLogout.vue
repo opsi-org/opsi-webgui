@@ -1,4 +1,5 @@
 <template>
+  <div data-testid="BTNLogout">
 
   <!-- <el-menu-item
     v-if="props.isMenuItem" type="text"
@@ -32,15 +33,15 @@
   >
     <template #reference>
       <el-button
-        data-testid="ButtonBTNLogout"
         class="h-full max-h-full min-h-full border-0 rounded-none"
         style="--el-border-radius-base: 0px"
-        >
+      >
         <IconIIcon :icon="icon.logout" />
         <p v-if="isMobile" class="pt-3 ml-1">{{ $t('button.logout') }}</p>
       </el-button>
     </template>
   </el-popconfirm>
+  </div>
 </template>
 
 <script setup lang="ts">

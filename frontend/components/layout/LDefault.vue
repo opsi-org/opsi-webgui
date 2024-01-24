@@ -1,4 +1,5 @@
 <template>
+  <!-- <DevOnly>Hello</DevOnly> -->
   <div :class="{
     'is-mobile': useMQ().isMobile.value,
     'is-not-mobile': !useMQ().isMobile.value,
