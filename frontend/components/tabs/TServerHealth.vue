@@ -1,50 +1,17 @@
 <template>
-  <el-header style="height: 32px">
-    <IconILoading v-if="isLoading" />
-    <el-button class="float-right" @click="downloadHealthData"><IconIIcon :icon="icons.download" /> {{ $t('button.download') }}</el-button>
-  </el-header>
-  <el-tabs>
-    <el-tab-pane :label="$t('title.healthcheck')">
-      <el-table :data="fetchedData.health_check" row-key="check_id" :tree-props="{ children: 'partial_results' }">
-        <el-table-column
-          prop="check_status"
-          label="Status"
-          width="150"
-          :filters="[
-          { text: 'Ok', value: 'ok' },
-          { text: 'Error', value: 'error' },
-          { text: 'Warning', value: 'warning' },
-        ]"
-        :filter-method="filterStatus"
-      >
-          <template #default="scope">
-            <el-button :type="getType(scope.row.check_status)" class="text-capitalize" size="small">{{ scope.row.check_status }}</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column prop="check_name" label="Check Name" width="450" />
-        <el-table-column prop="message" label="Message" />
-      </el-table>
-    </el-tab-pane>
-    <el-tab-pane :label="$t('title.diagnostics')">
-      <el-form label-width="200px" size="small">
-        <div v-for="values, category in {...fetchedData, health_check: void(0)}">
-          <template v-if="values && Object.keys(values).length !== 0">
-            <el-text tag="b"> {{ category }} </el-text><br>
-            <el-form-item v-for="v, k in values" :label="k.toString()">
-                <template v-if="typeof v == 'object'">
-                  <div class="scrollValue">
-                    <pre>{{ JSON.stringify(v, null, 2) }}</pre>
-                  </div>
-                </template>
-                <template v-else>
-                  {{ v }}
-                </template>
-            </el-form-item>
-          </template>
-        </div>
-      </el-form>
-    </el-tab-pane>
-  </el-tabs>
+  <el-container v-loading="isLoading">
+    <el-header style="height: 32px">
+      <el-button class="float-right" @click="downloadHealthData"><IconIIcon :icon="icons.download" /> {{ $t('button.download') }}</el-button>
+    </el-header>
+    <el-tabs lazy>
+      <el-tab-pane :label="$t('title.healthcheck')">
+        <TableTHealthCheck :data="fetchedData.health_check" />
+      </el-tab-pane>
+      <el-tab-pane :label="$t('title.diagnostics')">
+        <FormFDiagnostics :data="{...fetchedData, health_check: void(0)}" />
+      </el-tab-pane>
+    </el-tabs>
+  </el-container>
 </template>
 
 <script setup lang="ts">
@@ -71,14 +38,6 @@ async function fetch() {
   isLoading.value = false
 }
 
-const filterStatus = (value: string, row: any) => {
-  return row.check_status === value
-}
-
-function getType (status: any) {
-  if (status === 'error') { return 'danger' } else if (status === 'ok') { return 'success' } else if (status === 'warning') { return 'warning' } else { return 'primary' }
-}
-
 function downloadHealthData () {
   const text = JSON.stringify(fetchedData.value, null, 2)
   const filename = 'server_diagnostics.json'
@@ -91,10 +50,3 @@ function downloadHealthData () {
   document.body.removeChild(element)
 }
 </script>
-<style>
-div.scrollValue {
-  max-height: 400px;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-</style>
