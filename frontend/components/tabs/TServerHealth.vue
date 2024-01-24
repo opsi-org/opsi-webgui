@@ -26,7 +26,17 @@
       </el-table>
     </el-tab-pane>
     <el-tab-pane :label="$t('title.diagnostics')">
-      <pre>{{ JSON.stringify({...fetchedData, health_check: void(0)}, null, 2) }}</pre>
+      <!-- <pre>{{ JSON.stringify({...fetchedData, health_check: void(0)}, null, 2) }}</pre> -->
+      <el-form label-width="200px" size="small">
+        <div v-for="values, category in {...fetchedData, health_check: void(0)}">
+          <template v-if="values && Object.keys(values).length !== 0">
+            <el-text tag="b"> {{ category }} </el-text><br>
+            <el-form-item v-for="v, k in values" :label="k.toString()">
+                {{ v }} {{ typeof v }}
+            </el-form-item>
+          </template>
+        </div>
+      </el-form>
     </el-tab-pane>
   </el-tabs>
 </template>

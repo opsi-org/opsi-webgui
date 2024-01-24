@@ -2,7 +2,7 @@
   "git": {
     "hooks": {
       # "echo \"> Test Changed files\"\nbash ./scripts/devhelper.sh all-changed .test.component.js test:all:components $file || exit_code=$?\necho
-      "pre-push": "echo \"hello?\"\nbash /workspace/frontend/scripts/prehook.sh"
+      "pre-push": "bash /workspace/frontend/scripts/prehook.sh"
     }
   },
   "package": {
