@@ -15,8 +15,9 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "strict": true,
+    "allowImportingTsExtensions": true,
     "noImplicitThis": true,
-    "noEmit": false, // was true
+    "noEmit": true, // was true
     "skipLibCheck": true,
     "resolveJsonModule": true, // locales
     "ignoreDeprecations": "5.0",

@@ -3,6 +3,7 @@
     :default-active="useRouter().currentRoute.value?.fullPath"
     :collapse="!isMobile && isCollapse"
     class="el-menu-mywrapper overflow-hidden max-w-full"
+    data-testid="BSide"
     style="--el-menu-icon-width: 244px;"
   >
   <!-- :class="{collapse: !isCollapse}" -->

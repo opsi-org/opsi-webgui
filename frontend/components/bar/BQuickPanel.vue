@@ -1,5 +1,5 @@
 <template>
-  <div class="quickpanel">
+  <div class="quickpanel" data-testid="BQuickPanel">
     <el-text tag="b" size="small"> {{$t('label.quickselect')}}</el-text><br>
     <TabsTQuickSelections />
     <el-text tag="b" size="small"> {{$t('label.quickaction')}}</el-text><br>

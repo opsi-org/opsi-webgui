@@ -126,14 +126,14 @@
             //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
             //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.component.js test:all:components-devices /" // This is executed in the terminal.
             // },
-            // { // update snapshots for opened file (if .vue/.stories.js/.test.component.js )
-            //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-            //     "name": "$(device-camera) current",
-            //     "tooltip": "Update UI Snapshot",
-            //     "color": "white",
-            //     "singleInstance": true,
-            //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh ${fileBasename} .test.component.js test:all:components-devices:update /" // This is executed in the terminal.
-            // },
+            { // update snapshots for opened file (if .vue/.stories.js/.test.component.js )
+                "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
+                "name": "$(device-camera) current",
+                "tooltip": "Update UI Snapshot",
+                "color": "white",
+                "singleInstance": true,
+                "command": "bash /workspace/frontend/scripts/devhelper.sh ${fileBasename} .test.component.ts pwtest:components:update /" // This is executed in the terminal.
+            },
             // { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.component.js ) //
             //     // may not work if currently in develop
             //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
@@ -143,14 +143,14 @@
             //     "singleInstance": true,
             //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh all-changed .test.component.js test:all:components /" // This is executed in the terminal.
             // },
-            // { // run tests for all files
-            //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-            //     "name": "$(testing-run-all-icon) all",
-            //     "tooltip": "Run test for all files",
-            //     "color": "white",
-            //     "singleInstance": true,
-            //     "command": "bash /workspace/opsiweb/scripts/devhelper.sh all .test.component.js test:all:components /" // This is executed in the terminal.
-            // },
+            { // run tests for all files
+                "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
+                "name": "$(testing-run-all-icon) all",
+                "tooltip": "Run test for all files",
+                "color": "white",
+                "singleInstance": true,
+                "command": "bash /workspace/frontend/scripts/devhelper.sh all .test.component.ts pwtest:components /" // This is executed in the terminal.
+            },
             // { // build dist directory (used in production)
             //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
             //     "name": "$(package) buildDist",

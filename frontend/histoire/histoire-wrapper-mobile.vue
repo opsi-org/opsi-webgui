@@ -34,7 +34,7 @@ const hasWrapper = computed(()=> {
 
 <style scoped>
 .mobile-wrapper {
-  --width-desktop: 500px; /** mobile width from tailwind */
+  --width-desktop: 400px; /** mobile width from tailwind */
   max-width: var(--width-desktop) !important;
   min-width: var(--width-desktop) !important;
   width: var(--width-desktop) !important;

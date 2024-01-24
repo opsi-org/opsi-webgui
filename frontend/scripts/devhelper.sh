@@ -7,16 +7,20 @@
 # $4: playwright-config-path(rel)   e.g. .config/playwright-all-components.js
 # $5: sub commands logfile          e.g. .tmp_RESULT
 file=$1
+echo "file: $file"
 # file_ext=$2
 file_ext_new=$2
+echo "file_ext_new: $file_ext_new"
 npm_command=$3
+echo "npm_command: $npm_command"
 file_prepattern_new=$4
+echo "file_prepattern_new: $file_prepattern_new"
 branchToCompare=$5
 if [[ ${branchToCompare} == "" ]]; then
     branchToCompare="main"
 fi
 echo "branchToCompare: $branchToCompare"
-
+echo "---------------------------------"
 set -e
 # source $HOME/.bashrc
 seedfile() {
