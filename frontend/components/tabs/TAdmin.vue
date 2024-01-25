@@ -1,5 +1,12 @@
 <template>
-  hellooo
+  <el-tabs lazy>
+    <el-tab-pane :label="$t('form.general')">
+      {{ $t('form.general') }}
+    </el-tab-pane>
+    <el-tab-pane :label="$t('label.maintenance')">
+      {{ $t('label.maintenance') }}
+    </el-tab-pane>
+  </el-tabs>
   <!-- <div data-testid="TAdmin" class="TAdmin">
     <b-tabs small lazy>
       <b-tab :title="$t('form.general')" active>
@@ -66,7 +73,7 @@
   </div> -->
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 // import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 // import { AlertToast } from '../../mixins/component'
 // import { MBus } from '../../mixins/messagebus'
