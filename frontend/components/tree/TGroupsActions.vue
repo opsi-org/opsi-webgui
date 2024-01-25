@@ -9,15 +9,31 @@
     >
     <template #default="{ node, data }">
       <span>{{ node.label }}</span>
-      <div class="ml-auto">
-        <span v-for="action in (data.type == 'ObjectToGroup' ? props.data.actions.children : props.data.actions.parent)">
+      <div class="ml-auto" v-if="node.label !== 'not_assigned'">
+        <span v-for="action in
+              (data.type == 'ObjectToGroup' ? props.data.actions.children
+              : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
+              )"
+        >
           <el-popover :width="500" trigger="click">
             <template #reference>
               <el-button size="small">
                 <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" />
               </el-button>
             </template>
-            {{ action }} {{ props.data.category }}
+            <template v-if="action == 'edit'">
+              <small>{{ $t('group.removeClient.confirm') }}</small>
+              <b-button variant="danger" class="float-right" size="sm">
+                {{ $t('group.remove') }}
+              </b-button>
+            </template>
+            <template v-if="action == 'delete'">
+              <small>{{ $t('group.removeClient.confirm') }}</small>
+              <b-button variant="danger" class="float-right" size="sm">
+                {{ $t('group.remove') }}
+              </b-button>
+            </template>
+            {{ action }} {{ props.data.category }} {{ data.type }}
           </el-popover>
         </span>
       </div>

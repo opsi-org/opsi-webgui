@@ -232,17 +232,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useNotification } from '~/composables/mixins/useComponent';
-import {useIcons} from '../../composables/mixins/useIcons'
-const icons = useIcons()
-const isLoading = ref(false)
 const groupActions = reactive({
   clientGroups: {
     category : 'clientGroups',
     actions: {
+      maingroups: ['group-add'],
       parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'],
-      children: ['copy', 'delete']
+      children: ['delete', 'copy']
     }
   },
   prodGroups: {
@@ -253,43 +249,6 @@ const groupActions = reactive({
     }
   }
 })
-const defaultProps = {
-  label: 'text',
-  children: 'children'
-}
-const fetchedData = ref<any>({})
-const fetchedClientData = ref<any>({})
-const storeSelection = storeSelections()
-// onMounted(async ()=> {
-//   await fetch()
-//   await fetchClients()
-// })
-// async function fetch() {
-//   isLoading.value = true
-//   const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
-//   if (error) {
-//     useNotification().error(error)
-//     isLoading.value = false
-//     return
-//   }
-//   fetchedData.value = data.value.groups ?
-//                         Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
-//                         : []
-//   isLoading.value = false
-// }
-// async function fetchClients() {
-//   const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
-//   if (error) {
-//     useNotification().error(error)
-//     return
-//   }
-
-//   fetchedClientData.value = data.value  ?
-//                               Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
-//                                 children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
-//                                 ({ ...objA, children: Object.values(objA.children || {})}))}))
-//                               : []
-// }
 
 // @Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
 // export default class VGroups extends Vue {
