@@ -1,5 +1,6 @@
 <template>
-  <div data-testid="TAdmin" class="TAdmin">
+  hellooo
+  <!-- <div data-testid="TAdmin" class="TAdmin">
     <b-tabs small lazy>
       <b-tab :title="$t('form.general')" active>
         <b-row class="mt-4 mb-2 text-small">
@@ -62,79 +63,79 @@
         <ViewVAdminMaintenance />
       </b-tab>
     </b-tabs>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
-import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-import { AlertToast } from '../../mixins/component'
-import { MBus } from '../../mixins/messagebus'
-const cache = namespace('data-cache')
+// import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
+// import { AlertToast } from '../../mixins/component'
+// import { MBus } from '../../mixins/messagebus'
+// const cache = namespace('data-cache')
 
-@Component({ mixins: [MBus, AlertToast] })
-export default class VAdminTerminal extends Vue {
-  showToastError: any // from mixin AlertToast
-  showToastSuccess: any // from mixin AlertToast
-  @Prop({ }) id!: string
-  @Prop({ }) type!: string
-  @Prop({ default: false }) 'asChild'!: string
-  @Prop({ default: false }) 'closeroute'!: string
-  @cache.Getter public opsiconfigserver!: string
-  $axios: any
-  $t: any
-  blockedClients: Array<string> = []
-  lockedProducts: Array<string> = []
-  clientId: string = ''
-  productId: string = ''
+// @Component({ mixins: [MBus, AlertToast] })
+// export default class VAdminTerminal extends Vue {
+//   showToastError: any // from mixin AlertToast
+//   showToastSuccess: any // from mixin AlertToast
+//   @Prop({ }) id!: string
+//   @Prop({ }) type!: string
+//   @Prop({ default: false }) 'asChild'!: string
+//   @Prop({ default: false }) 'closeroute'!: string
+//   @cache.Getter public opsiconfigserver!: string
+//   $axios: any
+//   $t: any
+//   blockedClients: Array<string> = []
+//   lockedProducts: Array<string> = []
+//   clientId: string = ''
+//   productId: string = ''
 
-  async mounted () {
-    await this.fetchBlockedClients()
-    await this.fetchLockedProducts()
-  }
+//   async mounted () {
+//     await this.fetchBlockedClients()
+//     await this.fetchLockedProducts()
+//   }
 
-  async fetchBlockedClients () {
-    await this.$axios.$get('/api/opsidata/blocked-clients')
-      .then((response) => {
-        this.blockedClients = response
-      }).catch(this.showToastError)
-  }
+//   async fetchBlockedClients () {
+//     await this.$axios.$get('/api/opsidata/blocked-clients')
+//       .then((response) => {
+//         this.blockedClients = response
+//       }).catch(this.showToastError)
+//   }
 
-  async fetchLockedProducts () {
-    await this.$axios.$get('/api/opsidata/locked-products')
-      .then((response) => {
-        this.lockedProducts = response
-      }).catch(this.showToastError)
-  }
+//   async fetchLockedProducts () {
+//     await this.$axios.$get('/api/opsidata/locked-products')
+//       .then((response) => {
+//         this.lockedProducts = response
+//       }).catch(this.showToastError)
+//   }
 
-  async unblockClient () {
-    await this.$axios.$post(`/api/opsidata/clients/${this.clientId}/unblock`)
-      .then((response) => { this.showToastSuccess(response) })
-      .catch(this.showToastError)
-  }
+//   async unblockClient () {
+//     await this.$axios.$post(`/api/opsidata/clients/${this.clientId}/unblock`)
+//       .then((response) => { this.showToastSuccess(response) })
+//       .catch(this.showToastError)
+//   }
 
-  async unlockProduct () {
-    await this.$axios.$post(`/api/opsidata/products/${this.productId}/unlock`)
-      .then((response) => { this.showToastSuccess(response) })
-      .catch(this.showToastError)
-  }
+//   async unlockProduct () {
+//     await this.$axios.$post(`/api/opsidata/products/${this.productId}/unlock`)
+//       .then((response) => { this.showToastSuccess(response) })
+//       .catch(this.showToastError)
+//   }
 
-  async unblockAllClients () {
-    await this.$axios.$post('/api/opsidata/clients/unblock')
-      .then((response) => { this.showToastSuccess(response) })
-      .catch(this.showToastError)
-  }
+//   async unblockAllClients () {
+//     await this.$axios.$post('/api/opsidata/clients/unblock')
+//       .then((response) => { this.showToastSuccess(response) })
+//       .catch(this.showToastError)
+//   }
 
-  async unlockAllProducts () {
-    await this.$axios.$post('/api/opsidata/products/unlock')
-      .then((response) => { this.showToastSuccess(response) })
-      .catch(this.showToastError)
-  }
-}
+//   async unlockAllProducts () {
+//     await this.$axios.$post('/api/opsidata/products/unlock')
+//       .then((response) => { this.showToastSuccess(response) })
+//       .catch(this.showToastError)
+//   }
+// }
 </script>
 
 <style scoped>
-.VAdmin {
+/* .VAdmin {
   overflow-x: hidden;
   padding-left: 10px;
-}
+} */
 </style>
