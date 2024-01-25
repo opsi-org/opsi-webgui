@@ -1,5 +1,11 @@
 <template>
-  <el-tabs>
+  <el-tabs lazy>
+    <el-tab-pane v-for="options, category in groupActions" :key="category" :label="$t('treeselect.' + category)">
+      <TreeTGroupsActions :data="options" />
+    </el-tab-pane>
+  </el-tabs>
+
+  <!-- <el-tabs>
     <el-tab-pane :label="$t('treeselect.clientGroups')">
       <el-tree
         :data="fetchedClientData"
@@ -10,18 +16,14 @@
     <el-tab-pane :label="$t('treeselect.prodGroups')">
       <el-row>
         <el-col>
-          <!-- <IconILoading v-if="isLoading" /> -->
           <el-tree
             :data="fetchedData"
             :props="defaultProps"
             highlight-current
           >
             <template #default="{ node, data }">
-              {{ node.label }}
               <template v-if="data.type == 'ObjectToGroup'">
-                <div class="float-right">
                   <el-button :aria-label="$t('group.removeProduct')"> <IconIIcon :icon="icons.delete" /> </el-button>
-                </div>
               </template>
               <template v-else>
                 <el-button :aria-label="$t('group.editGroup')"> <IconIIcon :icon="icons.pencil" /> </el-button>
@@ -30,12 +32,13 @@
                   <el-button :aria-label="$t('group.addToGroup')"> <IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.add" class="mt-2" /> </el-button>
                   <el-button :aria-label="$t('group.addSubgroup')"> <IconIIcon :icon="icons.group" /> <IconIIcon :icon="icons.add" class="mt-2" /></el-button>
               </template>
+              {{ node.label }}
             </template>
           </el-tree>
         </el-col>
       </el-row>
     </el-tab-pane>
-  </el-tabs>
+  </el-tabs> -->
   <!-- <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
@@ -269,6 +272,22 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const isLoading = ref(false)
+const groupActions = reactive({
+  clientGroups: {
+    category : 'clientGroups',
+    actions: {
+      parent: ['edit', 'delete', 'deleteOnlyAssignments', 'addChildren', 'addSubGroup'],
+      children: ['copy', 'delete']
+    }
+  },
+  prodGroups: {
+    category : 'prodGroups',
+    actions: {
+      parent: ['edit', 'delete', 'deleteOnlyAssignments', 'addChildren', 'addSubGroup'],
+      children: ['delete']
+    }
+  }
+})
 const defaultProps = {
   label: 'text',
   children: 'children'
@@ -276,39 +295,36 @@ const defaultProps = {
 const fetchedData = ref<any>({})
 const fetchedClientData = ref<any>({})
 const storeSelection = storeSelections()
-onMounted(async ()=> {
-  await fetch()
-  await fetchClients()
-})
-async function fetch() {
-  isLoading.value = true
-  const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
-  if (error) {
-    useNotification().error(error)
-    isLoading.value = false
-    return
-  }
-  fetchedData.value = data.value.groups ?
-                        Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
-                        : []
-  isLoading.value = false
-}
-async function fetchClients() {
-  // isLoading.value = true
-  const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
-  if (error) {
-    useNotification().error(error)
-    // isLoading.value = false
-    return
-  }
+// onMounted(async ()=> {
+//   await fetch()
+//   await fetchClients()
+// })
+// async function fetch() {
+//   isLoading.value = true
+//   const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+//   if (error) {
+//     useNotification().error(error)
+//     isLoading.value = false
+//     return
+//   }
+//   fetchedData.value = data.value.groups ?
+//                         Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
+//                         : []
+//   isLoading.value = false
+// }
+// async function fetchClients() {
+//   const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
+//   if (error) {
+//     useNotification().error(error)
+//     return
+//   }
 
-  fetchedClientData.value = data.value  ?
-                              Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
-                                children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
-                                ({ ...objA, children: Object.values(objA.children || {})}))}))
-                              : []
-  // isLoading.value = false
-}
+//   fetchedClientData.value = data.value  ?
+//                               Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
+//                                 children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
+//                                 ({ ...objA, children: Object.values(objA.children || {})}))}))
+//                               : []
+// }
 
 // @Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
 // export default class VGroups extends Vue {

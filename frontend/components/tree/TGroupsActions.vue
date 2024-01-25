@@ -1,4 +1,12 @@
 <template>
+  <el-container v-loading="isLoading">
+    <el-tree
+      :data="fetchedData"
+      :props="defaultProps"
+      highlight-current
+    />
+  </el-container>
+
   <!-- <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
@@ -187,7 +195,56 @@
   </div> -->
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useNotification } from '~/composables/mixins/useComponent';
+import {useIcons} from '../../composables/mixins/useIcons'
+const props = defineProps({
+  data: { type: Object, required: true }
+})
+const icons = useIcons()
+const storeSelection = storeSelections()
+const isLoading = ref(false)
+const defaultProps = {
+  label: 'text',
+  children: 'children'
+}
+const fetchedData = ref<any>({})
+onMounted(async ()=> {
+  isLoading.value = true
+  if (props.data.category == 'clientGroups')
+  {
+    await fetchClientGroups()
+  } else {
+    await fetchProdGroups()
+  }
+  isLoading.value = false
+})
+async function fetchClientGroups() {
+  const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+
+  fetchedData.value = data.value  ?
+                              Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
+                                children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
+                                ({ ...objA, children: Object.values(objA.children || {})}))}))
+                              : []
+}
+
+async function fetchProdGroups() {
+  const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+  fetchedData.value = data.value.groups ?
+                        Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
+                        : []
+}
+
 // import { Component, namespace, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
 // import { Client } from '../../mixins/get'
