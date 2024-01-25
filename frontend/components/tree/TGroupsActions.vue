@@ -4,7 +4,14 @@
       :data="fetchedData"
       :props="defaultProps"
       highlight-current
-    />
+    >
+    <template #default="{ node, data }">
+      <span v-for="action in (data.type == 'ObjectToGroup' ? props.data.actions.children : props.data.actions.parent)">
+        <el-button> <IconIIcon :icon="icons[action]" /> {{ action }} </el-button>
+      </span>
+      <span>{{ node.label }}</span>
+    </template>
+    </el-tree>
   </el-container>
 
   <!-- <div class="VGroups" data-testid="VGroups">
@@ -412,6 +419,15 @@ async function fetchProdGroups() {
 // }
 </script>
 <style>
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+
 /* .groupstabs .tab-content {
   height: 82vh;
   margin: 10px;
