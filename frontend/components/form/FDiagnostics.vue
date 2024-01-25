@@ -33,10 +33,10 @@ div.scrollValue {
   margin-bottom: 7px;
 }
 .diagnostics-form .el-form-item__label{
-  height: 30px;
-  line-height: 30px;
+  height: 28px;
+  line-height: 28px;
 }
 .diagnostics-form .el-form-item__content {
-  line-height: 30px;
+  line-height: 28px;
 }
 </style>

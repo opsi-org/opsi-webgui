@@ -1,41 +1,31 @@
 <template>
-  <!-- <div data-testid="VModules" :class="{loadingCursor: $fetchState.pending}">
-    <OverlayOLoading :is-loading="$fetchState.pending" />
-    <LazyGridGFormItem v-if="!errorText" v-once :label="$t('form.modules.available')" labelclass="modules" variant="longvalue">
-      <template #value>
-        <b-form-textarea
-          id="modules-list"
-          rows="3"
-          :label="$t('settingsPage.modules.available')"
-          max-rows="30"
-          size="sm"
-          no-resize
-          plaintext
-          :value="Object.values(modules).join('\n')"
-        />
-      </template>
-    </LazyGridGFormItem>
-  </div> -->
+  <el-container v-loading="isLoading">
+    <el-form>
+      <el-form-item :label="$t('form.modules.available')">
+        <pre>{{ JSON.stringify(fetchedData.result, null, 2) }}</pre>
+      </el-form-item>
+    </el-form>
+  </el-container>
 </template>
 
-<script lang="ts">
-// import { Component, Vue } from 'nuxt-property-decorator'
-// import { AlertToast } from '../../mixins/component'
-// @Component({ mixins: [AlertToast] })
-// export default class VModules extends Vue {
-//   showToastError: any // mixin
-//   $axios: any
-//   $t:any
-//   modules: object = {}
-//   errorText: string = ''
+<script setup lang="ts">
+import { useNotification } from '~/composables/mixins/useComponent';
+const isLoading = ref(false)
+let fetchedData = ref<any>([])
+onMounted(async ()=> {
+  await fetch()
+})
 
-//   async fetch () {
-//     await this.$axios.$get('/api/opsidata/modulesContent')
-//       .then((response) => {
-//         this.modules = response.result
-//       }).catch((error) => {
-//         this.showToastError(error)
-//       })
-//   }
-// }
+async function fetch() {
+  isLoading.value = true
+  const {data, error} = await useApiGETBody('/opsidata/modulesContent')
+  if (error) {
+    console.log(error)
+    useNotification().error(error)
+    isLoading.value = false
+    return
+  }
+  fetchedData.value = data?.value
+  isLoading.value = false
+}
 </script>
