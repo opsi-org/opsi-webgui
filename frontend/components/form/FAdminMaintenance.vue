@@ -1,5 +1,5 @@
 <template>
-  <div data-testid="VAdminMaintenance" class="VAdminMaintenance">
+  <!-- <div data-testid="VAdminMaintenance" class="VAdminMaintenance">
     <OverlayOLoading :is-loading="isLoading" />
     <GridGFormItem :label="$t('label.currentappstate')" variant="longvalue">
       <template #value>
@@ -196,151 +196,151 @@
         </GridGFormItem>
       </template>
     </GridGFormItem>
-  </div>
+  </div> -->
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
-import { AlertToast } from '../../mixins/component'
-import { Icons } from '../../mixins/icons'
+// import { Component, Vue } from 'nuxt-property-decorator'
+// import { AlertToast } from '../../mixins/component'
+// import { Icons } from '../../mixins/icons'
 
-interface AppState {
-  type: string
-  address_exceptions: Array<string>,
-  retry_after: number
-}
-interface CreateBackup {
-  config_files: boolean,
-  redis_data:boolean,
-  maintenance_mode: boolean,
-  password: string
-}
-interface RestoreBackup {
-  file_id: string,
-  config_files: boolean,
-  redis_data:boolean,
-  server_id: string,
-  password: string
-}
+// interface AppState {
+//   type: string
+//   address_exceptions: Array<string>,
+//   retry_after: number
+// }
+// interface CreateBackup {
+//   config_files: boolean,
+//   redis_data:boolean,
+//   maintenance_mode: boolean,
+//   password: string
+// }
+// interface RestoreBackup {
+//   file_id: string,
+//   config_files: boolean,
+//   redis_data:boolean,
+//   server_id: string,
+//   password: string
+// }
 
-@Component({ mixins: [Icons, AlertToast] })
-export default class VAdminMaintenance extends Vue {
-  showToastSuccess: any // from mixin AlertToast
-  showToastError: any // from mixin AlertToast
-  icon: any
-  $axios: any
-  $t: any
-  currentAppState: string = ''
-  newAppState: AppState = { type: '', address_exceptions: [], retry_after: 0 }
-  createbackup: CreateBackup = { config_files: true, redis_data: false, maintenance_mode: true, password: '' }
-  restorebackup: RestoreBackup = { file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' }
-  exception: string = ''
-  exceptions: Array<string> = []
-  isLoading: boolean = false
-  file: any = null
-  newserverID: string = ''
-  showPasswordCB: boolean = false
-  showPasswordRB: boolean = false
+// @Component({ mixins: [Icons, AlertToast] })
+// export default class VAdminMaintenance extends Vue {
+//   showToastSuccess: any // from mixin AlertToast
+//   showToastError: any // from mixin AlertToast
+//   icon: any
+//   $axios: any
+//   $t: any
+//   currentAppState: string = ''
+//   newAppState: AppState = { type: '', address_exceptions: [], retry_after: 0 }
+//   createbackup: CreateBackup = { config_files: true, redis_data: false, maintenance_mode: true, password: '' }
+//   restorebackup: RestoreBackup = { file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' }
+//   exception: string = ''
+//   exceptions: Array<string> = []
+//   isLoading: boolean = false
+//   file: any = null
+//   newserverID: string = ''
+//   showPasswordCB: boolean = false
+//   showPasswordRB: boolean = false
 
-  async mounted () {
-    await this.getAppState()
-  }
+//   async mounted () {
+//     await this.getAppState()
+//   }
 
-  async getAppState () {
-    await this.$axios.$get('/api/app-state')
-      .then((response) => {
-        this.currentAppState = response.type
-      })
-      .catch(this.showToastError)
-  }
+//   async getAppState () {
+//     await this.$axios.$get('/api/app-state')
+//       .then((response) => {
+//         this.currentAppState = response.type
+//       })
+//       .catch(this.showToastError)
+//   }
 
-  resetAppState () {
-    this.newAppState.address_exceptions = []
-    this.newAppState.retry_after = 0
-  }
+//   resetAppState () {
+//     this.newAppState.address_exceptions = []
+//     this.newAppState.retry_after = 0
+//   }
 
-  resetCreateBackup () {
-    this.createbackup = { config_files: true, redis_data: false, maintenance_mode: true, password: '' } as CreateBackup
-  }
+//   resetCreateBackup () {
+//     this.createbackup = { config_files: true, redis_data: false, maintenance_mode: true, password: '' } as CreateBackup
+//   }
 
-  resetRestoreBackup () {
-    this.restorebackup = { file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' } as RestoreBackup
-  }
+//   resetRestoreBackup () {
+//     this.restorebackup = { file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' } as RestoreBackup
+//   }
 
-  async setAppState () {
-    this.isLoading = true
-    await this.$axios.$post('/api/app-state', this.newAppState)
-      .then((response) => {
-        this.currentAppState = response.type
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.isLoading = false
-  }
+//   async setAppState () {
+//     this.isLoading = true
+//     await this.$axios.$post('/api/app-state', this.newAppState)
+//       .then((response) => {
+//         this.currentAppState = response.type
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.isLoading = false
+//   }
 
-  async createBackup () {
-    this.isLoading = true
-    await this.$axios.$post('/api/backup/create', this.createbackup)
-      .then((response) => {
-        const downloadLink = document.createElement('a')
-        downloadLink.setAttribute('href', `/file-transfer/${response}?delete=true`)
-        downloadLink.style.display = 'none'
-        document.body.appendChild(downloadLink)
-        downloadLink.click()
-        document.body.removeChild(downloadLink)
-        this.showToastSuccess(this.$t('success.backup.created'))
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.isLoading = false
-  }
+//   async createBackup () {
+//     this.isLoading = true
+//     await this.$axios.$post('/api/backup/create', this.createbackup)
+//       .then((response) => {
+//         const downloadLink = document.createElement('a')
+//         downloadLink.setAttribute('href', `/file-transfer/${response}?delete=true`)
+//         downloadLink.style.display = 'none'
+//         document.body.appendChild(downloadLink)
+//         downloadLink.click()
+//         document.body.removeChild(downloadLink)
+//         this.showToastSuccess(this.$t('success.backup.created'))
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.isLoading = false
+//   }
 
-  async requestRestore () {
-    const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
-    this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
-    await this.$axios.$post('/api/backup/restore', this.restorebackup)
-      .then(() => {
-        this.showToastSuccess(this.$t('success.backup.restored'))
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-  }
+//   async requestRestore () {
+//     const host = window.location.hostname
+//     const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+//     this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
+//     await this.$axios.$post('/api/backup/restore', this.restorebackup)
+//       .then(() => {
+//         this.showToastSuccess(this.$t('success.backup.restored'))
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//   }
 
-  async restoreBackup () {
-    if (!this.file) { return }
-    if (this.restorebackup.server_id === 'new') {
-      if (!this.newserverID) { return }
-      this.restorebackup.server_id = this.newserverID
-    }
+//   async restoreBackup () {
+//     if (!this.file) { return }
+//     if (this.restorebackup.server_id === 'new') {
+//       if (!this.newserverID) { return }
+//       this.restorebackup.server_id = this.newserverID
+//     }
 
-    this.isLoading = true
+//     this.isLoading = true
 
-    const formData = new FormData()
-    formData.append('file', this.file)
+//     const formData = new FormData()
+//     formData.append('file', this.file)
 
-    const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+//     const host = window.location.hostname
+//     const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
 
-    this.$axios.setBaseURL('https://' + host + ':' + port)
-    await this.$axios.$post('/file-transfer/multipart', formData)
-      .then(async (response) => {
-        this.restorebackup.file_id = response.file_id
-        await this.requestRestore()
-      })
-      .catch((error) => {
-        this.showToastError(error)
-      })
-    this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
-    this.isLoading = false
-  }
-}
+//     this.$axios.setBaseURL('https://' + host + ':' + port)
+//     await this.$axios.$post('/file-transfer/multipart', formData)
+//       .then(async (response) => {
+//         this.restorebackup.file_id = response.file_id
+//         await this.requestRestore()
+//       })
+//       .catch((error) => {
+//         this.showToastError(error)
+//       })
+//     this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
+//     this.isLoading = false
+//   }
+// }
 </script>
 <style>
-.dropdownForm {
+/* .dropdownForm {
   max-height: var(--component-height);
   width: 100% !important;
   font-size: var(--text-small);
@@ -358,5 +358,5 @@ export default class VAdminMaintenance extends Vue {
   color: var(--color) !important;
   background: var(--background) !important;
   border: var(--border) !important;
-}
+} */
 </style>
