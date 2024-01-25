@@ -1,15 +1,20 @@
 <template>
   <el-container v-loading="isLoading">
     <el-tree
+      class="group-actions"
       :data="fetchedData"
       :props="defaultProps"
       highlight-current
     >
     <template #default="{ node, data }">
-      <span v-for="action in (data.type == 'ObjectToGroup' ? props.data.actions.children : props.data.actions.parent)">
-        <el-button> <IconIIcon :icon="icons[action]" /> {{ action }} </el-button>
-      </span>
       <span>{{ node.label }}</span>
+      <div class="ml-auto">
+        <span v-for="action in (data.type == 'ObjectToGroup' ? props.data.actions.children : props.data.actions.parent)">
+          <el-button size="small">
+            <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" />
+          </el-button>
+        </span>
+      </div>
     </template>
     </el-tree>
   </el-container>
@@ -419,17 +424,7 @@ async function fetchProdGroups() {
 // }
 </script>
 <style>
-.custom-tree-node {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  padding-right: 8px;
+.group-actions.el-tree {
+  width: 100%;
 }
-
-/* .groupstabs .tab-content {
-  height: 82vh;
-  margin: 10px;
-} */
 </style>

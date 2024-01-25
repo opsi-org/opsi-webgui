@@ -4,41 +4,6 @@
       <TreeTGroupsActions :data="options" />
     </el-tab-pane>
   </el-tabs>
-
-  <!-- <el-tabs>
-    <el-tab-pane :label="$t('treeselect.clientGroups')">
-      <el-tree
-        :data="fetchedClientData"
-        :props="defaultProps"
-        highlight-current
-        />
-    </el-tab-pane>
-    <el-tab-pane :label="$t('treeselect.prodGroups')">
-      <el-row>
-        <el-col>
-          <el-tree
-            :data="fetchedData"
-            :props="defaultProps"
-            highlight-current
-          >
-            <template #default="{ node, data }">
-              <template v-if="data.type == 'ObjectToGroup'">
-                  <el-button :aria-label="$t('group.removeProduct')"> <IconIIcon :icon="icons.delete" /> </el-button>
-              </template>
-              <template v-else>
-                <el-button :aria-label="$t('group.editGroup')"> <IconIIcon :icon="icons.pencil" /> </el-button>
-                  <el-button :aria-label="$t('group.deletegroup')"> <IconIIcon :icon="icons.delete" /> </el-button>
-                  <el-button :aria-label="$t('group.deleteOnlyAssignments')"><IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.delete" class="mt-2" /></el-button>
-                  <el-button :aria-label="$t('group.addToGroup')"> <IconIIcon :icon="icons.product" /><IconIIcon :icon="icons.add" class="mt-2" /> </el-button>
-                  <el-button :aria-label="$t('group.addSubgroup')"> <IconIIcon :icon="icons.group" /> <IconIIcon :icon="icons.add" class="mt-2" /></el-button>
-              </template>
-              {{ node.label }}
-            </template>
-          </el-tree>
-        </el-col>
-      </el-row>
-    </el-tab-pane>
-  </el-tabs> -->
   <!-- <div class="VGroups" data-testid="VGroups">
     <OverlayOLoading :is-loading="$fetchState.pending" />
     <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
@@ -276,14 +241,14 @@ const groupActions = reactive({
   clientGroups: {
     category : 'clientGroups',
     actions: {
-      parent: ['edit', 'delete', 'deleteOnlyAssignments', 'addChildren', 'addSubGroup'],
+      parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'],
       children: ['copy', 'delete']
     }
   },
   prodGroups: {
     category : 'prodGroups',
     actions: {
-      parent: ['edit', 'delete', 'deleteOnlyAssignments', 'addChildren', 'addSubGroup'],
+      parent: ['edit', 'delete', 'product-delete', 'product-add', 'group-add'],
       children: ['delete']
     }
   }
