@@ -4,15 +4,21 @@
       class="group-actions"
       :data="fetchedData"
       :props="defaultProps"
+      :expand-on-click-node="false"
       highlight-current
     >
     <template #default="{ node, data }">
       <span>{{ node.label }}</span>
       <div class="ml-auto">
         <span v-for="action in (data.type == 'ObjectToGroup' ? props.data.actions.children : props.data.actions.parent)">
-          <el-button size="small">
-            <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" />
-          </el-button>
+          <el-popover :width="500" trigger="click">
+            <template #reference>
+              <el-button size="small">
+                <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" />
+              </el-button>
+            </template>
+            {{ action }} {{ props.data.category }}
+          </el-popover>
         </span>
       </div>
     </template>
