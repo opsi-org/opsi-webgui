@@ -74,6 +74,28 @@
 </template>
 
 <script setup lang="ts">
+const groupActions = reactive({
+  general: {
+    clients: ['unblock', 'unblockAll'],
+    products: ['unblock', 'unblockAll']
+  },
+  maintenance: {
+    applicationState : ['current', 'setup'],
+    createBackup : {
+      config_files: true,
+      redis_data:true,
+      maintenance_mode: false,
+      password: ''
+    },
+    restoreBackup : {
+      file_id: '',
+      config_files: false,
+      redis_data:false,
+      server_id: '',
+      password: ''
+    },
+  }
+})
 // import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 // import { AlertToast } from '../../mixins/component'
 // import { MBus } from '../../mixins/messagebus'
