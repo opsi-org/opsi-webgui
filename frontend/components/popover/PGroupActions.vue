@@ -5,22 +5,22 @@
         <IconIIcon v-for="subaction in props.data.action.split('-')" :icon="icons[subaction]" />
       </el-button>
     </template>
-    <!-- <template v-if="action == 'group-add'">
-      <el-form label-width="180px">
-        <el-form-item v-for="value,label,index in addSubGroup" :key="index" :label="label" :class="{ 'd-none': label=='groupId' }">
+    <template v-if="props.data.action == 'group-add'">
+      <el-form label-width="150px">
+        <el-form-item v-for="value,label,index in addSubGroup" :key="index" :label="$t('table.fields.'+label)" :class="{ 'd-none': label=='parentGroupId' }">
           <el-input v-model="addSubGroup[label]" />
         </el-form-item>
       </el-form>
-      <b-button variant="danger" class="float-right" size="sm">
-        {{ $t('group.remove') }}
-      </b-button>
+      <el-button class="float-right" type="success" data-testid="createSubGroup">
+        {{ $t("button.create") }}
+      </el-button>
     </template>
-    <template v-if="action == 'delete'">
+    <template v-if="props.data.action == 'delete'">
       <small>{{ $t('group.removeClient.confirm') }}</small>
       <b-button variant="danger" class="float-right" size="sm">
         {{ $t('group.remove') }}
       </b-button>
-    </template> -->
+    </template>
     {{ props.data.category }} : {{ props.data.nodeType }} : {{ props.data.nodeLabel }} : {{ props.data.action }}
   </el-popover>
 </template>
