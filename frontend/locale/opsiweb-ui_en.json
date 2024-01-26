@@ -202,6 +202,7 @@
   "table.details.productproperty.server":"Server default",
   "table.contextmenu.header-specific":"Options for '{id}':",
   "table.contextmenu.header-general":"Options for tabelle:",
+  "label.selectChildren": "Select Children",
   "label.unblock": "Unblock",
   "label.unblock.all": "Unblock All",
   "label.unlock": "Unlock",
