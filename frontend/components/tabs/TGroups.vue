@@ -5,110 +5,6 @@
     </el-tab-pane>
   </el-tabs>
   <!-- <div class="VGroups" data-testid="VGroups">
-    <OverlayOLoading :is-loading="$fetchState.pending" />
-    <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
-    <b-tabs small class="groupstabs">
-      <b-tab>
-        <template #title>
-          <span> {{ $t("treeselect.clientGroups") }} </span>
-        </template>
-        <b-row>
-          <b-col :class="{'d-none' : action && $mq === 'mobile'}">
-            <treeselect
-              v-model="selectedvalue"
-              class="treeselect_notstored treeselect treeselect_fullpage"
-              :placeholder="$t('treeselect.search')"
-              always-open
-              :default-expand-level="1"
-              :normalizer="normalizer"
-              value-format="object"
-              :options="group"
-            >
-              <div slot="option-label" slot-scope="{ node }">
-                <div :ref="'tree-item-'+node.id">
-                  <template v-if="node.isBranch">
-                    <IconIIcon :icon="icon.group" />
-                    {{ node.label }}
-                    <div v-if="node.label !== 'not_assigned'" class="float-right">
-                      <b-button
-                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.editGroup')"
-                        @click="showChild('editGroup')"
-                      >
-                        <IconIIcon :icon="icon.pencil" />
-                      </b-button>
-                      <b-button
-                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.deletegroup')"
-                        @click="showChild('deletegroup')"
-                      >
-                        <IconIIcon :icon="icon.delete" />
-                      </b-button>
-                      <b-button
-                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.deleteOnlyAssignments', {type: $t('title.clients')})"
-                        @click="showChild('deleteOnlyAssignments')"
-                      >
-                        <IconIIcon :icon="icon.client" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
-                      </b-button>
-                      <b-button
-                        v-if="node.label !== 'groups' && node.label !== 'clientdirectory'"
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.addToGroup', {type: $t('title.clients')})"
-                        @click="showChild('addToGroup')"
-                      >
-                        <IconIIcon :icon="icon.client" /><IconIIcon :icon="icon.add" font-scale="0.8" />
-                      </b-button>
-                      <b-button
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.addSubgroup')"
-                        @click="showChild('addSubgroup')"
-                      >
-                        <IconIIcon :icon="icon.group" /><IconIIcon :icon="icon.add" font-scale="0.8" />
-                      </b-button>
-                    </div>
-                  </template>
-                  <template v-else>
-                    <IconIIcon :icon="icon.client" />
-                    {{ node.label }}
-                    <div v-if="node.raw.parent !== 'not_assigned'" class="float-right">
-                      <b-button
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.copyClient')"
-                        @click="showChild('copyClient')"
-                      >
-                        <IconIIcon :icon="icon.client" /><IconIIcon :icon="icon.group" font-scale="0.8" />
-                      </b-button>
-                      <b-button
-                        class="border-0"
-                        variant="outline-primary"
-                        size="sm"
-                        :title="$t('group.removeClient')"
-                        @click="showChild('removeClient')"
-                      >
-                        <IconIIcon :icon="icon.delete" />
-                      </b-button>
-                    </div>
-                  </template>
-                </div>
-              </div>
-            </treeselect>
-          </b-col>
           <b-col v-if="action && selectedvalue">
             <span class="text-small"><b> {{ title + t_fixed('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
@@ -250,73 +146,6 @@ const groupActions = reactive({
   }
 })
 
-// @Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
-// export default class VGroups extends Vue {
-//   group: Array<object>|undefined = undefined
-//   selectedvalue: any = null
-//   clientIds: Array<string> = []
-//   selectedClients: Array<string> = []
-//   updategroupparent: any = null
-//   selectedGroups: Array<any> = []
-//   selectedGroupsRemove: any = null
-//   addClientToListOfGroups: any
-//   action: string = ''
-//   title: string = ''
-//   subgroup: any = {
-//     parentGroupId: '',
-//     groupId: '',
-//     description: '',
-//     notes: ''
-//   }
-
-//   updategroup = {
-//     parent: '',
-//     description: '',
-//     notes: ''
-//   }
-
-//   @selections.Getter public selectionDepots!: Array<string>
-//   $root: any
-//   $refs: any
-//   $fetchState: any
-
-//   normalizer (node: any) {
-//     if (node.children) {
-//       if (node.children.not_assigned) {
-//         node.children.__not_assigned = node.children.not_assigned
-//         delete node.children.not_assigned
-//       }
-//       return {
-//         id: node.id,
-//         label: node.text,
-//         children: Object.values(Object.keys(node.children).sort().reduce(
-//           (obj, key) => { obj[key] = node.children[key]; return obj }, {}
-//         ))
-//       }
-//     }
-//     return {
-//       id: node.id,
-//       label: node.text,
-//       children: node.type === 'HostGroup' ? [] : undefined
-//     }
-//   }
-
-//   normalizerUpdateGroup (node: any) {
-//     if (node.children) {
-//       return {
-//         id: node.id,
-//         label: node.text,
-//         children: Object.values(node.children)
-//       }
-//     }
-//     return {
-//       id: node.id,
-//       label: node.text,
-//       isDisabled: node.type === 'ObjectToGroup',
-//       children: node.type === 'HostGroup' ? [] : undefined
-//     }
-//   }
-
 //   @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
 //     await this.fetchGroups()
 //   }
@@ -326,12 +155,6 @@ const groupActions = reactive({
 //     await this.fetchClients()
 //   }
 
-//   async fetchGroups () {
-//     this.group = undefined
-//     const result = await this.$axios.$get(`/api/opsidata/hosts/groups?selectedDepots=[${this.selectionDepots}]`)
-//     this.group = Object.values(result)
-//     this.showChild(this.action)
-//   }
 
 //   showChild (selectedAction: string) {
 //     this.action = selectedAction
@@ -367,9 +190,6 @@ const groupActions = reactive({
 //     this.afterAsync()
 //   }
 
-//   async fetchClients () {
-//     this.clientIds = await this.getClientIdList(this.selectionDepots)
-//   }
 
 //   async addClientsToSelectedGroup () {
 //     await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
@@ -434,9 +254,3 @@ const groupActions = reactive({
 //   }
 // }
 </script>
-<style>
-/* .groupstabs .tab-content {
-  height: 82vh;
-  margin: 10px;
-} */
-</style>

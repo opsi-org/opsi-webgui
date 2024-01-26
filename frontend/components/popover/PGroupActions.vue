@@ -1,22 +1,21 @@
 <template>
-  <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click" :ref="props.data.nodeLabel">
+  <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click" :ref="props.data.nodeLabel+props.data.action">
     <template #reference>
       <el-button size="small">
         <IconIIcon v-for="subaction in props.data.action.split('-')" :icon="icons[subaction]" />
       </el-button>
     </template>
-    <template v-if="props.data.action == 'group-add'">
-      <el-form label-width="150px">
+    <el-text tag="b">{{ $t('table.fields.'+props.data.action) }}</el-text> <el-text tag="i">{{ props.data.nodeLabel }}</el-text>
+    <el-form label-position="top">
+      <template v-if="props.data.action == 'group-add'">
         <el-form-item v-for="value,label,index in addSubGroup" :key="index" :label="$t('table.fields.'+label)" :class="{ 'd-none': label=='parentGroupId' }">
           <el-input v-model="addSubGroup[label]" />
         </el-form-item>
-      </el-form>
-      <el-button class="float-right" type="success" data-testid="createSubGroup">
-        {{ $t("button.create") }}
-      </el-button>
-    </template>
-    <template v-else-if="props.data.action == 'client-add' || 'product-add'">
-      <el-form label-width="150px">
+        <el-button class="float-right" type="success" data-testid="createSubGroup">
+          {{ $t("button.create") }}
+        </el-button>
+      </template>
+      <template v-else-if="props.data.action == 'client-add' || props.data.action == 'product-add'">
         <el-form-item :label="$t('label.selectChildren')">
           <el-scrollbar height="300px">
             <el-checkbox-group v-model="selectedChildren">
@@ -26,20 +25,39 @@
             </el-checkbox-group>
           </el-scrollbar>
         </el-form-item>
-      </el-form>
-      <el-button class="float-right" type="success" data-testid="addprodToSelectedGroup">
-        {{ $t("group.add") }}
-      </el-button>
-    </template>
-    <template v-else-if="props.data.action == 'delete'">
-      <small>{{ $t('group.removeClient.confirm') }}</small>
-      <b-button variant="danger" class="float-right" size="sm">
-        {{ $t('group.remove') }}
-      </b-button>
-    </template>
-    <template v-else>
-      {{ props.data.category }} : {{ props.data.nodeType }} : {{ props.data.nodeLabel }} : {{ props.data.action }}
-    </template>
+        <el-button class="float-right" type="success" data-testid="addprodToSelectedGroup">
+          {{ $t("group.add") }}
+        </el-button>
+      </template>
+      <template v-else-if="props.data.action == 'client-delete' || props.data.action == 'product-delete'">
+        <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'client'}) }}</small>
+        <el-button class="float-right" type="danger" data-testid="removeAssignments">
+          {{ $t("group.remove") }}
+        </el-button>
+      </template>
+      <template v-else-if="props.data.action == 'delete'">
+        <small>{{ $t('group.removeClient.confirm') }}</small>
+        <el-button type="danger" class="float-right">
+          {{ $t('group.remove') }}
+        </el-button>
+      </template>
+      <template v-else-if="props.data.action == 'edit'">
+        <el-form-item v-for="value,label,index in updateGroup" :key="index" :label="$t('table.fields.'+label)">
+          <el-input v-model="addSubGroup[label]" />
+        </el-form-item>
+        <el-button class="float-right" type="success" data-testid="updateGroup">
+          {{ $t("button.update") }}
+        </el-button>
+      </template>
+      <template v-else-if="props.data.action == 'copy'">
+        <el-tree />
+        <el-button type="success" class="float-right">
+          {{ $t('group.copy') }}
+        </el-button>
+      </template>
+      <template v-else> No action available </template>
+    </el-form>
+    <!-- {{ props.data.category }} : {{ props.data.nodeType }} : {{ props.data.nodeLabel }} : {{ props.data.action }} -->
   </el-popover>
 </template>
 <script setup lang="ts">
