@@ -1,7 +1,7 @@
 <template>
   <el-container v-loading="isLoading">
     <el-tree
-      class="group-actions"
+      :class="useMQ().isMobile.value ? 'w-100': 'w-50'"
       :data="fetchedData"
       :props="defaultProps"
       :expand-on-click-node="false"
@@ -213,6 +213,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
+const mq = useMQ()
 const props = defineProps({
   data: { type: Object, required: true }
 })
@@ -424,8 +425,3 @@ async function fetchProdGroups() {
 //   }
 // }
 </script>
-<style>
-.group-actions.el-tree {
-  width: 100%;
-}
-</style>
