@@ -77,7 +77,7 @@
 const groupActions = reactive({
   general: {
     clients: ['unblock', 'unblockAll'],
-    products: ['unblock', 'unblockAll']
+    products: ['unlock', 'unlockAll']
   },
   maintenance: {
     applicationState : ['current', 'setup'],
