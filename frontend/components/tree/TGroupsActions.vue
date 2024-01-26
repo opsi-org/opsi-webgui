@@ -7,18 +7,21 @@
       :expand-on-click-node="false"
       highlight-current
     >
-    <template #default="{ node, data }">
-      <span>{{ node.label }}</span>
-      <div class="ml-auto" v-if="node.label !== 'not_assigned'">
-        <span v-for="action in
-              (data.type == 'ObjectToGroup' ? props.data.actions.children
-              : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
-              )"
-        >
-        <PopoverPGroupActions :data="{'category':props.data.category, 'nodeType': data.type, 'nodeLabel': node.label, 'action': action}"  />
-        </span>
-      </div>
-    </template>
+      <template #default="{ node, data }">
+        <span>{{ node.label }}</span>
+        <div class="ml-auto" v-if="node.label !== 'not_assigned'">
+          <span v-for="action in
+                (data.type == 'ObjectToGroup' ? props.data.actions.children
+                : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
+                )"
+          >
+          <PopoverPGroupActions
+            :data="{'category':props.data.category, 'nodeType': data.type, 'nodeLabel': node.label, 'action': action}"
+            :idList="idList"
+          />
+          </span>
+        </div>
+      </template>
     </el-tree>
   </el-container>
 
@@ -213,10 +216,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
-const mq = useMQ()
+import { useClient } from '~/composables/mixins/useGet';
 const props = defineProps({
   data: { type: Object, required: true }
 })
+
 const storeSelection = storeSelections()
 const isLoading = ref(false)
 const defaultProps = {
@@ -224,16 +228,21 @@ const defaultProps = {
   children: 'children'
 }
 const fetchedData = ref<any>({})
+const idList = ref([])
+
 onMounted(async ()=> {
   isLoading.value = true
   if (props.data.category == 'clientGroups')
   {
     await fetchClientGroups()
+    await fetchClientList()
   } else {
     await fetchProdGroups()
+    await fetchProductList()
   }
   isLoading.value = false
 })
+
 async function fetchClientGroups() {
   const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
@@ -248,6 +257,10 @@ async function fetchClientGroups() {
                               : []
 }
 
+async function fetchClientList () {
+  idList.value = await useClient().getClientIdList(storeSelection.selectionDepots)
+}
+
 async function fetchProdGroups() {
   const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
@@ -259,94 +272,19 @@ async function fetchProdGroups() {
                         : []
 }
 
-// import { Component, namespace, Vue } from 'nuxt-property-decorator'
-// import { Icons } from '../../mixins/icons'
-// import { Client } from '../../mixins/get'
-// import { Group } from '../../mixins/post'
-// import { Strings } from '../../mixins/strings'
-// import { AlertToast } from '../../mixins/component'
-// const selections = namespace('selections')
-// @Component({ mixins: [Icons, Client, Group, AlertToast, Strings] })
-// export default class VGroups extends Vue {
-//   showToastSuccess: any // from mixin AlertToast
-//   showToastError: any // from mixin AlertToast
-//   icon:any
-//   t_fixed: any
-//   $t:any
-//   $axios: any
-//   node: any
-//   action: string = ''
-//   title: string = ''
-//   productIds: Array<string> = []
-//   selectedProducts: Array<string> = []
-//   group: Array<object>|undefined = undefined
-//   updategroupparent: any = null
-//   selectedvalue: any = null
-//   subgroup: any = {
-//     parentGroupId: '',
-//     groupId: '',
-//     description: '',
-//     notes: ''
-//   }
-
-//   updategroup = {
-//     parent: '',
-//     description: '',
-//     notes: ''
-//   }
-
-//   @selections.Getter public selectionDepots!: Array<string>
-
-//   normalizer (node: any) {
-//     if (node.children) {
-//       return {
-//         id: node.id,
-//         label: node.text,
-//         children: node.children ? Object.values(node.children) : {}
-//       }
-//     }
-//     return {
-//       id: node.id,
-//       label: node.text,
-//       children: node.type === 'ProductGroup' ? [] : undefined
-//     }
-//   }
-
-//   normalizerUpdateGroup (node: any) {
-//     return {
-//       id: node.id,
-//       label: node.text,
-//       isDisabled: node.type === 'ObjectToGroup',
-//       children: node.children ? Object.values(node.children) : {}
-//     }
-//   }
-
-//   async fetch () {
-//     await this.fetchGroups()
-//     await this.fetchProducts()
-//   }
+async function fetchProductList() {
+  const {data, error } = await useApiGETBody(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${storeSelection.selectionDepots}`)
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+  idList.value = data.value.map(function (item: { productId: any; }) { return item.productId })
+}
 
 //   async reloadGroup () {
 //     this.action = ''
 //     await this.fetchGroups()
 //     this.selectedvalue = null
-//   }
-
-//   async fetchProducts () {
-//     await this.$axios.$get(`/api/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${this.selectionDepots}`)
-//       .then((response) => {
-//         this.productIds = response.map(function (item) {
-//           return item.productId
-//         })
-//       }).catch((error) => {
-//         this.showToastError(error)
-//       })
-//   }
-
-//   async fetchGroups () {
-//     this.group = undefined
-//     const result = await this.$axios.$get('/api/opsidata/products/groups')
-//     this.group = Object.values(result?.groups)
 //   }
 
 //   showChild (selectedAction: string) {

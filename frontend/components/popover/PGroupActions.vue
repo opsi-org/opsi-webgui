@@ -1,5 +1,5 @@
 <template>
-  <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click">
+  <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click" :ref="props.data.nodeLabel">
     <template #reference>
       <el-button size="small">
         <IconIIcon v-for="subaction in props.data.action.split('-')" :icon="icons[subaction]" />
@@ -15,34 +15,45 @@
         {{ $t("button.create") }}
       </el-button>
     </template>
-    <template v-if="props.data.action == 'client-add' || 'product-add'">
+    <template v-else-if="props.data.action == 'client-add' || 'product-add'">
       <el-form label-width="150px">
-        <el-form-item :label="$t('group.selectItems')">
-          <el-select />
+        <el-form-item :label="$t('label.selectChildren')">
+          <el-scrollbar height="300px">
+            <el-checkbox-group v-model="selectedChildren">
+              <div v-for="item in idList" :key="item">
+                <el-checkbox size="small" :label="item" />
+              </div>
+            </el-checkbox-group>
+          </el-scrollbar>
         </el-form-item>
       </el-form>
       <el-button class="float-right" type="success" data-testid="addprodToSelectedGroup">
         {{ $t("group.add") }}
       </el-button>
     </template>
-    <template v-if="props.data.action == 'delete'">
+    <template v-else-if="props.data.action == 'delete'">
       <small>{{ $t('group.removeClient.confirm') }}</small>
       <b-button variant="danger" class="float-right" size="sm">
         {{ $t('group.remove') }}
       </b-button>
     </template>
-    {{ props.data.category }} : {{ props.data.nodeType }} : {{ props.data.nodeLabel }} : {{ props.data.action }}
+    <template v-else>
+      {{ props.data.category }} : {{ props.data.nodeType }} : {{ props.data.nodeLabel }} : {{ props.data.action }}
+    </template>
   </el-popover>
 </template>
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import {useIcons} from '../../composables/mixins/useIcons'
-const mq = useMQ()
 const props = defineProps({
-  data: { type: Object, required: true }
+  data: { type: Object, required: true },
+  idList: { type: Array<any>, required: true}
 })
 const icons = useIcons()
+const selectedChildren = ref([])
+const checkAll = ref(false)
+
 const addSubGroup = reactive({
   parentGroupId: '',
   groupId: '',
