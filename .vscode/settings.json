@@ -134,6 +134,14 @@
                 "singleInstance": true,
                 "command": "bash /workspace/frontend/scripts/devhelper.sh ${fileBasename} .test.component.ts pwtest:components:update /" // This is executed in the terminal.
             },
+            { // update snapshots for opened file (if .vue/.stories.js/.test.component.js )
+                "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
+                "name": "$(testing-run-icon) current",
+                "tooltip": "Update UI Snapshot",
+                "color": "white",
+                "singleInstance": true,
+                "command": "bash /workspace/frontend/scripts/devhelper.sh ${fileBasename} .test.component.ts pwtest:components /" // This is executed in the terminal.
+            },
             // { // run tests for all changed files (comparing to developbranch, if .vue/.stories.js/.test.component.js ) //
             //     // may not work if currently in develop
             //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
