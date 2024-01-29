@@ -67,6 +67,7 @@ import { Terminal, type ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
+import type { T_DisaledFeatures } from '~/types/APItypes';
 
 /*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
@@ -132,11 +133,11 @@ function _wsBusMsgObjectChangedTerminal () {
 
 async function _fetchIsDisabled () {
     isLoading.value = true
-    const {data, error} = await useApiGET('/opsidata/server/disabled-features')
+    const {data, error} = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
     if (error) {
       useNotification().error(error)
       isLoading.value = false
-      return []
+      return false
     }
     isLoading.value = false
     // return true

@@ -24,6 +24,7 @@
 import { ref } from 'vue'
 import { ElTree } from 'element-plus'
 import { useNotification } from '~/composables/mixins/useComponent';
+import type { T_PGroups } from '~/types/APItypes'
 const isLoading = ref(false)
 interface Tree {
   name: string
@@ -40,7 +41,7 @@ onMounted(async ()=> {
 })
 async function fetch() {
   isLoading.value = true
-  const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  const {data, error } = await useApiGETBody<T_PGroups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
     useNotification().error(error)
     isLoading.value = false

@@ -38,6 +38,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useSaveProductProperties } from '~/composables/mixins/useSave';
 import { useUtils } from '~/composables/mixins/useUtils';
+import type { T_ProductPropertiesResult, T_ProductDependenciesResult, T_ProductPropertiesDependenciesResult } from '~/types/APItypes';
 import type { IErrorDepProp, IFetchedData } from '~/types/tobjects';
 
 const isLoading = ref(true)
@@ -62,7 +63,8 @@ watch(()=> activeName.value, (val)=>{
 })
 
 
-const fetchedData = ref<IFetchedData>({
+
+const fetchedData = ref<T_ProductPropertiesDependenciesResult>({
     dependencies: { dependencies: [], productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} },
     properties: { properties: {}, productVersions: {}, productDescription: '', productDescriptionDetails: {}, productAdvice: '', productAdviceDetails: {} }
   })
@@ -97,7 +99,7 @@ async function fetch(){
   isLoading.value = false
 }
 async function fetchProperties (refetch: boolean = false) {
-  const { data, error } = await useApiGETBody(`/opsidata/products/${props.id}/properties`, {
+  const { data, error } = await useApiGETBody<T_ProductPropertiesResult>(`/opsidata/products/${props.id}/properties`, {
     selectedDepots: `[${selectionDepots.value.toString()}]`,
     selectedClients: `[${selectionClients.value.toString()}]`
   })
@@ -105,13 +107,13 @@ async function fetchProperties (refetch: boolean = false) {
   if (error) {
     console.log(error)
     useNotification().error(error)
-    errorText.value.properties = error
+    errorText.value.properties = error.response.data.message
     return
   }
   fetchedData.value.properties = data.value
 }
 async function fetchDependencies () {
-  const { data, error } = await useApiGETBody(`/opsidata/products/${props.id}/dependencies`, {
+  const { data, error } = await useApiGETBody<T_ProductDependenciesResult>(`/opsidata/products/${props.id}/dependencies`, {
     selectedDepots: `[${selectionDepots.value.toString()}]`,
     selectedClients: `[${selectionClients.value.toString()}]`
   })
@@ -119,7 +121,7 @@ async function fetchDependencies () {
   if (error) {
     console.log(error)
     useNotification().error(error)
-    errorText.value.dependencies = error
+    errorText.value.dependencies = error.response.data.message
     return
   }
   fetchedData.value.dependencies = data.value

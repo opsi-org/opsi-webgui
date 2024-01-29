@@ -68,7 +68,8 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
-let fetchedData = ref<Array<any>>([])
+import type { T_ClientLog } from '~/types/APItypes';
+let fetchedData = ref<Array<string>>([])
 const currentId = ref<string|undefined>('')
 const props = defineProps({
   id: { type: String, default: undefined },
@@ -91,14 +92,14 @@ watch(()=>props.id, ()=>{
 async function fetch(id:string) {
   loading.value = true
   logrequest.selectedClient = id
-  const {data, error} = await useApiGETBody('/api/opsidata/log', logrequest )
+  const {data, error} = await useApiGETBody<T_ClientLog>('/api/opsidata/log', logrequest )
   if (error) {
     console.log(error)
     useNotification().error(error)
     loading.value = false
     return
   }
-  fetchedData.value = data.value
+  fetchedData.value = data.value.result
   loading.value = false
 }
 const isIdEmpty = computed(()=> {

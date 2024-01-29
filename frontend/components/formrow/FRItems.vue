@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
 import type { FormrowFRItemProperty } from '#build/components';
+import type { T_ClientAttr, T_HostParameterEntry, T_ServerAttr } from '~/types/APItypes';
 
 const $emit = defineEmits(['change-item', 'transform-id'])
 // const $emit = defineEmits({
@@ -41,7 +42,7 @@ const $emit = defineEmits(['change-item', 'transform-id'])
 //   transformId: (id: string) => { return id },
 // })
 const props = defineProps({
-  items: { type: Array<Object>, required: true },
+  items: { type: Array<T_HostParameterEntry>, required: true },
   idKey: { type: String, default: 'configId' },
   boolTypeKey: { type: String, default: 'type' },
   boolTypeValue: { type: String, default: 'BoolConfig' },

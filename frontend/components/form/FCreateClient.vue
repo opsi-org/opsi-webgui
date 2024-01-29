@@ -41,8 +41,9 @@
 import { reactive, ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useDepot } from '~/composables/mixins/useGet';
+import type { T_DepotIds } from '~/types/APItypes';
 const $t = useI18n().t
-const depotIDList = ref<Array<any>>([])
+const depotIDList = ref<T_DepotIds>([])
   // TODO: Backend: change createClient data structure
 const createClient = reactive({
   basics: {
@@ -276,6 +277,7 @@ import { Client, Configserver } from '../../mixins/get'
 import { Group, SetUEFI, DeployClientAgent } from '../../mixins/post'
 import { AlertToast } from '../../mixins/component'
 import { NewClient, FormClientAgent } from '../../.utils/types/tobjects'
+import { T_DepotIds } from '../../types/APItypes';
 
 const cache = namespace('data-cache')
 const selections = namespace('selections')

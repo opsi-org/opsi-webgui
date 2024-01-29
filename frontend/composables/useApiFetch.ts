@@ -6,13 +6,26 @@ const urlsWithoutAuthentication = [
   '/user/configuration'
 ]
 
-const useAPI2 = async (
+interface terror {
+  response: {
+    data: {
+      class: string
+      message: string
+      details?: string
+    }
+  }
+}
+
+interface ApiResult<T> { readonly data: Ref<T>, readonly error: terror, readonly headers: Headers }
+
+
+async function useAPI2<T> (
     method: string,
     url: string,
     body: FormData | Object | undefined = undefined,
     opts: UseFetchOptions<any> = {},
     prePath: string | undefined = undefined
-) => {
+): Promise<ApiResult<T>> {
   const config = useRuntimeConfig()
   const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
   const basePath: string = prePath ?? config.public.API_PATH
@@ -42,7 +55,7 @@ const useAPI2 = async (
 
   const onResponseError = async (res: any) => {
     const _callerror = res.error.value
-    const errordata = { response: { data: {
+    const errordata: terror = { response: { data: {
       class: 'Error',
       message: _callerror
       // details: ''
@@ -100,9 +113,15 @@ const _getURLwithParams = (url: string, params: any) => {
   return _url.toString()
 }
 
-const useApiGET = async (url: string, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, undefined, opts, prePath)
-const useApiGETBody = async (url: string, params:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('GET', url, params, opts, prePath)
-const useApiPOST = async (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) => useAPI2('POST', url, body, opts, prePath)
+
+async function useApiGET<ResultDataType> (url: string, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) {
+  return useAPI2<ResultDataType>('GET', url, undefined, opts, prePath)
+}
+
+async function useApiGETBody<ResultDataType> (url: string, params:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) { return useAPI2<ResultDataType>('GET', url, params, opts, prePath) }
+async function useApiPOST<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) { return useAPI2<ResultDataType>('POST', url, body, opts, prePath) }
+
+// For following need to add types: (like useApiGET)
 // const useApiPUT = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('PUT', url, body, opts, prePath)
 // const useApiDELETE = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('DELETE', url, body, opts, prePath)
 

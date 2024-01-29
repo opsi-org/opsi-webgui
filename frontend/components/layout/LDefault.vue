@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
-
+import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
 // const color = useColorMode();
 
 const settings = storeSettings()
@@ -155,14 +155,16 @@ const toggleSide = async (side: string) => {
   }
 }
 
+// interface ApiResConf { data: Ref<T_configuration>, error: string, headers: Headers }
+// interface ApiResDF { data: Ref<Array<string>>, error: string, headers: Headers }
 async function checkConfig () {
-  const result = await useApiGET('/user/configuration')
+  const result = await useApiGET<T_configuration>('/user/configuration')
   if (result.error) {
     console.log(result.error)
     useNotification().error(result.error, 'Error fetching Configuration')
     return
   }
-  const forbidden = await useApiGET('/opsidata/server/disabled-features')
+  const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
   if (forbidden.error) {
     console.log(forbidden.error)
     useNotification().error(forbidden.error, 'Error fetching forbidden features')

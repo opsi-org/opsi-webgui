@@ -47,6 +47,7 @@
 <script setup lang="ts">
 import { useIcons } from '@/composables/mixins/useIcons'
 import { useNotification } from '../../composables/mixins/useComponent'
+import type { T_Logout } from '~/types/APItypes';
 const isMobile = ref(useMQ().isMobile.value)
 watch(() => useMQ().isMobile, () => {
   isMobile.value = useMQ().isMobile.value
@@ -63,8 +64,8 @@ const props = defineProps({
 async function doLogout () {
   if (props.abortClick) { return }
 
-  const { data, error } = await useApiPOST('/auth/logout')
-  if (error?.response?.data?.message === 'Unauthorized') {
+  const { data, error } = await useApiPOST<T_Logout>('/auth/logout')
+  if (error?.response.data.message === 'Unauthorized') {
 
   } else if (error) {
     console.log("error", error.response.data.message)

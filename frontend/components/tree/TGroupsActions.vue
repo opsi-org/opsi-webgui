@@ -217,6 +217,8 @@
 import { ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient } from '~/composables/mixins/useGet';
+import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/APItypes';
+
 const props = defineProps({
   data: { type: Object, required: true }
 })
@@ -228,7 +230,7 @@ const defaultProps = {
   children: 'children'
 }
 const fetchedData = ref<any>({})
-const idList = ref([])
+const idList = ref<T_ProductIds|T_ClientIds>([])
 
 onMounted(async ()=> {
   isLoading.value = true
@@ -262,7 +264,7 @@ async function fetchClientList () {
 }
 
 async function fetchProdGroups() {
-  const {data, error } = await useApiGETBody(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
+  const {data, error } = await useApiGETBody<T_Groups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
     useNotification().error(error)
     return
@@ -273,7 +275,7 @@ async function fetchProdGroups() {
 }
 
 async function fetchProductList() {
-  const {data, error } = await useApiGETBody(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${storeSelection.selectionDepots}`)
+  const {data, error } = await useApiGETBody<Array<T_Product>>(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
     useNotification().error(error)
     return

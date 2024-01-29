@@ -5,8 +5,11 @@
     <IconILoading v-else-if="isLoading" />
     <el-collapse v-else v-model="activeNames" @change="handleCollapseValueChange"
       class="mr-3 ml-3">
-      <el-alert v-if="Object.keys(fetchedData).length === 0" type="warning"> No data found</el-alert>
-      <el-collapse-item v-else v-for="(items, topic, index) in fetchedData" :title="(topic.toString())" :name="index.toString()">
+      <el-alert v-if="fetchedData && Object.keys(fetchedData).length === 0" type="warning"> No data found</el-alert>
+      <el-collapse-item v-else
+        v-for="(items, topic, index) in fetchedData" :title="(topic.toString())"
+        :name="index.toString()"
+      >
         <FormrowFRItems :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
       </el-collapse-item>
     </el-collapse>
@@ -15,9 +18,10 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
+import type { T_ClientAttr, T_HostParameter, T_ServerAttr } from '~/types/APItypes';
 const $t = useI18n().t
 const isLoading = ref(true)
-const fetchedData = ref<any>({})
+const fetchedData = ref<T_HostParameter|undefined>()
 const activeNames = ref<string[]>([])
 const props = defineProps({
   id: { type: String, default: undefined },
@@ -92,7 +96,7 @@ async function fetch () {
 }
 
 async function fetchHostParameters (endpoint: string) {
-  const {data, error} = await useApiGETBody(endpoint)
+  const {data, error} = await useApiGETBody<T_HostParameter>(endpoint)
   if (error) {
     console.log(error)
     useNotification().error(error)

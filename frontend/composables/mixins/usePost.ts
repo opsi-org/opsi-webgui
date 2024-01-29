@@ -2,6 +2,7 @@
 // import { AlertToast } from './component'
 import { useMBus } from './useMessagebus'
 import { useNotification } from './useComponent'
+import type { T_Logout } from '~/types/APItypes'
 
 // const auth = namespace('auth')
 // const selections = namespace('selections')
@@ -21,7 +22,7 @@ export const useCallLogout = () => {
   // @settings.Mutation public setExpiresInterval!: (any) => void
 
   async function  callLogout () {
-    const { data, error } = await useApiPOST('/auth/logout')
+    const { error } = await useApiPOST('/auth/logout')
     if (error) {
         useNotification().error(error)
       return
@@ -48,7 +49,7 @@ export const useGroup = () => {
   // showToastError: any // mixin
   async function addClientToListOfGroups (client: string, groupsList: Array<string>) {
 
-    const { data, error } = await useApiPOST(`/api/opsidata/clients/${client}/groups`, groupsList)
+    const { error } = await useApiPOST(`/api/opsidata/clients/${client}/groups`, groupsList)
     if (error) {
       console.log("error", error)
       useNotification().error(error)
@@ -74,7 +75,7 @@ export const useSetUEFI = () => {
   // showToastError: any // mixin
   async function setUEFI (clientId: string, uefi:string) {
 
-    const { data, error } = await useApiPOST(`api/opsidata/clients/${clientId}/uefi`, uefi)
+    const { error } = await useApiPOST(`api/opsidata/clients/${clientId}/uefi`, uefi)
     if (error) {
       console.log("error", error)
       useNotification().error(error, t('message.error.uefi'))
@@ -97,7 +98,8 @@ export const useDeployClientAgent = () => {
   async function deployClientAgent (_data: any, modal:boolean, incontextmenu:boolean) {
     // const ref = ($refs.clientagentAlert as any)
 
-    const { data, error } = await useApiPOST('/api/opsidata/clients/deploy', _data)
+    // TODO: use correct type for data (param and response type)
+    const { data, error } = await useApiPOST<any>('/api/opsidata/clients/deploy', _data)
     if (error) {
       console.log("error", error)
       useNotification().error(error, t('message.error.clientagent'))

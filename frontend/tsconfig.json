@@ -17,6 +17,7 @@
     "strict": true,
     "allowImportingTsExtensions": true,
     "noImplicitThis": true,
+    "noImplicitAny": true,
     "noEmit": true, // was true
     "skipLibCheck": true,
     "resolveJsonModule": true, // locales

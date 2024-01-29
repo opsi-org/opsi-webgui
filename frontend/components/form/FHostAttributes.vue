@@ -15,8 +15,9 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient } from '~/composables/mixins/useGet';
+import type {T_ServerAttr, T_ClientAttr} from '~/types/APItypes'
 const $t = useI18n().t
-let fetchedData = ref<Array<any>>([])
+let fetchedData = ref<Array<T_ServerAttr|T_ClientAttr>>([])
 const props = defineProps({
   id: { type: String, default: undefined },
   type: { type: String, default: 'servers' },
@@ -34,7 +35,7 @@ watch(()=>props.id, ()=>{
 
 async function fetch(id:string) {
   if (props.type === 'servers' && id){
-    const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${id}]`)
+    const {data, error} = await useApiGETBody<Array<T_ServerAttr>>(`/opsidata/servers?servers=[${id}]`)
     if (error) {
       console.log(error)
       useNotification().error(error)
@@ -43,8 +44,7 @@ async function fetch(id:string) {
     console.log('Fetchresult data', data.value)
     fetchedData.value = data.value
   } else if (props.type === 'clients') {
-    const {data, error} = await useApiGETBody(`/opsidata/hosts?hosts=${id}`)
-
+    const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
     // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
     if (error) {
       console.log(error)

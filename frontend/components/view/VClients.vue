@@ -258,6 +258,7 @@ import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useConfigserver } from '~/composables/mixins/useGet';
+import type { T_ClientsList } from '~/types/APItypes';
 const storeSelection = storeSelections()
 const datacache = storeCache()
 console.log('datacache', datacache.opsiconfigserver)
@@ -538,12 +539,12 @@ async function _fetch() {
     //     this.showToastError(error)
     //     return []
     //  })
-  const {data, error, headers} = await useApiGETBody('/opsidata/clients', params)
+  const {data, error, headers} = await useApiGETBody<T_ClientsList>('/opsidata/clients', params)
 
   if (error) {
     console.log(error)
     useNotification().error(error, 'Error fetching clients')
-    return
+    return []
   }
   // console.log('data', data)
   console.log('headers2', headers)

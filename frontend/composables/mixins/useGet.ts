@@ -4,6 +4,7 @@ import type { IObjectString2String } from '@/types/tgeneral'
 import { useNotification } from './useComponent'
 import { storeCache } from '@/store/datacacheStore'
 import { _getI18nInComposable } from './helper-i18n'
+import type { T_Client2Depot, T_ClientIds, T_DepotIds, T_Opsiserver } from '~/types/APItypes'
 
 export const useConfigserver = async (init: boolean = false, _store:any=undefined) => {
   const t = _getI18nInComposable()
@@ -26,7 +27,7 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
   }
 
   async function getOpsiConfigServer (alertRef: any = undefined) {
-    const { data, error } = await useApiGET('/user/opsiserver')
+    const { data, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
     if (error) {
       const errordata = { response: { data: {class: '', details: '', message: t('message.error.opsiconfd')}} }
       useNotification().error(errordata, t('message.error.login'))
@@ -45,10 +46,10 @@ export const useDepot = () => {
 //     return await this.$axios.$get('/api/opsidata/depot_ids')
 //   }
   async function getDepotIdList () {
-    const {data, error} = await useApiGET('/opsidata/depot_ids')
+    const {data, error} = await useApiGET<T_DepotIds>('/opsidata/depot_ids')
     if (error) {
       useNotification().error(error, 'Error fetching server ids')
-      return
+      return []
     }
     return data.value.sort()
     // const { data, error } = await useApiGET('/opsidata/depot_ids')
@@ -64,11 +65,11 @@ export const useDepot = () => {
 export const useClient = () => {
   let fetchedDataClients2Depots: IObjectString2String = {}
 
-  async function getClientIdList (selectedDepots: Array<string>) {
-    const { data, error } = await useApiGET(`/opsidata/depots/clients?selectedDepots=[${selectedDepots}]`)
+  async function getClientIdList (selectedDepots: Array<string>): Promise<T_ClientIds> {
+    const { data, error } = await useApiGET<T_ClientIds>(`/opsidata/depots/clients?selectedDepots=[${selectedDepots}]`)
     if (error) {
       useNotification().error(error)
-      return
+      return []
     }
     return data.value.sort()
 //   async getClientIdList (selectedDepots: Array<string>) {
@@ -87,11 +88,11 @@ export const useClient = () => {
 //         // this.showToastError(error)
 //       })
 
-    const { data, error } = await useApiGET(`/opsidata/clientsdepots?selectedClients=[${selectedClients}]`)
+    const { data, error } = await useApiGET<T_Client2Depot>(`/opsidata/clientsdepots?selectedClients=[${selectedClients}]`)
     if (error) {
       useNotification().error(error)
-      throw new Error(error)
-      return
+      throw new Error(JSON.stringify(error))
+      return {}
     }
     fetchedDataClients2Depots = data.value
     return data.value

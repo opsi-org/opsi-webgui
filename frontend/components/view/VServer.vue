@@ -117,6 +117,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useConfigserver } from '~/composables/mixins/useGet';
 import type { ITableHeaderRow } from '~/types/ttableV3'
+import type { T_ServerList } from '~/types/APItypes'
 
 import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
@@ -249,7 +250,7 @@ const columns = reactive<ITableHeaderRow>({
       //     />
     }
 })
-const fetchedData = ref<Array<any>>([])
+const fetchedData = ref<T_ServerList>([])
 const totalItems = ref<number>(0)
 
 // const handleChange = (id:string) => {
@@ -285,12 +286,12 @@ async function _fetch() {
     params.sortDesc = true
     params.selected = JSON.stringify([])
   }
-  const {data, error, headers } = await useApiGETBody('/opsidata/depots', params)
+  const {data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
   '/api/opsidata/depots'
   if (error) {
     console.log(error)
     useNotification().error(error)
-    return
+    return []
   }
   totalItems.value = parseInt(headers['x-total-count'])
   console.log('Fetchresult data', data)
@@ -329,6 +330,7 @@ import { AlertToast, Synchronization } from '../../mixins/component'
 import { Icons } from '../../mixins/icons'
 import { Client } from '../../mixins/get'
 import { Cookies } from '../../mixins/cookies'
+import { T_ServerList } from '../../types/APItypes';
 const selections = namespace('selections')
 const cache = namespace('data-cache')
 
