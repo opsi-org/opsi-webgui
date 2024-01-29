@@ -15,10 +15,77 @@
                 : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
                 )"
           >
-          <PopoverPGroupActions
+          <!-- <PopoverPGroupActions
             :data="{'category':props.data.category, 'nodeType': data.type, 'nodeLabel': node.label, 'action': action}"
-            :idList="idList"
-          />
+            :idList="idList" /> -->
+            <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click" :ref="node.label+action">
+              <template #reference>
+                <el-button size="small">
+                  <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" />
+                </el-button>
+              </template>
+              <el-text tag="b">{{ $t('group.'+action) }}</el-text> - <el-text tag="i">{{ node.label }}</el-text>
+              <el-form label-position="top" class="mt-3">
+                <template v-if="action == 'group-add'">
+                  <el-form-item
+                    v-for="value,label,index in addSubGroup"
+                    :key="index"
+                    :label="$t('table.fields.'+label)"
+                    :class="{ 'd-none': label=='parentGroupId' }"
+                  >
+                    <el-input v-model="addSubGroup[label]" />
+                  </el-form-item>
+                  <el-button class="float-right" type="success" data-testid="createSubGroup">
+                    {{ $t("button.create") }}
+                  </el-button>
+                </template>
+                <template v-else-if="action == 'client-add' || action == 'product-add'">
+                  <el-form-item :label="$t('label.selectChildren')">
+                    <el-scrollbar height="300px">
+                      <el-checkbox-group v-model="selectedChildren">
+                        <div v-for="item in idList" :key="item">
+                          <el-checkbox size="small" :label="item" />
+                        </div>
+                      </el-checkbox-group>
+                    </el-scrollbar>
+                  </el-form-item>
+                  <el-button class="float-right" type="success" data-testid="addprodToSelectedGroup">
+                    {{ $t("button.add") }}
+                  </el-button>
+                </template>
+                <template v-else-if="action == 'client-delete' || action == 'product-delete'">
+                  <el-text> {{ $t('group.confirm.'+action) }} </el-text>
+                  <el-button class="float-right" type="danger" data-testid="removeAssignments">
+                    {{ $t("button.delete") }}
+                  </el-button>
+                </template>
+                <template v-else-if="action == 'delete'">
+                  <el-text>{{ $t('group.confirm.'+action) }}</el-text>
+                  <el-button type="danger" class="float-right">
+                    {{ $t('button.delete') }}
+                  </el-button>
+                </template>
+                <template v-else-if="action == 'edit'">
+                  <el-form-item v-for="value,label,index in updateGroup" :key="index" :label="$t('table.fields.'+label)">
+                    <!-- <el-tree-select v-if="label == 'parent'" :props="defaultProps" :data="groupdata" default-expand-all /> -->
+                    <el-input v-model="addSubGroup[label]" />
+                  </el-form-item>
+                  <el-button class="float-right" type="success" data-testid="updateGroup">
+                    {{ $t("button.update") }}
+                  </el-button>
+                </template>
+                <template v-else-if="action == 'copy'">
+                  <!-- <el-tree-select :placeholder="$t('group.copyClient.selectgroup')" :props="defaultProps" :data="groupdata" default-expand-all>
+                  </el-tree-select> -->
+                  <el-button type="success" class="float-right">
+                    {{ $t('button.copy') }}
+                  </el-button>
+                </template>
+                <template v-else> No action available </template>
+              </el-form>
+              {{ props.data.category }} {{ data.type }} {{ node.label }}
+              <!-- {{ props.data.category }} : {{ props.data.nodeType }} : {{ props.data.nodeLabel }} : {{ props.data.action }} -->
+            </el-popover>
           </span>
         </div>
       </template>
@@ -26,88 +93,6 @@
   </el-container>
 
   <!-- <div class="VGroups" data-testid="VGroups">
-    <OverlayOLoading :is-loading="$fetchState.pending" />
-    <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
-    <b-row>
-      <b-col>
-        <treeselect
-          v-model="selectedvalue"
-          class="treeselect_notstored treeselect treeselect_fullpage"
-          :placeholder="$t('treeselect.search')"
-          always-open
-          :default-expand-level="1"
-          :normalizer="normalizer"
-          value-format="object"
-          :options="group"
-        >
-          <div slot="option-label" slot-scope="{ node }">
-            <template v-if="node.isBranch">
-              {{ node.label }}
-              <div class="float-right">
-                <b-button
-                  class="border-0"
-                  variant="outline-primary"
-                  size="sm"
-                  :title="$t('group.editGroup')"
-                  @click="showChild('editGroup')"
-                >
-                  <IconIIcon :icon="icon.pencil" />
-                </b-button>
-                <b-button
-                  class="border-0"
-                  variant="outline-primary"
-                  size="sm"
-                  :title="$t('group.deletegroup')"
-                  @click="showChild('deletegroup')"
-                >
-                  <IconIIcon :icon="icon.delete" />
-                </b-button>
-                <b-button
-                  class="border-0"
-                  variant="outline-primary"
-                  size="sm"
-                  :title="$t('group.deleteOnlyAssignments', {type: $t('table.fields.products')})"
-                  @click="showChild('deleteOnlyAssignments')"
-                >
-                  <IconIIcon :icon="icon.product" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
-                </b-button>
-                <b-button
-                  class="border-0"
-                  variant="outline-primary"
-                  size="sm"
-                  :title="$t('group.addToGroup', {type: $t('table.fields.products')})"
-                  @click="showChild('addToGroup')"
-                >
-                  <IconIIcon :icon="icon.product" /><IconIIcon :icon="icon.add" font-scale="0.8" />
-                </b-button> -->
-                <!-- <b-button
-                  class="border-0"
-                  variant="outline-primary"
-                  size="sm"
-                  :title="$t('group.addSubgroup')"
-                  @click="showChild('addSubgroup')"
-                >
-                  <IconIIcon :icon="icon.group" /><IconIIcon :icon="icon.add" font-scale="0.8" />
-                </b-button> -->
-              <!-- </div>
-            </template>
-            <template v-else>
-              {{ node.label }}
-              <div class="float-right">
-                <b-button
-                  class="border-0"
-                  variant="outline-primary"
-                  size="sm"
-                  :title="$t('group.removeProduct')"
-                  @click="showChild('removeProduct')"
-                >
-                  <IconIIcon :icon="icon.delete" />
-                </b-button>
-              </div>
-            </template>
-          </div>
-        </treeselect>
-      </b-col>
       <b-col v-if="action && selectedvalue">
         <span class="text-small"><b> {{ title + t_fixed('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
         <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
@@ -217,12 +202,13 @@
 import { ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient } from '~/composables/mixins/useGet';
+import {useIcons} from '../../composables/mixins/useIcons'
 import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/APItypes';
 
 const props = defineProps({
   data: { type: Object, required: true }
 })
-
+const icons = useIcons()
 const storeSelection = storeSelections()
 const isLoading = ref(false)
 const defaultProps = {
@@ -231,6 +217,18 @@ const defaultProps = {
 }
 const fetchedData = ref<any>({})
 const idList = ref<T_ProductIds|T_ClientIds>([])
+const selectedChildren = ref([])
+const addSubGroup = reactive({
+  parentGroupId: '',
+  groupId: '',
+  description: '',
+  notes: ''
+})
+const updateGroup = reactive({
+  parent: '',
+  description: '',
+  notes: ''
+})
 
 onMounted(async ()=> {
   isLoading.value = true

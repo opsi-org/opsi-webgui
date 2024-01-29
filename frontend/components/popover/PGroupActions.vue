@@ -35,19 +35,20 @@
         </el-button>
       </template>
       <template v-else-if="props.data.action == 'client-delete' || props.data.action == 'product-delete'">
-        <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'client'}) }}</small>
+        <el-text> {{ $t('group.confirm.'+props.data.action) }} </el-text>
         <el-button class="float-right" type="danger" data-testid="removeAssignments">
           {{ $t("button.delete") }}
         </el-button>
       </template>
       <template v-else-if="props.data.action == 'delete'">
-        <small>{{ $t('group.removeClient.confirm') }}</small>
+        <el-text>{{ $t('group.confirm.'+props.data.action) }}</el-text>
         <el-button type="danger" class="float-right">
           {{ $t('button.delete') }}
         </el-button>
       </template>
       <template v-else-if="props.data.action == 'edit'">
         <el-form-item v-for="value,label,index in updateGroup" :key="index" :label="$t('table.fields.'+label)">
+          <!-- <el-tree-select v-if="label == 'parent'" :props="defaultProps" :data="groupdata" default-expand-all /> -->
           <el-input v-model="addSubGroup[label]" />
         </el-form-item>
         <el-button class="float-right" type="success" data-testid="updateGroup">
@@ -55,7 +56,8 @@
         </el-button>
       </template>
       <template v-else-if="props.data.action == 'copy'">
-        <el-tree />
+        <!-- <el-tree-select :placeholder="$t('group.copyClient.selectgroup')" :props="defaultProps" :data="groupdata" default-expand-all>
+        </el-tree-select> -->
         <el-button type="success" class="float-right">
           {{ $t('button.copy') }}
         </el-button>
@@ -67,15 +69,18 @@
 </template>
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { useNotification } from '~/composables/mixins/useComponent';
 import {useIcons} from '../../composables/mixins/useIcons'
 const props = defineProps({
   data: { type: Object, required: true },
-  idList: { type: Array<any>, required: true}
+  idList: { type: Array<any>, required: true},
+  // groupdata: {type: Array<any>, required: true}
 })
 const icons = useIcons()
 const selectedChildren = ref([])
-
+// const defaultProps = {
+//   label: 'text',
+//   children: 'children'
+// }
 const addSubGroup = reactive({
   parentGroupId: '',
   groupId: '',
