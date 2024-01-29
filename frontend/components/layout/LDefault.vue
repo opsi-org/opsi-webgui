@@ -259,7 +259,7 @@ async function checkConfig () {
   max-width: calc(var(--main-width) - var(--minus-width));
 }
 .left-opened:not(.right-opened) .el-main { --minus-width: 200px; }
-.left-opened.right-opened .el-main { --minus-width: 500px; }
+.left-opened.right-opened .el-main { --minus-width: 465px; }
 .left-collapsed.right-opened .el-main { --minus-width: 350px; }
 .left-collapsed:not(.right-opened) .el-main { --minus-width: 70px; }
 
