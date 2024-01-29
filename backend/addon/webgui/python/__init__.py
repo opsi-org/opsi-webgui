@@ -14,15 +14,14 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.requests import HTTPConnection
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
-from starlette.concurrency import run_in_threadpool
-from starlette.types import Receive, Send
-
 from opsicommon.exceptions import BackendAuthenticationError, BackendPermissionDeniedError
 from opsiconfd.addon import Addon
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
-from opsiconfd.utils import remove_route_path
 from opsiconfd.session import authenticate as opsiconfd_authenticate
+from opsiconfd.utils import remove_route_path
+from starlette.concurrency import run_in_threadpool
+from starlette.types import Receive, Send
 
 from .clients import client_router
 from .config import conifg_router
@@ -30,9 +29,9 @@ from .const import ADDON_ID, ADDON_NAME, ADDON_VERSION
 from .depots import depot_router
 from .hosts import host_router
 from .products import product_router
+from .server import server_router
 from .utils import mysql
 from .webgui import set_data_path_var, webgui_router
-from .server import server_router
 
 SESSION_LIFETIME = 60 * 30
 
@@ -43,7 +42,6 @@ class Webgui(Addon):
 	version = ADDON_VERSION
 
 	def setup(self, app: FastAPI) -> None:
-
 		if not mysql:
 			logger.warning("No mysql backend found! Webgui only works with mysql backend.")
 			error_router = APIRouter()
@@ -74,9 +72,7 @@ class Webgui(Addon):
 		"""Called before unloading the addon"""
 		remove_route_path(app, self.router_prefix)
 
-	async def handle_request(
-		self, connection: HTTPConnection, receive: Receive, send: Send
-	) -> bool:  # pylint: disable=no-self-use,unused-argument
+	async def handle_request(self, connection: HTTPConnection, receive: Receive, send: Send) -> bool:  # pylint: disable=no-self-use,unused-argument
 		"""Called on every request where the path matches the addons router prefix.
 		Return true to skip further request processing."""
 		connection.scope["required_access_role"] = ACCESS_ROLE_AUTHENTICATED
@@ -97,15 +93,16 @@ class Webgui(Addon):
 			else:
 				try:
 					await authenticate(connection, receive)
-					connection.scope["session"].max_age = SESSION_LIFETIME
+					if connection.scope["session"].is_admin:
+						connection.scope["session"].max_age = SESSION_LIFETIME
+					else:
+						raise BackendAuthenticationError("Not an admin")
 				except Exception as err:
 					raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
 
 		return False
 
-	async def handle_request_exception(
-		self, err: Exception, connection: HTTPConnection, receive: Receive, send: Send
-	) -> bool:  # pylint: disable=no-self-use,unused-argument
+	async def handle_request_exception(self, err: Exception, connection: HTTPConnection, receive: Receive, send: Send) -> bool:  # pylint: disable=no-self-use,unused-argument
 		"""Called on every request exception where the path matches the addons router prefix.
 		Return true to skip further request processing."""
 		message = str(err)
