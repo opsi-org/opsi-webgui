@@ -159,6 +159,14 @@
                 "singleInstance": true,
                 "command": "bash /workspace/frontend/scripts/devhelper.sh all .test.component.ts pwtest:components /" // This is executed in the terminal.
             },
+            { // run tests accessibility for all files
+                "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
+                "name": "$(testing-run-all-icon) allaccess",
+                "tooltip": "Run test for all files",
+                "color": "white",
+                "singleInstance": true,
+                "command": "npm run pwtest:access" // This is executed in the terminal.
+            },
             // { // build dist directory (used in production)
             //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
             //     "name": "$(package) buildDist",

@@ -26,6 +26,7 @@
     "story:build": "NODE_ENV=development histoire build",
     "story:preview": "NODE_ENV=development histoire preview",
     "pwtest:usecase": "playwright test -c tests-configs/playwright-all-usecases.config.ts",
+    "pwtest:access": "playwright test -c tests-configs/playwright-all-accessibility.config.ts",
     "pwtest:components": "playwright test -c tests-configs/playwright-all-components.config.ts",
     "pwtest:components:update": "playwright test -c tests-configs/playwright-all-components.config.ts --update-snapshots",
     "bash:delete-empty-test-results": "find test-results -empty -delete"
