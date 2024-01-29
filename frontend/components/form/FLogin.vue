@@ -8,7 +8,7 @@
         class="text-center bg-primary mx-auto"
         :class="mq.$mq === 'mobile'? 'w-full;' : 'w-1/2; max-w-md' "
     >
-      <IconIOpsiLogo :light="!storeSettings().isLight" :short="false" class="mb-2" classes="w-full" />
+      <IconIOpsiLogo :light="false" :short="false" class="mb-2" classes="w-full" />
       <div @keyup.enter="doLogin">
         <el-form class="mt-1">
           <el-form-item class="mb-1">
