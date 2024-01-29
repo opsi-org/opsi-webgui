@@ -5,10 +5,15 @@
         <IconIIcon v-for="subaction in props.data.action.split('-')" :icon="icons[subaction]" />
       </el-button>
     </template>
-    <el-text tag="b">{{ $t('table.fields.'+props.data.action) }}</el-text> <el-text tag="i">{{ props.data.nodeLabel }}</el-text>
-    <el-form label-position="top">
+    <el-text tag="b">{{ $t('group.'+props.data.action) }}</el-text> - <el-text tag="i">{{ props.data.nodeLabel }}</el-text>
+    <el-form label-position="top" class="mt-3">
       <template v-if="props.data.action == 'group-add'">
-        <el-form-item v-for="value,label,index in addSubGroup" :key="index" :label="$t('table.fields.'+label)" :class="{ 'd-none': label=='parentGroupId' }">
+        <el-form-item
+          v-for="value,label,index in addSubGroup"
+          :key="index"
+          :label="$t('table.fields.'+label)"
+          :class="{ 'd-none': label=='parentGroupId' }"
+        >
           <el-input v-model="addSubGroup[label]" />
         </el-form-item>
         <el-button class="float-right" type="success" data-testid="createSubGroup">
@@ -26,19 +31,19 @@
           </el-scrollbar>
         </el-form-item>
         <el-button class="float-right" type="success" data-testid="addprodToSelectedGroup">
-          {{ $t("group.add") }}
+          {{ $t("button.add") }}
         </el-button>
       </template>
       <template v-else-if="props.data.action == 'client-delete' || props.data.action == 'product-delete'">
         <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'client'}) }}</small>
         <el-button class="float-right" type="danger" data-testid="removeAssignments">
-          {{ $t("group.remove") }}
+          {{ $t("button.delete") }}
         </el-button>
       </template>
       <template v-else-if="props.data.action == 'delete'">
         <small>{{ $t('group.removeClient.confirm') }}</small>
         <el-button type="danger" class="float-right">
-          {{ $t('group.remove') }}
+          {{ $t('button.delete') }}
         </el-button>
       </template>
       <template v-else-if="props.data.action == 'edit'">
@@ -52,7 +57,7 @@
       <template v-else-if="props.data.action == 'copy'">
         <el-tree />
         <el-button type="success" class="float-right">
-          {{ $t('group.copy') }}
+          {{ $t('button.copy') }}
         </el-button>
       </template>
       <template v-else> No action available </template>
@@ -70,7 +75,6 @@ const props = defineProps({
 })
 const icons = useIcons()
 const selectedChildren = ref([])
-const checkAll = ref(false)
 
 const addSubGroup = reactive({
   parentGroupId: '',
