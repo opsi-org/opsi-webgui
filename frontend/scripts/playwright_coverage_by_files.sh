@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
 # echo "----------------------- ALL COMPONENTS which should have a test (all .vue files in components/): "
-ls -1 components/*/*.vue | sort > .tmp_RESULT_FILESFOUND_VUE
+ls  -1 components/*/*[!story].vue | sort > .tmp_RESULT_FILESFOUND_VUE
 # cat .tmp_RESULT_FILESFOUND
 # echo $RES_ALL | tr " " "\n"
 NUM_FILES_VUE=$(cat .tmp_RESULT_FILESFOUND_VUE | wc -l)
@@ -12,8 +11,8 @@ cat .tmp_RESULT_FILESFOUND_VUE | cut -d '.' -f 1 > .tmp_X_RESULT_FILEIDS_FOUND_V
 rm -f .tmp_RESULT_FILESFOUND_VUE
 
 # echo "----------------------- ALL COMPONENTS which should have a test (all .vue files in components/): "
-ls -1 components/*/*.test.component.ts | sort > .tmp_RESULT_FILESFOUND_PW
-ls -1 components/*/*.test.component.js | sort >> .tmp_RESULT_FILESFOUND_PW
+ls -1 components/**/*.test.component.ts | sort > .tmp_RESULT_FILESFOUND_PW
+# ls -1 components/*/*.test.component.js | sort >> .tmp_RESULT_FILESFOUND_PW
 # cat .tmp_RESULT_FILESFOUND
 # echo $RES_ALL | tr " " "\n"
 NUM_FILES_PW=$(cat .tmp_RESULT_FILESFOUND_PW | wc -l)
