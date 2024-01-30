@@ -30,6 +30,12 @@ html {
   --opsi-log-critical: #E20066;
   --opsi-log-essential: #2979FF;
 }
+html {
+  /* PrimeVue */
+  --highlight-bg: #f0f0f0;
+  --primary-color: var(--opsi-general-blue);
+  --primary-color-text: var(--opsi-genral-white);
+}
 
 html.light, html:not(.light):not(.dark),
 body[data-bs-theme="light"] {

@@ -11,7 +11,8 @@
       class="mycol"
       :class="{
         [props.classfirstcol]: !isMobile,
-        [props.classeachcol]: true
+        [props.classeachcol]: true,
+        [props.classmaincol]: $props.classmaincol
       }"
       >
       <slot />
@@ -54,6 +55,7 @@ const props = defineProps({
   classlastcol: { type: String, default: '' },
   // classlastcol: { type: String, default: 'mr-5' },
   classcontainer: { type: String, default: 'pagecontent' },
+  classmaincol: { type: String, default: '' },
 })
 onMounted(()=>{
 })

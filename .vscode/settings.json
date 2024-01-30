@@ -6,6 +6,7 @@
     // "editor.codeActionsOnSave": {
     //   "source.fixAll.eslint": false
     // },
+    "betterTypeScriptErrors.prettify": true,
     "trailing-spaces.trimOnSave": true,
     "js/ts.implicitProjectConfig.experimentalDecorators": true,
     "i18n-ally.localesPaths": [

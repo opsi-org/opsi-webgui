@@ -9,7 +9,7 @@
     <!-- :classeachcol="isMobile ? 'm-1': 'm-1 h-full'" -->
     <!-- classlastcol="mt-0 mb-0" -->
     <template #default>
-      <el-button class="float-right" v-if="routeNameSettings?.page1Condition" @click="toggleClientstableVisibility">{{'v'}}</el-button>
+      <el-button class="float-right" v-if="routeName.startsWith('clients-products') && routeNameSettings?.page1Condition" @click="toggleClientstableVisibility">{{'v'}}</el-button>
       <ViewVClients v-if="clientstableVisible"/>
     </template>
     <template #page1>
@@ -23,8 +23,9 @@ import { usePageHelper } from '~/composables/mixins/usePageHelper';
 
 const route = useRoute()
 const {path, clientSettings } = usePageHelper()
+const routeName = computed(()=> route.name as string || '')
 const routeNameSettings =  computed(()=> {
-  const s = clientSettings[route.name as string || '']
+  const s = clientSettings[routeName.value]
   if (s === undefined )
     throw new Error('route name not found: ' + (route.name as string))
   return s
@@ -48,3 +49,7 @@ const isMobile = computed(()=> {
   return useMQ().isMobile.value
 })
 </script>
+
+<style scoped>
+
+</style>

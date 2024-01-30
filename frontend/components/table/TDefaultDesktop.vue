@@ -30,15 +30,18 @@
       @current-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, pageNumber: v})}"
       @size-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, perPage: v, pageNumber: 1})}"
       />
+      <ContextmenuCMTable ref="menu" :item="curRowCMId" :key="curRowCMDataKey" :type="props.id"/>
   </div>
 </template>
 
 <script lang="tsx" setup>
+// import ContextMenu from 'primevue/contextmenu';
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import type { SortBy, SortState } from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
 import {TableV2SortOrder, type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus';
 import type { FunctionalComponent } from 'vue';
+// import PButton from 'primevue/button'
 
 const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
@@ -148,6 +151,11 @@ const onScroll = (event: any) => {
 // const rowEventHandlers = (handlers: any) =>{
 //   console.log('row event', handlers)
 // }
+
+const menu = ref()
+const curRowCMId = ref()
+const curRowCMDataKey = ref<string>('ident')
+// const show = () => {}
 const rowEventHandlers: RowEventHandlers = {
   onClick: (params: RowEventHandlerParams) => {
     // params.event.preventDefault()
@@ -170,7 +178,16 @@ const rowEventHandlers: RowEventHandlers = {
     console.log('row dblclick', params.rowKey, params.event)
     // $emit('selection-changed', )
   },
+  onContextmenu: (params: RowEventHandlerParams) => {
+    curRowCMId.value = params.rowData
+    curRowCMDataKey.value = 'ident'
+    // onImageRightClick(params.event)
+    menu.value.show(params.event);
+    // menu.value.s
+    // $emit('selection-changed', )
+  },
 }
+
 const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
   value,
   intermediate = false,

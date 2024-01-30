@@ -32,7 +32,7 @@
         console.log('sort table', id, 'by', key, 'desc', isDesc)
         tableData.sortBy = key
         tableData.sortDesc = isDesc
-        storeTablesettings().setSortColumn(id, key, isDesc)
+        storeTable.setSortColumn(id, key, isDesc)
       }"
     >
 
@@ -259,10 +259,13 @@ import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useConfigserver } from '~/composables/mixins/useGet';
 import type { T_ClientsList } from '~/types/APItypes';
+import { useNavigate } from '~/composables/mixins/useNavigateTo';
 const storeSelection = storeSelections()
+const storeTable = storeTablesettings()
 const datacache = storeCache()
 console.log('datacache', datacache.opsiconfigserver)
 const cookies = useCookies()
+const navigation = useNavigate()
 const $t = useI18n().t
 const icons = useIcons()
 const id = "clients"
@@ -278,19 +281,23 @@ function openLink(link: string) {
   useRouter().push(link)
 }
 
-const route = useRoute()
-const _routeId = route.params.id || ['']
-const _routeLength = _routeId.length
-const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
-watch(()=>route.params.id, ()=>{
-  console.log('route.params.id', route.params.id)
-  const routeLength = route.params.id?.length || 1
-  const id = route.params.id?.[routeLength - 1] || ''
+// const route = useRoute()
+// const _routeId = route.params.id || ['']
+// const _routeLength = _routeId.length
+// const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
+// watch(()=>route.params.id, ()=>{
+//   console.log('secondColumnSelectedRowId route.params.id', route.params.id)
+//   let id: string = ''
+//   if (Array.isArray(route.params.id)) {
+//     id = route.params.id[route.params.id.length - 1]
+//   } else {
+//     id = route.params.id
+//   }
 
-  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+//   Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
 
-  rowactionConfigChecked.value[id] = true
-}, {deep: true})
+//   rowactionConfigChecked.value[id] = true
+// }, {deep: true})
 
 
 const emit = defineEmits(['change'])
@@ -328,7 +335,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-description',
       sortable: true,
       width: 200,
-      hidden: !storeTablesettings().clientsColumns.includes('description')
+      hidden: !storeTable.clientsColumns.includes('description')
       // hidden: cookies.includesCookie('column_' + id, 'description', false)
     },
     ipAddress: { // eslint-disable-next-line object-property-newline
@@ -338,7 +345,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-ipAddress',
       sortable: true,
       width: 100,
-      hidden: !storeTablesettings().clientsColumns.includes('ipAddress')
+      hidden: !storeTable.clientsColumns.includes('ipAddress')
       // hidden: cookies.includesCookie('column_' + id, 'ipAddress', false)
     },
     macAddress: { // eslint-disable-next-line object-property-newline
@@ -348,7 +355,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-macAddress',
       sortable: true,
       width: 100,
-      hidden: !storeTablesettings().clientsColumns.includes('macAddress')
+      hidden: !storeTable.clientsColumns.includes('macAddress')
       // hidden: cookies.includesCookie('column_' + id, 'macAddress', false)
     },
     lastSeen: { // eslint-disable-next-line object-property-newline
@@ -358,7 +365,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-lastSeen',
       sortable: true,
       width: 100,
-      hidden: !storeTablesettings().clientsColumns.includes('lastSeen')
+      hidden: !storeTable.clientsColumns.includes('lastSeen')
       // hidden: cookies.includesCookie('column_' + id, 'lastSeen', false)
     },
     uefi: { // eslint-disable-next-line object-property-newline
@@ -368,7 +375,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-uefi',
       sortable: true,
       width: 50,
-      hidden: !storeTablesettings().clientsColumns.includes('uefi'),
+      hidden: !storeTable.clientsColumns.includes('uefi'),
       // hidden: !cookies.includesCookie('column_' + id, 'uefi', false),
         // onChange={onChange}
       cellRenderer: ({rowData}:any) =>
@@ -395,7 +402,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     version_outdated_netboot: { // eslint-disable-next-line object-property-newline
@@ -406,7 +413,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
@@ -417,7 +424,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
@@ -428,7 +435,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !storeTablesettings().clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
     },
     // TODO: Sorting for reachable column
@@ -439,7 +446,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-reachable',
       sortable: false,
       width: 50,
-      hidden: !storeTablesettings().clientsColumns.includes('reachable')
+      hidden: !storeTable.clientsColumns.includes('reachable')
       // hidden: !cookies.includesCookie('column_' + id, 'reachable', true)
     },
     rowactions: { // eslint-disable-next-line object-property-newline
@@ -449,41 +456,27 @@ const columns = ref<ITableHeaderRow>({
       fixed: TableV2FixedDir.RIGHT,
       width: 150,
       hidden: false,
-      // hidden: !cookies.includesCookie('column_' + id, 'rowactions', false),
       class: 'col-rowactions',
-      // cellRenderer: ({rowData}: any) => <el-button type="primary">Edit {rowData.clientId}</el-button>
       cellRenderer: ({rowData}) => {
-        // const change = (e: Event)=>{
-        //   e.stopPropagation()
-        //   emit('change', rowData.clientId)
-        //   Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-        //   rowactionConfigChecked.value[rowData.clientId] = true
-        //   useRouter().push('/clients/client/config/' + rowData.clientId)
-        //   console.log('change rowConfig', rowData, e)
-        // }
         return (
         <>
           <buttonBTNRowLink
-            is-pressed={rowactionConfigChecked.value[rowData.clientId]}
+            is-pressed={navigation.rowactionConfigChecked.value[rowData.clientId]}
             icon={icons.settings}
             onClick={(e: Event) => changeRowLink(e, rowData.clientId)}
           />
         </>
       )},
     }
-    // <el-button size="small" onClick={change}>
-    //   <iconIIcon icon={icons.settings} />
-    //   {/* {rowData.depotId} */}
-    // </el-button>
 })
-function changeRowLink(e:Event, id: string) {
+
+function changeRowLink(e:Event, cid: string) {
   e.stopPropagation()
-  emit('change', id)
-  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-  rowactionConfigChecked.value[id] = true
-  useRouter().push('/clients/client/config/' + id)
-  console.log('change rowConfig', id, e)
+  emit('change', cid)
+  navigation.toConfiguration(id, cid)
 }
+
+
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
 // const handleChange = (id:string) => {
@@ -494,8 +487,8 @@ const tableData = ref({
   pageNumber: 1,
   perPage: 5,
   // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-  sortBy: storeTablesettings().clientsSorting.column,
-  sortDesc: storeTablesettings().clientsSorting.isDesc,
+  sortBy: storeTable.clientsSorting.column,
+  sortDesc: storeTable.clientsSorting.isDesc,
   // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
   filterColumns: ['clientId', 'description']
@@ -571,6 +564,7 @@ import QueueNested from '../../.utils/utils/QueueNested'
 import { Cookies } from '../../mixins/cookies'
 import { Format } from '../../mixins/format'
 import { DeleteClient } from '../../.utils/types/tobjects'
+import { storeTablesettings } from '../../store/tablesettingsStore';
 const selections = namespace('selections')
 
 @Component({ mixins: [AlertToast, MBus, Icons, Synchronization, Cookies, Format] })
