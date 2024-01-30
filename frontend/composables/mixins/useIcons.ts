@@ -49,6 +49,7 @@ export const useIcons = () => {
     log: 'bi:file-earmark-text',
     clientReachable: 'bi:link-45deg',
     ondemand: 'bi:collection-play',
+    deploy: 'material-symbols-light:real-estate-agent-outline-sharp',
     message: 'bi:envelope',
     reboot: 'bi:bootstrap-reboot',
     productInstallationStatusUnknown: 'bi:question',

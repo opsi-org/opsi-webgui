@@ -2,7 +2,8 @@
   <!-- <PContextMenu ref="cmmenu" :model="items" class="min-w-60 p-0" unstyled> -->
   <ContextMenu ref="cmmenu" :model="items" class="p-contextmenu">
     <template #item="{ item, hasSubmenu }">
-      <div class="inline">
+      <!-- <FormitemDDTableSorting v-if="item.id === 'table_sort'" > {{ item.label }}</FormitemDDTableSorting> -->
+      <div class="inline" >
         <IconIIcon v-if="item.icon" :icon="item.icon" class="inline ml-2 mr-4" />
         <span class="inline">{{ item.label }}</span>
         <!-- <PButton @click="() => call_opsievent('hi')">Hallo</PButton> -->
@@ -12,6 +13,7 @@
       </div>
     </template>
   </ContextMenu>
+  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[props.key]"/>
 </template>
 
 <script setup lang="ts">
@@ -19,75 +21,62 @@ import { useIcons } from '../../composables/mixins/useIcons';
 import ContextMenu from 'primevue/contextmenu';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 // const curRowContext = ref()
+const navigation = useNavigate()
 const icons = useIcons()
 const $t = useI18n().t
-const cmmenu = ref()
+
+const emit = defineEmits(['refetch'])
 const props = defineProps({
   item: { type: String, default: '' },
   key: { type: String, default: 'ident' },
   type: { type: String, default: 'servers' }
 })
+
+const cmmenu = ref()
+const showModal = ref(false)
+const selectedAction = ref('')
+const items = ref([
+  { id: '_header', label: $t('table.contextmenu.header-specific', {id: 'XXX'}), disabled: true /* row ident */ },
+  { id: '_actions', label: $t('button.item-actions'), icon: icons.menu, items: [
+    { id: 'action_ondemand', label: $t('button.event.ondemand'), command: ()=>call_opsievent('ondemand')},
+    { id: 'action_showpopup', label: $t('button.event.showpopup'), command: ()=>call_opsievent('showpopup')},
+    { id: 'action_reboot', label: $t('button.event.reboot'), command: ()=>call_opsievent('reboot')},
+    { id: 'action_clientagent', label: $t('label.clientagent'), command: ()=>call_opsievent('deployclientagent')},
+    { id: 'action_rename', label: $t('label.rename'), command: ()=>call_opsievent('rename')},
+    { id: 'action_delete', label: $t('label.delete'), command: ()=>call_opsievent('delete')},
+  ] },
+  { id: 'to_config', label: $t('title.config'), icon: icons.settings, command: () => call_navigate('config')},
+  { id: 'to_log', label: $t('title.log'), icon: icons.log, command: () => call_navigate('logs')},
+
+  {
+      separator: true
+  },
+
+  { id: 'table_sort', label: $t('button.sort.tablecolumns'), icon: icons.sort },
+  { id: 'table_showcol', label: $t('table.showCol'), icon: icons.columns },
+  { id: 'page_reload', label: $t('button.reload'), icon: icons.refresh, command: () => emit('refetch')},
+])
+
 watch(()=>props.item, ()=>{
   items.value[0].label = $t('table.contextmenu.header-specific', {id: props.item[props.key]})
 }, { deep: true })
 
-const items = ref([
-    { label: $t('table.contextmenu.header-specific', {id: 'XXX'}) , icon: icons.edit, disabled: true /* row ident */ },
-    { label: $t('button.item-actions'), icon: icons.menu, items: [
-      { label: $t('button.event.ondemand'), command: ()=>call_opsievent('ondemand')},
-      { label: $t('button.event.showpopup'), command: ()=>call_opsievent('showpopup')},
-      { label: $t('button.event.reboot'), command: ()=>call_opsievent('reboot')},
-      { label: $t('label.clientagent'), command: ()=>call_opsievent('deployclientagent')},
-      { label: $t('label.rename'), command: ()=>call_opsievent('rename')},
-      { label: $t('label.remove'), command: ()=>call_opsievent('remove')},
-
-    ] },
-    { label: $t('title.config'), icon: icons.settings, command: () => call_navigate('config')},
-    { label: $t('title.log'), icon: icons.log, command: () => call_navigate('logs')},
-
-
-    {
-        separator: true
-    },
-
-    { label: $t('button.sort.tablecolumns'), icon: icons.sort },
-    { label: $t('table.showCol'), icon: icons.columns },
-    { label: $t('button.reload'), icon: icons.refresh
-      // ,command:(e: any, e2: any) => alert('hi: ' + JSON.stringify(e) + ' ' +JSON.stringify(curRowContext.value))
-    },
-])
-
 defineExpose({ show })
 function show(e: any) {
-  // curRowContext.value = e
   items.value[0].label = $t('table.contextmenu.header-specific', {id: props.item[props.key]})
   cmmenu.value.show(e)
 }
 
-const navigation = useNavigate()
-
 function call_opsievent(event: string) {
   console.log('call_opsievent', event)
-  alert('call_opsievent: ' + event + " on client " + props.item[props.key])
+  // alert('call_opsievent: ' + event + " on client " + props.item[props.key])
+  selectedAction.value = event
+  showModal.value = true
 }
 function call_navigate(pagetype: string) {
   navigation.toType(props.type, props.item[props.key], pagetype)
-  switch (pagetype) {
-    case 'config':
-      break;
-
-    default:
-      break;
-  }
-  // const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
-  // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
-  // if (error) {
-  //   console.log(error)
-  //   useNotification().error(error)
-  //   return
-  // }
-  // fetchedData.value = data.value
 }
+
 </script>
 
 
