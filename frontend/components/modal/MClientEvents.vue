@@ -1,4 +1,8 @@
 
+import type { id } from 'element-plus/es/locale';
+
+import type { id } from 'element-plus/es/locale';
+
 import type { select } from 'bootstrap-vue-next/dist/src/utils';
 
 <template>
@@ -19,18 +23,21 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
       </div>
     </template>
 
-    Event: {{ event }} <br />
-    ID: {{ id }} <br />
-    <!-- Events {{  events[props.event] }} <br /> -->
+    <!-- Event: {{ event }} <br />
+    ID: {{ id }} <br /> -->
+    <div v-if="props.event=='showpopup'"
+    >
+      <el-input
+        v-model="events.showpopup.params.params[0]"
+        :rows="2"
+        type="textarea"
+        placeholder="Please input"
+      />
+      {{ id }} <br/>
+      {{ $t('button.event.modal.footer', {event}) }} <br/>
+    </div>
 
-    <el-input
-      v-if="props.event=='showpopup'"
-      v-model="events.showpopup.params.params[0]"
-      :rows="2"
-      type="textarea"
-      placeholder="Please input"
-    />
-    <div v-else-if="props.event=='ondemand'"
+    <div v-if="props.event=='ondemand'"
     >
       <el-radio-group v-model="events.ondemand.params.onlyIdFromParams">
         <el-radio :label="1">Only passed id</el-radio>
@@ -61,11 +68,50 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
         </li>
       </ul>
       </el-card>
+        {{ $t('button.event.modal.footer', {event}) }} <br/>
       <!-- checkboy for only selected client, or all selected clients -->
       <!-- <el-checkbox-group v-model="events[props.event]?.params?.params">
         <el-checkbox v-for="c in selection" :key="c" :label="c" class="modal-client-p text-small">
           {{ c }}
         </el-checkbox> -->
+    </div>
+
+    <div v-if="props.event=='reboot'">
+      {{ id }} <br />
+      {{ $t('button.event.modal.footer', {event}) }} <br/>
+    </div>
+
+    <div v-if="props.event=='deployclientagent'">
+      <el-form label-width="120px">
+        <el-form-item :label="$t('form.clientId')" ><el-input class="border-0" disabled :placeholder="id"/></el-form-item>
+        <el-form-item :label="$t('form.username')" ><el-input class="border-0" v-model="events.deployclientagent.params.user" /></el-form-item>
+        <el-form-item :label="$t('form.password')" class="flex">
+          <el-input class="border-0" v-model="events.deployclientagent.params.password" :type="(events.deployclientagent.params.passwordVisible) ? 'password' : ''" >
+
+            <template #append>
+              <el-button @click="events.deployclientagent.params.passwordVisible = !events.deployclientagent.params.passwordVisible" class="text-on-primary"> <IconIIcon :icon="events.deployclientagent.params.passwordVisible ? icon.valueHide : icon.valueShow"></IconIIcon></el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item :label="$t('form.type')" ><el-input class="border-0" v-model="events.deployclientagent.params.type" /></el-form-item>
+      </el-form>
+    </div>
+
+    <div v-if="props.event=='rename'">
+      <el-form>
+        <el-form-item label="Old name" :label-width="150">
+          <el-input :placeholder="id" disabled />
+        </el-form-item>
+        <el-form-item label="New name" :label-width="150">
+          <el-input v-model="events.rename.params.newName" autocomplete="off" />
+        </el-form-item>
+        <!-- <el-form-item label="Domain" :label-width="150">
+          <el-input disabled v-model="events.rename.params.newDomain" autocomplete="off" />
+        </el-form-item> -->
+      </el-form>
+    </div>
+    <div v-if="props.event=='delete'">
+      {{ $t('message.confirm.deleteClient', {client: id}) }} <br/>
     </div>
     <!-- <MClientEventContentPopup v-if="props.event=='showpopup'" :id="props.id" v-model="events[]"/> -->
     <!-- :title="$t(events[props.event]?.titlemodal)" -->
@@ -83,10 +129,8 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
   -->
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="updateModel(false)">Cancel</el-button>
-        <el-button type="primary" @click="callEvent()">
-          Confirm
-        </el-button>
+        <el-button @click="updateModel(false)">{{  $t('label.cancel') }}</el-button>
+        <el-button :type="events[event].buttonConfirmVariant" @click="callEvent()"> {{  $t(events[event].buttonConfirm) }}</el-button>
       </span>
     </template>
   </el-dialog>
@@ -122,6 +166,8 @@ const events = ref({
     tooltip: 'button.event.showpopup.tooltip',
     titlemodal: 'button.event.showpopup',
     icon: icon.message,
+    buttonConfirm: 'button.confirm',
+    buttonConfirmVariant: 'primary',
 
     params: {
       method: 'showPopup',
@@ -132,6 +178,8 @@ const events = ref({
     tooltip: 'button.event.ondemand.tooltip',
     titlemodal: 'button.event.ondemand',
     icon: icon.ondemand,
+    buttonConfirm: 'button.confirm',
+    buttonConfirmVariant: 'primary',
     params: {
       method: 'fireEvent',
       params: ['on_demand'],
@@ -143,6 +191,8 @@ const events = ref({
     tooltip: 'button.event.reboot.tooltip',
     titlemodal: 'button.event.reboot',
     icon: icon.reboot,
+    buttonConfirm: 'button.confirm',
+    buttonConfirmVariant: 'primary',
     params: {
       method: 'reboot',
       params: [],
@@ -151,28 +201,41 @@ const events = ref({
   },
   deployclientagent: {
     tooltip: 'button.event.deployclientagent.tooltip',
-    titlemodal: 'button.event.deployclientagent',
+    titlemodal: 'label.clientagent',
     icon: icon.deploy,
+    buttonConfirm: 'button.confirm',
+    buttonConfirmVariant: 'primary',
     params: {
       method: 'deployClientAgent',
-      params: [],
+      // params: ['','',''],
+      user: 'Administrator',
+      password: '',
+      type: 'windows',
+      passwordVisible: false,
+
       // client_ids: this.selectionClients
     }
   },
   rename: {
     tooltip: 'button.event.rename.tooltip',
-    titlemodal: 'button.event.rename',
+    titlemodal: 'title.renameClient',
     icon: icon.edit,
+    buttonConfirm: 'label.rename',
+    buttonConfirmVariant: 'primary',
     params: {
       method: 'rename',
       params: [],
+      newName: props.id.split('.')[0],
+      newDomain: props.id.split('.')[1] + '.'+props.id.split('.')[2],
       // client_ids: this.selectionClients
     }
   },
   delete: {
     tooltip: 'button.event.delete.tooltip',
-    titlemodal: 'button.event.delete',
+    titlemodal: 'title.deleteClient',
     icon: icon.delete,
+    buttonConfirm: 'label.delete',
+    buttonConfirmVariant: 'danger',
     params: {
       method: 'delete',
       params: [],

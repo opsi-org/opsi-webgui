@@ -350,6 +350,7 @@
   "form.clientId": "Client ID",
   "form.username": "Username",
   "form.password": "Password",
+  "form.type": "Type",
   "form.theme": "Theme",
   "form.quicksave": "Quick save",
   "form.general": "General",
