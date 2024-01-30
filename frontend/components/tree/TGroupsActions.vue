@@ -17,22 +17,22 @@
           >
             <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click" :ref="node.label+action">
               <template #reference>
-                <el-button size="small">
-                  <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" />
-                </el-button>
+                <el-button size="small"> <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" /> </el-button>
               </template>
               <el-text tag="b">{{ $t('group.'+action) }}</el-text> - <el-text tag="i">{{ node.label }}</el-text>
               <el-form label-position="top" class="mt-3">
                 <template v-if="action == 'group-add'">
-                  <el-form-item
-                    v-for="value,label,index in addSubGroup"
-                    :key="index"
-                    :label="$t('table.fields.'+label)"
-                    :class="{ 'd-none': label=='parentGroupId' }"
-                  >
-                    <el-input v-model="addSubGroup[label]" />
+                  <el-form-item v-for="value,label,index in createGroup" :key="index" :label="$t('table.fields.'+label)"
+                    :class="{ 'd-none': label=='parentGroupId' }">
+                      <el-input v-model="createGroup[label]" />
                   </el-form-item>
-                  <el-button class="float-right" type="success" data-testid="createSubGroup">
+                  <el-button
+                    class="float-right"
+                    type="success"
+                    data-testid="createSubGroup"
+                    @click="createSubGroup(node.label)"
+                    :disabled="createGroup.groupId == ''"
+                  >
                     {{ $t("button.create") }}
                   </el-button>
                 </template>
@@ -40,9 +40,7 @@
                   <el-form-item :label="$t('label.selectChildren')">
                     <el-scrollbar height="300px">
                       <el-checkbox-group v-model="selectedChildren">
-                        <div v-for="item in idList" :key="item">
-                          <el-checkbox size="small" :label="item" />
-                        </div>
+                        <div v-for="item in idList" :key="item"> <el-checkbox size="small" :label="item" /> </div>
                       </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>
@@ -69,7 +67,7 @@
                       <!-- <el-tree :props="defaultProps" :data="fetchedData">
                       </el-tree> -->
                     </el-scrollbar>
-                    <el-input v-else v-model="addSubGroup[label]" />
+                    <el-input v-else v-model="updateGroup[label]" />
                   </el-form-item>
                   <el-button class="float-right" type="success" data-testid="updateGroup">
                     {{ $t("button.update") }}
@@ -94,44 +92,6 @@
     </el-tree>
   </el-container>
 
-  <!-- <div class="VGroups" data-testid="VGroups">
-      <b-col v-if="action && selectedvalue">
-        <span class="text-small"><b> {{ title + t_fixed('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
-        <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
-          <IconIIcon :icon="icon.x" />
-        </b-button>
-        <br><br> -->
-        <!-- <template v-if="action == 'addSubgroup'">
-          <b-form>
-            <b-form-input
-              v-model="subgroup.groupId"
-              size="sm"
-              trim
-              :placeholder="$t('group.subgroupname')"
-              :state="subgroup.groupId.length > 0 && subgroup.groupId.length < 255"
-              @keydown.enter.prevent="createSubGroup"
-            />
-            <b-form-input
-              v-model="subgroup.description"
-              size="sm"
-              trim
-              :placeholder="$t('table.fields.description')"
-              :state="subgroup.description.length >= 0 && subgroup.description.length < 100"
-              @keydown.enter.prevent="createSubGroup"
-            />
-            <b-form-input
-              v-model="subgroup.notes"
-              size="sm"
-              trim
-              :placeholder="$t('table.fields.notes')"
-              :state="subgroup.notes.length >= 0 && subgroup.notes.length < 500"
-              @keydown.enter.prevent="createSubGroup"
-            />
-            <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
-              {{ $t("button.create") }}
-            </b-button>
-          </b-form>
-        </template> -->
         <!-- <template v-if="action == 'addToGroup'">
           <b-form-select
             v-model="selectedProducts"
@@ -220,7 +180,7 @@ const defaultProps = {
 const fetchedData = ref<any>({})
 const idList = ref<T_ProductIds|T_ClientIds>([])
 const selectedChildren = ref([])
-const addSubGroup = reactive({
+const createGroup = reactive({
   parentGroupId: '',
   groupId: '',
   description: '',
@@ -283,6 +243,20 @@ async function fetchProductList() {
   idList.value = data.value.map(function (item: { productId: any; }) { return item.productId })
 }
 
+  async function createSubGroup (parent: string) {
+    createGroup.parentGroupId = parent
+    const url = props.data.category == 'clientGroups' ? 'opsidata/hosts/groups' : 'opsidata/products/groups'
+    const {data, error } = await useApiPOST(url, createGroup)
+    if (error) {
+      useNotification().error(error)
+      return
+    } else {
+      useNotification().success(data.toString())
+      // this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
+      // await this.reloadGroup()
+    }
+  }
+
 //   async reloadGroup () {
 //     this.action = ''
 //     await this.fetchGroups()
@@ -293,18 +267,6 @@ async function fetchProductList() {
 //     this.action = selectedAction
 //     const groupaction = 'group.' + this.action
 //     this.title = this.$t(groupaction)
-//   }
-
-//   async createSubGroup () {
-//     this.subgroup.parentGroupId = this.selectedvalue.text
-//     await this.$axios.$post('/api/opsidata/products/groups', this.subgroup)
-//       .then(async () => {
-//         this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
-//         await this.reloadGroup()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
 //   }
 
 //   async updateGroup () {

@@ -29,37 +29,6 @@
                 {{ $t("group.add") }}
               </b-button>
             </template>
-            <template v-else-if="action == 'addSubgroup'">
-              <b-form>
-                <b-form-input
-                  v-model="subgroup.groupId"
-                  size="sm"
-                  trim
-                  :placeholder="$t('group.subgroupname')"
-                  :state="subgroup.groupId.length > 0 && subgroup.groupId.length < 255"
-                  @keydown.enter.prevent="createSubGroup"
-                />
-                <b-form-input
-                  v-model="subgroup.description"
-                  size="sm"
-                  trim
-                  :placeholder="$t('table.fields.description')"
-                  :state="subgroup.description.length >= 0 && subgroup.description.length < 100"
-                  @keydown.enter.prevent="createSubGroup"
-                />
-                <b-form-input
-                  v-model="subgroup.notes"
-                  size="sm"
-                  trim
-                  :placeholder="$t('table.fields.notes')"
-                  :state="subgroup.notes.length >= 0 && subgroup.notes.length < 500"
-                  @keydown.enter.prevent="createSubGroup"
-                />
-                <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
-                  {{ $t("button.create") }}
-                </b-button>
-              </b-form>
-            </template>
             <template v-else-if="action == 'editGroup'">
               <b-form>
                 <treeselect
@@ -195,19 +164,6 @@ const groupActions = reactive({
 //     await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
 //       .then(async (response) => {
 //         this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
-//         await this.fetchGroups()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.afterAsync()
-//   }
-
-//   async createSubGroup () {
-//     this.subgroup.parentGroupId = this.selectedvalue.text
-//     await this.$axios.$post('/api/opsidata/hosts/groups', this.subgroup)
-//       .then(async (response) => {
-//         this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
 //         await this.fetchGroups()
 //       })
 //       .catch((error) => {
