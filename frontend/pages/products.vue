@@ -10,6 +10,7 @@
     <template #default>
       <ViewVProducts v-if="path[0] === 'products'"
         :product-type="(route.params.producttype as string)" :is-child="false"
+        :is-mobile="mq.isMobile.value"
       />
     </template>
     <template #page1>
@@ -22,6 +23,7 @@
 import { usePageHelper } from '~/composables/mixins/usePageHelper';
 
 const route = useRoute()
+const mq = useMQ()
 const {path, productSettings } = usePageHelper()
 const routeNameSettings =  computed(()=> {
   const s = productSettings[route.name as string || '']
@@ -31,6 +33,6 @@ const routeNameSettings =  computed(()=> {
 })
 
 const isMobile = computed(()=> {
-  return useMQ().isMobile.value
+  return mq.isMobile.value
 })
 </script>

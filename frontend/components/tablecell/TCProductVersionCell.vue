@@ -27,13 +27,13 @@
         @click="$emit('details', row, tooltiptext)"
       />
     </div>
-    <TooltipTTProductCell
+    <!-- <TooltipTTProductCell
       v-if="rowitem.depot_version_diff || rowitem.client_version_outdated || (rowitem.selectedDepots.length !== selectionDepots.length) || false"
       type="version"
       :target="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       :details="tooltiptext"
       :depot-version-diff="rowitem.depot_version_diff"
-    />
+    /> -->
   </div>
 </template>
 

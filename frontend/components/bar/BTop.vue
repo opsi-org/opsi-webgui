@@ -1,5 +1,5 @@
 <template>
- <el-menu v-if="useMQ().isMobile.value" mode="horizontal" class="border-0"
+ <el-menu v-if="mq.isMobile.value" mode="horizontal" class="border-0"
   data-testid="BTop"
     :ellipsis="false">
     <el-menu-item index="0" @click="()=>emit('toggleLeft')" data-testid="menu_routes">
@@ -49,6 +49,7 @@
 <script setup lang="ts">
 import { useIcons } from '~/composables/mixins/useIcons';
 
+const mq = useMQ()
 const emit = defineEmits(['toggleLeft', 'toggleRight'])
 const settings = storeSettings()
 const icons = useIcons()

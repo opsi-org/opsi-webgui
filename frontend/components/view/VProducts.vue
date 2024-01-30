@@ -20,7 +20,7 @@
       >Product</el-checkbox-button>
   </div>
   <TableTDefault
-      v-if="fetchedData[currentType].length > 0 && totalItems > 0"
+      v-if="isDataVisible"
       row-id="productId"
       :id="id"
       :columns="columns"
@@ -37,7 +37,7 @@
         console.log('sort table', currentType, 'by', key, 'desc', isDesc)
         tableData[currentType].sortBy = key
         tableData[currentType].sortDesc = isDesc
-        storeTablesettings().setSortColumn(id, key, isDesc)
+        tableSettings.setSortColumn(id, key, isDesc)
       }"
     >
 
@@ -104,90 +104,72 @@
 <script setup lang="tsx">
 
 import { useNotification } from '~/composables/mixins/useComponent';
-
-import type { ITableHeaderRow } from '~/types/ttableV3'
-
-import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useClient } from '~/composables/mixins/useGet';
+import { useNavigate } from '~/composables/mixins/useNavigateTo';
+
+import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableRow } from '~/types/ttable';
 import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
-const cookies = useCookies()
+import type { T_Client2Depot } from '~/types/APItypes';
+
+
 const $t = useI18n().t
 const icons = useIcons()
-const id = "products"
+// const route = useRoute()
+const router = useRouter()
+const navigation = useNavigate()
+const fetchClient = useClient()
+const notify = useNotification()
 
-const route = useRoute()
-const _routeId = route.params.id || ['']
-const _routeLength = _routeId.length
-const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
-watch(()=>route.params.id, ()=>{
-  console.log('route.params.id', route.params.id)
-  const routeLength = route.params.id?.length || 1
-  const id = route.params.id?.[routeLength - 1] || ''
-  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-  rowactionConfigChecked.value[id] = true
-}, {deep: true})
-
-// import { Component, Vue, Watch, Prop, namespace } from 'nuxt-property-decorator'
-// import { Client } from '../../mixins/get'
-// import { Icons } from '../../mixins/icons'
-// import { Cookies } from '../../mixins/cookies'
-// import { ITableHeaders, ITableInfo } from '../../.utils/types/ttable'
-// import { IObjectString2Any, IObjectString2String } from '../../.utils/types/tgeneral'
-// import { Strings } from '../../mixins/strings'
-// import { AlertToast } from '../../mixins/component'
-// const selections = namespace('selections')
-
-// @Component({ mixins: [AlertToast, Client, Icons, Strings, Cookies] })
-// export default class VProducts extends Vue {
-//   fetchedDataClients2Depots!: IObjectString2String // mixin Client
-//   // Cookie: any
-//   showToastError: any // mixin
-//   isCookie: any
-//   includesCookie!: any
-//   getKeyCookie!: any
-//   setCookie: any
-//   icon: any
-//   t_fixed: any
-//   $mq: any
-//   $route:any
-//   $router:any
-//   $t!:any
-//   $axios: any
-//   getClientToDepot:any
-
-const emit = defineEmits(['change'])
-const props = defineProps({
-  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
-  productType: { type: String, default: 'LocalbootProduct' },
-  isChild: { type: Boolean, default: false },
-})
-//   @Prop() child!: boolean
-//   @Prop({}) id!: string
-//   @Prop({}) sortby!: string
-// const datacache = storeCache()
-// console.log('datacache', datacache.opsiconfigserver)
-
+const tableSettings = storeTablesettings()
 const storeSelection = storeSelections()
+
+// Refs
 const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(storeSelection)
+const fetchedDataClients2Depots = ref<T_Client2Depot>({})
 
-const fetchedDataClients2Depots = ref(await useClient().getClientToDepot(selectionClients.value))
-//   @selections.Getter public selectionDepots!: Array<string>
-//   @selections.Getter public selectionClients!: Array<string>
-//   @selections.Getter public selectionProducts!: Array<string>
-//   @selections.Mutation public setSelectionProducts!: (s: Array<string>) => void
+const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
 
-//   sortdesc: boolean = false
-//   rowId: string = ''
-//   isLoading: boolean = false
-//   localboot: string = ''
-//   netboot: string = ''
-//   totalnetboot: number = 0
-//   tableloaded: boolean = false
-//   activeLocalbootTab: boolean = true
-  // headerData: ITableHeaders = {
+const totalItems = ref<number>(0)
+const tableData = ref({
+  'LocalbootProduct': {
+    type: 'LocalbootProduct',
+    pageNumber: 1,
+    perPage: 25,
+    // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+    sortBy: tableSettings.productsSorting.column,
+    sortDesc: tableSettings.productsSorting.isDesc,
+    // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+    filterQuery: '',
+    filterColumns: ['productId', 'description']
+  },
+  'NetbootProduct': {
+    type: 'NetbootProduct',
+    pageNumber: 1,
+    perPage: 5,
+    sortBy: tableSettings.productsSorting.column,
+    sortDesc: tableSettings.productsSorting.isDesc,
+    filterQuery: '',
+    filterColumns: ['productId', 'description']
+  },
+  'Product': {
+    type: 'Product',
+    pageNumber: 1,
+    perPage: 5,
+    sortBy: tableSettings.productsSorting.column,
+    sortDesc: tableSettings.productsSorting.isDesc,
+    filterQuery: '',
+    filterColumns: ['productId', 'description']
+  }
+})
+
+const fetchedData = ref({
+  LocalbootProduct: [] as Array<any>,
+  NetbootProduct: [] as Array<any>
+})
+
 const columns = reactive<ITableHeaderRow>({
   selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
@@ -209,7 +191,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'installationStatus', true)
-      hidden: !storeTablesettings().productsColumns.includes('installationStatus')
+      hidden: !tableSettings.productsColumns.includes('installationStatus')
     },
     actionResult: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionResult'),
@@ -220,7 +202,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
-      hidden: !storeTablesettings().productsColumns.includes('actionResult')
+      hidden: !tableSettings.productsColumns.includes('actionResult')
     },
     productId: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.productId'),
@@ -243,7 +225,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'name', false)
-      hidden: !storeTablesettings().productsColumns.includes('name')
+      hidden: !tableSettings.productsColumns.includes('name')
     },
     description: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.description'),
@@ -254,7 +236,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'description', false)
-      hidden: !storeTablesettings().productsColumns.includes('description')
+      hidden: !tableSettings.productsColumns.includes('description')
     },
     modificationTime: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.modificationTime'),
@@ -265,7 +247,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'modificationTime', false)
-      hidden: !storeTablesettings().productsColumns.includes('modificationTime')
+      hidden: !tableSettings.productsColumns.includes('modificationTime')
     },
     priority: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.priority'),
@@ -276,7 +258,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'priority', false)
-      hidden: !storeTablesettings().productsColumns.includes('priority')
+      hidden: !tableSettings.productsColumns.includes('priority')
     },
     // selectedDepots: { // eslint-disable-next-line object-property-newline
     //   title: $t('table.fields.depotIds') as string, key: 'selectedDepots', dise,
@@ -299,13 +281,14 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'version', false)
-      hidden: !storeTablesettings().productsColumns.includes('version'),
+      hidden: !tableSettings.productsColumns.includes('version'),
       cellRenderer: ({rowData}) => {
         return (
           <>
+          {/* TODO: check if this works for different versions of server/clients */}
             {/* <el-text v-if={!rowData.depot_version_diff}>{Object.values(rowData.depotVersions)[0]}</el-text> */}
+              {/* v-if={Object.keys(fetchedDataClients2Depots).length == selectionClients.value.length} */}
             <tablecellTCProductVersionCell
-              v-if={Object.keys(fetchedDataClients2Depots).length == selectionClients.value.length}
               type="depotVersions"
               row={rowData}
               clients2depots={fetchedDataClients2Depots}
@@ -324,7 +307,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionProgress', false)
-      hidden: !storeTablesettings().productsColumns.includes('actionProgress')
+      hidden: !tableSettings.productsColumns.includes('actionProgress')
     },
     actionRequest: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionRequest'),
@@ -335,7 +318,7 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionRequest', false)
-      hidden: !storeTablesettings().productsColumns.includes('actionRequest'),
+      hidden: !tableSettings.productsColumns.includes('actionRequest'),
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions',
@@ -351,18 +334,19 @@ const columns = reactive<ITableHeaderRow>({
         const change = (e: Event)=>{
           e.stopPropagation()
           emit('change', rowData.productId)
-          Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-          rowactionConfigChecked.value[rowData.productId] = true
-          if (props.isChild) {
-            useRouter().push(`/clients/products/${currentType.value}/config/${rowData.productId}`)
-          } else {
-            useRouter().push(`/products/${currentType.value}/config/${rowData.productId}`)
-          }
+          navigation.toConfiguration(id, rowData.productId, props.isChild, currentType.value)
+          // Object.keys(navigation.rowactionConfigChecked.value).forEach(k => navigation.rowactionConfigChecked.value[k] = false)
+          // navigation.rowactionConfigChecked.value[rowData.productId] = true
+          // if (props.isChild) {
+          //   useRouter().push(`/clients/products/${currentType.value}/config/${rowData.productId}`)
+          // } else {
+          //   useRouter().push(`/products/${currentType.value}/config/${rowData.productId}`)
+          // }
         }
         return (
         <>
           <buttonBTNRowLink
-            is-pressed={rowactionConfigChecked.value[rowData.productId]}
+            is-pressed={navigation.rowactionConfigChecked.value[rowData.productId]}
             icon={icons.settings}
             onClick={change}
           />
@@ -375,27 +359,50 @@ const columns = reactive<ITableHeaderRow>({
     }
   }
 )
+// consts
+const id = "products"
 
-const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
-const changeProductsType = (type: string)=>{
+const emit = defineEmits(['change'])
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return false}},
+  // isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
+  productType: { type: String, default: 'LocalbootProduct' },
+  isChild: { type: Boolean, default: false },
+})
 
-  console.log('route.params.id changeProductsType', type)
-  if (props.isChild) {
-    useRouter().push('/clients/products/' + type + '/')
-  } else {
-    useRouter().push('/products/' + type + '/')
-  }
-  Object.keys(productsTypeChecked.value).forEach(k => productsTypeChecked.value[k] = false)
-  productsTypeChecked.value[type] = true
 
-}
+//   sortdesc: boolean = false
+//   rowId: string = ''
+//   isLoading: boolean = false
+//   localboot: string = ''
+//   netboot: string = ''
+//   totalnetboot: number = 0
+//   tableloaded: boolean = false
+//   activeLocalbootTab: boolean = true
+  // headerData: ITableHeaders = {
+
+// Computed
 const currentType = computed(()=>{
   if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
   if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
   if (productsTypeChecked.value.Product) return 'Product'
   return 'LocalbootProduct'
 })
-if (props.productType && props.productType !== currentType.value) changeProductsType(props.productType)
+const isDataVisible = computed(()=> {
+  return totalItems.value > 0 && fetchedData.value[currentType.value]?.length > 0
+})
+
+
+onMounted(async ()=> {
+  if (props.productType && props.productType !== currentType.value)
+    changeProductsType(props.productType)
+
+  fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(selectionClients.value)
+  fetchedData.value[currentType.value] = await _fetch(currentType.value)
+})
+
+// watch(() => fetchedData[currentType.value])
+
 watch(()=>props.productType, (v)=>{
   changeProductsType(v)
 })
@@ -404,8 +411,26 @@ setColumnVisibilityDependOnClients()
 watch(()=>selectionClients.value, async () => {
   setColumnVisibilityDependOnClients()
   console.log('selectionClients changed', selectionClients.value)
-  fetchedDataClients2Depots.value = await useClient().getClientToDepot(selectionClients.value)
+  fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(selectionClients.value)
 }, { deep: true })
+
+
+watch(()=> tableData.value[currentType.value], async ()=>{
+  console.log('tableData changed', tableData)
+  fetchedData.value[currentType.value] = []
+  fetchedData.value[currentType.value] = await _fetch(currentType.value)
+}, { deep: true})
+
+function changeProductsType (type: string) {
+  if (props.isChild) {
+    router.push('/clients/products/' + type + '/')
+  } else {
+    router.push('/products/' + type + '/')
+  }
+  Object.keys(productsTypeChecked.value).forEach(k => productsTypeChecked.value[k] = false)
+  productsTypeChecked.value[type] = true
+
+}
 
 function setColumnVisibilityDependOnClients () {
   let b = true
@@ -418,47 +443,6 @@ function setColumnVisibilityDependOnClients () {
   columns.actionRequest.hidden = b
   columns.actionProgress.hidden = b
 }
-const fetchedData = ref({
-  LocalbootProduct: [] as Array<any>,
-  NetbootProduct: [] as Array<any>
-})
-const totalItems = ref<number>(0)
-// const handleChange = (id:string) => {
-//   console.log('handleSelectionChange', id)
-//   storeSelection.toggleSelectionDepots(id)
-// }
-
-const tableData = ref({
-  'LocalbootProduct': {
-    type: 'LocalbootProduct',
-    pageNumber: 1,
-    perPage: 25,
-    // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-    sortBy: storeTablesettings().productsSorting.column,
-    sortDesc: storeTablesettings().productsSorting.isDesc,
-    // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-    filterQuery: '',
-    filterColumns: ['productId', 'description']
-  },
-  'NetbootProduct': {
-    type: 'NetbootProduct',
-    pageNumber: 1,
-    perPage: 5,
-    sortBy: storeTablesettings().productsSorting.column,
-    sortDesc: storeTablesettings().productsSorting.isDesc,
-    filterQuery: '',
-    filterColumns: ['productId', 'description']
-  },
-  'Product': {
-    type: 'Product',
-    pageNumber: 1,
-    perPage: 5,
-    sortBy: storeTablesettings().productsSorting.column,
-    sortDesc: storeTablesettings().productsSorting.isDesc,
-    filterQuery: '',
-    filterColumns: ['productId', 'description']
-  }
-})
 
 async function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
   console.log('tabledata changed total', v)
@@ -467,12 +451,17 @@ async function updateTableData (type:string, v: typeof tableData.value.Localboot
   fetchedData.value[currentType.value] = await _fetch(currentType.value)
 }
 
-onMounted(async ()=> fetchedData.value[currentType.value] = await _fetch(currentType.value))
-watch(()=> tableData.value[currentType.value], async ()=>{
-  console.log('tableData changed', tableData)
-  fetchedData.value[currentType.value] = []
-  fetchedData.value[currentType.value] = await _fetch(currentType.value)
-}, { deep: true})
+async function _fetch(type: string) {
+  const params = fetchProductsPrepareParams(type)
+  const {data, error, headers} = await useApiGETBody('/opsidata/products', params)
+  if (error) {
+    console.error(error)
+    notify.error(error)
+    return []
+  }
+  totalItems.value = parseInt(headers['x-total-count'])
+  return data.value
+}
 
 function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
     // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
@@ -570,17 +559,6 @@ function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString
 //   async waitBeforeFetch () {
 //     // await new Promise(resolve => setTimeout(resolve, 5))
 //   }
-async function _fetch(type: string) {
-  const params = fetchProductsPrepareParams(type)
-  const {data, error, headers} = await useApiGETBody('/opsidata/products', params)
-  if (error) {
-    console.error(error)
-    useNotification().error(error)
-    return []
-  }
-  totalItems.value = parseInt(headers['x-total-count'])
-  return data.value
-}
   // async function fetchProducts (thiss) {
   //   thiss.isLoadingTable = true // have to be "thiss" -> overwise sorting breaks - whyever
   //   await this.waitBeforeFetch() // needed for messagebus timing problem

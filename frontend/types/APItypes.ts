@@ -1,8 +1,10 @@
 
 
-/** Types which cam efrom backend and some additionally according to them */
+/** Types which came from backend and some additionally according to them */
 
-
+/** Type for Response of '/api/user/configuration'
+ * @ see {@link https://localhost:4447/docs#/default/user_configuration_addons_webgui_api_user_configuration_get | API documentation}
+ */
 export interface T_configuration {
   user: string,
   configuration: {

@@ -1,8 +1,8 @@
 <template>
   <!-- <DevOnly>Hello</DevOnly> -->
   <div :class="{
-    'is-mobile': useMQ().isMobile.value,
-    'is-not-mobile': !useMQ().isMobile.value,
+    'is-mobile': mq.isMobile.value,
+    'is-not-mobile': !mq.isMobile.value,
   }" >
   <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">
@@ -16,26 +16,26 @@
       <el-container
        class="h-screen max-h-screen overflow-hidden"
        :class="{
-        // 'is-mobile': useMQ().isMobile.value,
-        // 'is-not-mobile': !useMQ().isMobile.value,
+        // 'is-mobile': mq.isMobile.value,
+        // 'is-not-mobile': !mq.isMobile.value,
         // 'leftVisible': leftSideVisible,
         // 'leftSmall': leftSideIsSmall,
-        'left-collapsed': !useMQ().isMobile.value && leftSideIsSmall,
-        'left-opened': !useMQ().isMobile.value && !leftSideIsSmall,
-        'right-opened': !useMQ().isMobile.value && rightSideVisible,
+        'left-collapsed': !mq.isMobile.value && leftSideIsSmall,
+        'left-opened': !mq.isMobile.value && !leftSideIsSmall,
+        'right-opened': !mq.isMobile.value && rightSideVisible,
        }"
       >
         <el-aside
-          v-if="!useMQ().isMobile.value || leftSideVisible"
+          v-if="!mq.isMobile.value || leftSideVisible"
           class="el-aside-left"
           :class="{
-            'absolute z-20 grid w-screen': useMQ().isMobile.value
+            'absolute z-20 grid w-screen': mq.isMobile.value
             }"
         >
           <div
             :class="{
-              'hidden': !useMQ().isMobile.value,
-              'fixed bg-color opacity-70 z-10 w-screen h-full': useMQ().isMobile.value,
+              'hidden': !mq.isMobile.value,
+              'fixed bg-color opacity-70 z-10 w-screen h-full': mq.isMobile.value,
               }"
             @click.self="toggleSide('left')"
           ></div>
@@ -43,10 +43,10 @@
             style="border-right: 1px solid var(--el-border-color)"
             :class="{
             'border-0 border-r': true,
-            // 'w-48': !useMQ().isMobile.value && !leftSideIsSmall,
+            // 'w-48': !mq.isMobile.value && !leftSideIsSmall,
             'max-w-full': true,
-            'w-16': !useMQ().isMobile.value && leftSideIsSmall,
-            ' z-40 bg-color opacity-100': useMQ().isMobile.value,
+            'w-16': !mq.isMobile.value && leftSideIsSmall,
+            ' z-40 bg-color opacity-100': mq.isMobile.value,
           }">
             <BarBSide @change-small="setLeftCollapse"/>
           </el-scrollbar>
@@ -71,21 +71,21 @@
           class="border-l"
           :class="{
             'el-aside-right': true,
-            'p-0 w-full': !useMQ().isMobile.value,
-            'absolute right-0 z-20 grid': useMQ().isMobile.value
+            'p-0 w-full': !mq.isMobile.value,
+            'absolute right-0 z-20 grid': mq.isMobile.value
             }"
         >
           <div
             :class="{
-              'hidden': !useMQ().isMobile.value,
-              'fixed bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': useMQ().isMobile.value
+              'hidden': !mq.isMobile.value,
+              'fixed bg-color left-0 opacity-70 z-30 w-screen h-screen max-w-screen': mq.isMobile.value
             }"
             @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
             'w-full max-w-full right-0 opacity-100 justify-self-end bg-color border-0 p-2': true,
-            // 'w-80': !useMQ().isMobile.value,
-            'max-w-full z-30': useMQ().isMobile.value,
+            // 'w-80': !mq.isMobile.value,
+            'max-w-full z-30': mq.isMobile.value,
             }">
             <BarBQuickPanel />
           </el-scrollbar>
@@ -98,53 +98,45 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
-// const color = useColorMode();
 
+const mq = useMQ()
 const settings = storeSettings()
-// const { colormode } = storeToRefs(settings)
 const configapp = storeConfigapp()
-// const { config,  } = storeToRefs(configapp)
-// const { isMobile } = storeToRefs(settings)
 const leftSideIsSmall = ref<boolean>(false)
-const leftSideVisible = ref<boolean>(!useMQ().isMobile.value)
-const rightSideVisible = ref<boolean>(!useMQ().isMobile.value)
+const leftSideVisible = ref<boolean>(!mq.isMobile.value)
+const rightSideVisible = ref<boolean>(!mq.isMobile.value)
 
-// const cache = storeCache()
-// const { opsiconfigserver } = storeToRefs(cache)
-watch(()=> useMQ().$mq.value, (newVal, oldVal) => {
-  console.log('mq changed', newVal)
-  if (useMQ().$mq.value === 'mobile') {
-    settings.setIsMobile(true)
-  } else {
-    settings.setIsMobile(false)
-  }
+
+watch(()=> mq.$mq.value, (newVal, oldVal) => {
+  settings.setIsMobile(mq.$mq.value === 'mobile')
 })
 
 watch(useRouter().currentRoute, () => {
-  if (useMQ().isMobile.value) { toggleSide('left') }
+  if (mq.isMobile.value) { toggleSide('left') }
 })
 
-onMounted(async ()=>{
-  settings.initColormode()
-  await checkConfig()
 
-  leftSideIsSmall.value = false
-  if (settings.menuCollapsed && !useMQ().isMobile.value) {
-    leftSideIsSmall.value = true
-  }
+// onMounted(async ()=>{
+await checkConfig()
+settings.initColormode()
 
-  rightSideVisible.value = false
-  if (settings.quickpanelOpened && !useMQ().isMobile.value) {
-    rightSideVisible.value = true
-  }
+leftSideIsSmall.value = false
+if (settings.menuCollapsed && !mq.isMobile.value) {
+  leftSideIsSmall.value = true
+}
 
-})
-const setLeftCollapse = (v: boolean) => {
+rightSideVisible.value = false
+if (settings.quickpanelOpened && !mq.isMobile.value) {
+  rightSideVisible.value = true
+}
+// })
+
+function setLeftCollapse (v: boolean) {
   leftSideIsSmall.value = v
   settings.setMenuCollapsed(v)
   // (v: any) => leftSideIsSmall = v
 }
-const toggleSide = async (side: string) => {
+function toggleSide (side: string) {
   if (side === 'left') {
     rightSideVisible.value = false
     leftSideVisible.value = !leftSideVisible.value

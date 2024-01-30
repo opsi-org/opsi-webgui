@@ -23,13 +23,20 @@ export const useNavigate = () => {
   }
 
 
-  function toConfiguration(type: string, id: string) {
+  function toConfiguration(type: string, id: string, isChild: boolean = false, productType='LocalbootProduct') {
     if (type === 'clients') {
       storeTS.setSecondColumnSelectedRowId(id)
       useRouter().push('/clients/client/config/' + id)
     } else if (type === 'servers') {
       storeTS.setSecondColumnSelectedRowId(id)
       useRouter().push('/servers/server/config/' + id)
+    } else if (type === 'products') {
+      storeTS.setSecondColumnSelectedRowId(id)
+      if (isChild) {
+        useRouter().push(`/clients/products/${productType}/config/${id}`)
+      } else {
+        useRouter().push(`/products/${productType}/config/${id}`)
+      }
     }
   }
   function toType(type: string, id: string, pagetype: string = 'config') {

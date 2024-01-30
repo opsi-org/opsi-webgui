@@ -3,10 +3,10 @@
 
   >
     <el-menu router
-      :default-active="useRouter().currentRoute.value?.fullPath"
-      :collapse="!useMQ().isMobile.value && isCollapse"
+      :default-active="router.currentRoute.value?.fullPath"
+      :collapse="!mq.isMobile.value && isCollapse"
       class="el-menu-mywrapper overflow-hidden max-w-full"
-      :class="{'max-height-side': !useMQ().isMobile.value }"
+      :class="{'max-height-side': !mq.isMobile.value }"
       style="--el-menu-icon-width: 244px;"
       type="primary"
     >
@@ -24,11 +24,11 @@
               class="text-on-primary"
               :class="{
                 'contents': true,
-                'selected': item.routeSubpath && useRouter().currentRoute.value?.fullPath.includes(item.routeSubpath),
+                'selected': item.routeSubpath && router.currentRoute.value?.fullPath.includes(item.routeSubpath),
               }"
               >
                 <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1"/>
-                <span v-if="useMQ().isMobile.value || !isCollapse" >{{ $t(item.title) }}</span>
+                <span v-if="mq.isMobile.value || !isCollapse" >{{ $t(item.title) }}</span>
                 <div class="min-w-full"></div>
                 <!-- <div class="flex-grow" />
                   <IconIIcon v-if="item.icon" :icon="icons.arrowDoubleDown"/> -->
@@ -50,12 +50,12 @@
           <el-menu-item :index="item.route" :route="item.route" class="text-on-primary"
           :data-testid="'NSidebar-' + item.title">
             <IconIIcon v-if="item.icon" :icon="item.icon" class="mr-1" />
-              <span v-if="useMQ().isMobile.value || !isCollapse">{{ $t(item.title) }}</span>
+              <span v-if="mq.isMobile.value || !isCollapse">{{ $t(item.title) }}</span>
           </el-menu-item>
         </template>
       </span>
     </el-menu>
-    <div v-if="!useMQ().isMobile.value" class="menu-footer relative inset-x-0 bottom-0 w-full text-on-primary">
+    <div v-if="!mq.isMobile.value" class="menu-footer relative inset-x-0 bottom-0 w-full text-on-primary">
       <el-checkbox-button v-model="isCollapse" class="w-full text-on-primary" type="">
           {{ isCollapse ? '>>' : 'Collapse' }}
       </el-checkbox-button>
@@ -65,12 +65,7 @@
 
 <script setup lang="ts">
 import {useIcons} from '../../composables/mixins/useIcons'
-const icons = useIcons()
-const {config} = storeToRefs(storeConfigapp())
-const settings = storeSettings()
-const { menuCollapsed } = storeToRefs(settings)
-const mq = useMQ()
-const isCollapse = ref(menuCollapsed.value)
+
 interface INavItem {
   title: string
   route: string
@@ -79,11 +74,19 @@ interface INavItem {
   disabled?: boolean
   submenu?: Array<INavItem>
 }
+
+const icons = useIcons()
+const router = useRouter()
+const mq = useMQ()
+
+const settings = storeSettings()
+const { menuCollapsed } = storeToRefs(settings)
+const {config} = storeToRefs(storeConfigapp())
+
+const isCollapse = ref(menuCollapsed.value)
 const emit = defineEmits(['changeSmall'])
 const { selectionDepots } = storeSelections()
-const navItems = computed<Array<INavItem>>(() =>
-// const navItems:Array<INavItem> =
-  [
+const navItems = computed<Array<INavItem>>(() => [
   {
     title: 'title.depots',
     routeSubpath: '/servers/',
