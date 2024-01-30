@@ -56,6 +56,10 @@ const props = defineProps({
   small: { type: Boolean, default: true }
 })
 const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed'])
+
+const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (props.id === 'clients' ? 'selectionClients' : 'selectionProducts'))
+const selectionInStoreByType = computed<string[]>(()=> selectionStore['_'+selectKey.value])
+
 const wrappedColumns = ref<ITableHeaderRow>({})
 const wrappedData = ref<Array<any>>([])
 onMounted(()=>{
@@ -131,12 +135,13 @@ function updateColumns() {
     )
   }
   _columns.selected.cellRenderer = ({ rowData }) => {
+    const selected = computed<boolean>(()=> selectionInStoreByType.value.includes(rowData[props.rowId]) || rowData.selected)
     const onChange = (value: CheckboxValueType) => {
       rowData.selected = value
       console.log('selection changed', props.rowId, rowData[props.rowId])
       $emit('selection-changed', rowData[props.rowId])
     }
-    return <SelectionCell value={rowData.selected} onChange={onChange} />
+    return <SelectionCell value={selected.value} onChange={onChange} />
   }
   return _columns
 }
@@ -197,6 +202,7 @@ const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
     return (
       <el-checkbox
         onChange={onChange}
+        onClick={(e: any) => e.stopPropagation()}
         modelValue={value}
         indeterminate={intermediate}
       />
