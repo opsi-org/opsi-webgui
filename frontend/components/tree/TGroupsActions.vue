@@ -15,9 +15,6 @@
                 : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
                 )"
           >
-          <!-- <PopoverPGroupActions
-            :data="{'category':props.data.category, 'nodeType': data.type, 'nodeLabel': node.label, 'action': action}"
-            :idList="idList" /> -->
             <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click" :ref="node.label+action">
               <template #reference>
                 <el-button size="small">
@@ -49,7 +46,7 @@
                       </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>
-                  <el-button class="float-right" type="success" data-testid="addprodToSelectedGroup">
+                  <el-button class="float-right" type="success" data-testid="addChildren">
                     {{ $t("button.add") }}
                   </el-button>
                 </template>
@@ -67,24 +64,29 @@
                 </template>
                 <template v-else-if="action == 'edit'">
                   <el-form-item v-for="value,label,index in updateGroup" :key="index" :label="$t('table.fields.'+label)">
-                    <!-- <el-tree-select v-if="label == 'parent'" :props="defaultProps" :data="groupdata" default-expand-all /> -->
-                    <el-input v-model="addSubGroup[label]" />
+                    <el-scrollbar v-if="label == 'parent'" height="200px">
+                      {{ fetchedData }}
+                      <!-- <el-tree :props="defaultProps" :data="fetchedData">
+                      </el-tree> -->
+                    </el-scrollbar>
+                    <el-input v-else v-model="addSubGroup[label]" />
                   </el-form-item>
                   <el-button class="float-right" type="success" data-testid="updateGroup">
                     {{ $t("button.update") }}
                   </el-button>
                 </template>
                 <template v-else-if="action == 'copy'">
-                  <!-- <el-tree-select :placeholder="$t('group.copyClient.selectgroup')" :props="defaultProps" :data="groupdata" default-expand-all>
-                  </el-tree-select> -->
+                  <el-scrollbar height="200px">
+                    <!-- <el-tree :placeholder="$t('group.copyClient.selectgroup')" :props="defaultProps" :data="fetchedData" /> -->
+                    {{ fetchedData }}
+                  </el-scrollbar>
                   <el-button type="success" class="float-right">
                     {{ $t('button.copy') }}
                   </el-button>
                 </template>
                 <template v-else> No action available </template>
               </el-form>
-              {{ props.data.category }} {{ data.type }} {{ node.label }}
-              <!-- {{ props.data.category }} : {{ props.data.nodeType }} : {{ props.data.nodeLabel }} : {{ props.data.action }} -->
+              <!-- {{ props.data.category }} {{ data.type }} {{ node.label }} {{ action }} -->
             </el-popover>
           </span>
         </div>
