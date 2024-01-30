@@ -15,7 +15,7 @@ Further links:
 ## Quick installation guide (Production)
 This project espacially the devcontainer is not for production usage. To install the webgui from official sources see this chapter.
 ### Installation from sources
-* optional: use `development`/`experimental`/`testing`/`stable` branch by editiing the content of `/etc/apt/sources.list.d/opsi.list`
+* optional: use `experimental`/`testing`/`stable` branch by editiing the content of `/etc/apt/sources.list.d/opsi.list`
 * run `sudo apt update && sudo apt install opsi-webgui`
 * restart opsiconfd: `sudo systemctl restart opsiconfd`
 * checkout https://YOUROPSISERVER:4447/addons/webgui/app
@@ -28,7 +28,7 @@ This project espacially the devcontainer is not for production usage. To install
 
 ## Development
 The development with this project includes a complete dev environment. The built container includes a opsiconfd and the webgui.
-The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser`
+The opsiconfd will be available at the address https://localhost:4447 and the webgui at https://localhost:8888 with the username `adminuser` and password `adminuser` (changeable through `.devcontainer/.env` file)
 
 ### Environment
 * Requirements: Docker, VisualStudioCode with 'Remote - Container' extension
