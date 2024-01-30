@@ -21,6 +21,7 @@ export const storeTablesettings = defineStore('tablesettings', {
     _configLastSelected: deepCp(_data_configLastSelected),
     _visibleColumns: deepCp(_data_visibleColumns),
     _sortColumns: deepCp(_data_sortColumns),
+    secondColumnSelectedRowId: ''
   }),
   getters: {
     serversColumns: ({ _visibleColumns }) => _visibleColumns.servers,
@@ -37,6 +38,9 @@ export const storeTablesettings = defineStore('tablesettings', {
       this._configLastSelected = deepCp(_data_configLastSelected)
       this._visibleColumns = deepCp(_data_visibleColumns)
       this._sortColumns = deepCp(_data_sortColumns)
+    },
+    setSecondColumnSelectedRowId (id:string) {
+      this.secondColumnSelectedRowId = id
     },
     setColumns (tabletype:string, value:Array<string>) {
       this._visibleColumns[tabletype] = value

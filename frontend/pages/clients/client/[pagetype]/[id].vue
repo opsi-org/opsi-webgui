@@ -6,9 +6,11 @@
     </div>
     <div v-else-if="pagetype === 'logs'">
       <div> LOGS (split view)</div>
+      {{ id }}
     </div>
     <div v-else-if="pagetype === 'clone'">
       <div> CLONE (split view)</div>
+      {{ id }}
     </div>
     <div v-else>
       idk

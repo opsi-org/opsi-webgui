@@ -122,22 +122,10 @@ import type { T_ServerList } from '~/types/APItypes'
 import { useCookies } from '~/composables/mixins/useCookies'
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
-const route = useRoute()
-
-const _routeId = route.params.id || ['']
-const _routeLength = _routeId.length
-const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
-watch(()=>route.params.id, ()=>{
-  console.log('route.params.id', route.params.id)
-  const routeLength = route.params.id?.length || 1
-  const id = route.params.id?.[routeLength - 1] || ''
-
-  Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-
-  rowactionConfigChecked.value[id] = true
-}, {deep: true})
+import { useNavigate } from '~/composables/mixins/useNavigateTo';
 
 const storeSelection = storeSelections()
+const navigation = useNavigate()
 const cookies = useCookies()
 const icons = useIcons()
 const $t = useI18n().t
@@ -208,29 +196,30 @@ const columns = reactive<ITableHeaderRow>({
       hidden: false,
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => {
-        const change = (e: Event)=>{
-          e.stopPropagation()
-          emit('change', rowData.depotId)
-          Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-          rowactionConfigChecked.value[rowData.depotId] = true
-          // useRouter().push('/servers/config/' + rowData.depotId)
-          useRouter().push('/servers/server/config/' + rowData.depotId)
-        }
+        // const change = (e: Event)=>{
+        //   e.stopPropagation()
+        //   emit('change', rowData.depotId)
+        //   Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
+        //   rowactionConfigChecked.value[rowData.depotId] = true
+        //   // useRouter().push('/servers/config/' + rowData.depotId)
+        //   useRouter().push('/servers/server/config/' + rowData.depotId)
+        // }
 
         const classes = computed(()=> {
           return {
-            'pressed': rowactionConfigChecked.value[rowData.clientId]
+            'pressed': navigation.rowactionConfigChecked.value[rowData.clientId]
           }
         })
         return (
         <>
           <buttonBTNRowLink
-            is-pressed={rowactionConfigChecked.value[rowData.depotId]}
+            is-pressed={navigation.rowactionConfigChecked.value[rowData.depotId]}
             icon={icons.settings}
-            onClick={change}
+            onClick={(e: Event) => changeRowLink(e, rowData.depotId)}
           />
         </>
       )},
+      // onClick={change}
           // <el-checkbox-button
           //   v-model={rowactionConfigChecked.value[rowData.depotId]}
           //   onChange={change}
@@ -250,6 +239,15 @@ const columns = reactive<ITableHeaderRow>({
       //     />
     }
 })
+
+
+function changeRowLink(e:Event, cid: string) {
+  e.stopPropagation()
+  emit('change', cid)
+  navigation.toConfiguration(id, cid)
+}
+
+
 const fetchedData = ref<T_ServerList>([])
 const totalItems = ref<number>(0)
 

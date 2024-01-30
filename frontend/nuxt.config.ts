@@ -58,6 +58,7 @@ export default defineNuxtConfig({
 
     '@bootstrap-vue-next/nuxt',
 
+    'nuxt-primevue',
     '@element-plus/nuxt',
     '@nuxtjs/tailwindcss',
     // '@nuxtjs/color-mode',
@@ -92,6 +93,7 @@ export default defineNuxtConfig({
     // injectPosition: 'first',
     viewer: false,
   },
+
   // // colorMode
   // colorMode: {
   //   classSuffix: '',
@@ -111,8 +113,9 @@ export default defineNuxtConfig({
     },
   },
   css: [
+    'primevue/resources/themes/md-dark-indigo/theme.css',
     '~/assets/scss/index.scss', // ep import colors
-    '~/assets/scss/bv-colors.scss' // bv import colors
+    '~/assets/scss/bv-colors.scss', // bv import colors
   ],
   elementPlus: {
     // useSource: true,
@@ -121,6 +124,21 @@ export default defineNuxtConfig({
     themes: ['dark'], // from docs: "import style css or sass(scss) with components, disable automatically import styles with false."
     defaultLocale: 'de',
   },
+
+  primevue: {
+    usePrimeVue: true,
+    /* Options */
+    // cssLayerOrder: 'reset,primevue',
+    options: {
+      unstyled: true
+    },
+
+    components: {
+      prefix: 'P',
+      include: ['Button', 'ContextMenu']
+    },
+  },
+
   imports: {
     dirs: ['store'],
   },
