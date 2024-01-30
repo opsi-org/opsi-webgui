@@ -195,6 +195,7 @@
   "table.fields.checkreachable": "Check the Client Reachability",
   "table.fields.groupId": "Subgroup Name",
   "table.fields.parent": "Parent Group",
+  "table.fields.parentGroupId": "Parent Group",
   "button.reachable": "Check reachability for the selected clients",
   "label.reachable": "Reachability Status",
   "table.name.client": "Client name",
