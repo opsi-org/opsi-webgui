@@ -105,7 +105,7 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
 function updateColumns() {
   if (props.columns == undefined) return {}
 
-  const _columns: ITableHeaderRow = {...props.columns}
+  const _columns: ITableHeaderRow = JSON.parse(JSON.stringify(props.columns))
   Object.values(_columns)
     .map(c => {
       if (c.cellRenderer === undefined)

@@ -140,7 +140,7 @@ const tableData = ref({
   filterQuery: '',
   filterColumns: ['depotId']
 })
-const columns = reactive<ITableHeaderRow>({
+const columns = ref<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
       key: 'selected',
