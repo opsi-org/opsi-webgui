@@ -23,7 +23,7 @@
       v-if="isDataVisible"
       row-id="productId"
       :id="id"
-      :columns="columns"
+      v-model="columns"
       :data="fetchedData[currentType]"
       :table-data="tableData[currentType]"
       :total-items="totalItems"

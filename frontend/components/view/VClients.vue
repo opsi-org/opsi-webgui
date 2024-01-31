@@ -19,7 +19,7 @@
       v-if="fetchedData.length > 0 && totalItems > 0"
       row-id="clientId"
       :id="id"
-      :columns="columns"
+      v-model="columns"
       :data="fetchedData"
       :table-data="tableData"
       :total-items="totalItems"

@@ -23,7 +23,7 @@ const totalItems = data.length
   <Story :setup-app="loginlogout">
       <TableTDefaultDesktop
         id="tableId"
-        :columns="columns"
+        v-model="columns"
         :data="data"
         :table-data="tableData"
         :total-items="totalItems"

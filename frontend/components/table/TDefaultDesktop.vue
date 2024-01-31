@@ -1,5 +1,5 @@
 <template>
-  <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+  <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
   <div class="h-96 w-full" :class="{small: props.small !== false}">
     <el-auto-resizer>
       <template #default="{ height, width }">
@@ -37,7 +37,7 @@
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
-import {TableV2SortOrder, type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
+import {TableV2SortOrder, type CheckboxValueType, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
 import type { SortBy, SortState } from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
 import type { FunctionalComponent } from 'vue'
@@ -48,9 +48,10 @@ const tableStore = storeTablesettings()
 
 const icons = useIcons()
 
+const columns = defineModel<ITableHeaderRow>()
 const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed'])
 const props = defineProps({
-  columns: { type: Object as PropType<ITableHeaderRow>, required:true},
+  // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   data: { type: Array<any>, required: true },
   tableData: { type: Object, required: true },
   totalItems: { type: Number, required: true },
@@ -162,9 +163,10 @@ function onSort({ key, order }: SortBy) {
   // data.value = data.value.reverse()
 }
 function updateColumns() {
-  if (props.columns == undefined) return {}
+  if (columns.value == undefined) return {}
 
-  const _columns: ITableHeaderRow = JSON.parse(JSON.stringify(props.columns))
+  // const _columns: ITableHeaderRow = JSON.parse(JSON.stringify(props.columns))
+  const _columns: ITableHeaderRow = {...columns.value}
   Object.values(_columns)
     .map(c => {
       if (c.cellRenderer === undefined)
@@ -174,8 +176,7 @@ function updateColumns() {
           return <el-text />
       }
     } )
-
-  if (props.columns.selected === undefined) {
+  if (columns.value?.selected === undefined) {
     return _columns
   }
   _columns.selected.headerCellRenderer = () => {

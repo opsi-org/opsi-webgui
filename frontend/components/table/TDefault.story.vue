@@ -33,9 +33,9 @@ const totalItems = data.length
 const MyTDefault = ({ isMobile }: any) => {
   return <TDefault
         id={'tableId-' + isMobile?'mobile':'desktop'}
+        modelValue={columns}
         tableData={tableData}
         totalItems={totalItems}
-        columns={columns}
         data={data}
 
         sort-by={undefined}

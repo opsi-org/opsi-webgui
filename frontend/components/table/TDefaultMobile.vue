@@ -1,5 +1,5 @@
 <template>
-    <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="props.columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+    <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
     <el-collapse v-model="activeRowIndex" accordion>
       <el-collapse-item v-for="row, index in wrappedData" :name="index">
         <template #title>
@@ -94,8 +94,9 @@ const Details = ({rowData, colData}: any) => {
     </div>
 }
 
+const columns = defineModel<ITableHeaderRow>()
 const props = defineProps({
-  columns: { type: Object as PropType<ITableHeaderRow>, required:true},
+  // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   rowId: { type: String, default: 'depotId'},
   data: { type: Array<any>, required:true},
   id: { type: String, default: 'servers' },
@@ -120,15 +121,15 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
   activeRowIndex.value = curRow
 })
 function updateColumns() {
-  if (props.columns == undefined) return {}
+  if (columns.value == undefined) return {}
 
-  let _columns: ITableHeaderRow = { ...props.columns}
+  let _columns: ITableHeaderRow = { ...columns.value}
   Object.values(_columns)
     .map(c => {
       if (!c.fixed) c.hidden = true
     } )
 
-  if (props.columns.selected === undefined) {
+  if (columns.value?.selected === undefined) {
     return _columns
   }
   _columns.selected.cellRenderer = ({ rowData }) => {
