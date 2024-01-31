@@ -21,7 +21,7 @@
 
     <!-- <IconELILoading animation="cylon" /> -->
 
-    <ButtonBTNLogout />
+    <PopconfirmPLogout />
   </div>
   <!-- </b-card> -->
 </template>

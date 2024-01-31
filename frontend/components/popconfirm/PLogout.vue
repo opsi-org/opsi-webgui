@@ -3,16 +3,11 @@
     :title="$t('message.confirm.logout')"
     :confirm-button-text="$t('button.confirm')"
     :cancel-button-text="$t('label.cancel')"
-    id="ButtonBTNLogout-ConfirmID"
-    ref="ButtonBTNLogout-ConfirmRef"
     @confirm="doLogout"
     data-testid="BTNLogout"
   >
     <template #reference>
-      <el-button
-        class="h-full max-h-full min-h-full border-0 rounded-none"
-        style="--el-border-radius-base: 0px"
-      >
+      <el-button class="h-full max-h-full min-h-full border-0 rounded-none" style="--el-border-radius-base: 0px">
         <IconIIcon :icon="icon.logout" />
         <p v-if="isMobile" class="pt-3 ml-1">{{ $t('button.logout') }}</p>
       </el-button>
