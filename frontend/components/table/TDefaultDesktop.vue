@@ -35,16 +35,18 @@
 </template>
 
 <script lang="tsx" setup>
-// import ContextMenu from 'primevue/contextmenu';
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import type { SortBy, SortState } from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
-import {TableV2SortOrder, type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus';
-import type { FunctionalComponent } from 'vue';
-// import PButton from 'primevue/button'
-
+import {TableV2SortOrder, type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
+import type { FunctionalComponent } from 'vue'
+import { useIcons } from '~/composables/mixins/useIcons'
 const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
+
+const icons = useIcons()
+
+const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed'])
 const props = defineProps({
   columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   data: { type: Array<any>, required: true },
@@ -55,33 +57,78 @@ const props = defineProps({
   sortBy: { type: String, default: 'selection'},
   small: { type: Boolean, default: true }
 })
-const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed'])
 
+const menu = ref()
+const curRowCMId = ref()
+const curRowCMDataKey = ref<string>('ident')
 const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (props.id === 'clients' ? 'selectionClients' : 'selectionProducts'))
-const selectionInStoreByType = computed<string[]>(()=> selectionStore['_'+selectKey.value])
 
 const wrappedColumns = ref<ITableHeaderRow>({})
 const wrappedData = ref<Array<any>>([])
+
+const total = ref(props.totalItems)
+const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
+const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
+const lastSelectedItemForSingleselect = ref<any>(undefined)
+
+const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
+
+const rowEventHandlers: RowEventHandlers = {
+  onClick: (params: RowEventHandlerParams) => {
+    console.log('row click', params.rowIndex, params.rowKey, params.rowData, params.event)
+    if (selectionStore.multiSelection === false) {
+      if (lastSelectedItemForSingleselect.value !== undefined) {
+        lastSelectedItemForSingleselect.value.selected = false
+      }
+      lastSelectedItemForSingleselect.value = params.rowData
+      params.rowData.selected = true
+    }
+    else {
+      params.rowData.selected = params.rowData.selected === true ? false : true
+    }
+    $emit('selection-changed', params.rowData[props.rowId])
+  },
+  onDblclick: (params: RowEventHandlerParams) => {
+    console.log('row dblclick', params.rowKey, params.event)
+  },
+  onContextmenu: (params: RowEventHandlerParams) => {
+    curRowCMId.value = params.rowData
+    curRowCMDataKey.value = 'ident'
+    menu.value.show(params.event)
+  },
+}
+const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
+  value,
+  intermediate = false,
+  onChange,
+}) => {
+  if (selectionStore.multiSelection === true) {
+    return (
+      <el-checkbox
+        onChange={onChange}
+        onClick={(e: any) => e.stopPropagation()}
+        modelValue={value}
+        indeterminate={intermediate}
+      />
+    )
+  } else {
+    const label = computed(()=> value === true? (<><iconIIcon icon={icons.check}></iconIIcon></>) : '')
+    return (
+      <>
+      <el-text>{label.value}</el-text>
+      </>
+    )
+  }
+}
+
+
 onMounted(()=>{
   wrappedColumns.value = updateColumns()
   wrappedData.value = updateData()
 })
-const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
-const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
-const total = ref(props.totalItems)
-console.log('total pagenumber', pageNumber.value)
-pageNumber.value = props.tableData.pageNumber
-console.log('total pagenumber', pageNumber.value )
-const lastSelectedItemForSingleselect = ref<any>(undefined)
 
-const sortState = ref<SortState>({
-  [props.sortBy]: TableV2SortOrder.DESC
-})
-const onSort = ({ key, order }: SortBy) => {
-  sortState.value[key] = order
-  $emit('sort-changed', key, order === TableV2SortOrder.DESC)
-  // data.value = data.value.reverse()
-}
+
+const selectionInStoreByType = computed<string[]>(()=> selectionStore['_'+selectKey.value])
 
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
 // watch(()=>tableStore.columns[props.id], ()=>{
@@ -102,6 +149,12 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
     })
 }, { deep: true})
 
+
+function onSort({ key, order }: SortBy) {
+  sortState.value[key] = order
+  $emit('sort-changed', key, order === TableV2SortOrder.DESC)
+  // data.value = data.value.reverse()
+}
 function updateColumns() {
   if (props.columns == undefined) return {}
 
@@ -150,79 +203,10 @@ function updateData() {
   const _data = props.data
   return _data
 }
-const onScroll = (event: any) => {
+function onScroll(event: any) {
   console.log('scroll', event)
 }
-// const rowEventHandlers = (handlers: any) =>{
-//   console.log('row event', handlers)
-// }
 
-const menu = ref()
-const curRowCMId = ref()
-const curRowCMDataKey = ref<string>('ident')
-// const show = () => {}
-const rowEventHandlers: RowEventHandlers = {
-  onClick: (params: RowEventHandlerParams) => {
-    // params.event.preventDefault()
-    // params.event.preventDefault()
-    console.log('row click', params.rowIndex, params.rowKey, params.rowData, params.event)
-    if (selectionStore.multiSelection === false) {
-      if (lastSelectedItemForSingleselect.value !== undefined) {
-        lastSelectedItemForSingleselect.value.selected = false
-      }
-      lastSelectedItemForSingleselect.value = params.rowData
-      params.rowData.selected = true
-    }
-    else {
-      params.rowData.selected = params.rowData.selected === true ? false : true
-    }
-    $emit('selection-changed', params.rowData[props.rowId])
-    // $emit('selection-changed', )
-  },
-  onDblclick: (params: RowEventHandlerParams) => {
-    console.log('row dblclick', params.rowKey, params.event)
-    // $emit('selection-changed', )
-  },
-  onContextmenu: (params: RowEventHandlerParams) => {
-    curRowCMId.value = params.rowData
-    curRowCMDataKey.value = 'ident'
-    // onImageRightClick(params.event)
-    menu.value.show(params.event);
-    // menu.value.s
-    // $emit('selection-changed', )
-  },
-}
-
-const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
-  value,
-  intermediate = false,
-  onChange,
-}) => {
-  if (selectionStore.multiSelection === true) {
-    return (
-      <el-checkbox
-        onChange={onChange}
-        onClick={(e: any) => e.stopPropagation()}
-        modelValue={value}
-        indeterminate={intermediate}
-      />
-    )
-  } else {
-    //<el-text>{value}</el-text>
-    const label = computed(()=> value === true? 'x' : '')
-    return (
-      <>
-      <el-text>{label.value}</el-text>
-      {/* <el-checkox-button
-        onChange={onChange}
-        modelValue={value}
-        indeterminate={intermediate}
-        label={label}
-      /> */}
-      </>
-    )
-  }
-}
 </script>
 
 
