@@ -10,7 +10,7 @@
       </div>
     </template>
   </ContextMenu>
-  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="itemModel[keyWrapper]"/>
+  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[keyWrapper]"/>
 </template>
 
 <script setup lang="ts">
@@ -25,9 +25,9 @@ const $t = useI18n().t
 
 defineExpose({ show, hide })
 const emit = defineEmits(['refetch'])
-const itemModel = defineModel<TRowData>()
+// const itemModel = defineModel<TRowData>()
 const props = defineProps({
-  // item: { type: Object as PropType<TRowData>, default: {} },
+  item: { type: Object as PropType<TRowData>, default: {} },
   rowId: { type: String, default: 'ident' },
   type: { type: String, default: 'servers' }
 })
@@ -58,14 +58,32 @@ const items = ref([
   { id: 'page_reload', label: $t('button.reload'), icon: icons.refresh, command: () => emit('refetch')},
 ])
 const keyWrapper = ref(props.rowId)
-
-function show(e: any) {
-  items.value[0].label = $t('table.contextmenu.header-specific', {id: itemModel.value[keyWrapper.value]})
+// onMounted(() => {
+//   console.log('CMTable mounted', props.item)
+//   cmmenu.value.$el.addEventListener('click', (e: any) => {
+//     console.log('click', e)
+//     if (e.target.tagName === 'LI') {
+//       hide()
+//     }
+//   })
+// })
+onBeforeUnmount(() => {
+  console.log('CMTable unmounted', props.item)
+})
+watch(() => props.item, (newVal, oldVal) => {
+  items.value[0].label = $t('table.contextmenu.header-specific', {id: props.item[keyWrapper.value]})
+})
+function show(e: Event) {
+  if (props.item === undefined || props.item[keyWrapper.value] === '')
+    throw new Error("itemModel is undefined [1]")
+  if (e === undefined)
+    throw new Error("event is undefined")
   cmmenu.value.show(e)
 }
-function hide(e: any) {
-  itemModel.value = undefined
-  cmmenu.value.hide(e)
+function hide() {
+  console.log('hide', props.item)
+  // props.item = undefined
+  cmmenu.value.hide()
 }
 
 function call_opsievent(event: string) {
@@ -74,12 +92,15 @@ function call_opsievent(event: string) {
   showModal.value = true
 }
 function call_navigate(pagetype: string) {
+  if (props.item === undefined)
+    throw new Error("itemModel is undefined [2]")
+
   if (props.type === 'products') {
     const currProdType = 'LocalbootProduct'
     const idChildOfClients = false
-    navigation.toConfiguration(props.type, itemModel.value[keyWrapper.value], idChildOfClients, currProdType)
+    navigation.toConfiguration(props.type, props.item[keyWrapper.value], idChildOfClients, currProdType)
   } else {
-    navigation.toType(props.type, itemModel.value[keyWrapper.value], pagetype)
+    navigation.toType(props.type, props.item[keyWrapper.value], pagetype)
   }
 
 }

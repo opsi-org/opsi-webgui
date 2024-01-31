@@ -29,14 +29,14 @@ export default defineNuxtConfig({
   app: {
     baseURL: '/addons/webgui/app'
   },
-  imports: {
-    presets: [
-      {
-        from: 'vue-i18n',
-        imports: ['useI18n']
-      }
-    ]
-  },
+  // imports: {
+  //   presets: [
+  //     {
+  //       from: 'vue-i18n',
+  //       imports: ['useI18n']
+  //     }
+  //   ]
+  // },
   // alias: {
   //   'assets': fileURLToPath(new URL('./assets', import.meta.url)),
   //   // 'images': fileURLToPath(new URL('./assets/images', import.meta.url)),

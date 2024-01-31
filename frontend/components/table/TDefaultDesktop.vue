@@ -30,7 +30,7 @@
       @current-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, pageNumber: v})}"
       @size-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, perPage: v, pageNumber: 1})}"
       />
-      <ContextmenuCMTable ref="menu" v-model="currentSelectedRow" :row-id="props.rowId" :type="props.id"/>
+      <ContextmenuCMTable ref="menu" :item="currentSelectedRow" :row-id="props.rowId" :type="props.id"/>
       rowId {{ props.rowId }}
       Cur: {{currentSelectedRow}}
   </div>
