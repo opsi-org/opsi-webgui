@@ -102,6 +102,8 @@
 </template>
 
 <script setup lang="tsx">
+import TCProductVersionCell from '~/components/tablecell/TCProductVersionCell.vue';
+import BTNRowLink from '~/components/button/BTNRowLink.vue';
 
 import { useNotification } from '~/composables/mixins/useComponent';
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
@@ -288,10 +290,10 @@ const columns = reactive<ITableHeaderRow>({
           {/* TODO: check if this works for different versions of server/clients */}
             {/* <el-text v-if={!rowData.depot_version_diff}>{Object.values(rowData.depotVersions)[0]}</el-text> */}
               {/* v-if={Object.keys(fetchedDataClients2Depots).length == selectionClients.value.length} */}
-            <tablecellTCProductVersionCell
+            <TCProductVersionCell
               type="depotVersions"
               row={rowData}
-              clients2depots={fetchedDataClients2Depots}
+              clients2depots={fetchedDataClients2Depots.value}
               onDetails={toggleDetailsTooltip}
             />
           </>
@@ -345,10 +347,10 @@ const columns = reactive<ITableHeaderRow>({
         }
         return (
         <>
-          <buttonBTNRowLink
+          <BTNRowLink
             is-pressed={navigation.rowactionConfigChecked.value[rowData.productId]}
             icon={icons.settings}
-            onClick={change}
+            onOnClick={change}
           />
         </>
       )},

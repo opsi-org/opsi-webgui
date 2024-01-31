@@ -249,7 +249,7 @@
 </template>
 
 <script setup lang="tsx">
-
+import BTNRowLink from '@/components/button/BTNRowLink.vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useConfigserver } from '~/composables/mixins/useGet';
@@ -438,13 +438,11 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => {
         return (
-        <>
-          <buttonBTNRowLink
-            is-pressed={navigation.rowactionConfigChecked.value[rowData.clientId]}
+          <BTNRowLink
+            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] as boolean}
             icon={icons.settings}
-            onClick={(e: Event) => changeRowLink(e, rowData.clientId)}
+            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId)}
           />
-        </>
       )},
     }
 })
@@ -544,6 +542,7 @@ import { Cookies } from '../../mixins/cookies'
 import { Format } from '../../mixins/format'
 import { DeleteClient } from '../../.utils/types/tobjects'
 import { storeTablesettings } from '../../store/tablesettingsStore';
+import BTNRowLinkTo from '../../../opsiweb/uib-components/components/button/BTNRowLinkTo.vue';
 const selections = namespace('selections')
 
 @Component({ mixins: [AlertToast, MBus, Icons, Synchronization, Cookies, Format] })

@@ -121,6 +121,7 @@ import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { T_ServerList } from '~/types/APItypes'
+import BTNRowLink from '~/components/button/BTNRowLink.vue';
 
 const storeSelection = storeSelections()
 const navigation = useNavigate()
@@ -217,10 +218,10 @@ const columns = ref<ITableHeaderRow>({
         })
         return (
         <>
-          <buttonBTNRowLink
+          <BTNRowLink
             is-pressed={navigation.rowactionConfigChecked.value[rowData.depotId]}
             icon={icons.settings}
-            onClick={(e: Event) => changeRowLink(e, rowData.depotId)}
+            onOnClick={(e: Event) => changeRowLink(e, rowData.depotId)}
           />
         </>
       )},

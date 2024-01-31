@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import type { T_Client2Depot } from '~/types/APItypes';
 import type { IObjectString2String, IObjectString2ObjectString2String } from '~/types/tgeneral';
 import { mapValues2Objects } from '~/utils/smappings';
 // const selStore = storeSelections()
@@ -47,7 +48,7 @@ const $emit = defineEmits(['details'])
 const props = defineProps({
   row: { type: Object as PropType<any>, required: true },
   type: { type: String, required: true },
-  clients2depots: { type: Object as PropType<IObjectString2String>, required: true }
+  clients2depots: { type: Object as PropType<T_Client2Depot>, required: true }
 })
 const rowitem = computed(()=>props.row)
 const tooltiptext = computed(()=>{
