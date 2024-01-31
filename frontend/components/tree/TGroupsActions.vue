@@ -235,6 +235,7 @@ async function fetchProdGroups() {
 }
 
 async function fetchProductList() {
+  console.log('fetchProductList')
   const {data, error } = await useApiGETBody<Array<T_Product>>(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
     useNotification().error(error)

@@ -511,7 +511,7 @@ async function _fetch() {
     //     this.showToastError(error)
     //     return []
     //  })
-  const {data, error, headers} = await useApiGETBody<T_ClientsList>('/opsidata/clients', params)
+  const {data, error, headers} = await useApiGETBody<T_ClientsList>(`/opsidata/clients`, params)
 
   if (error) {
     console.log(error)

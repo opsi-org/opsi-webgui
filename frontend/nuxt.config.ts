@@ -48,7 +48,9 @@ export default defineNuxtConfig({
       BASE_PAGE: '/clients',
       packageVersion: pkg.version,
       API_PATH: '/addons/webgui/api', // only default value is useApiFetch composable (can be overwritten for specific api calls)
+      OWN_PATH: '/addons/webgui/app', // only default value is useApiFetch composable (can be overwritten for specific api calls)
       NUXT_PUBLIC_API_BASE: (process.env.NODE_ENV === 'production') ? '' : 'https://localhost:4447'
+      // NUXT_PUBLIC_API_BASE: process.env.BASE_URL
     },
   },
   pages: true, // not necessary, will be done auttttomatically
@@ -135,8 +137,13 @@ export default defineNuxtConfig({
 
     components: {
       prefix: 'P',
-      include: ['Button', 'ContextMenu']
+      include: ['ContextMenu'],
+      exclude: ['Toast']
     },
+
+    composables: {
+      include: []
+    }
   },
 
   imports: {

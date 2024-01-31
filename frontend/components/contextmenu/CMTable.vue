@@ -17,7 +17,6 @@
 import { useIcons } from '../../composables/mixins/useIcons';
 import ContextMenu from 'primevue/contextmenu';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
-import type { PropType } from 'nuxt/dist/app/compat/capi';
 import type { TRowData } from '~/types/Datatypes'
 
 const navigation = useNavigate()

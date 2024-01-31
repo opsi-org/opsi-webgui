@@ -1,3 +1,4 @@
+import { useRuntimeConfig } from 'nuxt/app';
 <template>
     <el-image
       data-testid="IconIOpsiLogo"
@@ -21,6 +22,7 @@
 
 <script setup lang="ts">
 const { t } = useI18n()
+const config = useRuntimeConfig()
 const translatedLabel = ref(t('button.reload.app'))
 
 const props = defineProps({
@@ -33,10 +35,10 @@ const props = defineProps({
 
 const imageUrl = computed<string>({
   get:  () => {
-    if (props.short && props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer.png'
-    if (props.short && !props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer_neg.png'
-    if (!props.short && props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer.png'
-    if (!props.short && !props.light) return '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer_neg.png'
+    if (props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer.png'
+    if (props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer_neg.png'
+    if (!props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer.png'
+    if (!props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer_neg.png'
     return ''
   },
   set: (_v) => {}

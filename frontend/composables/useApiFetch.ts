@@ -5,7 +5,7 @@ const urlsWithoutAuthentication = [
   '/auth/logout',
   '/user/configuration'
 ]
-
+type tmethod = "GET" | "HEAD" | "PATCH" | "POST" | "PUT" | "DELETE" | "CONNECT" | "OPTIONS" | "TRACE" | "get" | "head" | "patch" | "post" | "put" | "delete" | "connect" | "options" | "trace"
 interface terror {
   response: {
     data: {
@@ -20,7 +20,7 @@ interface ApiResult<T> { readonly data: Ref<T>, readonly error: terror, readonly
 
 
 async function useAPI2<T> (
-    method: string,
+    method: tmethod,
     url: string,
     body: FormData | Object | undefined = undefined,
     opts: UseFetchOptions<any> = {},
@@ -29,6 +29,9 @@ async function useAPI2<T> (
   const config = useRuntimeConfig()
   const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
   const basePath: string = prePath ?? config.public.API_PATH
+  console.log('useAPI2', method, url, body, opts, prePath)
+  console.log('useAPI2 baseurl', baseUrl)
+  console.log('useAPI2 basepath', basePath)
   // prePath could be '', e.g. for localhost:4447/filetransfer
   //    -> path = '/filetransfer'
   //       prepath = ''
@@ -80,6 +83,7 @@ async function useAPI2<T> (
   }
 
   let fullURL = baseUrl + basePath + url
+  console.log('useAPI2 fullURL', fullURL)
   let fullBody = body
   if (method !== 'GET' && body != undefined && url !== '/auth/login') {
     if (headers['Content-Type'] === undefined)
@@ -90,27 +94,35 @@ async function useAPI2<T> (
     fullBody = JSON.stringify(body)
   }
   if (method === 'GET' && body != undefined) {
-    fullURL = _getURLwithParams(fullURL, body)
+    // fullURL = _getURLwithParams(fullURL, body)
+    fullURL = fullURL +'?'+ _getBodyParams(body)
     fullBody = undefined
   }
   console.log(method, fullURL, fullBody)
-  await useFetch(fullURL, {
-    baseURL: baseUrl,
+  const fetchOptions: any = {
     credentials: 'include',
     method,
     headers,
     body: fullBody,
     ...opts
-  } as any).then(onResponse,onResponseError)
+  }
+  if (baseUrl && baseUrl !== '') fetchOptions.baseURL = baseUrl
+  await useFetch(fullURL, fetchOptions).then(onResponse,onResponseError)
           //  .catch((err:any) => console.log('intern error', err))
 
   return { data: callresponse, error: callerror, headers: callheaders }
 }
-const _getURLwithParams = (url: string, params: any) => {
-  const _url = new URL(url);
-  _url.search = new URLSearchParams(params).toString();
-  console.log('GET URL WITH SEARCH PARAMS IS', _url)
-  return _url.toString()
+// const _getURLwithParams = (url: string, params: any) => {
+//   const _url = new URL(url);
+//   _url.search = new URLSearchParams(params).toString();
+//   console.log('GET URL WITH SEARCH PARAMS IS', _url)
+//   return _url.toString()
+// }
+const _getBodyParams = (params: any) => {
+  return new URLSearchParams(params).toString();
+  // _url.search = new URLSearchParams(params).toString();
+  // console.log('GET URL WITH SEARCH PARAMS IS', _url)
+  // return _url.toString()
 }
 
 
@@ -118,7 +130,9 @@ async function useApiGET<ResultDataType> (url: string, prePath: string|undefined
   return useAPI2<ResultDataType>('GET', url, undefined, opts, prePath)
 }
 
-async function useApiGETBody<ResultDataType> (url: string, params:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) { return useAPI2<ResultDataType>('GET', url, params, opts, prePath) }
+async function useApiGETBody<ResultDataType> (url: string, params:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) {
+  return useAPI2<ResultDataType>('GET', url, params, opts, prePath)
+}
 async function useApiPOST<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) { return useAPI2<ResultDataType>('POST', url, body, opts, prePath) }
 
 // For following need to add types: (like useApiGET)

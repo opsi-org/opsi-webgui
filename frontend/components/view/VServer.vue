@@ -277,6 +277,7 @@ async function _fetch() {
     params.sortDesc = true
     params.selected = JSON.stringify([])
   }
+  console.log('fetching depots')
   const {data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
   '/api/opsidata/depots'
   if (error) {

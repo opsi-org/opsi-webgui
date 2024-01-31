@@ -155,13 +155,13 @@ const _useNotification = (t: any) => {
     if (obj.components !== undefined) {
       // Create right aligned custom components if defined
       elements.push(h('div', {
-        class: 'd-flex justify-content-end',
+        class: 'd-flex justify-end',
         on: {
           click: () => { hideToast() }
         }
       }, obj.components))
     }
-    $elements.push(h('div', { class: 'd-flex justify-content-end' }, elements)) // all elements are right aligned
+    $elements.push(h('div', { class: 'd-flex justify-end' }, elements)) // all elements are right aligned
     // const _showToast = (BToast?.methods as any).showToast
     // const _showToast: any = $bvToast.showToast
 
