@@ -334,7 +334,6 @@ const columns = reactive<ITableHeaderRow>({
       hidden: false,
       cellRenderer: ({rowData}) => {
         const change = (e: Event)=>{
-          e.stopPropagation()
           emit('change', rowData.productId)
           navigation.toConfiguration(id, rowData.productId, props.isChild, currentType.value)
           // Object.keys(navigation.rowactionConfigChecked.value).forEach(k => navigation.rowactionConfigChecked.value[k] = false)

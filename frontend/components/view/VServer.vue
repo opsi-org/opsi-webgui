@@ -262,7 +262,6 @@ watch(()=> tableData.value, async ()=>{
 }, { deep: true})
 
 function changeRowLink(e:Event, cid: string) {
-  e.stopPropagation()
   emit('change', cid)
   navigation.toConfiguration(id, cid)
 }
