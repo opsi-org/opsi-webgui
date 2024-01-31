@@ -30,7 +30,9 @@
       @current-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, pageNumber: v})}"
       @size-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, perPage: v, pageNumber: 1})}"
       />
-      <ContextmenuCMTable ref="menu" :item="currentSelectedRow" :key="currentSelectedRowIdKey" :type="props.id"/>
+      <ContextmenuCMTable ref="menu" v-model="currentSelectedRow" :row-id="props.rowId" :type="props.id"/>
+      rowId {{ props.rowId }}
+      Cur: {{currentSelectedRow}}
   </div>
 </template>
 
@@ -62,8 +64,7 @@ const props = defineProps({
 })
 
 const menu = ref()
-const currentSelectedRow = ref<TRowData>()
-const currentSelectedRowIdKey = ref<string>('ident')
+const currentSelectedRow = ref<TRowData|undefined>()
 const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (props.id === 'clients' ? 'selectionClients' : 'selectionProducts'))
 
 const wrappedColumns = ref<ITableHeaderRow>({})
@@ -100,7 +101,6 @@ const rowEventHandlers: RowEventHandlers = {
     const rowData:TRowData  = params.rowData
     currentSelectedRow.value = rowData
     console.log('row contextmenu', params.rowKey, params.event, rowData)
-    currentSelectedRowIdKey.value = 'ident'
     menu.value.show(params.event)
   },
 }

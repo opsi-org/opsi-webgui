@@ -10,7 +10,7 @@
       </div>
     </template>
   </ContextMenu>
-  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[props.key]"/>
+  <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="itemModel[keyWrapper]"/>
 </template>
 
 <script setup lang="ts">
@@ -24,14 +24,14 @@ const navigation = useNavigate()
 const icons = useIcons()
 const $t = useI18n().t
 
+defineExpose({ show, hide })
 const emit = defineEmits(['refetch'])
+const itemModel = defineModel<TRowData>()
 const props = defineProps({
-  item: { type: Object as PropType<TRowData>, default: {} },
-  key: { type: String, default: 'ident' },
+  // item: { type: Object as PropType<TRowData>, default: {} },
+  rowId: { type: String, default: 'ident' },
   type: { type: String, default: 'servers' }
 })
-console.log('PROPS ITEM', props.item)
-
 const cmmenu = ref()
 const showModal = ref(false)
 const selectedAction = ref('')
@@ -58,25 +58,31 @@ const items = ref([
   { id: 'table_showcol', label: $t('table.showCol'), icon: icons.columns },
   { id: 'page_reload', label: $t('button.reload'), icon: icons.refresh, command: () => emit('refetch')},
 ])
+const keyWrapper = ref(props.rowId)
 
-watch(()=>props.item, ()=>{
-  items.value[0].label = $t('table.contextmenu.header-specific', {id: props.item[props.key]})
-}, { deep: true })
-
-defineExpose({ show })
 function show(e: any) {
-  items.value[0].label = $t('table.contextmenu.header-specific', {id: props.item[props.key]})
+  items.value[0].label = $t('table.contextmenu.header-specific', {id: itemModel.value[keyWrapper.value]})
   cmmenu.value.show(e)
+}
+function hide(e: any) {
+  itemModel.value = undefined
+  cmmenu.value.hide(e)
 }
 
 function call_opsievent(event: string) {
   console.log('call_opsievent', event)
-  // alert('call_opsievent: ' + event + " on client " + props.item[props.key])
   selectedAction.value = event
   showModal.value = true
 }
 function call_navigate(pagetype: string) {
-  navigation.toType(props.type, props.item[props.key], pagetype)
+  if (props.type === 'products') {
+    const currProdType = 'LocalbootProduct'
+    const idChildOfClients = false
+    navigation.toConfiguration(props.type, itemModel.value[keyWrapper.value], idChildOfClients, currProdType)
+  } else {
+    navigation.toType(props.type, itemModel.value[keyWrapper.value], pagetype)
+  }
+
 }
 
 </script>
