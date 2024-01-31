@@ -146,7 +146,7 @@ watch(isCollapse, (val: boolean) => {
 }
 
 .max-height-side {
-  height: calc(100vh - 70px);
+  height: calc(100vh - 72px);
 }
 :deep(.el-menu-item.is-active path) {
   color: var(--el-color-primary) !important;
