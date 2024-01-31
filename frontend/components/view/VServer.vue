@@ -115,25 +115,30 @@
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
 import { useNotification } from '~/composables/mixins/useComponent';
-import { useConfigserver } from '~/composables/mixins/useGet';
+import { useCookies } from '~/composables/mixins/useCookies'
+import { useIcons } from '~/composables/mixins/useIcons';
+import { useNavigate } from '~/composables/mixins/useNavigateTo';
+import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { T_ServerList } from '~/types/APItypes'
 
-import { useCookies } from '~/composables/mixins/useCookies'
-import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
-import { useIcons } from '~/composables/mixins/useIcons';
-import { useNavigate } from '~/composables/mixins/useNavigateTo';
-
 const storeSelection = storeSelections()
 const navigation = useNavigate()
-const cookies = useCookies()
 const icons = useIcons()
 const $t = useI18n().t
 
-const id = "servers"
-const emit = defineEmits(['change'])
-const props = defineProps({
-  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
+
+const fetchedData = ref<T_ServerList>([])
+const totalItems = ref<number>(0)
+const tableData = ref({
+  pageNumber: 1,
+  perPage: 5,
+  // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+  sortBy: storeTablesettings().serversSorting.column,
+  // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+  sortDesc: storeTablesettings().serversSorting.isDesc,
+  filterQuery: '',
+  filterColumns: ['depotId']
 })
 const columns = reactive<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
@@ -241,34 +246,13 @@ const columns = reactive<ITableHeaderRow>({
 })
 
 
-function changeRowLink(e:Event, cid: string) {
-  e.stopPropagation()
-  emit('change', cid)
-  navigation.toConfiguration(id, cid)
-}
+const id = "servers"
 
-
-const fetchedData = ref<T_ServerList>([])
-const totalItems = ref<number>(0)
-
-// const handleChange = (id:string) => {
-//   console.log('handleSelectionChange', id)
-//   storeSelection.toggleSelectionDepots(id)
-// }
-const tableData = ref({
-  pageNumber: 1,
-  perPage: 5,
-  // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-  sortBy: storeTablesettings().serversSorting.column,
-  // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  sortDesc: storeTablesettings().serversSorting.isDesc,
-  filterQuery: '',
-  filterColumns: ['depotId']
+const emit = defineEmits(['change'])
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
 })
-function updateTableData (v: typeof tableData.value) {
-  console.log('tabledata changed total', v)
-  tableData.value = reactive(v)
-}
+
 
 watch(()=> tableData.value, async ()=>{
   console.log('tableData changed', tableData)
@@ -276,6 +260,15 @@ watch(()=> tableData.value, async ()=>{
   fetchedData.value = await _fetch()
 }, { deep: true})
 
+function changeRowLink(e:Event, cid: string) {
+  e.stopPropagation()
+  emit('change', cid)
+  navigation.toConfiguration(id, cid)
+}
+function updateTableData (v: typeof tableData.value) {
+  console.log('tabledata changed total', v)
+  tableData.value = reactive(v)
+}
 async function _fetch() {
   const params = { ...tableData.value, selected: '' }
 

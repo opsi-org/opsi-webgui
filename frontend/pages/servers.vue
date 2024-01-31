@@ -20,19 +20,20 @@
 
 <script setup lang="ts">
 import { usePageHelper } from '~/composables/mixins/usePageHelper';
+import { useMQ } from '../composables/useMQ';
 
+const mq = useMQ()
 const route = useRoute()
 const {path, serverSettings } = usePageHelper()
+
+const maintableVisible = ref(true)
+
 const routeNameSettings =  computed(()=> {
   const s = serverSettings[route.name as string || '']
   if (s === undefined )
     throw new Error('route name not found: ' + (route.name as string))
   return s
 })
-const maintableVisible = ref(true)
-const toggleClientstableVisibility = ()=> {
-  maintableVisible.value = !maintableVisible.value
-}
 
 const width = computed(()=> {
   if (maintableVisible.value) {
@@ -45,8 +46,14 @@ const width = computed(()=> {
 })
 
 const isMobile = computed(()=> {
-  return useMQ().isMobile.value
+  return mq.isMobile.value
 })
+
+
+function toggleClientstableVisibility () {
+  maintableVisible.value = !maintableVisible.value
+}
+
 </script>
 
 

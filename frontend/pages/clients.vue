@@ -10,7 +10,7 @@
     <!-- classlastcol="mt-0 mb-0" -->
     <template #default>
       <el-button class="float-right" v-if="routeName.startsWith('clients-products') && routeNameSettings?.page1Condition" @click="toggleClientstableVisibility">{{'v'}}</el-button>
-      <ViewVClients v-if="clientstableVisible"/>
+      <ViewVClients v-if="clientstableVisible" :is-mobile="mq.isMobile.value"/>
     </template>
     <template #page1>
       <NuxtPage />
@@ -20,9 +20,15 @@
 
 <script setup lang="ts">
 import { usePageHelper } from '~/composables/mixins/usePageHelper';
+import { useMQ } from '../composables/useMQ';
 
+const mq = useMQ()
 const route = useRoute()
 const {path, clientSettings } = usePageHelper()
+
+const clientstableVisible = ref(true)
+
+
 const routeName = computed(()=> route.name as string || '')
 const routeNameSettings =  computed(()=> {
   const s = clientSettings[routeName.value]
@@ -30,7 +36,6 @@ const routeNameSettings =  computed(()=> {
     throw new Error('route name not found: ' + (route.name as string))
   return s
 })
-const clientstableVisible = ref(true)
 const toggleClientstableVisibility = ()=> {
   clientstableVisible.value = !clientstableVisible.value
 }
@@ -46,7 +51,7 @@ const width = computed(()=> {
 })
 
 const isMobile = computed(()=> {
-  return useMQ().isMobile.value
+  return mq.isMobile.value
 })
 </script>
 

@@ -11,7 +11,7 @@
       }"
     />
     <ButtonBTNRowLink
-      :is-pressed="useRouter().currentRoute.value.path.includes('/clients/products/')"
+      :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
       :icon="icons.product"
       @click="openLink('/clients/products/LocalbootProduct')"
     > Products </ButtonBTNRowLink>
@@ -251,59 +251,38 @@
 <script setup lang="tsx">
 
 import { useNotification } from '~/composables/mixins/useComponent';
-
-import type { ITableHeaderRow } from '~/types/ttableV3'
-
-import { useCookies } from '~/composables/mixins/useCookies'
-import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useConfigserver } from '~/composables/mixins/useGet';
-import type { T_ClientsList } from '~/types/APItypes';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
-const storeSelection = storeSelections()
-const storeTable = storeTablesettings()
-const datacache = storeCache()
-console.log('datacache', datacache.opsiconfigserver)
-const cookies = useCookies()
+import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
+import type { T_ClientsList } from '~/types/APItypes';
+import type { ITableHeaderRow } from '~/types/ttableV3'
+
+const router = useRouter()
 const navigation = useNavigate()
 const $t = useI18n().t
 const icons = useIcons()
-const id = "clients"
+const notify = useNotification()
 
-// await initServer()
-// async function initServer() {
-//   await useConfigserver(true) // init selectiondepots with configserver
-// }
-await useConfigserver(true) // init selectiondepots with configserver
+const storeSelection = storeSelections()
+const storeTable = storeTablesettings()
+const datacache = storeCache()
 
-
-function openLink(link: string) {
-  useRouter().push(link)
-}
-
-// const route = useRoute()
-// const _routeId = route.params.id || ['']
-// const _routeLength = _routeId.length
-// const rowactionConfigChecked = ref<any>({[_routeId[_routeLength - 1]]: true})
-// watch(()=>route.params.id, ()=>{
-//   console.log('secondColumnSelectedRowId route.params.id', route.params.id)
-//   let id: string = ''
-//   if (Array.isArray(route.params.id)) {
-//     id = route.params.id[route.params.id.length - 1]
-//   } else {
-//     id = route.params.id
-//   }
-
-//   Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
-
-//   rowactionConfigChecked.value[id] = true
-// }, {deep: true})
-
-
-const emit = defineEmits(['change'])
-const props = defineProps({
-  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+const fetchedData = ref<Array<any>>([])
+const totalItems = ref<number>(0)
+const tableData = ref({
+  pageNumber: 1,
+  perPage: 5,
+  // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
+  sortBy: storeTable.clientsSorting.column,
+  sortDesc: storeTable.clientsSorting.isDesc,
+  // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
+  filterQuery: '',
+  filterColumns: ['clientId', 'description']
 })
+
+
+const id = "clients"
 const columns = ref<ITableHeaderRow>({
     selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
@@ -470,34 +449,16 @@ const columns = ref<ITableHeaderRow>({
     }
 })
 
-function changeRowLink(e:Event, cid: string) {
-  e.stopPropagation()
-  emit('change', cid)
-  navigation.toConfiguration(id, cid)
-}
 
 
-const fetchedData = ref<Array<any>>([])
-const totalItems = ref<number>(0)
-// const handleChange = (id:string) => {
-//   console.log('handleSelectionChange', id)
-//   storeSelection.toggleSelectionDepots(id)
-// }
-const tableData = ref({
-  pageNumber: 1,
-  perPage: 5,
-  // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-  sortBy: storeTable.clientsSorting.column,
-  sortDesc: storeTable.clientsSorting.isDesc,
-  // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  filterQuery: '',
-  filterColumns: ['clientId', 'description']
+const emit = defineEmits(['change'])
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return false}}
 })
-function updateTableData (v: typeof tableData.value) {
-  console.log('tabledata changed total', v)
-  tableData.value = reactive(v)
-}
-// onMounted(async ()=> fetchedData.value = await _fetch())
+
+onMounted(async ()=> {
+  await useConfigserver(true) // init selectiondepots with configserver
+})
 
 watch(()=> tableData.value, async ()=>{
   console.log('tableData changed', tableData)
@@ -505,6 +466,24 @@ watch(()=> tableData.value, async ()=>{
   fetchedData.value = await _fetch()
 }, { deep: true})
 
+
+
+// const handleChange = (id:string) => {
+//   console.log('handleSelectionChange', id)
+//   storeSelection.toggleSelectionDepots(id)
+// }
+function openLink(link: string) {
+  router.push(link)
+}
+function changeRowLink(e:Event, cid: string) {
+  e.stopPropagation()
+  emit('change', cid)
+  navigation.toConfiguration(id, cid)
+}
+function updateTableData (v: typeof tableData.value) {
+  console.log('tabledata changed total', v)
+  tableData.value = reactive(v)
+}
 async function _fetch() {
   const params:any = { ...tableData.value }
   console.log('datacache server', datacache.opsiconfigserver)
@@ -536,7 +515,7 @@ async function _fetch() {
 
   if (error) {
     console.log(error)
-    useNotification().error(error, 'Error fetching clients')
+    notify.error(error, 'Error fetching clients')
     return []
   }
   // console.log('data', data)
