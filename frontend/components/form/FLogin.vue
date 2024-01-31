@@ -19,7 +19,7 @@
               :aria-label="$t('title.configserver')"
               disabled
               readonly
-              size="sm"
+              size="small"
               class="mb-2"
               :placeholder="opsiconfigserver"
             />
@@ -33,7 +33,7 @@
               :aria-label="$t('form.username')"
               :placeholder="$t('form.username')"
               :state="validUsername"
-              size="sm"
+              size="small"
               class="mb-2 username"
             />
           </el-form-item>
@@ -47,7 +47,7 @@
                 :placeholder="$t('form.password')"
                 :state="validPassword"
                 :type="showPassword? 'text': 'password'"
-                size="sm"
+                size="small"
                 class="mb-2 password"
               >
 
