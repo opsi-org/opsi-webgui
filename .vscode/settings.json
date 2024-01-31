@@ -168,14 +168,14 @@
                 "singleInstance": true,
                 "command": "npm run pwtest:access" // This is executed in the terminal.
             },
-            // { // build dist directory (used in production)
-            //     "cwd": "/workspace/opsiweb", // Terminal initial folder ${workspaceFolder} and os user home as defaults
-            //     "name": "$(package) buildDist",
-            //     "tooltip": "Build productive",
-            //     "color": "white",
-            //     "singleInstance": true,
-            //     "command": "bash /workspace/opsiweb/scripts/build_production_local.sh \"$(pwd)/..\" install" // This is executed in the terminal.
-            // },
+            { // build dist directory (used in production)
+                "cwd": "/workspace/frontend", // Terminal initial folder ${workspaceFolder} and os user home as defaults
+                "name": "$(package) buildDist",
+                "tooltip": "Build productive",
+                "color": "white",
+                "singleInstance": true,
+                "command": "bash /workspace/frontend/scripts/build_production_local.sh /workspace install" // This is executed in the terminal.
+            },
             // { // take screenshots for Documentation
             //     "cwd": "/workspace/opsiweb/screenshots4Docs",
             //     "name": "$(device-camera) screenshots4Docs",
