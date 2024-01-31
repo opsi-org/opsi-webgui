@@ -28,6 +28,7 @@
   "message.success.trackChanges.saveAll": "Changes saved.",
   "message.success.clientagent": "OPSI Client Agent on {client} has been deployed successfully.",
   "message.confirm.deleteClient": "Are you sure you want to delete the client {client} ?",
+  "message.confirm.logout": "Log out of opsi-webgui?",
   "message.warning.title": "Warning",
   "message.warning.clientExists": "{client} already exists.",
   "message.formvalid.clientExists": "Client name already exists.",

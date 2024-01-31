@@ -42,7 +42,7 @@
     <el-menu-item index="1" type="text" @click="()=>emit('toggleRight')" data-testid="menu-quickpanel">
       <IconIIcon :icon="icons.quickpanel" class="text-on-primary"/>
     </el-menu-item>
-    <ButtonBTNLogout index="2" :is-menu-item="true"/>
+    <PopconfirmPLogout index="2" :is-menu-item="true"/>
   </el-menu>
 </template>
 

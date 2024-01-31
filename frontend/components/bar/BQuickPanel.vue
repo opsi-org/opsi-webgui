@@ -17,7 +17,7 @@
       <FormitemDDTheme />
       <FormitemDDLang />
       <br />
-      <ButtonBTNLogout v-if="useMQ().isMobile.value" />
+      <PopconfirmPLogout v-if="useMQ().isMobile.value" />
     <!-- </div> -->
   </div>
   <!-- <b-sidebar
