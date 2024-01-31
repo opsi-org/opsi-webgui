@@ -21,6 +21,7 @@ export const useNavigate = () => {
     Object.keys(rowactionConfigChecked.value).forEach(k => rowactionConfigChecked.value[k] = false)
     rowactionConfigChecked.value[id] = true
   }
+  const pageType = computed(() => { return route.params.pagetype || '' })
 
 
   function toConfiguration(type: string, id: string, isChild: boolean = false, productType='LocalbootProduct') {
@@ -48,5 +49,5 @@ export const useNavigate = () => {
       useRouter().push('/servers/server/'+pagetype+'/' + id)
     }
   }
-  return { rowactionConfigChecked, secondColumnSelectedRowId, toType, toConfiguration}
+  return { pageType, rowactionConfigChecked, secondColumnSelectedRowId, toType, toConfiguration}
 }

@@ -438,11 +438,18 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => {
         return (
+          <>
           <BTNRowLink
-            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] as boolean}
+            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'config'}
             icon={icons.settings}
-            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId)}
+            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'config')}
           />
+          <BTNRowLink
+            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'logs'}
+            icon={icons.log}
+            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'logs')}
+          />
+          </>
       )},
     }
 })
@@ -473,10 +480,15 @@ watch(()=> tableData.value, async ()=>{
 function openLink(link: string) {
   router.push(link)
 }
-function changeRowLink(e:Event, cid: string) {
-  e.stopPropagation()
+function changeRowLink(e:Event, cid: string, to='config') {
+  // e.stopPropagation()
+  // e.stopImmediatePropagation()
   emit('change', cid)
-  navigation.toConfiguration(id, cid)
+  if (to === 'config') {
+    navigation.toConfiguration(id, cid)
+  } else if (to === 'logs') {
+    navigation.toType(id, cid, 'logs')
+  }
 }
 function updateTableData (v: typeof tableData.value) {
   console.log('tabledata changed total', v)

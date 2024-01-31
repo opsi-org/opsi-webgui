@@ -2,7 +2,7 @@
   <el-button
     :class="{pressed: props.isPressed}"
     data-testid="BTNRowLink"
-    @click="emit('onClick')"
+    @click.stop="emit('onClick')"
   >
     <iconIIcon :icon="props.icon" />
   </el-button>
