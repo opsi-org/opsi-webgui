@@ -1,12 +1,9 @@
 <template>
-  <!-- <PContextMenu ref="cmmenu" :model="items" class="min-w-60 p-0" unstyled> -->
   <ContextMenu ref="cmmenu" :model="items" class="p-contextmenu">
     <template #item="{ item, hasSubmenu }">
-      <!-- <FormitemDDTableSorting v-if="item.id === 'table_sort'" > {{ item.label }}</FormitemDDTableSorting> -->
       <div class="inline" >
         <IconIIcon v-if="item.icon" :icon="item.icon" class="inline ml-2 mr-4" />
         <span class="inline">{{ item.label }}</span>
-        <!-- <PButton @click="() => call_opsievent('hi')">Hallo</PButton> -->
         <span v-if="hasSubmenu" class="inline float-right">
           <IconIIcon :icon="icons.arrowRight" />
         </span>
@@ -20,24 +17,29 @@
 import { useIcons } from '../../composables/mixins/useIcons';
 import ContextMenu from 'primevue/contextmenu';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
-// const curRowContext = ref()
+import type { PropType } from 'nuxt/dist/app/compat/capi';
+import type { TRowData } from '~/types/Datatypes'
+
 const navigation = useNavigate()
 const icons = useIcons()
 const $t = useI18n().t
 
 const emit = defineEmits(['refetch'])
 const props = defineProps({
-  item: { type: String, default: '' },
+  item: { type: Object as PropType<TRowData>, default: {} },
   key: { type: String, default: 'ident' },
   type: { type: String, default: 'servers' }
 })
+console.log('PROPS ITEM', props.item)
 
 const cmmenu = ref()
 const showModal = ref(false)
 const selectedAction = ref('')
 const items = ref([
   { id: '_header', label: $t('table.contextmenu.header-specific', {id: 'XXX'}), disabled: true /* row ident */ },
-  { id: '_actions', label: $t('button.item-actions'), icon: icons.menu, items: [
+
+  { id: 'action_ondemand_all', label: $t('button.event.ondemand'), icon: icons.ondemand, command: ()=>call_opsievent('ondemand-all'), visible: props.type !== 'clients'},
+  { id: '_actions', label: $t('button.item-actions'), icon: icons.menu, visible: props.type === 'clients', items: [
     { id: 'action_ondemand', label: $t('button.event.ondemand'), command: ()=>call_opsievent('ondemand')},
     { id: 'action_showpopup', label: $t('button.event.showpopup'), command: ()=>call_opsievent('showpopup')},
     { id: 'action_reboot', label: $t('button.event.reboot'), command: ()=>call_opsievent('reboot')},

@@ -30,17 +30,19 @@
       @current-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, pageNumber: v})}"
       @size-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, perPage: v, pageNumber: 1})}"
       />
-      <ContextmenuCMTable ref="menu" :item="curRowCMId" :key="curRowCMDataKey" :type="props.id"/>
+      <ContextmenuCMTable ref="menu" :item="currentSelectedRow" :key="currentSelectedRowIdKey" :type="props.id"/>
   </div>
 </template>
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
+import { useIcons } from '~/composables/mixins/useIcons'
+import {TableV2SortOrder, type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
 import type { SortBy, SortState } from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
-import {TableV2SortOrder, type CheckboxValueType, type Column, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
 import type { FunctionalComponent } from 'vue'
-import { useIcons } from '~/composables/mixins/useIcons'
+import type { TRowData } from '~/types/Datatypes'
+
 const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
 
@@ -59,8 +61,8 @@ const props = defineProps({
 })
 
 const menu = ref()
-const curRowCMId = ref()
-const curRowCMDataKey = ref<string>('ident')
+const currentSelectedRow = ref<TRowData>()
+const currentSelectedRowIdKey = ref<string>('ident')
 const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (props.id === 'clients' ? 'selectionClients' : 'selectionProducts'))
 
 const wrappedColumns = ref<ITableHeaderRow>({})
@@ -75,25 +77,29 @@ const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
 
 const rowEventHandlers: RowEventHandlers = {
   onClick: (params: RowEventHandlerParams) => {
-    console.log('row click', params.rowIndex, params.rowKey, params.rowData, params.event)
+    const rowData:TRowData  = params.rowData
+    console.log('row click', params.rowIndex, params.rowKey, rowData, params.event)
     if (selectionStore.multiSelection === false) {
       if (lastSelectedItemForSingleselect.value !== undefined) {
         lastSelectedItemForSingleselect.value.selected = false
       }
-      lastSelectedItemForSingleselect.value = params.rowData
-      params.rowData.selected = true
+      lastSelectedItemForSingleselect.value = rowData
+      rowData.selected = true
     }
     else {
-      params.rowData.selected = params.rowData.selected === true ? false : true
+      rowData.selected = rowData.selected === true ? false : true
     }
-    $emit('selection-changed', params.rowData[props.rowId])
+    $emit('selection-changed', rowData[props.rowId])
   },
   onDblclick: (params: RowEventHandlerParams) => {
+    // const rowData:TRowData  = params.rowData
     console.log('row dblclick', params.rowKey, params.event)
   },
   onContextmenu: (params: RowEventHandlerParams) => {
-    curRowCMId.value = params.rowData
-    curRowCMDataKey.value = 'ident'
+    const rowData:TRowData  = params.rowData
+    currentSelectedRow.value = rowData
+    console.log('row contextmenu', params.rowKey, params.event, rowData)
+    currentSelectedRowIdKey.value = 'ident'
     menu.value.show(params.event)
   },
 }

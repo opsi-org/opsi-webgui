@@ -1,10 +1,3 @@
-
-import type { id } from 'element-plus/es/locale';
-
-import type { id } from 'element-plus/es/locale';
-
-import type { select } from 'bootstrap-vue-next/dist/src/utils';
-
 <template>
   <el-dialog
     v-model="modelValue"
@@ -16,9 +9,9 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
     >
     <template #header>
       <div class="flex">
-        <IconIIcon :icon="events[props.event]?.icon" class="min-w-9 min-h-9"/>
+        <IconIIcon :icon="eventWrapper.icon" class="min-w-9 min-h-9"/>
         <h3>
-          {{ $t(events[props.event]?.titlemodal) }}
+          {{ $t(eventWrapper.titlemodal) }}
         </h3>
       </div>
     </template>
@@ -37,8 +30,7 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
       {{ $t('button.event.modal.footer', {event}) }} <br/>
     </div>
 
-    <div v-if="props.event=='ondemand'"
-    >
+    <div v-if="props.event=='ondemand'">
       <el-radio-group v-model="events.ondemand.params.onlyIdFromParams">
         <el-radio :label="1">Only passed id</el-radio>
         <el-radio :label="2">All selected</el-radio>
@@ -69,8 +61,25 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
       </ul>
       </el-card>
         {{ $t('button.event.modal.footer', {event}) }} <br/>
+    </div>
+    <div v-if="props.event=='ondemand-all'">
+      <el-card shadow="always" body-class="p-0">
+      <ul>
+        <li v-for="c in selection" :key="c" class="p-2 ">
+          <el-button
+            class="text-small"
+            variant="outline-primary"
+            :title="$t('button.delete')"
+            size="small"
+            @click="selectionDelete(c)"
+          >x</el-button>
+          {{ c }}
+        </li>
+      </ul>
+      </el-card>
+        {{ $t('button.event.modal.footer', {event}) }} <br/>
       <!-- checkboy for only selected client, or all selected clients -->
-      <!-- <el-checkbox-group v-model="events[props.event]?.params?.params">
+      <!-- <el-checkbox-group v-model="eventWrapper.params?.params">
         <el-checkbox v-for="c in selection" :key="c" :label="c" class="modal-client-p text-small">
           {{ c }}
         </el-checkbox> -->
@@ -114,7 +123,7 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
       {{ $t('message.confirm.deleteClient', {client: id}) }} <br/>
     </div>
     <!-- <MClientEventContentPopup v-if="props.event=='showpopup'" :id="props.id" v-model="events[]"/> -->
-    <!-- :title="$t(events[props.event]?.titlemodal)" -->
+    <!-- :title="$t(eventWrapper.titlemodal)" -->
     <!-- <el-form :model="form">
       <el-form-item label="Promotion name" :label-width="formLabelWidth">
         <el-input v-model="form.name" autocomplete="off" />
@@ -130,7 +139,7 @@ import type { select } from 'bootstrap-vue-next/dist/src/utils';
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="updateModel(false)">{{  $t('label.cancel') }}</el-button>
-        <el-button :type="events[event].buttonConfirmVariant" @click="callEvent()"> {{  $t(events[event].buttonConfirm) }}</el-button>
+        <el-button :type="eventWrapper.buttonConfirmVariant" :disabled="confirmDisabled" @click="callEvent()"> {{  $t(eventWrapper.buttonConfirm) }}</el-button>
       </span>
     </template>
   </el-dialog>
@@ -142,25 +151,14 @@ import { useIcons } from '~/composables/mixins/useIcons';
 import { useNotification } from '../../composables/mixins/useComponent';
 const icon = useIcons()
 
-const { selectionClients } = storeToRefs(storeSelections())
-const selection = ref(JSON.parse(JSON.stringify(selectionClients.value)))
-function selectionDelete(client: string) {
-  const index = selection.value.indexOf(client)
-  if (index > -1) {
-    selection.value.splice(index, 1)
-  }
-}
 const modelValue = defineModel<boolean>()
 const props = defineProps({
   event: { type: String, default: '' },
   id: { type: String, default: '' },
-  // type: { type: String, default: 'servers' },
 })
 
-function updateModel(value: boolean) {
-  modelValue.value = value
-}
-
+const { selectionClients } = storeToRefs(storeSelections())
+const selection = ref(JSON.parse(JSON.stringify(selectionClients.value)))
 const events = ref({
   showpopup: {
     tooltip: 'button.event.showpopup.tooltip',
@@ -184,7 +182,6 @@ const events = ref({
       method: 'fireEvent',
       params: ['on_demand'],
       onlyIdFromParams: 1,
-      // client_ids: this.selectionClients
     }
   },
   reboot: {
@@ -243,8 +240,34 @@ const events = ref({
     }
   },
 })
+
+const confirmDisabled = computed(() => {
+  if (props.event === 'ondemand-all')
+    return selection.value.length === 0
+  if (props.event === 'ondemand' && events.value.ondemand.params.onlyIdFromParams == 2)
+    return selection.value.length === 0
+  return false
+})
+
+const eventWrapper = computed(() => {
+  if (props.event === 'ondemand-all')
+    return events.value['ondemand']
+  return events.value[props.event]
+})
+function updateModel(value: boolean) {
+  modelValue.value = value
+}
+
+function selectionDelete(client: string) {
+  const index = selection.value.indexOf(client)
+  if (index > -1) {
+    selection.value.splice(index, 1)
+  }
+}
+
 function callEvent() {
   useNotification().success('[Dummy!] callEvent: ' + props.event)
+  // TODO: call api
   // const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
   // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
   // if (error) {
