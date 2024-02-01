@@ -54,7 +54,7 @@ body[data-bs-theme="light"] {
   --el-menu-text-color: #000000;
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
-  --el-border-color: #c6c6c6;
+  --el-border-color: #c6c6c6; //This property was added to fix the input fields without borders that looked hidden.
   --el-border-color-hover: #000000;
 
   .el-notification,
@@ -84,7 +84,7 @@ body[data-bs-theme="dark"] {
   // --el-text-color-regular: #CFD3DC;
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
-  --el-border-color: #616161;
+  --el-border-color: #616161; //This property was added to fix the input fields without borders that looked hidden.
   --el-border-color-hover: #ffffff;
 
   .text-on-primary {
@@ -92,7 +92,6 @@ body[data-bs-theme="dark"] {
     color: var(--el-text-color-regular);
   }
 }
-
 
 
 a {
