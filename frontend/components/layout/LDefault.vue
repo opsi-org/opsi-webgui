@@ -67,8 +67,7 @@
 
         <el-aside
           v-if="rightSideVisible"
-          style="border-left: 1px solid var(--el-border-color)"
-          class="border-l"
+          style="border-left: 1px solid var(--border)"
           :class="{
             'el-aside-right': true,
             'p-0 w-full': !mq.isMobile.value,

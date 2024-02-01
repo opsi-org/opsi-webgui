@@ -54,6 +54,8 @@ body[data-bs-theme="light"] {
   --el-menu-text-color: #000000;
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
+  --border: #c6c6c6;
+  border: var(--border)!important;
 
   .el-notification,
   .el-notification__content {
@@ -82,6 +84,8 @@ body[data-bs-theme="dark"] {
   // --el-text-color-regular: #CFD3DC;
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
+  --border: #616161;
+  border: var(--border)!important;
 
   .text-on-primary {
     --el-text-color-regular: var(--opsi-genral-white);
@@ -104,7 +108,7 @@ button.pressed {
 }
 
 .el-input , .el-checkbox__input {
-  border: var(--fg-color) solid 1px;
+  border: var(--border) solid 1px;
 }
 
 .el-popper, .el-vl__window  {
