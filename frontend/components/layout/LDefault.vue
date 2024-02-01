@@ -192,6 +192,7 @@ async function checkConfig () {
 
 <style scoped>
 
+/* Quickpanel uses the same colors as the main content to reduce visual clutter */
 .qp-background {
   background-color: var(--bg-color) !important;
   color: var(--fg-color) !important;
