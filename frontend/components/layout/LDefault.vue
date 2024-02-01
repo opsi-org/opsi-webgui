@@ -83,7 +83,7 @@
             @click.self="toggleSide('right')"
           ></div>
           <el-scrollbar :class="{
-            'w-full max-w-full right-0 opacity-100 justify-self-end bg-color border-0 p-2': true,
+            'w-full max-w-full right-0 opacity-100 justify-self-end qp-background border-0 p-2': true,
             // 'w-80': !mq.isMobile.value,
             'max-w-full z-30': mq.isMobile.value,
             }">
@@ -192,10 +192,9 @@ async function checkConfig () {
 
 <style scoped>
 
-.bg-color {
-  /* background-color: var(--bg-color) !important; */
-  /* color: var(--fg-color) !important; */
-
+.qp-background {
+  background-color: var(--bg-color) !important;
+  color: var(--fg-color) !important;
 }
 .el-header {
   position: relative;
