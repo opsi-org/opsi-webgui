@@ -1,7 +1,7 @@
 <template>
   <el-container v-loading="isLoading">
     <el-tree
-      :class="useMQ().isMobile.value ? 'w-100': 'w-50'"
+      :class="mq.isMobile.value ? 'w-100': 'w-50'"
       :data="fetchedData"
       :props="defaultProps"
       :expand-on-click-node="false"
@@ -15,15 +15,15 @@
                 : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
                 )"
           >
-            <el-popover :placement="useMQ().isMobile.value ? 'auto': 'right'" :width="400" trigger="click" :ref="node.label+action">
+            <el-popover :placement="mq.isMobile.value ? 'auto': 'right'" :width="360" trigger="click" :ref="node.label+action">
               <template #reference>
                 <el-button size="small"> <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" /> </el-button>
               </template>
               <el-text tag="b">{{ $t('group.'+action) }}</el-text> - <el-text tag="i">{{ node.label }}</el-text>
               <el-form label-position="top" class="mt-3">
                 <template v-if="action == 'group-add'">
-                  <el-form-item v-for="value,label,index in createGroup" :key="index" :label="$t('table.fields.'+label)"
-                    :class="{ 'd-none': label=='parentGroupId' }">
+                  <el-form-item v-for="val, label in createGroup" :key="label" :label="$t('table.fields.'+label)"
+                    :class="{ 'd-none': label.toString()=='parentGroupId' }">
                       <el-input v-model="createGroup[label]" />
                   </el-form-item>
                   <el-button
@@ -44,7 +44,7 @@
                       </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>
-                  <el-button class="float-right" type="success" data-testid="addChildren">
+                  <el-button class="float-right" type="success" data-testid="addChildren" @click="addChildren(node.label)">
                     {{ $t("button.add") }}
                   </el-button>
                 </template>
@@ -61,8 +61,8 @@
                   </el-button>
                 </template>
                 <template v-else-if="action == 'edit'">
-                  <el-form-item v-for="value,label,index in updateGroup" :key="index" :label="$t('table.fields.'+label)">
-                    <el-scrollbar v-if="label == 'parent'" height="200px">
+                  <el-form-item v-for="value,label in updateGroup" :key="label" :label="$t('table.fields.'+label)">
+                    <el-scrollbar v-if="label.toString() == 'parent'" height="200px">
                       {{ fetchedData }}
                       <!-- <el-tree :props="defaultProps" :data="fetchedData">
                       </el-tree> -->
@@ -92,24 +92,7 @@
     </el-tree>
   </el-container>
 
-        <!-- <template v-if="action == 'addToGroup'">
-          <b-form-select
-            v-model="selectedProducts"
-            multiple
-            size="sm"
-            :select-size="10"
-            :options="productIds"
-          >
-            <template #first>
-              <b-form-select-option :value="null" disabled>
-                {{ $t('group.selectItems', {type: $t('table.fields.products')}) }}
-              </b-form-select-option>
-            </template>
-          </b-form-select>
-          <b-button class="float-right" variant="success" size="sm" data-testid="addprodToSelectedGroup" @click="addProducts">
-            {{ $t("group.add") }}
-          </b-button>
-        </template>
+        <!--
         <template v-else-if="action == 'editGroup'">
           <b-form>
             <treeselect
@@ -161,7 +144,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient } from '~/composables/mixins/useGet';
 import {useIcons} from '../../composables/mixins/useIcons'
@@ -171,6 +153,7 @@ const props = defineProps({
   data: { type: Object, required: true }
 })
 const icons = useIcons()
+const mq = useMQ()
 const storeSelection = storeSelections()
 const isLoading = ref(false)
 const defaultProps = {
@@ -235,7 +218,6 @@ async function fetchProdGroups() {
 }
 
 async function fetchProductList() {
-  console.log('fetchProductList')
   const {data, error } = await useApiGETBody<Array<T_Product>>(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
     useNotification().error(error)
@@ -244,19 +226,32 @@ async function fetchProductList() {
   idList.value = data.value.map(function (item: { productId: any; }) { return item.productId })
 }
 
-  async function createSubGroup (parent: string) {
-    createGroup.parentGroupId = parent
-    const url = props.data.category == 'clientGroups' ? 'opsidata/hosts/groups' : 'opsidata/products/groups'
-    const {data, error } = await useApiPOST(url, createGroup)
-    if (error) {
-      useNotification().error(error)
-      return
-    } else {
-      useNotification().success(data.toString())
-      // this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
-      // await this.reloadGroup()
-    }
+async function createSubGroup (parent: string) {
+  createGroup.parentGroupId = parent
+  const url = props.data.category == 'clientGroups' ? 'opsidata/hosts/groups' : 'opsidata/products/groups'
+  const {data, error } = await useApiPOST(url, createGroup)
+  if (error) {
+    useNotification().error(error)
+    return
+  } else {
+    useNotification().success(data.toString())
+    // this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
+    // await this.reloadGroup()
   }
+}
+
+async function addChildren (selectedGroup: string) {
+  const url = props.data.category == 'clientGroups' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
+  const {data, error } = await useApiPOST(url, selectedChildren)
+  if (error) {
+    useNotification().error(error)
+    return
+  } else {
+    useNotification().success(data.toString())
+    // this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
+    // await this.reloadGroup()
+  }
+}
 
 //   async reloadGroup () {
 //     this.action = ''
@@ -275,17 +270,6 @@ async function fetchProductList() {
 //     await this.$axios.$put(`/api/opsidata/products/groups/${this.selectedvalue.text}`, this.updategroup)
 //       .then(async () => {
 //         this.showToastSuccess(this.$t('message.success.save.update.group', { group: this.selectedvalue.text }))
-//         await this.reloadGroup()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//   }
-
-//   async addProducts () {
-//     await this.$axios.$post(`/api/opsidata/products/groups/${this.selectedvalue.text}/products`, this.selectedProducts)
-//       .then(async () => {
-//         this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
 //         await this.reloadGroup()
 //       })
 //       .catch((error) => {

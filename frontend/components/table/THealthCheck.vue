@@ -1,7 +1,5 @@
 <template>
-  <el-table :data="data" row-key="check_id" :tree-props="{ children: 'partial_results' }" style="
-      --el-color-info: var(--color);
-    ">
+  <el-table :data="data" row-key="check_id" :tree-props="{ children: 'partial_results' }" style="--el-color-info: var(--color);">
     <el-table-column
       prop="check_status"
       label="Status"

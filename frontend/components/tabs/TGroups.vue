@@ -4,31 +4,9 @@
       <TreeTGroupsActions :data="options" />
     </el-tab-pane>
   </el-tabs>
-  <!-- <div class="VGroups" data-testid="VGroups">
-          <b-col v-if="action && selectedvalue">
-            <span class="text-small"><b> {{ title + t_fixed('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
-            <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
-              <IconIIcon :icon="icon.x" />
-            </b-button>
-            <br><br>
-            <template v-if="action == 'addToGroup'">
-              <b-form-select
-                v-model="selectedClients"
-                multiple
-                size="sm"
-                :select-size="10"
-                :options="clientIds"
-              >
-                <template #first>
-                  <b-form-select-option :value="null" disabled>
-                    {{ $t('group.selectItems', {type: $t('title.clients')}) }}
-                  </b-form-select-option>
-                </template>
-              </b-form-select>
-              <b-button class="float-right" variant="success" size="sm" data-testid="addClientsToSelectedGroup" @click="addClientsToSelectedGroup">
-                {{ $t("group.add") }}
-              </b-button>
-            </template>
+
+
+  <!--
             <template v-else-if="action == 'editGroup'">
               <b-form>
                 <treeselect
@@ -125,12 +103,6 @@ const groupActions = reactive({
 //   }
 
 
-//   showChild (selectedAction: string) {
-//     this.action = selectedAction
-//     const groupaction = 'group.' + this.action
-//     this.title = this.$t(groupaction)
-//   }
-
 //   afterAsync () {
 //     this.subgroup.groupId = this.subgroup.groupId + 'x'
 //     this.subgroup.groupId = this.subgroup.groupId.slice(0, -1)
@@ -159,18 +131,6 @@ const groupActions = reactive({
 //     this.afterAsync()
 //   }
 
-
-//   async addClientsToSelectedGroup () {
-//     await this.$axios.$post(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`, this.selectedClients)
-//       .then(async (response) => {
-//         this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
-//         await this.fetchGroups()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.afterAsync()
-//   }
 
 //   async updateGroup () {
 //     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
