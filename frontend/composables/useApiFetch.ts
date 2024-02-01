@@ -18,7 +18,7 @@ interface terror {
 
 interface ApiResult<T> { readonly data: Ref<T>, readonly error: terror, readonly headers: Headers }
 
-
+// TODO: Return Pending status to update loading status.
 async function useAPI2<T> (
     method: tmethod,
     url: string,
