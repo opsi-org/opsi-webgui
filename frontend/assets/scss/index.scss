@@ -55,7 +55,7 @@ body[data-bs-theme="light"] {
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
   --el-border-color: #c6c6c6; //This property was added to fix the input fields without borders that looked hidden.
-  --el-border-color-hover: #000000;
+  --el-border-color-hover: #404040;
 
   .el-notification,
   .el-notification__content {
@@ -85,7 +85,7 @@ body[data-bs-theme="dark"] {
   background: var(--bg-color) !important;
   color: var(--fg-color) !important;
   --el-border-color: #616161; //This property was added to fix the input fields without borders that looked hidden.
-  --el-border-color-hover: #ffffff;
+  --el-border-color-hover: #b3b3b3;
 
   .text-on-primary {
     --el-text-color-regular: var(--opsi-genral-white);
