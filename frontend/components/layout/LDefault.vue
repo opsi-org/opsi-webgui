@@ -193,6 +193,7 @@ async function checkConfig () {
 <style scoped>
 
 /* Quickpanel uses the same colors as the main content to reduce visual clutter */
+/* TODO: If users require the same colors as the navigation bar, the options can be made available later in the GUI Settings feature. */
 .qp-background {
   background-color: var(--bg-color) !important;
   color: var(--fg-color) !important;
