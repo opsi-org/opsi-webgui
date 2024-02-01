@@ -4,6 +4,7 @@
       :class="mq.isMobile.value ? 'w-100': 'w-50'"
       :data="fetchedData"
       :props="defaultProps"
+      node-key="id"
       :expand-on-click-node="false"
       highlight-current
     >
@@ -50,13 +51,13 @@
                 </template>
                 <template v-else-if="action == 'client-delete' || action == 'product-delete'">
                   <el-text> {{ $t('group.confirm.'+action) }} </el-text>
-                  <el-button class="float-right" type="danger" data-testid="removeAssignments">
+                  <el-button class="float-right" type="danger" data-testid="removeAssignments" @click="deleteChildren(node.label)">
                     {{ $t("button.delete") }}
                   </el-button>
                 </template>
                 <template v-else-if="action == 'delete'">
                   <el-text>{{ $t('group.confirm.'+action) }}</el-text>
-                  <el-button type="danger" class="float-right">
+                  <el-button type="danger" class="float-right" @click="deleteGroup(node.label)">
                     {{ $t('button.delete') }}
                   </el-button>
                 </template>
@@ -120,18 +121,7 @@
             </b-button>
           </b-form>
         </template>
-        <template v-else-if="action == 'deletegroup'">
-          <small> {{ $t('group.deletegroup.confirm', {type: 'product'}) }}</small>
-          <b-button class="float-right" size="sm" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
-            {{ $t("label.delete") }}
-          </b-button>
-        </template>
-        <template v-else-if="action == 'deleteOnlyAssignments'">
-          <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'product'}) }}</small>
-          <b-button class="float-right" variant="danger" data-testid="removeAllProducts" size="sm" @click="removeAllProducts">
-            {{ $t("group.remove") }}
-          </b-button>
-        </template>
+
         <template v-else-if="action == 'removeProduct'">
           <small>{{ $t('group.removeClient.confirm') }}</small>
           <b-button variant="danger" class="float-right" size="sm" @click="removeSelectedProduct">
@@ -173,6 +163,11 @@ const updateGroup = reactive({
   parent: '',
   description: '',
   notes: ''
+})
+
+watch(()=>storeSelection.selectionDepots, async ()=>{
+  await fetchClientGroups()
+  await fetchClientList()
 })
 
 onMounted(async ()=> {
@@ -235,6 +230,7 @@ async function createSubGroup (parent: string) {
     return
   } else {
     useNotification().success(data.toString())
+    useNotification().success(data.toString())
     // this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
     // await this.reloadGroup()
   }
@@ -249,6 +245,32 @@ async function addChildren (selectedGroup: string) {
   } else {
     useNotification().success(data.toString())
     // this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
+    // await this.reloadGroup()
+  }
+}
+
+async function deleteChildren (selectedGroup: string) {
+  const url = props.data.category == 'clientGroups' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
+  const {data, error } = await useApiDELETE(url)
+  if (error) {
+    useNotification().error(error)
+    return
+  } else {
+    useNotification().success(data.toString())
+    // this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
+    // await this.reloadGroup()
+  }
+}
+
+async function deleteGroup (selectedGroup: string) {
+  const url = props.data.category == 'clientGroups' ? `opsidata/hosts/groups/${selectedGroup}` : `opsidata/products/groups/${selectedGroup}`
+  const {data, error } = await useApiGET(url)
+  if (error) {
+    useNotification().error(error)
+    return
+  } else {
+    useNotification().success(data.toString())
+    // this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
     // await this.reloadGroup()
   }
 }
@@ -281,17 +303,6 @@ async function addChildren (selectedGroup: string) {
 //     await this.$axios.$get(`/api/opsidata/products/groups/${this.selectedvalue.text}`)
 //       .then(async () => {
 //         this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
-//         await this.reloadGroup()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//   }
-
-//   async removeAllProducts () {
-//     await this.$axios.$delete(`/api/opsidata/products/groups/${this.selectedvalue.text}/products`)
-//       .then(async () => {
-//         this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
 //         await this.reloadGroup()
 //       })
 //       .catch((error) => {

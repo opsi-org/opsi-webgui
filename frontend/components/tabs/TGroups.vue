@@ -34,18 +34,7 @@
                 </b-button>
               </b-form>
             </template>
-            <template v-else-if="action == 'deleteOnlyAssignments'">
-              <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'client'}) }}</small>
-              <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" size="sm" @click="removeClientAssignments">
-                {{ $t("group.remove") }}
-              </b-button>
-            </template>
-            <template v-else-if="action == 'deletegroup'">
-              <small> {{ $t('group.deletegroup.confirm', {type: 'client'}) }}</small>
-              <b-button class="float-right" size="sm" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
-                {{ $t("label.delete") }}
-              </b-button>
-            </template>
+
             <template v-else-if="action == 'copyClient'">
               <treeselect
                 v-model="selectedGroups"
@@ -93,20 +82,8 @@ const groupActions = reactive({
   }
 })
 
-//   @Watch('selectionDepots', { deep: true }) async selectionDepotChanged () {
-//     await this.fetchGroups()
-//   }
-
-//   async fetch () {
-//     await this.fetchGroups()
-//     await this.fetchClients()
-//   }
 
 
-//   afterAsync () {
-//     this.subgroup.groupId = this.subgroup.groupId + 'x'
-//     this.subgroup.groupId = this.subgroup.groupId.slice(0, -1)
-//   }
 
 //   async removeClientFromGroup () {
 //     const group = this.selectedvalue.parent
@@ -145,28 +122,4 @@ const groupActions = reactive({
 //     this.afterAsync()
 //   }
 
-//   async deleteGroup () {
-//     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}`)
-//       .then(async (response) => {
-//         this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
-//         await this.fetchGroups()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.afterAsync()
-//   }
-
-//   async removeClientAssignments () {
-//     await this.$axios.$delete(`/api/opsidata/hosts/groups/${this.selectedvalue.text}/clients`)
-//       .then(async (response) => {
-//         this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
-//         await this.fetchGroups()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.afterAsync()
-//   }
-// }
 </script>

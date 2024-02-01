@@ -139,7 +139,11 @@ async function useApiPOST<ResultDataType> (url: string, body:any=undefined, preP
 // const useApiPUT = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('PUT', url, body, opts, prePath)
 // const useApiDELETE = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('DELETE', url, body, opts, prePath)
 
-export { useApiGET, useApiGETBody, useApiPOST }
+async function useApiDELETE<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) {
+  return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath)
+}
+
+export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE }
 
 
 // export function useAPI<T> (url: string, opts: UseFetchOptions<T> = {}, prePath: string|undefined = undefined) {
