@@ -73,10 +73,11 @@ const groupActions = reactive({
       children: ['delete', 'copy']
     }
   },
+  // TODO: Add group-add to the list prodGroups.actions.parent
   prodGroups: {
     category : 'prodGroups',
     actions: {
-      parent: ['edit', 'delete', 'product-delete', 'product-add', 'group-add'],
+      parent: ['edit', 'delete', 'product-delete', 'product-add'],
       children: ['delete']
     }
   }
