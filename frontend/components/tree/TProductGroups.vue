@@ -1,9 +1,5 @@
 <template>
-  WIP
   <IconILoading v-if="isLoading" />
-  <!-- <el-button @click="getCheckedNodes">get by node</el-button>
-  <el-button @click="getCheckedKeys">get by key</el-button>
-  <el-button @click="syncSelection">Sync Selection</el-button> -->
   <el-button @click="clearSelection"> {{$t('table.selection.clear')}}</el-button>
   <el-tree
     ref="prodGroupRef"
@@ -13,7 +9,7 @@
     node-key="text"
     default-expand-all
     highlight-current
-    @check-change="handleCheckChange" />
+    @check-change="handleProductSelection" />
 </template>
 
 <script setup lang="ts">
@@ -86,13 +82,19 @@ const getCheckedNodes = () => {
 const getCheckedKeys = () => {
   console.log(JSON.stringify(prodGroupRef.value!.getCheckedKeys(false)))
 }
-const handleCheckChange = (
-  data: Tree,
-  checked: boolean
-) => {
-  console.log('Data',JSON.stringify(data)),
-  console.log('checked',JSON.stringify(checked))
+
+const handleProductSelection = () => {
+  const getNodes = prodGroupRef.value!.getCheckedNodes(false, false)
+  const checkNodes = getNodes.filter(node=> node.type == 'ObjectToGroup').map(item => (item.text))
+  console.log(JSON.stringify(checkNodes))
 }
+// const handleCheckChange = (
+//   data: Tree,
+//   checked: boolean
+// ) => {
+//   console.log('Data',JSON.stringify(data)),
+//   console.log('checked',JSON.stringify(checked))
+// }
 
 //   changeSelection (selection: Event) {
 //     if (selection === undefined) { return }
