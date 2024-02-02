@@ -1,9 +1,9 @@
 <template>
   WIP
   <IconILoading v-if="isLoading" />
-  <el-button @click="getCheckedNodes">get by node</el-button>
+  <!-- <el-button @click="getCheckedNodes">get by node</el-button>
   <el-button @click="getCheckedKeys">get by key</el-button>
-  <el-button @click="syncSelection">Sync Selection</el-button>
+  <el-button @click="syncSelection">Sync Selection</el-button> -->
   <el-button @click="clearSelection"> {{$t('table.selection.clear')}}</el-button>
   <el-tree
     ref="prodGroupRef"
@@ -14,11 +14,6 @@
     default-expand-all
     highlight-current
     @check-change="handleCheckChange" />
-  <!-- <TreeTSDefaultGroups
-    :show-as-multi="multi"
-    :store="{selection:selectionProducts, pushSelection:pushToSelectionProducts, delSelection: delFromSelectionProducts}"
-    @change="changeSelection"
-  />  -->
 </template>
 
 <script setup lang="ts">
@@ -37,9 +32,16 @@ const defaultProps = {
 }
 const fetchedData = ref<any>({})
 const storeSelection = storeSelections()
+
+watch(()=>storeSelection.selectionProducts, async ()=>{
+  syncSelection()
+})
+
 onMounted(async ()=> {
   await fetch()
+  syncSelection()
 })
+
 async function fetch() {
   isLoading.value = true
   const {data, error } = await useApiGETBody<T_PGroups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
@@ -67,8 +69,8 @@ async function fetch() {
   //     ]
   //   }
   // ]
-
 }
+
 const syncSelection = () => {
   prodGroupRef.value!.setCheckedKeys(storeSelection.selectionProducts, false)
 }
