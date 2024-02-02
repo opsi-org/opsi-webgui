@@ -2,7 +2,7 @@ export const useIcons = () => {
   // All available icons: https://icon-sets.iconify.design
   // prefered urrently: bootstrap icons
   const icon = {
-    server: 'bi:server',
+    depots: 'bi:server',
     client: 'bi:laptop',
     product: 'bi:box-seam',
     group: 'bi:diagram-2',
@@ -31,6 +31,7 @@ export const useIcons = () => {
     delete: 'bi:trash',
     help: 'bi:question-circle',
     info: 'bi:info-circle',
+    infoselections: 'bi:info-circle',
     download: 'bi:download',
     check: 'bi:check2',
     dash: 'bi:dash',

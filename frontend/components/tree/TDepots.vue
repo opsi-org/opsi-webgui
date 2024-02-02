@@ -1,4 +1,5 @@
 <template>
+  TODO:selection is not available now
   <el-checkbox-group>
     <div v-for="item in depotIDList" :key="item">
       <el-checkbox size="small" :label="item" />

@@ -9,10 +9,10 @@
     > -->
       <span v-if="props.content=='depot-unequal'" class="inline">
         {{ props.text ? props.text: t_fixed('unequal') }}
-        <IconIIcon :icon="icons.server" size="small"/>
+        <IconIIcon :icon="icons.depots" size="small"/>
       </span>
       <span v-else-if="props.content=='depot-wo-prod'" class="h6">
-        {{ $t('notOrigin') }} <IconIIcon :icon="icons.server" />
+        {{ $t('notOrigin') }} <IconIIcon :icon="icons.depots" />
       </span>
       <span v-else-if="props.content=='client-outdated'" class="h6">
         <span> {{ props.text ? props.text: t_fixed('unequal') }}</span> <IconIIcon :icon="icons.client" />
@@ -21,7 +21,7 @@
         <span> {{ props.text ? props.text: t_fixed('unequal') }}</span> <IconIIcon :icon="icons.client" />
       </span>
       <span v-else-if="props.content=='ppid-not-exists-on-depot'" class="h6">
-        {{ t_fixed('unequal') }} <IconIIcon :icon="icons.server" />
+        {{ t_fixed('unequal') }} <IconIIcon :icon="icons.depots" />
       </span>
       <span v-else class="h6">{{ props.content==='unequal'? t_fixed('unequal'):props.content }} </span>
     <!-- </b-badge> -->
