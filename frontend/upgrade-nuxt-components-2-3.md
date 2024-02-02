@@ -1,6 +1,6 @@
 # TODO (order more or less important, because of dependencies)
 - [ ] TODO ! test building process...
-- [ ] packages:
+- [x] packages:
   - [x] i18n
   - [x] store (Example: storeSettings in store/settingsStore)
   - [x] componentslib + icons
@@ -8,43 +8,42 @@
   - [x] axios/requests (example in form/FLogin or test/Fetch)
   - [x] msgpack
   - [x] xterm // adminTerminal
-  * playwright
+  - [x] playwright
   - [x] storybook
-- [ ] WIP *layout*
+- [x] layout
 - [x] mixins
-- [ ] utils
+- [-] utils
 - [x] store
 - [ ] components
   - [ ] WIP *general vue3*
-    - [ ] WIP *general components*
     - [ ] messagebus
-    - [ ] treeselect rebuild
-  - [ ] use elementplus everywhere
+  - [-] use elementplus everywhere
 - [ ] WIP *pages*
   - [x] login page
   - [ ] index page
-  - [ ] clients
+  - [-] clients
   - [ ] clients-clone
-  - [ ] clients-config
-  - [ ] clients-creation
+  - [-] WIP clients-config
+  - [-] WIP clients-creation
   - [ ] clients-log
-  - [ ] clients-products
-  - [ ] depots
-  - [ ] depots-config
-  - [ ] products
-  - [ ] products-config
+  - [x] clients-products
+  - [x] depots
+  - [-] WIP depots-config
+  - [-] products
+  - [-] WIP products-config
   - [ ] admin
-  - [ ] admin-modules
-  - [ ] admin-terminal
-  - [ ] admin-healthcheck
-  - [ ] support
-- [ ] themes
-- [ ] screenshot tests
+  - [x] admin-modules
+  - [x] admin-terminal
+  - [x] admin-healthcheck
+  - [x] support
+- [-] themes
+- [-] stories and screenshot tests
 
 
 # important links:
 * https://learnvue.co/LearnVue-Vue-3-Cheatsheet.pdf
 * https://vuejs.org/guide/components/props.html#props-declaration
+* https://blog.vuejs.org/posts/vue-3-3#generic-components
 * https://element-plus.org/en-US/
 * https://element-plus-interactive-docs.netlify.app/story/src-components-data-collapse-collapse-story-vue?variantId=src-components-data-collapse-collapse-story-vue-0
 * https://tailwindcss.com/docs/
