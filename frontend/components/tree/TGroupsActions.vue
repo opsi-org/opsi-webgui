@@ -189,7 +189,7 @@ async function fetchClientGroups() {
     useNotification().error(error)
     return
   }
-
+    // TODO: Backend: change groups data structure
   fetchedData.value = data.value  ?
                               Object.entries(data.value).map(([label, obj] : any ) => ({ ...obj,
                                 children: Object.entries(obj.children || {}).map(([labelA, objA] : any ) =>
@@ -207,6 +207,7 @@ async function fetchProdGroups() {
     useNotification().error(error)
     return
   }
+    // TODO: Backend: change groups data structure
   fetchedData.value = data.value.groups ?
                         Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
                         : []

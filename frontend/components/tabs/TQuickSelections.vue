@@ -21,14 +21,12 @@
 import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const storeSelection = storeSelections()
-const quickSelDisplayList = reactive(
-  [
+const quickSelDisplayList = reactive([
     {name: 'infoselections', store: ''},
     {name: 'depots', store: 'selectionDepots'},
     {name: 'client-group', store: 'selectionClients'},
     {name: 'product-group', store: 'selectionProducts'}
-  ]
-)
+])
 const activeName = ref('infoselections')
 </script>
 
