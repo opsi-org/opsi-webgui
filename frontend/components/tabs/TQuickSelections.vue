@@ -91,34 +91,4 @@ const selections = storeSelections()
   min-height: 30vh !important;
   overflow-y: auto;
 }
-
-
-/* .scrollcontent {
-  min-height: 30vh !important;
-  overflow-x:auto;
-  overflow-y: auto;
-}
-.QPTabs .scrollcontent {
-  max-height: 500px !important;
-}
-.QPTabs .nav-tabs .nav-link{
-  color:var(--color);
-  background-color:var(--background);
-  border:1px solid var(--border);
-  padding:0.2rem;
-}
-.QPTabs .nav-tabs .nav-link:hover{
-  color: var(--color);
-  background-color: var(--highlight);
-  border:1px solid var(--border);
-}
-.QPTabs .nav-tabs .nav-link.active{
-  color: var(--color);
-  background-color: var(--highlight);
-  border:1px solid var(--border);
-}
-
-.QPTabs #qp-tab-selection .GFormItem .firstcol {
-  min-width: 110px !important;
-} */
 </style>
