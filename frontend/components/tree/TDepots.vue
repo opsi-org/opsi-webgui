@@ -14,14 +14,19 @@ const depotIDList = ref<Array<any>>([])
 let selectedDepots= ref<Array<any>>([])
 
 watch(()=>storeSelection.selectionDepots, async ()=>{
-  selectedDepots.value = storeSelection.selectionDepots
+  syncSelection ()
 })
 
 onMounted(async ()=> {
   await fetch()
+  syncSelection ()
 })
+
 async function fetch() {
   depotIDList.value = await useDepot().getDepotIdList()
+}
+
+const syncSelection = () => {
   selectedDepots.value = storeSelection.selectionDepots
 }
 

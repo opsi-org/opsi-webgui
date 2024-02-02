@@ -12,9 +12,10 @@
       <template v-else> -- </template>
     </el-tab-pane>
   </el-tabs>
-        <!-- <TreeTSDepots :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />
+        <!--
         <TreeTSHostGroups :open="true" :multi="multiSelection" type="propertyvalues" classes="treeselect_quickpanel" />
-        <TreeTSProductGroups :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" /> -->
+        <TreeTSProductGroups :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />
+        -->
 </template>
 
 <script setup lang="ts">
