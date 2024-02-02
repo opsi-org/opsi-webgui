@@ -2,10 +2,10 @@
 - [ ] TODO ! test building process...
 - [x] packages:
   - [x] i18n
-  - [x] store (Example: storeSettings in store/settingsStore)
+  - [x] store
   - [x] componentslib + icons
-  - [x] cookies (-> https://nuxt.com/docs/api/composables/use-cookie)
-  - [x] axios/requests (example in form/FLogin or test/Fetch)
+  - [x] cookies / localstorage
+  - [x] axios/requests
   - [x] msgpack
   - [x] xterm // adminTerminal
   - [x] playwright
