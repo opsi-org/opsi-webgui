@@ -1,6 +1,13 @@
 <template>
   <div class="quickpanel" data-testid="BQuickPanel">
-    <el-text tag="b" size="small"> {{$t('label.quickselect')}}</el-text><br>
+    <div class="flex">
+      <el-text tag="b" size="small"> {{$t('label.quickselect')}}</el-text><br>
+      <el-button size="small" class="border-0 ml-auto">
+        <span class="sr-only">{{ $t('button.resetAll') }}</span>
+        <IconIIcon :icon="icons.reset" @click="storeSelection.clearAllSelection" />
+      </el-button>
+    </div>
+
     <TabsTQuickSelections />
     <el-text tag="b" size="small"> {{$t('label.quickaction')}}</el-text><br>
     <div class="flex justify-evenly">
@@ -79,6 +86,9 @@
 </template>
 
 <script setup lang="ts">
+import {useIcons} from '../../composables/mixins/useIcons'
+const icons = useIcons()
+const storeSelection = storeSelections()
 const changes = storeChanges()
 // import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
