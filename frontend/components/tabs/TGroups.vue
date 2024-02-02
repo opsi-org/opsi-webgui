@@ -1,7 +1,7 @@
 <template>
   <el-tabs lazy>
-    <el-tab-pane v-for="options, category in groupActions" :key="category" :label="$t('treeselect.' + category)">
-      <TreeTGroupsActions :data="options" />
+    <el-tab-pane v-for="category in groupActions" :key="category.category" :label="$t('title.' + category.category)">
+      <TreeTGroupsActions :data="category" />
     </el-tab-pane>
   </el-tabs>
 
@@ -64,9 +64,9 @@
 </template>
 
 <script setup lang="ts">
-const groupActions = reactive({
-  clientGroups: {
-    category : 'clientGroups',
+const groupActions = reactive([
+  {
+    category: 'client-group',
     actions: {
       maingroups: ['group-add'],
       parent: ['edit', 'delete', 'client-delete', 'client-add', 'group-add'],
@@ -74,16 +74,14 @@ const groupActions = reactive({
     }
   },
   // TODO: Add group-add to the list prodGroups.actions.parent
-  prodGroups: {
-    category : 'prodGroups',
+  {
+    category: 'product-group',
     actions: {
       parent: ['edit', 'delete', 'product-delete', 'product-add'],
       children: ['delete']
     }
   }
-})
-
-
+])
 
 
 //   async removeClientFromGroup () {

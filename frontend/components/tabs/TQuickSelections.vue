@@ -21,7 +21,7 @@
 import {useIcons} from '../../composables/mixins/useIcons'
 const icons = useIcons()
 const storeSelection = storeSelections()
-const quickSelDisplayList = ref<Array<any>>(
+const quickSelDisplayList = reactive(
   [
     {name: 'infoselections', store: ''},
     {name: 'depots', store: 'selectionDepots'},

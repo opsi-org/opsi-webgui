@@ -172,7 +172,7 @@ watch(()=>storeSelection.selectionDepots, async ()=>{
 
 onMounted(async ()=> {
   isLoading.value = true
-  if (props.data.category == 'clientGroups')
+  if (props.data.category == 'client-group')
   {
     await fetchClientGroups()
     await fetchClientList()
@@ -223,7 +223,7 @@ async function fetchProductList() {
 
 async function createSubGroup (parent: string) {
   createGroup.parentGroupId = parent
-  const url = props.data.category == 'clientGroups' ? 'opsidata/hosts/groups' : 'opsidata/products/groups'
+  const url = props.data.category == 'client-group' ? 'opsidata/hosts/groups' : 'opsidata/products/groups'
   const {data, error } = await useApiPOST(url, createGroup)
   if (error) {
     useNotification().error(error)
@@ -237,7 +237,7 @@ async function createSubGroup (parent: string) {
 }
 
 async function addChildren (selectedGroup: string) {
-  const url = props.data.category == 'clientGroups' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
+  const url = props.data.category == 'client-group' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiPOST(url, selectedChildren)
   if (error) {
     useNotification().error(error)
@@ -250,7 +250,7 @@ async function addChildren (selectedGroup: string) {
 }
 
 async function deleteChildren (selectedGroup: string) {
-  const url = props.data.category == 'clientGroups' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
+  const url = props.data.category == 'client-group' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiDELETE(url)
   if (error) {
     useNotification().error(error)
@@ -263,7 +263,7 @@ async function deleteChildren (selectedGroup: string) {
 }
 
 async function deleteGroup (selectedGroup: string) {
-  const url = props.data.category == 'clientGroups' ? `opsidata/hosts/groups/${selectedGroup}` : `opsidata/products/groups/${selectedGroup}`
+  const url = props.data.category == 'client-group' ? `opsidata/hosts/groups/${selectedGroup}` : `opsidata/products/groups/${selectedGroup}`
   const {data, error } = await useApiGET(url)
   if (error) {
     useNotification().error(error)
