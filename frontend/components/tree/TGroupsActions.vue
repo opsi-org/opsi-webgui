@@ -56,8 +56,8 @@
                   </el-button>
                 </template>
                 <template v-else-if="action == 'delete'">
-                  <el-text>{{ $t('group.confirm.'+action) }}</el-text>
-                  <el-button type="danger" class="float-right" @click="deleteGroup(node.label)">
+                  <el-text>{{ $t('group.confirm.'+action) }}</el-text> {{ data }}
+                  <el-button type="danger" class="float-right" @click="applyDelete(node.label, data.type, data.parent)">
                     {{ $t('button.delete') }}
                   </el-button>
                 </template>
@@ -273,6 +273,28 @@ async function deleteGroup (selectedGroup: string) {
     useNotification().success(data.toString())
     // this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
     // await this.reloadGroup()
+  }
+}
+
+async function deleteObjectToGroup (selectedChild: string, parent: string) {
+  const url = props.data.category == 'client-group' ? `/api/opsidata/clients/${selectedChild}/groups` : `/api/opsidata/products/groups/${parent}/${selectedChild}`
+  const body = props.data.category == 'client-group' ? { data: [parent] } : {}
+  const {data, error } = await useApiDELETE(url, body)
+  if (error) {
+    useNotification().error(error)
+    return
+  } else {
+    useNotification().success(data.toString())
+    // this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
+    // await this.reloadGroup()
+  }
+}
+
+async function applyDelete (selectedNode: string, nodeType: string, parent: string) {
+  if (nodeType == 'ObjectToGroup') {
+    deleteObjectToGroup(selectedNode, parent)
+  } else {
+    deleteGroup(selectedNode)
   }
 }
 
