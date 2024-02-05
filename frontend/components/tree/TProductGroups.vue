@@ -60,6 +60,12 @@ async function fetch() {
   // ]
 }
 
+// Note: sync function
+// Synchronize from tree to table: Always
+// Synchronize from table to tree: Only on button click.
+// Since tree elements are a subset of table elements,
+// And if there is no table element in the tree structure, the selection will be deselected during synchronization
+
 const syncSelection = () => {
   prodGroupRef.value!.setCheckedKeys(storeSelection.selectionProducts, false)
 }
