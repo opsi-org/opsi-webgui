@@ -129,6 +129,7 @@
   "table.fields.terminalId": "Terminal ID",
   "table.fields.terminalChannel": "Channel",
   "button.reconnect": "Re-/connect",
+  "button.syncSelect": "Sync Selection",
   "button.clear": "Clear",
   "button.clearFilter": "Clear filter",
   "button.continue": "Continue",

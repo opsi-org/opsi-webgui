@@ -1,7 +1,7 @@
 <template>
   <IconILoading v-if="isLoading" />
-  <el-button @click="syncSelection"> Sync Selection</el-button>
-  <el-button @click="clearSelection"> {{$t('table.selection.clear')}}</el-button>
+  <el-button @click="syncSelection" size="small"> {{ $t('button.syncSelect') }}</el-button>
+  <el-button @click="clearSelection" size="small"> {{$t('table.selection.clear')}}</el-button>
   <el-tree
     ref="prodGroupRef"
     :data="fetchedData"
@@ -60,11 +60,11 @@ async function fetch() {
   // ]
 }
 
-// Note: sync function
+// NOTE: Sync feature
 // Synchronize from tree to table: Always
 // Synchronize from table to tree: Only on button click.
 // Since tree elements are a subset of table elements,
-// And if there is no table element in the tree structure, the selection will be deselected during synchronization
+// And if there is no table element in the tree structure, the selection will be deselected during synchronization.
 
 const syncSelection = () => {
   prodGroupRef.value!.setCheckedKeys(storeSelection.selectionProducts, false)
@@ -84,7 +84,6 @@ const getSelection = () => {
 
 const handleProductSelection = () => {
   let checkNodes = getSelection()
-  // console.log('handle Product Selection', checkNodes)
   storeSelection.setSelectionProducts(checkNodes)
 }
 </script>

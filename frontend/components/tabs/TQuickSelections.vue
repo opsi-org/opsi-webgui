@@ -7,15 +7,9 @@
       </template>
       <template v-if="category.name == 'infoselections'"> <FormFAllSelections /> </template>
       <template v-else-if="category.name == 'depots'"> <TreeTDepots /> </template>
-      <template v-else-if="category.name == 'client-group'"> <TreeTHostGroups /> </template>
-      <template v-else-if="category.name == 'product-group'"> <TreeTProductGroups /> </template>
-      <template v-else> -- </template>
+      <template v-else> <TreeTGroupSelection :grouptype="category.name" /> </template>
     </el-tab-pane>
   </el-tabs>
-        <!--
-        <TreeTSHostGroups :open="true" :multi="multiSelection" type="propertyvalues" classes="treeselect_quickpanel" />
-        <TreeTSProductGroups :open="true" type="propertyvalues" :multi="multiSelection" classes="treeselect_quickpanel" />
-        -->
 </template>
 
 <script setup lang="ts">
