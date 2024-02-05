@@ -120,12 +120,13 @@ const getSelection = () => {
 }
 
 const handleSelection = () => {
-  let checkNodes = getSelection()
+  let checkedNodes = getSelection()
+  // console.log('checkedNodes', checkedNodes)
   if(props.grouptype == 'client-group') {
-    storeSelection.setSelectionClients(checkNodes)
+    storeSelection.setSelectionClients(checkedNodes)
   }
   else {
-    storeSelection.setSelectionProducts(checkNodes)
+    storeSelection.setSelectionProducts(checkedNodes)
   }
 }
 </script>

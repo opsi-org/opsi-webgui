@@ -83,7 +83,6 @@ const groupActions = reactive([
   }
 ])
 
-
 //   async removeClientFromGroup () {
 //     const group = this.selectedvalue.parent
 //     await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: [group] })

@@ -300,17 +300,6 @@ async function deleteGroup (selectedGroup: string) {
 //       })
 //   }
 
-//   async deleteGroup () {
-//     await this.$axios.$get(`/api/opsidata/products/groups/${this.selectedvalue.text}`)
-//       .then(async () => {
-//         this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
-//         await this.reloadGroup()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//   }
-
 //   async removeSelectedProduct () {
 //     const group = this.selectedvalue.parent
 //     await this.$axios.$delete(`/api/opsidata/products/groups/${group}/${this.selectedvalue.text}`)
