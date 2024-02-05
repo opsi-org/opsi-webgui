@@ -18,9 +18,6 @@ import { ElTree } from 'element-plus'
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_PGroups } from '~/types/APItypes'
 const isLoading = ref(false)
-interface Tree {
-  name: string
-}
 const prodGroupRef = ref<InstanceType<typeof ElTree>>()
 const defaultProps = {
   label: 'text',
@@ -76,35 +73,9 @@ const clearSelection = () => {
   storeSelection.clearSelectionProducts()
 }
 
-const getCheckedNodes = () => {
-  console.log(JSON.stringify(prodGroupRef.value!.getCheckedNodes(false, false)))
-}
-const getCheckedKeys = () => {
-  console.log(JSON.stringify(prodGroupRef.value!.getCheckedKeys(false)))
-}
-
 const handleProductSelection = () => {
   const getNodes = prodGroupRef.value!.getCheckedNodes(false, false)
   const checkNodes = getNodes.filter(node=> node.type == 'ObjectToGroup').map(item => (item.text))
-  console.log(JSON.stringify(checkNodes))
+  storeSelection.setSelectionProducts(checkNodes)
 }
-// const handleCheckChange = (
-//   data: Tree,
-//   checked: boolean
-// ) => {
-//   console.log('Data',JSON.stringify(data)),
-//   console.log('checked',JSON.stringify(checked))
-// }
-
-//   changeSelection (selection: Event) {
-//     if (selection === undefined) { return }
-//     if (!Array.isArray(selection)) { return }
-
-//     if (selection.length > 0) {
-//       this.setSelectionProducts([...selection])
-//     } else {
-//       this.setSelectionProducts([])
-//     }
-//   }
-// }
 </script>
