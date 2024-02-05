@@ -1,5 +1,6 @@
 <template>
   <IconILoading v-if="isLoading" />
+  <el-button @click="syncSelection"> Sync Selection</el-button>
   <el-button @click="clearSelection"> {{$t('table.selection.clear')}}</el-button>
   <el-tree
     ref="prodGroupRef"
@@ -26,13 +27,8 @@ const defaultProps = {
 const fetchedData = ref<any>({})
 const storeSelection = storeSelections()
 
-watch(()=>storeSelection.selectionProducts, async ()=>{
-  syncSelection()
-})
-
 onMounted(async ()=> {
   await fetch()
-  syncSelection()
 })
 
 async function fetch() {
@@ -73,9 +69,16 @@ const clearSelection = () => {
   storeSelection.clearSelectionProducts()
 }
 
+const getSelection = () => {
+  let getNodes = prodGroupRef.value!.getCheckedNodes(false, false)
+  let ObjectToGroup = getNodes.filter(node=> node.type == 'ObjectToGroup').map(item => (item.text))
+  let uniqueSelection = [... new Set(ObjectToGroup)]
+  return uniqueSelection
+}
+
 const handleProductSelection = () => {
-  const getNodes = prodGroupRef.value!.getCheckedNodes(false, false)
-  const checkNodes = getNodes.filter(node=> node.type == 'ObjectToGroup').map(item => (item.text))
+  let checkNodes = getSelection()
+  // console.log('handle Product Selection', checkNodes)
   storeSelection.setSelectionProducts(checkNodes)
 }
 </script>
