@@ -1,9 +1,7 @@
 <template>
-  <el-button @click="clearSelection"> {{$t('table.selection.clear')}}</el-button>
+  <el-button @click="clearSelection" size="small"> {{$t('table.selection.clear')}} </el-button>
   <el-checkbox-group v-model="selectedDepots" @change="handleDepotSelection">
-    <div v-for="item in depotIDList" :key="item">
-      <el-checkbox size="small" :label="item" />
-    </div>
+    <div v-for="item in depotIDList" :key="item"> <el-checkbox size="small" :label="item" /> </div>
   </el-checkbox-group>
 </template>
 
@@ -35,7 +33,6 @@ const clearSelection = () => {
 }
 
 const handleDepotSelection = () => {
-  console.log('selectedDepots', selectedDepots.value)
   storeSelection.setSelectionDepots(selectedDepots.value)
 }
 </script>

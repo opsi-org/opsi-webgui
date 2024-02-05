@@ -1,7 +1,7 @@
 <template>
   <IconILoading v-if="isLoading" />
-  <el-button @click="syncSelection" size="small"> {{ $t('button.syncSelect') }}</el-button>
-  <el-button @click="clearSelection" size="small"> {{$t('table.selection.clear')}}</el-button>
+  <el-button @click="syncSelection" size="small"> {{ $t('button.syncSelect') }} </el-button>
+  <el-button @click="clearSelection" size="small"> {{$t('table.selection.clear')}} </el-button>
   <el-tree
     :ref="props.grouptype == 'client-group'? 'clientGroupRef': 'prodGroupRef'"
     :data="fetchedData"
