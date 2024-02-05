@@ -83,19 +83,6 @@ const groupActions = reactive([
   }
 ])
 
-//   async removeClientFromGroup () {
-//     const group = this.selectedvalue.parent
-//     await this.$axios.$delete(`/api/opsidata/clients/${this.selectedvalue.text}/groups`, { data: [group] })
-//       .then(async (response) => {
-//         this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
-//         await this.fetchGroups()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.afterAsync()
-//   }
-
 //   async copyClientToGroups () {
 //     const groupsList = this.selectedGroups.map(function (item) {
 //       return item.text

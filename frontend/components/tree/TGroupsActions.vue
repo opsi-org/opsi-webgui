@@ -51,12 +51,12 @@
                 </template>
                 <template v-else-if="action == 'client-delete' || action == 'product-delete'">
                   <el-text> {{ $t('group.confirm.'+action) }} </el-text>
-                  <el-button class="float-right" type="danger" data-testid="removeAssignments" @click="deleteChildren(node.label)">
+                  <el-button class="float-right" type="danger" data-testid="removeAssignments" @click="deleteAllChildren(node.label)">
                     {{ $t("button.delete") }}
                   </el-button>
                 </template>
                 <template v-else-if="action == 'delete'">
-                  <el-text>{{ $t('group.confirm.'+action) }}</el-text> {{ data }}
+                  <el-text>{{ $t('group.confirm.'+action) }}</el-text>
                   <el-button type="danger" class="float-right" @click="applyDelete(node.label, data.type, data.parent)">
                     {{ $t('button.delete') }}
                   </el-button>
@@ -250,7 +250,7 @@ async function addChildren (selectedGroup: string) {
   }
 }
 
-async function deleteChildren (selectedGroup: string) {
+async function deleteAllChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiDELETE(url)
   if (error) {
@@ -279,7 +279,7 @@ async function deleteGroup (selectedGroup: string) {
 async function deleteObjectToGroup (selectedChild: string, parent: string) {
   const url = props.data.category == 'client-group' ? `/api/opsidata/clients/${selectedChild}/groups` : `/api/opsidata/products/groups/${parent}/${selectedChild}`
   const body = props.data.category == 'client-group' ? { data: [parent] } : {}
-  const {data, error } = await useApiDELETE(url, body)
+  const {data, error} = await useApiDELETE(url, body)
   if (error) {
     useNotification().error(error)
     return
@@ -321,17 +321,4 @@ async function applyDelete (selectedNode: string, nodeType: string, parent: stri
 //         this.showToastError(error)
 //       })
 //   }
-
-//   async removeSelectedProduct () {
-//     const group = this.selectedvalue.parent
-//     await this.$axios.$delete(`/api/opsidata/products/groups/${group}/${this.selectedvalue.text}`)
-//       .then(async () => {
-//         this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
-//         await this.reloadGroup()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//   }
-// }
 </script>
