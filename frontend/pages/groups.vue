@@ -1,5 +1,5 @@
 <template>
-  <TabsTGroups />
+  <TabsTGroupActions />
 </template>
 
 <script setup lang="ts">

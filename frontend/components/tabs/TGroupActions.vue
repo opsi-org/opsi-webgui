@@ -1,7 +1,7 @@
 <template>
   <el-tabs lazy>
     <el-tab-pane v-for="category in groupActions" :key="category.category" :label="$t('title.' + category.category)">
-      <TreeTGroupsActions :data="category" />
+      <TreeTGroupActions :data="category" />
     </el-tab-pane>
   </el-tabs>
 
