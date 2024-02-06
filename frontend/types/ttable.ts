@@ -44,8 +44,8 @@ export interface ITableRow {
 export interface ITableData {
   pageNumber: number,
   perPage: number,
-  sortBy: string,
-  sortDesc: boolean,
+  sortBy: any,
+  sortDesc: any,
   filterQuery: string,
   filterColumns?: Array<string>,
   type?: string,

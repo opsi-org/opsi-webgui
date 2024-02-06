@@ -2,21 +2,13 @@
   <el-text>{{ $t('title.clients') }}</el-text><br />
   <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
-  <InputIFilter
-      :data="tableData"
-      :filterable-columns="Object.values(columns)"
-      @update="(v: any)=> {
-        tableData.filterColumns = v.cols
-        tableData.filterQuery = v.vals
-      }"
-    />
+
     <ButtonBTNRowLink
       :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
       :icon="icons.product"
       @click="openLink('/clients/products/LocalbootProduct')"
     > Products </ButtonBTNRowLink>
     <TableTDefault
-      v-if="fetchedData.length > 0 && totalItems > 0"
       row-id="clientId"
       :id="id"
       v-model="columns"
@@ -34,8 +26,11 @@
         tableData.sortDesc = isDesc
         storeTable.setSortColumn(id, key, isDesc)
       }"
+      @update-input-filter="(v: any)=> {
+        tableData.filterColumns = v.cols
+        tableData.filterQuery = v.vals
+      }"
     >
-
     </TableTDefault>
   <!--
 
@@ -257,6 +252,7 @@ import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import type { T_ClientsList } from '~/types/APItypes';
 import type { ITableHeaderRow } from '~/types/ttableV3'
+import type { ITableData } from '~/types/ttable';
 
 const router = useRouter()
 const navigation = useNavigate()
@@ -270,7 +266,7 @@ const datacache = storeCache()
 
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
-const tableData = ref({
+const tableData = ref<ITableData>({
   pageNumber: 1,
   perPage: 5,
   // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
@@ -463,15 +459,16 @@ const props = defineProps({
 
 onMounted(async ()=> {
   await useConfigserver(true) // init selectiondepots with configserver
+  fetchedData.value = []
+  fetchedData.value = await _fetch()
 })
 
-watch(()=> tableData.value, async ()=>{
+watch(()=> tableData.value.filterQuery, async ()=>{
   console.log('tableData changed', tableData)
+  // fetchedData.value.length = 0
   fetchedData.value = []
   fetchedData.value = await _fetch()
 }, { deep: true})
-
-
 
 // const handleChange = (id:string) => {
 //   console.log('handleSelectionChange', id)

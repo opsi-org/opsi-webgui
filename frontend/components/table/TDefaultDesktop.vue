@@ -1,5 +1,16 @@
 <template>
-  <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+  <div>
+    <div class="flex">
+    <!-- <slot name="filter" /> -->
+    <InputIFilter
+        :data="tableData"
+        :filterable-columns="Object.values(wrappedColumns)"
+        @update="($event: any) => $emit('update-input-filter', $event)"
+      />
+    <!-- <slot name="column-visibility">
+      <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+    </slot> -->
+  </div>
   <div class="h-96 w-full" :class="{small: props.small !== false}">
     <el-auto-resizer>
       <template #default="{ height, width }">
@@ -34,6 +45,7 @@
       rowId {{ props.rowId }}
       Cur: {{currentSelectedRow}}
   </div>
+  </div>
 </template>
 
 <script lang="tsx" setup>
@@ -44,6 +56,7 @@ import type { SortBy, SortState } from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
 import type { FunctionalComponent } from 'vue'
 import type { TRowData } from '~/types/Datatypes'
+import type { ITableData } from '~/types/ttable';
 
 const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
@@ -51,11 +64,11 @@ const tableStore = storeTablesettings()
 const icons = useIcons()
 
 const columns = defineModel<ITableHeaderRow>()
-const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed'])
+const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   data: { type: Array<any>, required: true },
-  tableData: { type: Object, required: true },
+  tableData: { type: Object as PropType<ITableData>, required: true },
   totalItems: { type: Number, required: true },
   id: { type: String, default: 'servers' },
   rowId: { type: String, default: 'depotId' },
@@ -156,6 +169,10 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
     })
 }, { deep: true})
 
+watch (()=>props.data, ()=>{
+  wrappedColumns.value = updateColumns()
+  wrappedData.value = updateData()
+}, {deep: true})
 
 function onSort({ key, order }: SortBy) {
   sortState.value[key] = order

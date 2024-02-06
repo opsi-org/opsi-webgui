@@ -4,16 +4,15 @@
     <!-- <el-button :type="'danger'">Danger</el-button> -->
     <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
     <!-- :filterable-columns="[columns['depotId']]" -->
-    <InputIFilter
+    <!-- <InputIFilter
       :data="tableData"
       :filterable-columns="Object.values(columns)"
       @update="(v: any)=> {
         tableData.filterColumns = v.cols
         tableData.filterQuery = v.vals
       }"
-    />
+    /> -->
     <TableTDefault
-      v-if="fetchedData.length > 0 && totalItems > 0"
       row-id="depotId"
       :id="id"
       v-model="columns"
@@ -31,8 +30,11 @@
         tableData.sortDesc = isDesc
         storeTablesettings().setSortColumn(id, key, isDesc)
       }"
+      @update-input-filter="(v: any)=> {
+        tableData.filterColumns = v.cols
+        tableData.filterQuery = v.vals
+      }"
     >
-
     </TableTDefault>
 <!-- <div data-testid="VDepots">
   <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
@@ -122,6 +124,7 @@ import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { T_ServerList } from '~/types/APItypes'
 import BTNRowLink from '~/components/button/BTNRowLink.vue';
+import type { ITableData } from '~/types/ttable';
 
 const storeSelection = storeSelections()
 const navigation = useNavigate()
@@ -131,7 +134,7 @@ const $t = useI18n().t
 
 const fetchedData = ref<T_ServerList>([])
 const totalItems = ref<number>(0)
-const tableData = ref({
+const tableData = ref<ITableData>({
   pageNumber: 1,
   perPage: 5,
   // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
@@ -254,8 +257,16 @@ const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
 })
 
+onMounted(async () => {
+  console.log('VServer mounted')
+  fetchedData.value = await _fetch()
+  console.log('VServer mounted fetchedData', fetchedData.value)
+  // if (storeSelection.selectionDepots.length === 1) {
+  //   navigation.toConfiguration(id, storeSelection.selectionDepots[0])
+  // }
+})
 
-watch(()=> tableData.value, async ()=>{
+watch(()=> tableData.value.filterQuery, async ()=>{
   console.log('tableData changed', tableData)
   fetchedData.value = []
   fetchedData.value = await _fetch()

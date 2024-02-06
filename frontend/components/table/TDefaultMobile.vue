@@ -1,7 +1,13 @@
 <template>
+  <div>
+    <InputIFilter
+        :data="tableData"
+        :filterable-columns="Object.values(wrappedColumns)"
+        @update="($event: any) => $emit('update-input-filter', $event)"
+      />
     <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
     <el-collapse v-model="activeRowIndex" accordion>
-      <el-collapse-item v-for="row, index in wrappedData" :name="index">
+      <el-collapse-item v-for="row, index in wrappedData" :key="JSON.stringify(row)" :name="JSON.stringify(row)">
         <template #title>
           <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="row" :colData="wrappedColumns['selected']" />
 
@@ -12,15 +18,16 @@
 
       </el-collapse-item>
     </el-collapse>
+  </div>
 </template>
 
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 
+import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
-import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus';
-import { useUtilsData } from '~/composables/mixins/useUtilsData'
+import type { ITableData } from '../../types/ttable';
 const tableStore = storeTablesettings()
 
 const activeRowIndex = ref<number>()
@@ -97,13 +104,14 @@ const Details = ({rowData, colData}: any) => {
 const columns = defineModel<ITableHeaderRow>()
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
+  tableData: { type: Object as PropType<ITableData>, required:true },
   rowId: { type: String, default: 'depotId'},
   data: { type: Array<any>, required:true},
   id: { type: String, default: 'servers' },
   sortBy: { type: String, default: 'selection'},
   fetch: {type: Function, default: (p:any) => {} }
 })
-const $emit = defineEmits(['selection-changed', 'selection-clear'])
+const $emit = defineEmits(['selection-changed', 'selection-clear', 'update-input-filter'])
 const wrappedColumns = ref<ITableHeaderRow>({})
 const wrappedData = ref<Array<any>>([])
 onMounted(()=>{
@@ -112,6 +120,10 @@ onMounted(()=>{
 })
 
 const visibleColumns = reactive<Array<string>>([])
+watch (()=>props.data, ()=>{
+  wrappedColumns.value = updateColumns()
+  wrappedData.value = updateData()
+}, {deep: true})
 
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
 // watch(()=>tableStore.columns[props.id], ()=>{

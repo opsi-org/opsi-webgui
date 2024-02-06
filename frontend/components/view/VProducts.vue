@@ -20,7 +20,6 @@
       >Product</el-checkbox-button>
   </div>
   <TableTDefault
-      v-if="isDataVisible"
       row-id="productId"
       :id="id"
       v-model="columns"
@@ -32,12 +31,15 @@
       @selection-changed="(id: string) => storeSelection.toggleSelectionProducts(id)"
       @selection-clear="storeSelection.clearSelectionProducts"
       @tabledata-changed="(v: any) => {updateTableData('localboot', v)}"
-
       @sort-changed="(key: string, isDesc: boolean) => {
         console.log('sort table', currentType, 'by', key, 'desc', isDesc)
         tableData[currentType].sortBy = key
         tableData[currentType].sortDesc = isDesc
         tableSettings.setSortColumn(id, key, isDesc)
+      }"
+      @update-input-filter="(v: any)=> {
+        tableData[currentType].filterColumns = v.cols
+        tableData[currentType].filterQuery = v.vals
       }"
     >
 
@@ -112,7 +114,7 @@ import { useClient } from '~/composables/mixins/useGet';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 
 import type { ITableHeaderRow } from '~/types/ttableV3'
-import type { ITableRow } from '~/types/ttable';
+import type { ITableData, ITableRow } from '~/types/ttable';
 import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
 import type { T_Client2Depot } from '~/types/APItypes';
 
@@ -135,7 +137,12 @@ const fetchedDataClients2Depots = ref<T_Client2Depot>({})
 const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
 
 const totalItems = ref<number>(0)
-const tableData = ref({
+interface tproductITableData {
+  LocalbootProduct: ITableData,
+  NetbootProduct: ITableData,
+  Product: ITableData
+}
+const tableData = ref<tproductITableData>({
   'LocalbootProduct': {
     type: 'LocalbootProduct',
     pageNumber: 1,
@@ -389,9 +396,6 @@ const currentType = computed(()=>{
   if (productsTypeChecked.value.Product) return 'Product'
   return 'LocalbootProduct'
 })
-const isDataVisible = computed(()=> {
-  return totalItems.value > 0 && fetchedData.value[currentType.value]?.length > 0
-})
 
 
 onMounted(async ()=> {
@@ -416,7 +420,7 @@ watch(()=>selectionClients.value, async () => {
 }, { deep: true })
 
 
-watch(()=> tableData.value[currentType.value], async ()=>{
+watch(()=> tableData.value[currentType.value].filterQuery, async ()=>{
   console.log('tableData changed', tableData)
   fetchedData.value[currentType.value] = []
   fetchedData.value[currentType.value] = await _fetch(currentType.value)
