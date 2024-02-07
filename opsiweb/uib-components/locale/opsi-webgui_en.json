@@ -315,6 +315,8 @@
   "group.addToGroup": "Add {type}",
   "group.selectItems": "Select {type}",
   "group.addSubgroup": "Create Subgroup",
+  "group.addProdgroup": "Create Product Group",
+  "group.prodgroupname": "Product Group Name",
   "group.subgroupname": "Subgroup Name",
   "group.editGroup": "Edit Group",
   "group.parent": "Parent Group",
