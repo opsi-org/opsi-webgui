@@ -1,9 +1,5 @@
 <template>
-  <FormFCloneClient :id="id" :as-child="false">
-    <template slot="IDSelection">
-      <TreeTSClientsNotStored :id.sync="id" />
-    </template>
-  </FormFCloneClient>
+  <FormFCloneClient :id="id" :as-child="false" />
 </template>
 
 <script setup lang="ts">
