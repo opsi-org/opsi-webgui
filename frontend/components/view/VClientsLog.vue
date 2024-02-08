@@ -1,25 +1,17 @@
 <template>
   <div v-loading="loading">
-    <el-form :model="logrequest" :inline="true" label-position="top">
-      <el-form-item label="ID" v-if="props.isChild === false">
-        <SelectSHosts :id="currentId" :type="type" @change="setId" />
-      </el-form-item>
+    <el-form :inline="true" label-position="top" class="mt-2">
+      <el-form-item :label="$t('form.clientId')" v-if="props.isChild === false"> <SelectSHosts :type="type" @change="setId" :id="logrequest.selectedClient" /> </el-form-item>
       <el-form-item :label="$t('form.logtype')">
-        <el-input v-model="logrequest.selectedLogType" />
+        <el-select v-model="logtype" style="min-width: 200px"> <el-option v-for="type in logTypes" :key="type" :label="type" :value="type" /> </el-select>
       </el-form-item>
-      <el-form-item :label="$t('button.change.loglevel')">
-          <el-slider v-model="loglevel" show-stops :max="8" />
-        </el-form-item>
+      <el-form-item :label="$t('form.loglevel')"> <el-slider v-model="loglevel" show-stops :max="8" style="min-width: 200px" /> </el-form-item>
     </el-form>
     {{ fetchedData }}
   </div>
-  <!-- <div data-testid="VClientsLog" :class="{loadingCursor: isLoading}">
-    <BarBPageHeader v-if="asChild" :title="$t('title.log') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" closeroute="/clients/" />
-    <BarBPageHeader>
-      <template #left>
-        <slot v-if="!asChild" name="IDSelection" />
-        <SelectSLogtype class="ml-1" :logtype.sync="logtype" />
-        <SpinbuttonSBLoglevel class="ml-1" :loglevel.sync="loglevel" />
+
+
+  <!--
         <b-form-input
           v-if="logResult.length > 1"
           id="filter"
@@ -30,11 +22,6 @@
           :placeholder="$t('form.filter.logs')"
           @keyup="filterLog"
         />
-      </template>
-    </BarBPageHeader>
-    <OverlayOLoading :is-loading="isLoading" />
-    <p v-if="errorText" />
-    <div class="log-row-text" />
     <DivDScrollResult v-if="logResult">
       <div v-if="filteredLog.includes('')">
         {{ t_fixed('keep-english.empty') }}
@@ -61,38 +48,45 @@
         >
           {{ t_fixed('keep-english.(content)').replace('content', index) }} {{ log }}
         </span>
-      </div>
-    </DivDScrollResult>
-  </div> -->
+         -->
 </template>
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_ClientLog } from '~/types/APItypes';
-let fetchedData = ref<Array<string>>([])
-const currentId = ref<string|undefined>('')
+
 const props = defineProps({
-  id: { type: String, default: undefined },
+  id: { type: String, default: '' },
   type: { type: String, default: 'servers' },
   isChild: { type: Boolean, default: false }
 })
-console.log('props.id0', props.id)
-currentId.value = props.id
+
+let fetchedData = ref<Array<string>>([])
 const loading = ref(false)
-const logrequest = { selectedClient: '', selectedLogType: 'instlog' }
+let logrequest = { selectedClient: '', selectedLogType: '' }
+const logTypes = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
 const loglevel = 5
+const logtype = ref('instlog')
+
 onMounted(async ()=> {
-  if (props.id)
-    await fetch(props.id)
+  if (props.id!= ''){ await fetch() }
 })
-watch(()=>props.id, ()=>{
-  if (props.id)
-    fetch(props.id)
+
+watch(()=>logrequest.selectedClient, ()=>{
+  fetch()
 })
-async function fetch(id:string) {
+
+watch(()=>logtype.value, ()=>{
+  fetch()
+})
+
+async function fetch() {
   loading.value = true
-  logrequest.selectedClient = id
-  const {data, error} = await useApiGETBody<T_ClientLog>('/api/opsidata/log', logrequest )
+  logrequest.selectedClient = props.id
+  if(logtype.value!=''){
+    logrequest.selectedLogType = logtype.value
+  } else { logrequest.selectedLogType = 'instlog' }
+  const {data, error} = await useApiGETBody<T_ClientLog>('/opsidata/log', logrequest )
   if (error) {
     console.log(error)
     useNotification().error(error)
@@ -102,33 +96,11 @@ async function fetch(id:string) {
   fetchedData.value = data.value.result
   loading.value = false
 }
-const isIdEmpty = computed(()=> {
-  return currentId.value === ''
-})
+
 function setId(id:string) {
-  currentId.value = id
+  logrequest.selectedClient = id
 }
-// import { MBus } from '~/composables/mixins/messagebus'
-// import { Strings } from '~/composables/mixins/strings'
-// import { AlertToast } from '~/composables/mixins/component'
-// import { LogRequest } from '~/composables/mixins/tobjects'
-// const storeSel = storeSelections()
 
-
-//   $axios: any
-//   $t: any
-//   $root: any
-//   t_fixed: any
-//   showToastMbus: any // mixin
-//   showToastError: any
-
-//   @Prop({ }) id!: string
-//   @Prop({ default: () => { return [] } }) 'testdata'!: Array<string>
-//   @Prop({ default: false }) 'asChild'!: string
-
-//   logtype: string = 'instlog'
-//   loglevel: number = 5
-//   isLoading: boolean = false
 //   logResult: Array<string> = []
 //   filteredLog: Array<string> = []
 //   filterQuery: string = ''
@@ -186,12 +158,6 @@ function setId(id:string) {
 //     if (this.testdata) { this.logResult = this.testdata }
 //   }
 
-//   async _fetch () {
-//     await this.getLog(this.id, this.logtype)
-//     const ref = (this.$refs.event_log_updated as any)
-//     ref?.hide()
-//   }
-
 //   filterLog () {
 //     if (this.filterQuery) {
 //       this.filteredLog = this.logResult.filter(log =>
@@ -225,17 +191,3 @@ function setId(id:string) {
 //   }
 </script>
 
-<style>
-.log-row-text {
-  font-family: var(--font-family-log);
-  text-align: left;
-  display:block;
-  font-size: var(--font-family-log-size);
-}
-.filter_logs{
-  max-width: var(--component-width) !important;
-}
-.b-form-spinbutton output > div, .b-form-spinbutton output > bdi  {
-  color: var(--color) !important;
-}
-</style>

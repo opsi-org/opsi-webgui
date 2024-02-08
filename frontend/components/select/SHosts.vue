@@ -1,5 +1,5 @@
 <template>
-  <el-select v-model="value" clearable :placeholder="$t('select.placeholder.'+type)">
+  <el-select v-model="value" clearable :placeholder="$t('select.placeholder.'+type)" style="min-width: 200px">
     <el-option
       v-for="item in fetchedData"
       :key="item"
@@ -7,7 +7,7 @@
       :value="item"
     />
   </el-select>
-  {{ useRoute().name }}
+  <!-- {{ useRoute().name }} -->
 </template>
 
 <script setup lang="tsx">
