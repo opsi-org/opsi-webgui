@@ -19,8 +19,6 @@
     - [ ] messagebus
   - [-] use elementplus everywhere
 - [ ] WIP *pages*
-  - [x] Login page
-  - [ ] index page
   - [-] Topbar
     - [ ] Breadcrumb
     - [x] Logout
@@ -30,16 +28,19 @@
     - [ ] Quick Actions: Product Quick Actions, On Demand
     - [-] Settings: Multiselection, Quick Save
     - [x] GUI Settings: Language, Theme
+  - [x] Login page
+  - [ ] index page
+  - [x] Depots
+  - [-] WIP Depots-config
   - [-] Clients
   - [ ] Clients Clone
   - [-] WIP Clients Config
   - [-] WIP Clients Creation
   - [-] WIP Clients Log
   - [x] Clients Products
-  - [x] Depots
-  - [-] WIP Depots-config
   - [-] products
   - [-] WIP products-config
+  - [-] WIP Groups: Client and Product Group Actions
   - [ ] admin
   - [x] admin-modules
   - [x] admin-terminal
