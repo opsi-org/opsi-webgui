@@ -1,8 +1,8 @@
 <template>
   <div v-loading="loading">
     <el-form :model="logrequest" :inline="true" label-position="top">
-      <el-form-item label="ID">
-        <SelectSHosts v-if="props.isChild === false" :id="currentId" :type="type" @change="setId" />
+      <el-form-item label="ID" v-if="props.isChild === false">
+        <SelectSHosts :id="currentId" :type="type" @change="setId" />
       </el-form-item>
       <el-form-item :label="$t('form.logtype')">
         <el-input v-model="logrequest.selectedLogType" />

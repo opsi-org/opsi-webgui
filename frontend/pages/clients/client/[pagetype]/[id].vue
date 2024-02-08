@@ -8,6 +8,7 @@
       <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
       <div> LOGS (split view)</div>
       {{ id }}
+      <ViewVClientsLog :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
     </div>
     <div v-else-if="pagetype === 'clone'">
       <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
