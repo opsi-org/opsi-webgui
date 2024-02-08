@@ -1,26 +1,38 @@
 <template>
-  <div v-loading="loading">
-    <el-form :inline="true" label-position="top" class="mt-2">
-      <el-form-item :label="$t('form.clientId')" v-if="props.isChild === false"> <SelectSHosts :type="type" @change="setId" :id="logrequest.selectedClient" /> </el-form-item>
-      <el-form-item :label="$t('form.logtype')">
-        <el-select v-model="logtype" style="min-width: 200px"> <el-option v-for="type in logTypes" :key="type" :label="type" :value="type" /> </el-select>
+  <el-form :inline="true" label-position="top" class="mt-2">
+    <el-form-item :label="$t('form.clientId')" v-if="props.isChild === false">
+      <SelectSHosts :type="type" @change="setId" :id="logrequest.selectedClient" />
+    </el-form-item>
+    <el-form-item :label="$t('form.logtype')">
+      <el-select v-model="logtype" style="min-width: 200px">
+        <el-option v-for="logtype in logTypes" :key="logtype" :label="logtype" :value="logtype" />
+      </el-select>
+    </el-form-item>
+    <template v-if="fetchedData.length > 1">
+      <el-form-item :label="$t('form.filter.logs')">
+        <el-input v-model="filterQuery" @input="filterLogByQuery" clearable style="width: 200px" />
       </el-form-item>
-      <el-form-item :label="$t('form.loglevel')"> <el-slider v-model="loglevel" show-stops :max="8" style="min-width: 200px" /> </el-form-item>
-    </el-form>
-    <el-input v-if="fetchedData.length > 1" v-model="filterQuery" :placeholder="$t('form.filter.logs')"  @input="filterLog" clearable />
+      <el-form-item :label="$t('form.loglevel')">
+        <el-slider v-model="loglevel" show-stops :max="8" style="min-width: 200px" />
+      </el-form-item>
+    </template>
+  </el-form>
+  <el-scrollbar height="79vh" v-if="fetchedData.length > 1" v-loading="isLoading">
     <span
       v-for="(log, index) in filteredData"
       :key="index"
       :style="{ color: getColorBasedOnLoglevel(log) }"
+      :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
     >
-     {{ index }} - {{ log }} <br>
+    {{ index }} - {{ log }} <br>
     </span>
-  </div>
+  </el-scrollbar>
 </template>
-
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_ClientLog } from '~/types/APItypes';
+
+// TODO: messagebus event:log_updated
 
 const props = defineProps({
   id: { type: String, default: '' },
@@ -30,7 +42,7 @@ const props = defineProps({
 
 let fetchedData = ref<Array<string>>([])
 let filteredData = ref<Array<string>>([])
-const loading = ref(false)
+const isLoading = ref(false)
 let logrequest = { selectedClient: '', selectedLogType: '' }
 const logTypes = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
 const loglevel = ref(5)
@@ -50,7 +62,7 @@ watch(()=>logtype.value, ()=>{
 })
 
 async function fetch() {
-  loading.value = true
+  isLoading.value = true
   logrequest.selectedClient = props.id
   if(logtype.value!=''){
     logrequest.selectedLogType = logtype.value
@@ -59,28 +71,23 @@ async function fetch() {
   if (error) {
     console.log(error)
     useNotification().error(error)
-    loading.value = false
+    isLoading.value = false
     return
   }
   fetchedData.value = data.value.result
-  fetchedData.value = ['null',
-        '[0] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:131)',
-        '[1] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[2] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:133)',
-        '[3] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:134)',
-        '[4] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:135)',
-        '[5] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:136)',
-        '[6] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:137)',
-        '[7] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:138)',
-        '[8] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:139)',
-        '[0] [2023-03-31 12:29:49.371] opsiconfd service start (service.py:140)'
-      ]
   filteredData.value = fetchedData.value
-  loading.value = false
+  isLoading.value = false
 }
 
-function filterLog() {
+function filterLogByQuery() {
   filteredData.value = fetchedData.value.filter(log => log.includes(filterQuery.value))
+}
+
+function isLoglevelSmaller (logrow:string, loglevel:number) {
+  // match charakters in beginning with [<=loglevel] or not [0-9]
+  const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
+  const result = RegExp(rxSelf2).exec(logrow)
+  return !!result
 }
 
 function setId(id:string) {
@@ -123,33 +130,4 @@ function getColorBasedOnLoglevel(log:string) {
   }
   return color;
 }
-
-
-//   wsBusMsg: any // mixin // store
-//   wsSubscribeChannel: any
-//   channels = ['event:log_updated']
-
-//   @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-//     const msg = this.wsBusMsg
-//     // console.log('MessageBus: receive-watch: ', msg)
-//     if (msg && this.channels.includes(msg.channel) && msg.data.type === this.logtype && msg.data.object_id === this.id) {
-//       this.showToastMbus({
-//         title: this.$t('message.info.event'),
-//         content: this.$t('message.info.event.log_updated'),
-//         reloadAction: this._fetch // shows (default) reload button
-//       })
-//     } else {
-//       console.log('MessageBus other: ', msg.channel, msg.data)
-//     }
-//   }
-
-//   isLoglevelSmaller (logrow:string, loglevel:number) {
-//     // match charakters in beginning with [<=loglevel] or not [0-9]
-//     const rxSelf2 = new RegExp('^((\\[[0-' + loglevel + ']\\])|[^\\[0-9\\]])', 'g')
-//     const result = RegExp(rxSelf2).exec(logrow)
-//     return !!result
-//   }
-
-
 </script>
-

@@ -16,7 +16,7 @@
 - [x] store
 - [ ] components
   - [ ] WIP *general vue3*
-    - [ ] messagebus
+    - [ ] messagebus - event:log_updated
   - [-] use elementplus everywhere
 - [ ] WIP *pages*
   - [-] Topbar
@@ -36,7 +36,7 @@
   - [ ] Clients Clone
   - [-] WIP Clients Config
   - [-] WIP Clients Creation
-  - [-] WIP Clients Log
+  - [x] Clients Log
   - [x] Clients Products
   - [-] products
   - [-] WIP products-config
