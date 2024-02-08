@@ -7,48 +7,15 @@
       </el-form-item>
       <el-form-item :label="$t('form.loglevel')"> <el-slider v-model="loglevel" show-stops :max="8" style="min-width: 200px" /> </el-form-item>
     </el-form>
-    {{ fetchedData }}
+    <el-input v-if="fetchedData.length > 1" v-model="filterQuery" :placeholder="$t('form.filter.logs')"  @input="filterLog" />
+    <span
+      v-for="(log, index) in fetchedData"
+      :key="index"
+      :style="{ color: getColorBasedOnLoglevel(log) }"
+    >
+     {{ index }} - {{ log }} <br>
+    </span>
   </div>
-
-
-  <!--
-        <b-form-input
-          v-if="logResult.length > 1"
-          id="filter"
-          v-model.trim="filterQuery"
-          size="sm"
-          class="ml-1 filter_logs"
-          :aria-label="$t('form.filter.logs')"
-          :placeholder="$t('form.filter.logs')"
-          @keyup="filterLog"
-        />
-    <DivDScrollResult v-if="logResult">
-      <div v-if="filteredLog.includes('')">
-        {{ t_fixed('keep-english.empty') }}
-      </div>
-      <div
-        v-for="(log, index) in filteredLog"
-        :key="index"
-        :class="{ 'd-none': !isLoglevelSmaller(log, loglevel) }"
-      >
-        <span
-          v-if="log != ''"
-          class="log-row-text"
-          :class="{
-            'log-row-1': log.startsWith('[1]'),
-            'log-row-2': log.startsWith('[2]'),
-            'log-row-3': log.startsWith('[3]'),
-            'log-row-4': log.startsWith('[4]'),
-            'log-row-5': log.startsWith('[5]'),
-            'log-row-6': log.startsWith('[6]'),
-            'log-row-7': log.startsWith('[7]'),
-            'log-row-8': log.startsWith('[8]'),
-            'log-row-9': log.startsWith('[9]'),
-          }"
-        >
-          {{ t_fixed('keep-english.(content)').replace('content', index) }} {{ log }}
-        </span>
-         -->
 </template>
 
 <script setup lang="ts">
@@ -67,6 +34,7 @@ let logrequest = { selectedClient: '', selectedLogType: '' }
 const logTypes = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
 const loglevel = 5
 const logtype = ref('instlog')
+const filterQuery = ref('')
 
 onMounted(async ()=> {
   if (props.id!= ''){ await fetch() }
@@ -94,25 +62,66 @@ async function fetch() {
     return
   }
   fetchedData.value = data.value.result
+  fetchedData.value = ['null',
+        '[0] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[1] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[2] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[3] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[4] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[5] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[6] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[7] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[8] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[0] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)'
+      ]
   loading.value = false
+}
+
+function filterLog() {
+  return fetchedData.value.filter(log => log.includes(filterQuery.value))
 }
 
 function setId(id:string) {
   logrequest.selectedClient = id
 }
 
-//   logResult: Array<string> = []
-//   filteredLog: Array<string> = []
-//   filterQuery: string = ''
-//   logrequest: LogRequest = { selectedClient: '', selectedLogType: '' }
-//   errorText: string = ''
+function getColorBasedOnLoglevel(log:string) {
+  const logLevel = parseInt(log.charAt(1), 10);
+  let color;
+  switch (logLevel) {
+      case 1:
+          color = 'var(--opsi-log-essential)';
+          break;
+      case 2:
+          color = 'var(--opsi-log-critical)';
+          break;
+      case 3:
+          color = 'var(--opsi-log-error)';
+          break;
+      case 4:
+          color = 'var(--opsi-log-warning)';
+          break;
+      case 5:
+          color = 'var(--opsi-log-notice)';
+          break;
+      case 6:
+          color = 'var(--opsi-log-info)';
+          break;
+      case 7:
+          color = 'var(--opsi-log-debug)';
+          break;
+      case 8:
+          color = 'var(--opsi-log-trace)';
+          break;
+      case 9:
+          color = 'var(--opsi-log-secret)';
+          break;
+      default:
+          color = 'var(--color)';
+  }
+  return color;
+}
 
-//   @selections.Getter public XselectionLogClient!: string
-//   @selections.Getter public XselectionLogType!: string
-//   @selections.Getter public XselectionLogLevel!: number
-//   @selections.Mutation public XsetSelectionLogClient!: (s: string) => void
-//   @selections.Mutation public XsetSelectionLogType!: (s: string) => void
-//   @selections.Mutation public XsetSelectionLogLevel!: (s: number) => void
 
 //   wsBusMsg: any // mixin // store
 //   wsSubscribeChannel: any
@@ -133,30 +142,7 @@ function setId(id:string) {
 //   }
 
 //   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
-//   @Watch('loglevel', { deep: true }) loglevelChanged () {
-//     this.XsetSelectionLogLevel(this.loglevel)
-//   }
 
-//   @Watch('logtype', { deep: true }) async logtypeChanged () {
-//     this.XsetSelectionLogType(this.logtype)
-//     if (this.XselectionLogType && this.id) { await this._fetch() }
-//   }
-
-//   @Watch('id', { deep: true }) async idChanged () {
-//     // this.setSelectionLogClient(this.id)
-//     if (this.XselectionLogType && this.id) { await this._fetch() }
-//   }
-
-//   async beforeMount () {
-//     // eslint-disable-next-line brace-style
-//     if (this.id) { this.XsetSelectionLogClient(this.id) }
-//     else if (this.XselectionLogClient) { this.id = this.XselectionLogClient }
-
-//     this.loglevel = this.XselectionLogLevel
-//     this.logtype = this.XselectionLogType
-//     if (this.XselectionLogType && this.id) { await this._fetch() }
-//     if (this.testdata) { this.logResult = this.testdata }
-//   }
 
 //   filterLog () {
 //     if (this.filterQuery) {
@@ -175,19 +161,6 @@ function setId(id:string) {
 //     return !!result
 //   }
 
-//   async getLog (id: string, logtype: string) {
-//     this.isLoading = true
-//     this.logrequest.selectedClient = id
-//     this.logrequest.selectedLogType = logtype
-//     const params = this.logrequest
-//     await this.$axios.$get('/api/opsidata/log', { params })
-//       .then((response) => {
-//         this.logResult = response.result
-//         this.filteredLog = this.logResult
-//       }).catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.isLoading = false
-//   }
+
 </script>
 
