@@ -7,9 +7,9 @@
       </el-form-item>
       <el-form-item :label="$t('form.loglevel')"> <el-slider v-model="loglevel" show-stops :max="8" style="min-width: 200px" /> </el-form-item>
     </el-form>
-    <el-input v-if="fetchedData.length > 1" v-model="filterQuery" :placeholder="$t('form.filter.logs')"  @input="filterLog" />
+    <el-input v-if="fetchedData.length > 1" v-model="filterQuery" :placeholder="$t('form.filter.logs')"  @input="filterLog" clearable />
     <span
-      v-for="(log, index) in fetchedData"
+      v-for="(log, index) in filteredData"
       :key="index"
       :style="{ color: getColorBasedOnLoglevel(log) }"
     >
@@ -29,10 +29,11 @@ const props = defineProps({
 })
 
 let fetchedData = ref<Array<string>>([])
+let filteredData = ref<Array<string>>([])
 const loading = ref(false)
 let logrequest = { selectedClient: '', selectedLogType: '' }
 const logTypes = ['bootimage', 'clientconnect', 'instlog', 'opsiconfd', 'userlogin']
-const loglevel = 5
+const loglevel = ref(5)
 const logtype = ref('instlog')
 const filterQuery = ref('')
 
@@ -63,22 +64,23 @@ async function fetch() {
   }
   fetchedData.value = data.value.result
   fetchedData.value = ['null',
-        '[0] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
+        '[0] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:131)',
         '[1] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[2] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[3] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[4] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[5] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[6] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[7] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[8] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)',
-        '[0] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:132)'
+        '[2] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:133)',
+        '[3] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:134)',
+        '[4] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:135)',
+        '[5] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:136)',
+        '[6] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:137)',
+        '[7] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:138)',
+        '[8] [2023-03-31 12:29:49.371] opsiclientd service start (service.py:139)',
+        '[0] [2023-03-31 12:29:49.371] opsiconfd service start (service.py:140)'
       ]
+  filteredData.value = fetchedData.value
   loading.value = false
 }
 
 function filterLog() {
-  return fetchedData.value.filter(log => log.includes(filterQuery.value))
+  filteredData.value = fetchedData.value.filter(log => log.includes(filterQuery.value))
 }
 
 function setId(id:string) {
@@ -138,19 +140,6 @@ function getColorBasedOnLoglevel(log:string) {
 //       })
 //     } else {
 //       console.log('MessageBus other: ', msg.channel, msg.data)
-//     }
-//   }
-
-//   @Watch('filterQuery', { deep: true }) filterQueryChanged () { this.filterLog() }
-
-
-//   filterLog () {
-//     if (this.filterQuery) {
-//       this.filteredLog = this.logResult.filter(log =>
-//         log.toLowerCase().includes(this.filterQuery.toLowerCase())
-//       )
-//     } else {
-//       this.filteredLog = this.logResult
 //     }
 //   }
 
