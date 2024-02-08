@@ -27,7 +27,9 @@
     {{ index }} - {{ log }} <br>
     </span>
   </el-scrollbar>
+  <el-alert v-else :title="$t('message.info.nologs')" type="info" show-icon :closable="false" />
 </template>
+
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_ClientLog } from '~/types/APItypes';

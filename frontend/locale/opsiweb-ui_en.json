@@ -7,6 +7,7 @@
   "message.info.event.poc_updated": "Product with id '{productId}' changed on server.",
   "message.info.event.config_updated": "Config '{configId}' changed on server.",
   "message.info.event.client_updated": "Client created '{clientId}' on server.",
+  "message.info.nologs": "No log data.",
   "message.success.title": "Success",
   "message.success.createClient": "{client} has been added succesfully.",
   "message.success.updateHostAttr": "Attributes of {client} has been saved succesfully.",
