@@ -1,4 +1,24 @@
 <template>
+  <el-popover v-if="props.data.category == 'product-group'" :placement="mq.isMobile.value ? 'auto': 'right'" :width="360" trigger="click">
+      <template #reference>
+        <el-button size="small">{{ $t('label.create.prodgroup') }} </el-button>
+      </template>
+      <el-form label-position="top" class="mt-3">
+        <el-form-item v-for="val, label in createGroup" :key="label" :label="$t('table.fields.'+label)"
+          :class="{ 'd-none': label.toString()=='parentGroupId' }">
+            <el-input v-model="createGroup[label]" />
+        </el-form-item>
+        <el-button
+          class="float-right"
+          type="success"
+          data-testid="createSubGroup"
+          @click="createSubGroup('')"
+          :disabled="createGroup.groupId == ''"
+        >
+          {{ $t("button.create") }}
+        </el-button>
+      </el-form>
+  </el-popover>
   <el-container v-loading="isLoading">
     <el-tree
       :class="mq.isMobile.value ? 'w-100': 'w-50'"
@@ -137,6 +157,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient } from '~/composables/mixins/useGet';
 import {useIcons} from '../../composables/mixins/useIcons'
+import { _getI18nInComposable } from '../../composables/mixins/helper-i18n';
 import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/APItypes';
 
 const props = defineProps({
@@ -144,6 +165,7 @@ const props = defineProps({
 })
 const icons = useIcons()
 const mq = useMQ()
+const translate = _getI18nInComposable()
 const storeSelection = storeSelections()
 const isLoading = ref(false)
 const defaultProps = {
@@ -224,69 +246,64 @@ async function fetchProductList() {
 
 async function createSubGroup (parent: string) {
   createGroup.parentGroupId = parent
-  const url = props.data.category == 'client-group' ? 'opsidata/hosts/groups' : 'opsidata/products/groups'
+  const url = props.data.category == 'client-group' ? '/opsidata/hosts/groups' : '/opsidata/products/groups'
   const {data, error } = await useApiPOST(url, createGroup)
   if (error) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(data.toString())
-    useNotification().success(data.toString())
-    // this.showToastSuccess(this.$t('message.success.save.create.group', { group: this.subgroup.groupId }))
-    // await this.reloadGroup()
+    useNotification().success(translate('message.success.save.create.group', { group: createGroup.groupId }));
+    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
   }
 }
 
 async function addChildren (selectedGroup: string) {
-  const url = props.data.category == 'client-group' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
+  const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiPOST(url, selectedChildren)
   if (error) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(data.toString())
-    // this.showToastSuccess(this.$t('message.success.save.add.clientfromgroups', { group: this.selectedvalue.text }))
-    // await this.reloadGroup()
+    useNotification().success(translate('message.success.save.add.clientfromgroups', { group: selectedGroup }))
+    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
   }
 }
 
 async function deleteAllChildren (selectedGroup: string) {
-  const url = props.data.category == 'client-group' ? `opsidata/hosts/groups/${selectedGroup}/clients` : `opsidata/products/groups/${selectedGroup}/products`
+  const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiDELETE(url)
   if (error) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(data.toString())
-    // this.showToastSuccess(this.$t('message.success.save.delete.clientsfromgroup', { group: this.selectedvalue.text }))
-    // await this.reloadGroup()
+    useNotification().success(translate('message.success.save.delete.clientsfromgroup', { group: selectedGroup }))
+    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
   }
 }
 
 async function deleteGroup (selectedGroup: string) {
-  const url = props.data.category == 'client-group' ? `opsidata/hosts/groups/${selectedGroup}` : `opsidata/products/groups/${selectedGroup}`
-  const {data, error } = await useApiGET(url)
+  const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
+  // TODO: Backend: change product group deletion to DELETE
+  const {data, error } = props.data.category == 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
   if (error) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(data.toString())
-    // this.showToastSuccess(this.$t('message.success.save.delete.group', { group: this.selectedvalue.text }))
-    // await this.reloadGroup()
+    useNotification().success(translate('message.success.save.delete.group', { group: selectedGroup }))
+    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
   }
 }
 
 async function deleteObjectToGroup (selectedChild: string, parent: string) {
-  const url = props.data.category == 'client-group' ? `/api/opsidata/clients/${selectedChild}/groups` : `/api/opsidata/products/groups/${parent}/${selectedChild}`
+  const url = props.data.category == 'client-group' ? `/opsidata/clients/${selectedChild}/groups` : `/opsidata/products/groups/${parent}/${selectedChild}`
   const body = props.data.category == 'client-group' ? { data: [parent] } : {}
   const {data, error} = await useApiDELETE(url, body)
   if (error) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(data.toString())
-    // this.showToastSuccess(this.$t('message.success.save.delete.clientfromgroups', { client: this.selectedvalue.text }))
-    // await this.reloadGroup()
+    useNotification().success(translate('message.success.save.delete.clientfromgroups', { client: selectedChild }))
+    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
   }
 }
 

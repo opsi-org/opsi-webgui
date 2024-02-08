@@ -240,6 +240,7 @@
   "label.configfiles": "Config files",
   "label.redis_data": "Redis Data",
   "label.retryaftersec": "Retry-After (in seconds)",
+  "label.create.prodgroup": "Create Product Group",
   "label.createbackup": "Create Backup",
   "label.restorebackup": "Restore Backup",
   "label.uploadbackup": "Upload Backup File",
