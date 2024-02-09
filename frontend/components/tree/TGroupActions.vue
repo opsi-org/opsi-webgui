@@ -22,6 +22,7 @@
   </el-popover>
   <el-container v-loading="isLoading">
     <el-tree
+      :ref="props.data.category"
       :class="mq.isMobile.value ? 'w-100': 'w-50'"
       :data="fetchedData"
       :props="treeProps"
@@ -100,14 +101,15 @@
                 <template v-else-if="action == 'copy'">
                   <el-form-item :label="$t('group.copyClient.selectgroup')">
                     <el-scrollbar height="200px" class="border w-100">
-                      <el-tree :props="treeProps" :data="fetchedData">
-                        <template #default="{ node, data }">
-                          <span v-if="data.type == 'ObjectToGroup'"> {{ node.disabled = true }} </span>
-                        </template>
-                      </el-tree>
+                      <!-- TODO: Backend: return list of groups -->
+                      <el-checkbox-group v-model="selectedGroups">
+                        <div v-for="item in fetchedData.filter((item: any) => item.type !== 'ObjectToGroup').map((item: any) => item.text)" :key="item">
+                          <el-checkbox size="small" :label="item" />
+                        </div>
+                      </el-checkbox-group>
                     </el-scrollbar>
                   </el-form-item>
-                  <el-button type="success" class="float-right">
+                  <el-button type="success" class="float-right" @click="copyClient(node.label)">
                     {{ $t('button.copy') }}
                   </el-button>
                 </template>
@@ -124,6 +126,7 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient } from '~/composables/mixins/useGet';
+import { useGroup } from '~/composables/mixins/usePost';
 import {useIcons} from '../../composables/mixins/useIcons'
 import { _getI18nInComposable } from '../../composables/mixins/helper-i18n';
 import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/APItypes';
@@ -144,6 +147,7 @@ const treeProps = {
 const fetchedData = ref<any>({})
 const idList = ref<T_ProductIds|T_ClientIds>([])
 const selectedChildren = ref([])
+const selectedGroups = ref([])
 const createGroup = reactive({
   parentGroupId: '',
   groupId: '',
@@ -299,6 +303,11 @@ async function editGroup (selectedGroup: string) {
     useNotification().success(translate('message.success.save.update.group', { group: selectedGroup }));
     await refetchGroup()
   }
+}
+
+async function copyClient (selectedClient: string) {
+  await useGroup().addClientToListOfGroups(selectedClient, selectedGroups.value)
+  await refetchGroup()
 }
 
 </script>

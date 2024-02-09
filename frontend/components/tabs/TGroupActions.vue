@@ -25,15 +25,4 @@ const groupActions = reactive([
     }
   }
 ])
-
-//   async copyClientToGroups () {
-//     const groupsList = this.selectedGroups.map(function (item) {
-//       return item.text
-//     })
-//     const client = this.selectedvalue.text
-//     await this.addClientToListOfGroups(client, groupsList)
-//     await this.fetchGroups()
-//     this.afterAsync()
-//   }
-
 </script>
