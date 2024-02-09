@@ -26,6 +26,11 @@
               :value="item"
             />
           </el-select>
+          <el-input v-else-if="label === 'hostId'" v-model="createClient[category][label]">
+            <template #append>
+              <el-input v-model="domain" class="border-0" />
+            </template>
+          </el-input>
           <el-checkbox v-else-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
           <el-input v-else v-model="createClient[category][label]" :data-testid="label"/>
         </el-form-item>
@@ -44,6 +49,7 @@ import { useDepot } from '~/composables/mixins/useGet';
 import type { T_DepotIds } from '~/types/APItypes';
 const $t = useI18n().t
 const depotIDList = ref<T_DepotIds>([])
+const domain = ref('')
   // TODO: Backend: change createClient data structure
 const createClient = reactive({
   basics: {
@@ -74,6 +80,7 @@ const createClient = reactive({
 })
 onMounted(async ()=> {
   await fetch()
+  domain.value = storeCache().opsiconfigserver.substring(storeCache().opsiconfigserver.indexOf('.'))
 })
 async function fetch() {
   depotIDList.value = await useDepot().getDepotIdList()
