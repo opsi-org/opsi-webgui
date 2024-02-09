@@ -5,7 +5,7 @@
       <el-button size="small">{{ $t('label.create.prodgroup') }} </el-button>
     </template>
     <el-form label-position="top" class="mt-3">
-      <el-form-item v-for="val, label in createGroup" :key="label" :label="$t('table.fields.'+label)"
+      <el-form-item v-for="label in Object.keys(createGroup)" :key="label" :label="$t('table.fields.'+label)"
         :class="{ 'd-none': label.toString()=='parentGroupId' }">
           <el-input v-model="createGroup[label]" />
       </el-form-item>
@@ -44,7 +44,7 @@
               <el-text tag="b">{{ $t('group.'+action) }}</el-text> - <el-text tag="i">{{ node.label }}</el-text>
               <el-form label-position="top" class="mt-3">
                 <template v-if="action == 'group-add'">
-                  <el-form-item v-for="val, label in createGroup" :key="label" :label="$t('table.fields.'+label)"
+                  <el-form-item v-for="label in Object.keys(createGroup)" :key="label" :label="$t('table.fields.'+label)"
                     :class="{ 'd-none': label.toString()=='parentGroupId' }">
                       <el-input v-model="createGroup[label]" />
                   </el-form-item>
@@ -83,15 +83,15 @@
                   </el-button>
                 </template>
                 <template v-else-if="action == 'edit'">
-                  <el-form-item v-for="value,label in updateGroup" :key="label" :label="$t('table.fields.'+label)">
+                  <el-form-item v-for="label in Object.keys(editGroup)" :key="label" :label="$t('table.fields.'+label)">
                     <el-scrollbar v-if="label.toString() == 'parent'" height="200px">
                       {{ fetchedData }}
                       <!-- <el-tree :props="defaultProps" :data="fetchedData">
                       </el-tree> -->
                     </el-scrollbar>
-                    <el-input v-else v-model="updateGroup[label]" />
+                    <el-input v-else v-model="editGroup[label]" />
                   </el-form-item>
-                  <el-button class="float-right" type="success" data-testid="updateGroup">
+                  <el-button class="float-right" type="success" data-testid="editGroup">
                     {{ $t("button.update") }}
                   </el-button>
                 </template>
@@ -182,7 +182,7 @@ const createGroup = reactive({
   description: '',
   notes: ''
 })
-const updateGroup = reactive({
+const editGroup = reactive({
   parent: '',
   description: '',
   notes: ''
@@ -296,8 +296,9 @@ async function deleteGroup (selectedGroup: string) {
 }
 
 async function deleteObjectToGroup (selectedChild: string, parent: string) {
+  // TODO: Backend: Change the client deletion URL in the same way as product deletion from group
   const url = props.data.category == 'client-group' ? `/opsidata/clients/${selectedChild}/groups` : `/opsidata/products/groups/${parent}/${selectedChild}`
-  const body = props.data.category == 'client-group' ? { data: [parent] } : {}
+  const body = props.data.category == 'client-group' ? { data: parent } : {}
   const {data, error} = await useApiDELETE(url, body)
   if (error) {
     useNotification().error(error)
