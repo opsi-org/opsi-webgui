@@ -1,5 +1,5 @@
 <template>
-  <el-button @click="props.data.category == 'client-group' ? fetchClientGroups() : fetchProdGroups()" size="small"> {{ $t('label.refresh') }}</el-button>
+  <el-button @click="refetchGroup" size="small"> {{ $t('label.refresh') }}</el-button>
   <el-popover v-if="props.data.category == 'product-group'" :placement="mq.isMobile.value ? 'auto': 'right'" :width="360" trigger="click">
     <template #reference>
       <el-button size="small">{{ $t('label.create.prodgroup') }} </el-button>
@@ -24,7 +24,7 @@
     <el-tree
       :class="mq.isMobile.value ? 'w-100': 'w-50'"
       :data="fetchedData"
-      :props="defaultProps"
+      :props="treeProps"
       node-key="id"
       :expand-on-click-node="false"
       highlight-current
@@ -83,75 +83,42 @@
                   </el-button>
                 </template>
                 <template v-else-if="action == 'edit'">
-                  <el-form-item v-for="label in Object.keys(editGroup)" :key="label" :label="$t('table.fields.'+label)">
-                    <el-scrollbar v-if="label.toString() == 'parent'" height="200px">
-                      {{ fetchedData }}
-                      <!-- <el-tree :props="defaultProps" :data="fetchedData">
-                      </el-tree> -->
+                  <el-form-item v-for="label in Object.keys(editgroup)" :key="label" :label="$t('table.fields.'+label)">
+                    <el-scrollbar v-if="label.toString() == 'parent'" height="200px" class="border w-100">
+                      <el-tree :props="treeProps" :data="fetchedData">
+                        <template #default="{ node, data }">
+                          <span v-if="data.type == 'ObjectToGroup'"> {{ node.disabled = true }} </span>
+                        </template>
+                      </el-tree>
                     </el-scrollbar>
-                    <el-input v-else v-model="editGroup[label]" />
+                    <el-input v-else v-model="editgroup[label]" />
                   </el-form-item>
-                  <el-button class="float-right" type="success" data-testid="editGroup">
+                  <el-button class="float-right" type="success" data-testid="editGroup" @click="editGroup(node.label)">
                     {{ $t("button.update") }}
                   </el-button>
                 </template>
                 <template v-else-if="action == 'copy'">
-                  <el-scrollbar height="200px">
-                    <!-- <el-tree :placeholder="$t('group.copyClient.selectgroup')" :props="defaultProps" :data="fetchedData" /> -->
-                    {{ fetchedData }}
-                  </el-scrollbar>
+                  <el-form-item :label="$t('group.copyClient.selectgroup')">
+                    <el-scrollbar height="200px" class="border w-100">
+                      <el-tree :props="treeProps" :data="fetchedData">
+                        <template #default="{ node, data }">
+                          <span v-if="data.type == 'ObjectToGroup'"> {{ node.disabled = true }} </span>
+                        </template>
+                      </el-tree>
+                    </el-scrollbar>
+                  </el-form-item>
                   <el-button type="success" class="float-right">
                     {{ $t('button.copy') }}
                   </el-button>
                 </template>
                 <template v-else> No action available </template>
               </el-form>
-              <!-- {{ props.data.category }} {{ data.type }} {{ node.label }} {{ action }} -->
             </el-popover>
           </span>
         </div>
       </template>
     </el-tree>
   </el-container>
-
-        <!--
-        <template v-else-if="action == 'editGroup'">
-          <b-form>
-            <treeselect
-              v-model="updategroupparent"
-              class="treeselect_notstored treeselect"
-              :placeholder="$t('group.parent')"
-              value-format="object"
-              :options="group"
-              :normalizer="normalizerUpdateGroup"
-            />
-            <b-form-input
-              v-model="updategroup.description"
-              size="sm"
-              :placeholder="$t('table.fields.description')"
-              :state="updategroup.description.length >= 0 && updategroup.description.length < 100"
-            />
-            <b-form-input
-              v-model="updategroup.notes"
-              size="sm"
-              :placeholder="$t('table.fields.notes')"
-              :state="updategroup.notes.length >= 0 && updategroup.notes.length < 500"
-            />
-            <b-button class="float-right" size="sm" variant="success" data-testid="updateGroup" @click="updateGroup">
-              {{ $t("button.update") }}
-            </b-button>
-          </b-form>
-        </template>
-
-        <template v-else-if="action == 'removeProduct'">
-          <small>{{ $t('group.removeClient.confirm') }}</small>
-          <b-button variant="danger" class="float-right" size="sm" @click="removeSelectedProduct">
-            {{ $t('group.remove') }}
-          </b-button>
-        </template>
-      </b-col>
-    </b-row>
-  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -164,12 +131,13 @@ import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/API
 const props = defineProps({
   data: { type: Object, required: true }
 })
+
 const icons = useIcons()
 const mq = useMQ()
 const translate = _getI18nInComposable()
 const storeSelection = storeSelections()
 const isLoading = ref(false)
-const defaultProps = {
+const treeProps = {
   label: 'text',
   children: 'children'
 }
@@ -182,7 +150,7 @@ const createGroup = reactive({
   description: '',
   notes: ''
 })
-const editGroup = reactive({
+const editgroup = reactive({
   parent: '',
   description: '',
   notes: ''
@@ -205,6 +173,10 @@ onMounted(async ()=> {
   }
   isLoading.value = false
 })
+
+async function refetchGroup () {
+  props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+}
 
 async function fetchClientGroups() {
   const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
@@ -254,7 +226,7 @@ async function createSubGroup (parent: string) {
     return
   } else {
     useNotification().success(translate('message.success.save.create.group', { group: createGroup.groupId }));
-    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+    await refetchGroup()
   }
 }
 
@@ -266,7 +238,7 @@ async function addChildren (selectedGroup: string) {
     return
   } else {
     useNotification().success(translate('message.success.save.add.clientfromgroups', { group: selectedGroup }))
-    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+    await refetchGroup()
   }
 }
 
@@ -278,7 +250,7 @@ async function deleteAllChildren (selectedGroup: string) {
     return
   } else {
     useNotification().success(translate('message.success.save.delete.clientsfromgroup', { group: selectedGroup }))
-    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+    await refetchGroup()
   }
 }
 
@@ -291,7 +263,7 @@ async function deleteGroup (selectedGroup: string) {
     return
   } else {
     useNotification().success(translate('message.success.save.delete.group', { group: selectedGroup }))
-    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+    await refetchGroup()
   }
 }
 
@@ -305,7 +277,7 @@ async function deleteObjectToGroup (selectedChild: string, parent: string) {
     return
   } else {
     useNotification().success(translate('message.success.save.delete.clientfromgroups', { client: selectedChild }))
-    props.data.category == 'client-group' ? await fetchClientGroups() : await fetchProdGroups()
+    await refetchGroup()
   }
 }
 
@@ -317,27 +289,16 @@ async function applyDelete (selectedNode: string, nodeType: string, parent: stri
   }
 }
 
-//   async reloadGroup () {
-//     this.action = ''
-//     await this.fetchGroups()
-//     this.selectedvalue = null
-//   }
+async function editGroup (selectedGroup: string) {
+  const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
+  const {data, error } = await useApiPOST(url, editgroup)
+  if (error) {
+    useNotification().error(error)
+    return
+  } else {
+    useNotification().success(translate('message.success.save.update.group', { group: selectedGroup }));
+    await refetchGroup()
+  }
+}
 
-//   showChild (selectedAction: string) {
-//     this.action = selectedAction
-//     const groupaction = 'group.' + this.action
-//     this.title = this.$t(groupaction)
-//   }
-
-//   async updateGroup () {
-//     this.updategroup.parent = this.updategroupparent ? this.updategroupparent.text : ''
-//     await this.$axios.$put(`/api/opsidata/products/groups/${this.selectedvalue.text}`, this.updategroup)
-//       .then(async () => {
-//         this.showToastSuccess(this.$t('message.success.save.update.group', { group: this.selectedvalue.text }))
-//         await this.reloadGroup()
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//   }
 </script>
