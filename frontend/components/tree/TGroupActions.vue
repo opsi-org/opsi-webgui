@@ -259,7 +259,7 @@ async function createSubGroup (parent: string) {
 
 async function addChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
-  const {data, error } = await useApiPOST(url, selectedChildren)
+  const {data, error } = await useApiPOST(url, selectedChildren.value)
   if (error) {
     useNotification().error(error)
     return
