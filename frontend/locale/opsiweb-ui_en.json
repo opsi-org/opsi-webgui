@@ -249,6 +249,7 @@
   "label.backup": "Backup",
   "label.local": "Local",
   "label.new": "New",
+  "label.refresh": "Refresh",
   "placeholder.enterNewID": "Enter new ID",
   "label.ppId-onlyOnDepots" : "Property only exists on server \"{depots}\" (reason: different product versions)",
   "label.on": "ON",

@@ -1,23 +1,24 @@
 <template>
+  <el-button @click="props.data.category == 'client-group' ? fetchClientGroups() : fetchProdGroups()" size="small"> {{ $t('label.refresh') }}</el-button>
   <el-popover v-if="props.data.category == 'product-group'" :placement="mq.isMobile.value ? 'auto': 'right'" :width="360" trigger="click">
-      <template #reference>
-        <el-button size="small">{{ $t('label.create.prodgroup') }} </el-button>
-      </template>
-      <el-form label-position="top" class="mt-3">
-        <el-form-item v-for="val, label in createGroup" :key="label" :label="$t('table.fields.'+label)"
-          :class="{ 'd-none': label.toString()=='parentGroupId' }">
-            <el-input v-model="createGroup[label]" />
-        </el-form-item>
-        <el-button
-          class="float-right"
-          type="success"
-          data-testid="createSubGroup"
-          @click="createSubGroup('')"
-          :disabled="createGroup.groupId == ''"
-        >
-          {{ $t("button.create") }}
-        </el-button>
-      </el-form>
+    <template #reference>
+      <el-button size="small">{{ $t('label.create.prodgroup') }} </el-button>
+    </template>
+    <el-form label-position="top" class="mt-3">
+      <el-form-item v-for="val, label in createGroup" :key="label" :label="$t('table.fields.'+label)"
+        :class="{ 'd-none': label.toString()=='parentGroupId' }">
+          <el-input v-model="createGroup[label]" />
+      </el-form-item>
+      <el-button
+        class="float-right"
+        type="success"
+        data-testid="createSubGroup"
+        @click="createSubGroup('')"
+        :disabled="createGroup.groupId == ''"
+      >
+        {{ $t("button.create") }}
+      </el-button>
+    </el-form>
   </el-popover>
   <el-container v-loading="isLoading">
     <el-tree
@@ -236,7 +237,7 @@ async function fetchProdGroups() {
 }
 
 async function fetchProductList() {
-  const {data, error } = await useApiGETBody<Array<T_Product>>(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=${storeSelection.selectionDepots}`)
+  const {data, error } = await useApiGETBody<Array<T_Product>>(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`)
   if (error) {
     useNotification().error(error)
     return
