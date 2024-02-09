@@ -298,7 +298,7 @@ async function deleteGroup (selectedGroup: string) {
 async function deleteObjectToGroup (selectedChild: string, parent: string) {
   // TODO: Backend: Change the client deletion URL in the same way as product deletion from group
   const url = props.data.category == 'client-group' ? `/opsidata/clients/${selectedChild}/groups` : `/opsidata/products/groups/${parent}/${selectedChild}`
-  const body = props.data.category == 'client-group' ? { data: parent } : {}
+  const body = props.data.category == 'client-group' ? [parent] : {}
   const {data, error} = await useApiDELETE(url, body)
   if (error) {
     useNotification().error(error)
