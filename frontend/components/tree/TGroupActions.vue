@@ -85,13 +85,12 @@
                 </template>
                 <template v-else-if="action == 'edit'">
                   <el-form-item v-for="label in Object.keys(editgroup)" :key="label" :label="$t('table.fields.'+label)">
-                    <el-scrollbar v-if="label.toString() == 'parent'" height="200px" class="border w-100">
-                      <el-tree :props="treeProps" :data="fetchedData">
-                        <template #default="{ node, data }">
-                          <span v-if="data.type == 'ObjectToGroup'"> {{ node.disabled = true }} </span>
-                        </template>
-                      </el-tree>
-                    </el-scrollbar>
+                    <!-- TODO: Backend: return list of groups -->
+                    <el-select v-if="label.toString() == 'parent'" v-model="editgroup[label]">
+                      <el-option
+                        v-for="item in fetchedData.filter((item: any) => item.type !== 'ObjectToGroup').map((item: any) => item.text)"
+                        :key="item" :label="item" :value="item" />
+                    </el-select>
                     <el-input v-else v-model="editgroup[label]" />
                   </el-form-item>
                   <el-button class="float-right" type="success" data-testid="editGroup" @click="editGroup(node.label)">
@@ -258,6 +257,14 @@ async function deleteAllChildren (selectedGroup: string) {
   }
 }
 
+async function applyDelete (selectedNode: string, nodeType: string, parent: string) {
+  if (nodeType == 'ObjectToGroup') {
+    deleteObjectToGroup(selectedNode, parent)
+  } else {
+    deleteGroup(selectedNode)
+  }
+}
+
 async function deleteGroup (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
   // TODO: Backend: change product group deletion to DELETE
@@ -285,17 +292,9 @@ async function deleteObjectToGroup (selectedChild: string, parent: string) {
   }
 }
 
-async function applyDelete (selectedNode: string, nodeType: string, parent: string) {
-  if (nodeType == 'ObjectToGroup') {
-    deleteObjectToGroup(selectedNode, parent)
-  } else {
-    deleteGroup(selectedNode)
-  }
-}
-
 async function editGroup (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
-  const {data, error } = await useApiPOST(url, editgroup)
+  const {data, error } = await useApiPUT(url, editgroup)
   if (error) {
     useNotification().error(error)
     return
