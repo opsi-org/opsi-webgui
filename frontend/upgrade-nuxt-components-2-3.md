@@ -40,7 +40,7 @@
   - [x] Clients Products
   - [-] products
   - [-] WIP products-config
-  - [-] WIP Groups: Client and Product Group Actions
+  - [x] Groups: Client and Product Group Actions
   - [ ] admin
   - [x] admin-modules
   - [x] admin-terminal
