@@ -16,21 +16,31 @@
 - [x] store
 - [ ] components
   - [ ] WIP *general vue3*
-    - [ ] messagebus
+    - [ ] messagebus - event:log_updated
   - [-] use elementplus everywhere
 - [ ] WIP *pages*
-  - [x] login page
+  - [-] Topbar
+    - [ ] Breadcrumb
+    - [x] Logout
+  - [x] Sidemenu
+  - [-] Quick Panel
+    - [x] Quick Selections: All Selections, Depots, Client Groups, Product Groups
+    - [ ] Quick Actions: Product Quick Actions, On Demand
+    - [-] Settings: Multiselection, Quick Save
+    - [x] GUI Settings: Language, Theme
+  - [x] Login page
   - [ ] index page
-  - [-] clients
-  - [ ] clients-clone
-  - [-] WIP clients-config
-  - [-] WIP clients-creation
-  - [ ] clients-log
-  - [x] clients-products
-  - [x] depots
-  - [-] WIP depots-config
+  - [x] Depots
+  - [-] WIP Depots-config
+  - [-] Clients
+  - [ ] Clients Clone
+  - [-] WIP Clients Config
+  - [-] WIP Clients Creation
+  - [x] Clients Log
+  - [x] Clients Products
   - [-] products
   - [-] WIP products-config
+  - [x] Groups: Client and Product Group Actions
   - [ ] admin
   - [x] admin-modules
   - [x] admin-terminal

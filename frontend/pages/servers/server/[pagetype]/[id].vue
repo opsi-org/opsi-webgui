@@ -1,19 +1,8 @@
 <template>
-  <div>
-    <div v-if="pagetype === 'config'">
-      <el-button class="float-right" @click="useRouter().push(`/${type}/`)">X</el-button>
-      <ViewVConfig  :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
-    </div>
-    <div v-else-if="pagetype === 'logs'">
-      <div> LOGS </div>
-    </div>
-    <!-- <div v-else-if="pagetype === 'clone'">
-      <div> LOGS </div>
-    </div> -->
-    <div v-else>
-      idk
-    </div>
-  </div>
+  <el-text tag="b" class="text-capitalize"> {{ pagetype }}</el-text> - <el-text tag="i"> {{ id }} </el-text>
+  <el-button class="float-right" @click="useRouter().push(`/${type}/`)">X</el-button>
+  <ViewVConfig v-if="pagetype === 'config'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
+  <div v-else> Page not found! </div>
 </template>
 
 <script setup lang="ts">

@@ -1,23 +1,10 @@
 <template>
-  <div>
-    <div v-if="pagetype === 'config'">
-      <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
-      <ViewVConfig  :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
-    </div>
-    <div v-else-if="pagetype === 'logs'">
-      <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
-      <div> LOGS (split view)</div>
-      {{ id }}
-    </div>
-    <div v-else-if="pagetype === 'clone'">
-      <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
-      <div> CLONE (split view)</div>
-      {{ id }}
-    </div>
-    <div v-else>
-      idk
-    </div>
-  </div>
+  <el-text tag="b" class="text-capitalize"> {{ pagetype }}</el-text> - <el-text tag="i"> {{ id }} </el-text>
+  <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
+  <ViewVConfig v-if="pagetype === 'config'"  :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
+  <ViewVClientsLog v-else-if="pagetype === 'logs'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
+  <div v-else-if="pagetype === 'clone'"> CLONE (split view)</div>
+  <div v-else> Page not found! </div>
 </template>
 
 <script setup lang="ts">
