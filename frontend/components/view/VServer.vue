@@ -15,8 +15,8 @@
     <TableTDefault
       row-id="depotId"
       :id="id"
-      v-model="columns"
-      :data="fetchedData"
+      v-model:columns="columns"
+      v-model:data="fetchedData"
       :table-data="tableData"
       :total-items="totalItems"
       :sort-by="tableData.sortBy"
@@ -24,11 +24,11 @@
       @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
       @selection-clear="storeSelection.clearSelectionDepots"
       @tabledata-changed="(v: any) => {updateTableData(v)}"
-      @sort-changed="(key: string, isDesc: boolean) => {
-        console.log('sort table', id, 'by', key, 'desc', isDesc)
-        tableData.sortBy = key
-        tableData.sortDesc = isDesc
-        storeTablesettings().setSortColumn(id, key, isDesc)
+      @sort-changed="(v: any ) => {
+        console.log('sort table', id, 'by', v.key, 'desc', v.isDesc)
+        tableData.sortBy = v.key
+        tableData.sortDesc = v.isDesc
+        storeTablesettings().setSortColumn(id, v.key, v.isDesc)
       }"
       @update-input-filter="(v: any)=> {
         tableData.filterColumns = v.cols

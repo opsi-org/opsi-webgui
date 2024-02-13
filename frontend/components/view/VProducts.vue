@@ -22,8 +22,8 @@
   <TableTDefault
       row-id="productId"
       :id="id"
-      v-model="columns"
-      :data="fetchedData[currentType]"
+      v-model:columns="columns"
+      v-model:data="fetchedData[currentType]"
       :table-data="tableData[currentType]"
       :total-items="totalItems"
       :sort-by="tableData[currentType].sortBy"

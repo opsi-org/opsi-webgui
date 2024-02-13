@@ -11,25 +11,17 @@
     <TableTDefault
       row-id="clientId"
       :id="id"
-      v-model="columns"
-      :data="fetchedData"
+      v-model:columns="columns"
+      v-model:data="fetchedData"
       :table-data="tableData"
       :total-items="totalItems"
       :sort-by="tableData.sortBy"
       :is-mobile="isMobile"
       @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionClients(id)}"
       @selection-clear="storeSelection.clearSelectionClients"
-      @tabledata-changed="(v: any) => {updateTableData(v)}"
-      @sort-changed="(key: string, isDesc: boolean) => {
-        console.log('sort table', id, 'by', key, 'desc', isDesc)
-        tableData.sortBy = key
-        tableData.sortDesc = isDesc
-        storeTable.setSortColumn(id, key, isDesc)
-      }"
-      @update-input-filter="(v: any)=> {
-        tableData.filterColumns = v.cols
-        tableData.filterQuery = v.vals
-      }"
+      @tabledata-changed="tableHelper.updateTableData"
+      @sort-changed="tableHelper.sortChanged"
+      @update-input-filter="tableHelper.filterChanged"
     >
     </TableTDefault>
   <!--
@@ -241,11 +233,17 @@
     </GridGTwoColumnLayout>
   </div>
   -->
+  <br />
+  <br />
+  <br />
+  <pre>{{ totalItems }}</pre>
+  <!-- <pre>{{ tableData }}</pre> -->
 </template>
 
 <script setup lang="tsx">
 import BTNRowLink from '@/components/button/BTNRowLink.vue'
 import { useNotification } from '~/composables/mixins/useComponent';
+import { useTableHelper } from '~/composables/mixins/useTableHelper';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useConfigserver } from '~/composables/mixins/useGet';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
@@ -276,7 +274,6 @@ const tableData = ref<ITableData>({
   filterQuery: '',
   filterColumns: ['clientId', 'description']
 })
-
 
 const id = "clients"
 const columns = ref<ITableHeaderRow>({
@@ -451,6 +448,8 @@ const columns = ref<ITableHeaderRow>({
 })
 
 
+const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, storeTable) // define watcher for tableData
+
 
 const emit = defineEmits(['change'])
 const props = defineProps({
@@ -463,12 +462,6 @@ onMounted(async ()=> {
   fetchedData.value = await _fetch()
 })
 
-watch(()=> tableData.value.filterQuery, async ()=>{
-  console.log('tableData changed', tableData)
-  // fetchedData.value.length = 0
-  fetchedData.value = []
-  fetchedData.value = await _fetch()
-}, { deep: true})
 
 // const handleChange = (id:string) => {
 //   console.log('handleSelectionChange', id)
@@ -487,10 +480,10 @@ function changeRowLink(e:Event, cid: string, to='config') {
     navigation.toType(id, cid, 'logs')
   }
 }
-function updateTableData (v: typeof tableData.value) {
-  console.log('tabledata changed total', v)
-  tableData.value = reactive(v)
-}
+// function updateTableData (v: typeof tableData.value) {
+//   console.log('tabledata changed total', v)
+//   tableData.value = v
+// }
 async function _fetch() {
   const params:any = { ...tableData.value }
   console.log('datacache server', datacache.opsiconfigserver)

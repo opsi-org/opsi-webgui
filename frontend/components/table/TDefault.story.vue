@@ -33,7 +33,7 @@ const totalItems = data.length
 const MyTDefault = ({ isMobile }: any) => {
   return <TDefault
         id={'tableId-' + isMobile?'mobile':'desktop'}
-        modelValue={columns}
+        columns={columns}
         tableData={tableData}
         totalItems={totalItems}
         data={data}

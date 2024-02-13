@@ -18,7 +18,7 @@
           v-if="Object.values(wrappedColumns).length > 0"
           v-model:sort-state="sortState"
           :columns="Object.values(wrappedColumns)"
-          :data="wrappedData"
+          :data="dataModel"
           :width="width"
           :height="height"
           fixed
@@ -32,18 +32,19 @@
     <el-pagination
       v-model:page-size="perPage"
       v-model:current-page="pageNumber"
-      :total="total"
+      :total="props.totalItems"
       layout="sizes, prev, pager, next"
       :page-sizes="[1, 5, 10, 20, 50, 100]"
       :small="true"
       :background="true"
       :hide-on-single-page="false"
-      @current-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, pageNumber: v})}"
-      @size-change="(v: number) => { $emit('tabledata-changed', {...props.tableData, perPage: v, pageNumber: 1})}"
+      @current-change="updateCurrentPage"
+      @size-change="updatePerPage"
       />
       <ContextmenuCMTable ref="menu" :item="currentSelectedRow" :row-id="props.rowId" :type="props.id"/>
-      rowId {{ props.rowId }}
-      Cur: {{currentSelectedRow}}
+      <!-- rowId {{ props.rowId }}
+      Cur: {{currentSelectedRow}} -->
+      <pre>{{tableData}}</pre>
   </div>
   </div>
 </template>
@@ -60,14 +61,14 @@ import type { ITableData } from '~/types/ttable';
 
 const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
-
 const icons = useIcons()
 
-const columns = defineModel<ITableHeaderRow>()
+const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
+const dataModel = defineModel<Array<any>>('data', { required:true})
 const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
-  data: { type: Array<any>, required: true },
+  // data: { type: Array<any>, required: true },
   tableData: { type: Object as PropType<ITableData>, required: true },
   totalItems: { type: Number, required: true },
   id: { type: String, default: 'servers' },
@@ -81,9 +82,8 @@ const currentSelectedRow = ref<TRowData|undefined>()
 const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (props.id === 'clients' ? 'selectionClients' : 'selectionProducts'))
 
 const wrappedColumns = ref<ITableHeaderRow>({})
-const wrappedData = ref<Array<any>>([])
+// const wrappedData = ref<Array<any>>([])
 
-const total = ref(props.totalItems)
 const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
 const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
 const lastSelectedItemForSingleselect = ref<any>(undefined)
@@ -144,7 +144,7 @@ const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
 
 onMounted(()=>{
   wrappedColumns.value = updateColumns()
-  wrappedData.value = updateData()
+  // wrappedData.value = updateData()
 })
 
 
@@ -169,21 +169,29 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
     })
 }, { deep: true})
 
-watch (()=>props.data, ()=>{
+watch (()=>dataModel, ()=>{
+  console.log('data changed')
   wrappedColumns.value = updateColumns()
-  wrappedData.value = updateData()
+  // wrappedData.value = updateData()
 }, {deep: true})
 
 function onSort({ key, order }: SortBy) {
   sortState.value[key] = order
-  $emit('sort-changed', key, order === TableV2SortOrder.DESC)
+  if (sortState.value[key] === undefined) {
+    sortState.value[key] = TableV2SortOrder.DESC
+  }8910
+  console.log('onSort', key, order, sortState.value[key])
+  $emit('sort-changed',  {
+    key,
+    isDesc: sortState.value[key] === TableV2SortOrder.DESC
+  })
   // data.value = data.value.reverse()
 }
 function updateColumns() {
-  if (columns.value == undefined) return {}
+  if (columnsModel.value == undefined) return {}
 
   // const _columns: ITableHeaderRow = JSON.parse(JSON.stringify(props.columns))
-  const _columns: ITableHeaderRow = {...columns.value}
+  const _columns: ITableHeaderRow = {...columnsModel.value}
   Object.values(_columns)
     .map(c => {
       if (c.cellRenderer === undefined)
@@ -193,16 +201,16 @@ function updateColumns() {
           return <el-text />
       }
     } )
-  if (columns.value?.selected === undefined) {
+  if (columnsModel.value?.selected === undefined) {
     return _columns
   }
   _columns.selected.headerCellRenderer = () => {
-    const _data = unref(props.data)
+    const _data = unref(dataModel)
     // const allSelected = _data.every((row: any) => row.selected)
     // const containsChecked = _data.some((row: any) => row.selected)
     const clearSelection = (event:any) => {
       $emit('selection-clear')
-      props.data.map((row:any) => {
+      dataModel.map((row:any) => {
         row.selected = false
         return row
       })
@@ -222,9 +230,18 @@ function updateColumns() {
   }
   return _columns
 }
+
+function updateCurrentPage(pageNumber: number) {
+  console.log('updateCurrentPage', pageNumber)
+  $emit('tabledata-changed', {...props.tableData, pageNumber})
+}
+function updatePerPage(perPage: number) {
+  console.log('updatePerPage', perPage)
+  $emit('tabledata-changed', {...props.tableData, perPage, pageNumber: 1})
+}
 function updateData() {
-  if (props.data === undefined) return []
-  const _data = props.data
+  if (dataModel === undefined) return []
+  const _data = dataModel
   return _data
 }
 function onScroll(event: any) {

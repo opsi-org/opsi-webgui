@@ -23,8 +23,8 @@ const data = generateData(columns, 15, '', page.value)
     <Variant title="mobile" :meta="{ wrapperMobile: true }">
       <TableTDefaultMobile
         id="tableId"
-        v-model="columns"
-        :data="data"
+        v-model:columns="columns"
+        v-model:data="data"
         :table-data="tableData"
         rowId="column-0"
         :sort-by="undefined"

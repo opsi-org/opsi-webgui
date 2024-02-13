@@ -5,9 +5,9 @@
         :filterable-columns="Object.values(wrappedColumns)"
         @update="($event: any) => $emit('update-input-filter', $event)"
       />
-    <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+    <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columnsModel" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
     <el-collapse v-model="activeRowIndex" accordion>
-      <el-collapse-item v-for="row, index in wrappedData" :key="JSON.stringify(row)" :name="JSON.stringify(row)">
+      <el-collapse-item v-for="row, index in dataModel" :key="JSON.stringify(row)" :name="JSON.stringify(row)">
         <template #title>
           <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="row" :colData="wrappedColumns['selected']" />
 
@@ -101,7 +101,8 @@ const Details = ({rowData, colData}: any) => {
     </div>
 }
 
-const columns = defineModel<ITableHeaderRow>()
+const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
+const dataModel = defineModel<Array<any>>('data', { required:true})
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   tableData: { type: Object as PropType<ITableData>, required:true },
@@ -113,16 +114,16 @@ const props = defineProps({
 })
 const $emit = defineEmits(['selection-changed', 'selection-clear', 'update-input-filter'])
 const wrappedColumns = ref<ITableHeaderRow>({})
-const wrappedData = ref<Array<any>>([])
+// const wrappedData = ref<Array<any>>([])
 onMounted(()=>{
   wrappedColumns.value = updateColumns()
-  wrappedData.value = updateData()
+  // wrappedData.value = updateData()
 })
 
 const visibleColumns = reactive<Array<string>>([])
-watch (()=>props.data, ()=>{
+watch (()=>dataModel, ()=>{
   wrappedColumns.value = updateColumns()
-  wrappedData.value = updateData()
+  // wrappedData.value = updateData()
 }, {deep: true})
 
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
@@ -133,15 +134,15 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
   activeRowIndex.value = curRow
 })
 function updateColumns() {
-  if (columns.value == undefined) return {}
+  if (columnsModel.value == undefined) return {}
 
-  let _columns: ITableHeaderRow = { ...columns.value}
+  let _columns: ITableHeaderRow = { ...columnsModel.value}
   Object.values(_columns)
     .map(c => {
       if (!c.fixed) c.hidden = true
     } )
 
-  if (columns.value?.selected === undefined) {
+  if (columnsModel.value?.selected === undefined) {
     return _columns
   }
   _columns.selected.cellRenderer = ({ rowData }) => {
@@ -160,8 +161,8 @@ function updateColumns() {
   return _columns
 }
 function updateData() {
-  if (props.data === undefined) return []
-  const _data = props.data
+  if (dataModel === undefined) return []
+  const _data = dataModel
   return _data
 }
 
