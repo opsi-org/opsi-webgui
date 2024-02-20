@@ -49,7 +49,7 @@
                   class="border-0"
                   variant="outline-primary"
                   size="sm"
-                  :title="$t('group.deleteOnlyAssignments', {type: $t('table.fields.products')})"
+                  :title="$t('group.deleteOnlyAssignments')"
                   @click="showChild('deleteOnlyAssignments')"
                 >
                   <IconIIcon :icon="icon.product" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
@@ -172,19 +172,19 @@
           </b-form>
         </template> -->
         <template v-else-if="action == 'deletegroup'">
-          <small> {{ $t('group.deletegroup.confirm', {type: 'product'}) }}</small>
+          <small> {{ $t('group.deletegroup.confirm') }}</small>
           <b-button class="float-right" size="sm" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
             {{ $t("label.delete") }}
           </b-button>
         </template>
         <template v-else-if="action == 'deleteOnlyAssignments'">
-          <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'product'}) }}</small>
+          <small> {{ $t('group.deleteOnlyAssignments.confirm') }}</small>
           <b-button class="float-right" variant="danger" data-testid="removeAllProducts" size="sm" @click="removeAllProducts">
             {{ $t("group.remove") }}
           </b-button>
         </template>
         <template v-else-if="action == 'removeProduct'">
-          <small>{{ $t('group.removeClient.confirm') }}</small>
+          <small>{{ $t('group.removeProduct.confirm') }}</small>
           <b-button variant="danger" class="float-right" size="sm" @click="removeSelectedProduct">
             {{ $t('group.remove') }}
           </b-button>

@@ -49,7 +49,7 @@
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
-                        :title="$t('group.deleteOnlyAssignments', {type: $t('title.clients')})"
+                        :title="$t('group.deleteOnlyAssignments')"
                         @click="showChild('deleteOnlyAssignments')"
                       >
                         <IconIIcon :icon="icon.client" /><IconIIcon font-scale="0.8" :icon="icon.delete" />
@@ -59,7 +59,7 @@
                         class="border-0"
                         variant="outline-primary"
                         size="sm"
-                        :title="$t('group.addToGroup', {type: $t('title.clients')})"
+                        :title="$t('group.addToGroup')"
                         @click="showChild('addToGroup')"
                       >
                         <IconIIcon :icon="icon.client" /><IconIIcon :icon="icon.add" font-scale="0.8" />
@@ -106,7 +106,6 @@
           <b-col v-if="action && selectedvalue">
             <span class="text-small"><b> {{ title + t_fixed('keep-english.title.delimiter') }}</b><i>{{ selectedvalue.text }}</i></span>
             <b-button class="float-right border-0" variant="outline-primary" size="sm" @click="action = ''">
-              <!-- closing right side -->
               <IconIIcon :icon="icon.x" />
             </b-button>
             <br><br>
@@ -187,13 +186,13 @@
               </b-form>
             </template>
             <template v-else-if="action == 'deleteOnlyAssignments'">
-              <small> {{ $t('group.deleteOnlyAssignments.confirm', {type: 'client'}) }}</small>
+              <small> {{ $t('group.deleteOnlyAssignments.confirm') }}</small>
               <b-button class="float-right" variant="danger" data-testid="removeClientAssignments" size="sm" @click="removeClientAssignments">
                 {{ $t("group.remove") }}
               </b-button>
             </template>
             <template v-else-if="action == 'deletegroup'">
-              <small> {{ $t('group.deletegroup.confirm', {type: 'client'}) }}</small>
+              <small> {{ $t('group.deletegroup.confirm') }}</small>
               <b-button class="float-right" size="sm" variant="danger" data-testid="deleteGroup" @click="deleteGroup">
                 {{ $t("label.delete") }}
               </b-button>
