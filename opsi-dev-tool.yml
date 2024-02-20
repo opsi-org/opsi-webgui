@@ -60,7 +60,7 @@ pull-binaries:
       - exit 1
     server-type: binaryindex
     server-url: http://binaryindex.uib.gmbh
-    version: "4.3.26"
+    version: "4.3.27"
 transifex:
   download_translations:
     - install_dir: opsiweb/uib-components/locale
