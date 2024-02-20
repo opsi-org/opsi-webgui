@@ -1,6 +1,6 @@
 <template>
   <el-button @click="refetchGroup" size="small"> {{ $t('label.refresh') }}</el-button>
-  <el-popover v-if="props.data.category == 'product-group'" :placement="mq.isMobile.value ? 'auto': 'right'" :width="360" trigger="click">
+  <el-popover v-if="props.data.category == 'product-group'" :placement="mq.isMobile.value ? 'auto': 'right'" trigger="click" :width="mq.isMobile.value ? '100%': '360px'">
     <template #reference>
       <el-button size="small">{{ $t('label.create.prodgroup') }} </el-button>
     </template>
@@ -38,7 +38,7 @@
                 : (node.label == 'groups' || node.label == 'clientdirectory' ? props.data.actions.maingroups : props.data.actions.parent)
                 )"
           >
-            <el-popover :placement="mq.isMobile.value ? 'auto': 'right'" :width="360" trigger="click" :ref="node.label+action">
+            <el-popover :placement="mq.isMobile.value ? 'auto': 'right'" :width="mq.isMobile.value ? '100%': '360px'" trigger="click" :ref="node.label+action">
               <template #reference>
                 <el-button size="small"> <IconIIcon v-for="subaction in action.split('-')" :icon="icons[subaction]" /> </el-button>
               </template>
@@ -61,7 +61,7 @@
                 </template>
                 <template v-else-if="action == 'client-add' || action == 'product-add'">
                   <el-form-item :label="$t('label.selectChildren')">
-                    <el-scrollbar height="300px">
+                    <el-scrollbar height="300px" class="border w-100 p-2">
                       <el-checkbox-group v-model="selectedChildren">
                         <div v-for="item in idList" :key="item"> <el-checkbox size="small" :label="item" /> </div>
                       </el-checkbox-group>
