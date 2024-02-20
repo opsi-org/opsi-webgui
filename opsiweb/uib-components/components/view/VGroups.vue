@@ -14,7 +14,6 @@
               class="treeselect_notstored treeselect treeselect_fullpage"
               :placeholder="$t('treeselect.search')"
               always-open
-              :default-expand-level="1"
               :normalizer="normalizer"
               value-format="object"
               :options="group"
