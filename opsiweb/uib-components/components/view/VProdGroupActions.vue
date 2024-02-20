@@ -98,7 +98,7 @@
             trim
             :placeholder="$t('group.prodgroupname')"
             :state="subgroup.groupId.length > 0 && subgroup.groupId.length < 255"
-            @keydown.enter.prevent="createSubGroup"
+            @keydown.enter.prevent="checkGroupIdAndCreateSubGroup"
           />
           <b-form-input
             v-model="subgroup.description"
@@ -106,7 +106,7 @@
             trim
             :placeholder="$t('table.fields.description')"
             :state="subgroup.description.length >= 0 && subgroup.description.length < 100"
-            @keydown.enter.prevent="createSubGroup"
+            @keydown.enter.prevent="checkGroupIdAndCreateSubGroup"
           />
           <b-form-input
             v-model="subgroup.notes"
@@ -114,7 +114,7 @@
             trim
             :placeholder="$t('table.fields.notes')"
             :state="subgroup.notes.length >= 0 && subgroup.notes.length < 500"
-            @keydown.enter.prevent="createSubGroup"
+            @keydown.enter.prevent="checkGroupIdAndCreateSubGroup"
           />
           <b-button class="float-right" size="sm" variant="success" data-testid="createSubGroup" @click="createSubGroup">
             {{ $t("button.create") }}
@@ -290,6 +290,12 @@ export default class VGroups extends Vue {
     this.action = selectedAction
     const groupaction = 'group.' + this.action
     this.title = this.$t(groupaction)
+  }
+
+  checkGroupIdAndCreateSubGroup () {
+    if (this.subgroup.groupId.length > 0) {
+      this.createSubGroup()
+    }
   }
 
   async createSubGroup () {
