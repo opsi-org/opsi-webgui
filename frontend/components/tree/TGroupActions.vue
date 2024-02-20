@@ -7,7 +7,7 @@
     <el-form label-position="top" class="mt-3">
       <el-form-item v-for="label in Object.keys(createGroup)" :key="label" :label="$t('table.fields.'+label)"
         :class="{ 'd-none': label.toString()=='parentGroupId' }">
-          <el-input v-model="createGroup[label]" />
+          <el-input v-model="createGroup[label]" @keyup.enter="createGroup.groupId != '' && createSubGroup('')" />
       </el-form-item>
       <el-button
         class="float-right"
@@ -47,7 +47,7 @@
                 <template v-if="action == 'group-add'">
                   <el-form-item v-for="label in Object.keys(createGroup)" :key="label" :label="$t('table.fields.'+label)"
                     :class="{ 'd-none': label.toString()=='parentGroupId' }">
-                      <el-input v-model="createGroup[label]" />
+                      <el-input v-model="createGroup[label]" @keyup.enter="createGroup.groupId != '' && createSubGroup(node.label)" />
                   </el-form-item>
                   <el-button
                     class="float-right"
