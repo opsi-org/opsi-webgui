@@ -136,7 +136,7 @@ const props = defineProps({
 
 const icons = useIcons()
 const mq = useMQ()
-const translate = _getI18nInComposable()
+const { t } = useI18n()
 const storeSelection = storeSelections()
 const isLoading = ref(false)
 const treeProps = {
@@ -228,7 +228,7 @@ async function createSubGroup (parent: string) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(translate('message.success.save.create.group', { group: createGroup.groupId }));
+    useNotification().success(t('message.success.save.create.group', { group: createGroup.groupId }));
     await refetchGroup()
   }
 }
@@ -240,7 +240,7 @@ async function addChildren (selectedGroup: string) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(translate('message.success.save.add.clientfromgroups', { group: selectedGroup }))
+    useNotification().success(t('message.success.save.add.clientfromgroups', { group: selectedGroup }))
     await refetchGroup()
   }
 }
@@ -252,7 +252,7 @@ async function deleteAllChildren (selectedGroup: string) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(translate('message.success.save.delete.clientsfromgroup', { group: selectedGroup }))
+    useNotification().success(t('message.success.save.delete.clientsfromgroup', { group: selectedGroup }))
     await refetchGroup()
   }
 }
@@ -273,7 +273,7 @@ async function deleteGroup (selectedGroup: string) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(translate('message.success.save.delete.group', { group: selectedGroup }))
+    useNotification().success(t('message.success.save.delete.group', { group: selectedGroup }))
     await refetchGroup()
   }
 }
@@ -287,7 +287,7 @@ async function deleteObjectToGroup (selectedChild: string, parent: string) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(translate('message.success.save.delete.clientfromgroups', { client: selectedChild }))
+    useNotification().success(t('message.success.save.delete.clientfromgroups', { client: selectedChild }))
     await refetchGroup()
   }
 }
@@ -299,7 +299,7 @@ async function editGroup (selectedGroup: string) {
     useNotification().error(error)
     return
   } else {
-    useNotification().success(translate('message.success.save.update.group', { group: selectedGroup }));
+    useNotification().success(t('message.success.save.update.group', { group: selectedGroup }));
     await refetchGroup()
   }
 }
