@@ -5,14 +5,14 @@
         <el-row class="mt-2 mb-2 text-small">
           <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
         </el-row>
-        <el-form label-width="200px">
+        <el-form :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'">
           <el-form-item
             v-for="(action, index) in actions"
             :key="index"
             :label="$t('label.' + section + '.' + action)"
             variant="longvalue"
           >
-            <el-input-group style="display: flex; align-items: center;">
+            <el-input-group :style="mq.isMobile.value ?'': 'display: flex; align-items: center;'">
               <el-select v-if="action === 'unlock' || action === 'unblock'" style="min-width: 200px;" />
               <el-button variant="outiline-primary">
                 {{ $t('label.' + action) }}
@@ -93,6 +93,7 @@
 </template>
 
 <script setup lang="ts">
+const mq = useMQ()
 const groupActions = reactive({
   general: {
     clients: ['unblock', 'unblockAll'],

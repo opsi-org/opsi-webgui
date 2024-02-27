@@ -1,5 +1,5 @@
 <template>
-  <el-form label-width="200px" v-loading="isLoading">
+  <el-form :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'" v-loading="isLoading">
     <div v-for="options,category,index in createClient" :key="index">
       <el-row>
         <b>{{ $t('title.' + category) }} </b>
@@ -47,6 +47,7 @@ import { reactive, ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useDepot } from '~/composables/mixins/useGet';
 import type { T_DepotIds } from '~/types/APItypes';
+const mq = useMQ()
 const $t = useI18n().t
 const isLoading = ref(false)
 const depotIDList = ref<T_DepotIds>([])
