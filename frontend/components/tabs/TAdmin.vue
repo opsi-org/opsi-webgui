@@ -1,7 +1,26 @@
 <template>
   <el-tabs lazy>
     <el-tab-pane :label="$t('form.general')">
-      {{ $t('form.general') }}
+      <div v-for="(actions, section) in groupActions.general" :key="section">
+        <el-row class="mt-2 mb-2 text-small">
+          <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
+        </el-row>
+        <el-form label-width="200px">
+          <el-form-item
+            v-for="(action, index) in actions"
+            :key="index"
+            :label="$t('label.' + section + '.' + action)"
+            variant="longvalue"
+          >
+            <el-input-group style="display: flex; align-items: center;">
+              <el-select v-if="action === 'unlock' || action === 'unblock'" style="min-width: 200px;" />
+              <el-button variant="outiline-primary">
+                {{ $t('label.' + action) }}
+              </el-button>
+            </el-input-group>
+          </el-form-item>
+        </el-form>
+      </div>
     </el-tab-pane>
     <el-tab-pane :label="$t('label.maintenance')">
       {{ $t('label.maintenance') }}
