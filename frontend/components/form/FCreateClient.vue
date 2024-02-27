@@ -1,5 +1,5 @@
 <template>
-  <el-form label-width="200px">
+  <el-form label-width="200px" v-loading="isLoading">
     <div v-for="options,category,index in createClient" :key="index">
       <el-row>
         <b>{{ $t('title.' + category) }} </b>
@@ -26,9 +26,9 @@
               :value="item"
             />
           </el-select>
-          <el-input v-else-if="label === 'hostId'" v-model="createClient[category][label]">
+          <el-input v-else-if="label === 'hostId'" v-model="clientName">
             <template #append>
-              <el-input v-model="domain" class="border-0" />
+              <el-input v-model="domain" class="border-none" />
             </template>
           </el-input>
           <el-checkbox v-else-if="typeof value == 'boolean'" v-model="createClient[category][label]" />
@@ -38,7 +38,7 @@
     </div>
     <el-form-item>
       <el-button @click="resetForm()"> {{ $t('button.reset') }}</el-button>
-      <el-button data-testid="clientCreate_addButton" type="primary" @click="createClientBtn">{{ $t('button.create') }}</el-button>
+      <el-button data-testid="clientCreate_addButton" type="primary" :disabled="!clientName" @click="createOpsiClient">{{ $t('button.create') }}</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -48,7 +48,9 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import { useDepot } from '~/composables/mixins/useGet';
 import type { T_DepotIds } from '~/types/APItypes';
 const $t = useI18n().t
+const isLoading = ref(false)
 const depotIDList = ref<T_DepotIds>([])
+const clientName = ref('')
 const domain = ref('')
   // TODO: Backend: change createClient data structure
 const createClient = reactive({
@@ -87,8 +89,8 @@ async function fetch() {
 }
 function resetForm () {
   Object.assign(createClient, {
-    hostId: '',
     basics: {
+      hostId: '',
       description: '',
       inventoryNumber: '',
       hardwareAddress: '',
@@ -115,18 +117,67 @@ function resetForm () {
   })
 }
 
-function createClientBtn() {
-  useNotification().success($t('message.success.createClient', { client: createClient.basics.hostId }))
+async function createOpsiClient() {
+  createClient.basics.hostId =  clientName.value + domain.value
+  isLoading.value = true
+  const request = {
+    client: createClient.basics, depot: createClient.assignments.depot
+  }
+  const {data, error } = await useApiPOST('/opsidata/clients', request)
+  if (error) {
+    useNotification().error(error)
+    return
+  } else {
+    useNotification().success($t('message.success.createClient', { client: createClient.basics.hostId }))
+    if (createClient.settings.uefi) {
+      setUEFI(createClient.basics.hostId, createClient.settings.uefi.toString())
+    }
+    if (createClient.assignments.group) {
+      await assignToGroup()
+    }
+    if (createClient.initialSetup.opsiClientAgent.setup) {
+      await deployopsiclientagent()
+    }
+    if (createClient.initialSetup.netbootProduct) {
+      await setupNetbootProduct()
+    }
+    // clientIds.push(createClient.basics.hostId)
+  }
+  isLoading.value = false
+}
+
+async function setUEFI(clientId: string, uefi: string) {
+  const {data, error } = await useApiPOST('/opsidata/clients/uefi', {clientId, uefi})
+  if (error) {
+    useNotification().error(error)
+  }
+}
+
+async function assignToGroup() {
+  const {data, error } = await useApiPOST('/opsidata/clients/groups', {clientId: createClient.basics.hostId, group: createClient.assignments.group})
+  if (error) {
+    useNotification().error(error)
+  }
+}
+
+async function deployopsiclientagent() {
+  const {data, error } = await useApiPOST('/opsidata/clients/agent', createClient.initialSetup.opsiClientAgent)
+  if (error) {
+    useNotification().error(error)
+  }
+}
+
+async function setupNetbootProduct() {
+  const {data, error } = await useApiPOST('/opsidata/clients/netboot', {clientIds: [createClient.basics.hostId], productIds: [createClient.initialSetup.netbootProduct], actionRequest: 'setup'})
+  if (error) {
+    useNotification().error(error)
+  }
 }
 </script>
 
 
 <!-- <template>
   <div data-testid="VClientCreation" class="VClientCreation">
-    <AlertAAlert ref="newClientAlert" />
-    <AlertAAlert ref="clientagentAlert" />
-    <AlertAAlert ref="groupAlert" data-testid="groupAlert" />
-    <OverlayOLoading :is-loading="isLoading" />
     <GridGFormItem value-more="true" variant="longvalue" :label="$t('table.fields.id')" labelclass="id">
       <template #value>
         <b-form-input
@@ -157,47 +208,6 @@ function createClientBtn() {
         />
       </template>
     </GridGFormItem>
-    <b-row class="text-small mb-2">
-      <b class="basics">{{ $t('title.basics') }} </b>
-    </b-row>
-    <div>
-      <GridGFormItem
-        v-for="(value, label, index) in newClient"
-        :key="index"
-        :label="$t('table.fields.' + label)"
-        :labelclass="'text-capitalize ' + label"
-        variant="longvalue"
-        :class="label.toString() === 'hostId' ? 'd-none' : ''"
-      >
-        <template #value>
-          <b-form-textarea
-            v-if="label.toString() === 'notes'"
-            v-model="newClient.notes"
-            size="sm"
-            rows="4"
-
-            no-resize
-          />
-          <b-form-input v-else v-model="newClient[label.toString()]" size="sm" type="text" />
-        </template>
-      </GridGFormItem>
-    </div>
-    <b-row class="text-small mb-2">
-      <b class="assignments">{{ $t('title.assignments') }} </b>
-    </b-row>
-    <GridGFormItem :label="$t('table.fields.depot')" variant="longvalue" labelclass="depot">
-      <template #value>
-        <TreeTSDepotsNotStored :id.sync="depotId" />
-      </template>
-    </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.group')" variant="longvalue" labelclass="group">
-      <template #value>
-        <TreeTSGroupInitSelection :id.sync="group" />
-      </template>
-    </GridGFormItem>
-    <b-row class="text-small mb-2">
-      <b class="initsetup">{{ $t('title.initsetup') }} </b>
-    </b-row>
     <GridGFormItem :label=" $t('table.fields.netbootproduct')" variant="longvalue" labelclass="netbootproduct">
       <template #value>
         <b-form-select
@@ -210,127 +220,10 @@ function createClientBtn() {
         />
       </template>
     </GridGFormItem>
-    <GridGFormItem :label="$t('table.fields.clientagent')" variant="longvalue" labelclass="clientagent">
-      <template #value>
-        <b-form inline>
-          <b-form-checkbox v-model="clientagent" size="sm" />
-          <div :class="{'d-none' : !clientagent}">
-            <b-form-input
-              id="username"
-              v-model="form.username"
-              size="sm"
-              class="valid-none"
-              :placeholder="$t('form.username')"
-              :state="formvalidation_user"
-              required
-            />
-            <b-form-input
-              id="password"
-              v-model="form.password"
-              size="sm"
-              class="valid-none"
-              :placeholder="$t('form.password')"
-              :state="formvalidation_pw"
-              required
-            />
-            <b-form-select id="type" v-model="form.type" size="sm" :options="clientagenttypes" required />
-          </div>
-        </b-form>
-      </template>
-    </GridGFormItem>
-    <b-row class="text-small mb-2">
-      <b class="settings">{{ $t('title.settings') }} </b>
-    </b-row>
-    <GridGFormItem :label="$t('table.fields.uefi')" variant="longvalue" labelclass="uefi">
-      <template #value>
-        <b-form-checkbox id="uefi" v-model="uefi" size="sm" :aria-label="$t('table.fields.uefi')" />
-      </template>
-    </GridGFormItem>
-    <GridGFormItem variant="longvalue">
-      <template #value>
-        <div class="float-right mt-2">
-          <b-button id="resetButton" class="resetButton d-inline" size="sm" variant="primary" @click="resetNewClientForm()">
-            <IconIIcon :icon="icon.reset" class="d-inline" />
-            <div class="resetButtonLabel d-inline">
-              {{ $t('button.reset') }}
-            </div>
-          </b-button>
-
-          <b-button
-            id="addButton"
-            data-testid="addButton"
-            size="sm"
-            class="addButton d-inline"
-            variant="success"
-            :disabled="!clientName"
-            @click="createOpsiClient()"
-          >
-            <IconIIcon :icon="icon.add" class="d-inline" />
-            <div class="addButtonLabel d-inline">
-              {{ $t('button.create') }}
-            </div>
-          </b-button>
-        </div>
-      </template>
-    </GridGFormItem>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, namespace, Watch, Vue } from 'nuxt-property-decorator'
-import { Icons } from '../../mixins/icons'
-import { SaveProductActionRequest } from '../../mixins/save'
-import { Client, Configserver } from '../../mixins/get'
-import { Group, SetUEFI, DeployClientAgent } from '../../mixins/post'
-import { AlertToast } from '../../mixins/component'
-import { NewClient, FormClientAgent } from '../../.utils/types/tobjects'
-import { T_DepotIds } from '../../types/APItypes';
-
-const cache = namespace('data-cache')
-const selections = namespace('selections')
-
-@Component({ mixins: [AlertToast, Icons, Configserver, Client, Group, SetUEFI, DeployClientAgent, SaveProductActionRequest] })
-export default class VClientCreation extends Vue {
-  showToastWarning:any // mixin
-  showToastSuccess:any // mixin
-  showToastError:any // mixin
-  getClientIdList:any
-  icon: any
-  $axios: any
-  $nuxt: any
-  $fetch: any
-  $mq: any
-  $t: any
-  setUEFI:any
-  deployClientAgent:any
-  saveProdActionRequest:any
-  clientIds: Array<string> = []
-  result: string = ''
-  isLoading: boolean = false
-  domain: string = ''
-  clientName: string = ''
-  depotId: string = ''
-  group: any = null
-  newClient: NewClient = {
-    hostId: '',
-    description: '',
-    inventoryNumber: '',
-    hardwareAddress: '',
-    ipAddress: null,
-    notes: ''
-  }
-
-  form: FormClientAgent = { clients: [], username: '', password: '', type: 'windows' }
-  clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
-  uefi: boolean = false
-  clientagent: boolean = false
-  netbootproduct: string = ''
-  netbootproductslist: Array<string> = []
-
-  @cache.Getter public opsiconfigserver!: string
-  @selections.Getter public selectionDepots!: Array<string>
-  addClientToListOfGroups: any
-
   @Watch('depotId', { deep: true }) async depotIdChanged () { await this.fetchNetbootProducts() }
 
   get domainName () {
