@@ -1,9 +1,11 @@
 <template>
   <el-tabs lazy>
-    <el-tab-pane :label="$t('form.general')">
+    <el-tab-pane :label="$t('form.general')" v-loading="isLoading">
       <div v-for="(actions, section) in groupActions.general" :key="section">
         <el-row class="mt-2 mb-2 text-small">
           <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
+          <el-alert v-if="section === 'clients' && !hasBlockedClients" :title="$t('message.warning.noBlockedClients')" type="warning" :closable="false" />
+          <el-alert v-if="section === 'products' && !hasLockedProducts" :title="$t('message.warning.noLockedProducts')" type="warning" :closable="false" />
         </el-row>
         <el-form :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'">
           <el-form-item
@@ -13,8 +15,15 @@
             variant="longvalue"
           >
             <el-input-group :style="mq.isMobile.value ?'': 'display: flex; align-items: center;'">
-              <el-select v-if="action === 'unlock' || action === 'unblock'" style="min-width: 200px;" />
-              <el-button variant="outiline-primary">
+              <el-select v-if="action === 'unlock' || action === 'unblock'" style="min-width: 200px;" v-model="selected[section]">
+                <el-option
+                  v-for="item in section === 'clients' ? (blockedClients ? Object.keys(blockedClients) : []) : (lockedProducts ? Object.keys(lockedProducts) : [])"
+                  :key="item"
+                  :label="item + ' : ' + (section === 'clients' ? (blockedClients ? blockedClients[item] : '') : (lockedProducts ? lockedProducts[item] : ''))"
+                  :value="item"
+                />
+              </el-select>
+              <el-button type="primary" :disabled="(action === 'unblock' || action === 'unlock') && selected[section] == ''" @click="applyAction(action)">
                 {{ $t('label.' + action) }}
               </el-button>
             </el-input-group>
@@ -26,74 +35,20 @@
       {{ $t('label.maintenance') }}
     </el-tab-pane>
   </el-tabs>
-  <!-- <div data-testid="TAdmin" class="TAdmin">
-    <b-tabs small lazy>
-      <b-tab :title="$t('form.general')" active>
-        <b-row class="mt-4 mb-2 text-small">
-          <b class="titleclients">{{ $t('title.clients') }}</b>
-        </b-row>
-        <template v-if="blockedClients.length > 1">
-          <GridGFormItem :label="$t('label.blockedclients.select')" variant="longvalue">
-            <template #value>
-              <b-input-group>
-                <b-form-select :options="blockedClients" />
-                <template #append>
-                  <b-button v-model="clientId" variant="outiline-primary" size="sm" @click="unblockClient()">
-                    {{ $t('label.unblock') }}
-                  </b-button>
-                </template>
-              </b-input-group>
-            </template>
-          </GridGFormItem>
-          <GridGFormItem :label="$t('label.blockedclients')" variant="longvalue">
-            <template #value>
-              <b-button variant="outiline-primary" block size="sm" @click="unblockAllClients()">
-                {{ $t('label.unblock.all') }}
-              </b-button>
-            </template>
-          </GridGFormItem>
-        </template>
-        <span v-else class="text-small ml-2">
-          {{ $t('label.blockedclients.null') }}
-        </span>
-
-        <b-row class="mt-4 mb-2 text-small">
-          <b class="titleproducts">{{ $t('title.products') }} </b>
-        </b-row>
-        <template v-if="lockedProducts.length > 1">
-          <GridGFormItem :label="$t('label.lockedproducts.select')" variant="longvalue">
-            <template #value>
-              <b-input-group>
-                <b-form-select :options="lockedProducts" />
-                <template #append>
-                  <b-button v-model="productId" variant="outiline-primary" size="sm" @click="unlockProduct()">
-                    {{ $t('label.unlock') }}
-                  </b-button>
-                </template>
-              </b-input-group>
-            </template>
-          </GridGFormItem>
-          <GridGFormItem :label="$t('label.lockedproducts')" variant="longvalue">
-            <template #value>
-              <b-button variant="outiline-primary" block size="sm" @click="unlockAllProducts()">
-                {{ $t('label.unlock.all') }}
-              </b-button>
-            </template>
-          </GridGFormItem>
-        </template>
-        <span v-else show class="text-small ml-2">
-          {{ $t('label.lockedproducts.null') }}
-        </span>
-      </b-tab>
-      <b-tab :title="$t('label.maintenance')">
-        <ViewVAdminMaintenance />
-      </b-tab>
-    </b-tabs>
-  </div> -->
 </template>
 
 <script setup lang="ts">
+import { useNotification } from '~/composables/mixins/useComponent';
 const mq = useMQ()
+const selected = ref(
+  {
+    clients: '',
+    products: ''
+  }
+)
+const blockedClients = ref()
+const lockedProducts = ref()
+const isLoading = ref(false)
 const groupActions = reactive({
   general: {
     clients: ['unblock', 'unblockAll'],
@@ -116,75 +71,58 @@ const groupActions = reactive({
     },
   }
 })
-// import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-// import { AlertToast } from '../../mixins/component'
-// import { MBus } from '../../mixins/messagebus'
-// const cache = namespace('data-cache')
 
-// @Component({ mixins: [MBus, AlertToast] })
-// export default class VAdminTerminal extends Vue {
-//   showToastError: any // from mixin AlertToast
-//   showToastSuccess: any // from mixin AlertToast
-//   @Prop({ }) id!: string
-//   @Prop({ }) type!: string
-//   @Prop({ default: false }) 'asChild'!: string
-//   @Prop({ default: false }) 'closeroute'!: string
-//   @cache.Getter public opsiconfigserver!: string
-//   $axios: any
-//   $t: any
-//   blockedClients: Array<string> = []
-//   lockedProducts: Array<string> = []
-//   clientId: string = ''
-//   productId: string = ''
+const hasBlockedClients = computed(() => {
+  return blockedClients.value && Object.keys(blockedClients.value).length > 0
+})
 
-//   async mounted () {
-//     await this.fetchBlockedClients()
-//     await this.fetchLockedProducts()
-//   }
+const hasLockedProducts = computed(() => {
+  return lockedProducts.value && Object.keys(lockedProducts.value).length > 0
+})
 
-//   async fetchBlockedClients () {
-//     await this.$axios.$get('/api/opsidata/blocked-clients')
-//       .then((response) => {
-//         this.blockedClients = response
-//       }).catch(this.showToastError)
-//   }
+onMounted(async ()=> {
+  isLoading.value = true
+  await fetchBlockedClients()
+  await fetchLockedProducts()
+  isLoading.value = false
+})
 
-//   async fetchLockedProducts () {
-//     await this.$axios.$get('/api/opsidata/locked-products')
-//       .then((response) => {
-//         this.lockedProducts = response
-//       }).catch(this.showToastError)
-//   }
+async function fetchBlockedClients() {
+  const {data, error } = await useApiGET('/opsidata/blocked-clients')
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+  blockedClients.value = data.value
+}
 
-//   async unblockClient () {
-//     await this.$axios.$post(`/api/opsidata/clients/${this.clientId}/unblock`)
-//       .then((response) => { this.showToastSuccess(response) })
-//       .catch(this.showToastError)
-//   }
+async function fetchLockedProducts() {
+  const {data, error } = await useApiGET('/opsidata/locked-products')
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+  lockedProducts.value = data.value
+}
 
-//   async unlockProduct () {
-//     await this.$axios.$post(`/api/opsidata/products/${this.productId}/unlock`)
-//       .then((response) => { this.showToastSuccess(response) })
-//       .catch(this.showToastError)
-//   }
-
-//   async unblockAllClients () {
-//     await this.$axios.$post('/api/opsidata/clients/unblock')
-//       .then((response) => { this.showToastSuccess(response) })
-//       .catch(this.showToastError)
-//   }
-
-//   async unlockAllProducts () {
-//     await this.$axios.$post('/api/opsidata/products/unlock')
-//       .then((response) => { this.showToastSuccess(response) })
-//       .catch(this.showToastError)
-//   }
-// }
+async function applyAction(action: string) {
+  try {
+    if (action === 'unblock') {
+      await useApiPOST(`/opsidata/clients/${selected.value.clients}/unblock`)
+      await fetchBlockedClients()
+    } else if (action === 'unblockAll') {
+      await useApiPOST('/opsidata/clients/unblock')
+      await fetchBlockedClients()
+    } else if (action === 'unlock') {
+      await useApiPOST(`/opsidata/products/${selected.value.products}/unlock`)
+      await fetchLockedProducts()
+    } else if (action === 'unlockAll') {
+      await useApiPOST('/opsidata/products/unlock')
+      await fetchLockedProducts()
+    }
+    selected.value = { clients: '', products: '' }
+  } catch (error) {
+    useNotification().error(error)
+  }
+}
 </script>
-
-<style scoped>
-/* .VAdmin {
-  overflow-x: hidden;
-  padding-left: 10px;
-} */
-</style>
