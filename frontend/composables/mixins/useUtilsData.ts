@@ -4,14 +4,31 @@ export const useUtilsData = () => {
   const getVisibleColumnIds = (headers:Array<any>) => {
     return headers
       .filter(v=>
-        !((v.fixed === undefined || v.fixed === false)
+        v.title !== undefined && v.title !== ''
+        && !((v.fixed === undefined || v.fixed === false)
         && (v.hidden === undefined || v.hidden === true)
         && (v._majorKey === undefined))
       )
       .map((_v:any) => _v.dataKey)
   }
+  const getVisibleColumns = (headers:Array<any>) => {
+    const _majors = []
+    const _defaults = headers
+      .filter(v=>
+        v.title !== undefined && v.title !== ''
+        && !((v.fixed === undefined || v.fixed === false)
+        && (v.hidden === undefined || v.hidden === true)
+        && (v._majorKey === undefined))
+      )
+      // .map((_v:any) => {
+      //   if (_v._isMajor) {
 
-  return { getVisibleColumnIds }
+      //     _majors.push(_v.dataKey)
+      //   }
+      //   const v = { ..._v }
+      // })
+    return {..._defaults}
+  }
+  return { getVisibleColumnIds, getVisibleColumns }
 }
-
 

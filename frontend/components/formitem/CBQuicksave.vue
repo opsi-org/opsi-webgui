@@ -78,8 +78,8 @@ const cbValue = computed({
   set: () => {}
 })
 
-console.log('cbquicksave store', settings.quicksave)
-console.log('cbquicksave cbValue', cbValue.value)
+// console.log('cbquicksave store', settings.quicksave)
+// console.log('cbquicksave cbValue', cbValue.value)
 
 // watch(()=>settings.quicksave, (val)=>{
 //   if (val === true) {

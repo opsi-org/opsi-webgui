@@ -5,6 +5,8 @@
 // import { defineNuxtConfig } from 'nuxt'
 import pkg from './package.json'
 
+import Tailwind from "primevue/passthrough/tailwind";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: false },
@@ -116,6 +118,7 @@ export default defineNuxtConfig({
   },
   css: [
     'primevue/resources/themes/md-dark-indigo/theme.css',
+    // 'primevue/resources/themes/lara-dark-green/theme.css',
     '~/assets/scss/index.scss', // ep import colors
     '~/assets/scss/bv-colors.scss', // bv import colors
   ],
@@ -132,12 +135,30 @@ export default defineNuxtConfig({
     /* Options */
     // cssLayerOrder: 'reset,primevue',
     options: {
-      unstyled: true
+      ripple: false,
+      // unstyled: true,
+      // pt: Tailwind,
+      pt: {
+        ...Tailwind,
+
+        // datatable: {
+        //   header: {class: 'bg-red-500'},
+        //   paginator: {class: 'bg-blue-500'},
+        //   thead: {class: 'bg-green-500'}, // hover
+        //   tbody: {class: 'bg-purple-500'},
+        //   footer: {class: 'bg-yellow-500'},
+        //   headerCell: {class: 'bg-pink-500'},
+        //   bodyCell: {class: 'bg-blue-500'},
+        // },
+        // paginator: {
+        //   handle: { class: 'bg-yellow-500' }
+        // }
+    }
     },
 
     components: {
       prefix: 'P',
-      include: ['ContextMenu'],
+      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown'],
       exclude: ['Toast']
     },
 

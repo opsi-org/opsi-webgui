@@ -49,6 +49,7 @@ export interface ITableData {
   filterQuery: string,
   filterColumns?: Array<string>,
   type?: string,
+  _lastScrollDirection?: string,
   selected?: string,
   selectedDepots?: string,
   selectedClients?: string

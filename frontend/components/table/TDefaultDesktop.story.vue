@@ -20,8 +20,9 @@ const totalItems = data.length
 </script>
 
 <template>
-  <Story :setup-app="loginlogout">
-      <TableTDefaultDesktop
+  <Story :setup-app="loginlogout" :layout="{ type: 'grid', width: '100%'}">
+    <Variant title="PrimeVue">
+      <TableTDefaultDesktopPV
         id="tableId"
         v-model:columns="columns"
         v-model:data="data"
@@ -33,5 +34,20 @@ const totalItems = data.length
         @selection-changed="(id: any) => {}"
         @selection-clear="() => { }"
       />
+    </Variant>
+    <Variant title="Element+">
+      <TableTDefaultDesktop
+      id="tableId"
+      v-model:columns="columns"
+      v-model:data="data"
+      :table-data="tableData"
+      :total-items="totalItems"
+
+      rowId="column-0"
+      :sort-by="undefined"
+      @selection-changed="(id: any) => {}"
+      @selection-clear="() => { }"
+      />
+    </Variant>
   </Story>
 </template>

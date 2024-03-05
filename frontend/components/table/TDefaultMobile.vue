@@ -110,9 +110,10 @@ const props = defineProps({
   data: { type: Array<any>, required:true},
   id: { type: String, default: 'servers' },
   sortBy: { type: String, default: 'selection'},
-  fetch: {type: Function, default: (p:any) => {} }
+  // fetch: {type: Function, default: (p:any) => {} },
+  isLoading: { type: Boolean, default: false, required:false },
 })
-const $emit = defineEmits(['selection-changed', 'selection-clear', 'update-input-filter'])
+const $emit = defineEmits(['fetch', 'selection-changed', 'selection-clear', 'update-input-filter'])
 const wrappedColumns = ref<ITableHeaderRow>({})
 // const wrappedData = ref<Array<any>>([])
 onMounted(()=>{

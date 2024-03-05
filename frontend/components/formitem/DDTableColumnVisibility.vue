@@ -1,5 +1,5 @@
 <template>
-  <el-text>{{ tableId }}</el-text>
+  <!-- <el-text>{{ tableId }}</el-text> -->
   <el-select-v2
     v-model="columnVisibilityList"
     :options="headerWrapper"

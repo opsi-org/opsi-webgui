@@ -11,22 +11,28 @@
       <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
     </slot> -->
   </div>
-  <div class="h-96 w-full" :class="{small: props.small !== false}">
+  <!-- <div class="h-192 min-h-192 w-full" :class="{small: props.small !== false}"> -->
+  <div class="h-96 max-w-full" :class="{small: props.small !== false}">
     <el-auto-resizer>
       <template #default="{ height, width }">
         <el-table-v2
           v-if="Object.values(wrappedColumns).length > 0"
+          ref="tableRef"
           v-model:sort-state="sortState"
           :columns="Object.values(wrappedColumns)"
           :data="dataModel"
           :width="width"
           :height="height"
+          :estimated-row-height="50"
           fixed
-          :row-event-handlers="rowEventHandlers"
+          :row-class="rowClass"
           @scroll="onScroll"
           @column-sort="onSort"
-        >
+          @end-reached="onEndReached"
+          >
+          <!-- :row-event-handlers="rowEventHandlers" -->
         </el-table-v2>
+        <!-- <div class="min-h-36 w-screen border-1 border-red-500"></div> -->
       </template>
     </el-auto-resizer>
     <el-pagination
@@ -34,7 +40,7 @@
       v-model:current-page="pageNumber"
       :total="props.totalItems"
       layout="sizes, prev, pager, next"
-      :page-sizes="[1, 5, 10, 20, 50, 100]"
+      :page-sizes="[1, 5, 10, 20, 50, 100, 10000]"
       :small="true"
       :background="true"
       :hide-on-single-page="false"
@@ -53,11 +59,12 @@
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
 import {TableV2SortOrder, type CheckboxValueType, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
-import type { SortBy, SortState } from 'element-plus'
+import type { RowClassNameGetter, SortBy, SortState } from 'element-plus'
 import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
 import type { FunctionalComponent } from 'vue'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable';
+import type { CellRendererParams } from 'element-plus/es/components/table-v2/src/types.mjs'
 
 const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
@@ -65,7 +72,7 @@ const icons = useIcons()
 
 const columnsModel = defineModel<ITableHeaderRow>('columns', { required:true})
 const dataModel = defineModel<Array<any>>('data', { required:true})
-const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
+const $emit = defineEmits(['fetch', 'selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
 const props = defineProps({
   // columns: { type: Object as PropType<ITableHeaderRow>, required:true},
   // data: { type: Array<any>, required: true },
@@ -74,9 +81,11 @@ const props = defineProps({
   id: { type: String, default: 'servers' },
   rowId: { type: String, default: 'depotId' },
   sortBy: { type: String, default: 'selection'},
-  small: { type: Boolean, default: true }
+  small: { type: Boolean, default: true },
+  isLoading: { type: Boolean, default: false, required:false },
 })
 
+const tableRef = ref()
 const menu = ref()
 const currentSelectedRow = ref<TRowData|undefined>()
 const selectKey = ref<string>( props.id === 'servers' ? 'selectionDepots': (props.id === 'clients' ? 'selectionClients' : 'selectionProducts'))
@@ -121,26 +130,60 @@ const SelectionCell: FunctionalComponent<ISelectionCellProps> = ({
   value,
   intermediate = false,
   onChange,
+  show = true,
 }) => {
   if (selectionStore.multiSelection === true) {
     return (
+      // < ></>
+      <>
+      { show === true ?
       <el-checkbox
+        v-if={show === true}
         onChange={onChange}
         onClick={(e: any) => e.stopPropagation()}
         modelValue={value}
         indeterminate={intermediate}
       />
+      : ''}
+      </>
     )
   } else {
     const label = computed(()=> value === true? (<><iconIIcon icon={icons.check}></iconIIcon></>) : '')
     return (
       <>
+
+      { show === true ?
       <el-text>{label.value}</el-text>
+      : ''}
       </>
     )
   }
 }
 
+const rowClass = ({ rowIndex, rowData }: Parameters<RowClassNameGetter<any>>[0]) => {
+  // if (rowIndex === 0)
+  //   return "before:content-['Festivus']"
+  if (rowIndex !== 0)
+    if (rowIndex % (perPage.value) === 0)
+      return 'bg-blue-500'
+
+  if (rowData.dummy === true) {
+    // is first page and first row of page
+    const isFirstPageFirstRow = pageNumber.value === 1 && rowIndex === 0
+    // is last page and last row of page
+    const isLastPageLastRow = pageNumber.value === Math.ceil(props.totalItems / perPage.value) && rowIndex === dataModel.value.length - 1
+    if (isFirstPageFirstRow){
+      return 'bg-red-500'+ ' !hidden'
+    }else if (isLastPageLastRow){
+      return 'bg-red-500'+ ' !hidden'
+    } else if (rowIndex === 0) {
+      return 'bg-orange-500 min-h-[30px]'
+    } else {
+      return 'bg-yellow-500 align-top min-h-12'
+    }
+  }
+  return ''
+}
 
 onMounted(()=>{
   wrappedColumns.value = updateColumns()
@@ -149,7 +192,8 @@ onMounted(()=>{
 
 
 const selectionInStoreByType = computed<string[]>(()=> selectionStore['_'+selectKey.value])
-
+watch(()=>props.tableData.pageNumber, (val)=>{ pageNumber.value = val })
+watch(()=>props.tableData.perPage, (val)=>{ perPage.value = val })
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
 // watch(()=>tableStore.columns[props.id], ()=>{
   // show or hide major-children
@@ -195,10 +239,21 @@ function updateColumns() {
   Object.values(_columns)
     .map(c => {
       if (c.cellRenderer === undefined)
-        c.cellRenderer = ({rowData}: any) => {
+        c.cellRenderer = ({rowData,cellData}: CellRendererParams<any>) => {
           if (rowData)
-            return <el-text> {rowData[c.dataKey || c.key]}</el-text>
+            return <el-text>a {rowData[c.dataKey || c.key]}</el-text>
+          return <el-text > XX </el-text>
+      }
+      else {
+        const renderer = c.cellRenderer
+        c.cellRenderer = ({rowData}: any) => {
+          if (rowData && rowData.dummy === undefined)
+            return renderer({rowData} as any)
+          else if (rowData && rowData.dummy === true && c.dataKey === props.rowId)
+            return <div contenteditable="true">{rowData[props.rowId]}</div>
+            // return <el-text >b {rowData[props.rowId]} </el-text>
           return <el-text />
+        }
       }
     } )
   if (columnsModel.value?.selected === undefined) {
@@ -226,26 +281,85 @@ function updateColumns() {
       console.log('selection changed', props.rowId, rowData[props.rowId])
       $emit('selection-changed', rowData[props.rowId])
     }
-    return <SelectionCell value={selected.value} onChange={onChange} />
+    // return <SelectionCell show={false} value={selected.value} onChange={onChange} />
+    return <SelectionCell show={rowData.dummy !== true} value={selected.value} onChange={onChange} />
   }
   return _columns
 }
 
-function updateCurrentPage(pageNumber: number) {
-  console.log('updateCurrentPage', pageNumber)
-  $emit('tabledata-changed', {...props.tableData, pageNumber})
+function updateCurrentPage(pageNo: number) {
+  console.log('updateCurrentPage', pageNo)
+  pageNumber.value = pageNo
+  $emit('tabledata-changed', {...props.tableData, pageNumber: pageNo})
+  $emit('fetch')
 }
 function updatePerPage(perPage: number) {
   console.log('updatePerPage', perPage)
   $emit('tabledata-changed', {...props.tableData, perPage, pageNumber: 1})
+  $emit('fetch')
 }
 function updateData() {
   if (dataModel === undefined) return []
   const _data = dataModel
   return _data
 }
-function onScroll(event: any) {
-  console.log('scroll', event)
+
+const lastFetchedDirection = ref<'next'|'prev'>('next')
+const middleOfTable = ref<number>(50 + 150)
+async function onScroll(event: any) {
+  // console.log('scroll', event, tableRef.value.$el)
+  //console.log('scroll to top. ')
+  // show marker in middle of table
+  // middleOfTable.value = tableRef.value.$el.clientHeight / 2 + 50
+  if (event.yAxisScrollDir === 'backward' && event.scrollTop === 0 && pageNumber.value > 1 ) {
+  } else {
+    console.log('scroll to top. not at top')
+    return
+  }
+  //   // we only want to fetch prev if we are at the top of the table
+
+  // if (!(event.yAxisScrollDir !== 'forward' || event.scrollTop > 0 || pageNumber.value === 1)) {
+  //   console.log('scroll to top. not at top', event, pageNumber.value, tableRef.value.$el)
+  //   return
+  // }
+  console.log('scroll to top. at top')
+
+  const visiblePages =  Math.ceil(dataModel.value.length / perPage.value)
+  // update current page (without fetching)
+  if (lastFetchedDirection.value === 'next' && visiblePages > 1){
+    $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value - 2})
+  } else {
+    $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value - 1})
+  }
+
+  // fetch manually and push data to start of array
+  await $emit('fetch', 'prev')
+
+  // scroll to middle of table
+  const visiblePagesNew = dataModel.value.length / perPage.value
+  console.log('visiblePagesNew', visiblePagesNew)
+  if (visiblePagesNew > 1)
+    tableRef.value.scrollToRow(props.tableData.perPage, "start")
+
+  lastFetchedDirection.value = 'prev'
+}
+function onEndReached() {
+  console.log('end reached')
+  if (pageNumber.value >= props.totalItems / perPage.value){
+    console.log('end reached, no more pages')
+    return
+  }
+
+  if (lastFetchedDirection.value === 'prev' && pageNumber.value > 1){
+    console.log('end reached, fetch prev')
+    $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value + 2})
+  } else{
+    console.log('end reached, fetch next')
+    $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value + 1})
+  }
+  $emit('fetch', 'next')
+  lastFetchedDirection.value = 'next'
+  // emit('')
 }
 
 </script>
@@ -256,4 +370,18 @@ function onScroll(event: any) {
   /* width: 40px !important; */
   /* background-color: aqua !important; */
 /* } */
+/* :deep([role="row"].el-table-v2__row:nth-last-of-type(10)) { */
+  /* border: 1px solid red; */
+/* } */
+/* :deep([role="row"].el-table-v2__row:last-of-type) { */
+/* :deep(.el-table-v2__row:last-of-type) { */
+  /* border: 1px solid #ebeef5; */
+  /* margin-bottom: 100px !important;
+  height: 100px !important;
+  align-content: flex-start !important; */
+  /* padding-bottom: 100px !important; */
+/* } */
+/* :deep(.el-table-v2__body > div) {
+  padding-bottom: 100px;
+} */
 </style>
