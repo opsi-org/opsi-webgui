@@ -423,8 +423,8 @@ watch(()=>props.tableData._lastScrollDirection, ()=> {
     setTimeout(() => {
       var rows = document.querySelectorAll('[data-pc-section="bodyrow"]');
       const last_first_row = rows[props.tableData.perPage]
-      console.log('rows', rows.length)
-      console.log('rows', last_first_row.innerText?.substring(4, 30))
+      // console.log('rows', rows.length)
+      // console.log('rows', last_first_row.innerText?.substring(4, 30))
       // line is the row number that you want to see into view after scroll
       last_first_row.scrollIntoView({
           behavior: 'instant',
