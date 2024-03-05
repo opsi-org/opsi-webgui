@@ -4,9 +4,11 @@
       <div v-for="(actions, section) in groupActions.general" :key="section">
         <el-row class="mt-2 mb-2 text-small">
           <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
+        </el-row>
+        <div style="max-width: 600px;">
           <el-alert v-if="section === 'clients' && !hasBlockedClients" :title="$t('message.warning.noBlockedClients')" type="warning" :closable="false" />
           <el-alert v-if="section === 'products' && !hasLockedProducts" :title="$t('message.warning.noLockedProducts')" type="warning" :closable="false" />
-        </el-row>
+        </div>
         <el-form :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'">
           <el-form-item
             v-for="(action, index) in actions"
