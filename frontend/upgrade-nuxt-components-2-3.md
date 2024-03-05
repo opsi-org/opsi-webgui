@@ -41,7 +41,7 @@
   - [-] products
   - [-] WIP products-config
   - [x] Groups: Client and Product Group Actions
-  - [ ] admin
+  - [-] Admin: General and Maintenance
   - [x] admin-modules
   - [x] admin-terminal
   - [x] admin-healthcheck
