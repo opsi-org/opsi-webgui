@@ -112,8 +112,8 @@ const cbValue = computed({
   set: () => {}
 })
 
-console.log('cbmultiselect store', selections.multiSelection)
-console.log('cbmultiselect cbValue', cbValue.value)
+// console.log('cbmultiselect store', selections.multiSelection)
+// console.log('cbmultiselect cbValue', cbValue.value)
 /*
   @Watch('multiSelection') multiSelectionChanged () {
     if (this.multiSelection !== true) {

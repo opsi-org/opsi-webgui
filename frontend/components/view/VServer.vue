@@ -21,20 +21,28 @@
       :total-items="totalItems"
       :sort-by="tableData.sortBy"
       :is-mobile="props.isMobile"
-      @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
+      :is-loading="tableHelper.isLoading.value"
+      @fetch="tableHelper.fetch"
+      @selection-changed="(id: string) => {console.log('select depotId', id);storeSelection.toggleSelectionDepots(id)}"
+      @selection-clear="storeSelection.clearSelectionDepots"
+      @tabledata-changed="tableHelper.updateTableData"
+      @sort-changed="tableHelper.sortChanged"
+      @update-input-filter="tableHelper.filterChanged"
+
+    >
+      <!-- @selection-changed="(id: string) => storeSelection.toggleSelectionDepots(id)"
       @selection-clear="storeSelection.clearSelectionDepots"
       @tabledata-changed="(v: any) => {updateTableData(v)}"
       @sort-changed="(v: any ) => {
         console.log('sort table', id, 'by', v.key, 'desc', v.isDesc)
         tableData.sortBy = v.key
         tableData.sortDesc = v.isDesc
-        storeTablesettings().setSortColumn(id, v.key, v.isDesc)
+        storeTable.setSortColumn(id, v.key, v.isDesc)
       }"
       @update-input-filter="(v: any)=> {
         tableData.filterColumns = v.cols
         tableData.filterQuery = v.vals
-      }"
-    >
+      }" -->
     </TableTDefault>
 <!-- <div data-testid="VDepots">
   <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId" parent-id="tabledepots">
@@ -108,8 +116,8 @@
 
 <pre>
   <!-- {{ fetchedData }} -->
-  {{ storeTablesettings().serversColumns }}
-  {{storeTablesettings().serversSorting}}
+  {{ storeTable.serversColumns }}
+  {{storeTable.serversSorting}}
 </pre>
   </div>
 </template>
@@ -125,8 +133,10 @@ import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { T_ServerList } from '~/types/APItypes'
 import BTNRowLink from '~/components/button/BTNRowLink.vue';
 import type { ITableData } from '~/types/ttable';
+import { useTableHelper } from '~/composables/mixins/useTableHelper';
 
 const storeSelection = storeSelections()
+const storeTable = storeTablesettings()
 const navigation = useNavigate()
 const icons = useIcons()
 const $t = useI18n().t
@@ -136,11 +146,11 @@ const fetchedData = ref<T_ServerList>([])
 const totalItems = ref<number>(0)
 const tableData = ref<ITableData>({
   pageNumber: 1,
-  perPage: 5,
+  perPage: 100000,
   // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
-  sortBy: storeTablesettings().serversSorting.column,
+  sortBy: storeTable.serversSorting.column,
   // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  sortDesc: storeTablesettings().serversSorting.isDesc,
+  sortDesc: storeTable.serversSorting.isDesc,
   filterQuery: '',
   filterColumns: ['depotId']
 })
@@ -161,8 +171,7 @@ const columns = ref<ITableHeaderRow>({
       key: 'depotId',
       dataKey: 'depotId',
       sortable: true,
-      width: 250,
-      maxWidth: 350,
+      width: 150,
       fixed: true,
       hidden: false
     },
@@ -171,8 +180,10 @@ const columns = ref<ITableHeaderRow>({
       key: 'description',
       dataKey: 'description',
       sortable: true,
-      width: 150,
-      hidden: !storeTablesettings().serversColumns.includes('description')
+      width: 350,
+      // minWidth: 300,
+      class: "col-description",
+      hidden: !storeTable.serversColumns.includes('description')
       // hidden: !cookies.includesCookie('column_' + id, 'description', false)
     },
     type: { // eslint-disable-next-line object-property-newline
@@ -180,9 +191,9 @@ const columns = ref<ITableHeaderRow>({
       key: 'type',
       dataKey: 'type',
       sortable: true,
-      width: 140,
-      maxWidth: 300,
-      hidden: !storeTablesettings().serversColumns.includes('type')
+      width: 150,
+      // minWidth: 100,
+      hidden: !storeTable.serversColumns.includes('type')
       // hidden: !cookies.includesCookie('column_' + id, 'type', true)
     },
     ip: { // eslint-disable-next-line object-property-newline
@@ -190,17 +201,16 @@ const columns = ref<ITableHeaderRow>({
       key: 'ip',
       dataKey: 'ip',
       sortable: true,
-      width: 100,
-      maxWidth: 150,
+      width: 150,
+      // minWidth: 100,
       // hidden: !cookies.includesCookie('column_' + id, 'ip', false)
-      hidden: !storeTablesettings().serversColumns.includes('ip')
+      hidden: !storeTable.serversColumns.includes('ip')
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions',
       dataKey: 'rowactions',
       title: $t('table.fields.rowactions'),
-      width: 160,
-      maxWidth: 160,
+      width: 50,
       fixed: TableV2FixedDir.RIGHT,
       hidden: false,
       class: 'col-rowactions',
@@ -252,6 +262,9 @@ const columns = ref<ITableHeaderRow>({
 
 const id = "servers"
 
+
+const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, storeTable) // define watcher for tableData
+
 const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
@@ -259,8 +272,12 @@ const props = defineProps({
 
 onMounted(async () => {
   console.log('VServer mounted')
-  fetchedData.value = await _fetch()
+  // fetchedData.value = await _fetch()
+  await tableHelper.fetch()
   console.log('VServer mounted fetchedData', fetchedData.value)
+
+  // totalItems.value = parseInt(headers['x-total-count'])
+  tableHelper.setTotalItemsAsPerPage(totalItems.value)
   // if (storeSelection.selectionDepots.length === 1) {
   //   navigation.toConfiguration(id, storeSelection.selectionDepots[0])
   // }
@@ -297,6 +314,7 @@ async function _fetch() {
     return []
   }
   totalItems.value = parseInt(headers['x-total-count'])
+  // tableHelper.setPerPage(headers)
   console.log('Fetchresult data', data)
   console.log('Fetchresult data2', fetchedData.value)
   const opsiconfigserver = storeCache().opsiconfigserver

@@ -42,6 +42,7 @@ body[data-bs-theme="light"] {
   --el-bg-color: #FFFFFF;
   --bs-body-bg: var(--el-bg-color);
   --bg-color: var(--el-bg-color);
+  --bg-color-hover: var(--el-bg-color);
   // --el-fill-color: #aaaaaa;
   // --el-fill-color-light: var(--el-fill-color);
 
@@ -56,6 +57,19 @@ body[data-bs-theme="light"] {
   color: var(--fg-color) !important;
   --el-border-color: #c6c6c6; //This property was added to fix the input fields without borders that looked hidden.
   --el-border-color-hover: #404040;
+
+  /* PrimeVue */
+  --text-color: var(--fg-color);
+  --text-secondary-color: var(--opsi-general-dark);
+  --primary-color: --opsi-general-blue;
+  --primary-color-text: var(--el-text-color-regular);
+  --font-family: 'Roboto', sans-serif;
+  /* --inline-spacing	Spacing between to adjacent items.*/
+  /* --border-radius	Common border radius of elements. */
+  /* --focus-ring	Box shadow of a focused element. */
+  /* --mask-bg	Background of an overlay mask. */
+  --highlight-bg: var(--bg-color);	/* Background of a highlighted element. */
+  /* --highlight-text-color Text color of a highlighted element.*/
 
   .el-notification,
   .el-notification__content {
@@ -74,6 +88,7 @@ body[data-bs-theme="dark"] {
   --el-bg-color: #3f3f3e;
   --bs-body-bg: var(--el-bg-color);
   --bg-color: var(--el-bg-color);
+  --bg-color-hover: #4b4b49;
   --el-bg-color-overlay: #4b4b49 !important;
   // --fg-color: var(--el-text-color-primary);
   --fg-color: var(--opsi-genral-white);

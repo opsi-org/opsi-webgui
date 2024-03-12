@@ -5,6 +5,7 @@
     v-model:columns="columns"
     v-model:data="dataModel"
     v-bind="propsMobile"
+    @fetch="(v: any) => $emit('fetch', v)"
     @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
     @selection-changed="(v: any) => $emit('selection-changed', v)"
     @selection-clear="(v: any) => $emit('selection-clear', v)"
@@ -12,11 +13,12 @@
     @sort-changed="(v: any) => $emit('sort-changed', v)"
   >
   </TableTDefaultMobile>
-  <TableTDefaultDesktop
+  <TableTDefaultDesktopPV
     v-else
     v-model:columns="columns"
     v-model:data="dataModel"
     v-bind="propsDesktop"
+    @fetch="(v: any) => $emit('fetch', v)"
     @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
     @selection-changed="(v: any) => $emit('selection-changed', v)"
     @selection-clear="(v: any) => $emit('selection-clear', v)"
@@ -24,7 +26,7 @@
     @sort-changed="(v: any) => $emit('sort-changed', v)"
   >
     <!-- v-bind="(({ isMobile, ...rest }) => rest)($attrs)" -->
-  </TableTDefaultDesktop>
+  </TableTDefaultDesktopPV>
 </div>
 </template>
 
@@ -42,7 +44,8 @@ const props = defineProps({
   id: { type: String, default: 'servers' },
   rowId: { type: String, default: 'depotId'},
   sortBy: { type: String, default: 'selection'},
-  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}}
+  isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
+  isLoading: { type: Boolean, default: false, required:false },
 })
 const isMobileWrapper = ref<boolean>(props.isMobile)
 watch(()=>useMQ().isMobile, (val)=>{
@@ -61,7 +64,7 @@ const propsDesktop = computed (()=>{
   }
 })
 
-const $emit = defineEmits(['selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
+const $emit = defineEmits(['fetch', 'selection-changed', 'selection-clear', 'tabledata-changed', 'sort-changed', 'update-input-filter'])
 </script>
 
 <style scoped>

@@ -29,9 +29,9 @@ async function useAPI2<T> (
   const config = useRuntimeConfig()
   const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
   const basePath: string = prePath ?? config.public.API_PATH
-  console.log('useAPI2', method, url, body, opts, prePath)
-  console.log('useAPI2 baseurl', baseUrl)
-  console.log('useAPI2 basepath', basePath)
+  // console.debug('useAPI2', method, url, body, opts, prePath)
+  // console.debug('useAPI2 baseurl', baseUrl)
+  // console.debug('useAPI2 basepath', basePath)
   // prePath could be '', e.g. for localhost:4447/filetransfer
   //    -> path = '/filetransfer'
   //       prepath = ''
@@ -83,7 +83,7 @@ async function useAPI2<T> (
   }
 
   let fullURL = baseUrl + basePath + url
-  console.log('useAPI2 fullURL', fullURL)
+  console.debug('useAPI2 fullURL', fullURL)
   let fullBody = body
   if (method !== 'GET' && body != undefined && url !== '/auth/login') {
     if (headers['Content-Type'] === undefined)
@@ -98,7 +98,7 @@ async function useAPI2<T> (
     fullURL = fullURL +'?'+ _getBodyParams(body)
     fullBody = undefined
   }
-  console.log(method, fullURL, fullBody)
+  console.debug(method, fullURL, fullBody)
   const fetchOptions: any = {
     credentials: 'include',
     method,

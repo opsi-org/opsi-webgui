@@ -12,6 +12,7 @@ export type ISelectionCellProps = {
   value: boolean
   intermediate?: boolean
   onChange: (value: CheckboxValueType) => void
+  show?: boolean
 }
 // export interface ITableHeader {
 //   label: string,

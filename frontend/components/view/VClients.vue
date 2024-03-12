@@ -3,6 +3,7 @@
   <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
 
+      <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
     <ButtonBTNRowLink
       :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
       :icon="icons.product"
@@ -13,10 +14,12 @@
       :id="id"
       v-model:columns="columns"
       v-model:data="fetchedData"
-      :table-data="tableData"
+      :table-data.sync="tableData"
       :total-items="totalItems"
       :sort-by="tableData.sortBy"
       :is-mobile="isMobile"
+      :is-loading="tableHelper.isLoading.value"
+      @fetch="tableHelper.fetch"
       @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionClients(id)}"
       @selection-clear="storeSelection.clearSelectionClients"
       @tabledata-changed="tableHelper.updateTableData"
@@ -233,10 +236,10 @@
     </GridGTwoColumnLayout>
   </div>
   -->
+  <!-- <br />
   <br />
-  <br />
-  <br />
-  <pre>{{ totalItems }}</pre>
+  <br /> -->
+  <!-- <pre>{{ totalItems }}</pre> -->
   <!-- <pre>{{ tableData }}</pre> -->
 </template>
 
@@ -260,13 +263,14 @@ const notify = useNotification()
 
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
-const datacache = storeCache()
+// const datacache = storeCache()
 
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
 const tableData = ref<ITableData>({
   pageNumber: 1,
-  perPage: 5,
+  perPage: 1000000,
+  _lastScrollDirection: '',
   // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.clientsSorting.column,
   sortDesc: storeTable.clientsSorting.isDesc,
@@ -283,8 +287,9 @@ const columns = ref<ITableHeaderRow>({
       dataKey: 'selected',
       class: 'col-selected',
       sortable: true,
-      width: 50,
-      maxWidth: 50,
+      width: 40,
+      maxWidth: 40,
+      _fixed: true, // always visible
       fixed: true, // always visible
       // hidden: cookies.includesCookie('column_' + id, 'selected', true)
     },
@@ -294,11 +299,20 @@ const columns = ref<ITableHeaderRow>({
       key: 'clientId',
       dataKey: 'clientId',
       class: 'col-clientId',
-      fixed: true,
-      width: 200,
+      _fixed: true,
+      width: 100,
       sortable: true,
       // hidden: cookies.includesCookie('column_' + id, 'clientId', true)
-      hidden: false
+      hidden: false,
+
+      cellRenderer: ({rowData}) => {
+        // { <el-tag>{fetchedData.value.findIndex((e: any) => e.clientId === rowData.clientId)}</el-tag> }
+        return (
+          <>
+          <el-text>{rowData.clientId}</el-text>
+          </>
+        )
+      }
     },
     description: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.description'),
@@ -306,7 +320,7 @@ const columns = ref<ITableHeaderRow>({
       dataKey: 'description',
       class: 'col-description',
       sortable: true,
-      width: 200,
+      width: 300,
       hidden: !storeTable.clientsColumns.includes('description')
       // hidden: cookies.includesCookie('column_' + id, 'description', false)
     },
@@ -367,21 +381,25 @@ const columns = ref<ITableHeaderRow>({
       hidden: true // this is a dummy column for grouping
     },
     version_outdated: { // eslint-disable-next-line object-property-newline
-      title: $t('table.fields.versionOutdated'),
+      tooltip: $t('table.fields.versionOutdatedGeneral'),
       key: 'version_outdated',
       dataKey: 'version_outdated',
       _majorKey: '_majorStats',
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
+      icon: icons.productsOutdated,
+      iconColor: "--el-color-warning",
       hidden: !storeTable.clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     version_outdated_netboot: { // eslint-disable-next-line object-property-newline
-      title: $t('table.fields.versionOutdated'),
+      tooltip: $t('table.fields.versionOutdatedNetboot'),
       key: 'version_outdated_netboot',
       dataKey: 'version_outdated',
       _majorKey: '_majorStats',
+      icon: icons.productsOutdated,
+      iconColor: "--el-color-warning",
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
@@ -389,22 +407,26 @@ const columns = ref<ITableHeaderRow>({
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
-      title: $t('table.fields.actionResultFailed'),
+      tooltip: $t('table.fields.actionResultFailed'),
       key: 'actionResult_failed',
       dataKey: 'actionResult_failed',
       _majorKey: '_majorStats',
       class: 'col-_majorStats',
+      icon: icons.productsFailedActionResult,
+      iconColor: "--el-color-error",
       sortable: true,
       width: 50,
       hidden: !storeTable.clientsColumns.includes('_majorStats')
       // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
-      title: $t('table.fields.installationStatusUnknown'),
+      tooltip: $t('table.fields.installationStatusUnknown'),
       key: 'installationStatus_unknown',
       dataKey: 'installationStatus_unknown',
       _majorKey: '_majorStats',
       class: 'col-_majorStats',
+      icon: icons.productInstallationStatusUnknown,
+      iconColor: "--el-color-info",
       sortable: true,
       width: 50,
       hidden: !storeTable.clientsColumns.includes('_majorStats')
@@ -412,10 +434,11 @@ const columns = ref<ITableHeaderRow>({
     },
     // TODO: Sorting for reachable column
     reachable: { // eslint-disable-next-line object-property-newline
-      title: $t('table.fields.reachable'),
+      tooltip: $t('table.fields.reachable'),
       key: 'reachable',
       dataKey: 'reachable',
       class: 'col-reachable',
+      icon: icons.productsOutdated,
       sortable: false,
       width: 50,
       hidden: !storeTable.clientsColumns.includes('reachable')
@@ -425,13 +448,14 @@ const columns = ref<ITableHeaderRow>({
       title: $t('table.fields.rowactions'),
       key: 'rowactions',
       dataKey: 'rowactions',
-      fixed: TableV2FixedDir.RIGHT,
-      width: 150,
+      _fixed: TableV2FixedDir.RIGHT,
+      width: 100,
       hidden: false,
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => {
         return (
           <>
+          {/* { <el-tag>{fetchedData.value.findIndex((e: any) => e.clientId === rowData.clientId) + 1}</el-tag> } */}
           <BTNRowLink
             isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'config'}
             icon={icons.settings}
@@ -458,8 +482,8 @@ const props = defineProps({
 
 onMounted(async ()=> {
   await useConfigserver(true) // init selectiondepots with configserver
-  fetchedData.value = []
-  fetchedData.value = await _fetch()
+  await tableHelper.fetch()
+  tableHelper.setTotalItemsAsPerPage(totalItems.value)
 })
 
 
@@ -486,16 +510,16 @@ function changeRowLink(e:Event, cid: string, to='config') {
 // }
 async function _fetch() {
   const params:any = { ...tableData.value }
-  console.log('datacache server', datacache.opsiconfigserver)
+  // console.log('datacache server', datacache.opsiconfigserver)
   params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
-  console.log('params.selectedDepots', params.selectedDepots)
-    params.selectedClients = JSON.stringify(storeSelection.selectionClients)
-    console.log('params.selectedClients', params.selectedClients)
-    if (params.sortBy === '') { params.sortBy = 'clientId' }
-    if (params.sortBy === 'selected') {
-      params.sortDesc = true
-      params.selected = JSON.stringify(storeSelection.selectionClients)
-    }
+  // console.log('params.selectedDepots', params.selectedDepots)
+  params.selectedClients = JSON.stringify(storeSelection.selectionClients)
+    // console.log('params.selectedClients', params.selectedClients)
+  if (params.sortBy === '') { params.sortBy = 'clientId' }
+  if (params.sortBy === 'selected') {
+    params.sortDesc = true
+    params.selected = JSON.stringify(storeSelection.selectionClients)
+  }
     // return await this.$axios.get('/api/opsidata/clients', { params })
     //   .then((response) => {
     //     this.totalItems = response.headers['x-total-count']
@@ -511,6 +535,8 @@ async function _fetch() {
     //     this.showToastError(error)
     //     return []
     //  })
+  log().log_colored('green', 'VClients: fetch clients. page', params.pageNumber)
+  // console.log('VClients: fetch clients. page', params.pageNumber)
   const {data, error, headers} = await useApiGETBody<T_ClientsList>(`/opsidata/clients`, params)
 
   if (error) {
@@ -519,9 +545,8 @@ async function _fetch() {
     return []
   }
   // console.log('data', data)
-  console.log('headers2', headers)
   totalItems.value = parseInt(headers['x-total-count'])
-  console.log('headers2.x-total-count', totalItems.value)
+  // tableHelper.setPerPage(headers)
   // this.totalpages = Math.ceil(this.totalItems / params.perPage)
   // this.isLoading = false
   // this.tableloaded = true
@@ -530,8 +555,20 @@ async function _fetch() {
   // } else {
   //   return response.data
   // }
-  console.log('DATA', data.value.length)
-  return data.value;
+  // console.log('DATA', data.value.length)
+  // const items = [{dummy:true, clientId: 'scroll up to load more'}, ...data.value, {dummy:true, clientId: 'scroll down to load more'}]
+  // return items
+  const sort_by_SortBy = (a: any, b: any) => {
+    if (a[params.sortBy] < b[params.sortBy]) {
+      return params.sortDesc ? 1 : -1
+    }
+    if (a[params.sortBy] > b[params.sortBy]) {
+      return params.sortDesc ? -1 : 1
+    }
+    return 0
+  }
+  // return data.value.sort(sort_by_SortBy)
+  return data.value
 }
 /**
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'
