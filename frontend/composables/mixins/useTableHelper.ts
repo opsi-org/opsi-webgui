@@ -3,103 +3,137 @@ import type { ITableData } from "~/types/ttable"
 
 export const useTableHelper = (
   tableId: string,
-  tableData: Ref<ITableData>,
-  fetchedData:Ref<Array<any>>,
+  tableData: Ref<ITableData> | Ref< { [key: string]: ITableData } >,
+  fetchedData:Ref<Array<any>>| Ref< { [key: string]: Array<any> } >,
   totalItems: Ref<number>,
   _fetch: Function,
-  storeTable: any
+  storeTable: any,
+  tableDataType: Ref<string>|undefined = undefined,
 ) => {
+  log().log_colored('blue', 'tableId', tableId)
+  log().log_colored('blue', 'fetchedData', fetchedData.value)
+  log().log_colored('blue', 'tableDataType', tableDataType ? tableDataType.value : 'undefined')
+
   const isLoading = ref(false)
   const nPages = 2
 
   const _firstDummyRow = {dummy:true, clientId: 'click to load more', direction: 'prev'}
+  const _firstDummyRow2 = {dummy:true, clientId: '', direction: undefined}
   const _lastDummyRow = {dummy:true, clientId: 'click to load more', direction: 'next'}
 
-  const maxPage = computed(()=> Math.ceil(totalItems.value/tableData.value.perPage) || -1)
-  watch(()=> tableData.value.filterQuery, async ()=>{ await fetch ()}, { deep: true})
-  watch(()=> tableData.value.sortBy, async ()=>{ await fetch ()}, { deep: true})
-  watch(()=> tableData.value.sortDesc, async ()=>{await fetch ()}, { deep: true})
+  const fetchedDataWrapper = computed<any[]>(()=> { return (tableDataType !== undefined) ? fetchedData.value[tableDataType.value] : fetchedData.value })
+  const tableDataWrapper = computed(()=> (tableDataType !== undefined) ? tableData.value[tableDataType.value] : tableData.value)
 
+  const maxPage = computed(()=> Math.ceil(totalItems.value/tableDataWrapper.value.perPage) || -1)
+
+  watch(()=> tableDataWrapper.value.filterQuery, async ()=>{ await fetch ()}, { deep: true})
+  watch(()=> tableDataWrapper.value.sortBy, async ()=>{ await fetch ()}, { deep: true})
+  watch(()=> tableDataWrapper.value.sortDesc, async ()=>{await fetch ()}, { deep: true})
+
+  function resetFetchData(val: any[]|undefined = []) {
+    if (tableDataType === undefined) {
+      console.log('resetFetchData', fetchedData.value, val)
+      fetchedData.value = val
+      return
+    }
+    console.log('resetFetchData', fetchedData.value[tableDataType.value], val)
+    fetchedData.value[tableDataType.value] = val
+  }
+  function setTotalItemsAsPerPage (count: number) {
+    totalItems.value = count
+    if (totalItems.value === 0) {
+      log().log_colored('red', 'VClients: fetch clients. no clients found')
+      return []
+    }
+    tableDataWrapper.value.perPage = totalItems.value
+    updateTableData(tableDataWrapper.value)
+  }
   async function fetch (location: string|undefined = undefined) {
     isLoading.value = true
 
-    const visiblePages = Math.ceil(fetchedData.value.filter(x=>x.dummy !== true).length / tableData.value.perPage)
-    // console.warn('useTableHelper:  fetch clients. page', tableData.value.pageNumber )
+    const visiblePages = Math.ceil(fetchedDataWrapper.value.filter(x=>x.dummy !== true).length / tableDataWrapper.value.perPage)
+    // console.warn('useTableHelper:  fetch clients. page', tableDataWrapper.value.pageNumber )
     let direction = location
-    if (fetchedData.value.length === 0) direction = undefined
+    if (fetchedDataWrapper.value.length === 0) direction = undefined
 
-    log().log_colored('darkgreen', 'useTableHelper: fetch clients. page', tableData.value.pageNumber)
+    log().log_colored('darkgreen', 'useTableHelper: fetch clients. page', tableDataWrapper.value.pageNumber)
 
     if (direction === undefined || direction === '') {
       log().log_colored('gray', 'only this page / reset')
-      fetchedData.value = []
-      const data =  await _fetch()
-      fetchedData.value =  []
-      if (tableData.value.pageNumber !== 1) fetchedData.value.push(_firstDummyRow)
-      fetchedData.value.push(...data)
-      log().log_colored('gray', 'pageNumber', tableData.value.pageNumber, 'maxPage', maxPage.value)
-      if (tableData.value.pageNumber < maxPage.value) fetchedData.value.push(_lastDummyRow)
+      resetFetchData()
+      const data = await _fetch()
+      resetFetchData()
+      if (tableDataWrapper.value.pageNumber !== 1) {
+        fetchedDataWrapper.value.push(_firstDummyRow)
+        fetchedDataWrapper.value.push(_firstDummyRow2)
+      }
+      fetchedDataWrapper.value.push(...data)
+      log().log_colored('gray', 'pageNumber', tableDataWrapper.value.pageNumber, 'maxPage', maxPage.value)
+      if (tableDataWrapper.value.pageNumber < maxPage.value) fetchedDataWrapper.value.push(_lastDummyRow)
 
     } else if (direction === 'next') {
       console.log('next / append data to end of array', visiblePages)
-      if (fetchedData.value.length > 0 ) {
+      if (fetchedDataWrapper.value.length > 0 ) {
         log().log_colored('orange', 'next / remove last dummy row')
-        if (fetchedData.value[0].dummy) fetchedData.value.splice(0, 1) // remove first dummy row
-        if (fetchedData.value[fetchedData.value.length-1].dummy) fetchedData.value.splice(fetchedData.value.length-1, 1) // remove last dummy row
+        if (fetchedDataWrapper.value[0].dummy) fetchedDataWrapper.value.splice(0, 1) // remove first dummy row
+        if (fetchedDataWrapper.value[fetchedDataWrapper.value.length-1].dummy) fetchedDataWrapper.value.splice(fetchedDataWrapper.value.length-1, 1) // remove last dummy row
       }
       if (visiblePages >= nPages) {
         log().log_colored('orange', 'next / remove first n rows')
-        fetchedData.value.splice(0, tableData.value.perPage) // remove first n rows
+        fetchedDataWrapper.value.splice(0, tableDataWrapper.value.perPage) // remove first n rows
       }
 
-      // fetchedData.value.push(_firstDummyRow)
-      if (tableData.value.pageNumber > 2) fetchedData.value.splice(0, 0, _firstDummyRow)
-      fetchedData.value.push(...(await _fetch()))
-      if (tableData.value.pageNumber < maxPage.value) fetchedData.value.push(_lastDummyRow)
+      // fetchedDataWrapper.value.push(_firstDummyRow)
+      if (tableDataWrapper.value.pageNumber > 2){
+        fetchedDataWrapper.value.splice(0, 0, _firstDummyRow, _firstDummyRow2)
+      }
+      fetchedDataWrapper.value.push(...(await _fetch()))
+      if (tableDataWrapper.value.pageNumber < maxPage.value) fetchedDataWrapper.value.push(_lastDummyRow)
 
     } else if (direction === 'prev') {
 
-      if (fetchedData.value.length > 0 ) {
+      if (fetchedDataWrapper.value.length > 0 ) {
         log().log_colored('orange', 'next / remove last dummy row')
-        if (fetchedData.value[0].dummy) fetchedData.value.splice(0, 1) // remove first dummy row
-        if (fetchedData.value[fetchedData.value.length-1].dummy) fetchedData.value.splice(fetchedData.value.length-1, 1) // remove last dummy row
+        if (fetchedDataWrapper.value[0].dummy) fetchedDataWrapper.value.splice(0, 1) // remove first dummy row
+        if (fetchedDataWrapper.value[fetchedDataWrapper.value.length-1].dummy) fetchedDataWrapper.value.splice(fetchedDataWrapper.value.length-1, 1) // remove last dummy row
       }
       if (visiblePages >= nPages) {
-        // fetchedData.value.splice(0, tableData.value.perPage) // remove first n rows
-        fetchedData.value.splice(fetchedData.value.length - tableData.value.perPage, tableData.value.perPage)
+        // fetchedDataWrapper.value.splice(0, tableDataWrapper.value.perPage) // remove first n rows
+        fetchedDataWrapper.value.splice(fetchedDataWrapper.value.length - tableDataWrapper.value.perPage, tableDataWrapper.value.perPage)
       }
-      fetchedData.value.unshift(...(await _fetch()))
-      if (tableData.value.pageNumber !== 1) fetchedData.value.unshift(_firstDummyRow)
-      if (maxPage.value-1 > 1 && tableData.value.pageNumber < maxPage.value-1) fetchedData.value.push(_lastDummyRow)
+      fetchedDataWrapper.value.unshift(...(await _fetch()))
+      if (tableDataWrapper.value.pageNumber !== 1) fetchedDataWrapper.value.unshift(_firstDummyRow, _firstDummyRow2)
+      if (maxPage.value-1 > 1 && tableDataWrapper.value.pageNumber < maxPage.value-1) fetchedDataWrapper.value.push(_lastDummyRow)
     }
-    tableData.value._lastScrollDirection = direction
+    tableDataWrapper.value._lastScrollDirection = direction
     isLoading.value = false
   }
 
-  function updateTableData (v: typeof tableData.value) {
+  function updateTableData (v: typeof tableDataWrapper.value) {
     for (const key in v) {
-      if (JSON.stringify(tableData.value[key]) !== JSON.stringify(v[key])) {
-        log().log_colored('orange', 'tabledata changed key', key, 'value', v[key], 'oldvalue', tableData.value[key])
-        tableData.value[key] = v[key]
+      if (JSON.stringify(tableDataWrapper.value[key]) !== JSON.stringify(v[key])) {
+        log().log_colored('orange', 'tabledata changed key', key, 'value', v[key], 'oldvalue', tableDataWrapper.value[key])
+        tableDataWrapper.value[key] = v[key]
       }
     }
-    console.log('tabledata changed', v)
-    // tableData.value = v
+    log().log_colored('red','tabledata changed', JSON.stringify(v))
+    // tableDataWrapper.value = v
   }
   function sortChanged(v: any) {
     console.log('onSort table', tableId, 'by', v.key, 'desc', v.isDesc)
-    tableData.value.sortBy = v.key
-    tableData.value.sortDesc = v.isDesc
+    tableDataWrapper.value.sortBy = v.key
+    tableDataWrapper.value.sortDesc = v.isDesc
     storeTable.setSortColumn(tableId, v.key, v.isDesc)
     // storeTable.setSortColumn(tableId, 'clientId', true)
   }
   function filterChanged(v: any) {
-    tableData.value.filterColumns = v.cols
-    tableData.value.filterQuery = v.vals
+    tableDataWrapper.value.filterColumns = v.cols
+    tableDataWrapper.value.filterQuery = v.vals
   }
   return {
     isLoading,
     fetch,
+    setTotalItemsAsPerPage,
     updateTableData,
     sortChanged,
     filterChanged

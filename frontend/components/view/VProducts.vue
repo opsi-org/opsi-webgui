@@ -13,35 +13,41 @@
         v-model="productsTypeChecked.NetbootProduct"
         @change="changeProductsType('NetbootProduct')"
       >NetbootProduct</el-checkbox-button>
-    <el-checkbox-button
+    <!-- <el-checkbox-button
         disabled
         v-model="productsTypeChecked.Product"
         @change="changeProductsType('Product')"
-      >Product</el-checkbox-button>
+      >Product</el-checkbox-button> -->
   </div>
   <TableTDefault
       row-id="productId"
       :id="id"
       v-model:columns="columns"
-      v-model:data="fetchedData[currentType]"
-      :table-data="tableData[currentType]"
+      v-model:data="fetchedDataWrapper"
+      :table-data="tableDataWrapper"
       :total-items="totalItems"
-      :sort-by="tableData[currentType].sortBy"
+      :sort-by="tableDataWrapper.sortBy"
       :is-mobile="isMobile"
-      @selection-changed="(id: string) => storeSelection.toggleSelectionProducts(id)"
+
+      :is-loading="tableHelper.isLoading.value"
+      @fetch="tableHelper.fetch"
+      @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionProducts(id)}"
       @selection-clear="storeSelection.clearSelectionProducts"
-      @tabledata-changed="(v: any) => {updateTableData('localboot', v)}"
-      @sort-changed="(key: string, isDesc: boolean) => {
+      @tabledata-changed="tableHelper.updateTableData"
+      @sort-changed="tableHelper.sortChanged"
+      @update-input-filter="tableHelper.filterChanged"
+      >
+      <!-- @tabledata-changed="(v: any) => {updateTableData('localboot', v)}" -->
+      <!-- @sort-changed="(key: string, isDesc: boolean) => {
         console.log('sort table', currentType, 'by', key, 'desc', isDesc)
         tableData[currentType].sortBy = key
         tableData[currentType].sortDesc = isDesc
         tableSettings.setSortColumn(id, key, isDesc)
-      }"
-      @update-input-filter="(v: any)=> {
+      }" -->
+      <!-- @update-input-filter="(v: any)=> {
         tableData[currentType].filterColumns = v.cols
         tableData[currentType].filterQuery = v.vals
-      }"
-    >
+      }" -->
 
     </TableTDefault>
   <!-- <div data-testid="VProducts" class="VProducts">
@@ -117,6 +123,7 @@ import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData, ITableRow } from '~/types/ttable';
 import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
 import type { T_Client2Depot } from '~/types/APItypes';
+import { useTableHelper } from '~/composables/mixins/useTableHelper';
 
 
 const $t = useI18n().t
@@ -146,7 +153,7 @@ const tableData = ref<tproductITableData>({
   'LocalbootProduct': {
     type: 'LocalbootProduct',
     pageNumber: 1,
-    perPage: 25,
+    perPage: 1000000,
     // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
     sortBy: tableSettings.productsSorting.column,
     sortDesc: tableSettings.productsSorting.isDesc,
@@ -157,7 +164,7 @@ const tableData = ref<tproductITableData>({
   'NetbootProduct': {
     type: 'NetbootProduct',
     pageNumber: 1,
-    perPage: 5,
+    perPage: 1000000,
     sortBy: tableSettings.productsSorting.column,
     sortDesc: tableSettings.productsSorting.isDesc,
     filterQuery: '',
@@ -166,7 +173,7 @@ const tableData = ref<tproductITableData>({
   'Product': {
     type: 'Product',
     pageNumber: 1,
-    perPage: 5,
+    perPage: 1000000,
     sortBy: tableSettings.productsSorting.column,
     sortDesc: tableSettings.productsSorting.isDesc,
     filterQuery: '',
@@ -196,8 +203,7 @@ const columns = reactive<ITableHeaderRow>({
       key: 'installationStatus',
       dataKey: 'installationStatus',
       class: 'col-installationStatus',
-      width: 200,
-      maxWidth: 200,
+      width: 50,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'installationStatus', true)
       hidden: !tableSettings.productsColumns.includes('installationStatus')
@@ -207,8 +213,7 @@ const columns = reactive<ITableHeaderRow>({
       key: 'actionResult',
       dataKey: 'actionResult',
       class: 'col-actionResult',
-      width: 200,
-      maxWidth: 200,
+      width: 50,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
       hidden: !tableSettings.productsColumns.includes('actionResult')
@@ -219,8 +224,7 @@ const columns = reactive<ITableHeaderRow>({
       key: 'productId',
       dataKey: 'productId',
       class: 'col-productId',
-      width: 200,
-      maxWidth: 200,
+      width: 150,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'productId', true)
       hidden: false
@@ -370,6 +374,19 @@ const columns = reactive<ITableHeaderRow>({
 // consts
 const id = "products"
 
+// Computed
+const currentType = computed<string>(()=>{
+  if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
+  if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
+  if (productsTypeChecked.value.Product) return 'Product'
+  return 'LocalbootProduct'
+})
+const fetchedDataWrapper = computed(()=>fetchedData.value[currentType.value])
+const tableDataWrapper = computed(()=>tableData.value[currentType.value])
+
+const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, tableSettings, currentType) // define watcher for tableData
+
+
 const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return false}},
@@ -389,21 +406,15 @@ const props = defineProps({
 //   activeLocalbootTab: boolean = true
   // headerData: ITableHeaders = {
 
-// Computed
-const currentType = computed(()=>{
-  if (productsTypeChecked.value.LocalbootProduct) return 'LocalbootProduct'
-  if (productsTypeChecked.value.NetbootProduct) return 'NetbootProduct'
-  if (productsTypeChecked.value.Product) return 'Product'
-  return 'LocalbootProduct'
-})
-
-
 onMounted(async ()=> {
   if (props.productType && props.productType !== currentType.value)
     changeProductsType(props.productType)
 
   fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(selectionClients.value)
-  fetchedData.value[currentType.value] = await _fetch(currentType.value)
+  // fetchedData.value[currentType.value] = await _fetch(currentType.value)
+  // fetchedData.value[currentType.value] = []
+  await tableHelper.fetch()
+  tableHelper.setTotalItemsAsPerPage(totalItems.value)
 })
 
 // watch(() => fetchedData[currentType.value])
@@ -419,12 +430,11 @@ watch(()=>selectionClients.value, async () => {
   fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(selectionClients.value)
 }, { deep: true })
 
-
-watch(()=> tableData.value[currentType.value].filterQuery, async ()=>{
-  console.log('tableData changed', tableData)
-  fetchedData.value[currentType.value] = []
-  fetchedData.value[currentType.value] = await _fetch(currentType.value)
-}, { deep: true})
+// watch(()=> tableData.value[currentType.value].filterQuery, async ()=>{
+//   console.log('tableData changed', tableData)
+//   fetchedData.value[currentType.value] = []
+//   fetchedData.value[currentType.value] = await _fetch(currentType.value)
+// }, { deep: true})
 
 function changeProductsType (type: string) {
   if (props.isChild) {
@@ -456,7 +466,8 @@ async function updateTableData (type:string, v: typeof tableData.value.Localboot
   fetchedData.value[currentType.value] = await _fetch(currentType.value)
 }
 
-async function _fetch(type: string) {
+async function _fetch(_type: string = "") {
+  const type = currentType.value
   const params = fetchProductsPrepareParams(type)
   const {data, error, headers} = await useApiGETBody('/opsidata/products', params)
   if (error) {
@@ -465,6 +476,7 @@ async function _fetch(type: string) {
     return []
   }
   totalItems.value = parseInt(headers['x-total-count'])
+  // tableHelper.setTotalItemsAsPerPage(totalItems.value)
   return data.value
 }
 

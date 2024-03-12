@@ -18,18 +18,28 @@
         ref="tableRef"
         scrollable scrollHeight="400px"
         tableStyle="width: 100%" size="small"
-        class="bg-transparent"
+        class="bg-transparent "
         style="width: calc(100% - 5px)"
         :dataKey="props.rowId"
         :value="dataModel"
+        :row-class="(d) => { return {
+          '!w-full': true,
+          'noHoverRow min-h-48 h-48': d.direction !== undefined,
+          'align-bottom': d.direction === 'prev',
+          'align-top': d.direction === 'next',
+          'noHoverRow min-h-10 h-10 hover:bg-transparent': d.dummy && d.direction === undefined
+          // [(!d.dummy) ? '': (!d.direction) ? '' : 'min-h-48 h-48 ' + (d.direction == 'prev' ? 'align-bottom' : ' align-top')]: true
+        }}"
         :highlight-on-select="false"
         v-model:selection="selection" :metaKeySelection="false"
         :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
+        :virtual-scroller-options="{ itemSize: 46 }"
         @update:sort-field="log().log('sortfield changed')"
         @update:sort-order="log().log('sortorder changed')"
         @sort="onSort($event)"
         @row-click="rowEventHandlers.onClick"
         >
+        <!-- :virtual-scroller-options="{ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 1000, showLoader: false, loading: lazyLoading, numToleratedItems: perPage / 2 }" -->
         <!-- :virtualScrollerOptions="virtualScrollerOptions" -->
         <!-- @rowSelect="rowEventHandlers.onClick"
         @rowUnselect="rowEventHandlers.onClick" -->
@@ -62,114 +72,120 @@
             <template #start="slotProps"></template>
             <template #end></template>
           </Paginator> -->
-          <div>
+          <div class="flex flex-row-reverse space-x-4 space-x-reverse">
             <el-button
               size="small"
-              @click="$emit('fetch')"
+              @click="_fetch"
             ><IconIIcon :icon="icons.refetch" /></el-button>
             <el-pagination
               v-model:current-page="pageNumber"
               v-model:page-size="perPage"
               class="max-w-1/2 !inline-flex"
               :pager-count="5"
-              :page-sizes="[1, 5, 10, 20, 50, 100, 1000]"
+              :page-sizes="pagesSizes"
               :small="small"
               :disabled="false"
               :background="false"
-              layout="sizes, prev, pager, next"
+              :layout="(pagesSizes.length <= 1) ? 'total' : ((props.totalItems / perPage) <= 1) ? 'total, sizes' : 'total, sizes, prev, pager, next'"
               :total="props.totalItems"
               @size-change="onPerPageChange"
               @current-change="onPage"
             />
           </div>
         </template>
-        <!-- v-model:selection="selection" :selectionMode="selectionStore.multiSelection === true ? 'multiple' : 'single'" -->
-        <!-- paginator :rows="props.tableData.perPage" :rowsPerPageOptions="[1, 5, 10, 20, 50, 100, 10000]" -->
         <div>
-
-        <div v-for="col,k in (visibleColumns as any)" >
-
-          <Column v-if="(col as any).key === 'selected'"
-            :selectionMode="selectionStore.multiSelection === true ? 'multiple': 'single'"  headerStyle="width: 4rem"
-          >
-            <template #loading>
-              <div class="flex align-items-center" :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
-                  <Skeleton width="60%" height="1rem" />
-              </div>
-            </template>
-            <template #header="slotProps">
-              <!-- <HeaderCellRenderer :colData="col" :key="col.title"/> -->
-              <ButtonBTNClearSelection @clearselection="clearSelection"/>
-            </template>
-            <template #body="scope">
-              <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(scope.data[props.rowId])) ? scope.data.selected = true : scope.data.selected = false }}</div>
-
-              <div v-if="scope.data.dummy"></div>
-              <el-checkbox v-else-if="selectionStore.multiSelection" v-model="scope.data.selected"/>
-
-              <el-radio-group v-else v-model="scope.data.selected">
-                <!-- <el-radio :value="true">t</el-radio>
-                <el-radio :value="false">f</el-radio> -->
-                <el-radio :label="true" class="hide_label" />
-              </el-radio-group>
-            </template>
-            <!-- <template #body="slotProps">
-              <CellRenderer :colData="col" :key="col.key" :rowData="slotProps.data"/>
-            </template> -->
-          </Column>
-          <Column v-else
-            :key="col.key" :field="col.key"
-            :header="col.title"
-            :sortable="col.sortable"
-            :style="(Boolean(col._fixed) !== false || Boolean(col.fixed) !== false) ? 'min-width: ' + col.width : ''"
+          <div v-for="col,k in (visibleColumns as any)" >
+            <Column v-if="(col as any).key === 'selected'"
+              :selectionMode="selectionStore.multiSelection === true ? 'multiple': 'single'"  headerStyle="width: 4rem"
+              :class="col.class"
             >
-            <template v-if="col.headerCellRenderer" #header="slotProps">
-              <HeaderCellRenderer :colData="col" :key="col.title"/>
-            </template>
-            <template v-else-if="col.icon" #header>
-              <el-tooltip
-                effect="dark"
-                :content="col.tooltip"
-                placement="bottom-end"
-              >
-              <!-- <IconIIcon :icon="col.icon" :style="'color: blue'" /> -->
-              <IconIIcon :icon="col.icon" :style="'color: var(' + col.iconColor + ')'" />
-              </el-tooltip>
-            </template>
+              <template #loading>
+                <div class="flex align-items-center" :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
+                    <Skeleton width="60%" height="1rem" />
+                </div>
+              </template>
+              <template #header="slotProps">
+                <!-- <HeaderCellRenderer :colData="col" :key="col.title"/> -->
+                <ButtonBTNClearSelection @clearselection="clearSelection"/>
+              </template>
+              <template #body="scope">
+                <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(scope.data[props.rowId])) ? scope.data.selected = true : scope.data.selected = false }}</div>
 
-            <template v-if="col.cellRenderer" #body="slotProps">
-              <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && col.key==props.rowId"
+                <div v-if="scope.data.dummy"></div>
+                <el-checkbox v-else-if="selectionStore.multiSelection" v-model="scope.data.selected"/>
+
+                <el-radio-group v-else v-model="scope.data.selected">
+                  <!-- <el-radio :value="true">t</el-radio>
+                  <el-radio :value="false">f</el-radio> -->
+                  <el-radio :label="true" class="hide_label" />
+                </el-radio-group>
+              </template>
+              <!-- <template #body="slotProps">
+                <CellRenderer :colData="col" :key="col.key" :rowData="slotProps.data"/>
+              </template> -->
+            </Column>
+            <!-- :style="(Boolean(col._fixed) !== false || Boolean(col.fixed) !== false) ? 'min-width: ' + col.width + 'px;' : ''" -->
+            <!-- :style="getColumnStyle(col)" -->
+            <Column v-else
+              :key="col.key" :field="col.key"
+              :header="col.title"
+              :sortable="col.sortable"
+              :class="{
+                '!w-1/1': true,
+                '': col._fixed === TableV2FixedDir.LEFT || col.fixed === TableV2FixedDir.LEFT || col.fixed === true || col._fixed === true,
+                'flex flex-row-reverse': col._fixed === TableV2FixedDir.RIGHT || col.fixed === TableV2FixedDir.RIGHT,
+                // []: Boolean(col._fixed) === false && Boolean(col.fixed) === false,
+                [col.class]: true,
+              }"
               >
-              <!-- @click="onScroll(slotProps.data.direction)" -->
-                {{ slotProps.data[props.rowId] }}
-              </el-text>
-              <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
-            </template>
-          </Column>
-          <!-- <Column :key="'id'" :field="'id'" :header="'Id'"> </Column> -->
-        </div>
+              <template v-if="col.headerCellRenderer" #header="slotProps">
+                <HeaderCellRenderer :colData="col" :key="col.title"/>
+              </template>
+              <template v-else-if="col.icon" #header>
+                <el-tooltip
+                  effect="dark"
+                  :content="col.tooltip"
+                  placement="bottom-end"
+                >
+                <!-- <IconIIcon :icon="col.icon" :style="'color: blue'" /> -->
+                <IconIIcon :icon="col.icon" :style="'color: var(' + col.iconColor + ')'" />
+                </el-tooltip>
+              </template>
+
+              <template v-if="col.cellRenderer" #body="slotProps">
+                <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && col.key==props.rowId"
+                  class="min-h-24"
+                >
+                <!-- @click="onScroll(slotProps.data.direction)" -->
+                  {{ slotProps.data[props.rowId] }}
+                </el-text>
+                <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
+              </template>
+            </Column>
+            <!-- <Column :key="'id'" :field="'id'" :header="'Id'"> </Column> -->
+          </div>
         </div>
       </DataTable>
     </div>
-
+    pagesSizes {{ pagesSizes.length }} <br />
+    perPage {{ perPage }} <br />
+    tableData.perPage {{ props.tableData.perPage }} <br />
   </div>
 </template>
 
 <script lang="tsx" setup>
 // tsx used to create components inside ts code (see columns[...].cellRenderer)
 import { useIcons } from '~/composables/mixins/useIcons'
-import {TableV2SortOrder, type CheckboxValueType, type RowEventHandlerParams, type RowEventHandlers } from 'element-plus'
-import type { RowClassNameGetter, SortBy, SortState } from 'element-plus'
-import type { ISelectionCellProps, ITableHeaderRow } from '~/types/ttableV3'
-import type { FunctionalComponent } from 'vue'
+import {TableV2SortOrder, type RowEventHandlerParams, TableV2FixedDir } from 'element-plus'
+import type { SortState } from 'element-plus'
+import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
-import type { ITableData } from '~/types/ttable';
-import type { CellRendererParams } from 'element-plus/es/components/table-v2/src/types.mjs'
+import type { ITableData } from '~/types/ttable'
 
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';                   // optional
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+// import ColumnGroup from 'primevue/columngroup'   // optional
+// import Row from 'primevue/row'                   // optional
 import { useUtilsData } from '~/composables/mixins/useUtilsData'
 
 const CellRenderer = ({key, rowData, colData}: any) => {
@@ -212,9 +228,14 @@ const wrappedColumns = ref<ITableHeaderRow>({})
 
 const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
 const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
+const _pagesSizes = [1, 5, 10, 20, 50, 100, 1000]
+const pagesSizes = ref(_pagesSizes)
+updateMaxPerPage()
 const lastSelectedItemForSingleselect = ref<any>(undefined)
 
 const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
+
+const lastScrollDirection = ref<'next'|'prev'|''>('')
 
 // rowEventHandlers.onClick
 const rowEventHandlers: any = {
@@ -222,7 +243,9 @@ const rowEventHandlers: any = {
     log().log_colored('red', '--------onClick-------')
     const rowData:TRowData  = params.rowData || params.data || params
     log().log_colored('gray', 'rowEventHandlers.onClick', rowData[props.rowId])
-    if (rowData.dummy === true) {
+    if (rowData.dummy === true && rowData.direction === undefined) {
+      return
+    } else if (rowData.dummy === true) {
       log().log_colored('gray', 'clicked on dummy row', rowData.direction)
       onScroll(rowData.direction)
       return
@@ -258,18 +281,12 @@ const rowEventHandlers: any = {
   },
 }
 
-function getSelectedrowsFromStore() {
-  const _selection: any = []
-  for (const rId of selectionStore['_'+selectKey.value]) {
-    const row = dataModel.value.find((r: any) => r[props.rowId] === rId)
-    if (row !== undefined)
-      _selection.push(row)
-  }
-  return _selection
-}
-function getSelectedrowIdsFromStore() {
-  return getSelectedrowsFromStore().map((r: any) => r[props.rowId])
-}
+
+const lazyLoading = ref(true);
+// const loadLazyTimeout = ref();
+
+const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 500, showLoader: false, loading: lazyLoading, numToleratedItems: perPage.value / 2 })
+
 
 const selection = ref<Array<string>>(getSelectedrowsFromStore())
 const _visibleColumnsDataKeys = computed(()=> useUtilsData().getVisibleColumnIds(Object.values(columnsModel.value)) )
@@ -277,8 +294,17 @@ const _visibleColumnsDataKeys = computed(()=> useUtilsData().getVisibleColumnIds
 const columnValues = computed(()=> Object.values(columnsModel.value))
 const visibleColumns = computed(()=> useUtilsData().getVisibleColumns(columnValues.value) )
 // const visibleColumns = computed(()=> Object.values(columnsModel.value).filter((c:any) => c.fixed === true || c._fixed === true || c.hidden === false))
+
+
+// numVisibleColumns.value < numFixedColumns.value + numVisibleColumnsDelta.value
+const numVisibleColumns = computed(()=> Object.values(visibleColumns.value).length)
+const numFixedColumns = computed(()=> Object.values(visibleColumns.value).filter((c:any) => Boolean(c.fixed) === true || Boolean(c._fixed) === true).length)
+const numVisibleColumnsDelta = ref(1)
+
 // watch(()=>props.tableData.pageNumber, (val)=>{ pageNumber.value = val })
 // watch(()=>props.tableData.perPage, (val)=>{ perPage.value = val })
+
+
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
 // watch(()=>tableStore.columns[props.id], ()=>{
   // show or hide major-children
@@ -300,6 +326,7 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
 }, { deep: true})
 // watch (()=> columnsModel.value)
 
+watch (()=>props.totalItems, updateMaxPerPage)
 
 watch (()=>dataModel, ()=>{ selection.value = getSelectedrowsFromStore() }, {deep: true})
 
@@ -359,13 +386,6 @@ watch (()=>dataModel, ()=>{ selection.value = getSelectedrowsFromStore() }, {dee
   //   return _columns
 // }
 
-function clearSelection (event:any) {
-  $emit('selection-clear')
-  dataModel.value.map((row:any) => {
-    row.selected = false
-    return row
-  })
-}
 // function updateCurrentPage(pageNo: number) {
 //   console.log('updateCurrentPage', pageNo)
 //   pageNumber.value = pageNo
@@ -398,47 +418,75 @@ watch(()=>props.tableData._lastScrollDirection, ()=> {
   props.tableData._lastScrollDirection = ''
   const items = dataModel.value.filter(x => x.dummy !== true).length
   const visiblePages =  Math.ceil(items / perPage.value)
-  log().log_colored('purple', 'event prev visiblePages', visiblePages)
-  log().log_colored('purple', 'event prev = modelValue.length', items)
-  log().log_colored('purple', 'event prev perPage.value', perPage.value)
-
 
   if (visiblePages > 1) {
-    log().log_colored('orange', 'scroll to row')
-    console.log('tableref', tableRef.value)
-    console.log('tablerefEl', tableRef.value.$el)
-    console.log('tablerefElScroll', tableRef.value.$el.scrollHeight)
-
-    // const tables = document.getElementsByClassName("p-datatable-table");
-    // const tables = document.getElementsByClassName("p-datatable-tbody");
-    // if (tables.length === 0) { console.error('no table found'); return }
-    // else if (tables.length > 1) { console.error('more than one table found'); return }
-    // console.log('table', tables[0])
-    // tables[0].scrollTo({top: tables[0].scrollHeight/2, behavior: 'smooth'})
-
-    // tableRef.value.$el.scrollTo({top: tableRef.value.$el.scrollHeight/2, behavior: 'smooth'})
-    // var rows = document.querySelectorAll('.p-datatable-tbody tr');
-    // wait 2 seconds
-    console.log('scroll to row, wait 2 seconds')
-    setTimeout(() => {
-      var rows = document.querySelectorAll('[data-pc-section="bodyrow"]');
-      const last_first_row = rows[props.tableData.perPage]
-      // console.log('rows', rows.length)
-      // console.log('rows', last_first_row.innerText?.substring(4, 30))
-      // line is the row number that you want to see into view after scroll
-      last_first_row.scrollIntoView({
-          behavior: 'instant',
-          block: 'start'
-      });
-    }, 100);
+    scrollToRow(props.tableData.perPage)
   }
-
-
 })
-const lastScrollDirection = ref<'next'|'prev'|''>('')
+
+function _fetch() {
+  $emit('fetch')
+  if (props.tableData.pageNumber > 1) scrollToRow(1, 500)
+}
+
+
+function updateMaxPerPage () {
+  // const _pagesSizes = [1, 5, 10, 20, 50, 100, 1000]
+  let sizes: number[] = JSON.parse(JSON.stringify(_pagesSizes))
+  sizes.push(props.totalItems)
+  sizes.sort((a, b) => a - b)
+  sizes = sizes.filter((e: number) => e <= props.totalItems)
+
+  perPage.value = props.totalItems
+  if (props.totalItems < 10) {
+    pagesSizes.value = [props.totalItems]
+    return
+  }
+  pagesSizes.value = sizes
+}
+
+function scrollToRow(rowNumber: number, timeout: number=100, behavior: 'auto'|'smooth'|'instant'='instant', block: 'start'|'center'|'end'|'nearest'='start') {
+  setTimeout(() => {
+
+    log().log_colored_group('purple', 'SCROLL TO ROW')
+    var rows = document.querySelectorAll('[data-pc-section="bodyrow"]');
+    const last_first_row = rows[rowNumber]
+    log().log_colored('gray', 'rows', rows.length, 'rowNumber', rowNumber, 'last_first_row')
+    console.log(last_first_row)
+    if (last_first_row === undefined) {
+      log().log_colored('red', 'last_first_row is undefined')
+      return
+    }
+    // line is the row number that you want to see into view after scroll
+    last_first_row.scrollIntoView({ behavior, block });
+    log().log_colored_group_end()
+  }, timeout);
+}
+
+// TODO:
+// - add scroll (real scroll)
+// - fix table column visibility
+//    - check major columns
+
+
+
+function getSelectedrowsFromStore() {
+  const _selection: any = []
+  for (const rId of selectionStore['_'+selectKey.value]) {
+    const row = dataModel.value.find((r: any) => r[props.rowId] === rId)
+    if (row !== undefined)
+      _selection.push(row)
+  }
+  return _selection
+}
+function getSelectedrowIdsFromStore() {
+  return getSelectedrowsFromStore().map((r: any) => r[props.rowId])
+}
+
+
 async function onScroll(event: any) {
 
-  log().log_colored('red', '---------- scroll', event, '-----------', event)
+  log().log_colored_group('red', '---------- scroll', event, '-----------', event)
   const tData = JSON.parse(JSON.stringify(props.tableData))
   if (event === 'next' && lastScrollDirection.value === 'prev') {
     tData.pageNumber = props.tableData.pageNumber + 2
@@ -454,6 +502,7 @@ async function onScroll(event: any) {
   await $emit('tabledata-changed', tData)
   await $emit('fetch', event)
   lastScrollDirection.value = event
+  log().log_colored_group_end()
 }
 //   // console.log('scroll', event, tableRef.value.$el)
 //   //console.log('scroll to top. ')
@@ -510,17 +559,17 @@ async function onScroll(event: any) {
 //   // emit('')
 // }
 
-const lazyParams = ref({
-    first: 0,
-    rows: 10,
-    sortField: props.tableData.sortBy,
-    sortOrder: props.tableData.sortDesc ? -1: 1,
-    // filters: filters.value
-})
+// const lazyParams = ref({
+//     first: 0,
+//     rows: 10,
+//     sortField: props.tableData.sortBy,
+//     sortOrder: props.tableData.sortDesc ? -1: 1,
+//     // filters: filters.value
+// })
 function onPerPageChange(event: any) {
-  console.log('onPerPageChange', event)
+  log().log('onPerPageChange', event)
   if (event === props.tableData.perPage) {
-    console.log('onPerPageChange, same perPage')
+    log().log_colored('orange', 'onPerPageChange, same perPage')
     return
   }
   // loadCarsLazy(event)
@@ -528,12 +577,11 @@ function onPerPageChange(event: any) {
   tData.perPage = event
   tData.pageNumber = 1
   lastScrollDirection.value = ''
-  console.log('onPerPageChange', tData)
   $emit('tabledata-changed', tData)
-  $emit('fetch')
+  _fetch()
 }
 function onPage(newPageNumber: any) {
-  log().log_colored('red', 'onPage', newPageNumber)
+  log().log_colored_group('white', 'onPage', newPageNumber)
   // loadCarsLazy(event)
   const tData = JSON.parse(JSON.stringify(props.tableData))
   // tData.pageNumber = newPageNumber/tData.perPage + 1 // Paginator from primeVue
@@ -541,27 +589,20 @@ function onPage(newPageNumber: any) {
   // console.log('onPage', tData)
   lastScrollDirection.value = ''
   $emit('tabledata-changed', tData)
-  $emit('fetch')
+  _fetch()
+  log().log_colored('gray', 'onPageStored', props.tableData.pageNumber)
+  log().log_colored_group_end()
 }
 
 function onSort(event: any) {
   console.log('onSort', event)
-  // lazyParams.value = event
-  // loadCarsLazy(event)
-
   const tData = JSON.parse(JSON.stringify(props.tableData))
   tData.sortBy = event.sortField
   tData.sortDesc = event.sortOrder === -1
-  tData.pageNumber = 1
-
+  // tData.pageNumber = 1
   $emit('tabledata-changed', tData)
-  $emit('fetch')
+  _fetch()
 }
-
-const lazyLoading = ref(true);
-const loadLazyTimeout = ref();
-
-const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 500, showLoader: false, loading: lazyLoading, numToleratedItems: perPage.value / 2 })
 
 async function onVirtualScrollerLoad (event: any) {
   lazyLoading.value = true;
@@ -569,20 +610,28 @@ async function onVirtualScrollerLoad (event: any) {
   //   lazyLoading.value = false;
   //   return
   // }
-  log().log_colored('red', '--------- virtScroll ---------')
+  log().log_colored_group('red', '--------- virtScroll ---------')
   const items = dataModel.value.filter(x => x.dummy !== true).length
-  const pageNumber = Math.ceil((items===0)? 0 : items / perPage.value) + 1
+  const pageNumber = Math.ceil((items===0)? 1 : items / perPage.value)
   log().log_colored('gray', 'onVirtualScrollerLoad', JSON.stringify(event), 'items', items, ' pageNo', pageNumber)
+  if (event.first === 0 && event.last === 0) {
+    lazyLoading.value = false;
+    log().log_colored('orange', 'onVirtualScrollerLoad', 'same page')
+    log().log_colored_group_end()
+    return
+  }
   if (items != 0 && event.first == 0) {
   // if (pageNumber === props.tableData.pageNumber) {
     log().log_colored('orange', 'onVirtualScrollerLoad', 'same page')
     lazyLoading.value = false;
+    log().log_colored_group_end()
     return
   }
   const tData = JSON.parse(JSON.stringify(props.tableData))
   tData.pageNumber = pageNumber
   $emit('tabledata-changed', tData)
   $emit('fetch', 'next')
+  log().log_colored_group_end()
 }
 //   if (event.last === 0 && event.first === 0) {
 //     lazyLoading.value = false;
@@ -644,10 +693,41 @@ async function onVirtualScrollerLoad (event: any) {
 // // //     // }, Math.random() * 1000 + 250);
 // }
 
+function clearSelection (event:any) {
+  $emit('selection-clear')
+  dataModel.value.map((row:any) => {
+    row.selected = false
+    return row
+  })
+}
+// function getColumnStyle(col: any) {
+//   if (col === undefined) return ''
+//   let style = ""
+//   const isLeft = col._fixed === TableV2FixedDir.LEFT || col.fixed === TableV2FixedDir.LEFT || col.fixed === true || col._fixed === true
+//   const isRight = col._fixed === TableV2FixedDir.RIGHT || col.fixed === TableV2FixedDir.RIGHT
+//   const isFixed = isLeft || isRight
+//   if (col.width !== undefined) {
+//     if (isLeft) {
+//       style += 'width: ' + col.width + 'px; background-color: red;'
+//       style += 'min-width: ' + col.width + 'px; background-color: green;'
+//       if (numVisibleColumns.value < numFixedColumns.value + numVisibleColumnsDelta.value) style += 'width:100%;'
+//     }else {
+//       style += 'width: ' + col.width + 'px; background-color: red;'
+//     }
+//   }
+//   if (col.maxWidth !== undefined) style += 'max-width: ' + col.maxWidth + 'px;'
+//   if (col.minWidth !== undefined && !isFixed) style += 'min-width: ' + col.minWidth + 'px;'
+//   return style
+//   // return (Boolean(col._fixed) !== false || Boolean(col.fixed) !== false) ? 'min-width: ' + col.width + 'px;' : ''
+// }
 </script>
 
 
 <style scoped>
+:deep(.noHoverRow){
+  --bg-color-hover: transparent;
+  /* background-color: blue !important; */
+}
 /* :deep(.p-dropdown-items-wrapper) {
   background-color: black !important;
 }

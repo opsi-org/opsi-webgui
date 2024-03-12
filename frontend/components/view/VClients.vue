@@ -236,10 +236,10 @@
     </GridGTwoColumnLayout>
   </div>
   -->
+  <!-- <br />
   <br />
-  <br />
-  <br />
-  <pre>{{ totalItems }}</pre>
+  <br /> -->
+  <!-- <pre>{{ totalItems }}</pre> -->
   <!-- <pre>{{ tableData }}</pre> -->
 </template>
 
@@ -263,13 +263,13 @@ const notify = useNotification()
 
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
-const datacache = storeCache()
+// const datacache = storeCache()
 
 const fetchedData = ref<Array<any>>([])
 const totalItems = ref<number>(0)
 const tableData = ref<ITableData>({
   pageNumber: 1,
-  perPage: 10,
+  perPage: 1000000,
   _lastScrollDirection: '',
   // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.clientsSorting.column,
@@ -300,15 +300,15 @@ const columns = ref<ITableHeaderRow>({
       dataKey: 'clientId',
       class: 'col-clientId',
       _fixed: true,
-      width: 200,
+      width: 100,
       sortable: true,
       // hidden: cookies.includesCookie('column_' + id, 'clientId', true)
       hidden: false,
 
       cellRenderer: ({rowData}) => {
+        // { <el-tag>{fetchedData.value.findIndex((e: any) => e.clientId === rowData.clientId)}</el-tag> }
         return (
           <>
-          { <el-tag>{fetchedData.value.findIndex((e: any) => e.clientId === rowData.clientId)}</el-tag> }
           <el-text>{rowData.clientId}</el-text>
           </>
         )
@@ -320,7 +320,7 @@ const columns = ref<ITableHeaderRow>({
       dataKey: 'description',
       class: 'col-description',
       sortable: true,
-      width: 200,
+      width: 300,
       hidden: !storeTable.clientsColumns.includes('description')
       // hidden: cookies.includesCookie('column_' + id, 'description', false)
     },
@@ -449,7 +449,7 @@ const columns = ref<ITableHeaderRow>({
       key: 'rowactions',
       dataKey: 'rowactions',
       _fixed: TableV2FixedDir.RIGHT,
-      width: 150,
+      width: 100,
       hidden: false,
       class: 'col-rowactions',
       cellRenderer: ({rowData}) => {
@@ -483,6 +483,7 @@ const props = defineProps({
 onMounted(async ()=> {
   await useConfigserver(true) // init selectiondepots with configserver
   await tableHelper.fetch()
+  tableHelper.setTotalItemsAsPerPage(totalItems.value)
 })
 
 
@@ -545,6 +546,7 @@ async function _fetch() {
   }
   // console.log('data', data)
   totalItems.value = parseInt(headers['x-total-count'])
+  // tableHelper.setPerPage(headers)
   // this.totalpages = Math.ceil(this.totalItems / params.perPage)
   // this.isLoading = false
   // this.tableloaded = true

@@ -6,10 +6,19 @@ export const log = () => {
   function error (...msg: any) { console.error(...msg) }
 
   function log_colored (color: string, ...msg:any) {
-    const s =  "" + msg.map((v: string)=>{return v}).join(" ")
+    // const [first, ...rest] = msg
+    const s =  "" + msg.map((v: any)=> v ).join(" ")
     console.log("%c"+s, "color:" + color + ";font-weight:bold;");
+  }
+  function log_colored_group (color: string, ...msg:any) {
+    const s =  "" + msg.map((v: string)=>{return v}).join(" ")
+    console.group("%c"+s, "color:" + color + ";font-weight:bold;");
+  }
+  function log_colored_group_end () {
+    console.groupEnd()
   }
 
   // colorTrace("Test Me", "red");
-  return { log, debug, info, warn, error, log_colored }
+  return { log, debug, info, warn, error, log_colored,
+            log_colored_group, log_colored_group_end }
 }
