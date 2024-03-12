@@ -53,7 +53,7 @@ export const useTableHelper = (
       }
 
       // fetchedData.value.push(_firstDummyRow)
-      if (tableData.value.pageNumber !== 1) fetchedData.value.splice(0, 0, _firstDummyRow)
+      if (tableData.value.pageNumber > 2) fetchedData.value.splice(0, 0, _firstDummyRow)
       fetchedData.value.push(...(await _fetch()))
       if (tableData.value.pageNumber < maxPage.value) fetchedData.value.push(_lastDummyRow)
 
@@ -70,7 +70,7 @@ export const useTableHelper = (
       }
       fetchedData.value.unshift(...(await _fetch()))
       if (tableData.value.pageNumber !== 1) fetchedData.value.unshift(_firstDummyRow)
-      if (tableData.value.pageNumber < maxPage.value) fetchedData.value.push(_lastDummyRow)
+      if (maxPage.value-1 > 1 && tableData.value.pageNumber < maxPage.value-1) fetchedData.value.push(_lastDummyRow)
     }
     tableData.value._lastScrollDirection = direction
     isLoading.value = false
