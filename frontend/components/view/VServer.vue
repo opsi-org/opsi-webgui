@@ -113,12 +113,6 @@
     </template>
   </GridGTwoColumnLayout>
 </div> -->
-
-<pre>
-  <!-- {{ fetchedData }} -->
-  {{ storeTable.serversColumns }}
-  {{storeTable.serversSorting}}
-</pre>
   </div>
 </template>
 <script setup lang="tsx">

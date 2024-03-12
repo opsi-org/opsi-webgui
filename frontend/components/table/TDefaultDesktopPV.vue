@@ -167,9 +167,6 @@
         </div>
       </DataTable>
     </div>
-    pagesSizes {{ pagesSizes.length }} <br />
-    perPage {{ perPage }} <br />
-    tableData.perPage {{ props.tableData.perPage }} <br />
   </div>
 </template>
 
@@ -228,7 +225,7 @@ const wrappedColumns = ref<ITableHeaderRow>({})
 
 const perPage = ref(props.tableData.perPage) // computed(()=> props.tableData.perPage)
 const pageNumber = ref(props.tableData.pageNumber) // computed(()=> props.tableData.pageNumber)
-const _pagesSizes = [1, 5, 10, 20, 50, 100, 1000]
+const _pagesSizes = [10, 20, 50, 100]
 const pagesSizes = ref(_pagesSizes)
 updateMaxPerPage()
 const lastSelectedItemForSingleselect = ref<any>(undefined)
