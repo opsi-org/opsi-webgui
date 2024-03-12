@@ -14,14 +14,16 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request, status
 from fastapi.requests import HTTPConnection
 from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
-from opsicommon.exceptions import BackendAuthenticationError, BackendPermissionDeniedError
+from opsicommon.exceptions import (BackendAuthenticationError,
+                                   BackendPermissionDeniedError)
+from starlette.concurrency import run_in_threadpool
+from starlette.types import Receive, Send
+
 from opsiconfd.addon import Addon
 from opsiconfd.logging import logger
 from opsiconfd.session import ACCESS_ROLE_AUTHENTICATED, ACCESS_ROLE_PUBLIC
 from opsiconfd.session import authenticate as opsiconfd_authenticate
-from opsiconfd.utils import remove_route_path
-from starlette.concurrency import run_in_threadpool
-from starlette.types import Receive, Send
+from opsiconfd.utils.fastapi import remove_route_path
 
 from .clients import client_router
 from .config import conifg_router
