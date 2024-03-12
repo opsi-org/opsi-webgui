@@ -13,7 +13,7 @@
           {{ currentAppState }}
         </template>
         <template v-if="action === 'setup'">
-          <el-form :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'">
+          <el-form :label-width="mq.isMobile.value ? '': '180px'" :label-position="mq.isMobile.value ? 'top': 'left'" class="w-100">
             <el-form-item label="">
               <el-radio-group v-model="newAppState.type">
                 <el-radio value="normal">{{ $t('label.normal') }}</el-radio>
@@ -22,7 +22,23 @@
             </el-form-item>
             <template v-if="newAppState.type === 'maintenance'">
               <el-form-item :label="$t('label.addressexcept')">
-                {{ newAppState.address_exceptions }}
+                <el-select
+                  v-model="newAppState.address_exceptions"
+                  multiple
+                  filterable
+                  clearable
+                  allow-create
+                  default-first-option
+                  :reserve-keyword="false"
+                  placeholder="Enter network address and press Enter"
+                >
+                  <el-option
+                    v-for="item in newAppState.address_exceptions"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
               </el-form-item>
               <el-form-item :label="$t('label.retryaftersec')">
                 <el-input v-model="newAppState.retry_after" />
