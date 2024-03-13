@@ -13,7 +13,6 @@
       <pre class="max-h-56">{{ visibleColumns }}</pre> -->
       <!-- class="bg-green-500"
       tableClass="bg-transparent" -->
-      <pre>{{ visibleColumns }}</pre>
       <DataTable
         lazy
         ref="tableRef"
