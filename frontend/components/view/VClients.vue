@@ -396,7 +396,7 @@ const columns = ref<ITableHeaderRow>({
     version_outdated_netboot: { // eslint-disable-next-line object-property-newline
       tooltip: $t('table.fields.versionOutdatedNetboot'),
       key: 'version_outdated_netboot',
-      dataKey: 'version_outdated',
+      dataKey: 'version_outdated_netboot',
       _majorKey: '_majorStats',
       icon: icons.productsOutdated,
       iconColor: "--el-color-warning",
@@ -416,7 +416,9 @@ const columns = ref<ITableHeaderRow>({
       iconColor: "--el-color-error",
       sortable: true,
       width: 50,
-      hidden: !storeTable.clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) =>
+        <el-tag>{rowData.actionResult_failed}</el-tag>
       // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
@@ -452,6 +454,7 @@ const columns = ref<ITableHeaderRow>({
       width: 100,
       hidden: false,
       class: 'col-rowactions',
+      _has_cell_renderer: true,
       cellRenderer: ({rowData}) => {
         return (
           <>

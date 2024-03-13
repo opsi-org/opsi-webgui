@@ -1,24 +1,36 @@
 <template>
   <div>
+
+  <div v-if="Object.keys(columnsModel).length > 0">
     <InputIFilter
         :data="tableData"
         :filterable-columns="Object.values(wrappedColumns)"
         @update="($event: any) => $emit('update-input-filter', $event)"
       />
     <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columnsModel" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
-    <el-collapse v-model="activeRowIndex" accordion>
-      <el-collapse-item v-for="row, index in dataModel" :key="JSON.stringify(row)" :name="JSON.stringify(row)">
+    <el-collapse v-model="collapseRowIdValue" accordion>
+      <el-collapse-item v-for="row, index in dataModel" :key="JSON.stringify(row)" :name="row[props.rowId]">
         <template #title>
-          <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="row" :colData="wrappedColumns['selected']" />
+          <div class="min-w-fit">
 
-          <el-text v-if="!wrappedColumns[props.rowId].cellRenderer"> {{row[props.rowId]}} </el-text>
-          <CellRenderer v-else :rowId="props.rowId" :rowData="row" :colData="wrappedColumns[props.rowId]" />
+            <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="row" :colData="wrappedColumns['selected']" />
+
+            <el-text v-if="!wrappedColumns[props.rowId].cellRenderer"> {{row[props.rowId]}} </el-text>
+            <CellRenderer v-else :rowId="props.rowId" :rowData="row" :colData="wrappedColumns[props.rowId]" />
+          </div>
+
+          <div class="w-full flex flex-row-reverse">
+            <!-- <el-button @click.stop="()=>{}"> hallo </el-button> -->
+            <CellRenderer v-if="wrappedColumns.rowactions" rowId="rowactions" :rowData="row" :colData="wrappedColumns.rowactions" />
+            <!-- {{ columnsModel.rowactions}} -->
+          </div>
         </template>
-        <Details v-if="activeRowIndex === index" :rowData="row" :colData="wrappedColumns[props.rowId]" />
+        <Details v-if="collapseRowIdValue && collapseRowIdValue === row[props.rowId]"  :rowData="row" :colData="wrappedColumns[props.rowId]" />
 
       </el-collapse-item>
     </el-collapse>
   </div>
+</div>
 </template>
 
 
@@ -28,23 +40,25 @@
 import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData } from '../../types/ttable';
+log().log_colored('red', "TDefaultMobile !!!!!!!!!!!!!!!!!!!!!")
 const tableStore = storeTablesettings()
 
-const activeRowIndex = ref<number>()
+const collapseRowIdValue = ref<any>({})
 const CellRenderer = ({key, rowData, colData}: any) => {
   if (colData.cellRenderer)
     return colData.cellRenderer({rowData})
   return <el-text>{ key }</el-text>
 }
 const Details = ({rowData, colData}: any) => {
-  console.log('load details')
+  log().log_colored('green', 'load details')
   const _width = {'width': '100%'}
   const data: Array<any> = []
-  const _fixedRightLast: Array<any> = []
+  // const _fixedRightLast: Array<any> = []
   Object.values(wrappedColumns.value).forEach((colInfo) =>{
     const cId = colInfo.key
     // const visible = tableStore.columns[props.id].includes(cId)
-    const visible = tableStore[props.id + 'Columns'].includes(cId)
+    // const visible = tableStore[props.id + 'Columns'].includes(cId)
+    const visible = colInfo._majorKey === undefined && cId !== 'selected'
     if (!visible) {
       return
     }
@@ -54,14 +68,17 @@ const Details = ({rowData, colData}: any) => {
       const major: any = { id: cId, value: '', children:[]}
       Object.values(wrappedColumns.value).filter(e => e._majorKey === cId).map(
         (e:any) => major.children.push({ id: e.dataKey, value: rowData[e.dataKey]}) )
+      console.log('major-children: ', major)
       data.push(major)
     } else if (colInfo.fixed === TableV2FixedDir.RIGHT){
-      _fixedRightLast.push({ id: cId, value: rowData[cId]})
+      // _fixedRightLast.push({ id: cId, value: rowData[cId]})
     } else {
       data.push({ id: cId, value: rowData[cId]})
     }
   })
-  data.push(..._fixedRightLast)
+  // data.push(..._fixedRightLast)
+  console.log('data', data)
+  // console.log('fixedRightLast', _fixedRightLast)
   return <div class="mx-3">
       <el-table
         show-header={false}
@@ -76,7 +93,8 @@ const Details = ({rowData, colData}: any) => {
           {{
             default: (scope: any) => {
               const rowKey = scope.row.id
-              return <el-text>{ wrappedColumns.value[rowKey].title }</el-text>
+              {/* console.log('rowKey', rowKey, Object.keys(columnsModel.value), columnsModel.value[rowKey]) */}
+              return <el-text>{ columnsModel.value[rowKey].title || columnsModel.value[rowKey].tooltip }</el-text>
             }
           }}
 
@@ -85,14 +103,20 @@ const Details = ({rowData, colData}: any) => {
           {{
             default: (scope: any) => {
               const rowKey = scope.row.id
-              if (rowKey.startsWith('_')) return
+              if (rowKey.startsWith('_')) {
+                console.log('rowKey', rowKey)
+                return
+              }
               const rowValue = scope.row.value
               const colInfo = wrappedColumns.value[rowKey]
-              console.log('colInfo', colInfo, rowKey, rowValue)
+              console.log('colInfo', colInfo, rowKey, rowValue, colInfo.cellRenderer)
 
               const renderer = colInfo.cellRenderer
-              if (renderer !== undefined)
+              if (renderer !== undefined) {
+                console.log('renderer', renderer)
                 return renderer({ rowData } as any)
+              }
+              {/* console.log('rowValue', rowValue) */}
               return <el-text>{ rowValue }</el-text>
             }
           }}
@@ -115,33 +139,34 @@ const props = defineProps({
 })
 const $emit = defineEmits(['fetch', 'selection-changed', 'selection-clear', 'update-input-filter'])
 const wrappedColumns = ref<ITableHeaderRow>({})
+wrappedColumns.value = updateColumns()
 // const wrappedData = ref<Array<any>>([])
-onMounted(()=>{
-  wrappedColumns.value = updateColumns()
-  // wrappedData.value = updateData()
-})
+// onMounted(()=>{
+//   // wrappedColumns.value = updateColumns()
+//   // wrappedData.value = updateData()
+// })
 
 const visibleColumns = reactive<Array<string>>([])
-watch (()=>dataModel, ()=>{
-  wrappedColumns.value = updateColumns()
-  // wrappedData.value = updateData()
-}, {deep: true})
+watch (()=>dataModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: true})
+watch (()=>columnsModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: true})
+// wrappedData.value = updateData()
 
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
 // watch(()=>tableStore.columns[props.id], ()=>{
   console.log('WRAPPED CHANGED')
-  const curRow = activeRowIndex.value
-  activeRowIndex.value = undefined
-  activeRowIndex.value = curRow
+  const curRow = collapseRowIdValue.value
+  collapseRowIdValue.value = undefined
+  collapseRowIdValue.value = curRow
 })
 function updateColumns() {
   if (columnsModel.value == undefined) return {}
 
-  let _columns: ITableHeaderRow = { ...columnsModel.value}
-  Object.values(_columns)
-    .map(c => {
-      if (!c.fixed) c.hidden = true
-    } )
+  let _columns: ITableHeaderRow = JSON.parse(JSON.stringify(columnsModel.value))
+  log().log_colored('orange', 'updateColumns', Object.keys(_columns))
+  // Object.values(_columns)
+  //   .map(c => {
+  //     if (!c.fixed) c.hidden = true
+  //   } )
 
   if (columnsModel.value?.selected === undefined) {
     return _columns

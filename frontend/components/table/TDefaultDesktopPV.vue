@@ -13,6 +13,7 @@
       <pre class="max-h-56">{{ visibleColumns }}</pre> -->
       <!-- class="bg-green-500"
       tableClass="bg-transparent" -->
+      <pre>{{ visibleColumns }}</pre>
       <DataTable
         lazy
         ref="tableRef"
@@ -51,7 +52,7 @@
               <h4>{{ props.id }}</h4>
             </div>
             <div class="flex">
-              <FormitemDDTableColumnVisibility :table-id="props.id" v-model:headers="columnsModel" :sort-by="props.tableData.sortBy" :multi="true" :incontextmenu="false"/>
+              <!-- <FormitemDDTableColumnVisibility :table-id="props.id" v-model:headers="columnsModel" :sort-by="props.tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
               <InputIFilter
               :data="tableData"
 
@@ -286,7 +287,7 @@ const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLo
 
 
 const selection = ref<Array<string>>(getSelectedrowsFromStore())
-const _visibleColumnsDataKeys = computed(()=> useUtilsData().getVisibleColumnIds(Object.values(columnsModel.value)) )
+// const _visibleColumnsDataKeys = computed(()=> useUtilsData().getVisibleColumnIds(Object.values(columnsModel.value)) )
 // const visibleColumns = computed(()=> Object.values(columnsModel.value).filter((c:any) => (c._majorKey === undefined) ? _visibleColumnsDataKeys.value.includes(c.dataKey) : _visibleColumnsDataKeys.value.includes(c._majorKey) ))
 const columnValues = computed(()=> Object.values(columnsModel.value))
 const visibleColumns = computed(()=> useUtilsData().getVisibleColumns(columnValues.value) )

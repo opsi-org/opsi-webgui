@@ -1,7 +1,8 @@
 <template>
   <div>
-    <TableTDefaultMobile
-      v-show="isMobileWrapper"
+    <pre>{{ isMobileWrapper }}</pre>
+    <LazyTableTDefaultMobile
+      v-if="isMobileWrapper"
       v-model:columns="columns"
       v-model:data="dataModel"
       v-bind="propsMobile"
@@ -12,9 +13,9 @@
       @update-input-filter="(v: any) => $emit('update-input-filter', v)"
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
-    </TableTDefaultMobile>
+    </LazyTableTDefaultMobile>
     <TableTDefaultDesktopPV
-      v-show="!isMobileWrapper"
+      v-else-if="!isMobileWrapper"
       v-model:columns="columns"
       v-model:data="dataModel"
       v-bind="propsDesktop"

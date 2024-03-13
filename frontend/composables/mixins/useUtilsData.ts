@@ -1,7 +1,7 @@
 
 export const useUtilsData = () => {
 
-  const getVisibleColumnIds = (headers:Array<any>) => {
+  function getVisibleColumnIds (headers:Array<any>) {
     return headers
       .filter(v=>
         v.title !== undefined && v.title !== ''
@@ -11,7 +11,7 @@ export const useUtilsData = () => {
       )
       .map((_v:any) => _v.dataKey)
   }
-  const getVisibleColumns = (headers:Array<any>) => {
+  function getVisibleColumns (headers:Array<any>) {
     const _majors = []
     const _defaults = headers
       .filter(v=>
