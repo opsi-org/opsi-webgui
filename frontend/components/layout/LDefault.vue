@@ -109,13 +109,13 @@ const rightSideVisible = ref<boolean>(!mq.isMobile.value)
 
 watch(()=> mq.$mq.value, (newVal, oldVal) => {
   settings.setIsMobile(mq.$mq.value === 'mobile')
+  leftSideVisible.value = !mq.isMobile.value
+  rightSideVisible.value = !mq.isMobile.value
 })
 
 watch(useRouter().currentRoute, () => {
   if (mq.isMobile.value) { toggleSide('left') }
 })
-
-console.log('NUXT_PUBLIC_API_BASE', useRuntimeConfig().public.NUXT_PUBLIC_API_BASE)
 
 // onMounted(async ()=>{
 await checkConfig()
