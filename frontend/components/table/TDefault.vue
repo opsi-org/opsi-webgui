@@ -1,33 +1,33 @@
 <template>
   <div>
-  <TableTDefaultMobile
-    v-if="isMobileWrapper"
-    v-model:columns="columns"
-    v-model:data="dataModel"
-    v-bind="propsMobile"
-    @fetch="(v: any) => $emit('fetch', v)"
-    @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
-    @selection-changed="(v: any) => $emit('selection-changed', v)"
-    @selection-clear="(v: any) => $emit('selection-clear', v)"
-    @update-input-filter="(v: any) => $emit('update-input-filter', v)"
-    @sort-changed="(v: any) => $emit('sort-changed', v)"
-  >
-  </TableTDefaultMobile>
-  <TableTDefaultDesktopPV
-    v-else
-    v-model:columns="columns"
-    v-model:data="dataModel"
-    v-bind="propsDesktop"
-    @fetch="(v: any) => $emit('fetch', v)"
-    @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
-    @selection-changed="(v: any) => $emit('selection-changed', v)"
-    @selection-clear="(v: any) => $emit('selection-clear', v)"
-    @update-input-filter="(v: any) => $emit('update-input-filter', v)"
-    @sort-changed="(v: any) => $emit('sort-changed', v)"
-  >
-    <!-- v-bind="(({ isMobile, ...rest }) => rest)($attrs)" -->
-  </TableTDefaultDesktopPV>
-</div>
+    <TableTDefaultMobile
+      v-show="isMobileWrapper"
+      v-model:columns="columns"
+      v-model:data="dataModel"
+      v-bind="propsMobile"
+      @fetch="(v: any) => $emit('fetch', v)"
+      @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
+      @selection-changed="(v: any) => $emit('selection-changed', v)"
+      @selection-clear="(v: any) => $emit('selection-clear', v)"
+      @update-input-filter="(v: any) => $emit('update-input-filter', v)"
+      @sort-changed="(v: any) => $emit('sort-changed', v)"
+    >
+    </TableTDefaultMobile>
+    <TableTDefaultDesktopPV
+      v-show="!isMobileWrapper"
+      v-model:columns="columns"
+      v-model:data="dataModel"
+      v-bind="propsDesktop"
+      @fetch="(v: any) => $emit('fetch', v)"
+      @tabledata-changed="(v: any) => $emit('tabledata-changed', v)"
+      @selection-changed="(v: any) => $emit('selection-changed', v)"
+      @selection-clear="(v: any) => $emit('selection-clear', v)"
+      @update-input-filter="(v: any) => $emit('update-input-filter', v)"
+      @sort-changed="(v: any) => $emit('sort-changed', v)"
+    >
+      <!-- v-bind="(({ isMobile, ...rest }) => rest)($attrs)" -->
+    </TableTDefaultDesktopPV>
+  </div>
 </template>
 
 
