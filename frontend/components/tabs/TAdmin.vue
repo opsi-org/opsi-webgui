@@ -4,7 +4,7 @@
       <FormFAdminGeneral :adminTasks="adminTasks.general" />
     </el-tab-pane>
     <el-tab-pane :label="$t('label.maintenance')">
-      {{ $t('label.maintenance') }}
+      <FormFAdminMaintenance :adminTasks="adminTasks.maintenance" />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -19,7 +19,7 @@ const adminTasks = reactive({
     applicationState : ['current', 'setup'],
     createBackup : {
       config_files: true,
-      redis_data:true,
+      redis_data:false,
       maintenance_mode: false,
       password: ''
     },

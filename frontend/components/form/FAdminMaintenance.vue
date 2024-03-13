@@ -1,22 +1,83 @@
 <template>
+  <div v-for="(actions, section) in adminTasks">
+    <el-row class="mt-2 mb-2 text-small">
+        <b :class="['title' + section]">{{ $t('title.' + section) }}</b>
+    </el-row>
+    <el-form v-if="section === 'applicationState'" :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'">
+      <el-form-item
+        v-for="(action, index) in actions"
+        :key="index"
+        :label="$t('label.' + section + '.' + action)"
+      >
+        <template v-if="action === 'current'">
+          {{ currentAppState }}
+        </template>
+        <template v-if="action === 'setup'">
+          <el-form :label-width="mq.isMobile.value ? '': '180px'" :label-position="mq.isMobile.value ? 'top': 'left'" class="w-100">
+            <el-form-item label="">
+              <el-radio-group v-model="newAppState.type">
+                <el-radio value="normal">{{ $t('label.normal') }}</el-radio>
+                <el-radio value="maintenance">{{ $t('label.maintenance') }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <template v-if="newAppState.type === 'maintenance'">
+              <el-form-item :label="$t('label.addressexcept')">
+                <el-select
+                  v-model="newAppState.address_exceptions"
+                  multiple
+                  filterable
+                  clearable
+                  allow-create
+                  default-first-option
+                  :reserve-keyword="false"
+                  placeholder="Enter network address and press Enter"
+                >
+                  <el-option
+                    v-for="item in newAppState.address_exceptions"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+              </el-form-item>
+              <el-form-item :label="$t('label.retryaftersec')">
+                <el-input v-model="newAppState.retry_after" />
+              </el-form-item>
+            </template>
+            <template v-if="newAppState.type">
+              <el-button type="primary" @click="resetForm(section)">
+                {{ $t('button.reset') }}
+              </el-button>
+              <el-button type="success">
+                {{ $t('button.apply') }}
+              </el-button>
+            </template>
+          </el-form>
+        </template>
+      </el-form-item>
+    </el-form>
+    <el-form v-else :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'">
+      <el-form-item
+        v-for="(value, key) in actions"
+        :key="key"
+        :label="$t('label.'+ key)"
+      >
+          <el-checkbox v-if="typeof value == 'boolean'" v-model="actions[key]" />
+          <el-input v-else v-model="actions[key]" />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="resetForm(section)">
+          {{ $t('button.reset') }}
+        </el-button>
+        <el-button type="success">
+          {{ section === 'createBackup' ? $t('button.create') : $t('button.restore')}}
+        </el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+
   <!-- <div data-testid="VAdminMaintenance" class="VAdminMaintenance">
-    <OverlayOLoading :is-loading="isLoading" />
-    <GridGFormItem :label="$t('label.currentappstate')" variant="longvalue">
-      <template #value>
-        <span class="text-capitalize">{{ currentAppState }}</span>
-      </template>
-    </GridGFormItem>
-    <GridGFormItem :label="$t('label.setappstate')" value-more="true" variant="longvalue">
-      <template #value>
-        <b-form-radio-group v-model="newAppState.type">
-          <b-form-radio value="normal">
-            {{ $t('label.normal') }}
-          </b-form-radio>
-          <b-form-radio value="maintenance">
-            {{ $t('label.maintenance') }}
-          </b-form-radio>
-        </b-form-radio-group>
-      </template>
+    <OverlayOLoading :is-loading="isLoading" /
       <template v-if="newAppState.type" #valueMore>
         <template v-if="newAppState.type === 'maintenance'">
           <GridGFormItem :label="$t('label.addressexcept')">
@@ -56,18 +117,11 @@
             </template>
           </GridGFormItem>
         </template>
-        <GridGFormItem>
-          <template #value>
-            <div :class="newAppState.type === 'maintenance'? 'float-right' : ''">
-              <b-button v-if="newAppState.type === 'maintenance'" size="sm" class="mr-2" variant="outline-primary" @click="resetAppState">
-                {{ $t('button.reset') }}
-              </b-button>
+
               <b-button size="sm" variant="success" @click="setAppState">
                 {{ $t('button.apply') }}
               </b-button>
-            </div>
-          </template>
-        </GridGFormItem>
+
       </template>
     </GridGFormItem>
     <hr>
@@ -199,7 +253,45 @@
   </div> -->
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { useNotification } from '~/composables/mixins/useComponent';
+const props = defineProps({
+  adminTasks: { type: Object, required: true }
+})
+const mq = useMQ()
+const currentAppState = ref('')
+const isLoading = ref(false)
+const newAppState = ref({ type: '', address_exceptions: [], retry_after: 0 })
+// const createbackup = ref({ config_files: true, redis_data:false, maintenance_mode: false, password: '' })
+// const restorebackup = ref({ file_id: '', config_files: false, redis_data:false, server_id: '', password: '' })
+
+
+onMounted(async ()=> {
+  isLoading.value = true
+  await fetchAppState()
+  isLoading.value = false
+})
+
+const fetchAppState = async () => {
+  const {data, error } = await useApiGET('/app-state')
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+  currentAppState.value = (data.value as { type: any }).type
+}
+
+const resetForm = (section: string) => {
+  if (section === 'applicationState') {
+    newAppState.value = { type: '', address_exceptions: [], retry_after: 0 }
+  }
+  else if (section === 'createBackup') {
+    props.adminTasks[section] = { config_files: true, redis_data:false, maintenance_mode: false, password: '' }
+  }
+  else if (section === 'restoreBackup') {
+    props.adminTasks[section] = { file_id: '', config_files: false, redis_data:false, server_id: '', password: '' }
+  }
+}
 // import { Component, Vue } from 'nuxt-property-decorator'
 // import { AlertToast } from '../../mixins/component'
 // import { Icons } from '../../mixins/icons'
@@ -339,24 +431,4 @@
 //   }
 // }
 </script>
-<style>
-/* .dropdownForm {
-  max-height: var(--component-height);
-  width: 100% !important;
-  font-size: var(--text-small);
-  color: var(--color) !important;
-  background: var(--background) !important;
-  border: var(--border);
-}
-.dropdownForm .dropdown-menu{
-  color: var(--color) !important;
-  background: var(--background) !important;
-  width: 100% !important;
-  padding:0.5rem;
-}
-.dropdownForm .btn{
-  color: var(--color) !important;
-  background: var(--background) !important;
-  border: var(--border) !important;
-} */
-</style>
+
