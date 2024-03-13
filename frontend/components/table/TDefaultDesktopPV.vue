@@ -9,8 +9,9 @@
       <!-- COLUMNSValues: <pre>{{ columnValues.length }}</pre>
       COLUMNS: <pre>{{ visibleColumns }}</pre> -->
       <!-- <pre class="max-h-56">{{ selectionInStoreByType }}</pre> -->
-      <!-- <pre class="max-h-56">{{ visibleColumns.map(v => v.key) }}</pre>
-      <pre class="max-h-56">{{ visibleColumns }}</pre> -->
+      <!-- <pre class="max-h-56">{{ Object.values(visibleColumns).map(v => v.key) }}</pre> <br />
+      <pre class="max-h-56">{{ Object.values(columnsModel).map(v => v.key) }}</pre> <br /> -->
+      <!-- <pre class="max-h-56">{{ visibleColumns }}</pre> -->
       <!-- class="bg-green-500"
       tableClass="bg-transparent" -->
       <DataTable
@@ -20,6 +21,7 @@
         tableStyle="width: 100%" size="small"
         class="bg-transparent "
         style="width: calc(100% - 5px)"
+        resizableColumns
         :dataKey="props.rowId"
         :value="dataModel"
         :row-class="(d) => { return {
@@ -51,7 +53,7 @@
               <h4>{{ props.id }}</h4>
             </div>
             <div class="flex">
-              <!-- <FormitemDDTableColumnVisibility :table-id="props.id" v-model:headers="columnsModel" :sort-by="props.tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
+              <FormitemDDTableColumnVisibility :table-id="props.id" v-model:headers="columnsModel" :sort-by="props.tableData.sortBy" :multi="true" :incontextmenu="false"/>
               <InputIFilter
               :data="tableData"
 
@@ -94,8 +96,8 @@
           </div>
         </template>
         <div>
-          <div v-for="col,k in (visibleColumns as any)" >
-            <Column v-if="(col as any).key === 'selected'"
+          <div v-for="col in (visibleColumns as any)" >
+            <PColumn v-if="(col as any).key === 'selected'"
               :selectionMode="selectionStore.multiSelection === true ? 'multiple': 'single'"  headerStyle="width: 4rem"
               :class="col.class"
             >
@@ -112,21 +114,66 @@
                 <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(scope.data[props.rowId])) ? scope.data.selected = true : scope.data.selected = false }}</div>
 
                 <div v-if="scope.data.dummy"></div>
-                <el-checkbox v-else-if="selectionStore.multiSelection" v-model="scope.data.selected"/>
+                <el-checkbox v-else-if="selectionStore.multiSelection" v-model="scope.data.selected" class="selectionItem"/>
 
                 <el-radio-group v-else v-model="scope.data.selected">
                   <!-- <el-radio :value="true">t</el-radio>
                   <el-radio :value="false">f</el-radio> -->
-                  <el-radio :label="true" class="hide_label" />
+                  <el-radio :label="true" class="selectionItem hide_label" />
                 </el-radio-group>
               </template>
               <!-- <template #body="slotProps">
                 <CellRenderer :colData="col" :key="col.key" :rowData="slotProps.data"/>
               </template> -->
-            </Column>
+            </PColumn>
             <!-- :style="(Boolean(col._fixed) !== false || Boolean(col.fixed) !== false) ? 'min-width: ' + col.width + 'px;' : ''" -->
             <!-- :style="getColumnStyle(col)" -->
-            <Column v-else
+
+            <div v-else-if="(col as any).key.startsWith('_')">
+              <div
+              v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)"
+              >
+              <PColumn
+                :key="colChild.key" :field="colChild.key"
+                :sortable="colChild.sortable"
+                :header="colChild.title"
+                  :class="{
+                    '!w-1/1': true,
+                    '': colChild._fixed === TableV2FixedDir.LEFT || colChild.fixed === TableV2FixedDir.LEFT || colChild.fixed === true || colChild._fixed === true,
+                    'flex flex-row-reverse': colChild._fixed === TableV2FixedDir.RIGHT || colChild.fixed === TableV2FixedDir.RIGHT,
+                    // []: Boolean(colChild._fixed) === false && Boolean(colChild.fixed) === false,
+                    [(colChild.class as string)]: true,
+                  }"
+                  >
+                  <template v-if="colChild.headerCellRenderer" #header="slotProps">
+                    <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                  </template>
+                  <template v-else-if="colChild.icon" #header>
+                    <el-tooltip
+                      effect="dark"
+                      :content="colChild.tooltip"
+                      placement="bottom-end"
+                    >
+                    <IconIIcon :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                    </el-tooltip>
+                  </template>
+
+                  <template v-if="colChild.cellRenderer" #body="slotProps">
+                    <!-- CELLS OF THIS (CHILD) COLUMN -->
+                    <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && colChild.key==props.rowId"
+                      class="min-h-24"
+                    >
+                      {{ slotProps.data[props.rowId] }}
+                    </el-text>
+                    <CellRenderer v-else-if="!slotProps.data.dummy" :colData="colChild" :key="colChild.key" :rowData="slotProps.data"/>
+                  </template>
+                </PColumn>
+              </div>
+            </div>
+            <!-- <TableTDefaultDesktopColumn v-else
+              :column="col" :rowId="props.rowId" :key="col.key"
+            /> -->
+            <PColumn v-else
               :key="col.key" :field="col.key"
               :header="col.title"
               :sortable="col.sortable"
@@ -147,7 +194,6 @@
                   :content="col.tooltip"
                   placement="bottom-end"
                 >
-                <!-- <IconIIcon :icon="col.icon" :style="'color: blue'" /> -->
                 <IconIIcon :icon="col.icon" :style="'color: var(' + col.iconColor + ')'" />
                 </el-tooltip>
               </template>
@@ -156,12 +202,11 @@
                 <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && col.key==props.rowId"
                   class="min-h-24"
                 >
-                <!-- @click="onScroll(slotProps.data.direction)" -->
                   {{ slotProps.data[props.rowId] }}
                 </el-text>
                 <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
               </template>
-            </Column>
+            </PColumn>
             <!-- <Column :key="'id'" :field="'id'" :header="'Id'"> </Column> -->
           </div>
         </div>
@@ -180,10 +225,11 @@ import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable'
 
 import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+// import Column from 'primevue/column'
 // import ColumnGroup from 'primevue/columngroup'   // optional
 // import Row from 'primevue/row'                   // optional
 import { useUtilsData } from '~/composables/mixins/useUtilsData'
+// import TDefaultDesktopColumn from './TDefaultDesktopColumn'
 
 const CellRenderer = ({key, rowData, colData}: any) => {
   if (colData.cellRenderer)
@@ -237,7 +283,17 @@ const lastScrollDirection = ref<'next'|'prev'|''>('')
 // rowEventHandlers.onClick
 const rowEventHandlers: any = {
   onClick: (params: any) => {
-    log().log_colored('red', '--------onClick-------')
+
+    log().log_colored_group('red', '--------onClick-------')
+    console.log('onclick', params)
+
+    if (params && params.originalEvent
+      && params.originalEvent.target.localName !== "td" // is not a tablecell (raw text)
+      && !Boolean(params?.originalEvent?.target?.__vueParentComponent?.attrs?.class?.includes('selectionItem')) // is not the selection cell
+    ) {
+      log().log_colored_group_end()
+      return
+    }
     const rowData:TRowData  = params.rowData || params.data || params
     log().log_colored('gray', 'rowEventHandlers.onClick', rowData[props.rowId])
     if (rowData.dummy === true && rowData.direction === undefined) {
@@ -265,6 +321,7 @@ const rowEventHandlers: any = {
     $emit('selection-changed', rowData[props.rowId])
     const isAlreadyInStore2 = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
     log().log('row click', rowData[props.rowId], rowData.selected, isAlreadyInStore2)
+    log().log_colored_group_end()
   },
   onDblclick: (params: RowEventHandlerParams) => {
     // const rowData:TRowData  = params.rowData

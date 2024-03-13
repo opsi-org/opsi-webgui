@@ -390,7 +390,11 @@ const columns = ref<ITableHeaderRow>({
       width: 50,
       icon: icons.productsOutdated,
       iconColor: "--el-color-warning",
-      hidden: !storeTable.clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) => {
+        const click = () => {console.log('HIIII')}
+        return <el-tag onClick={click}>{rowData.version_outdated}</el-tag>
+      }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     version_outdated_netboot: { // eslint-disable-next-line object-property-newline
@@ -403,7 +407,11 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
-      hidden: !storeTable.clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) => {
+        const click = () => {console.log('HIIII')}
+        return <el-tag onClick={click}>{rowData.version_outdated_netboot}</el-tag>
+      }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
     actionResult_failed: { // eslint-disable-next-line object-property-newline
@@ -417,8 +425,10 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 50,
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
-      cellRenderer: ({rowData}:any) =>
-        <el-tag>{rowData.actionResult_failed}</el-tag>
+      cellRenderer: ({rowData}:any) => {
+        const click = () => {console.log('HIIII')}
+        return <el-tag onClick={click}>{rowData.actionResult_failed}</el-tag>
+      }
       // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     installationStatus_unknown: { // eslint-disable-next-line object-property-newline
@@ -431,7 +441,11 @@ const columns = ref<ITableHeaderRow>({
       iconColor: "--el-color-info",
       sortable: true,
       width: 50,
-      hidden: !storeTable.clientsColumns.includes('_majorStats')
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) => {
+        const click = () => {console.log('HIIII')}
+        return <el-tag onClick={click}>{rowData.installationStatus_unknown}</el-tag>
+      }
       // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
     },
     // TODO: Sorting for reachable column
