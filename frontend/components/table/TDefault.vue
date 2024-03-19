@@ -1,6 +1,5 @@
 <template>
   <div>
-    <pre>{{ isMobileWrapper }}</pre>
     <LazyTableTDefaultMobile
       v-if="isMobileWrapper"
       v-model:columns="columns"

@@ -146,7 +146,7 @@ wrappedColumns.value = updateColumns()
 //   // wrappedData.value = updateData()
 // })
 
-const visibleColumns = reactive<Array<string>>([])
+// const visibleColumns = reactive<Array<string>>([])
 watch (()=>dataModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: true})
 watch (()=>columnsModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: true})
 // wrappedData.value = updateData()
@@ -162,7 +162,8 @@ function updateColumns() {
   if (columnsModel.value == undefined) return {}
 
   let _columns: ITableHeaderRow = JSON.parse(JSON.stringify(columnsModel.value))
-  log().log_colored('orange', 'updateColumns', Object.keys(_columns))
+  // log().log_colored('orange', 'updateColumns')
+  // console.log(_columns)
   // Object.values(_columns)
   //   .map(c => {
   //     if (!c.fixed) c.hidden = true
@@ -171,6 +172,7 @@ function updateColumns() {
   if (columnsModel.value?.selected === undefined) {
     return _columns
   }
+
   _columns.selected.cellRenderer = ({ rowData }) => {
     const onChange = (value: CheckboxValueType) => {
 
