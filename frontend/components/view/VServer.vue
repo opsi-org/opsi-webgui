@@ -287,10 +287,10 @@ function changeRowLink(e:Event, cid: string) {
   emit('change', cid)
   navigation.toConfiguration(id, cid)
 }
-function updateTableData (v: typeof tableData.value) {
-  console.log('tabledata changed total', v)
-  tableData.value = reactive(v)
-}
+// function updateTableData (v: typeof tableData.value) {
+//   console.log('tabledata changed total', v)
+//   tableData.value = reactive(v)
+// }
 async function _fetch() {
   const params = { ...tableData.value, selected: '' }
 

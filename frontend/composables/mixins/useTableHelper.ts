@@ -27,7 +27,10 @@ export const useTableHelper = (
   const maxPage = computed(()=> Math.ceil(totalItems.value/tableDataWrapper.value.perPage) || -1)
 
   watch(()=> tableDataWrapper.value.filterQuery, async ()=>{ await fetch ()}, { deep: true})
-  watch(()=> tableDataWrapper.value.sortBy, async ()=>{ await fetch ()}, { deep: true})
+  watch(()=> tableDataWrapper.value.sortBy, async ()=>{
+    log().log_colored('orange', 'sortBy changed', tableDataWrapper.value.sortBy)
+    await fetch ()
+  }, { deep: true})
   watch(()=> tableDataWrapper.value.sortDesc, async ()=>{await fetch ()}, { deep: true})
 
   function resetFetchData(val: any[]|undefined = []) {

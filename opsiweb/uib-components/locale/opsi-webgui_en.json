@@ -1,4 +1,6 @@
 {
+  "yes": "Yes",
+  "no": "No",
   "versionmarker": "v",
   "alt.uiblogo": "uib logo",
   "message.loading": "Loading",
@@ -158,6 +160,11 @@
   "table.fields.priority": "Priority",
   "table.fields.stats": "Statistics",
   "table.fields.version": "(Server) Version",
+  "table.fields.version.tooltip.serverversions": "Server versions:",
+  "table.fields.version.tooltip.clientversions": "Client versions:",
+  "table.fields.version.tooltip.depot_version_diff": "Do selected server have different versions?",
+  "table.fields.version.tooltip.client_version_diff": "Do selected clients have different versions?",
+  "table.fields.version.tooltip.not_on_all_depots": "Product only on some servers",
   "table.fields.instStatus": "Installation status",
   "table.fields.actionResult": "Action result",
   "table.fields.actionProgress":"Action progress",

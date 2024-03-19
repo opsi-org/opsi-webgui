@@ -296,8 +296,32 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie('column_' + id, 'version', false)
       hidden: !tableSettings.productsColumns.includes('version'),
       cellRenderer: ({rowData}) => {
+        const tt = (
+          <>
+            <ul>
+              <li>{$t('table.fields.version.tooltip.serverversions')} {(rowData.depotVersions) ? Object.values(rowData.depotVersions).join(', ') : ''}</li>
+              <li>{$t('table.fields.version.tooltip.clientversions')} {(rowData.clientVersions) ? Object.values(rowData.clientVersions).join(', ') : ''}</li>
+              <li>{$t('table.fields.version.tooltip.depot_version_diff')}  {rowData.depot_version_diff ? $t('yes') : $t('no')}</li>
+              <li>{$t('table.fields.version.tooltip.client_version_diff')} {rowData.client_version_outdated ? $t('yes') : $t('no')}</li>
+              <li>{$t('table.fields.version.tooltip.not_on_all_depots')} {rowData.not_on_all_depots ? $t('yes') : $t('no')}</li>
+            </ul>
+          </>
+        )
         return (
           <>
+          <el-tooltip
+            class="box-item"
+            effect="dark"
+            placement="left-start"
+            v-slots={{
+              content: () => tt
+            }}
+          >
+            {/* content={tt} */}
+
+            {/* <template #content>
+              <span>Content</span>
+            </template> */}
           {/* TODO: check if this works for different versions of server/clients */}
             {/* <el-text v-if={!rowData.depot_version_diff}>{Object.values(rowData.depotVersions)[0]}</el-text> */}
               {/* v-if={Object.keys(fetchedDataClients2Depots).length == selectionClients.value.length} */}
@@ -307,6 +331,7 @@ const columns = reactive<ITableHeaderRow>({
               clients2depots={fetchedDataClients2Depots.value}
               onDetails={toggleDetailsTooltip}
             />
+      </el-tooltip>
           </>
         )
       }
@@ -459,12 +484,12 @@ function setColumnVisibilityDependOnClients () {
   columns.actionProgress.hidden = b
 }
 
-async function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
-  console.log('tabledata changed total', v)
-  tableData.value[type] = reactive(v)
-  fetchedData.value[currentType.value] = []
-  fetchedData.value[currentType.value] = await _fetch(currentType.value)
-}
+// async function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
+//   console.log('tabledata changed total', v)
+//   tableData.value[type] = reactive(v)
+//   fetchedData.value[currentType.value] = []
+//   fetchedData.value[currentType.value] = await _fetch(currentType.value)
+// }
 
 async function _fetch(_type: string = "") {
   const type = currentType.value
@@ -626,7 +651,7 @@ function fetchProductsPrepareParams (type: string) {
   } else if (params.sortBy === '') {
     params.sortBy = 'productId'
   } else if (params.sortBy === 'version') {
-    params.sortBy = '["client_version_outdated", "depot_version_diff", "not_on_all_depots" ]'
+    params.sortBy = '["client_version_outdated", "depot_version_diff", "not_on_all_depots", "clientVersions", "depotVersions"]'
   } else if (params.sortBy === 'selected') {
     params.sortDesc = true
     params.selected = JSON.stringify(selectionProducts)
