@@ -35,8 +35,10 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
-const props = defineProps({
-  adminTasks: { type: Object, required: true }
+
+const adminTasks = reactive({
+  clients: ['unblock', 'unblockAll'],
+  products: ['unlock', 'unlockAll']
 })
 const mq = useMQ()
 const selected = ref(

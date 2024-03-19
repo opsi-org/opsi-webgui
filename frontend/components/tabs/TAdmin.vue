@@ -1,7 +1,7 @@
 <template>
   <el-tabs lazy>
     <el-tab-pane :label="$t('form.general')">
-      <FormFAdminGeneral :adminTasks="adminTasks.general" />
+      <FormFAdminGeneral />
     </el-tab-pane>
     <el-tab-pane :label="$t('label.maintenance')">
       <FormFAdminMaintenance />
@@ -9,11 +9,3 @@
   </el-tabs>
 </template>
 
-<script setup lang="ts">
-const adminTasks = reactive({
-  general: {
-    clients: ['unblock', 'unblockAll'],
-    products: ['unlock', 'unlockAll']
-  }
-})
-</script>
