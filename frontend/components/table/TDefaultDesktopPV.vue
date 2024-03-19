@@ -138,7 +138,7 @@
                 :sortable="colChild.sortable"
                 :header="colChild.title"
                   :class="{
-                    '!w-1/1': true,
+                    '!w-1/1': colChild.maxWidth === undefined,
                     '': colChild._fixed === TableV2FixedDir.LEFT || colChild.fixed === TableV2FixedDir.LEFT || colChild.fixed === true || colChild._fixed === true,
                     'flex flex-row-reverse': colChild._fixed === TableV2FixedDir.RIGHT || colChild.fixed === TableV2FixedDir.RIGHT,
                     // []: Boolean(colChild._fixed) === false && Boolean(colChild.fixed) === false,
@@ -178,7 +178,7 @@
               :header="col.title"
               :sortable="col.sortable"
               :class="{
-                '!w-1/1': true,
+                '!w-1/1': col.maxWidth === undefined,
                 '': col._fixed === TableV2FixedDir.LEFT || col.fixed === TableV2FixedDir.LEFT || col.fixed === true || col._fixed === true,
                 'flex flex-row-reverse': col._fixed === TableV2FixedDir.RIGHT || col.fixed === TableV2FixedDir.RIGHT,
                 // []: Boolean(col._fixed) === false && Boolean(col.fixed) === false,
