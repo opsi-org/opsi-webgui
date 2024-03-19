@@ -34,6 +34,7 @@ html {
   /* PrimeVue */
   --highlight-bg: #f0f0f0;
   --primary-color: var(--opsi-general-blue);
+  --primary-color-dark: var(--opsi-general-blue-dark);
   --primary-color-text: var(--opsi-genral-white);
 }
 
@@ -109,6 +110,19 @@ body[data-bs-theme="dark"] {
 }
 
 
+.el-popper .el-menu .text-on-primary {
+  /* BSIDE items during hover. cannot be inside component, cause el-popper is directly in body tag*/
+  --el-text-color-regular: var(--fg-color) !important;
+}
+.el-popper .el-menu .el-menu-item.is-active.text-on-primary,
+.el-popper .el-menu .el-menu-item.is-active.text-on-primary .text-on-primary {
+  /* BSIDE items during hover. cannot be inside component, cause el-popper is directly in body tag*/
+  --el-text-color-regular: var(--opsi-general-lighter) !important;
+}
+.el-popper .el-menu .el-menu-item.is-active.text-on-primary:hover,
+.el-popper .el-menu .el-menu-item.is-active.text-on-primary:hover .text-on-primary {
+--el-text-color-regular: var(--opsi-general-light) !important;
+}
 a {
   font-weight: 400;
   color: var(--el-color-primary);

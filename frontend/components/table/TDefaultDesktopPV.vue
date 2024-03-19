@@ -188,14 +188,20 @@
               <template v-if="col.headerCellRenderer" #header="slotProps">
                 <HeaderCellRenderer :colData="col" :key="col.title"/>
               </template>
-              <template v-else-if="col.icon" #header>
+              <template v-else-if="col.icon && col.tooltip" #header>
                 <el-tooltip
                   effect="dark"
                   :content="col.tooltip"
                   placement="bottom-end"
                 >
-                <IconIIcon :icon="col.icon" :style="'color: var(' + col.iconColor + ')'" />
+                <el-text><IconIIcon :icon="col.icon" :style="'color: var(' + col.iconColor + ')'" /></el-text>
                 </el-tooltip>
+              </template>
+              <template v-else-if="col.title" #header="slotProps">
+                <el-text>{{ col.title }}</el-text>
+              </template>
+              <template v-else #header="slotProps">
+                <el-text>{{ col.key }}</el-text>
               </template>
 
               <template v-if="col.cellRenderer" #body="slotProps">
@@ -205,6 +211,10 @@
                   {{ slotProps.data[props.rowId] }}
                 </el-text>
                 <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
+              </template>
+              <template v-else #body="slotProps">
+                <!-- <pre>{{ slotProps }}</pre> -->hi
+                <el-text>{{ slotProps.data[col.key] }}</el-text>
               </template>
             </PColumn>
             <!-- <Column :key="'id'" :field="'id'" :header="'Id'"> </Column> -->
@@ -791,6 +801,12 @@ function clearSelection (event:any) {
 /* p-dropdown-items-wrapper = el-select-dropdown__list
 p-dropdown-items
 p-dropdown-item = el-select-dropdown__item */
+:deep(.p-datatable .p-datatable-thead > tr > th .p-column-title) {
+  display: none !important;
+}
+:deep(.p-datatable .p-sortable-column .p-sortable-column-icon) {
+  color: var(--bs-purple) !important;
+}
 :deep(.hide_label .el-radio__label) {
   display: none !important;
 }

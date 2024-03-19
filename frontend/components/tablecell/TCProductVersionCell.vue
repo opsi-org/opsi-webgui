@@ -4,7 +4,7 @@
       :id="`TCProductVersionCell_hover_${rowitem.productId}_${type}`"
       class="TCProductVersionCell_hover text-small"
     >
-      {{ (rowitem.depot_version_diff) ? '' : rowitem.depotVersions[0] }}
+      <el-text>{{ (rowitem.depot_version_diff) ? '' : rowitem.depotVersions[0] }}</el-text>
       <IconIDetails
         v-if="rowitem.depot_version_diff"
         class="details depot-unequal"

@@ -256,7 +256,13 @@ const columns = reactive<ITableHeaderRow>({
       width: 150,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'productId', true)
-      hidden: false
+      hidden: false,
+      cellRenderer: ({rowData}) => {
+        return (
+          <> <el-text>{rowData.productId}</el-text>
+          </>
+        )
+      }
     },
     name: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.name'),
