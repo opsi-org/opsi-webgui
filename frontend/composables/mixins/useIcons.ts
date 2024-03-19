@@ -66,6 +66,7 @@ export const useIcons = () => {
     refresh: 'bi:arrow-repeat',
     // // stackedIcons used??
     readonly: 'material-symbols-light:edit-off-outline',
+    unequal: 'mdi:not-equal-variant',
     // _stackedIcons: {
     //   readonly: [
     //     { icon: 'bi:pencil', scale: '0.55' },

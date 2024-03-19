@@ -15,7 +15,8 @@ export const useUtilsData = () => {
     const _majors = []
     const _defaults = headers
       .filter(v=>
-        v.title !== undefined && v.title !== ''
+        ((v.title !== undefined && v.title !== '')
+          || (v.icon !== undefined && v.icon !== '' && v.tooltip !== undefined && v.tooltip !== ''))
         && !((v.fixed === undefined || v.fixed === false)
         && (v.hidden === undefined || v.hidden === true)
         && (v._majorKey === undefined))

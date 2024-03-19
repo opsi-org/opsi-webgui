@@ -199,24 +199,53 @@ const columns = reactive<ITableHeaderRow>({
       // hidden: cookies.includesCookie('column_' + id, 'selected', true)
     },
     installationStatus: { // eslint-disable-next-line object-property-newline
-      title: $t('table.fields.instStatus'),
+      tooltip: $t('table.fields.instStatus'),
       key: 'installationStatus',
       dataKey: 'installationStatus',
       class: 'col-installationStatus',
       width: 50,
       sortable: true,
-      // visible: this.includesCookie(`column_${id}`, 'installationStatus', true)
-      hidden: !tableSettings.productsColumns.includes('installationStatus')
+      icon: icons.product,
+      // iconColor: "--el-color-warning",
+      hidden: !tableSettings.productsColumns.includes('installationStatus'),
+      cellRenderer: ({rowData}) => {
+        return (
+          <>
+            <tablecellTCBadgeCompares
+              type="installationStatus"
+              rowid={rowData.productId}
+              values={rowData.installationStatusDetails || [rowData.installationStatus] || []}
+              objects={rowData.selectedClients || []}
+              objectsorigin={selectionClients.value || []}
+            />
+          </>
+        )
+      }
     },
     actionResult: { // eslint-disable-next-line object-property-newline
-      title: $t('table.fields.actionResult'),
+      tooltip: $t('table.fields.actionResult'),
       key: 'actionResult',
       dataKey: 'actionResult',
       class: 'col-actionResult',
       width: 50,
+      icon: icons.productActionResult,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
-      hidden: !tableSettings.productsColumns.includes('actionResult')
+      hidden: !tableSettings.productsColumns.includes('actionResult'),
+
+      cellRenderer: ({rowData}) => {
+        return (
+          <>
+            <tablecellTCBadgeCompares
+              type="actionResult"
+              rowid={rowData.productId}
+              values={rowData.actionResultDetails || [rowData.actionResult] || []}
+              objects={rowData.selectedClients || []}
+              objectsorigin={selectionClients.value || []}
+            />
+          </>
+        )
+      }
     },
     productId: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.productId'),
@@ -307,6 +336,12 @@ const columns = reactive<ITableHeaderRow>({
             </ul>
           </>
         )
+        // <TableTTooltipContent
+        //   v-if="row.item.depot_version_diff || row.item.client_version_outdated || false"
+        //   type="version"
+        //   :details="row.item.tooltiptext"
+        //   :depot-version-diff="row.item.depot_version_diff"
+        // />
         return (
           <>
           <el-tooltip

@@ -1,4 +1,5 @@
 import { id } from "element-plus/es/locales.mjs"
+import type { IObjectString2Function } from "~/types/tgeneral"
 import type { ITableData } from "~/types/ttable"
 
 export const useTableHelper = (
@@ -133,6 +134,7 @@ export const useTableHelper = (
     tableDataWrapper.value.filterColumns = v.cols
     tableDataWrapper.value.filterQuery = v.vals
   }
+
   return {
     isLoading,
     fetch,
