@@ -52,7 +52,9 @@
           </el-scrollbar>
         </el-aside>
 
+
         <el-main class="z-0 p-2">
+          <BreadcrumbBPageNavigation />
           <el-scrollbar
             class="p-0 m-0"
             wrap-class="p-0 m-0"
@@ -98,6 +100,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
 import { useRuntimeConfig } from 'nuxt/app';
+
 
 const mq = useMQ()
 const settings = storeSettings()
