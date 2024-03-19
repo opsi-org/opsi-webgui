@@ -245,7 +245,7 @@
   "label.maintenance": "Maintenance",
   "label.addressexcept": "Address Exceptions",
   "label.retryaftersec": "Retry-After (in seconds)",
-  "placeholder.netwrkadr": "Enter Network Address",
+  "placeholder.netwrkadr": "Enter Network Address and press Enter",
   "label.exceptionslist": "Exceptions List:",
   "label.file_id": "Upload Backup File",
   "label.config_files": "Config files",

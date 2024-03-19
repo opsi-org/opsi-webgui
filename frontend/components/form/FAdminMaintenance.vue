@@ -16,8 +16,7 @@
           <el-form :label-width="mq.isMobile.value ? '': '180px'" :label-position="mq.isMobile.value ? 'top': 'left'" class="w-100">
             <el-form-item label="">
               <el-radio-group v-model="newAppState.type">
-                <el-radio value="normal">{{ $t('label.normal') }}</el-radio>
-                <el-radio value="maintenance">{{ $t('label.maintenance') }}</el-radio>
+                <el-radio :label="item" v-for="item in ['normal', 'maintenance']" :key="item">{{ $t('label.' + item) }}</el-radio>
               </el-radio-group>
             </el-form-item>
             <template v-if="newAppState.type === 'maintenance'">
@@ -30,7 +29,7 @@
                   allow-create
                   default-first-option
                   :reserve-keyword="false"
-                  placeholder="Enter network address and press Enter"
+                  :placeholder="$t('placeholder.netwrkadr')"
                 >
                   <el-option
                     v-for="item in newAppState.address_exceptions"
@@ -48,7 +47,7 @@
               <el-button type="primary" @click="resetForm(section)">
                 {{ $t('button.reset') }}
               </el-button>
-              <el-button type="success">
+              <el-button type="success" @click="setAppState">
                 {{ $t('button.apply') }}
               </el-button>
             </template>
@@ -63,331 +62,155 @@
         :label="$t('label.'+ key)"
       >
           <el-checkbox v-if="typeof value == 'boolean'" v-model="actions[key]" />
+          <el-input-group v-else-if="key === 'password'" class="w-100 flex">
+            <el-input v-model="actions[key]" :type="(section === 'createBackup' ? showPasswordCB : showPasswordRB) ? 'text': 'password'" />
+            <el-button class="flex-shrink-0" @click="section === 'createBackup' ? showPasswordCB = !showPasswordCB : showPasswordRB = !showPasswordRB" type="primary">
+              <IconIIcon :icon="(section === 'createBackup' ? showPasswordCB : showPasswordRB) ? icon.valueShow : icon.valueHide" />
+            </el-button>
+          </el-input-group>
+          <el-input-group v-else-if="key === 'server_id'" class="w-100 flex">
+            <el-radio-group class="flex-shrink-0" v-model="actions[key]">
+              <el-radio :label="item" v-for="item in ['backup', 'local', 'new']" :key="item">{{ $t('label.' + item) }}</el-radio>
+            </el-radio-group>
+            <el-input class="ml-2" v-if="actions[key] === 'new'" :placeholder="$t('placeholder.enterNewID')" required v-model="actions[key]" />
+          </el-input-group>
+          <el-input-group v-else-if="key === 'file_id'" class="w-100 flex">
+            <b-form-file v-model="actions[key]" :state="Boolean(actions[key])" :placeholder="$t('placeholder.fileupload')" size="sm" />
+            <el-button @click="adminTasks.restoreBackup.file_id = ''">
+              {{ $t('button.clear') }}
+            </el-button>
+          </el-input-group>
           <el-input v-else v-model="actions[key]" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="resetForm(section)">
           {{ $t('button.reset') }}
         </el-button>
-        <el-button type="success">
+        <el-button type="success" @click="section === 'createBackup' ? executeCreateBackup : executeRestoreBackup">
           {{ section === 'createBackup' ? $t('button.create') : $t('button.restore')}}
         </el-button>
       </el-form-item>
     </el-form>
   </div>
-
-  <!-- <div data-testid="VAdminMaintenance" class="VAdminMaintenance">
-    <OverlayOLoading :is-loading="isLoading" /
-      <template v-if="newAppState.type" #valueMore>
-        <template v-if="newAppState.type === 'maintenance'">
-          <GridGFormItem :label="$t('label.addressexcept')">
-            <template #value>
-              <b-dropdown class="dropdownForm" size="sm" no-caret variant="outline-primary" :title="newAppState.address_exceptions">
-                <template #button-content>
-                  <span class="text-small">{{ newAppState.address_exceptions.toString().substring(0,38) }}</span>
-                </template>
-                <b-input-group class="border">
-                  <b-form-input
-                    v-model="exception"
-                    class="border-0"
-                    :placeholder="$t('placeholder.netwrkadr')"
-                    size="sm"
-                  />
-                  <b-button
-                    size="sm"
-                    variant="outline-primary border-0"
-                    @click="exceptions.push(exception);newAppState.address_exceptions.push(exception)"
-                  >
-                    {{ $t('+') }}
-                  </b-button>
-                </b-input-group>
-                <br>
-                <span class="text-small">{{ $t('label.exceptionslist') }}</span>
-                <b-form-select v-model="newAppState.address_exceptions" size="sm" multiple :select-size="4" :options="exceptions" />
-              </b-dropdown>
-            </template>
-          </GridGFormItem>
-          <GridGFormItem :label="$t('label.retryaftersec')">
-            <template #value>
-              <b-form-input
-                v-model="newAppState.retry_after"
-                size="sm"
-                type="number"
-              />
-            </template>
-          </GridGFormItem>
-        </template>
-
-              <b-button size="sm" variant="success" @click="setAppState">
-                {{ $t('button.apply') }}
-              </b-button>
-
-      </template>
-    </GridGFormItem>
-    <hr>
-    <GridGFormItem :label="$t('label.createbackup')" variant="longvalue">
-      <template #value>
-        <GridGFormItem :label="$t('label.maintenancemode')">
-          <template #value>
-            <b-form-checkbox v-model="createbackup.maintenance_mode" size="sm" />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('label.configfiles')">
-          <template #value>
-            <b-form-checkbox v-model="createbackup.config_files" size="sm" />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('label.redis_data')">
-          <template #value>
-            <b-form-checkbox v-model="createbackup.redis_data" size="sm" />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('form.password')">
-          <template #value>
-            <b-input-group>
-              <b-form-input
-                id="password"
-                v-model="createbackup.password"
-                :aria-label="$t('form.password')"
-                :type="showPasswordCB? 'text': 'password'"
-                size="sm"
-              />
-              <b-button variant="outline-primary" :pressed.sync="showPasswordCB" size="sm">
-                <span class="sr-only">{{ showPasswordCB? $t('label.hide', {item: 'Password'}) : $t('label.show', {item: 'Password'}) }}</span>
-                <IconIIcon :icon="showPasswordCB ? icon.valueShow : icon.valueHide" />
-              </b-button>
-            </b-input-group>
-          </template>
-        </GridGFormItem>
-        <GridGFormItem>
-          <template #value>
-            <div class="float-right">
-              <b-button size="sm" class="mr-2" variant="outline-primary" @click="resetCreateBackup">
-                {{ $t('button.reset') }}
-              </b-button>
-              <b-button size="sm" variant="success" @click="createBackup">
-                {{ $t('button.create') }}
-              </b-button>
-            </div>
-          </template>
-        </GridGFormItem>
-      </template>
-    </GridGFormItem>
-    <hr>
-    <GridGFormItem :label="$t('label.restorebackup')" variant="longvalue">
-      <template #value>
-        <GridGFormItem :label="$t('label.uploadbackup')">
-          <template #value>
-            <b-input-group>
-              <b-form-file v-model="file" :state="Boolean(file)" :placeholder="$t('placeholder.fileupload')" size="sm" />
-              <b-button size="sm" variant="outline-primary" @click="file = []">
-                {{ $t('button.clear') }}
-              </b-button>
-            </b-input-group>
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('label.configfiles')">
-          <template #value>
-            <b-form-checkbox v-model="restorebackup.config_files" size="sm" />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('label.redis_data')">
-          <template #value>
-            <b-form-checkbox v-model="createbackup.redis_data" size="sm" />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('label.serverID')">
-          <template #value>
-            <b-form-radio-group v-model="restorebackup.server_id">
-              <b-form-radio value="backup">
-                {{ $t('label.backup') }}
-              </b-form-radio>
-              <b-form-radio value="local">
-                {{ $t('label.local') }}
-              </b-form-radio>
-              <b-form-radio value="new">
-                {{ $t('label.new') }}
-              </b-form-radio>
-            </b-form-radio-group>
-            <b-form-input
-              v-if="restorebackup.server_id === 'new'"
-              v-model="newserverID"
-              size="sm"
-              :state="newserverID!=''"
-              :placeholder="$t('placeholder.enterNewID')"
-              required
-            />
-          </template>
-        </GridGFormItem>
-        <GridGFormItem :label="$t('form.password')">
-          <template #value>
-            <b-input-group>
-              <b-form-input
-                id="password"
-                v-model="restorebackup.password"
-                :aria-label="$t('form.password')"
-                :type="showPasswordRB? 'text': 'password'"
-                size="sm"
-              />
-              <b-button variant="outline-primary" :pressed.sync="showPasswordRB" size="sm">
-                <span class="sr-only">{{ showPasswordRB? $t('label.hide', {item: 'Password'}) : $t('label.show', {item: 'Password'}) }}</span>
-                <IconIIcon :icon="showPasswordRB ? icon.valueShow : icon.valueHide" />
-              </b-button>
-            </b-input-group>
-          </template>
-        </GridGFormItem>
-        <GridGFormItem>
-          <template #value>
-            <div class="float-right">
-              <b-button size="sm" class="mr-2" variant="outline-primary" @click="resetRestoreBackup">
-                {{ $t('button.reset') }}
-              </b-button>
-              <b-button size="sm" variant="success" @click="restoreBackup">
-                {{ $t('button.restore') }}
-              </b-button>
-            </div>
-          </template>
-        </GridGFormItem>
-      </template>
-    </GridGFormItem>
-  </div> -->
 </template>
 
 <script setup lang="ts">
+import { useIcons } from "../../composables/mixins/useIcons"
 import { useNotification } from '~/composables/mixins/useComponent';
-const props = defineProps({
-  adminTasks: { type: Object, required: true }
+
+const adminTasks = reactive({
+  applicationState : ['current', 'setup'],
+  createBackup : {
+    config_files: true,
+    redis_data:false,
+    maintenance_mode: false,
+    password: ''
+  },
+  restoreBackup : {
+    file_id: '',
+    config_files: false,
+    redis_data:false,
+    server_id: 'backup',
+    password: ''
+  }
 })
+const icon = useIcons()
 const mq = useMQ()
 const currentAppState = ref('')
 const isLoading = ref(false)
 const newAppState = ref({ type: '', address_exceptions: [], retry_after: 0 })
-// const createbackup = ref({ config_files: true, redis_data:false, maintenance_mode: false, password: '' })
-// const restorebackup = ref({ file_id: '', config_files: false, redis_data:false, server_id: '', password: '' })
+const showPasswordCB = ref(false)
+const showPasswordRB = ref(false)
 
 
 onMounted(async ()=> {
-  isLoading.value = true
   await fetchAppState()
-  isLoading.value = false
 })
 
 const fetchAppState = async () => {
+  isLoading.value = true
   const {data, error } = await useApiGET('/app-state')
   if (error) {
     useNotification().error(error)
     return
   }
   currentAppState.value = (data.value as { type: any }).type
+  isLoading.value = false
 }
+
+const setAppState = async () => {
+  isLoading.value = true
+  const { data, error } = await useApiPOST('/app-state', newAppState.value)
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+  currentAppState.value = (data.value as { type: any }).type
+  isLoading.value = false
+}
+
+const executeCreateBackup = async () => {
+  isLoading.value = true
+  console.log('createBackup', adminTasks.createBackup)
+  await useApiPOST('/backup/create', adminTasks.createBackup)
+    .then((response) => {
+      const downloadLink = document.createElement('a')
+      downloadLink.setAttribute('href', `/file-transfer/${response}?delete=true`)
+      downloadLink.style.display = 'none'
+      document.body.appendChild(downloadLink)
+      downloadLink.click()
+      document.body.removeChild(downloadLink)
+      useNotification().success('success.backup.created')
+    })
+    .catch((error) => {
+      useNotification().error(error)
+    })
+  isLoading.value = false
+}
+
+const requestRestore = async () => {
+  await useApiPOST('/backup/restore', adminTasks.restoreBackup)
+    .then(() => {
+      useNotification().success('success.backup.restored')
+    })
+    .catch((error) => {
+      useNotification().error(error)
+    })
+}
+
+const executeRestoreBackup = async () => {
+  if (!adminTasks.restoreBackup.file_id) { return }
+
+  isLoading.value = true
+
+  const formData = new FormData()
+  formData.append('file', adminTasks.restoreBackup.file_id)
+  const {data, error } = await useApiPOST('/file-transfer/multipart', formData)
+  if (error) {
+    useNotification().error(error)
+    return
+  }
+  adminTasks.restoreBackup.file_id = (data.value as { file_id: any }).file_id
+  await requestRestore()
+  isLoading.value = false
+}
+
 
 const resetForm = (section: string) => {
   if (section === 'applicationState') {
     newAppState.value = { type: '', address_exceptions: [], retry_after: 0 }
   }
   else if (section === 'createBackup') {
-    props.adminTasks[section] = { config_files: true, redis_data:false, maintenance_mode: false, password: '' }
+    adminTasks[section] = { config_files: true, redis_data:false, maintenance_mode: false, password: '' }
   }
   else if (section === 'restoreBackup') {
-    props.adminTasks[section] = { file_id: '', config_files: false, redis_data:false, server_id: '', password: '' }
+    adminTasks[section] = { file_id: '', config_files: false, redis_data:false, server_id: '', password: '' }
   }
 }
-// import { Component, Vue } from 'nuxt-property-decorator'
-// import { AlertToast } from '../../mixins/component'
-// import { Icons } from '../../mixins/icons'
 
-// interface AppState {
-//   type: string
-//   address_exceptions: Array<string>,
-//   retry_after: number
-// }
-// interface CreateBackup {
-//   config_files: boolean,
-//   redis_data:boolean,
-//   maintenance_mode: boolean,
-//   password: string
-// }
-// interface RestoreBackup {
-//   file_id: string,
-//   config_files: boolean,
-//   redis_data:boolean,
-//   server_id: string,
-//   password: string
-// }
 
-// @Component({ mixins: [Icons, AlertToast] })
-// export default class VAdminMaintenance extends Vue {
-//   showToastSuccess: any // from mixin AlertToast
-//   showToastError: any // from mixin AlertToast
-//   icon: any
-//   $axios: any
-//   $t: any
-//   currentAppState: string = ''
-//   newAppState: AppState = { type: '', address_exceptions: [], retry_after: 0 }
-//   createbackup: CreateBackup = { config_files: true, redis_data: false, maintenance_mode: true, password: '' }
-//   restorebackup: RestoreBackup = { file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' }
-//   exception: string = ''
-//   exceptions: Array<string> = []
-//   isLoading: boolean = false
 //   file: any = null
 //   newserverID: string = ''
-//   showPasswordCB: boolean = false
-//   showPasswordRB: boolean = false
-
-//   async mounted () {
-//     await this.getAppState()
-//   }
-
-//   async getAppState () {
-//     await this.$axios.$get('/api/app-state')
-//       .then((response) => {
-//         this.currentAppState = response.type
-//       })
-//       .catch(this.showToastError)
-//   }
-
-//   resetAppState () {
-//     this.newAppState.address_exceptions = []
-//     this.newAppState.retry_after = 0
-//   }
-
-//   resetCreateBackup () {
-//     this.createbackup = { config_files: true, redis_data: false, maintenance_mode: true, password: '' } as CreateBackup
-//   }
-
-//   resetRestoreBackup () {
-//     this.restorebackup = { file_id: '', config_files: false, redis_data: false, server_id: 'backup', password: '' } as RestoreBackup
-//   }
-
-//   async setAppState () {
-//     this.isLoading = true
-//     await this.$axios.$post('/api/app-state', this.newAppState)
-//       .then((response) => {
-//         this.currentAppState = response.type
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.isLoading = false
-//   }
-
-//   async createBackup () {
-//     this.isLoading = true
-//     await this.$axios.$post('/api/backup/create', this.createbackup)
-//       .then((response) => {
-//         const downloadLink = document.createElement('a')
-//         downloadLink.setAttribute('href', `/file-transfer/${response}?delete=true`)
-//         downloadLink.style.display = 'none'
-//         document.body.appendChild(downloadLink)
-//         downloadLink.click()
-//         document.body.removeChild(downloadLink)
-//         this.showToastSuccess(this.$t('success.backup.created'))
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.isLoading = false
-//   }
 
 //   async requestRestore () {
 //     const host = window.location.hostname
