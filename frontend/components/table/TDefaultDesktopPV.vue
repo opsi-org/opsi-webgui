@@ -805,7 +805,7 @@ p-dropdown-item = el-select-dropdown__item */
   display: none !important;
 }
 :deep(.p-datatable .p-sortable-column .p-sortable-column-icon) {
-  color: var(--bs-purple) !important;
+  color: var(--fg-color) !important;
 }
 :deep(.hide_label .el-radio__label) {
   display: none !important;
