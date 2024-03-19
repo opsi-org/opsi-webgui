@@ -1,30 +1,26 @@
 <template>
-  <!-- :target="`TCBadgeCompares_${type}_hover_${rowid}`" -->
-  <!-- :content="gettooltiphtml" -->
   <el-tooltip
     :type="type"
-    placement="bottom-start"
+    placement="bottom-end"
   >
-    <template #content>
-      <TooltipCell />
-    </template>
-  <div :id="`TCBadgeCompares_${type}_hover_${rowid}`" class="TCBadgeCompares" data-testid="TCBadgeCompares">
-    <!-- ({{ gettext }}) - {{ getvariant }} -->
-    <TablecellTCProductInstallationStatus v-if="type=='installationStatus' && gettext=='mixed'" :text="gettext" :variant="getvariant" />
-    <TablecellTCProductInstallationStatus v-else-if="type=='installationStatus'" :text="gettext" :variant="getvariant" />
+    <template #content> <TooltipCell /> </template>
 
-    <TablecellTCProductActionResult v-else-if="type=='actionResult' && gettext=='mixed'" :text="gettext" :variant="getvariant" />
-    <TablecellTCProductActionResult v-else-if="type=='actionResult'" :text="gettext" :variant="getvariant" />
+    <div :id="`TCBadgeCompares_${type}_hover_${rowid}`" class="TCBadgeCompares" data-testid="TCBadgeCompares">
+      <TablecellTCProductInstallationStatus v-if="type=='installationStatus' && gettext=='mixed'" :text="gettext" :variant="getvariant" />
+      <TablecellTCProductInstallationStatus v-else-if="type=='installationStatus'" :text="gettext" :variant="getvariant" />
 
-    <el-tag v-else>
-      {{ gettext }}
-    </el-tag>
-    <!-- <TooltipTTProductCell
-      :target="`TCBadgeCompares_${type}_hover_${rowid}`"
-      :details="tooltiptext"
-      :type="type"
-    /> -->
-  </div>
+      <TablecellTCProductActionResult v-else-if="type=='actionResult' && gettext=='mixed'" :text="gettext" :variant="getvariant" />
+      <TablecellTCProductActionResult v-else-if="type=='actionResult'" :text="gettext" :variant="getvariant" />
+
+      <el-tag v-else>
+        <el-text>{{ gettext }}</el-text>
+      </el-tag>
+      <!-- <TooltipTTProductCell
+        :target="`TCBadgeCompares_${type}_hover_${rowid}`"
+        :details="tooltiptext"
+        :type="type"
+      /> -->
+    </div>
   </el-tooltip>
 </template>
 

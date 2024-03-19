@@ -15,7 +15,7 @@
         <template v-if="item.submenu">
           <!-- menus with children -->
           <el-sub-menu :index="item.route" :route="item.route"
-          popper-class="text-on-primary"
+          popper-class="text-on-primary" class="text-on-primary"
           :data-testid="'NSidebar-' + item.title"
           >
           <!-- :expand-open-icon="isCollapse ? ' ' : ''" :expand-close-icon="isCollapse ? ' ' : ''" -->
@@ -149,13 +149,29 @@ watch(isCollapse, (val: boolean) => {
   height: calc(100vh - 72px);
 }
 :deep(.el-menu-item.is-active path) {
-  color: var(--el-color-primary) !important;
+  color: var(--opsi-genral-white) !important;
   color: var(--el-menu-active-color) !important;
 }
 /* :deep(.el-sub-menu__icon-arrow) {
 color: white !important;
 } */
 
+:deep(.el-menu-item.is-active),
+  :deep(.el-menu-item.is-active svg),
+  :deep(.el-sub-menu.is-active > .el-sub-menu__title)
+   {
+    --el-menu-active-color: var(--opsi-genral-white);
+    color: var(--opsi-genral-white);
+    background-color: var(--primary-color-dark);
+  }
+  .el-menu-item.text-on-primary:hover,
+  .el-menu-item.text-on-primary:hover .text-on-primary,
+  :deep(.el-sub-menu__title:hover .text-on-primary),
+  :deep(.el-sub-menu__title:hover .el-sub-menu__icon-arrow)
+  {
+    --el-text-color-regular: var(--fg-color) !important;
+    color: var(--el-text-color-regular) !important;
+  }
   :deep(.el-sub-menu__icon-arrow) {
   /* .el-menu--collapse >>> .el-sub-menu__icon-arrow { */
     /* display: none !important; */
@@ -193,4 +209,5 @@ color: white !important;
   .el-menu-mywrapper > span > .el-menu-item {
     padding-left: 5px !important;
   }
+
 </style>

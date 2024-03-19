@@ -8,22 +8,27 @@
       size="sm"
     > -->
       <span v-if="props.content=='depot-unequal'" class="inline">
-        {{ props.text ? props.text: t_fixed('unequal') }}
+        <el-text>{{ props.text ? props.text: t_fixed('unequal') }}</el-text>
         <IconIIcon :icon="icons.depots" size="small"/>
       </span>
       <span v-else-if="props.content=='depot-wo-prod'" class="h6">
-        {{ $t('notOrigin') }} <IconIIcon :icon="icons.depots" />
+        <el-text>{{ $t('notOrigin') }} </el-text>
+        <IconIIcon :icon="icons.depots" />
       </span>
       <span v-else-if="props.content=='client-outdated'" class="h6">
-        <span> {{ props.text ? props.text: t_fixed('unequal') }}</span> <IconIIcon :icon="icons.client" />
+        <el-text>{{ props.text ? props.text: t_fixed('unequal') }}</el-text>
+        <!-- <span> {{ props.text ? props.text: t_fixed('unequal') }}</span> -->
+        <IconIIcon :icon="icons.client" />
       </span>
       <span v-else-if="props.content=='ppv-client-different'" class="h6">
-        <span> {{ props.text ? props.text: t_fixed('unequal') }}</span> <IconIIcon :icon="icons.client" />
+        <el-text>{{ props.text ? props.text: t_fixed('unequal') }}</el-text>
+        <!-- <span> {{ props.text ? props.text: t_fixed('unequal') }}</span>  -->
+        <IconIIcon :icon="icons.client" />
       </span>
       <span v-else-if="props.content=='ppid-not-exists-on-depot'" class="h6">
-        {{ t_fixed('unequal') }} <IconIIcon :icon="icons.depots" />
+        <el-text>{{ t_fixed('unequal') }} </el-text><IconIIcon :icon="icons.depots" />
       </span>
-      <span v-else class="h6">{{ props.content==='unequal'? t_fixed('unequal'):props.content }} </span>
+      <el-text v-else class="h6">{{ props.content==='unequal'? t_fixed('unequal'):props.content }} </el-text>
     <!-- </b-badge> -->
   </el-tag>
 

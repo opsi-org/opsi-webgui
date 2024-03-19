@@ -204,6 +204,7 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'installationStatus',
       class: 'col-installationStatus',
       width: 50,
+      maxWidth: 50,
       sortable: true,
       icon: icons.product,
       // iconColor: "--el-color-warning",
@@ -228,6 +229,7 @@ const columns = reactive<ITableHeaderRow>({
       dataKey: 'actionResult',
       class: 'col-actionResult',
       width: 50,
+      maxWidth: 50,
       icon: icons.productActionResult,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
@@ -256,7 +258,13 @@ const columns = reactive<ITableHeaderRow>({
       width: 150,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'productId', true)
-      hidden: false
+      hidden: false,
+      cellRenderer: ({rowData}) => {
+        return (
+          <> <el-text>{rowData.productId}</el-text>
+          </>
+        )
+      }
     },
     name: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.name'),
