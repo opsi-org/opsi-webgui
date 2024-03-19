@@ -35,6 +35,7 @@ The opsiconfd will be available at the address https://localhost:4447 and the we
 
 ### Build devcontainer
 * **Clone project and open** it in VSCode with `git clone https://github.com/opsi-org/opsiweb-ui.git`
+* **Clone opsi-docker** `git@gitlab.uib.gmbh:uib/opsi-docker.git` inside `.devcontainer`.
 * **run `.devcontainer/devenv.sh`** in terminal (from Workspace-folder!)
   * check if .env-file contains your fqdn (like 'HOST.YOUR.DOMAIN')
   * if it only contains 'HOST': edit your local /etc/hosts file to contain `127.0.0.1       host.your.domain host localhost` and run devenv.sh again
