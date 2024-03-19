@@ -35,7 +35,7 @@
         :highlight-on-select="false"
         v-model:selection="selection" :metaKeySelection="false"
         :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
-        :virtual-scroller-options="{ itemSize: 46 }"
+        :virtual-scroller-options="{ itemSize: 60 }"
         @update:sort-field="log().log('sortfield changed')"
         @update:sort-order="log().log('sortorder changed')"
         @sort="onSort($event)"
@@ -139,6 +139,7 @@
                 :header="colChild.title"
                   :class="{
                     '!w-1/1': colChild.maxWidth === undefined,
+                    ['!min-w-' + colChild.minWidth + ' !w-' + colChild.minWidth]: colChild.minWidth !== undefined,
                     '': colChild._fixed === TableV2FixedDir.LEFT || colChild.fixed === TableV2FixedDir.LEFT || colChild.fixed === true || colChild._fixed === true,
                     'flex flex-row-reverse': colChild._fixed === TableV2FixedDir.RIGHT || colChild.fixed === TableV2FixedDir.RIGHT,
                     // []: Boolean(colChild._fixed) === false && Boolean(colChild.fixed) === false,
@@ -179,11 +180,14 @@
               :sortable="col.sortable"
               :class="{
                 '!w-1/1': col.maxWidth === undefined,
-                '': col._fixed === TableV2FixedDir.LEFT || col.fixed === TableV2FixedDir.LEFT || col.fixed === true || col._fixed === true,
+                // ['!w-' + col.minWidth]: col.minWidth !== undefined,
+                // ['!min-w-' + col.minWidth]: col.minWidth !== undefined,
+                // '': col._fixed === TableV2FixedDir.LEFT || col.fixed === TableV2FixedDir.LEFT || col.fixed === true || col._fixed === true,
                 'flex flex-row-reverse': col._fixed === TableV2FixedDir.RIGHT || col.fixed === TableV2FixedDir.RIGHT,
                 // []: Boolean(col._fixed) === false && Boolean(col.fixed) === false,
                 [col.class]: true,
               }"
+              :style=" (col.minWidth !== undefined) ? 'min-width: ' + col.minWidth + 'px;' : ''"
               >
               <template v-if="col.headerCellRenderer" #header="slotProps">
                 <HeaderCellRenderer :colData="col" :key="col.title"/>

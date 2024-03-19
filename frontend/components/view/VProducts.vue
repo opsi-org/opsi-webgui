@@ -142,7 +142,7 @@ const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(sto
 const fetchedDataClients2Depots = ref<T_Client2Depot>({})
 
 const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
-
+const action = ref('')
 const totalItems = ref<number>(0)
 interface tproductITableData {
   LocalbootProduct: ITableData,
@@ -395,11 +395,33 @@ const columns = reactive<ITableHeaderRow>({
       key: 'actionRequest',
       dataKey: 'actionRequest',
       class: 'col-actionRequest',
-      width: 200,
-      maxWidth: 200,
+      width: 110,
+      minWidth: 110, // in rem !
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionRequest', false)
       hidden: !tableSettings.productsColumns.includes('actionRequest'),
+      headerCellRenderer: () => {
+        return ( <>
+          <tablecellTCProductRequest
+            action={action.value}
+            title={$t('form.tooltip.actionRequest')}
+            save={saveActionRequests}
+          />
+        </>)
+      },
+      cellRenderer: ({rowData}) => {
+        return (
+          <>
+            <tablecellTCProductRequest
+              request={rowData.actionRequest || 'none'}
+              requestoptions={[...rowData.actions]}
+              rowitem={rowData}
+              row-is-selected={selectionProducts.value.includes(rowData.productId)}
+              save={saveActionRequest}
+            />
+          </>
+        )
+      }
     },
     rowactions: { // eslint-disable-next-line object-property-newline
       key: 'rowactions',
@@ -546,6 +568,14 @@ async function _fetch(_type: string = "") {
   totalItems.value = parseInt(headers['x-total-count'])
   // tableHelper.setTotalItemsAsPerPage(totalItems.value)
   return data.value
+}
+
+async function saveActionRequests() {
+  log().log_colored('orange', 'saveActionRequests')
+}
+
+async function saveActionRequest() {
+  log().log_colored('orange', 'saveActionRequest')
 }
 
 function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
