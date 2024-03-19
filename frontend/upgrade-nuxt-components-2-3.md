@@ -20,7 +20,7 @@
   - [-] use elementplus everywhere
 - [ ] WIP *pages*
   - [-] Topbar
-    - [ ] Breadcrumb
+    - [x] Breadcrumb
     - [x] Logout
   - [x] Sidemenu
   - [-] Quick Panel
