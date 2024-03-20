@@ -217,7 +217,7 @@
                 <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
               </template>
               <template v-else #body="slotProps">
-                <!-- <pre>{{ slotProps }}</pre> -->hi
+                <!-- <pre>{{ slotProps }}</pre> -->
                 <el-text>{{ slotProps.data[col.key] }}</el-text>
               </template>
             </PColumn>

@@ -344,37 +344,22 @@ const columns = reactive<ITableHeaderRow>({
             </ul>
           </>
         )
-        // <TableTTooltipContent
-        //   v-if="row.item.depot_version_diff || row.item.client_version_outdated || false"
-        //   type="version"
-        //   :details="row.item.tooltiptext"
-        //   :depot-version-diff="row.item.depot_version_diff"
-        // />
         return (
           <>
           <el-tooltip
             class="box-item"
             effect="dark"
             placement="left-start"
-            v-slots={{
-              content: () => tt
-            }}
+            v-slots={ {content: () => tt} }
           >
-            {/* content={tt} */}
-
-            {/* <template #content>
-              <span>Content</span>
-            </template> */}
           {/* TODO: check if this works for different versions of server/clients */}
-            {/* <el-text v-if={!rowData.depot_version_diff}>{Object.values(rowData.depotVersions)[0]}</el-text> */}
-              {/* v-if={Object.keys(fetchedDataClients2Depots).length == selectionClients.value.length} */}
             <TCProductVersionCell
               type="depotVersions"
               row={rowData}
               clients2depots={fetchedDataClients2Depots.value}
               onDetails={toggleDetailsTooltip}
             />
-      </el-tooltip>
+          </el-tooltip>
           </>
         )
       }
