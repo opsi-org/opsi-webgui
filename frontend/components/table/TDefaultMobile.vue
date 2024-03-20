@@ -12,7 +12,6 @@
       <el-collapse-item v-for="row, index in dataModel" :key="JSON.stringify(row)" :name="row[props.rowId]">
         <template #title>
           <div class="min-w-fit">
-
             <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="row" :colData="wrappedColumns['selected']" />
 
             <el-text v-if="!wrappedColumns[props.rowId].cellRenderer"> {{row[props.rowId]}} </el-text>
@@ -25,11 +24,13 @@
             <!-- {{ columnsModel.rowactions}} -->
           </div>
         </template>
+
         <Details v-if="collapseRowIdValue && collapseRowIdValue === row[props.rowId]"  :rowData="row" :colData="wrappedColumns[props.rowId]" />
 
       </el-collapse-item>
     </el-collapse>
   </div>
+  <pre>{{ wrappedColumns }}</pre>
 </div>
 </template>
 
@@ -67,8 +68,7 @@ const Details = ({rowData, colData}: any) => {
       // column is a major column / collapseable / with children e.g. Statistics
       const major: any = { id: cId, value: '', children:[]}
       Object.values(wrappedColumns.value).filter(e => e._majorKey === cId).map(
-        (e:any) => major.children.push({ id: e.dataKey, value: rowData[e.dataKey]}) )
-      console.log('major-children: ', major)
+        (e:any) => major.children.push({ id: e.dataKey, value: rowData[e.dataKey], cellRenderer: rowData.cellRenderer}) )
       data.push(major)
     } else if (colInfo.fixed === TableV2FixedDir.RIGHT){
       // _fixedRightLast.push({ id: cId, value: rowData[cId]})
@@ -76,9 +76,6 @@ const Details = ({rowData, colData}: any) => {
       data.push({ id: cId, value: rowData[cId]})
     }
   })
-  // data.push(..._fixedRightLast)
-  console.log('data', data)
-  // console.log('fixedRightLast', _fixedRightLast)
   return <div class="mx-3">
       <el-table
         show-header={false}
@@ -104,7 +101,6 @@ const Details = ({rowData, colData}: any) => {
             default: (scope: any) => {
               const rowKey = scope.row.id
               if (rowKey.startsWith('_')) {
-                console.log('rowKey', rowKey)
                 return
               }
               const rowValue = scope.row.value
@@ -113,7 +109,7 @@ const Details = ({rowData, colData}: any) => {
 
               const renderer = colInfo.cellRenderer
               if (renderer !== undefined) {
-                console.log('renderer', renderer)
+                log().log_colored('blue', 'renderer'  + renderer)
                 return renderer({ rowData } as any)
               }
               {/* console.log('rowValue', rowValue) */}
@@ -162,6 +158,14 @@ function updateColumns() {
   if (columnsModel.value == undefined) return {}
 
   let _columns: ITableHeaderRow = JSON.parse(JSON.stringify(columnsModel.value))
+  for (const [key, value] of Object.entries(columnsModel.value)) {
+    if (value.cellRenderer !== undefined) {
+      _columns[key].cellRenderer = value.cellRenderer
+    }
+    if (value.headerCellRenderer !== undefined) {
+      _columns[key].headerCellRenderer = value.headerCellRenderer
+    }
+  }
   // log().log_colored('orange', 'updateColumns')
   // console.log(_columns)
   // Object.values(_columns)
