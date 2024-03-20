@@ -3,6 +3,7 @@
   <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
   <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
   <el-text>Product Selection: {{ storeSelection.selectionProducts }}</el-text> <br />
+  <el-text>SortByProp {{ props.sortby }}</el-text> <br />
   {{ fetchedData[currentType].length }}, total {{ totalItems }}
   <div>
     <el-checkbox-button
@@ -481,6 +482,9 @@ const props = defineProps({
   // isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
   productType: { type: String, default: 'LocalbootProduct' },
   isChild: { type: Boolean, default: false },
+
+  sortby: { type: String, default: 'productId' },
+  selectedClient: { type: String, default: undefined },
 })
 
 
@@ -497,7 +501,10 @@ const props = defineProps({
 onMounted(async ()=> {
   if (props.productType && props.productType !== currentType.value)
     changeProductsType(props.productType)
-
+  if (props.sortby) {
+    tableData.value[currentType.value].sortBy = props.sortby
+    tableData.value[currentType.value].sortDesc = true
+  }
   fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(selectionClients.value)
   // fetchedData.value[currentType.value] = await _fetch(currentType.value)
   // fetchedData.value[currentType.value] = []
@@ -708,7 +715,12 @@ function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString
 function fetchProductsPrepareParams (type: string) {
   const params = { ...tableData.value[type] }
   params.selectedDepots = JSON.stringify(selectionDepots.value)
-  params.selectedClients = JSON.stringify(selectionClients.value)
+  if (props.selectedClient !== undefined) {
+    params.selectedClients = JSON.stringify([props.selectedClient])
+  } else {
+    params.selectedClients = JSON.stringify(selectionClients.value)
+  }
+  // params.selectedClients = JSON.stringify(selectionClients.value)
   if (params.sortBy === 'installationStatus') {
     params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'
   } else if (params.sortBy === 'actionResult') {

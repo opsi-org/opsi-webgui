@@ -393,7 +393,8 @@ const columns = ref<ITableHeaderRow>({
       iconColor: "--el-color-warning",
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
       cellRenderer: ({rowData}:any) => {
-        const click = () => {console.log('HIIII')}
+        // const click = () => {console.log('HIIII')}
+        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=version&selectedClient=' + rowData.clientId)}
         return <el-tag onClick={click}>{rowData.version_outdated}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
@@ -410,7 +411,8 @@ const columns = ref<ITableHeaderRow>({
       width: 50,
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
       cellRenderer: ({rowData}:any) => {
-        const click = () => {console.log('HIIII')}
+        // const click = () => {console.log('HIIII')}
+        const click = () => {openLink('/clients/products/NetbootProduct?sortby=version&selectedClient=' + rowData.clientId)}
         return <el-tag onClick={click}>{rowData.version_outdated_netboot}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
@@ -427,7 +429,8 @@ const columns = ref<ITableHeaderRow>({
       width: 50,
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
       cellRenderer: ({rowData}:any) => {
-        const click = () => {console.log('HIIII')}
+        // const click = () => {console.log('HIIII')}
+        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=' + rowData.clientId)}
         return <el-tag onClick={click}>{rowData.actionResult_failed}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
@@ -444,7 +447,7 @@ const columns = ref<ITableHeaderRow>({
       width: 50,
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
       cellRenderer: ({rowData}:any) => {
-        const click = () => {console.log('HIIII')}
+        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=' + rowData.clientId)}
         return <el-tag onClick={click}>{rowData.installationStatus_unknown}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
