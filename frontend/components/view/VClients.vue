@@ -388,6 +388,7 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
+      align: 'right',
       icon: icons.productsOutdated,
       iconColor: "--el-color-warning",
       hidden: !storeTable.clientsColumns.includes('_majorStats'),

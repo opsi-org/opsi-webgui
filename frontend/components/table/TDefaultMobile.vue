@@ -102,6 +102,7 @@ const Details = ({rowData, colData}: any) => {
         size="small"
         row-key="id"
         style={_width}
+        table-layout="auto"
         default-expand-all
       >
         <el-table-column prop="id" label="id">
@@ -117,7 +118,7 @@ const Details = ({rowData, colData}: any) => {
           }}
 
         </el-table-column>
-        <el-table-column prop="value" label="value">
+        <el-table-column prop="value" label="value" align={'right'}>
           {{
             default: (scope: any) => {
               const rowKey = scope.row.id
