@@ -209,6 +209,7 @@ const columns = reactive<ITableHeaderRow>({
       icon: icons.product,
       // iconColor: "--el-color-warning",
       hidden: !tableSettings.productsColumns.includes('installationStatus'),
+      disabled: selectionClients.value.length <= 0,
       // headerCellRenderer: () => {
       //   return ( <>
       //     <el-text>Hallo</el-text>
@@ -241,6 +242,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
       hidden: !tableSettings.productsColumns.includes('actionResult'),
+      disabled: selectionClients.value.length <= 0,
 
       cellRenderer: ({rowData}) => {
         return (
@@ -382,7 +384,8 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 200,
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionProgress', false)
-      hidden: !tableSettings.productsColumns.includes('actionProgress')
+      hidden: !tableSettings.productsColumns.includes('actionProgress'),
+      disabled: selectionClients.value.length <= 0,
     },
     actionRequest: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionRequest'),
@@ -394,6 +397,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionRequest', false)
       hidden: !tableSettings.productsColumns.includes('actionRequest'),
+      disabled: selectionClients.value.length <= 0,
       headerCellRenderer: (useMQ().isMobile.value) ? undefined : () => {
         return ( <>
           <tablecellTCProductRequest

@@ -141,7 +141,11 @@ const headerWrapper = computed<Array<any>>(() => {
     (h._majorKey===undefined ||
     h._isMajor!==undefined)
   // ).map((v,i) => ({ value: v.key, label: v.title, disabled: false}))
-  ).map((v,i) => ({ value: v.key, label: v.title || v.tooltip, disabled: v.fixed != undefined}))
+  ).map((v,i) => ({
+    value: v.key,
+    label: v.title || v.tooltip,
+    disabled: v.fixed != undefined || Boolean(v.disabled)
+  }))
 })
 
 // const columnVisibilityListWrapper = ref<Array<string>>([])
