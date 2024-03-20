@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="">
 
   <div v-if="Object.keys(columnsModel).length > 0">
     <InputIFilter
@@ -8,7 +8,31 @@
         @update="($event: any) => $emit('update-input-filter', $event)"
       />
     <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columnsModel" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+
     <el-collapse v-model="collapseRowIdValue" accordion>
+      <PVirtualScroller :items="dataModel" :itemSize="50" class="w-full h-[39rem] maxVisibleNoOverflow" >
+      <!-- style="width: 200px; height: 200px" -->
+        <template v-slot:item="{ item, options }">
+            <!-- <div :class="['flex align-items-center p-2', { 'surface-hover': options.odd }]" style="height: 50px">{{ item }}</div> -->
+            <el-collapse-item :name="item[props.rowId]">
+              <template #title>
+                <div class="min-w-fit">
+                  <CellRenderer v-if="wrappedColumns.selected" rowId="selected" :rowData="item" :colData="wrappedColumns['selected']" />
+
+                  <el-text v-if="!wrappedColumns[props.rowId].cellRenderer"> {{item[props.rowId]}} </el-text>
+                  <CellRenderer v-else :rowId="props.rowId" :rowData="item" :colData="wrappedColumns[props.rowId]" />
+                </div>
+
+                <div class="w-full flex flex-row-reverse">
+                  <CellRenderer v-if="wrappedColumns.rowactions" rowId="rowactions" :rowData="item" :colData="wrappedColumns.rowactions" />
+                </div>
+              </template>
+              <Details v-if="collapseRowIdValue && collapseRowIdValue === item[props.rowId]"  :rowData="item" :colData="wrappedColumns[props.rowId]" />
+            </el-collapse-item>
+        </template>
+      </PVirtualScroller>
+    </el-collapse>
+    <!-- <el-collapse v-model="collapseRowIdValue" accordion>
       <el-collapse-item v-for="row, index in dataModel" :key="JSON.stringify(row)" :name="row[props.rowId]">
         <template #title>
           <div class="min-w-fit">
@@ -19,18 +43,13 @@
           </div>
 
           <div class="w-full flex flex-row-reverse">
-            <!-- <el-button @click.stop="()=>{}"> hallo </el-button> -->
             <CellRenderer v-if="wrappedColumns.rowactions" rowId="rowactions" :rowData="row" :colData="wrappedColumns.rowactions" />
-            <!-- {{ columnsModel.rowactions}} -->
           </div>
         </template>
-
         <Details v-if="collapseRowIdValue && collapseRowIdValue === row[props.rowId]"  :rowData="row" :colData="wrappedColumns[props.rowId]" />
-
       </el-collapse-item>
-    </el-collapse>
+    </el-collapse> -->
   </div>
-  <pre>{{ wrappedColumns }}</pre>
 </div>
 </template>
 
@@ -204,6 +223,12 @@ function updateData() {
 </script>
 
 <style scoped>
+/* .maxVisibleNoOverflow {
+  height: calc(100vh - 800px);
+} */
+:global(section > section > main.el-main) {
+  overflow: hidden;
+}
 :deep(.el-collapse-item__header) {
   word-break: break-all !important;
   line-height: initial !important;

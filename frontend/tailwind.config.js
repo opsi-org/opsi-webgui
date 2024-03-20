@@ -30,7 +30,9 @@ export default {
         '192': '48rem',
       },
       height: {
-        // 96*2: 24rem*2 // 384px*2
+        // 96: 24rem // 384px*2
+        // '144': '32rem;',
+        '128': '32rem',
         '192': '48rem;',
       },
       // backgroundColor: {

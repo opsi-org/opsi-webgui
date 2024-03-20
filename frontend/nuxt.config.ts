@@ -158,7 +158,7 @@ export default defineNuxtConfig({
 
     components: {
       prefix: 'P',
-      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown'],
+      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown', 'VirtualScroller'],
       exclude: ['Toast']
     },
 
