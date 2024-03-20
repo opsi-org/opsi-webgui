@@ -68,7 +68,7 @@ const Details = ({rowData, colData}: any) => {
       // column is a major column / collapseable / with children e.g. Statistics
       const major: any = { id: cId, value: '', children:[]}
       Object.values(wrappedColumns.value).filter(e => e._majorKey === cId).map(
-        (e:any) => major.children.push({ id: e.dataKey, value: rowData[e.dataKey], cellRenderer: rowData.cellRenderer}) )
+        (e:any) => major.children.push({ id: e.dataKey, value: rowData[e.dataKey]}) )
       data.push(major)
     } else if (colInfo.fixed === TableV2FixedDir.RIGHT){
       // _fixedRightLast.push({ id: cId, value: rowData[cId]})
@@ -90,7 +90,10 @@ const Details = ({rowData, colData}: any) => {
           {{
             default: (scope: any) => {
               const rowKey = scope.row.id
-              {/* console.log('rowKey', rowKey, Object.keys(columnsModel.value), columnsModel.value[rowKey]) */}
+              let rowObj = columnsModel.value[rowKey]
+              if (rowObj.headerCellRenderer !== undefined) {
+                return rowObj.headerCellRenderer({ rowData } as any)
+              }
               return <el-text>{ columnsModel.value[rowKey].title || columnsModel.value[rowKey].tooltip }</el-text>
             }
           }}

@@ -209,16 +209,23 @@ const columns = reactive<ITableHeaderRow>({
       icon: icons.product,
       // iconColor: "--el-color-warning",
       hidden: !tableSettings.productsColumns.includes('installationStatus'),
+      // headerCellRenderer: () => {
+      //   return ( <>
+      //     <el-text>Hallo</el-text>
+      //   </>)
+      // },
       cellRenderer: ({rowData}) => {
         return (
           <>
             <tablecellTCBadgeCompares
+              v-if={selectionClients.value.length > 0}
               type="installationStatus"
               rowid={rowData.productId}
               values={rowData.installationStatusDetails || [rowData.installationStatus] || []}
               objects={rowData.selectedClients || []}
               objectsorigin={selectionClients.value || []}
             />
+            <el-text v-else>---</el-text>
           </>
         )
       }
@@ -239,12 +246,14 @@ const columns = reactive<ITableHeaderRow>({
         return (
           <>
             <tablecellTCBadgeCompares
+              v-if={selectionClients.value.length > 0}
               type="actionResult"
               rowid={rowData.productId}
               values={rowData.actionResultDetails || [rowData.actionResult] || []}
               objects={rowData.selectedClients || []}
               objectsorigin={selectionClients.value || []}
             />
+            <el-text v-else>---</el-text>
           </>
         )
       }
@@ -385,7 +394,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionRequest', false)
       hidden: !tableSettings.productsColumns.includes('actionRequest'),
-      headerCellRenderer: () => {
+      headerCellRenderer: (useMQ().isMobile.value) ? undefined : () => {
         return ( <>
           <tablecellTCProductRequest
             action={action.value}
