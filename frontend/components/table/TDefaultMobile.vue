@@ -79,9 +79,8 @@ const Details = ({rowData, colData}: any) => {
     // const visible = tableStore.columns[props.id].includes(cId)
     // const visible = tableStore[props.id + 'Columns'].includes(cId)
     const visible = colInfo._majorKey === undefined && cId !== 'selected'
-    if (!visible) {
-      return
-    }
+    if (!visible) { return }
+    if (colInfo.key === 'rowactions') { return }
 
     if (cId.startsWith('_')) {
       // column is a major column / collapseable / with children e.g. Statistics
