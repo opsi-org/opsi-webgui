@@ -78,8 +78,10 @@ const props = defineProps({
   rowIsSelected: { type: Boolean, default: undefined },
   request: { type: String, default: '---' },
   requestoptions: { type: Array as PropType<Array<string>>, default: () => { return ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom'] } },
-  save: { type: Function, default: () => { return () => { return {} } } }
+  save: { type: Function, default: () => { return () => { return {} } } },
+  // selectedClients: { type: Array as PropType<Array<string>>, default: () => { return selectionClients.value } }
 })
+const selectedClients = ref(selectionClients.value)
   // @Prop({ }) rowitem!: ITableRowItemProducts|undefined
   // @Prop({ }) rowIsSelected: boolean|undefined
   // @Prop({ default: () => { return '---' } }) request!: string
@@ -90,12 +92,10 @@ const currentReq = ref(props.request)
 
   // @config.Getter public config!: IObjectString2Boolean
   // @selections.Getter public selectionClients!: Array<string>
-
 function updated () {
     preRequest.value = visibleRequest.value
   }
-
-watch(() => selectionClients, () => {
+watch(() => selectedClients, () => {
     currentReq.value = props.request
     preRequest.value = props.request
   }, { deep: true })
@@ -105,13 +105,14 @@ watch(() => selectionClients, () => {
   //   this.preRequest = this.request
   //   return this.currentReq
   // }
+
 const visibleRequest = computed({
 get: () =>{
     currentReq.value = props.request
     if (props.rowitem === undefined) {
       return currentReq.value
     }
-    if (props.rowitem.selectedClients && props.rowitem.selectedClients.length !== selectionClients.value.length) {
+    if (props.rowitem.selectedClients && props.rowitem.selectedClients.length !== selectedClients.value.length) {
       if (props.request !== 'none') {
         currentReq.value = 'mixed'
       }
@@ -134,8 +135,8 @@ const get_allRequests = computed(() => {
   if (props.rowitem === undefined) {
     return {}
   }
-  if (props.rowitem.actionRequestDetails || selectionClients.value.length > 1) {
-    return mapValues2Objects(props.rowitem.actionRequestDetails ?? [props.rowitem.actionRequest], props.rowitem.selectedClients, selectionClients.value, 'none')
+  if (props.rowitem.actionRequestDetails || selectedClients.value.length > 1) {
+    return mapValues2Objects(props.rowitem.actionRequestDetails ?? [props.rowitem.actionRequest], props.rowitem.selectedClients, selectedClients.value, 'none')
   }
   return {}
 })

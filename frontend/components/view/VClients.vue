@@ -380,6 +380,48 @@ const columns = ref<ITableHeaderRow>({
       _isMajor: true,
       hidden: true // this is a dummy column for grouping
     },
+    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
+      tooltip: $t('table.fields.installationStatusUnknown'),
+      key: 'installationStatus_unknown',
+      dataKey: 'installationStatus_unknown',
+      _majorKey: '_majorStats',
+      class: 'col-_majorStats',
+      icons: [icons.productInstallationStatusUnknown, icons.product],
+      // icon: icons.productInstallationStatusUnknown,
+      iconColor: "--el-color-info",
+      sortable: true,
+      width: 50,
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) => {
+        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=' + rowData.clientId)}
+        return <el-tag
+                  class="cursor-pointer"
+                  onClick={click}>
+                  {rowData.installationStatus_unknown}
+              </el-tag>
+      }
+      // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
+    },
+    actionResult_failed: { // eslint-disable-next-line object-property-newline
+      tooltip: $t('table.fields.actionResultFailed'),
+      key: 'actionResult_failed',
+      dataKey: 'actionResult_failed',
+      _majorKey: '_majorStats',
+      class: 'col-_majorStats',
+      icons: [icons.productsFailedActionResult, icons.productActionResult],
+      // icon: icons.productsFailedActionResult,
+      iconColor: "--el-color-error",
+      sortable: true,
+      width: 50,
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) => {
+        // const click = () => {console.log('HIIII')}
+        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=' + rowData.clientId)}
+        return <el-tag
+                  class="cursor-pointer" onClick={click}>{rowData.actionResult_failed}</el-tag>
+      }
+      // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
+    },
     version_outdated: { // eslint-disable-next-line object-property-newline
       tooltip: $t('table.fields.versionOutdatedGeneral'),
       key: 'version_outdated',
@@ -389,13 +431,14 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 50,
       align: 'right',
-      icon: icons.productsOutdated,
+      icons: [icons.productsOutdated, icons.product],
       iconColor: "--el-color-warning",
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
       cellRenderer: ({rowData}:any) => {
         // const click = () => {console.log('HIIII')}
         const click = () => {openLink('/clients/products/LocalbootProduct?sortby=version&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.version_outdated}</el-tag>
+        return <el-tag
+                  class="cursor-pointer" onClick={click}>{rowData.version_outdated}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
@@ -404,7 +447,7 @@ const columns = ref<ITableHeaderRow>({
       key: 'version_outdated_netboot',
       dataKey: 'version_outdated_netboot',
       _majorKey: '_majorStats',
-      icon: icons.productsOutdated,
+      icons: [icons.productsOutdated, icons.product],
       iconColor: "--el-color-warning",
       class: 'col-_majorStats',
       sortable: true,
@@ -413,45 +456,13 @@ const columns = ref<ITableHeaderRow>({
       cellRenderer: ({rowData}:any) => {
         // const click = () => {console.log('HIIII')}
         const click = () => {openLink('/clients/products/NetbootProduct?sortby=version&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.version_outdated_netboot}</el-tag>
+        return <el-tag
+                  class="cursor-pointer" onClick={click}>{rowData.version_outdated_netboot}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
-    actionResult_failed: { // eslint-disable-next-line object-property-newline
-      tooltip: $t('table.fields.actionResultFailed'),
-      key: 'actionResult_failed',
-      dataKey: 'actionResult_failed',
-      _majorKey: '_majorStats',
-      class: 'col-_majorStats',
-      icon: icons.productsFailedActionResult,
-      iconColor: "--el-color-error",
-      sortable: true,
-      width: 50,
-      hidden: !storeTable.clientsColumns.includes('_majorStats'),
-      cellRenderer: ({rowData}:any) => {
-        // const click = () => {console.log('HIIII')}
-        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.actionResult_failed}</el-tag>
-      }
-      // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
-    },
-    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
-      tooltip: $t('table.fields.installationStatusUnknown'),
-      key: 'installationStatus_unknown',
-      dataKey: 'installationStatus_unknown',
-      _majorKey: '_majorStats',
-      class: 'col-_majorStats',
-      icon: icons.productInstallationStatusUnknown,
-      iconColor: "--el-color-info",
-      sortable: true,
-      width: 50,
-      hidden: !storeTable.clientsColumns.includes('_majorStats'),
-      cellRenderer: ({rowData}:any) => {
-        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.installationStatus_unknown}</el-tag>
-      }
-      // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
-    },
+
+
     // TODO: Sorting for reachable column
     reachable: { // eslint-disable-next-line object-property-newline
       tooltip: $t('table.fields.reachable'),
@@ -513,6 +524,7 @@ onMounted(async ()=> {
 //   storeSelection.toggleSelectionDepots(id)
 // }
 function openLink(link: string) {
+  console.log('openLink', link)
   router.push(link)
 }
 function changeRowLink(e:Event, cid: string, to='config') {

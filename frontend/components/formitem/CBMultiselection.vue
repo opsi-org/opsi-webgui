@@ -165,9 +165,11 @@ watch(()=>selections.multiSelection, (val)=>{
 */
 const showModal = () => {
   // TODO
+  alert('cbmultiselect showModal')
   console.log('cbmultiselect showModal')
 }
 const hideModal = () => {
+  alert('cbmultiselect hideModal')
   console.log('cbmultiselect hideModal')
   // TODO
 }

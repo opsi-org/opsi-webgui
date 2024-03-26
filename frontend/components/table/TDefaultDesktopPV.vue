@@ -147,16 +147,23 @@
                   }"
                   >
                   <template v-if="colChild.headerCellRenderer" #header="slotProps">
-                    <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                    <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
+                      <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                    </el-badge>
                   </template>
-                  <template v-else-if="colChild.icon" #header>
+                  <template v-else-if="colChild.icon || colChild.icons" #header>
+                    <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                     <el-tooltip
                       effect="dark"
                       :content="colChild.tooltip"
                       placement="bottom-end"
                     >
-                    <IconIIcon :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                    <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                    <div v-else-if="colChild.icons">
+                      <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                    </div>
                     </el-tooltip>
+                    </el-badge>
                   </template>
 
                   <template v-if="colChild.cellRenderer" #body="slotProps">
@@ -190,22 +197,43 @@
               :style=" (col.minWidth !== undefined) ? 'min-width: ' + col.minWidth + 'px;' : ''"
               >
               <template v-if="col.headerCellRenderer" #header="slotProps">
-                <HeaderCellRenderer :colData="col" :key="col.title"/>
+                <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
+                  <HeaderCellRenderer :colData="col" :key="col.title"/>
+                </el-badge>
               </template>
               <template v-else-if="col.icon && col.tooltip" #header>
+                <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
                 <el-tooltip
                   effect="dark"
                   :content="col.tooltip"
                   placement="bottom-end"
                 >
-                <el-text><IconIIcon :icon="col.icon" :style="'color: var(' + col.iconColor + ')'" /></el-text>
+                <el-text><IconIIcon :icon="col.icon" :class="col.iconClass" :style="'color: var(' + col.iconColor + ')'" /></el-text>
                 </el-tooltip>
+                </el-badge>
+              </template>
+              <template v-else-if="col.icons && col.tooltip" #header>
+                <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
+                  <el-tooltip
+                    effect="dark"
+                    :content="col.tooltip"
+                    placement="bottom-end"
+                  >
+                    <el-text>
+                      <IconIIcon v-for="icon in col.icons" :icon="icon" :style="'color: var(' + col.iconColor + ')'" />
+                    </el-text>
+                  </el-tooltip>
+                </el-badge>
               </template>
               <template v-else-if="col.title" #header="slotProps">
-                <el-text>{{ col.title }}</el-text>
+                <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
+                  <el-text>{{ col.title }}</el-text>
+                </el-badge>
               </template>
               <template v-else #header="slotProps">
-                <el-text>{{ col.key }}</el-text>
+                <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
+                  <el-text>{{ col.key }}</el-text>
+                </el-badge>
               </template>
 
               <template v-if="col.cellRenderer" #body="slotProps">
