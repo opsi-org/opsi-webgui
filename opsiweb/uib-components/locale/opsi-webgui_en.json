@@ -125,6 +125,7 @@
   "table.fields.newid": "New ID",
   "table.fields.name": "Name",
   "table.fields.description": "Description",
+  "table.fields.advice": "Advice",
   "table.fields.type": "Type",
   "table.fields.ip": "IP",
   "table.fields.ipAddress": "IP Address",

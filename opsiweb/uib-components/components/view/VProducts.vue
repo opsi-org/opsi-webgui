@@ -127,6 +127,10 @@ export default class VProducts extends Vue {
       label: this.$t('table.fields.description') as string, key: 'description', sortable: true,
       visible: this.includesCookie(`column_${this.id}`, 'description', false)
     },
+    advice: { // eslint-disable-next-line object-property-newline
+      label: this.$t('table.fields.advice') as string, key: 'advice', sortable: true,
+      visible: this.includesCookie(`column_${this.id}`, 'advice', false)
+    },
     modificationTime: { // eslint-disable-next-line object-property-newline
       label: this.$t('table.fields.modificationTime') as string, key: 'modificationTime', sortable: true,
       visible: this.includesCookie(`column_${this.id}`, 'modificationTime', false)
