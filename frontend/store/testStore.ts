@@ -1,7 +1,7 @@
 // import { defineStore } from 'pinia'
 
 export const useMainStore = defineStore('main', {
-  persist: true,
+  persist: false,
   state: () => ({
     counter: 0,
   }),

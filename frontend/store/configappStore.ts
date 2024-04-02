@@ -4,7 +4,11 @@ import { computed } from 'vue'
 import type { IObjectString2Boolean } from '@/types/tgeneral'
 
 export const storeConfigapp = defineStore('config-app', {
-  persist: true,
+  persist: {
+    key: 'opsi-configs',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   state: () => ({
     _config: undefined as IObjectString2Boolean|undefined
   }),

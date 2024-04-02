@@ -2,7 +2,11 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 
 export const storeChanges = defineStore('changes', {
-  persist: true,
+  persist: {
+    key: 'opsi-localchanges',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   state: () => ({
     _changesProducts: [] as Array<any>,
     _changesHostParam: [] as Array<any>,

@@ -34,17 +34,17 @@
   },
   "dependencies": {
     "@msgpack/msgpack": "^3.0.0-beta2",
-    "element-plus": "^2.4.x",
+    "element-plus": "^2.x.x",
     "nuxt": "^3.10.0",
-    "primevue": "^3.47.2",
-    "xterm": "^5.3.0",
-    "xterm-addon-fit": "^0.8.0",
-    "xterm-addon-search": "^0.13.0",
-    "xterm-addon-web-links": "^0.9.0"
+    "primevue": "^3.x.x",
+    "xterm": "^5.x.x",
+    "xterm-addon-fit": "^0.x.x",
+    "xterm-addon-search": "^0.x.x",
+    "xterm-addon-web-links": "^0.x.x"
   },
   "devDependencies": {
     "@bootstrap-vue-next/nuxt": "^0.14.10",
-    "@element-plus/nuxt": "^1.0.6",
+    "@element-plus/nuxt": "^1.x.x",
     "@histoire/plugin-nuxt": "0.17.6",
     "@histoire/plugin-vue": "0.17.6",
     "@iconify/vue": "^4.1.1",
@@ -59,8 +59,8 @@
     "bootstrap-vue-next": "^0.14.10",
     "histoire": "0.17.6",
     "npm-check-updates": "^16.14.6",
-    "nuxt-primevue": "^0.2.2",
-    "pinia": "2.1.6",
+    "nuxt-primevue": "^0.x.x",
+    "pinia": "^2.x.x",
     "sass": "^1.69.4",
     "typescript": "^5.3.2",
     "vue-tsc": "^1.8.22"

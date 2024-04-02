@@ -10,7 +10,12 @@ import _ from 'lodash'
 
 
 export const storeSettings = defineStore('settings', {
-  persist: true,
+  // persist: false,
+  persist: {
+    key: 'opsi-auth',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   state: () => ({
     isMobile: useMQ().isMobile.value as boolean,
     language: 'en',

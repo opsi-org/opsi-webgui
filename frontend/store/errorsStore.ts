@@ -2,7 +2,12 @@ import { defineStore } from 'pinia'
 import { computed } from 'vue'
 
 export const storeErrors = defineStore('errors', {
-  persist: true,
+  persist: false,
+  // persist: {
+  //   key: 'opsi-auth',
+  //   storage: localStorage,
+  //   // storage: sessionStorage,
+  // },
   state: () => ({
     _errorsProducts: [] as Array<any>,
     _errorsHostParam: [] as Array<any>,

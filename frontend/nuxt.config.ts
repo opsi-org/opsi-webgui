@@ -19,10 +19,10 @@ export default defineNuxtConfig({
       }
     }
   },
-  sourcemap: {
-    server: false,
-    client: false,
-  },
+  // sourcemap: {
+  //   server: false,
+  //   client: false,
+  // },
   typescript: {
     typeCheck: true
   },
@@ -99,6 +99,7 @@ export default defineNuxtConfig({
     // },
     key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
+    // storage: 'localStorage',
     debug: true,
   },
   tailwindcss: {
@@ -161,7 +162,7 @@ export default defineNuxtConfig({
       // unstyled: true,
       // pt: Tailwind,
       pt: {
-        // ...Tailwind,
+        ...Tailwind,
 
         // datatable: {
         //   header: {class: 'bg-red-500'},

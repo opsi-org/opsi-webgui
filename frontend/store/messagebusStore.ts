@@ -1,7 +1,12 @@
 import { defineStore } from 'pinia'
 
 export const storeMBus = defineStore('mbus', {
-  persist: true,
+  persist: false,
+  // persist: {
+  //   key: 'opsi-auth',
+  //   storage: localStorage,
+  //   // storage: sessionStorage,
+  // },
   state: () => ({
     _bus: undefined as WebSocket|undefined,
     _busterminal: undefined as WebSocket|undefined,

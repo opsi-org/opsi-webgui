@@ -18,7 +18,12 @@ const _data_sortColumns = {
 const deepCp = (obj:any) => obj
 
 export const storeTablesettings = defineStore('tablesettings', {
-  persist: true,
+  // persist: false,
+  persist: {
+    key: 'opsi-tables',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   state: () => ({ // the state objects are stored in localStorage
     _configLastSelected: deepCp(_data_configLastSelected),
     _visibleColumns: deepCp(_data_visibleColumns),
