@@ -1,6 +1,6 @@
 <template>
-  <el-text>{{ $t('title.clients') }}</el-text><br />
-  <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
+  <!-- <el-text>{{ $t('title.clients') }}</el-text><br /> -->
+  <!-- <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br /> -->
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
 
       <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="tableData.sortBy" :multi="true" :incontextmenu="false"/> -->

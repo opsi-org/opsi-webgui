@@ -56,7 +56,7 @@ const optionsWrapper = computed<Array<any>>(() => {
   .map((v,i) => ({
     value: v.key,
     label: v.title || v.tooltip,
-    disabled: v.fixed || v._fixed || Boolean(v.disabled),
+    disabled: Boolean(v.fixed) || Boolean(v._fixed) || Boolean(v.disabled),
     // visible: selectedColumnsIds.value.includes(v.key) // visibility is covered by v-model
   }))
 })

@@ -1,11 +1,11 @@
 <template>
-  <el-text>{{ $t('title.depots') }}</el-text><br />
-  <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
-  <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
-  <el-text>Product Selection: {{ storeSelection.selectionProducts }}</el-text> <br />
-  <el-text>SortByProp {{ props.sortby }}</el-text> <br />
-  <el-text>PropsSelection {{ props.selectedClient }}</el-text> <br />
-  {{ fetchedData[currentType].length }}, total {{ totalItems }}
+  <!-- <el-text>{{ $t('title.depots') }}</el-text><br /> -->
+  <!-- <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br /> -->
+  <!-- <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br /> -->
+  <!-- <el-text>Product Selection: {{ storeSelection.selectionProducts }}</el-text> <br /> -->
+  <!-- <el-text>SortByProp {{ props.sortby }}</el-text> <br /> -->
+  <!-- <el-text>PropsSelection {{ props.selectedClient }}</el-text> <br /> -->
+  <!-- {{ fetchedData[currentType].length }}, total {{ totalItems }} -->
   <div>
     <!-- <el-badge :value="numberLocalbootsSortbyNotEmpty" class="item"  :hidden="numberLocalbootsSortbyNotEmpty <= 0" type="success" > -->
     <el-checkbox-button

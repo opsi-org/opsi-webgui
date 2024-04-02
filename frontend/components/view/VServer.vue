@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-text>{{ $t('title.depots') }}</el-text><br />
+    <!-- <el-text>{{ $t('title.depots') }}</el-text><br /> -->
     <!-- <el-button :type="'danger'">Danger</el-button> -->
-    <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
+    <!-- <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br /> -->
     <!-- :filterable-columns="[columns['depotId']]" -->
     <!-- <InputIFilter
       :data="tableData"

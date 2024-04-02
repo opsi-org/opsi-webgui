@@ -35,7 +35,7 @@
         :highlight-on-select="false"
         v-model:selection="selection" :metaKeySelection="false"
         :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
-        :virtual-scroller-options="{ itemSize: 60 }"
+        :virtual-scroller-options="{ itemSize: 46, delay: 0, showLoader: true, numToleratedItems: 10 }"
         @update:sort-field="log().log_colored('orange', 'sortfield changed')"
         @update:sort-order="log().log_colored('orange', 'sortorder changed')"
         @sort="onSort($event)"
@@ -104,7 +104,7 @@
             >
               <template #loading>
                 <div class="flex align-items-center" :style="{ height: '17px', 'flex-grow': '1', overflow: 'hidden' }">
-                    <Skeleton width="60%" height="1rem" />
+                    <el-skeleton width="60%" height="1rem" />
                 </div>
               </template>
               <template #header="slotProps">
@@ -120,7 +120,7 @@
                 <el-radio-group v-else v-model="scope.data.selected">
                   <!-- <el-radio :value="true">t</el-radio>
                   <el-radio :value="false">f</el-radio> -->
-                  <el-radio :label="true" class="selectionItem hide_label" />
+                  <el-radio :label="true" :value="true" class="selectionItem hide_label" />
                 </el-radio-group>
               </template>
               <!-- <template #body="slotProps">
@@ -154,16 +154,16 @@
                   </template>
                   <template v-else-if="colChild.icon || colChild.icons" #header>
                     <el-badge :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
-                    <el-tooltip
-                      effect="dark"
-                      :content="colChild.tooltip"
-                      placement="bottom-end"
-                    >
-                    <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
-                    <div v-else-if="colChild.icons">
-                      <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
-                    </div>
-                    </el-tooltip>
+                      <el-tooltip
+                        effect="dark"
+                        :content="colChild.tooltip"
+                        placement="bottom-end"
+                      >
+                        <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                        <div v-else-if="colChild.icons">
+                          <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                        </div>
+                      </el-tooltip>
                     </el-badge>
                   </template>
 
@@ -338,7 +338,7 @@ const rowEventHandlers: any = {
     if (rowData.dummy === true && rowData.direction === undefined) {
       return
     } else if (rowData.dummy === true) {
-      onScroll(rowData.direction)
+      // onScroll(rowData.direction)
       return
     }
     const isAlreadyInStore = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
@@ -492,27 +492,27 @@ watch (()=>dataModel, ()=>{ selection.value = getSelectedrowsFromStore() }, {dee
 // const lastFetchedDirection = ref<'next'|'prev'>('next')
 // const middleOfTable = ref<number>(50 + 150)
 
-watch(()=>props.tableData._lastScrollDirection, ()=> {
-  // scroll to element if lastScrollDirection is set to 'prev'
-  if (props.tableData._lastScrollDirection === undefined) { return }
-  else if (props.tableData._lastScrollDirection === '') { return }
-  else if (props.tableData._lastScrollDirection === 'next') { return }
-  else if (props.tableData._lastScrollDirection !== 'prev') {
-    console.error('no such direction', props.tableData._lastScrollDirection)
-    return
-  }
-  props.tableData._lastScrollDirection = ''
-  const items = dataModel.value.filter(x => x.dummy !== true).length
-  const visiblePages =  Math.ceil(items / perPage.value)
+// watch(()=>props.tableData._lastScrollDirection, ()=> {
+//   // scroll to element if lastScrollDirection is set to 'prev'
+//   if (props.tableData._lastScrollDirection === undefined) { return }
+//   else if (props.tableData._lastScrollDirection === '') { return }
+//   else if (props.tableData._lastScrollDirection === 'next') { return }
+//   else if (props.tableData._lastScrollDirection !== 'prev') {
+//     console.error('no such direction', props.tableData._lastScrollDirection)
+//     return
+//   }
+//   props.tableData._lastScrollDirection = ''
+//   const items = dataModel.value.filter(x => x.dummy !== true).length
+//   const visiblePages =  Math.ceil(items / perPage.value)
 
-  if (visiblePages > 1) {
-    scrollToRow(props.tableData.perPage)
-  }
-})
+//   if (visiblePages > 1) {
+//     scrollToRow(props.tableData.perPage)
+//   }
+// })
 
 function _fetch() {
   $emit('fetch')
-  if (props.tableData.pageNumber > 1) scrollToRow(1, 500)
+  // if (props.tableData.pageNumber > 1) scrollToRow(1, 500)
 }
 
 
@@ -531,17 +531,17 @@ function updateMaxPerPage () {
   pagesSizes.value = sizes
 }
 
-function scrollToRow(rowNumber: number, timeout: number=100, behavior: 'auto'|'smooth'|'instant'='instant', block: 'start'|'center'|'end'|'nearest'='start') {
-  setTimeout(() => {
-    var rows = document.querySelectorAll('[data-pc-section="bodyrow"]');
-    const last_first_row = rows[rowNumber]
-    if (last_first_row === undefined) {
-      return
-    }
-    // line is the row number that you want to see into view after scroll
-    last_first_row.scrollIntoView({ behavior, block });
-  }, timeout);
-}
+// function scrollToRow(rowNumber: number, timeout: number=100, behavior: 'auto'|'smooth'|'instant'='instant', block: 'start'|'center'|'end'|'nearest'='start') {
+//   setTimeout(() => {
+//     var rows = document.querySelectorAll('[data-pc-section="bodyrow"]');
+//     const last_first_row = rows[rowNumber]
+//     if (last_first_row === undefined) {
+//       return
+//     }
+//     // line is the row number that you want to see into view after scroll
+//     last_first_row.scrollIntoView({ behavior, block });
+//   }, timeout);
+// }
 
 // TODO:
 // - add scroll (real scroll)
@@ -564,24 +564,24 @@ function getSelectedrowIdsFromStore() {
 }
 
 
-async function onScroll(event: any) {
+// async function onScroll(event: any) {
 
-  const tData = JSON.parse(JSON.stringify(props.tableData))
-  if (event === 'next' && lastScrollDirection.value === 'prev') {
-    tData.pageNumber = props.tableData.pageNumber + 2
-  }
-  else if (event === 'prev' && lastScrollDirection.value === 'next') {
-    tData.pageNumber = props.tableData.pageNumber - 2
-  }
-  else {
-    tData.pageNumber = props.tableData.pageNumber + ((event === 'next') ? 1 : -1)
-  }
+//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   if (event === 'next' && lastScrollDirection.value === 'prev') {
+//     tData.pageNumber = props.tableData.pageNumber + 2
+//   }
+//   else if (event === 'prev' && lastScrollDirection.value === 'next') {
+//     tData.pageNumber = props.tableData.pageNumber - 2
+//   }
+//   else {
+//     tData.pageNumber = props.tableData.pageNumber + ((event === 'next') ? 1 : -1)
+//   }
 
-  pageNumber.value = tData.pageNumber
-  await $emit('tabledata-changed', tData)
-  await $emit('fetch', event)
-  lastScrollDirection.value = event
-}
+//   pageNumber.value = tData.pageNumber
+//   await $emit('tabledata-changed', tData)
+//   await $emit('fetch', event)
+//   lastScrollDirection.value = event
+// }
 
 function onPerPageChange(event: any) {
   if (event === props.tableData.perPage) {
@@ -727,6 +727,9 @@ function clearSelection (event:any) {
 :deep(.noHoverRow){
   --bg-color-hover: transparent;
   /* background-color: blue !important; */
+}
+:deep(.p-column-header-content .p-checkbox) {
+  display: none;
 }
 /* :deep(.p-dropdown-items-wrapper) {
   background-color: black !important;

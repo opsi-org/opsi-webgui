@@ -54,12 +54,13 @@
 
 
         <el-main class="z-0 p-2">
-          <BreadcrumbBPageNavigation />
           <el-scrollbar
-            class="p-0 m-0"
-            wrap-class="p-0 m-0"
-            view-class="p-0 m-0"
+          class="p-0 m-0"
+          wrap-class="p-0 m-0"
+          view-class="p-0 m-0"
           >
+            <BreadcrumbBPageNavigation />
+            <br />
             <slot />
           </el-scrollbar>
         </el-main>
