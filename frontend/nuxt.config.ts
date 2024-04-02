@@ -35,7 +35,14 @@ export default defineNuxtConfig({
     }
   },
   app: {
-    baseURL: '/addons/webgui/app'
+    baseURL: '/addons/webgui/app',
+    head: {
+      link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
+    }
+  },
+
+  static: {
+    prefix: false
   },
   // imports: {
   //   presets: [
