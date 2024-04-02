@@ -30,7 +30,7 @@ import type { ElTypeVariant } from '~/types/LibComponentTypes';
 // import { Strings } from '../../../mixins/strings'
 const icon = useIcons()
 const t_fixed = useStrings().t_fixed
-const mq = useMQ().$mq
+const $mq = useMQ().$mq
 // @Component({ mixins: [Icons, Strings] })
 // export default class TCActionResult extends Vue {
   // $mq: any
@@ -41,7 +41,7 @@ const mq = useMQ().$mq
 
 const props = defineProps({
   text: { type: String, default: '' },
-  variant: { type: Object as PropType<ElTypeVariant>, default: 'warning' }
+  variant: { type: String as PropType<ElTypeVariant>, default: 'warning' }
 })
 //   @Prop({ }) text!: string
 //   @Prop({ default: 'warning' }) variant!: string

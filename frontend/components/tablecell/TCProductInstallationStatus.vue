@@ -48,7 +48,6 @@
 </template>
 
 <script lang="ts" setup>
-import type { EpPropMergeType } from 'element-plus/lib/utils/index.js';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useStrings } from '~/composables/mixins/useStrings';
 import type { ElTypeVariant } from '~/types/LibComponentTypes';
@@ -60,7 +59,7 @@ import type { ElTypeVariant } from '~/types/LibComponentTypes';
 // import { Strings } from '../../../mixins/strings'
 const icons = useIcons()
 const { t_fixed } = useStrings()
-const mq = useMQ()
+const $mq = useMQ().$mq
 // @Component({ mixins: [Icons, Strings] })
 // export default class TCInstallationStatus extends Vue {
 //   icon: any // from mixin
@@ -69,7 +68,7 @@ const mq = useMQ()
 
 const props = defineProps({
   text: { type: String, default: '' },
-  variant: { type: Object as PropType<ElTypeVariant>, default: 'warning' }
+  variant: { type: String as PropType<ElTypeVariant>, default: 'warning' }
 })
 //   @Prop({ }) text!: string
 //   @Prop({ default: 'warning' }) variant!: string

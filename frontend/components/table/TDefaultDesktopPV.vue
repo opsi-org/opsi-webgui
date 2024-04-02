@@ -14,8 +14,10 @@
       <!-- <pre class="max-h-56">{{ visibleColumns }}</pre> -->
       <!-- class="bg-green-500"
       tableClass="bg-transparent" -->
+      <IconILoading v-if="dataModel.length <= 0" />
       <DataTable
         lazy
+        v-if="dataModel.length > 0"
         ref="tableRef"
         scrollable scrollHeight="400px"
         tableStyle="width: 100%" size="small"
@@ -24,23 +26,24 @@
         resizableColumns
         :dataKey="props.rowId"
         :value="dataModel"
-        :row-class="(d) => { return {
+        :row-class="(d: any) => { return {
           '!w-full': true,
-          'noHoverRow min-h-48 h-48': d.direction !== undefined,
-          'align-bottom': d.direction === 'prev',
-          'align-top': d.direction === 'next',
-          'noHoverRow min-h-10 h-10 hover:bg-transparent': d.dummy && d.direction === undefined
+          'noHoverRow min-h-48 h-48': d && d.direction !== undefined,
+          'align-bottom': d && d.direction === 'prev',
+          'align-top': d && d.direction === 'next',
+          // 'noHoverRow min-h-10 h-10 hover:bg-transparent': d && d.dummy && d.direction === undefined
           // [(!d.dummy) ? '': (!d.direction) ? '' : 'min-h-48 h-48 ' + (d.direction == 'prev' ? 'align-bottom' : ' align-top')]: true
         }}"
         :highlight-on-select="false"
         v-model:selection="selection" :metaKeySelection="false"
         :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
-        :virtual-scroller-options="{ itemSize: 46, delay: 0, showLoader: true, numToleratedItems: 10 }"
+        :virtual-scroller-options="(dataModel.length = props.totalItems) ? { itemSize: 46, showLoader: true } : undefined"
         @update:sort-field="log().log_colored('orange', 'sortfield changed')"
         @update:sort-order="log().log_colored('orange', 'sortorder changed')"
         @sort="onSort($event)"
         @row-click="rowEventHandlers.onClick"
         >
+        <!-- :virtual-scroller-options="{ itemSize: 46, delay: 0, showLoader: true, numToleratedItems: 10 }" -->
         <!-- :virtual-scroller-options="{ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 1000, showLoader: false, loading: lazyLoading, numToleratedItems: perPage / 2 }" -->
         <!-- :virtualScrollerOptions="virtualScrollerOptions" -->
         <!-- @rowSelect="rowEventHandlers.onClick"
@@ -114,7 +117,7 @@
               <template #body="scope">
                 <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(scope.data[props.rowId])) ? scope.data.selected = true : scope.data.selected = false }}</div>
 
-                <div v-if="scope.data.dummy"></div>
+                <div v-if="scope?.data?.dummy"></div>
                 <el-checkbox v-else-if="selectionStore.multiSelection" v-model="scope.data.selected" class="selectionItem"/>
 
                 <el-radio-group v-else v-model="scope.data.selected">
@@ -157,8 +160,8 @@
                       <el-tooltip
                         effect="dark"
                         :content="colChild.tooltip"
-                        placement="bottom-end"
-                      >
+                        >
+                        <!-- placement="bottom-end" -->
                         <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
                         <div v-else-if="colChild.icons">
                           <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
@@ -170,8 +173,8 @@
                   <template v-if="colChild.cellRenderer" #body="slotProps">
                     <!-- CELLS OF THIS (CHILD) COLUMN -->
                     <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && colChild.key==props.rowId"
-                      class="min-h-24"
                     >
+                    <!-- class="min-h-24" -->
                       {{ slotProps.data[props.rowId] }}
                     </el-text>
                     <CellRenderer v-else-if="!slotProps.data.dummy" :colData="colChild" :key="colChild.key" :rowData="slotProps.data"/>
@@ -553,14 +556,14 @@ function updateMaxPerPage () {
 function getSelectedrowsFromStore() {
   const _selection: any = []
   for (const rId of selectionStore['_'+selectKey.value]) {
-    const row = dataModel.value.find((r: any) => r[props.rowId] === rId)
+    const row = dataModel.value.find((r: any) => r && r[props.rowId] === rId)
     if (row !== undefined)
       _selection.push(row)
   }
   return _selection
 }
 function getSelectedrowIdsFromStore() {
-  return getSelectedrowsFromStore().map((r: any) => r[props.rowId])
+  return getSelectedrowsFromStore().map((r: any) => r && r[props.rowId])
 }
 
 

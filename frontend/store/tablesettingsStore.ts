@@ -7,7 +7,7 @@ const _data_visibleColumns = {
   // clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
   clients: ['sel', 'clientId', 'description', '_majorStats', 'rowactions'],
   // products: ['sel', 'productId', 'name', 'description', 'installationStatus', 'actionResult', 'modificationTime', 'priority', 'version', 'actionProgress', 'actionRequest', 'rowactions'], // all columns
-  products: ['sel', 'productId', 'installationStatus', 'actionResult', 'version', 'actionRequest', 'rowactions'],
+  products: ['sel', 'installationStatus', 'actionResult', 'productId',  'version', 'actionRequest', 'rowactions'],
 }
 const _data_sortColumns = {
   servers: { column: 'depotId', isDesc: false },

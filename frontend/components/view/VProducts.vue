@@ -235,23 +235,25 @@ const columns = reactive<ITableHeaderRow>({
       icon: icons.product,
       // iconColor: "--el-color-warning",
       hidden: !tableSettings.productsColumns.includes('installationStatus'),
-      disabled: clientSelection.value.length <= 0,
+      disabled: clientSelection.value.length <= 0 ,
       // headerCellRenderer: () => {
       //   return ( <>
       //     <el-text>Hallo</el-text>
       //   </>)
       // },
+      // {/* v-if={clientSelection.value.length > 0} */}
       cellRenderer: ({rowData}) => {
         return (
           <>
+          { clientSelection.value.length > 0 ?
             <tablecellTCBadgeCompares
-              v-if={clientSelection.value.length > 0}
               type="installationStatus"
               rowid={rowData.productId}
               values={rowData.installationStatusDetails || [rowData.installationStatus] || []}
               objects={rowData.selectedClients || []}
               objectsorigin={clientSelection.value || []}
             />
+            : <div /> }
             {/* <el-text v-else>---</el-text> */}
           </>
         )
@@ -278,14 +280,16 @@ const columns = reactive<ITableHeaderRow>({
       cellRenderer: ({rowData}) => {
         return (
           <>
+              {/* v-if={clientSelection.value.length > 0} */}
+          { clientSelection.value.length > 0 ?
             <tablecellTCBadgeCompares
-              v-if={clientSelection.value.length > 0}
               type="actionResult"
               rowid={rowData.productId}
               values={rowData.actionResultDetails || [rowData.actionResult] || []}
               objects={rowData.selectedClients || []}
               objectsorigin={clientSelection.value || []}
             />
+            : <div /> }
             {/* <el-text v-else>---</el-text> */}
           </>
         )

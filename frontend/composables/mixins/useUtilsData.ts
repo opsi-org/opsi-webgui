@@ -31,8 +31,9 @@ export const useUtilsData = () => {
   }
   function _getEntries (headers:Array<any>) {
     return headers.filter(v=>
-        (v.title !== undefined && v.title !== '')&&
-        (v.hidden === undefined || v.hidden === false)
+        ((v.title !== undefined && v.title !== '')
+        || (v.tooltip !== undefined && v.tooltip !== '' && v._majorKey == undefined))
+        && (v.hidden === undefined || v.hidden === false)
         // || (v.icon !== undefined && v.icon !== '' && v.tooltip !== undefined && v.tooltip !== '')
         // || (v.icons !== undefined && v.icons !== '' && v.tooltip !== undefined && v.tooltip !== '')
       )
