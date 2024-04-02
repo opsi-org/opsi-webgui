@@ -78,9 +78,6 @@ const cbValue = computed({
   set: () => {}
 })
 
-// console.log('cbquicksave store', settings.quicksave)
-// console.log('cbquicksave cbValue', cbValue.value)
-
 // watch(()=>settings.quicksave, (val)=>{
 //   if (val === true) {
 //     if (changes.changesHostParam.length > 0) {
@@ -109,10 +106,10 @@ const cbValue = computed({
 */
 const showModal = () => {
   // TODO
-  console.log('cbmultiselect cannot set Quicksave mode, cause there exists changes. showModal')
+  alert('cbmultiselect cannot set Quicksave mode, cause there exists changes. showModal')
 }
 const hideModal = () => {
-  console.log('cbmultiselect hideModal')
+  alert('cbmultiselect hideModal')
   // TODO
 }
 

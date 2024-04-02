@@ -35,7 +35,6 @@ const icons = useIcons()
   // @Prop({ default: false }) short?: boolean
   // @Prop({ default: () => { return () => { /* default */ } } }) clearselection!: Function
 // }
-// const click = (value: MouseEvent) : any => { console.log('hallo') }
 const click = () => {
   $emit('clearselection')
 }

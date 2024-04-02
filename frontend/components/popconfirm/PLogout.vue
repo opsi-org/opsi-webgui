@@ -39,7 +39,7 @@ async function doLogout () {
   if (error?.response.data.message === 'Unauthorized') {
 
   } else if (error) {
-    console.log("error", error.response.data.message)
+    console.error("error", error.response.data.message)
     notificationError(error)
     return
   }

@@ -126,26 +126,20 @@ const setInitialValue = () => {
       })
 
       if (objectValueStrings.every((v: string, i:number, a: string[]) => v === a[0])) {
-        // console.log('all objects same value,', objectValueStrings[0], props.item)
 
         itemValue.value = Object.values(props.item.objects)[0]
-        console.log('itemValue2', itemValue.value, props.item)
         return
       }
       itemValue.value = 'mixed'
-      console.log('itemValue2', itemValue.value, props.item)
       return // mixed
       // multiValue end
     }
 
-    console.log('singlevalue ', props.item.objects)
     const allEqual = Object.values(props.item.objects)?.every((v: any, index: number, a: any[]) => v === a[0])
-    console.log('allEqual', allEqual)
     if (allEqual){ // all objects same value (usually only one object allowed)
       const objVals: Array<any> = Object.values(props.item.objects)
       const defVals: Array<any> = objVals[0]
       itemValue.value = defVals[0]
-      console.log('itemValue3', itemValue.value, props.item)
       return
     }
   }

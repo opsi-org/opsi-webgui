@@ -71,7 +71,6 @@ export const storeSettings = defineStore('settings', {
     setMenuCollapsed (isMenuCollapsed: boolean) {
       this._menuCollapsed = isMenuCollapsed
       useCookie('MenuCollapsed').value = (isMenuCollapsed) ? 'true' : 'false'
-      console.log('setMenuCollapsed', isMenuCollapsed)
     },
     setIsMobile (isMobile: boolean) {
       // only for testing purpose
@@ -88,18 +87,14 @@ export const storeSettings = defineStore('settings', {
     },
     toggleTheme() {
       let _mode = this.colormode
-      console.log('color toggleTheme current', _mode)
       if (_mode === 'auto') {
         _mode = useColorMode().value // current bootstrap mode
       }
       const newMode = (_mode === 'light') ? 'dark' : 'light'
-      console.log('color toggleTheme current', newMode)
       this.setColormode(newMode)
     },
     setColormode (colormode: 'light'|'dark'|'auto', saveCookie = true) {
-      console.log('color setColormode new mode', colormode, 'saveAsCookie', saveCookie)
       if (saveCookie) {
-        console.log('color setColormode saveAsCookie', saveCookie)
         useCookie('colormode').value = colormode
       }
 

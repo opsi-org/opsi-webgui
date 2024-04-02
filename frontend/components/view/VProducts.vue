@@ -39,7 +39,7 @@
 
       :is-loading="tableHelper.isLoading.value"
       @fetch="tableHelper.fetch"
-      @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionProducts(id)}"
+      @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
       @selection-clear="storeSelection.clearSelectionProducts"
       @tabledata-changed="tableHelper.updateTableData"
       @sort-changed="tableHelper.sortChanged"
@@ -47,7 +47,6 @@
       >
       <!-- @tabledata-changed="(v: any) => {updateTableData('localboot', v)}" -->
       <!-- @sort-changed="(key: string, isDesc: boolean) => {
-        console.log('sort table', currentType, 'by', key, 'desc', isDesc)
         tableData[currentType].sortBy = key
         tableData[currentType].sortDesc = isDesc
         tableSettings.setSortColumn(id, key, isDesc)
@@ -328,6 +327,7 @@ const columns = reactive<ITableHeaderRow>({
       key: 'description',
       dataKey: 'description',
       class: 'col-description',
+      // class: 'col-description max-w-[400px] text-wrap',
       width: 200,
       maxWidth: 200,
       sortable: true,
@@ -577,12 +577,10 @@ watch(()=>props.productType, (v)=>{
 setColumnVisibilityDependOnClients()
 watch(()=>clientSelection.value, async () => {
   setColumnVisibilityDependOnClients()
-  console.log('clientSelection changed', clientSelection.value)
   fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
 }, { deep: true })
 
 // watch(()=> tableData.value[currentType.value].filterQuery, async ()=>{
-//   console.log('tableData changed', tableData)
 //   fetchedData.value[currentType.value] = []
 //   fetchedData.value[currentType.value] = await _fetch(currentType.value)
 // }, { deep: true})
@@ -602,7 +600,6 @@ function changeProductsType (type: string) {
 
 function setColumnVisibilityDependOnClients () {
   let b = true
-  console.log('clientSelection', clientSelection.value)
   if (clientSelection.value.length > 0) {
     b = false
   }
@@ -613,7 +610,6 @@ function setColumnVisibilityDependOnClients () {
 }
 
 // async function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
-//   console.log('tabledata changed total', v)
 //   tableData.value[type] = reactive(v)
 //   fetchedData.value[currentType.value] = []
 //   fetchedData.value[currentType.value] = await _fetch(currentType.value)
@@ -634,17 +630,16 @@ async function _fetch(_type: string = "") {
 }
 
 async function saveActionRequests() {
-  log().log_colored('orange', 'saveActionRequests')
+  // TODO
 }
 
 async function saveActionRequest() {
-  log().log_colored('orange', 'saveActionRequest')
+  // TODO
 }
 
 function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
     // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
     // row.toggleDetails()
-    console.log('TOGGLE ROW', row, tooltiptext)
   }
 //   tableInfo: ITableInfo = {
 //     sortBy: this.getKeyCookie(`sorting_${id}`, 'sortBy', this.sortby || 'productId'),

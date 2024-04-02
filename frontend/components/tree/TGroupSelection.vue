@@ -121,7 +121,6 @@ const getSelection = () => {
 
 const handleSelection = () => {
   let checkedNodes = getSelection()
-  // console.log('checkedNodes', checkedNodes)
   if(props.grouptype == 'client-group') {
     storeSelection.setSelectionClients(checkedNodes)
   }

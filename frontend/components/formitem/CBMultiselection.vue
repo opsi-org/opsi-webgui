@@ -112,8 +112,6 @@ const cbValue = computed({
   set: () => {}
 })
 
-// console.log('cbmultiselect store', selections.multiSelection)
-// console.log('cbmultiselect cbValue', cbValue.value)
 /*
   @Watch('multiSelection') multiSelectionChanged () {
     if (this.multiSelection !== true) {
@@ -166,11 +164,9 @@ watch(()=>selections.multiSelection, (val)=>{
 const showModal = () => {
   // TODO
   alert('cbmultiselect showModal')
-  console.log('cbmultiselect showModal')
 }
 const hideModal = () => {
   alert('cbmultiselect hideModal')
-  console.log('cbmultiselect hideModal')
   // TODO
 }
 

@@ -36,8 +36,8 @@
         v-model:selection="selection" :metaKeySelection="false"
         :sortField="props.tableData.sortBy" :sortOrder="props.tableData.sortDesc ? -1: 1"
         :virtual-scroller-options="{ itemSize: 60 }"
-        @update:sort-field="log().log('sortfield changed')"
-        @update:sort-order="log().log('sortorder changed')"
+        @update:sort-field="log().log_colored('orange', 'sortfield changed')"
+        @update:sort-order="log().log_colored('orange', 'sortorder changed')"
         @sort="onSort($event)"
         @row-click="rowEventHandlers.onClick"
         >
@@ -53,7 +53,8 @@
               <h4>{{ props.id }}</h4>
             </div>
             <div class="flex">
-              <FormitemDDTableColumnVisibility :table-id="props.id" v-model:headers="columnsModel" :sort-by="props.tableData.sortBy" :multi="true" :incontextmenu="false"/>
+              <SelectSColumnVisibility :table-id="props.id" v-model:possibleColumns="columnsModel" />
+              <!-- <FormitemDDTableColumnVisibility :table-id="props.id" v-model:headers="columnsModel" :sort-by="props.tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
               <InputIFilter
               :data="tableData"
 
@@ -326,29 +327,21 @@ const lastScrollDirection = ref<'next'|'prev'|''>('')
 const rowEventHandlers: any = {
   onClick: (params: any) => {
 
-    log().log_colored_group('red', '--------onClick-------')
-    console.log('onclick', params)
 
     if (params && params.originalEvent
       && params.originalEvent.target.localName !== "td" // is not a tablecell (raw text)
       && !Boolean(params?.originalEvent?.target?.__vueParentComponent?.attrs?.class?.includes('selectionItem')) // is not the selection cell
     ) {
-      log().log_colored_group_end()
       return
     }
     const rowData:TRowData  = params.rowData || params.data || params
-    log().log_colored('gray', 'rowEventHandlers.onClick', rowData[props.rowId])
     if (rowData.dummy === true && rowData.direction === undefined) {
       return
     } else if (rowData.dummy === true) {
-      log().log_colored('gray', 'clicked on dummy row', rowData.direction)
       onScroll(rowData.direction)
       return
     }
-    log().log_colored('gray', 'clicked on real client', rowData[props.rowId])
-    // console.log('row click', params.rowIndex, params.rowKey, rowData, params.event)
     const isAlreadyInStore = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
-    log().log('row click', rowData[props.rowId], rowData.selected, isAlreadyInStore)
     if (selectionStore.multiSelection === false) {
       if (lastSelectedItemForSingleselect.value !== undefined) {
         lastSelectedItemForSingleselect.value.selected = false
@@ -362,17 +355,13 @@ const rowEventHandlers: any = {
 
     $emit('selection-changed', rowData[props.rowId])
     const isAlreadyInStore2 = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
-    log().log('row click', rowData[props.rowId], rowData.selected, isAlreadyInStore2)
-    log().log_colored_group_end()
   },
   onDblclick: (params: RowEventHandlerParams) => {
     // const rowData:TRowData  = params.rowData
-    console.log('row dblclick', params.rowKey, params.event)
   },
   onContextmenu: (params: RowEventHandlerParams) => {
     const rowData:TRowData  = params.rowData
     currentSelectedRow.value = rowData
-    console.log('row contextmenu', params.rowKey, params.event, rowData)
     menu.value.show(params.event)
   },
 }
@@ -388,7 +377,7 @@ const selection = ref<Array<string>>(getSelectedrowsFromStore())
 // const _visibleColumnsDataKeys = computed(()=> useUtilsData().getVisibleColumnIds(Object.values(columnsModel.value)) )
 // const visibleColumns = computed(()=> Object.values(columnsModel.value).filter((c:any) => (c._majorKey === undefined) ? _visibleColumnsDataKeys.value.includes(c.dataKey) : _visibleColumnsDataKeys.value.includes(c._majorKey) ))
 const columnValues = computed(()=> Object.values(columnsModel.value))
-const visibleColumns = computed(()=> useUtilsData().getVisibleColumns(columnValues.value) )
+const visibleColumns = computed(()=> useUtilsData().getVisibleColumnsInTable(columnValues.value) )
 // const visibleColumns = computed(()=> Object.values(columnsModel.value).filter((c:any) => c.fixed === true || c._fixed === true || c.hidden === false))
 
 
@@ -401,25 +390,29 @@ const numVisibleColumnsDelta = ref(1)
 // watch(()=>props.tableData.perPage, (val)=>{ perPage.value = val })
 
 
-watch(()=>tableStore[props.id + 'Columns'], ()=>{
-// watch(()=>tableStore.columns[props.id], ()=>{
-  // show or hide major-children
-
-  Object.values(wrappedColumns.value)
-    .filter((e:any) => e.dataKey.startsWith('_')) // only majors
-    .map((e:any)=> {
-      const majorKey = e.dataKey
-      const children = Object.values(wrappedColumns.value).filter(e => e._majorKey === majorKey).map(e => e.dataKey as string)
-      // const visible = tableStore.columns[props.id].includes(e.dataKey)
-      const visible = tableStore[props.id + 'Columns'].includes(e.dataKey)
-      if (visible){ // is major visible? // show major.chilrden
-        wrappedColumns.value[majorKey].hidden = true
-        children.map((cId:string)=> wrappedColumns.value[cId].hidden = false)
-      } else { // hide mahor.chilrden
-        children.map((cId:string)=> wrappedColumns.value[cId].hidden = true)
-      }
-    })
-}, { deep: true})
+// watch(()=>tableStore[props.id + 'Columns'], ()=>{
+//   _fixMajorVisibility()
+// }, { deep: true})
+// _fixMajorVisibility()
+// function _fixMajorVisibility() {
+//   Object.values(wrappedColumns.value)
+//     .filter((e:any) => e.dataKey.startsWith('_')) // only majors
+//     .map((e:any)=> {
+//       const majorKey = e.dataKey
+//       const children = Object.values(wrappedColumns.value).filter(e => e._majorKey === majorKey).map(e => e.dataKey as string)
+//       // const visible = tableStore.columns[props.id].includes(e.dataKey)
+//       const visible = tableStore[props.id + 'Columns'].includes(e.dataKey)
+//       console.log('majorKey', majorKey, 'visible', visible, 'children', children)
+//       if (visible){ // is major visible? // show major.chilrden
+//         wrappedColumns.value[majorKey].hidden = true
+//         children.map((cId:string)=> wrappedColumns.value[cId].hidden = false)
+//       } else { // hide mahor.chilrden
+//         children.map((cId:string)=> wrappedColumns.value[cId].hidden = true)
+//       }
+//     }
+//   )
+//   // log not hidden columns
+// }
 // watch (()=> columnsModel.value)
 
 watch (()=>props.totalItems, updateMaxPerPage)
@@ -473,7 +466,6 @@ watch (()=>dataModel, ()=>{ selection.value = getSelectedrowsFromStore() }, {dee
   //   //   const selected = computed<boolean>(()=> selectionInStoreByType.value.includes(rowData[props.rowId]) || rowData.selected)
   //   //   const onChange = (value: CheckboxValueType) => {
   //   //     rowData.selected = value
-  //   //     console.log('selection changed', props.rowId, rowData[props.rowId])
   //   //     $emit('selection-changed', rowData[props.rowId])
   //   //   }
   //   //   // return <SelectionCell show={false} value={selected.value} onChange={onChange} />
@@ -483,13 +475,11 @@ watch (()=>dataModel, ()=>{ selection.value = getSelectedrowsFromStore() }, {dee
 // }
 
 // function updateCurrentPage(pageNo: number) {
-//   console.log('updateCurrentPage', pageNo)
 //   pageNumber.value = pageNo
 //   $emit('tabledata-changed', {...props.tableData, pageNumber: pageNo})
 //   $emit('fetch')
 // }
 // function updatePerPage(perPage: number) {
-//   console.log('updatePerPage', perPage)
 //   $emit('tabledata-changed', {...props.tableData, perPage, pageNumber: 1})
 //   $emit('fetch')
 // }
@@ -543,19 +533,13 @@ function updateMaxPerPage () {
 
 function scrollToRow(rowNumber: number, timeout: number=100, behavior: 'auto'|'smooth'|'instant'='instant', block: 'start'|'center'|'end'|'nearest'='start') {
   setTimeout(() => {
-
-    log().log_colored_group('purple', 'SCROLL TO ROW')
     var rows = document.querySelectorAll('[data-pc-section="bodyrow"]');
     const last_first_row = rows[rowNumber]
-    log().log_colored('gray', 'rows', rows.length, 'rowNumber', rowNumber, 'last_first_row')
-    console.log(last_first_row)
     if (last_first_row === undefined) {
-      log().log_colored('red', 'last_first_row is undefined')
       return
     }
     // line is the row number that you want to see into view after scroll
     last_first_row.scrollIntoView({ behavior, block });
-    log().log_colored_group_end()
   }, timeout);
 }
 
@@ -582,7 +566,6 @@ function getSelectedrowIdsFromStore() {
 
 async function onScroll(event: any) {
 
-  log().log_colored_group('red', '---------- scroll', event, '-----------', event)
   const tData = JSON.parse(JSON.stringify(props.tableData))
   if (event === 'next' && lastScrollDirection.value === 'prev') {
     tData.pageNumber = props.tableData.pageNumber + 2
@@ -598,74 +581,10 @@ async function onScroll(event: any) {
   await $emit('tabledata-changed', tData)
   await $emit('fetch', event)
   lastScrollDirection.value = event
-  log().log_colored_group_end()
 }
-//   // console.log('scroll', event, tableRef.value.$el)
-//   //console.log('scroll to top. ')
-//   // show marker in middle of table
-//   // middleOfTable.value = tableRef.value.$el.clientHeight / 2 + 50
-//   if (event.yAxisScrollDir === 'backward' && event.scrollTop === 0 && pageNumber.value > 1 ) {
-//   } else {
-//     console.log('scroll to top. not at top')
-//     return
-//   }
-//   //   // we only want to fetch prev if we are at the top of the table
 
-//   // if (!(event.yAxisScrollDir !== 'forward' || event.scrollTop > 0 || pageNumber.value === 1)) {
-//   //   console.log('scroll to top. not at top', event, pageNumber.value, tableRef.value.$el)
-//   //   return
-//   // }
-//   console.log('scroll to top. at top')
-
-//   const visiblePages =  Math.ceil(dataModel.value.length / perPage.value)
-//   // update current page (without fetching)
-//   if (lastFetchedDirection.value === 'next' && visiblePages > 1){
-//     $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value - 2})
-//   } else {
-//     $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value - 1})
-//   }
-
-//   // fetch manually and push data to start of array
-//   await $emit('fetch', 'prev')
-
-//   // scroll to middle of table
-//   const visiblePagesNew = dataModel.value.length / perPage.value
-//   console.log('visiblePagesNew', visiblePagesNew)
-//   if (visiblePagesNew > 1)
-//     tableRef.value.scrollToRow(props.tableData.perPage, "start")
-
-//   lastFetchedDirection.value = 'prev'
-// }
-// function onEndReached() {
-//   console.log('end reached')
-//   if (pageNumber.value >= props.totalItems / perPage.value){
-//     console.log('end reached, no more pages')
-//     return
-//   }
-
-//   if (lastFetchedDirection.value === 'prev' && pageNumber.value > 1){
-//     console.log('end reached, fetch prev')
-//     $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value + 2})
-//   } else{
-//     console.log('end reached, fetch next')
-//     $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value + 1})
-//   }
-//   $emit('fetch', 'next')
-//   lastFetchedDirection.value = 'next'
-//   // emit('')
-// }
-
-// const lazyParams = ref({
-//     first: 0,
-//     rows: 10,
-//     sortField: props.tableData.sortBy,
-//     sortOrder: props.tableData.sortDesc ? -1: 1,
-//     // filters: filters.value
-// })
 function onPerPageChange(event: any) {
-  log().log('onPerPageChange', event)
   if (event === props.tableData.perPage) {
-    log().log_colored('orange', 'onPerPageChange, same perPage')
     return
   }
   // loadCarsLazy(event)
@@ -677,21 +596,16 @@ function onPerPageChange(event: any) {
   _fetch()
 }
 function onPage(newPageNumber: any) {
-  log().log_colored_group('white', 'onPage', newPageNumber)
   // loadCarsLazy(event)
   const tData = JSON.parse(JSON.stringify(props.tableData))
   // tData.pageNumber = newPageNumber/tData.perPage + 1 // Paginator from primeVue
   tData.pageNumber = newPageNumber // paginator from element-plus
-  // console.log('onPage', tData)
   lastScrollDirection.value = ''
   $emit('tabledata-changed', tData)
   _fetch()
-  log().log_colored('gray', 'onPageStored', props.tableData.pageNumber)
-  log().log_colored_group_end()
 }
 
 function onSort(event: any) {
-  console.log('onSort', event)
   const tData = JSON.parse(JSON.stringify(props.tableData))
   tData.sortBy = event.sortField
   tData.sortDesc = event.sortOrder === -1
@@ -706,28 +620,20 @@ async function onVirtualScrollerLoad (event: any) {
   //   lazyLoading.value = false;
   //   return
   // }
-  log().log_colored_group('red', '--------- virtScroll ---------')
   const items = dataModel.value.filter(x => x.dummy !== true).length
   const pageNumber = Math.ceil((items===0)? 1 : items / perPage.value)
-  log().log_colored('gray', 'onVirtualScrollerLoad', JSON.stringify(event), 'items', items, ' pageNo', pageNumber)
   if (event.first === 0 && event.last === 0) {
     lazyLoading.value = false;
-    log().log_colored('orange', 'onVirtualScrollerLoad', 'same page')
-    log().log_colored_group_end()
     return
   }
   if (items != 0 && event.first == 0) {
-  // if (pageNumber === props.tableData.pageNumber) {
-    log().log_colored('orange', 'onVirtualScrollerLoad', 'same page')
     lazyLoading.value = false;
-    log().log_colored_group_end()
     return
   }
   const tData = JSON.parse(JSON.stringify(props.tableData))
   tData.pageNumber = pageNumber
   $emit('tabledata-changed', tData)
   $emit('fetch', 'next')
-  log().log_colored_group_end()
 }
 //   if (event.last === 0 && event.first === 0) {
 //     lazyLoading.value = false;
@@ -745,7 +651,6 @@ async function onVirtualScrollerLoad (event: any) {
 //   const pageNo = event.first / event.rows + 1
 //   const tData = JSON.parse(JSON.stringify(props.tableData))
 //   tData.pageNumber = pageNo
-//   log().log_colored('red', 'onVirtualScrollerLoad', tData)
 
 // // //     !lazyLoading.value && (lazyLoading.value = true);
 
@@ -753,7 +658,6 @@ async function onVirtualScrollerLoad (event: any) {
 //     //     clearTimeout(loadLazyTimeout.value);
 //     // }
 // // const tData = JSON.parse(JSON.stringify(props.tableData))
-// //   console.log('loadCarsLazy', event)
 // //   if (event.sortField) {
 // //     tData.sortBy = event.sortField
 // //     tData.sortDesc = event.sortOrder === -1

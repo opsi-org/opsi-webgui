@@ -64,7 +64,7 @@ async function useAPI2<T> (
       // details: ''
     }}}
     callerror = errordata
-    console.log('onResponseError', errordata)
+    console.error('onResponseError', errordata)
     if (res.statusCode.value === 401) {
       storeAuth().logout()
       storeAuth().clearSession()
@@ -77,7 +77,6 @@ async function useAPI2<T> (
       return
     }
     callresponse.value = JSON.parse(res.json().data.value)
-    // console.log("RESU", )
     callheaders = Object.fromEntries(res.json().response.value.headers)
     // callheader.value = JSON.parse(res.json().data.value)
   }
@@ -108,20 +107,17 @@ async function useAPI2<T> (
   }
   if (baseUrl && baseUrl !== '') fetchOptions.baseURL = baseUrl
   await useFetch(fullURL, fetchOptions).then(onResponse,onResponseError)
-          //  .catch((err:any) => console.log('intern error', err))
 
   return { data: callresponse, error: callerror, headers: callheaders }
 }
 // const _getURLwithParams = (url: string, params: any) => {
 //   const _url = new URL(url);
 //   _url.search = new URLSearchParams(params).toString();
-//   console.log('GET URL WITH SEARCH PARAMS IS', _url)
 //   return _url.toString()
 // }
 const _getBodyParams = (params: any) => {
   return new URLSearchParams(params).toString();
   // _url.search = new URLSearchParams(params).toString();
-  // console.log('GET URL WITH SEARCH PARAMS IS', _url)
   // return _url.toString()
 }
 

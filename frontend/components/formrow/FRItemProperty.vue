@@ -138,7 +138,6 @@ getChanges()
 watch(()=>changesProducts.value, getChanges, { deep: true })
 function getChanges() {
   const changesPropValues = changesProducts.value?.filter((obj: any) => {
-    console.log('CHANGESprops obj', obj.productId, obj.property)
     return obj.productId === props.item.productId
     && obj.property === props.item.propertyId
     && (selectionClients.value.includes(obj.clientId) || selectionDepots.value.includes(obj.depotId))

@@ -30,7 +30,6 @@
 // export default class VSupport extends Vue {
   const $t = useI18n().t
   const locale = useI18n().locale
-  console.log('current locale', locale.value)
   // $i18n: any
   const props = defineProps({
     withIframe: { type: Boolean, default: true }

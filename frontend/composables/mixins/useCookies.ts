@@ -57,14 +57,11 @@ export const useCookies = () => {
       opt.expires = undefined
     }
     const keyCookie = useCookie(key, opt)
-    console.log('Cookie description was   ', keyCookie.value)
-    console.log('Cookie description should', value)
     if (value.value === undefined)
       keyCookie.value = value
     else
       keyCookie.value = value.value
     // const _keyCookie = useCookie(key, opt)
-    console.log('Cookie description is    ', keyCookie.value)
   }
   return { existsCookie, isCookie, getCookie, getParsedCookie, getKeyCookie, includesCookie, setCookie }
 }

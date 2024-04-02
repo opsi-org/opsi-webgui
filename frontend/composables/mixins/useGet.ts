@@ -18,9 +18,8 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
       if (server){
         if (_store) _store.selectedDepots = [server]
         else storeSelection.setSelectionDepots([server])
-      }
-      else {
-        console.log('no server selected')
+      } else {
+        console.error('no server selected')
         useNotification().error('no server selected')
       }
     }

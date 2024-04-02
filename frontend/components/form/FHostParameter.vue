@@ -35,7 +35,6 @@ function handleCollapseValueChange (val: any) {
 function changeItem (item: any, val: any, index: number) {
   if (!item) return
   if (!val) return
-  console.log('changeItem', item, val, index)
   // fetchedData.value[item] = v
   item.value = val
   if (!item.possibleValues.includes(val)) {
@@ -58,18 +57,17 @@ watch(()=>props.id, async ()=>{
 //   if (props.type === 'depots' && id){
 //     const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${id}]`)
 //     if (error) {
-//       console.log(error)
+//       console.error(error)
 //       useNotification().error(error)
 //       return
 //     }
-//     console.log('Fetchresult data', data.value)
 //     fetchedData.value = data.value
 //   } else if (props.type === 'clients') {
 //     const {data, error} = await useApiGETBody(`/opsidata/hosts?hosts=${id}`)
 
 //     // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
 //     if (error) {
-//       console.log(error)
+//       console.error(error)
 //       useNotification().error(error)
 //       return
 //     }
@@ -98,11 +96,10 @@ async function fetch () {
 async function fetchHostParameters (endpoint: string) {
   const {data, error} = await useApiGETBody<T_HostParameter>(endpoint)
   if (error) {
-    console.log(error)
+    console.error(error)
     useNotification().error(error)
     return
   }
-  console.log('Fetchresult data', data.value)
   fetchedData.value = data.value
 
   // await this.$axios.$get(endpoint)

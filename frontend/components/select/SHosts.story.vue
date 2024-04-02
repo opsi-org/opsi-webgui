@@ -11,7 +11,7 @@ async function init(data: any) {
 <template>
   <Story :setup-app="init">
     <Variant title="mobile" :meta="{ wrapperMobile: true }" responsive-disabled>
-      <SelectSHosts :id="store.selectionDepot[0]" @change="(s:string)=>{console.log(s)}"/>
+      <SelectSHosts :id="store.selectionDepot[0]" @change="(s:string)=>{}"/>
     </Variant>
   </Story>
 </template>

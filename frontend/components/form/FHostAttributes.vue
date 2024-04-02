@@ -37,17 +37,16 @@ async function fetch(id:string) {
   if (props.type === 'servers' && id){
     const {data, error} = await useApiGETBody<Array<T_ServerAttr>>(`/opsidata/servers?servers=[${id}]`)
     if (error) {
-      console.log(error)
+      console.error(error)
       useNotification().error(error)
       return
     }
-    console.log('Fetchresult data', data.value)
     fetchedData.value = data.value
   } else if (props.type === 'clients') {
     const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
     // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
     if (error) {
-      console.log(error)
+      console.error(error)
       useNotification().error(error)
       return
     }

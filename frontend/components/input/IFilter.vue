@@ -110,9 +110,7 @@ onMounted(()=>{
   if (props.data.filterColumns){
     filterValue.value = props.data.filterColumns
   }
-  console.log('filterquery', props.data.filterQuery)
   if (props.data.filterQuery !== undefined){
-    console.log('filterquery set', props.data.filterQuery)
     filterQueryValue.value = props.data.filterQuery
   }
 })

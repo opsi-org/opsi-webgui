@@ -72,7 +72,7 @@ const _useNotification = (t: any) => {
       title = t('message.error.serverresponse.title', { error: _error.response.data.class })
     }
     let error = _error?.response?.data || _error
-    console.log(error)
+    console.error(error)
     return showToast({
       title: title || _title || t('message.error.title'),
       variant: 'error',
@@ -276,7 +276,6 @@ export const useScrollListener = (refComponent: Ref<HTMLElement|undefined>, hand
 
   function onResize() {
     const h = refComponent.value?.clientHeight + 'px'
-    console.log('RESIZE', h)
   }
   onUnmounted(() => {
     if (resizeObserver !== null)

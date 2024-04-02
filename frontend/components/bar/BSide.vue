@@ -129,7 +129,6 @@ const navItems = computed<Array<INavItem>>(() => [
 ]
 )
 watch(isCollapse, (val: boolean) => {
-  console.log('change isCollapse', val)
   emit('changeSmall', val)
 })
 </script>
