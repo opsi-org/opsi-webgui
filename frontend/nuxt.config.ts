@@ -7,6 +7,8 @@ import pkg from './package.json'
 
 import Tailwind from "primevue/passthrough/tailwind";
 
+// export const hash = Math.floor(Math.random() * 90000) + 10000;
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: false },
@@ -16,6 +18,10 @@ export default defineNuxtConfig({
         hotReload: true,
       }
     }
+  },
+  sourcemap: {
+    server: false,
+    client: false,
   },
   typescript: {
     typeCheck: true
@@ -115,6 +121,15 @@ export default defineNuxtConfig({
         },
       },
     },
+    // build: {
+    //   rollupOptions: {
+    //     output: {
+    //       entryFileNames: `[name]` + hash + `.js`,
+    //       chunkFileNames: `[name]` + hash + `.js`,
+    //       assetFileNames: `[name]` + hash + `.[ext]`
+    //     }
+    //   }
+    // }
   },
   css: [
     'primevue/resources/themes/md-dark-indigo/theme.css',
@@ -139,7 +154,7 @@ export default defineNuxtConfig({
       // unstyled: true,
       // pt: Tailwind,
       pt: {
-        ...Tailwind,
+        // ...Tailwind,
 
         // datatable: {
         //   header: {class: 'bg-red-500'},

@@ -13,7 +13,7 @@
         <IconIIcon :icon="icons.productInstallationStatusUnknown" :alt="props.text" />
       </span>
     </el-tag>
-    <el-tag v-else-if="$mq=='mobile'&&(props.text=='not_installed'||props.text==''||props.text=='none')" data-testid="TCInstallationStatusBadge" type=""> <!-- transparent-->
+    <el-tag v-else-if="$mq=='mobile'&&(props.text=='not_installed'||props.text==''||props.text=='none')" data-testid="TCInstallationStatusBadge" :type="undefined"> <!-- transparent-->
       <span class="h6"> {{ ($mq=='mobile')? t_fixed('keep-english.empty'):'' }} </span>
     </el-tag>
     <div v-else-if="$mq!='mobile'&&(props.text=='not_installed'||props.text==''||props.text=='none')" data-testid="TCInstallationStatusBadge" :type="undefined" > <!-- transparent -->
@@ -51,6 +51,7 @@
 import type { EpPropMergeType } from 'element-plus/lib/utils/index.js';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useStrings } from '~/composables/mixins/useStrings';
+import type { ElTypeVariant } from '~/types/LibComponentTypes';
 
 
 // import { Component, Prop, Vue } from 'nuxt-property-decorator'
@@ -65,12 +66,10 @@ const mq = useMQ()
 //   icon: any // from mixin
 //   $mq:any
 //   t_fixed: any
-type ElType = EpPropMergeType<StringConstructor, "" | "warning" | "success" | "info" | "danger", unknown> | undefined
-// type ElType = 'primary' | 'success' | 'info' | 'warning' | 'danger' | 'transparent' | undefined
 
 const props = defineProps({
   text: { type: String, default: '' },
-  variant: { type: Object as PropType<ElType>, default: 'warning' }
+  variant: { type: Object as PropType<ElTypeVariant>, default: 'warning' }
 })
 //   @Prop({ }) text!: string
 //   @Prop({ default: 'warning' }) variant!: string

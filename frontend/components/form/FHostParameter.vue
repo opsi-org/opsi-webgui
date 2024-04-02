@@ -5,12 +5,13 @@
     <IconILoading v-else-if="isLoading" />
     <el-collapse v-else v-model="activeNames" @change="handleCollapseValueChange"
       class="mr-3 ml-3">
+
       <el-alert v-if="fetchedData && Object.keys(fetchedData).length === 0" type="warning"> No data found</el-alert>
       <el-collapse-item v-else
-        v-for="(items, topic, index) in fetchedData" :title="(topic.toString())"
+        v-for="(items, topic, index) in fetchedData" :title="topic.toString()"
         :name="index.toString()"
       >
-        <FormrowFRItems :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
+        <FormrowFRItems v-if="activeNames.includes(index.toString())" :items="items" :replace-in-id="topic + '.'" @change-item="changeItem"/>
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -18,8 +19,8 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
-import type { T_ClientAttr, T_HostParameter, T_ServerAttr } from '~/types/APItypes';
-const $t = useI18n().t
+import type { T_ClientAttr, T_HostParameter, T_ServerAttr } from '~/types/APItypes'
+
 const isLoading = ref(true)
 const fetchedData = ref<T_HostParameter|undefined>()
 const activeNames = ref<string[]>([])
@@ -35,7 +36,7 @@ function handleCollapseValueChange (val: any) {
 function changeItem (item: any, val: any, index: number) {
   if (!item) return
   if (!val) return
-  // fetchedData.value[item] = v
+
   item.value = val
   if (!item.possibleValues.includes(val)) {
     item.possibleValues.push(val)
@@ -90,18 +91,19 @@ async function fetch () {
     console.error('not defined')
   }
   await fetchHostParameters(endpoint)
+
   isLoading.value = false
 }
 
 async function fetchHostParameters (endpoint: string) {
   const {data, error} = await useApiGETBody<T_HostParameter>(endpoint)
+  console.debug('fetched', data, error)
   if (error) {
     console.error(error)
     useNotification().error(error)
     return
   }
   fetchedData.value = data.value
-
   // await this.$axios.$get(endpoint)
   //   .then((response) => {
   //     this.hostParam = { id: this.id, value: response }

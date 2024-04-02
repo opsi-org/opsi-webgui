@@ -12,7 +12,6 @@
 
 <script setup lang="ts">
 const settings = storeSettings()
-onMounted(()=>{
-  settings.initColormode()
-})
+settings.initColormode()
+
 </script>

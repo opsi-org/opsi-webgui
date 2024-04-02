@@ -33,57 +33,62 @@
     </template>
   <!-- <el-text>{{ props.item[props.idKey] }}</el-text> -->
     <template #default>
-      <!-- {{ itemValue }} -->
-      <el-checkbox v-if="props.item[props.boolTypeKey] === boolTypeValue" v-model="itemValue" :label="itemValue"/>
-      <el-select
-        v-else
-        v-model="itemValue"
-        :multiple="props.item.multiValue"
-        :allow-create="props.item.editable"
-        :filterable="true"
-        default-first-option
-        collapse-tags
-        collapse-tags-tooltip
-        :no-data-text="$t('treeselect.nooption')"
-        :no-match-text="$t('treeselect.noResultTextEditable')"
-        placeholder=""
-        class="w-full"
-        tag-type=""
-      >
-        <!-- suffix-icon="el-icon-arrow-down" -->
-        <!-- style="width: 240px" -->
-        <template #default>
-          <el-tooltip
-            v-for="pVal in props.item[props.allValuesKey]"
-            class="box-item"
-            effect="dark"
-            :content="pVal"
-            :show-after="1000"
-            placement="top-start"
+
+      <!-- <el-skeleton :rows="1" animated :loading="loading" >
+
+        <template #default> -->
+          <el-checkbox v-if="props.item[props.boolTypeKey] === boolTypeValue" v-model="itemValue" :label="itemValue"/>
+          <el-select
+            v-else
+            v-model="itemValue"
+            :multiple="props.item.multiValue"
+            :allow-create="props.item.editable"
+            :filterable="true"
+            default-first-option
+            collapse-tags
+            collapse-tags-tooltip
+            :no-data-text="$t('treeselect.nooption')"
+            :no-match-text="$t('treeselect.noResultTextEditable')"
+            placeholder=""
+            class="w-full"
+            :tag-type="undefined"
           >
-            <el-option
-              class="max-w-96"
-              :key="pVal"
-              :label="pVal"
-              :value="pVal"
+            <!-- suffix-icon="el-icon-arrow-down" -->
+            <!-- style="width: 240px" -->
+            <template #default>
+              <el-tooltip
+                v-for="pVal in props.item[props.allValuesKey]"
+                class="box-item"
+                effect="dark"
+                :content="pVal"
+                :show-after="1000"
+                placement="top-start"
               >
-            </el-option>
-          </el-tooltip>
-        </template>
-        <template #header v-if="props.item.editable">
-          <el-text> {{ $t('treeselect.searchOrAdd') }} </el-text>
-        </template>
-        <template #prefix v-if="props.item.editable">
-          <el-tooltip
-            class="box-item"
-            effect="dark"
-            :content="'This config is editable. Press <Enter> or click on item to add and select'"
-            placement="top-start"
-          >
-            <el-text><IconIIcon :icon="icons.add" /></el-text>
-          </el-tooltip>
-        </template>
-      </el-select>
+                <el-option
+                  class="max-w-96"
+                  :key="pVal"
+                  :label="pVal"
+                  :value="pVal"
+                  >
+                </el-option>
+              </el-tooltip>
+            </template>
+            <template #header v-if="props.item.editable">
+              <el-text> {{ $t('treeselect.searchOrAdd') }} </el-text>
+            </template>
+            <template #prefix v-if="props.item.editable">
+              <el-tooltip
+                class="box-item"
+                effect="dark"
+                :content="'This config is editable. Press <Enter> or click on item to add and select'"
+                placement="top-start"
+              >
+                <el-text><IconIIcon :icon="icons.add" /></el-text>
+              </el-tooltip>
+            </template>
+          </el-select>
+        <!-- </template>
+      </el-skeleton> -->
     </template>
   </el-form-item>
 </template>
@@ -100,7 +105,7 @@ const props = defineProps({
   allValuesKey: { type: String, default: 'possibleValues' },
   replaceInId: { type: String, default: undefined },
 })
-
+const loading = ref(true)
 const itemValue = ref(props.item.value)
 const setInitialValue = () => {
   /**
@@ -109,7 +114,10 @@ const setInitialValue = () => {
   * if there is no value and no objects, throw an error
   */
 
-  if (itemValue.value !== undefined) return
+  if (itemValue.value !== undefined) {
+    loading.value = false
+    return
+  }
   if (itemValue.value === undefined && props.item.objects && Object.keys(props.item.objects).length > 0) {
     const objectValueStrings: Array<string> = []
     if (props.item.multiValue) {
@@ -126,11 +134,12 @@ const setInitialValue = () => {
       })
 
       if (objectValueStrings.every((v: string, i:number, a: string[]) => v === a[0])) {
-
         itemValue.value = Object.values(props.item.objects)[0]
+        loading.value = false
         return
       }
       itemValue.value = 'mixed'
+      loading.value = false
       return // mixed
       // multiValue end
     }
@@ -140,9 +149,11 @@ const setInitialValue = () => {
       const objVals: Array<any> = Object.values(props.item.objects)
       const defVals: Array<any> = objVals[0]
       itemValue.value = defVals[0]
+      loading.value = false
       return
     }
   }
+  loading.value = false
   throw new Error('itemValue is undefined and no objects found', props.item)
 }
 setInitialValue()

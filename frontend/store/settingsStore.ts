@@ -12,22 +12,23 @@ import _ from 'lodash'
 export const storeSettings = defineStore('settings', {
   persist: true,
   state: () => ({
-    _isMobile: useMQ().isMobile.value as boolean,
-    _language: 'en',
-    _quicksave: false,
-    _quickpanelOpened: true as boolean,
-    _menuCollapsed: false as boolean,
-    _twoColumnLayoutCollapsed: { tabledepots: false, tableclients: false },
-    _expiresInterval: undefined as NodeJS.Timeout|undefined,
+    isMobile: useMQ().isMobile.value as boolean,
+    language: 'en',
+    quicksave: false,
+    quickpanelOpened: true as boolean,
+    menuCollapsed: false as boolean,
+    twoColumnLayoutCollapsed: { tabledepots: false, tableclients: false },
+    expiresInterval: undefined as NodeJS.Timeout|undefined,
+    // _colormode: 'auto' as 'light'|'dark'|'auto',
   }),
   getters: {
-    twoColumnLayoutCollapsed: (state: any) => state._twoColumnLayoutCollapsed,
-    isMobile: (state: any) => state._isMobile,
-    language: (state: any) => state._language,
-    quicksave: (state: any) => state._quicksave,
-    quickpanelOpened: (state: any) => state._quickpanelOpened,
-    menuCollapsed: (state: any) => state._menuCollapsed,
-    expiresInterval: (state: any) => state._expiresInterval,
+    // twoColumnLayoutCollapsed: (state: any) => state._twoColumnLayoutCollapsed,
+    // isMobile: (state: any) => state._isMobile,
+    // language: (state: any) => state._language,
+    // quicksave: (state: any) => state._quicksave,
+    // quickpanelOpened: (state: any) => state._quickpanelOpened,
+    // menuCollapsed: (state: any) => state._menuCollapsed,
+    // expiresInterval: (state: any) => state._expiresInterval,
     colormodeCookie: (state: any) => useCookie('colormode').value,
     colormode: (getter: any) => {
       // check if specific colormode for webgui is set
@@ -49,35 +50,35 @@ export const storeSettings = defineStore('settings', {
   },
   actions: {
     setExpiresInterval (int: NodeJS.Timeout|undefined) {
-      if ((int === null || int === undefined) && this._expiresInterval) {
-        clearInterval(this._expiresInterval)
+      if ((int === null || int === undefined) && this.expiresInterval) {
+        clearInterval(this.expiresInterval)
       }
-      this._expiresInterval = int
+      this.expiresInterval = int
     },
     setLanguage (lang: string) {
-      this._language = lang
+      this.language = lang
       // Cookie.set('Language', this._language, { expires: 365 })
       // Cookies.options.methods.setCookie('Language', this._language)
-      useCookie('Language').value = this._language
+      useCookie('Language').value = this.language
     },
     setQuicksave (isQuickSave: boolean) {
-      this._quicksave = isQuickSave
+      this.quicksave = isQuickSave
       useCookie('Quicksave').value = (isQuickSave) ? 'true' : 'false'
     },
     setQuickpanelOpened (isQuickpanelOpened: boolean) {
-      this._quickpanelOpened = isQuickpanelOpened
+      this.quickpanelOpened = isQuickpanelOpened
       useCookie('QuickpanelOpened').value = (isQuickpanelOpened) ? 'true' : 'false'
     },
     setMenuCollapsed (isMenuCollapsed: boolean) {
-      this._menuCollapsed = isMenuCollapsed
+      this.menuCollapsed = isMenuCollapsed
       useCookie('MenuCollapsed').value = (isMenuCollapsed) ? 'true' : 'false'
     },
     setIsMobile (isMobile: boolean) {
       // only for testing purpose
-      this._isMobile = isMobile
+      this.isMobile = isMobile
     },
     setColumnLayoutCollapsed (obj: IColumnLayoutCollapsed) {
-      this._twoColumnLayoutCollapsed[obj.parentId] = obj.value
+      this.twoColumnLayoutCollapsed[obj.parentId] = obj.value
     },
     initColormode () { // init colormode without saving as cookie
       const colormode = this.colormode // getter:

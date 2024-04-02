@@ -54,7 +54,7 @@
           :no-match-text="$t('treeselect.noResultTextEditable')"
           placeholder=""
           class=""
-          tag-type=""
+          :tag-type="undefined"
         >
           <template #default>
             <el-tooltip
