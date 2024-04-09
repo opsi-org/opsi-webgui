@@ -378,6 +378,8 @@
   "form.hostkey.hide": "Hide opsiHostKey",
   "form.password.show": "Show Password",
   "form.password.hide": "Hide Password",
+  "form.otp.show": "Show OTP",
+  "form.otp.hide": "Hide OTP",
   "form.filter.logs": "Filter logs",
   "formselect.select.server": "-- Server selection --",
   "form.multiselection": "Multi selection",
