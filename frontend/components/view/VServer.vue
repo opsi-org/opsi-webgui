@@ -143,7 +143,7 @@ const tableData = ref<ITableData>({
   // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.serversSorting.column,
   // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  sortDesc: storeTable.serversSorting.isDesc,
+  sortDesc: Boolean(storeTable.serversSorting.isDesc),
   filterQuery: '',
   filterColumns: ['depotId']
 })
@@ -156,7 +156,26 @@ const columns = ref<ITableHeaderRow>({
       width: 50,
       maxWidth: 50,
       fixed: true,
-      hidden: false
+      hidden: false,
+      headerCellRenderer: () => {
+        return (
+          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionDepots} />
+        )
+      },
+      cellRenderer: ({rowData}) => {
+        // const selectedIds = computed(() => storeSelection._selectionProducts)
+        // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        return (<>
+          {rowData.dummy ? <div /> :
+            storeSelection.multiSelection ?
+              <el-checkbox v-model={rowData.selected} class="selectionItem" />
+            :
+              <el-radio-group v-model={rowData.selected}>
+                <el-radio label={true} value={true} class="selectionItem hide_label" />
+              </el-radio-group>
+          }
+        </>)
+      }
       // hidden: !cookies.includesCookie('column_' + id, 'selected', true)
     },
     depotId: { // eslint-disable-next-line object-property-newline

@@ -273,7 +273,7 @@ const tableData = ref<ITableData>({
   _lastScrollDirection: '',
   // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.clientsSorting.column,
-  sortDesc: storeTable.clientsSorting.isDesc,
+  sortDesc: Boolean(storeTable.clientsSorting.isDesc),
   // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
   filterColumns: ['clientId', 'description']
@@ -292,6 +292,25 @@ const columns = ref<ITableHeaderRow>({
       _fixed: true, // always visible
       fixed: true, // always visible
       // hidden: cookies.includesCookie('column_' + id, 'selected', true)
+      headerCellRenderer: () => {
+        return (
+          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} />
+        )
+      },
+      cellRenderer: ({rowData}) => {
+        // const selectedIds = computed(() => storeSelection._selectionClients)
+        // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        return (<>
+          {rowData.dummy ? <div /> :
+            storeSelection.multiSelection ?
+              <el-checkbox v-model={rowData.selected} class="selectionItem" />
+            :
+              <el-radio-group v-model={rowData.selected}>
+                <el-radio label={true} value={true} class="selectionItem hide_label" />
+              </el-radio-group>
+          }
+        </>)
+      }
     },
     // class: 'mobileVisibleOnlySelection'
     clientId: { // eslint-disaconfigble-next-line object-property-newline
@@ -530,8 +549,21 @@ function changeRowLink(e:Event, cid: string, to='config') {
 // function updateTableData (v: typeof tableData.value) {
 //   tableData.value = v
 // }
+
+function _objectWithoutProperties(obj: any, keys: string[]): any {
+  var target = {};
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+  return target;
+}
+
 async function _fetch() {
-  const params:any = { ...tableData.value }
+
+  const params: any = _objectWithoutProperties(tableData.value, ["_lastScrollDirection"]);
+  // const params:any = { ...tableData.value }
   params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
   params.selectedClients = JSON.stringify(storeSelection.selectionClients)
   if (params.sortBy === '') { params.sortBy = 'clientId' }

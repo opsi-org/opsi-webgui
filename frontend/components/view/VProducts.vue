@@ -179,7 +179,7 @@ const tableData = ref<tproductITableData>({
     perPage: 1000000,
     // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
     sortBy: tableSettings.productsSorting.column,
-    sortDesc: tableSettings.productsSorting.isDesc,
+    sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
     filterQuery: '',
     filterColumns: ['productId', 'description']
@@ -189,7 +189,7 @@ const tableData = ref<tproductITableData>({
     pageNumber: 1,
     perPage: 1000000,
     sortBy: tableSettings.productsSorting.column,
-    sortDesc: tableSettings.productsSorting.isDesc,
+    sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
     filterColumns: ['productId', 'description']
   },
@@ -198,7 +198,7 @@ const tableData = ref<tproductITableData>({
     pageNumber: 1,
     perPage: 1000000,
     sortBy: tableSettings.productsSorting.column,
-    sortDesc: tableSettings.productsSorting.isDesc,
+    sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
     filterColumns: ['productId', 'description']
   }
@@ -219,6 +219,25 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 50,
       fixed: true, // always visible
       // hidden: cookies.includesCookie('column_' + id, 'selected', true)
+      headerCellRenderer: () => {
+        return (
+          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionProducts} />
+        )
+      },
+      cellRenderer: ({rowData}) => {
+        // const selectedIds = computed(() => storeSelection._selectionProducts)
+        // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        return (<>
+          {rowData.dummy ? <div /> :
+            storeSelection.multiSelection ?
+              <el-checkbox v-model={rowData.selected} class="selectionItem" />
+            :
+              <el-radio-group v-model={rowData.selected}>
+                <el-radio label={true} value={true} class="selectionItem hide_label" />
+              </el-radio-group>
+          }
+        </>)
+      }
     },
     installationStatus: { // eslint-disable-next-line object-property-newline
       tooltip: $t('table.fields.instStatus'),

@@ -11,7 +11,12 @@ import Tailwind from "primevue/passthrough/tailwind";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: false },
+  devtools: { 
+    enabled: true,
+    timeline: {
+      enabled: true,
+    },
+ },
   webpack: {
     loaders: {
       vue: {
@@ -145,6 +150,12 @@ export default defineNuxtConfig({
     '~/assets/scss/index.scss', // ep import colors
     '~/assets/scss/bv-colors.scss', // bv import colors
   ],
+  // bootstrapVueNext: {
+  //   // bootstrapCSS: false, // here you can disable automatic bootstrapCSS in case you are loading it yourself using sass
+  //   // bootstrapVueCSS: false, // CSS that is specific to bootstrapVue components can also be disabled. That way you won't load css for modules that you don't use
+  //   componentPlugins: ['BFormFile', 'BRow', 'BFormInput', 'BFormCheckbox', 'BButton', 'BInvalidFeedback', 'BIcon', 'BModal', 'BTooltip', 'BDropdown', 'BDropdownItem', 'BDropdownDivider', 'BBadge','BInputGroup', 'BFormInput', 'BTabs', 'BTab'],
+  //   directivePlugins: [] 
+  // },
   elementPlus: {
     // useSource: true,
     icon: false,
@@ -181,7 +192,7 @@ export default defineNuxtConfig({
 
     components: {
       prefix: 'P',
-      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown', 'VirtualScroller'],
+      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown', 'VirtualScroller', 'Skeleton'],
       exclude: ['Toast']
     },
 

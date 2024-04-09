@@ -13,7 +13,7 @@
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
     </LazyTableTDefaultMobile>
-    <TableTDefaultDesktopPV
+    <TableTDefaultDesktopPVlist
       v-else-if="!isMobileWrapper"
       v-model:columns="columns"
       v-model:data="dataModel"
@@ -26,7 +26,7 @@
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
       <!-- v-bind="(({ isMobile, ...rest }) => rest)($attrs)" -->
-    </TableTDefaultDesktopPV>
+    </TableTDefaultDesktopPVlist>
   </div>
 </template>
 
