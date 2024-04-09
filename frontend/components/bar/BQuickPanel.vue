@@ -1,16 +1,14 @@
 <template>
   <div class="quickpanel" data-testid="BQuickPanel">
-    <template v-if="storeSelection.multiSelection == true">
-      <div class="flex">
-        <el-text tag="b" size="small"> {{$t('label.quickselect')}}</el-text><br>
-        <el-button size="small" class="border-0 ml-auto">
-          <span class="sr-only">{{ $t('button.resetAll') }}</span>
-          <IconIIcon :icon="icons.reset" @click="storeSelection.clearAllSelection" />
-        </el-button>
-      </div>
-      <TabsTQuickSelections />
-    </template>
-    <el-text tag="b" size="small"> {{$t('label.quickaction')}}</el-text><br>
+    <div class="flex">
+      <el-text tag="b" size="small"> {{$t('label.quickselect')}}</el-text><br>
+      <el-button size="small" class="border-0 ml-auto">
+        <span class="sr-only">{{ $t('button.resetAll') }}</span>
+        <IconIIcon :icon="icons.reset" @click="storeSelection.clearAllSelection" />
+      </el-button>
+    </div>
+    <TabsTQuickSelections />
+    <el-text tag="b" size="small"> {{$t('label.quickaction')}}</el-text><br />
       TODO:ondemand
       TODO:ProductQuickActions
       <br>
