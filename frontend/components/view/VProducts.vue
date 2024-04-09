@@ -300,6 +300,16 @@ const columns = reactive<ITableHeaderRow>({
       // visible: this.includesCookie(`column_${id}`, 'description', false)
       hidden: !tableSettings.productsColumns.includes('description')
     },
+    advice: { // eslint-disable-next-line object-property-newline
+      title: $t('table.fields.advice'),
+      key: 'advice',
+      dataKey: 'advice',
+      class: 'col-advice',
+      width: 200,
+      maxWidth: 200,
+      sortable: true,
+      hidden: !tableSettings.productsColumns.includes('advice')
+    },
     modificationTime: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.modificationTime'),
       key: 'modificationTime',
