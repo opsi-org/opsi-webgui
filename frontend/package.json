@@ -37,6 +37,7 @@
     "element-plus": "^2.x.x",
     "nuxt": "^3.10.0",
     "primevue": "^3.x.x",
+    "vue3-markdown-it": "^1.0.10",
     "xterm": "^5.x.x",
     "xterm-addon-fit": "^0.x.x",
     "xterm-addon-search": "^0.x.x",
