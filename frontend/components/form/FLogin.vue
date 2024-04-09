@@ -58,6 +58,24 @@
               </template>
             </el-input>
           </el-form-item>
+          <el-form-item>
+            <el-input
+              data-testid="login_otp"
+              v-model="totp"
+              :aria-label="$t('table.fields.otp')"
+              :placeholder="$t('table.fields.otp')"
+              :type="showOTP? 'text': 'password'"
+            >
+              <template #append>
+                <el-button @click="toggleShowOTP" type="primary" class="pr-2"
+                style="--el-button-border-color: var(--el-text-color-regular);"
+                :disabled="isLoading">
+                  <span class="sr-only">{{ showOTP? $t('form.otp.hide'): $t('form.otp.show') }}</span>
+                  <IconIIcon :icon="showOTP ? icon.valueShow : icon.valueHide" />
+                </el-button>
+              </template>
+            </el-input>
+          </el-form-item>
 
           <IconILoading v-if="isLoading"> </IconILoading>
           <el-button
@@ -90,6 +108,8 @@ const icon = useIcons()
 
 const form = ref({ username: '', password: '' })
 const showPassword = ref(false)
+const showOTP = ref(false)
+const totp = ref('')
 
 const opsiconfigserver = ref('');
 
@@ -110,13 +130,21 @@ function toggleShowPassword () {
   showPassword.value = !showPassword.value
 }
 
+function toggleShowOTP () {
+  showOTP.value = !showOTP.value
+}
+
 const isLoading = ref(false)
 async function doLogin () {
   if (!validUsername || !validPassword) return
   isLoading.value = true
   const User = new FormData()
   User.append('username', form.value.username)
-  User.append('password', form.value.password)
+  let newPassword = form.value.password
+  if (totp.value !== null) {
+    newPassword = form.value.password + totp.value
+  }
+  User.append('password', newPassword)
 
   const { data, error } = await useApiPOST('/auth/login', User)
   if (error) {
