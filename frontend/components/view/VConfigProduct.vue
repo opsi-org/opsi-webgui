@@ -3,9 +3,8 @@
   <h6>Id: {{ props.id }}</h6>
   <h7>Version: {{ getVersion(fetchedData.properties, fetchedData.properties.productVersions || fetchedData.dependencies.productVersions) }}</h7> <br />
   <!-- TODO: render description and advice as markdown -->
-  <b>Description: {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}</b> <br />
-  <b>Advice: {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }}</b> <br />
-
+  <b>Description:</b><pre><Markdown> {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }} </Markdown></pre>
+  <b>Advice:</b><pre><Markdown> {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }} </Markdown></pre>
 
   <el-alert v-if="selectionClients.length <= 0" :title="$t('message.warning.noClientsSelectedShowDepot')" type="warning" />
   <el-alert v-if="Object.values(fetchedData.properties.productVersions).filter(n => n).length !== selectionDepots.length" :title="$t('message.warning.notOnEachDepot', {count:Object.values(fetchedData.properties.productVersions).filter(n => n).length, countall:selectionDepots.length})" type="warning" />
