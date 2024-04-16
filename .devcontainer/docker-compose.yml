@@ -3,10 +3,10 @@ version: '3.8'
 include:
   - path: ./opsi-docker/opsi-server/docker-compose-env.yml
     env_file:
-      - .devcontainer/opsi-docker/opsi-server/opsi-server.env
-      - .devcontainer/.env
-      # - opsi-docker/opsi-server/opsi-server.env
-      # - .env
+      # - .devcontainer/opsi-docker/opsi-server/opsi-server.env
+      # - .devcontainer/.env
+      - opsi-docker/opsi-server/opsi-server.env
+      - .env
 
 services:
   opsiweb_dev:

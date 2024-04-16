@@ -19,7 +19,7 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"dbaeumer.vscode-eslint",
+				// "dbaeumer.vscode-eslint",
 				"gruntfuggly.todo-tree",
 				"fooxly.workspace",
 				"esbenp.prettier-vscode",
