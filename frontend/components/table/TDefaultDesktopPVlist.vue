@@ -17,6 +17,7 @@
           />
         </div>
       </div>
+        <!-- <PContextMenu ref="cmmenu" :model="cmmenuItems" @hide="currentSelectedRow.value = null" /> -->
         <PVirtualScroller
           :items="dataModel"
           :itemSize="50"
@@ -36,7 +37,8 @@
                           'cursor-pointer': colChild.sortable,
                         }"
                         @click="(colChild.sortable) ? onSort({sortField: colChild.key, sortDescOld: props.tableData.sortDesc}) : undefined"
-                      >
+                        >
+                        <!-- @contextmenu="rowEventHandlers.onContextmenu()" -->
                         <el-badge v-if="colChild.headerCellRenderer" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
                           <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
                         </el-badge>
@@ -74,7 +76,7 @@
                 :class="{ 'h-[50px]': true }"
                   @click="rowEventHandlers.onClick(item)"
                   @dblclick="rowEventHandlers.onDblclick(item)"
-                  @contextmenu="rowEventHandlers.onContextmenu(item)"
+                  @contextmenu="rowEventHandlers.onContextmenu({rowData: item, event: $event})"
                   >
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
 
@@ -361,6 +363,11 @@
         </div>
       </PDataTable> -->
     </div>
+
+    <LazyContextmenuCMTable ref="menu"
+      :table-data="props.tableData"
+      :item="currentSelectedRow"
+      :row-id="props.rowId" :type="props.id" @refetch="$emit('fetch')"/>
   </div>
 </template>
 
@@ -372,7 +379,7 @@ import type { SortState } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { TRowData } from '~/types/Datatypes'
 import type { ITableData } from '~/types/ttable'
-
+import { useMouse } from '@vueuse/core'
 // import Column from 'primevue/column'
 // import ColumnGroup from 'primevue/columngroup'   // optional
 // import Row from 'primevue/row'                   // optional
@@ -429,6 +436,16 @@ const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
 
 const lastScrollDirection = ref<'next'|'prev'|''>('')
 
+// const cmmenu = ref()
+// const cmmenuItems = ref([
+//   { label: 'onDemand', icon: 'pi pi-fw pi-pencil', command: () => { console.log('Edit') } },
+//   { label: 'notify', icon: 'pi pi-fw pi-trash', command: () => { console.log('Delete') } },
+//   { label: 'reboot', icon: 'pi pi-fw pi-refresh', command: () => { console.log('Refresh') } },
+//   { label: 'dca', icon: 'pi pi-fw pi-trash', command: () => { console.log('Delete') } },
+//   { label: 'rename', icon: 'pi pi-fw pi-trash', command: () => { console.log('Delete') } },
+//   { label: 'remove', icon: 'pi pi-fw pi-trash', command: () => { console.log('Delete') } },
+// ])
+
 // rowEventHandlers.onClick
 const rowEventHandlers: any = {
   onClick: (params: any) => {
@@ -466,9 +483,18 @@ const rowEventHandlers: any = {
     // const rowData:TRowData  = params.rowData
   },
   onContextmenu: (params: RowEventHandlerParams) => {
+    // const { x, y, sourceType } = useMouse()
+
+    // console.log("params: ", params)
+    // console.log("x: ", x.value, "y: ", y.value)
+    // console.log(cmmenu.value.$style)
+    // cmmenu.value.$style.css = `top: ${y.value}px !important; left: ${x.value}px !important;`
     const rowData:TRowData  = params.rowData
     currentSelectedRow.value = rowData
+
     menu.value.show(params.event)
+    // menu.value.show()
+    // cmmenu.value.show(params)
   },
 }
 

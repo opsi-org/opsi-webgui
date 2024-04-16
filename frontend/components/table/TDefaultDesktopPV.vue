@@ -14,7 +14,9 @@
       <!-- <pre class="max-h-56">{{ visibleColumns }}</pre> -->
       <!-- class="bg-green-500"
       tableClass="bg-transparent" -->
-      <IconILoading v-if="dataModel.length <= 0" />
+      <IconILoading v-if="dataModel.length <= 0" />">
+      <!-- <ContextMenu ref="cmmenu" :model="cmmenuItems" @hide="currentSelectedRow.value = null" /> -->
+
       <PDataTable
         lazy
         v-if="dataModel.length > 0"
@@ -43,6 +45,7 @@
         @sort="onSort($event)"
         @row-click="rowEventHandlers.onClick"
         >
+        <!-- @row-contextmenu="rowEventHandlers.onContextmenu" -->
         <!-- :virtual-scroller-options="{ itemSize: 46, delay: 0, showLoader: true, numToleratedItems: 10 }" -->
         <!-- :virtual-scroller-options="{ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 1000, showLoader: false, loading: lazyLoading, numToleratedItems: perPage / 2 }" -->
         <!-- :virtualScrollerOptions="virtualScrollerOptions" -->
@@ -374,6 +377,7 @@ const rowEventHandlers: any = {
     const rowData:TRowData  = params.rowData
     currentSelectedRow.value = rowData
     menu.value.show(params.event)
+    // cmmenu.value.show(params.event)
   },
 }
 

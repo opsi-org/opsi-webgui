@@ -1,5 +1,5 @@
 <template>
-  <ContextMenu ref="cmmenu" :model="items" class="p-contextmenu">
+  <PContextMenu ref="cmmenu" :model="items" class="p-contextmenu">
     <template #item="{ item, hasSubmenu }">
       <div class="inline" >
         <IconIIcon v-if="item.icon" :icon="item.icon" class="inline ml-2 mr-4" />
@@ -9,15 +9,15 @@
         </span>
       </div>
     </template>
-  </ContextMenu>
+  </PContextMenu>
   <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[keyWrapper]"/>
 </template>
 
 <script setup lang="ts">
 import { useIcons } from '../../composables/mixins/useIcons';
-import ContextMenu from 'primevue/contextmenu';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import type { TRowData } from '~/types/Datatypes'
+import type { ITableData } from '~/types/ttable';
 
 const navigation = useNavigate()
 const icons = useIcons()
@@ -29,7 +29,8 @@ const emit = defineEmits(['refetch'])
 const props = defineProps({
   item: { type: Object as PropType<TRowData>, default: {} },
   rowId: { type: String, default: 'ident' },
-  type: { type: String, default: 'servers' }
+  type: { type: String, default: 'servers' },
+  tableData: { type: Object as PropType<ITableData>, required: true },
 })
 const cmmenu = ref()
 const showModal = ref(false)
@@ -53,8 +54,11 @@ const items = ref([
       separator: true
   },
 
-  { id: 'table_sort', label: $t('button.sort.tablecolumns'), icon: icons.sort },
-  { id: 'table_showcol', label: $t('table.showCol'), icon: icons.columns },
+  { id: 'table_sort', label: $t('button.sort.tablecolumns'), icon: icons.sort, items:[
+  ]},
+  { id: 'table_showcol', label: $t('table.showCol'), icon: icons.columns, items:[
+  ]},
+
   { id: 'page_reload', label: $t('button.reload'), icon: icons.refresh, command: () => emit('refetch')},
 ])
 const keyWrapper = ref(props.rowId)
@@ -68,6 +72,7 @@ function show(e: Event) {
   if (e === undefined)
     throw new Error("event is undefined")
   cmmenu.value.show(e)
+  // cmmenu.value.show()
 }
 function hide() {
   // props.item = undefined
