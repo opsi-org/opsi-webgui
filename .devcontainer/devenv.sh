@@ -1,5 +1,5 @@
 #!/bin/sh
-ENVFILE=.env
+ENVFILE=.devcontainer/.env
 
 echo "################# env for webgui" > $ENVFILE
 if [ -z ${USER+x} ]; then
@@ -34,3 +34,7 @@ echo OPSILICSRV_URL=https://opsi-license-server.uib.gmbh/api/v1/licenses/test?us
 
 # echo "token: $OPSILICSRV_TOKEN"
 echo "OPSILICSRV_TOKEN=$OPSILICSRV_TOKEN"  >> $ENVFILE
+
+echo "MYSQL_DATABASE=opsi" >> $ENVFILE
+echo "MYSQL_USER=opsi" >> $ENVFILE
+echo "MYSQL_PASSWORD=opsi" >> $ENVFILE
