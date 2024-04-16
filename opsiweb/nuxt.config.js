@@ -58,7 +58,7 @@ export default {
     ],
     noscript: [{ innerHTML: 'opsi-webgui requires JavaScript. Please enable it in your browser.' }],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }
     ]
   },
   ignoreOptions: [],
