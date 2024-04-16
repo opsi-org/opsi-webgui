@@ -15,7 +15,9 @@
     <b-col
       class="text-sm-left text-small valcol"
       :class="{'mobile-leftspace': newRowForValueWrapper,
-               'mt-1': (formclass.includes('collapsable'))}"
+               'mt-1': (formclass.includes('collapsable')),
+               [classvalue]: true
+               }"
       :sm="variant === 'longlabel' || $mq=='mobile' || variant==='longvalue' ? '' : 3"
     >
       <slot name="value" />
@@ -49,6 +51,9 @@ export default class GFormItem extends Vue {
   @Prop({ }) valuedetails?: string
   @Prop({ default: undefined }) newRowForValue?: boolean
   @Prop({ default: 'longlabel' }) variant?: string // shortlabel
+  @Prop({ default: ''}) classvalue?: string
+  @Prop({ default: '' }) stylevalue?: string // shortlabel
+
   @Prop({ default: 'mb-2 container' }) formclass?: any
 
   get newRowForValueWrapper () {
