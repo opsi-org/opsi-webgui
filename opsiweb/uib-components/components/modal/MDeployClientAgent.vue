@@ -48,10 +48,8 @@
       <GridGFormItem :label="$t('form.password')" variant="longlabel" labelclass="password" classvalue="d-inline-flex">
         <template #value>
           <b-form-input id="password" v-model="form.password" size="sm" required :type="showPassword? 'text': 'password'"/>
-        <!-- </template>
-        <template #valuemore> -->
           <b-button variant="primary" :pressed.sync="showPassword" size="sm" class="text-light" >
-            <span class="sr-only">{{ showPassword? $t('label.hide', {item: 'Password'}) : $t('label.show', {item: 'Password'}) }}</span>
+            <span class="sr-only">{{ showPassword? $t('label.hide', { item: $t('form.password') }) : $t('label.show', { item: $t('form.password') }) }}</span>
             <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
           </b-button>
         </template>
@@ -99,7 +97,6 @@ export default class MDeployClientAgent extends Vue {
   form: FormClientAgent = { clients: [this.clientId], username: '', password: '', type: 'windows' }
   clientagenttypes: Array<string> = ['windows', 'linux', 'mac']
   showPassword: boolean = false
-
 
   @config.Getter public config!: IObjectString2Boolean
 

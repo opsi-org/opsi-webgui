@@ -3,10 +3,12 @@
     <b-col
       :sm="newRowForValueWrapper ? undefined : (variant === 'longlabel' ? 5 : (variant === 'longvalue' ? 3 : 2))"
       class="d-inline pl-4 text-sm-left"
-      :class="{ [labelclass]: true,
-                'firstcol': !newRowForValueWrapper,
-                'w-100': newRowForValueWrapper,
-                'text-small': !newRowForValueWrapper }"
+      :class="{
+        [labelclass]: true,
+        'firstcol': !newRowForValueWrapper,
+        'w-100': newRowForValueWrapper,
+        'text-small': !newRowForValueWrapper
+      }"
     >
       <slot name="label" />
       {{ label }}
@@ -14,10 +16,11 @@
     <div v-if="newRowForValueWrapper" class="w-100" />
     <b-col
       class="text-sm-left text-small valcol"
-      :class="{'mobile-leftspace': newRowForValueWrapper,
-               'mt-1': (formclass.includes('collapsable')),
-               [classvalue]: true
-               }"
+      :class="{
+        'mobile-leftspace': newRowForValueWrapper,
+        'mt-1': (formclass.includes('collapsable')),
+        [classvalue]: true
+      }"
       :sm="variant === 'longlabel' || $mq=='mobile' || variant==='longvalue' ? '' : 3"
     >
       <slot name="value" />
@@ -27,8 +30,10 @@
     <b-col
       v-if="valueMore"
       class="text-sm-left text-small morevalcol"
-      :class="{'mobile-leftspace': newRowForValueWrapper,
-               'mt-1': (formclass.includes('collapsable'))}"
+      :class="{
+        'mobile-leftspace': newRowForValueWrapper,
+        'mt-1': (formclass.includes('collapsable'))
+      }"
     >
     <!-- :sm="$mq=='mobile' ? '' : 3" -->
       <slot name="valueMore" />
@@ -51,7 +56,7 @@ export default class GFormItem extends Vue {
   @Prop({ }) valuedetails?: string
   @Prop({ default: undefined }) newRowForValue?: boolean
   @Prop({ default: 'longlabel' }) variant?: string // shortlabel
-  @Prop({ default: ''}) classvalue?: string
+  @Prop({ default: '' }) classvalue?: string
   @Prop({ default: '' }) stylevalue?: string // shortlabel
 
   @Prop({ default: 'mb-2 container' }) formclass?: any
