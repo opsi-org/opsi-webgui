@@ -1,83 +1,77 @@
-{
-  "git": {
-    "hooks": {
-      "pre-push": "exit 0\ncd /workspace/opsiweb/\nfile=\".tmp_prepush_result_changed_files.log\"\necho \"> Test Changed files\"\nbash ./scripts/devhelper.sh all-changed .test.component.js test:all:components $file || exit_code=$?\necho \"====================================================== Check test files\"\nbash ./scripts/playwright_coverage_by_files.sh $file\n# rm $file\necho \"======================================================\"\necho \"\"\ncd ..\necho \"exitcode $exit_code\"\nexit $exit_code\n"
-    }
-  },
-  "package": {
-    "architecture": "all",
-    "depends": [
-      "opsiconfd (>= 4.3.11.3)"
-    ],
-    "name": "opsi-webgui",
-    "postinst_script": [
-      "echo \"OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'\"",
-      "exit 0"
-    ],
-    "source_script": "mkdir -p \"${DST}/rootfs/var/lib/opsiconfd/addons\"\ncp -a \"${SRC}/backend/addon/webgui\" \"${DST}/rootfs/var/lib/opsiconfd/addons/webgui\"\nmkdir -p \"${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data\"\nls -la \"${SRC}/opsiweb/dist/\"\ncp -a \"${SRC}\"/opsiweb/dist/* \"${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app\"\n",
-    "type": "binary"
-  },
-  "project": {
-    "allow_tag_delete": false,
-    "description": "opsi webgui",
-    "homepage": "http://www.opsi.org",
-    "licenses": [
-      {
-        "license": "AGPL-3.0"
-      }
-    ],
-    "maintainer": "uib GmbH <info@uib.de>",
-    "name": "opsi-webgui",
-    "version": "4.3.30",
-    "version_files": {
-      "opsi-dev-tool.yml": "pull-binaries[0].version",
-      "opsiweb/package.json": "$.version"
-    }
-  },
-  "pull-binaries": [
-    {
-      "architecture": "x64",
-      "branch": "development",
-      "destination": ".",
-      "extract": true,
-      "name": "opsi-webgui",
-      "os": "linux",
-      "post-script": [
-        "WEBGUI_VERSION=$(grep $FILE -A 20 -e project | grep -m 1 \"version\" )",
-        "echo \"webgui-version row $WEBGUI_VERSION\"",
-        "WEBGUI_VERSION=$(echo $WEBGUI_VERSION | awk '{print $2}')",
-        "echo \"webgui-version row-value $WEBGUI_VERSION\"",
-        "WEBGUI_VERSION=$(echo $WEBGUI_VERSION | sed -e s/\"//g | sed -e s/,//g)",
-        "zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui",
-        "echo \"Did this work ? If so, remove row exit1\"",
-        "ls -lah",
-        "exit 1"
-      ],
-      "server-type": "binaryindex",
-      "server-url": "http://binaryindex.uib.gmbh",
-      "version": "4.3.30"
-    }
-  ],
-  "transifex": {
-    "download_translations": [
-      {
-        "install_dir": "opsiweb/uib-components/locale",
-        "languages": [
-          "de",
-          "fr"
-        ],
-        "organization": "opsi-org",
-        "project": "opsiorg",
-        "resource_name": "opsi-webgui.json"
-      }
-    ],
-    "upload_resources": [
-      {
-        "organization": "opsi-org",
-        "project": "opsiorg",
-        "resource_file": "opsiweb/uib-components/locale/opsi-webgui_en.json",
-        "resource_name": "opsi-webgui.json"
-      }
-    ]
-  }
-}
+git:
+  hooks:
+    pre-push: |
+      exit 0
+      cd /workspace/opsiweb/
+      file=".tmp_prepush_result_changed_files.log"
+      echo "> Test Changed files"
+      bash ./scripts/devhelper.sh all-changed .test.component.js test:all:components $file || exit_code=$?
+      echo "====================================================== Check test files"
+      bash ./scripts/playwright_coverage_by_files.sh $file
+      # rm $file
+      echo "======================================================"
+      echo ""
+      cd ..
+      echo "exitcode $exit_code"
+      exit $exit_code
+package:
+  architecture: all
+  depends:
+    - opsiconfd (>= 4.3.11.3)
+  name: opsi-webgui
+  postinst_script:
+    - echo "OPSI webgui folder '/var/lib/opsiconfd/addons/webgui'"
+    - exit 0
+  source_script: |
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons"
+    cp -a "${SRC}/backend/addon/webgui" "${DST}/rootfs/var/lib/opsiconfd/addons/webgui"
+    mkdir -p "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data"
+    ls -la "${SRC}/opsiweb/dist/"
+    cp -a "${SRC}"/opsiweb/dist/* "${DST}/rootfs/var/lib/opsiconfd/addons/webgui/data/app"
+  type: binary
+project:
+  allow_tag_delete: false
+  description: opsi webgui
+  homepage: http://www.opsi.org
+  licenses:
+    - license: AGPL-3.0
+  maintainer: uib GmbH <info@uib.de>
+  name: opsi-webgui
+  version: "4.3.30"
+  version_files:
+    opsi-dev-tool.yml: pull-binaries[0].version
+    opsiweb/package.json: "$.version"
+pull-binaries:
+  - architecture: x64
+    branch: development
+    destination: "."
+    extract: true
+    name: opsi-webgui
+    os: linux
+    post-script:
+      - WEBGUI_VERSION=$(grep $FILE -A 20 -e project | grep -m 1 "version" )
+      - echo "webgui-version row $WEBGUI_VERSION"
+      - WEBGUI_VERSION=$(echo $WEBGUI_VERSION | awk '{print $2}')
+      - echo "webgui-version row-value $WEBGUI_VERSION"
+      - WEBGUI_VERSION=$(echo $WEBGUI_VERSION | sed -e s/"//g | sed -e s/,//g)
+      - zip -r opsi-webgui_${WEBGUI_VERSION}.zip webgui
+      - echo "Did this work ? If so, remove row exit1"
+      - ls -lah
+      - exit 1
+    server-type: binaryindex
+    server-url: http://binaryindex.uib.gmbh
+    version: "4.3.30"
+transifex:
+  download_translations:
+    - install_dir: opsiweb/uib-components/locale
+      languages:
+        - de
+        - fr
+      organization: opsi-org
+      project: opsiorg
+      resource_name: opsi-webgui.json
+  upload_resources:
+    - organization: opsi-org
+      project: opsiorg
+      resource_file: opsiweb/uib-components/locale/opsi-webgui_en.json
+      resource_name: opsi-webgui.json
