@@ -6,10 +6,11 @@
     <template #dropdown>
       <el-dropdown-menu>
         <div v-for="action in clientActions" :key="action" :data-testid="`client-action-${action}`">
-          <el-popover trigger="click" placement="auto" :width="mq.isMobile.value ? '100%': '360px'">
+          <el-popover trigger="click" :width="mq.isMobile.value ? '100%': '360px'" :ref="clientId+action">
             <template #reference>
               <el-button size="small" class="w-100"><IconIIcon :icon="icon[action]" class="mr-1" /> {{ $t('label.'+action) }} </el-button>
             </template>
+            <el-text tag="b">{{ $t('label.'+action) }}</el-text> - <el-text tag="i">{{ clientId }}</el-text>
             <el-form label-position="top" class="mt-3">
               <el-button
                 class="float-right"
