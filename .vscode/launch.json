@@ -48,7 +48,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true
+			"auto": false
 		},
 		// { // Webgui-Storybook
 		// 	"name": "webgui-storybook",
@@ -79,7 +79,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"auto": true,
+			"auto": false,
             "cwd": "${workspaceFolder}/frontend"
 		},
 		// {

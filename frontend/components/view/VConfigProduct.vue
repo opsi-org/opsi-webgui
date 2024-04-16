@@ -3,7 +3,7 @@
   <h6>Id: {{ props.id }}</h6>
   <h7>Version: {{ getVersion(fetchedData.properties, fetchedData.properties.productVersions || fetchedData.dependencies.productVersions) }}</h7> <br />
   <!-- TODO: render description and advice as markdown -->
-  <b>{{ $t('table.fields.description'): }}</b><pre><Markdown> {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }} </Markdown></pre>
+  <b>{{ $t('table.fields.description')}}:</b><pre><Markdown> {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }} </Markdown></pre>
   <b>{{ $t('table.fields.advice') }}:</b><pre><Markdown> {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }} </Markdown></pre>
 
   <el-alert v-if="selectionClients.length <= 0" :title="$t('message.warning.noClientsSelectedShowDepot')" type="warning" />
