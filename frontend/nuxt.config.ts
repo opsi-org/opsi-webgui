@@ -5,17 +5,18 @@
 // import { defineNuxtConfig } from 'nuxt'
 import pkg from './package.json'
 
-import Tailwind from "primevue/passthrough/tailwind";
+// import Tailwind from "primevue/passthrough/tailwind";
 
 // export const hash = Math.floor(Math.random() * 90000) + 10000;
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { 
-    enabled: true,
-    timeline: {
-      enabled: true,
-    },
+  devtools: {
+    enabled: false,
+    // enabled: true,
+    // timeline: {
+    //   enabled: true,
+    // },
  },
   webpack: {
     loaders: {
@@ -154,7 +155,7 @@ export default defineNuxtConfig({
   //   // bootstrapCSS: false, // here you can disable automatic bootstrapCSS in case you are loading it yourself using sass
   //   // bootstrapVueCSS: false, // CSS that is specific to bootstrapVue components can also be disabled. That way you won't load css for modules that you don't use
   //   componentPlugins: ['BFormFile', 'BRow', 'BFormInput', 'BFormCheckbox', 'BButton', 'BInvalidFeedback', 'BIcon', 'BModal', 'BTooltip', 'BDropdown', 'BDropdownItem', 'BDropdownDivider', 'BBadge','BInputGroup', 'BFormInput', 'BTabs', 'BTab'],
-  //   directivePlugins: [] 
+  //   directivePlugins: []
   // },
   elementPlus: {
     // useSource: true,
@@ -173,7 +174,7 @@ export default defineNuxtConfig({
       // unstyled: true,
       // pt: Tailwind,
       pt: {
-        ...Tailwind,
+        // ...Tailwind,
 
         // datatable: {
         //   header: {class: 'bg-red-500'},

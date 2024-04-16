@@ -68,9 +68,9 @@ const gettext = computed<string>(() => {
 const gettooltipobj = computed(() => {
   return mapValues2Objects(props.values, props.objects, props.objectsorigin, defaults[props.type])
 })
-const gettooltiptext = computed(() => {
-  return JSON.stringify(gettooltipobj.value)
-})
+// const gettooltiptext = computed(() => {
+//   return JSON.stringify(gettooltipobj.value)
+// })
 
 function _getVariantInTooltip(v: string): ElTypeVariant {
   if (v === 'failed') {
@@ -87,7 +87,7 @@ function _getVariantInTooltip(v: string): ElTypeVariant {
 const TooltipCell = () => {
   const items: any[] = []
   for (const [key, value] of Object.entries(gettooltipobj.value)) {
-    const item = (<><tr>
+    items.push((<><tr>
       <td>{key}</td>
       <td>
         <el-tag type={_getVariantInTooltip(value)} effect="dark">
@@ -95,8 +95,7 @@ const TooltipCell = () => {
         </el-tag>
         {/* ({v}) */}
       </td>
-    </tr></>)
-    items.push(item)
+    </tr></>))
   }
   return (
         // <li v-for={{i in selectedItems}}>
