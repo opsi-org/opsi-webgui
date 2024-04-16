@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div
     data-testid="BTNEvent"
     :class="{'incontextmenu': incontextmenu }"
@@ -213,4 +213,4 @@ export default class BTNEvent extends Vue {
 .smaller-text-size > .eventlabel{
   font-size: 85% !important;
 }
-</style>
+</style> -->

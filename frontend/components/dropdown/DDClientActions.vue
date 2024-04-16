@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div
     data-testid="DDClientActions"
     class="DDClientActions"
@@ -93,4 +93,4 @@ export default class DDClientActions extends Vue {
   min-height: calc(var(--min-height-button) - 5px) !important;
   width: 100%;
 }
-</style>
+</style> -->

@@ -33,7 +33,7 @@
   - [x] Depots
   - [-] WIP Depots-config
   - [-] Clients
-  - [ ] Clients Clone
+  - [-] Clients Clone
   - [-] WIP Clients Config
   - [-] WIP Clients Creation
   - [x] Clients Log
