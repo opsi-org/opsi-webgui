@@ -245,6 +245,7 @@
 
 <script setup lang="tsx">
 import BTNRowLink from '@/components/button/BTNRowLink.vue'
+import DDClientActions from '@/components/dropdown/DDClientActions.vue';
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useTableHelper } from '~/composables/mixins/useTableHelper';
 import { useIcons } from '~/composables/mixins/useIcons';
@@ -514,6 +515,7 @@ const columns = ref<ITableHeaderRow>({
             icon={icons.client}
             onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'clone')}
           />
+          <DDClientActions clientId={rowData.clientId} />
           </>
       )},
     }
