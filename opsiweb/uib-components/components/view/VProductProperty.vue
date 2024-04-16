@@ -1,9 +1,11 @@
 <template>
   <div data-testid="VProductProperty">
     <BarBPageHeader :title="$t('title.config') + '' + t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
-    <div class="mb-3 text-small">
+
+    <vue-markdown>
       {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }}
-    </div>
+    </vue-markdown>
+
     <b-tabs v-if="id" v-model="activeTab" small lazy>
       <small v-if="!$fetchState.pending && ($fetchState.error || activeTabSet < -1)">
         <p>

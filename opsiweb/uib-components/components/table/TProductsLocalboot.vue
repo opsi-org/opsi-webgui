@@ -92,6 +92,9 @@
       <template #cell(modificationTime)="row">
         <small>{{ date(row.item.modificationTime) }}</small>
       </template>
+      <template #cell(advice)="row">
+        <small> <vue-markdown>{{ row.item.advice }}</vue-markdown> </small>
+      </template>
       <template #cell(version)="row">
         <TableCellTCProductVersionCell
           v-if="Object.keys(fetchedDataClients2Depots).length == selectionClients.length"
