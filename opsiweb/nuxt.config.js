@@ -69,7 +69,8 @@ export default {
     // '~/plugins/axios',
     { src: '~/uib-components/plugins/axios' },
     { src: '~/uib-components/plugins/vuex-persist', ssr: false },
-    { src: '~/uib-components/plugins/vue-treeselect.js', mode: 'client' }
+    { src: '~/uib-components/plugins/vue-treeselect.js', mode: 'client' },
+    { src: '~/uib-components/plugins/vue-markdown.js' }
     // '~/plugins/vue-i18n.js'
   ],
 

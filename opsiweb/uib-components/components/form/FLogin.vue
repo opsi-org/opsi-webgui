@@ -55,6 +55,21 @@
               <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
             </b-button>
           </b-input-group>
+          <b-input-group>
+            <b-form-input
+              id="totp"
+              v-model="totp"
+              :aria-label="$t('table.fields.oneTimePassword')"
+              :placeholder="$t('table.fields.oneTimePassword')"
+              :type="showOTP? 'text': 'password'"
+              size="sm"
+              class="mb-2 totp"
+            />
+            <b-button variant="primary" :pressed.sync="showOTP" size="sm" class="mb-2 text-light">
+              <span class="sr-only">{{ showOTP? $t('label.hide', {item: 'OTP'}) : $t('label.show', {item: 'OTP'}) }}</span>
+              <IconIIcon :icon="showOTP ? icon.valueShow : icon.valueHide" />
+            </b-button>
+          </b-input-group>
           <b-button
             data-testid="btn-login"
             variant="primary"
@@ -98,6 +113,8 @@ export default class FLogin extends Vue {
   form: FormUser = { username: '', password: '' }
   isLoading: boolean = false
   showPassword : boolean = false
+  totp: number | null = null
+  showOTP: boolean = false
 
   @cache.Getter public opsiconfigserver!: string
   @cache.Mutation public setOpsiconfigserver!: (s: string) => void
@@ -133,7 +150,11 @@ export default class FLogin extends Vue {
 
     const User = new FormData()
     User.append('username', this.form.username)
-    User.append('password', this.form.password)
+    let newPassword = this.form.password
+    if (this.totp !== null) {
+      newPassword = this.form.password + this.totp
+    }
+    User.append('password', newPassword)
     this.$axios.post('/api/auth/login', User)
       .then((response) => {
         if (response.data.result === 'Login success') {

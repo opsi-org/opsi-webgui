@@ -24,10 +24,12 @@ rm -rf /data/opsiconfd/addons/webgui
 # ln -s $OPSI_ADDON_DIRS /data/opsiconfd/addons
 cp -r /workspace/backend/addon/webgui /data/opsiconfd/addons/.
 
+<<<<<<< HEAD
 #https://stackoverflow.com/questions/49544215/it-is-possible-to-run-a-command-inside-a-docker-container-from-another-container
-alias opsiconfdrestart="docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload"
-echo "alias opsiconfdrestart='docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload'" > ~/.bash_aliases
-echo "alias opsiconfdrestart='docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload'" >> ~/.zshrc
+# alias opsiconfdrestart="docker exec -u root opsi-webgui-main_devcontainer-opsi-server-1 supervisorctl reload"
+alias opsiconfdrestart="docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload"  # default repo name
+# echo "alias opsiconfdrestart='docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload'" > ~/.bash_aliases
+# echo "alias opsiconfdrestart='docker exec -u root opsi-webgui_devcontainer-opsi-server-1 supervisorctl reload'" >> ~/.zshrc
 
 zsh
 
