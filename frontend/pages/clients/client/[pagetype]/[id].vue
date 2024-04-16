@@ -3,6 +3,7 @@
   <el-button class="float-right" @click="useRouter().push('/clients/')">X</el-button>
   <ViewVConfig v-if="pagetype === 'config'"  :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
   <ViewVClientsLog v-else-if="pagetype === 'logs'" :type="type" :id="id" :is-child="id !== undefined && id !== ''"/>
+  <FormFCloneClient v-else-if="pagetype === 'clone'" :id="id" :is-child="id !== undefined && id !== ''" />
   <div v-else-if="pagetype === 'clone'"> CLONE (split view)</div>
   <div v-else> Page not found! </div>
 </template>

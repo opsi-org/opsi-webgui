@@ -1,79 +1,82 @@
 <template>
-  <!-- <div data-testid="VClientClone" class="VClientClone">
-    <OverlayOLoading :is-loading="isLoading" />
-    <BarBPageHeader v-if="asChild" :title="$t('title.cloneclient') +''+ t_fixed('keep-english.title.delimiter')" :subtitle="id" :closeroute="closeroute" />
-    <GridGFormItem v-if="!asChild" :label="$t('table.fields.sourceclient')" variant="longvalue">
-      <template #value>
-        <slot name="IDSelection" />
-      </template>
-    </GridGFormItem>
-    <span v-for="options,category,index in cloneclient" :key="index">
-      <b-row class="text-capitalize text-small mt-3 mb-2 pl-1">
+  <el-form :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'" v-loading="isLoading">
+    <el-form-item v-if="!isChild" :label="$t('table.fields.sourceClient')">
+      <SelectSHosts type="clients" />
+    </el-form-item>
+    <div v-for="options,category,index in cloneClient" :key="index">
+      <el-row>
         <b>{{ $t('title.' + category) }} </b>
-      </b-row>
-      <span v-for="val,label,i in options" :key="i">
-        <GridGFormItem :label="$t('table.fields.' + label)" labelclass="text-capitalize" variant="longvalue">
-          <template #value>
-            <div v-if="label.toString() === 'hostId'" class="d-flex flex-nowrap">
-              <b-form-input
-                id="clientname"
-                v-model="clientName"
-                :aria-label="$t('table.name.client')"
-                size="sm"
-                type="text"
-                trim
-                :state="checkValid"
-                required
-              />
-              <b-form-invalid-feedback :state="checkValid" class="w-25">
-                <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
-              </b-form-invalid-feedback>
-              <b-form-input
-                id="domainName"
-                v-model="domainName"
-                class="domainName"
-                :aria-label="$t('table.name.domain')"
-                size="sm"
-                type="text"
-                trim
-                required
-              />
-            </div>
-            <b-form-checkbox
-              v-else-if="typeof val == 'boolean'"
-              :id="label"
-              v-model="cloneclient[category][label.toString()]"
-              size="sm"
-              :aria-label="$t('table.fields.' + label)"
-            />
-            <b-form-input
-              v-else
-              :id="label"
-              v-model="cloneclient[category][label.toString()]"
-              size="sm"
-              :aria-label="$t('table.fields.' + label)"
-              type="text"
-            />
-          </template>
-        </GridGFormItem>
-      </span>
-    </span>
-    <GridGFormItem variant="longvalue">
-      <template #value>
-        <div class="float-right mt-2">
-          <b-button id="resetButton" class="resetButton" size="sm" variant="primary" @click="resetForm()">
-            <IconIIcon :icon="icon.reset" /> {{ $t('button.reset') }}
-          </b-button>
-          <b-button id="cloneButton" class="cloneButton" size="sm" variant="success" @click="cloneClient">
-            <IconIIcon :icon="icon.client" /> {{ $t('title.clone') }}
-          </b-button>
+      </el-row>
+      <div v-for="(value, label, index) in options">
+        <el-form-item :label="$t('table.fields.' + label)">
+          <el-input v-if="label === 'hostId'">
+            <template #append>
+              <el-input class="border-none" />
+            </template>
+          </el-input>
+          <el-checkbox v-else-if="typeof value == 'boolean'" v-model="cloneClient[category][label]" />
+          <el-input v-else v-model="cloneClient[category][label]" :data-testid="label"/>
+        </el-form-item>
+      </div>
+    </div>
+    <el-form-item>
+      <el-button> {{ $t('button.reset') }}</el-button>
+      <el-button data-testid="cloneButton" type="primary">{{ $t('title.clone') }}</el-button>
+    </el-form-item>
+  </el-form>
+  <!--
+        <div v-if="label.toString() === 'hostId'" class="d-flex flex-nowrap">
+          <b-form-input
+            id="clientname"
+            v-model="clientName"
+            :aria-label="$t('table.name.client')"
+            size="sm"
+            type="text"
+            trim
+            :state="checkValid"
+            required
+          />
+          <b-form-invalid-feedback :state="checkValid" class="w-25">
+            <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
+          </b-form-invalid-feedback>
+          <b-form-input
+            id="domainName"
+            v-model="domainName"
+            class="domainName"
+            :aria-label="$t('table.name.domain')"
+            size="sm"
+            type="text"
+            trim
+            required
+          />
         </div>
       </template>
-    </GridGFormItem>
-  </div> -->
+    </GridGFormItem>-->
 </template>
 
 <script setup lang="ts">
+const props = defineProps({
+  id: { type: String, default: '' },
+  type: { type: String, default: 'clients' },
+  isChild: { type: Boolean, default: false }
+})
+
+const mq = useMQ()
+const isLoading = ref(false)
+const cloneClient = ref({
+  targetclient: {
+    hostId: '',
+    ipAddress: '',
+    hardwareAddress: '',
+    systemUUID: ''
+  },
+  options: {
+    configs: false,
+    products: false,
+    productProperties: false
+  }
+})
+
 // import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../mixins/icons'
 // import { Strings } from '../../mixins/strings'

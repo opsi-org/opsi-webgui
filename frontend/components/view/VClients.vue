@@ -509,6 +509,11 @@ const columns = ref<ITableHeaderRow>({
             icon={icons.log}
             onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'logs')}
           />
+          <BTNRowLink
+            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'clone'}
+            icon={icons.client}
+            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'clone')}
+          />
           </>
       )},
     }
@@ -544,6 +549,8 @@ function changeRowLink(e:Event, cid: string, to='config') {
     navigation.toConfiguration(id, cid)
   } else if (to === 'logs') {
     navigation.toType(id, cid, 'logs')
+  } else if (to === 'clone') {
+    navigation.toType(id, cid, 'clone')
   }
 }
 // function updateTableData (v: typeof tableData.value) {
