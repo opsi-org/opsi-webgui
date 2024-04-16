@@ -1,12 +1,14 @@
 <template>
 
-  <div role="main" data-testid="FLogin">
+  <div role="main" data-testid="FLogin"
+    :class="$mq === 'mobile'? 'px-[4%]': ''"
+  >
     <h1 class="sr-only">
       {{ $t('button.login') }}
     </h1>
     <el-card
         class="text-center bg-primary mx-auto"
-        :class="mq.$mq === 'mobile'? 'w-full;' : 'w-1/2; max-w-md' "
+        :class="$mq === 'mobile'? 'w-full' : 'w-1/2; max-w-md' "
     >
       <IconIOpsiLogo :light="false" :short="false" class="mb-2" classes="w-full" />
       <div @keyup.enter="doLogin">
@@ -95,36 +97,43 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useIcons } from "../../composables/mixins/useIcons"
 import { useNotification } from "../../composables/mixins/useComponent"
 import { useConfigserver } from '@/composables/mixins/useGet'
+
+interface T_Result {
+  result: string
+}
+
 const notificationSuccess = useNotification().success
 const notificationError = useNotification().error
 
 const config = useRuntimeConfig()
-const mq = useMQ()
+const $mq = useMQ().$mq
 const icon = useIcons()
 
 const form = ref({ username: '', password: '' })
 const showPassword = ref(false)
+
+const isLoading = ref(false)
 const showOTP = ref(false)
 const totp = ref('')
-
 const opsiconfigserver = ref('');
 
 onMounted( async () => {
   const useServerGet = await useConfigserver(true)
-  opsiconfigserver.value = await useServerGet.getOpsiConfigServer()
+  const os = await useServerGet.getOpsiConfigServer()
+  opsiconfigserver.value = os || ''
 })
 
 
-const validUsername = computed({
-  get:  () => (form.username !== '') ?  null : false
-})
-const validPassword = computed({
-  get:  () => (form.password !== '') ?  null : false
-})
+const validUsername = computed<Boolean|null>(
+  () => (form.value.username !== '') ?  null : false
+)
+const validPassword = computed(
+  () => (form.value.password !== '') ?  null : false
+)
 
 function toggleShowPassword () {
   showPassword.value = !showPassword.value
@@ -134,7 +143,6 @@ function toggleShowOTP () {
   showOTP.value = !showOTP.value
 }
 
-const isLoading = ref(false)
 async function doLogin () {
   if (!validUsername || !validPassword) return
   isLoading.value = true
@@ -146,7 +154,7 @@ async function doLogin () {
   }
   User.append('password', newPassword)
 
-  const { data, error } = await useApiPOST('/auth/login', User)
+  const { data, error } = await useApiPOST<T_Result>('/auth/login', User)
   if (error) {
     notificationError(error)
     isLoading.value = false
@@ -154,7 +162,6 @@ async function doLogin () {
   }
   if (data?.value?.result == 'Login success') {
     notificationSuccess('Successfull. Redirect to clients')
-    console.log("login successful")
     storeAuth().login(form.value.username)
     storeAuth().setSession()
     if (useRoute().name === 'login') {

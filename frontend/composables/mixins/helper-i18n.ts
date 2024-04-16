@@ -9,6 +9,5 @@ export const _getI18nInComposable = () => {
     console.debug('its ok...', error)
   }
   if (_t !== undefined) t = _t
-  console.debug('use81n.  t  ', t)
   return t
 }

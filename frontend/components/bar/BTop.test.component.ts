@@ -6,7 +6,6 @@ const filename = 'BTop'
 
 test.describe('snapshot', () => {
   test(folder + '/' + filename + '', async ({ page }, testInfo) => {
-    // console.log('testInfo', testInfo)
     // const afterDataTestidFound = async (p: Page, el: any) => {
     //   await el.evaluate(() => {
     //     const version = document.querySelector('.BAuthFooter-version')

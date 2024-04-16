@@ -1,21 +1,148 @@
 <template>
   <div>
     <div class="max-w-full" :class="{small: props.small !== false}">
-      <!-- <pre class="max-h-56 ">{{ selection }}</pre> -->
-      <!-- <pre class="max-h-56 ">{{ visibleColumns.map((v: any) => v.dataKey) }}</pre> -->
-      <!-- <pre class="max-h-56 border-1 border-red-400">{{ columnValues }}</pre> -->
-      <!-- <pre class="max-h-56 border-1 border-red-400">{{ Object.values(visibleColumns).filter(x => x.fixed === undefined || x.fixed === false || x._fixed === false ) }}</pre> -->
-      <!-- <pre class="max-h-56 border-0 border-red-400 ">{{ lazyParams }}</pre> -->
-      <!-- COLUMNSValues: <pre>{{ columnValues.length }}</pre>
-      COLUMNS: <pre>{{ visibleColumns }}</pre> -->
-      <!-- <pre class="max-h-56">{{ selectionInStoreByType }}</pre> -->
-      <!-- <pre class="max-h-56">{{ Object.values(visibleColumns).map(v => v.key) }}</pre> <br />
-      <pre class="max-h-56">{{ Object.values(columnsModel).map(v => v.key) }}</pre> <br /> -->
-      <!-- <pre class="max-h-56">{{ visibleColumns }}</pre> -->
-      <!-- class="bg-green-500"
-      tableClass="bg-transparent" -->
       <IconILoading v-if="dataModel.length <= 0" />
-      <PDataTable
+      <!-- HEADER -->
+      SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }}
+      <div class="flex justify-content-between">
+        <div>
+          <h4>{{ props.id }}</h4>
+        </div>
+        <div class="flex">
+          <SelectSColumnVisibility :table-id="props.id" v-model:possibleColumns="columnsModel" />
+          <InputIFilter
+            :data="tableData"
+            :filterable-columns="Object.values(wrappedColumns)"
+            @update="($event: any) => $emit('update-input-filter', $event)"
+          />
+        </div>
+      </div>
+        <PVirtualScroller
+          :items="dataModel"
+          :itemSize="50"
+          showLoader
+          class=" min-h-192"
+        >
+          <template #content="{ items }">
+            <table class="table-auto w-full min-h-96">
+              <thead class="sticky top-0 bg-dark z-[999] !h-[50px] !max-h-[50px]">
+                <tr class="h-[50px]">
+                  <template v-for="col in (visibleColumns as any)" :key="col.key">
+                    <template v-if="col.key.startsWith('_')" >
+                      <th
+                        v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)"
+                        :class="{
+                          'max-h-[50px]': true,
+                          'cursor-pointer': colChild.sortable,
+                        }"
+                        @click="(colChild.sortable) ? onSort({sortField: colChild.key, sortDescOld: props.tableData.sortDesc}) : undefined"
+                      >
+                        <el-badge v-if="colChild.headerCellRenderer" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
+                          <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                        </el-badge>
+                        <el-badge v-else-if="colChild.icon || colChild.icons" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
+                          <el-tooltip effect="dark" :content="colChild.tooltip">
+                            <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                            <div v-else-if="colChild.icons">
+                              <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                            </div>
+                          </el-tooltip>
+                        </el-badge>
+                        <el-text v-else>{{ colChild.title || colChild.tooltip }}</el-text>
+                        <IconIIcon v-if="colChild.sortable" :icon="props.tableData.sortBy == colChild.key ? ( (props.tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
+                      </th>
+                    </template>
+                    <th v-else
+                      :class="{
+                          'max-h-[50px]': true,
+                          'cursor-pointer': col.sortable,
+                        }"
+                      @click="(col.sortable) ? onSort({sortField: col.key, sortDescOld: props.tableData.sortDesc}) : undefined"
+                    >
+                      <el-badge v-if="col.headerCellRenderer" :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
+                        <HeaderCellRenderer :colData="col" :key="col.title"/>
+                      </el-badge>
+                      <el-text v-else>{{ col.title }}</el-text>
+                      <IconIIcon v-if="col.sortable" :icon="props.tableData.sortBy == col.key ? ( (props.tableData.sortDesc) ?icons.sortDesc: icons.sort) : icons.sort_not" class="inline ml-2"/>
+                    </th>
+
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in dataModel" :key="item[props.rowId]"
+                :class="{ 'h-[50px]': true }"
+                  @click="rowEventHandlers.onClick(item)"
+                  @dblclick="rowEventHandlers.onDblclick(item)"
+                  @contextmenu="rowEventHandlers.onContextmenu(item)"
+                  >
+                  <template v-for="col in (visibleColumns as any)" :key="col.key">
+
+                    <td v-if="!renderCells"><el-text>{{ item[col.key] }}</el-text></td>
+                    <template v-else-if="col.key.startsWith('_')">
+                      <td v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)">
+                        <CellRenderer :colData="colChild" :key="colChild.key" :rowData="item"/>
+                      </td>
+                    </template>
+                    <td v-else-if="col.cellRenderer">
+                      <CellRenderer :colData="col" :key="col.key" :rowData="item"/>
+                    </td>
+                    <td v-else><el-text>{{ item[col.key] }}</el-text></td>
+
+                  </template>
+                </tr>
+              </tbody>
+            </table>
+          </template>
+
+          <template #loader="{ options }">
+
+            <table class="table-auto w-full border-1 min-h-96">
+              <thead class="sticky top-0 bg-primary">
+                <tr class="border-1 h-[50px]">
+                  <template v-for="col in (visibleColumns as any)" :key="col.key">
+                    <th v-if="!renderHeaderCell"><el-text>{{ col.title }}</el-text></th>
+                    <template v-else-if="col.key.startsWith('_')">
+                      <th v-for="colChild in Object.values(columnsModel).filter(e => e._majorKey === col.key)" class="max-h-[50px]">
+                        <el-badge v-if="colChild.headerCellRenderer" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
+                          <HeaderCellRenderer :colData="colChild" :key="colChild.title"/>
+                        </el-badge>
+                        <el-badge v-else-if="colChild.icon || colChild.icons" :type="colChild.headerCounterBadgeColor" :class="colChild.headerCounterBadgeClass" :value="colChild.headerCounterBadge" :hidden="colChild.headerCounterBadge === undefined">
+                          <el-tooltip effect="dark" :content="colChild.tooltip">
+                            <IconIIcon v-if="colChild.icon" :icon="colChild.icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                            <div v-else-if="colChild.icons">
+                              <IconIIcon v-for="icon in colChild.icons" :icon="icon" :style="'color: var(' + colChild.iconColor + ')'" />
+                            </div>
+                          </el-tooltip>
+                        </el-badge>
+                        <el-text v-else>{{ colChild.title || colChild.tooltip }}</el-text>
+                      </th>
+                    </template>
+                    <th v-else-if="col.headerCellRenderer">
+                      <el-badge :type="col.headerCounterBadgeColor" :class="col.headerCounterBadgeClass" :value="col.headerCounterBadge" :hidden="col.headerCounterBadge === undefined">
+                        <HeaderCellRenderer :colData="col" :key="col.title"/>
+                      </el-badge>
+                    </th>
+                    <th v-else>
+                      <el-text>{{ col.title }}</el-text>
+                    </th>
+
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in dataModel" :key="item[props.rowId]" :class="{ 'h-[50px]': true }" >
+                  <template v-for="col in (visibleColumns as any)" :key="col.key">
+                    <td><PSkeleton width="80%" height="1rem" /> </td>
+                  </template>
+                </tr>
+              </tbody>
+            </table>
+          </template>
+        </PVirtualScroller>
+
+
+      <!-- <PDataTable
         lazy
         v-if="dataModel.length > 0"
         ref="tableRef"
@@ -31,8 +158,6 @@
           'noHoverRow min-h-48 h-48': d && d.direction !== undefined,
           'align-bottom': d && d.direction === 'prev',
           'align-top': d && d.direction === 'next',
-          // 'noHoverRow min-h-10 h-10 hover:bg-transparent': d && d.dummy && d.direction === undefined
-          // [(!d.dummy) ? '': (!d.direction) ? '' : 'min-h-48 h-48 ' + (d.direction == 'prev' ? 'align-bottom' : ' align-top')]: true
         }}"
         :highlight-on-select="false"
         v-model:selection="selection" :metaKeySelection="false"
@@ -43,13 +168,6 @@
         @sort="onSort($event)"
         @row-click="rowEventHandlers.onClick"
         >
-        <!-- :virtual-scroller-options="{ itemSize: 46, delay: 0, showLoader: true, numToleratedItems: 10 }" -->
-        <!-- :virtual-scroller-options="{ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 1000, showLoader: false, loading: lazyLoading, numToleratedItems: perPage / 2 }" -->
-        <!-- :virtualScrollerOptions="virtualScrollerOptions" -->
-        <!-- @rowSelect="rowEventHandlers.onClick"
-        @rowUnselect="rowEventHandlers.onClick" -->
-        <!-- :virtual-scroller-options="{onScroll: onScroll}" -->
-        <!-- :onscroll="onScroll" -->
         <template #header>
           <div class="flex justify-content-between">
             <div>
@@ -58,24 +176,15 @@
             <div class="flex">
               <SelectSColumnVisibility :table-id="props.id" v-model:possibleColumns="columnsModel" />
               <InputIFilter
-                :data="tableData"
-                :filterable-columns="Object.values(wrappedColumns)"
-                @update="($event: any) => $emit('update-input-filter', $event)"
+              :data="tableData"
+
+              :filterable-columns="Object.values(wrappedColumns)"
+              @update="($event: any) => $emit('update-input-filter', $event)"
               />
             </div>
           </div>
         </template>
         <template #footer>
-          <!-- <Paginator :rows="props.tableData.perPage" :total-records="props.totalItems" :rowsPerPageOptions="[1, 5, 10, 20, 50, 100, 1000]"
-            class="bg-transparent"
-            pt:row-per-page-dropdown:id="MY-DROPDOWN-PERPAGE"
-
-            @update:first="onPage($event)"
-            @update:rows="onPerPageChange($event)"
-            >
-            <template #start="slotProps"></template>
-            <template #end></template>
-          </Paginator> -->
           <div class="flex flex-row-reverse space-x-4 space-x-reverse">
             <el-button
               size="small"
@@ -95,7 +204,6 @@
               @size-change="onPerPageChange"
               @current-change="onPage"
               />
-              <!-- :layout="(pagesSizes.length <= 1) ? 'total' : ((props.totalItems / perPage) <= 1) ? 'total, sizes' : 'total, sizes, prev, pager, next'" -->
           </div>
         </template>
         <div>
@@ -111,7 +219,6 @@
               </template>
 
               <template #header="slotProps">
-                <!-- <HeaderCellRenderer :colData="col" :key="col.title"/> -->
                 <ButtonBTNClearSelection @clearselection="clearSelection"/>
               </template>
               <template #body="scope">
@@ -136,7 +243,6 @@
                     ['!min-w-' + colChild.minWidth + ' !w-' + colChild.minWidth]: colChild.minWidth !== undefined,
                     '': colChild._fixed === TableV2FixedDir.LEFT || colChild.fixed === TableV2FixedDir.LEFT || colChild.fixed === true || colChild._fixed === true,
                     'flex flex-row-reverse': colChild._fixed === TableV2FixedDir.RIGHT || colChild.fixed === TableV2FixedDir.RIGHT,
-                    // []: Boolean(colChild._fixed) === false && Boolean(colChild.fixed) === false,
                     [(colChild.class as string)]: true,
                   }"
               >
@@ -170,10 +276,7 @@
                   <el-text>{{ slotProps.data[colChild.key] }}</el-text>
                 </template>
                 <template v-else-if="colChild.cellRenderer" #body="slotProps">
-                  <!-- CELLS OF THIS (CHILD) COLUMN -->
-                  <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && colChild.key==props.rowId"
-                  >
-                  <!-- class="min-h-24" -->
+                  <el-text v-if="slotProps.data[props.rowId] && slotProps.data.dummy && colChild.key==props.rowId">
                     {{ slotProps.data[props.rowId] }}
                   </el-text>
                   <CellRenderer v-else-if="!slotProps.data.dummy" :colData="colChild" :key="colChild.key" :rowData="slotProps.data"/>
@@ -181,20 +284,13 @@
               </PColumn>
               </div>
             </div>
-            <!-- <TableTDefaultDesktopColumn v-else
-              :column="col" :rowId="props.rowId" :key="col.key"
-            /> -->
             <PColumn v-else
               :key="col.key" :field="col.key"
               :header="col.title"
               :sortable="col.sortable"
               :class="{
                 '!w-1/1': col.maxWidth === undefined,
-                // ['!w-' + col.minWidth]: col.minWidth !== undefined,
-                // ['!min-w-' + col.minWidth]: col.minWidth !== undefined,
-                // '': col._fixed === TableV2FixedDir.LEFT || col.fixed === TableV2FixedDir.LEFT || col.fixed === true || col._fixed === true,
                 'flex flex-row-reverse': col._fixed === TableV2FixedDir.RIGHT || col.fixed === TableV2FixedDir.RIGHT,
-                // []: Boolean(col._fixed) === false && Boolean(col.fixed) === false,
                 [col.class]: true,
               }"
               :style=" (col.minWidth !== undefined) ? 'min-width: ' + col.minWidth + 'px;' : ''"
@@ -258,14 +354,12 @@
                 <CellRenderer v-else-if="!slotProps.data.dummy" :colData="col" :key="col.key" :rowData="slotProps.data"/>
               </template>
               <template v-else #body="slotProps">
-                <!-- <pre>{{ slotProps }}</pre> -->
                 <el-text>{{ slotProps.data[col.key] }}</el-text>
               </template>
             </PColumn>
-            <!-- <Column :key="'id'" :field="'id'" :header="'Id'"> </Column> -->
           </div>
         </div>
-      </PDataTable>
+      </PDataTable> -->
     </div>
   </div>
 </template>
@@ -314,7 +408,8 @@ const props = defineProps({
   small: { type: Boolean, default: true },
   isLoading: { type: Boolean, default: false, required:false },
 })
-const renderCells = ref(false)
+const renderCells = ref(true)
+const renderHeaderCell = ref(true)
 const tableRef = ref()
 const menu = ref()
 const currentSelectedRow = ref<TRowData|undefined>()
@@ -381,7 +476,7 @@ const rowEventHandlers: any = {
 const lazyLoading = ref(true);
 // const loadLazyTimeout = ref();
 
-const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 500, showLoader: false, loading: lazyLoading, numToleratedItems: perPage.value / 2 })
+// const virtualScrollerOptions = ref({ lazy: true, onLazyLoad: onVirtualScrollerLoad, itemSize: 10, delay: 500, showLoader: false, loading: lazyLoading, numToleratedItems: perPage.value / 2 })
 
 
 const selection = ref<Array<string>>(getSelectedrowsFromStore())
@@ -594,58 +689,65 @@ function getSelectedrowIdsFromStore() {
 //   lastScrollDirection.value = event
 // }
 
-function onPerPageChange(event: any) {
-  if (event === props.tableData.perPage) {
-    return
-  }
-  // loadCarsLazy(event)
-  const tData = JSON.parse(JSON.stringify(props.tableData))
-  tData.perPage = event
-  tData.pageNumber = 1
-  lastScrollDirection.value = ''
-  $emit('tabledata-changed', tData)
-  _fetch()
-}
-function onPage(newPageNumber: any) {
-  // loadCarsLazy(event)
-  const tData = JSON.parse(JSON.stringify(props.tableData))
-  // tData.pageNumber = newPageNumber/tData.perPage + 1 // Paginator from primeVue
-  tData.pageNumber = newPageNumber // paginator from element-plus
-  lastScrollDirection.value = ''
-  $emit('tabledata-changed', tData)
-  _fetch()
-}
+// function onPerPageChange(event: any) {
+//   if (event === props.tableData.perPage) {
+//     return
+//   }
+//   // loadCarsLazy(event)
+//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   tData.perPage = event
+//   tData.pageNumber = 1
+//   lastScrollDirection.value = ''
+//   $emit('tabledata-changed', tData)
+//   _fetch()
+// }
+// function onPage(newPageNumber: any) {
+//   // loadCarsLazy(event)
+//   const tData = JSON.parse(JSON.stringify(props.tableData))
+//   // tData.pageNumber = newPageNumber/tData.perPage + 1 // Paginator from primeVue
+//   tData.pageNumber = newPageNumber // paginator from element-plus
+//   lastScrollDirection.value = ''
+//   $emit('tabledata-changed', tData)
+//   _fetch()
+// }
 
 function onSort(event: any) {
   const tData = JSON.parse(JSON.stringify(props.tableData))
   tData.sortBy = event.sortField
-  tData.sortDesc = event.sortOrder === -1
-  // tData.pageNumber = 1
+
+  // tData.sortDesc = event.sortDesc
+  tData.sortDesc = !event.sortDescOld
+  console.log('sortBy', event.sortField, 'sortDescOld', event.sortDescOld, 'sortDesc', tData.sortDesc)
+  tData.pageNumber = 1
   $emit('tabledata-changed', tData)
-  _fetch()
+  // _fetch()
+  // $emit('sort-changed', {
+  //   key: event.sortField,
+  //   isDesc: event.sortOrder === -1
+  // })
 }
 
-async function onVirtualScrollerLoad (event: any) {
-  lazyLoading.value = true;
+// async function onVirtualScrollerLoad (event: any) {
+  // lazyLoading.value = true;
+  // // if (event.first === 0 && event.last === 0) {
+  // //   lazyLoading.value = false;
+  // //   return
+  // // }
+  // const items = dataModel.value.filter(x => x.dummy !== true).length
+  // const pageNumber = Math.ceil((items===0)? 1 : items / perPage.value)
   // if (event.first === 0 && event.last === 0) {
   //   lazyLoading.value = false;
   //   return
   // }
-  const items = dataModel.value.filter(x => x.dummy !== true).length
-  const pageNumber = Math.ceil((items===0)? 1 : items / perPage.value)
-  if (event.first === 0 && event.last === 0) {
-    lazyLoading.value = false;
-    return
-  }
-  if (items != 0 && event.first == 0) {
-    lazyLoading.value = false;
-    return
-  }
-  const tData = JSON.parse(JSON.stringify(props.tableData))
-  tData.pageNumber = pageNumber
-  $emit('tabledata-changed', tData)
-  $emit('fetch', 'next')
-}
+  // if (items != 0 && event.first == 0) {
+  //   lazyLoading.value = false;
+  //   return
+  // }
+  // const tData = JSON.parse(JSON.stringify(props.tableData))
+  // tData.pageNumber = pageNumber
+  // $emit('tabledata-changed', tData)
+  // $emit('fetch', 'next')
+// }
 //   if (event.last === 0 && event.first === 0) {
 //     lazyLoading.value = false;
 //     return

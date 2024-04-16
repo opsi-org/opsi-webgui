@@ -14,14 +14,12 @@
 </template>
 
 <script setup lang="ts">
-const $t = useI18n().t
 const emit = defineEmits(['change-property'])
 const props = defineProps({
   properties: { type: Object as PropType<any>, required: true },
 })
 
 function changeItem(item: any, v: any, visibleVal: any) {
-  console.log('changeItem', item, v, visibleVal)
   emit('change-property', item, v, visibleVal)
 }
 </script>

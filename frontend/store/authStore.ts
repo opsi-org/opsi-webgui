@@ -6,29 +6,32 @@ const expirySec = 60 * 30 // Default=30min
 
 
 export const storeAuth = defineStore('auth', {
-  persist: true,
+  persist: {
+    key: 'opsi-auth',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   state: () => ({ // the state objects are stored in localStorage
-    _username: "",
-    _sessionexpiry: expirySec, // sec
-    _sessionendTime: '',
+    username: "",
+    sessionExpiry: expirySec, // sec
+    sessionEndTime: '',
   }),
   getters: {
-    sessionEndTime: ({ _sessionendTime }) => _sessionendTime,
-    sessionExpiry: ({ _sessionexpiry }) => _sessionexpiry,
-    username: ({ _username }) => _username,
-    isAuthenticated: ({ _username }) => Boolean(useCookie('opsiconfd-session') && _username),
+    // sessionEndTime: ({ _sessionendTime }) => _sessionendTime,
+    // sessionExpiry: ({ _sessionexpiry }) => _sessionexpiry,
+    // username: ({ _username }) => _username,
+    isAuthenticated: ({ username }) => Boolean(useCookie('opsiconfd-session') && username),
   },
   actions: {
     $reset () {
-      this._username = ''
-      this._sessionendTime = ''
+      this.username = ''
+      this.sessionEndTime = ''
     },
     login (_username: string) {
-      this._username = _username
+      this.username = _username
       // localStorage.setItem('_username', _username)
     },
     logout () {
-      console.log('logout')
       this.$reset()
       storeMBus().$reset()
       storeTablesettings().$reset()
@@ -37,21 +40,21 @@ export const storeAuth = defineStore('auth', {
       // localStorage.removeItem('tablesettings')
       // localStorage.removeItem('data-cache')
       // storeTablesettings().$hydrate()
-      this._username = ''
+      this.username = ''
     },
     setExpiredMin (m: number) {
-      this._sessionexpiry = m
+      this.sessionExpiry = m
     },
     setSession () {
-      let expiryInSec = this._sessionexpiry
+      let expiryInSec = this.sessionExpiry
       if (!expiryInSec) { expiryInSec = this.sessionExpiry }
       if (!expiryInSec) { expiryInSec = expirySec }
 
       const expiryTime = new Date(new Date().getTime() + (expiryInSec * 1000))
-      this._sessionendTime = expiryTime as unknown as string
+      this.sessionEndTime = expiryTime as unknown as string
     },
     clearSession () {
-      this._sessionendTime = ''
+      this.sessionEndTime = ''
     },
   },
 })

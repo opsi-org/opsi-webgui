@@ -60,9 +60,7 @@ async function fetch() {
     const dataSorted = await useDepot().getDepotIdList()
     fetchedData.value = dataSorted
   } else if (props.type === 'clients') {
-    console.log('shosts fetch clients')
     const dataSorted = await useClient().getClientIdList(storeSel.selectionDepots)
-    console.log('shosts fetch clients', dataSorted)
     fetchedData.value = dataSorted
   }
 }

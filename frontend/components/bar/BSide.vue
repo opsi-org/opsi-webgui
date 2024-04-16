@@ -105,7 +105,6 @@ const navItems = computed<Array<INavItem>>(() => [
     submenu: [
       { title: 'title.allClients', route: '/clients/'},
       { title: 'title.addNew', route: '/clients/create', disabled: !config.value?.client_creation },
-      // TODO: Display clone client when backend is ready
       { title: 'title.clone', route: '/clients/clone' },
       { title: 'title.config', route: '/clients/config' },
       { title: 'title.log', route: '/clients/logs' }
@@ -130,7 +129,6 @@ const navItems = computed<Array<INavItem>>(() => [
 ]
 )
 watch(isCollapse, (val: boolean) => {
-  console.log('change isCollapse', val)
   emit('changeSmall', val)
 })
 </script>

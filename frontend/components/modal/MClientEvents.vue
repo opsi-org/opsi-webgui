@@ -271,7 +271,7 @@ function callEvent() {
   // const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
   // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
   // if (error) {
-  //   console.log(error)
+  //   console.error(error)
   //   useNotification().error(error)
   //   return
   // }

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <el-text>{{ $t('title.depots') }}</el-text><br />
+    <!-- <el-text>{{ $t('title.depots') }}</el-text><br /> -->
     <!-- <el-button :type="'danger'">Danger</el-button> -->
-    <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
+    <!-- <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br /> -->
     <!-- :filterable-columns="[columns['depotId']]" -->
     <!-- <InputIFilter
       :data="tableData"
@@ -23,7 +23,7 @@
       :is-mobile="props.isMobile"
       :is-loading="tableHelper.isLoading.value"
       @fetch="tableHelper.fetch"
-      @selection-changed="(id: string) => {console.log('select depotId', id);storeSelection.toggleSelectionDepots(id)}"
+      @selection-changed="(id: string) => {storeSelection.toggleSelectionDepots(id)}"
       @selection-clear="storeSelection.clearSelectionDepots"
       @tabledata-changed="tableHelper.updateTableData"
       @sort-changed="tableHelper.sortChanged"
@@ -34,7 +34,6 @@
       @selection-clear="storeSelection.clearSelectionDepots"
       @tabledata-changed="(v: any) => {updateTableData(v)}"
       @sort-changed="(v: any ) => {
-        console.log('sort table', id, 'by', v.key, 'desc', v.isDesc)
         tableData.sortBy = v.key
         tableData.sortDesc = v.isDesc
         storeTable.setSortColumn(id, v.key, v.isDesc)
@@ -144,7 +143,7 @@ const tableData = ref<ITableData>({
   // sortBy: 'depotId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.serversSorting.column,
   // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
-  sortDesc: storeTable.serversSorting.isDesc,
+  sortDesc: Boolean(storeTable.serversSorting.isDesc),
   filterQuery: '',
   filterColumns: ['depotId']
 })
@@ -157,7 +156,26 @@ const columns = ref<ITableHeaderRow>({
       width: 50,
       maxWidth: 50,
       fixed: true,
-      hidden: false
+      hidden: false,
+      headerCellRenderer: () => {
+        return (
+          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionDepots} />
+        )
+      },
+      cellRenderer: ({rowData}) => {
+        // const selectedIds = computed(() => storeSelection._selectionProducts)
+        // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        return (<>
+          {rowData.dummy ? <div /> :
+            storeSelection.multiSelection ?
+              <el-checkbox v-model={rowData.selected} class="selectionItem" />
+            :
+              <el-radio-group v-model={rowData.selected}>
+                <el-radio label={true} value={true} class="selectionItem hide_label" />
+              </el-radio-group>
+          }
+        </>)
+      }
       // hidden: !cookies.includesCookie('column_' + id, 'selected', true)
     },
     depotId: { // eslint-disable-next-line object-property-newline
@@ -265,10 +283,8 @@ const props = defineProps({
 })
 
 onMounted(async () => {
-  console.log('VServer mounted')
   // fetchedData.value = await _fetch()
   await tableHelper.fetch()
-  console.log('VServer mounted fetchedData', fetchedData.value)
 
   // totalItems.value = parseInt(headers['x-total-count'])
   tableHelper.setTotalItemsAsPerPage(totalItems.value)
@@ -278,7 +294,6 @@ onMounted(async () => {
 })
 
 watch(()=> tableData.value.filterQuery, async ()=>{
-  console.log('tableData changed', tableData)
   fetchedData.value = []
   fetchedData.value = await _fetch()
 }, { deep: true})
@@ -288,7 +303,6 @@ function changeRowLink(e:Event, cid: string) {
   navigation.toConfiguration(id, cid)
 }
 // function updateTableData (v: typeof tableData.value) {
-//   console.log('tabledata changed total', v)
 //   tableData.value = reactive(v)
 // }
 async function _fetch() {
@@ -299,40 +313,29 @@ async function _fetch() {
     params.sortDesc = true
     params.selected = JSON.stringify([])
   }
-  console.log('fetching depots')
   const {data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
   '/api/opsidata/depots'
   if (error) {
-    console.log(error)
+    console.error(error)
     useNotification().error(error)
     return []
   }
   totalItems.value = parseInt(headers['x-total-count'])
-  // tableHelper.setPerPage(headers)
-  console.log('Fetchresult data', data)
-  console.log('Fetchresult data2', fetchedData.value)
   const opsiconfigserver = storeCache().opsiconfigserver
   if (opsiconfigserver){
-    console.log('Fetchresult set configserver from store')
     storeSelection.pushToSelectionDepots(opsiconfigserver)
     emit('change', opsiconfigserver)
   } else{
-    console.log('Fetchresult set configserver from result')
     storeSelection.pushToSelectionDepots(data.value[0].depotId)
     emit('change', data.value[0].depotId)
   }
-  console.log('Fetchresult configserver', opsiconfigserver)
-  console.log('Fetchresult selection', storeSelection.selectionDepots)
   for (const dId of storeSelection.selectionDepots) {
     data.value.filter((row:any) => {
-      console.log('FilterSelected', row.depotId, dId)
       return row.depotId === dId
     }).forEach((row:any) => {
-      console.log('ChangeSelected of row', row.depotId);
       row.selected = true
     })
   }
-  console.log('DATA', data.value)
   return data.value;
 
 }

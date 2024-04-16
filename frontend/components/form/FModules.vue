@@ -20,7 +20,7 @@ async function fetch() {
   isLoading.value = true
   const {data, error} = await useApiGETBody('/opsidata/modulesContent')
   if (error) {
-    console.log(error)
+    console.error(error)
     useNotification().error(error)
     isLoading.value = false
     return

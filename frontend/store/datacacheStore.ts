@@ -1,5 +1,9 @@
 export const storeCache = defineStore('data-cache', {
-  persist: true,
+  persist: {
+    key: 'opsi-data',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   state: () => ({
     myopsiconfigserver: '',
   }),

@@ -8,7 +8,6 @@
 
     <TestEPButton />
     <br />
-    <TestStore />
     <FormitemDDTheme />
     <br /> screen: {{  mq.$mq }}
     <TestI18n />

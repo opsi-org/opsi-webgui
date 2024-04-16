@@ -11,7 +11,7 @@ export const useSaveParameters = () => {
     const { data, error } = await useApiPOST(url, request)
     if (error) {
       if (showalert) {
-        console.log("error", error)
+        console.error("error", error)
         useNotification().error(error)
       } else {
           const errorObj = deleteitem
@@ -59,7 +59,7 @@ export const useSaveProductActionRequest = () => {
     const { data, error } = await useApiPOST('/opsidata/clients/products', change)
     if (error) {
       if (showalert) {
-        console.log("error", error)
+        console.error("error", error)
         useNotification().error(error)
       } else {
         const errorObj = deleteitem
@@ -110,7 +110,7 @@ export const useSaveProductProperties = (refetch: Function = (b: any)=>{}) => {
     const { data, error } = await useApiPOST(`/opsidata/products/${id}/properties`, change)
     if (error) {
       if (showalert) {
-        console.log("error", error)
+        console.error("error", error)
         useNotification().error(error)
       } else {
         const errorObj = deleteitem

@@ -2,7 +2,12 @@ import { defineStore } from 'pinia'
 // import { computed } from 'vue'
 
 export const storeSelections = defineStore('selections', {
-  persist: true,
+  // persist: false,
+  persist: {
+    key: 'opsi-selections',
+    storage: localStorage,
+    // storage: sessionStorage,
+  },
   state: () => ({
     // _multiSelection: useCookie('MultiSelection', { default: () => false }),
     // _multiSelection: (useCookie('MultiSelection').value === 'true' || (useCookie('MultiSelection').value === undefined) || true) as boolean,

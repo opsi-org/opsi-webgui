@@ -40,13 +40,13 @@
 import type { EpPropMergeType } from 'element-plus/es/utils';
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useStrings } from '~/composables/mixins/useStrings';
-type ElType = EpPropMergeType<StringConstructor, "" | "warning" | "success" | "info" | "danger", unknown> | undefined
+import type { ElTypeVariant } from '~/types/LibComponentTypes'
 
 const props = defineProps({
   text: { type: String, default: '' },
   content: { type: String, default: '*' },
   // variant: { type: String, default: 'warning' }
-  variant: { type: Object as PropType<ElType>, default: 'warning' }
+  variant: { type: Object as PropType<ElTypeVariant>, default: 'warning' }
 })
 
 const icons = useIcons()

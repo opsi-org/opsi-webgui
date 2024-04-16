@@ -11,10 +11,6 @@ export const useTableHelper = (
   storeTable: any,
   tableDataType: Ref<string>|undefined = undefined,
 ) => {
-  log().log_colored('blue', 'tableId', tableId)
-  log().log_colored('blue', 'fetchedData', fetchedData.value)
-  log().log_colored('blue', 'tableDataType', tableDataType ? tableDataType.value : 'undefined')
-
   const isLoading = ref(false)
   const nPages = 2
 
@@ -27,26 +23,22 @@ export const useTableHelper = (
 
   const maxPage = computed(()=> Math.ceil(totalItems.value/tableDataWrapper.value.perPage) || -1)
 
+  // watch(()=> tableDataWrapper.value, async ()=>{ await fetch ()}, { deep: true})
   watch(()=> tableDataWrapper.value.filterQuery, async ()=>{ await fetch ()}, { deep: true})
-  watch(()=> tableDataWrapper.value.sortBy, async ()=>{
-    log().log_colored('orange', 'sortBy changed', tableDataWrapper.value.sortBy)
-    await fetch ()
-  }, { deep: true})
-  watch(()=> tableDataWrapper.value.sortDesc, async ()=>{await fetch ()}, { deep: true})
+  watch(()=> [tableDataWrapper.value.sortBy, tableDataWrapper.value.sortDesc], async ()=>{ await fetch () }, { deep: true})
+  // watch(()=> tableDataWrapper.value.sortBy, async ()=>{ await fetch () }, { deep: true})
+  // watch(()=> tableDataWrapper.value.sortDesc, async ()=>{await fetch ()}, { deep: true})
 
   function resetFetchData(val: any[]|undefined = []) {
     if (tableDataType === undefined) {
-      console.log('resetFetchData', fetchedData.value, val)
       fetchedData.value = val
       return
     }
-    console.log('resetFetchData', fetchedData.value[tableDataType.value], val)
     fetchedData.value[tableDataType.value] = val
   }
   function setTotalItemsAsPerPage (count: number) {
     totalItems.value = count
     if (totalItems.value === 0) {
-      log().log_colored('red', 'VClients: fetch clients. no clients found')
       return []
     }
     tableDataWrapper.value.perPage = totalItems.value
@@ -60,10 +52,7 @@ export const useTableHelper = (
     let direction = location
     if (fetchedDataWrapper.value.length === 0) direction = undefined
 
-    log().log_colored('darkgreen', 'useTableHelper: fetch clients. page', tableDataWrapper.value.pageNumber)
-
     if (direction === undefined || direction === '') {
-      log().log_colored('gray', 'only this page / reset')
       resetFetchData()
       const data = await _fetch()
       resetFetchData()
@@ -72,18 +61,14 @@ export const useTableHelper = (
         fetchedDataWrapper.value.push(_firstDummyRow2)
       }
       fetchedDataWrapper.value.push(...data)
-      log().log_colored('gray', 'pageNumber', tableDataWrapper.value.pageNumber, 'maxPage', maxPage.value)
       if (tableDataWrapper.value.pageNumber < maxPage.value) fetchedDataWrapper.value.push(_lastDummyRow)
 
     } else if (direction === 'next') {
-      console.log('next / append data to end of array', visiblePages)
       if (fetchedDataWrapper.value.length > 0 ) {
-        log().log_colored('orange', 'next / remove last dummy row')
         if (fetchedDataWrapper.value[0].dummy) fetchedDataWrapper.value.splice(0, 1) // remove first dummy row
         if (fetchedDataWrapper.value[fetchedDataWrapper.value.length-1].dummy) fetchedDataWrapper.value.splice(fetchedDataWrapper.value.length-1, 1) // remove last dummy row
       }
       if (visiblePages >= nPages) {
-        log().log_colored('orange', 'next / remove first n rows')
         fetchedDataWrapper.value.splice(0, tableDataWrapper.value.perPage) // remove first n rows
       }
 
@@ -97,7 +82,6 @@ export const useTableHelper = (
     } else if (direction === 'prev') {
 
       if (fetchedDataWrapper.value.length > 0 ) {
-        log().log_colored('orange', 'next / remove last dummy row')
         if (fetchedDataWrapper.value[0].dummy) fetchedDataWrapper.value.splice(0, 1) // remove first dummy row
         if (fetchedDataWrapper.value[fetchedDataWrapper.value.length-1].dummy) fetchedDataWrapper.value.splice(fetchedDataWrapper.value.length-1, 1) // remove last dummy row
       }
@@ -116,15 +100,12 @@ export const useTableHelper = (
   function updateTableData (v: typeof tableDataWrapper.value) {
     for (const key in v) {
       if (JSON.stringify(tableDataWrapper.value[key]) !== JSON.stringify(v[key])) {
-        log().log_colored('orange', 'tabledata changed key', key, 'value', v[key], 'oldvalue', tableDataWrapper.value[key])
         tableDataWrapper.value[key] = v[key]
       }
     }
-    log().log_colored('red','tabledata changed', JSON.stringify(v))
     // tableDataWrapper.value = v
   }
   function sortChanged(v: any) {
-    console.log('onSort table', tableId, 'by', v.key, 'desc', v.isDesc)
     tableDataWrapper.value.sortBy = v.key
     tableDataWrapper.value.sortDesc = v.isDesc
     storeTable.setSortColumn(tableId, v.key, v.isDesc)

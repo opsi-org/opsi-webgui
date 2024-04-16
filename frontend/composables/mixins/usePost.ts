@@ -51,7 +51,7 @@ export const useGroup = () => {
 
     const { error } = await useApiPOST(`/api/opsidata/clients/${client}/groups`, groupsList)
     if (error) {
-      console.log("error", error)
+      console.error("error", error)
       useNotification().error(error)
       return
     }
@@ -77,7 +77,7 @@ export const useSetUEFI = () => {
 
     const { error } = await useApiPOST(`api/opsidata/clients/${clientId}/uefi`, uefi)
     if (error) {
-      console.log("error", error)
+      console.error("error", error)
       useNotification().error(error, t('message.error.uefi'))
       return
     }
@@ -101,7 +101,7 @@ export const useDeployClientAgent = () => {
     // TODO: use correct type for data (param and response type)
     const { data, error } = await useApiPOST<any>('/api/opsidata/clients/deploy', _data)
     if (error) {
-      console.log("error", error)
+      console.error("error", error)
       useNotification().error(error, t('message.error.clientagent'))
       return
     }

@@ -5,11 +5,19 @@
 // import { defineNuxtConfig } from 'nuxt'
 import pkg from './package.json'
 
-import Tailwind from "primevue/passthrough/tailwind";
+// import Tailwind from "primevue/passthrough/tailwind";
+
+// export const hash = Math.floor(Math.random() * 90000) + 10000;
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: false },
+  devtools: {
+    enabled: false,
+    // enabled: true,
+    // timeline: {
+    //   enabled: true,
+    // },
+ },
   webpack: {
     loaders: {
       vue: {
@@ -17,6 +25,10 @@ export default defineNuxtConfig({
       }
     }
   },
+  // sourcemap: {
+  //   server: false,
+  //   client: false,
+  // },
   typescript: {
     typeCheck: true
   },
@@ -29,7 +41,14 @@ export default defineNuxtConfig({
     }
   },
   app: {
-    baseURL: '/addons/webgui/app'
+    baseURL: '/addons/webgui/app',
+    head: {
+      link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
+    }
+  },
+
+  static: {
+    prefix: false
   },
   // imports: {
   //   presets: [
@@ -86,6 +105,7 @@ export default defineNuxtConfig({
     // },
     key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
+    // storage: 'localStorage',
     debug: true,
   },
   tailwindcss: {
@@ -115,6 +135,15 @@ export default defineNuxtConfig({
         },
       },
     },
+    // build: {
+    //   rollupOptions: {
+    //     output: {
+    //       entryFileNames: `[name]` + hash + `.js`,
+    //       chunkFileNames: `[name]` + hash + `.js`,
+    //       assetFileNames: `[name]` + hash + `.[ext]`
+    //     }
+    //   }
+    // }
   },
   css: [
     'primevue/resources/themes/md-dark-indigo/theme.css',
@@ -122,6 +151,12 @@ export default defineNuxtConfig({
     '~/assets/scss/index.scss', // ep import colors
     '~/assets/scss/bv-colors.scss', // bv import colors
   ],
+  // bootstrapVueNext: {
+  //   // bootstrapCSS: false, // here you can disable automatic bootstrapCSS in case you are loading it yourself using sass
+  //   // bootstrapVueCSS: false, // CSS that is specific to bootstrapVue components can also be disabled. That way you won't load css for modules that you don't use
+  //   componentPlugins: ['BFormFile', 'BRow', 'BFormInput', 'BFormCheckbox', 'BButton', 'BInvalidFeedback', 'BIcon', 'BModal', 'BTooltip', 'BDropdown', 'BDropdownItem', 'BDropdownDivider', 'BBadge','BInputGroup', 'BFormInput', 'BTabs', 'BTab'],
+  //   directivePlugins: []
+  // },
   elementPlus: {
     // useSource: true,
     icon: false,
@@ -139,7 +174,7 @@ export default defineNuxtConfig({
       // unstyled: true,
       // pt: Tailwind,
       pt: {
-        ...Tailwind,
+        // ...Tailwind,
 
         // datatable: {
         //   header: {class: 'bg-red-500'},
@@ -158,7 +193,7 @@ export default defineNuxtConfig({
 
     components: {
       prefix: 'P',
-      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown', 'VirtualScroller'],
+      include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown', 'VirtualScroller', 'Skeleton'],
       exclude: ['Toast']
     },
 

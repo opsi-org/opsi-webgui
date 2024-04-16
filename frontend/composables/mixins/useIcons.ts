@@ -58,6 +58,7 @@ export const useIcons = () => {
     productsFailedActionResult: 'bi:exclamation',
     productActionResultSuccessful: 'bi:check',
     productsOutdated: 'bi:cloud-arrow-down',
+    sort_not: 'bi:arrows-vertical',
     sort: 'bi:sort-up',
     sortDesc: 'bi:sort-down',
     columns: 'bi:grid-3x3',

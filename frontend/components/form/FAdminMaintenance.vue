@@ -151,7 +151,6 @@ const setAppState = async () => {
 
 const executeCreateBackup = async () => {
   isLoading.value = true
-  console.log('createBackup', adminTasks.createBackup)
   await useApiPOST('/backup/create', adminTasks.createBackup)
     .then((response) => {
       const downloadLink = document.createElement('a')

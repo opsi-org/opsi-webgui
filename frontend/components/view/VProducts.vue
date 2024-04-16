@@ -1,19 +1,26 @@
 <template>
-  <el-text>{{ $t('title.depots') }}</el-text><br />
-  <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br />
-  <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
-  <el-text>Product Selection: {{ storeSelection.selectionProducts }}</el-text> <br />
-  <el-text>SortByProp {{ props.sortby }}</el-text> <br />
-  {{ fetchedData[currentType].length }}, total {{ totalItems }}
+  <!-- <el-text>{{ $t('title.depots') }}</el-text><br /> -->
+  <!-- <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br /> -->
+  <!-- <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br /> -->
+  <!-- <el-text>Product Selection: {{ storeSelection.selectionProducts }}</el-text> <br /> -->
+  <!-- <el-text>SortByProp {{ props.sortby }}</el-text> <br /> -->
+  <!-- <el-text>PropsSelection {{ props.selectedClient }}</el-text> <br /> -->
+  <!-- {{ fetchedData[currentType].length }}, total {{ totalItems }} -->
   <div>
+    <!-- <el-badge :value="numberLocalbootsSortbyNotEmpty" class="item"  :hidden="numberLocalbootsSortbyNotEmpty <= 0" type="success" > -->
     <el-checkbox-button
         v-model="productsTypeChecked.LocalbootProduct"
         @change="changeProductsType('LocalbootProduct')"
       >LocalbootProduct</el-checkbox-button>
-    <el-checkbox-button
-        v-model="productsTypeChecked.NetbootProduct"
-        @change="changeProductsType('NetbootProduct')"
+      <!-- </el-badge> -->
+
+      <el-badge is-dot class="item"  :hidden="numberOtherNetboot <= 0" type="warning" >
+      <el-checkbox-button
+      v-model="productsTypeChecked.NetbootProduct"
+      @change="changeProductsType('NetbootProduct')"
       >NetbootProduct</el-checkbox-button>
+        <!-- <el-button size="small">XProducts</el-button> -->
+      </el-badge>
     <!-- <el-checkbox-button
         disabled
         v-model="productsTypeChecked.Product"
@@ -32,7 +39,7 @@
 
       :is-loading="tableHelper.isLoading.value"
       @fetch="tableHelper.fetch"
-      @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionProducts(id)}"
+      @selection-changed="(id: string) => {storeSelection.toggleSelectionProducts(id)}"
       @selection-clear="storeSelection.clearSelectionProducts"
       @tabledata-changed="tableHelper.updateTableData"
       @sort-changed="tableHelper.sortChanged"
@@ -40,7 +47,6 @@
       >
       <!-- @tabledata-changed="(v: any) => {updateTableData('localboot', v)}" -->
       <!-- @sort-changed="(key: string, isDesc: boolean) => {
-        console.log('sort table', currentType, 'by', key, 'desc', isDesc)
         tableData[currentType].sortBy = key
         tableData[currentType].sortDesc = isDesc
         tableSettings.setSortColumn(id, key, isDesc)
@@ -138,9 +144,25 @@ const notify = useNotification()
 const tableSettings = storeTablesettings()
 const storeSelection = storeSelections()
 
+
+const emit = defineEmits(['change'])
+const props = defineProps({
+  isMobile: { type: Boolean, default: ()=> {return false}},
+  // isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
+  productType: { type: String, default: 'LocalbootProduct' },
+  isChild: { type: Boolean, default: false },
+
+  sortby: { type: String, default: 'productId' },
+  selectedClient: { type: String, default: undefined },
+})
+// const clientSelection = computed(()=>props.selectedClient ? [props.selectedClient] : selectionClients.value)
+
+
 // Refs
 const { selectionDepots, selectionClients, selectionProducts } = storeToRefs(storeSelection)
 const fetchedDataClients2Depots = ref<T_Client2Depot>({})
+
+const clientSelection = ref(props.selectedClient ? [props.selectedClient] : selectionClients.value)
 
 const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
 const action = ref('')
@@ -157,7 +179,7 @@ const tableData = ref<tproductITableData>({
     perPage: 1000000,
     // sortBy: 'productId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
     sortBy: tableSettings.productsSorting.column,
-    sortDesc: tableSettings.productsSorting.isDesc,
+    sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
     filterQuery: '',
     filterColumns: ['productId', 'description']
@@ -167,7 +189,7 @@ const tableData = ref<tproductITableData>({
     pageNumber: 1,
     perPage: 1000000,
     sortBy: tableSettings.productsSorting.column,
-    sortDesc: tableSettings.productsSorting.isDesc,
+    sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
     filterColumns: ['productId', 'description']
   },
@@ -176,7 +198,7 @@ const tableData = ref<tproductITableData>({
     pageNumber: 1,
     perPage: 1000000,
     sortBy: tableSettings.productsSorting.column,
-    sortDesc: tableSettings.productsSorting.isDesc,
+    sortDesc: Boolean(tableSettings.productsSorting.isDesc),
     filterQuery: '',
     filterColumns: ['productId', 'description']
   }
@@ -186,7 +208,6 @@ const fetchedData = ref({
   LocalbootProduct: [] as Array<any>,
   NetbootProduct: [] as Array<any>
 })
-
 const columns = reactive<ITableHeaderRow>({
   selected: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.selection'),
@@ -198,36 +219,61 @@ const columns = reactive<ITableHeaderRow>({
       maxWidth: 50,
       fixed: true, // always visible
       // hidden: cookies.includesCookie('column_' + id, 'selected', true)
+      headerCellRenderer: () => {
+        return (
+          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionProducts} />
+        )
+      },
+      cellRenderer: ({rowData}) => {
+        // const selectedIds = computed(() => storeSelection._selectionProducts)
+        // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        return (<>
+          {rowData.dummy ? <div /> :
+            storeSelection.multiSelection ?
+              <el-checkbox v-model={rowData.selected} class="selectionItem" />
+            :
+              <el-radio-group v-model={rowData.selected}>
+                <el-radio label={true} value={true} class="selectionItem hide_label" />
+              </el-radio-group>
+          }
+        </>)
+      }
     },
     installationStatus: { // eslint-disable-next-line object-property-newline
       tooltip: $t('table.fields.instStatus'),
       key: 'installationStatus',
       dataKey: 'installationStatus',
       class: 'col-installationStatus',
-      width: 50,
-      maxWidth: 50,
       sortable: true,
+      width: 70,
+      maxWidth: 70,
+      // minWidth: 70,
+      // headerCounterBadge: 5,
+      // headerCounterBadgeClass: '!mr-1',
+      // iconClass: "!mr-4",
       icon: icons.product,
       // iconColor: "--el-color-warning",
       hidden: !tableSettings.productsColumns.includes('installationStatus'),
-      disabled: selectionClients.value.length <= 0,
+      disabled: clientSelection.value.length <= 0 ,
       // headerCellRenderer: () => {
       //   return ( <>
       //     <el-text>Hallo</el-text>
       //   </>)
       // },
+      // {/* v-if={clientSelection.value.length > 0} */}
       cellRenderer: ({rowData}) => {
         return (
           <>
+          { clientSelection.value.length > 0 ?
             <tablecellTCBadgeCompares
-              v-if={selectionClients.value.length > 0}
               type="installationStatus"
               rowid={rowData.productId}
               values={rowData.installationStatusDetails || [rowData.installationStatus] || []}
               objects={rowData.selectedClients || []}
-              objectsorigin={selectionClients.value || []}
+              objectsorigin={clientSelection.value || []}
             />
-            <el-text v-else>---</el-text>
+            : <div /> }
+            {/* <el-text v-else>---</el-text> */}
           </>
         )
       }
@@ -237,26 +283,33 @@ const columns = reactive<ITableHeaderRow>({
       key: 'actionResult',
       dataKey: 'actionResult',
       class: 'col-actionResult',
-      width: 50,
-      maxWidth: 50,
+      width: 70,
+      maxWidth: 70,
+      // minWidth: 70,
+      // headerCounterBadge: 555,
+      // headerCounterBadgeColor: 'primary',
+      // headerCounterBadgeClass: '!mr-4',
+      // iconClass: "!mr-2",
       icon: icons.productActionResult,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'actionResult', true)
       hidden: !tableSettings.productsColumns.includes('actionResult'),
-      disabled: selectionClients.value.length <= 0,
+      disabled: clientSelection.value.length <= 0,
 
       cellRenderer: ({rowData}) => {
         return (
           <>
+              {/* v-if={clientSelection.value.length > 0} */}
+          { clientSelection.value.length > 0 ?
             <tablecellTCBadgeCompares
-              v-if={selectionClients.value.length > 0}
               type="actionResult"
               rowid={rowData.productId}
               values={rowData.actionResultDetails || [rowData.actionResult] || []}
               objects={rowData.selectedClients || []}
-              objectsorigin={selectionClients.value || []}
+              objectsorigin={clientSelection.value || []}
             />
-            <el-text v-else>---</el-text>
+            : <div /> }
+            {/* <el-text v-else>---</el-text> */}
           </>
         )
       }
@@ -267,6 +320,9 @@ const columns = reactive<ITableHeaderRow>({
       key: 'productId',
       dataKey: 'productId',
       class: 'col-productId',
+      // headerCounterBadge: 5,
+      // headerCounterBadgeColor: 'primary',
+      // headerCounterBadgeClass: '',
       width: 150,
       sortable: true,
       // visible: this.includesCookie(`column_${id}`, 'productId', true)
@@ -294,6 +350,7 @@ const columns = reactive<ITableHeaderRow>({
       key: 'description',
       dataKey: 'description',
       class: 'col-description',
+      // class: 'col-description max-w-[400px] text-wrap',
       width: 200,
       maxWidth: 200,
       sortable: true,
@@ -396,7 +453,7 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionProgress', false)
       hidden: !tableSettings.productsColumns.includes('actionProgress'),
-      disabled: selectionClients.value.length <= 0,
+      disabled: clientSelection.value.length <= 0,
     },
     actionRequest: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.actionRequest'),
@@ -408,17 +465,19 @@ const columns = reactive<ITableHeaderRow>({
       sortable: true,
       // visible: this.includesCookie('column_' + id, 'actionRequest', false)
       hidden: !tableSettings.productsColumns.includes('actionRequest'),
-      disabled: selectionClients.value.length <= 0,
+      disabled: clientSelection.value.length <= 0,
       headerCellRenderer: (useMQ().isMobile.value) ? undefined : () => {
         return ( <>
           <tablecellTCProductRequest
             action={action.value}
             title={$t('form.tooltip.actionRequest')}
             save={saveActionRequests}
+            selectedClients={clientSelection.value}
           />
         </>)
       },
       cellRenderer: ({rowData}) => {
+        // const sel = (props.selectedClient) ? [props.selectedClient]: clientSelection.value
         return (
           <>
             <tablecellTCProductRequest
@@ -430,6 +489,7 @@ const columns = reactive<ITableHeaderRow>({
             />
           </>
         )
+        // selectedClients={sel}
       }
     },
     rowactions: { // eslint-disable-next-line object-property-newline
@@ -482,22 +542,26 @@ const currentType = computed<string>(()=>{
 })
 const fetchedDataWrapper = computed(()=>fetchedData.value[currentType.value])
 const tableDataWrapper = computed(()=>tableData.value[currentType.value])
+// const clientSelection = computed(()=>props.selectedClient || selectionClients.value)
 
 const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, tableSettings, currentType) // define watcher for tableData
+const numberOtherNetboot = computed(()=>{
+  // TODO: show number of netboot products with sortBy isnt empty/none/not_installed/..
 
-
-const emit = defineEmits(['change'])
-const props = defineProps({
-  isMobile: { type: Boolean, default: ()=> {return false}},
-  // isMobile: { type: Boolean, default: ()=> {return useMQ().isMobile.value}},
-  productType: { type: String, default: 'LocalbootProduct' },
-  isChild: { type: Boolean, default: false },
-
-  sortby: { type: String, default: 'productId' },
-  selectedClient: { type: String, default: undefined },
+  // if (props.sortby) {
+  //   fetchedData.value.LocalbootProduct.every((v: any)=>v[props.sortby] === 'none')
+  // }
+  // if (fetchedData.value.NetbootProduct.length === 0) return 0
+  return 0
 })
-
-
+// const numberLocalbootsSortbyNotEmpty = computed(()=>{
+//   const emptys = [undefined, null, '', 'null', 'none', 'None', 'Null', 'not_installed']
+//   return fetchedData.value.LocalbootProduct.filter((v: any)=>emptys.includes(v[props.sortby])).length
+// })
+// const noLocalbootWithEntry = computed(()=>{
+//   const emptys = [undefined, null, '', 'null', 'none', 'None', 'Null', 'not_installed']
+//     return fetchedData.value[currentType.value].filter((v: any)=>v[tableData.value[currentType.value]] !== 'none').length === 0
+// })
 //   sortdesc: boolean = false
 //   rowId: string = ''
 //   isLoading: boolean = false
@@ -515,13 +579,28 @@ onMounted(async ()=> {
     tableData.value[currentType.value].sortBy = props.sortby
     tableData.value[currentType.value].sortDesc = true
   }
-  fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(selectionClients.value)
+  fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
   // fetchedData.value[currentType.value] = await _fetch(currentType.value)
   // fetchedData.value[currentType.value] = []
   await tableHelper.fetch()
   tableHelper.setTotalItemsAsPerPage(totalItems.value)
 })
 
+watch(()=>props.selectedClient, (v)=>{
+  if (v) { clientSelection.value = [v] }
+  else { clientSelection.value = selectionClients.value }
+})
+watch(()=>selectionClients.value, (v)=>{
+  if (v) { clientSelection.value = [v] }
+  else { clientSelection.value = selectionClients.value }
+})
+watch (()=>props.sortby, async (v)=>{
+  if (props.selectedClient) {
+    tableData.value[currentType.value].sortBy = v
+    tableData.value[currentType.value].sortDesc = true
+    // sortDesc: tableSettings.productsSorting.isDesc,
+  }
+}, { deep: true })
 // watch(() => fetchedData[currentType.value])
 
 watch(()=>props.productType, (v)=>{
@@ -529,17 +608,17 @@ watch(()=>props.productType, (v)=>{
 })
 
 setColumnVisibilityDependOnClients()
-watch(()=>selectionClients.value, async () => {
+watch(()=>clientSelection.value, async () => {
   setColumnVisibilityDependOnClients()
-  console.log('selectionClients changed', selectionClients.value)
-  fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(selectionClients.value)
+  fetchedDataClients2Depots.value = await fetchClient.getClientToDepot(clientSelection.value)
 }, { deep: true })
 
 // watch(()=> tableData.value[currentType.value].filterQuery, async ()=>{
-//   console.log('tableData changed', tableData)
 //   fetchedData.value[currentType.value] = []
 //   fetchedData.value[currentType.value] = await _fetch(currentType.value)
 // }, { deep: true})
+watch(()=>clientSelection.value, async ()=> { await tableHelper.fetch() })
+watch(()=>props.sortby, async ()=> { await tableHelper.fetch() })
 
 function changeProductsType (type: string) {
   if (props.isChild) {
@@ -554,8 +633,7 @@ function changeProductsType (type: string) {
 
 function setColumnVisibilityDependOnClients () {
   let b = true
-  console.log('selectionClients', selectionClients.value)
-  if (selectionClients.value.length > 0) {
+  if (clientSelection.value.length > 0) {
     b = false
   }
   columns.installationStatus.hidden = b
@@ -565,7 +643,6 @@ function setColumnVisibilityDependOnClients () {
 }
 
 // async function updateTableData (type:string, v: typeof tableData.value.LocalbootProduct) {
-//   console.log('tabledata changed total', v)
 //   tableData.value[type] = reactive(v)
 //   fetchedData.value[currentType.value] = []
 //   fetchedData.value[currentType.value] = await _fetch(currentType.value)
@@ -586,17 +663,16 @@ async function _fetch(_type: string = "") {
 }
 
 async function saveActionRequests() {
-  log().log_colored('orange', 'saveActionRequests')
+  // TODO
 }
 
 async function saveActionRequest() {
-  log().log_colored('orange', 'saveActionRequest')
+  // TODO
 }
 
 function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
     // (row.item as ITableRowItemProducts).tooltiptext = tooltiptext
     // row.toggleDetails()
-    console.log('TOGGLE ROW', row, tooltiptext)
   }
 //   tableInfo: ITableInfo = {
 //     sortBy: this.getKeyCookie(`sorting_${id}`, 'sortBy', this.sortby || 'productId'),
@@ -725,11 +801,14 @@ function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString
 function fetchProductsPrepareParams (type: string) {
   const params = { ...tableData.value[type] }
   params.selectedDepots = JSON.stringify(selectionDepots.value)
-  if (props.selectedClient !== undefined) {
-    params.selectedClients = JSON.stringify([props.selectedClient])
-  } else {
-    params.selectedClients = JSON.stringify(selectionClients.value)
-  }
+  params.selectedClients = JSON.stringify(clientSelection.value)
+  // if (props.selectedClient) {
+  //   params.sortDesc = false
+  // }
+  // if (props.selectedClient !== undefined) {
+  // } else {
+  //   params.selectedClients = JSON.stringify(selectionClients.value)
+  // }
   // params.selectedClients = JSON.stringify(selectionClients.value)
   if (params.sortBy === 'installationStatus') {
     params.sortBy = '["installationStatus", "installationStatusErrorLevel"]'

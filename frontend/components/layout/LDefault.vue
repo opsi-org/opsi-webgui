@@ -54,12 +54,13 @@
 
 
         <el-main class="z-0 p-2">
-          <BreadcrumbBPageNavigation />
           <el-scrollbar
-            class="p-0 m-0"
-            wrap-class="p-0 m-0"
-            view-class="p-0 m-0"
+          class="p-0 m-0"
+          wrap-class="p-0 m-0"
+          view-class="p-0 m-0"
           >
+            <BreadcrumbBPageNavigation />
+            <br />
             <slot />
           </el-scrollbar>
         </el-main>
@@ -156,22 +157,20 @@ function toggleSide (side: string) {
 async function checkConfig () {
   const result = await useApiGET<T_configuration>('/user/configuration')
   if (result.error) {
-    console.log(result.error)
+    console.error(result.error)
     useNotification().error(result.error, 'Error fetching Configuration')
     return
   }
   const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
   if (forbidden.error) {
-    console.log(forbidden.error)
+    console.error(forbidden.error)
     useNotification().error(forbidden.error, 'Error fetching forbidden features')
     return
   }
   const _config = { ...result.data.value.configuration }
-  console.log('forbidden', forbidden.data.value)
   forbidden.data.value.forEach((forbElem:string) => {
     _config[forbElem + '.forbidden'] = true
   })
-  console.log('SET CONFIG TO', _config)
   configapp.setConfig(_config)
 
   //   try {

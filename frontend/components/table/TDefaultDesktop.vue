@@ -102,7 +102,6 @@ const sortState = ref<SortState>({ [props.sortBy]: TableV2SortOrder.DESC })
 const rowEventHandlers: RowEventHandlers = {
   onClick: (params: RowEventHandlerParams) => {
     const rowData:TRowData  = params.rowData
-    console.log('row click', params.rowIndex, params.rowKey, rowData, params.event)
     if (selectionStore.multiSelection === false) {
       if (lastSelectedItemForSingleselect.value !== undefined) {
         lastSelectedItemForSingleselect.value.selected = false
@@ -117,12 +116,10 @@ const rowEventHandlers: RowEventHandlers = {
   },
   onDblclick: (params: RowEventHandlerParams) => {
     // const rowData:TRowData  = params.rowData
-    console.log('row dblclick', params.rowKey, params.event)
   },
   onContextmenu: (params: RowEventHandlerParams) => {
     const rowData:TRowData  = params.rowData
     currentSelectedRow.value = rowData
-    console.log('row contextmenu', params.rowKey, params.event, rowData)
     menu.value.show(params.event)
   },
 }
@@ -214,7 +211,6 @@ watch(()=>tableStore[props.id + 'Columns'], ()=>{
 }, { deep: true})
 
 watch (()=>dataModel, ()=>{
-  console.log('data changed')
   wrappedColumns.value = updateColumns()
   // wrappedData.value = updateData()
 }, {deep: true})
@@ -223,8 +219,7 @@ function onSort({ key, order }: SortBy) {
   sortState.value[key] = order
   if (sortState.value[key] === undefined) {
     sortState.value[key] = TableV2SortOrder.DESC
-  }8910
-  console.log('onSort', key, order, sortState.value[key])
+  }
   $emit('sort-changed',  {
     key,
     isDesc: sortState.value[key] === TableV2SortOrder.DESC
@@ -278,7 +273,6 @@ function updateColumns() {
     const selected = computed<boolean>(()=> selectionInStoreByType.value.includes(rowData[props.rowId]) || rowData.selected)
     const onChange = (value: CheckboxValueType) => {
       rowData.selected = value
-      console.log('selection changed', props.rowId, rowData[props.rowId])
       $emit('selection-changed', rowData[props.rowId])
     }
     // return <SelectionCell show={false} value={selected.value} onChange={onChange} />
@@ -288,13 +282,11 @@ function updateColumns() {
 }
 
 function updateCurrentPage(pageNo: number) {
-  console.log('updateCurrentPage', pageNo)
   pageNumber.value = pageNo
   $emit('tabledata-changed', {...props.tableData, pageNumber: pageNo})
   $emit('fetch')
 }
 function updatePerPage(perPage: number) {
-  console.log('updatePerPage', perPage)
   $emit('tabledata-changed', {...props.tableData, perPage, pageNumber: 1})
   $emit('fetch')
 }
@@ -307,22 +299,20 @@ function updateData() {
 const lastFetchedDirection = ref<'next'|'prev'>('next')
 const middleOfTable = ref<number>(50 + 150)
 async function onScroll(event: any) {
-  // console.log('scroll', event, tableRef.value.$el)
-  //console.log('scroll to top. ')
   // show marker in middle of table
   // middleOfTable.value = tableRef.value.$el.clientHeight / 2 + 50
   if (event.yAxisScrollDir === 'backward' && event.scrollTop === 0 && pageNumber.value > 1 ) {
   } else {
-    console.log('scroll to top. not at top')
+    // scroll to top. not at top
     return
   }
   //   // we only want to fetch prev if we are at the top of the table
 
   // if (!(event.yAxisScrollDir !== 'forward' || event.scrollTop > 0 || pageNumber.value === 1)) {
-  //   console.log('scroll to top. not at top', event, pageNumber.value, tableRef.value.$el)
+  //   // scroll to top. not at top //, event, pageNumber.value, tableRef.value.$el)
   //   return
   // }
-  console.log('scroll to top. at top')
+  // scroll to top. at top
 
   const visiblePages =  Math.ceil(dataModel.value.length / perPage.value)
   // update current page (without fetching)
@@ -337,24 +327,19 @@ async function onScroll(event: any) {
 
   // scroll to middle of table
   const visiblePagesNew = dataModel.value.length / perPage.value
-  console.log('visiblePagesNew', visiblePagesNew)
   if (visiblePagesNew > 1)
     tableRef.value.scrollToRow(props.tableData.perPage, "start")
 
   lastFetchedDirection.value = 'prev'
 }
 function onEndReached() {
-  console.log('end reached')
   if (pageNumber.value >= props.totalItems / perPage.value){
-    console.log('end reached, no more pages')
     return
   }
 
   if (lastFetchedDirection.value === 'prev' && pageNumber.value > 1){
-    console.log('end reached, fetch prev')
     $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value + 2})
   } else{
-    console.log('end reached, fetch next')
     $emit('tabledata-changed', {...props.tableData, pageNumber: pageNumber.value + 1})
   }
   $emit('fetch', 'next')

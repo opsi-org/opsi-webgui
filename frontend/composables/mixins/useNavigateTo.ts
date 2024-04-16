@@ -9,8 +9,6 @@ export const useNavigate = () => {
   watch(()=>route.params.id, changeSelectedSetting, {deep: true})
   changeSelectedSetting()
   function changeSelectedSetting () {
-    console.log('secondColumnSelectedRowId route.params.id', route.params.id)
-
     let id: string = ''
     if (Array.isArray(route.params.id)) {
       id = route.params.id[route.params.id.length - 1]

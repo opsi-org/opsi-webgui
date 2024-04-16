@@ -111,7 +111,6 @@ const isDisabled = ref<boolean|undefined>(undefined)
   // @Watch('wsBusMsg', { deep: true })
 watch(() => ws.wsBusMsg.value, _wsBusMsgObjectChangedTerminal)
 function _wsBusMsgObjectChangedTerminal () {
-  console.log(`VAdminTerminal MessageBus watch msg:\n\ttype:\t${ws.wsBusMsg.value.type}\n\tsender:\t${ws.wsBusMsg.value.sender}\n\tdata:\t`, ws.wsBusMsg.value)
   const msg = ws.wsBusMsg.value
   if (msg?.type && !msg.type.startsWith('terminal_')) { return }
 
@@ -127,7 +126,6 @@ function _wsBusMsgObjectChangedTerminal () {
     mbTerminal.value.write(msg.data)
   } else if (msg.type === 'terminal_close_event') {
     // mbTerminal.value.writeln('> # Terminal closed')
-    console.log('> # Terminal closed')
   }
 }
 
@@ -168,22 +166,17 @@ async created () {
   }
 */
 onMounted(async () => {
-  console.log('VAdminTerminal MessageBus: onMounted')
   while (ws.wsBus.value === undefined) {
-    console.log('VAdminTerminal MessageBus: wait for wsBus')
     await new Promise(resolve => {
-      console.log('VAdminTerminal MessageBus: wait for wsBus')
       setTimeout(resolve, 100)
     })
   }
   isDisabled.value = await _fetchIsDisabled()
   waitForRefNot (isDisabled, undefined)
   if (isDisabled.value) {
-    console.log('VAdminTerminal MessageBus: terminal disabled')
     useNotification().warning('Terminal is disabled')
     return
   }
-  console.log('VAdminTerminal MessageBus: wsBus ready. connect to terminal...')
   // connect()
   // ws.wsInit() // already done in useMBus().onMounted
   listenScreenResize()
@@ -198,8 +191,6 @@ onUnmounted(() => {
 })
 function listenScreenResize () {
   window.addEventListener('resize', () => {
-
-    console.log('VAdminTerminal MessageBus-Window Resize: ')
     updateTerminalSize()
   })
 }
@@ -214,7 +205,7 @@ function updateTerminalSize () {
 function disconnect () {
   console.group('VAdminTerminal MessageBus try disconnect')
   if (mbTerminal.value === undefined) {
-    console.log('VAdminTerminal MessageBus: no terminal to disconnect')
+    console.warn('VAdminTerminal MessageBus: no terminal to disconnect')
     console.groupEnd()
     return
   }
@@ -228,12 +219,10 @@ function disconnect () {
 }
 
 function connect () {
-  console.log('VAdminTerminal MessageBus try connect')
   waitForRefNot (isDisabled, undefined)
   if (isDisabled.value) {
     return
   }
-  console.group('VAdminTerminal MessageBus connect')
   if (mbTerminal && mbTerminal.value) {
     try {
       mbTerminal.value.dispose()
@@ -264,9 +253,7 @@ function connect () {
   mbTerminal.value.open(terminalcontainer.value)
   mbTerminal.value.fitAddon.fit()
 
-  console.log('VAdminTerminal MessageBus: ', mbTerminal.value)
   ws.wsTerminalOpen(terminalId.value, mbTerminal.value)
-  console.log('VAdminTerminal MessageBus: ', mbTerminal.value.terminalChannel)
   terminalId.value = mbTerminal.value.terminalId
 
   mbTerminal.value.onData((data: any) => {
@@ -276,9 +263,7 @@ function connect () {
   mbTerminal.value.onResize((event: any) => {
   //   // TODO: resize is called too often on window resize
 
-    console.log('VAdminTerminal MessageBus Resize: ', event.rows, event.cols)
     if (mbTerminal.value.skipResizeEvent) {
-      console.log('VAdminTerminal MessageBus Resize: skip resize event')
       // mbTerminal.value.skipResizeEvent = false
     } else {
       const r = ws.wsTerminalResize(event.rows, event.cols, mbTerminal.value)
@@ -289,7 +274,6 @@ function connect () {
   // Why does html tag has visible scroll bar ?
   // => After connecting with terminal a div apears with 50000 width. this causes scrollbar to appear. We hide the horizontal scrollbar here (hopefully temporary:
   const elHtml = document.getElementsByTagName('html')[0]
-  console.log('element to hide', elHtml)
   if (elHtml) {
     elHtml.style['overflow-x'] = 'hidden'
   }
@@ -299,9 +283,7 @@ function connect () {
 
 function waitForRefNot (el: any, valueNot: any) {
   while (el === valueNot) {
-    console.log('VAdminTerminal MessageBus: wait for disabled-check')
     setTimeout(() => {
-      console.log('VAdminTerminal MessageBus: wait for disabled-check')
     }, 100)
   }
   return el

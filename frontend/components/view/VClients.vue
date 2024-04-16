@@ -1,6 +1,6 @@
 <template>
-  <el-text>{{ $t('title.clients') }}</el-text><br />
-  <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br />
+  <!-- <el-text>{{ $t('title.clients') }}</el-text><br /> -->
+  <!-- <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br /> -->
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
 
       <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
@@ -20,7 +20,7 @@
       :is-mobile="isMobile"
       :is-loading="tableHelper.isLoading.value"
       @fetch="tableHelper.fetch"
-      @selection-changed="(id: string) => {console.log('select clientId', id);storeSelection.toggleSelectionClients(id)}"
+      @selection-changed="(id: string) => {storeSelection.toggleSelectionClients(id)}"
       @selection-clear="storeSelection.clearSelectionClients"
       @tabledata-changed="tableHelper.updateTableData"
       @sort-changed="tableHelper.sortChanged"
@@ -273,7 +273,7 @@ const tableData = ref<ITableData>({
   _lastScrollDirection: '',
   // sortBy: 'clientId', // this.getKeyCookie('sorting_' + id, 'sortBy', 'depotId'),
   sortBy: storeTable.clientsSorting.column,
-  sortDesc: storeTable.clientsSorting.isDesc,
+  sortDesc: Boolean(storeTable.clientsSorting.isDesc),
   // sortDesc: false, // this.getKeyCookie('sorting_' + id, 'sortDesc', false),
   filterQuery: '',
   filterColumns: ['clientId', 'description']
@@ -292,6 +292,25 @@ const columns = ref<ITableHeaderRow>({
       _fixed: true, // always visible
       fixed: true, // always visible
       // hidden: cookies.includesCookie('column_' + id, 'selected', true)
+      headerCellRenderer: () => {
+        return (
+          <buttonBTNClearSelection onClearselection={storeSelection.clearSelectionClients} />
+        )
+      },
+      cellRenderer: ({rowData}) => {
+        // const selectedIds = computed(() => storeSelection._selectionClients)
+        // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        return (<>
+          {rowData.dummy ? <div /> :
+            storeSelection.multiSelection ?
+              <el-checkbox v-model={rowData.selected} class="selectionItem" />
+            :
+              <el-radio-group v-model={rowData.selected}>
+                <el-radio label={true} value={true} class="selectionItem hide_label" />
+              </el-radio-group>
+          }
+        </>)
+      }
     },
     // class: 'mobileVisibleOnlySelection'
     clientId: { // eslint-disaconfigble-next-line object-property-newline
@@ -322,7 +341,6 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 300,
       hidden: !storeTable.clientsColumns.includes('description')
-      // hidden: cookies.includesCookie('column_' + id, 'description', false)
     },
     ipAddress: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.ip'),
@@ -332,7 +350,6 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 100,
       hidden: !storeTable.clientsColumns.includes('ipAddress')
-      // hidden: cookies.includesCookie('column_' + id, 'ipAddress', false)
     },
     macAddress: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.mac'),
@@ -342,7 +359,6 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 100,
       hidden: !storeTable.clientsColumns.includes('macAddress')
-      // hidden: cookies.includesCookie('column_' + id, 'macAddress', false)
     },
     lastSeen: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.lastSeen'),
@@ -352,7 +368,6 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 100,
       hidden: !storeTable.clientsColumns.includes('lastSeen')
-      // hidden: cookies.includesCookie('column_' + id, 'lastSeen', false)
     },
     uefi: { // eslint-disable-next-line object-property-newline
       title: $t('table.fields.uefi'),
@@ -362,8 +377,6 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 50,
       hidden: !storeTable.clientsColumns.includes('uefi'),
-      // hidden: !cookies.includesCookie('column_' + id, 'uefi', false),
-        // onChange={onChange}
       cellRenderer: ({rowData}:any) =>
         <el-checkbox
           modelValue={rowData.uefi}
@@ -378,7 +391,49 @@ const columns = ref<ITableHeaderRow>({
       class: 'col-_majorStats',
       width: 50,
       _isMajor: true,
-      hidden: true // this is a dummy column for grouping
+      // hidden: true // this is a dummy column for grouping
+      hidden: !storeTable.clientsColumns.includes('_majorStats')
+    },
+    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
+      tooltip: $t('table.fields.installationStatusUnknown'),
+      key: 'installationStatus_unknown',
+      dataKey: 'installationStatus_unknown',
+      _majorKey: '_majorStats',
+      class: 'col-_majorStats',
+      icons: [icons.productInstallationStatusUnknown, icons.product],
+      // icon: icons.productInstallationStatusUnknown,
+      iconColor: "--el-color-info",
+      sortable: true,
+      width: 50,
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) => {
+        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=' + rowData.clientId)}
+        return <el-tag
+                  class="cursor-pointer"
+                  onClick={click}>
+                  {rowData.installationStatus_unknown}
+              </el-tag>
+      }
+      // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
+    },
+    actionResult_failed: { // eslint-disable-next-line object-property-newline
+      tooltip: $t('table.fields.actionResultFailed'),
+      key: 'actionResult_failed',
+      dataKey: 'actionResult_failed',
+      _majorKey: '_majorStats',
+      class: 'col-_majorStats',
+      icons: [icons.productsFailedActionResult, icons.productActionResult],
+      // icon: icons.productsFailedActionResult,
+      iconColor: "--el-color-error",
+      sortable: true,
+      width: 50,
+      hidden: !storeTable.clientsColumns.includes('_majorStats'),
+      cellRenderer: ({rowData}:any) => {
+        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=' + rowData.clientId)}
+        return <el-tag
+                  class="cursor-pointer" onClick={click}>{rowData.actionResult_failed}</el-tag>
+      }
+      // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
     },
     version_outdated: { // eslint-disable-next-line object-property-newline
       tooltip: $t('table.fields.versionOutdatedGeneral'),
@@ -389,13 +444,13 @@ const columns = ref<ITableHeaderRow>({
       sortable: true,
       width: 50,
       align: 'right',
-      icon: icons.productsOutdated,
+      icons: [icons.productsOutdated, icons.product],
       iconColor: "--el-color-warning",
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
       cellRenderer: ({rowData}:any) => {
-        // const click = () => {console.log('HIIII')}
         const click = () => {openLink('/clients/products/LocalbootProduct?sortby=version&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.version_outdated}</el-tag>
+        return <el-tag
+                  class="cursor-pointer" onClick={click}>{rowData.version_outdated}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
@@ -404,54 +459,21 @@ const columns = ref<ITableHeaderRow>({
       key: 'version_outdated_netboot',
       dataKey: 'version_outdated_netboot',
       _majorKey: '_majorStats',
-      icon: icons.productsOutdated,
+      icons: [icons.productsOutdated, icons.product],
       iconColor: "--el-color-warning",
       class: 'col-_majorStats',
       sortable: true,
       width: 50,
       hidden: !storeTable.clientsColumns.includes('_majorStats'),
       cellRenderer: ({rowData}:any) => {
-        // const click = () => {console.log('HIIII')}
         const click = () => {openLink('/clients/products/NetbootProduct?sortby=version&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.version_outdated_netboot}</el-tag>
+        return <el-tag
+                  class="cursor-pointer" onClick={click}>{rowData.version_outdated_netboot}</el-tag>
       }
       // hidden: !cookies.includesCookie('column_' + id, 'version_outdated', true)
     },
-    actionResult_failed: { // eslint-disable-next-line object-property-newline
-      tooltip: $t('table.fields.actionResultFailed'),
-      key: 'actionResult_failed',
-      dataKey: 'actionResult_failed',
-      _majorKey: '_majorStats',
-      class: 'col-_majorStats',
-      icon: icons.productsFailedActionResult,
-      iconColor: "--el-color-error",
-      sortable: true,
-      width: 50,
-      hidden: !storeTable.clientsColumns.includes('_majorStats'),
-      cellRenderer: ({rowData}:any) => {
-        // const click = () => {console.log('HIIII')}
-        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=actionResult&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.actionResult_failed}</el-tag>
-      }
-      // hidden: !cookies.includesCookie('column_' + id, 'actionResult_failed', true)
-    },
-    installationStatus_unknown: { // eslint-disable-next-line object-property-newline
-      tooltip: $t('table.fields.installationStatusUnknown'),
-      key: 'installationStatus_unknown',
-      dataKey: 'installationStatus_unknown',
-      _majorKey: '_majorStats',
-      class: 'col-_majorStats',
-      icon: icons.productInstallationStatusUnknown,
-      iconColor: "--el-color-info",
-      sortable: true,
-      width: 50,
-      hidden: !storeTable.clientsColumns.includes('_majorStats'),
-      cellRenderer: ({rowData}:any) => {
-        const click = () => {openLink('/clients/products/LocalbootProduct?sortby=installationStatus&selectedClient=' + rowData.clientId)}
-        return <el-tag onClick={click}>{rowData.installationStatus_unknown}</el-tag>
-      }
-      // hidden: !cookies.includesCookie('column_' + id, 'installationStatus_unknown', true)
-    },
+
+
     // TODO: Sorting for reachable column
     reachable: { // eslint-disable-next-line object-property-newline
       tooltip: $t('table.fields.reachable'),
@@ -509,7 +531,6 @@ onMounted(async ()=> {
 
 
 // const handleChange = (id:string) => {
-//   console.log('handleSelectionChange', id)
 //   storeSelection.toggleSelectionDepots(id)
 // }
 function openLink(link: string) {
@@ -526,16 +547,25 @@ function changeRowLink(e:Event, cid: string, to='config') {
   }
 }
 // function updateTableData (v: typeof tableData.value) {
-//   console.log('tabledata changed total', v)
 //   tableData.value = v
 // }
+
+function _objectWithoutProperties(obj: any, keys: string[]): any {
+  var target = {};
+  for (var i in obj) {
+    if (keys.indexOf(i) >= 0) continue;
+    if (!Object.prototype.hasOwnProperty.call(obj, i)) continue;
+    target[i] = obj[i];
+  }
+  return target;
+}
+
 async function _fetch() {
-  const params:any = { ...tableData.value }
-  // console.log('datacache server', datacache.opsiconfigserver)
+
+  const params: any = _objectWithoutProperties(tableData.value, ["_lastScrollDirection"]);
+  // const params:any = { ...tableData.value }
   params.selectedDepots = JSON.stringify(storeSelection.selectionDepots)
-  // console.log('params.selectedDepots', params.selectedDepots)
   params.selectedClients = JSON.stringify(storeSelection.selectionClients)
-    // console.log('params.selectedClients', params.selectedClients)
   if (params.sortBy === '') { params.sortBy = 'clientId' }
   if (params.sortBy === 'selected') {
     params.sortDesc = true
@@ -556,16 +586,13 @@ async function _fetch() {
     //     this.showToastError(error)
     //     return []
     //  })
-  log().log_colored('green', 'VClients: fetch clients. page', params.pageNumber)
-  // console.log('VClients: fetch clients. page', params.pageNumber)
   const {data, error, headers} = await useApiGETBody<T_ClientsList>(`/opsidata/clients`, params)
 
   if (error) {
-    console.log(error)
+    console.error(error)
     notify.error(error, 'Error fetching clients')
     return []
   }
-  // console.log('data', data)
   totalItems.value = parseInt(headers['x-total-count'])
   // tableHelper.setPerPage(headers)
   // this.totalpages = Math.ceil(this.totalItems / params.perPage)
@@ -576,7 +603,6 @@ async function _fetch() {
   // } else {
   //   return response.data
   // }
-  // console.log('DATA', data.value.length)
   // const items = [{dummy:true, clientId: 'scroll up to load more'}, ...data.value, {dummy:true, clientId: 'scroll down to load more'}]
   // return items
   const sort_by_SortBy = (a: any, b: any) => {
@@ -674,7 +700,7 @@ export default class VClients extends Vue {
     }
     if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
       // eslint-disable-next-line no-console
-      console.log('message bus host_connected', msg)
+      console.warn('message bus host_connected', msg)
       // this.cache_pages.
       // await this.$fetch()
     }

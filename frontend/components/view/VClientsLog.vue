@@ -71,7 +71,7 @@ async function fetch() {
   } else { logrequest.selectedLogType = 'instlog' }
   const {data, error} = await useApiGETBody<T_ClientLog>('/opsidata/log', logrequest )
   if (error) {
-    console.log(error)
+    console.error(error)
     useNotification().error(error)
     isLoading.value = false
     return

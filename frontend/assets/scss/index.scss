@@ -113,7 +113,6 @@ body[data-bs-theme="dark"] {
 h1, h2, h3, h4, h5, h6 {
   --bs-heading-color: var(--fg-color);
 }
-
 .el-popper .el-menu .text-on-primary {
   /* BSIDE items during hover. cannot be inside component, cause el-popper is directly in body tag*/
   --el-text-color-regular: var(--fg-color) !important;
@@ -139,7 +138,7 @@ button.pressed {
   outline: none;
 }
 
-.el-popper, .el-vl__window  {
+.el-popper.el-select__popper, .el-popper .el-select-dropdown, .el-popper .el-vl__window  {
   // width: 500px !important;
   width: fit-content;
   min-width: 200px;

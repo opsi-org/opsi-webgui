@@ -58,18 +58,7 @@ const items = ref([
   { id: 'page_reload', label: $t('button.reload'), icon: icons.refresh, command: () => emit('refetch')},
 ])
 const keyWrapper = ref(props.rowId)
-// onMounted(() => {
-//   console.log('CMTable mounted', props.item)
-//   cmmenu.value.$el.addEventListener('click', (e: any) => {
-//     console.log('click', e)
-//     if (e.target.tagName === 'LI') {
-//       hide()
-//     }
-//   })
-// })
-onBeforeUnmount(() => {
-  console.log('CMTable unmounted', props.item)
-})
+
 watch(() => props.item, (newVal, oldVal) => {
   items.value[0].label = $t('table.contextmenu.header-specific', {id: props.item[keyWrapper.value]})
 })
@@ -81,13 +70,11 @@ function show(e: Event) {
   cmmenu.value.show(e)
 }
 function hide() {
-  console.log('hide', props.item)
   // props.item = undefined
   cmmenu.value.hide()
 }
 
 function call_opsievent(event: string) {
-  console.log('call_opsievent', event)
   selectedAction.value = event
   showModal.value = true
 }

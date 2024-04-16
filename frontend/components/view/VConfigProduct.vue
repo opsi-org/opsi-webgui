@@ -3,7 +3,7 @@
   <h6>Id: {{ props.id }}</h6>
   <h7>Version: {{ getVersion(fetchedData.properties, fetchedData.properties.productVersions || fetchedData.dependencies.productVersions) }}</h7> <br />
   <!-- TODO: render description and advice as markdown -->
-  <b>{{ $t('table.fields.description')}}:</b><pre><Markdown> {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }} </Markdown></pre>
+  <b>{{ $t('table.fields.description') }}:</b><pre><Markdown> {{ fetchedData.properties.productDescription || fetchedData.dependencies.productDescription }} </Markdown></pre>
   <b>{{ $t('table.fields.advice') }}:</b><pre><Markdown> {{ fetchedData.properties.productAdvice || fetchedData.dependencies.productAdvice }} </Markdown></pre>
 
   <el-alert v-if="selectionClients.length <= 0" :title="$t('message.warning.noClientsSelectedShowDepot')" type="warning" />
@@ -77,7 +77,6 @@ watch(()=>selectionClients.value, async ()=>{
   await fetch()
 })
 watch(()=>props.id, async ()=>{
-  console.log('PROPERTIES props.id', props.id)
   await fetch()
 })
 onMounted(async ()=>{
@@ -104,7 +103,7 @@ async function fetchProperties (refetch: boolean = false) {
   })
 
   if (error) {
-    console.log(error)
+    console.error(error)
     useNotification().error(error)
     errorText.value.properties = error.response.data.message
     return
@@ -118,7 +117,7 @@ async function fetchDependencies () {
   })
 
   if (error) {
-    console.log(error)
+    console.error(error)
     useNotification().error(error)
     errorText.value.dependencies = error.response.data.message
     return
@@ -146,16 +145,10 @@ async function changeProperty (item: any, values: any, originValue: any) {
     data.depotIds = [...selectionDepots.value]
   }
 
-  console.log('changeProperty ', item.productId, item.propertyId)
-  console.log('changeProperty new value', values)
-  console.log('changeProperty old value', originValue)
-  console.log('changeProperty params', data)
   if (originValue === values) {
-    console.log('originValue === values', originValue, values)
     return
   }
   else if (values === '' && originValue === undefined) {
-    console.log('values === "" && originValue === undefined', originValue, values)
     return
   }
   await useSaveProductProperties().saveProdProperties(item.productId, data as Object, false, true)
@@ -176,11 +169,7 @@ function handleTrackingChanges (productId:string, hosts:Array<string>, key:strin
         changes.delWithIndexChangesProducts(objIndex)
       }
       // if (!arrayEqual(value, orgValues)) {
-        console.log('CHANGESprops pushToChangesProducts value', value)
-        console.log('CHANGESprops pushToChangesProducts orgValue', orgValue)
-        console.log('CHANGESprops pushToChangesProducts if unequal', changeObject)
         if (value !== orgValue) {
-          console.log('CHANGESprops pushToChangesProducts push', changeObject)
           changes.pushToChangesProducts(changeObject)
         }
       }

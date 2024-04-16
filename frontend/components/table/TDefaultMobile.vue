@@ -7,7 +7,7 @@
         :filterable-columns="Object.values(wrappedColumns)"
         @update="($event: any) => $emit('update-input-filter', $event)"
       />
-    <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columnsModel" :sort-by="sortBy" :multi="true" :incontextmenu="true" />
+    <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columnsModel" :sort-by="sortBy" :multi="true" :incontextmenu="true" /> -->
 
     <el-collapse v-model="collapseRowIdValue" accordion>
       <PVirtualScroller :items="dataModel" :itemSize="50" class="w-full h-[39rem] maxVisibleNoOverflow" >
@@ -59,8 +59,7 @@
 
 import {TableV2FixedDir, type CheckboxValueType, type Column } from 'element-plus'
 import type { ITableHeaderRow } from '~/types/ttableV3'
-import type { ITableData } from '../../types/ttable';
-log().log_colored('red', "TDefaultMobile !!!!!!!!!!!!!!!!!!!!!")
+import type { ITableData } from '../../types/ttable'
 const tableStore = storeTablesettings()
 
 const collapseRowIdValue = ref<any>({})
@@ -70,7 +69,6 @@ const CellRenderer = ({key, rowData, colData}: any) => {
   return <el-text>{ key }</el-text>
 }
 const Details = ({rowData, colData}: any) => {
-  log().log_colored('green', 'load details')
   const _width = {'width': '100%'}
   const data: Array<any> = []
   // const _fixedRightLast: Array<any> = []
@@ -127,14 +125,11 @@ const Details = ({rowData, colData}: any) => {
               }
               const rowValue = scope.row.value
               const colInfo = wrappedColumns.value[rowKey]
-              console.log('colInfo', colInfo, rowKey, rowValue, colInfo.cellRenderer)
 
               const renderer = colInfo.cellRenderer
               if (renderer !== undefined) {
-                log().log_colored('blue', 'renderer'  + renderer)
                 return renderer({ rowData } as any)
               }
-              {/* console.log('rowValue', rowValue) */}
               return <el-text>{ rowValue }</el-text>
             }
           }}
@@ -171,7 +166,6 @@ watch (()=>columnsModel, ()=>{ wrappedColumns.value = updateColumns() }, {deep: 
 
 watch(()=>tableStore[props.id + 'Columns'], ()=>{
 // watch(()=>tableStore.columns[props.id], ()=>{
-  console.log('WRAPPED CHANGED')
   const curRow = collapseRowIdValue.value
   collapseRowIdValue.value = undefined
   collapseRowIdValue.value = curRow
@@ -188,8 +182,6 @@ function updateColumns() {
       _columns[key].headerCellRenderer = value.headerCellRenderer
     }
   }
-  // log().log_colored('orange', 'updateColumns')
-  // console.log(_columns)
   // Object.values(_columns)
   //   .map(c => {
   //     if (!c.fixed) c.hidden = true

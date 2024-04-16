@@ -23,26 +23,25 @@
 <script lang="ts" setup>
 import { useStrings } from '~/composables/mixins/useStrings';
 import { useIcons } from '../../composables/mixins/useIcons';
-import type { EpPropMergeType } from 'element-plus/lib/utils/index.js';
+import type { ElTypeVariant } from '~/types/LibComponentTypes';
 
 // import { Component, Prop, Vue } from 'nuxt-property-decorator'
 // import { Icons } from '../../../mixins/icons'
 // import { Strings } from '../../../mixins/strings'
 const icon = useIcons()
 const t_fixed = useStrings().t_fixed
-const mq = useMQ().$mq
+const $mq = useMQ().$mq
 // @Component({ mixins: [Icons, Strings] })
 // export default class TCActionResult extends Vue {
   // $mq: any
   // icon: any
   // t_fixed: any
 
-  type ElType = EpPropMergeType<StringConstructor, "" | "warning" | "success" | "info" | "danger", unknown> | undefined
 // type ElType = 'primary' | 'success' | 'info' | 'warning' | 'danger' | 'transparent' | undefined
 
 const props = defineProps({
   text: { type: String, default: '' },
-  variant: { type: Object as PropType<ElType>, default: 'warning' }
+  variant: { type: String as PropType<ElTypeVariant>, default: 'warning' }
 })
 //   @Prop({ }) text!: string
 //   @Prop({ default: 'warning' }) variant!: string

@@ -28,12 +28,12 @@ const props = defineProps({
   type: { type: String, default: 'servers' },
   isChild: { type: Boolean, default: false }
 })
-console.log('props.id0', props.id)
+console.debug('VConfig', props.id, props.type, props.isChild)
+
 currentId.value = props.id
 const activeName = ref(configLastSelected.value[props.type] || (props.isChild? 'config':'attr'))
 
 watch(()=>props.id, ()=>{
-  console.log('props.id1', props.id)
   currentId.value = props.id
   if (isIdEmpty.value && activeName.value !== 'config') {
     activeName.value = 'config'
