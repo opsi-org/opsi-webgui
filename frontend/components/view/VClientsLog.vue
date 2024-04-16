@@ -38,7 +38,7 @@ import type { T_ClientLog } from '~/types/APItypes';
 
 const props = defineProps({
   id: { type: String, default: '' },
-  type: { type: String, default: 'servers' },
+  type: { type: String, default: 'clients' },
   isChild: { type: Boolean, default: false }
 })
 

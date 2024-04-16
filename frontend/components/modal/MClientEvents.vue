@@ -163,7 +163,7 @@ const events = ref({
   showpopup: {
     tooltip: 'button.event.showpopup.tooltip',
     titlemodal: 'button.event.showpopup',
-    icon: icon.message,
+    icon: icon.notify,
     buttonConfirm: 'button.confirm',
     buttonConfirmVariant: 'primary',
 

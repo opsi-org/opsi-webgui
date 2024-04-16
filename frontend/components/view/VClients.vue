@@ -245,6 +245,7 @@
 
 <script setup lang="tsx">
 import BTNRowLink from '@/components/button/BTNRowLink.vue'
+import DDClientActions from '@/components/dropdown/DDClientActions.vue';
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useTableHelper } from '~/composables/mixins/useTableHelper';
 import { useIcons } from '~/composables/mixins/useIcons';
@@ -509,6 +510,12 @@ const columns = ref<ITableHeaderRow>({
             icon={icons.log}
             onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'logs')}
           />
+          <BTNRowLink
+            isPressed={navigation.rowactionConfigChecked.value[rowData.clientId] && navigation.pageType.value === 'clone'}
+            icon={icons.client}
+            onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'clone')}
+          />
+          <DDClientActions clientId={rowData.clientId} />
           </>
       )},
     }
@@ -544,6 +551,8 @@ function changeRowLink(e:Event, cid: string, to='config') {
     navigation.toConfiguration(id, cid)
   } else if (to === 'logs') {
     navigation.toType(id, cid, 'logs')
+  } else if (to === 'clone') {
+    navigation.toType(id, cid, 'clone')
   }
 }
 // function updateTableData (v: typeof tableData.value) {

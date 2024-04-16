@@ -1,11 +1,10 @@
 <template>
-  <el-container v-loading="isLoading">
-    <el-form>
-      <el-form-item :label="$t('form.modules.available')">
-        <pre>{{ JSON.stringify(fetchedData.result, null, 2) }}</pre>
-      </el-form-item>
-    </el-form>
-  </el-container>
+  <el-row v-loading="isLoading">
+    <b>{{ $t('form.modules.available') }}: </b>
+  </el-row>
+  <div v-for="module, index in fetchedData.result" :key="index" class="ml-5">
+    <el-text> {{ module }} </el-text>
+  </div>
 </template>
 
 <script setup lang="ts">
