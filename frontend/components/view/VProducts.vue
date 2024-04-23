@@ -131,6 +131,8 @@ import type { ITableData, ITableRow } from '~/types/ttable';
 import type { IObjectString2ObjectString2String } from '~/types/tgeneral';
 import type { T_Client2Depot } from '~/types/APItypes';
 import { useTableHelper } from '~/composables/mixins/useTableHelper';
+import { useMBus } from '~/composables/mixins/useMessagebus';
+import { useSaveProductActionRequest } from '~/composables/mixins/useSave';
 
 
 const $t = useI18n().t
@@ -620,6 +622,42 @@ watch(()=>clientSelection.value, async () => {
 watch(()=>clientSelection.value, async ()=> { await tableHelper.fetch() })
 watch(()=>props.sortby, async ()=> { await tableHelper.fetch() })
 
+
+const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
+
+async function wsBusMsgObjectChanged (msg: any = undefined) {
+// async function _wsBusMsgObjectChanged (msg: any = undefined) {
+  if (msg &&
+    ['event:productOnClient_created', 'event:productOnClient_updated', 'event:productOnClient_deleted'].includes(msg.channel) &&
+    msg.data.productType === currentType.value &&
+    // this.visibleProductIds.includes(msg.data.productId) &&
+    clientSelection.value.includes(msg.data.clientId)
+  ) {
+
+    // if (!(this.lastChanges.clientIds.includes(msg.data.clientId) && this.lastChanges.productIds.includes(msg.data.productId))) {
+    //   // check if we may cause the event...
+    //   console.log(`MBUS; ${msg.data.productType}`, msg)
+      useNotification($t).infoMbus(
+        $t('message.info.event'),
+        $t('message.info.event.poc_updated', { productId: msg.data.productId }),
+        async () => {
+          await tableHelper.fetch()
+        }
+      )
+    // }
+    // if (this.quicksave) {
+    //   this.$fetch()
+    //   // if (ref) { ref.hide() }
+    // } else { /* quicksave is false ... do sth .. show message or sth */
+    //   const objIndex = this.changesProducts.findIndex(
+    //     item => item.user === localStorage.getItem('username') &&
+    //     item.clientId === msg.data.clientId &&
+    //     item.productId === msg.data.productId)
+    //   if (objIndex > -1) { /* show msg product updated */ }
+    // }
+  }
+}
+
 function changeProductsType (type: string) {
   if (props.isChild) {
     router.push('/clients/products/' + type + '/')
@@ -672,8 +710,35 @@ async function saveActionRequests() {
   // TODO
 }
 
-async function saveActionRequest() {
-  // TODO
+async function saveActionRequest(rowitem: any, newrequest: string) {
+  // alert (JSON.stringify(rowItem) + "----" + req)
+  // return
+  // const {data, error} = await useApiPOST('/opsidata/products', {action: action.value})
+  const data = {
+    clientIds: clientSelection.value,
+    productIds: [rowitem.productId],
+    actionRequest: newrequest
+  }
+    // this.lastChanges.clientIds = data.clientIds
+    // this.lastChanges.productIds = data.productIds
+    // if (!this.quicksave) {
+    //   for (const c in this.selectionClients) {
+    //     const d: Object = {
+    //       user: localStorage.getItem('username'),
+    //       clientId: this.selectionClients[c],
+    //       productId: rowitem.productId,
+    //       actionRequest: newrequest
+    //     }
+    //     const objIndex = this.changesProducts.findIndex(item => item.user === localStorage.getItem('username') && item.clientId === this.selectionClients[c] && item.productId === rowitem.productId)
+    //     if (objIndex > -1) {
+    //       this.delWithIndexChangesProducts(objIndex)
+    //     }
+    //     this.pushToChangesProducts(d)
+    //   }
+    // } else {
+      await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+      // this.fetchOptions.fetchClients = true
+    // }
 }
 
 function toggleDetailsTooltip (row: any, tooltiptext: IObjectString2ObjectString2String) {
