@@ -13,14 +13,39 @@
           >
             <div v-for="(value, label, index) in createClient.initialSetup.opsiClientAgent">
               <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
-              <el-form-item v-else  :label="$t('table.fields.' + label)" :class="{'d-none' : !createClient.initialSetup.opsiClientAgent.setup}">
-                <el-input v-model="createClient.initialSetup.opsiClientAgent[label.toString()]"/>
+              <el-form-item v-else  :label="$t('form.' + label)" :class="{'d-none' : !createClient.initialSetup.opsiClientAgent.setup}">
+                <el-select v-if="label === 'type'" filterable v-model="createClient.initialSetup.opsiClientAgent[label.toString()]">
+                  <el-option
+                    v-for="item in ['windows', 'linux', 'mac']"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
+                <el-input v-else v-model="createClient.initialSetup.opsiClientAgent[label.toString()]"/>
               </el-form-item>
             </div>
           </el-form>
           <el-select v-else-if="label === 'depot'" filterable v-model="createClient.assignments.depot">
             <el-option
               v-for="item in depotIDList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+          <el-select v-else-if="label === 'group'" filterable v-model="createClient.assignments.group">
+            <el-option
+              v-for="item in groupList"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+
+          <el-select v-else-if="label === 'netbootProduct'" filterable v-model="createClient.initialSetup.netbootProduct">
+            <el-option
+              v-for="item in netbootProductList"
               :key="item"
               :label="item"
               :value="item"
@@ -46,12 +71,14 @@
 import { reactive, ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useDepot } from '~/composables/mixins/useGet';
-import type { T_ClientAttr, T_DepotIds } from '~/types/APItypes';
+import type { T_ClientAttr, T_DepotIds, T_Product } from '~/types/APItypes';
 const mq = useMQ()
 const $t = useI18n().t
 const notify = useNotification($t)
 const isLoading = ref(false)
 const depotIDList = ref<T_DepotIds>([])
+const netbootProductList = ref()
+const groupList = ref()
 const clientName = ref('')
 const domain = ref('')
   // TODO: Backend: change createClient data structure
@@ -72,7 +99,6 @@ const createClient = reactive({
     netbootProduct: [],
     opsiClientAgent: {
       setup: false,
-      clients: [],
       username: '',
       password: '',
       type: 'windows'
@@ -87,37 +113,39 @@ onMounted(async ()=> {
   domain.value = storeCache().opsiconfigserver.substring(storeCache().opsiconfigserver.indexOf('.'))
   createClient.assignments.depot = storeCache().opsiconfigserver
 })
+watch(()=>createClient.assignments.depot, async ()=>{
+  await fetchNetbootProducts()
+})
 async function fetch() {
   depotIDList.value = await useDepot($t).getDepotIdList()
+  await fetchNetbootProducts()
+  await fetchGroups()
 }
-function resetForm () {
-  Object.assign(createClient, {
-    basics: {
-      hostId: '',
-      description: '',
-      inventoryNumber: '',
-      hardwareAddress: '',
-      ipAddress: null,
-      notes: ''
-    },
-    assignments: {
-      depot: "",
-      group: []
-    },
-    initialSetup: {
-      netbootProduct: [],
-      opsiClientAgent: {
-        setup: false,
-        clients: [],
-        username: '',
-        password: '',
-        type: 'windows'
+
+async function fetchGroups() {
+  const {data, error } = await useApiGET('/opsidata/hosts/groups/id')
+  if (error) {
+    notify.error(error)
+  } else {
+    groupList.value = data.value
+  }
+}
+
+async function fetchNetbootProducts() {
+  let depot = ''
+  if (createClient.assignments.depot !== '') {
+    depot = createClient.assignments.depot
+  } else {
+    depot = storeCache().opsiconfigserver
+  }
+  await useApiGET('/opsidata/depots/products?selectedDepots=[' + depot + ']')
+    .then((response) => {
+      if (Array.isArray(response.data.value)) {
+        netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
       }
-    },
-    settings: {
-      uefi: false
-    }
-  })
+    }).catch((error) => {
+      notify.error(error)
+    })
 }
 
 async function createOpsiClient() {
@@ -177,71 +205,42 @@ async function setupNetbootProduct() {
   //   useNotification($t).error(error)
   // }
 }
+function resetForm () {
+  Object.assign(createClient, {
+    basics: {
+      hostId: '',
+      description: '',
+      inventoryNumber: '',
+      hardwareAddress: '',
+      ipAddress: null,
+      notes: ''
+    },
+    assignments: {
+      depot: "",
+      group: []
+    },
+    initialSetup: {
+      netbootProduct: [],
+      opsiClientAgent: {
+        setup: false,
+        clients: [],
+        username: '',
+        password: '',
+        type: 'windows'
+      }
+    },
+    settings: {
+      uefi: false
+    }
+  })
+}
 </script>
 
 
-<!-- <template>
-  <div data-testid="VClientCreation" class="VClientCreation">
-    <GridGFormItem value-more="true" variant="longvalue" :label="$t('table.fields.id')" labelclass="id">
-      <template #value>
-        <b-form-input
-          id="clientname"
-          v-model="clientName"
-          size="sm"
-          data-testid="clientname"
-          :aria-label="$t('table.name.client')"
-          type="text"
-          :state="checkValid"
-          trim
-          required
-        />
+<!--
         <b-form-invalid-feedback :state="checkValid">
           <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
         </b-form-invalid-feedback>
-      </template>
-      <template #valueMore>
-        <b-form-input
-          id="domainName"
-          v-model="domainName"
-          size="sm"
-          class="domainName"
-          :aria-label="$t('table.name.domain')"
-          type="text"
-          trim
-          required
-        />
-      </template>
-    </GridGFormItem>
-    <GridGFormItem :label=" $t('table.fields.netbootproduct')" variant="longvalue" labelclass="netbootproduct">
-      <template #value>
-        <b-form-select
-          id="netbootproduct"
-          v-model="netbootproduct"
-          size="sm"
-          value-field="productId"
-          text-field="productId"
-          :options="netbootproductslist"
-        />
-      </template>
-    </GridGFormItem>
-  </div>
-</template>
-
-<script lang="ts">
-  @Watch('depotId', { deep: true }) async depotIdChanged () { await this.fetchNetbootProducts() }
-
-  get domainName () {
-    if (this.opsiconfigserver) {
-      this.result = this.opsiconfigserver
-      this.result = this.result.substring(this.result.indexOf('.'))
-    }
-    this.domain = this.result
-    return this.result
-  }
-
-  set domainName (val: string) {
-    this.domain = val
-  }
 
   get formvalidation_user () { return this.form.username !== '' }
   get formvalidation_pw () { return this.form.password !== '' }
@@ -250,38 +249,8 @@ async function setupNetbootProduct() {
     return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domain)
   }
 
-  // async mounted () {
-  //   await this.fetchClients()
-  //   await this.fetchNetbootProducts()
-  // }
 
-  async fetch () {
-    await this.fetchClients()
-    await this.fetchNetbootProducts()
-  }
-
-  async fetchClients () {
-    this.clientIds = await this.getClientIdList(this.selectionDepots)
-  }
-
-  async fetchNetbootProducts () {
-    let depot = ''
-    if (this.depotId !== '') {
-      depot = this.depotId
-    } else {
-      depot = this.opsiconfigserver
-    }
-    await this.$axios.$get(`/api/opsidata/depots/products?selectedDepots=[${depot}]`)
-      .then((response) => {
-        this.netbootproductslist = response
-      }).catch((error) => {
-        const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-        const ref = (this.$refs.newClientAlert as any)
-        ref.alert(detailedError, 'danger')
-      })
-  }
-
-  async deployopsiclientagent () {
+ async deployopsiclientagent () {
     this.form.clients = [this.newClient.hostId]
     if (!this.form.username || !this.form.password || !this.form.clients) {
       return
@@ -332,33 +301,6 @@ async function setupNetbootProduct() {
       })
     this.isLoading = false
   }
-
-  resetNewClientForm () {
-    this.clientName = ''
-    this.newClient = {
-      hostId: '',
-      description: '',
-      inventoryNumber: '',
-      hardwareAddress: '',
-      ipAddress: null,
-      notes: ''
-    } as NewClient
-  }
 }
 </script>
-
-<style>
-.VClientCreation {
-  overflow-x: hidden;
-  padding-left: 10px;
-}
-.valid-none.is-valid {
-  background-image: unset !important;
-  border-color: var(--b-input_component) !important;
-  box-shadow: unset !important;
-}
-.valid-none.is-valid:focus {
-  border-color: var(--b-input_component-focus) !important;
-  box-shadow: unset !important;
-}
-</style> -->
+ -->
