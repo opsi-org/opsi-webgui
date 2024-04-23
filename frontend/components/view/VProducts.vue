@@ -548,6 +548,7 @@ const fetchedDataWrapper = computed(()=>fetchedData.value[currentType.value])
 const tableDataWrapper = computed(()=>tableData.value[currentType.value])
 // const clientSelection = computed(()=>props.selectedClient || selectionClients.value)
 
+const lastChanges = ref({ clientIds: [], productIds: [] }) // used to check if we caused the last event
 const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, tableSettings, currentType) // define watcher for tableData
 const numberOtherNetboot = computed(()=>{
   // TODO: show number of netboot products with sortBy isnt empty/none/not_installed/..
@@ -636,9 +637,9 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
     clientSelection.value.includes(msg.data.clientId)
   ) {
 
-    // if (!(this.lastChanges.clientIds.includes(msg.data.clientId) && this.lastChanges.productIds.includes(msg.data.productId))) {
-    //   // check if we may cause the event...
-    //   console.log(`MBUS; ${msg.data.productType}`, msg)
+    if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
+      // check if we may cause the event...
+      console.log(`MBUS; ${msg.data.productType}`, msg)
       useNotification($t).infoMbus(
         $t('message.info.event'),
         $t('message.info.event.poc_updated', { productId: msg.data.productId }),
@@ -646,7 +647,7 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
           await tableHelper.fetch()
         }
       )
-    // }
+    }
     // if (this.quicksave) {
     //   this.$fetch()
     //   // if (ref) { ref.hide() }
@@ -714,8 +715,8 @@ async function saveActionRequests(rowItem: any, newrequest: string) {
     productIds: selectionProducts.value,
     actionRequest: newrequest
   }
-  // this.lastChanges.clientIds = data.clientIds
-  // this.lastChanges.productIds = data.productIds
+  lastChanges.value.clientIds = data.clientIds
+  lastChanges.value.productIds = data.productIds
   // if (!this.quicksave) {
   //   for (const c in this.selectionClients) {
   //     for (const p in this.selectionProducts) {
