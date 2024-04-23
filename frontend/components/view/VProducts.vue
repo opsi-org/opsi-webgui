@@ -548,7 +548,7 @@ const fetchedDataWrapper = computed(()=>fetchedData.value[currentType.value])
 const tableDataWrapper = computed(()=>tableData.value[currentType.value])
 // const clientSelection = computed(()=>props.selectedClient || selectionClients.value)
 
-const lastChanges = ref({ clientIds: [], productIds: [] }) // used to check if we caused the last event
+const lastChanges = ref({ clientIds: [] as Array<string>, productIds: [] as Array<string> }) // used to check if we caused the last event
 const tableHelper = useTableHelper(id, tableData, fetchedData, totalItems, _fetch, tableSettings, currentType) // define watcher for tableData
 const numberOtherNetboot = computed(()=>{
   // TODO: show number of netboot products with sortBy isnt empty/none/not_installed/..
