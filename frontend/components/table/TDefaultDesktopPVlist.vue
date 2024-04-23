@@ -478,6 +478,9 @@ const rowEventHandlers: any = {
 
     $emit('selection-changed', rowData[props.rowId])
     const isAlreadyInStore2 = selectionStore['_'+selectKey.value].includes(rowData[props.rowId])
+    // alert('selection-changed: ' + rowData[props.rowId])
+    alert('selection-changed: ' + rowData[props.rowId] + ' isAlreadyInStore: ' + isAlreadyInStore + ' isAlreadyInStore2: ' + isAlreadyInStore2)
+
   },
   onDblclick: (params: RowEventHandlerParams) => {
     // const rowData:TRowData  = params.rowData

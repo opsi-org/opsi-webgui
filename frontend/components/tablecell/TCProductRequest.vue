@@ -9,7 +9,7 @@
         :label="a"
         :value="a"
         :data-testid="`DropdownDDProductRequest-Item-${a}`"
-        @click="$emit('update:action', a);save(rowitem, a); visibleRequest=a"
+        @click="save(rowitem, a); visibleRequest=a"
         >
         </el-option>
     </el-select>

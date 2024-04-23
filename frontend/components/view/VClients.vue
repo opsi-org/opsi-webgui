@@ -6,6 +6,7 @@
       <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
       {{tableData}} <br />
       {{totalItems}} <br />
+      {{storeSelection.selectionClients}}
     <ButtonBTNRowLink
       :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
       :icon="icons.product"
@@ -305,6 +306,9 @@ const columns = ref<ITableHeaderRow>({
       cellRenderer: ({rowData}) => {
         // const selectedIds = computed(() => storeSelection._selectionClients)
         // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        if (storeSelection.selectionClients.includes(rowData.clientId)){
+          rowData.selected = true
+        }
         return (<>
           {rowData.dummy ? <div /> :
             storeSelection.multiSelection ?
