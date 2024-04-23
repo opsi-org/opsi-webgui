@@ -52,7 +52,7 @@ const $t = useI18n().t
 const notify = useNotification($t)
 const isLoading = ref(false)
 const depotIDList = ref<T_DepotIds>([])
-const clientName = ref('a-test-01')
+const clientName = ref('')
 const domain = ref('')
   // TODO: Backend: change createClient data structure
 const createClient = reactive({

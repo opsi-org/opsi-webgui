@@ -7,7 +7,7 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   // showToastMbus: any // mixin
   let t = _t
   if (!t) { t = useI18n().t }
-  const showToastMbus = useNotification().infoMbus
+  const showToastMbus = useNotification(t).infoMbus
 
   let channels: any // from importing component?
   const wsBus = ref<WebSocket|undefined>(storeMBus().bus)

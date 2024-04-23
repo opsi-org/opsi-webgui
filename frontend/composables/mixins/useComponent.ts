@@ -61,6 +61,7 @@ const _useNotification = (t: any) => {
     return showToast({
       title,
       content,
+      noAutoHide: true,
       variant: 'info',
       ...obj
     })
@@ -127,7 +128,7 @@ const _useNotification = (t: any) => {
 
     const $elements:any = []
     const vid = `my-toast-${count.value++}`
-    $elements.push(h('div', obj.content))
+    $elements.push(h('div', {class: 'el-text'}, obj.content))
     if (obj.error_data !== undefined) {
       // Construct toast to be displayed on errors (will hide all toasts before)
       const e = obj.error_data
@@ -156,30 +157,17 @@ const _useNotification = (t: any) => {
       // Create right aligned custom components if defined
       elements.push(h('div', {
         class: 'd-flex justify-end',
-        on: {
-          click: () => { hideToast() }
-        }
+        on: { click: () => { hideToast() } }
       }, obj.components))
     }
-    $elements.push(h('div', { class: 'd-flex justify-end' }, elements)) // all elements are right aligned
-    // const _showToast = (BToast?.methods as any).showToast
-    // const _showToast: any = $bvToast.showToast
-
-    const message = h('div', $elements)
+    $elements.push(h('div', { class: '' }, elements)) // all elements are right aligned
+    const col = h('div', {class: 'el-col el-col-24'}, $elements)
+    const message = h('div', {class: 'el-row'}, col)
     const data = {
-  // setTimeout(() =>
-  // {
-  //   // The timeout seems to be need, otherwise _bv__toast is undefined.
-  //   // const bvToast = instance.ctx._bv__toast as BvToast;
-  //   const _showToast: any = instance.ctx._bv__toast.showToast
-  //   _showToast($elements, {
       title: `${obj.title}`,
       message,
-  //     vid,
       type: obj.variant,
-  //     solid: true,
       duration: obj.noAutoHide ? 0 : obj.autoHideDelay,
-      // showClose: obj.noAutoHide,
 
       // current workaround, cause colors are not inherits
       // customClass: settings.isLight ? 'bg-light text-black' : 'bg-dark text-dark'
@@ -205,16 +193,24 @@ const _useNotification = (t: any) => {
   }
 
   function _create_button (h: any, id:string, variant: string, btnData: any): any {
-    const $btn = h('b-button',
+    const $btn = h('button',
       {
-        props: { variant: `outline-${variant}`, title: btnData.tooltip },
-        // class: `btn btn-outline-${variant}`,
-        on: {
-          click: () => {
-            if (btnData.hide === undefined || btnData.hide === true) { hideToast() }
-            if (btnData.action !== undefined) { (btnData.action as Function)() }
-          }
+        'aria-disabled':"false",
+        class:"el-button",
+        type: variant,
+        title: btnData.tooltip,
+        onClick: async () => {
+          if (btnData.hide === undefined || btnData.hide === true) { hideToast() }
+          if (btnData.action !== undefined) { await (btnData.action as Function)() }
         }
+        // props: { type: `${variant}`, title: btnData.tooltip },
+        // class: `btn btn-outline-${variant}`,
+        // on: {
+        //   click: async () => {
+        //     if (btnData.hide === undefined || btnData.hide === true) { hideToast() }
+        //     if (btnData.action !== undefined) { await (btnData.action as Function)() }
+        //   }
+        // }
       },
       btnData.text
     )
@@ -232,9 +228,7 @@ const _useNotification = (t: any) => {
   }
 }
 export function useNotification(_t: any = undefined) {
-  // const { t } = useI18n()
-  const t = _getI18nInComposable()
-  return _useNotification(_t || t)
+  return _useNotification(_t || _getI18nInComposable())
 }
 export const useAlertToast = () => {
   // const { t } = useI18n()

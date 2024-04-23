@@ -139,7 +139,7 @@ const icons = useIcons()
 const router = useRouter()
 const navigation = useNavigate()
 const fetchClient = useClient($t)
-const notify = useNotification()
+const notify = useNotification($t)
 
 const tableSettings = storeTablesettings()
 const storeSelection = storeSelections()

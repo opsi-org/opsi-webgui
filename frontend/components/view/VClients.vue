@@ -11,6 +11,7 @@
       :icon="icons.product"
       @click="openLink('/clients/products/LocalbootProduct')"
     > Products </ButtonBTNRowLink>
+    <!-- TODO: i18n of Products -->
     <TableTDefault
       row-id="clientId"
       :id="id"
@@ -263,7 +264,7 @@ const router = useRouter()
 const navigation = useNavigate()
 const $t = useI18n().t
 const icons = useIcons()
-const notify = useNotification()
+const notify = useNotification($t)
 const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
@@ -639,15 +640,16 @@ async function wsBusMsgObjectChanged(msg: any = undefined) {
     notify.infoMbus(
       $t('message.info.event'), // title
       $t('message.info.event.client_updated', { clientId: msg.data.id }), // content
-      undefined // action
+      async () => {
+        tableHelper.setTotalItemsAsPerPage(100000)
+        await tableHelper.fetch()
+        tableHelper.setTotalItemsAsPerPage(totalItems.value)
+      }
     )
-    // await this.$fetch()
   }
   if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
     // eslint-disable-next-line no-console
-    console.warn('message bus host_connected', msg)
-    // this.cache_pages.
-    // await this.$fetch()
+    console.warn('message bus: ', msg)
   }
 }
 /**

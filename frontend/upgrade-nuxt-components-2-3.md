@@ -249,6 +249,7 @@ const colorMode = computed({
   import { useNotification } from '~/composables/mixins/useComponent';
   const fetchResult = ref(undefined);
   const fetchError = ref(false);
+  const $t = useI18n().t
   onMounted( async () => {
     // usually this is enough:
     const { data, error } = await useApiGet('/user/opsiserver')
@@ -262,7 +263,7 @@ const colorMode = computed({
 
     // show error / data
     if (error) {
-      useNotification().error(error)
+      useNotification($t).error(error) // $t only used for translations in error messages (at least currently)
       fetchError.value = error;
       return
     }
