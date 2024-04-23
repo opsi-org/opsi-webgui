@@ -22,7 +22,7 @@
                     :value="item"
                   />
                 </el-select>
-                <el-input v-else v-model="createClient.initialSetup.opsiClientAgent[label.toString()]"/>
+                <el-input v-else v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
               </el-form-item>
             </div>
           </el-form>
@@ -70,13 +70,14 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
-import { useDepot } from '~/composables/mixins/useGet';
+import { useDepot, useClient } from '~/composables/mixins/useGet';
 import type { T_ClientAttr, T_DepotIds, T_Product } from '~/types/APItypes';
 const mq = useMQ()
 const $t = useI18n().t
 const notify = useNotification($t)
 const isLoading = ref(false)
 const depotIDList = ref<T_DepotIds>([])
+const clientIDList = ref()
 const netbootProductList = ref()
 const groupList = ref()
 const clientName = ref('')
@@ -115,9 +116,11 @@ onMounted(async ()=> {
 })
 watch(()=>createClient.assignments.depot, async ()=>{
   await fetchNetbootProducts()
+  clientIDList.value = await useClient($t).getClientIdList([createClient.assignments.depot])
 })
 async function fetch() {
   depotIDList.value = await useDepot($t).getDepotIdList()
+  clientIDList.value = await useClient($t).getClientIdList([createClient.assignments.depot])
   await fetchNetbootProducts()
   await fetchGroups()
 }
@@ -150,11 +153,15 @@ async function fetchNetbootProducts() {
 
 async function createOpsiClient() {
   createClient.basics.hostId =  clientName.value + domain.value
+  if (clientIDList.value.includes(createClient.basics.hostId)) {
+    notify.error($t('message.error.clientExists', { client: createClient.basics.hostId }))
+    return
+  }
   isLoading.value = true
   const request = {
     client: createClient.basics, depot: createClient.assignments.depot
   }
-  const {data, error, status } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
+  const { error } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
 
   if (error) {
     notify.error(error)
@@ -173,38 +180,39 @@ async function createOpsiClient() {
     if (createClient.initialSetup.netbootProduct) {
       await setupNetbootProduct()
     }
-    // clientIds.push(createClient.basics.hostId)
+    clientIDList.value.push(createClient.basics.hostId)
   }
   isLoading.value = false
 }
 
 async function setUEFI(clientId: string, uefi: string) {
-  const {data, error } = await useApiPOST('/opsidata/clients/uefi', {clientId, uefi})
+  const { error } = await useApiPOST('/opsidata/clients/uefi', {clientId, uefi})
   if (error) {
     useNotification($t).error(error)
   }
 }
 
 async function assignToGroup() {
-  // const {data, error } = await useApiPOST('/opsidata/clients/groups', {clientId: createClient.basics.hostId, group: createClient.assignments.group})
-  // if (error) {
-  //   useNotification($t).error(error)
-  // }
+  const { error } = await useApiPOST('/opsidata/clients/groups', {clientId: createClient.basics.hostId, group: createClient.assignments.group})
+  if (error) {
+    useNotification($t).error(error)
+  }
 }
 
 async function deployopsiclientagent() {
-  const {data, error } = await useApiPOST('/opsidata/clients/agent', createClient.initialSetup.opsiClientAgent)
+  const { error } = await useApiPOST('/opsidata/clients/agent', createClient.initialSetup.opsiClientAgent)
   if (error) {
     useNotification($t).error(error)
   }
 }
 
 async function setupNetbootProduct() {
-  // const {data, error } = await useApiPOST('/opsidata/clients/netboot', {clientIds: [createClient.basics.hostId], productIds: [createClient.initialSetup.netbootProduct], actionRequest: 'setup'})
-  // if (error) {
-  //   useNotification($t).error(error)
-  // }
+  const { error } = await useApiPOST('/opsidata/clients/netboot', {clientIds: [createClient.basics.hostId], productIds: [createClient.initialSetup.netbootProduct], actionRequest: 'setup'})
+  if (error) {
+    useNotification($t).error(error)
+  }
 }
+
 function resetForm () {
   Object.assign(createClient, {
     basics: {
@@ -237,70 +245,3 @@ function resetForm () {
 </script>
 
 
-<!--
-        <b-form-invalid-feedback :state="checkValid">
-          <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
-        </b-form-invalid-feedback>
-
-  get formvalidation_user () { return this.form.username !== '' }
-  get formvalidation_pw () { return this.form.password !== '' }
-
-  get checkValid () {
-    return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domain)
-  }
-
-
- async deployopsiclientagent () {
-    this.form.clients = [this.newClient.hostId]
-    if (!this.form.username || !this.form.password || !this.form.clients) {
-      return
-    }
-    const modal = false
-    const contextmenu = false
-    await this.deployClientAgent(this.form, modal, contextmenu)
-  }
-
-  async assignToGroup () {
-    await this.addClientToListOfGroups(this.newClient.hostId, this.group)
-  }
-
-  async setupNetbootProduct () {
-    const change = {
-      clientIds: [this.newClient.hostId],
-      productIds: [this.netbootproduct],
-      actionRequest: 'setup'
-    }
-    const successalert = false
-    await this.saveProdActionRequest(change, null, successalert)
-  }
-
-  async createOpsiClient () {
-    this.isLoading = true
-    this.newClient.hostId = this.clientName + this.domain
-    const request = {
-      client: this.newClient, depot: this.depotId
-    }
-    await this.$axios.$post('/api/opsidata/clients', request)
-      .then(async () => {
-        this.showToastSuccess(this.$t('message.success.createClient', { client: this.newClient.hostId }))
-        if (this.uefi) {
-          this.setUEFI(this.newClient.hostId, this.uefi.toString())
-        }
-        if (this.group) {
-          await this.assignToGroup()
-        }
-        if (this.clientagent) {
-          await this.deployopsiclientagent()
-        }
-        if (this.netbootproduct) {
-          await this.setupNetbootProduct()
-        }
-        this.clientIds.push(this.newClient.hostId)
-      }).catch((error) => {
-        this.showToastError(error)
-      })
-    this.isLoading = false
-  }
-}
-</script>
- -->
