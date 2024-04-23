@@ -35,7 +35,7 @@
   - [-] Clients
   - [-] Clients Clone
   - [-] WIP Clients Config
-  - [-] WIP Clients Creation
+  - [x] WIP Clients Creation
   - [x] Clients Log
   - [x] Clients Products
   - [-] products

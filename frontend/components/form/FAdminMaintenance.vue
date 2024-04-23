@@ -62,12 +62,7 @@
         :label="$t('label.'+ key)"
       >
           <el-checkbox v-if="typeof value == 'boolean'" v-model="actions[key]" />
-          <el-input-group v-else-if="key === 'password'" class="w-100 flex">
-            <el-input v-model="actions[key]" :type="(section === 'createBackup' ? showPasswordCB : showPasswordRB) ? 'text': 'password'" />
-            <el-button class="flex-shrink-0" @click="section === 'createBackup' ? showPasswordCB = !showPasswordCB : showPasswordRB = !showPasswordRB" type="primary">
-              <IconIIcon :icon="(section === 'createBackup' ? showPasswordCB : showPasswordRB) ? icon.valueShow : icon.valueHide" />
-            </el-button>
-          </el-input-group>
+          <el-input v-else-if="key === 'password'" v-model="actions[key]" show-password />
           <el-input-group v-else-if="key === 'server_id'" class="w-100 flex">
             <el-radio-group class="flex-shrink-0" v-model="actions[key]">
               <el-radio :label="item" v-for="item in ['backup', 'local', 'new']" :key="item">{{ $t('label.' + item) }}</el-radio>
@@ -120,8 +115,8 @@ const mq = useMQ()
 const currentAppState = ref('')
 const isLoading = ref(false)
 const newAppState = ref({ type: '', address_exceptions: [], retry_after: 0 })
-const showPasswordCB = ref(false)
-const showPasswordRB = ref(false)
+
+
 
 
 onMounted(async ()=> {

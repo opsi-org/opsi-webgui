@@ -46,19 +46,9 @@
                 :aria-label="$t('form.password')"
                 :placeholder="$t('form.password')"
                 :state="validPassword"
-                :type="showPassword? 'text': 'password'"
+                show-password
                 class="mb-2 password"
-              >
-
-              <template #append>
-                <el-button @click="toggleShowPassword" type="primary" class="pr-2"
-                style="--el-button-border-color: var(--el-text-color-regular);"
-                :disabled="isLoading">
-                  <span class="sr-only">{{ showPassword? $t('form.password.hide'): $t('form.password.show') }}</span>
-                  <IconIIcon :icon="showPassword ? icon.valueShow : icon.valueHide" />
-                </el-button>
-              </template>
-            </el-input>
+              />
           </el-form-item>
           <el-form-item>
             <el-input
@@ -66,17 +56,8 @@
               v-model="totp"
               :aria-label="$t('table.fields.otp')"
               :placeholder="$t('table.fields.otp')"
-              :type="showOTP? 'text': 'password'"
-            >
-              <template #append>
-                <el-button @click="toggleShowOTP" type="primary" class="pr-2"
-                style="--el-button-border-color: var(--el-text-color-regular);"
-                :disabled="isLoading">
-                  <span class="sr-only">{{ showOTP? $t('form.otp.hide'): $t('form.otp.show') }}</span>
-                  <IconIIcon :icon="showOTP ? icon.valueShow : icon.valueHide" />
-                </el-button>
-              </template>
-            </el-input>
+              show-password
+            />
           </el-form-item>
 
           <IconILoading v-if="isLoading"> </IconILoading>
@@ -113,13 +94,8 @@ const notificationError = useNotification($t).error
 
 const config = useRuntimeConfig()
 const $mq = useMQ().$mq
-const icon = useIcons()
-
 const form = ref({ username: '', password: '' })
-const showPassword = ref(false)
-
 const isLoading = ref(false)
-const showOTP = ref(false)
 const totp = ref('')
 const opsiconfigserver = ref('');
 
@@ -136,14 +112,6 @@ const validUsername = computed<Boolean|null>(
 const validPassword = computed(
   () => (form.value.password !== '') ?  null : false
 )
-
-function toggleShowPassword () {
-  showPassword.value = !showPassword.value
-}
-
-function toggleShowOTP () {
-  showOTP.value = !showOTP.value
-}
 
 async function doLogin () {
   if (!validUsername || !validPassword) return
