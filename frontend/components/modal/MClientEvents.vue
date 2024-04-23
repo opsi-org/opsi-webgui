@@ -200,7 +200,7 @@ const events = ref({
   deployclientagent: {
     tooltip: 'button.event.deployclientagent.tooltip',
     titlemodal: 'label.clientagent',
-    icon: icon.deploy,
+    icon: icon.deployclientagent,
     buttonConfirm: 'button.confirm',
     buttonConfirmVariant: 'primary',
     params: {
