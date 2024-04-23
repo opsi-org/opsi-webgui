@@ -19,6 +19,7 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
+import { useMBus } from '~/composables/mixins/useMessagebus';
 import { useSaveParameters } from '~/composables/mixins/useSave';
 import type { T_ClientAttr, T_HostParameter, T_ServerAttr } from '~/types/APItypes'
 
@@ -45,7 +46,6 @@ function changeItem (item: any, val: any, index: number) {
     item.possibleValues.push(val)
   }
 
-  // TODO: Save to backend or add to changes
   handleSelection(item)
 }
 
@@ -58,24 +58,27 @@ watch(()=>props.id, async ()=>{
     await fetch()
 })
 
+const channels = ['event:config_created', 'event:config_updated', 'event:config_deleted', 'event:configState_created', 'event:configState_updated', 'event:configState_deleted']
+const msgbus = useMBus(wsBusMsgObjectChanged, false, $t, channels)
+async function wsBusMsgObjectChanged(msg: any = undefined) {
 
 // @Watch('wsBusMsg', { deep: true }) async _wsBusMsgObjectChanged2 () {
-//     const msg = this.wsBusMsg
-//     if (msg && this.channels.includes(msg.channel)) {
-//       // console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
-//       if (!(this.lastSavedData.configIds.includes(msg.data.configId) && // configId matches
-//             (this.lastSavedData.objectIds.includes(msg.data.objectId) || // objectId matches
-//               (this.lastSavedData.objectIds.length === 0 && msg.data.isDefault === true)
-//             )
-//       )) {
-//         this.showToastMbus({
-//           title: this.$t('message.info.event'),
-//           content: this.$t('message.info.event.config_updated', { configId: msg.data.configId })
-//         })
-//         await this.$fetch()
-//       }
-//     }
-//   }
+    // const msg = this.wsBusMsg
+    if (msg && channels.includes(msg.channel)) {
+      // console.log(`MessageBus [HostParam] received a channel msg: ${msg.channel}: ${JSON.stringify(msg.data)}`)
+      if (!(lastSavedData.value.configIds.includes(msg.data.configId) && // configId matches
+            (lastSavedData.value.objectIds.includes(msg.data.objectId) || // objectId matches
+              (lastSavedData.value.objectIds.length === 0 && msg.data.isDefault === true)
+            )
+      )) {
+        useNotification($t).infoMbus(
+          $t('message.info.event'),
+          $t('message.info.event.config_updated', { configId: msg.data.configId }),
+          $fetch
+        )
+      }
+    }
+  }
 
 // async function fetch(id:string) {
 //   if (props.type === 'depots' && id){

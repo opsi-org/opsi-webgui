@@ -2,14 +2,14 @@ import { encode, decode } from '@msgpack/msgpack'
 import { useNotification } from './useComponent'
 import _ from 'lodash'
 
-export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifications=false, _t: any=undefined) => {
+export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifications=false, _t: any=undefined, _channels: any = []) => {
   // @Component({ mixins: [AlertToast] }) export class MBus extends Vue {
   // showToastMbus: any // mixin
   let t = _t
   if (!t) { t = useI18n().t }
   const showToastMbus = useNotification(t).infoMbus
 
-  let channels: any // from importing component?
+  let channels: any = _channels || undefined// from importing component?
   const wsBus = ref<WebSocket|undefined>(storeMBus().bus)
   const wsBusMsg = ref(storeMBus().wsBusMsg)
   const setBus = (_bus: WebSocket|undefined)=> {
