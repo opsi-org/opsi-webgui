@@ -6,6 +6,7 @@
   <!-- <el-text>SortByProp {{ props.sortby }}</el-text> <br /> -->
   <!-- <el-text>PropsSelection {{ props.selectedClient }}</el-text> <br /> -->
   <!-- {{ fetchedData[currentType].length }}, total {{ totalItems }} -->
+  {{selectionProducts}}<br />
   <div>
     <!-- <el-badge :value="numberLocalbootsSortbyNotEmpty" class="item"  :hidden="numberLocalbootsSortbyNotEmpty <= 0" type="success" > -->
     <el-checkbox-button
@@ -167,7 +168,6 @@ const fetchedDataClients2Depots = ref<T_Client2Depot>({})
 const clientSelection = ref(props.selectedClient ? [props.selectedClient] : selectionClients.value)
 
 const productsTypeChecked = ref({ LocalbootProduct: true, NetbootProduct: false, Product: false })
-const action = ref('')
 const totalItems = ref<number>(0)
 interface tproductITableData {
   LocalbootProduct: ITableData,
@@ -229,6 +229,9 @@ const columns = reactive<ITableHeaderRow>({
       cellRenderer: ({rowData}) => {
         // const selectedIds = computed(() => storeSelection._selectionProducts)
         // <div class="hidden">{{ (getSelectedrowIdsFromStore().includes(rowData[props.rowId])) ? rowData.selected = true : rowData.selected = false }}</div>
+        if (selectionProducts.value.includes(rowData.productId)){
+          rowData.selected = true
+        }
         return (<>
           {rowData.dummy ? <div /> :
             storeSelection.multiSelection ?
@@ -471,7 +474,6 @@ const columns = reactive<ITableHeaderRow>({
       headerCellRenderer: (useMQ().isMobile.value) ? undefined : () => {
         return ( <>
           <tablecellTCProductRequest
-            action={action.value}
             title={$t('form.tooltip.actionRequest')}
             save={saveActionRequests}
             selectedClients={clientSelection.value}
@@ -706,8 +708,34 @@ async function _fetch(_type: string = "") {
   return data.value
 }
 
-async function saveActionRequests() {
-  // TODO
+async function saveActionRequests(rowItem: any, newrequest: string) {
+  const data = {
+    clientIds: clientSelection.value,
+    productIds: selectionProducts.value,
+    actionRequest: newrequest
+  }
+  // this.lastChanges.clientIds = data.clientIds
+  // this.lastChanges.productIds = data.productIds
+  // if (!this.quicksave) {
+  //   for (const c in this.selectionClients) {
+  //     for (const p in this.selectionProducts) {
+  //       const d = {
+  //         user: localStorage.getItem('username'),
+  //         clientId: this.selectionClients[c],
+  //         productId: this.selectionProducts[p],
+  //         actionRequest: this.action
+  //       }
+  //       const objIndex = this.changesProducts.findIndex(item => item.clientId === this.selectionClients[c] && item.productId === this.selectionProducts[p])
+  //       if (objIndex > -1) {
+  //         this.delWithIndexChangesProducts(objIndex)
+  //       }
+  //       this.pushToChangesProducts(d)
+  //     }
+  //   }
+  // } else {
+    await useSaveProductActionRequest($t).saveProdActionRequest(data, null, true)
+    await tableHelper.fetch()
+  // }
 }
 
 async function saveActionRequest(rowitem: any, newrequest: string) {

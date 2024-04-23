@@ -94,9 +94,9 @@ async function useAPI2<T> (
         response: {
           data: {
             class: response?.data?.class || response?._data?.class,
-            message: response?.data?.details || response?._data?.details
+            message: response?.data?.message || response?._data?.message,
             // message: response?.data?.message || response?._data?.message,
-            // details: response?.data?.details || response?._data?.details
+            details: response?.data?.details || response?._data?.details
           }
         }
       }
