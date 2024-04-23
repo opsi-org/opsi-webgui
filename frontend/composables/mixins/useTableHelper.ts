@@ -100,7 +100,8 @@ export const useTableHelper = (
   function updateTableData (v: typeof tableDataWrapper.value) {
     for (const key in v) {
       if (JSON.stringify(tableDataWrapper.value[key]) !== JSON.stringify(v[key])) {
-        tableDataWrapper.value[key] = v[key]
+        if (v[key])
+          tableDataWrapper.value[key] = v[key]
       }
     }
     // tableDataWrapper.value = v

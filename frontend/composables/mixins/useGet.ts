@@ -6,8 +6,12 @@ import { storeCache } from '@/store/datacacheStore'
 import { _getI18nInComposable } from './helper-i18n'
 import type { T_Client2Depot, T_ClientIds, T_DepotIds, T_Opsiserver } from '~/types/APItypes'
 
-export const useConfigserver = async (init: boolean = false, _store:any=undefined) => {
-  const t = _getI18nInComposable()
+export const useConfigserver = async (init: boolean = false, _store:any=undefined, _t:any=undefined) => {
+  let $t = _t
+  if (!$t){
+    $t = _getI18nInComposable()
+
+  }
   const storeSelection = storeSelections()
 
   if (init) await initServer()
@@ -20,16 +24,18 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
         else storeSelection.setSelectionDepots([server])
       } else {
         console.error('no server selected')
-        useNotification().error('no server selected')
+        useNotification($t).error('no server selected') // TODO: i18n
       }
     }
   }
 
   async function getOpsiConfigServer (alertRef: any = undefined) {
     const { data, error } = await useApiGET<T_Opsiserver>('/user/opsiserver')
-    if (error) {
-      const errordata = { response: { data: {class: '', details: '', message: t('message.error.opsiconfd')}} }
-      useNotification().error(errordata, t('message.error.login'))
+    console.log('getOpsiConfigServer', data, error)
+    if (error || !data?.value) {
+      const errordata = { response: { data: {class: '', details: '', message: $t('message.error.opsiconfd')}} }
+      useNotification($t).error(errordata, $t('message.error.login'))
+      // useNotification(t).error(error)
       return
     }
     storeCache().setOpsiconfigserver(data.value.result)
@@ -39,21 +45,21 @@ export const useConfigserver = async (init: boolean = false, _store:any=undefine
   return { getOpsiConfigServer }
 }
 
-export const useDepot = () => {
+export const useDepot = (t:any = undefined) => {
 //   showToastError: any // from mixin AlertToast
 //   async getDepotIdList () {
 //     return await this.$axios.$get('/api/opsidata/depot_ids')
 //   }
   async function getDepotIdList () {
     const {data, error} = await useApiGET<T_DepotIds>('/opsidata/depot_ids')
-    if (error) {
-      useNotification().error(error, 'Error fetching server ids')
+    if (error || !data?.value) {
+      useNotification(t).error(error, 'Error fetching server ids') // TODO: i18n
       return []
     }
     return data.value.sort()
     // const { data, error } = await useApiGET('/opsidata/depot_ids')
     // if (error) {
-    //   useNotification().error(error)
+    //   useNotification(t).error(error)
     //   return
     // }
     // return data.value
@@ -61,13 +67,13 @@ export const useDepot = () => {
 
   return { getDepotIdList }
 }
-export const useClient = () => {
+export const useClient = (t:any = undefined) => {
   let fetchedDataClients2Depots: IObjectString2String = {}
 
   async function getClientIdList (selectedDepots: Array<string>): Promise<T_ClientIds> {
     const { data, error } = await useApiGET<T_ClientIds>(`/opsidata/depots/clients?selectedDepots=[${selectedDepots}]`)
-    if (error) {
-      useNotification().error(error)
+    if (error || !data?.value) {
+      useNotification(t).error(error)
       return []
     }
     return data.value.sort()
@@ -88,8 +94,8 @@ export const useClient = () => {
 //       })
 
     const { data, error } = await useApiGET<T_Client2Depot>(`/opsidata/clientsdepots?selectedClients=[${selectedClients}]`)
-    if (error) {
-      useNotification().error(error)
+    if (error || !data?.value) {
+      useNotification(t).error(error)
       throw new Error(JSON.stringify(error))
       return {}
     }

@@ -17,6 +17,7 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import {useIcons} from '../../composables/mixins/useIcons'
+const $t = useI18n().t
 const icons = useIcons()
 const isLoading = ref(false)
 let fetchedData = ref<any>([])
@@ -30,7 +31,7 @@ async function fetch() {
   const {data, error} = await useApiGETBody('/opsidata/server/diagnostic')
   if (error) {
     console.error(error)
-    useNotification().error(error)
+    useNotification($t).error(error)
     isLoading.value = false
     return
   }

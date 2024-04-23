@@ -4,6 +4,8 @@
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
 
       <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
+      {{tableData}} <br />
+      {{totalItems}} <br />
     <ButtonBTNRowLink
       :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
       :icon="icons.product"
@@ -35,7 +37,7 @@
         <LazyBarBPageHeader v-if="tableloaded" :title="$t('title.clients')">
           <template #right>
             <ButtonBTNRowLinkTo
-              v-if="$mq !== 'mobile'"
+              v-if="$mq == 'desktop'"
               :title="(secondColumnOpened || $mq=='mobile'? $t('button.show.products') : '')"
               :label="((secondColumnOpened) ? '' : $t('title.products'))"
               :icon="icon.product"
@@ -255,13 +257,14 @@ import { TableV2FixedDir, type CheckboxValueType } from 'element-plus';
 import type { T_ClientsList } from '~/types/APItypes';
 import type { ITableHeaderRow } from '~/types/ttableV3'
 import type { ITableData } from '~/types/ttable';
+import { useMBus } from '~/composables/mixins/useMessagebus';
 
 const router = useRouter()
 const navigation = useNavigate()
 const $t = useI18n().t
 const icons = useIcons()
 const notify = useNotification()
-
+const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
 // const datacache = storeCache()
@@ -531,7 +534,7 @@ const props = defineProps({
 })
 
 onMounted(async ()=> {
-  await useConfigserver(true) // init selectiondepots with configserver
+  await useConfigserver(true, undefined, $t) // init selectiondepots with configserver
   await tableHelper.fetch()
   tableHelper.setTotalItemsAsPerPage(totalItems.value)
 })
@@ -602,7 +605,8 @@ async function _fetch() {
     notify.error(error, 'Error fetching clients')
     return []
   }
-  totalItems.value = parseInt(headers['x-total-count'])
+
+  totalItems.value = parseInt(headers.get('x-total-count') || '0')
   // tableHelper.setPerPage(headers)
   // this.totalpages = Math.ceil(this.totalItems / params.perPage)
   // this.isLoading = false
@@ -614,17 +618,37 @@ async function _fetch() {
   // }
   // const items = [{dummy:true, clientId: 'scroll up to load more'}, ...data.value, {dummy:true, clientId: 'scroll down to load more'}]
   // return items
-  const sort_by_SortBy = (a: any, b: any) => {
-    if (a[params.sortBy] < b[params.sortBy]) {
-      return params.sortDesc ? 1 : -1
-    }
-    if (a[params.sortBy] > b[params.sortBy]) {
-      return params.sortDesc ? -1 : 1
-    }
-    return 0
-  }
+  // const sort_by_SortBy = (a: any, b: any) => {
+  //   if (a[params.sortBy] < b[params.sortBy]) {
+  //     return params.sortDesc ? 1 : -1
+  //   }
+  //   if (a[params.sortBy] > b[params.sortBy]) {
+  //     return params.sortDesc ? -1 : 1
+  //   }
+  //   return 0
+  // }
   // return data.value.sort(sort_by_SortBy)
+  if (!data.value) {
+    return []
+  }
   return data.value
+}
+
+async function wsBusMsgObjectChanged(msg: any = undefined) {
+  if (msg && msg.channel === 'event:host_created') {
+    notify.infoMbus(
+      $t('message.info.event'), // title
+      $t('message.info.event.client_updated', { clientId: msg.data.id }), // content
+      undefined // action
+    )
+    // await this.$fetch()
+  }
+  if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
+    // eslint-disable-next-line no-console
+    console.warn('message bus host_connected', msg)
+    // this.cache_pages.
+    // await this.$fetch()
+  }
 }
 /**
 import { Component, Watch, namespace, Vue } from 'nuxt-property-decorator'

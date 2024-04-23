@@ -282,13 +282,17 @@ function updateColumns() {
 }
 
 function updateCurrentPage(pageNo: number) {
-  pageNumber.value = pageNo
-  $emit('tabledata-changed', {...props.tableData, pageNumber: pageNo})
-  $emit('fetch')
+  if (pageNo){
+    pageNumber.value = pageNo
+    $emit('tabledata-changed', {...props.tableData, pageNumber: pageNo})
+    $emit('fetch')
+  }
 }
 function updatePerPage(perPage: number) {
-  $emit('tabledata-changed', {...props.tableData, perPage, pageNumber: 1})
-  $emit('fetch')
+  if (perPage) {
+    $emit('tabledata-changed', {...props.tableData, perPage, pageNumber: 1})
+    $emit('fetch')
+  }
 }
 function updateData() {
   if (dataModel === undefined) return []

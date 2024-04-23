@@ -127,6 +127,7 @@ import type { T_ServerList } from '~/types/APItypes'
 import BTNRowLink from '~/components/button/BTNRowLink.vue';
 import type { ITableData } from '~/types/ttable';
 import { useTableHelper } from '~/composables/mixins/useTableHelper';
+import { he } from 'element-plus/es/locales.mjs';
 
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
@@ -317,10 +318,15 @@ async function _fetch() {
   '/api/opsidata/depots'
   if (error) {
     console.error(error)
-    useNotification().error(error)
+    useNotification($t).error(error)
     return []
   }
-  totalItems.value = parseInt(headers['x-total-count'])
+  if (data.value === undefined ) {
+    useNotification($t).error($t('message.error.empty-response'))
+    return []
+  }
+
+  totalItems.value = parseInt(headers.get('x-total-count') || '0')
   const opsiconfigserver = storeCache().opsiconfigserver
   if (opsiconfigserver){
     storeSelection.pushToSelectionDepots(opsiconfigserver)

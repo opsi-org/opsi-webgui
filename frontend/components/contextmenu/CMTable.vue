@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import { columns } from 'element-plus/es/components/table-v2/src/common.mjs';
 import { useIcons } from '../../composables/mixins/useIcons';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import type { TRowData } from '~/types/Datatypes'
@@ -30,7 +31,8 @@ const props = defineProps({
   item: { type: Object as PropType<TRowData>, default: {} },
   rowId: { type: String, default: 'ident' },
   type: { type: String, default: 'servers' },
-  tableData: { type: Object as PropType<ITableData>, required: true },
+  // tableData: { type: Object as PropType<ITableData>, required: true }, // TODO: show/hide coluns, sort; BUT as defineModel
+  // columns: { type: Array as PropType<columns>, required: true },
 })
 const cmmenu = ref()
 const showModal = ref(false)

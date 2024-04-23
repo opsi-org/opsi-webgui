@@ -655,8 +655,8 @@ function updateMaxPerPage () {
   sizes.sort((a, b) => a - b)
   sizes = sizes.filter((e: number) => e <= props.totalItems)
 
-  perPage.value = props.totalItems
-  if (props.totalItems < 10) {
+  if (props.totalItems) perPage.value = props.totalItems
+  if (props.totalItems && props.totalItems < 10) {
     pagesSizes.value = [props.totalItems]
     return
   }

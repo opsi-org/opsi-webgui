@@ -231,10 +231,10 @@ const _useNotification = (t: any) => {
     warning
   }
 }
-export function useNotification() {
+export function useNotification(_t: any = undefined) {
   // const { t } = useI18n()
   const t = _getI18nInComposable()
-  return _useNotification(t)
+  return _useNotification(_t || t)
 }
 export const useAlertToast = () => {
   // const { t } = useI18n()

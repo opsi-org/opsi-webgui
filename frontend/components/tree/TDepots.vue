@@ -7,9 +7,11 @@
 
 <script setup lang="ts">
 import { useDepot } from '~/composables/mixins/useGet';
+const $t = useI18n().t
+
 const storeSelection = storeSelections()
 const depotIDList = ref<Array<any>>([])
-let selectedDepots= ref<Array<any>>([])
+const selectedDepots= ref<Array<any>>([])
 
 watch(()=>storeSelection.selectionDepots, async ()=>{
   syncSelection()
@@ -21,7 +23,7 @@ onMounted(async ()=> {
 })
 
 async function fetch() {
-  depotIDList.value = await useDepot().getDepotIdList()
+  depotIDList.value = await useDepot($t).getDepotIdList()
 }
 
 const syncSelection = () => {

@@ -1,4 +1,5 @@
-import { useFetch } from "@vueuse/core"
+// import { useFetch } from "@vueuse/core"
+
 import { useRuntimeConfig, type UseFetchOptions } from "nuxt/app"
 
 const urlsWithoutAuthentication = [
@@ -16,131 +17,132 @@ interface terror {
   }
 }
 
-interface ApiResult<T> { readonly data: Ref<T>, readonly error: terror, readonly headers: Headers }
+interface ApiResult<T> {readonly pending: Ref<boolean>, readonly data: Ref<T|undefined>, readonly error: terror|undefined, readonly headers: Headers, readonly status: number}
 
-// TODO: Return Pending status to update loading status.
+
 async function useAPI2<T> (
     method: tmethod,
     url: string,
     body: FormData | Object | undefined = undefined,
     opts: UseFetchOptions<any> = {},
-    prePath: string | undefined = undefined
+    prePath: string | undefined = undefined,
+    synced: boolean = true // possibility to wait for the fetch in component and have "pending" state available, otherwise pending is always false
 ): Promise<ApiResult<T>> {
   const config = useRuntimeConfig()
   const baseUrl: string = config.public.NUXT_PUBLIC_API_BASE
   const basePath: string = prePath ?? config.public.API_PATH
-  // console.debug('useAPI2', method, url, body, opts, prePath)
-  // console.debug('useAPI2 baseurl', baseUrl)
-  // console.debug('useAPI2 basepath', basePath)
-  // prePath could be '', e.g. for localhost:4447/filetransfer
-  //    -> path = '/filetransfer'
-  //       prepath = ''
-
-  let headers: any = {
-    ...opts?.headers,
-    // "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization",
-    // Accept: 'application/json'
-    // Accept: 'application/json, text/plain, */*',
-
-  }
-
-  if (!urlsWithoutAuthentication.includes(url)) {
-    const expiry = 3600 // TOD O: get from store
-    // const expiry = store.getters['auth/sessionExpiry']
-    headers['X-opsi-session-lifetime'] = expiry
-    // store.commit('auth/setSession', expiry)
-  }
-
-  let callresponse = ref<any>(undefined);
-  let callheaders: any = {};
-  let callerror: any = null;
-
-
-  const onResponseError = async (res: any) => {
-    const _callerror = res.error.value
-    const errordata: terror = { response: { data: {
-      class: 'Error',
-      message: _callerror
-      // details: ''
-    }}}
-    callerror = errordata
-    console.error('onResponseError', errordata)
-    if (res.statusCode.value === 401) {
-      storeAuth().logout()
-      storeAuth().clearSession()
-      await useRouter().push({ path: '/login' })
-    }
-  }
-  const onResponse = async (res: any) => {
-    if (res.statusCode.value !== 200) {
-      await onResponseError(res)
-      return
-    }
-    callresponse.value = JSON.parse(res.json().data.value)
-    callheaders = Object.fromEntries(res.json().response.value.headers)
-    // callheader.value = JSON.parse(res.json().data.value)
-  }
-
   let fullURL = baseUrl + basePath + url
-  console.debug('useAPI2 fullURL', fullURL)
-  let fullBody = body
-  if (method !== 'GET' && body != undefined && url !== '/auth/login') {
-    if (headers['Content-Type'] === undefined)
-      headers['Content-Type'] = 'application/json'
-    if (headers['Accept'] === undefined)
-      headers['Accept'] = 'application/json, text/plain, */*'
 
-    fullBody = JSON.stringify(body)
-  }
+  const callresponse = ref<T|undefined>();
+  const callerror = ref<terror|undefined>(undefined);
+  const pendingState = ref<boolean>(true);
+  let callheaders: any = {};
+  let status: any = null;
+
+  let fullBody = body
+  let query = {}
+
+
   if (method === 'GET' && body != undefined) {
-    // fullURL = _getURLwithParams(fullURL, body)
     fullURL = fullURL +'?'+ _getBodyParams(body)
+    // query = body
     fullBody = undefined
   }
-  console.debug(method, fullURL, fullBody)
-  const fetchOptions: any = {
-    credentials: 'include',
-    method,
-    headers,
-    body: fullBody,
-    ...opts
-  }
-  if (baseUrl && baseUrl !== '') fetchOptions.baseURL = baseUrl
-  await useFetch(fullURL, fetchOptions).then(onResponse,onResponseError)
 
-  return { data: callresponse, error: callerror, headers: callheaders }
+  const fetch = useFetch<T>(fullURL, {
+    onRequest({ request, options }: any) {
+      // Set the request headers
+      const headers = { ...opts?.headers }
+      if (!urlsWithoutAuthentication.includes(url)) {
+        headers['X-opsi-session-lifetime'] = 3600  // TODO: get from store
+      }
+      if (method !== 'GET' && body != undefined && url !== '/auth/login') {
+        if (headers['Content-Type'] === undefined)
+          headers['Content-Type'] = 'application/json'
+        if (headers['Accept'] === undefined)
+          headers['Accept'] = 'application/json, text/plain, */*'
+
+        fullBody = JSON.stringify(body)
+      }
+      if (method === 'GET' && body != undefined) {
+      //   // fullURL = fullURL +'?'+ _getBodyParams(body)
+      //   query = body
+        fullBody = undefined
+      }
+
+      options.credentials = 'include'
+      options.method = method
+      options.body = fullBody
+      // options.query = query
+      options.headers = headers
+    },
+    onRequestError({ request, options, error }: any) {
+      // Handle the request errors
+      console.log('onRequestError', error)
+    },
+    onResponse({ request, response, options }:any) {
+      // Process the response data
+      callresponse.value = response.data || response._data || response.body || {}
+      callheaders = response.headers
+      console.log('onResponse', callheaders)
+      status = response.status
+      pendingState.value = false
+    },
+    onResponseError({ request, response, options }: any) {
+      // Handle the response errors
+      callerror.value = {
+        response: {
+          data: {
+            class: response?.data?.class || response?._data?.class,
+            message: response?.data?.details || response?._data?.details
+            // message: response?.data?.message || response?._data?.message,
+            // details: response?.data?.details || response?._data?.details
+          }
+        }
+      }
+      pendingState.value = false
+      status = response.status
+      callheaders = response.headers
+    }
+  })
+  if (synced) {
+    await fetch
+  }
+  if (!synced) {
+    pendingState.value = false
+    if (callresponse.value === undefined) {
+      callerror.value = { response: { data: { class: 'error', message: 'no response' } } }
+    }
+  }
+  return {pending:pendingState, data: callresponse, error: callerror.value, headers: callheaders, status }
 }
-// const _getURLwithParams = (url: string, params: any) => {
-//   const _url = new URL(url);
-//   _url.search = new URLSearchParams(params).toString();
-//   return _url.toString()
-// }
+
 const _getBodyParams = (params: any) => {
   return new URLSearchParams(params).toString();
-  // _url.search = new URLSearchParams(params).toString();
-  // return _url.toString()
 }
 
 
-async function useApiGET<ResultDataType> (url: string, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) {
-  return useAPI2<ResultDataType>('GET', url, undefined, opts, prePath)
+async function useApiGET<ResultDataType> (url: string, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}, synced: boolean = true) {
+  return useAPI2<ResultDataType>('GET', url, undefined, opts, prePath, synced)
 }
 
-async function useApiGETBody<ResultDataType> (url: string, params:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) {
-  return useAPI2<ResultDataType>('GET', url, params, opts, prePath)
+async function useApiGETBody<ResultDataType> (url: string, params:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}, synced: boolean = true) {
+  return useAPI2<ResultDataType>('GET', url, params, opts, prePath, synced)
 }
-async function useApiPOST<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) { return useAPI2<ResultDataType>('POST', url, body, opts, prePath) }
+async function useApiPOST<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}, synced: boolean = true) {
+  return useAPI2<ResultDataType>('POST', url, body, opts, prePath, synced)
+}
 
 // For following need to add types: (like useApiGET)
 // const useApiPUT = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('PUT', url, body, opts, prePath)
 // const useApiDELETE = async (url: string, body:any=undefined, opts: UseFetchOptions<any> = {}, prePath: string|undefined = undefined) => useAPI2('DELETE', url, body, opts, prePath)
 
-async function useApiDELETE<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) {
-  return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath)
+async function useApiDELETE<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}, synced: boolean = true) {
+  return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath, synced)
 }
 
-async function useApiPUT<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}) {
-  return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath)
+async function useApiPUT<ResultDataType> (url: string, body:any=undefined, prePath: string|undefined = undefined, opts: UseFetchOptions<any> = {}, synced: boolean = true) {
+  return useAPI2<ResultDataType>('DELETE', url, body, opts, prePath, synced)
 }
 
 export { useApiGET, useApiGETBody, useApiPOST, useApiDELETE, useApiPUT }

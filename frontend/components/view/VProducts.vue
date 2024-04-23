@@ -138,7 +138,7 @@ const icons = useIcons()
 // const route = useRoute()
 const router = useRouter()
 const navigation = useNavigate()
-const fetchClient = useClient()
+const fetchClient = useClient($t)
 const notify = useNotification()
 
 const tableSettings = storeTablesettings()
@@ -657,7 +657,13 @@ async function _fetch(_type: string = "") {
     notify.error(error)
     return []
   }
-  totalItems.value = parseInt(headers['x-total-count'])
+  if (data.value === undefined ) {
+    return []
+  }
+  if (headers === undefined) {
+    return []
+  }
+  totalItems.value = parseInt(headers.get('x-total-count') || '0')
   // tableHelper.setTotalItemsAsPerPage(totalItems.value)
   return data.value
 }

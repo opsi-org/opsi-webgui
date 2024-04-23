@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { loginlogout } from '~/histoire/histoire-utils'
 import { useConfigserver } from '~/composables/mixins/useGet'
-
 const store = ref<any>({ selectionDepots: [] })
 async function init(data: any) {
   await loginlogout(data)

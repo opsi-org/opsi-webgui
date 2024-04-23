@@ -106,8 +106,10 @@ interface T_Result {
   result: string
 }
 
+const $t = useI18n().t
+
 const notificationSuccess = useNotification().success
-const notificationError = useNotification().error
+const notificationError = useNotification($t).error
 
 const config = useRuntimeConfig()
 const $mq = useMQ().$mq
@@ -122,7 +124,7 @@ const totp = ref('')
 const opsiconfigserver = ref('');
 
 onMounted( async () => {
-  const useServerGet = await useConfigserver(true)
+  const useServerGet = await useConfigserver(true, undefined, $t)
   const os = await useServerGet.getOpsiConfigServer()
   opsiconfigserver.value = os || ''
 })
@@ -157,6 +159,10 @@ async function doLogin () {
   const { data, error } = await useApiPOST<T_Result>('/auth/login', User)
   if (error) {
     notificationError(error)
+    isLoading.value = false
+    return
+  } else if (!data.value) {
+    useNotification($t).error($t('message.error.empty-response'))
     isLoading.value = false
     return
   }

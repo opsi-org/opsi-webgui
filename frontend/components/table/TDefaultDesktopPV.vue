@@ -604,7 +604,7 @@ function onPerPageChange(event: any) {
   }
   // loadCarsLazy(event)
   const tData = JSON.parse(JSON.stringify(props.tableData))
-  tData.perPage = event
+  tData.perPage = event.value || event
   tData.pageNumber = 1
   lastScrollDirection.value = ''
   $emit('tabledata-changed', tData)

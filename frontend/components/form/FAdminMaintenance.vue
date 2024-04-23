@@ -115,6 +115,7 @@ const adminTasks = reactive({
   }
 })
 const icon = useIcons()
+const $t = useI18n().t
 const mq = useMQ()
 const currentAppState = ref('')
 const isLoading = ref(false)
@@ -131,7 +132,7 @@ const fetchAppState = async () => {
   isLoading.value = true
   const {data, error } = await useApiGET('/app-state')
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   }
   currentAppState.value = (data.value as { type: any }).type
@@ -142,7 +143,7 @@ const setAppState = async () => {
   isLoading.value = true
   const { data, error } = await useApiPOST('/app-state', newAppState.value)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   }
   currentAppState.value = (data.value as { type: any }).type
@@ -162,7 +163,7 @@ const executeCreateBackup = async () => {
       useNotification().success('success.backup.created')
     })
     .catch((error) => {
-      useNotification().error(error)
+      useNotification($t).error(error)
     })
   isLoading.value = false
 }
@@ -173,7 +174,7 @@ const requestRestore = async () => {
       useNotification().success('success.backup.restored')
     })
     .catch((error) => {
-      useNotification().error(error)
+      useNotification($t).error(error)
     })
 }
 
@@ -186,7 +187,7 @@ const executeRestoreBackup = async () => {
   formData.append('file', adminTasks.restoreBackup.file_id)
   const {data, error } = await useApiPOST('/file-transfer/multipart', formData)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   }
   adminTasks.restoreBackup.file_id = (data.value as { file_id: any }).file_id

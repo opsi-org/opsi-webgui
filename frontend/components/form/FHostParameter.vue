@@ -21,6 +21,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_ClientAttr, T_HostParameter, T_ServerAttr } from '~/types/APItypes'
 
+const $t = useI18n().t
 const isLoading = ref(true)
 const fetchedData = ref<T_HostParameter|undefined>()
 const activeNames = ref<string[]>([])
@@ -59,17 +60,17 @@ watch(()=>props.id, async ()=>{
 //     const {data, error} = await useApiGETBody(`/opsidata/servers?servers=[${id}]`)
 //     if (error) {
 //       console.error(error)
-//       useNotification().error(error)
+//       useNotification($t).error(error)
 //       return
 //     }
 //     fetchedData.value = data.value
 //   } else if (props.type === 'clients') {
 //     const {data, error} = await useApiGETBody(`/opsidata/hosts?hosts=${id}`)
 
-//     // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
+//     // const {data, error} = await useClient($t).getClientIdList(storeSel.selectionDepots)
 //     if (error) {
 //       console.error(error)
-//       useNotification().error(error)
+//       useNotification($t).error(error)
 //       return
 //     }
 //     fetchedData.value = data.value
@@ -100,7 +101,7 @@ async function fetchHostParameters (endpoint: string) {
   console.debug('fetched', data, error)
   if (error) {
     console.error(error)
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   }
   fetchedData.value = data.value

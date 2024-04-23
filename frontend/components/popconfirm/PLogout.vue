@@ -24,7 +24,8 @@ watch(() => useMQ().isMobile, () => {
   isMobile.value = useMQ().isMobile.value
 })
 const icon = useIcons()
-const notificationError = useNotification().error
+const $t = useI18n().t
+const notificationError = useNotification($t).error
 
 const authStore = storeAuth() // autho imported
 const props = defineProps({

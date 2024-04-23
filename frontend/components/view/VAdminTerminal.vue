@@ -69,6 +69,8 @@ import { SearchAddon } from 'xterm-addon-search'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 import type { T_DisaledFeatures } from '~/types/APItypes';
 
+const $t = useI18n().t
+
 /*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
@@ -87,8 +89,8 @@ export default class VAdminTerminal extends Vue {
   @Prop({ default: false }) 'closeroute'!: string
   @cache.Getter public opsiconfigserver!: string
   */
-await useConfigserver(true) // init with configserver if empty selectiondepots
-const ws = useMBus()
+await useConfigserver(true, undefined, $t) // init with configserver if empty selectiondepots
+const ws = useMBus(undefined, false, $t)
 const terminalcontainer = ref()
 const terminal = ref()
   /*
@@ -133,7 +135,11 @@ async function _fetchIsDisabled () {
     isLoading.value = true
     const {data, error} = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
     if (error) {
-      useNotification().error(error)
+      useNotification($t).error(error)
+      isLoading.value = false
+      return false
+    } else if (!data.value) {
+      useNotification($t).error($t('message.error.empty-response'))
       isLoading.value = false
       return false
     }

@@ -150,6 +150,7 @@
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useNotification } from '../../composables/mixins/useComponent';
 const icon = useIcons()
+// const $t = useI18n().t
 
 const modelValue = defineModel<boolean>()
 const props = defineProps({
@@ -269,10 +270,10 @@ function callEvent() {
   useNotification().success('[Dummy!] callEvent: ' + props.event)
   // TODO: call api
   // const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
-  // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
+  // const {data, error} = await useClient($t).getClientIdList(storeSel.selectionDepots)
   // if (error) {
   //   console.error(error)
-  //   useNotification().error(error)
+  //   useNotification($t).error(error)
   //   return
   // }
   // fetchedData.value = data.value

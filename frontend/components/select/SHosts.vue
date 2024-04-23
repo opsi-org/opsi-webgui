@@ -57,10 +57,10 @@ watch(()=>value.value, ()=>{
 })
 async function fetch() {
   if (props.type === 'servers'){
-    const dataSorted = await useDepot().getDepotIdList()
+    const dataSorted = await useDepot($t).getDepotIdList()
     fetchedData.value = dataSorted
   } else if (props.type === 'clients') {
-    const dataSorted = await useClient().getClientIdList(storeSel.selectionDepots)
+    const dataSorted = await useClient($t).getClientIdList(storeSel.selectionDepots)
     fetchedData.value = dataSorted
   }
 }

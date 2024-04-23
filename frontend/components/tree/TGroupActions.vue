@@ -136,7 +136,7 @@ const props = defineProps({
 
 const icons = useIcons()
 const mq = useMQ()
-const { t } = useI18n()
+const $t = useI18n().t
 const storeSelection = storeSelections()
 const isLoading = ref(false)
 const treeProps = {
@@ -184,7 +184,7 @@ async function refetchGroup () {
 async function fetchClientGroups() {
   const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   }
     // TODO: Backend: change groups data structure
@@ -196,16 +196,19 @@ async function fetchClientGroups() {
 }
 
 async function fetchClientList () {
-  idList.value = await useClient().getClientIdList(storeSelection.selectionDepots)
+  idList.value = await useClient($t).getClientIdList(storeSelection.selectionDepots)
 }
 
 async function fetchProdGroups() {
   const {data, error } = await useApiGETBody<T_Groups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
+    return
+  } else if (!data.value) {
+    useNotification($t).error($t('message.error.empty-response'))
     return
   }
-    // TODO: Backend: change groups data structure
+  // TODO: Backend: change groups data structure
   fetchedData.value = data.value.groups ?
                         Object.entries(data.value.groups).map(([label, obj] :any ) => ({ ...obj, children: Object.values(obj.children || {})}))
                         : []
@@ -214,7 +217,10 @@ async function fetchProdGroups() {
 async function fetchProductList() {
   const {data, error } = await useApiGETBody<Array<T_Product>>(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
+    return
+  } else if (!data.value) {
+    useNotification($t).error($t('message.error.empty-response'))
     return
   }
   idList.value = data.value.map(function (item: { productId: any; }) { return item.productId })
@@ -225,10 +231,10 @@ async function createSubGroup (parent: string) {
   const url = props.data.category == 'client-group' ? '/opsidata/hosts/groups' : '/opsidata/products/groups'
   const {data, error } = await useApiPOST(url, createGroup)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   } else {
-    useNotification().success(t('message.success.save.create.group', { group: createGroup.groupId }));
+    useNotification().success($t('message.success.save.create.group', { group: createGroup.groupId }));
     await refetchGroup()
   }
 }
@@ -237,10 +243,10 @@ async function addChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiPOST(url, selectedChildren.value)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   } else {
-    useNotification().success(t('message.success.save.add.clientfromgroups', { group: selectedGroup }))
+    useNotification().success($t('message.success.save.add.clientfromgroups', { group: selectedGroup }))
     await refetchGroup()
   }
 }
@@ -249,10 +255,10 @@ async function deleteAllChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiDELETE(url)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   } else {
-    useNotification().success(t('message.success.save.delete.clientsfromgroup', { group: selectedGroup }))
+    useNotification().success($t('message.success.save.delete.clientsfromgroup', { group: selectedGroup }))
     await refetchGroup()
   }
 }
@@ -270,10 +276,10 @@ async function deleteGroup (selectedGroup: string) {
   // TODO: Backend: change product group deletion to DELETE
   const {data, error } = props.data.category == 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   } else {
-    useNotification().success(t('message.success.save.delete.group', { group: selectedGroup }))
+    useNotification().success($t('message.success.save.delete.group', { group: selectedGroup }))
     await refetchGroup()
   }
 }
@@ -284,10 +290,10 @@ async function deleteObjectToGroup (selectedChild: string, parent: string) {
   const body = props.data.category == 'client-group' ? [parent] : {}
   const {data, error} = await useApiDELETE(url, body)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   } else {
-    useNotification().success(t('message.success.save.delete.clientfromgroups', { client: selectedChild }))
+    useNotification().success($t('message.success.save.delete.clientfromgroups', { client: selectedChild }))
     await refetchGroup()
   }
 }
@@ -296,16 +302,16 @@ async function editGroup (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
   const {data, error } = await useApiPUT(url, editgroup)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
     return
   } else {
-    useNotification().success(t('message.success.save.update.group', { group: selectedGroup }));
+    useNotification().success($t('message.success.save.update.group', { group: selectedGroup }));
     await refetchGroup()
   }
 }
 
 async function copyClient (selectedClient: string) {
-  await useGroup().addClientToListOfGroups(selectedClient, selectedGroups.value)
+  await useGroup($t).addClientToListOfGroups(selectedClient, selectedGroups.value)
   await refetchGroup()
 }
 

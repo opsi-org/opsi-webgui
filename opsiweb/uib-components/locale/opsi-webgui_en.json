@@ -36,6 +36,7 @@
   "message.error.404": "Page not found",
   "message.error.else": "An error occurred",
   "message.error.title": "ERROR: ",
+  "message.error.empty-response": "No data received from server.",
   "message.error.buttton.details": "Details ",
   "message.error.defaulttext": "Something went wrong.",
   "message.error.uefi": "Failed to set UEFI.",

@@ -104,8 +104,11 @@ async function fetchProperties (refetch: boolean = false) {
 
   if (error) {
     console.error(error)
-    useNotification().error(error)
+    useNotification($t).error(error)
     errorText.value.properties = error.response.data.message
+    return
+  } else if (!data.value) {
+    useNotification($t).error($t('message.error.empty-response'))
     return
   }
   fetchedData.value.properties = data.value
@@ -118,8 +121,11 @@ async function fetchDependencies () {
 
   if (error) {
     console.error(error)
-    useNotification().error(error)
+    useNotification($t).error(error)
     errorText.value.dependencies = error.response.data.message
+    return
+  } else if (!data.value) {
+    useNotification($t).error('message.error.empty-response')
     return
   }
   fetchedData.value.dependencies = data.value
@@ -151,7 +157,7 @@ async function changeProperty (item: any, values: any, originValue: any) {
   else if (values === '' && originValue === undefined) {
     return
   }
-  await useSaveProductProperties().saveProdProperties(item.productId, data as Object, false, true)
+  await useSaveProductProperties(undefined, $t).saveProdProperties(item.productId, data as Object, false, true)
 
 
 function handleTrackingChanges (productId:string, hosts:Array<string>, key:string, propertyId:string, value: any, orgValue: any) {

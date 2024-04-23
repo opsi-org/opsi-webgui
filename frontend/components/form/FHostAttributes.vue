@@ -38,16 +38,22 @@ async function fetch(id:string) {
     const {data, error} = await useApiGETBody<Array<T_ServerAttr>>(`/opsidata/servers?servers=[${id}]`)
     if (error) {
       console.error(error)
-      useNotification().error(error)
+      useNotification($t).error(error)
+      return
+    } else if (data.value == undefined) {
+      useNotification($t).error($t('message.error.empty-response'))
       return
     }
     fetchedData.value = data.value
   } else if (props.type === 'clients') {
     const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
-    // const {data, error} = await useClient().getClientIdList(storeSel.selectionDepots)
+    // const {data, error} = await useClient($t).getClientIdList(storeSel.selectionDepots)
     if (error) {
       console.error(error)
-      useNotification().error(error)
+      useNotification($t).error(error)
+      return
+    } else if (data.value == undefined) {
+      useNotification($t).error($t('message.error.empty-response'))
       return
     }
     fetchedData.value = data.value

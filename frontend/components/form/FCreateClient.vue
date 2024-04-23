@@ -18,7 +18,7 @@
               </el-form-item>
             </div>
           </el-form>
-          <el-select v-else-if="label === 'depot'" filterable>
+          <el-select v-else-if="label === 'depot'" filterable v-model="createClient.assignments.depot">
             <el-option
               v-for="item in depotIDList"
               :key="item"
@@ -46,12 +46,13 @@
 import { reactive, ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useDepot } from '~/composables/mixins/useGet';
-import type { T_DepotIds } from '~/types/APItypes';
+import type { T_ClientAttr, T_DepotIds } from '~/types/APItypes';
 const mq = useMQ()
 const $t = useI18n().t
+const notify = useNotification($t)
 const isLoading = ref(false)
 const depotIDList = ref<T_DepotIds>([])
-const clientName = ref('')
+const clientName = ref('a-test-01')
 const domain = ref('')
   // TODO: Backend: change createClient data structure
 const createClient = reactive({
@@ -64,7 +65,7 @@ const createClient = reactive({
     notes: ''
   },
   assignments: {
-    depot: [],
+    depot: "",
     group: []
   },
   initialSetup: {
@@ -84,9 +85,10 @@ const createClient = reactive({
 onMounted(async ()=> {
   await fetch()
   domain.value = storeCache().opsiconfigserver.substring(storeCache().opsiconfigserver.indexOf('.'))
+  createClient.assignments.depot = storeCache().opsiconfigserver
 })
 async function fetch() {
-  depotIDList.value = await useDepot().getDepotIdList()
+  depotIDList.value = await useDepot($t).getDepotIdList()
 }
 function resetForm () {
   Object.assign(createClient, {
@@ -99,7 +101,7 @@ function resetForm () {
       notes: ''
     },
     assignments: {
-      depot: [],
+      depot: "",
       group: []
     },
     initialSetup: {
@@ -124,12 +126,13 @@ async function createOpsiClient() {
   const request = {
     client: createClient.basics, depot: createClient.assignments.depot
   }
-  const {data, error } = await useApiPOST('/opsidata/clients', request)
+  const {data, error, status } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
+
   if (error) {
-    useNotification().error(error)
+    notify.error(error)
     return
   } else {
-    useNotification().success($t('message.success.createClient', { client: createClient.basics.hostId }))
+    notify.success($t('message.success.createClient', { client: createClient.basics.hostId }))
     if (createClient.settings.uefi) {
       setUEFI(createClient.basics.hostId, createClient.settings.uefi.toString())
     }
@@ -150,29 +153,29 @@ async function createOpsiClient() {
 async function setUEFI(clientId: string, uefi: string) {
   const {data, error } = await useApiPOST('/opsidata/clients/uefi', {clientId, uefi})
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
   }
 }
 
 async function assignToGroup() {
-  const {data, error } = await useApiPOST('/opsidata/clients/groups', {clientId: createClient.basics.hostId, group: createClient.assignments.group})
-  if (error) {
-    useNotification().error(error)
-  }
+  // const {data, error } = await useApiPOST('/opsidata/clients/groups', {clientId: createClient.basics.hostId, group: createClient.assignments.group})
+  // if (error) {
+  //   useNotification($t).error(error)
+  // }
 }
 
 async function deployopsiclientagent() {
   const {data, error } = await useApiPOST('/opsidata/clients/agent', createClient.initialSetup.opsiClientAgent)
   if (error) {
-    useNotification().error(error)
+    useNotification($t).error(error)
   }
 }
 
 async function setupNetbootProduct() {
-  const {data, error } = await useApiPOST('/opsidata/clients/netboot', {clientIds: [createClient.basics.hostId], productIds: [createClient.initialSetup.netbootProduct], actionRequest: 'setup'})
-  if (error) {
-    useNotification().error(error)
-  }
+  // const {data, error } = await useApiPOST('/opsidata/clients/netboot', {clientIds: [createClient.basics.hostId], productIds: [createClient.initialSetup.netbootProduct], actionRequest: 'setup'})
+  // if (error) {
+  //   useNotification($t).error(error)
+  // }
 }
 </script>
 

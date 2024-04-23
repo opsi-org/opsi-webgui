@@ -34,6 +34,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_ClientLog } from '~/types/APItypes';
 
+const $t = useI18n().t
 // TODO: messagebus event:log_updated
 
 const props = defineProps({
@@ -72,7 +73,11 @@ async function fetch() {
   const {data, error} = await useApiGETBody<T_ClientLog>('/opsidata/log', logrequest )
   if (error) {
     console.error(error)
-    useNotification().error(error)
+    useNotification($t).error(error)
+    isLoading.value = false
+    return
+  } else if (!data.value) {
+    useNotification($t).error($t('message.error.empty-response'))
     isLoading.value = false
     return
   }

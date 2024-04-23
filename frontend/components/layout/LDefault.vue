@@ -103,6 +103,7 @@ import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
 import { useRuntimeConfig } from 'nuxt/app';
 
 
+const $t = useI18n().t
 const mq = useMQ()
 const settings = storeSettings()
 const configapp = storeConfigapp()
@@ -158,15 +159,24 @@ async function checkConfig () {
   const result = await useApiGET<T_configuration>('/user/configuration')
   if (result.error) {
     console.error(result.error)
-    useNotification().error(result.error, 'Error fetching Configuration')
+    useNotification($t).error(result.error, 'Error fetching Configuration')  // TODO: add to i18n
+    return
+  } else if (!result.data.value) {
+    console.error('No data in response')
+    useNotification($t).error('No data in response', 'Error fetching Configuration')  // TODO: add to i18n
     return
   }
   const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
   if (forbidden.error) {
     console.error(forbidden.error)
-    useNotification().error(forbidden.error, 'Error fetching forbidden features')
+    useNotification($t).error(forbidden.error, 'Error fetching forbidden features')  // TODO: add to i18n
+    return
+  } else if (!forbidden.data.value) {
+    console.error('No data in response')
+    useNotification($t).error('No data in response', 'Error fetching forbidden features')  // TODO: add to i18n
     return
   }
+
   const _config = { ...result.data.value.configuration }
   forbidden.data.value.forEach((forbElem:string) => {
     _config[forbElem + '.forbidden'] = true

@@ -11,6 +11,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 const isLoading = ref(false)
 let fetchedData = ref<any>([])
+const $t = useI18n().t
 onMounted(async ()=> {
   await fetch()
 })
@@ -20,7 +21,7 @@ async function fetch() {
   const {data, error} = await useApiGETBody('/opsidata/modulesContent')
   if (error) {
     console.error(error)
-    useNotification().error(error)
+    useNotification($t).error(error)
     isLoading.value = false
     return
   }

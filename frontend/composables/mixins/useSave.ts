@@ -1,8 +1,11 @@
 import { useNotification } from './useComponent'
 import { _getI18nInComposable } from './helper-i18n'
 
-export const useSaveParameters = () => {
-  const t = _getI18nInComposable()
+export const useSaveParameters = (_t: any = undefined) => {
+  let t = _t
+  if (!t){
+    t = _getI18nInComposable()
+  }
   const delFromChangesHostParam = storeChanges().delFromChangesHostParam
   const pushToErrorsHostParam = storeErrors().pushToErrorsHostParam
 
@@ -12,7 +15,7 @@ export const useSaveParameters = () => {
     if (error) {
       if (showalert) {
         console.error("error", error)
-        useNotification().error(error)
+        useNotification(t).error(error)
       } else {
           const errorObj = deleteitem
           errorObj.error = error?.response?.data
@@ -50,8 +53,12 @@ export const useSaveParameters = () => {
   }
 }
 
-export const useSaveProductActionRequest = () => {
-  const t = _getI18nInComposable()
+export const useSaveProductActionRequest = (_t:any = undefined) => {
+  let t = _t
+  if (!t){
+    t = _getI18nInComposable()
+  }
+
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
 
@@ -60,7 +67,7 @@ export const useSaveProductActionRequest = () => {
     if (error) {
       if (showalert) {
         console.error("error", error)
-        useNotification().error(error)
+        useNotification(t).error(error)
       } else {
         const errorObj = deleteitem
         errorObj.error = error?.response?.data
@@ -101,8 +108,12 @@ export const useSaveProductActionRequest = () => {
 }
 
 
-export const useSaveProductProperties = (refetch: Function = (b: any)=>{}) => {
-  const t = _getI18nInComposable()
+export const useSaveProductProperties = (refetch: Function = (b: any)=>{}, _t: any = undefined) => {
+  let t = _t
+  if (!t){
+    t = _getI18nInComposable()
+  }
+
   const delFromChangesProducts = storeChanges().delFromChangesProducts
   const pushToErrorsProducts = storeErrors().pushToErrorsProducts
   // const $emit = defineEmits(['refetch'])
@@ -111,7 +122,7 @@ export const useSaveProductProperties = (refetch: Function = (b: any)=>{}) => {
     if (error) {
       if (showalert) {
         console.error("error", error)
-        useNotification().error(error)
+        useNotification(t).error(error)
       } else {
         const errorObj = deleteitem
         errorObj.error = error?.response?.data
@@ -124,7 +135,7 @@ export const useSaveProductProperties = (refetch: Function = (b: any)=>{}) => {
       delFromChangesProducts(deleteitem)
     } else {
       // $emit('refetch', true)
-      refetch(true)
+      if (refetch) refetch(true)
       useNotification().success(t('message.success.save.productproperty', { id: Object.keys(change.properties) }))
     }
 

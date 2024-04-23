@@ -8,9 +8,9 @@ import type { T_Logout } from '~/types/APItypes'
 // const selections = namespace('selections')
 // const settings = namespace('settings')
 
-export const useCallLogout = () => {
+export const useCallLogout = (t: any = undefined) => {
 // @Component({ mixins: [MBus] }) export class CallLogout extends Vue {
-  const wsDisconnect = useMBus().wsDisconnect // mixin
+  const wsDisconnect = useMBus(undefined, false, t).wsDisconnect // mixin
 
   const logout = storeAuth().logout
   const clearSession = storeAuth().clearSession
@@ -24,7 +24,7 @@ export const useCallLogout = () => {
   async function  callLogout () {
     const { error } = await useApiPOST('/auth/logout')
     if (error) {
-        useNotification().error(error)
+        useNotification(t).error(error)
       return
     }
     // const response = await this.$axios.$post('/api/auth/logout')
@@ -42,8 +42,11 @@ export const useCallLogout = () => {
   return { callLogout }
 }
 
-export const useGroup = () => {
-  const { t } = useI18n()
+export const useGroup = (_t: any = undefined) => {
+  let t = _t
+  if (!t){
+    t = useI18n().t
+  }
 // @Component({ mixins: [AlertToast] }) export class Group extends Vue {
   // showToastSuccess: any // mixin
   // showToastError: any // mixin
@@ -52,7 +55,7 @@ export const useGroup = () => {
     const { error } = await useApiPOST(`/api/opsidata/clients/${client}/groups`, groupsList)
     if (error) {
       console.error("error", error)
-      useNotification().error(error)
+      useNotification(t).error(error)
       return
     }
 
@@ -69,16 +72,19 @@ export const useGroup = () => {
   return { addClientToListOfGroups }
 }
 
-export const useSetUEFI = () => {
-// @Component({ mixins: [AlertToast] }) export class SetUEFI extends Vue {
-  const { t } = useI18n()
+export const useSetUEFI = (_t: any = undefined) => {
+  // @Component({ mixins: [AlertToast] }) export class SetUEFI extends Vue {
+  let t = _t
+  if (!t){
+    t = useI18n().t
+  }
   // showToastError: any // mixin
   async function setUEFI (clientId: string, uefi:string) {
 
     const { error } = await useApiPOST(`api/opsidata/clients/${clientId}/uefi`, uefi)
     if (error) {
       console.error("error", error)
-      useNotification().error(error, t('message.error.uefi'))
+      useNotification(t).error(error, t('message.error.uefi'))
       return
     }
 
@@ -90,9 +96,12 @@ export const useSetUEFI = () => {
   return { setUEFI }
 }
 
-export const useDeployClientAgent = () => {
+export const useDeployClientAgent = (_t: any = undefined) => {
 // @Component({ mixins: [AlertToast] }) export class DeployClientAgent extends Vue {
-  const { t } = useI18n()
+  let t = _t
+  if (!t){
+    t = useI18n().t
+  }
   const clientagentAlert = ref<any>()
   // showToastError: any // mixin
   async function deployClientAgent (_data: any, modal:boolean, incontextmenu:boolean) {
@@ -102,7 +111,7 @@ export const useDeployClientAgent = () => {
     const { data, error } = await useApiPOST<any>('/api/opsidata/clients/deploy', _data)
     if (error) {
       console.error("error", error)
-      useNotification().error(error, t('message.error.clientagent'))
+      useNotification(t).error(error, t('message.error.clientagent'))
       return
     }
 
