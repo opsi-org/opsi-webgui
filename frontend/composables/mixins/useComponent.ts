@@ -61,7 +61,7 @@ const _useNotification = (t: any) => {
     return showToast({
       title,
       content,
-      noAutoHide: true,
+      // noAutoHide: true,
       variant: 'info',
       ...obj
     })
