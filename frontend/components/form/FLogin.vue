@@ -113,14 +113,6 @@ const validPassword = computed(
   () => (form.value.password !== '') ?  null : false
 )
 
-function toggleShowPassword () {
-  showPassword.value = !showPassword.value
-}
-
-function toggleShowOTP () {
-  showOTP.value = !showOTP.value
-}
-
 async function doLogin () {
   if (!validUsername || !validPassword) return
   isLoading.value = true
