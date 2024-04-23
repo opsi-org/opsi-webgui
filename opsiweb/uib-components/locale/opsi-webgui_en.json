@@ -48,6 +48,7 @@
   "message.error.unsavedChanges": "Save or discard the tracked changes to enable QuickSave.",
   "message.error.unknown": "Cannot find error message. Please check browser terminal for errors.",
   "message.error.serverresponse.title": "Servers sends \"{error}\"",
+  "message.error.serverresponse.title.default": "Server response error",
   "message.session.expired": "Session expired.",
   "message.session.expires": "Automatically log out in: {min} minutes",
   "message.session.expiresInDays": "Automatically log out in {d} d {h} h, {min} min and {s} s.",

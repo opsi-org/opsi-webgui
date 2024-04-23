@@ -69,9 +69,12 @@ const _useNotification = (t: any) => {
 
   function error (_error: any, _title: any = undefined) {
     let title
-    if (_error?.response?.data && !_title) {
+    if (!_error?.response?.data?.class && !_title) {
+      title = t('message.error.serverresponse.title.default')
+    }else if (_error?.response?.data?.class && !_title) {
       title = t('message.error.serverresponse.title', { error: _error.response.data.class })
     }
+
     let error = _error?.response?.data || _error
     console.error(error)
     return showToast({

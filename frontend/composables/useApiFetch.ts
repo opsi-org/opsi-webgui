@@ -78,7 +78,8 @@ async function useAPI2<T> (
     },
     onRequestError({ request, options, error }: any) {
       // Handle the request errors
-      console.log('onRequestError', error)
+      console.log('onRequestError', error, typeof error)
+      callerror.value = { response: { data: { class: "", message: String(error) } } }
     },
     onResponse({ request, response, options }:any) {
       // Process the response data
