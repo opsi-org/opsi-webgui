@@ -22,6 +22,7 @@
                     :value="item"
                   />
                 </el-select>
+                <el-input v-else-if="label === 'password'" v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" show-password />
                 <el-input v-else v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
               </el-form-item>
             </div>
