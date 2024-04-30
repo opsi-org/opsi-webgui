@@ -1,11 +1,11 @@
 <template>
   <div data-testid="FHostAttributes">
     <el-alert v-if="!props.id" type="warning"> Please select item</el-alert>
-    <el-alert v-else-if="Object.keys(fetchedData).length === 0" type="warning"> No data found</el-alert>
+    <el-alert v-else-if="!fetchedData" type="warning"> Data is not available</el-alert>
     <el-form v-else label-width="200px" class="w-full">
-      <div v-for="(value, label, index) in fetchedData[0]" :key="index">
-        <el-form-item :label="label.toString()">
-          <el-input :value="value" />
+      <div v-for="(value, label) in fetchedData[0]" :key="label">
+        <el-form-item :label="$t('table.fields.' + label)">
+          <el-input :value="value" disabled />
         </el-form-item>
       </div>
     </el-form>
@@ -14,10 +14,9 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
-import { useClient } from '~/composables/mixins/useGet';
 import type {T_ServerAttr, T_ClientAttr} from '~/types/APItypes'
 const $t = useI18n().t
-let fetchedData = ref<Array<T_ServerAttr|T_ClientAttr>>([])
+const fetchedData = ref<Array<T_ServerAttr|T_ClientAttr>>([])
 const props = defineProps({
   id: { type: String, default: undefined },
   type: { type: String, default: 'servers' },
@@ -26,37 +25,23 @@ const props = defineProps({
 
 onMounted(async ()=> {
   if (props.id)
-    await fetch(props.id)
+    await fetchData(props.id)
 })
 watch(()=>props.id, ()=>{
   if (props.id)
-    fetch(props.id)
+    fetchData(props.id)
 })
 
-async function fetch(id:string) {
-  if (props.type === 'servers' && id){
-    const {data, error} = await useApiGETBody<Array<T_ServerAttr>>(`/opsidata/servers?servers=[${id}]`)
-    if (error) {
-      console.error(error)
-      useNotification($t).error(error)
-      return
-    } else if (data.value == undefined) {
-      useNotification($t).error($t('message.error.empty-response'))
-      return
-    }
+async function fetchData(id:string) {
+  try {
+    const url = props.type === 'servers' ? `/opsidata/servers?servers=[${id}]` : `/opsidata/hosts?hosts=${id}`
+    const {data, error} = await useApiGETBody<Array<T_ServerAttr|T_ClientAttr>>(url)
+    if (error) throw error
+    if (data.value == undefined) throw new Error($t('message.error.empty-response'))
     fetchedData.value = data.value
-  } else if (props.type === 'clients') {
-    const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
-    // const {data, error} = await useClient($t).getClientIdList(storeSel.selectionDepots)
-    if (error) {
-      console.error(error)
-      useNotification($t).error(error)
-      return
-    } else if (data.value == undefined) {
-      useNotification($t).error($t('message.error.empty-response'))
-      return
-    }
-    fetchedData.value = data.value
+  } catch (error) {
+    console.error(error)
+    useNotification($t).error(error)
   }
 }
 </script>
