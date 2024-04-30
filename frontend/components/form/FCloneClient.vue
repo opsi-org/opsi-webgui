@@ -1,7 +1,7 @@
 <template>
   <el-form :label-width="mq.isMobile.value ? '': '230px'" :label-position="mq.isMobile.value ? 'top': 'right'" v-loading="isLoading">
     <el-form-item v-if="!isChild" :label="$t('table.fields.sourceClient')">
-      <SelectSHosts type="clients" />
+      <SelectSHosts type="clients" @change="setId" :id="sourceID" />
     </el-form-item>
     <div v-for="options,category,index in cloneClient" :key="index">
       <el-row>
@@ -9,9 +9,9 @@
       </el-row>
       <div v-for="(value, label, index) in options">
         <el-form-item :label="$t('table.fields.' + label)">
-          <el-input v-if="label === 'hostId'">
+          <el-input v-if="label === 'hostId'" v-model="cloneClient[category][label]">
             <template #append>
-              <el-input class="border-none" />
+              <el-input v-model="domain" class="border-none" />
             </template>
           </el-input>
           <el-checkbox v-else-if="typeof value == 'boolean'" v-model="cloneClient[category][label]" />
@@ -20,41 +20,18 @@
       </div>
     </div>
     <el-form-item>
-      <el-button> {{ $t('button.reset') }}</el-button>
-      <el-button data-testid="cloneButton" type="primary">{{ $t('title.clone') }}</el-button>
+      <el-button @click="resetForm"> {{ $t('button.reset') }}</el-button>
+      <el-button data-testid="cloneButton" type="primary" @click="applyCloneClient" :disabled="!sourceID || !cloneClient.target.hostId">{{ $t('title.clone') }}</el-button>
     </el-form-item>
   </el-form>
-  <!--
-        <div v-if="label.toString() === 'hostId'" class="d-flex flex-nowrap">
-          <b-form-input
-            id="clientname"
-            v-model="clientName"
-            :aria-label="$t('table.name.client')"
-            size="sm"
-            type="text"
-            trim
-            :state="checkValid"
-            required
-          />
-          <b-form-invalid-feedback :state="checkValid" class="w-25">
-            <span v-if="clientIds.includes(clientName + domain)"> {{ $t('message.formvalid.clientExists') }} </span>
-          </b-form-invalid-feedback>
-          <b-form-input
-            id="domainName"
-            v-model="domainName"
-            class="domainName"
-            :aria-label="$t('table.name.domain')"
-            size="sm"
-            type="text"
-            trim
-            required
-          />
-        </div>
-      </template>
-    </GridGFormItem>-->
 </template>
 
 <script setup lang="ts">
+import { useClient } from '~/composables/mixins/useGet';
+import { useNotification } from '~/composables/mixins/useComponent';
+const storeSelection = storeSelections()
+const $t = useI18n().t
+const notify = useNotification($t)
 const props = defineProps({
   id: { type: String, default: '' },
   type: { type: String, default: 'clients' },
@@ -63,120 +40,63 @@ const props = defineProps({
 
 const mq = useMQ()
 const isLoading = ref(false)
-const cloneClient = ref({
-  targetclient: {
-    hostId: '',
-    ipAddress: '',
-    hardwareAddress: '',
-    systemUUID: ''
-  },
-  options: {
-    configs: false,
-    products: false,
-    productProperties: false
-  }
+const domain = ref('')
+const sourceID = ref('')
+const clientIDList = ref()
+const cloneClient = ref(getDefaultCloneClient())
+onMounted(async ()=> {
+  await fetch()
+  if (props.id != '') { sourceID.value = props.id}
+  domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
 })
+watch(()=>sourceID.value, async ()=>{
+  domain.value = sourceID.value.substring(sourceID.value.indexOf('.'))
+})
+function setId(id:string) {
+  sourceID.value = id
+}
+async function fetch() {
+  clientIDList.value = await useClient($t).getClientIdList(storeSelection.selectionDepots)
+}
 
-// import { Component, namespace, Prop, Vue } from 'nuxt-property-decorator'
-// import { Icons } from '../../mixins/icons'
-// import { Strings } from '../../mixins/strings'
-// import { Client } from '../../mixins/get'
-// import { AlertToast } from '../../mixins/component'
-// import { CloneClient } from '../../.utils/types/tobjects'
-// const selections = namespace('selections')
-// @Component({ mixins: [Icons, Strings, AlertToast, Client] })
-// export default class VClientClone extends Vue {
-//   showToastWarning:any // mixin
-//   showToastSuccess: any // from mixin AlertToast
-//   showToastError: any // from mixin AlertToast
-//   getClientIdList:any
-//   icon: any
-//   t_fixed: any
-//   $axios:any
-//   $t:any
+async function applyCloneClient() {
+  isLoading.value = true
+  const cloneClientCopy = { ...cloneClient.value }
+  cloneClientCopy.target.hostId += domain.value
+  if (clientIDList.value.includes(cloneClientCopy.target.hostId)) {
+    notify.error($t('message.error.clientExists', { client: cloneClientCopy.target.hostId }))
+    isLoading.value = false
+    return
+  }
+  try {
+    await useApiPOST(`/opsidata/clients/${sourceID.value}/clone`, cloneClientCopy)
+    notify.success($t('message.success.clone'))
+  } catch (error) {
+    notify.error(error)
+  } finally {
+    isLoading.value = false
+    resetForm()
+  }
+}
 
-//   @Prop({ }) id!: string
-//   @Prop({ default: false }) 'asChild'!: string
-//   @Prop({ default: false }) 'closeroute'!: string
+function resetForm() {
+  cloneClient.value = getDefaultCloneClient()
+}
 
-//   @selections.Getter public selectionDepots!: Array<string>
-
-//   clientName: string = ''
-//   domain: string = ''
-//   isLoading: boolean = false
-//   clientIds: Array<string> = []
-
-//   cloneclient: CloneClient = {
-//     target: {
-//       hostId: '',
-//       ipAddress: '',
-//       hardwareAddress: '',
-//       systemUUID: ''
-//     },
-//     options: {
-//       configs: false,
-//       products: false,
-//       productPropeties: false
-//     }
-//   }
-
-//   get domainName () {
-//     const result = this.id.substring(this.id.indexOf('.'))
-//     this.domain = result
-//     return result
-//   }
-
-//   set domainName (val: string) {
-//     this.domain = val
-//   }
-
-//   get checkValid () {
-//     return this.clientName.length > 0 && !Number.isInteger(parseInt(this.clientName.charAt(0))) && !this.clientIds.includes(this.clientName + this.domain)
-//   }
-
-//   async fetch () {
-//     await this.fetchClients()
-//   }
-
-//   async fetchClients () {
-//     this.clientIds = await this.getClientIdList(this.selectionDepots)
-//   }
-
-//   async cloneClient () {
-//     this.isLoading = true
-//     this.cloneclient.target.hostId = this.clientName + this.domain
-//     await this.$axios.$post(`/api/opsidata/clients/${this.id}/clone`, this.cloneclient)
-//       .then((response) => {
-//         this.showToastSuccess(response)
-//       })
-//       .catch((error) => {
-//         this.showToastError(error)
-//       })
-//     this.isLoading = false
-//   }
-
-//   resetForm () {
-//     this.clientName = ''
-//     this.cloneclient = {
-//       target: {
-//         hostId: '',
-//         ipAddress: '',
-//         hardwareAddress: '',
-//         systemUUID: ''
-//       },
-//       options: {
-//         configs: false,
-//         products: false,
-//         productPropeties: false
-//       }
-//     } as CloneClient
-//   }
-// }
+function getDefaultCloneClient() {
+  return {
+    target: {
+      hostId: '',
+      ipAddress: '',
+      hardwareAddress: '',
+      systemUUID: ''
+    },
+    options: {
+      configs: false,
+      products: false,
+      productProperties: false
+    }
+  }
+}
 </script>
 
-<style>
-.VClientClone {
-  overflow-x: hidden;
-  padding-left: 10px;
-}
-</style>
