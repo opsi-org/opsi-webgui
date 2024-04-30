@@ -12,6 +12,7 @@ export const useSaveParameters = (_t: any = undefined) => {
   async function saveParameters (url: string, request: any, deleteitem:any, showalert:boolean) {
 
     const { data, error } = await useApiPOST(url, request)
+    console.log("saveParameters", data, error)
     if (error) {
       if (showalert) {
         console.error("error", error)
