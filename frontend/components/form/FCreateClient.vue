@@ -4,14 +4,14 @@
       <el-row>
         <b>{{ $t('title.' + category) }} </b>
       </el-row>
-      <div v-for="(value, label, index) in options">
+      <div v-for="(value, label) in options">
         <el-form-item :label="$t('table.fields.' + label)">
           <el-form
             v-if="label === 'opsiClientAgent'"
             :inline="true"
             label-position="top"
           >
-            <div v-for="(value, label, index) in createClient.initialSetup.opsiClientAgent">
+            <div v-for="(value, label) in createClient.initialSetup.opsiClientAgent">
               <el-checkbox v-if="typeof value == 'boolean'" v-model="createClient.initialSetup.opsiClientAgent[label.toString()]" />
               <el-form-item v-else  :label="$t('form.' + label)" :class="{'d-none' : !createClient.initialSetup.opsiClientAgent.setup}">
                 <el-select v-if="label === 'type'" filterable v-model="createClient.initialSetup.opsiClientAgent[label.toString()]">
@@ -68,8 +68,8 @@
     </el-form-item>
   </el-form>
 </template>
+
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
 import { useNotification } from '~/composables/mixins/useComponent';
 import { useDepot, useClient } from '~/composables/mixins/useGet';
 import type { T_ClientAttr, T_DepotIds, T_Product } from '~/types/APItypes';
@@ -83,47 +83,28 @@ const netbootProductList = ref()
 const groupList = ref()
 const clientName = ref('')
 const domain = ref('')
-  // TODO: Backend: change createClient data structure
-const createClient = reactive({
-  basics: {
-    hostId: '',
-    description: '',
-    inventoryNumber: '',
-    hardwareAddress: '',
-    ipAddress: null,
-    notes: ''
-  },
-  assignments: {
-    depot: "",
-    group: []
-  },
-  initialSetup: {
-    netbootProduct: [],
-    opsiClientAgent: {
-      setup: false,
-      username: '',
-      password: '',
-      type: 'windows'
-    }
-  },
-  settings: {
-    uefi: false
-  }
-})
+const createClient = ref(getDefaultCreateClient())
+
 onMounted(async ()=> {
-  await fetch()
-  domain.value = storeCache().opsiconfigserver.substring(storeCache().opsiconfigserver.indexOf('.'))
-  createClient.assignments.depot = storeCache().opsiconfigserver
+  await fetchInitialData()
 })
-watch(()=>createClient.assignments.depot, async ()=>{
-  await fetchNetbootProducts()
-  clientIDList.value = await useClient($t).getClientIdList([createClient.assignments.depot])
+
+watch(()=>createClient.value.assignments.depot, async ()=>{
+  await fetchDepotSpecificData()
 })
-async function fetch() {
-  depotIDList.value = await useDepot($t).getDepotIdList()
-  clientIDList.value = await useClient($t).getClientIdList([createClient.assignments.depot])
-  await fetchNetbootProducts()
+
+async function fetchInitialData() {
+  const opsiconfigserver = storeCache().opsiconfigserver
+  domain.value = opsiconfigserver.substring(opsiconfigserver.indexOf('.'))
+  createClient.value.assignments.depot = opsiconfigserver
+  await fetchDepotSpecificData()
   await fetchGroups()
+}
+
+async function fetchDepotSpecificData() {
+  depotIDList.value = await useDepot($t).getDepotIdList()
+  clientIDList.value = await useClient($t).getClientIdList([createClient.value.assignments.depot])
+  await fetchNetbootProducts()
 }
 
 async function fetchGroups() {
@@ -136,13 +117,8 @@ async function fetchGroups() {
 }
 
 async function fetchNetbootProducts() {
-  let depot = ''
-  if (createClient.assignments.depot !== '') {
-    depot = createClient.assignments.depot
-  } else {
-    depot = storeCache().opsiconfigserver
-  }
-  await useApiGET('/opsidata/depots/products?selectedDepots=[' + depot + ']')
+  let depot = createClient.value.assignments.depot !== '' ? createClient.value.assignments.depot : storeCache().opsiconfigserver
+  await useApiGET(`/opsidata/depots/products?selectedDepots=[${depot}]`)
     .then((response) => {
       if (Array.isArray(response.data.value)) {
         netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
@@ -153,14 +129,14 @@ async function fetchNetbootProducts() {
 }
 
 async function createOpsiClient() {
-  createClient.basics.hostId =  clientName.value + domain.value
-  if (clientIDList.value.includes(createClient.basics.hostId)) {
-    notify.error($t('message.error.clientExists', { client: createClient.basics.hostId }))
+  createClient.value.basics.hostId =  `${clientName.value}${domain.value}`
+  if (clientIDList.value.includes(createClient.value.basics.hostId)) {
+    notify.error($t('message.error.clientExists', { client: createClient.value.basics.hostId }))
     return
   }
   isLoading.value = true
   const request = {
-    client: createClient.basics, depot: createClient.assignments.depot
+    client: createClient.value.basics, depot: createClient.value.assignments.depot
   }
   const { error } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
 
@@ -168,54 +144,37 @@ async function createOpsiClient() {
     notify.error(error)
     return
   } else {
-    notify.success($t('message.success.createClient', { client: createClient.basics.hostId }))
-    if (createClient.settings.uefi) {
-      setUEFI(createClient.basics.hostId, createClient.settings.uefi.toString())
+    notify.success($t('message.success.createClient', { client: createClient.value.basics.hostId }))
+    if (createClient.value.settings.uefi) {
+      await handleApiPost('/opsidata/clients/uefi', {clientId: createClient.value.basics.hostId, uefi: createClient.value.settings.uefi.toString()})
     }
-    if (createClient.assignments.group) {
-      await assignToGroup()
+    if (createClient.value.assignments.group) {
+      await handleApiPost('/opsidata/clients/groups', {clientId: createClient.value.basics.hostId, group: createClient.value.assignments.group})
     }
-    if (createClient.initialSetup.opsiClientAgent.setup) {
-      await deployopsiclientagent()
+    if (createClient.value.initialSetup.opsiClientAgent.setup) {
+      await handleApiPost('/opsidata/clients/agent', createClient.value.initialSetup.opsiClientAgent)
     }
-    if (createClient.initialSetup.netbootProduct) {
-      await setupNetbootProduct()
+    if (createClient.value.initialSetup.netbootProduct) {
+      await handleApiPost('/opsidata/clients/netboot', {clientIds: [createClient.value.basics.hostId], productIds: [createClient.value.initialSetup.netbootProduct], actionRequest: 'setup'})
     }
-    clientIDList.value.push(createClient.basics.hostId)
+    clientIDList.value.push(createClient.value.basics.hostId)
   }
   isLoading.value = false
 }
 
-async function setUEFI(clientId: string, uefi: string) {
-  const { error } = await useApiPOST('/opsidata/clients/uefi', {clientId, uefi})
-  if (error) {
-    useNotification($t).error(error)
-  }
-}
-
-async function assignToGroup() {
-  const { error } = await useApiPOST('/opsidata/clients/groups', {clientId: createClient.basics.hostId, group: createClient.assignments.group})
-  if (error) {
-    useNotification($t).error(error)
-  }
-}
-
-async function deployopsiclientagent() {
-  const { error } = await useApiPOST('/opsidata/clients/agent', createClient.initialSetup.opsiClientAgent)
-  if (error) {
-    useNotification($t).error(error)
-  }
-}
-
-async function setupNetbootProduct() {
-  const { error } = await useApiPOST('/opsidata/clients/netboot', {clientIds: [createClient.basics.hostId], productIds: [createClient.initialSetup.netbootProduct], actionRequest: 'setup'})
+async function handleApiPost(url: string, data: any) {
+  const { error } = await useApiPOST(url, data)
   if (error) {
     useNotification($t).error(error)
   }
 }
 
 function resetForm () {
-  Object.assign(createClient, {
+  createClient.value = getDefaultCreateClient()
+}
+
+function getDefaultCreateClient() {
+  return {
     basics: {
       hostId: '',
       description: '',
@@ -232,7 +191,7 @@ function resetForm () {
       netbootProduct: [],
       opsiClientAgent: {
         setup: false,
-        clients: [],
+        // clients: [],
         username: '',
         password: '',
         type: 'windows'
@@ -241,7 +200,7 @@ function resetForm () {
     settings: {
       uefi: false
     }
-  })
+  }
 }
 </script>
 
