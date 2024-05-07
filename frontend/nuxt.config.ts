@@ -71,6 +71,7 @@ export default defineNuxtConfig({
   // },
   runtimeConfig: {
     public: {
+      OPSICONFD_PORT: CONFD_PORT,
       BASE_PAGE: '/clients',
       packageVersion: pkg.version,
       API_PATH: '/addons/webgui/api', // only default value is useApiFetch composable (can be overwritten for specific api calls)
