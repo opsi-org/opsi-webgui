@@ -35,7 +35,8 @@
 				"shardulm94.trailing-spaces",
 				"seunlanlege.action-buttons",
 				"anseki.vscode-color",
-				"ms-azuretools.vscode-docker"
+				"ms-azuretools.vscode-docker",
+				"SonarSource.sonarlint-vscode"
 			]
 		}
 	}
