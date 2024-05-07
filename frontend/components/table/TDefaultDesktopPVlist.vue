@@ -3,7 +3,7 @@
     <div class="max-w-full" :class="{small: props.small !== false}">
       <IconILoading v-if="dataModel.length <= 0" />
       <!-- HEADER -->
-      SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }}
+      <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
           <h4>{{ props.id }}</h4>

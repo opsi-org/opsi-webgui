@@ -1,10 +1,8 @@
 <template>
-  <!-- <DevOnly>Hello</DevOnly> -->
   <div :class="{
     'is-mobile': mq.isMobile.value,
     'is-not-mobile': !mq.isMobile.value,
   }" >
-  <!-- [`webgui-theme-${colormode}`]: true, -->
     <el-container class="h-screen w-screen">
       <el-header class="min-w-screen max-h-10 p-0 m-0 border-0">
         <BarBTop
@@ -25,6 +23,7 @@
         'right-opened': !mq.isMobile.value && rightSideVisible,
        }"
       >
+        <!-- LEFT SIDE -->
         <el-aside
           v-if="!mq.isMobile.value || leftSideVisible"
           class="el-aside-left"
@@ -52,8 +51,10 @@
           </el-scrollbar>
         </el-aside>
 
-
-        <el-main class="z-0 p-2">
+        <!-- MAIN CONTENT -->
+        <el-main class="z-0 p-2"
+          :class="{ 'el-overlay': mq.isMobile.value && (leftSideVisible || rightSideVisible) }"
+        >
           <el-scrollbar
           class="p-0 m-0"
           wrap-class="p-0 m-0"
@@ -67,7 +68,7 @@
 
 
 
-
+        <!-- RIGHT SIDE -->
         <el-aside
           v-if="rightSideVisible"
           style="border-left: 1px solid var(--el-border-color)"
@@ -209,6 +210,7 @@ async function checkConfig () {
   background-color: var(--bg-color) !important;
   color: var(--fg-color) !important;
 }
+
 .el-header {
   position: relative;
   height: calc(var(--el-header-height) + 1px);
@@ -216,7 +218,19 @@ async function checkConfig () {
   --el-color: green;
 }
 
+.el-main {
+  --minus-width: 0px; /* will be overwritten */
+  --main-width: 100vw;
+  width: calc(var(--main-width) - var(--minus-width));
+  min-width: calc(var(--main-width) - var(--minus-width));
+  max-width: calc(var(--main-width) - var(--minus-width));
+}
+:deep(main.el-main .el-main.mycol ) {
+  max-width: 100% !important;
+  overflow: hidden;
+}
 
+/*  BOTH SIDES */
 .el-aside>.el-scrollbar {
   --width: 100%;
   max-width: var(--width);
@@ -236,39 +250,44 @@ async function checkConfig () {
   min-width: calc(var(--width) - var(--minus-width));
   max-width: calc(var(--width) - var(--minus-width));
 }
+
+
+/*  LEFT SIDE */
 .el-aside-left { /*mobile*/
-  --width: 200px;
+  --width: 150px;
 }
 
 
+/*  RIGHT SIDE */
+.el-aside-right {
+  --width: 285px;
+}
+
+/* BOTH SIDES */
 .is-mobile {
   .el-aside { --minus-height: 40px; }
   .el-aside-left { --width: 60%; }
   .el-aside-right { --width: 70%; }
 }
 .is-not-mobile {
-  .left-opened .el-aside-left { --width: 20%; }
+  .left-opened .el-aside-left {
+    --width: 250px;
+  }
   .left-collapsed .el-aside-left {
     --width: 65px;
   }
 }
 
-/* .is-not-mobile .left-collapsed .el-aside-left>.el-scrollbar, */
-.el-aside-right { --width: 285px; }
-
-
-.el-main {
-  --minus-width: 0px; /* will be overwritten */
-  --main-width: 100vw;
-  width: calc(var(--main-width) - var(--minus-width));
-  min-width: calc(var(--main-width) - var(--minus-width));
-  max-width: calc(var(--main-width) - var(--minus-width));
+.el-overlay {
+  background-color: var(--el-overlay-color-lighter) !important;
 }
-.left-opened:not(.right-opened) .el-main { --minus-width: 200px; }
-.left-opened.right-opened .el-main { --minus-width: 465px; }
+
+.left-opened:not(.right-opened) .el-main { --minus-width: 250px; }
+.left-opened.right-opened .el-main { --minus-width: 545px; }
 .left-collapsed.right-opened .el-main { --minus-width: 350px; }
 .left-collapsed:not(.right-opened) .el-main { --minus-width: 70px; }
 
+/* OTHER */
 .border-r {
   border-color: var(--el-border-color)
 }

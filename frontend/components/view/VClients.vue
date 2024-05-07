@@ -4,9 +4,9 @@
       <!-- :filterable-columns="[columns['clientId'], columns['description']]" -->
 
       <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columns" :sort-by="tableData.sortBy" :multi="true" :incontextmenu="false"/> -->
-      {{tableData}} <br />
+      <!-- {{tableData}} <br />
       {{totalItems}} <br />
-      {{storeSelection.selectionClients}}
+      {{storeSelection.selectionClients}} -->
     <ButtonBTNRowLink
       :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
       :icon="icons.product"

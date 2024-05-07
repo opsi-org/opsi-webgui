@@ -83,7 +83,7 @@ const page2Condition = computed(()=> {
 
 <style scoped>
 .pagecontent {
-  max-height: calc(100vh - 65px) !important;
+  max-height: calc(100vh - 80px) !important;
   max-width: calc(100vw - 90px) !important;
   max-width: 100% !important;
 }
@@ -93,8 +93,8 @@ const page2Condition = computed(()=> {
 .is-mobile .pagecontent,
 .is-mobile .pagecontent .mycol {
   /* max-width: calc(100vw - 0px) !important; */
-  height: calc(100vh - 70px) !important;
-  max-height: calc(100vh - 70px) !important;
+  height: calc(100vh - 80px) !important;
+  max-height: calc(100vh - 80px) !important;
 }
 .el-main {
   padding: 0px !important;
