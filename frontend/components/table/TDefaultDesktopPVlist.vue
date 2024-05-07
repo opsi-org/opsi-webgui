@@ -364,8 +364,8 @@
       </PDataTable> -->
     </div>
 
+    <!-- :table-data="props.tableData" -->
     <LazyContextmenuCMTable ref="menu"
-      :table-data="props.tableData"
       :item="currentSelectedRow"
       :row-id="props.rowId" :type="props.id" @refetch="$emit('fetch')"/>
   </div>
