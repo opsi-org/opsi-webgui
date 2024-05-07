@@ -1,5 +1,5 @@
 <template>
-  <PContextMenu ref="cmmenu" :model="items" class="p-contextmenu">
+  <PContextMenu v-if="items" ref="cmmenu" :model="items" class="p-contextmenu">
     <template #item="{ item, hasSubmenu }">
       <div class="inline" >
         <IconIIcon v-if="item.icon" :icon="item.icon" class="inline ml-2 mr-4" />
@@ -14,11 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import { columns } from 'element-plus/es/components/table-v2/src/common.mjs';
 import { useIcons } from '../../composables/mixins/useIcons';
 import { useNavigate } from '~/composables/mixins/useNavigateTo';
 import type { TRowData } from '~/types/Datatypes'
-import type { ITableData } from '~/types/ttable';
 
 const navigation = useNavigate()
 const icons = useIcons()
