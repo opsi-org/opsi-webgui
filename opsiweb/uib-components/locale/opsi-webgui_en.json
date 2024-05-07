@@ -193,6 +193,7 @@
   "table.fields.reachable": "Reachable",
   "table.fields.reachablility": "Reachability Check",
   "table.fields.checkreachable": "Check the Client Reachability",
+  "table.fields.otp": "One Time Password",
   "table.name.client": "Client name",
   "table.name.domain": "Domain name",
   "table.details.productproperty.defaults":"Product default",
