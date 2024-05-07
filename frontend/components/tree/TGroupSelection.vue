@@ -31,7 +31,7 @@ const defaultProps = {
   label: 'text',
   children: 'children'
 }
-const fetchedData = ref<any>({})
+const fetchedData = ref<any>([])
 const storeSelection = storeSelections()
 
 onMounted(async ()=> {

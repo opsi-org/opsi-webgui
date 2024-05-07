@@ -66,8 +66,6 @@
           </el-scrollbar>
         </el-main>
 
-
-
         <!-- RIGHT SIDE -->
         <el-aside
           v-if="rightSideVisible"

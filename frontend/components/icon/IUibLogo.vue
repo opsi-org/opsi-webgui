@@ -1,13 +1,11 @@
-import { useRuntimeConfig } from 'nuxt/app';
 <template>
     <el-image
-      data-testid="IconIOpsiLogo"
+      data-testid="IconIUibLogo"
       :src="imageUrl"
       :alt="translatedLabel"
       :height="props.height"
       :class="{opsilogo_white: props.white !== false, [props.classes]: true}"
     >
-
     <template #placeholder>
       <div class="image-slot">
         {{  $t('loading.image.opsilogo') }}
@@ -38,10 +36,10 @@ const props = defineProps({
 
 const imageUrl = computed<string>({
   get:  () => {
-    if (props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer.png'
-    if (props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer_neg.png'
-    if (!props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer.png'
-    if (!props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer_neg.png'
+    if (props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Schriftzug_quer.png'
+    if (props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Schriftzug_quer_neg.png'
+    if (!props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Logo_quer.png'
+    if (!props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_UIB_Logo_quer_neg.png'
     return ''
   },
   set: (_v) => {}
@@ -49,7 +47,7 @@ const imageUrl = computed<string>({
 </script>
 
 <style>
-.opsilogo_white {
+/* .uiblogo_white {
   filter: saturate(0) brightness(5) !important;
-}
+} */
 </style>
