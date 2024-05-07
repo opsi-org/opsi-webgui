@@ -523,7 +523,7 @@ const columns = ref<ITableHeaderRow>({
             icon={icons.client}
             onOnClick={(e: Event) => changeRowLink(e, rowData.clientId, 'clone')}
           />
-          <DDClientActions clientId={rowData.clientId} />
+          <DDClientActions clientIds={[rowData.clientId]} />
           </>
       )},
     }

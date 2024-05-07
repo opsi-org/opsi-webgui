@@ -9,7 +9,7 @@
     </div>
     <TabsTQuickSelections />
     <el-text tag="b" size="small"> {{$t('label.quickaction')}}</el-text><br />
-      TODO:ondemand
+      <DropdownDDClientActions :clientIds="storeSelection.selectionClients" icon="client" />
       TODO:ProductQuickActions
       <br>
     <el-text tag="b" size="small"> {{$t('Tracked Changes')}}</el-text><br>

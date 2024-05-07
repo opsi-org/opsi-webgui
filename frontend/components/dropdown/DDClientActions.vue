@@ -1,7 +1,7 @@
 <template>
   <el-dropdown trigger="click">
     <el-button class="ml-3">
-      <IconIIcon :icon="icon.menu" :title="$t('button.tablerow.moreoptions')" />
+      <IconIIcon :icon="icon[props.icon]" :title="$t('button.tablerow.moreoptions')" />
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
@@ -10,7 +10,8 @@
             <template #reference>
               <el-button size="small" class="w-100"><IconIIcon :icon="icon[action]" class="mr-1" /> {{ $t('label.'+action) }} </el-button>
             </template>
-            <el-text tag="b">{{ $t('label.'+action) }}</el-text> - <el-text tag="i">{{ clientId }}</el-text>
+            <el-text tag="b">{{ $t('label.'+action) }}</el-text> - <el-text tag="i">{{ props.clientIds[0] }}</el-text>
+            <el-text v-if="props.clientIds.length>1">+{{ props.clientIds.length-1 }}</el-text>
             <el-form label-position="top" class="mt-3" v-loading="isLoading">
               <el-form-item v-if="action == 'notify'" :label="$t('button.event.showpopup.message')">
                 <el-input  v-model="notifyText" class="w-100" />
@@ -49,7 +50,8 @@ const notify = useNotification($t)
 const icon = useIcons()
 const mq = useMQ()
 const props = defineProps({
-  clientId: { type: String, default: '' }
+  clientIds: { type: Array, default: [] },
+  icon: { type: String, default: 'menu' }
 })
 const popoverVisible = ref(false)
 const isLoading = ref(false)
@@ -62,11 +64,11 @@ const opsiClientAgent = ref({
 })
 
 const actionMethods = {
-  ondemand: () => useApiPOST('/command/opsiclientd_rpc', { client_ids: [props.clientId], method: 'fireEvent', params: ['on_demand'] }),
-  notify: () => useApiPOST('/command/opsiclientd_rpc', { client_ids: [props.clientId], method: 'showPopup', params: [notifyText.value] }),
-  reboot: () => useApiPOST('/command/opsiclientd_rpc', { client_ids: [props.clientId], method: 'reboot', params: [''] }),
+  ondemand: () => useApiPOST('/command/opsiclientd_rpc', { client_ids: props.clientIds, method: 'fireEvent', params: ['on_demand'] }),
+  notify: () => useApiPOST('/command/opsiclientd_rpc', { client_ids: props.clientIds, method: 'showPopup', params: [notifyText.value] }),
+  reboot: () => useApiPOST('/command/opsiclientd_rpc', { client_ids: props.clientIds, method: 'reboot', params: [''] }),
   deployclientagent: () => useApiPOST('/command/deployclientagent', opsiClientAgent.value),
-  delete: () => useApiDELETE(`/opsidata/clients/${props.clientId}`)
+  delete: () => useApiDELETE(`/opsidata/clients/${props.clientIds}`)
 }
 
 async function executeClientAction(action: string) {
