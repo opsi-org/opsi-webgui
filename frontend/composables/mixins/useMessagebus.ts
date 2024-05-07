@@ -103,7 +103,7 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
 
     wsNotification('connecting')
     const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : process.env.OPSICONFD_PORT || 4447
     const url = 'wss://' + host + ':' + port + '/messagebus/v1?'
     const _bus = new WebSocket(url)
 

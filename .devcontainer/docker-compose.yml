@@ -5,8 +5,8 @@ include:
     env_file:
       # - .devcontainer/opsi-docker/opsi-server/opsi-server.env
       # - .devcontainer/.env
-      - opsi-docker/opsi-server/opsi-server.env
       - .env
+      - opsi-docker/opsi-server/opsi-server.env
 
 services:
   opsiweb_dev:

@@ -1,6 +1,7 @@
 // import { useFetch } from "@vueuse/core"
 
 import { useRuntimeConfig, type UseFetchOptions } from "nuxt/app"
+import { use } from "~/tests-configs/playwright/config/playwright-config"
 
 const urlsWithoutAuthentication = [
   '/auth/logout',
@@ -104,6 +105,13 @@ async function useAPI2<T> (
       pendingState.value = false
       status = response.status
       callheaders = response.headers
+      // if status is 401
+      if (response.status === 401) {
+        storeAuth().logout()
+        navigateTo('/login')
+
+      }
+      console.log('onResponseError', callerror.value)
     }
   })
   if (synced) {
