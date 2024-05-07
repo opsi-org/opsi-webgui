@@ -54,8 +54,8 @@
             <el-input
               data-testid="login_otp"
               v-model="totp"
-              :aria-label="$t('table.fields.otp')"
-              :placeholder="$t('table.fields.otp')"
+              :aria-label="$t('table.fields.oneTimePassword')"
+              :placeholder="$t('table.fields.oneTimePassword')"
               show-password
             />
           </el-form-item>
