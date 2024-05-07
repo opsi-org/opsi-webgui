@@ -25,7 +25,7 @@
   - [x] Sidemenu
   - [-] Quick Panel
     - [x] Quick Selections: All Selections, Depots, Client Groups, Product Groups
-    - [ ] Quick Actions: Product Quick Actions, On Demand
+    - [-] Quick Actions: Product Quick Actions, On Demand
     - [-] Settings: Multiselection, Quick Save
     - [x] GUI Settings: Language, Theme
   - [x] Login page
@@ -33,7 +33,7 @@
   - [x] Depots
   - [-] WIP Depots-config
   - [-] Clients
-  - [ ] Client Actions
+  - [x] Client Actions
   - [x] Clients Clone
   - [-] WIP Clients Config
   - [x] WIP Clients Creation
