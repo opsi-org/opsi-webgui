@@ -1,23 +1,71 @@
+<template>
+  <el-button plain @click="popoverVisible = true">
+    <IconIIcon :icon="icon.product" />
+  </el-button>
+  <el-dialog v-model="popoverVisible">
+    <template #header>
+      <h5> {{ $t('label.prodquickaction') }} </h5>
+    </template>
+    <el-form :label-width="mq.isMobile.value ? '': '300px'" :label-position="mq.isMobile.value ? 'top': 'right'">
+      <div v-for="options, category, index in productActions" :key="index">
+        <el-row>
+          <b>{{ $t('title.' + category) }} </b>
+        </el-row>
+        <div v-for="value, label in options">
+          <el-form-item :label="$t('table.fields.' + label)">
+            <el-checkbox v-if="typeof value == 'boolean'" v-model="productActions[category][label]" />
+            <el-select v-else-if="Array.isArray(value)" v-model="productActions[category][label]" multiple>
+              <el-option
+                v-for="item in value"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+            <div v-else>
+              {{ value }}
+            </div>
+
+          </el-form-item>
+        </div>
+      </div>
+      <el-form-item>
+        <el-button> {{ $t('button.reset') }}</el-button>
+        <el-button type="primary">{{ $t('button.apply') }}</el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
+</template>
+<script setup lang="ts">
+import { useIcons } from '@/composables/mixins/useIcons'
+import { useNotification } from '~/composables/mixins/useComponent';
+const $t = useI18n().t
+const notify = useNotification($t)
+const icon = useIcons()
+const mq = useMQ()
+const popoverVisible = ref(false)
+const productActions = ref({
+  conditions: {
+    instStatus: ['not_installed', 'installed', 'unknown'],
+    actionResult: ['null', 'failed', 'successful', 'none'],
+    outdatedonclient: false
+  },
+  possibleActions: {
+    rowactions: ['none', 'setup', 'uninstall', 'update', 'once', 'always', 'custom']
+  },
+  scope: {
+    apply: ['To both selected servers and clients', 'Only to selected servers', 'Only to selected clients']
+  },
+  demo: {
+    demoInfo: 'Demo mode will not make any changes, but will return the expected result. This allows to see where these actions are going to be performed without actually executing them.',
+    demoMode: true,
+    demoResult: '--'
+  }
+})
+</script>
+
+
 <!-- <template>
-  <div data-testid="MProdActions">
-    <b-button
-      variant="outline-primary"
-      size="sm"
-      block
-      @click="$bvModal.show('productactions')"
-    >
-      {{ $t(label) }}
-    </b-button>
-    <b-modal
-      id="productactions"
-      data-testid="MProdActionsModal"
-      :title="$t('label.prodquickaction')"
-      size="lg"
-      centered
-      scrollable
-      hide-footer
-    >
-      <AlertAAlert ref="prodQuickActionAlert" />
       <OverlayOLoading :is-loading="isLoading" />
       <b-row class="text-small mb-2">
         <b>{{ $t('label.conditions') }} </b>
@@ -112,29 +160,13 @@
           </div>
         </template>
       </GridGFormItem>
-    </b-modal>
-  </div>
 </template> -->
 
 <!-- <script lang="ts">
-import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
-import { AlertToast } from '../../mixins/component'
+
 import { MBus } from '../../mixins/messagebus'
-import { Strings } from '../../mixins/strings'
-import { QuickAction } from '../../.utils/types/tobjects'
-const selections = namespace('selections')
 
-@Component({ mixins: [MBus, Strings, AlertToast] })
-export default class MProductActions extends Vue {
-  showToastSuccess: any // mixin
-  showToastError: any // mixin
   wsBusMsg: any // mixin // store
-  t_fixed: any // mixin
-  $t: any
-  $fetch: any
-  $axios: any
-
-  @Prop({ default: 'label.quickaction' }) label?: string
 
   @selections.Getter public selectionClients!: Array<string>
   @selections.Getter public selectionDepots!: Array<string>
