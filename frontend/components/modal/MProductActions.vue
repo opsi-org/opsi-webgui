@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div data-testid="MProdActions">
     <b-button
       variant="outline-primary"
@@ -77,8 +77,6 @@
             >
               {{ $t('form.productaction.radio.both') }}
             </b-form-radio>
-            <!-- <b-form-radio v-model="radioOption" name="server-radio" value="server" :disabled="selectionDepots.length <= 0">{{ $t('form.productaction.radio.server') }}</b-form-radio> -->
-            <!-- <b-form-radio v-model="radioOption" name="client-radio" value="clients" :disabled="selectionClients.length <= 0">{{ $t('form.productaction.radio.clients') }}</b-form-radio> -->
           </b-form-group>
         </template>
       </GridGFormItem>
@@ -116,9 +114,9 @@
       </GridGFormItem>
     </b-modal>
   </div>
-</template>
+</template> -->
 
-<script lang="ts">
+<!-- <script lang="ts">
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { AlertToast } from '../../mixins/component'
 import { MBus } from '../../mixins/messagebus'
@@ -288,4 +286,4 @@ export default class MProductActions extends Vue {
     } as QuickAction
   }
 }
-</script>
+</script> -->
