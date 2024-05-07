@@ -55,6 +55,10 @@
   "message.session.expiresInHours": "Automatically log out in {h}:{min}:{s}",
   "message.session.expiresInMinutes": "Auto Logout in {min}m {s}s",
   "message.session.expiresInMinutesDetails": "Automatic Logout in {min} minutes und {s} seconds.",
+
+  "loading.image.error": "Error loading image. ",
+  "loading.image.opsilogo": "Loading opsi logo",
+  "loading.image.uiblogo": "Loading uib logo",
   "note.quicksave": "NOTE: This feature is currently available for Host Parameters and Product Properties.",
   "success.backup.restored": "Backup restored successfully.",
   "success.backup.created": "Backup created successfully.",
