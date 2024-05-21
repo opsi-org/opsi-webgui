@@ -1,75 +1,23 @@
 <template>
-
-  <div role="main" data-testid="FLogin"
-    :class="$mq === 'mobile'? 'px-[4%]': ''"
-  >
-    <h1 class="sr-only">
-      {{ $t('button.login') }}
-    </h1>
-    <el-card
-        class="text-center bg-primary mx-auto"
-        :class="$mq === 'mobile'? 'w-full' : 'w-1/2; max-w-md' "
-    >
+  <div role="main" data-testid="FLogin" :class="$mq === 'mobile'? 'px-[4%]': ''" v-loading="isLoading">
+    <h1 class="sr-only">{{ $t('button.login') }}</h1>
+    <el-card class="text-center bg-primary mx-auto" :class="$mq === 'mobile'? 'w-full' : 'w-1/2; max-w-md'">
       <IconIOpsiLogo :light="false" :short="false" class="mb-2" classes="w-full" />
       <div @keyup.enter="doLogin">
         <el-form class="mt-1">
           <el-form-item class="mb-1">
-            <el-input
-              id="configserver"
-              data-testid="login_configserver"
-              v-model="opsiconfigserver"
-              :aria-label="$t('title.configserver')"
-              disabled
-              readonly
-              class="mb-2"
-              :placeholder="opsiconfigserver"
-            />
+            <el-input id="configserver" data-testid="login_configserver" v-model="opsiconfigserver" :aria-label="$t('title.configserver')" disabled readonly :placeholder="opsiconfigserver" />
           </el-form-item>
           <el-form-item class="mb-1">
-            <el-input
-              id="username"
-              v-model="form.username"
-              :disabled="isLoading"
-              data-testid="login_username"
-              :aria-label="$t('form.username')"
-              :placeholder="$t('form.username')"
-              :state="validUsername"
-              class="mb-2 username"
-            />
+            <el-input id="username" v-model="form.username" :disabled="isLoading" data-testid="login_username" :aria-label="$t('form.username')" :placeholder="$t('form.username')" :state="validUsername" class="username" />
           </el-form-item>
           <el-form-item class="mb-1">
-              <el-input
-                id="password"
-                v-model="form.password"
-                :disabled="isLoading"
-                data-testid="login_password"
-                :aria-label="$t('form.password')"
-                :placeholder="$t('form.password')"
-                :state="validPassword"
-                show-password
-                class="mb-2 password"
-              />
+            <el-input id="password" v-model="form.password" :disabled="isLoading" data-testid="login_password" :aria-label="$t('form.password')" :placeholder="$t('form.password')" :state="validPassword" show-password class="password" />
           </el-form-item>
           <el-form-item>
-            <el-input
-              data-testid="login_otp"
-              v-model="totp"
-              :aria-label="$t('table.fields.oneTimePassword')"
-              :placeholder="$t('table.fields.oneTimePassword')"
-              show-password
-            />
+            <el-input data-testid="login_otp" v-model="totp" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-
-          <IconILoading v-if="isLoading"> </IconILoading>
-          <el-button
-            v-else
-            data-testid="btn-login"
-            type="primary"
-            class="mt-2 login"
-            block
-            style="--el-button-border-color: var(--el-text-color-regular);"
-            @click="doLogin"
-          >
+          <el-button data-testid="btn-login" type="primary" class="mt-2 login" block style="--el-button-border-color: var(--el-text-color-regular);" @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
         </el-form>
@@ -152,20 +100,13 @@ async function doLogin () {
 </script>
 
 <style scoped>
-
 :deep(.el-input-group__append) {
   --el-fill-color-light: transparent;
   --el-color-info: var(--el-input-text-color);
 }
-
-.ILoading {
-  --el-input-text-color: #E1E1E1;
-  color: var(--el-input-text-color);
-}
 .el-input.is-disabled {
   --el-input-text-color: #E1E1E1;
   background-color: var(--el-input-text-color);
-  /* color: var(--el-text-regular); */
 }
 .el-input {
   --el-text-color-regular: #e1e1e1;
