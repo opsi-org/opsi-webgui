@@ -17,7 +17,7 @@
           <el-form-item>
             <el-input data-testid="login_otp" v-model="totp" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button data-testid="btn-login" type="primary" class="mt-2 login" block style="--el-button-border-color: var(--el-text-color-regular);" @click="doLogin">
+          <el-button data-testid="btn-login" type="primary" class="mt-2 login w-100" style="--el-button-border-color: var(--el-text-color-regular);" @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
         </el-form>
@@ -27,7 +27,6 @@
 </template>
 
 <script setup lang="ts">
-import { useIcons } from "../../composables/mixins/useIcons"
 import { useNotification } from "../../composables/mixins/useComponent"
 import { useConfigserver } from '@/composables/mixins/useGet'
 
@@ -53,7 +52,6 @@ onMounted( async () => {
   opsiconfigserver.value = os || ''
 })
 
-
 const validUsername = computed<Boolean|null>(
   () => (form.value.username !== '') ?  null : false
 )
@@ -72,30 +70,29 @@ async function doLogin () {
   }
   User.append('password', newPassword)
 
-  const { data, error } = await useApiPOST<T_Result>('/auth/login', User)
-  if (error) {
-    notificationError(error)
-    isLoading.value = false
-    return
-  } else if (!data.value) {
-    useNotification($t).error($t('message.error.empty-response'))
-    isLoading.value = false
-    return
-  }
-  if (data?.value?.result == 'Login success') {
-    notificationSuccess('Successfull. Redirect to clients')
-    storeAuth().login(form.value.username)
-    storeAuth().setSession()
-    if (useRoute().name === 'login') {
-      useRouter().push({ path: config.public.BASE_PAGE })
-    } else {
-      useRouter().back()
+  try {
+    const { data, error } = await useApiPOST<T_Result>('/auth/login', User)
+    if (error) {
+      notificationError(error)
+      return
     }
+    if (!data.value) {
+      useNotification($t).error($t('message.error.empty-response'))
+      return
+    }
+    if (data?.value?.result == 'Login success') {
+      notificationSuccess('Successfull. Redirect to clients')
+      storeAuth().login(form.value.username)
+      storeAuth().setSession()
+      if (useRoute().name === 'login') {
+        useRouter().push({ path: config.public.BASE_PAGE })
+      } else {
+        useRouter().back()
+      }
+    }
+  } finally {
     isLoading.value = false
   }
-
-  // body not readable if error is 403...
-  // const errordata = { response: { data: {class: 'AuthenticationError', message: error.value}} }
 }
 </script>
 
