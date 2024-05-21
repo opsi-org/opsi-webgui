@@ -81,7 +81,7 @@ async function doLogin () {
       return
     }
     if (data?.value?.result == 'Login success') {
-      notificationSuccess('Successfull. Redirect to clients')
+      notificationSuccess('Redirecting to Clients Page...')
       storeAuth().login(form.value.username)
       storeAuth().setSession()
       if (useRoute().name === 'login') {
