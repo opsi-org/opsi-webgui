@@ -17,7 +17,7 @@
           <el-form-item>
             <el-input data-testid="login_otp" v-model="totp" :aria-label="$t('table.fields.oneTimePassword')" :placeholder="$t('table.fields.oneTimePassword')" show-password />
           </el-form-item>
-          <el-button data-testid="btn-login" type="primary" class="mt-2 login w-100" style="--el-button-border-color: var(--el-text-color-regular);" @click="doLogin">
+          <el-button data-testid="btn-login" :disabled="!form.username || !form.password" type="primary" class="mt-2 login w-100" style="--el-button-border-color: var(--el-text-color-regular);" @click="doLogin">
             {{ $t('button.login') }}
           </el-button>
         </el-form>
