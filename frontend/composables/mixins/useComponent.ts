@@ -1,171 +1,76 @@
 import { ElNotification } from 'element-plus'
 import { _getI18nInComposable } from './helper-i18n'
+import { h } from 'vue';
 
-const _useNotification = (t: any) => {
-  const count = ref(0)
-  const _default_options = {
-    title: '',
-    content: '',
-    variant: 'primary',
-    noAutoHide: false,
-    autoHideDelay: 5000,
-    position: 'top-right',
-    showClose: true,
-    buttons: undefined,
-    components: undefined,
-    error_data: undefined,
-    hideLastErrorToast: true
-  }
+interface NotificationOptions {
+  title?: string;
+  message: any;
+  showClose?: boolean;
+  duration?: number;
+  onClose?: () => void;
+  buttonText?: string;
+  buttonOnClick?: () => void;
+}
 
-  function showToastWithVariant (variant: string, autoHideDelay: number, titleKey: string, content: string = '') {
-    return showToast({
-      title: t(titleKey),
-      content,
-      variant,
-      autoHideDelay
-    })
-  }
+export function useNotification() {
+  const notification = ref();
 
-  const success = (content: string = '') => showToastWithVariant('success', 3000, 'message.success.title', content)
-  const warning = (content: string = '') => showToastWithVariant('warning', 10000, 'message.warning.title', content)
-  const info = (content: string = '') => showToastWithVariant('info', 10000, 'message.info.event', content)
+  const createNotification = (type: 'success' | 'error' | 'warning' | 'info') => {
+    return ({ title, message, showClose = true, duration, onClose, buttonText, buttonOnClick }: NotificationOptions) => {
+        let customMessage = typeof message === 'object' && message !== null ?
+          h('pre', {
+            innerHTML:
+              Object.entries(message)
+                .map(([key, value]) => {
+                  if (typeof value === 'object' && value !== null) {
+                    value = Object.entries(value)
+                      .map(([k, v]) => v !== null ? `${k}: ${v}` : '')
+                      .filter(Boolean)
+                      .join('\n');
+                  }
+                  return `<b>${key}</b>:\n${value}\n`;
+                })
+                .join('\n'),
+            style: { 'white-space': 'pre-wrap' } })
+          : message
 
-  function infoMbus (title: string, content: string, reloadAction:any = false) {
-    return showToast({
-      title,
-      content,
-      variant: 'info',
-      ...(reloadAction !== false && {
-        buttons: [{
-          text: t('button.reload'),
-          tooltip: t('button.reload.tooltip.clients.removeselection'),
-          action: reloadAction // shows reload button
-        }]
-      })
-    });
-  }
 
-  function error (_error: any, _title: any = undefined) {
-    const errorData = _error?.response?.data || _error;
-    const defaultTitle = _title || t('message.error.title');
-    const title = _error?.response?.data?.class
-        ? t('message.error.serverresponse.title', { error: _error.response.data.class })
-        : t('message.error.serverresponse.title.default');
-
-    console.error(errorData);
-
-    return showToast({
-      title: title || defaultTitle,
-      variant: 'error',
-      autoHideDelay: 30000,
-      noAutoHide: true,
-      error_data: errorData || { message: t('message.error.unknown') }
-    });
-  }
-
-  function infoList (response: any) {
-    const $elements:any = []
-
-    for (const [key, value] of Object.entries(response)) {
-      const $key = h('b', key)
-      const variant = (value as any).error ? 'danger' : 'success'
-      const msg = (value as any).error || (value as any).result
-      const $msg = h('p', msg)
-
-      $elements.push(h('b-list-group-item', {
-        props: { variant },
-        style: { 'background-color': 'transparent !important' }
-      }, [$key, $msg]))
-    }
-
-    return showToast({
-      title: t('message.info.event'),
-      type: 'info',
-      noAutoHide: true, // will be hidden by next error message
-      components: $elements,
-      hideLastErrorToast: true
-    })
-  }
-
-  function showToast (_obj: any) {
-    const obj = { ..._default_options, ..._obj } // overwrite defaults
-
-    const vid = `my-toast-${count.value++}`
-    const $elements:any = [h('div', {class: 'el-text'}, obj.content)]
-
-    const e = obj.error_data
-    if (e) {
-      if (!obj.title.includes(e.class)) { $elements.push(h('b', e.class)) }
-      $elements.push(h('p', e.message))
-      if (e.details) {
-        const btnDetails = h('ButtonBTNCollapseDetails', {
-          props: {
-            details: e.details,
-            variant: obj.variant,
-            buttonText: t('message.error.buttton.details')
-          }
-        })
-        $elements.push(h('div', {}, [btnDetails]))
+      if (buttonText && buttonOnClick) {
+        customMessage = h('div', {}, [
+          customMessage,
+          h('button', {
+            onClick: buttonOnClick,
+            style: {
+              display: 'block',
+              width: '100%',
+              border: '1px solid #000',
+              cursor: 'pointer'
+            }
+          }, buttonText)
+        ])
       }
+
+      const autoHideDuration = type === 'success' ? (duration ?? 10000) : 0
+
+      notification.value = ElNotification[type]({
+        title,
+        message: customMessage,
+        showClose,
+        duration: autoHideDuration,
+        onClose,
+      })
     }
-
-    const elements:Array<any> = [
-      ...(obj.buttons?.map((button: any) => _create_button(h, vid, obj.variant, button)) || []),
-      ...(obj.components ? [h('div', {
-        class: 'd-flex justify-end',
-        on: { click: () => { hideToast() } }
-      }, obj.components)] : [])
-    ]
-
-    $elements.push(h('div', {}, elements)) // all elements are right aligned
-
-    const col = h('div', {class: 'el-col'}, $elements)
-    const message = h('div', {class: 'el-row'}, col)
-    const data = {
-      title: `${obj.title}`,
-      message,
-      type: obj.variant,
-      duration: obj.noAutoHide ? 0 : obj.autoHideDelay,
-    }
-    ElNotification(data)
-    return vid
-  }
-
-  function hideToast (vid: string|undefined = undefined) {
-    ElNotification.closeAll()
-  }
-
-  function _create_button (h: any, id:string, variant: string, btnData: any): any {
-    const $btn = h('button',
-      {
-        'aria-disabled':"false",
-        class:"el-button",
-        type: variant,
-        title: btnData.tooltip,
-        onClick: async () => {
-          if (btnData.hide === undefined || btnData.hide === true) { hideToast() }
-          if (btnData.action !== undefined) { await (btnData.action as Function)() }
-        }
-      },
-      btnData.text
-    )
-    return $btn
   }
 
   return {
-    error,
-    success,
-    info,
-    infoMbus,
-    infoList,
-    warning
+    success: createNotification('success'),
+    error: createNotification('error'),
+    warning: createNotification('warning'),
+    info: createNotification('info'),
   }
 }
 
-export function useNotification(_t: any = undefined) {
-  return _useNotification(_t || _getI18nInComposable())
-}
-
+// ----------------------------------------------------------------------------------------------
 
 // const _useNotification = (t: any) => {
 //   const count = ref(0)
@@ -377,6 +282,9 @@ export function useNotification(_t: any = undefined) {
 // export function useNotification(_t: any = undefined) {
 //   return _useNotification(_t || _getI18nInComposable())
 // }
+
+// ----------------------------------------------------------------------------------------------
+
 
 
 export const useHoverDropdown = () => {
