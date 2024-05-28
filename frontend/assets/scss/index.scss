@@ -82,6 +82,12 @@ body[data-bs-theme="light"] {
     --el-text-color-regular: var(--opsi-genral-white);
     color: var(--el-text-color-regular);
   }
+  .el-card {
+    background-color:var(--bg-color);
+  }
+  .el-card__header {
+    background-color:var(--bg-color);
+  }
 }
 // html.dark {
 html.dark,
@@ -148,7 +154,7 @@ button.pressed {
 
 body > .p-contextmenu {
   position: absolute;
-  
+
   z-index: 1000;
   padding: 2px;
   display: block;

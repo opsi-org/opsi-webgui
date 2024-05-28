@@ -1,22 +1,17 @@
 <template>
   <div data-testid="VSupport" class="w-100 min-w-1/1">
-    <!-- CurrentVersion: {{ $config.public.packageVersion }} -->
     <div class="grid grid-cols-2 content-stretch mb-2 items-stretch">
-      <div v-for="(item,i) in supportItems" :key="item.title"
-        :class="{
-          'ml-0 mr-0': i === 0,
-          'mr-0 ml-0': i === supportItems.length - 1,
-          'w-full': true
-        }"
-        >
+      <div v-for="(item, i) in supportItems" :key="item.title" class="w-full">
         <CardCSupport :item="item" />
       </div>
     </div>
-    <iframe
-      v-if="withIframe !== false"
-      class="opsidoc-frame w-100 min-w-1/1"
-      :src="(locale=='de')? `https://docs.opsi.org/opsi-docs-de/4.3/index.html`: `https://docs.opsi.org/opsi-docs-en/4.2/index.html`"
-      :title="$t('supportPage.documentation.title')"/>
+    <div v-if="withIframe">
+      <iframe
+        class="opsidoc-frame w-100 min-w-1/1"
+        :src="documentationUrl"
+        :title="$t('supportPage.documentation.title')"
+      />
+    </div>
     <div v-else>
       disabled
       {{ $t('supportPage.support.opsi-doc-disabled') }}
@@ -25,35 +20,33 @@
 </template>
 
 <script setup lang="ts">
-// import { Component, Prop, Vue } from 'nuxt-property-decorator'
-// @Component
-// export default class VSupport extends Vue {
-  const $t = useI18n().t
-  const locale = useI18n().locale
-  // $i18n: any
+  const { t, locale } = useI18n()
   const props = defineProps({
     withIframe: { type: Boolean, default: true }
   })
-  // @Prop({ default: true }) withIframe!: boolean
-  // get supportItems (): Array<any> {
-  const supportItems = computed(() => {
-    return [
-      {
-        title: 'supportPage.forum.title',
-        description: 'supportPage.forum.description',
-        buttonname: 'supportPage.forum.button',
-        link: 'https://forum.opsi.org/index.php'
-      },
-      {
-        title: 'title.support',
-        description: 'supportPage.support.description',
-        buttonname: 'supportPage.support.button',
-        link: locale.value === 'en' ? 'https://www.uib.de/en/support-training/support' : 'https://www.uib.de/de/support-schulung/support'
-      }
-    ]
-  })
-// }
+
+  const supportItems = computed(() => [
+    {
+      title: 'supportPage.forum.title',
+      description: 'supportPage.forum.description',
+      buttonname: 'supportPage.forum.button',
+      link: 'https://forum.opsi.org/index.php'
+    },
+    {
+      title: 'title.support',
+      description: 'supportPage.support.description',
+      buttonname: 'supportPage.support.button',
+      link: locale.value === 'en' ? 'https://www.uib.de/en/support-training/support' : 'https://www.uib.de/de/support-schulung/support'
+    }
+  ])
+
+  const documentationUrl = computed(() =>
+    locale.value === 'de'
+      ? 'https://docs.opsi.org/opsi-docs-de/4.3/index.html'
+      : 'https://docs.opsi.org/opsi-docs-en/4.2/index.html'
+  )
 </script>
+
 <style scoped>
 .opsidoc-frame {
   min-height: calc(100vh - 245px);
