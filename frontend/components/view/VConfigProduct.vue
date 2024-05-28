@@ -39,6 +39,7 @@ import { useSaveProductProperties } from '~/composables/mixins/useSave';
 import { useUtils } from '~/composables/mixins/useUtils';
 import type { T_ProductPropertiesResult, T_ProductDependenciesResult, T_ProductPropertiesDependenciesResult } from '~/types/APItypes';
 import type { IErrorDepProp, IFetchedData } from '~/types/tobjects';
+const { notifyError } = useNotification()
 const $t = useI18n().t
 const isLoading = ref(true)
 const changes = storeChanges()
@@ -104,11 +105,11 @@ async function fetchProperties (refetch: boolean = false) {
 
   if (error) {
     console.error(error)
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     errorText.value.properties = error.response.data.message
     return
   } else if (!data.value) {
-    useNotification($t).error($t('message.error.empty-response'))
+    notifyError({ message: $t('message.error.empty-response') })
     return
   }
   fetchedData.value.properties = data.value
@@ -121,11 +122,11 @@ async function fetchDependencies () {
 
   if (error) {
     console.error(error)
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     errorText.value.dependencies = error.response.data.message
     return
   } else if (!data.value) {
-    useNotification($t).error('message.error.empty-response')
+    notifyError({ message: $t('message.error.empty-response') })
     return
   }
   fetchedData.value.dependencies = data.value

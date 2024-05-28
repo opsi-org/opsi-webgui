@@ -75,7 +75,7 @@ import { useDepot, useClient } from '~/composables/mixins/useGet';
 import type { T_ClientAttr, T_DepotIds, T_Product } from '~/types/APItypes';
 const mq = useMQ()
 const $t = useI18n().t
-const notify = useNotification($t)
+const { notifySuccess, notifyError } = useNotification()
 const isLoading = ref(false)
 const depotIDList = ref<T_DepotIds>([])
 const clientIDList = ref()
@@ -110,7 +110,7 @@ async function fetchDepotSpecificData() {
 async function fetchGroups() {
   const {data, error } = await useApiGET('/opsidata/hosts/groups/id')
   if (error) {
-    notify.error(error)
+    notifyError({ message: error?.response?.data?.message })
   } else {
     groupList.value = data.value
   }
@@ -124,14 +124,14 @@ async function fetchNetbootProducts() {
         netbootProductList.value = response.data.value.map((item: T_Product) => item.productId)
       }
     }).catch((error) => {
-      notify.error(error)
+      notifyError({ message: error?.response?.data?.message })
     })
 }
 
 async function createOpsiClient() {
   createClient.value.basics.hostId =  `${clientName.value}${domain.value}`
   if (clientIDList.value.includes(createClient.value.basics.hostId)) {
-    notify.error($t('message.error.clientExists', { client: createClient.value.basics.hostId }))
+    notifyError({ message: $t('message.error.clientExists', { client: createClient.value.basics.hostId }) })
     return
   }
   isLoading.value = true
@@ -141,10 +141,10 @@ async function createOpsiClient() {
   const { error } = await useApiPOST<T_ClientAttr>('/opsidata/clients', request)
 
   if (error) {
-    notify.error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else {
-    notify.success($t('message.success.createClient', { client: createClient.value.basics.hostId }))
+    notifySuccess({ message: $t('message.success.createClient', { client: createClient.value.basics.hostId }) })
     if (createClient.value.settings.uefi) {
       await handleApiPost('/opsidata/clients/uefi', {clientId: createClient.value.basics.hostId, uefi: createClient.value.settings.uefi.toString()})
     }
@@ -165,7 +165,7 @@ async function createOpsiClient() {
 async function handleApiPost(url: string, data: any) {
   const { error } = await useApiPOST(url, data)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
   }
 }
 

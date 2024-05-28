@@ -265,7 +265,7 @@ const router = useRouter()
 const navigation = useNavigate()
 const $t = useI18n().t
 const icons = useIcons()
-const notify = useNotification($t)
+const { notifyInfo, notifyError } = useNotification()
 const msgbus = useMBus(wsBusMsgObjectChanged, false, $t)
 const storeSelection = storeSelections()
 const storeTable = storeTablesettings()
@@ -607,7 +607,7 @@ async function _fetch() {
 
   if (error) {
     console.error(error)
-    notify.error(error, 'Error fetching clients')
+    notifyError({ title:$t('message.error.fetch')+'Clients', message: error?.response?.data?.message })
     return []
   }
 
@@ -641,15 +641,14 @@ async function _fetch() {
 
 async function wsBusMsgObjectChanged(msg: any = undefined) {
   if (msg && msg.channel === 'event:host_created') {
-    notify.infoMbus(
-      $t('message.info.event'), // title
-      $t('message.info.event.client_updated', { clientId: msg.data.id }), // content
-      async () => {
-        tableHelper.setTotalItemsAsPerPage(100000)
-        await tableHelper.fetch()
-        tableHelper.setTotalItemsAsPerPage(totalItems.value)
-      }
-    )
+    notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.client_updated', { clientId: msg.data.id }),
+          button: { label: $t('label.reloadPage'), onClick() { 
+            async () => {
+              tableHelper.setTotalItemsAsPerPage(100000)
+              await tableHelper.fetch()
+              tableHelper.setTotalItemsAsPerPage(totalItems.value)
+            }
+           } } })
   }
   if (msg && ['host_connected', 'host_disconnected'].includes(msg.event)) {
     // eslint-disable-next-line no-console

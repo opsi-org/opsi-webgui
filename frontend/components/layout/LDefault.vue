@@ -14,10 +14,6 @@
       <el-container
        class="h-screen max-h-screen overflow-hidden"
        :class="{
-        // 'is-mobile': mq.isMobile.value,
-        // 'is-not-mobile': !mq.isMobile.value,
-        // 'leftVisible': leftSideVisible,
-        // 'leftSmall': leftSideIsSmall,
         'left-collapsed': !mq.isMobile.value && leftSideIsSmall,
         'left-opened': !mq.isMobile.value && !leftSideIsSmall,
         'right-opened': !mq.isMobile.value && rightSideVisible,
@@ -99,9 +95,7 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_DisaledFeatures, T_configuration } from '~/types/APItypes'
-import { useRuntimeConfig } from 'nuxt/app';
-
-
+const { notifyError } = useNotification()
 const $t = useI18n().t
 const mq = useMQ()
 const settings = storeSettings()
@@ -158,21 +152,21 @@ async function checkConfig () {
   const result = await useApiGET<T_configuration>('/user/configuration')
   if (result.error) {
     console.error(result.error)
-    useNotification($t).error(result.error, 'Error fetching Configuration')  // TODO: add to i18n
+    notifyError({ title: $t('message.error.fetch'), message: result.error })
     return
   } else if (!result.data.value) {
     console.error('No data in response')
-    useNotification($t).error('No data in response', 'Error fetching Configuration')  // TODO: add to i18n
+    notifyError({ title: $t('message.error.fetch'), message: 'No data in response' })
     return
   }
   const forbidden = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
   if (forbidden.error) {
     console.error(forbidden.error)
-    useNotification($t).error(forbidden.error, 'Error fetching forbidden features')  // TODO: add to i18n
+    notifyError({ title: $t('message.error.fetch'), message: forbidden.error })
     return
   } else if (!forbidden.data.value) {
     console.error('No data in response')
-    useNotification($t).error('No data in response', 'Error fetching forbidden features')  // TODO: add to i18n
+    notifyError({ title: $t('message.error.fetch'), message: 'No data in response' })
     return
   }
 
@@ -203,7 +197,7 @@ async function checkConfig () {
 <style scoped>
 
 /* Quickpanel uses the same colors as the main content to reduce visual clutter */
-/* TODO: If users require the same colors as the navigation bar, the options can be made available later in the GUI Settings feature. */
+/* If users require the same colors as the navigation bar, the options can be made available later in the GUI Settings feature. */
 .qp-background {
   background-color: var(--bg-color) !important;
   color: var(--fg-color) !important;

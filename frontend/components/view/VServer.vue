@@ -135,7 +135,7 @@ const navigation = useNavigate()
 const icons = useIcons()
 const $t = useI18n().t
 
-
+const { notifyError } = useNotification()
 const fetchedData = ref<T_ServerList>([])
 const totalItems = ref<number>(0)
 const tableData = ref<ITableData>({
@@ -317,12 +317,11 @@ async function _fetch() {
   const {data, error, headers } = await useApiGETBody<T_ServerList>('/opsidata/depots', params)
   '/api/opsidata/depots'
   if (error) {
-    console.error(error)
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return []
   }
   if (data.value === undefined ) {
-    useNotification($t).error($t('message.error.empty-response'))
+    notifyError({ message: $t('message.error.empty-response') })
     return []
   }
 

@@ -92,6 +92,7 @@
 <script setup lang="ts">
 import { useIcons } from "../../composables/mixins/useIcons"
 import { useNotification } from '~/composables/mixins/useComponent';
+const { notifySuccess, notifyError } = useNotification()
 
 const adminTasks = reactive({
   applicationState : ['current', 'setup'],
@@ -116,9 +117,6 @@ const currentAppState = ref('')
 const isLoading = ref(false)
 const newAppState = ref({ type: '', address_exceptions: [], retry_after: 0 })
 
-
-
-
 onMounted(async ()=> {
   await fetchAppState()
 })
@@ -127,7 +125,7 @@ const fetchAppState = async () => {
   isLoading.value = true
   const {data, error } = await useApiGET('/app-state')
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
   currentAppState.value = (data.value as { type: any }).type
@@ -138,7 +136,7 @@ const setAppState = async () => {
   isLoading.value = true
   const { data, error } = await useApiPOST('/app-state', newAppState.value)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
   currentAppState.value = (data.value as { type: any }).type
@@ -155,10 +153,10 @@ const executeCreateBackup = async () => {
       document.body.appendChild(downloadLink)
       downloadLink.click()
       document.body.removeChild(downloadLink)
-      useNotification().success('success.backup.created')
+      notifySuccess({ message: $t('success.backup.created') })
     })
     .catch((error) => {
-      useNotification($t).error(error)
+      notifyError({ message: error?.response?.data?.message })
     })
   isLoading.value = false
 }
@@ -166,10 +164,10 @@ const executeCreateBackup = async () => {
 const requestRestore = async () => {
   await useApiPOST('/backup/restore', adminTasks.restoreBackup)
     .then(() => {
-      useNotification().success('success.backup.restored')
+      notifySuccess({ message: $t('success.backup.restored') })
     })
     .catch((error) => {
-      useNotification($t).error(error)
+      notifyError({ message: error?.response?.data?.message })
     })
 }
 
@@ -182,7 +180,7 @@ const executeRestoreBackup = async () => {
   formData.append('file', adminTasks.restoreBackup.file_id)
   const {data, error } = await useApiPOST('/file-transfer/multipart', formData)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
   adminTasks.restoreBackup.file_id = (data.value as { file_id: any }).file_id

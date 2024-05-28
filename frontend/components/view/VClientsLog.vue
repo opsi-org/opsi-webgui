@@ -33,7 +33,7 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_ClientLog } from '~/types/APItypes';
-
+const { notifyError } = useNotification()
 const $t = useI18n().t
 
 const props = defineProps({
@@ -58,13 +58,13 @@ async function fetch() {
   logrequest.selectedLogType = logtype.value
   try {
     const {data, error} = await useApiGETBody<T_ClientLog>('/opsidata/log', logrequest)
-    if (error) throw error
+    if (error) throw error?.response?.data?.message
     if (!data.value) throw new Error($t('message.error.empty-response'))
     fetchedData.value = data.value.result
     filteredData.value = fetchedData.value
   } catch (error) {
     console.error(error)
-    useNotification($t).error(error)
+    notifyError({ message: error })
   } finally {
     isLoading.value = false
   }

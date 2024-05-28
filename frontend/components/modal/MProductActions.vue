@@ -39,8 +39,8 @@
 <script setup lang="ts">
 import { useIcons } from '@/composables/mixins/useIcons'
 import { useNotification } from '~/composables/mixins/useComponent';
+const { notifySuccess, notifyError } = useNotification()
 const $t = useI18n().t
-const notify = useNotification($t)
 const icon = useIcons()
 const mq = useMQ()
 const popoverVisible = ref(false)

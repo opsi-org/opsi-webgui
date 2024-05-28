@@ -1,14 +1,11 @@
 import { encode, decode } from '@msgpack/msgpack'
 import { useNotification } from './useComponent'
 import _ from 'lodash'
-
+const { notifyInfo, notifySuccess, notifyWarning, notifyError } = useNotification()
 export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifications=false, _t: any=undefined, _channels: any = []) => {
-  // @Component({ mixins: [AlertToast] }) export class MBus extends Vue {
-  // showToastMbus: any // mixin
   const $config = useRuntimeConfig()
-  let t = _t
-  if (!t) { t = useI18n().t }
-  const showToastMbus = useNotification(t).infoMbus
+  let $t = _t
+  if (!$t) { $t = useI18n().t }
 
   let channels: any = _channels || undefined// from importing component?
   const wsBus = ref<WebSocket|undefined>(storeMBus().bus)
@@ -25,27 +22,6 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   const wsIsConnected = computed(() => {
     return wsBus.value !== undefined && wsBus.value.readyState === 1 // 1 = 'open'
   })
-  // @mbus.Getter public bus!: WebSocket|undefined
-  // @mbus.Getter public wsBusMsg!: any
-  // @mbus.Mutation public setBus!: (bus: WebSocket|undefined) => void
-  // @mbus.Mutation public setBusLastMsg!: (obj: any) => void
-
-  // // check events / channels and trigger actions in concrete classes
-  // // e.g. currently View/VClients.vue
-  // // example:
-  // @Component({ mixins: [MBus, AlertToast] })
-  // // ....
-  //  wsBusMsg: any // mixin // store
-  //  @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged2 () {
-  //     const msg = wsBusMsg
-  //     if (msg && msg.channel === 'event:host_created') {
-  //         showToastMbus(
-  //           $t('message.info.event'),
-  //           $t('message.info.event.client_updated', { clientId: msg.data.id })
-  //         )
-  //        await $fetch()
-  //     }
-  // }
   watch(()=> wsBusMsg.value, async ()=>{
     if (watchFn !== undefined) {
       wsNotification('(info) received a message "' + wsBusMsg.value + '"', wsBusMsg.value)
@@ -54,17 +30,6 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
     }
     // await watchFn()
   }, { deep: true})
-
-  // @Watch('wsBusMsg', { deep: true }) _wsBusMsgObjectChanged () {
-  //   // triggered before specific Watch method e.g. in VClients, VProductsLocalboot, ...
-  //   // wsNotification('(info) received a message "' + wsBusMsg.channel + '"', wsBusMsg)
-  //   // const msg = wsBusMsg
-  //   // let data = ''
-  //   // if (msg.data) { data = String.fromCharCode(...msg.data) }
-  //   // wsNotification('MessageBus received "' + msg.type + '": "' + data + '"', msg)
-  // }
-  // const wsbus = computed(()=> wsBus.value)
-  // get wsBus () { return bus }
 
   function wsDisconnect () {
     const _ws: WebSocket = wsBus.value as WebSocket
@@ -111,11 +76,11 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
     setBus(undefined)
     setBus(_bus)
     if (_bus === undefined) {
-      useNotification(t).error('MessageBus: connected _bus undefined')
+      notifyError({ message: 'MessageBus: connected _bus undefined' })
       throw new Error('_MessageBus shouldnt be undefined')
     }
     if (wsBus.value === undefined) {
-      useNotification(t).error('MessageBus: connected wsBus undefined')
+      notifyError({ message: 'MessageBus: connected wsBus undefined' })
       throw new Error('MessageBus shouldnt be undefined')
     }
     wsBus.value.binaryType = 'arraybuffer'
@@ -137,14 +102,13 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
         'event:productOnClient_updated',
         'event:productOnClient_deleted'
       ])
-      // useNotification().success('MessageBus: opened')
     }
     _setBusMethods(wsBus.value, setBusLastMsg)
     await wsWait(1000)
     if (wsIsConnected.value){
 
       if (showStartNotifications)
-        useNotification().success('MessageBus: connected')
+        notifySuccess({ message: 'MessageBus: connected' })
     }
 
   }
@@ -223,21 +187,6 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   function wsTerminalResize (rows: any, cols: any, terminal: any) {
     if (wsBus.value === undefined) { return }
     if (!wsIsConnected.value) { return }
-    // const len = listSizes.value.push({ rows, cols }) // returns length
-    // // sleep 1sec and send only last resize request
-    // let res = 0
-    // setTimeout(() => {
-    //   if (listSizes.value.length === 0) { res = -1; return }
-    //   if (listSizes.value.length === len) { res = 0; return }
-    //   // still resizing
-    //   if (listSizes.value.length >= len) { res = 1; return }
-    // }, 500)
-    // if (res === -1) { return } // already resized
-    // else if (res === 1) { // still resizing
-    //   return
-    // }
-    // const rowNew = listSizes.value[len - 1].rows
-    // const colNew = listSizes.value[len - 1].cols
     const rowNew = rows
     const colNew = cols
     // if res is 0 => resize list didnt change in last second. send last resize request
@@ -270,33 +219,25 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
   }
 
   function wsNotificationInfo (text: any, data: any = '') {
-    showToastMbus(
-      t('message.info.event'),
-      text + ' ' + data
-    )
+    notifyInfo({ title: $t('message.info.event'), message: text + ' ' + data})
   }
 
   function wsNotificationWarn (text: any, data: any = '') {
-    // const stringtext = JSON.stringify(data)
-    showToastMbus(text, data)
+    notifyWarning({ message: text + ' ' + data})
     console.warn('MessageBus:', text, data)
-    // ref?.alert(`MessageBus: ${stringtext}`, 'warning', text)
   }
 
   function _setBusMethods (_bus: WebSocket, setBusLastMsgMethod: any) {
     _bus.onclose = () => {
-      // wsNotificationWarn('Websocket:', 'Connection closed.')
-
       if (showStartNotifications)
-        useNotification().info('MessageBus: Connection closed.')
+        notifyInfo({ message: 'MessageBus: Connection closed.' })
       setBus(undefined)
     }
     _bus.onerror = (err:any) => {
       wsNotificationWarn('Websocket:', 'Connection error: ' + JSON.stringify(err))
-      // wsNotificationWarn('websocket error ', err)
 
       if (showStartNotifications)
-        useNotification(t).error('MessageBus: Connection error: ' + JSON.stringify(err))
+        notifyError({ message: 'MessageBus: Connection error: ' + JSON.stringify(err) })
       setBus(undefined)
     }
     _bus.onmessage = (event) => {
@@ -306,10 +247,7 @@ export const useMBus = (watchFn: Function|undefined = undefined, showStartNotifi
         wsNotification('Message is expired', message)
         return
       }
-      // setBusLastMsg(message)
       setBusLastMsgMethod(message)
-      // useNotification().info('MessageBus: received: ' + JSON.stringify(message))
-      // wsNotification('received: ' + JSON.stringify(message))
     }
   }
 

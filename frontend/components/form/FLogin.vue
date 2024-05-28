@@ -35,10 +35,7 @@ interface T_Result {
 }
 
 const $t = useI18n().t
-
-const notificationSuccess = useNotification().success
-const notificationError = useNotification($t).error
-
+const { notifySuccess, notifyError } = useNotification()
 const config = useRuntimeConfig()
 const $mq = useMQ().$mq
 const form = ref({ username: '', password: '' })
@@ -73,15 +70,15 @@ async function doLogin () {
   try {
     const { data, error } = await useApiPOST<T_Result>('/auth/login', User)
     if (error) {
-      notificationError(error)
+      notifyError({ message: error?.response?.data?.message })
       return
     }
     if (!data.value) {
-      useNotification($t).error($t('message.error.empty-response'))
+      notifyError({ message: $t('message.error.empty-response') })
       return
     }
     if (data?.value?.result == 'Login success') {
-      notificationSuccess('Redirecting to Clients Page...')
+      notifySuccess({ message: 'Redirecting to Clients Page...' })
       storeAuth().login(form.value.username)
       storeAuth().setSession()
       if (useRoute().name === 'login') {

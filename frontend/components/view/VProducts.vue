@@ -135,19 +135,15 @@ import { useTableHelper } from '~/composables/mixins/useTableHelper';
 import { useMBus } from '~/composables/mixins/useMessagebus';
 import { useSaveProductActionRequest } from '~/composables/mixins/useSave';
 
-
+const { notifyInfo, notifyError } = useNotification()
 const $t = useI18n().t
 const icons = useIcons()
 // const route = useRoute()
 const router = useRouter()
 const navigation = useNavigate()
 const fetchClient = useClient($t)
-const notify = useNotification($t)
-
 const tableSettings = storeTablesettings()
 const storeSelection = storeSelections()
-
-
 const emit = defineEmits(['change'])
 const props = defineProps({
   isMobile: { type: Boolean, default: ()=> {return false}},
@@ -640,13 +636,12 @@ async function wsBusMsgObjectChanged (msg: any = undefined) {
     if (!(lastChanges.value.clientIds.includes(msg.data.clientId) && lastChanges.value.productIds.includes(msg.data.productId))) {
       // check if we may cause the event...
       console.log(`MBUS; ${msg.data.productType}`, msg)
-      useNotification($t).infoMbus(
-        $t('message.info.event'),
-        $t('message.info.event.poc_updated', { productId: msg.data.productId }),
-        async () => {
-          await tableHelper.fetch()
-        }
-      )
+      notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.poc_updated', { productId: msg.data.productId }),
+          button: { label: $t('label.reloadPage'), onClick() { 
+            async () => {
+              await tableHelper.fetch()
+            }
+           } } })
     }
     // if (this.quicksave) {
     //   this.$fetch()
@@ -694,8 +689,7 @@ async function _fetch(_type: string = "") {
   const params = fetchProductsPrepareParams(type)
   const {data, error, headers} = await useApiGETBody('/opsidata/products', params)
   if (error) {
-    console.error(error)
-    notify.error(error)
+    notifyError({ message: error?.response?.data?.message })
     return []
   }
   if (data.value === undefined ) {

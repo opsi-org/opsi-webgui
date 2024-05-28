@@ -22,7 +22,7 @@ import { useNotification } from '~/composables/mixins/useComponent';
 import { useMBus } from '~/composables/mixins/useMessagebus';
 import { useSaveParameters } from '~/composables/mixins/useSave';
 import type { T_ClientAttr, T_HostParameter, T_ServerAttr } from '~/types/APItypes'
-
+const { notifyError, notifyInfo } = useNotification()
 const $t = useI18n().t
 const isLoading = ref(true)
 const fetchedData = ref<T_HostParameter|undefined>()
@@ -71,11 +71,8 @@ async function wsBusMsgObjectChanged(msg: any = undefined) {
               (lastSavedData.value.objectIds.length === 0 && msg.data.isDefault === true)
             )
       )) {
-        useNotification($t).infoMbus(
-          $t('message.info.event'),
-          $t('message.info.event.config_updated', { configId: msg.data.configId }),
-          $fetch
-        )
+        notifyInfo({ title: $t('message.info.event'), message: $t('message.info.event.config_updated', { configId: msg.data.configId }),
+          button: { label: $t('label.reloadPage'), onClick() { $fetch } } })
       }
     }
   }
@@ -125,8 +122,7 @@ async function fetchHostParameters (endpoint: string) {
   const {data, error} = await useApiGETBody<T_HostParameter>(endpoint)
   console.debug('fetched', data, error)
   if (error) {
-    console.error(error)
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
   fetchedData.value = data.value

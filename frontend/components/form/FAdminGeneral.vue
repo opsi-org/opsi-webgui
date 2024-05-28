@@ -35,6 +35,7 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/mixins/useComponent';
+const { notifyError } = useNotification()
 const $t = useI18n().t
 const adminTasks = reactive({
   clients: ['unblock', 'unblockAll'],
@@ -69,7 +70,7 @@ onMounted(async ()=> {
 async function fetchBlockedClients() {
   const {data, error } = await useApiGET('/opsidata/blocked-clients')
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
   blockedClients.value = data.value
@@ -78,7 +79,7 @@ async function fetchBlockedClients() {
 async function fetchLockedProducts() {
   const {data, error } = await useApiGET('/opsidata/locked-products')
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
   lockedProducts.value = data.value
@@ -101,7 +102,7 @@ async function applyAction(action: string) {
     }
     selected.value = { clients: '', products: '' }
   } catch (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error })
   }
 }
 </script>

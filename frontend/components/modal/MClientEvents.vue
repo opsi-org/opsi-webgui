@@ -149,6 +149,7 @@
 <script setup lang="ts">
 import { useIcons } from '~/composables/mixins/useIcons';
 import { useNotification } from '../../composables/mixins/useComponent';
+const { notifySuccess } = useNotification()
 const icon = useIcons()
 // const $t = useI18n().t
 
@@ -267,7 +268,7 @@ function selectionDelete(client: string) {
 }
 
 function callEvent() {
-  useNotification().success('[Dummy!] callEvent: ' + props.event)
+  notifySuccess({ message: '[Dummy!] callEvent: ' + props.event })
   // TODO: call api
   // const {data, error} = await useApiGETBody<Array<T_ClientAttr>>(`/opsidata/hosts?hosts=${id}`)
   // const {data, error} = await useClient($t).getClientIdList(storeSel.selectionDepots)

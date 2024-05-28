@@ -25,7 +25,7 @@ watch(() => useMQ().isMobile, () => {
 })
 const icon = useIcons()
 const $t = useI18n().t
-const notificationError = useNotification($t).error
+const { notifyError } = useNotification()
 
 const authStore = storeAuth() // autho imported
 const props = defineProps({
@@ -40,8 +40,7 @@ async function doLogout () {
   if (error?.response.data.message === 'Unauthorized') {
 
   } else if (error) {
-    console.error("error", error.response.data.message)
-    notificationError(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
 

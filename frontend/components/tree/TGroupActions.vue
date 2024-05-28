@@ -133,7 +133,7 @@ import type { T_ClientIds, T_Groups, T_ProductIds, T_Product } from '~/types/API
 const props = defineProps({
   data: { type: Object, required: true }
 })
-
+const { notifySuccess, notifyError } = useNotification()
 const icons = useIcons()
 const mq = useMQ()
 const $t = useI18n().t
@@ -184,7 +184,7 @@ async function refetchGroup () {
 async function fetchClientGroups() {
   const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
     // TODO: Backend: change groups data structure
@@ -202,10 +202,10 @@ async function fetchClientList () {
 async function fetchProdGroups() {
   const {data, error } = await useApiGETBody<T_Groups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else if (!data.value) {
-    useNotification($t).error($t('message.error.empty-response'))
+    notifyError({ message: $t('message.error.empty-response') })
     return
   }
   // TODO: Backend: change groups data structure
@@ -217,10 +217,10 @@ async function fetchProdGroups() {
 async function fetchProductList() {
   const {data, error } = await useApiGETBody<Array<T_Product>>(`/opsidata/depots/products?productType=LocalbootProduct&selectedDepots=[${storeSelection.selectionDepots}]`)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else if (!data.value) {
-    useNotification($t).error($t('message.error.empty-response'))
+    notifyError({ message: $t('message.error.empty-response') })
     return
   }
   idList.value = data.value.map(function (item: { productId: any; }) { return item.productId })
@@ -231,10 +231,10 @@ async function createSubGroup (parent: string) {
   const url = props.data.category == 'client-group' ? '/opsidata/hosts/groups' : '/opsidata/products/groups'
   const {data, error } = await useApiPOST(url, createGroup)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else {
-    useNotification().success($t('message.success.save.create.group', { group: createGroup.groupId }));
+    notifySuccess({ message: $t('message.success.save.create.group', { group: createGroup.groupId }) })
     await refetchGroup()
   }
 }
@@ -243,10 +243,10 @@ async function addChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiPOST(url, selectedChildren.value)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else {
-    useNotification().success($t('message.success.save.add.clientfromgroups', { group: selectedGroup }))
+    notifySuccess({ message: $t('message.success.save.add.clientfromgroups', { group: selectedGroup }) })
     await refetchGroup()
   }
 }
@@ -255,10 +255,10 @@ async function deleteAllChildren (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}/clients` : `/opsidata/products/groups/${selectedGroup}/products`
   const {data, error } = await useApiDELETE(url)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else {
-    useNotification().success($t('message.success.save.delete.clientsfromgroup', { group: selectedGroup }))
+    notifySuccess({ message: $t('message.success.save.delete.clientfromgroups', { group: selectedGroup }) })
     await refetchGroup()
   }
 }
@@ -276,10 +276,10 @@ async function deleteGroup (selectedGroup: string) {
   // TODO: Backend: change product group deletion to DELETE
   const {data, error } = props.data.category == 'client-group' ? await useApiDELETE(url) : await useApiGET(url)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else {
-    useNotification().success($t('message.success.save.delete.group', { group: selectedGroup }))
+    notifySuccess({ message: $t('message.success.save.delete.group', { group: selectedGroup }) })
     await refetchGroup()
   }
 }
@@ -290,10 +290,10 @@ async function deleteObjectToGroup (selectedChild: string, parent: string) {
   const body = props.data.category == 'client-group' ? [parent] : {}
   const {data, error} = await useApiDELETE(url, body)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else {
-    useNotification().success($t('message.success.save.delete.clientfromgroups', { client: selectedChild }))
+    notifySuccess({ message: $t('message.success.save.delete.clientfromgroups', { client: selectedChild }) })
     await refetchGroup()
   }
 }
@@ -302,10 +302,10 @@ async function editGroup (selectedGroup: string) {
   const url = props.data.category == 'client-group' ? `/opsidata/hosts/groups/${selectedGroup}` : `/opsidata/products/groups/${selectedGroup}`
   const {data, error } = await useApiPUT(url, editgroup)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else {
-    useNotification().success($t('message.success.save.update.group', { group: selectedGroup }));
+    notifySuccess({ message: $t('message.success.save.update.group', { group: selectedGroup }) })
     await refetchGroup()
   }
 }

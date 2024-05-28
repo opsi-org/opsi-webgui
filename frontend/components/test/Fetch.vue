@@ -9,15 +9,14 @@
 
 <script setup>
 import { useNotification } from '~/composables/mixins/useComponent';
-
-const $t = useI18n().t
+const { notifyError } = useNotification()
 const fetchResult = ref(undefined);
 const fetchError = ref(false);
 
 onMounted( async () => {
   const { data, error } = await useApiGET('/user/opsiserver')
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     fetchError.value = error;
     return
   }

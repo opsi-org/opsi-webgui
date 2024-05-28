@@ -46,7 +46,7 @@
 import { useIcons } from '@/composables/mixins/useIcons'
 import { useNotification } from '~/composables/mixins/useComponent';
 const $t = useI18n().t
-const notify = useNotification($t)
+const { notifyError } = useNotification()
 const icon = useIcons()
 const mq = useMQ()
 const props = defineProps({
@@ -78,7 +78,7 @@ async function executeClientAction(action: string) {
       await actionMethods[action]()
       popoverVisible.value = false
     } catch (error) {
-      notify.error(error)
+      notifyError({ message: error })
     } finally {
       isLoading.value = false
     }

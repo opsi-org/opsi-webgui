@@ -16,6 +16,7 @@
 import { useNotification } from '~/composables/mixins/useComponent';
 import type {T_ServerAttr, T_ClientAttr} from '~/types/APItypes'
 const $t = useI18n().t
+const { notifyError } = useNotification()
 const fetchedData = ref<Array<T_ServerAttr|T_ClientAttr>>([])
 const props = defineProps({
   id: { type: String, default: undefined },
@@ -40,8 +41,7 @@ async function fetchData(id:string) {
     if (data.value == undefined) throw new Error($t('message.error.empty-response'))
     fetchedData.value = data.value
   } catch (error) {
-    console.error(error)
-    useNotification($t).error(error)
+    notifyError({ message: error })
   }
 }
 </script>

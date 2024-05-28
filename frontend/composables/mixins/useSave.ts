@@ -1,6 +1,6 @@
 import { useNotification } from './useComponent'
 import { _getI18nInComposable } from './helper-i18n'
-
+const { notifySuccess, notifyError } = useNotification()
 export const useSaveParameters = (_t: any = undefined) => {
   let t = _t
   if (!t){
@@ -15,8 +15,7 @@ export const useSaveParameters = (_t: any = undefined) => {
     console.log("saveParameters", data, error)
     if (error) {
       if (showalert) {
-        console.error("error", error)
-        useNotification(t).error(error)
+        notifyError({ message: error?.response?.data?.message })
       } else {
           const errorObj = deleteitem
           errorObj.error = error?.response?.data
@@ -28,7 +27,7 @@ export const useSaveParameters = (_t: any = undefined) => {
     if (deleteitem) {
       delFromChangesHostParam(deleteitem)
     } else {
-      useNotification().success(t('message.success.save.parameters'))
+      notifySuccess({ message: t('message.success.save.parameters') })
     }
     // await this.$axios.$post(url, request)
     //   .then(() => {
@@ -67,8 +66,7 @@ export const useSaveProductActionRequest = (_t:any = undefined) => {
     const { data, error } = await useApiPOST('/opsidata/clients/products', change)
     if (error) {
       if (showalert) {
-        console.error("error", error)
-        useNotification(t).error(error)
+        notifyError({ message: error?.response?.data?.message })
       } else {
         const errorObj = deleteitem
         errorObj.error = error?.response?.data
@@ -80,7 +78,7 @@ export const useSaveProductActionRequest = (_t:any = undefined) => {
     if (deleteitem) {
       delFromChangesProducts(deleteitem)
     } else {
-      useNotification().success(t('message.success.save.prodActionRequest'))
+      notifySuccess({ message: t('message.success.save.prodActionRequest') })
       // await $nuxt.refresh()
       // TODO how to refresh nuxt ??? https://stackoverflow.com/questions/77387776/nuxt-3-reload-refresh-the-page
     }
@@ -122,8 +120,7 @@ export const useSaveProductProperties = (refetch: Function = (b: any)=>{}, _t: a
     const { data, error } = await useApiPOST(`/opsidata/products/${id}/properties`, change)
     if (error) {
       if (showalert) {
-        console.error("error", error)
-        useNotification(t).error(error)
+        notifyError({ message: error?.response?.data?.message })
       } else {
         const errorObj = deleteitem
         errorObj.error = error?.response?.data
@@ -137,7 +134,7 @@ export const useSaveProductProperties = (refetch: Function = (b: any)=>{}, _t: a
     } else {
       // $emit('refetch', true)
       if (refetch) refetch(true)
-      useNotification().success(t('message.success.save.productproperty', { id: Object.keys(change.properties) }))
+        notifySuccess({ message: t('message.success.save.productproperty', { id: Object.keys(change.properties) }) })
     }
 
     // await this.$axios.$post(`/api/opsidata/products/${id}/properties`, change)

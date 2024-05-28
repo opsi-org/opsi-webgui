@@ -29,9 +29,9 @@
 <script setup lang="ts">
 import { useClient } from '~/composables/mixins/useGet';
 import { useNotification } from '~/composables/mixins/useComponent';
+const { notifySuccess, notifyError } = useNotification()
 const storeSelection = storeSelections()
 const $t = useI18n().t
-const notify = useNotification($t)
 const props = defineProps({
   id: { type: String, default: '' },
   type: { type: String, default: 'clients' },
@@ -64,15 +64,15 @@ async function applyCloneClient() {
   const cloneClientCopy = { ...cloneClient.value }
   cloneClientCopy.target.hostId += domain.value
   if (clientIDList.value.includes(cloneClientCopy.target.hostId)) {
-    notify.error($t('message.error.clientExists', { client: cloneClientCopy.target.hostId }))
+    notifyError({ message: $t('message.error.clientExists', { client: cloneClientCopy.target.hostId }) })
     isLoading.value = false
     return
   }
   try {
     await useApiPOST(`/opsidata/clients/${sourceID.value}/clone`, cloneClientCopy)
-    notify.success($t('message.success.clone'))
+    notifySuccess({ message: $t('message.success.clone') })
   } catch (error) {
-    notify.error(error)
+    notifyError({ message: error })
   } finally {
     isLoading.value = false
     resetForm()

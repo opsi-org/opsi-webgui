@@ -27,6 +27,7 @@
 
 <script setup>
 import { useNotification } from '~/composables/mixins/useComponent';
+const { notifyError } = useNotification()
 const $t = useI18n().t
 const mq = useMQ()
 // user/configuration
@@ -36,7 +37,7 @@ onMounted( async () => {
   // const { data, error } = await useAPI('/user/configuration').get().json()
   const { data ,error } = await useApiGET('/user/configuration')
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   }
   fetchResult.value = data;

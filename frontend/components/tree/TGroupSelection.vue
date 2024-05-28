@@ -18,7 +18,7 @@ import { ref } from 'vue'
 import { ElTree } from 'element-plus'
 import { useNotification } from '~/composables/mixins/useComponent';
 import type { T_PGroups } from '~/types/APItypes'
-
+const { notifyError } = useNotification()
 const $t = useI18n().t
 
 const props = defineProps({
@@ -48,10 +48,10 @@ onMounted(async ()=> {
 async function fetchClientGroups() {
   const {data, error } = await useApiGETBody(`/opsidata/hosts/groups?selectedDepots=${storeSelection.selectionDepots}`)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else if (!data.value) {
-    useNotification($t).error($t('message.error.empty-response'))
+    notifyError({ message: $t('message.error.empty-response') })
     return
   }
     // TODO: Backend: change groups data structure
@@ -65,10 +65,10 @@ async function fetchClientGroups() {
 async function fetchProdGroups() {
   const {data, error } = await useApiGETBody<T_PGroups>(`/opsidata/products/groups?selectedProducts=${storeSelection.selectionProducts}`)
   if (error) {
-    useNotification($t).error(error)
+    notifyError({ message: error?.response?.data?.message })
     return
   } else if (!data.value) {
-    useNotification($t).error($t('message.error.empty-response'))
+    notifyError({ message: $t('message.error.empty-response') })
     return
   }
   fetchedData.value = data.value.groups ?

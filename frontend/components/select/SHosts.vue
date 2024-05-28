@@ -11,7 +11,6 @@
 </template>
 
 <script setup lang="tsx">
-import { useNotification } from '~/composables/mixins/useComponent';
 import { useClient, useDepot } from '~/composables/mixins/useGet';
 const $t = useI18n().t
 const storeSel = storeSelections()

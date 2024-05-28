@@ -70,7 +70,7 @@ import { WebLinksAddon } from 'xterm-addon-web-links'
 import type { T_DisaledFeatures } from '~/types/APItypes';
 
 const $t = useI18n().t
-
+const { notifyWarning, notifyError } = useNotification()
 /*
 import { Component, namespace, Prop, Vue, Watch } from 'nuxt-property-decorator'
 import { MBus } from '../../mixins/messagebus'
@@ -135,11 +135,11 @@ async function _fetchIsDisabled () {
     isLoading.value = true
     const {data, error} = await useApiGET<T_DisaledFeatures>('/opsidata/server/disabled-features')
     if (error) {
-      useNotification($t).error(error)
+      notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return false
     } else if (!data.value) {
-      useNotification($t).error($t('message.error.empty-response'))
+      notifyError({ message: $t('message.error.empty-response') })
       isLoading.value = false
       return false
     }
@@ -180,7 +180,7 @@ onMounted(async () => {
   isDisabled.value = await _fetchIsDisabled()
   waitForRefNot (isDisabled, undefined)
   if (isDisabled.value) {
-    useNotification().warning('Terminal is disabled')
+    notifyWarning({ message: 'Terminal is disabled' })
     return
   }
   // connect()

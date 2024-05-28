@@ -1,34 +1,21 @@
-// import { Component, namespace, Vue } from 'nuxt-property-decorator'
-// import { AlertToast } from './component'
 import { useMBus } from './useMessagebus'
 import { useNotification } from './useComponent'
-import type { T_Logout } from '~/types/APItypes'
-
-// const auth = namespace('auth')
-// const selections = namespace('selections')
-// const settings = namespace('settings')
-
+const { notifySuccess, notifyError } = useNotification()
 export const useCallLogout = (t: any = undefined) => {
-// @Component({ mixins: [MBus] }) export class CallLogout extends Vue {
   const wsDisconnect = useMBus(undefined, false, t).wsDisconnect // mixin
 
   const logout = storeAuth().logout
   const clearSession = storeAuth().clearSession
-  // @auth.Mutation public logout!: () => void
-  // @auth.Mutation public clearSession!: () => void
   const clearAllSelection = storeSelections().clearAllSelection
-  // @selections.Mutation public clearAllSelection!: () => void
   const setExpiresInterval = storeSettings().setExpiresInterval
-  // @settings.Mutation public setExpiresInterval!: (any) => void
 
   async function  callLogout () {
     const { error } = await useApiPOST('/auth/logout')
     if (error) {
-        useNotification(t).error(error)
+      notifyError({ message: error?.response?.data?.message })
       return
     }
-    // const response = await this.$axios.$post('/api/auth/logout')
-    // if (response.result === 'logout success') {
+
       wsDisconnect()
       logout()
       clearSession()
@@ -47,71 +34,48 @@ export const useGroup = (_t: any = undefined) => {
   if (!t){
     t = useI18n().t
   }
-// @Component({ mixins: [AlertToast] }) export class Group extends Vue {
-  // showToastSuccess: any // mixin
-  // showToastError: any // mixin
+
   async function addClientToListOfGroups (client: string, groupsList: Array<string>) {
 
     const { error } = await useApiPOST(`/api/opsidata/clients/${client}/groups`, groupsList)
     if (error) {
-      console.error("error", error)
-      useNotification(t).error(error)
+      notifyError({ message: error?.response?.data?.message })
       return
     }
-
-    useNotification().success(t('message.success.save.clienttogroups', { client }))
-
-    // await this.$axios.$post(`/api/opsidata/clients/${client}/groups`, groupsList)
-    //   .then((response) => {
-    //     this.showToastSuccess(this.$t('message.success.save.clienttogroups', { client }))
-    //   })
-    //   .catch((error) => {
-    //     this.showToastError(error)
-    //   })
+    notifySuccess({ message: t('message.success.save.clienttogroups', { client }) })
   }
   return { addClientToListOfGroups }
 }
 
 export const useSetUEFI = (_t: any = undefined) => {
-  // @Component({ mixins: [AlertToast] }) export class SetUEFI extends Vue {
   let t = _t
   if (!t){
     t = useI18n().t
   }
-  // showToastError: any // mixin
+
   async function setUEFI (clientId: string, uefi:string) {
 
     const { error } = await useApiPOST(`api/opsidata/clients/${clientId}/uefi`, uefi)
     if (error) {
-      console.error("error", error)
-      useNotification(t).error(error, t('message.error.uefi'))
+      notifyError({ title:t('message.error.uefi'), message: error?.response?.data?.message })
       return
     }
-
-    // await this.$axios.$post(`api/opsidata/clients/${clientId}/uefi`, uefi)
-    //   .catch((error) => {
-    //     this.showToastError(error, this.$t('message.error.uefi'))
-    //   })
   }
   return { setUEFI }
 }
 
 export const useDeployClientAgent = (_t: any = undefined) => {
-// @Component({ mixins: [AlertToast] }) export class DeployClientAgent extends Vue {
   let t = _t
   if (!t){
     t = useI18n().t
   }
   const clientagentAlert = ref<any>()
-  // showToastError: any // mixin
   async function deployClientAgent (_data: any, modal:boolean, incontextmenu:boolean) {
-    // const ref = ($refs.clientagentAlert as any)
 
     // TODO: use correct type for data (param and response type)
     const { data, error } = await useApiPOST<any>('/api/opsidata/clients/deploy', _data)
     if (error) {
-      console.error("error", error)
-      useNotification(t).error(error, t('message.error.clientagent'))
+      notifyError({ title:t('message.error.clientagent'), message: error?.response?.data?.message })
       return
     }
 
@@ -119,22 +83,8 @@ export const useDeployClientAgent = (_t: any = undefined) => {
     if (modal) {
       const { hide } = useModal('event-modal-deployCA-' + data.value.clientId[0] + '-context-menu-' + incontextmenu)
       hide ()
-      // $bvModal.hide('event-modal-deployCA-' + data.clientId[0] + '-context-menu-' + incontextmenu)
     }
     throw new Error('TODO: check if this really works in mixin/composable. If so remove this line')
-
-
-    // await this.$axios.$post('/api/opsidata/clients/deploy', data)
-    //   .then(() => {
-    //     ref.alert(this.$t('message.success.clientagent', { client: data.clientId[0] }) as string, 'success')
-    //     if (modal) {
-    //       this.$bvModal.hide('event-modal-deployCA-' + data.clientId[0] + '-context-menu-' + incontextmenu)
-    //     }
-    //   }).catch((error) => {
-    //     this.showToastError(error, this.$t('message.error.clientagent'))
-    //     // const detailedError = ((error?.response?.data?.message) ? error.response.data.message : '') + ' ' + ((error?.response?.data?.detail) ? error.response.data.detail : '')
-    //     // ref.alert(this.$t('message.error.clientagent') as string, 'danger', detailedError)
-    //   })
   }
   return { deployClientAgent }
 }
