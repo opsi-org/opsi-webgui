@@ -4,7 +4,7 @@ import fs from 'fs'
 import pkg from './package.json'
 
 const CONFD_PORT = process.env.OPSICONFD_PORT || 4447
-// import * as langFiles from './uib-components/locale/';
+
 const langs = {}
 
 const dir = './uib-components/locale/'
@@ -23,12 +23,12 @@ try {
     }
   })
 } catch (error) { console.log(error) }
-console.log("===================================================================")
-console.log("DEBUG: Nuxt config")
-console.log("DEBUG: OPSICONFD_PORT: ", CONFD_PORT)
-console.log("DEBUG: PKG version: ", pkg.version)
+console.log('===================================================================')
+console.log('DEBUG: Nuxt config')
+console.log('DEBUG: OPSICONFD_PORT: ', CONFD_PORT)
+console.log('DEBUG: PKG version: ', pkg.version)
 console.log('DEBUG: Reading locales done: ', Object.keys(langs))
-console.log("===================================================================")
+console.log('===================================================================')
 
 const env = {
   APIPATH: '/addons/webgui'
@@ -151,7 +151,7 @@ export default {
   // https://nuxtjs.org/guide/runtime-config
   publicRuntimeConfig: {
     packageVersion: pkg.version,
-    confdPort: CONFD_PORT,
+    confdPort: CONFD_PORT
     // local: 'https://localhost:' + CONFD_PORT + '/addons/webgui' // fallback
   },
   privateRuntimeConfig: {
