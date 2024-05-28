@@ -23,6 +23,7 @@
       @new-node="addNewValue"
       @input="selectValue"
     />
+    {{ localval }}
 
   </div>
 </template>
@@ -50,7 +51,7 @@ export default class GCHostParamVal extends Vue {
       possiblevalues.push({ id: v, label: v })
     }
     this.options = possiblevalues
-    this.localval = this.getlocalvalue()
+    this.localval = this.getlocalvalue() || null
   }
 
   getlocalvalue () {
