@@ -49,7 +49,7 @@ export function useNotification() {
         ])
       }
 
-      const autoHideDuration = type === 'success' ? (duration ?? 10000) : 0 // 0 means no Auto Hide
+      const autoHideDuration = type === 'success' ? (duration ?? 8000) : 0 // 0 means no Auto Hide
 
       notification.value = ElNotification[type]({
         title,

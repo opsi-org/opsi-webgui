@@ -56,37 +56,52 @@ const validPassword = computed(
   () => (form.value.password !== '') ?  null : false
 )
 
-async function doLogin () {
-  if (!validUsername || !validPassword) return
-  isLoading.value = true
+function createUserFormData() {
   const User = new FormData()
   User.append('username', form.value.username)
   let newPassword = form.value.password
   if (totp.value !== null) {
-    newPassword = form.value.password + totp.value
+    newPassword += totp.value
   }
   User.append('password', newPassword)
+  return User
+}
+
+function handleSuccessfulLogin() {
+  notifySuccess({ message: $t('message.page.redirect.clients') })
+  storeAuth().login(form.value.username)
+  storeAuth().setSession()
+  const route = useRoute()
+  const router = useRouter()
+  if (route.name === 'login') {
+    router.push({ path: config.public.BASE_PAGE })
+  } else {
+    router.back()
+  }
+}
+
+async function doLogin () {
+  if (!validUsername || !validPassword) return
+  isLoading.value = true
 
   try {
+    const User = createUserFormData()
     const { data, error } = await useApiPOST<T_Result>('/auth/login', User)
     if (error) {
-      notifyError({ message: error?.response?.data?.message })
+      notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
       return
     }
-    if (!data.value) {
+    if (data.value == undefined) {
       notifyError({ message: $t('message.error.empty-response') })
       return
     }
-    if (data?.value?.result == 'Login success') {
-      notifySuccess({ message: 'Redirecting to Clients Page...' })
-      storeAuth().login(form.value.username)
-      storeAuth().setSession()
-      if (useRoute().name === 'login') {
-        useRouter().push({ path: config.public.BASE_PAGE })
-      } else {
-        useRouter().back()
-      }
+    if (data.value.result !== 'Login success') {
+      notifyError({ message: $t('message.error.login-failed') })
+      return
     }
+    handleSuccessfulLogin()
+  } catch (error) {
+    notifyError({ message: $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
   }

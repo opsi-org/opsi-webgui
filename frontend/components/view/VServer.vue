@@ -320,7 +320,7 @@ async function _fetch() {
     notifyError({ message: error?.response?.data?.message })
     return []
   }
-  if (data.value === undefined ) {
+  if (data.value == undefined) {
     notifyError({ message: $t('message.error.empty-response') })
     return []
   }

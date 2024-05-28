@@ -204,7 +204,7 @@ async function fetchProdGroups() {
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
-  } else if (!data.value) {
+  } else if (data.value == undefined) {
     notifyError({ message: $t('message.error.empty-response') })
     return
   }
@@ -219,7 +219,7 @@ async function fetchProductList() {
   if (error) {
     notifyError({ message: error?.response?.data?.message })
     return
-  } else if (!data.value) {
+  } else if (data.value == undefined) {
     notifyError({ message: $t('message.error.empty-response') })
     return
   }

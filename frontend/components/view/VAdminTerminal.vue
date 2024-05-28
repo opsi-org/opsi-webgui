@@ -138,7 +138,7 @@ async function _fetchIsDisabled () {
       notifyError({ message: error?.response?.data?.message })
       isLoading.value = false
       return false
-    } else if (!data.value) {
+    } else if (data.value == undefined) {
       notifyError({ message: $t('message.error.empty-response') })
       isLoading.value = false
       return false

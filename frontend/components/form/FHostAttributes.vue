@@ -37,11 +37,17 @@ async function fetchData(id:string) {
   try {
     const url = props.type === 'servers' ? `/opsidata/servers?servers=[${id}]` : `/opsidata/hosts?hosts=${id}`
     const {data, error} = await useApiGETBody<Array<T_ServerAttr|T_ClientAttr>>(url)
-    if (error) throw error
-    if (data.value == undefined) throw new Error($t('message.error.empty-response'))
+      if (error) {
+      notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
+      return
+    }
+    if (data.value == undefined) {
+      notifyError({ message: $t('message.error.empty-response') })
+      return
+    }
     fetchedData.value = data.value
   } catch (error) {
-    notifyError({ message: error })
+    notifyError({ message: $t('message.error.unexpected') })
   }
 }
 </script>

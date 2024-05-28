@@ -58,13 +58,18 @@ async function fetch() {
   logrequest.selectedLogType = logtype.value
   try {
     const {data, error} = await useApiGETBody<T_ClientLog>('/opsidata/log', logrequest)
-    if (error) throw error?.response?.data?.message
-    if (!data.value) throw new Error($t('message.error.empty-response'))
+      if (error) {
+      notifyError({ message: error?.response?.data?.message || $t('message.error.generic') })
+      return
+    }
+    if (data.value == undefined) {
+      notifyError({ message: $t('message.error.empty-response') })
+      return
+    }
     fetchedData.value = data.value.result
     filteredData.value = fetchedData.value
   } catch (error) {
-    console.error(error)
-    notifyError({ message: error })
+    notifyError({ message: $t('message.error.unexpected') })
   } finally {
     isLoading.value = false
   }

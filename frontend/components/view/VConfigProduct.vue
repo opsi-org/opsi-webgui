@@ -108,7 +108,7 @@ async function fetchProperties (refetch: boolean = false) {
     notifyError({ message: error?.response?.data?.message })
     errorText.value.properties = error.response.data.message
     return
-  } else if (!data.value) {
+  } else if (data.value == undefined) {
     notifyError({ message: $t('message.error.empty-response') })
     return
   }
@@ -125,7 +125,7 @@ async function fetchDependencies () {
     notifyError({ message: error?.response?.data?.message })
     errorText.value.dependencies = error.response.data.message
     return
-  } else if (!data.value) {
+  } else if (data.value == undefined) {
     notifyError({ message: $t('message.error.empty-response') })
     return
   }
