@@ -4,6 +4,7 @@ import { AlertToast } from './component'
 const mbus = namespace('messagebus')
 
 @Component({ mixins: [AlertToast] }) export class MBus extends Vue {
+  $config: any // from nuxt.config.js / runtimeConfig
   showToastMbus: any // mixin
   uid: string = this.createUUID()
   channels: any // from importing component?
@@ -69,7 +70,7 @@ const mbus = namespace('messagebus')
 
     this.wsNotification('connecting')
     const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : this.$config.confdPort
     const url = 'wss://' + host + ':' + port + '/messagebus/v1?'
     const _bus = new WebSocket(url)
     this.setBus(_bus)

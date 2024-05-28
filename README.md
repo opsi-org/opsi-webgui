@@ -18,12 +18,12 @@ This project espacially the devcontainer is not for production usage. To install
 * optional: use `development`/`experimental`/`testing`/`stable` branch by editiing the content of `/etc/apt/sources.list.d/opsi.list`
 * run `sudo apt update && sudo apt install opsi-webgui`
 * restart opsiconfd: `sudo systemctl restart opsiconfd`
-* checkout https://YOUROPSISERVER:4447/addons/webgui/app
+* checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
 
 ### Installation using Zip
 * get zip from https://download.uib.de/opsi4.3/stable/opsiconfd-addons/
-* upload zip through https://YOUROPSISERVER:4447/admin/#addons
-* checkout https://YOUROPSISERVER:4447/addons/webgui/app
+* upload zip through https://YOUROPSISERVER:OPSICONFD_PORT/admin/#addons
+* checkout https://YOUROPSISERVER:OPSICONFD_PORT/addons/webgui/app
 
 
 ## Development

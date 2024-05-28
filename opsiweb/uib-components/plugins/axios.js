@@ -1,7 +1,7 @@
-export default function ({ $axios, redirect, store, route }) {
+export default function ({ app, $axios, redirect, store, route }) {
   if (process.client || process.static) {
     const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : app.$config.confdPort || 4447
     $axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
   }
 

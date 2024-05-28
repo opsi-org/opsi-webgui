@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import pkg from './package.json'
 
+const CONFD_PORT = process.env.OPSICONFD_PORT || 4447
 // import * as langFiles from './uib-components/locale/';
 const langs = {}
 
@@ -22,7 +23,12 @@ try {
     }
   })
 } catch (error) { console.log(error) }
+console.log("===================================================================")
+console.log("DEBUG: Nuxt config")
+console.log("DEBUG: OPSICONFD_PORT: ", CONFD_PORT)
+console.log("DEBUG: PKG version: ", pkg.version)
 console.log('DEBUG: Reading locales done: ', Object.keys(langs))
+console.log("===================================================================")
 
 const env = {
   APIPATH: '/addons/webgui'
@@ -138,13 +144,15 @@ export default {
   },
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: (process.env.NODE_ENV === 'production') ? env.APIPATH : 'http://localhost:4447' + env.APIPATH, // fallback baseurl
+    baseURL: (process.env.NODE_ENV === 'production') ? env.APIPATH : 'http://localhost:' + CONFD_PORT + env.APIPATH, // fallback baseurl
     https: true,
     progress: false
   },
   // https://nuxtjs.org/guide/runtime-config
   publicRuntimeConfig: {
-    packageVersion: pkg.version
+    packageVersion: pkg.version,
+    confdPort: CONFD_PORT,
+    // local: 'https://localhost:' + CONFD_PORT + '/addons/webgui' // fallback
   },
   privateRuntimeConfig: {
   },

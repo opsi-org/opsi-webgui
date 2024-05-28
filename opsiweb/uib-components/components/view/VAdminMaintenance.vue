@@ -225,6 +225,7 @@ interface RestoreBackup {
 
 @Component({ mixins: [Icons, AlertToast] })
 export default class VAdminMaintenance extends Vue {
+  $config: any // runtimeConfig
   showToastSuccess: any // from mixin AlertToast
   showToastError: any // from mixin AlertToast
   icon: any
@@ -299,7 +300,7 @@ export default class VAdminMaintenance extends Vue {
 
   async requestRestore () {
     const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : this.$config.confdPort
     this.$axios.setBaseURL('https://' + host + ':' + port + '/addons/webgui')
     await this.$axios.$post('/api/backup/restore', this.restorebackup)
       .then(() => {
@@ -323,7 +324,7 @@ export default class VAdminMaintenance extends Vue {
     formData.append('file', this.file)
 
     const host = window.location.hostname
-    const port = (process.env.NODE_ENV === 'production') ? window.location.port : 4447
+    const port = (process.env.NODE_ENV === 'production') ? window.location.port : this.$config.confdPort
 
     this.$axios.setBaseURL('https://' + host + ':' + port)
     await this.$axios.$post('/file-transfer/multipart', formData)
