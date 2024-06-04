@@ -18,9 +18,11 @@
 	// 	"opsi-server:4447": { "label": "opsiserver" }
 	// },
 	// "otherPortsAttributes": { "onAutoForward" : "notify" },
-	"settings": { "terminal.integrated.shell.linux": "/usr/bin/zsh" },
 	"customizations": {
 		"vscode": {
+			"settings": {
+				"terminal.integrated.shell.linux": "/usr/bin/zsh"
+			},
 			// cleaning up. only install the ones which are really needed/useful
 			"extensions": [
 				"Vue.volar",
@@ -36,7 +38,8 @@
 				"seunlanlege.action-buttons",
 				"anseki.vscode-color",
 				"ms-azuretools.vscode-docker",
-				"SonarSource.sonarlint-vscode"
+				"SonarSource.sonarlint-vscode",
+				"dbaeumer.vscode-eslint"
 			]
 		}
 	}
