@@ -7,7 +7,7 @@
     </div>
     <div v-if="withIframe">
       <iframe
-        class="opsidoc-frame w-100 min-w-1/1"
+        class="opsidoc-frame w-100 min-w-1/1 border"
         :src="documentationUrl"
         :title="$t('supportPage.documentation.title')"
       />
@@ -49,7 +49,7 @@
 
 <style scoped>
 .opsidoc-frame {
-  min-height: calc(100vh - 245px);
-  max-height: calc(100vh - 245px);
+  min-height: calc(100vh - 270px);
+  max-height: calc(100vh - 270px);
 }
 </style>

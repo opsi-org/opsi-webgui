@@ -1,7 +1,5 @@
 <template>
-  <el-container class="h-screen"
-  >
-  <!-- :class="'webgui-theme-'+settings.colortheme" -->
+  <el-container class="h-screen">
     <el-header/> <!-- do not remove header -->
     <el-main>
       <slot />
@@ -13,5 +11,4 @@
 <script setup lang="ts">
 const settings = storeSettings()
 settings.initColormode()
-
 </script>
