@@ -19,7 +19,7 @@
     - [ ] messagebus - event:log_updated
   - [-] use elementplus everywhere
 - [ ] WIP *pages*
-  - [-] Topbar
+  - [x] Topbar
     - [x] Breadcrumb
     - [x] Logout
   - [x] Sidemenu

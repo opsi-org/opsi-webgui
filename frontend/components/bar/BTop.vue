@@ -1,67 +1,51 @@
+
 <template>
- <el-menu v-if="mq.isMobile.value" mode="horizontal" class="border-0"
-  data-testid="BTop"
-    :ellipsis="false">
-    <el-menu-item index="0" @click="()=>emit('toggleLeft')" data-testid="menu_routes">
+  <el-menu mode="horizontal" :ellipsis="false" class="border-0 text-on-primary" data-testid="BTop">
+    <el-menu-item v-if="mq.isMobile.value" index="0" @click="toggleLeft" data-testid="menu_routes">
       <IconIIcon :icon="icons.navmenu" class="text-on-primary"/>
     </el-menu-item>
 
-    <div class="flex-grow" />
-    <el-menu-item index="1" @click="useRouter().push('/clients/')">
-      <IconIOpsiLogo class="max-h-full h-full" />
+    <div v-if="mq.isMobile.value" class="flex-grow" />
+
+    <el-menu-item :index="mq.isMobile.value? '1' : '0'" @click="navigateToClients">
+      <IconIOpsiLogo class="opsi-logo" />
     </el-menu-item>
 
     <div class="flex-grow" />
 
-    <!-- <el-menu-item index="2">
-    </el-menu-item> -->
-
-    <!-- <el-sub-menu index="2"
-      class="grid"
-    > -->
-
-      <el-menu-item index="2" type="text" @click="()=>emit('toggleRight')" data-testid="menu-quickpanel">
-        <IconIIcon :icon="icons.quickpanel" class="text-on-primary"/>
-        <!-- <div class="flex-grow" /> -->
-        <!-- <p class="ml-1">QuickPanel</p> -->
-      </el-menu-item>
-
-      <!-- <ButtonBTNLogout index="3" :is-menu-item="true"/> -->
-      <!-- <IconIIcon :icon="icons.menu" /> -->
-    <!-- </el-sub-menu> -->
-  </el-menu>
-
- <el-menu v-else mode="horizontal" :ellipsis="false" class="text-on-primary border-0"
-  data-testid="BTop">
-    <el-menu-item index="0" @click="useRouter().push('/clients/')" class="hover:cursor-pointer hover:!bg-transparent">
-      <IconIOpsiLogo class="max-h-full h-full"/>
-    </el-menu-item>
-
-    <div class="flex-grow" />
-
-    <el-menu-item index="1" type="text" @click="()=>emit('toggleRight')" data-testid="menu-quickpanel" class="text-on-primary">
+    <el-menu-item index="2" type="text" @click="toggleRight" data-testid="menu-quickpanel">
       <IconIIcon :icon="icons.quickpanel" class="text-on-primary"/>
     </el-menu-item>
-    <PopconfirmPLogout index="2" :is-menu-item="true"/>
+
+    <PopconfirmPLogout v-if="!mq.isMobile.value" index="3" :is-menu-item="true"/>
   </el-menu>
 </template>
 
 <script setup lang="ts">
 import { useIcons } from '~/composables/mixins/useIcons';
+import { useRouter } from 'vue-router';
 
 const mq = useMQ()
 const emit = defineEmits(['toggleLeft', 'toggleRight'])
-const settings = storeSettings()
 const icons = useIcons()
+const router = useRouter()
+
+const toggleLeft = () => emit('toggleLeft')
+const toggleRight = () => emit('toggleRight')
+const navigateToClients = () => router.push('/clients/')
 </script>
 
 <style scoped>
 .el-menu-item,
 .el-menu-item.is-active {
-  color: var(--fg-color) !important;
+  color: var(--fg-color);
 }
 [data-testid="menu-quickpanel"].text-on-primary:hover .text-on-primary {
   --el-text-color-regular: var(--fg-color);
-  color: var(--el-text-color-regular) !important;
+  color: var(--el-text-color-regular);
+}
+.opsi-logo {
+  height: 45px;
 }
 </style>
+
