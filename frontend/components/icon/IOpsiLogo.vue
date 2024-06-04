@@ -1,17 +1,16 @@
-import { useRuntimeConfig } from 'nuxt/app';
 <template>
-    <el-image
-      data-testid="IconIOpsiLogo"
-      :src="imageUrl"
-      :alt="translatedLabel"
-      :height="props.height"
-      :class="{opsilogo_white: props.white !== false, [props.classes]: true}"
-    >
-
+  <el-image
+    data-testid="IconIOpsiLogo"
+    :src="imageUrl"
+    :alt="translatedLabel"
+    :height="props.height"
+    :class="{opsilogo_white: props.white, [props.classes]: true}"
+  >
     <template #placeholder>
       <div class="image-slot">
         {{  $t('loading.image.opsilogo') }}
-        <span class="dot">...</span></div>
+        <span class="dot">...</span>
+      </div>
     </template>
     <template #error>
       <div class="image-slot">
@@ -36,15 +35,11 @@ const props = defineProps({
   height: { type: String, default: ''},
 })
 
-const imageUrl = computed<string>({
-  get:  () => {
-    if (props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer.png'
-    if (props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_ohne_Text_quer_neg.png'
-    if (!props.short && props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer.png'
-    if (!props.short && !props.light) return config.public.OWN_PATH + '/images/UIB_1704_2023_OPSI_Logo_Bildmarke_quer_neg.png'
-    return ''
-  },
-  set: (_v) => {}
+const imageUrl = computed(() => {
+  const base = config.public.OWN_PATH + '/images/';
+  const short = props.short ? 'Bildmarke_ohne_Text_quer' : 'Bildmarke_quer';
+  const light = props.light ? '' : '_neg';
+  return `${base}UIB_1704_2023_OPSI_Logo_${short}${light}.png`;
 })
 </script>
 

@@ -7,7 +7,7 @@
 
     <div v-if="mq.isMobile.value" class="flex-grow" />
 
-    <el-menu-item :index="mq.isMobile.value? '1' : '0'" @click="navigateToClients">
+    <el-menu-item index="1" @click="navigateToClients">
       <IconIOpsiLogo class="opsi-logo" />
     </el-menu-item>
 
@@ -45,7 +45,7 @@ const navigateToClients = () => router.push('/clients/')
   color: var(--el-text-color-regular);
 }
 .opsi-logo {
-  height: 45px;
+  height: 40px;
 }
 </style>
 
