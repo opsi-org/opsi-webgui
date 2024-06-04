@@ -13,7 +13,7 @@
       <el-text tag="b" size="small"> {{$t('label.quickaction')}}</el-text>
     </el-row>
     <DropdownDDClientActions :clientIds="storeSelection.selectionClients" icon="client" />
-    <ModalMProductActions />
+    <DialogDProductActions />
 
     <el-row>
       <el-text tag="b" size="small"> {{$t('title.settings')}}</el-text>
