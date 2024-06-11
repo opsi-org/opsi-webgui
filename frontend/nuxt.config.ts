@@ -1,3 +1,4 @@
+// @ts-nocheck
 
 import pkg from './package.json'
 
@@ -7,9 +8,15 @@ console.log("---------------------------------------------------")
 console.log('OPSI CONFD PORT', CONFD_PORT)
 console.log("---------------------------------------------------")
 
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  build: {
+    analyze: true,
+  },
+  ignore: [
+    '**/tests-configs/**', '**/*.test.component.ts',
+    '**/*.test.accessibility.ts', '**/*.test.usecase.ts', '**/*.test.screenshot.ts'
+  ],
   devtools: {
     enabled: false,
  },
@@ -37,6 +44,7 @@ export default defineNuxtConfig({
       link: [{ rel: 'icon', type: 'image/x-icon', href: 'favicon.ico' }],
     }
   },
+
   static: {
     prefix: false
   },
@@ -48,9 +56,10 @@ export default defineNuxtConfig({
       API_PATH: '/addons/webgui/api', // only default value is useApiFetch composable (can be overwritten for specific api calls)
       OWN_PATH: '/addons/webgui/app', // only default value is useApiFetch composable (can be overwritten for specific api calls)
       NUXT_PUBLIC_API_BASE: (process.env.NODE_ENV === 'production') ? '' : 'https://localhost:' + CONFD_PORT
+      // NUXT_PUBLIC_API_BASE: process.env.BASE_URL
     },
   },
-  pages: true, // not necessary, will be done automatically
+  pages: true, // not necessary, will be done auttttomatically
   modules: [
     '@nuxtjs/i18n',
     '@bootstrap-vue-next/nuxt',
@@ -60,15 +69,22 @@ export default defineNuxtConfig({
     // store (alternative to vuex)
     ['@pinia/nuxt', { autoImports: ['defineStore', 'acceptHMRUpdate'] }],
     '@pinia-plugin-persistedstate/nuxt',
+    // 'nuxt-monaco-editor'
   ],
   piniaPersistedState: {
     key: (id: string) => `opsiui-${id}`,
     storage: 'localStorage',
+    // storage: 'localStorage',
     debug: true,
   },
   tailwindcss: {
     viewer: false,
   },
+  // colorMode: {
+  //   classSuffix: '',
+  // },
+
+  // vueuse
   vueuse: {
     ssrHandlers: true,
   },
@@ -87,26 +103,35 @@ export default defineNuxtConfig({
     '~/assets/scss/bv-colors.scss', // bv import colors
   ],
   elementPlus: {
+    // useSource: true,
     icon: false,
     importStyle: "scss",
     themes: ['dark'], // from docs: "import style css or sass(scss) with components, disable automatically import styles with false."
-    // defaultLocale: 'de',
+    defaultLocale: 'de',
   },
+
   primevue: {
     usePrimeVue: true,
+    /* Options */
+    // cssLayerOrder: 'reset,primevue',
     options: {
       ripple: false,
-      pt: {},
+      // unstyled: true,
+      // pt: Tailwind,
+      pt: {}
     },
+
     components: {
       prefix: 'P',
       include: ['ContextMenu', 'DataTable', 'Column', 'ColumnGroup', 'Row', 'Paginator', 'Dropdown', 'VirtualScroller', 'Skeleton'],
       exclude: ['Toast']
     },
+
     composables: {
       include: []
     }
   },
+
   imports: {
     dirs: ['store'],
   },
