@@ -42,6 +42,9 @@ export const storeAuth = defineStore('auth', {
       // storeTablesettings().$hydrate()
       this.username = ''
     },
+    setUser (username: string) {
+      this.username = username
+    },
     setExpiredMin (m: number) {
       this.sessionExpiry = m
     },

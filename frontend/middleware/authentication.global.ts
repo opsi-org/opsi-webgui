@@ -20,10 +20,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (isA && to.name === 'login') {
     return navigateTo('' + config.public.BASE_PAGE)
   } else if (!isA && to.name !== 'login') {
-    //TODO: useSelectionStore
-    // store.dispatch('selections/clearAllSelection')
-    return navigateTo('/login')
+    return navigateTo('/login?redirect=' + to.path)
   }
+  // if (to.params.redirect) {
+  //   return navigateTo('' + to.params.redirect)
+  // }
   // In a real app you would probably not redirect every route to `/`
   // however it is important to check `to.path` before redirecting or you
   // might get an infinite redirect loop
