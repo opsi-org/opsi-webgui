@@ -1,33 +1,4 @@
 <template>
-  <!-- <el-text>{{ $t('title.depots') }}</el-text><br /> -->
-  <!-- <el-text>Depot Selection: {{ storeSelection.selectionDepots }}</el-text> <br /> -->
-  <!-- <el-text>Client Selection: {{ storeSelection.selectionClients }}</el-text> <br /> -->
-  <!-- <el-text>Product Selection: {{ storeSelection.selectionProducts }}</el-text> <br /> -->
-  <!-- <el-text>SortByProp {{ props.sortby }}</el-text> <br /> -->
-  <!-- <el-text>PropsSelection {{ props.selectedClient }}</el-text> <br /> -->
-  <!-- {{ fetchedData[currentType].length }}, total {{ totalItems }} -->
-  {{selectionProducts}}<br />
-  <div>
-    <!-- <el-badge :value="numberLocalbootsSortbyNotEmpty" class="item"  :hidden="numberLocalbootsSortbyNotEmpty <= 0" type="success" > -->
-    <el-checkbox-button
-        v-model="productsTypeChecked.LocalbootProduct"
-        @change="changeProductsType('LocalbootProduct')"
-      >LocalbootProduct</el-checkbox-button>
-      <!-- </el-badge> -->
-
-      <el-badge is-dot class="item"  :hidden="numberOtherNetboot <= 0" type="warning" >
-      <el-checkbox-button
-      v-model="productsTypeChecked.NetbootProduct"
-      @change="changeProductsType('NetbootProduct')"
-      >NetbootProduct</el-checkbox-button>
-        <!-- <el-button size="small">XProducts</el-button> -->
-      </el-badge>
-    <!-- <el-checkbox-button
-        disabled
-        v-model="productsTypeChecked.Product"
-        @change="changeProductsType('Product')"
-      >Product</el-checkbox-button> -->
-  </div>
   <TableTDefault
       row-id="productId"
       :id="id"
@@ -56,7 +27,25 @@
         tableData[currentType].filterColumns = v.cols
         tableData[currentType].filterQuery = v.vals
       }" -->
-
+      <template #header-title>
+        <div>
+          <el-checkbox-button
+            v-model="productsTypeChecked.LocalbootProduct"
+            @change="changeProductsType('LocalbootProduct')"
+          >{{$t('title.localbootProducts')}}</el-checkbox-button>
+          <!-- <el-badge is-dot class="item"  :hidden="numberOtherNetboot <= 0" type="warning" > -->
+            <el-checkbox-button
+            v-model="productsTypeChecked.NetbootProduct"
+            @change="changeProductsType('NetbootProduct')"
+            >{{ $t('title.netbootProducts') }}</el-checkbox-button>
+          <!-- </el-badge> -->
+          <!--  el-checkbox-button
+            disabled
+            v-model="productsTypeChecked.Product"
+            @change="changeProductsType('Product')"
+          >Product< / > -->
+        </div>
+      </template>
     </TableTDefault>
   <!-- <div data-testid="VProducts" class="VProducts">
     <GridGTwoColumnLayout :showchild="secondColumnOpened && rowId">

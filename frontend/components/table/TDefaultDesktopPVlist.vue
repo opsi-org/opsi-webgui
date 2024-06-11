@@ -6,6 +6,8 @@
       <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
+          <slot name="header-title"></slot>
+
           <!-- <h4>{{ props.id }}</h4> -->
         </div>
         <div class="flex">

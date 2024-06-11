@@ -3,6 +3,7 @@
 
   <div v-if="Object.keys(columnsModel).length > 0">
     <div class="flex justify-content-between">
+      <slot name="header-title"></slot>
       <slot name="header-pre-visibility"></slot>
       <slot name="header-pre-filter"></slot>
       <InputIFilter
@@ -112,6 +113,9 @@ const Details = ({rowData, colData}: any) => {
             default: (scope: any) => {
               const rowKey = scope.row.id
               let rowObj = columnsModel.value[rowKey]
+              if (rowKey == undefined || rowKey == 'rowactions' || rowKey == 'actionRequest') {
+                return <el-text>{ columnsModel.value[rowKey].title || columnsModel.value[rowKey].tooltip }</el-text>
+              }
               if (rowObj.headerCellRenderer !== undefined) {
                 return rowObj.headerCellRenderer({ rowData } as any)
               }

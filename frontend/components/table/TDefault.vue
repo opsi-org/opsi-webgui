@@ -12,6 +12,9 @@
       @update-input-filter="(v: any) => $emit('update-input-filter', v)"
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
+      <template v-slot:header-title>
+        <slot name="header-title" />
+      </template>
       <template v-slot:header-pre-visibility>
         <slot name="header-pre-visibility" />
       </template>
@@ -34,6 +37,9 @@
       @update-input-filter="(v: any) => $emit('update-input-filter', v)"
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
+    <template v-slot:header-title>
+      <slot name="header-title" />
+    </template>
     <template v-slot:header-pre-visibility>
       <slot name="header-pre-visibility" />
     </template>
