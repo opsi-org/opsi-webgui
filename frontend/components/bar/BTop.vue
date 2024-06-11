@@ -1,7 +1,7 @@
 
 <template>
   <el-menu mode="horizontal" :ellipsis="false" class="border-0 text-on-primary" data-testid="BTop">
-    <el-menu-item v-if="mq.isMobile.value" index="0" @click="toggleLeft" data-testid="menu_routes">
+    <el-menu-item v-if="mq.isMobile.value" index="0" @click="toggleLeft" data-testid="menu_routes" class="min-w-14 w-14">
       <IconIIcon :icon="icons.navmenu" class="text-on-primary"/>
     </el-menu-item>
 
@@ -13,7 +13,7 @@
 
     <div class="flex-grow" />
 
-    <el-menu-item index="2" type="text" @click="toggleRight" data-testid="menu-quickpanel">
+    <el-menu-item index="2" type="text" @click="toggleRight" data-testid="menu-quickpanel" class="min-w-14 w-14">
       <IconIIcon :icon="icons.quickpanel" class="text-on-primary"/>
     </el-menu-item>
 

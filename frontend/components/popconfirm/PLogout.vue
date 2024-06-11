@@ -7,7 +7,11 @@
     data-testid="BTNLogout"
   >
     <template #reference>
-      <el-button class="h-full max-h-full min-h-full border-0 rounded-none" style="--el-border-radius-base: 0px">
+      <el-button :class="{
+        'h-full max-h-full min-h-full border-0 rounded-none': true,
+        [btnClass]: true
+      }"
+      style="--el-border-radius-base: 0px">
         <IconIIcon :icon="icon.logout" />
         <p v-if="isMobile" class="pt-3 ml-1">{{ $t('button.logout') }}</p>
       </el-button>
@@ -30,7 +34,8 @@ const { notifyError } = useNotification()
 const authStore = storeAuth() // autho imported
 const props = defineProps({
   abortClick: { type: Boolean, default: false},
-  isMenuItem: { type: Boolean, default: false}
+  isMenuItem: { type: Boolean, default: false},
+  btnClass: { type: String, default: 'min-w-14 w-14'}
 })
 
 async function doLogout () {
