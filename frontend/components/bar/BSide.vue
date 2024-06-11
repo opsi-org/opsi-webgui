@@ -1,6 +1,6 @@
 <template>
   <div data-testid="BSide">
-    <el-menu router :default-active="router.currentRoute.value?.fullPath" :collapse="isCollapse"
+    <el-menu router unique-opened :default-active="router.currentRoute.value?.fullPath" :collapse="isCollapse"
       class="el-menu-mywrapper overflow-hidden max-w-full" :class="{'max-height-side': !mq.isMobile.value }"
       style="--el-menu-icon-width: 244px;" type="primary">
       <span v-for="item in navItems" :key="item.title">
