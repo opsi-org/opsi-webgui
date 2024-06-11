@@ -1,6 +1,7 @@
 <template>
   <PContextMenu v-if="items" ref="cmmenu" :model="items" class="p-contextmenu">
     <template #item="{ item, hasSubmenu }">
+      <el-text>
       <div class="inline" >
         <IconIIcon v-if="item.icon" :icon="item.icon" class="inline ml-2 mr-4" />
         <span class="inline">{{ item.label }}</span>
@@ -8,6 +9,7 @@
           <IconIIcon :icon="icons.arrowRight" />
         </span>
       </div>
+    </el-text>
     </template>
   </PContextMenu>
   <ModalMClientEvents v-if="showModal" v-model="showModal" :event="selectedAction" :id="props.item[keyWrapper]"/>
