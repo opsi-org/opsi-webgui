@@ -146,10 +146,6 @@ function clearFilter () {
 :deep(.el-select-v2__wrapper) {
   height: 100% !important;
 }
-:deep(.el-input) {
-  border: 1px solid var(--el-text-color-regular) !important;
-  border-radius: 5px;
-}
 :deep(.el-input-group__prepend) {
   padding: 0 !important;
   border: 0px !important;

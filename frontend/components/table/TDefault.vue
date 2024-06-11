@@ -12,6 +12,15 @@
       @update-input-filter="(v: any) => $emit('update-input-filter', v)"
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
+      <template v-slot:header-pre-visibility>
+        <slot name="header-pre-visibility" />
+      </template>
+      <template v-slot:header-pre-filter>
+        <slot name="header-pre-filter" />
+      </template>
+      <template v-slot:header-post-filter>
+        <slot name="header-post-filter" />
+      </template>
     </LazyTableTDefaultMobile>
     <TableTDefaultDesktopPVlist
       v-else-if="!isMobileWrapper"
@@ -25,6 +34,16 @@
       @update-input-filter="(v: any) => $emit('update-input-filter', v)"
       @sort-changed="(v: any) => $emit('sort-changed', v)"
     >
+    <template v-slot:header-pre-visibility>
+      <slot name="header-pre-visibility" />
+    </template>
+    <template v-slot:header-pre-filter>
+      <slot name="header-pre-filter" />
+    </template>
+    <template v-slot:header-post-filter>
+      <slot name="header-post-filter" />
+    </template>
+
       <!-- v-bind="(({ isMobile, ...rest }) => rest)($attrs)" -->
     </TableTDefaultDesktopPVlist>
   </div>

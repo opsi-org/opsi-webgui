@@ -6,15 +6,19 @@
       <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
-          <h4>{{ props.id }}</h4>
+          <!-- <h4>{{ props.id }}</h4> -->
         </div>
         <div class="flex">
+          <slot name="header-pre-visibility"></slot>
           <SelectSColumnVisibility :table-id="props.id" v-model:possibleColumns="columnsModel" />
+          <slot name="header-pre-filter"></slot>
           <InputIFilter
             :data="tableData"
             :filterable-columns="Object.values(wrappedColumns)"
             @update="($event: any) => $emit('update-input-filter', $event)"
           />
+
+          <slot name="header-post-filter"></slot>
         </div>
       </div>
         <!-- <PContextMenu ref="cmmenu" :model="cmmenuItems" @hide="currentSelectedRow.value = null" /> -->
@@ -26,7 +30,10 @@
         >
           <template #content="{ items }">
             <table class="table-auto w-full min-h-96">
-              <thead class="sticky top-0 bg-dark z-[999] !h-[50px] !max-h-[50px]">
+              <thead class="sticky top-0 z-[999] !h-[50px] !max-h-[50px] bg-light"
+              :class="{
+                'bg-dark': settings.colormode === 'dark'
+              }">
                 <tr class="h-[50px]">
                   <template v-for="col in (visibleColumns as any)" :key="col.key">
                     <template v-if="col.key.startsWith('_')" >
@@ -397,6 +404,7 @@ const HeaderCellRenderer = ({colData}: any) => {
   return <el-text>{ colData.title }</el-text>
 }
 
+const settings = storeSettings()
 const selectionStore = storeSelections()
 const tableStore = storeTablesettings()
 const icons = useIcons()

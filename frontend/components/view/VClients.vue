@@ -1,9 +1,4 @@
 <template>
-    <ButtonBTNRowLink
-      :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
-      :icon="icons.product"
-      @click="openLink('/clients/products/LocalbootProduct')"
-    > {{$t('table.fields.products')}} </ButtonBTNRowLink>
     <TableTDefault
       row-id="clientId"
       :id="id"
@@ -21,6 +16,13 @@
       @sort-changed="tableHelper.sortChanged"
       @update-input-filter="tableHelper.filterChanged"
     >
+      <template v-slot:header-post-filter>
+        <ButtonBTNRowLink
+          :is-pressed="router.currentRoute.value.path.includes('/clients/products/')"
+          :icon="icons.product"
+          @click="openLink('/clients/products/LocalbootProduct')"
+        > {{$t('table.fields.products')}} </ButtonBTNRowLink>
+      </template>
     </TableTDefault>
 </template>
 
