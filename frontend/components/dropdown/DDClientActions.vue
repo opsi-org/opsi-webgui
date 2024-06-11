@@ -1,6 +1,6 @@
 <template>
   <el-dropdown trigger="click">
-    <el-button class="ml-3">
+    <el-button class="ml-0">
       <IconIIcon :icon="icon[props.icon]" :title="$t('button.tablerow.moreoptions')" />
     </el-button>
     <template #dropdown>

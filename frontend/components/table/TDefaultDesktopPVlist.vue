@@ -29,7 +29,6 @@
           class=" min-h-192"
         >
           <template #content="{ items }">
-            {{settings.colormode}}
             <table class="table-auto w-full min-h-96">
               <thead class="sticky top-0 z-[999] !h-[50px] !max-h-[50px] bg-light"
               :class="{
