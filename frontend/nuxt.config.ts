@@ -1,8 +1,6 @@
 // @ts-nocheck
 
 import pkg from './package.json'
-import HardSourceWebpackPlugin from 'hard-source-webpack-plugin'
-
 
 const CONFD_PORT = process.env.OPSICONFD_PORT || 4447
 console.log("---------------------------------------------------")
@@ -14,10 +12,10 @@ export default defineNuxtConfig({
   build: {
     analyze: true,
     webpack: {
-      plugins: [
-        new HardSourceWebpackPlugin()
-      ]
-    }
+      optimization: {
+        usedExports: true,
+      },
+    },
   },
   ignore: [
     '**/tests-configs/**', '**/*.test.component.ts',

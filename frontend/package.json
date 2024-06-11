@@ -58,7 +58,6 @@
     "@vitejs/plugin-vue": "^4.5.0",
     "bootstrap": "^5.3.2",
     "bootstrap-vue-next": "^0.14.10",
-    "hard-source-webpack-plugin": "^0.13.1",
     "histoire": "0.17.6",
     "npm-check-updates": "^16.14.6",
     "nuxt-primevue": "^0.x.x",
