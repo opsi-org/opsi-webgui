@@ -6,7 +6,7 @@
       :max-collapse-tags="0"
       :multiple="true"
       collapse-tags
-      class=""
+      class="h-9 min-h-9"
       popper-class="w-250"
       @change="handleItem"
     >

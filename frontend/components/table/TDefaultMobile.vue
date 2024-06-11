@@ -2,13 +2,17 @@
   <div class="">
 
   <div v-if="Object.keys(columnsModel).length > 0">
-    <InputIFilter
-        :data="tableData"
-        :filterable-columns="Object.values(wrappedColumns)"
-        @update="($event: any) => $emit('update-input-filter', $event)"
+    <div class="flex justify-content-between">
+      <slot name="header-pre-visibility"></slot>
+      <slot name="header-pre-filter"></slot>
+      <InputIFilter
+      :data="tableData"
+      :filterable-columns="Object.values(wrappedColumns)"
+      @update="($event: any) => $emit('update-input-filter', $event)"
       />
+      <slot name="header-post-filter"></slot>
+    </div>
     <!-- <FormitemDDTableColumnVisibility :table-id="id" v-model:headers="columnsModel" :sort-by="sortBy" :multi="true" :incontextmenu="true" /> -->
-
     <el-collapse v-model="collapseRowIdValue" accordion>
       <PVirtualScroller :items="dataModel" :itemSize="50" class="w-full h-[39rem] maxVisibleNoOverflow" >
       <!-- style="width: 200px; height: 200px" -->

@@ -6,15 +6,19 @@
       <!-- SortBy: {{ props.tableData.sortBy }}, SortDesc: {{ props.tableData.sortDesc }} -->
       <div class="flex justify-content-between">
         <div>
-          <h4>{{ props.id }}</h4>
+          <!-- <h4>{{ props.id }}</h4> -->
         </div>
         <div class="flex">
+          <slot name="header-pre-visibility"></slot>
           <SelectSColumnVisibility :table-id="props.id" v-model:possibleColumns="columnsModel" />
+          <slot name="header-pre-filter"></slot>
           <InputIFilter
             :data="tableData"
             :filterable-columns="Object.values(wrappedColumns)"
             @update="($event: any) => $emit('update-input-filter', $event)"
           />
+
+          <slot name="header-post-filter"></slot>
         </div>
       </div>
         <!-- <PContextMenu ref="cmmenu" :model="cmmenuItems" @hide="currentSelectedRow.value = null" /> -->

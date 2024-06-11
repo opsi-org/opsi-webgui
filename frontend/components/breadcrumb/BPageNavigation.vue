@@ -1,5 +1,5 @@
 <template>
-  <el-breadcrumb>
+  <el-breadcrumb class="mb-2">
     <el-breadcrumb-item v-for="(item, index) in pathSegments" :key="index" :to="{ path: '/' + pathSegments.slice(0, index + 1).join('/') }">
       {{ item }}
     </el-breadcrumb-item>

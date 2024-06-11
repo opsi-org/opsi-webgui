@@ -119,6 +119,22 @@ body[data-bs-theme="dark"] {
 h1, h2, h3, h4, h5, h6 {
   --bs-heading-color: var(--fg-color);
 }
+.el-input {
+  max-height: 2rem;
+  border: 0px !important;
+}
+.el-input .el-select__wrapper,
+.el-input input,
+.el-input .el-button {
+  min-height: 30px !important;
+  height: 30px !important;
+  max-height: 30px !important;
+  border-top: 0px !important;
+  border-bottom: 0px !important;
+  border: 0px !important;
+  border-radius: 0%;
+  box-shadow: none !important;
+}
 .el-popper .el-menu .text-on-primary {
   /* BSIDE items during hover. cannot be inside component, cause el-popper is directly in body tag*/
   --el-text-color-regular: var(--fg-color) !important;
