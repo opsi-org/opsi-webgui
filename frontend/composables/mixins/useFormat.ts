@@ -21,6 +21,10 @@ export const useFormat = () => {
       } else {
         console.warn('Format.date: unknown format', value)
       }
+      if (date === undefined || time === undefined) {
+        console.warn('Format.date: date or time is undefined', value)
+        return ''
+      }
       const d = new Date(
         date.getFullYear(),
         date.getMonth(),

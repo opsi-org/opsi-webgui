@@ -6,7 +6,7 @@
       <div @keyup.enter="doLogin">
         <el-form class="mt-1">
           <el-form-item class="mb-1">
-            <el-input id="configserver" data-testid="login_configserver" v-model="opsiconfigserver" :aria-label="$t('title.configserver')" disabled readonly :placeholder="opsiconfigserver" />
+            <el-input id="configserver" data-testid="login_configserver" v-model="opsiconfigserver" :aria-label="$t('title.configserver')" disabled readonly :placeholder="opsiconfigserver"/>
           </el-form-item>
           <el-form-item class="mb-1">
             <el-input id="username" v-model="form.username" :disabled="isLoading" data-testid="login_username" :aria-label="$t('form.username')" :placeholder="$t('form.username')" :state="validUsername" class="username" />
@@ -121,5 +121,8 @@ async function doLogin () {
   --el-text-color-regular: #e1e1e1;
   border: 1px solid var(--el-input-text-color);
   color: var(--el-input-text-color);
+}
+:deep(.el-input__wrapper) {
+  border-radius: 0px !important;
 }
 </style>
