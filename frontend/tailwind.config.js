@@ -1,27 +1,33 @@
-/** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./components/**/*.{js,jsx,ts,tsx}",
-  ],
+  purge: {
+    enabled: true, // process.env.NODE_ENV === 'production'
+    content: [
+      './components/**/*.{vue,js,ts,tsx}',
+      './layouts/**/*.vue',
+      './pages/**/*.vue',
+      './plugins/**/*.{js,ts,tsx}',
+      './nuxt.config.{js,ts}',
+    ],
+  },
   theme: {
     extend: {
       width: {
         '1/1': '100%',
         '1/2': '50%',
-        '1/3': '33%',
-        '2/3': '66%',
+        '1/3': '33.333333%',
+        '2/3': '66.666667%',
       },
       minWidth: {
         '1/1': '100%',
         '1/2': '50%',
-        '1/3': '33%',
-        '2/3': '66%',
+        '1/3': '33.333333%',
+        '2/3': '66.666667%',
       },
       maxWidth: {
-      '1/1': '100%',
-      '1/2': '50%',
-      '1/3': '33%',
-      '2/3': '66%',
+        '1/1': '100%',
+        '1/2': '50%',
+        '1/3': '33.333333%',
+        '2/3': '66.666667%',
       },
       minHeight: {
         '1/4': '25vh',
@@ -30,16 +36,10 @@ export default {
         '192': '48rem',
       },
       height: {
-        // 96: 24rem // 384px*2
-        // '144': '32rem;',
         '128': '32rem',
-        '192': '48rem;',
+        '192': '48rem',
       },
-      // backgroundColor: {
-      //   'transparent': 'transparent'
-      // }
     },
   },
   plugins: [],
 }
-
