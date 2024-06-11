@@ -6,8 +6,8 @@
     </el-menu-item>
 
     <div v-if="mq.isMobile.value" class="flex-grow" />
-
-    <el-menu-item index="1" @click="navigateToClients">
+    <!--  -->
+    <el-menu-item index="1" @click="navigateToClients"  class="!bg-transparent !hover:!bg-transparent">
       <IconIOpsiLogo class="opsi-logo" />
     </el-menu-item>
 
