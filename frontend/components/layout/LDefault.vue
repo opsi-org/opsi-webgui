@@ -7,6 +7,7 @@
       <el-aside v-if="leftSideVisible" class="el-aside-left"
       :class="{
         'aside-left-collapsed': !mq.isMobile.value && leftSideIsSmall,
+        'position-absolute z-[99999] min-w-[70%] min-h-calc-100vh-60px': mq.isMobile.value
        }"
       >
         <el-scrollbar>
@@ -14,14 +15,24 @@
         </el-scrollbar>
       </el-aside>
 
-      <el-main class="main-content">
+      <el-main :class="{ 'main-content': true }">
         <el-scrollbar>
           <BreadcrumbBPageNavigation />
           <slot />
         </el-scrollbar>
+
+        <!-- backdrop for mobile view-->
+        <div
+          v-if="mq.isMobile.value && (leftSideVisible || rightSideVisible)"
+          class="bg-black opacity-50 w-screen min-h-screen position-absolute top-0 z-index-[88888] -ml-5 mt-[60px]"
+          @click="closeOpenedSide()"
+        />
       </el-main>
 
-      <el-aside v-if="rightSideVisible" class="el-side-right">
+      <el-aside v-if="rightSideVisible" :class="{
+        'el-side-right': true,
+        'position-absolute right-0 z-[99999] min-w-[70%] min-h-calc-100vh-60px': mq.isMobile.value
+      }">
         <el-scrollbar class="quickpanel">
           <BarBQuickPanel />
         </el-scrollbar>
@@ -53,7 +64,11 @@ function setLeftCollapse (v: boolean) {
   leftSideIsSmall.value = v
   settings.setMenuCollapsed(v)
 }
-
+function closeOpenedSide() {
+  leftSideVisible.value = false
+  rightSideVisible.value = false
+  settings.setQuickpanelOpened(false)
+}
 function toggleSide (side: string) {
   if (side === 'left') {
     if (mq.isMobile.value) { rightSideVisible.value = false }
@@ -87,6 +102,9 @@ async function checkConfig () {
 </script>
 
 <style scoped>
+.min-h-calc-100vh-60px {
+  min-height: calc(100vh - 60px);
+}
 .el-header {
   background-color: var(--opsi-general-blue);
 }
